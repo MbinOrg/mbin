@@ -24,7 +24,6 @@ class ThemeSettingsController extends AbstractController
     public const KBIN_ENTRIES_SHOW_PREVIEW = 'kbin_entries_show_preview';
     public const KBIN_ENTRIES_COMPACT = 'kbin_entries_compact';
     public const KBIN_POSTS_SHOW_PREVIEW = 'kbin_posts_show_preview';
-    public const KBIN_POSTS_SHOW_USERS_AVATARS = 'kbin_posts_show_users_avatars';
     public const KBIN_GENERAL_ROUNDED_EDGES = 'kbin_general_rounded_edges';
     public const KBIN_GENERAL_INFINITE_SCROLL = 'kbin_general_infinite_scroll';
     public const KBIN_GENERAL_TOPBAR = 'kbin_general_topbar';
@@ -34,6 +33,10 @@ class ThemeSettingsController extends AbstractController
     public const KBIN_FEDERATION_ENABLED = 'kbin_federation_enabled';
     public const KBIN_COMMENTS_SHOW_USER_AVATAR = 'kbin_comments_show_user_avatar';
     public const KBIN_COMMENTS_REPLY_POSITION = 'kbin_comments_reply_position';
+    public const KBIN_GENERAL_SHOW_SUBSCRIPTIONS = 'kbin_general_show_subscriptions';
+    public const KBIN_GENERAL_SHOW_SUBSCRIPTIONS_SORT = 'kbin_general_show_subscriptions_sort';
+    public const KBIN_GENERAL_SHOW_SUBSCRIPTIONS_IN_SEPARATE = 'kbin_general_show_subscriptions_seperate';
+    public const KBIN_GENERAL_SIDEBARS_SAME_SIDE = 'kbin_general_sidebars_same_side';
 
     public const CLASSIC = 'classic';
     public const CHAT = 'chat';
@@ -51,6 +54,8 @@ class ThemeSettingsController extends AbstractController
     public const RIGHT = 'right';
     public const TOP = 'top';
     public const BOTTOM = 'bottom';
+    public const ALPHABETICALLY = 'alphabetically';
+    public const LAST_ACTIVE = 'last_active';
 
     public const KEYS = [
         self::ENTRIES_VIEW,
@@ -69,12 +74,15 @@ class ThemeSettingsController extends AbstractController
         self::KBIN_GENERAL_SIDEBAR_POSITION,
         self::KBIN_ENTRIES_SHOW_PREVIEW,
         self::KBIN_POSTS_SHOW_PREVIEW,
-        self::KBIN_POSTS_SHOW_USERS_AVATARS,
         self::KBIN_GENERAL_DYNAMIC_LISTS,
         self::KBIN_FEDERATION_ENABLED,
         self::KBIN_LANG,
         self::KBIN_COMMENTS_SHOW_USER_AVATAR,
         self::KBIN_COMMENTS_REPLY_POSITION,
+        self::KBIN_GENERAL_SHOW_SUBSCRIPTIONS,
+        self::KBIN_GENERAL_SHOW_SUBSCRIPTIONS_SORT,
+        self::KBIN_GENERAL_SHOW_SUBSCRIPTIONS_IN_SEPARATE,
+        self::KBIN_GENERAL_SIDEBARS_SAME_SIDE,
     ];
 
     public const VALUES = [
@@ -92,9 +100,6 @@ class ThemeSettingsController extends AbstractController
         self::FALSE,
         self::LEFT,
         self::RIGHT,
-        self::TOP,
-        self::BOTTOM,
-        '80',
         '90',
         '100',
         '120',
@@ -105,9 +110,13 @@ class ThemeSettingsController extends AbstractController
     {
         $response = new Response();
 
-        if (\in_array($key, self::KEYS) && \in_array($value, self::VALUES)) {
+        if (in_array($key, self::KEYS) && in_array($value, self::VALUES)) {
             $response->headers->setCookie(new Cookie($key, $value, strtotime('+1 year')));
         }
+
+        //        if (self::KBIN_THEME === $key && self::KBIN === $value) {
+        //            $response->headers->setCookie(new Cookie(self::KBIN_GENERAL_ROUNDED_EDGES, 'true', strtotime('+1 year')));
+        //        }
 
         if (self::KBIN_LANG === $key) {
             $response->headers->setCookie(new Cookie(self::KBIN_LANG, $value, strtotime('+1 year')));

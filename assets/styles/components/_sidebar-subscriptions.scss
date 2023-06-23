@@ -1,0 +1,86 @@
+.rounded-edges .sidebar-subscriptions .active {
+  border-radius: 0.5rem;
+}
+
+.sidebar-subscriptions {
+
+  &.section {
+    padding: 0.5rem 0.5rem 1rem;
+
+      &:not(.inline) {
+        @include media-breakpoint-down(lg) {
+          margin: 0.5rem;
+          padding: 0.5rem;
+        }
+    }
+
+  }
+
+  h3 {
+    border-bottom: var(--kbin-sidebar-header-border);
+    color: var(--kbin-sidebar-header-text-color);
+    font-size: .8rem;
+    margin: 0;
+    text-transform: uppercase;
+
+    @include media-breakpoint-down(lg) {
+      margin: 0;
+    }
+  }
+  .subscription-list {
+
+    @include media-breakpoint-down(lg) {
+      display: flex;
+      flex-direction: row;
+      overflow-y: auto;
+      max-width: calc(-2rem + 100vw);
+    }
+
+    .subscription {
+      padding: 0.5rem;
+
+      &:not(:last-child) {
+        @include media-breakpoint-up(lg) {
+          border-bottom: var(--kbin-meta-border);
+        }
+
+        @include media-breakpoint-down(lg) {
+          border-right: var(--kbin-meta-border);
+        }
+      }
+
+      .magazine-subscription-avatar {
+        height: 1.5rem;
+        width: 1.5rem;
+        object-fit: scale-down;
+        border-radius: 50%;
+        display: inline;
+        vertical-align: middle;
+      }
+
+      .magazine-subscription-avatar-placeholder{
+        width: 1.5rem;
+        display: inline-block;
+        @include media-breakpoint-down(lg) {
+          display: none;
+        }
+      }
+
+      &.active {
+        border: var(--kbin-header-border);
+
+      }
+
+      .magazine-name {
+        font-weight: bold;
+        padding: 0.25rem;
+
+        &.has-image {
+          @include media-breakpoint-down(lg) {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}

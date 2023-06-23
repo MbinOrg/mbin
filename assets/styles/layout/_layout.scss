@@ -24,14 +24,36 @@ body {
     grid-template-columns: 3fr 1fr;
 
     @include media-breakpoint-up(lg) {
+      .subs-show & {
+        grid-template-areas: 'subs main sidebar';
+        grid-template-columns: 1fr 3fr 1fr;
+      }
+
       .sidebar-left & {
         grid-template-areas: 'sidebar main';
         grid-template-columns: 1fr 3fr;
       }
+
+      .sidebar-left.subs-show & {
+        grid-template-areas: 'sidebar main subs';
+        grid-template-columns: 1fr 3fr 1fr;
+      }
+
+
+      .sidebars-same-side.subs-show & {
+        grid-template-areas: 'main sidebar subs ';
+        grid-template-columns: 3fr 1fr 1fr;
+      }
+
+      .sidebars-same-side.sidebar-left.subs-show & {
+        grid-template-areas: 'subs sidebar main';
+        grid-template-columns: 1fr 1fr 3fr;
+      }
     }
 
     @include media-breakpoint-down(lg) {
-      grid-template-areas: 'main main'
+      grid-template-areas: 'subs subs'
+                          'main main'
                           'sidebar sidebar';
       grid-template-columns: 1fr;
       margin: 0 auto;
