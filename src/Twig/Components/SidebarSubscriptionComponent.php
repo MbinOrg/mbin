@@ -35,5 +35,6 @@ class SidebarSubscriptionComponent
         } else {
             usort($this->magazines, fn($a, $b) => $a->lastActive < $b->lastActive ? 1 : -1);
         }
+        $this->magazines = array_slice($this->magazines, 0, 50);
     }
 }
