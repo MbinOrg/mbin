@@ -17,5 +17,14 @@
                 </a>
             </div>
         {% endfor %}
+        {% if tooManyMagazines %}
+            <div class="subscription {{ openMagazine and openMagazine.name is same as magazine.name ? 'active' : '' }}">
+                <a href="https://kbin.localhost/u/{{ app.user.username }}/subscriptions">
+                    <button class="btn btn__secondary">
+                        {{ 'show_more'|trans }}
+                    </button>
+                </a>
+            </div>
+        {% endif %}
     </div>
 </div>

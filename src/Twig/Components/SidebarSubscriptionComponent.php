@@ -15,6 +15,7 @@ class SidebarSubscriptionComponent
 {
     public User $user;
     public ?Magazine $openMagazine;
+    public bool $tooManyMagazines = false;
 
     /**
      * @var Magazine[]
@@ -26,15 +27,18 @@ class SidebarSubscriptionComponent
     #[PostMount]
     public function PostMount(): void
     {
+        $max = 50;
         $this->magazines = [];
         foreach ($this->user->subscriptions as /** @type MagazineSubscription $sub */ $sub) {
             $this->magazines[] = $sub->magazine;
         }
-        if($this->sort == ThemeSettingsController::ALPHABETICALLY) {
+        if ($this->sort == ThemeSettingsController::ALPHABETICALLY) {
             usort($this->magazines, fn($a, $b) => $a->name > $b->name ? 1 : -1);
         } else {
             usort($this->magazines, fn($a, $b) => $a->lastActive < $b->lastActive ? 1 : -1);
         }
-        $this->magazines = array_slice($this->magazines, 0, 50);
+        if (sizeof($this->magazines) > $max)
+            $this->tooManyMagazines = true;
+        $this->magazines = array_slice($this->magazines, 0, $max);
     }
 }
