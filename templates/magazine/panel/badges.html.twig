@@ -29,7 +29,7 @@
                             <div class="actions">
                                 <form method="post"
                                       action="{{ path('magazine_panel_badge_remove', {'magazine_name': badge.magazine.name, 'badge_id': badge.id} ) }}"
-                                      onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                                      data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                                     <input type="hidden" name="token" value="{{ csrf_token('badge_remove') }}">
                                     <button type="submit" class="btn btn__secondary">{{ 'delete'|trans }}</button>
                                 </form>

@@ -1,6 +1,6 @@
-<div class="flex">
+<div class="flex" data-controller="selection">
     <label class="select">
-        <select onchange="location = this.value;">
+        <select data-action="selection#changeLocation">
             <option value="{{ options_url('statsPeriod', -1) }}">{{ 'all'|trans }}</option>
             <option value="{{ options_url('statsPeriod', 7) }}" {{ period is same as 7 ? 'selected' : '' }}>{{ 'week'|trans }}</option>
             <option value="{{ options_url('statsPeriod', 14) }}" {{ period is same as 14 ? 'selected' : '' }}>
@@ -12,7 +12,7 @@
         </select>
     </label>
     <label class="select">
-        <select onchange="location = this.value;">
+        <select data-action="selection#changeLocation">
             <option value="{{ options_url('withFederated', false) }}">{{ 'local'|trans }}</option>
             <option value="{{ options_url('withFederated', true) }}" {{ withFederated is same as true ? 'selected' : '' }}>{{ 'federated'|trans }}</option>
         </select>

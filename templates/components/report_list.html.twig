@@ -53,7 +53,7 @@
                 {% if report.status is not same as REPORT_REJECTED %}
                     <form method="post"
                           action="{{ path('magazine_panel_report_reject', {'magazine_name': report.subject.magazine.name, 'report_id': report.id}) }}"
-                          onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                          data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                         <input type="hidden" name="token" value="{{ csrf_token('report_decline') }}">
                         <button type="submit" class="btn btn__secondary">{{ 'reject'|trans }}</button>
                     </form>
@@ -61,7 +61,7 @@
                 {% if report.status is not same as REPORT_APPROVED %}
                     <form method="post"
                           action="{{ path('magazine_panel_report_approve', {'magazine_name': report.subject.magazine.name, 'report_id': report.id} ) }}"
-                          onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                          data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                         <input type="hidden" name="token" value="{{ csrf_token('report_approve') }}">
                         <button type="submit" class="btn btn__secondary">{{ 'approve'|trans }}</button>
                     </form>
