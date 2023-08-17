@@ -43,9 +43,12 @@ export default class extends Controller {
         window.es = Subscribe(topics, cb);
         // firefox bug: https://github.com/dunglas/mercure/issues/339#issuecomment-650978605
         if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-            window.es.onerror = (e) => {
-                Subscribe(topics, cb);
+            let resubscribe = (e) => {
+                window.es.close();
+                window.es = Subscribe(topics, cb);
+                window.es.onerror = resubscribe;
             };
+            window.es.onerror = resubscribe;
         }
     }
 
