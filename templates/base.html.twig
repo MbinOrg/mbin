@@ -24,9 +24,7 @@
 
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
-        <style>
-            {% include 'components/_details_label.css.twig' %}
-        </style>
+        <link rel="stylesheet" href="{{ path('custom_style', {magazine: magazine.name|default(null)}) }}">
     {% endblock %}
 
     {% block javascripts %}
@@ -43,19 +41,6 @@
             }
         </script>
     {% endblock %}
-
-    {% if not app.user or not app.user.ignoreMagazinesCustomCss %}
-        {% if magazine is defined and magazine %}
-            <style>
-                {{ magazine.customCss }}
-            </style>
-        {% endif %}
-    {% endif %}
-    {% if app.user and app.user.customCss %}
-        <style>
-            {{ app.user.customCss }}
-        </style>
-    {% endif %}
 </head>
 <body class="{{ html_classes(app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_THEME'))
     ? 'theme--'~app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_THEME'))
