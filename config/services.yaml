@@ -69,6 +69,14 @@ parameters:
 
     sso_only_mode: "%env(bool:default::SSO_ONLY_MODE)%"
 
+    exif_default_uploaded: 'sanitize'
+    exif_default_external: 'none'
+
+    exif_clean_mode_uploaded: '%env(enum:\App\Utils\ExifCleanMode:default:exif_default_uploaded:EXIF_CLEAN_MODE_UPLOADED)%'
+    exif_clean_mode_external: '%env(enum:\App\Utils\ExifCleanMode:default:exif_default_external:EXIF_CLEAN_MODE_EXTERNAL)%'
+    exif_exiftool_path: '%env(default::EXIF_EXIFTOOL_PATH)%'
+    exif_exiftool_timeout: '%env(int:default::EXIF_EXIFTOOL_TIMEOUT)%'
+
 services:
     # default configuration for services in *this* file
     _defaults:

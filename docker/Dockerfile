@@ -8,7 +8,7 @@ RUN install-php-extensions amqp pgsql pdo_pgsql gd curl simplexml dom xml redis 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Install caddy
-RUN apk update && apk add caddy acl fcgi
+RUN apk update && apk add caddy acl fcgi exiftool
 
 # **Environment variables**
 ARG UID=1000
