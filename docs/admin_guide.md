@@ -875,36 +875,57 @@ Test PostgreSQL connections if using a remote server, same with Redis. Ensure no
 Edit your `.env` file:
 
 ```conf
-S3_KEY=
-S3_SECRET=
-S3_BUCKET=media.karab.in
-S3_REGION=eu-central-1
-S3_ENDPOINT=
+S3_KEY=$AWS_ACCESS_KEY_ID
+S3_SECRET=$AWS_SECRET_ACCESS_KEY
+S3_BUCKET=bucket-name
+# safe default for s3 deployments like minio or single zone ceph/radosgw
+S3_REGION=us-east-1
+# set if not using aws s3, note that the scheme is also required
+S3_ENDPOINT=https://endpoint.domain.tld
 S3_VERSION=latest
 ```
 
-And then edit the: `config/packages/oneup_flysystem.yaml` file:
+Then edit the: `config/packages/oneup_flysystem.yaml` file:
 
 ```yaml
 oneup_flysystem:
   adapters:
     default_adapter:
       local:
-        location: "%kernel.project_dir%/public/media"
+        location: "%kernel.project_dir%/public/%uploads_dir_name%"
 
-    kbin.s3_adapter:
-      awss3v3:
-        client: kbin.s3_client
-        bucket: "%amazon.s3.bucket%"
+  kbin.s3_adapter:
+    awss3v3:
+      client: kbin.s3_client
+      bucket: "%amazon.s3.bucket%"
 
   filesystems:
     public_uploads_filesystem:
+      #adapter: default_adapter
       adapter: kbin.s3_adapter
       alias: League\Flysystem\Filesystem
 ```
 
+And then edit the: `config/packages/liip_imagine.yaml` file:
+
 ```yaml
-// todo thumbnails
+liip_imagine:
+  # ensure both data loader and cache resolver is active
+  data_loader: kbin.liip_loader
+  cache: kbin.liip_resolver
+
+  loaders:
+    kbin.liip_loader:
+      flysystem:
+        filesystem_service: oneup_flysystem.public_uploads_filesystem_filesystem
+
+  resolvers:
+    kbin.liip_resolver:
+      flysystem:
+        filesystem_service: oneup_flysystem.public_uploads_filesystem_filesystem
+        root_url: '%kbin_storage_url%'
+        cache_prefix: cache
+        visibility: public
 ```
 
 ### Captcha (optional)
