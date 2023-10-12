@@ -10,7 +10,7 @@ promote a free and open internet.
 
 The inspiration came from kbin.
 
-![Kbin logo](docs/images/kbin.png)
+![Mbin logo](docs/images/mbin.png)
 
 - [List of instances](https://fedidb.org/software/kbin)
 
