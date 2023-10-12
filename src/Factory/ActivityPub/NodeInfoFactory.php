@@ -11,7 +11,7 @@ class NodeInfoFactory
 {
     public const NODE_REL = 'http://nodeinfo.diaspora.software/ns/schema/2.0';
     public const NODE_PROTOCOL = 'activitypub';
-    public const KBIN_HOMEPAGE = 'https://kbin.pub';
+    public const KBIN_HOMEPAGE = 'https://github.com/MbinOrg';
 
     public function __construct(
         private readonly StatsContentRepository $repository,
@@ -24,7 +24,7 @@ class NodeInfoFactory
         return [
             'version' => '2.0',
             'software' => [
-                'name' => 'kbin',
+                'name' => 'mbin',
                 'version' => '0.10.1',
             ],
             'protocols' => [
