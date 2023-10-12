@@ -1,15 +1,15 @@
-# Contributing to /kbin
+# Contributing to /mbin
 
-We always welcome new supporters and contributors. A quick list below of possible ways to contribute to /kbin.
+We always welcome new supporters and contributors. A quick list below of possible ways to contribute to /mbin.
 
 > *Note*:
-> Understand that /kbin is a young project, and we are all volunteers. Please be nice! ❤
+> Understand that /mbin is a young project, and we are all volunteers. Please be nice! ❤
 
-## Code
+## CodeRequest]()
 
 The code code is mainly written in PHP using the Symfony framework with Twig templating and a bit of JavaScript & CSS.
 
-With an account on [Codeberg](https://codeberg.org) you will be able to [fork this repository](https://codeberg.org/Kbin/kbin-core) and `git clone` the repository locally if you wish. As well as [creating a new Pull Request](https://codeberg.org/Kbin/kbin-core/pulls) in Codeberg. Also be sure to avoid regression, see below for more info about the coding style as well as testing.
+With an account on [Github](https://github.com) you will be able to [fork this repository](https://github.com/MbinOrg/mbin) and `git clone` the repository locally if you wish. As well as [creating a new Pull Request](https://github.com/MbinOrg/mbin/pulls) in Github. Also be sure to avoid regression, see below for more info about the coding style as well as testing.
 
 ### Coding Style Guide
 
@@ -44,33 +44,33 @@ Please note, that the command may take some time and data will not be visible du
 
 ## Translations
 
-Translations are done in [Weblate](https://translate.codeberg.org/projects/kbin/).
+Translations will be done in Weblate
 
 ## Documentation
 
-Documentation is stored at in the [`docs` folder](https://codeberg.org/Kbin/kbin-core/src/branch/develop/docs) within git. And periodically synced with our Codeberg wiki pages. Create a [new pull request](https://codeberg.org/Kbin/kbin-core/pulls) with changes to the documentation files.
+Documentation is stored in the [`docs` folder](https://github.com/MbinOrg/mbin/src/branch/develop/docs) within git. And periodically synced with our Codeberg wiki pages. Create a [new pull request](https://github.com/MbinOrg/mbin/pulls) with changes to the documentation files.
 
 ## Community
 
-We have a very active [Matrix community](https://matrix.to/#/#kbin-space:matrix.org). Feel free to join our community, ask questions, share your ideas or help others!
+We have a very active [Matrix community](). Feel free to join our community, ask questions, share your ideas or help others!
 
 ## Reporting Issues
 
-If you observe an error or any other issue, [create an new issue](https://codeberg.org/Kbin/kbin-core/issues) in Codeberg. A couple notes about this:
+If you observe an error or any other issue, [create an new issue] (https://github.com/MbinOrg/mbin/issues) in Github. A couple notes about this:
 
 - Please try to verify that your issue is not already present before you create a new issue. You can search on existing open issues.
 - We actually prefer you to **not** include `[Feature Request]` or `[Bug Report]` or similar tags in the title. Instead, we'll add the labels for you.
-- If you're reporting an issue that happened while you're on a specific instance, please include **the URL**.
+- If you're-reporting an issue that happened while you're on a specific instance, please include **the URL**.
 - If the issue is related to design/UI, please also **include screenshots**.
 - If you're the server admin and have access to logging, please also **include logs** when relevant.
 
 ## Reporting Security Vulnerability
 
-Contact Ernest (`@ernest_:matrix.org`) and/or Melroy (`@melroy:melroy.org`) via Matrix, using an encrypted room.
+Contact Melroy (`@melroy:melroy.org`) via Matrix, using an encrypted room.
 
 ## I Have a Question
 
-Before you ask a question, it is sometimes a good practice to search for existing [issues](https://codeberg.org/Kbin/kbin-core/issues) that might help you.
+Before you ask a question, it is sometimes a good practice to search for existing [Issues](https://github.com/MbinOrg/mbin/pulls) that might help you.
 
-If you still feel the need for asking a question, we recommend [joining our community on Matrix](https://matrix.to/#/%23kbin-space:matrix.org) where you can ask your questions to our community members.
+If you still feel the need for asking a question, we recommend [joining our community on Matrix]() where you can ask your questions to our community members.
 
