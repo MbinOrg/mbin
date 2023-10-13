@@ -48,6 +48,22 @@ The inspiration came from kbin.
 - [Mbin REST API Swagger Docs](https://kbin.melroy.org/api/docs)
 - [Mbin ActivityPub Reference](https://fedidevs.org/projects/kbin/)
 
+## Developers
+
+### Linting
+
+Install tooling via:
+
+```sh
+composer -d tools install
+```
+
+Try to automatically fix linting errors:
+
+```sh
+tools/vendor/bin/php-cs-fixer fix
+```
+
 ## Federation
 
 ### Official Documents
