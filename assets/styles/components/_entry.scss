@@ -260,6 +260,9 @@
   &__meta {
     grid-area: meta;
     align-self: flex-end;
+    justify-content: flex-start;
+    align-items: center;
+    column-gap: 0.25rem;
 
     .edited{
       font-style: italic;
