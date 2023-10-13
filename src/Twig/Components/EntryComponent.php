@@ -30,8 +30,6 @@ final class EntryComponent
         $this->canSeeTrashed();
 
         if ($this->isSingle) {
-            $this->showMagazineName = false;
-
             if (isset($attr['class'])) {
                 $attr['class'] = trim('entry--single section--top '.$attr['class']);
             } else {
