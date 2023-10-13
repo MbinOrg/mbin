@@ -52,9 +52,9 @@ class PeopleManager
     public function general(bool $federated = false): array
     {
         if ($federated) {
-            return $this->userRepository->findWithAbout(UserRepository::USERS_REMOTE);
+            return $this->userRepository->findUsersForGroup(UserRepository::USERS_REMOTE);
         }
 
-        return $this->userRepository->findWithAbout(UserRepository::USERS_LOCAL);
+        return $this->userRepository->findUsersForGroup(UserRepository::USERS_LOCAL, false);
     }
 }
