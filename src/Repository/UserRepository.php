@@ -323,12 +323,14 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->getResult();
     }
 
-    private function findWithAboutQueryBuilder(string $group): QueryBuilder
+    private function findUsersQueryBuilder(string $group, ?bool $recentlyActive = true): QueryBuilder
     {
-        $qb = $this->createQueryBuilder('u')
-            ->andWhere('u.about IS NOT NULL')
-            ->andWhere('u.about != :emptyString')
-            ->andWhere('u.lastActive >= :lastActive');
+        $qb = $this->createQueryBuilder('u');
+
+        if ($recentlyActive) {
+            $qb->where('u.lastActive >= :lastActive')
+                ->setParameters(['lastActive' => (new \DateTime())->modify('-7 days')]);
+        }
 
         switch ($group) {
             case self::USERS_LOCAL:
@@ -340,13 +342,12 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
                 break;
         }
 
-        return $qb->orderBy('u.lastActive', 'DESC')
-            ->setParameters(['emptyString' => '', 'lastActive' => (new \DateTime())->modify('-7 days')]);
+        return $qb->orderBy('u.lastActive', 'DESC');
     }
 
-    public function findWithAboutPaginated(int $page, string $group = self::USERS_ALL, int $perPage = self::PER_PAGE): PagerfantaInterface
+    public function findUsersPaginated(int $page, string $group = self::USERS_ALL, int $perPage = self::PER_PAGE): PagerfantaInterface
     {
-        $query = $this->findWithAboutQueryBuilder($group)->getQuery();
+        $query = $this->findUsersQueryBuilder($group)->getQuery();
 
         $pagerfanta = new Pagerfanta(
             new QueryAdapter(
@@ -364,9 +365,9 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $pagerfanta;
     }
 
-    public function findWithAbout(string $group = self::USERS_ALL): array
+    public function findUsersForGroup(string $group = self::USERS_ALL, ?bool $recentlyActive = true): array
     {
-        return $this->findWithAboutQueryBuilder($group)->setMaxResults(28)->getQuery()->getResult();
+        return $this->findUsersQueryBuilder($group, $recentlyActive)->setMaxResults(28)->getQuery()->getResult();
     }
 
     private function findBannedQueryBuilder(string $group): QueryBuilder

@@ -287,7 +287,7 @@ class UserRetrieveApi extends UserBaseApi
         $request = $this->request->getCurrentRequest();
         $group = $request->get('group', UserRepository::USERS_ALL);
 
-        $users = $userRepository->findWithAboutPaginated(
+        $users = $userRepository->findUsersPaginated(
             $this->getPageNb($request),
             $group,
             $this->constrainPerPage($request->get('perPage', UserRepository::PER_PAGE))
