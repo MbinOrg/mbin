@@ -1,8 +1,8 @@
 # Mbin - Fork of /kbin
 
-Mbin a fork of kbin, community-focused. Feel free to discuss on [Matrix](#mbin:melroy.org) & to create Pull Requests.
+Mbin is a fork of kbin, community-focused. Feel free to discuss on [Matrix](#mbin:melroy.org) and to create Pull Requests.
 
-**Important:** Mbin focused of what the community wants, pull requests can be merged by any repo member. Discussions are [taken place on Matrix](#mbin:melroy.org) then _consensus_ is taken place by the community. If approved by the community, no additional reviews are required on the PR. It's build on trust.
+**Important:** Mbin is focused on what the community wants, pull requests can be merged by any repo member. Discussions [take place on Matrix](#mbin:melroy.org) then _consensus_ has to be reached by the community. If approved by the community, no additional reviews are required on the PR. It's built on trust.
 
 Mbin is a modular, decentralized content aggregator and microblogging platform running on the Fediverse network. It can
 communicate with many other ActivityPub services, including Mastodon, Lemmy, Pleroma, Peertube. The initiative aims to
@@ -12,7 +12,7 @@ The inspiration came from kbin.
 
 ![Mbin logo](docs/images/mbin.png)
 
-- [List of instances](https://fedidb.org/software/kbin)
+- [List of instances](https://fedidb.org/software/mbin)
 
 ## Contributing
 
