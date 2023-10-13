@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: docker
+    runs-on: ubuntu-latest
     container:
       image: danger89/mbin-pipeline:1.0.0
     steps:
@@ -56,7 +56,7 @@ jobs:
         run: yarn build
 
   unit-test:
-    runs-on: docker
+    runs-on: ubuntu-latest
     container:
       image: danger89/mbin-pipeline:1.0.0
     steps:
@@ -87,7 +87,7 @@ jobs:
           SYMFONY_DEPRECATIONS_HELPER=disabled php bin/phpunit tests/Unit
 
   fixer-dry-run:
-    runs-on: docker
+    runs-on: ubuntu-latest
     container:
       image: danger89/mbin-pipeline:1.0.0
     steps:
