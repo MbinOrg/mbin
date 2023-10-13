@@ -1,14 +1,14 @@
 # Admin Bare Metal/VM Guide
 
-Below is a step-by-step guide of the process for creating your own /kbin instance from the moment a new VPS/VM is created or directly on bare-metal.  
+Below is a step-by-step guide of the process for creating your own /mbin instance from the moment a new VPS/VM is created or directly on bare-metal.  
 This is a preliminary outline that will help you launch an instance for your own needs.
 
 For Docker see: [Admin Deployment Guide](./docker_deployment_guide.md).
 
 > **Note**
-> /kbin is still in the early stages of development.
+> /mbin is still in the early stages of development.
 
-If you would like to support the project, you can register using the following [affiliate link](https://hetzner.cloud/?ref=8tSPCw0qqIwl).
+If you would like to support the project, you can register using the affiliate link (not yet available)
 
 This guide is aimed for Debian / Ubuntu distribution servers, but it could run on any modern Linux distro. This guide will however uses the `apt` commands.
 
@@ -49,23 +49,23 @@ sudo apt-get update && sudo apt-get install nodejs yarn
 ## Create new user
 
 ```bash
-sudo adduser kbin
-sudo usermod -aG sudo kbin
-sudo usermod -aG www-data kbin
-sudo su - kbin
+sudo adduser mbin
+sudo usermod -aG sudo mbin
+sudo usermod -aG www-data mbin
+sudo su - mbin
 ```
 
 ## Create folder
 
 ```bash
-sudo mkdir -p /var/www/kbin
-sudo chown kbin:www-data /var/www/kbin
+sudo mkdir -p /var/www/mbin
+sudo chown mbin:www-data /var/www/mbin
 ```
 
 ## Generate Secrets
 
 > **Note**
-> This will generate several valid tokens for the kbin setup, you will need quite a few.
+> This will generate several valid tokens for the mbin setup, you will need quite a few.
 
 ```bash
 for counter in {1..2}; do node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"; done && for counter in {1..3}; do node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"; done
@@ -76,8 +76,8 @@ for counter in {1..2}; do node -e "console.log(require('crypto').randomBytes(16)
 ### Clone git repository
 
 ```bash
-cd /var/www/kbin
-git clone https://codeberg.org/Kbin/kbin-core.git .
+cd /var/www/mbin
+git clone https://github.com/MbinOrg/mbin .
 ```
 
 ### Configure `public/media` folder
@@ -85,7 +85,7 @@ git clone https://codeberg.org/Kbin/kbin-core.git .
 ```bash
 mkdir public/media
 sudo chmod -R 777 public/media
-sudo chown -R kbin:www-data public/media
+sudo chown -R mbin:www-data public/media
 ```
 
 ### Configure `var` folder
@@ -93,7 +93,7 @@ sudo chown -R kbin:www-data public/media
 Create & set permissions to the `var` directory:
 
 ```bash
-cd /var/www/kbin
+cd /var/www/mbin
 mkdir var
 
 # See also: https://symfony.com/doc/current/setup/file_permissions.html
@@ -133,7 +133,7 @@ Other important `.env` configs:
 
 ```conf
 # Configure your media URL correctly:
-KBIN_STORAGE_URL=https://domain.tld/media
+mbin_STORAGE_URL=https://domain.tld/media
 
 # Ubuntu installs PostgreSQL v14 by default
 POSTGRES_VERSION=14
@@ -148,7 +148,7 @@ MAILER_DSN=gmail://username:password@localhost?encryption=tls&auth_mode=oauth
 # Mercure (assuming you are using Mercure Caddy on port 3000)
 MERCURE_HOST=localhost:3000
 MERCURE_URL=http://${MERCURE_HOST}/.well-known/mercure
-MERCURE_PUBLIC_URL=https://${KBIN_DOMAIN}/.well-known/mercure
+MERCURE_PUBLIC_URL=https://${mbin_DOMAIN}/.well-known/mercure
 ```
 
 OAuth2 keys for API credential grants:
@@ -296,16 +296,16 @@ REDIS_DNS=redis://${REDIS_PASSWORD}@${REDIS_HOST}
 
 ### PostgreSQL (Database)
 
-Create new `kbin` database user, using the password, `{!SECRET!!KEY!-32_2-!}`, you generated earlier:
+Create new `mbin` database user, using the password, `{!SECRET!!KEY!-32_2-!}`, you generated earlier:
 
 ```bash
-sudo -u postgres createuser --createdb --createrole --pwprompt kbin
+sudo -u postgres createuser --createdb --createrole --pwprompt mbin
 ```
 
 Create tables and database structure:
 
 ```bash
-cd /var/www/kbin
+cd /var/www/mbin
 php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
 ```
@@ -313,7 +313,7 @@ php bin/console doctrine:migrations:migrate
 ### Yarn
 
 ```bash
-cd /var/www/kbin
+cd /var/www/mbin
 yarn # Installs all NPM dependencies
 yarn build # Builds frontend
 ```
@@ -399,15 +399,15 @@ gzip_types
         font/opentype;
 ```
 
-#### Kbin Server Block
+#### mbin Server Block
 
 ```bash
-sudo nano /etc/nginx/sites-available/kbin.conf
+sudo nano /etc/nginx/sites-available/mbin.conf
 ```
 
-Content of `kbin.conf`:
+Content of `mbin.conf`:
 
-```kbin.conf
+```mbin.conf
 # Redirect HTTP to HTTPS
 server {
     server_name domain.tld www.domain.tld;
@@ -420,7 +420,7 @@ server {
     listen 443 ssl http2;
     server_name domain.tld www.domain.tld;
 
-    root /var/www/kbin/public;
+    root /var/www/mbin/public;
 
     index index.php;
 
@@ -445,8 +445,8 @@ server {
     client_max_body_size 20M; # Max size of a file that a user can upload
 
     # Logs
-    error_log /var/log/nginx/kbin_error.log;
-    access_log /var/log/nginx/kbin_access.log;
+    error_log /var/log/nginx/mbin_error.log;
+    access_log /var/log/nginx/mbin_access.log;
 
     location / {
         # try to serve file directly, fallback to app.php
@@ -511,7 +511,7 @@ server {
 Enable the NGINX site, using a symlink:
 
 ```bash
-sudo ln -s /etc/nginx/sites-available/kbin.conf /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/mbin.conf /etc/nginx/sites-enabled/
 ```
 
 Restart (or reload) NGINX:
@@ -596,11 +596,11 @@ sudo apt-get install -y erlang-base \
 sudo apt-get install rabbitmq-server -y --fix-missing
 ```
 
-Now, we will add a new `kbin` user with the correct permissions:
+Now, we will add a new `mbin` user with the correct permissions:
 
 ```bash
-sudo rabbitmqctl add_user 'kbin' '{!SECRET!!KEY!-16_2-!}'
-sudo rabbitmqctl set_permissions -p '/' 'kbin' '.' '.' '.*'
+sudo rabbitmqctl add_user 'mbin' '{!SECRET!!KEY!-16_2-!}'
+sudo rabbitmqctl set_permissions -p '/' 'mbin' '.' '.' '.*'
 ```
 
 Remove the `guest` account:
@@ -612,7 +612,7 @@ sudo rabbitmqctl delete_user 'guest'
 #### Configure Queue Messenger Handler
 
 ```bash
-cd /var/www/kbin
+cd /var/www/mbin
 nano .env
 ```
 
@@ -620,7 +620,7 @@ nano .env
 # Use RabbitMQ (recommended):
 RABBITMQ_HOST=127.0.0.1:5672
 RABBITMQ_PASSWORD=!ChangeThisRabbitPass!
-MESSENGER_TRANSPORT_DSN=amqp://kbin:${RABBITMQ_PASSWORD}@${RABBITMQ_HOST}/%2f/messages
+MESSENGER_TRANSPORT_DSN=amqp://mbin:${RABBITMQ_PASSWORD}@${RABBITMQ_HOST}/%2f/messages
 # or Redis:
 MESSENGER_TRANSPORT_DSN=redis://${REDIS_PASSWORD}@${REDIS_HOST}/messages
 # or database:
@@ -647,7 +647,7 @@ sudo chmod +x /usr/local/bin/mercure
 Prepare folder structure:
 
 ```bash
-cd /var/www/kbin
+cd /var/www/mbin
 mkdir -p metal/caddy
 ```
 
@@ -671,7 +671,7 @@ The content of the `Caddyfile`:
         http_port {$HTTP_PORT}
         persist_config off
         log {
-                output file /var/www/kbin/var/log/mercure.log
+                output file /var/www/mbin/var/log/mercure.log
                 # DEBUG, INFO, WARN, ERROR, PANIC, and FATAL
                 level WARN
                 format filter {
@@ -731,8 +731,8 @@ sudo nano /etc/supervisor/conf.d/messenger-worker.conf
 With the following content:
 
 ```conf
-[program:messenger-kbin]
-command=php /var/www/kbin/bin/console messenger:consume async --time-limit=1800
+[program:messenger-mbin]
+command=php /var/www/mbin/bin/console messenger:consume async --time-limit=1800
 user=www-data
 numprocs=2
 startsecs=0
@@ -742,7 +742,7 @@ startretries=10
 process_name=%(program_name)s_%(process_num)02d
 
 [program:messenger-ap]
-command=php /var/www/kbin/bin/console messenger:consume async_ap --time-limit=1800
+command=php /var/www/mbin/bin/console messenger:consume async_ap --time-limit=1800
 user=www-data
 numprocs=2
 startsecs=0
@@ -764,11 +764,11 @@ With the following content:
 
 ```conf
 [program:mercure]
-command=/usr/local/bin/mercure run --config /var/www/kbin/metal/caddy/Caddyfile
+command=/usr/local/bin/mercure run --config /var/www/mbin/metal/caddy/Caddyfile
 process_name=%(program_name)s_%(process_num)s
 numprocs=1
 environment=MERCURE_PUBLISHER_JWT_KEY="{!SECRET!!KEY!-32_3-!}",MERCURE_SUBSCRIBER_JWT_KEY="{!SECRET!!KEY!-32_3-!}",SERVER_NAME=":3000",HTTP_PORT="3000"
-directory=/var/www/kbin/metal/caddy
+directory=/var/www/mbin/metal/caddy
 autostart=true
 autorestart=true
 startsecs=5
@@ -790,24 +790,24 @@ _Hint:_ If you wish to restart your supervisor jobs in the future, use:
 sudo supervisorctl restart all
 ```
 
-### Kbin first setup
+### mbin first setup
 
 Create new admin user (without email verification), please change the `username`, `email` and `password` below:
 
 ```bash
-php bin/console kbin:user:create <username> <email@example.com> <password>
-php bin/console kbin:user:admin <username>
+php bin/console mbin:user:create <username> <email@example.com> <password>
+php bin/console mbin:user:admin <username>
 ```
 
 ```bash
-php bin/console kbin:ap:keys:update
+php bin/console mbin:ap:keys:update
 ```
 
 Next, log in and create a magazine named "random" to which unclassified content from the fediverse will flow.
 
 ### Upgrades
 
-If you perform a kbin upgrade (eg. `git pull`), be aware to _always_ execute the following Bash script:
+If you perform a mbin upgrade (eg. `git pull`), be aware to _always_ execute the following Bash script:
 
 ```bash
 ./bin/post-upgrade
@@ -818,8 +818,8 @@ And when needed also execute: `sudo redis-cli FLUSHDB` to get rid of Redis cache
 ### Backup and restore
 
 ```bash
-PGPASSWORD="YOUR_PASSWORD" pg_dump -U kbin kbin > dump.sql
-psql -U kbin kbin < dump.sql
+PGPASSWORD="YOUR_PASSWORD" pg_dump -U mbin mbin > dump.sql
+psql -U mbin mbin < dump.sql
 ```
 
 ### Logs
@@ -836,28 +836,28 @@ Supervisor jobs (Mercure and Messenger):
 
 - `sudo tail -f /var/log/supervisor/mercure*.log`
 - `sudo tail -f /var/log/supervisor/messenger-ap*.log`
-- `sudo tail -f /var/log/supervisor/messenger-kbin*.log`
+- `sudo tail -f /var/log/supervisor/messenger-mbin*.log`
 
 The separate Mercure log:
 
-- `sudo tail -f /var/www/kbin/var/log/mercure.log`
+- `sudo tail -f /var/www/mbin/var/log/mercure.log`
 
 Application Logs (prod or dev logs):
 
-- `tail -f /var/www/kbin/var/log/prod.log`
+- `tail -f /var/www/mbin/var/log/prod.log`
 
 Or:
 
-- `tail -f /var/www/kbin/var/log/dev.log`
+- `tail -f /var/www/mbin/var/log/dev.log`
 
 Web-server (Nginx):
 
-- `sudo tail -f /var/log/nginx/kbin_access.log`
-- `sudo tail -f /var/log/nginx/kbin_error.log`
+- `sudo tail -f /var/log/nginx/mbin_access.log`
+- `sudo tail -f /var/log/nginx/mbin_error.log`
 
 ### Debugging
 
-**Please, check the logs above first.** If you are really stuck, visit to our [Matrix space](https://matrix.to/#/%23kbin-space:matrix.org), there are dedicated rooms for 'Getting Started', 'Server Owners' and 'Issues'.
+**Please, check the logs above first.** If you are really stuck, visit to our [Matrix space](https://matrix.to/#/%23mbin-space:matrix.org), there are dedicated rooms for 'Getting Started', 'Server Owners' and 'Issues'.
 
 Test PostgreSQL connections if using a remote server, same with Redis. Ensure no firewall rules blocking are any incoming or out-coming traffic (eg. port on 80 and 443).
 
@@ -883,14 +883,14 @@ oneup_flysystem:
       local:
         location: "%kernel.project_dir%/public/media"
 
-    kbin.s3_adapter:
+    mbin.s3_adapter:
       awss3v3:
-        client: kbin.s3_client
+        client: mbin.s3_client
         bucket: "%amazon.s3.bucket%"
 
   filesystems:
     public_uploads_filesystem:
-      adapter: kbin.s3_adapter
+      adapter: mbin.s3_adapter
       alias: League\Flysystem\Filesystem
 ```
 
@@ -906,7 +906,7 @@ Optionally, increase the difficulty threshold. Making it even harder for bots.
 Edit your `.env` file:
 
 ```conf
-KBIN_CAPTCHA_ENABLED=true
+mbin_CAPTCHA_ENABLED=true
 HCAPTCHA_SITE_KEY=sitekey
 HCAPTCHA_SECRET=secret
 ```
