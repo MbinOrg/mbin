@@ -33,7 +33,7 @@ POST /api/client
 {
   "name": "My OAuth2 Authorization Code Client",
   "contactEmail": "contact@some.dev",
-  "description": "A client that I will be using to authenticate to /kbin's API",
+  "description": "A client that I will be using to authenticate to /mbin's API",
   "public": false,
   "redirectUris": [
     "https://localhost:3000/redirect",
