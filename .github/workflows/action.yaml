@@ -1,0 +1,118 @@
+name: Mbin Workflow
+on:
+  pull_request:
+  push:
+    branches:
+      - develop
+      - main
+
+jobs:
+  build:
+    runs-on: docker
+    container:
+      image: danger89/mbin-pipeline:1.0.0
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+
+      - name: Calculate yarn.lock hash
+        id: yarn-lock-hash
+        run: |
+          echo "hash=$(md5sum yarn.lock)" >> $GITHUB_OUTPUT
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Calculate composer.lock hash
+        id: composer-lock-hash
+        run: |
+          echo "hash=$(md5sum composer.lock)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ steps.yarn-lock-hash.outputs.hash }}
+          restore-keys: ${{ runner.os }}-yarn-
+
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-no-dev-${{ steps.composer-lock-hash.outputs.hash }}
+          restore-keys: ${{ runner.os }}-composer-no-dev-
+
+      - run: cp .env.example .env
+      - name: Composer install
+        run: composer install --no-dev --no-progress
+      - name: Yarn install
+        run: yarn install
+
+      - name: Build frontend
+        run: yarn build
+
+  unit-test:
+    runs-on: docker
+    container:
+      image: danger89/mbin-pipeline:1.0.0
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Calculate composer.lock hash
+        id: composer-lock-hash
+        run: |
+          echo "hash=$(md5sum composer.lock)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ steps.composer-lock-hash.outputs.hash }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - run: cp .env.example .env
+      - name: Composer install
+        run: composer install --no-scripts --no-progress
+
+      - name: Run unit tests
+        run: |
+          SYMFONY_DEPRECATIONS_HELPER=disabled php bin/phpunit tests/Unit
+
+  fixer-dry-run:
+    runs-on: docker
+    container:
+      image: danger89/mbin-pipeline:1.0.0
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Calculate tools/composer.lock hash
+        id: composer-lock-hash
+        run: |
+          echo "hash=$(md5sum tools/composer.lock)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-tools-${{ steps.composer-lock-hash.outputs.hash }}
+          restore-keys: ${{ runner.os }}-composer-tools-
+
+      - name: Composer tools install
+        run: composer -d tools install --no-scripts --no-progress
+
+      - name: php-cs-fixer dry-run
+        run: tools/vendor/bin/php-cs-fixer fix --dry-run -v --show-progress=none #--format=checkstyle #would be nice if codeberg did something with this like github does.
+
+# TODO: Integration tests
