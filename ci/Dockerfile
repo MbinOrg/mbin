@@ -1,7 +1,7 @@
 FROM php:8.2
 
 # Add composer
-COPY --from=composer:2.4.2 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.6.5 /usr/bin/composer /usr/bin/composer
 
 # Add NodeJS
 RUN apt-get update && apt-get install -y nodejs npm
