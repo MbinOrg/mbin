@@ -10,9 +10,11 @@ promote a free and open internet.
 
 The inspiration came from kbin.
 
-![Mbin logo](docs/images/mbin.png)
+## Instances
 
 - [List of instances](https://fedidb.org/software/mbin)
+
+![Mbin logo](docs/images/mbin.png)
 
 ## Star History
 
