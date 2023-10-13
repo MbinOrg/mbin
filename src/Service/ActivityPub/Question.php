@@ -80,9 +80,8 @@ class Question
         $dto->body = $this->markdownConverter->convert($object['content']);
         $dto->visibility = $this->getVisibility($object, $actor);
         $this->handleDate($dto, $object['published']);
-
-        if (isset($object['sensitive']) && true === $object['sensitive']) {
-            $dto->isAdult = true;
+        if (isset($object['sensitive'])) {
+            $this->handleSensitiveMedia($dto, $object['sensitive']);
         }
 
         if (!empty($object['language'])) {
@@ -125,6 +124,13 @@ class Question
     {
         $dto->createdAt = new \DateTimeImmutable($date);
         $dto->lastActive = new \DateTime($date);
+    }
+
+    private function handleSensitiveMedia(PostDto|PostCommentDto|EntryCommentDto|EntryDto $dto, string|bool $sensitive): void
+    {
+        if (true === $sensitive || 'true' === $sensitive) {
+            $dto->isAdult = true;
+        }
     }
 
     public function create(array $object, array $root = null): ActivityPubActivityInterface
@@ -208,6 +214,9 @@ class Question
         $dto->body = $this->markdownConverter->convert($object['content']);
         $dto->visibility = $this->getVisibility($object, $actor);
         $this->handleDate($dto, $object['published']);
+        if (isset($object['sensitive'])) {
+            $this->handleSensitiveMedia($dto, $object['sensitive']);
+        }
 
         return $this->postManager->create(
             $dto,
@@ -254,6 +263,9 @@ class Question
         $dto->body = $this->markdownConverter->convert($object['content']);
         $dto->visibility = $this->getVisibility($object, $actor);
         $this->handleDate($dto, $object['published']);
+        if (isset($object['sensitive'])) {
+            $this->handleSensitiveMedia($dto, $object['sensitive']);
+        }
 
         return $this->postCommentManager->create(
             $dto,
