@@ -25,7 +25,7 @@ See below our agreements / guidelines how we work together in the project (in ra
 - If a contributor has merge right, do _not_ merge a PR on their behalf (unless the contibutor agrees you can merge it).
   Leave it to the contributor when to merge the PR. This is to also avoid regression or merging unfinished work by accident.
   - In case of an _external_ contributor who does not have merge rights, anybody in the community with merge rights can merge the PR.
-- Existing GitHub Organization owners are allowed to add another GitHub users to the repository or to the GitHub organization. That being said, _be careful_ who to add and discuss on [Matrix](https://matrix.to/#/#mbin:melroy.org) first.
+- Existing GitHub Organization owners are allowed to add other GitHub users to the repository or to the GitHub organization. That being said, _be careful_ who to add and discuss on [Matrix](https://matrix.to/#/#mbin:melroy.org) first.
 
 ### Coding Style Guide
 
