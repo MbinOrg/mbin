@@ -1,6 +1,6 @@
 {
-    "name": "kbin/kbin-core",
-    "description": "Kbin is a decentralized content aggregator and microblogging platform running on the Fediverse network",
+    "name": "mbinorg/mbin",
+    "description": "Mbin is a decentralized content aggregator and microblogging platform running on the Fediverse network",
     "license": "AGPL-3.0-or-later",
     "type": "project",
     "require": {
