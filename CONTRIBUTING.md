@@ -13,7 +13,18 @@ With an account on [GitHub](https://github.com) you will be able to [fork this r
 
 \_Note:\_If you are a contributor with GitHub org rights, you do not need to fork the project, instead you are allowed to use branches.
 
-Always [create a new Pull Request](https://github.com/MbinOrg/mbin/pulls) in GitHub. Be sure to avoid regression, see below for more info about the coding style as well as testing. All tests in the Pull Request should be green!
+### Way of Working
+
+See below our agreements / guidelines how we work together in the project (in random order):
+
+- Respect each other naturally.
+- Discuss (big) issues/changes in the community first and have some consensus (WIP: we are still looking into some voting tool that might help here).
+- Always [create a new Pull Request](https://github.com/MbinOrg/mbin/pulls) in GitHub. Eg. Do _NOT_ merge directly to the `main` branch!
+- All tests should be passing (**all green**) in the PR. This is to avoid regression. More info about the coding style as well as testing see below.
+- Pull Requests require at least one (1) other maintainer approval before the PR gets merged (built-in peer review process).
+- If a contributor has merge right, do _not_ merge his/her PR on their behalf (unless the contibutor agrees you can merge it).
+  Leave that to the contributor when to merge the PR. This is to also avoid regression or merging unfinished work by accident.
+  - In case of an _external_ contributor who does not have merge rights, anybody in the community with merge rights can merge the PR.
 
 ### Coding Style Guide
 
