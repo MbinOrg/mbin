@@ -23,8 +23,8 @@ The inspiration came from kbin.
 ## Contributing
 
 - [Official repository on GitHub](https://github.com/MbinOrg/mbin)
+- [Matrix Space for discussions](https://matrix.to/#/#mbin:melroy.org)
 - [Translations](https://hosted.weblate.org/projects/mbin/)
-- [#mbin:melroy.org](https://matrix.to/#/#mbin:melroy.org)
 - [Contribution guidelines](CONTRIBUTING.md) - please read first, including before opening an issue!
 
 ## Getting Started
