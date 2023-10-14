@@ -18,13 +18,14 @@ With an account on [GitHub](https://github.com) you will be able to [fork this r
 See below our agreements / guidelines how we work together in the project (in random order):
 
 - Respect each other naturally.
-- Discuss (big) issues/changes in the community first and have some consensus (WIP: we are still looking into some voting tool that might help here).
+- [Discuss](https://matrix.to/#/#mbin:melroy.org) (big) issues/changes in the community first and have some consensus (WIP: we are still looking into some voting tool that might help here).
 - Always [create a new Pull Request](https://github.com/MbinOrg/mbin/pulls) in GitHub. Eg. Do _NOT_ merge directly to the `main` branch!
 - All tests should be passing (**all green**) in the PR. This is to avoid regression. More info about the coding style as well as testing see below.
 - Pull Requests require at least one (1) other maintainer approval before the PR gets merged (built-in peer review process).
 - If a contributor has merge right, do _not_ merge a PR on their behalf (unless the contibutor agrees you can merge it).
   Leave it to the contributor when to merge the PR. This is to also avoid regression or merging unfinished work by accident.
   - In case of an _external_ contributor who does not have merge rights, anybody in the community with merge rights can merge the PR.
+- Existing GitHub Organization owners are allowed to add another GitHub users to the repository or to the GitHub organization. That being said, _be careful_ who to add and discuss on [Matrix](https://matrix.to/#/#mbin:melroy.org) first.
 
 ### Coding Style Guide
 
