@@ -1,12 +1,12 @@
 # Admin Bare Metal/VM Guide
 
-Below is a step-by-step guide of the process for creating your own /kbin instance from the moment a new VPS/VM is created or directly on bare-metal.  
+Below is a step-by-step guide of the process for creating your own Mbin instance from the moment a new VPS/VM is created or directly on bare-metal.  
 This is a preliminary outline that will help you launch an instance for your own needs.
 
 For Docker see: [Admin Deployment Guide](./docker_deployment_guide.md).
 
 > **Note**
-> /kbin is still in the early stages of development.
+> Mbin is still in the early stages of development.
 
 If you would like to support the project, you can register using the following [affiliate link](https://hetzner.cloud/?ref=8tSPCw0qqIwl).
 
@@ -65,7 +65,7 @@ sudo chown kbin:www-data /var/www/kbin
 ## Generate Secrets
 
 > **Note**
-> This will generate several valid tokens for the kbin setup, you will need quite a few.
+> This will generate several valid tokens for the Mbin setup, you will need quite a few.
 
 ```bash
 for counter in {1..2}; do node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"; done && for counter in {1..3}; do node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"; done
@@ -77,7 +77,7 @@ for counter in {1..2}; do node -e "console.log(require('crypto').randomBytes(16)
 
 ```bash
 cd /var/www/kbin
-git clone https://codeberg.org/Kbin/kbin-core.git .
+git clone https://github.com/MbinOrg/mbin.git .
 ```
 
 ### Configure `public/media` folder
