@@ -29,6 +29,21 @@ The inspiration came from kbin.
 
 ## Getting Started
 
+### Migrating?
+
+If you want to migrate from Kbin to Mbin (on bare metal), following the following easy steps (default branch is `main`):
+
+```bash
+cd /var/www/your-instance
+git remote set-url origin https://github.com/MbinOrg/mbin.git
+git fetch
+git checkout main
+
+./bin/post-upgrade
+```
+
+Done!
+
 ### Requirements
 
 [See also Symfony requirements](https://symfony.com/doc/current/setup.html#technical-requirements)
