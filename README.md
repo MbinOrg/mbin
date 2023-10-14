@@ -96,10 +96,20 @@ tools/vendor/bin/php-cs-fixer fix
 
 ## Languages
 
+Following languages are currently supported/translated:
+
 - English
+- German
+- Greek
+- Esperanto
+- Spanish
+- French
+- Italian
+- Japanese
+- Dutch
 - Polish
-- Dutch ([Vistaus](https://github.com/Vistaus), [Melroy](https://github.com/melroy89))
-- Japanese ([@dannekrose@brioco.social](https://brioco.social/@dannekrose))
+- Turkish
+- Chinese
 
 ## Credits
 
