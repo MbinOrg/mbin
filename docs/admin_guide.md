@@ -857,7 +857,7 @@ Web-server (Nginx):
 
 ### Debugging
 
-**Please, check the logs above first.** If you are really stuck, visit to our [Matrix space](https://matrix.to/#/%23kbin-space:matrix.org), there are dedicated rooms for 'Getting Started', 'Server Owners' and 'Issues'.
+**Please, check the logs above first.** If you are really stuck, visit to our [Matrix space](https://matrix.to/#/%23mbin:melroy.org), there is a 'General' room and dedicated room for 'Issues/Support'.
 
 Test PostgreSQL connections if using a remote server, same with Redis. Ensure no firewall rules blocking are any incoming or out-coming traffic (eg. port on 80 and 443).
 
