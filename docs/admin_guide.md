@@ -399,7 +399,7 @@ gzip_types
         font/opentype;
 ```
 
-#### Kbin Server Block
+#### Mbin Nginx Server Block
 
 ```bash
 sudo nano /etc/nginx/sites-available/kbin.conf
@@ -790,7 +790,7 @@ _Hint:_ If you wish to restart your supervisor jobs in the future, use:
 sudo supervisorctl restart all
 ```
 
-### Kbin first setup
+### Mbin first setup
 
 Create new admin user (without email verification), please change the `username`, `email` and `password` below:
 
