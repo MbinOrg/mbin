@@ -44,7 +44,7 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 ```
 
-## Kbin Installation
+## Mbin Installation
 
 ### Preparation
 
