@@ -23,8 +23,8 @@ The inspiration came from kbin.
 ## Contributing
 
 - [Official repository on GitHub](https://github.com/MbinOrg/mbin)
+- [Matrix Space for discussions](https://matrix.to/#/#mbin:melroy.org)
 - [Translations](https://hosted.weblate.org/projects/mbin/)
-- [#mbin:melroy.org](https://matrix.to/#/#mbin:melroy.org)
 - [Contribution guidelines](CONTRIBUTING.md) - please read first, including before opening an issue!
 
 ## Getting Started
@@ -96,10 +96,20 @@ tools/vendor/bin/php-cs-fixer fix
 
 ## Languages
 
+Following languages are currently supported/translated:
+
 - English
+- German
+- Greek
+- Esperanto
+- Spanish
+- French
+- Italian
+- Japanese
+- Dutch
 - Polish
-- Dutch ([Vistaus](https://github.com/Vistaus), [Melroy](https://github.com/melroy89))
-- Japanese ([@dannekrose@brioco.social](https://brioco.social/@dannekrose))
+- Turkish
+- Chinese
 
 ## Credits
 
