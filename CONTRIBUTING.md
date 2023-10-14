@@ -22,7 +22,7 @@ See below our agreements / guidelines how we work together in the project (in ra
 - Always [create a new Pull Request](https://github.com/MbinOrg/mbin/pulls) in GitHub. Eg. Do _NOT_ merge directly to the `main` branch!
 - All tests should be passing (**all green**) in the PR. This is to avoid regression. More info about the coding style as well as testing see below.
 - Pull Requests require at least one (1) other maintainer approval before the PR gets merged (built-in peer review process).
-- If a contributor has merge right, do _not_ merge his/her PR on their behalf (unless the contibutor agrees you can merge it).
+- If a contributor has merge right, do _not_ merge a PR on their behalf (unless the contibutor agrees you can merge it).
   Leave it to the contributor when to merge the PR. This is to also avoid regression or merging unfinished work by accident.
   - In case of an _external_ contributor who does not have merge rights, anybody in the community with merge rights can merge the PR.
 
