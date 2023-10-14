@@ -9,6 +9,8 @@ oneup_flysystem:
   #  awss3v3:
   #    client: kbin.s3_client
   #    bucket: "%amazon.s3.bucket%"
+  #    options:
+  #      ACL: public-read
 
   filesystems:
     public_uploads_filesystem:
