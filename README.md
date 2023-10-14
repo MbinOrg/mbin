@@ -31,7 +31,7 @@ The inspiration came from kbin.
 
 ### Migrating?
 
-If you want to migrate from Kbin to Mbin (on bare metal), following the following easy steps (default branch is `main`):
+If you want to migrate from Kbin to Mbin (on bare metal), just follow the easy steps below (default branch is `main`):
 
 ```bash
 cd /var/www/your-instance
