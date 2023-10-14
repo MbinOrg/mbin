@@ -2,7 +2,7 @@
 
 ## Bare Metal / VM Upgrade
 
-If you perform a kbin upgrade (eg. `git pull`), be aware to _always_ execute the following Bash script:
+If you perform a mbin upgrade (eg. `git pull`), be aware to _always_ execute the following Bash script:
 
 ```bash
 ./bin/post-upgrade
