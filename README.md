@@ -113,7 +113,7 @@ Following languages are currently supported/translated:
 
 ## Credits
 
-- [grumpyDev](https://karab.in/u/grumpyDev): Logotype, icons, kbin-theme
+- [grumpyDev](https://karab.in/u/grumpyDev): icons, kbin-theme
 - [Ernest](https://codeberg.org/ernest): Kbin
 
 ## License
