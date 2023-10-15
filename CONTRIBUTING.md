@@ -26,6 +26,11 @@ See below our agreements / guidelines how we work together in the project (in ra
   Leave it to the contributor when to merge the PR. This is to also avoid regression or merging unfinished work by accident.
   - In case of an _external_ contributor who does not have merge rights, anybody in the community with merge rights can merge the PR.
 - Existing GitHub Organization owners are allowed to add other GitHub users to the repository or to the GitHub organization. That being said, _be careful_ who to add and discuss on [Matrix](https://matrix.to/#/#mbin:melroy.org) first.
+- Comply with the [Collective Code Construction Contract (C4) - revision 3](C4.md) rules.
+
+The model is based on Collective Code Construction Contract ('C4' for short). For [the complete C4 rules read this spec (rev 3)](C4.md). However, we might _deviate_ or _extend_ on this specification (now or in the future). In those cases we deviate or extend; see the bullet list defined above.
+
+External source: [C4 spec hosted on zeromq.org](https://rfc.zeromq.org/spec/42/)
 
 ### Coding Style Guide
 
