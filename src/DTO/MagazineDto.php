@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
-use App\Entity\User;
 use App\Entity\Image;
+use App\Entity\User;
 use App\Utils\RegPatterns;
 use App\Validator\Unique;
 use Doctrine\Common\Collections\Collection;
