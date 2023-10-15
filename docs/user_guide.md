@@ -59,26 +59,25 @@ You are now ready to start using /mbin to connect with others. You can access yo
 We've included a wide range of options that will allow you to customize your experience. Take your time to check all the
 options.
 
-* **General:** In this section, you can set your preferred home page (all, subscribed, moderated, favorites), hide adult
+- **General:** In this section, you can set your preferred home page (all, subscribed, moderated, favorites), hide adult
   content, set user tagging options, adjust privacy settings, and configure notification settings.
 
-* **Profile:** Here, you can write a few words about yourself (which will be visible in the "People" section), add an
+- **Profile:** Here, you can write a few words about yourself (which will be visible in the "People" section), add an
   avatar and cover image.
 
-* **Email:** In this section, you can change your email address. After changing to a new email, you will receive an
+- **Email:** In this section, you can change your email address. After changing to a new email, you will receive an
   activation link.
 
-* **Password:** In this section, you can change your account password.
+- **Password:** In this section, you can change your account password.
 
-* **Blocks:** Here, you can manage blocked accounts, magazines, and domains.
+- **Blocks:** Here, you can manage blocked accounts, magazines, and domains.
 
-* **Subscriptions:** In this section, you can manage subscriptions to other user accounts, magazines, and domains.
+- **Subscriptions:** In this section, you can manage subscriptions to other user accounts, magazines, and domains.
 
-* **Reports:** In this section, you can manage reports from moderated magazines.
+- **Reports:** In this section, you can manage reports from moderated magazines.
 
-* **Statistics:** Here, you can find some charts and numbers related to your account.
+- **Statistics:** Here, you can find some charts and numbers related to your account.
 
 ### Feed Timelines
 
 ### Fediverse
-

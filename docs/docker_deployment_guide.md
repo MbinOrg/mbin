@@ -14,9 +14,9 @@
 For bare metal see: [Admin Bare Metal Guide](./admin_guide.md).
 
 > **Note**
-> /kbin is still in the early stages of development.
+> Mbin is still in the early stages of development.
 
-_Note:_ This guide is using the [v2 docker files](https://codeberg.org/Kbin/kbin-core/src/branch/develop/docker/v2).
+_Note:_ This guide is using the [v2 docker files](docker/v2).
 
 ## System Requirements
 
@@ -44,21 +44,21 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 ```
 
-## Kbin Installation
+## Mbin Installation
 
 ### Preparation
 
 Clone git repository:
 
 ```bash
-git clone https://codeberg.org/Kbin/kbin-core.git
-cd kbin-core
+git clone https://github.com/MbinOrg/mbin.git
+cd mbin
 ```
 
 Build the Docker image:
 
-> **Note** 
-> If you're using a version of Docker Engine earlier than 23.0, run `export DOCKER_BUILDKIT=1`, prior to building the image.  This does not apply to users running Docker Desktop.  More info can be found [here](https://docs.docker.com/build/buildkit/#getting-started)
+> **Note**
+> If you're using a version of Docker Engine earlier than 23.0, run `export DOCKER_BUILDKIT=1`, prior to building the image. This does not apply to users running Docker Desktop. More info can be found [here](https://docs.docker.com/build/buildkit/#getting-started)
 
 ```bash
 docker build -t kbin -f docker/v2/Dockerfile .
@@ -79,40 +79,40 @@ sudo chown 1000:82 storage/media storage/caddy_config storage/caddy_data
 1. Choose your Redis password, PostgreSQL password, RabbitMQ password, and Mercure password.
 2. Place them in the corresponding variables in both `.env` and `docker-compose.override.yml`.
 3. Change the values in your `.env` file as followings. (If you change the service names and the listening ports of the services in your `docker-compose.yml`, update the following values correspondingly.)
-  
-  ```env
-  REDIS_HOST=redis:6379
-  POSTGRES_HOST=db:5432
-  RABBITMQ_HOST=rabbitmq:5672
-  MERCURE_HOST=www:80
-  ```
+
+```env
+REDIS_HOST=redis:6379
+POSTGRES_HOST=db:5432
+RABBITMQ_HOST=rabbitmq:5672
+MERCURE_HOST=www:80
+```
 
 ### Configure OAuth2 keys
 
 1. Create an RSA key pair using OpenSSL:
 
-  ```bash
-  mkdir ./config/oauth2/
-  # If you protect the key with a passphrase, make sure to remember it!
-  # You will need it later
-  openssl genrsa -des3 -out ./config/oauth2/private.pem 4096
-  openssl rsa -in ./config/oauth2/private.pem --outform PEM -pubout -out ./config/oauth2/public.pem
-  ```
+```bash
+mkdir ./config/oauth2/
+# If you protect the key with a passphrase, make sure to remember it!
+# You will need it later
+openssl genrsa -des3 -out ./config/oauth2/private.pem 4096
+openssl rsa -in ./config/oauth2/private.pem --outform PEM -pubout -out ./config/oauth2/public.pem
+```
 
 2. Generate a random hex string for the OAuth2 encryption key:
 
-  ```bash
-  openssl rand -hex 16
-  ```
+```bash
+openssl rand -hex 16
+```
 
 3. Add the public and private key paths to `.env`:
 
-  ```env
-  OAUTH_PRIVATE_KEY=%kernel.project_dir%/config/oauth2/private.pem
-  OAUTH_PUBLIC_KEY=%kernel.project_dir%/config/oauth2/public.pem
-  OAUTH_PASSPHRASE=<Your (optional) passphrase from above here>
-  OAUTH_ENCRYPTION_KEY=<Hex string generated in previous step>
-  ```
+```env
+OAUTH_PRIVATE_KEY=%kernel.project_dir%/config/oauth2/private.pem
+OAUTH_PUBLIC_KEY=%kernel.project_dir%/config/oauth2/public.pem
+OAUTH_PASSPHRASE=<Your (optional) passphrase from above here>
+OAUTH_ENCRYPTION_KEY=<Hex string generated in previous step>
+```
 
 ### Running the containers
 
