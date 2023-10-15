@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class MagazineDto
 {
     private User|UserDto|null $owner = null;
-    public ?ImageDto $icon = null;
+    public Image|ImageDto|null $icon = null;
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 25)]
     #[Assert\Regex(pattern: RegPatterns::MAGAZINE_NAME, match: true)]
