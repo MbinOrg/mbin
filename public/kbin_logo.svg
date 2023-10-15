@@ -67,22 +67,22 @@
     <g
        id="layer3"
        style="display:inline;fill:none"
-       transform="translate(94.38085,-25.408052)">
+       transform="translate(103.23085,-25.408052)">
       <path
          id="path3"
          style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
-         d="m 139.21773,37.69155 h -21.65234 l -25.980468,45 -25.980468,-45 H 43.954063 v 95 h 21.650391 v -57.5 l 25.980468,45 25.982418,-45 -0.002,37.5 v 20 h 21.65234 z" />
+         d="m 139.56809,37.69155 h -22.0027 l -25.980468,45 -25.980468,-45 H 43.604063 v 95 h 22.000391 v -55 l 25.980468,45 25.982418,-45 -0.002,55 h 22.0027 z" />
       <path
          id="ellipse14"
          style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:0.5"
-         d="m 160.95406,37.69155 v 95 h 47.5 c 16.56853,0 30,-13.43148 30,-30 0,-10.859773 -3.70774,-19.291794 -12.3722,-23.817265 2.12276,-3.965177 3.87241,-7.357346 3.87241,-12.432956 0,-15.878173 -13.12204,-28.749779 -29.00021,-28.749779 z m 20,20 h 20 c 5.52284,0 9,3.226938 9,8.749779 0,5.522841 -3.47716,8.750221 -9,8.750221 h -20 z m 0,35 h 27.5 c 5.52284,0 10,4.477159 10,10 0,5.52284 -4.47715,10.005 -10,10.005 h -27.5 z" />
+         d="m 159.56406,37.69155 v 95 h 47.5 c 16.56853,0 30,-13.43148 30,-30 0,-10.859773 -3.70774,-19.291794 -12.3722,-23.817265 2.12276,-3.965177 3.87241,-7.357346 3.87241,-12.432956 0,-15.878173 -13.12204,-28.749779 -29.00021,-28.749779 z m 20,20 h 20 c 5.52284,0 9,3.226938 9,8.749779 0,5.522841 -3.47716,8.750221 -9,8.750221 h -20 z m 0,35 h 27.5 c 5.52284,0 10,4.477159 10,10 0,5.52284 -4.47715,10.005 -10,10.005 h -27.5 z" />
       <path
          style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
-         d="m 277.70406,132.69155 v -95 h -21.75 v 95 z"
+         d="m 274.10406,132.69155 v -95 h -22 v 95 z"
          id="path20" />
       <path
          style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
-         d="m 377.22906,132.6913 -21.5,2.5e-4 v -29.99996 l -34.775,-35 v 64.99996 h -21.5 v -95 h 21.5 l 34.775,35.05849 V 37.69155 h 21.5 z"
+         d="m 372.87906,132.6913 -22,2.5e-4 v -29.99996 l -34.775,-35 v 64.99996 h -22 v -95 h 22 l 34.775,35.05849 V 37.69155 h 22 z"
          id="path3-4" />
     </g>
     <path
