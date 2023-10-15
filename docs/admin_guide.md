@@ -489,12 +489,21 @@ server {
       try_files $uri $uri/ /index.php?$query_string;
     }
 
-    location ~* .(js|webp|jpg|jpeg|gif|png|css|tgz|gz|rar|bz2|doc|pdf|ppt|tar|wav|bmp|rtf|swf|ico|flv|txt|woff|woff2|svg)$ {
-        expires 30d;
-        add_header Pragma "public";
-        add_header Cache-Control "public";
+    # assets, documents, archives, media
+    location ~* \.(?:css(\.map)?|js(\.map)?|jpe?g|png|tgz|gz|rar|bz2|doc|pdf|ptt|tar|gif|ico|cur|heic|webp|tiff?|mp3|m4a|aac|ogg|midi?|wav|mp4|mov|webm|mpe?g|avi|ogv|flv|wmv)$ {
+        expires    25d;
+        add_header Access-Control-Allow-Origin "*";
+        add_header Cache-Control "public, no-transform";
+        access_log off;
     }
 
+    # svg, fonts
+    location ~* \.(?:svgz?|ttf|ttc|otf|eot|woff2?)$ {
+        expires    25d;
+        add_header Access-Control-Allow-Origin "*";
+        add_header Cache-Control "public, no-transform";
+        access_log off;
+    }
 
     location ~ /\.(?!well-known).* {
         deny all;
