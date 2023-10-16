@@ -83,7 +83,7 @@ services:
       $storageUrl: '%kbin_storage_url%'
       $publicDir: '%kernel.project_dir%/public'
 
-  kbin.s3_client:
+  mbin.s3_client:
     class: Aws\S3\S3Client
     arguments:
       - version: '%amazon.s3.version%'
@@ -93,7 +93,6 @@ services:
         credentials:
           key: '%amazon.s3.key%'
           secret: '%amazon.s3.secret%'
-          #proxies: [ 'https://media.karab.in' ]
 
   App\:
     resource: '../src/'

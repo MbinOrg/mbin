@@ -22,16 +22,16 @@ liip_imagine:
       filters:
         thumbnail: { size: [ 1500, 500 ], mode: fixed }
 
-  data_loader: kbin.liip_loader
-  cache: kbin.liip_resolver
+  data_loader: mbin.liip_loader
+  cache: mbin.liip_resolver
 
   loaders:
-    kbin.liip_loader:
+    mbin.liip_loader:
       flysystem:
         filesystem_service: oneup_flysystem.public_uploads_filesystem_filesystem
 
   resolvers:
-    kbin.liip_resolver:
+    mbin.liip_resolver:
       flysystem:
         filesystem_service: oneup_flysystem.public_uploads_filesystem_filesystem
         root_url: '%kbin_storage_url%'

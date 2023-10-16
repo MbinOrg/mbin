@@ -894,17 +894,17 @@ oneup_flysystem:
       local:
         location: "%kernel.project_dir%/public/%uploads_dir_name%"
 
-  kbin.s3_adapter:
-    awss3v3:
-      client: kbin.s3_client
-      bucket: "%amazon.s3.bucket%"
-      options:
-        ACL: public-read
+    mbin.s3_adapter:
+      awss3v3:
+        client: mbin.s3_client
+        bucket: "%amazon.s3.bucket%"
+        options:
+          ACL: public-read
 
   filesystems:
     public_uploads_filesystem:
       #adapter: default_adapter
-      adapter: kbin.s3_adapter
+      adapter: mbin.s3_adapter
       alias: League\Flysystem\Filesystem
 ```
 
@@ -913,16 +913,16 @@ And then edit the: `config/packages/liip_imagine.yaml` file:
 ```yaml
 liip_imagine:
   # ensure both data loader and cache resolver is active
-  data_loader: kbin.liip_loader
-  cache: kbin.liip_resolver
+  data_loader: mbin.liip_loader
+  cache: mbin.liip_resolver
 
   loaders:
-    kbin.liip_loader:
+    mbin.liip_loader:
       flysystem:
         filesystem_service: oneup_flysystem.public_uploads_filesystem_filesystem
 
   resolvers:
-    kbin.liip_resolver:
+    mbin.liip_resolver:
       flysystem:
         filesystem_service: oneup_flysystem.public_uploads_filesystem_filesystem
         root_url: '%kbin_storage_url%'
