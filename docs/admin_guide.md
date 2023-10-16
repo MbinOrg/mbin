@@ -437,6 +437,7 @@ server {
     add_header X-Frame-Options "DENY" always;
     add_header X-XSS-Protection "1; mode=block" always;
     add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "same-origin" always;
     add_header X-Download-Options "noopen" always;
     add_header X-Permitted-Cross-Domain-Policies "none" always;
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
