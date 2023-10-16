@@ -535,10 +535,26 @@ request_account_deletion_description: Se notificará al administrador que desea 
   su cuenta.
 request_account_deletion_button: Solicitar la eliminación de la cuenta
 email_confirm_button_text: Confirme su solicitud de cambio de la contraseña
-errors.server429.title: 429 Demasiadas solicitudes
+errors.server429.title: Error 429 Demasiadas solicitudes
 errors.server404.title: Error 404 No encontrado
 errors.server403.title: Error 403 Prohibido
 errors.server500.title: Error 500 del servidor
 errors.server500.description: Lo sentimos, algo ha ido mal. Estamos trabajando para
   resolver este problema, por favor vuelva pronto.
 email_confirm_link_help: También puede copiar y pegar lo siguiente en su navegador
+resend_account_activation_email_error: Se ha producido un problema al enviar esta
+  solicitud. Es posible que no haya ninguna cuenta asociada a ese correo electrónico
+  o que ya esté activada.
+email.delete.description: El siguiente usuario ha solicitado que se elimine su cuenta
+custom_css: CSS personalizado
+resend_account_activation_email_success: Si existe una cuenta asociada a ese correo
+  electrónico, le enviaremos un nuevo correo electrónico de activación.
+ignore_magazines_custom_css: Ignorar las revistas CSS personalizadas
+oauth.consent.title: Formulario de consentimiento OAuth2
+resend_account_activation_email: Volver a enviar el correo para la activación de la
+  cuenta
+resend_account_activation_email_question: ¿Cuenta inactiva?
+resend_account_activation_email_description: Introduzca la dirección de correo electrónico
+  asociada a su cuenta. Le enviaremos otro correo electrónico de activación.
+oauth.consent.grant_permissions: Conceder los permisos
+email.delete.title: Solicitud de eliminación de la cuenta de usuario
