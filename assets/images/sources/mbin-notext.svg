@@ -29,8 +29,8 @@
      inkscape:document-units="px"
      showgrid="true"
      inkscape:zoom="1"
-     inkscape:cx="507"
-     inkscape:cy="516"
+     inkscape:cx="524"
+     inkscape:cy="485.5"
      inkscape:window-width="1855"
      inkscape:window-height="1057"
      inkscape:window-x="1137"
@@ -271,12 +271,23 @@
      y="0"
      inkscape:label="bg color" />
   <circle
-     style="display:none;opacity:0;fill:#ffffff;stroke-width:5.76;stroke-linecap:round;stroke-linejoin:round"
+     style="display:inline;opacity:0;fill:#ffffff;stroke-width:5.76;stroke-linecap:round;stroke-linejoin:round"
      id="path2"
      cx="512"
      cy="512"
      inkscape:label="pwa safe region"
      r="460.79999" />
+  <rect
+     style="display:inline;opacity:0;fill:#28134a;fill-opacity:1;stroke:none;stroke-width:29.7105;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+     id="rect1"
+     width="640"
+     height="640"
+     x="192.00002"
+     y="132.00002"
+     inkscape:label="tight export area"
+     inkscape:export-filename="mbin-notext-small.png"
+     inkscape:export-xdpi="96"
+     inkscape:export-ydpi="96" />
   <g
      inkscape:label="logo"
      inkscape:groupmode="layer"
