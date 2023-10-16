@@ -48,8 +48,8 @@ rss: RSS
 change_theme: Temayı değiştir
 help: Yardım
 check_email: E-postanızı kontrol edin
-email_confirm_content: '/kbin hesabınızı etkinleştirmeye hazır mısınız? Aşağıdaki
-  bağlantıya tıklayın:'
+email_confirm_content: 'Mbin hesabınızı etkinleştirmeye hazır mısınız? Aşağıdaki bağlantıya
+  tıklayın:'
 type.link: Bağlantı
 select_channel: Bir kanal seç
 markdown_howto: Editör nasıl çalışır?
@@ -308,7 +308,7 @@ logout: Çıkış yap
 expired_at: Süresinin dolma zamanı
 cards_view: Kart görünümü
 approved: Onaylanmış
-copy_url: Bağlantıyı kopyala
+copy_url: Mbin bağlantıyı kopyala
 ban_expired: Yasak süresi doldu
 edit_link: Bağlantıyı düzenle
 wrote_message: Mesaj yazdı
@@ -487,8 +487,8 @@ auto_preview_help: Medya önizlemelerini otomatik olarak genişletin.
 reload_to_apply: Değişiklikleri uygulamak için sayfayı yeniden yükleyin
 preferred_languages: Başlıkların ve gönderilerin dillerini filtreleyin
 filter.adult.show: NSFW Göster
-bot_body_content: "/Kbin Botuna hoş geldiniz! Bu bot, ActivityPub işlevselliğini /kbin
-  içinde etkinleştirmede çok önemli bir rol oynar. Bu, /kbin ’in fediverse’deki diğer
+bot_body_content: "Mbin Botuna hoş geldiniz! Bu bot, ActivityPub işlevselliğini Mbin
+  içinde etkinleştirmede çok önemli bir rol oynar. Bu, Mbin ’in fediverse’deki diğer
   örneklerle iletişim kurabilmesini ve federasyon kurabilmesini sağlar.\n\nActivityPub,
   Merkezi olmayan sosyal ağ platformlarının birbirleriyle iletişim kurmasını ve etkileşimde
   bulunmasını sağlayan açık standart bir protokoldür. Farklı örneklerdeki (sunucular)
@@ -504,5 +504,5 @@ filter.adult.only: Sadece NSFW
 local_and_federated: Yerel ve federe
 filter.fields.only_names: Sadece isimler
 filter.fields.names_and_descriptions: İsimler ve açıklamalar
-kbin_bot: /kbin Bot
+kbin_bot: Mbin Bot
 password_confirm_header: Parola değiştirme isteğinizi onaylayın.
