@@ -45,7 +45,7 @@ class EntryLinkType extends AbstractType
                 'tom_select_options' => [
                     'create' => true,
                     'createOnBlur' => true,
-                    'delimiter' => ',',
+                    'delimiter' => ' ',
                 ],
             ])
             ->add('body', TextareaType::class, [

@@ -10,7 +10,7 @@ class TagTransformer implements DataTransformerInterface
 {
     public function transform($value): ?string
     {
-        return $value ? implode(',', $value) : null;
+        return $value ? implode(' ', $value) : null;
     }
 
     public function reverseTransform($value): ?array
@@ -19,6 +19,6 @@ class TagTransformer implements DataTransformerInterface
             return null;
         }
 
-        return explode(',', strtolower($value));
+        return explode(' ', strtolower($value));
     }
 }
