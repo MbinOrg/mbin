@@ -558,3 +558,24 @@ resend_account_activation_email_description: Introduzca la dirección de correo 
   asociada a su cuenta. Le enviaremos otro correo electrónico de activación.
 oauth.consent.grant_permissions: Conceder los permisos
 email.delete.title: Solicitud de eliminación de la cuenta de usuario
+oauth2.grant.moderate.magazine.reports.all: Gestione los informes en las revistas
+  bajo su moderación.
+oauth.consent.to_allow_access: Para permitir este acceso, haga clic en el botón "Permitir"
+oauth.consent.app_requesting_permissions: Me gustaría realizar las siguientes acciones
+  en su nombre
+oauth2.grant.moderate.magazine.reports.action: Acepte o rechace informes en las revistas
+  bajo su moderación.
+oauth.consent.allow: Permitir
+block: Bloquear
+oauth2.grant.moderate.magazine.list: Lea una lista de las revistas bajo su moderación.
+oauth2.grant.moderate.magazine.reports.read: Lea informes en las revistas bajo su
+  moderación.
+oauth.consent.deny: Denegar
+oauth.client_not_granted_message_read_permission: Esta aplicación no tiene permiso
+  para leer tus mensajes.
+restrict_oauth_clients: Restringir la creación de clientes OAuth2 a los administradores
+unblock: Desbloquear
+oauth2.grant.moderate.magazine.ban.delete: Desbanea a los usuarios en las revistas
+  bajo su moderación.
+oauth.client_identifier.invalid: ¡ID para el cliente de OAuth no válido!
+oauth.consent.app_has_permissions: ya puede realizar las siguientes acciones
