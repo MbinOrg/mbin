@@ -1,12 +1,3 @@
-# Docker Deployment Guide (Alternative)
-
-## System Requirements
-
-- Docker Engine
-- Docker Compose V2
-
-  > If you are using Compose V1, replace `docker compose` with `docker-compose` in those commands below.
-
 # Admin Docker Guide
 
 **Docker guide is still WIP. Not all the steps have been fully verified yet.**
