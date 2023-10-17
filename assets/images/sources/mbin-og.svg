@@ -380,7 +380,7 @@
      units="px"
      showgrid="false"
      inkscape:document-rotation="0"
-     inkscape:current-layer="layer3"
+     inkscape:current-layer="layer1"
      inkscape:document-units="px"
      inkscape:cy="298.85057"
      inkscape:cx="589.08046"
@@ -405,7 +405,10 @@
        height="630"
        id="page1"
        margin="64"
-       bleed="0" />
+       bleed="0"
+       inkscape:export-filename="export\mbin-og.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
   </sodipodi:namedview>
   <metadata
      id="metadata5">
@@ -476,7 +479,7 @@
      style="display:inline;fill:none"
      transform="matrix(2.0000001,0,0,2.0000001,22.770172,203.93301)">
     <path
-       style="display:inline;opacity:1;fill:url(#linearGradient9);fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter15)"
+       style="display:inline;opacity:1;fill:url(#linearGradient9);fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
        d="M 92.898977,-25.466506 23.616945,94.53349 a 4.9999999,4.9999999 60 0 0 4.330127,7.5 H 166.51114 a 4.9999996,4.9999996 120 0 0 4.33012,-7.499999 L 101.55923,-25.466506 a 5.0000002,5.0000002 180 0 0 -8.660253,0 z"
        id="path5"
        sodipodi:nodetypes="cccc"
