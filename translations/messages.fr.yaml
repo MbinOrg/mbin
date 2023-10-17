@@ -105,7 +105,7 @@ body: Corps
 tags: Étiquettes
 badges: Insignes
 is_adult: +18 / NSFW
-email_confirm_content: 'Prêt pour activer votre compte /kbin ? Cliquez sur le lien
+email_confirm_content: 'Prêt pour activer votre compte Mbin ? Cliquez sur le lien
   ci-dessous :'
 oc: CO
 image_alt: Texte alternatif de l’image
@@ -139,7 +139,7 @@ articles: Fils
 photos: Photos
 report: Signaler
 share: Partager
-copy_url: Copier l'URL de /kbin
+copy_url: Copier l'URL de Mbin
 ratio: Ratio
 go_to_content: Aller au contenu
 go_to_filters: Aller aux filtres
@@ -490,7 +490,7 @@ oauth2.grant.moderate.post.trash: Supprimer ou restaurer des publications dans v
   magazines modérés.
 moderation.report.approve_report_title: Approuver le rapport
 moderation.report.reject_report_title: Rejeter le rapport
-kbin_bot: Robot /kbin
+kbin_bot: Robot Mbin
 oauth2.grant.moderate.magazine.reports.all: Gérer les rapports dans vos magazines
   modérés.
 oauth2.grant.admin.federation.update: Ajouter ou supprimer des instances dans ou à
@@ -703,9 +703,9 @@ oauth.client_not_granted_message_read_permission: Cette application n'a pas reç
 restrict_oauth_clients: Restreindre la création de clients OAuth2 aux administrateurs
 flash_post_unpin_success: La publication a été désépinglée avec succès.
 oauth2.grant.post_comment.delete: Supprimer vos commentaires existants sur les publications.
-bot_body_content: "Bienvenue dans le robot /kbin ! Ce robot joue un rôle crucial dans
-  l'activation de la fonctionnalité ActivityPub dans /kbin. Il garantit que /kbin
-  peut communiquer et fédérer avec d'autres instances dans le fediverse.\n\nActivityPub
+bot_body_content: "Bienvenue dans le robot Mbin ! Ce robot joue un rôle crucial dans
+  l'activation de la fonctionnalité ActivityPub dans Mbin. Il garantit que Mbin peut
+  communiquer et fédérer avec d'autres instances dans le fediverse.\n\nActivityPub
   est un protocole standard ouvert qui permet aux plateformes de réseaux sociaux décentralisées
   de communiquer et d'interagir les unes avec les autres. Il permet aux utilisateurs
   de différentes instances (serveurs) de se suivre, d'interagir et de partager du

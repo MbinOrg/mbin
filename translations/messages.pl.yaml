@@ -204,7 +204,7 @@ try_again: Spróbuj ponownie
 up_vote: Podbij
 down_vote: Zminusuj
 email_confirm_header: Cześć! Potwierdź adres email.
-email_confirm_content: 'Chcesz aktywować swoje konto Kbin? Kliknij poniższy link:'
+email_confirm_content: 'Chcesz aktywować swoje konto Mbin? Kliknij poniższy link:'
 email_verify: Potwierdź adres email
 email_confirm_expire: Link wygaśnie za godzinę.
 email_confirm_title: Potwierdź adres email.
@@ -259,7 +259,7 @@ photos: Obrazy
 videos: Video
 report: Zgłoś
 share: Udostępnij
-copy_url: Kopiuj link
+copy_url: Kopiuj link Mbin
 share_on_fediverse: Podziel się w Fediwersum
 edit: Edytuj
 are_you_sure: Jesteś pewien?
@@ -494,8 +494,8 @@ filter.adult.label: Wybierz, czy wyświetlać treści NSFW
 filter.adult.hide: Ukryj NSFW
 filter.adult.show: Pokaż NSFW
 local_and_federated: Lokalne i sfederowane
-bot_body_content: "Witaj w Bocie /kbin! Ten bot odgrywa kluczową rolę w umożliwianiu
-  funkcji ActivityPub w obrębie /kbin. Zapewnia, że /kbin może komunikować się i federować
+bot_body_content: "Witaj w Bocie Mbin! Ten bot odgrywa kluczową rolę w umożliwianiu
+  funkcji ActivityPub w obrębie Mbin. Zapewnia, że Mbin może komunikować się i federować
   z innymi instancjami w fediverse.\n\nActivityPub to otwarty standardowy protokół,
   który umożliwia komunikację i interakcje między zdecentralizowanymi platformami
   społecznościowymi. Umożliwia użytkownikom na różnych instancjach (serwerach) śledzenie,
@@ -503,7 +503,7 @@ bot_body_content: "Witaj w Bocie /kbin! Ten bot odgrywa kluczową rolę w umożl
   znanej jako fediverse. Daje standaryzowany sposób na publikowanie treści, śledzenie
   innych użytkowników oraz angażowanie się w interakcje społeczne, takie jak polubienia,
   udostępnianie i komentowanie wątków lub wpisów."
-kbin_bot: Bot /kbin
+kbin_bot: Bot Mbin
 password_confirm_header: Potwierdzi żądanie zmiany hasła.
 your_account_is_not_active: Twoje konto nie zostało aktywowane. Proszę sprawdź swój
   email i kliknij na link aktywacyjny, żeby kontynuować
