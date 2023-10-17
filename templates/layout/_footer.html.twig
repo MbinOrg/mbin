@@ -1,4 +1,4 @@
-<footer id="footer">
+<footer {{ (inSidebar is defined) ? 'id="footer"' : 'class="footer-sidebar"' }}>
     <div class="kbin-container">
         <section>
             <h5>{{ kbin_domain() }}</h5>
