@@ -525,3 +525,19 @@ federation_page_enabled: Strona federacji włączona
 request_account_deletion_title: Usuwanie konta
 flash_post_unpin_success: Wpis został odpięty.
 flash_post_pin_success: Wpis został przypięty.
+2fa.authentication_code.label: Kod uwierzytelniający
+2fa.remove: Usuń 2FA
+2fa.verify: Weryfikuj
+last_active: Ostatnia aktywność
+oauth.consent.allow: Zezwalaj
+custom_css: Niestandardowy CSS
+block: Zablokuj
+errors.server403.title: 403 Dostęp zabroniony
+oauth.consent.deny: Odrzuć
+single_settings: Pojedynczy
+moderation.report.ban_user_title: Zablokuj użytkownika
+resend_account_activation_email_question: Nieaktywne konto?
+cancel: Anuluj
+delete_content: Usuń zawartość
+unblock: Odblokuj
+oauth.consent.grant_permissions: Udziel uprawnienia
