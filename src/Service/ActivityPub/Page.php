@@ -147,7 +147,7 @@ class Page
 
     private function handleSensitiveMedia(PostDto|PostCommentDto|EntryCommentDto|EntryDto $dto, string|bool $sensitive): void
     {
-        if (true === $sensitive || 'true' === $sensitive) {
+        if (true === filter_var($sensitive, FILTER_VALIDATE_BOOLEAN)) {
             $dto->isAdult = true;
         }
     }
