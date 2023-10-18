@@ -93,7 +93,7 @@ try_again: Tente de novo
 up_vote: Upvoto
 down_vote: Downvoto
 email_confirm_header: Olá! Confirme o seu endereço de email.
-email_confirm_content: 'Pronto para ativar a sua conta Kbin? Clique no link abaixo:'
+email_confirm_content: 'Pronto para ativar a sua conta Mbin? Clique no link abaixo:'
 email_verify: Confirme endereço de email
 email_confirm_title: Confirme o seu endereço de email.
 select_magazine: Selecione uma magazine
@@ -163,8 +163,8 @@ error: Erro
 votes: Votos
 dark: Escuro
 light: Claro
-solarized_light: Claro solarizado
-solarized_dark: Escuro solarizado
+solarized_light: Claro Solarizado
+solarized_dark: Escuro Solarizado
 font_size: Tamanho da letra
 size: Tamanho
 boosts: Upvotos
@@ -293,7 +293,7 @@ deleted: Apagado pelo autor
 mod_log_alert: No Modlog pode encontrar conteúdo removido drasticamente por moderadores.
   Por favor saiba o que está a fazer.
 sticky_navbar: Barra de navegação fixa
-copy_url: Copiar url
+copy_url: Copiar url de Mbin
 off: Desligado
 edit_photo: Editar foto
 rejected: Rejeitado
@@ -315,7 +315,7 @@ title: Título
 body: Corpo
 tags: Etiquetas
 badges: Distintivos
-is_adult: +18 / NSFW
+is_adult: 18+ / NSFW
 eng: ENG
 oc: OC
 image: Imagem

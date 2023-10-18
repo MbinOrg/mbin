@@ -3,7 +3,7 @@
   opacity: 1;
   padding-bottom: 1rem;
 
-  h3 {
+  h3, h5 {
     border-bottom: var(--kbin-sidebar-header-border);
     color: var(--kbin-sidebar-header-text-color);
     font-size: .8rem;
@@ -614,6 +614,29 @@
         display: none;
       }
     }
+  }
+
+  .footer-sidebar{
+    background-color: unset;
+    padding: 0px;
+
+    .kbin-container {
+      grid-template-areas: none;
+      grid-template-columns: none;
+    }
+
+    section{
+      background-color: var(--kbin-section-bg);
+      border: var(--kbin-section-border);
+      color: var(--kbin-section-text-color);
+      margin-bottom: 0.5rem;
+      padding: 0.5rem 0.5rem 1rem;
+    }
+
+    @include media-breakpoint-up(sm){
+      display: none;
+    }
+
   }
 }
 
