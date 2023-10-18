@@ -101,7 +101,7 @@ try_again: Probeer opnieuw
 up_vote: Boost
 down_vote: Stem omlaag
 email_confirm_header: Hallo! Bevestig je e-mailadres.
-email_confirm_content: 'Klaar om je account te activeren? Klik dan op onderstaande
+email_confirm_content: 'Klaar om je Mbin account te activeren? Klik dan op onderstaande
   link:'
 email_verify: E-mailadres bevestigen
 email_confirm_expire: 'Let op: de link is 1 uur geldig.'
@@ -155,7 +155,7 @@ articles: Artikelen
 photos: Foto's
 report: Melden
 share: Delen
-copy_url: Kopieer /kbin URL
+copy_url: Kopieer Mbin URL
 copy_url_to_fediverse: Kopieer origineel URL
 share_on_fediverse: Delen op fediverse
 edit: Bewerken
@@ -500,10 +500,10 @@ filter.fields.only_names: Enkel op namen
 filter.fields.names_and_descriptions: Namen en beschrijvingen
 filter.adult.label: Kies of u NSFW (niet veilig voor werk) wilt weergeven
 local_and_federated: Lokaal en gefedereerd
-kbin_bot: /kbin Bot
-bot_body_content: "Welkom bij de /kbin Bot! Deze bot speelt een cruciale rol bij het
-  inschakelen van de ActivityPub-functionaliteit binnen /kbin. Het zorgt ervoor dat
-  /kbin kan communiceren en federeren met andere instanties in de fediverse.\n\nActivityPub
+kbin_bot: Mbin Bot
+bot_body_content: "Welkom bij de Mbin Bot! Deze bot speelt een cruciale rol bij het
+  inschakelen van de ActivityPub-functionaliteit binnen Mbin. Het zorgt ervoor dat
+  Mbin kan communiceren en federeren met andere instanties in de fediverse.\n\nActivityPub
   is een open standaardprotocol waarmee gedecentraliseerde sociale netwerkplatforms
   met elkaar kunnen communiceren en interacteren. Het stelt gebruikers in staat om
   op verschillende instanties (servers) inhoud te volgen, te gebruiken en te delen
@@ -776,3 +776,45 @@ subject_reported_exists: Je hebt deze inhoud al gerapporteerd.
 moderation.report.ban_user_title: Verban gebruiker
 moderation.report.reject_report_confirmation: Weet u zeker dat u dit rapport wilt
   afwijzen?
+2fa.authentication_code.label: Authenticatiecode
+2fa.remove: Verwijder 2FA
+delete_content_desc: Verwijder de inhoud van de gebruiker maar laat de reacties van
+  andere gebruikers achter in de gemaakte discussies, berichten en opmerkingen.
+purge_account_desc: Het account volledig opschonen, inclusief het verwijderen van
+  de reacties van andere gebruikers in gemaakte discussies, berichten en opmerkingen.
+2fa.backup_codes.help: U kunt deze codes gebruiken als u niet over een apparaat of
+  app voor tweefactorauthenticatie beschikt. Je krijgt ze <strong>niet meer te zien</strong>
+  en je kunt ze enkel <strong>slechts één keer</strong> gebruiken.
+account_settings_changed: Uw accountinstellingen zijn succesvol gewijzigd. U dient
+  opnieuw in te loggen.
+2fa.verify: Verifiëren
+2fa.add: Voeg toe aan mijn account
+2fa.disable: Schakel tweefactorauthenticatie uit
+purge_content: Inhoud leegmaken
+oauth2.grant.moderate.post.pin: Pin berichten bovenaan uw gemodereerde tijdschriften.
+2fa.backup_codes.recommendation: Het wordt aanbevolen dat u een kopie ervan op een
+  veilige plaats bewaart.
+2fa.qr_code_img.alt: Een QR-code waarmee tweefactorauthenticatie voor uw account ingesteld
+  kan worden
+delete_account_desc: Verwijder het account terwijl u de reacties van andere gebruikers
+  in de gemaakte discussies, berichten en opmerkingen laat staan.
+2fa.enable: Stel tweefactorauthenticatie in
+2fa.user_active_tfa.title: Gebruiker heeft actieve 2FA
+2fa.code_invalid: De authenticatiecode is niet geldig
+2fa.available_apps: Gebruik een tweefactorauthenticatie-app zoals %google_authenticator%,
+  %aegis% (Android) of %raivo% (iOS) om de QR-code te scannen.
+cancel: Annuleren
+purge_content_desc: De inhoud van de gebruiker volledig opschonen, inclusief het verwijderen
+  van de reacties van andere gebruikers in gemaakte discussies, berichten en opmerkingen.
+delete_content: Inhoud verwijderen
+two_factor_backup: Back-upcodes voor tweefactorauthenticatie
+password_and_2fa: Wachtwoord & 2FA
+2fa.backup-create.label: Maak nieuwe back-upverificatiecodes
+2fa.backup: Uw twee-factor back-upcodes
+2fa.qr_code_link.title: Als u deze link bezoekt, kan uw platform deze tweefactorauthenticatie
+  mogelijk registreren
+2fa.backup-create.help: U kunt nieuwe back-upauthenticatiecodes aanmaken; Als u dit
+  doet, worden bestaande codes ongeldig.
+two_factor_authentication: Tweefactorauthenticatie
+2fa.verify_authentication_code.label: Voer een tweefactorcode in om de configuratie
+  te verifiëren

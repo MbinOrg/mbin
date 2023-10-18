@@ -103,7 +103,7 @@ reset_check_email_desc2: Si no has recibido un correo electrónico, por favor ve
   tu carpeta de spam.
 try_again: Intentar de nuevo
 email_confirm_header: ¡Hola! Confirma tu dirección de correo electrónico.
-email_confirm_content: '¿Listo para activar tu cuenta /kbin? Haga clic en el siguiente
+email_confirm_content: '¿Listo para activar tu cuenta de Mbin? Haga clic en el siguiente
   enlace:'
 email_verify: Confirma la dirección de correo electrónico
 email_confirm_expire: Ten en cuenta que el enlace caducará en una hora.
@@ -168,7 +168,7 @@ photos: Fotos
 videos: Vídeos
 report: Reportar
 share: Compartir
-copy_url: Copia la URL de /kbin
+copy_url: Copiar la dirección url de Mbin
 copy_url_to_fediverse: Copia la URL original
 share_on_fediverse: Compartir en el Fediverso
 edit: Editar
@@ -497,17 +497,18 @@ toolbar.ordered_list: Lista ordenada
 toolbar.mention: Mención
 reload_to_apply: Recargar la página para aplicar los cambios
 local_and_federated: Locales y federados
-bot_body_content: "¡Bienvenido al Bot de /kbin! Este bot juega un papel crucial en
-  la habilitación de la funcionalidad ActivityPub dentro de /kbin. Asegura que /kbin
-  pueda comunicarse y federarse con otras instancias en el fediverso.\n\nActivityPub
-  es un protocolo estándar abierto que permite a las plataformas de redes sociales
-  descentralizadas comunicarse e interactuar entre sí. Permite a los usuarios de diferentes
-  instancias (servidores) seguir, interactuar y compartir contenidos a través de la
-  red social federada conocida como fediverso. Proporciona a los usuarios una forma
-  estandarizada de publicar contenidos, seguir a otros usuarios y participar en interacciones
-  sociales como gustar, compartir y comentar hilos o mensajes."
-your_account_is_not_active: Su cuenta no ha sido activada. Compruebe su correo electrónico
-  y haga clic en el enlace de activación para continuar
+bot_body_content: "¡Bienvenido al bot Mbin! Este bot juega un papel crucial al habilitar
+  la funcionalidad de ActivityPub dentro de Mbin. Asegura que Mbin pueda comunicarse
+  y federarse con otras instancias en el fediverso.\n\nActivityPub es un protocolo
+  estándar abierto que permite a las plataformas de las redes sociales descentralizadas
+  comunicarse e interactuar entre sí. Permite a los usuarios de diferentes instancias
+  (servidores) seguir, interactuar y compartir contenidos a través de la red social
+  federada conocida como fediverso. Proporciona a los usuarios una forma estandarizada
+  para publicar contenidos, seguir a otros usuarios y participar en las interacciones
+  sociales como dar me gusta, compartir y comentar en hilos o mensajes."
+your_account_is_not_active: Su cuenta no ha sido activada. Consulte su correo electrónico
+  para obtener instrucciones sobre la activación de la cuenta o <a href="%link_target%">solicite
+  un nuevo correo electrónico de activación de la cuenta.</a>
 more_from_domain: Más del dominio
 your_account_has_been_banned: Tu cuenta ha sido bloqueada
 infinite_scroll_help: Cargue automáticamente más contenido cuando llegue al final
@@ -523,7 +524,7 @@ filter.adult.show: Mostrar NSFW
 filter.adult.only: Sólo NSFW
 filter.fields.only_names: Sólo nombres
 filter.fields.names_and_descriptions: Nombres y descripciones
-kbin_bot: Bot de /kbin
+kbin_bot: Bot Mbin
 password_confirm_header: Confirme su solicitud de cambio de contraseña.
 federation_page_enabled: Página de la Federación activada
 federation_page_allowed_description: Instancias conocidas con las que nos federamos
@@ -533,3 +534,48 @@ request_account_deletion_title: Eliminación de la cuenta
 request_account_deletion_description: Se notificará al administrador que desea eliminar
   su cuenta.
 request_account_deletion_button: Solicitar la eliminación de la cuenta
+email_confirm_button_text: Confirme su solicitud de cambio de la contraseña
+errors.server429.title: Error 429 Demasiadas solicitudes
+errors.server404.title: Error 404 No encontrado
+errors.server403.title: Error 403 Prohibido
+errors.server500.title: Error 500 del servidor
+errors.server500.description: Lo sentimos, algo ha ido mal. Estamos trabajando para
+  resolver este problema, por favor vuelva pronto.
+email_confirm_link_help: También puede copiar y pegar lo siguiente en su navegador
+resend_account_activation_email_error: Se ha producido un problema al enviar esta
+  solicitud. Es posible que no haya ninguna cuenta asociada a ese correo electrónico
+  o que ya esté activada.
+email.delete.description: El siguiente usuario ha solicitado que se elimine su cuenta
+custom_css: CSS personalizado
+resend_account_activation_email_success: Si existe una cuenta asociada a ese correo
+  electrónico, le enviaremos un nuevo correo electrónico de activación.
+ignore_magazines_custom_css: Ignorar las revistas CSS personalizadas
+oauth.consent.title: Formulario de consentimiento OAuth2
+resend_account_activation_email: Volver a enviar el correo para la activación de la
+  cuenta
+resend_account_activation_email_question: ¿Cuenta inactiva?
+resend_account_activation_email_description: Introduzca la dirección de correo electrónico
+  asociada a su cuenta. Le enviaremos otro correo electrónico de activación.
+oauth.consent.grant_permissions: Conceder los permisos
+email.delete.title: Solicitud de eliminación de la cuenta de usuario
+oauth2.grant.moderate.magazine.reports.all: Gestione los informes en las revistas
+  bajo su moderación.
+oauth.consent.to_allow_access: Para permitir este acceso, haga clic en el botón "Permitir"
+oauth.consent.app_requesting_permissions: Me gustaría realizar las siguientes acciones
+  en su nombre
+oauth2.grant.moderate.magazine.reports.action: Acepte o rechace informes en las revistas
+  bajo su moderación.
+oauth.consent.allow: Permitir
+block: Bloquear
+oauth2.grant.moderate.magazine.list: Lea una lista de las revistas bajo su moderación.
+oauth2.grant.moderate.magazine.reports.read: Lea informes en las revistas bajo su
+  moderación.
+oauth.consent.deny: Denegar
+oauth.client_not_granted_message_read_permission: Esta aplicación no tiene permiso
+  para leer tus mensajes.
+restrict_oauth_clients: Restringir la creación de clientes OAuth2 a los administradores
+unblock: Desbloquear
+oauth2.grant.moderate.magazine.ban.delete: Desbanea a los usuarios en las revistas
+  bajo su moderación.
+oauth.client_identifier.invalid: ¡ID para el cliente de OAuth no válido!
+oauth.consent.app_has_permissions: ya puede realizar las siguientes acciones

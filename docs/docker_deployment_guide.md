@@ -1,12 +1,3 @@
-# Docker Deployment Guide (Alternative)
-
-## System Requirements
-
-- Docker Engine
-- Docker Compose V2
-
-  > If you are using Compose V1, replace `docker compose` with `docker-compose` in those commands below.
-
 # Admin Docker Guide
 
 **Docker guide is still WIP. Not all the steps have been fully verified yet.**
@@ -71,7 +62,7 @@ cd docker/v2
 cp ../../.env.example_v2 .env
 cp docker-compose.prod.yml docker-compose.override.yml
 mkdir -p storage/media storage/caddy_config storage/caddy_data
-sudo chown 1000:82 storage/media storage/caddy_config storage/caddy_data
+sudo chown $USER:$USER storage/media storage/caddy_config storage/caddy_data
 ```
 
 ### Configure `.env`
