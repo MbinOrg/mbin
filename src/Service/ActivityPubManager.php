@@ -34,7 +34,7 @@ class ActivityPubManager
         'Person',
         'Service',
         'Organization',
-        'Application'
+        'Application',
     ];
 
     public function __construct(
@@ -104,7 +104,9 @@ class ActivityPubManager
 
     /**
      * Find an existing actor or create a new one if the actor doesn't yet exists.
+     *
      * @param actorUrlOrHandle actor URL or actor handle
+     *
      * @return User or Magazine or null on error
      */
     public function findActorOrCreate(string $actorUrlOrHandle): null|User|Magazine
@@ -138,7 +140,7 @@ class ActivityPubManager
         // Check if actor isn't empty (not set/null/empty array/etc.) and check if actor type is set
         if (!empty($actor) && isset($actor['type'])) {
             // User (we don't make a distinction between bots with type Service as Lemmy does)
-            if (in_array($actor['type'], self::USER_TYPES)) {
+            if (\in_array($actor['type'], self::USER_TYPES)) {
                 $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
                 if (!$user) {
                     $user = $this->createUser($actorUrl);
@@ -172,6 +174,7 @@ class ActivityPubManager
                 return $magazine;
             }
         }
+
         return null;
     }
 
@@ -206,7 +209,9 @@ class ActivityPubManager
 
     /**
      * Creates a new user.
+     *
      * @param actorUrl actor URL
+     *
      * @return User or null on error
      */
     private function createUser(string $actorUrl): ?User
@@ -222,8 +227,10 @@ class ActivityPubManager
     }
 
     /**
-     * Update existing user and return user object,
+     * Update existing user and return user object,.
+     *
      * @param actorUrl actor URL
+     *
      * @return User or null on error (eg. actor not found)
      */
     public function updateUser(string $actorUrl): ?User
@@ -300,7 +307,9 @@ class ActivityPubManager
 
     /**
      * Creates a new magazine (Group).
+     *
      * @param actorUrl actor URL
+     *
      * @return User or null on error
      */
     private function createMagazine(string $actorUrl): ?Magazine
@@ -315,8 +324,10 @@ class ActivityPubManager
     }
 
     /**
-     * Update an existing magazine
+     * Update an existing magazine.
+     *
      * @param actorUrl actor URL
+     *
      * @return Magazine or null on error
      */
     public function updateMagazine(string $actorUrl): ?Magazine
@@ -444,8 +455,10 @@ class ActivityPubManager
     }
 
     /**
-     * Update existing actor
+     * Update existing actor.
+     *
      * @param actorUrl actor URL
+     *
      * @return User, Magazine or null on error
      */
     public function updateActor(string $actorUrl): null|Magazine|User
@@ -453,7 +466,7 @@ class ActivityPubManager
         $actor = $this->apHttpClient->getActorObject($actorUrl);
 
         // User (We don't make a distinction between bots with type Service as Lemmy does)
-        if (in_array($actor['type'], self::USER_TYPES)) {
+        if (\in_array($actor['type'], self::USER_TYPES)) {
             return $this->updateUser($actorUrl);
         }
 
