@@ -380,7 +380,7 @@
      units="px"
      showgrid="false"
      inkscape:document-rotation="0"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer3"
      inkscape:document-units="px"
      inkscape:cy="298.85057"
      inkscape:cx="589.08046"
@@ -494,26 +494,6 @@
        d="M 103.61607,27.033498 60.315284,102.0335 H 77.635596 L 90.625831,79.533498 103.61607,102.0335 116.60825,79.533498 129.59849,102.0335 h 17.32031 z m 0,15 10.82666,18.74973 a 7.4997612,7.4997612 90 0 1 0,7.50054 l -10.82666,18.74973 -10.824962,-18.74959 a 7.5008819,7.5008819 90 0 1 0,-7.50082 z"
        inkscape:path-effect="#path-effect39-7"
        inkscape:original-d="M 103.61607,27.033498 60.315284,102.0335 H 77.635596 L 90.625831,79.533498 103.61607,102.0335 116.60825,79.533498 129.59849,102.0335 h 17.32031 z m 0,15 12.99218,22.5 -12.99218,22.5 -12.990239,-22.5 z" />
-    <g
-       inkscape:groupmode="layer"
-       id="layer3"
-       inkscape:label="mbin text"
-       style="display:inline;fill:none"
-       transform="translate(118.41263,-22.122228)">
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:135px;line-height:1.25;font-family:Rubik;-inkscape-font-specification:Rubik;letter-spacing:7.42857px;fill:#ffffff;stroke-width:0.464286;stroke-linecap:round;stroke-linejoin:round"
-         x="65.781387"
-         y="124.15573"
-         id="text1"
-         inkscape:label="text object"><desc
-           id="desc1">font used: Rubik&#10;font src: https://www.fontsquirrel.com/fonts/rubik</desc><tspan
-           sodipodi:role="line"
-           id="tspan1"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:135px;font-family:Rubik;-inkscape-font-specification:'Rubik Bold';letter-spacing:7.42857px;stroke-width:0.464286"
-           x="65.781387"
-           y="124.15573">MBIN</tspan></text>
-    </g>
     <path
        style="display:inline;opacity:1;fill:url(#linearGradient7);fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
        d="M 27.947072,102.03349 H 166.51114 a 5.0000006,5.0000006 120 0 0 4.33012,-7.5 l -7.21687,-12.499996 h -40.41452 l -12.99038,-22.5 -12.990386,22.5 -12.990381,-22.5 -12.990381,22.5 H 30.833821 L 23.616945,94.53349 a 5,5 60 0 0 4.330127,7.5 z"
@@ -522,5 +502,34 @@
        inkscape:path-effect="#path-effect21-5"
        inkscape:original-d="M 19.286818,102.03349 H 175.17139 l -11.547,-19.999996 h -40.41452 l -12.99038,-22.5 -12.990386,22.5 -12.990381,-22.5 -12.990381,22.5 H 30.833821 Z"
        transform="translate(6.3878407,20.000004)" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="mbin text"
+     style="display:inline;fill:none"
+     transform="matrix(2.0000001,0,0,2.0000001,259.59544,159.68855)">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:135px;line-height:1.25;font-family:Rubik;-inkscape-font-specification:Rubik;letter-spacing:7.42857px;display:none;fill:#ffffff;stroke-width:0.464286;stroke-linecap:round;stroke-linejoin:round"
+       x="65.781387"
+       y="124.15573"
+       id="text1"
+       inkscape:label="text object"><desc
+         id="desc1">font used: Rubik&#10;font src: https://www.fontsquirrel.com/fonts/rubik</desc><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:135px;font-family:Rubik;-inkscape-font-specification:'Rubik Bold';letter-spacing:7.42857px;stroke-width:0.464286"
+         x="65.781387"
+         y="124.15573">MBIN</tspan></text>
+    <path
+       style="font-weight:bold;font-size:135px;line-height:1.25;font-family:Rubik;-inkscape-font-specification:'Rubik Bold';letter-spacing:7.42857px;fill:#ffffff;stroke-width:0.464286;stroke-linecap:round;stroke-linejoin:round"
+       d="m 117.89139,101.47573 q -2.025,0 -3.24,-1.08 -1.08,-1.214999 -1.755,-2.294999 l -12.69,-22.275 v 44.684999 q 0,1.485 -1.080003,2.565 -1.08,1.08 -2.565,1.08 h -17.685 q -1.485,0 -2.565,-1.08 -1.08,-1.08 -1.08,-2.565 V 33.300731 q 0,-1.485 1.08,-2.565 1.08,-1.08 2.565,-1.08 h 15.66 q 2.7,0 4.05,1.485 1.35,1.485 1.755003,2.16 l 21.87,37.395 21.87,-37.395 q 0.405,-0.675 1.755,-2.16 1.35,-1.485 4.05,-1.485 h 15.66 q 1.485,0 2.565,1.08 1.08,1.08 1.08,2.565 v 87.209999 q 0,1.485 -1.08,2.565 -1.08,1.08 -2.565,1.08 h -17.685 q -1.485,0 -2.565,-1.08 -1.08,-1.08 -1.08,-2.565 V 75.825731 l -12.69,22.275 q -0.675,1.08 -1.89,2.294999 -1.08,1.08 -3.105,1.08 h -8.64 z m 81.27363,22.68 q -1.485,0 -2.565,-1.08 -1.08,-1.08 -1.08,-2.565 V 33.300731 q 0,-1.485 1.08,-2.565 1.08,-1.08 2.565,-1.08 h 43.47 q 9.045,0 15.255,2.565 6.21,2.43 9.855,6.48 3.78,3.915 5.4,9.045 1.62,4.995 1.62,9.99 0,3.915 -0.945,6.885 -0.81,2.835 -2.025,4.995 -1.215,2.025 -2.565,3.375 -1.215,1.215 -2.025,1.89 5.265,3.645 7.29,8.505 2.16,4.725 2.16,11.475 0,5.534999 -1.62,10.799999 -1.62,5.265 -5.4,9.45 -3.645,4.05 -9.585,6.615 -5.94,2.43 -14.58,2.43 z m 50.49,-65.879999 q 0,-3.51 -2.16,-5.535 -2.025,-2.16 -6.075,-2.16 h -20.925 v 15.39 h 20.925 q 4.05,0 6.075,-2.025 2.16,-2.16 2.16,-5.67 z m -29.16,44.954999 h 22.275 q 4.05,0 6.48,-2.295 2.43,-2.429999 2.43,-5.939999 0,-3.51 -2.43,-5.805 -2.43,-2.43 -6.48,-2.43 h -22.275 z m 82.21856,20.925 q -1.485,0 -2.565,-1.08 -1.08,-1.08 -1.08,-2.565 V 33.300731 q 0,-1.485 1.08,-2.565 1.08,-1.08 2.565,-1.08 h 17.685 q 1.485,0 2.565,1.08 1.08,1.08 1.08,2.565 v 87.209999 q 0,1.485 -1.08,2.565 -1.08,1.08 -2.565,1.08 z m 109.08368,0 q -2.295,0 -3.78,-1.215 -1.35,-1.215 -1.755,-1.89 l -30.915,-46.169999 v 45.629999 q 0,1.485 -1.08,2.565 -1.08,1.08 -2.565,1.08 h -17.685 q -1.485,0 -2.565,-1.08 -1.08,-1.08 -1.08,-2.565 V 33.300731 q 0,-1.485 1.08,-2.565 1.08,-1.08 2.565,-1.08 h 14.04 q 2.295,0 3.645,1.215 1.485,1.215 1.89,1.89 l 30.915,46.17 v -45.63 q 0,-1.485 1.08,-2.565 1.08,-1.08 2.565,-1.08 h 17.685 q 1.485,0 2.565,1.08 1.08,1.08 1.08,2.565 v 87.209999 q 0,1.485 -1.08,2.565 -1.08,1.08 -2.565,1.08 z"
+       id="text2"
+       inkscape:label="text outline"
+       aria-label="MBIN">
+      <desc
+         id="desc2">font used: Rubik&#10;font src: https://www.fontsquirrel.com/fonts/rubik</desc>
+    </path>
   </g>
 </svg>
