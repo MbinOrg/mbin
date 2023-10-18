@@ -124,8 +124,8 @@ class ActivityPubManager
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
 
-        if ('Person' === $actor['type']) {
-            // User
+        // User (Person or Service, we don't make a distinction between bots with type Service as Lemmy does)
+        if ('Person' === $actor['type'] || 'Service' === $actor['type']) {
             $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
             if (!$user) {
                 $user = $this->createUser($actorUrl);
@@ -141,7 +141,7 @@ class ActivityPubManager
             return $user;
         }
 
-        // Magazine
+        // Magazine (Group)
         if ('Group' === $actor['type']) {
             // User
             $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
@@ -406,7 +406,8 @@ class ActivityPubManager
     {
         $actor = $this->apHttpClient->getActorObject($actorUrl);
 
-        if ('Person' === $actor['type']) {
+        // User (Person or Service, we don't make a distinction between bots with type Service as Lemmy does)
+        if ('Person' === $actor['type'] || 'Service' === $actor['type']) {
             return $this->updateUser($actorUrl);
         }
 
