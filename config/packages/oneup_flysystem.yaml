@@ -5,12 +5,12 @@ oneup_flysystem:
       local:
         location: "%kernel.project_dir%/public/%uploads_dir_name%"
 
-  #kbin.s3_adapter:
-  #  awss3v3:
-  #    client: kbin.s3_client
-  #    bucket: "%amazon.s3.bucket%"
-  #    options:
-  #      ACL: public-read
+    #kbin.s3_adapter:
+    #  awss3v3:
+    #    client: kbin.s3_client
+    #    bucket: "%amazon.s3.bucket%"
+    #    options:
+    #      ACL: public-read
 
   filesystems:
     public_uploads_filesystem:
