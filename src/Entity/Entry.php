@@ -141,11 +141,11 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
         'persist',
     ], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $badges;
-    #[OneToMany(mappedBy: 'entry', targetEntity: EntryCardanoTx::class, cascade: [
-        'remove',
-        'persist',
-    ], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
-    public Collection $cardanoTx;
+    //#[OneToMany(mappedBy: 'entry', targetEntity: EntryBadge::class, cascade: [
+    //    'remove',
+    //    'persist',
+    //], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    //public Collection $cardanoTx;
     public array $children = [];
     #[Id]
     #[GeneratedValue]
@@ -183,7 +183,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
         $this->notifications = new ArrayCollection();
         $this->viewCounters = new ArrayCollection();
         $this->badges = new ArrayCollection();
-        $this->cardanoTx = new ArrayCollection();
+        //$this->cardanoTx = new ArrayCollection();
 
         $user->addEntry($this);
 
