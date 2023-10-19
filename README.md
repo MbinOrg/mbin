@@ -13,6 +13,7 @@ The inspiration came from kbin.
 ## Instances
 
 - [List of instances](https://fedidb.org/software/mbin)
+- [Alternative listing of instances](https://mbin.fediverse.observer/list)
 
 ![Mbin logo](docs/images/mbin.png)
 
