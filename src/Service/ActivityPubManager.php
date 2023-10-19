@@ -227,7 +227,7 @@ class ActivityPubManager
     }
 
     /**
-     * Update existing user and return user object,.
+     * Update existing user and return user object.
      *
      * @param actorUrl actor URL
      *
