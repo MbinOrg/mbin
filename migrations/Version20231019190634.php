@@ -16,11 +16,13 @@ final class Version20231019190634 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE "user" ADD type VARCHAR(80) DEFAULT \'Person\' NOT NULL');
+        $this->addSql('CREATE TYPE user_type AS ENUM (\'Person\', \'Service\', \'Organization\', \'Application\')');
+        $this->addSql('ALTER TABLE "user" ADD COLUMN "type" user_type NOT NULL DEFAULT \'Person\'');
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE "user" DROP type');
+        $this->addSql('ALTER TABLE "user" DROP COLUMN "type"');
+        $this->addSql('DROP TYPE IF EXISTS user_type');
     }
 }

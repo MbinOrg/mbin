@@ -228,6 +228,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     private array $totpBackupCodes = [];
     #[OneToMany(mappedBy: 'user', targetEntity: OAuth2UserConsent::class, orphanRemoval: true)]
     private Collection $oAuth2UserConsents;
+    #[Column(type: 'string', nullable: false)]
+    public string $type;
 
     public function __construct(
         string $email,
