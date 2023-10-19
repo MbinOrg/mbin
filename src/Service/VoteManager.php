@@ -36,7 +36,7 @@ class VoteManager
             }
         }
 
-        if ($user->isBot) {
+        if ('Service' === $user->type) {
             throw new AccessDeniedHttpException('Bots are not allowed to vote on items!');
         }
 
@@ -92,7 +92,7 @@ class VoteManager
 
     public function upvote(VotableInterface $votable, User $user): Vote
     {
-        if ($user->isBot) {
+        if ('Service' === $user->type) {
             throw new AccessDeniedHttpException('Bots are not allowed to vote on items!');
         }
 
@@ -126,7 +126,7 @@ class VoteManager
 
     public function removeVote(VotableInterface $votable, User $user): ?Vote
     {
-        if ($user->isBot) {
+        if ($user->type === "Service") {
             throw new AccessDeniedHttpException('Bots are not allowed to vote on items!');
         }
 

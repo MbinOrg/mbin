@@ -18,11 +18,13 @@ final class Version20231019190634 extends AbstractMigration
     {
         $this->addSql('CREATE TYPE user_type AS ENUM (\'Person\', \'Service\', \'Organization\', \'Application\')');
         $this->addSql('ALTER TABLE "user" ADD COLUMN "type" user_type NOT NULL DEFAULT \'Person\'');
+        $this->addSql('ALTER TABLE "user" DROP is_bot');
     }
 
     public function down(Schema $schema): void
     {
         $this->addSql('ALTER TABLE "user" DROP COLUMN "type"');
         $this->addSql('DROP TYPE IF EXISTS user_type');
+        $this->addSql('ALTER TABLE "user" ADD is_bot BOOLEAN DEFAULT false NOT NULL');
     }
 }

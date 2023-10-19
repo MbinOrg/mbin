@@ -131,8 +131,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     public bool $isVerified = false;
     #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
     public bool $isDeleted = false;
-    #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
-    public bool $isBot = false;
     #[Column(type: 'text', nullable: true)]
     public ?string $customCss = null;
     #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
