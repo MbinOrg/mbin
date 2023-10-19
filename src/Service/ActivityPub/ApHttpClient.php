@@ -109,8 +109,9 @@ class ApHttpClient
     }
 
     /**
-     * Retrieve AP actor object (could be a user or magazine)
-     * @return Array key/value array of actor response body
+     * Retrieve AP actor object (could be a user or magazine).
+     *
+     * @return array key/value array of actor response body
      */
     public function getActorObject(string $apProfileId): ?array
     {

@@ -126,7 +126,7 @@ class VoteManager
 
     public function removeVote(VotableInterface $votable, User $user): ?Vote
     {
-        if ($user->type === "Service") {
+        if ('Service' === $user->type) {
             throw new AccessDeniedHttpException('Bots are not allowed to vote on items!');
         }
 
