@@ -41,7 +41,7 @@ export default class extends Controller {
         }
 
         window.es = Subscribe(topics, cb);
-        // firefox bug: https://github.com/dunglas/mercure/issues/339#issuecomment-650978605
+        // firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1803431
         if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
             let resubscribe = (e) => {
                 window.es.close();
