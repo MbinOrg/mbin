@@ -11,7 +11,7 @@ The code code is mainly written in PHP using the Symfony framework with Twig tem
 
 With an account on [GitHub](https://github.com) you will be able to [fork this repository](https://github.com/MbinOrg/mbin) and `git clone` the repository locally if you wish.
 
-\_Note:\_If you are a contributor with GitHub org rights, you do not need to fork the project, instead you are allowed to use branches.
+_Note:_ If you are a contributor with GitHub org rights, you do not need to fork the project, instead you are allowed to use branches.
 
 ### Way of Working
 
