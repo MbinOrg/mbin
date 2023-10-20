@@ -95,11 +95,11 @@ trait FactoryTrait
         ];
     }
 
-    private function createUser(string $username, string $email = null, string $password = null, string $type, $active = true, $hideAdult = true, $about = null): User
+    private function createUser(string $username, string $email = null, string $password = null, string $type = 'Person', $active = true, $hideAdult = true, $about = null): User
     {
         $manager = $this->getService(EntityManagerInterface::class);
 
-        $user = new User($email ?: $username.'@example.com', $username, $password ?: 'secret', $type ?: 'Person');
+        $user = new User($email ?: $username.'@example.com', $username, $password ?: 'secret', $type);
 
         $user->isVerified = $active;
         $user->notifyOnNewEntry = true;
