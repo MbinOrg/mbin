@@ -11,8 +11,8 @@ promote a free and open internet.
 The inspiration came from kbin. Unique Features of Mbin:
 
 - Support of **all** ActivityPub Actor Types (including also "Service" accounts, which are robot accounts)
-- Tons of **GUI improvements** and bugfixes
-- Various _bug fixes_, additional error checking and more to come soon!
+- Tons of **GUI improvements**
+- Various **bug fixes**, additional error checking and more to come soon!
 - Improved **admin guide** and setup
 - Support for `application/json` Accept request header on all ActivityPub end-points
 - Up-to-date PHP (Composer) dependency packages and **security/vulnerability** fixes
