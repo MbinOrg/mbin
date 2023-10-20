@@ -52,7 +52,7 @@ Build the Docker image:
 > If you're using a version of Docker Engine earlier than 23.0, run `export DOCKER_BUILDKIT=1`, prior to building the image. This does not apply to users running Docker Desktop. More info can be found [here](https://docs.docker.com/build/buildkit/#getting-started)
 
 ```bash
-docker build -t kbin -f docker/v2/Dockerfile .
+docker build -t mbin -f docker/v2/Dockerfile .
 ```
 
 Create config files and storage directories:
@@ -120,7 +120,7 @@ See your running containers via: `docker ps`.
 Then, you should be able to access the new instance via [http://localhost](http://localhost).  
 You can also access RabbitMQ management UI via [http://localhost:15672](http://localhost:15672).
 
-### Kbin first setup
+### Mbin first setup
 
 Create new admin user (without email verification), please change the `username`, `email` and `password` below:
 
@@ -149,7 +149,7 @@ You can also serve those media files on another server by mirroring the files at
 
 ## Filesystem ACL support
 
-The filesystem ACL is disabled by default, in the `kbin` image. You can set the environment variable `ENABLE_ACL=1` to enable it. Remember that not all filesystems support ACL. This will cause an error if you enable filesystem ACL for such filesystems.
+The filesystem ACL is disabled by default, in the `mbin` image. You can set the environment variable `ENABLE_ACL=1` to enable it. Remember that not all filesystems support ACL. This will cause an error if you enable filesystem ACL for such filesystems.
 
 ## Production
 
@@ -177,6 +177,6 @@ docker compose exec redis redis-cli
 ## Backup and restore
 
 ```bash
-docker exec -it container_id pg_dump -U kbin kbin > dump.sql
-docker compose exec -T database psql -U kbin kbin < dump.sql
+docker exec -it container_id pg_dump -U kbin mbin > dump.sql
+docker compose exec -T database psql -U kbin mbin < dump.sql
 ```

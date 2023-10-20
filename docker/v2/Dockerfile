@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1.4
 FROM php:8.2-fpm-alpine as base
 
 # Install php extensions, by docker-php-extension-installer
