@@ -96,6 +96,17 @@
       margin-bottom: 0;
     }
 
+    h1>code {
+      background: var(--kbin-button-secondary-bg);
+      border: var(--kbin-button-secondary-border);
+      color: var(--kbin-button-secondary-text-color);
+      font-size: .8rem;
+      padding: .3rem .5rem;
+      left: 2px;
+      top: -2px;
+      position: relative;
+    }
+
     small {
       display: block;
       margin-bottom: 1rem;
