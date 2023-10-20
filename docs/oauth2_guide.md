@@ -289,4 +289,4 @@ POST /api/client
       - `admin:oauth_clients:read`
         - Allows the admin to read usage stats of oauth clients, as well as list clients on the instance
       - `admin:oauth_clients:revoke`
-        - Allows the admin to revoke a client's permission to acces the instance
+        - Allows the admin to revoke a client's permission to access the instance
