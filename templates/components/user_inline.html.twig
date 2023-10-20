@@ -4,7 +4,8 @@
    class="user-inline"
    title="{{ user.username|username(true) }}">
     {% if user.avatar and showAvatar %}
-        <img width="30" height="30"
+        <img class="user-avatar"
+             width="30" height="30"
              src="{{ asset(user.avatar.filePath) | imagine_filter('avatar_thumb') }}"
              alt="{{ user.username ~' '~ 'avatar'|trans|lower }}">
     {% endif %}
