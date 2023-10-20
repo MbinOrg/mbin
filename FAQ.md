@@ -52,7 +52,7 @@ Mbin uses Mercure (optionally), on very large instances you might want to consid
 
 ## What is Redis?
 
-Redis is a _persinstent key-value store_, which might help for caching purposes or other storage requirements. We **recommend** to setup Redis when running Mbin, but Redis is optional.
+Redis is a _persinstent key-value store_, which can help for caching purposes or other storage requirements. We **recommend** to setup Redis when running Mbin, but Redis is optional.
 
 ## What is RabbitMQ?
 
@@ -74,6 +74,6 @@ You can find the Mbin logging in the `var/log/` directory from the root folder o
 
 ## Should I run development mode?
 
-**NO!** Try to avoid running development mode when you are hosting our own instance to the public. Running development mode can cause sensitive data to be leaked, such as secret keys or passwords (eg. via development console).
+**NO!** Try to avoid running development mode when you are hosting our own _public_ instance to the public. Running in development mode can cause sensitive data to be leaked, such as secret keys or passwords (eg. via development console).
 
 That being said, if you are experiencing serious problems with your instance and you are unable to solve it and the `prod.log` file won't help you any further. You can try running in development mode to debug the problem or issue you are having.
