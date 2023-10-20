@@ -66,7 +66,7 @@ RUN composer run-script --no-dev post-install-cmd && \
 
 ####################
 
-FROM node:alpine as builder-yarn
+FROM node:lts-alpine as builder-yarn
 
 # Setup environment
 ENV KBIN_HOME=/var/www/kbin
