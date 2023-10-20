@@ -138,8 +138,7 @@ class UserManager
             }
         }
 
-        $user = new User($dto->email, $dto->username, '', $dto->apProfileId, $dto->apId);
-        $user->type = ($dto->isBot) ? 'Service' : 'Person'; // Set type "Service" when it's a bot
+        $user = new User($dto->email, $dto->username, '', ($dto->isBot) ? 'Service' : 'Person', $dto->apProfileId, $dto->apId);
         $user->setPassword($this->passwordHasher->hashPassword($user, $dto->plainPassword));
 
         if (!$dto->apId) {

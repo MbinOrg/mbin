@@ -233,12 +233,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         string $email,
         string $username,
         string $password,
+        string $type,
         string $apProfileId = null,
         string $apId = null
     ) {
         $this->email = $email;
         $this->password = $password;
         $this->username = $username;
+        $this->type = $type;
         $this->apProfileId = $apProfileId;
         $this->apId = $apId;
         $this->moderatorTokens = new ArrayCollection();
