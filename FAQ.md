@@ -76,4 +76,4 @@ You can find the Mbin logging in the `var/log/` directory from the root folder o
 
 **NO!** Try to avoid running development mode when you are hosting our own _public_ instance to the public. Running in development mode can cause sensitive data to be leaked, such as secret keys or passwords (eg. via development console).
 
-That being said, if you are experiencing serious problems with your instance and you are unable to solve it and the `prod.log` file won't help you any further. You can try running in development mode to debug the problem or issue you are having.
+That said, if you are experiencing serious issues with your instance which you cannot resolve by looking at the log file (`prod.log`) or server logs, you can try running in development mode to debug the problem or issue you are having.
