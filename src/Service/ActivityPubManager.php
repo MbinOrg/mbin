@@ -30,6 +30,13 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ActivityPubManager
 {
+    public const USER_TYPES = [
+        'Person',
+        'Service',
+        'Organization',
+        'Application',
+    ];
+
     public function __construct(
         private readonly Server $server,
         private readonly UserRepository $userRepository,
@@ -95,6 +102,13 @@ class ActivityPubManager
         return $urls;
     }
 
+    /**
+     * Find an existing actor or create a new one if the actor doesn't yet exists.
+     *
+     * @param actorUrlOrHandle actor URL or actor handle
+     *
+     * @return User or Magazine or null on error
+     */
     public function findActorOrCreate(string $actorUrlOrHandle): null|User|Magazine
     {
         if (str_contains($actorUrlOrHandle, $this->settingsManager->get('KBIN_DOMAIN').'/m/')) {
@@ -123,40 +137,42 @@ class ActivityPubManager
         }
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
-
-        if ('Person' === $actor['type']) {
-            // User
-            $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
-            if (!$user) {
-                $user = $this->createUser($actorUrl);
-            } else {
-                if (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime())) {
-                    try {
-                        $this->bus->dispatch(new UpdateActorMessage($user->apProfileId));
-                    } catch (\Exception $e) {
+        // Check if actor isn't empty (not set/null/empty array/etc.) and check if actor type is set
+        if (!empty($actor) && isset($actor['type'])) {
+            // User (we don't make a distinction between bots with type Service as Lemmy does)
+            if (\in_array($actor['type'], self::USER_TYPES)) {
+                $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
+                if (!$user) {
+                    $user = $this->createUser($actorUrl);
+                } else {
+                    if (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime())) {
+                        try {
+                            $this->bus->dispatch(new UpdateActorMessage($user->apProfileId));
+                        } catch (\Exception $e) {
+                        }
                     }
                 }
+
+                return $user;
             }
 
-            return $user;
-        }
-
-        // Magazine
-        if ('Group' === $actor['type']) {
-            // User
-            $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
-            if (!$magazine) {
-                $magazine = $this->createMagazine($actorUrl);
-            } else {
-                if (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 hour') < (new \DateTime())) {
-                    try {
-                        $this->bus->dispatch(new UpdateActorMessage($magazine->apProfileId));
-                    } catch (\Exception $e) {
+            // Magazine (Group)
+            if ('Group' === $actor['type']) {
+                // User
+                $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
+                if (!$magazine) {
+                    $magazine = $this->createMagazine($actorUrl);
+                } else {
+                    if (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 hour') < (new \DateTime())) {
+                        try {
+                            $this->bus->dispatch(new UpdateActorMessage($magazine->apProfileId));
+                        } catch (\Exception $e) {
+                        }
                     }
                 }
-            }
 
-            return $magazine;
+                return $magazine;
+            }
         }
 
         return null;
@@ -191,7 +207,14 @@ class ActivityPubManager
         );
     }
 
-    private function createUser(string $actorUrl): User
+    /**
+     * Creates a new user.
+     *
+     * @param actorUrl actor URL
+     *
+     * @return User or null on error
+     */
+    private function createUser(string $actorUrl): ?User
     {
         $webfinger = $this->webfinger($actorUrl);
         $this->userManager->create(
@@ -203,47 +226,64 @@ class ActivityPubManager
         return $this->updateUser($actorUrl);
     }
 
-    public function updateUser(string $actorUrl): User
+    /**
+     * Update existing user and return user object.
+     *
+     * @param actorUrl actor URL
+     *
+     * @return User or null on error (eg. actor not found)
+     */
+    public function updateUser(string $actorUrl): ?User
     {
         $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
+        // Check if actor isn't empty (not set/null/empty array/etc.)
+        if (!empty($actor)) {
+            // Update the following user columns
+            $user->type = $actor['type'] ?? 'Person';
+            $user->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
+            $user->apDomain = parse_url($actor['id'], PHP_URL_HOST);
+            $user->apFollowersUrl = $actor['followers'] ?? null;
+            $user->apPreferredUsername = $actor['preferredUsername'] ?? null;
+            $user->apDiscoverable = $actor['discoverable'] ?? true;
+            $user->apManuallyApprovesFollowers = $actor['manuallyApprovesFollowers'] ?? false;
+            $user->apPublicUrl = $actor['url'] ?? $actorUrl;
+            $user->apDeletedAt = null;
+            $user->apTimeoutAt = null;
+            $user->apFetchedAt = new \DateTime();
 
-        if (isset($actor['summary'])) {
-            $converter = new HtmlConverter(['strip_tags' => true]);
-            $user->about = stripslashes($converter->convert($actor['summary']));
-        }
-
-        if (isset($actor['icon'])) {
-            $newImage = $this->handleImages([$actor['icon']]);
-            if ($user->avatar && $newImage !== $user->avatar) {
-                $this->bus->dispatch(new DeleteImageMessage($user->avatar->filePath));
+            // Only update about when summary is set
+            if (isset($actor['summary'])) {
+                $converter = new HtmlConverter(['strip_tags' => true]);
+                $user->about = stripslashes($converter->convert($actor['summary']));
             }
-            $user->avatar = $newImage;
-        }
 
-        if (isset($actor['image'])) {
-            $newImage = $this->handleImages([$actor['image']]);
-            if ($user->cover && $newImage !== $user->cover) {
-                $this->bus->dispatch(new DeleteImageMessage($user->cover->filePath));
+            // Only update avatar if icon is set
+            if (isset($actor['icon'])) {
+                $newImage = $this->handleImages([$actor['icon']]);
+                if ($user->avatar && $newImage !== $user->avatar) {
+                    $this->bus->dispatch(new DeleteImageMessage($user->avatar->filePath));
+                }
+                $user->avatar = $newImage;
             }
-            $user->cover = $newImage;
+
+            // Only update cover if image is set
+            if (isset($actor['image'])) {
+                $newImage = $this->handleImages([$actor['image']]);
+                if ($user->cover && $newImage !== $user->cover) {
+                    $this->bus->dispatch(new DeleteImageMessage($user->cover->filePath));
+                }
+                $user->cover = $newImage;
+            }
+
+            // Write to DB
+            $this->entityManager->flush();
+
+            return $user;
+        } else {
+            return null;
         }
-
-        $user->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
-        $user->apDomain = parse_url($actor['id'], PHP_URL_HOST);
-        $user->apFollowersUrl = $actor['followers'] ?? null;
-        $user->apPreferredUsername = $actor['preferredUsername'] ?? null;
-        $user->apDiscoverable = $actor['discoverable'] ?? true;
-        $user->apManuallyApprovesFollowers = $actor['manuallyApprovesFollowers'] ?? false;
-        $user->apPublicUrl = $actor['url'] ?? $actorUrl;
-        $user->apDeletedAt = null;
-        $user->apTimeoutAt = null;
-        $user->apFetchedAt = new \DateTime();
-
-        $this->entityManager->flush();
-
-        return $user;
     }
 
     public function handleImages(array $attachment): ?Image
@@ -271,7 +311,14 @@ class ActivityPubManager
         return null;
     }
 
-    private function createMagazine(string $actorUrl): Magazine
+    /**
+     * Creates a new magazine (Group).
+     *
+     * @param actorUrl actor URL
+     *
+     * @return User or null on error
+     */
+    private function createMagazine(string $actorUrl): ?Magazine
     {
         $this->magazineManager->create(
             $this->magazineFactory->createDtoFromAp($actorUrl, $this->buildHandle($actorUrl)),
@@ -282,41 +329,52 @@ class ActivityPubManager
         return $this->updateMagazine($actorUrl);
     }
 
-    public function updateMagazine(string $actorUrl): Magazine
+    /**
+     * Update an existing magazine.
+     *
+     * @param actorUrl actor URL
+     *
+     * @return Magazine or null on error
+     */
+    public function updateMagazine(string $actorUrl): ?Magazine
     {
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
         $actor = $this->apHttpClient->getActorObject($actorUrl);
-
-        if (isset($actor['summary'])) {
-            $converter = new HtmlConverter(['strip_tags' => true]);
-            $magazine->description = stripslashes($converter->convert($actor['summary']));
-        }
-
-        if (isset($actor['icon'])) {
-            $newImage = $this->handleImages([$actor['icon']]);
-            if ($magazine->icon && $newImage !== $magazine->icon) {
-                $this->bus->dispatch(new DeleteImageMessage($magazine->icon->filePath));
+        // Check if actor isn't empty (not set/null/empty array/etc.)
+        if (!empty($actor)) {
+            if (isset($actor['summary'])) {
+                $converter = new HtmlConverter(['strip_tags' => true]);
+                $magazine->description = stripslashes($converter->convert($actor['summary']));
             }
-            $magazine->icon = $newImage;
+
+            if (isset($actor['icon'])) {
+                $newImage = $this->handleImages([$actor['icon']]);
+                if ($magazine->icon && $newImage !== $magazine->icon) {
+                    $this->bus->dispatch(new DeleteImageMessage($magazine->icon->filePath));
+                }
+                $magazine->icon = $newImage;
+            }
+
+            if ($actor['preferredUsername']) {
+                $magazine->title = $actor['preferredUsername'];
+            }
+
+            $magazine->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
+            $magazine->apDomain = parse_url($actor['id'], PHP_URL_HOST);
+            $magazine->apFollowersUrl = $actor['followers'] ?? null;
+            $magazine->apPreferredUsername = $actor['preferredUsername'] ?? null;
+            $magazine->apDiscoverable = $actor['discoverable'] ?? true;
+            $magazine->apPublicUrl = $actor['url'] ?? $actorUrl;
+            $magazine->apDeletedAt = null;
+            $magazine->apTimeoutAt = null;
+            $magazine->apFetchedAt = new \DateTime();
+
+            $this->entityManager->flush();
+
+            return $magazine;
+        } else {
+            return null;
         }
-
-        if ($actor['preferredUsername']) {
-            $magazine->title = $actor['preferredUsername'];
-        }
-
-        $magazine->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
-        $magazine->apDomain = parse_url($actor['id'], PHP_URL_HOST);
-        $magazine->apFollowersUrl = $actor['followers'] ?? null;
-        $magazine->apPreferredUsername = $actor['preferredUsername'] ?? null;
-        $magazine->apDiscoverable = $actor['discoverable'] ?? true;
-        $magazine->apPublicUrl = $actor['url'] ?? $actorUrl;
-        $magazine->apDeletedAt = null;
-        $magazine->apTimeoutAt = null;
-        $magazine->apFetchedAt = new \DateTime();
-
-        $this->entityManager->flush();
-
-        return $magazine;
     }
 
     public function createInboxesFromCC(array $activity, User $user): array
@@ -402,11 +460,19 @@ class ActivityPubManager
         return null;
     }
 
-    public function updateActor(string $actorUrl): Magazine|User
+    /**
+     * Update existing actor.
+     *
+     * @param actorUrl actor URL
+     *
+     * @return User, Magazine or null on error
+     */
+    public function updateActor(string $actorUrl): null|Magazine|User
     {
         $actor = $this->apHttpClient->getActorObject($actorUrl);
 
-        if ('Person' === $actor['type']) {
+        // User (We don't make a distinction between bots with type Service as Lemmy does)
+        if (\in_array($actor['type'], self::USER_TYPES)) {
             return $this->updateUser($actorUrl);
         }
 

@@ -108,6 +108,11 @@ class ApHttpClient
         return $resp ? json_decode($resp, true) : null;
     }
 
+    /**
+     * Retrieve AP actor object (could be a user or magazine).
+     *
+     * @return array key/value array of actor response body
+     */
     public function getActorObject(string $apProfileId): ?array
     {
         $resp = $this->cache->get(
@@ -116,13 +121,15 @@ class ApHttpClient
                 $this->logger->info("ApHttpClient:getActorObject:url: {$apProfileId}");
 
                 try {
+                    // Set-up request
                     $client = new CurlHttpClient();
-                    $r = $client->request('GET', $apProfileId, [
+                    $response = $client->request('GET', $apProfileId, [
                         'max_duration' => self::TIMEOUT,
                         'timeout' => self::TIMEOUT,
                         'headers' => $this->getInstanceHeaders($apProfileId, null, 'get', ApRequestType::ActivityPub),
                     ]);
-                    if (str_starts_with((string) $r->getStatusCode(), '4')) {
+                    // If 4xx error response, try to find the actor locally
+                    if (str_starts_with((string) $response->getStatusCode(), '4')) {
                         if ($user = $this->userRepository->findOneByApProfileId($apProfileId)) {
                             $user->apDeletedAt = new \DateTime();
                             $this->userRepository->save($user, true);
@@ -133,6 +140,7 @@ class ApHttpClient
                         }
                     }
                 } catch (\Exception $e) {
+                    // If an exception occurred, try to find the actor locally
                     if ($user = $this->userRepository->findOneByApProfileId($apProfileId)) {
                         $user->apTimeoutAt = new \DateTime();
                         $this->userRepository->save($user, true);
@@ -142,12 +150,13 @@ class ApHttpClient
                         $this->magazineRepository->save($magazine, true);
                     }
 
-                    throw new InvalidApPostException("AP Get fail: {$apProfileId}, ".$r->getContent(false));
+                    throw new InvalidApPostException("AP Get fail: {$apProfileId}, ".$response->getContent(false));
                 }
 
                 $item->expiresAt(new \DateTime('+1 hour'));
 
-                return $r->getContent();
+                // When everything goes OK, return the data
+                return $response->getContent();
             }
         );
 
@@ -165,16 +174,17 @@ class ApHttpClient
         $this->logger->info("ApHttpClient:post:url: {$url}");
         $this->logger->info('ApHttpClient:post:body '.json_encode($body ?? []));
 
+        // Set-up request
         $client = new CurlHttpClient();
-        $req = $client->request('POST', $url, [
+        $response = $client->request('POST', $url, [
             'max_duration' => self::TIMEOUT,
             'timeout' => self::TIMEOUT,
             'body' => json_encode($body),
             'headers' => $this->getHeaders($url, $actor, $body),
         ]);
 
-        if (!str_starts_with((string) $req->getStatusCode(), '2')) {
-            throw new InvalidApPostException("Post fail: {$url}, ".$req->getContent(false).' '.json_encode($body));
+        if (!str_starts_with((string) $response->getStatusCode(), '2')) {
+            throw new InvalidApPostException("Post fail: {$url}, ".$response->getContent(false).' '.json_encode($body));
         }
 
         // build cache

@@ -21,9 +21,17 @@
                         <h1>
                             <a class="link-muted stretched-link"
                                href="{{ path('user_overview', {'username': user.username}) }}">{{ user.username|username(false) }}</a>
+                            {% if (user.type) == "Service" %}
+                                <code title="Bot Account">Robot</code>
+                            {% endif %}
                         </h1>
                     {% else %}
-                        <h1>{{ user.apPreferredUsername ?? user.username|username(false) }}</h1>
+                        <h1>
+                            {{ user.apPreferredUsername ?? user.username|username(false) }}
+                            {% if (user.type) == "Service" %}
+                                <code title="Bot Account">Robot</code>
+                            {% endif %}
+                        </h1>
                     {% endif %}
                     <small>{{ user.username|username(true) }}</small>
                 </div>
