@@ -8,7 +8,16 @@ Mbin is a modular, decentralized content aggregator and microblogging platform r
 communicate with many other ActivityPub services, including Kbin, Mastodon, Lemmy, Pleroma, Peertube. The initiative aims to
 promote a free and open internet.
 
-The inspiration came from kbin.
+The inspiration came from kbin. Unique Features of Mbin:
+
+- Support of **all** ActivityPub Actor Types (which includes also "Service" accounts, which are robot accounts)
+- Up-to-date PHP (Composer) dependency packages
+- Various bug fixes, additional error checking and more to come soon!
+- Improved admin documentation and fixes
+- Support for `application/json` Accept request header on all ActivityPub end-points
+- Improved source-code documentation
+- Tight integration with [Mbin Webplate project](https://hosted.weblate.org/projects/mbin/kbin/) for translations (Two way sync)
+- Last but not least, a community-focus project embracing the Collective Code Construction Contract (C4). No single maintainer.
 
 ## Instances
 
