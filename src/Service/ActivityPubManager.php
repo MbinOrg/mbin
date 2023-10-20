@@ -240,27 +240,8 @@ class ActivityPubManager
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         // Check if actor isn't empty (not set/null/empty array/etc.)
         if (!empty($actor)) {
-            if (isset($actor['summary'])) {
-                $converter = new HtmlConverter(['strip_tags' => true]);
-                $user->about = stripslashes($converter->convert($actor['summary']));
-            }
-
-            if (isset($actor['icon'])) {
-                $newImage = $this->handleImages([$actor['icon']]);
-                if ($user->avatar && $newImage !== $user->avatar) {
-                    $this->bus->dispatch(new DeleteImageMessage($user->avatar->filePath));
-                }
-                $user->avatar = $newImage;
-            }
-
-            if (isset($actor['image'])) {
-                $newImage = $this->handleImages([$actor['image']]);
-                if ($user->cover && $newImage !== $user->cover) {
-                    $this->bus->dispatch(new DeleteImageMessage($user->cover->filePath));
-                }
-                $user->cover = $newImage;
-            }
-
+            // Update the following user columns
+            $user->type = $actor['type'] ?? 'Person';
             $user->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
             $user->apDomain = parse_url($actor['id'], PHP_URL_HOST);
             $user->apFollowersUrl = $actor['followers'] ?? null;
@@ -272,6 +253,31 @@ class ActivityPubManager
             $user->apTimeoutAt = null;
             $user->apFetchedAt = new \DateTime();
 
+            // Only update about when summary is set
+            if (isset($actor['summary'])) {
+                $converter = new HtmlConverter(['strip_tags' => true]);
+                $user->about = stripslashes($converter->convert($actor['summary']));
+            }
+
+            // Only update avatar if icon is set
+            if (isset($actor['icon'])) {
+                $newImage = $this->handleImages([$actor['icon']]);
+                if ($user->avatar && $newImage !== $user->avatar) {
+                    $this->bus->dispatch(new DeleteImageMessage($user->avatar->filePath));
+                }
+                $user->avatar = $newImage;
+            }
+
+            // Only update cover if image is set
+            if (isset($actor['image'])) {
+                $newImage = $this->handleImages([$actor['image']]);
+                if ($user->cover && $newImage !== $user->cover) {
+                    $this->bus->dispatch(new DeleteImageMessage($user->cover->filePath));
+                }
+                $user->cover = $newImage;
+            }
+
+            // Write to DB
             $this->entityManager->flush();
 
             return $user;
