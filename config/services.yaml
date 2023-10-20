@@ -1,50 +1,50 @@
 framework:
   serializer:
     mapping:
-      paths: [ '%kernel.project_dir%/config/kbin_serialization' ]
+      paths: ["%kernel.project_dir%/config/kbin_serialization"]
 
 parameters:
-  kbin_domain: '%env(KBIN_DOMAIN)%'
-  kbin_title: '%env(KBIN_TITLE)%'
-  kbin_meta_title: '%env(KBIN_META_TITLE)%'
-  kbin_meta_description: '%env(KBIN_META_DESCRIPTION)%'
-  kbin_meta_keywords: '%env(KBIN_META_KEYWORDS)%'
-  kbin_contact_email: '%env(KBIN_CONTACT_EMAIL)%'
-  kbin_sender_email: '%env(KBIN_SENDER_EMAIL)%'
-  kbin_default_lang: '%env(KBIN_DEFAULT_LANG)%'
-  kbin_api_items_per_page: '%env(KBIN_API_ITEMS_PER_PAGE)%'
-  kbin_js_enabled: '%env(bool:KBIN_JS_ENABLED)%'
-  kbin_federation_enabled: '%env(KBIN_FEDERATION_ENABLED)%'
-  kbin_registrations_enabled: '%env(KBIN_REGISTRATIONS_ENABLED)%'
-  kbin_ap_route_condition: 'request.getAcceptableContentTypes() and request.getAcceptableContentTypes()[0] in ["application/activity+json", "application/ld+json"]'
-  kbin_storage_url: '%env(KBIN_STORAGE_URL)%'
+  kbin_domain: "%env(KBIN_DOMAIN)%"
+  kbin_title: "%env(KBIN_TITLE)%"
+  kbin_meta_title: "%env(KBIN_META_TITLE)%"
+  kbin_meta_description: "%env(KBIN_META_DESCRIPTION)%"
+  kbin_meta_keywords: "%env(KBIN_META_KEYWORDS)%"
+  kbin_contact_email: "%env(KBIN_CONTACT_EMAIL)%"
+  kbin_sender_email: "%env(KBIN_SENDER_EMAIL)%"
+  kbin_default_lang: "%env(KBIN_DEFAULT_LANG)%"
+  kbin_api_items_per_page: "%env(KBIN_API_ITEMS_PER_PAGE)%"
+  kbin_js_enabled: "%env(bool:KBIN_JS_ENABLED)%"
+  kbin_federation_enabled: "%env(KBIN_FEDERATION_ENABLED)%"
+  kbin_registrations_enabled: "%env(KBIN_REGISTRATIONS_ENABLED)%"
+  kbin_ap_route_condition: 'request.getAcceptableContentTypes() and request.getAcceptableContentTypes()[0] in ["application/activity+json", "application/ld+json", "application/json"]'
+  kbin_storage_url: "%env(KBIN_STORAGE_URL)%"
 
-  amazon.s3.key: '%env(S3_KEY)%'
-  amazon.s3.secret: '%env(S3_SECRET)%'
-  amazon.s3.bucket: '%env(S3_BUCKET)%'
-  amazon.s3.region: '%env(S3_REGION)%'
-  amazon.s3.version: '%env(S3_VERSION)%'
-  amazon.s3.endpoint: '%env(S3_ENDPOINT)%'
+  amazon.s3.key: "%env(S3_KEY)%"
+  amazon.s3.secret: "%env(S3_SECRET)%"
+  amazon.s3.bucket: "%env(S3_BUCKET)%"
+  amazon.s3.region: "%env(S3_REGION)%"
+  amazon.s3.version: "%env(S3_VERSION)%"
+  amazon.s3.endpoint: "%env(S3_ENDPOINT)%"
 
-  hcaptcha_site_key: '%env(resolve:HCAPTCHA_SITE_KEY)%'
-  hcaptcha_secret: '%env(resolve:HCAPTCHA_SECRET)%'
+  hcaptcha_site_key: "%env(resolve:HCAPTCHA_SITE_KEY)%"
+  hcaptcha_secret: "%env(resolve:HCAPTCHA_SECRET)%"
 
-  oauth_facebook_id: '%env(default::OAUTH_FACEBOOK_ID)%'
-  oauth_facebook_secret: '%env(OAUTH_FACEBOOK_SECRET)%'
+  oauth_facebook_id: "%env(default::OAUTH_FACEBOOK_ID)%"
+  oauth_facebook_secret: "%env(OAUTH_FACEBOOK_SECRET)%"
 
-  oauth_google_id: '%env(default::OAUTH_GOOGLE_ID)%'
-  oauth_google_secret: '%env(OAUTH_GOOGLE_SECRET)%'
+  oauth_google_id: "%env(default::OAUTH_GOOGLE_ID)%"
+  oauth_google_secret: "%env(OAUTH_GOOGLE_SECRET)%"
 
-  oauth_github_id: '%env(default::OAUTH_GITHUB_ID)%'
-  oauth_github_secret: '%env(OAUTH_GITHUB_SECRET)%'
+  oauth_github_id: "%env(default::OAUTH_GITHUB_ID)%"
+  oauth_github_secret: "%env(OAUTH_GITHUB_SECRET)%"
 
-  oauth_keycloak_id: '%env(default::OAUTH_KEYCLOAK_ID)%'
-  oauth_keycloak_secret: '%env(OAUTH_KEYCLOAK_SECRET)%'
-  oauth_keycloak_uri: '%env(OAUTH_KEYCLOAK_URI)%'
-  oauth_keycloak_realm: '%env(OAUTH_KEYCLOAK_REALM)%'
-  oauth_keycloak_version: '%env(OAUTH_KEYCLOAK_VERSION)%'
+  oauth_keycloak_id: "%env(default::OAUTH_KEYCLOAK_ID)%"
+  oauth_keycloak_secret: "%env(OAUTH_KEYCLOAK_SECRET)%"
+  oauth_keycloak_uri: "%env(OAUTH_KEYCLOAK_URI)%"
+  oauth_keycloak_realm: "%env(OAUTH_KEYCLOAK_REALM)%"
+  oauth_keycloak_version: "%env(OAUTH_KEYCLOAK_VERSION)%"
 
-  router.request_context.host: '%env(KBIN_DOMAIN)%'
+  router.request_context.host: "%env(KBIN_DOMAIN)%"
   router.request_context.scheme: https
 
   html5_validation: true
@@ -53,59 +53,59 @@ parameters:
   front_time_options: 6h|12h|1d|1w|1m|1y|all|wszystko|∞
   stats_type: general|content|views|votes|ogólne|treści|głosy|wyświetlenia
 
-  number_regex: '[1-9][0-9]{0,17}'
+  number_regex: "[1-9][0-9]{0,17}"
   username_regex: '\w{2,25}|!deleted\d+'
 
-  uploads_dir_name: 'media'
-  uploads_base_url: '/'
+  uploads_dir_name: "media"
+  uploads_base_url: "/"
 
-  mercure_public_url: '%env(MERCURE_PUBLIC_URL)%'
-  mercure_subscriptions_token: '%env(MERCURE_JWT_SECRET)%'
+  mercure_public_url: "%env(MERCURE_PUBLIC_URL)%"
+  mercure_subscriptions_token: "%env(MERCURE_JWT_SECRET)%"
 
-  cardano_wallet_url: '%env(CARDANO_WALLET_URL)%'
-  cardano_explorer_url: '%env(CARDANO_EXPLORER_URL)%'
+  cardano_wallet_url: "%env(CARDANO_WALLET_URL)%"
+  cardano_explorer_url: "%env(CARDANO_EXPLORER_URL)%"
 
-  sso_only_mode: '%env(bool:default::SSO_ONLY_MODE)%'
+  sso_only_mode: "%env(bool:default::SSO_ONLY_MODE)%"
 
 services:
   _defaults:
     autowire: true
     autoconfigure: true
     bind:
-      $kbinDomain: '%kbin_domain%'
-      $html5Validation: '%html5_validation%'
-      $uploadedAssetsBaseUrl: '%uploads_base_url%'
-      $cardanoWalletUrl: '%cardano_wallet_url%'
-      $cardanoExplorerUrl: '%cardano_explorer_url%'
-      $mercurePublicUrl: '%mercure_public_url%'
-      $mercureSubscriptionsToken: '%mercure_subscriptions_token%'
-      $kbinApiItemsPerPage: '%kbin_api_items_per_page%'
-      $storageUrl: '%kbin_storage_url%'
-      $publicDir: '%kernel.project_dir%/public'
+      $kbinDomain: "%kbin_domain%"
+      $html5Validation: "%html5_validation%"
+      $uploadedAssetsBaseUrl: "%uploads_base_url%"
+      $cardanoWalletUrl: "%cardano_wallet_url%"
+      $cardanoExplorerUrl: "%cardano_explorer_url%"
+      $mercurePublicUrl: "%mercure_public_url%"
+      $mercureSubscriptionsToken: "%mercure_subscriptions_token%"
+      $kbinApiItemsPerPage: "%kbin_api_items_per_page%"
+      $storageUrl: "%kbin_storage_url%"
+      $publicDir: "%kernel.project_dir%/public"
 
   kbin.s3_client:
     class: Aws\S3\S3Client
     arguments:
-      - version: '%amazon.s3.version%'
-        region: '%amazon.s3.region%'
-        endpoint: '%amazon.s3.endpoint%'
+      - version: "%amazon.s3.version%"
+        region: "%amazon.s3.region%"
+        endpoint: "%amazon.s3.endpoint%"
         #use_path_style_endpoint: true
         credentials:
-          key: '%amazon.s3.key%'
-          secret: '%amazon.s3.secret%'
+          key: "%amazon.s3.key%"
+          secret: "%amazon.s3.secret%"
           #proxies: [ 'https://media.karab.in' ]
 
   App\:
-    resource: '../src/'
+    resource: "../src/"
     exclude:
-      - '../src/DependencyInjection/'
-      - '../src/Entity/'
-      - '../src/Kernel.php'
-      - '../src/Tests/'
+      - "../src/DependencyInjection/"
+      - "../src/Entity/"
+      - "../src/Kernel.php"
+      - "../src/Tests/"
 
   App\Controller\:
-    resource: '../src/Controller/'
-    tags: [ 'controller.service_arguments' ]
+    resource: "../src/Controller/"
+    tags: ["controller.service_arguments"]
 
   #  App\Http\RequestDTOResolver:
   #    arguments:
@@ -116,37 +116,37 @@ services:
   # Instance settings
   App\Service\SettingsManager:
     arguments:
-      $kbinTitle: '%kbin_title%'
-      $kbinMetaTitle: '%kbin_meta_title%'
-      $kbinMetaDescription: '%kbin_meta_description%'
-      $kbinMetaKeywords: '%kbin_meta_keywords%'
-      $kbinDefaultLang: '%kbin_default_lang%'
-      $kbinContactEmail: '%kbin_contact_email%'
-      $kbinSenderEmail: '%kbin_sender_email%'
-      $kbinJsEnabled: '%env(bool:KBIN_JS_ENABLED)%'
-      $kbinFederationEnabled: '%env(bool:KBIN_FEDERATION_ENABLED)%'
-      $kbinRegistrationsEnabled: '%env(bool:KBIN_REGISTRATIONS_ENABLED)%'
-      $kbinHeaderLogo: '%env(bool:KBIN_HEADER_LOGO)%'
-      $kbinCaptchaEnabled: '%env(bool:KBIN_CAPTCHA_ENABLED)%'
-      $kbinFederationPageEnabled: '%env(bool:KBIN_FEDERATION_PAGE_ENABLED)%'
-      $kbinAdminOnlyOauthClients: '%env(bool:KBIN_ADMIN_ONLY_OAUTH_CLIENTS)%'
+      $kbinTitle: "%kbin_title%"
+      $kbinMetaTitle: "%kbin_meta_title%"
+      $kbinMetaDescription: "%kbin_meta_description%"
+      $kbinMetaKeywords: "%kbin_meta_keywords%"
+      $kbinDefaultLang: "%kbin_default_lang%"
+      $kbinContactEmail: "%kbin_contact_email%"
+      $kbinSenderEmail: "%kbin_sender_email%"
+      $kbinJsEnabled: "%env(bool:KBIN_JS_ENABLED)%"
+      $kbinFederationEnabled: "%env(bool:KBIN_FEDERATION_ENABLED)%"
+      $kbinRegistrationsEnabled: "%env(bool:KBIN_REGISTRATIONS_ENABLED)%"
+      $kbinHeaderLogo: "%env(bool:KBIN_HEADER_LOGO)%"
+      $kbinCaptchaEnabled: "%env(bool:KBIN_CAPTCHA_ENABLED)%"
+      $kbinFederationPageEnabled: "%env(bool:KBIN_FEDERATION_PAGE_ENABLED)%"
+      $kbinAdminOnlyOauthClients: "%env(bool:KBIN_ADMIN_ONLY_OAUTH_CLIENTS)%"
 
   # Markdown
   App\Markdown\Factory\EnvironmentFactory:
     arguments:
-        $container: !service_locator
-          League\CommonMark\Extension\Autolink\UrlAutolinkParser: '@League\CommonMark\Extension\Autolink\UrlAutolinkParser'
-          League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension: '@League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension'
-          League\CommonMark\Extension\Strikethrough\StrikethroughExtension: '@League\CommonMark\Extension\Strikethrough\StrikethroughExtension'
-          League\CommonMark\Extension\Table\TableExtension: '@League\CommonMark\Extension\Table\TableExtension'
-          App\Markdown\MarkdownExtension: '@App\Markdown\MarkdownExtension'
-        $config: '%commonmark.configuration%'
+      $container: !service_locator
+        League\CommonMark\Extension\Autolink\UrlAutolinkParser: '@League\CommonMark\Extension\Autolink\UrlAutolinkParser'
+        League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension: '@League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension'
+        League\CommonMark\Extension\Strikethrough\StrikethroughExtension: '@League\CommonMark\Extension\Strikethrough\StrikethroughExtension'
+        League\CommonMark\Extension\Table\TableExtension: '@League\CommonMark\Extension\Table\TableExtension'
+        App\Markdown\MarkdownExtension: '@App\Markdown\MarkdownExtension'
+      $config: "%commonmark.configuration%"
 
   # Language
   App\EventListener\LanguageListener:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 200 }
-    arguments: [ '%kbin_default_lang%' ]
+    arguments: ["%kbin_default_lang%"]
 
   # User
   App\EventListener\UserHomepageListener:
@@ -157,12 +157,11 @@ services:
   App\EventListener\FederationStatusListener:
     tags:
       - { name: kernel.event_listener, event: kernel.controller, priority: -5 }
-    arguments: [ '%kbin_federation_enabled%' ]
+    arguments: ["%kbin_federation_enabled%"]
 
   App\EventListener\UserActivityListener:
     tags:
       - { name: kernel.event_listener, event: kernel.controller, priority: -5 }
-
 
   # Notifications
   App\EventListener\ContentNotificationPurgeListener:
@@ -174,8 +173,7 @@ services:
     tags:
       - { name: kernel.event_listener, event: kernel.controller_arguments }
 
-
   # Feeds
   debril.rss_atom.provider:
     class: App\Feed\Provider
-    arguments: [ '@App\Service\FeedManager' ]
+    arguments: ['@App\Service\FeedManager']

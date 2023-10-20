@@ -131,8 +131,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     public bool $isVerified = false;
     #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
     public bool $isDeleted = false;
-    #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
-    public bool $isBot = false;
     #[Column(type: 'text', nullable: true)]
     public ?string $customCss = null;
     #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
@@ -228,6 +226,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     private array $totpBackupCodes = [];
     #[OneToMany(mappedBy: 'user', targetEntity: OAuth2UserConsent::class, orphanRemoval: true)]
     private Collection $oAuth2UserConsents;
+    #[Column(type: 'string', nullable: false)]
+    public string $type;
 
     public function __construct(
         string $email,
