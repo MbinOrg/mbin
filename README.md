@@ -11,14 +11,14 @@ promote a free and open internet.
 The inspiration came from kbin. Unique Features of Mbin:
 
 - Support of **all** ActivityPub Actor Types (including also "Service" accounts, which are robot accounts)
-- Tons of GUI improvements and bugfixes
-- Various bug fixes, additional error checking and more to come soon!
-- Improved admin documentation and fixes
+- Tons of **GUI improvements** and bugfixes
+- Various _bug fixes_, additional error checking and more to come soon!
+- Improved **admin guide** and setup
 - Support for `application/json` Accept request header on all ActivityPub end-points
-- Up-to-date PHP (Composer) dependency packages
-- Improved source-code documentation
-- Tight integration with [Mbin Webplate project](https://hosted.weblate.org/projects/mbin/kbin/) for translations (Two way sync)
-- Last but not least, a community-focus project embracing the Collective Code Construction Contract (C4). No single maintainer.
+- Up-to-date PHP (Composer) dependency packages and **security/vulnerability** fixes
+- Improved _code documentation_, making the code easier to understand and contribute
+- **Tight integration** with [Mbin Webplate project](https://hosted.weblate.org/projects/mbin/kbin/) for translations (Two way sync)
+- Last but not least, a **community-focus project embracing the Collective Code Construction Contract** (C4). No single maintainer.
 
 ## Instances
 
