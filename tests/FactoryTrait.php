@@ -84,20 +84,22 @@ trait FactoryTrait
             'username' => 'adminUser',
             'password' => 'adminUser123',
             'email' => 'adminUser@example.com',
+            'type' => 'Person',
         ];
 
         yield [
             'username' => 'JohnDoe',
             'password' => 'JohnDoe123',
             'email' => 'JohnDoe@example.com',
+            'type' => 'Person',
         ];
     }
 
-    private function createUser(string $username, string $email = null, string $password = null, $active = true, $hideAdult = true, $about = null): User
+    private function createUser(string $username, string $email = null, string $password = null, string $type, $active = true, $hideAdult = true, $about = null): User
     {
         $manager = $this->getService(EntityManagerInterface::class);
 
-        $user = new User($email ?: $username.'@example.com', $username, $password ?: 'secret');
+        $user = new User($email ?: $username.'@example.com', $username, $password ?: 'secret', $type ?: 'Person');
 
         $user->isVerified = $active;
         $user->notifyOnNewEntry = true;

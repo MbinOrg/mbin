@@ -29,7 +29,8 @@ class UserFixtures extends BaseFixture
             $newUser = new User(
                 $user['email'],
                 $user['username'],
-                $user['password']
+                $user['password'],
+                $user['type']
             );
 
             $newUser->setPassword(
@@ -74,6 +75,7 @@ class UserFixtures extends BaseFixture
                 'email' => 'demo@karab.in',
                 'username' => 'demo',
                 'password' => 'demo',
+                'type' => 'Person',
             ];
         }
 
@@ -82,6 +84,7 @@ class UserFixtures extends BaseFixture
                 'email' => $this->faker->email,
                 'username' => str_replace('.', '_', $this->faker->userName),
                 'password' => 'secret',
+                'type' => 'Person',
             ];
         }
     }
