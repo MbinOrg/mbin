@@ -91,10 +91,6 @@ $comment-margin-sm: .3rem;
     img{
       width: 30px;
       height: 30px;
-      display: inline-block;
-      text-indent: 100%;
-      white-space: nowrap;
-      overflow: hidden;
     }
 
     @include media-breakpoint-up(sm) {
