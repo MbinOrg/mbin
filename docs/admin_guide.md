@@ -903,31 +903,10 @@ oneup_flysystem:
 
   filesystems:
     public_uploads_filesystem:
+      # switch the adapter to s3 adapter
       #adapter: default_adapter
       adapter: kbin.s3_adapter
       alias: League\Flysystem\Filesystem
-```
-
-And then edit the: `config/packages/liip_imagine.yaml` file:
-
-```yaml
-liip_imagine:
-  # ensure both data loader and cache resolver is active
-  data_loader: kbin.liip_loader
-  cache: kbin.liip_resolver
-
-  loaders:
-    kbin.liip_loader:
-      flysystem:
-        filesystem_service: oneup_flysystem.public_uploads_filesystem_filesystem
-
-  resolvers:
-    kbin.liip_resolver:
-      flysystem:
-        filesystem_service: oneup_flysystem.public_uploads_filesystem_filesystem
-        root_url: '%kbin_storage_url%'
-        cache_prefix: cache
-        visibility: public
 ```
 
 ### Captcha (optional)
