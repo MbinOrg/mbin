@@ -5,7 +5,7 @@ services:
     build:
       context: ../../
       dockerfile: docker/v2/Dockerfile
-    image: kbin
+    image: mbin
     restart: unless-stopped
     command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
     healthcheck:
@@ -28,7 +28,7 @@ services:
     build:
       context: ../../
       dockerfile: docker/v2/Dockerfile
-    image: kbin
+    image: mbin
     restart: unless-stopped
     command: php-fpm
     healthcheck:
@@ -46,7 +46,7 @@ services:
     build:
       context: ../../
       dockerfile: docker/v2/Dockerfile
-    image: kbin
+    image: mbin
     restart: unless-stopped
     command: bin/console messenger:consume async --time-limit=3600
     healthcheck:
@@ -64,7 +64,7 @@ services:
     build:
       context: ../../
       dockerfile: docker/v2/Dockerfile
-    image: kbin
+    image: mbin
     restart: unless-stopped
     command: bin/console messenger:consume async_ap --time-limit=3600
     healthcheck:
@@ -88,7 +88,7 @@ services:
       test: ['CMD', 'redis-cli', 'ping']
 
   db:
-    image: postgres:13-alpine
+    image: postgres:16-alpine
     restart: unless-stopped
     volumes:
       - ./storage/postgres:/var/lib/postgresql/data

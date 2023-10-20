@@ -115,4 +115,18 @@ jobs:
       - name: php-cs-fixer dry-run
         run: tools/vendor/bin/php-cs-fixer fix --dry-run -v --show-progress=none #--format=checkstyle #would be nice if codeberg did something with this like github does.
 
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Run Docker build
+        uses: docker/build-push-action@v5
+        with:
+          file: docker/v2/Dockerfile
+          tags: mbin:latest
+          push: false
 # TODO: Integration tests
