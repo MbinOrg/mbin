@@ -72,6 +72,7 @@ Done!
 
 - [User Guide](docs/user_guide.md)
 - [Admin Guide](docs/admin_guide.md)
+- [Frequently Asked Questions (FAQ)](FAQ.md)
 - [Mbin REST API Swagger Docs](https://kbin.melroy.org/api/docs)
 - [Mbin ActivityPub Reference](https://fedidevs.org/projects/kbin/)
 
