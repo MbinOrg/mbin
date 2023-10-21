@@ -17,7 +17,7 @@ class ImageManager
 {
     public const IMAGE_MIMETYPES = ['image/jpeg', 'image/jpg', 'image/gif', 'image/png'];
     public const IMAGE_MIMETYPE_STR = 'image/jpeg, image/jpg, image/gif, image/png';
-    public const MAX_IMAGE_BYTES = 6000000;
+    public const MAX_IMAGE_BYTES = 40000000; 
 
     public function __construct(
         private readonly string $storageUrl,
