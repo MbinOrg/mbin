@@ -8,8 +8,6 @@ For Docker see: [Admin Docker Deployment Guide](./docker_deployment_guide.md).
 > **Note**
 > Mbin is still in development.
 
-If you would like to support the project, you can register using the following [affiliate link](https://hetzner.cloud/?ref=8tSPCw0qqIwl).
-
 This guide is aimed for Debian / Ubuntu distribution servers, but it could run on any modern Linux distro. This guide will however uses the `apt` commands.
 
 ## Minimum hardware requirements
