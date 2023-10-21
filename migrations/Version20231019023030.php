@@ -7,14 +7,11 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20231019023030 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Upgrade database to remove references to Cardano Wallet. The code is now deprecated and removed.';
     }
 
     public function up(Schema $schema): void
