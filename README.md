@@ -78,6 +78,14 @@ Done!
 
 ## Developers
 
+### Start development server
+
+1. Install Symfony CLI: `wget https://get.symfony.com/cli/installer -O - | bash`
+2. Check the requirements: `symfony check:requirements`
+3. Install depedencies: `composer install`
+4. Start Mbin: `symfony server:start`
+5. Go to: [http://127.0.0.1:8000](http://127.0.0.1:8000/)
+
 ### Linting
 
 Install tooling via:

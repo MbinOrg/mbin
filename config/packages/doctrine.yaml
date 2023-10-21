@@ -2,25 +2,13 @@ doctrine:
   dbal:
     url: "%env(resolve:DATABASE_URL)%"
 
-  connections:
-    default:
-      # When true, queries are logged to a "doctrine" monolog channel
-      logging: "%kernel.debug%"
+    # IMPORTANT: You MUST configure your server version,
+    # either here or in the DATABASE_URL env var (see .env file)
+    #server_version: '15'
 
-      profiling: "%kernel.debug%"
-      # When true, profiling also collects a backtrace for each query
-      profiling_collect_backtrace: false
-      # When true, profiling also collects schema errors for each query
-      profiling_collect_schema_errors: true
-
-      # IMPORTANT: You MUST configure your server version,
-      # either here or in the DATABASE_URL env var (see .env file)
-      #server_version: '15'
+    profiling_collect_backtrace: "%kernel.debug%"
 
   orm:
-    dql:
-      string_functions:
-        JSONB_CONTAINS: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Postgresql\JsonbContains
     auto_generate_proxy_classes: true
     enable_lazy_ghost_objects: true
     report_fields_where_declared: true
@@ -39,6 +27,9 @@ doctrine:
       region_cache_driver:
         type: pool
         pool: doctrine.second_level_cache_pool
+    dql:
+      string_functions:
+        JSONB_CONTAINS: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Postgresql\JsonbContains
 
 when@test:
   doctrine:
