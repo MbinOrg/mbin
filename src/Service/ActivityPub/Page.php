@@ -125,7 +125,7 @@ class Page
                     fn ($val) => \in_array($val['type'], ['Link'])
                 );
 
-                if (\is_array($link)) {
+                if (\is_array($link) && !empty($link[0]) ) {
                     $dto->url = $link[0]['href'];
                 } else {
                     $dto->url = $link['href'];
