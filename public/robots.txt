@@ -1,4 +1,4 @@
-# Ban ChatGPT from indexing /kbin instances at all, in order to prevent training their [the OpenAI] models on users' data.
+# Ban ChatGPT from indexing Mbin instances at all, in order to prevent training their [the OpenAI] models on users' data.
 User-agent: GPTBot
 Disallow: /
 

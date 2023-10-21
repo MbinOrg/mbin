@@ -1,7 +1,5 @@
 # Admin Docker Guide
 
-**Docker guide is still WIP. Not all the steps have been fully verified yet.**
-
 For bare metal see: [Admin Bare Metal Guide](./admin_guide.md).
 
 > **Note**
@@ -60,7 +58,7 @@ Create config files and storage directories:
 ```bash
 cd docker/v2
 cp ../../.env.example_v2 .env
-cp docker-compose.prod.yml docker-compose.override.yml
+cp compose.prod.yml compose.override.yml
 mkdir -p storage/media storage/caddy_config storage/caddy_data
 sudo chown $USER:$USER storage/media storage/caddy_config storage/caddy_data
 ```
@@ -68,8 +66,8 @@ sudo chown $USER:$USER storage/media storage/caddy_config storage/caddy_data
 ### Configure `.env`
 
 1. Choose your Redis password, PostgreSQL password, RabbitMQ password, and Mercure password.
-2. Place them in the corresponding variables in both `.env` and `docker-compose.override.yml`.
-3. Change the values in your `.env` file as follows (if you change the service names and the listening ports of the services in your `docker-compose.yml`, update the following values correspondingly):
+2. Place them in the corresponding variables in both `.env` and `compose.override.yml`.
+3. Change the values in your `.env` file as follows (if you change the service names and the listening ports of the services in your `compose.yml`, update the following values correspondingly):
 
 ```env
 REDIS_HOST=redis:6379
@@ -107,7 +105,7 @@ OAUTH_ENCRYPTION_KEY=<Hex string generated in previous step>
 
 ### Running the containers
 
-By default `docker compose` will execute the `docker-compose.yml` and `docker-compose.override.yml` files.
+By default `docker compose` will execute the `compose.yml` and `compose.override.yml` files.
 
 Run the container in the background (`-d` means detached, but this can also be omitted for testing):
 
@@ -135,7 +133,7 @@ docker compose exec php bin/console kbin:ap:keys:update
 
 Next, log in and create a magazine named "random" to which unclassified content from the fediverse will flow.
 
-### Add auxiliary containers to `docker-compose.yml`
+### Add auxiliary containers to `compose.yml`
 
 Add any auxiliary container as you want. For example, add a Nginx container as reverse proxy to provide HTTPS encryption.
 
@@ -153,7 +151,7 @@ The filesystem ACL is disabled by default, in the `mbin` image. You can set the 
 
 ## Production
 
-If you created the file `docker-compose.override.yml` with your configs (`cp docker-compose.prod.yml docker-compose.override.yml`), running production would be the same command:
+If you created the file `compose.override.yml` with your configs (`cp compose.prod.yml compose.override.yml`), running production would be the same command:
 
 ```bash
 docker compose up -d
