@@ -30,40 +30,44 @@ class FollowHandler
     public function __invoke(FollowMessage $message)
     {
         $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
+        // Check if actor is not empty
+        if (!empty($actor)) {
+            if ('Follow' === $message->payload['type']) {
+                $object = $this->activityPubManager->findActorOrCreate($message->payload['object']);
+                // Check if object is not empty
+                if (!empty($object)) {
+                    $this->handleFollow($object, $actor);
 
-        if ('Follow' === $message->payload['type']) {
-            $object = $this->activityPubManager->findActorOrCreate($message->payload['object']);
+                    // @todo manually Accept
+                    $this->accept($message->payload, $object);
+                }
 
-            $this->handleFollow($object, $actor);
+                return;
+            }
 
-            // @todo manually Accept
-            $this->accept($message->payload, $object);
-
-            return;
-        }
-
-        if (isset($message->payload['object'])) {
-            switch ($message->payload['type']) {
-                case 'Undo':
-                    $this->handleUnfollow(
-                        $this->activityPubManager->findActorOrCreate($message->payload['object']['object']),
-                        $actor
-                    );
-                    break;
-                case 'Accept':
-                    $this->handleAccept(
-                        $actor,
-                        $this->activityPubManager->findActorOrCreate($message->payload['object']['actor'])
-                    );
-                    break;
-                case 'Reject':
-                    $this->handleReject(
-                        $actor,
-                        $this->activityPubManager->findActorOrCreate($message->payload['object']['actor'])
-                    );
-                    break;
-                default:
-                    break;
+            if (isset($message->payload['object'])) {
+                switch ($message->payload['type']) {
+                    case 'Undo':
+                        $this->handleUnfollow(
+                            $actor,
+                            $this->activityPubManager->findActorOrCreate($message->payload['object']['object'])
+                        );
+                        break;
+                    case 'Accept':
+                        $this->handleAccept(
+                            $actor,
+                            $this->activityPubManager->findActorOrCreate($message->payload['object']['actor'])
+                        );
+                        break;
+                    case 'Reject':
+                        $this->handleReject(
+                            $actor,
+                            $this->activityPubManager->findActorOrCreate($message->payload['object']['actor'])
+                        );
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }
@@ -97,32 +101,38 @@ class FollowHandler
         $this->client->post($this->client->getInboxUrl($payload['actor']), $object, $accept);
     }
 
-    private function handleUnfollow(User|Magazine $object, User $actor): void
+    private function handleUnfollow(User $actor, null|User|Magazine $object): void
     {
-        match (true) {
-            $object instanceof User => $this->userManager->unfollow($actor, $object),
-            $object instanceof Magazine => $this->magazineManager->unsubscribe($object, $actor),
-            default => throw new \LogicException(),
-        };
-    }
-
-    private function handleAccept(User $actor, User|Magazine $object): void
-    {
-        if ($object instanceof User) {
-            $this->userManager->acceptFollow($object, $actor);
+        if (!empty($object)) {
+            match (true) {
+                $object instanceof User => $this->userManager->unfollow($actor, $object),
+                $object instanceof Magazine => $this->magazineManager->unsubscribe($object, $actor),
+                default => throw new \LogicException(),
+            };
         }
-
-        //        if ($object instanceof Magazine) {
-        //            $this->magazineManager->acceptFollow($actor, $object);
-        //        }
     }
 
-    private function handleReject(User $actor, User|Magazine $object): void
+    private function handleAccept(User $actor, null|User|Magazine $object): void
     {
-        match (true) {
-            $object instanceof User => $this->userManager->rejectFollow($object, $actor),
-            $object instanceof Magazine => $this->magazineManager->unsubscribe($object, $actor),
-            default => throw new \LogicException(),
-        };
+        if (!empty($object)) {
+            if ($object instanceof User) {
+                $this->userManager->acceptFollow($object, $actor);
+            }
+
+            //        if ($object instanceof Magazine) {
+            //            $this->magazineManager->acceptFollow($actor, $object);
+            //        }
+        }
+    }
+
+    private function handleReject(User $actor, null|User|Magazine $object): void
+    {
+        if (!empty($object)) {
+            match (true) {
+                $object instanceof User => $this->userManager->rejectFollow($object, $actor),
+                $object instanceof Magazine => $this->magazineManager->unsubscribe($object, $actor),
+                default => throw new \LogicException(),
+            };
+        }
     }
 }
