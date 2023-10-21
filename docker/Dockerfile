@@ -26,11 +26,11 @@ WORKDIR $KBIN_HOME
 
 # PHP configuration (Requires these configuration before "composer install" )
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-COPY --link docker/v2/php/conf.d/app.ini $PHP_INI_DIR/conf.d/app.ini
-COPY --link docker/v2/php/conf.d/app.prod.ini $PHP_INI_DIR/conf.d/app.prod.or.dev.ini
-COPY --link docker/v2/php/conf.d/app.prod.ini $PHP_INI_DIR/conf.d/app.ini-production
-COPY --link docker/v2/php/conf.d/app.dev.ini $PHP_INI_DIR/conf.d/app.ini-development
-COPY --link docker/v2/php/php-fpm.d/zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
+COPY --link docker/php/conf.d/app.ini $PHP_INI_DIR/conf.d/app.ini
+COPY --link docker/php/conf.d/app.prod.ini $PHP_INI_DIR/conf.d/app.prod.or.dev.ini
+COPY --link docker/php/conf.d/app.prod.ini $PHP_INI_DIR/conf.d/app.ini-production
+COPY --link docker/php/conf.d/app.dev.ini $PHP_INI_DIR/conf.d/app.ini-development
+COPY --link docker/php/php-fpm.d/zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
 RUN chown -R $USER:$GROUP $PHP_INI_DIR
 RUN chown -R $USER:$GROUP /usr/local/etc/php-fpm.d
 
@@ -95,8 +95,8 @@ COPY --from=builder-caddy --link /usr/bin/caddy /usr/sbin/caddy
 COPY --from=builder-composer --chown=$USER:$GROUP $KBIN_HOME/vendor $KBIN_HOME/vendor
 COPY --from=builder-yarn --chown=$USER:$GROUP $KBIN_HOME/public $KBIN_HOME/public
 
-COPY --link docker/v2/caddy/Caddyfile /etc/caddy/Caddyfile
-COPY --chmod=755 --link docker/v2/docker-entrypoint ./
+COPY --link docker/caddy/Caddyfile /etc/caddy/Caddyfile
+COPY --chmod=755 --link docker/docker-entrypoint ./
 
 RUN mkdir -p public/media /data /config && \
     chown -R $USER:$GROUP public/media /data /config .env && \

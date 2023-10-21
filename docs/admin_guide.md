@@ -107,12 +107,12 @@ sudo setfacl -dR -m u:"$HTTPDUSER":rwX -m u:$(whoami):rwX var
 sudo setfacl -R -m u:"$HTTPDUSER":rwX -m u:$(whoami):rwX var
 ```
 
-### The `.env` file
+### The dot env file
 
-Make a copy of the `.env.example_v2` the and edit the `.env` configure file:
+Make a copy of the `.env.example` the and edit the `.env` configure file:
 
 ```
-cp .env.example_v2 .env
+cp .env.example .env
 nano .env
 ```
 
