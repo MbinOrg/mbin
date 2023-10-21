@@ -50,3 +50,8 @@ package-lock.json
 ###> league/oauth2-server-bundle ###
 /config/jwt/*.pem
 ###< league/oauth2-server-bundle ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
