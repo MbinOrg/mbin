@@ -81,17 +81,18 @@ class SearchManager
                 $webfinger = $this->activityPubManager->webfinger($name);
                 foreach ($webfinger->getProfileIds() as $profileId) {
                     $object = $this->activityPubManager->findActorOrCreate($profileId);
+                    if (!empty($object)) {
+                        if ($object instanceof Magazine) {
+                            $type = 'magazine';
+                        } elseif ($object instanceof User) {
+                            $type = 'user';
+                        }
 
-                    if ($object instanceof Magazine) { // @todo
-                        $type = 'magazine';
-                    } elseif ($object instanceof User) {
-                        $type = 'user';
+                        $objects[] = [
+                            'type' => $type,
+                            'object' => $object,
+                        ];
                     }
-
-                    $objects[] = [
-                        'type' => $type,
-                        'object' => $object,
-                    ];
                 }
             } catch (\Exception $e) {
             }
