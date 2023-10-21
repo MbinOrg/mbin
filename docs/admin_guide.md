@@ -3,12 +3,10 @@
 Below is a step-by-step guide of the process for creating your own Mbin instance from the moment a new VPS/VM is created or directly on bare-metal.  
 This is a preliminary outline that will help you launch an instance for your own needs.
 
-For Docker see: [Admin Deployment Guide](./docker_deployment_guide.md).
+For Docker see: [Admin Docker Deployment Guide](./docker_deployment_guide.md).
 
 > **Note**
-> Mbin is still in the early stages of development.
-
-If you would like to support the project, you can register using the following [affiliate link](https://hetzner.cloud/?ref=8tSPCw0qqIwl).
+> Mbin is still in development.
 
 This guide is aimed for Debian / Ubuntu distribution servers, but it could run on any modern Linux distro. This guide will however uses the `apt` commands.
 
@@ -30,9 +28,7 @@ sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=compose
 
 ## Firewall
 
-```bash
-// todo
-```
+If you have a firewall installed (or you're behind a NAT), be sure to open port `443` for the web server. Mbin should run behind a reverse proxy like Nginx.
 
 ## Install NodeJS & Yarn (frontend tools)
 
