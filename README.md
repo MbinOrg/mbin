@@ -82,19 +82,38 @@ Done!
 
 Requirements:
 
-- PostgreSQL (create new database)
-- PHP
-- Correctly configured `.env` file (`cp .env.example .env`):
+- PHP 8.2
+- NodeJS + Yarn
+- Redis
+- PostgreSQL, connect & create new mbin database with mbin user:
+
+```bash
+sudo -u postgres psql
+```
+
+Execute:
+
+```sql
+CREATE DATABASE mbin;
+CREATE user mbin WITH encrypted password '<password>';
+GRANT ALL PRIVILEGES ON database mbin TO mbin;
+```
+
+- Correctly configured `.env` file (`cp .env.example .env`), these are only the changes you need to pay attention to:
 
 ```env
 APP_ENV=dev
 
-POSTGRES_DB=<db_name>
-POSTGRES_USER=<db_user>
-POSTGRES_PASSWORD=<db_password>
+POSTGRES_DB=mbin
+POSTGRES_USER=mbin
+POSTGRES_PASSWORD=<password>
 ```
 
 Dump `.env` via: `composer dump-env dev`
+
+Create tables and database structure: `php bin/console doctrine:migrations:migrate`
+
+Build frontend assets: `yarn && yarn build`
 
 Starting the server:
 
