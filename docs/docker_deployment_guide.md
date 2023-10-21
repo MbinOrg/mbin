@@ -3,9 +3,7 @@
 For bare metal see: [Admin Bare Metal Guide](./admin_guide.md).
 
 > **Note**
-> Mbin is still in the early stages of development.
-
-_Note:_ This guide is using the [v2 docker files](docker/v2).
+> Mbin is still in development.
 
 ## System Requirements
 
@@ -50,14 +48,14 @@ Build the Docker image:
 > If you're using a version of Docker Engine earlier than 23.0, run `export DOCKER_BUILDKIT=1`, prior to building the image. This does not apply to users running Docker Desktop. More info can be found [here](https://docs.docker.com/build/buildkit/#getting-started)
 
 ```bash
-docker build -t mbin -f docker/v2/Dockerfile .
+docker build -t mbin -f docker/Dockerfile .
 ```
 
 Create config files and storage directories:
 
 ```bash
-cd docker/v2
-cp ../../.env.example_v2 .env
+cd docker
+cp ../.env.example_docker .env
 cp compose.prod.yml compose.override.yml
 mkdir -p storage/media storage/caddy_config storage/caddy_data
 sudo chown $USER:$USER storage/media storage/caddy_config storage/caddy_data
@@ -81,7 +79,8 @@ MERCURE_HOST=www:80
 1. Create an RSA key pair using OpenSSL:
 
 ```bash
-mkdir ./config/oauth2/
+# Replace <mbin_dir> with Mbin's root directory
+mkdir <mbin_dir>/config/oauth2/
 # If you protect the key with a passphrase, make sure to remember it!
 # You will need it later
 openssl genrsa -des3 -out ./config/oauth2/private.pem 4096
@@ -110,6 +109,8 @@ By default `docker compose` will execute the `compose.yml` and `compose.override
 Run the container in the background (`-d` means detached, but this can also be omitted for testing):
 
 ```bash
+# Replace <mbin_dir> with Mbin's root directory
+cd <mbin_dir>/docker
 docker compose up -d
 ```
 
