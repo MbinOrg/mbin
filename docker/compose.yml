@@ -3,7 +3,7 @@ version: "3.9"
 services:
   www:
     build:
-      context: ../../
+      context: ../
       dockerfile: docker/Dockerfile
     image: mbin
     restart: unless-stopped
@@ -26,7 +26,7 @@ services:
 
   php:
     build:
-      context: ../../
+      context: ../
       dockerfile: docker/Dockerfile
     image: mbin
     restart: unless-stopped
@@ -48,7 +48,7 @@ services:
 
   messenger:
     build:
-      context: ../../
+      context: ../
       dockerfile: docker/Dockerfile
     image: mbin
     restart: unless-stopped
@@ -66,7 +66,7 @@ services:
 
   messenger_ap:
     build:
-      context: ../../
+      context: ../
       dockerfile: docker/Dockerfile
     image: mbin
     restart: unless-stopped

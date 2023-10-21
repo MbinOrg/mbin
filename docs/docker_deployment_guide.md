@@ -55,7 +55,7 @@ Create config files and storage directories:
 
 ```bash
 cd docker
-cp ../../.env.example_docker .env
+cp ../.env.example_docker .env
 cp compose.prod.yml compose.override.yml
 mkdir -p storage/media storage/caddy_config storage/caddy_data
 sudo chown $USER:$USER storage/media storage/caddy_config storage/caddy_data
@@ -79,7 +79,8 @@ MERCURE_HOST=www:80
 1. Create an RSA key pair using OpenSSL:
 
 ```bash
-mkdir ./config/oauth2/
+# Replace <mbin_dir> with Mbin's root directory
+mkdir <mbin_dir>/config/oauth2/
 # If you protect the key with a passphrase, make sure to remember it!
 # You will need it later
 openssl genrsa -des3 -out ./config/oauth2/private.pem 4096
@@ -108,6 +109,8 @@ By default `docker compose` will execute the `compose.yml` and `compose.override
 Run the container in the background (`-d` means detached, but this can also be omitted for testing):
 
 ```bash
+# Replace <mbin_dir> with Mbin's root directory
+cd <mbin_dir>/docker
 docker compose up -d
 ```
 
