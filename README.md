@@ -80,6 +80,24 @@ Done!
 
 ### Start development server
 
+Requirements:
+
+- PostgreSQL (create new database)
+- PHP
+- Correctly configured `.env` file (`cp .env.example .env`):
+
+```env
+APP_ENV=dev
+
+POSTGRES_DB=<db_name>
+POSTGRES_USER=<db_user>
+POSTGRES_PASSWORD=<db_password>
+```
+
+Dump `.env` via: `composer dump-env dev`
+
+Starting the server:
+
 1. Install Symfony CLI: `wget https://get.symfony.com/cli/installer -O - | bash`
 2. Check the requirements: `symfony check:requirements`
 3. Install depedencies: `composer install`
