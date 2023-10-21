@@ -3,8 +3,8 @@ version: "3.9"
 services:
   www:
     build:
-      context: ../../
-      dockerfile: docker/v2/Dockerfile
+      context: ../
+      dockerfile: docker/Dockerfile
     image: mbin
     restart: unless-stopped
     command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
@@ -26,8 +26,8 @@ services:
 
   php:
     build:
-      context: ../../
-      dockerfile: docker/v2/Dockerfile
+      context: ../
+      dockerfile: docker/Dockerfile
     image: mbin
     restart: unless-stopped
     command: php-fpm
@@ -48,8 +48,8 @@ services:
 
   messenger:
     build:
-      context: ../../
-      dockerfile: docker/v2/Dockerfile
+      context: ../
+      dockerfile: docker/Dockerfile
     image: mbin
     restart: unless-stopped
     command: bin/console messenger:consume async --time-limit=3600
@@ -66,8 +66,8 @@ services:
 
   messenger_ap:
     build:
-      context: ../../
-      dockerfile: docker/v2/Dockerfile
+      context: ../
+      dockerfile: docker/Dockerfile
     image: mbin
     restart: unless-stopped
     command: bin/console messenger:consume async_ap --time-limit=3600
