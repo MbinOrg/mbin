@@ -14,6 +14,11 @@ tools/vendor/
 # Keys
 *.pem
 
+# Mbin specific
+.env
+/public/media/*
+package-lock.json
+
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php
@@ -43,10 +48,6 @@ yarn-error.log
 /public/media/cache/
 ###< liip/imagine-bundle ###
 
-.env
-/public/media/*
-package-lock.json
-
 ###> league/oauth2-server-bundle ###
 /config/jwt/*.pem
 ###< league/oauth2-server-bundle ###
@@ -55,3 +56,7 @@ package-lock.json
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###
