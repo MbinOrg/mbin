@@ -60,6 +60,32 @@ RabbitMQ is an open-source _message broker_ software that facilitates the exchan
 
 We highly **recommend** to setup RabbitMQ on your Mbin instance, but RabbitMQ is optional. Failed messages are no longer stored in RabbitMQ, but in PostgreSQL instead (table: `public.messenger_messages`).
 
+## How do I know Redis is working?
+
+Execute: `sudo redis-cli ping` expect a PONG back. 
+
+Ensure you do not see any connection errors in your `var/log/prod.log` file.
+
+In the Mbin Admin settings, be sure to also enable Mercure:
+
+![image](https://github.com/MbinOrg/mbin/assets/628926/7a955912-57c1-4d5a-b0bc-4aab6e436cb4)
+
+When you visit your own Mbin instance domain, you can validate whether a connection was successfully established between your browser (client) and Mercure (server), by going to the browser developer toolbar and visit the "Network" tab.
+
+The browser should succesfully connect to the `https://<yourdomain>/.well-known/mercure` URL (thus without any errors). Since it's streaming data, don't expect any response from Mercure.
+
+## How do I know RabbitMQ is working?
+
+Execute: `sudo rabbitmqctl status`, that should provide details about your RabbitMQ instance. The output should also contain information about which plugins are installed, various usages and on which ports it is listening on (eg. `5672` for AMQP protocol).
+
+Ensure you do not see any connection errors in your `var/log/prod.log` file.
+
+Talking about plugins, we advise to also enable the `rabbitmq_management` plugin by execute: `rabbitmq-plugins enable rabbitmq_management`.
+
+This allows you to go to the RabbitMQ management page: `http://<server-ip>:15672`. [More info can be found here](https://www.rabbitmq.com/management.html#getting-started). See screenshot below of a typical small instance of Mbin running RabbitMQ management interface:
+
+![image](https://github.com/MbinOrg/mbin/assets/628926/ce47213e-13c5-4b57-9fd3-c5b4a64138ef)
+
 ## How to clean-up all failed messages?
 
 If you wish to **delete all failed messages** at once, execute the following PostgreSQL query (assuming you're connected to the correct PostgreSQL database):
