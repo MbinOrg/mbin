@@ -70,11 +70,9 @@ In the Mbin Admin settings, be sure to also enable Mercure:
 
 ![image](https://github.com/MbinOrg/mbin/assets/628926/7a955912-57c1-4d5a-b0bc-4aab6e436cb4)
 
-When you visit your own Mbin instance domain, you can validate whether a connection was successfully established between your browser (client) and Mercure (server), by going to the browser developer toolbar and visit the "Network" tab:
+When you visit your own Mbin instance domain, you can validate whether a connection was successfully established between your browser (client) and Mercure (server), by going to the browser developer toolbar and visit the "Network" tab.
 
-![image](https://github.com/MbinOrg/mbin/assets/628926/6e9cf63e-8271-4cf8-b919-5281426af617)
-
-The expected behaviour is to get a 200 OK response from the `https://<yourdomain>/.well-known/mercure` URL.
+The browser should succesfully connect to the `https://<yourdomain>/.well-known/mercure` URL (thus without any errors). Since it's streaming data, don't expect any response from Mercure.
 
 ## How do I know RabbitMQ is working?
 
