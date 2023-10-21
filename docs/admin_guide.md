@@ -30,9 +30,7 @@ sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=compose
 
 ## Firewall
 
-```bash
-// todo
-```
+If you have a firewall installed (or you're behind a NAT), be sure to open port `443` for the web server. Mbin should run behind a reverse proxy like Nginx.
 
 ## Install NodeJS & Yarn (frontend tools)
 
