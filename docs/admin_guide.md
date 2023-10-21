@@ -6,7 +6,7 @@ This is a preliminary outline that will help you launch an instance for your own
 For Docker see: [Admin Deployment Guide](./docker_deployment_guide.md).
 
 > **Note**
-> Mbin is still in the early stages of development.
+> Mbin is still in development.
 
 If you would like to support the project, you can register using the following [affiliate link](https://hetzner.cloud/?ref=8tSPCw0qqIwl).
 
