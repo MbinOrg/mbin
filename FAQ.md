@@ -64,13 +64,13 @@ We highly **recommend** to setup RabbitMQ on your Mbin instance, but RabbitMQ is
 
 Execute: `sudo redis-cli ping` expect a PONG back. 
 
-Ensure you do not see any connection errors in your `prod.log` file.
+Ensure you do not see any connection errors in your `var/log/prod.log` file.
 
 ## How do I know RabbitMQ is working?
 
 Execute: `sudo rabbitmqctl status`, that should provide details about your RabbitMQ instance. The output should also contain information about which plugins are installed, various usages and on which ports it is listening on (eg. `5672` for AMQP protocol).
 
-Ensure you do not see any connection errors in your `prod.log` file.
+Ensure you do not see any connection errors in your `var/log/prod.log` file.
 
 Talking about plugins, we advise to also enable the `rabbitmq_management` plugin by execute: `rabbitmq-plugins enable rabbitmq_management`.
 
