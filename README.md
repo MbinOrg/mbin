@@ -8,7 +8,7 @@ Mbin is a modular, decentralized content aggregator and microblogging platform r
 communicate with many other ActivityPub services, including Kbin, Mastodon, Lemmy, Pleroma, Peertube. The initiative aims to
 promote a free and open internet.
 
-The inspiration came from kbin. Unique Features of Mbin:
+Unique features of Mbin are:
 
 - Support of **all** ActivityPub Actor Types (including also "Service" accounts, which are robot accounts)
 - Tons of **GUI improvements**
@@ -85,18 +85,18 @@ Requirements:
 - PHP 8.2
 - NodeJS + Yarn
 - Redis
-- PostgreSQL, connect & create new mbin database with mbin user:
+- PostgreSQL
+
+Connect to PostgreSQL using the postgres user:
 
 ```bash
 sudo -u postgres psql
 ```
 
-Execute:
+Create new mbin database user:
 
 ```sql
-CREATE DATABASE mbin;
-CREATE user mbin WITH encrypted password '<password>';
-GRANT ALL PRIVILEGES ON database mbin TO mbin;
+sudo -u postgres createuser --createdb --createrole --pwprompt mbin
 ```
 
 - Correctly configured `.env` file (`cp .env.example .env`), these are only the changes you need to pay attention to:
@@ -109,19 +109,26 @@ POSTGRES_USER=mbin
 POSTGRES_PASSWORD=<password>
 ```
 
-Dump `.env` via: `composer dump-env dev`
+If you are using `127.0.0.1` to connect to the PostgreSQL server, edit the following file: `/etc/postgresql/<VERSION>/main/pg_hba.conf` and add:
 
-Create tables and database structure: `php bin/console doctrine:migrations:migrate`
+```conf
+local   mbin            mbin                                    md5
+```
 
-Build frontend assets: `yarn && yarn build`
+- Restart the PostgreSQL server: `sudo systemctl restart postgresql`
+- Create database: `php bin/console doctrine:database:create`
+- Create tables and database structure: `php bin/console doctrine:migrations:migrate`
+- Build frontend assets: `yarn && yarn build`
 
 Starting the server:
 
 1. Install Symfony CLI: `wget https://get.symfony.com/cli/installer -O - | bash`
 2. Check the requirements: `symfony check:requirements`
 3. Install depedencies: `composer install`
-4. Start Mbin: `symfony server:start`
-5. Go to: [http://127.0.0.1:8000](http://127.0.0.1:8000/)
+4. Dump `.env` into `.env.local.php` via: `composer dump-env dev`
+5. Clear cache: `APP_ENV=dev APP_DEBUG=1 php bin/console cache:clear -n`
+6. Start Mbin: `symfony server:start`
+7. Go to: [http://127.0.0.1:8000](http://127.0.0.1:8000/)
 
 ### Linting
 
