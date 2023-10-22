@@ -80,7 +80,8 @@ Execute: `sudo rabbitmqctl status`, that should provide details about your Rabbi
 
 Ensure you do not see any connection errors in your `var/log/prod.log` file.
 
-Talking about plugins, we advise to also enable the `rabbitmq_management` plugin by execute: `rabbitmq-plugins enable rabbitmq_management`.
+Talking about plugins, we advise to also enable the `rabbitmq_management` plugin by executing: 
+`rabbitmq-plugins enable rabbitmq_management`.
 
 This allows you to go to the RabbitMQ management page: `http://<server-ip>:15672`. [More info can be found here](https://www.rabbitmq.com/management.html#getting-started). See screenshot below of a typical small instance of Mbin running RabbitMQ management interface:
 
