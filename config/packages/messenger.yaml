@@ -5,9 +5,9 @@ framework:
 
     transports:
       # https://symfony.com/doc/current/messenger.html#transport-configuration
-      sync: 'sync://'
+      sync: "sync://"
       async:
-        dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+        dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
         retry_strategy:
           max_retries: 0
           delay: 1800000
@@ -15,7 +15,7 @@ framework:
           max_delay: 0
         serializer: messenger.transport.symfony_serializer
       async_ap:
-        dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+        dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
         retry_strategy:
           max_retries: 0
           delay: 1800000
@@ -23,10 +23,17 @@ framework:
           max_delay: 0
         serializer: messenger.transport.symfony_serializer
       failed:
-        dsn: 'doctrine://default?queue_name=failed'
+        dsn: "doctrine://default?queue_name=failed"
         serializer: messenger.transport.symfony_serializer
 
     routing:
       # Route your messages to the transports
       App\Message\Contracts\AsyncMessageInterface: async
       App\Message\Contracts\AsyncApMessageInterface: async_ap
+# when@test:
+#    framework:
+#        messenger:
+#            transports:
+#                # replace with your transport name here (e.g., my_transport: 'in-memory://')
+#                # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
+#                async: 'in-memory://'
