@@ -8,7 +8,8 @@ when@dev:
       main:
         type: stream
         path: "%kernel.logs_dir%/%kernel.environment%.log"
-        level: debug
+        # Or use: "debug" instead of "info", for more log messages
+        level: info
         channels: ["!event"]
         # Enable full stacktrace
         include_stacktraces: true
