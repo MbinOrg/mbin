@@ -137,7 +137,10 @@ class Client extends AbstractClient implements ClientEntityInterface
         return $this;
     }
 
-    public function getRedirectUri()
+    /**
+     * @return string|array
+     */
+    public function getRedirectUri(): string|array
     {
         return $this->getRedirectUris();
     }
