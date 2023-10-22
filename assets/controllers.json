@@ -1,4 +1,5 @@
 {
+<<<<<<< ours
     "controllers": {
         "@symfony/ux-autocomplete": {
             "autocomplete": {
@@ -17,5 +18,8 @@
             }
         }
     },
+=======
+    "controllers": [],
+>>>>>>> theirs
     "entrypoints": []
 }
