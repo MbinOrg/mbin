@@ -302,13 +302,16 @@
         ]
     },
     "oneup/flysystem-bundle": {
-        "version": "3.0",
+        "version": "4.9",
         "recipe": {
             "repo": "github.com/symfony/recipes-contrib",
-            "branch": "master",
-            "version": "3.0",
-            "ref": "e6c6440b279273a468e1f570b0fc1d4ff54ad69e"
-        }
+            "branch": "main",
+            "version": "4.0",
+            "ref": "3ae1b83985e89138f5443bbc2d9b8c074b497d49"
+        },
+        "files": [
+            "config/packages/oneup_flysystem.yaml"
+        ]
     },
     "paragonie/constant_time_encoding": {
         "version": "v2.4.0"
