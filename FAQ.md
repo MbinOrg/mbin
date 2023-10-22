@@ -62,7 +62,7 @@ We highly **recommend** to setup RabbitMQ on your Mbin instance, but RabbitMQ is
 
 ## How do I know Redis is working?
 
-Execute: `sudo redis-cli ping` expect a PONG back. 
+Execute: `sudo redis-cli ping` expect a PONG back. If it requires authentication, add the following flags: `--user <your_user> --askpass` to the `redis-cli` command.
 
 Ensure you do not see any connection errors in your `var/log/prod.log` file.
 
