@@ -88,10 +88,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
     public ?array $fields = null;
     #[Column(type: 'string', nullable: true)]
-    public ?string $cardanoWalletId = null;
-    #[Column(type: 'string', nullable: true)]
-    public ?string $cardanoWalletAddress = null;
-    #[Column(type: 'string', nullable: true)]
     public ?string $oauthGithubId = null;
     #[Column(type: 'string', nullable: true)]
     public ?string $oauthGoogleId = null;

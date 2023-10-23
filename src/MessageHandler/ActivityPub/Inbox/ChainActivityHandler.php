@@ -84,6 +84,7 @@ class ChainActivityHandler
     private function unloadStack(array $chain, array $parent, array $announce = null, array $like = null): void
     {
         $object = end($chain);
+
         if (!empty($object)) {
             match ($this->getType($object)) {
                 'Question' => $this->note->create($object),

@@ -6,7 +6,7 @@
           <img width="30" height="30"
                style="max-width: 30px; max-height: 30px;"
                src="{{ asset(magazine.icon.filePath) | imagine_filter('avatar_thumb') }}"
-               alt="{{ magazine.name ~ ' avatar' }}">
+               alt="{{ magazine.name ~ ' ' ~ 'icon'|trans|lower }}">
         </span>
     {% endif %}
     {% if fullName %}
