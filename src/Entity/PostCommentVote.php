@@ -27,6 +27,12 @@ class PostCommentVote extends Vote
     #[JoinColumn(name: 'comment_id', nullable: false, onDelete: 'CASCADE')]
     public ?PostComment $comment = null;
 
+    #[Id]
+    #[GeneratedValue(strategy: 'SEQUENCE')]
+    #[SequenceGenerator(sequenceName: 'post_comment_vote_id_seq')]
+    #[Column(type: 'integer')]
+    protected int $id;
+
     public function __construct(int $choice, User $user, PostComment $comment)
     {
         parent::__construct($choice, $user, $comment->user);

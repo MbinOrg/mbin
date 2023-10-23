@@ -30,7 +30,6 @@ class Vote implements VoteInterface
     #[JoinColumn(nullable: false)]
     public User $author;
     #[Id]
-    #[GeneratedValue]
     #[Column(type: 'integer')]
     protected int $id;
 

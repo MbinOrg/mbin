@@ -27,6 +27,12 @@ class EntryCommentVote extends Vote
     #[JoinColumn(name: 'comment_id', nullable: false, onDelete: 'CASCADE')]
     public ?EntryComment $comment;
 
+    #[Id]
+    #[GeneratedValue(strategy: 'SEQUENCE')]
+    #[SequenceGenerator(sequenceName: 'entry_comment_vote_id_seq')]
+    #[Column(type: 'integer')]
+    protected int $id;
+
     public function __construct(int $choice, User $user, EntryComment $comment)
     {
         parent::__construct($choice, $user, $comment->user);
