@@ -8,6 +8,7 @@ use App\Entity\Contracts\VotableInterface;
 use App\Entity\Contracts\VoteInterface;
 use App\Entity\Traits\CreatedAtTrait;
 use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
@@ -22,15 +23,12 @@ class Vote implements VoteInterface
 
     #[Column(type: 'integer', nullable: false)]
     public int $choice;
-
     #[ManyToOne(targetEntity: User::class)]
     #[JoinColumn(nullable: false)]
     public User $user;
-
     #[ManyToOne(targetEntity: User::class)]
     #[JoinColumn(nullable: false)]
     public User $author;
-
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
