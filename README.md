@@ -1,10 +1,10 @@
-# Mbin - Fork of /kbin
+# Mbin
 
 Mbin is a fork of kbin, community-focused. Feel free to discuss on [Matrix](https://matrix.to/#/#mbin:melroy.org) and to create Pull Requests.
 
 **Important:** Mbin is focused on what the community wants, pull requests can be merged by any repo member. Discussions take place on [Matrix](https://matrix.to/#/#mbin:melroy.org) then _consensus_ has to be reached by the community. If approved by the community, no additional reviews are required on the PR. It's built entirely on trust.
 
-Mbin is a modular, decentralized content aggregator and microblogging platform running on the Fediverse network. It can
+Mbin is a decentralized content aggregator, voting, discussion and microblogging platform running on the Fediverse network. It can
 communicate with many other ActivityPub services, including Kbin, Mastodon, Lemmy, Pleroma, Peertube. The initiative aims to
 promote a free and open internet.
 
@@ -88,13 +88,15 @@ Requirements:
 - Redis
 - PostgreSQL
 
-Connect to PostgreSQL using the postgres user:
+---
+
+- Connect to PostgreSQL using the postgres user:
 
 ```bash
 sudo -u postgres psql
 ```
 
-Create new mbin database user:
+- Create new mbin database user:
 
 ```sql
 sudo -u postgres createuser --createdb --createrole --pwprompt mbin
@@ -110,7 +112,7 @@ POSTGRES_USER=mbin
 POSTGRES_PASSWORD=<password>
 ```
 
-If you are using `127.0.0.1` to connect to the PostgreSQL server, edit the following file: `/etc/postgresql/<VERSION>/main/pg_hba.conf` and add:
+- If you are using `127.0.0.1` to connect to the PostgreSQL server, edit the following file: `/etc/postgresql/<VERSION>/main/pg_hba.conf` and add:
 
 ```conf
 local   mbin            mbin                                    md5
