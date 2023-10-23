@@ -18,6 +18,7 @@ tools/vendor/
 .env
 /public/media/*
 package-lock.json
+docker/compose.override.yml
 
 ###> symfony/framework-bundle ###
 /.env.local
