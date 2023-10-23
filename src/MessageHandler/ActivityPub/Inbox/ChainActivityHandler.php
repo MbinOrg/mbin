@@ -35,43 +35,42 @@ class ChainActivityHandler
         }
 
         $object = end($message->chain);
-        if (!empty($object)) {
-            // Handle parent objects
-            if (isset($object['inReplyTo']) && $object['inReplyTo']) {
-                if ($existed = $this->repository->findByObjectId($object['inReplyTo'])) {
-                    $this->bus->dispatch(
-                        new ChainActivityMessage($message->chain, $existed, $message->announce, $message->like)
-                    );
 
-                    return;
-                }
-
-                $message->chain[] = $this->client->getActivityObject($object['inReplyTo']);
-                $this->bus->dispatch(new ChainActivityMessage($message->chain, null, $message->announce, $message->like));
+        // Handle parent objects
+        if (isset($object['inReplyTo']) && $object['inReplyTo']) {
+            if ($existed = $this->repository->findByObjectId($object['inReplyTo'])) {
+                $this->bus->dispatch(
+                    new ChainActivityMessage($message->chain, $existed, $message->announce, $message->like)
+                );
 
                 return;
             }
 
-            $entity = match ($this->getType($object)) {
-                'Note' => $this->note->create($object),
-                'Page' => $this->page->create($object),
-                default => null
-            };
+            $message->chain[] = $this->client->getActivityObject($object['inReplyTo']);
+            $this->bus->dispatch(new ChainActivityMessage($message->chain, null, $message->announce, $message->like));
 
-            if (!$entity) {
-                if ($message->announce && $message->announce['object'] === $object['object']) {
-                    $this->unloadStack($message->chain, $message->parent, $message->announce, $message->like);
-                }
-
-                if ($message->like && $message->like['object'] === $object['object']) {
-                    $this->unloadStack($message->chain, $message->parent, $message->announce, $message->like);
-                }
-
-                return;
-            }
-
-            array_pop($message->chain);
+            return;
         }
+
+        $entity = match ($this->getType($object)) {
+            'Note' => $this->note->create($object),
+            'Page' => $this->page->create($object),
+            default => null
+        };
+
+        if (!$entity) {
+            if ($message->announce && $message->announce['object'] === $object['object']) {
+                $this->unloadStack($message->chain, $message->parent, $message->announce, $message->like);
+            }
+
+            if ($message->like && $message->like['object'] === $object['object']) {
+                $this->unloadStack($message->chain, $message->parent, $message->announce, $message->like);
+            }
+
+            return;
+        }
+
+        array_pop($message->chain);
 
         $this->bus->dispatch(
             new ChainActivityMessage($message->chain, [
@@ -84,7 +83,8 @@ class ChainActivityHandler
     private function unloadStack(array $chain, array $parent, array $announce = null, array $like = null): void
     {
         $object = end($chain);
-        if (!empty($object)) {
+
+        if ($object) {
             match ($this->getType($object)) {
                 'Question' => $this->note->create($object),
                 'Note' => $this->note->create($object),

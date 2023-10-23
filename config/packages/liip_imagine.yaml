@@ -1,39 +1,39 @@
 # Documentation on how to configure the bundle can be found at: https://symfony.com/doc/current/bundles/LiipImagineBundle/basic-usage.html
 liip_imagine:
-  resolvers:
-    kbin.liip_resolver:
-      flysystem:
-        filesystem_service: oneup_flysystem.public_uploads_filesystem_filesystem
-        root_url: "%kbin_storage_url%"
-        cache_prefix: cache
-        visibility: public
+  driver: "gd"
+  webp:
+    generate: true
+
+  filter_sets:
+    entry_thumb:
+      quality: 90
+      filters:
+        thumbnail: { size: [ 380, 380 ], mode: inset }
+    avatar_thumb:
+      quality: 90
+      filters:
+        thumbnail: { size: [ 100, 100 ], mode: fixed }
+    post_thumb:
+      quality: 90
+      filters:
+        thumbnail: { size: [ 600, 500 ], mode: inset }
+    user_cover:
+      quality: 90
+      filters:
+        thumbnail: { size: [ 1500, 500 ], mode: fixed }
+
+  data_loader: kbin.liip_loader
+  cache: kbin.liip_resolver
 
   loaders:
     kbin.liip_loader:
       flysystem:
         filesystem_service: oneup_flysystem.public_uploads_filesystem_filesystem
 
-  driver: gd
-  cache: kbin.liip_resolver
-  data_loader: kbin.liip_loader
-  twig:
-    mode: lazy
-  webp:
-    generate: true
-  filter_sets:
-    entry_thumb:
-      quality: 90
-      filters:
-        thumbnail: { size: [380, 380], mode: inset }
-    avatar_thumb:
-      quality: 90
-      filters:
-        thumbnail: { size: [100, 100], mode: fixed }
-    post_thumb:
-      quality: 90
-      filters:
-        thumbnail: { size: [600, 500], mode: inset }
-    user_cover:
-      quality: 90
-      filters:
-        thumbnail: { size: [1500, 500], mode: fixed }
+  resolvers:
+    kbin.liip_resolver:
+      flysystem:
+        filesystem_service: oneup_flysystem.public_uploads_filesystem_filesystem
+        root_url: '%kbin_storage_url%'
+        cache_prefix: cache
+        visibility: public
