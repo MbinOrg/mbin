@@ -1,8 +1,10 @@
 {% if user.avatar and showAvatar %}
-<img 
-    class="user-avatar"
-    width="20" height="20"
-    src="{{ asset(user.avatar.filePath) | imagine_filter('avatar_thumb') }}"
-    alt="{{ user.username ~ ' avatar' }}"
->
+  <span class="image-inline">
+    <img
+        class="user-avatar"
+        width="20" height="20"
+        src="{{ asset(user.avatar.filePath) | imagine_filter('avatar_thumb') }}"
+        alt="{{ user.username ~ ' avatar' }}"
+    >
+  </span>
 {% endif %}

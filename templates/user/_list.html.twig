@@ -12,9 +12,8 @@
                     {% for user in users %}
                         <li>
                             {% if user.avatar %}
-                                <figure>
-                                    <img class="user-avatar"
-                                         width="32" height="32"
+                                <figure class="image-inline">
+                                    <img width="32" height="32"
                                          src="{{ asset(user.avatar.filePath) | imagine_filter('avatar_thumb') }}"
                                          alt="{{ user.username ~' '~ 'avatar'|trans|lower }}">
                                 </figure>

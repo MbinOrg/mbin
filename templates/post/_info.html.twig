@@ -2,9 +2,8 @@
     <h3>{{ 'thread'|trans }}</h3>
     <div class="row">
         {% if post.user.avatar %}
-            <figure>
-                <img class="user-avatar"
-                     width="100" height="100"
+            <figure class="image-inline">
+                <img width="100" height="100"
                      src="{{ asset(post.user.avatar.filePath) | imagine_filter('avatar_thumb') }}"
                      alt="{{ post.user.username ~' '~ 'avatar'|trans|lower }}">
             </figure>

@@ -9,7 +9,7 @@
     {% endif %}
     <div class="row">
         {% if computed.magazine.icon and showCover %}
-            <figure>
+            <figure class="image-inline">
                 <img src="{{ asset(computed.magazine.icon.filePath) | imagine_filter('post_thumb') }}"
                      alt="{{ computed.magazine.name ~ ' ' ~ 'icon'|trans }}" width="260">
             </figure>

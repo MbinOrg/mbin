@@ -4,11 +4,12 @@
         {% for moderator in magazine.moderators|slice(0, 5) %}
             <li>
                 {% if moderator.user.avatar %}
-                    <img class="user-avatar"
-                         width="30"
+                  <span class="image-inline">
+                    <img width="30"
                          height="30"
                          src="{{ asset(moderator.user.avatar.filePath) | imagine_filter('avatar_thumb') }}"
                          alt="{{ moderator.user.username ~ ' ' ~ 'avatar'|trans|lower }}">
+                  </span>
                 {% endif %}
                 <a href="{{ path('user_overview', {username: moderator.user.username}) }}"
                    class="stretched-link">{{ moderator.user.username|username }}</a>
