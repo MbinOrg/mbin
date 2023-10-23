@@ -145,13 +145,6 @@ class AwesomeBotFixtures extends Command
                 'tags' => 'h2,h3',
             ],
             [
-                'username' => 'awesome-cardano-bot',
-                'magazine_name' => 'cardano',
-                'magazine_title' => 'Cardano',
-                'url' => 'https://github.com/CardanoUmbrella/awesome-cardano',
-                'tags' => 'h3,h4',
-            ],
-            [
                 'username' => 'awesome-vue-bot',
                 'magazine_name' => 'vue',
                 'magazine_title' => 'Vue',
