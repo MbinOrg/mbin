@@ -19,7 +19,7 @@ services:
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
 
   # Set the following HTTPS variables to TRUE if your environment is using a 
-  # valid certificate behind a reverse proxy. This is most likely true for most
+  # valid certificate behind a reverse proxy. This is likely true for most
   # production environments and is required for proper federation, that is, this
   # will ensure the webfinger responses include `https:` in the URLs generated.
 
