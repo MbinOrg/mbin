@@ -27,12 +27,6 @@ class EntryVote extends Vote
     #[JoinColumn(name: 'entry_id', nullable: false, onDelete: 'CASCADE')]
     public ?Entry $entry = null;
 
-    #[Id]
-    #[GeneratedValue(strategy: 'AUTO')]
-    #[SequenceGenerator(sequenceName: 'entry_vote_id_seq')]
-    #[Column(type: 'integer')]
-    protected int $id;
-
     public function __construct(int $choice, User $user, ?Entry $entry)
     {
         parent::__construct($choice, $user, $entry->user);
