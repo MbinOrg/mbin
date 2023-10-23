@@ -8,7 +8,7 @@ Mbin is a modular, decentralized content aggregator and microblogging platform r
 communicate with many other ActivityPub services, including Kbin, Mastodon, Lemmy, Pleroma, Peertube. The initiative aims to
 promote a free and open internet.
 
-Unique features of Mbin are:
+Unique Features of Mbin:
 
 - Support of **all** ActivityPub Actor Types (including also "Service" accounts, which are robot accounts)
 - Tons of **GUI improvements**
