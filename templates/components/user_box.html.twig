@@ -5,7 +5,7 @@
                  width="100%"
                  class="cover"
                  src="{{ asset(user.cover.filePath)|imagine_filter('user_cover') }}"
-                 alt="{{ user.username }}">
+                 alt="{{ user.username ~' '~ 'cover'|trans|lower  }}">
         {% endif %}
         <div class="user-main" id="content">
             <div>
