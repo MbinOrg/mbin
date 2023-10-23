@@ -2,7 +2,7 @@ doctrine:
   dbal:
     url: "%env(resolve:DATABASE_URL)%"
     mapping_types:
-      enum: string
+      user_type: string
 
   orm:
     dql:
