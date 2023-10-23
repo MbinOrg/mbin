@@ -49,7 +49,7 @@ class ApHttpClient
     public function getActivityObject(string $url, bool $decoded = true): array|string|null
     {
         $resp = $this->cache->get('ap_'.hash('sha256', $url), function (ItemInterface $item) use ($url) {
-            $this->logger->debug("ApHttpClient:getActivityObject:url: {$url}");
+            $this->logger->info("ApHttpClient:getActivityObject:url: {$url}");
 
             $client = new CurlHttpClient();
             $r = $client->request('GET', $url, [
@@ -86,7 +86,7 @@ class ApHttpClient
         $resp = $this->cache->get(
             'wf_'.hash('sha256', $url),
             function (ItemInterface $item) use ($url) {
-                $this->logger->debug("ApHttpClient:getWebfingerObject:url: {$url}");
+                $this->logger->info("ApHttpClient:getWebfingerObject:url: {$url}");
 
                 try {
                     $client = new CurlHttpClient();
@@ -118,7 +118,7 @@ class ApHttpClient
         $resp = $this->cache->get(
             'ap_'.hash('sha256', $apProfileId),
             function (ItemInterface $item) use ($apProfileId) {
-                $this->logger->debug("ApHttpClient:getActorObject:url: {$apProfileId}");
+                $this->logger->info("ApHttpClient:getActorObject:url: {$apProfileId}");
 
                 try {
                     // Set-up request
@@ -171,8 +171,8 @@ class ApHttpClient
             return;
         }
 
-        $this->logger->debug("ApHttpClient:post:url: {$url}");
-        $this->logger->debug('ApHttpClient:post:body '.json_encode($body ?? []));
+        $this->logger->info("ApHttpClient:post:url: {$url}");
+        $this->logger->info('ApHttpClient:post:body '.json_encode($body ?? []));
 
         // Set-up request
         $client = new CurlHttpClient();

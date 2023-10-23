@@ -29,9 +29,9 @@ class SharedInboxController
             ]
         );
 
-        $this->logger->debug('SharedInboxController:request: '.$requestInfo['method'].' '.$requestInfo['uri']);
-        $this->logger->debug('SharedInboxController:headers: '.$request->headers);
-        $this->logger->debug('SharedInboxController:body: '.$request->getContent());
+        $this->logger->info('SharedInboxController:request: '.$requestInfo['method'].' '.$requestInfo['uri']);
+        $this->logger->info('SharedInboxController:headers: '.$request->headers);
+        $this->logger->info('SharedInboxController:body: '.$request->getContent());
 
         $this->bus->dispatch(
             new ActivityMessage(

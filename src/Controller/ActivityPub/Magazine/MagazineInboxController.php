@@ -27,9 +27,9 @@ class MagazineInboxController
             ]
         );
 
-        $this->logger->debug('MagazineInboxController:request: '.$requestInfo['method'].' '.$requestInfo['uri']);
-        $this->logger->debug('MagazineInboxController:headers: '.$request->headers);
-        $this->logger->debug('MagazineInboxController:content: '.$request->getContent());
+        $this->logger->info('MagazineInboxController:request: '.$requestInfo['method'].' '.$requestInfo['uri']);
+        $this->logger->info('MagazineInboxController:headers: '.$request->headers);
+        $this->logger->info('MagazineInboxController:content: '.$request->getContent());
 
         $this->bus->dispatch(
             new ActivityMessage(
