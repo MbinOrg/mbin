@@ -28,7 +28,7 @@ class PostCommentVote extends Vote
     public ?PostComment $comment = null;
 
     #[Id]
-    #[GeneratedValue(strategy: 'SEQUENCE')]
+    #[GeneratedValue(strategy: 'AUTO')]
     #[SequenceGenerator(sequenceName: 'post_comment_vote_id_seq')]
     #[Column(type: 'integer')]
     protected int $id;

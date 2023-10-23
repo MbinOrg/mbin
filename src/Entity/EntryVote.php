@@ -28,7 +28,7 @@ class EntryVote extends Vote
     public ?Entry $entry = null;
 
     #[Id]
-    #[GeneratedValue(strategy: 'SEQUENCE')]
+    #[GeneratedValue(strategy: 'AUTO')]
     #[SequenceGenerator(sequenceName: 'entry_vote_id_seq')]
     #[Column(type: 'integer')]
     protected int $id;

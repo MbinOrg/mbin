@@ -28,7 +28,7 @@ class EntryCommentVote extends Vote
     public ?EntryComment $comment;
 
     #[Id]
-    #[GeneratedValue(strategy: 'SEQUENCE')]
+    #[GeneratedValue(strategy: 'AUTO')]
     #[SequenceGenerator(sequenceName: 'entry_comment_vote_id_seq')]
     #[Column(type: 'integer')]
     protected int $id;
