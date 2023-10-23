@@ -61,18 +61,10 @@ mkdir -p storage/media storage/caddy_config storage/caddy_data
 sudo chown $USER:$USER storage/media storage/caddy_config storage/caddy_data
 ```
 
-### Configure `.env`
+### Configure `.env` and `compose.override.yml`
 
 1. Choose your Redis password, PostgreSQL password, RabbitMQ password, and Mercure password.
 2. Place them in the corresponding variables in both `.env` and `compose.override.yml`.
-3. Change the values in your `.env` file as follows (if you change the service names and the listening ports of the services in your `compose.yml`, update the following values correspondingly):
-
-```env
-REDIS_HOST=redis:6379
-POSTGRES_HOST=db:5432
-RABBITMQ_HOST=rabbitmq:5672
-MERCURE_HOST=www:80
-```
 
 ### Configure OAuth2 keys
 
