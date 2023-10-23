@@ -66,6 +66,9 @@ sudo chown $USER:$USER storage/media storage/caddy_config storage/caddy_data
 1. Choose your Redis password, PostgreSQL password, RabbitMQ password, and Mercure password.
 2. Place them in the corresponding variables in both `.env` and `compose.override.yml`.
 
+> **Note**
+> Ensure the `HTTPS` environmental variable is set to `TRUE` in `compose.override.yml` for the `php`, `messenger`, and `messenger_ap` containers **if your environment is using a valid certificate behind a reverse proxy**. This is likely true for most production environments and is required for proper federation, that is, this will ensure the webfinger responses include `https:` in the URLs generated.
+
 ### Configure OAuth2 keys
 
 1. Create an RSA key pair using OpenSSL:
