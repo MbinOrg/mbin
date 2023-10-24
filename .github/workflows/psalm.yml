@@ -24,8 +24,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Psalm Security Scan
-        uses: docker://ghcr.io/psalm/psalm-security-scan
+      - name: Psalm Security Scan by Mbin
+        uses: docker://ghcr.io/mbinorg/psalm-security-scan
 
       - name: Import Security Analysis results into GitHub Security Code Scanning
         uses: github/codeql-action/upload-sarif@v2
