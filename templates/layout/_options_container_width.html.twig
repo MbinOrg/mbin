@@ -1,0 +1,37 @@
+<div class="settings width-settings">
+    <a href="{{ path('theme_settings', {key: constant('App\\Controller\\User\\ThemeSettingsController::KBIN_CONTAINER_WIDTH'), value: 'max'}) }}"
+       class="link-muted font-size {{ app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_CONTAINER_WIDTH')) is same as 'max' ? 'active' : ''}}"
+       title="Max width"
+       aria-label="Max width"
+       rel="nofollow">
+        <i class="fa-solid fa-align-center"></i>
+    </a>
+    <a href="{{ path('theme_settings', {key: constant('App\\Controller\\User\\ThemeSettingsController::KBIN_CONTAINER_WIDTH'), value: '8k'}) }}"
+       class="link-muted font-size {{ app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_CONTAINER_WIDTH')) is same as '8k' ? 'active' : ''}}"
+       title="8k Width"
+       aria-label="8k Width"
+       rel="nofollow">
+        <i class="fa-solid fa-align-center"></i>
+    </a>
+    <a href="{{ path('theme_settings', {key: constant('App\\Controller\\User\\ThemeSettingsController::KBIN_CONTAINER_WIDTH'), value: '4k'}) }}"
+       class="link-muted font-size {{ app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_CONTAINER_WIDTH')) is same as '4k' ? 'active' : ''}}"
+       title="4k Width"
+       aria-label="4k Width"
+       rel="nofollow">
+        <i class="fa-solid fa-align-center"></i>
+    </a>
+    <a href="{{ path('theme_settings', {key: constant('App\\Controller\\User\\ThemeSettingsController::KBIN_CONTAINER_WIDTH'), value: '2k'}) }}"
+       class="link-muted font-size {{ app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_CONTAINER_WIDTH')) is same as '2k' ? 'active' : ''}}"
+       title="2k Width"
+       aria-label="2k Width"
+       rel="nofollow">
+        <i class="fa-solid fa-align-center"></i>
+    </a>
+    <a href="{{ path('theme_settings', {key: constant('App\\Controller\\User\\ThemeSettingsController::KBIN_CONTAINER_WIDTH'), value: '1080'}) }}"
+       class="link-muted font-size {{ app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_CONTAINER_WIDTH')) is null or app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_CONTAINER_WIDTH')) is same as '1080'? 'active' : ''}}"
+       title="1080 Width"
+       aria-label="1080 Width"
+       rel="nofollow">
+        <i class="fa-solid fa-align-center"></i>
+    </a>
+</div>

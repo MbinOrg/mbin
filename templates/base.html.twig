@@ -71,7 +71,10 @@
     }) }}" data-controller="kbin notifications">
 {% include 'layout/_header.html.twig' with {header_nav: block('header_nav')} %}
 <div id="middle" class="{%- block mainClass -%}page{%- endblock %}">
-    <div class="kbin-container">
+    <div class="kbin-container
+      {{ html_classes(app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_CONTAINER_WIDTH'))
+        ? 'width--'~app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_CONTAINER_WIDTH'))
+        : 'width--default') }}">
         <main id="main"
               data-controller="lightbox timeago"
               class="{{ html_classes({'view-compact': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_COMPACT')) is same as 'true'}) }}">

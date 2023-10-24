@@ -18,6 +18,7 @@ class ThemeSettingsController extends AbstractController
     public const POST_COMMENTS_VIEW = 'post_comments_view';
     public const KBIN_THEME = 'kbin_theme';
     public const KBIN_FONT_SIZE = 'kbin_font_size';
+    public const KBIN_CONTAINER_WIDTH = 'kbin_container_width';
     public const KBIN_ENTRIES_SHOW_USERS_AVATARS = 'kbin_entries_show_users_avatars';
     public const KBIN_ENTRIES_SHOW_MAGAZINES_ICONS = 'kbin_entries_show_magazines_icons';
     public const KBIN_ENTRIES_SHOW_THUMBNAILS = 'kbin_entries_show_thumbnails';
@@ -58,6 +59,7 @@ class ThemeSettingsController extends AbstractController
         self::POST_COMMENTS_VIEW,
         self::KBIN_THEME,
         self::KBIN_FONT_SIZE,
+        self::KBIN_CONTAINER_WIDTH,
         self::KBIN_ENTRIES_SHOW_USERS_AVATARS,
         self::KBIN_ENTRIES_SHOW_MAGAZINES_ICONS,
         self::KBIN_ENTRIES_SHOW_THUMBNAILS,
@@ -99,6 +101,11 @@ class ThemeSettingsController extends AbstractController
         '100',
         '120',
         '150',
+        'max',
+        '8k',
+        '4k',
+        '2k',
+        '1080',
     ];
 
     public function __invoke(string $key, string $value, Request $request): Response

@@ -10,6 +10,26 @@ body {
 .kbin-container {
   margin: 0 auto;
   max-width: 1360px;
+
+  &.width--max {
+    max-width: 100%;
+  }
+
+  &.width--8k {
+    max-width: 7120px;
+  }
+
+  &.width--4k {
+    max-width: 3536px;
+  }
+
+  &.width--2k {
+    max-width: 1488px;
+  }
+
+  &.width--1080 {
+    max-width: 1360px;
+  }
 }
 
 #middle {
