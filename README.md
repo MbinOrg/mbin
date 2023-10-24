@@ -83,13 +83,21 @@ Done!
 
 Requirements:
 
-- PHP 8.2 (increase `max_execution_time` to 60 seconds in: `/etc/php/8.2/fpm/php.ini` and restart the php8.2-fpm service)
+- PHP v8.2
 - NodeJS + Yarn
 - Redis
 - PostgreSQL
+- _Optionally:_ Mercure
 
 ---
 
+- Increase execution time in PHP config file: `/etc/php/8.2/fpm/php.ini`:
+
+```ini
+max_execution_time = 60
+```
+
+- Restart the PHP-FPM service: `sudo systemctl restart php8.2-fpm.service`
 - Connect to PostgreSQL using the postgres user:
 
 ```bash
@@ -105,11 +113,20 @@ sudo -u postgres createuser --createdb --createrole --pwprompt mbin
 - Correctly configured `.env` file (`cp .env.example .env`), these are only the changes you need to pay attention to:
 
 ```env
-APP_ENV=dev
+#Redis (without password)
+REDIS_DNS=redis://127.0.0.1:6379
 
+# Set App configs
+APP_ENV=dev
+APP_SECRET=427f5e2940e5b2472c1b44b2d06e0525
+
+# Configure PostgreSQL
 POSTGRES_DB=mbin
 POSTGRES_USER=mbin
 POSTGRES_PASSWORD=<password>
+
+# Set messenger to Doctrine (= PostgresQL DB)
+MESSENGER_TRANSPORT_DSN=doctrine://default
 ```
 
 - If you are using `127.0.0.1` to connect to the PostgreSQL server, edit the following file: `/etc/postgresql/<VERSION>/main/pg_hba.conf` and add:
@@ -133,7 +150,9 @@ Starting the server:
 6. Start Mbin: `symfony server:start`
 7. Go to: [http://127.0.0.1:8000](http://127.0.0.1:8000/)
 
-This will give you a minimal working frontend with PostgreSQL setup. Keep in mind: this will _not_ start federating, for that you also need to setup/configure: Redis, RabbitMQ and Mercure to test the full Mbin setup.
+This will give you a minimal working frontend with PostgreSQL setup. Keep in mind: this will _not_ start federating, for that you also need to setup Mercure to test the full Mbin setup.
+
+_Optionally:_ you could also setup RabbitMQ, but the Doctrine messenger configuration will be sufficient for local development.
 
 ### Linting
 
