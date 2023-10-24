@@ -133,6 +133,7 @@ Other important `.env` configs:
 KBIN_STORAGE_URL=https://domain.tld/media
 
 # Ubuntu 22.04 installs PostgreSQL v14 by default, Debian 12 PostgreSQL v15 is the default
+POSTGRES_VERSION=14
 
 # Configure email, eg. using SMTP
 MAILER_DSN=smtp://127.0.0.1:25?encryption=ssl&auth_mode=login&username=&password=
