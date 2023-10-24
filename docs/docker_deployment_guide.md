@@ -14,7 +14,7 @@ For bare metal see: [Admin Bare Metal Guide](./admin_guide.md).
 
 ### Docker Install
 
-The most convenient way to install docker is using the official [convenience script](https://github.com/docker/docs/blob/main/_includes/install-script.md)
+The most convenient way to install docker is using an official [convenience script](https://docs.docker.com/engine/install/ubuntu/#install-using-the-convenience-script)
 provided at [get.docker.com](https://get.docker.com/):
 
 ```bash
@@ -22,7 +22,7 @@ curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 ```
 
-Alternatively, you can follow the [Docker install documentation](https://docs.docker.com/engine/install/) for your platform.
+Alternatively, you can follow the official [Docker install documentation](https://docs.docker.com/engine/install/) for your platform.
 
 Once Docker is installed on your system, it is recommended to create a `docker` group and add it to your user:
 
@@ -133,7 +133,7 @@ Next, log in and create a magazine named "random" to which unclassified content 
 
 Add any auxiliary container as you want. For example, add a Nginx container as reverse proxy to provide HTTPS encryption.
 
-## Uploaded media files
+### Uploaded media files
 
 Uploaded media files (e.g. photos uploaded by users) will be stored on the host directory `storage/media`. They will be served by the Caddy web server in the `www` container as static files.
 
@@ -141,11 +141,11 @@ Make sure `KBIN_STORAGE_URL` in your `.env` configuration file is set to be `htt
 
 You can also serve those media files on another server by mirroring the files at `storage/media` and changing `KBIN_STORAGE_URL` correspondingly.
 
-## Filesystem ACL support
+### Filesystem ACL support
 
 The filesystem ACL is disabled by default, in the `mbin` image. You can set the environment variable `ENABLE_ACL=1` to enable it. Remember that not all filesystems support ACL. This will cause an error if you enable filesystem ACL for such filesystems.
 
-## Production
+## Run Production
 
 If you created the file `compose.override.yml` with your configs (`cp compose.prod.yml compose.override.yml`), running production would be the same command:
 
@@ -174,3 +174,7 @@ docker compose exec redis redis-cli
 docker exec -it container_id pg_dump -U kbin mbin > dump.sql
 docker compose exec -T database psql -U kbin mbin < dump.sql
 ```
+
+## See also
+
+- [Frequently Asked Questions]([../FAQ.md)
