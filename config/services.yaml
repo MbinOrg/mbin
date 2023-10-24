@@ -59,11 +59,8 @@ parameters:
   uploads_dir_name: "media"
   uploads_base_url: "/"
 
-  mercure_public_url: "%env(MERCURE_PUBLIC_URL)%"
-  mercure_subscriptions_token: "%env(MERCURE_JWT_SECRET)%"
-
-  cardano_wallet_url: "%env(CARDANO_WALLET_URL)%"
-  cardano_explorer_url: "%env(CARDANO_EXPLORER_URL)%"
+  mercure_public_url: '%env(MERCURE_PUBLIC_URL)%'
+  mercure_subscriptions_token: '%env(MERCURE_JWT_SECRET)%'
 
   sso_only_mode: "%env(bool:default::SSO_ONLY_MODE)%"
 
@@ -72,16 +69,14 @@ services:
     autowire: true
     autoconfigure: true
     bind:
-      $kbinDomain: "%kbin_domain%"
-      $html5Validation: "%html5_validation%"
-      $uploadedAssetsBaseUrl: "%uploads_base_url%"
-      $cardanoWalletUrl: "%cardano_wallet_url%"
-      $cardanoExplorerUrl: "%cardano_explorer_url%"
-      $mercurePublicUrl: "%mercure_public_url%"
-      $mercureSubscriptionsToken: "%mercure_subscriptions_token%"
-      $kbinApiItemsPerPage: "%kbin_api_items_per_page%"
-      $storageUrl: "%kbin_storage_url%"
-      $publicDir: "%kernel.project_dir%/public"
+      $kbinDomain: '%kbin_domain%'
+      $html5Validation: '%html5_validation%'
+      $uploadedAssetsBaseUrl: '%uploads_base_url%'
+      $mercurePublicUrl: '%mercure_public_url%'
+      $mercureSubscriptionsToken: '%mercure_subscriptions_token%'
+      $kbinApiItemsPerPage: '%kbin_api_items_per_page%'
+      $storageUrl: '%kbin_storage_url%'
+      $publicDir: '%kernel.project_dir%/public'
 
   kbin.s3_client:
     class: Aws\S3\S3Client
@@ -89,26 +84,11 @@ services:
       - version: "%amazon.s3.version%"
         region: "%amazon.s3.region%"
         endpoint: "%amazon.s3.endpoint%"
+        #use_path_style_endpoint: true
         credentials:
           key: "%amazon.s3.key%"
           secret: "%amazon.s3.secret%"
           #proxies: [ 'https://media.karab.in' ]
-
-  #  kbin.imagine.cache.resolver.amazon_s3:
-  #    class: Liip\ImagineBundle\Imagine\Cache\Resolver\AwsS3Resolver
-  #    arguments:
-  #      - "@kbin.s3_client"
-  #      - '%amazon.s3.bucket%'
-  #      - 'private'
-  #
-  #  kbin.imagine.psr_cache.resolver.amazon_s3.cache:
-  #    class: Liip\ImagineBundle\Imagine\Cache\Resolver\PsrCacheResolver
-  #    arguments:
-  #      - "@cache.app"
-  #      - "@kbin.imagine.cache.resolver.amazon_s3"
-  #      - { prefix: "amazon_s3" }
-  #    tags:
-  #      - { name: "liip_imagine.cache.resolver", resolver: "cached_s3_client" }
 
   App\:
     resource: "../src/"

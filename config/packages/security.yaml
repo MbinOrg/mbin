@@ -1,255 +1,293 @@
 security:
+  # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
+  password_hashers:
+    Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: "auto"
+    App\Entity\User:
+      algorithm: auto
+  # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+  providers:
+    app_user_provider:
+      entity:
+        class: App\Entity\User
+
+  enable_authenticator_manager: true
+
+  firewalls:
+    dev:
+      pattern: ^/(_(profiler|wdt)|css|images|js)/
+      security: false
+    api_token:
+      pattern: ^/token$
+      security: false
+    api:
+      pattern: ^/api
+      security: true
+      stateless: true
+      oauth2: true
+    image_resolver:
+      pattern: ^/media/cache/resolve
+      security: false
+    main:
+      lazy: true
+      provider: app_user_provider
+      custom_authenticators:
+        - App\Security\KbinAuthenticator
+        - App\Security\FacebookAuthenticator
+        - App\Security\GoogleAuthenticator
+        - App\Security\GithubAuthenticator
+        - App\Security\KeycloakAuthenticator
+      logout:
+        path: app_logout
+      user_checker: App\Security\UserChecker
+      remember_me:
+        secret: "%kernel.secret%"
+        lifetime: 604800
+        path: /
+      two_factor:
+        auth_form_path: 2fa_login
+        check_path: 2fa_login_check
+        enable_csrf: true
+        csrf_parameter: _csrf_token
+        csrf_token_id: 2fa
+
+  access_control:
+    # This makes the logout route accessible during two-factor authentication. Allows the user to
+    # cancel two-factor authentication, if they need to.
+    - { path: ^/logout, role: PUBLIC_ACCESS }
+    # This ensures that the form can only be accessed when two-factor authentication is in progress.
+    - { path: ^/2fa, role: IS_AUTHENTICATED_2FA_IN_PROGRESS }
+
+    - { path: ^/admin, roles: ROLE_ADMIN }
+    - { path: ^/authorize, roles: PUBLIC_ACCESS }
+    - { path: ^/token, roles: PUBLIC_ACCESS }
+    - { path: ^/api/doc, roles: PUBLIC_ACCESS }
+    - { path: ^/api/client, roles: PUBLIC_ACCESS }
+
+  role_hierarchy:
+    ROLE_OAUTH2_WRITE:
+      [
+        "ROLE_OAUTH2_ENTRY:CREATE",
+        "ROLE_OAUTH2_ENTRY:EDIT",
+        "ROLE_OAUTH2_ENTRY_COMMENT:CREATE",
+        "ROLE_OAUTH2_ENTRY_COMMENT:EDIT",
+        "ROLE_OAUTH2_POST:CREATE",
+        "ROLE_OAUTH2_POST:EDIT",
+        "ROLE_OAUTH2_POST_COMMENT:CREATE",
+        "ROLE_OAUTH2_POST_COMMENT:EDIT",
+      ]
+    ROLE_OAUTH2_DELETE:
+      [
+        "ROLE_OAUTH2_ENTRY:DELETE",
+        "ROLE_OAUTH2_ENTRY_COMMENT:DELETE",
+        "ROLE_OAUTH2_POST:DELETE",
+        "ROLE_OAUTH2_POST_COMMENT:DELETE",
+      ]
+    ROLE_OAUTH2_REPORT:
+      [
+        "ROLE_OAUTH2_ENTRY:REPORT",
+        "ROLE_OAUTH2_ENTRY_COMMENT:REPORT",
+        "ROLE_OAUTH2_POST:REPORT",
+        "ROLE_OAUTH2_POST_COMMENT:REPORT",
+      ]
+    ROLE_OAUTH2_VOTE:
+      [
+        "ROLE_OAUTH2_ENTRY:VOTE",
+        "ROLE_OAUTH2_ENTRY_COMMENT:VOTE",
+        "ROLE_OAUTH2_POST:VOTE",
+        "ROLE_OAUTH2_POST_COMMENT:VOTE",
+      ]
+    ROLE_OAUTH2_SUBSCRIBE:
+      [
+        "ROLE_OAUTH2_DOMAIN:SUBSCRIBE",
+        "ROLE_OAUTH2_MAGAZINE:SUBSCRIBE",
+        "ROLE_OAUTH2_USER:FOLLOW",
+      ]
+    ROLE_OAUTH2_BLOCK:
+      [
+        "ROLE_OAUTH2_DOMAIN:BLOCK",
+        "ROLE_OAUTH2_MAGAZINE:BLOCK",
+        "ROLE_OAUTH2_USER:BLOCK",
+      ]
+    ROLE_OAUTH2_DOMAIN:
+      ["ROLE_OAUTH2_DOMAIN:SUBSCRIBE", "ROLE_OAUTH2_DOMAIN:BLOCK"]
+    ROLE_OAUTH2_ENTRY:
+      [
+        "ROLE_OAUTH2_ENTRY:CREATE",
+        "ROLE_OAUTH2_ENTRY:EDIT",
+        "ROLE_OAUTH2_ENTRY:DELETE",
+        "ROLE_OAUTH2_ENTRY:VOTE",
+        "ROLE_OAUTH2_ENTRY:REPORT",
+      ]
+    ROLE_OAUTH2_ENTRY_COMMENT:
+      [
+        "ROLE_OAUTH2_ENTRY_COMMENT:CREATE",
+        "ROLE_OAUTH2_ENTRY_COMMENT:EDIT",
+        "ROLE_OAUTH2_ENTRY_COMMENT:DELETE",
+        "ROLE_OAUTH2_ENTRY_COMMENT:VOTE",
+        "ROLE_OAUTH2_ENTRY_COMMENT:REPORT",
+      ]
+    ROLE_OAUTH2_MAGAZINE:
+      ["ROLE_OAUTH2_MAGAZINE:SUBSCRIBE", "ROLE_OAUTH2_MAGAZINE:BLOCK"]
+    ROLE_OAUTH2_POST:
+      [
+        "ROLE_OAUTH2_POST:CREATE",
+        "ROLE_OAUTH2_POST:EDIT",
+        "ROLE_OAUTH2_POST:DELETE",
+        "ROLE_OAUTH2_POST:VOTE",
+        "ROLE_OAUTH2_POST:REPORT",
+      ]
+    ROLE_OAUTH2_POST_COMMENT:
+      [
+        "ROLE_OAUTH2_POST_COMMENT:CREATE",
+        "ROLE_OAUTH2_POST_COMMENT:EDIT",
+        "ROLE_OAUTH2_POST_COMMENT:DELETE",
+        "ROLE_OAUTH2_POST_COMMENT:VOTE",
+        "ROLE_OAUTH2_POST_COMMENT:REPORT",
+      ]
+    ROLE_OAUTH2_USER:
+      [
+        "ROLE_OAUTH2_USER:PROFILE",
+        "ROLE_OAUTH2_USER:MESSAGE",
+        "ROLE_OAUTH2_USER:NOTIFICATION",
+        "ROLE_OAUTH2_USER:OAUTH_CLIENTS",
+        "ROLE_OAUTH2_USER:FOLLOW",
+        "ROLE_OAUTH2_USER:BLOCK",
+      ]
+    "ROLE_OAUTH2_USER:PROFILE":
+      ["ROLE_OAUTH2_USER:PROFILE:READ", "ROLE_OAUTH2_USER:PROFILE:EDIT"]
+    "ROLE_OAUTH2_USER:MESSAGE":
+      ["ROLE_OAUTH2_USER:MESSAGE:READ", "ROLE_OAUTH2_USER:MESSAGE:CREATE"]
+    "ROLE_OAUTH2_USER:NOTIFICATION":
+      [
+        "ROLE_OAUTH2_USER:NOTIFICATION:READ",
+        "ROLE_OAUTH2_USER:NOTIFICATION:DELETE",
+      ]
+    "ROLE_OAUTH2_USER:OAUTH_CLIENTS":
+      [
+        "ROLE_OAUTH2_USER:OAUTH_CLIENTS:READ",
+        "ROLE_OAUTH2_USER:OAUTH_CLIENTS:EDIT",
+      ]
+    "ROLE_OAUTH2_MODERATE":
+      [
+        "ROLE_OAUTH2_MODERATE:ENTRY",
+        "ROLE_OAUTH2_MODERATE:ENTRY_COMMENT",
+        "ROLE_OAUTH2_MODERATE:POST",
+        "ROLE_OAUTH2_MODERATE:POST_COMMENT",
+        "ROLE_OAUTH2_MODERATE:MAGAZINE",
+        "ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN",
+      ]
+    "ROLE_OAUTH2_MODERATE:ENTRY":
+      [
+        "ROLE_OAUTH2_MODERATE:ENTRY:LANGUAGE",
+        "ROLE_OAUTH2_MODERATE:ENTRY:PIN",
+        "ROLE_OAUTH2_MODERATE:ENTRY:SET_ADULT",
+        "ROLE_OAUTH2_MODERATE:ENTRY:TRASH",
+      ]
+    "ROLE_OAUTH2_MODERATE:ENTRY_COMMENT":
+      [
+        "ROLE_OAUTH2_MODERATE:ENTRY_COMMENT:LANGUAGE",
+        "ROLE_OAUTH2_MODERATE:ENTRY_COMMENT:SET_ADULT",
+        "ROLE_OAUTH2_MODERATE:ENTRY_COMMENT:TRASH",
+      ]
+    "ROLE_OAUTH2_MODERATE:POST":
+      [
+        "ROLE_OAUTH2_MODERATE:POST:LANGUAGE",
+        "ROLE_OAUTH2_MODERATE:POST:PIN",
+        "ROLE_OAUTH2_MODERATE:POST:SET_ADULT",
+        "ROLE_OAUTH2_MODERATE:POST:TRASH",
+      ]
+    "ROLE_OAUTH2_MODERATE:POST_COMMENT":
+      [
+        "ROLE_OAUTH2_MODERATE:POST_COMMENT:LANGUAGE",
+        "ROLE_OAUTH2_MODERATE:POST_COMMENT:SET_ADULT",
+        "ROLE_OAUTH2_MODERATE:POST_COMMENT:TRASH",
+      ]
+    "ROLE_OAUTH2_MODERATE:MAGAZINE":
+      [
+        "ROLE_OAUTH2_MODERATE:MAGAZINE:BAN",
+        "ROLE_OAUTH2_MODERATE:MAGAZINE:LIST",
+        "ROLE_OAUTH2_MODERATE:MAGAZINE:REPORTS",
+        "ROLE_OAUTH2_MODERATE:MAGAZINE:TRASH:READ",
+      ]
+    "ROLE_OAUTH2_MODERATE:MAGAZINE:BAN":
+      [
+        "ROLE_OAUTH2_MODERATE:MAGAZINE:BAN:READ",
+        "ROLE_OAUTH2_MODERATE:MAGAZINE:BAN:CREATE",
+        "ROLE_OAUTH2_MODERATE:MAGAZINE:BAN:DELETE",
+      ]
+    "ROLE_OAUTH2_MODERATE:MAGAZINE:REPORTS":
+      [
+        "ROLE_OAUTH2_MODERATE:MAGAZINE:REPORTS:READ",
+        "ROLE_OAUTH2_MODERATE:MAGAZINE:REPORTS:ACTION",
+      ]
+    "ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN":
+      [
+        "ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN:CREATE",
+        "ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN:DELETE",
+        "ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN:UPDATE",
+        "ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN:THEME",
+        "ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN:MODERATORS",
+        "ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN:BADGES",
+        "ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN:TAGS",
+        "ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN:STATS",
+      ]
+    "ROLE_OAUTH2_ADMIN":
+      [
+        "ROLE_OAUTH2_ADMIN:ENTRY:PURGE",
+        "ROLE_OAUTH2_ADMIN:ENTRY_COMMENT:PURGE",
+        "ROLE_OAUTH2_ADMIN:POST:PURGE",
+        "ROLE_OAUTH2_ADMIN:POST_COMMENT:PURGE",
+        "ROLE_OAUTH2_ADMIN:MAGAZINE",
+        "ROLE_OAUTH2_ADMIN:USER",
+        "ROLE_OAUTH2_ADMIN:INSTANCE",
+        "ROLE_OAUTH2_ADMIN:FEDERATION",
+        "ROLE_OAUTH2_ADMIN:OAUTH_CLIENTS",
+      ]
+    "ROLE_OAUTH2_ADMIN:MAGAZINE":
+      [
+        "ROLE_OAUTH2_ADMIN:MAGAZINE:MOVE_ENTRY",
+        "ROLE_OAUTH2_ADMIN:MAGAZINE:PURGE",
+      ]
+    "ROLE_OAUTH2_ADMIN:USER":
+      [
+        "ROLE_OAUTH2_ADMIN:USER:BAN",
+        "ROLE_OAUTH2_ADMIN:USER:VERIFY",
+        "ROLE_OAUTH2_ADMIN:USER:DELETE",
+        "ROLE_OAUTH2_ADMIN:USER:PURGE",
+      ]
+    "ROLE_OAUTH2_ADMIN:INSTANCE":
+      [
+        "ROLE_OAUTH2_ADMIN:INSTANCE:STATS",
+        "ROLE_OAUTH2_ADMIN:INSTANCE:SETTINGS",
+        "ROLE_OAUTH2_ADMIN:INSTANCE:INFORMATION:EDIT",
+      ]
+    "ROLE_OAUTH2_ADMIN:INSTANCE:SETTINGS":
+      [
+        "ROLE_OAUTH2_ADMIN:INSTANCE:SETTINGS:READ",
+        "ROLE_OAUTH2_ADMIN:INSTANCE:SETTINGS:EDIT",
+      ]
+    "ROLE_OAUTH2_ADMIN:FEDERATION":
+      [
+        "ROLE_OAUTH2_ADMIN:FEDERATION:READ",
+        "ROLE_OAUTH2_ADMIN:FEDERATION:UPDATE",
+      ]
+    "ROLE_OAUTH2_ADMIN:OAUTH_CLIENTS":
+      [
+        "ROLE_OAUTH2_ADMIN:OAUTH_CLIENTS:READ",
+        "ROLE_OAUTH2_ADMIN:OAUTH_CLIENTS:REVOKE",
+      ]
+    # - { path: ^/admin, roles: ROLE_ADMIN }
+    # - { path: ^/profile, roles: ROLE_USER }
+
+when@test:
+  security:
     password_hashers:
-        App\Entity\User:
-            algorithm: auto
-
-    providers:
-        app_user_provider:
-            entity:
-                class: App\Entity\User
-
-    enable_authenticator_manager: true
-
-    firewalls:
-        dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
-            security: false
-        api_token:
-            pattern: ^/token$
-            security: false
-        api:
-            pattern:   ^/api
-            security: true
-            stateless: true
-            oauth2: true
-        image_resolver:
-            pattern: ^/media/cache/resolve
-            security: false
-        main:
-            lazy: true
-            provider: app_user_provider
-            custom_authenticators:
-                - App\Security\KbinAuthenticator
-                - App\Security\FacebookAuthenticator
-                - App\Security\GoogleAuthenticator
-                - App\Security\GithubAuthenticator
-                - App\Security\KeycloakAuthenticator
-            logout:
-                path: app_logout
-            user_checker: App\Security\UserChecker
-            remember_me:
-                secret: '%kernel.secret%'
-                lifetime: 604800
-                path: /
-            two_factor:
-                auth_form_path: 2fa_login
-                check_path: 2fa_login_check
-                enable_csrf: true
-                csrf_parameter: _csrf_token
-                csrf_token_id: 2fa
-
-    access_control:
-        # This makes the logout route accessible during two-factor authentication. Allows the user to
-        # cancel two-factor authentication, if they need to.
-        - { path: ^/logout, role: PUBLIC_ACCESS }
-        # This ensures that the form can only be accessed when two-factor authentication is in progress.
-        - { path: ^/2fa, role: IS_AUTHENTICATED_2FA_IN_PROGRESS }
-        
-        - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/authorize, roles: PUBLIC_ACCESS }
-        - { path: ^/token, roles: PUBLIC_ACCESS }
-        - { path: ^/api/doc, roles: PUBLIC_ACCESS }
-        - { path: ^/api/client, roles: PUBLIC_ACCESS }
-
-    role_hierarchy:
-        ROLE_OAUTH2_WRITE: [
-            'ROLE_OAUTH2_ENTRY:CREATE',
-            'ROLE_OAUTH2_ENTRY:EDIT',
-            'ROLE_OAUTH2_ENTRY_COMMENT:CREATE',
-            'ROLE_OAUTH2_ENTRY_COMMENT:EDIT',
-            'ROLE_OAUTH2_POST:CREATE',
-            'ROLE_OAUTH2_POST:EDIT',
-            'ROLE_OAUTH2_POST_COMMENT:CREATE',
-            'ROLE_OAUTH2_POST_COMMENT:EDIT'
-        ]
-        ROLE_OAUTH2_DELETE: [
-            'ROLE_OAUTH2_ENTRY:DELETE',
-            'ROLE_OAUTH2_ENTRY_COMMENT:DELETE',
-            'ROLE_OAUTH2_POST:DELETE',
-            'ROLE_OAUTH2_POST_COMMENT:DELETE'
-        ]
-        ROLE_OAUTH2_REPORT: [
-            'ROLE_OAUTH2_ENTRY:REPORT',
-            'ROLE_OAUTH2_ENTRY_COMMENT:REPORT',
-            'ROLE_OAUTH2_POST:REPORT',
-            'ROLE_OAUTH2_POST_COMMENT:REPORT'
-        ]
-        ROLE_OAUTH2_VOTE: [
-            'ROLE_OAUTH2_ENTRY:VOTE',
-            'ROLE_OAUTH2_ENTRY_COMMENT:VOTE',
-            'ROLE_OAUTH2_POST:VOTE',
-            'ROLE_OAUTH2_POST_COMMENT:VOTE',
-        ]
-        ROLE_OAUTH2_SUBSCRIBE: [
-            'ROLE_OAUTH2_DOMAIN:SUBSCRIBE',
-            'ROLE_OAUTH2_MAGAZINE:SUBSCRIBE',
-            'ROLE_OAUTH2_USER:FOLLOW'
-        ]
-        ROLE_OAUTH2_BLOCK: [
-            'ROLE_OAUTH2_DOMAIN:BLOCK',
-            'ROLE_OAUTH2_MAGAZINE:BLOCK',
-            'ROLE_OAUTH2_USER:BLOCK'
-        ]
-        ROLE_OAUTH2_DOMAIN: [
-            'ROLE_OAUTH2_DOMAIN:SUBSCRIBE',
-            'ROLE_OAUTH2_DOMAIN:BLOCK'
-        ]
-        ROLE_OAUTH2_ENTRY: [
-            'ROLE_OAUTH2_ENTRY:CREATE',
-            'ROLE_OAUTH2_ENTRY:EDIT',
-            'ROLE_OAUTH2_ENTRY:DELETE',
-            'ROLE_OAUTH2_ENTRY:VOTE',
-            'ROLE_OAUTH2_ENTRY:REPORT'
-        ]
-        ROLE_OAUTH2_ENTRY_COMMENT: [
-            'ROLE_OAUTH2_ENTRY_COMMENT:CREATE',
-            'ROLE_OAUTH2_ENTRY_COMMENT:EDIT',
-            'ROLE_OAUTH2_ENTRY_COMMENT:DELETE',
-            'ROLE_OAUTH2_ENTRY_COMMENT:VOTE',
-            'ROLE_OAUTH2_ENTRY_COMMENT:REPORT'
-        ]
-        ROLE_OAUTH2_MAGAZINE: [
-            'ROLE_OAUTH2_MAGAZINE:SUBSCRIBE',
-            'ROLE_OAUTH2_MAGAZINE:BLOCK'
-        ]
-        ROLE_OAUTH2_POST: [
-            'ROLE_OAUTH2_POST:CREATE',
-            'ROLE_OAUTH2_POST:EDIT',
-            'ROLE_OAUTH2_POST:DELETE',
-            'ROLE_OAUTH2_POST:VOTE',
-            'ROLE_OAUTH2_POST:REPORT'
-        ]
-        ROLE_OAUTH2_POST_COMMENT: [
-            'ROLE_OAUTH2_POST_COMMENT:CREATE',
-            'ROLE_OAUTH2_POST_COMMENT:EDIT',
-            'ROLE_OAUTH2_POST_COMMENT:DELETE',
-            'ROLE_OAUTH2_POST_COMMENT:VOTE',
-            'ROLE_OAUTH2_POST_COMMENT:REPORT'
-        ]
-        ROLE_OAUTH2_USER: [
-            'ROLE_OAUTH2_USER:PROFILE',
-            'ROLE_OAUTH2_USER:MESSAGE',
-            'ROLE_OAUTH2_USER:NOTIFICATION',
-            'ROLE_OAUTH2_USER:OAUTH_CLIENTS',
-            'ROLE_OAUTH2_USER:FOLLOW',
-            'ROLE_OAUTH2_USER:BLOCK'
-        ]
-        "ROLE_OAUTH2_USER:PROFILE": [
-            'ROLE_OAUTH2_USER:PROFILE:READ',
-            'ROLE_OAUTH2_USER:PROFILE:EDIT'
-        ]
-        "ROLE_OAUTH2_USER:MESSAGE": [
-            'ROLE_OAUTH2_USER:MESSAGE:READ',
-            'ROLE_OAUTH2_USER:MESSAGE:CREATE'
-        ]
-        "ROLE_OAUTH2_USER:NOTIFICATION": [
-            'ROLE_OAUTH2_USER:NOTIFICATION:READ',
-            'ROLE_OAUTH2_USER:NOTIFICATION:DELETE'
-        ]
-        "ROLE_OAUTH2_USER:OAUTH_CLIENTS": [
-            'ROLE_OAUTH2_USER:OAUTH_CLIENTS:READ',
-            'ROLE_OAUTH2_USER:OAUTH_CLIENTS:EDIT'
-        ]
-        "ROLE_OAUTH2_MODERATE": [
-            'ROLE_OAUTH2_MODERATE:ENTRY',
-            'ROLE_OAUTH2_MODERATE:ENTRY_COMMENT',
-            'ROLE_OAUTH2_MODERATE:POST',
-            'ROLE_OAUTH2_MODERATE:POST_COMMENT',
-            'ROLE_OAUTH2_MODERATE:MAGAZINE',
-            'ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN'
-        ]
-        "ROLE_OAUTH2_MODERATE:ENTRY": [
-            'ROLE_OAUTH2_MODERATE:ENTRY:LANGUAGE',
-            'ROLE_OAUTH2_MODERATE:ENTRY:PIN',
-            'ROLE_OAUTH2_MODERATE:ENTRY:SET_ADULT',
-            'ROLE_OAUTH2_MODERATE:ENTRY:TRASH'
-        ]
-        "ROLE_OAUTH2_MODERATE:ENTRY_COMMENT": [
-            'ROLE_OAUTH2_MODERATE:ENTRY_COMMENT:LANGUAGE',
-            'ROLE_OAUTH2_MODERATE:ENTRY_COMMENT:SET_ADULT',
-            'ROLE_OAUTH2_MODERATE:ENTRY_COMMENT:TRASH'
-        ]
-        "ROLE_OAUTH2_MODERATE:POST": [
-            'ROLE_OAUTH2_MODERATE:POST:LANGUAGE',
-            'ROLE_OAUTH2_MODERATE:POST:PIN',
-            'ROLE_OAUTH2_MODERATE:POST:SET_ADULT',
-            'ROLE_OAUTH2_MODERATE:POST:TRASH'
-        ]
-        "ROLE_OAUTH2_MODERATE:POST_COMMENT": [
-            'ROLE_OAUTH2_MODERATE:POST_COMMENT:LANGUAGE',
-            'ROLE_OAUTH2_MODERATE:POST_COMMENT:SET_ADULT',
-            'ROLE_OAUTH2_MODERATE:POST_COMMENT:TRASH'
-        ]
-        "ROLE_OAUTH2_MODERATE:MAGAZINE": [
-            'ROLE_OAUTH2_MODERATE:MAGAZINE:BAN',
-            'ROLE_OAUTH2_MODERATE:MAGAZINE:LIST',
-            'ROLE_OAUTH2_MODERATE:MAGAZINE:REPORTS',
-            'ROLE_OAUTH2_MODERATE:MAGAZINE:TRASH:READ'
-        ]
-        "ROLE_OAUTH2_MODERATE:MAGAZINE:BAN": [
-            'ROLE_OAUTH2_MODERATE:MAGAZINE:BAN:READ',
-            'ROLE_OAUTH2_MODERATE:MAGAZINE:BAN:CREATE',
-            'ROLE_OAUTH2_MODERATE:MAGAZINE:BAN:DELETE'
-        ]
-        "ROLE_OAUTH2_MODERATE:MAGAZINE:REPORTS": [
-            'ROLE_OAUTH2_MODERATE:MAGAZINE:REPORTS:READ',
-            'ROLE_OAUTH2_MODERATE:MAGAZINE:REPORTS:ACTION'
-        ]
-        "ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN": [
-            'ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN:CREATE',
-            'ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN:DELETE',
-            'ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN:UPDATE',
-            'ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN:THEME',
-            'ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN:MODERATORS',
-            'ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN:BADGES',
-            'ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN:TAGS',
-            'ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN:STATS'
-        ]
-        "ROLE_OAUTH2_ADMIN": [
-            'ROLE_OAUTH2_ADMIN:ENTRY:PURGE',
-            'ROLE_OAUTH2_ADMIN:ENTRY_COMMENT:PURGE',
-            'ROLE_OAUTH2_ADMIN:POST:PURGE',
-            'ROLE_OAUTH2_ADMIN:POST_COMMENT:PURGE',
-            'ROLE_OAUTH2_ADMIN:MAGAZINE',
-            'ROLE_OAUTH2_ADMIN:USER',
-            'ROLE_OAUTH2_ADMIN:INSTANCE',
-            'ROLE_OAUTH2_ADMIN:FEDERATION',
-            'ROLE_OAUTH2_ADMIN:OAUTH_CLIENTS'
-        ]
-        "ROLE_OAUTH2_ADMIN:MAGAZINE": [
-            'ROLE_OAUTH2_ADMIN:MAGAZINE:MOVE_ENTRY',
-            'ROLE_OAUTH2_ADMIN:MAGAZINE:PURGE'
-        ]
-        "ROLE_OAUTH2_ADMIN:USER": [
-            'ROLE_OAUTH2_ADMIN:USER:BAN',
-            'ROLE_OAUTH2_ADMIN:USER:VERIFY',
-            'ROLE_OAUTH2_ADMIN:USER:DELETE',
-            'ROLE_OAUTH2_ADMIN:USER:PURGE'
-        ]
-        "ROLE_OAUTH2_ADMIN:INSTANCE": [
-            'ROLE_OAUTH2_ADMIN:INSTANCE:STATS',
-            'ROLE_OAUTH2_ADMIN:INSTANCE:SETTINGS',
-            'ROLE_OAUTH2_ADMIN:INSTANCE:INFORMATION:EDIT'
-        ]
-        "ROLE_OAUTH2_ADMIN:INSTANCE:SETTINGS": [
-            'ROLE_OAUTH2_ADMIN:INSTANCE:SETTINGS:READ',
-            'ROLE_OAUTH2_ADMIN:INSTANCE:SETTINGS:EDIT'
-        ]
-        "ROLE_OAUTH2_ADMIN:FEDERATION": [
-            'ROLE_OAUTH2_ADMIN:FEDERATION:READ',
-            'ROLE_OAUTH2_ADMIN:FEDERATION:UPDATE'
-        ]
-        "ROLE_OAUTH2_ADMIN:OAUTH_CLIENTS": [
-            'ROLE_OAUTH2_ADMIN:OAUTH_CLIENTS:READ',
-            'ROLE_OAUTH2_ADMIN:OAUTH_CLIENTS:REVOKE'
-        ]
+      # By default, password hashers are resource intensive and take time. This is
+      # important to generate secure password hashes. In tests however, secure hashes
+      # are not important, waste resources and increase test times. The following
+      # reduces the work factor to the lowest possible values.
+      Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+        algorithm: auto
+        cost: 4 # Lowest possible value for bcrypt
+        time_cost: 3 # Lowest possible value for argon
+        memory_cost: 10 # Lowest possible value for argon

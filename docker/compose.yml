@@ -3,9 +3,9 @@ version: "3.9"
 services:
   www:
     build:
-      context: ../../
-      dockerfile: docker/v2/Dockerfile
-    image: kbin
+      context: ../
+      dockerfile: docker/Dockerfile
+    image: mbin
     restart: unless-stopped
     command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
     healthcheck:
@@ -17,8 +17,8 @@ services:
       - ./storage/caddy_data:/data
       - ./storage/media:/var/www/kbin/public/media
     environment:
-      - SERVER_NAME=:80  # the addresss that the web server binds
-      - PHP_FASTCGI_HOST=php:9000  # caddy forward traffic to this host via fastcgi
+      - SERVER_NAME=:80 # the addresss that the web server binds
+      - PHP_FASTCGI_HOST=php:9000 # caddy forward traffic to this host via fastcgi
       - MERCURE_PUBLISHER_JWT_KEY=$MERCURE_JWT_SECRET
       - MERCURE_SUBSCRIBER_JWT_KEY=$MERCURE_JWT_SECRET
     depends_on:
@@ -26,13 +26,17 @@ services:
 
   php:
     build:
-      context: ../../
-      dockerfile: docker/v2/Dockerfile
-    image: kbin
+      context: ../
+      dockerfile: docker/Dockerfile
+    image: mbin
     restart: unless-stopped
     command: php-fpm
     healthcheck:
-      test: ["CMD-SHELL", "REQUEST_METHOD=GET SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping cgi-fcgi -bind -connect localhost:9000 || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "REQUEST_METHOD=GET SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping cgi-fcgi -bind -connect localhost:9000 || exit 1",
+        ]
     volumes:
       - ./storage/media:/var/www/kbin/public/media
     env_file:
@@ -44,9 +48,9 @@ services:
 
   messenger:
     build:
-      context: ../../
-      dockerfile: docker/v2/Dockerfile
-    image: kbin
+      context: ../
+      dockerfile: docker/Dockerfile
+    image: mbin
     restart: unless-stopped
     command: bin/console messenger:consume async --time-limit=3600
     healthcheck:
@@ -62,9 +66,9 @@ services:
 
   messenger_ap:
     build:
-      context: ../../
-      dockerfile: docker/v2/Dockerfile
-    image: kbin
+      context: ../
+      dockerfile: docker/Dockerfile
+    image: mbin
     restart: unless-stopped
     command: bin/console messenger:consume async_ap --time-limit=3600
     healthcheck:
@@ -85,10 +89,10 @@ services:
     volumes:
       - ./storage/redis:/data
     healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
+      test: ["CMD", "redis-cli", "ping"]
 
   db:
-    image: postgres:13-alpine
+    image: postgres:${POSTGRES_VERSION:-13}-alpine
     restart: unless-stopped
     volumes:
       - ./storage/postgres:/var/lib/postgresql/data
@@ -108,9 +112,20 @@ services:
 
   # Add your favorite reverse proxy (e.g nginx) which accept incoming HTTPS
   # traffic and forward to http://www:80
-  # nginx:
+  #nginx:
   #  image: nginx
   #  ports:
   #    - 443:443
   #  volumes:
   #    - ./nginx.conf:/etc/nginx/nginx.conf
+
+  # Example of a SMTP docker service
+  # More info: https://hub.docker.com/r/ixdotai/smtp
+  #mailserver:
+  #  image: ixdotai/smtp:latest
+  #  environment:
+  #    - SMARTHOST_ADDRESS=mail.mysmtp.com
+  #    - SMARTHOST_PORT=587
+  #    - SMARTHOST_USER=myuser
+  #    - SMARTHOST_PASSWORD=secret
+  #    - SMARTHOST_ALIASES=*.mysmtp.com

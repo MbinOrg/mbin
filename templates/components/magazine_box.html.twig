@@ -10,8 +10,9 @@
     <div class="row">
         {% if computed.magazine.icon and showCover %}
             <figure>
-                <img src="{{ asset(computed.magazine.icon.filePath) | imagine_filter('post_thumb') }}"
-                     alt="{{ computed.magazine.name ~ ' ' ~ 'icon'|trans }}" width="260">
+                <img class="image-inline"
+                     src="{{ asset(computed.magazine.icon.filePath) | imagine_filter('post_thumb') }}"
+                     alt="{{ computed.magazine.name ~ ' ' ~ 'icon'|trans|lower }}" width="260">
             </figure>
         {% endif %}
         <header>

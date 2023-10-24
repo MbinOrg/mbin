@@ -67,10 +67,11 @@ readonly class SignatureValidator
         $actorUrl = \is_array($payload['actor']) ? $payload['actor'][0] : $payload['actor'];
 
         $user = $this->activityPubManager->findActorOrCreate($actorUrl);
+        if (!empty($user)) {
+            $pkey = openssl_pkey_get_public($this->client->getActorObject($user->apProfileId)['publicKey']['publicKeyPem']);
 
-        $pkey = openssl_pkey_get_public($this->client->getActorObject($user->apProfileId)['publicKey']['publicKeyPem']);
-
-        $this->verifySignature($pkey, $signature, $headers, $request['uri'], $body);
+            $this->verifySignature($pkey, $signature, $headers, $request['uri'], $body);
+        }
     }
 
     private function validateUrl(string $url): void
@@ -125,7 +126,7 @@ readonly class SignatureValidator
             throw new InvalidApSignatureException('Signature of request could not be verified.');
         }
 
-        $this->logger->info('Successfully verified signature of incoming AP request.', ['digest' => $digest]);
+        $this->logger->debug('Successfully verified signature of incoming AP request.', ['digest' => $digest]);
     }
 
     private static function headersToSigningString($headers): string

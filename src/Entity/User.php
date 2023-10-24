@@ -88,10 +88,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
     public ?array $fields = null;
     #[Column(type: 'string', nullable: true)]
-    public ?string $cardanoWalletId = null;
-    #[Column(type: 'string', nullable: true)]
-    public ?string $cardanoWalletAddress = null;
-    #[Column(type: 'string', nullable: true)]
     public ?string $oauthGithubId = null;
     #[Column(type: 'string', nullable: true)]
     public ?string $oauthGoogleId = null;
@@ -233,12 +229,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         string $email,
         string $username,
         string $password,
+        string $type,
         string $apProfileId = null,
         string $apId = null
     ) {
         $this->email = $email;
         $this->password = $password;
         $this->username = $username;
+        $this->type = $type;
         $this->apProfileId = $apProfileId;
         $this->apId = $apId;
         $this->moderatorTokens = new ArrayCollection();

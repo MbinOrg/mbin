@@ -4,9 +4,10 @@
    class="user-inline"
    title="{{ user.username|username(true) }}">
     {% if user.avatar and showAvatar %}
-        <img width="30" height="30"
+        <img class="image-inline"
+             width="30" height="30"
              src="{{ asset(user.avatar.filePath) | imagine_filter('avatar_thumb') }}"
-             alt="{{ user.username ~ ' avatar' }}">
+             alt="{{ user.username ~' '~ 'avatar'|trans|lower }}">
     {% endif %}
     {{ user.apPreferredUsername ?? user.username|username -}}
 </a>
