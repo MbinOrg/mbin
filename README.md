@@ -105,11 +105,17 @@ sudo -u postgres createuser --createdb --createrole --pwprompt mbin
 - Correctly configured `.env` file (`cp .env.example .env`), these are only the changes you need to pay attention to:
 
 ```env
+# Set APP configs
 APP_ENV=dev
+APP_SECRET=427f5e2940e5b2472c1b44b2d06e0525
 
+# Configure PostgreSQL
 POSTGRES_DB=mbin
 POSTGRES_USER=mbin
 POSTGRES_PASSWORD=<password>
+
+# Set messenger to Doctrine (=PostgresQL)
+MESSENGER_TRANSPORT_DSN=doctrine://default
 ```
 
 - If you are using `127.0.0.1` to connect to the PostgreSQL server, edit the following file: `/etc/postgresql/<VERSION>/main/pg_hba.conf` and add:
