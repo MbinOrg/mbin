@@ -65,26 +65,28 @@ class UserFollowersController
     }
 
     #[ArrayShape([
-     '@context' => 'string',
-     'type' => 'string',
-     'partOf' => 'string',
-     'id' => 'string',
-     'totalItems' => 'int',
-     'orderedItems' => 'array',
- ])]
+        '@context' => 'string',
+        'type' => 'string',
+        'partOf' => 'string',
+        'id' => 'string',
+        'totalItems' => 'int',
+        'orderedItems' => 'array',
+    ])]
     private function getCollectionItems(User $user, int $page, string $type): array
     {
         $routeName = "ap_user_{$type}";
+        $items = [];
 
         if (ActivityPubActivityInterface::FOLLOWING === $type) {
             $actors = $this->userRepository->findFollowing($page, $user);
+            foreach ($actors as $actor) {
+                $items[] = $this->manager->getActorProfileId($actor->following);
+            }
         } else {
             $actors = $this->userRepository->findFollowers($page, $user);
-        }
-
-        $items = [];
-        foreach ($actors as $actor) {
-            $items[] = $this->manager->getActorProfileId($actor);
+            foreach ($actors as $actor) {
+                $items[] = $this->manager->getActorProfileId($actor->follower);
+            }
         }
 
         return $this->collectionItemsWrapper->build(

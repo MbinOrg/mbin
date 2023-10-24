@@ -51,9 +51,15 @@ if [ "$1" == "php-fpm" ] || [ "$1" == "php" ] || [ "$1" == "bin/console" ]; then
         bin/console doctrine:migrations:migrate --no-interaction
     fi
 
-    if [ $ENABLE_ACL = 1 ]; then
-        setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX var
-        setfacl -dR -m u:www-data:rwX -m u:"$(whoami)":rwX var
+    if [ -n "$ENABLE_ACL" ]; then
+        if [ "$ENABLE_ACL" -eq 1 ]; then
+            setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX var
+            setfacl -dR -m u:www-data:rwX -m u:"$(whoami)":rwX var
+        else
+            echo "Filesystem ACL is disabled."
+        fi
+    else
+        echo "ENABLE_ACL is not set!"
     fi
 fi
 

@@ -8,18 +8,22 @@ liip_imagine:
     entry_thumb:
       quality: 90
       filters:
+        auto_rotate: ~
         thumbnail: { size: [ 380, 380 ], mode: inset }
     avatar_thumb:
       quality: 90
       filters:
+        auto_rotate: ~
         thumbnail: { size: [ 100, 100 ], mode: fixed }
     post_thumb:
       quality: 90
       filters:
+        auto_rotate: ~
         thumbnail: { size: [ 600, 500 ], mode: inset }
     user_cover:
       quality: 90
       filters:
+        auto_rotate: ~
         thumbnail: { size: [ 1500, 500 ], mode: fixed }
 
   data_loader: kbin.liip_loader

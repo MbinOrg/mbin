@@ -1,11 +1,12 @@
 <div{{ attributes.defaults({class: 'user-box'}) }}>
     <div class="{{ html_classes({'with-cover': user.cover, 'with-avatar': user.avatar }) }}">
         {% if user.cover %}
-            <img height="220"
+            <img class="image-inline"
+                 height="220"
                  width="100%"
                  class="cover"
                  src="{{ asset(user.cover.filePath)|imagine_filter('user_cover') }}"
-                 alt="{{ user.username }}">
+                 alt="{{ user.username ~' '~ 'cover'|trans|lower  }}">
         {% endif %}
         <div class="user-main" id="content">
             <div>

@@ -20,6 +20,7 @@ This guide is aimed for Debian / Ubuntu distribution servers, but it could run o
 
 ```bash
 sudo apt-get update && sudo apt-get upgrade -y
+sudo apt-get install software-properties-common python3-launchpadlib acl -y
 sudo add-apt-repository ppa:ondrej/php -y
 sudo apt-get install git redis-server postgresql postgresql-contrib nginx php8.2-common php8.2-fpm php8.2-cli php8.2-amqp php8.2-pgsql php8.2-gd php8.2-curl php8.2-simplexml php8.2-dom php8.2-xml php8.2-redis php8.2-mbstring php8.2-intl unzip -y
 sudo curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
@@ -131,20 +132,15 @@ Other important `.env` configs:
 # Configure your media URL correctly:
 KBIN_STORAGE_URL=https://domain.tld/media
 
-# Ubuntu installs PostgreSQL v14 by default
+# Ubuntu 22.04 installs PostgreSQL v14 by default, Debian 12 PostgreSQL v15 is the default
 POSTGRES_VERSION=14
 
 # Configure email, eg. using SMTP
-MAILER_DSN=smtp://localhost:25?encryption=ssl&auth_mode=login&username=&password=
-# But if already have Postfix configured, just use:
+MAILER_DSN=smtp://127.0.0.1:25?encryption=ssl&auth_mode=login&username=&password=
+# But if already have Postfix configured, just use sendmail:
 MAILER_DSN=sendmail://default
-# Or Gmail
-MAILER_DSN=gmail://username:password@localhost?encryption=tls&auth_mode=oauth
-
-# Mercure (assuming you are using Mercure Caddy on port 3000)
-MERCURE_HOST=localhost:3000
-MERCURE_URL=http://${MERCURE_HOST}/.well-known/mercure
-MERCURE_PUBLIC_URL=https://${KBIN_DOMAIN}/.well-known/mercure
+# Or Gmail (%40 = @-sign) use:
+MAILER_DSN=gmail+smtp://user%40domain.com:pass@default
 ```
 
 OAuth2 keys for API credential grants:

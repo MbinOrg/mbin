@@ -112,9 +112,20 @@ services:
 
   # Add your favorite reverse proxy (e.g nginx) which accept incoming HTTPS
   # traffic and forward to http://www:80
-  # nginx:
+  #nginx:
   #  image: nginx
   #  ports:
   #    - 443:443
   #  volumes:
   #    - ./nginx.conf:/etc/nginx/nginx.conf
+
+  # Example of a SMTP docker service
+  # More info: https://hub.docker.com/r/ixdotai/smtp
+  #mailserver:
+  #  image: ixdotai/smtp:latest
+  #  environment:
+  #    - SMARTHOST_ADDRESS=mail.mysmtp.com
+  #    - SMARTHOST_PORT=587
+  #    - SMARTHOST_USER=myuser
+  #    - SMARTHOST_PASSWORD=secret
+  #    - SMARTHOST_ALIASES=*.mysmtp.com
