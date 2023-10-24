@@ -351,6 +351,13 @@
         border: var(--kbin-avatar-border);
       }
     }
+
+    &.width-settings {
+      display: flex;
+      @include media-breakpoint-down(lg) {
+        display: none;
+      }
+    }
   }
 
   .settings-list {
