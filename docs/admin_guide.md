@@ -20,9 +20,9 @@ This guide is aimed for Debian / Ubuntu distribution servers, but it could run o
 
 ```bash
 sudo apt-get update && sudo apt-get upgrade -y
+sudo apt-get install software-properties-common python3-launchpadlib -y
 sudo add-apt-repository ppa:ondrej/php -y
 sudo apt-get install git redis-server postgresql postgresql-contrib nginx php8.2-common php8.2-fpm php8.2-cli php8.2-amqp php8.2-pgsql php8.2-gd php8.2-curl php8.2-simplexml php8.2-dom php8.2-xml php8.2-redis php8.2-mbstring php8.2-intl unzip -y
-sudo curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
 sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
 ```
 
