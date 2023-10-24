@@ -62,7 +62,7 @@ We highly **recommend** to setup RabbitMQ on your Mbin instance, but RabbitMQ is
 
 ## How do I know Redis is working?
 
-Execute: `sudo redis-cli ping` expect a PONG back. 
+Execute: `sudo redis-cli ping` expect a PONG back. If it requires authentication, add the following flags: `--askpass` to the `redis-cli` command.
 
 Ensure you do not see any connection errors in your `var/log/prod.log` file.
 
@@ -104,6 +104,6 @@ You can find the Mbin logging in the `var/log/` directory from the root folder o
 
 ## Should I run development mode?
 
-**NO!** Try to avoid running development mode when you are hosting our own _public_ instance. Running in development mode can cause sensitive data to be leaked, such as secret keys or passwords (eg. via development console).
+**NO!** Try to avoid running development mode when you are hosting our own _public_ instance. Running in development mode can cause sensitive data to be leaked, such as secret keys or passwords (eg. via development console). There is no log rotation enabled in development mode and development mode will log a lot of messages to disk (incl. stacktraces).
 
-That said, if you are experiencing serious issues with your instance which you cannot resolve by looking at the log file (`prod.log`) or server logs, you can try running in development mode to debug the problem or issue you are having.
+That said, if you are _experiencing serious issues_ with your instance which you cannot resolve by looking at the log file (`prod.log`) or server logs, you can try running in development mode to debug the problem or issue you are having. Enabling development mode **during development** is also very useful.

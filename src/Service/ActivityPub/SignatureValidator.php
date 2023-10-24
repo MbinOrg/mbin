@@ -126,7 +126,7 @@ readonly class SignatureValidator
             throw new InvalidApSignatureException('Signature of request could not be verified.');
         }
 
-        $this->logger->info('Successfully verified signature of incoming AP request.', ['digest' => $digest]);
+        $this->logger->debug('Successfully verified signature of incoming AP request.', ['digest' => $digest]);
     }
 
     private static function headersToSigningString($headers): string
