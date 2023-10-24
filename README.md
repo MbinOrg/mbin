@@ -1,10 +1,10 @@
-# Mbin - Fork of /kbin
+# Mbin
 
 Mbin is a fork of kbin, community-focused. Feel free to discuss on [Matrix](https://matrix.to/#/#mbin:melroy.org) and to create Pull Requests.
 
 **Important:** Mbin is focused on what the community wants, pull requests can be merged by any repo member. Discussions take place on [Matrix](https://matrix.to/#/#mbin:melroy.org) then _consensus_ has to be reached by the community. If approved by the community, no additional reviews are required on the PR. It's built entirely on trust.
 
-Mbin is a modular, decentralized content aggregator and microblogging platform running on the Fediverse network. It can
+Mbin is a decentralized content aggregator, voting, discussion and microblogging platform running on the fediverse network. It can
 communicate with many other ActivityPub services, including Kbin, Mastodon, Lemmy, Pleroma, Peertube. The initiative aims to
 promote a free and open internet.
 
@@ -71,7 +71,8 @@ Done!
 ## Documentation
 
 - [User Guide](docs/user_guide.md)
-- [Admin Guide](docs/admin_guide.md)
+- [Admin Bare Metal/VM Guide](docs/admin_guide.md)
+- [Admin Docker Guide](docs/docker_deployment_guide.md)
 - [Frequently Asked Questions (FAQ)](FAQ.md)
 - [Mbin REST API Swagger Docs](https://kbin.melroy.org/api/docs)
 - [Mbin ActivityPub Reference](https://fedidevs.org/projects/kbin/)
@@ -82,18 +83,20 @@ Done!
 
 Requirements:
 
-- PHP 8.2
+- PHP 8.2 (increase `max_execution_time` to 60 seconds in: `/etc/php/8.2/fpm/php.ini` and restart the php8.2-fpm service)
 - NodeJS + Yarn
 - Redis
 - PostgreSQL
 
-Connect to PostgreSQL using the postgres user:
+---
+
+- Connect to PostgreSQL using the postgres user:
 
 ```bash
 sudo -u postgres psql
 ```
 
-Create new mbin database user:
+- Create new mbin database user:
 
 ```sql
 sudo -u postgres createuser --createdb --createrole --pwprompt mbin
@@ -109,7 +112,7 @@ POSTGRES_USER=mbin
 POSTGRES_PASSWORD=<password>
 ```
 
-If you are using `127.0.0.1` to connect to the PostgreSQL server, edit the following file: `/etc/postgresql/<VERSION>/main/pg_hba.conf` and add:
+- If you are using `127.0.0.1` to connect to the PostgreSQL server, edit the following file: `/etc/postgresql/<VERSION>/main/pg_hba.conf` and add:
 
 ```conf
 local   mbin            mbin                                    md5
@@ -129,6 +132,8 @@ Starting the server:
 5. Clear cache: `APP_ENV=dev APP_DEBUG=1 php bin/console cache:clear -n`
 6. Start Mbin: `symfony server:start`
 7. Go to: [http://127.0.0.1:8000](http://127.0.0.1:8000/)
+
+This will give you a minimal working frontend with PostgreSQL setup. Keep in mind: this will _not_ start federating, for that you also need to setup/configure: Redis, RabbitMQ and Mercure to test the full Mbin setup.
 
 ### Linting
 
