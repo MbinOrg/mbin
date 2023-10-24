@@ -33,11 +33,32 @@ If you have a firewall installed (or you're behind a NAT), be sure to open port 
 
 ## Install NodeJS & Yarn (frontend tools)
 
-```bash
-curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
-# Or use NodeJS LTS
-# curl -sL https://deb.nodesource.com/setup_lts.x | sudo bash -
+1. Prepare & download keyring:
 
+```bash
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl gnupg
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+```
+
+2. Setup deb repository:
+
+```bash
+NODE_MAJOR=20
+echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
+```
+
+3. Update and install NodeJS:
+
+```bash
+sudo apt-get update
+sudo apt-get install nodejs -y
+```
+
+Install Yarn:
+
+```bash
 curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | sudo tee /usr/share/keyrings/yarnkey.gpg >/dev/null
 echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 sudo apt-get update && sudo apt-get install nodejs yarn
