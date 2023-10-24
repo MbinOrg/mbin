@@ -132,20 +132,14 @@ Other important `.env` configs:
 # Configure your media URL correctly:
 KBIN_STORAGE_URL=https://domain.tld/media
 
-# Ubuntu installs PostgreSQL v14 by default, Debian 12 v15
-POSTGRES_VERSION=14
+# Ubuntu 22.04 installs PostgreSQL v14 by default, Debian 12 PostgreSQL v15 is the default
 
 # Configure email, eg. using SMTP
-MAILER_DSN=smtp://localhost:25?encryption=ssl&auth_mode=login&username=&password=
-# But if already have Postfix configured, just use:
+MAILER_DSN=smtp://127.0.0.1:25?encryption=ssl&auth_mode=login&username=&password=
+# But if already have Postfix configured, just use sendmail:
 MAILER_DSN=sendmail://default
-# Or Gmail
-MAILER_DSN=gmail://username:password@localhost?encryption=tls&auth_mode=oauth
-
-# Mercure (assuming you are using Mercure Caddy on port 3000)
-MERCURE_HOST=localhost:3000
-MERCURE_URL=http://${MERCURE_HOST}/.well-known/mercure
-MERCURE_PUBLIC_URL=https://${KBIN_DOMAIN}/.well-known/mercure
+# Or Gmail (%40 = @-sign) use:
+MAILER_DSN=gmail+smtp://user%40domain.com:pass@default
 ```
 
 OAuth2 keys for API credential grants:
