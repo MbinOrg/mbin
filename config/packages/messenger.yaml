@@ -1,37 +1,37 @@
 framework:
-  messenger:
-    # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
-    failure_transport: failed
+    messenger:
+        # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
+        failure_transport: failed
 
-    transports:
-      # https://symfony.com/doc/current/messenger.html#transport-configuration
-      sync: "sync://"
-      async:
-        dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
-        retry_strategy:
-          max_retries: 0
-          delay: 1800000
-          multiplier: 2
-          max_delay: 0
-        serializer: messenger.transport.symfony_serializer
-      async_ap:
-        dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
-        retry_strategy:
-          max_retries: 0
-          delay: 1800000
-          multiplier: 2
-          max_delay: 0
-        serializer: messenger.transport.symfony_serializer
-      failed:
-        dsn: "doctrine://default?queue_name=failed"
-        serializer: messenger.transport.symfony_serializer
+        transports:
+            # https://symfony.com/doc/current/messenger.html#transport-configuration
+            sync: "sync://"
+            async:
+                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                retry_strategy:
+                    max_retries: 0
+                    delay: 1800000
+                    multiplier: 2
+                    max_delay: 0
+                serializer: messenger.transport.symfony_serializer
+            async_ap:
+                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                retry_strategy:
+                    max_retries: 0
+                    delay: 1800000
+                    multiplier: 2
+                    max_delay: 0
+                serializer: messenger.transport.symfony_serializer
+            failed:
+                dsn: "doctrine://default?queue_name=failed"
+                serializer: messenger.transport.symfony_serializer
 
-    routing:
-      # Route your messages to the transports
-      App\Message\Contracts\AsyncMessageInterface: async
-      App\Message\Contracts\AsyncApMessageInterface: async_ap
-      # Consider adding SendEmail from Mailer via async messenger as well:
-      #Symfony\Component\Mailer\Messenger\SendEmailMessage: async
+        routing:
+            # Route your messages to the transports
+            App\Message\Contracts\AsyncMessageInterface: async
+            App\Message\Contracts\AsyncApMessageInterface: async_ap
+            # Consider adding SendEmail from Mailer via async messenger as well:
+            #Symfony\Component\Mailer\Messenger\SendEmailMessage: async
 # when@test:
 #    framework:
 #        messenger:
