@@ -177,4 +177,4 @@ docker compose exec -T database psql -U kbin mbin < dump.sql
 
 ## See also
 
-- [Frequently Asked Questions]([../FAQ.md)
+- [Frequently Asked Questions](../FAQ.md)
