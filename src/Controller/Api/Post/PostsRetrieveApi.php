@@ -512,7 +512,7 @@ class PostsRetrieveApi extends PostsBaseApi
         $criteria->perPage = self::constrainPerPage($request->getCurrentRequest()->get('perPage', PostRepository::PER_PAGE));
         $criteria->favourite = true;
 
-        $this->logger->info(var_export($criteria, true));
+        $this->logger->debug(var_export($criteria, true));
 
         $posts = $repository->findByCriteria($criteria);
 

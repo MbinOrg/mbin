@@ -27,9 +27,9 @@ class UserInboxController
             ]
         );
 
-        $this->logger->info('UserInboxController:request: '.$requestInfo['method'].' '.$requestInfo['uri']);
-        $this->logger->info('UserInboxController:headers: '.$request->headers);
-        $this->logger->info('UserInboxController:content: '.$request->getContent());
+        $this->logger->debug('UserInboxController:request: '.$requestInfo['method'].' '.$requestInfo['uri']);
+        $this->logger->debug('UserInboxController:headers: '.$request->headers);
+        $this->logger->debug('UserInboxController:content: '.$request->getContent());
 
         $this->bus->dispatch(
             new ActivityMessage(
