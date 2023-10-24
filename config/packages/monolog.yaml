@@ -6,13 +6,14 @@ when@dev:
   monolog:
     handlers:
       main:
-        type: stream
+        type: rotating_file
         path: "%kernel.logs_dir%/%kernel.environment%.log"
         # Or use: "debug" instead of "info" for more log (debug) messages
         level: info
         channels: ["!event"]
-        # Enable full stacktrace
+        # Enable full stacktrace, set this to false, to disable stacktraces
         include_stacktraces: true
+        max_files: 10
       # uncomment to get logging in your browser
       # you may have to allow bigger header sizes in your Web server configuration
       #firephp:
@@ -44,13 +45,13 @@ when@prod:
   monolog:
     handlers:
       main:
-        type: rotating_file
+        type: fingers_crossed
         action_level: error
         handler: nested
         buffer_size: 50 # How many messages should be saved? Prevent memory leaks
-        max_files: 15
       nested:
         type: rotating_file
+        max_files: 7
         path: "%kernel.logs_dir%/%kernel.environment%.log"
         level: debug
         formatter: monolog.formatter.json
