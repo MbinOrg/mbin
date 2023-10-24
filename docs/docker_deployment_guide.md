@@ -1,22 +1,9 @@
-# Docker Deployment Guide (Alternative)
-
-## System Requirements
-
-- Docker Engine
-- Docker Compose V2
-
-  > If you are using Compose V1, replace `docker compose` with `docker-compose` in those commands below.
-
 # Admin Docker Guide
-
-**Docker guide is still WIP. Not all the steps have been fully verified yet.**
 
 For bare metal see: [Admin Bare Metal Guide](./admin_guide.md).
 
 > **Note**
-> /kbin is still in the early stages of development.
-
-_Note:_ This guide is using the [v2 docker files](https://codeberg.org/Kbin/kbin-core/src/branch/develop/docker/v2).
+> Mbin is still in development.
 
 ## System Requirements
 
@@ -44,83 +31,81 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 ```
 
-## Kbin Installation
+## Mbin Installation
 
 ### Preparation
 
 Clone git repository:
 
 ```bash
-git clone https://codeberg.org/Kbin/kbin-core.git
-cd kbin-core
+git clone https://github.com/MbinOrg/mbin.git
+cd mbin
 ```
 
 Build the Docker image:
 
-> **Note** 
-> If you're using a version of Docker Engine earlier than 23.0, run `export DOCKER_BUILDKIT=1`, prior to building the image.  This does not apply to users running Docker Desktop.  More info can be found [here](https://docs.docker.com/build/buildkit/#getting-started)
+> **Note**
+> If you're using a version of Docker Engine earlier than 23.0, run `export DOCKER_BUILDKIT=1`, prior to building the image. This does not apply to users running Docker Desktop. More info can be found [here](https://docs.docker.com/build/buildkit/#getting-started)
 
 ```bash
-docker build -t kbin -f docker/v2/Dockerfile .
+docker build -t mbin -f docker/Dockerfile .
 ```
 
 Create config files and storage directories:
 
 ```bash
-cd docker/v2
-cp ../../.env.example_v2 .env
-cp docker-compose.prod.yml docker-compose.override.yml
+cd docker
+cp ../.env.example_docker .env
+cp compose.prod.yml compose.override.yml
 mkdir -p storage/media storage/caddy_config storage/caddy_data
-sudo chown 1000:82 storage/media storage/caddy_config storage/caddy_data
+sudo chown $USER:$USER storage/media storage/caddy_config storage/caddy_data
 ```
 
-### Configure `.env`
+### Configure `.env` and `compose.override.yml`
 
 1. Choose your Redis password, PostgreSQL password, RabbitMQ password, and Mercure password.
-2. Place them in the corresponding variables in both `.env` and `docker-compose.override.yml`.
-3. Change the values in your `.env` file as followings. (If you change the service names and the listening ports of the services in your `docker-compose.yml`, update the following values correspondingly.)
-  
-  ```env
-  REDIS_HOST=redis:6379
-  POSTGRES_HOST=db:5432
-  RABBITMQ_HOST=rabbitmq:5672
-  MERCURE_HOST=www:80
-  ```
+2. Place them in the corresponding variables in both `.env` and `compose.override.yml`.
+
+> **Note**
+> Ensure the `HTTPS` environmental variable is set to `TRUE` in `compose.override.yml` for the `php`, `messenger`, and `messenger_ap` containers **if your environment is using a valid certificate behind a reverse proxy**. This is likely true for most production environments and is required for proper federation, that is, this will ensure the webfinger responses include `https:` in the URLs generated.
 
 ### Configure OAuth2 keys
 
 1. Create an RSA key pair using OpenSSL:
 
-  ```bash
-  mkdir ./config/oauth2/
-  # If you protect the key with a passphrase, make sure to remember it!
-  # You will need it later
-  openssl genrsa -des3 -out ./config/oauth2/private.pem 4096
-  openssl rsa -in ./config/oauth2/private.pem --outform PEM -pubout -out ./config/oauth2/public.pem
-  ```
+```bash
+# Replace <mbin_dir> with Mbin's root directory
+mkdir <mbin_dir>/config/oauth2/
+# If you protect the key with a passphrase, make sure to remember it!
+# You will need it later
+openssl genrsa -des3 -out ./config/oauth2/private.pem 4096
+openssl rsa -in ./config/oauth2/private.pem --outform PEM -pubout -out ./config/oauth2/public.pem
+```
 
 2. Generate a random hex string for the OAuth2 encryption key:
 
-  ```bash
-  openssl rand -hex 16
-  ```
+```bash
+openssl rand -hex 16
+```
 
 3. Add the public and private key paths to `.env`:
 
-  ```env
-  OAUTH_PRIVATE_KEY=%kernel.project_dir%/config/oauth2/private.pem
-  OAUTH_PUBLIC_KEY=%kernel.project_dir%/config/oauth2/public.pem
-  OAUTH_PASSPHRASE=<Your (optional) passphrase from above here>
-  OAUTH_ENCRYPTION_KEY=<Hex string generated in previous step>
-  ```
+```env
+OAUTH_PRIVATE_KEY=%kernel.project_dir%/config/oauth2/private.pem
+OAUTH_PUBLIC_KEY=%kernel.project_dir%/config/oauth2/public.pem
+OAUTH_PASSPHRASE=<Your (optional) passphrase from above here>
+OAUTH_ENCRYPTION_KEY=<Hex string generated in previous step>
+```
 
 ### Running the containers
 
-By default `docker compose` will execute the `docker-compose.yml` and `docker-compose.override.yml` files.
+By default `docker compose` will execute the `compose.yml` and `compose.override.yml` files.
 
 Run the container in the background (`-d` means detached, but this can also be omitted for testing):
 
 ```bash
+# Replace <mbin_dir> with Mbin's root directory
+cd <mbin_dir>/docker
 docker compose up -d
 ```
 
@@ -129,7 +114,7 @@ See your running containers via: `docker ps`.
 Then, you should be able to access the new instance via [http://localhost](http://localhost).  
 You can also access RabbitMQ management UI via [http://localhost:15672](http://localhost:15672).
 
-### Kbin first setup
+### Mbin first setup
 
 Create new admin user (without email verification), please change the `username`, `email` and `password` below:
 
@@ -144,7 +129,7 @@ docker compose exec php bin/console kbin:ap:keys:update
 
 Next, log in and create a magazine named "random" to which unclassified content from the fediverse will flow.
 
-### Add auxiliary containers to `docker-compose.yml`
+### Add auxiliary containers to `compose.yml`
 
 Add any auxiliary container as you want. For example, add a Nginx container as reverse proxy to provide HTTPS encryption.
 
@@ -158,11 +143,11 @@ You can also serve those media files on another server by mirroring the files at
 
 ## Filesystem ACL support
 
-The filesystem ACL is disabled by default, in the `kbin` image. You can set the environment variable `ENABLE_ACL=1` to enable it. Remember that not all filesystems support ACL. This will cause an error if you enable filesystem ACL for such filesystems.
+The filesystem ACL is disabled by default, in the `mbin` image. You can set the environment variable `ENABLE_ACL=1` to enable it. Remember that not all filesystems support ACL. This will cause an error if you enable filesystem ACL for such filesystems.
 
 ## Production
 
-If you created the file `docker-compose.override.yml` with your configs (`cp docker-compose.prod.yml docker-compose.override.yml`), running production would be the same command:
+If you created the file `compose.override.yml` with your configs (`cp compose.prod.yml compose.override.yml`), running production would be the same command:
 
 ```bash
 docker compose up -d
@@ -186,6 +171,6 @@ docker compose exec redis redis-cli
 ## Backup and restore
 
 ```bash
-docker exec -it container_id pg_dump -U kbin kbin > dump.sql
-docker compose exec -T database psql -U kbin kbin < dump.sql
+docker exec -it container_id pg_dump -U kbin mbin > dump.sql
+docker compose exec -T database psql -U kbin mbin < dump.sql
 ```

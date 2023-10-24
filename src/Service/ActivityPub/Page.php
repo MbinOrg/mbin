@@ -33,64 +33,68 @@ class Page
     public function create(array $object): ActivityPubActivityInterface
     {
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
-        if ($actor->isBanned) {
-            throw new \Exception('User is banned.');
-        }
+        if (!empty($actor)) {
+            if ($actor->isBanned) {
+                throw new \Exception('User is banned.');
+            }
 
-        $current = $this->repository->findByObjectId($object['id']);
-        if ($current) {
-            return $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
-        }
+            $current = $this->repository->findByObjectId($object['id']);
+            if ($current) {
+                return $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
+            }
 
-        if (\is_string($object['to'])) {
-            $object['to'] = [$object['to']];
-        }
+            if (\is_string($object['to'])) {
+                $object['to'] = [$object['to']];
+            }
 
-        if (\is_string($object['cc'])) {
-            $object['cc'] = [$object['cc']];
-        }
+            if (\is_string($object['cc'])) {
+                $object['cc'] = [$object['cc']];
+            }
 
-        $dto = new EntryDto();
-        $dto->magazine = $this->magazineRepository->findByApGroupProfileId(
-            array_merge($object['to'], $object['cc'])
-        ) ?? $this->magazineRepository->findOneByName(
-            'random'
-        );
-        $dto->title = $object['name'];
-        $dto->apId = $object['id'];
+            $dto = new EntryDto();
+            $dto->magazine = $this->magazineRepository->findByApGroupProfileId(
+                array_merge($object['to'], $object['cc'])
+            ) ?? $this->magazineRepository->findOneByName(
+                'random'
+            );
+            $dto->title = $object['name'];
+            $dto->apId = $object['id'];
 
-        if (
-            (isset($object['attachment']) || isset($object['image']))
-            && $image = $this->activityPubManager->handleImages($object['attachment'])
-        ) {
-            $dto->image = $this->imageFactory->createDto($image);
-        }
+            if (
+                (isset($object['attachment']) || isset($object['image']))
+                && $image = $this->activityPubManager->handleImages($object['attachment'])
+            ) {
+                $dto->image = $this->imageFactory->createDto($image);
+            }
 
-        $dto->body = !empty($object['content']) ? $this->markdownConverter->convert($object['content']) : null;
-        $dto->visibility = $this->getVisibility($object, $actor);
-        $this->handleUrl($dto, $object);
-        $this->handleDate($dto, $object['published']);
-        if (isset($object['sensitive'])) {
-            $this->handleSensitiveMedia($dto, $object['sensitive']);
-        }
+            $dto->body = !empty($object['content']) ? $this->markdownConverter->convert($object['content']) : null;
+            $dto->visibility = $this->getVisibility($object, $actor);
+            $this->handleUrl($dto, $object);
+            $this->handleDate($dto, $object['published']);
+            if (isset($object['sensitive'])) {
+                $this->handleSensitiveMedia($dto, $object['sensitive']);
+            }
 
-        if (isset($object['sensitive']) && true === $object['sensitive']) {
-            $dto->isAdult = true;
-        }
+            if (isset($object['sensitive']) && true === $object['sensitive']) {
+                $dto->isAdult = true;
+            }
 
-        if (!empty($object['language'])) {
-            $dto->lang = $object['language']['identifier'];
-        } elseif (!empty($object['contentMap'])) {
-            $dto->lang = array_keys($object['contentMap'])[0];
+            if (!empty($object['language'])) {
+                $dto->lang = $object['language']['identifier'];
+            } elseif (!empty($object['contentMap'])) {
+                $dto->lang = array_keys($object['contentMap'])[0];
+            } else {
+                $dto->lang = $this->settingsManager->get('KBIN_DEFAULT_LANG');
+            }
+
+            return $this->entryManager->create(
+                $dto,
+                $actor,
+                false
+            );
         } else {
-            $dto->lang = $this->settingsManager->get('KBIN_DEFAULT_LANG');
+            throw new \Exception('Actor could not be found for entry.');
         }
-
-        return $this->entryManager->create(
-            $dto,
-            $actor,
-            false
-        );
     }
 
     private function getVisibility(array $object, User $actor): string
@@ -125,9 +129,9 @@ class Page
                     fn ($val) => \in_array($val['type'], ['Link'])
                 );
 
-                if (\is_array($link)) {
+                if (\is_array($link) && !empty($link[0]) && isset($link[0]['href'])) {
                     $dto->url = $link[0]['href'];
-                } else {
+                } elseif (\is_array($link) && isset($link['href'])) {
                     $dto->url = $link['href'];
                 }
             }
@@ -147,7 +151,7 @@ class Page
 
     private function handleSensitiveMedia(PostDto|PostCommentDto|EntryCommentDto|EntryDto $dto, string|bool $sensitive): void
     {
-        if (true === $sensitive || 'true' === $sensitive) {
+        if (true === filter_var($sensitive, FILTER_VALIDATE_BOOLEAN)) {
             $dto->isAdult = true;
         }
     }

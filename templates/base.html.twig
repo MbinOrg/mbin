@@ -14,7 +14,7 @@
     <meta property="og:type" content="article">
     <meta property="og:title" content="{{ block('title')|trim }}">
     <meta property="og:description" content="{{ block('description')|trim }}">
-    <meta property="og:image" content="{% block image %}{{ absolute_url(asset('kbin-og.png')) }}{% endblock %}">
+    <meta property="og:image" content="{% block image %}{{ absolute_url(asset('mbin-og.png')) }}{% endblock %}">
 
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     <link rel="apple-touch-icon" href="{{ asset('assets/icons/apple-touch-icon.png') }}">
@@ -84,7 +84,8 @@
         </aside>
     </div>
 </div>
-{% include 'layout/_footer.html.twig' %}
+
+{% include 'layout/_footer.html.twig' with {inSidebar: true} %}
 {% include 'layout/_topbar.html.twig' %}
 <div id="popover" class="popover js-popover section section--small" role="dialog"></div>
 <div id="scroll-top" data-controller="scroll-top" style="display: none;" data-action="click->scroll-top#scrollTop">

@@ -88,10 +88,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
     public ?array $fields = null;
     #[Column(type: 'string', nullable: true)]
-    public ?string $cardanoWalletId = null;
-    #[Column(type: 'string', nullable: true)]
-    public ?string $cardanoWalletAddress = null;
-    #[Column(type: 'string', nullable: true)]
     public ?string $oauthGithubId = null;
     #[Column(type: 'string', nullable: true)]
     public ?string $oauthGoogleId = null;
@@ -131,8 +127,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     public bool $isVerified = false;
     #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
     public bool $isDeleted = false;
-    #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
-    public bool $isBot = false;
     #[Column(type: 'text', nullable: true)]
     public ?string $customCss = null;
     #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
@@ -228,17 +222,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     private array $totpBackupCodes = [];
     #[OneToMany(mappedBy: 'user', targetEntity: OAuth2UserConsent::class, orphanRemoval: true)]
     private Collection $oAuth2UserConsents;
+    #[Column(type: 'string', nullable: false)]
+    public string $type;
 
     public function __construct(
         string $email,
         string $username,
         string $password,
+        string $type,
         string $apProfileId = null,
         string $apId = null
     ) {
         $this->email = $email;
         $this->password = $password;
         $this->username = $username;
+        $this->type = $type;
         $this->apProfileId = $apProfileId;
         $this->apId = $apId;
         $this->moderatorTokens = new ArrayCollection();

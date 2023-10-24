@@ -34,7 +34,7 @@ class PersonFactory
         $person = array_merge(
             $person ?? [], [
                 'id' => $this->getActivityPubId($user),
-                'type' => 'Person',
+                'type' => $user->type,
                 'name' => $user->username,
                 'preferredUsername' => $user->username,
                 'inbox' => $this->urlGenerator->generate(

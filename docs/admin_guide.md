@@ -1,14 +1,12 @@
 # Admin Bare Metal/VM Guide
 
-Below is a step-by-step guide of the process for creating your own /kbin instance from the moment a new VPS/VM is created or directly on bare-metal.  
+Below is a step-by-step guide of the process for creating your own Mbin instance from the moment a new VPS/VM is created or directly on bare-metal.  
 This is a preliminary outline that will help you launch an instance for your own needs.
 
-For Docker see: [Admin Deployment Guide](./docker_deployment_guide.md).
+For Docker see: [Admin Docker Deployment Guide](./docker_deployment_guide.md).
 
 > **Note**
-> /kbin is still in the early stages of development.
-
-If you would like to support the project, you can register using the following [affiliate link](https://hetzner.cloud/?ref=8tSPCw0qqIwl).
+> Mbin is still in development.
 
 This guide is aimed for Debian / Ubuntu distribution servers, but it could run on any modern Linux distro. This guide will however uses the `apt` commands.
 
@@ -22,6 +20,7 @@ This guide is aimed for Debian / Ubuntu distribution servers, but it could run o
 
 ```bash
 sudo apt-get update && sudo apt-get upgrade -y
+sudo apt-get install software-properties-common python3-launchpadlib acl -y
 sudo add-apt-repository ppa:ondrej/php -y
 sudo apt-get install git redis-server postgresql postgresql-contrib nginx php8.2-common php8.2-fpm php8.2-cli php8.2-amqp php8.2-pgsql php8.2-gd php8.2-curl php8.2-simplexml php8.2-dom php8.2-xml php8.2-redis php8.2-mbstring php8.2-intl unzip -y
 sudo curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
@@ -30,9 +29,7 @@ sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=compose
 
 ## Firewall
 
-```bash
-// todo
-```
+If you have a firewall installed (or you're behind a NAT), be sure to open port `443` for the web server. Mbin should run behind a reverse proxy like Nginx.
 
 ## Install NodeJS & Yarn (frontend tools)
 
@@ -65,7 +62,7 @@ sudo chown kbin:www-data /var/www/kbin
 ## Generate Secrets
 
 > **Note**
-> This will generate several valid tokens for the kbin setup, you will need quite a few.
+> This will generate several valid tokens for the Mbin setup, you will need quite a few.
 
 ```bash
 for counter in {1..2}; do node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"; done && for counter in {1..3}; do node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"; done
@@ -77,7 +74,7 @@ for counter in {1..2}; do node -e "console.log(require('crypto').randomBytes(16)
 
 ```bash
 cd /var/www/kbin
-git clone https://codeberg.org/Kbin/kbin-core.git .
+git clone https://github.com/MbinOrg/mbin.git .
 ```
 
 ### Configure `public/media` folder
@@ -107,12 +104,12 @@ sudo setfacl -dR -m u:"$HTTPDUSER":rwX -m u:$(whoami):rwX var
 sudo setfacl -R -m u:"$HTTPDUSER":rwX -m u:$(whoami):rwX var
 ```
 
-### The `.env` file
+### The dot env file
 
-Make a copy of the `.env.example_v2` the and edit the `.env` configure file:
+Make a copy of the `.env.example` the and edit the `.env` configure file:
 
 ```
-cp .env.example_v2 .env
+cp .env.example .env
 nano .env
 ```
 
@@ -135,20 +132,15 @@ Other important `.env` configs:
 # Configure your media URL correctly:
 KBIN_STORAGE_URL=https://domain.tld/media
 
-# Ubuntu installs PostgreSQL v14 by default
+# Ubuntu 22.04 installs PostgreSQL v14 by default, Debian 12 PostgreSQL v15 is the default
 POSTGRES_VERSION=14
 
 # Configure email, eg. using SMTP
-MAILER_DSN=smtp://localhost:25?encryption=ssl&auth_mode=login&username=&password=
-# But if already have Postfix configured, just use:
+MAILER_DSN=smtp://127.0.0.1:25?encryption=ssl&auth_mode=login&username=&password=
+# But if already have Postfix configured, just use sendmail:
 MAILER_DSN=sendmail://default
-# Or Gmail
-MAILER_DSN=gmail://username:password@localhost?encryption=tls&auth_mode=oauth
-
-# Mercure (assuming you are using Mercure Caddy on port 3000)
-MERCURE_HOST=localhost:3000
-MERCURE_URL=http://${MERCURE_HOST}/.well-known/mercure
-MERCURE_PUBLIC_URL=https://${KBIN_DOMAIN}/.well-known/mercure
+# Or Gmail (%40 = @-sign) use:
+MAILER_DSN=gmail+smtp://user%40domain.com:pass@default
 ```
 
 OAuth2 keys for API credential grants:
@@ -399,7 +391,7 @@ gzip_types
         font/opentype;
 ```
 
-#### Kbin Server Block
+#### Mbin Nginx Server Block
 
 ```bash
 sudo nano /etc/nginx/sites-available/kbin.conf
@@ -437,7 +429,7 @@ server {
     add_header X-Frame-Options "DENY" always;
     add_header X-XSS-Protection "1; mode=block" always;
     add_header X-Content-Type-Options "nosniff" always;
-    add_header Referrer-Policy "no-referrer" always;
+    add_header Referrer-Policy "same-origin" always;
     add_header X-Download-Options "noopen" always;
     add_header X-Permitted-Cross-Domain-Policies "none" always;
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
@@ -489,12 +481,21 @@ server {
       try_files $uri $uri/ /index.php?$query_string;
     }
 
-    location ~* .(js|webp|jpg|jpeg|gif|png|css|tgz|gz|rar|bz2|doc|pdf|ppt|tar|wav|bmp|rtf|swf|ico|flv|txt|woff|woff2|svg)$ {
-        expires 30d;
-        add_header Pragma "public";
-        add_header Cache-Control "public";
+    # assets, documents, archives, media
+    location ~* \.(?:css(\.map)?|js(\.map)?|jpe?g|png|tgz|gz|rar|bz2|doc|pdf|ptt|tar|gif|ico|cur|heic|webp|tiff?|mp3|m4a|aac|ogg|midi?|wav|mp4|mov|webm|mpe?g|avi|ogv|flv|wmv)$ {
+        expires    25d;
+        add_header Access-Control-Allow-Origin "*";
+        add_header Cache-Control "public, no-transform";
+        access_log off;
     }
 
+    # svg, fonts
+    location ~* \.(?:svgz?|ttf|ttc|otf|eot|woff2?)$ {
+        expires    25d;
+        add_header Access-Control-Allow-Origin "*";
+        add_header Cache-Control "public, no-transform";
+        access_log off;
+    }
 
     location ~ /\.(?!well-known).* {
         deny all;
@@ -790,7 +791,7 @@ _Hint:_ If you wish to restart your supervisor jobs in the future, use:
 sudo supervisorctl restart all
 ```
 
-### Kbin first setup
+### Mbin first setup
 
 Create new admin user (without email verification), please change the `username`, `email` and `password` below:
 
@@ -857,7 +858,7 @@ Web-server (Nginx):
 
 ### Debugging
 
-**Please, check the logs above first.** If you are really stuck, visit to our [Matrix space](https://matrix.to/#/%23kbin-space:matrix.org), there are dedicated rooms for 'Getting Started', 'Server Owners' and 'Issues'.
+**Please, check the logs above first.** If you are really stuck, visit to our [Matrix space](https://matrix.to/#/%23mbin:melroy.org), there is a 'General' room and dedicated room for 'Issues/Support'.
 
 Test PostgreSQL connections if using a remote server, same with Redis. Ensure no firewall rules blocking are any incoming or out-coming traffic (eg. port on 80 and 443).
 
@@ -866,36 +867,38 @@ Test PostgreSQL connections if using a remote server, same with Redis. Ensure no
 Edit your `.env` file:
 
 ```conf
-S3_KEY=
-S3_SECRET=
-S3_BUCKET=media.karab.in
-S3_REGION=eu-central-1
-S3_ENDPOINT=
+S3_KEY=$AWS_ACCESS_KEY_ID
+S3_SECRET=$AWS_SECRET_ACCESS_KEY
+S3_BUCKET=bucket-name
+# safe default for s3 deployments like minio or single zone ceph/radosgw
+S3_REGION=us-east-1
+# set if not using aws s3, note that the scheme is also required
+S3_ENDPOINT=https://endpoint.domain.tld
 S3_VERSION=latest
 ```
 
-And then edit the: `config/packages/oneup_flysystem.yaml` file:
+Then edit the: `config/packages/oneup_flysystem.yaml` file:
 
 ```yaml
 oneup_flysystem:
   adapters:
     default_adapter:
       local:
-        location: "%kernel.project_dir%/public/media"
+        location: "%kernel.project_dir%/public/%uploads_dir_name%"
 
     kbin.s3_adapter:
       awss3v3:
         client: kbin.s3_client
         bucket: "%amazon.s3.bucket%"
+        options:
+          ACL: public-read
 
   filesystems:
     public_uploads_filesystem:
+      # switch the adapter to s3 adapter
+      #adapter: default_adapter
       adapter: kbin.s3_adapter
       alias: League\Flysystem\Filesystem
-```
-
-```yaml
-// todo thumbnails
 ```
 
 ### Captcha (optional)

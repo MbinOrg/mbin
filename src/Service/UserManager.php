@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\DTO\CardanoWalletAddressDto;
 use App\DTO\UserDto;
 use App\Entity\User;
 use App\Entity\UserFollowRequest;
@@ -138,10 +137,7 @@ class UserManager
             }
         }
 
-        $user = new User($dto->email, $dto->username, '', $dto->apProfileId, $dto->apId);
-
-        $user->isBot = true === $dto->isBot;
-
+        $user = new User($dto->email, $dto->username, '', ($dto->isBot) ? 'Service' : 'Person', $dto->apProfileId, $dto->apId);
         $user->setPassword($this->passwordHasher->hashPassword($user, $dto->plainPassword));
 
         if (!$dto->apId) {
@@ -251,14 +247,6 @@ class UserManager
     {
         $this->tokenStorage->setToken(null);
         $this->requestStack->getSession()->invalidate();
-    }
-
-    public function attachWallet(User $user, CardanoWalletAddressDto $dto): void
-    {
-        $user->cardanoWalletAddress = $dto->walletAddress;
-
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
     }
 
     public function ban(User $user): void

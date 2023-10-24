@@ -1,11 +1,12 @@
 <div{{ attributes.defaults({class: 'user-box'}) }}>
     <div class="{{ html_classes({'with-cover': user.cover, 'with-avatar': user.avatar }) }}">
         {% if user.cover %}
-            <img height="220"
+            <img class="image-inline"
+                 height="220"
                  width="100%"
                  class="cover"
                  src="{{ asset(user.cover.filePath)|imagine_filter('user_cover') }}"
-                 alt="{{ user.username }}">
+                 alt="{{ user.username ~' '~ 'cover'|trans|lower  }}">
         {% endif %}
         <div class="user-main" id="content">
             <div>
@@ -21,9 +22,17 @@
                         <h1>
                             <a class="link-muted stretched-link"
                                href="{{ path('user_overview', {'username': user.username}) }}">{{ user.username|username(false) }}</a>
+                            {% if (user.type) == "Service" %}
+                                <code title="Bot Account">Robot</code>
+                            {% endif %}
                         </h1>
                     {% else %}
-                        <h1>{{ user.apPreferredUsername ?? user.username|username(false) }}</h1>
+                        <h1>
+                            {{ user.apPreferredUsername ?? user.username|username(false) }}
+                            {% if (user.type) == "Service" %}
+                                <code title="Bot Account">Robot</code>
+                            {% endif %}
+                        </h1>
                     {% endif %}
                     <small>{{ user.username|username(true) }}</small>
                 </div>

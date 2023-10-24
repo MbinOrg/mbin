@@ -83,8 +83,10 @@ jobs:
         run: composer install --no-scripts --no-progress
 
       - name: Run unit tests
-        run: |
-          SYMFONY_DEPRECATIONS_HELPER=disabled php bin/phpunit tests/Unit
+        env:
+          COMPOSER_CACHE_DIR: ${{ steps.composer-cache.outputs.dir }}
+          SYMFONY_DEPRECATIONS_HELPER: disabled
+        run: php bin/phpunit tests/Unit
 
   fixer-dry-run:
     runs-on: ubuntu-latest

@@ -25,7 +25,7 @@ class NodeInfoFactory
             'version' => '2.0',
             'software' => [
                 'name' => 'mbin',
-                'version' => '0.10.1',
+                'version' => '1.0.0',
             ],
             'protocols' => [
                 self::NODE_PROTOCOL,

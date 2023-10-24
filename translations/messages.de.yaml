@@ -159,7 +159,7 @@ add_new_article: Neues Thema hinzufügen
 reset_check_email_desc: Wenn zu dieser Email-Addresse bereits ein Konto registriert
   ist, dann wird in Kürze eine Email mit einem Link um das Passwort zurückzusetzen
   gesendet. Dieser Link läuft in %expire% ab.
-email_confirm_content: 'Bereit dein /kbin-Konto zu aktivieren? Dann klicke den folgenden
+email_confirm_content: 'Bereit dein Mbin-Konto zu aktivieren? Dann klicke den folgenden
   Link:'
 agree_terms: Stimme den %terms_link_start%Allgemeine Geschäftsbedingungen%terms_link_end%
   und der %policy_link_start%Datenschutzerklärung%policy_link_end% zu
@@ -229,7 +229,7 @@ photos: Bilder
 videos: Videos
 report: Melden
 share: Teilen
-copy_url: /kbin URL kopieren
+copy_url: Mbin URL kopieren
 share_on_fediverse: Im Fediverse teilen
 go_to_original_instance: Auf der Original-Instanz weiterstöbern.
 up_vote: Boost
@@ -497,11 +497,11 @@ filter.adult.only: Nur NSFW
 local_and_federated: Lokal und föderiert
 filter.fields.only_names: Nur Namen
 filter.fields.names_and_descriptions: Namen und Beschreibungen
-kbin_bot: /kbin Bot
+kbin_bot: Mbin Bot
 filter.fields.label: Wähle Felder für die Suche
-bot_body_content: "Willkommen beim /kbin Bot! Der Bot spielt eine entscheidende Rolle
-  um die ActivityPub-Funktionalität für /kbin bereitzustellen. Er stellt sicher, dass
-  /kbin mit anderen Instanzen des Fediverse kommunizieren und föderieren kann.\n\n
+bot_body_content: "Willkommen beim Mbin Bot! Der Bot spielt eine entscheidende Rolle
+  um die ActivityPub-Funktionalität für Mbin bereitzustellen. Er stellt sicher, dass
+  Mbin mit anderen Instanzen des Fediverse kommunizieren und föderieren kann.\n\n
   ActivityPub ist ein offenes Protokoll dass dezentralen sozialen Netzwerken ermöglicht
   miteinander zu kommunizieren und zu interagieren. Es ermöglicht Nutzern auf unterschiedlichen
   Instanzen (Servern) anderen Nutzern zu folgen, mit ihnen zu interagieren und Inhalte

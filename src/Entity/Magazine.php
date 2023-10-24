@@ -38,6 +38,9 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
 
+    public const MAX_DESCRIPTION_LENGTH = 10000;
+    public const MAX_RULES_LENGTH = 10000;
+
     #[ManyToOne(targetEntity: Image::class, cascade: ['persist'])]
     #[JoinColumn(nullable: true)]
     public ?Image $icon = null;
@@ -45,9 +48,9 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public string $name;
     #[Column(type: 'string')]
     public ?string $title;
-    #[Column(type: 'text', length: 10000, nullable: true)]
+    #[Column(type: 'text', length: self::MAX_DESCRIPTION_LENGTH, nullable: true)]
     public ?string $description = null;
-    #[Column(type: 'text', length: 10000, nullable: true)]
+    #[Column(type: 'text', length: self::MAX_RULES_LENGTH, nullable: true)]
     public ?string $rules = null;
     #[Column(type: 'integer', nullable: false)]
     public int $subscriptionsCount = 0;
@@ -295,12 +298,12 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
 
     public function softDelete(): void
     {
-        $this->visibility = self::VISIBILITY_SOFT_DELETED;
+        $this->visibility = VisibilityInterface::VISIBILITY_SOFT_DELETED;
     }
 
     public function trash(): void
     {
-        $this->visibility = self::VISIBILITY_TRASHED;
+        $this->visibility = VisibilityInterface::VISIBILITY_TRASHED;
     }
 
     public function restore(): void
