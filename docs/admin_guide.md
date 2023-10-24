@@ -139,7 +139,7 @@ Make sure you have substituted all the passwords and configured the basic servic
 > **Note**
 > The snippet below are to variables inside the .env file. Using the keys generated in the section above "Generating Secrets" fill in the values. You should fully review this file to ensure everything is configured correctly.
 
-```conf
+```ini
 REDIS_PASSWORD="{!SECRET!!KEY!-32_1-!}"
 APP_SECRET="{!SECRET!!KEY-16_1-!}"
 POSTGRES_PASSWORD={!SECRET!!KEY!-32_2-!}
@@ -149,7 +149,7 @@ MERCURE_JWT_SECRET="{!SECRET!!KEY!-32_3-!}"
 
 Other important `.env` configs:
 
-```conf
+```ini
 # Configure your media URL correctly:
 KBIN_STORAGE_URL=https://domain.tld/media
 
@@ -184,7 +184,7 @@ openssl rand -hex 16
 
 3. Add the public and private key paths to `.env`:
 
-```env
+```ini
 OAUTH_PRIVATE_KEY=%kernel.project_dir%/config/oauth2/private.pem
 OAUTH_PUBLIC_KEY=%kernel.project_dir%/config/oauth2/public.pem
 OAUTH_PASSPHRASE=<Your (optional) passphrase from above here>
@@ -296,12 +296,11 @@ Restart Redis:
 sudo systemctl restart redis.service
 ```
 
-Within your `.env` file, change the redis host to `127.0.0.1` (localhost), proper IP or use socket file:
+Within your `.env` file set your Redis password:
 
-```conf
-REDIS_HOST=127.0.0.1:6379
+```ini
 REDIS_PASSWORD={!SECRET!!KEY!-32_1-!}
-REDIS_DNS=redis://${REDIS_PASSWORD}@${REDIS_HOST}
+REDIS_DNS=redis://${REDIS_PASSWORD}@$127.0.0.1:6379
 
 # Or if you want to use socket file:
 #REDIS_DNS=redis://${REDIS_PASSWORD}/var/run/redis/redis-server.sock
@@ -638,7 +637,7 @@ cd /var/www/kbin
 nano .env
 ```
 
-```conf
+```ini
 # Use RabbitMQ (recommended):
 RABBITMQ_HOST=127.0.0.1:5672
 RABBITMQ_PASSWORD=!ChangeThisRabbitPass!
@@ -866,11 +865,11 @@ The separate Mercure log:
 
 Application Logs (prod or dev logs):
 
-- `tail -f /var/www/kbin/var/log/prod.log`
+- `tail -f /var/www/kbin/var/log/prod-{YYYY-MM-DD}.log`
 
 Or:
 
-- `tail -f /var/www/kbin/var/log/dev.log`
+- `tail -f /var/www/kbin/var/log/dev-{YYYY-MM-DD}.log`
 
 Web-server (Nginx):
 
@@ -887,7 +886,7 @@ Test PostgreSQL connections if using a remote server, same with Redis. Ensure no
 
 Edit your `.env` file:
 
-```conf
+```ini
 S3_KEY=$AWS_ACCESS_KEY_ID
 S3_SECRET=$AWS_SECRET_ACCESS_KEY
 S3_BUCKET=bucket-name
@@ -929,7 +928,7 @@ Optionally, increase the difficulty threshold. Making it even harder for bots.
 
 Edit your `.env` file:
 
-```conf
+```ini
 KBIN_CAPTCHA_ENABLED=true
 HCAPTCHA_SITE_KEY=sitekey
 HCAPTCHA_SECRET=secret
@@ -948,6 +947,10 @@ composer dump-env dev
 ```
 
 Finally, go to the admin panel, settings tab and check "Captcha enabled" and press "Save".
+
+## See also
+
+- [Frequently Asked Questions]([../FAQ.md)
 
 ## Performance hints
 
