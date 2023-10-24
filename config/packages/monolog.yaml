@@ -10,10 +10,10 @@ when@dev:
         path: "%kernel.logs_dir%/%kernel.environment%.log"
         # Or use: "debug" instead of "info" for more log (debug) messages
         level: info
-        channels: ["!event"]
         # Enable full stacktrace, set this to false, to disable stacktraces
         include_stacktraces: true
         max_files: 10
+        channels: ["!event"]
       # uncomment to get logging in your browser
       # you may have to allow bigger header sizes in your Web server configuration
       #firephp:
