@@ -6,34 +6,25 @@ namespace App;
 
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 class Kernel extends BaseKernel
 {
     use MicroKernelTrait;
 
-    protected function configureContainer(ContainerConfigurator $container): void
-    {
-        $container->import('../config/{packages}/*.yaml');
-        $container->import('../config/{packages}/'.$this->environment.'/*.yaml');
-
-        if (is_file(\dirname(__DIR__).'/config/services.yaml')) {
-            $container->import('../config/services.yaml');
-            $container->import('../config/{services}_'.$this->environment.'.yaml');
-        } else {
-            $container->import('../config/{services}.php');
-        }
-    }
-
+    // Kernel can be empty according to: https://github.com/symfony/recipes/pull/1006
+    // But this will break your routing, so we keep configureRoutes()
     protected function configureRoutes(RoutingConfigurator $routes): void
     {
-        $routes->import('../config/{routes}/'.$this->environment.'/*.yaml');
-        $routes->import('../config/{kbin_routes}/*.yaml');
-        $routes->import('../config/{routes}/*.yaml');
+        $projectDir = $this->getProjectDir();
+        $routes->import($projectDir . '/config/{routes}/'.$this->environment.'/*.yaml');
+        $routes->import($projectDir . '/config/{kbin_routes}/*.yaml');
+        $routes->import($projectDir . '/config/{routes}/*.yaml');
 
-        if (is_file(\dirname(__DIR__).'/config/routes.yaml')) {
-            $routes->import('../config/routes.yaml');
+        if (is_file($projectDir.'/config/routes.yaml')) {
+            $routes->import($projectDir . '/config/routes.yaml');
         } else {
-            $routes->import('../config/{routes}.php');
+            $routes->import($projectDir . '/config/{routes}.php');
         }
     }
 }
