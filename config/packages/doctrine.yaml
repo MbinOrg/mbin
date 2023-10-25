@@ -1,25 +1,25 @@
 doctrine:
-  dbal:
-    url: "%env(resolve:DATABASE_URL)%"
-    mapping_types:
-      user_type: string
+    dbal:
+        url: "%env(resolve:DATABASE_URL)%"
+        mapping_types:
+            user_type: string
 
-  orm:
-    dql:
-      string_functions:
-        JSONB_CONTAINS: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Postgresql\JsonbContains
-    auto_generate_proxy_classes: true
-    naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
-    auto_mapping: true
-    mappings:
-      App:
-        is_bundle: false
-        type: attribute
-        dir: "%kernel.project_dir%/src/Entity"
-        prefix: 'App\Entity'
-        alias: App
-    second_level_cache:
-      enabled: true
-      region_cache_driver:
-        type: pool
-        pool: doctrine.second_level_cache_pool
+    orm:
+        dql:
+            string_functions:
+                JSONB_CONTAINS: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Postgresql\JsonbContains
+        auto_generate_proxy_classes: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        auto_mapping: true
+        mappings:
+            App:
+                is_bundle: false
+                type: attribute
+                dir: "%kernel.project_dir%/src/Entity"
+                prefix: 'App\Entity'
+                alias: App
+        second_level_cache:
+            enabled: true
+            region_cache_driver:
+                type: pool
+                pool: doctrine.second_level_cache_pool
