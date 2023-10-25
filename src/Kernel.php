@@ -17,14 +17,14 @@ class Kernel extends BaseKernel
     protected function configureRoutes(RoutingConfigurator $routes): void
     {
         $projectDir = $this->getProjectDir();
-        $routes->import($projectDir . '/config/{routes}/'.$this->environment.'/*.yaml');
-        $routes->import($projectDir . '/config/{kbin_routes}/*.yaml');
-        $routes->import($projectDir . '/config/{routes}/*.yaml');
+        $routes->import($projectDir.'/config/{routes}/'.$this->environment.'/*.yaml');
+        $routes->import($projectDir.'/config/{kbin_routes}/*.yaml');
+        $routes->import($projectDir.'/config/{routes}/*.yaml');
 
         if (is_file($projectDir.'/config/routes.yaml')) {
-            $routes->import($projectDir . '/config/routes.yaml');
+            $routes->import($projectDir.'/config/routes.yaml');
         } else {
-            $routes->import($projectDir . '/config/{routes}.php');
+            $routes->import($projectDir.'/config/{routes}.php');
         }
     }
 }
