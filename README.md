@@ -18,7 +18,7 @@ Unique Features of Mbin:
 - Up-to-date PHP (Composer) dependency packages and **security/vulnerability** fixes
   - Enabled: GitHub Security advisories, vulnerability reporting, Dependabot and code scanning
 - Improved _code documentation_, making the code easier to understand and contribute
-- **Tight integration** with [Mbin Webplate project](https://hosted.weblate.org/projects/mbin/kbin/) for translations (Two way sync)
+- **Tight integration** with [Mbin Weblate project](https://hosted.weblate.org/projects/mbin/kbin/) for translations (Two way sync)
 - Last but not least, a **community-focus project embracing the Collective Code Construction Contract** (C4). No single maintainer.
 
 ## Instances
