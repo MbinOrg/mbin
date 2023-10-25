@@ -1,22 +1,24 @@
 framework:
-  secret: "%env(APP_SECRET)%"
-  #csrf_protection: true
+    secret: "%env(APP_SECRET)%"
+    #csrf_protection: true
+    http_method_override: false
+    handle_all_throwables: true
 
-  # Enables session support. Note that the session will ONLY be started if you read or write from it.
-  # Remove or comment this section to explicitly disable session support.
-  session:
-    handler_id: "%env(REDIS_DNS)%"
-    cookie_secure: auto
-    cookie_samesite: lax
-    gc_maxlifetime: 604800 # Match the remember_me lifetime
-    storage_factory_id: session.storage.factory.native
+    # Enables session support. Note that the session will ONLY be started if you read or write from it.
+    # Remove or comment this section to explicitly disable session support.
+    session:
+        handler_id: "%env(REDIS_DNS)%"
+        cookie_secure: auto
+        cookie_samesite: lax
+        gc_maxlifetime: 604800 # Match the remember_me lifetime
+        storage_factory_id: session.storage.factory.native
 
-  http_client:
-    default_options:
-      headers:
-        "User-Agent": "MbinBot/0.1 (+https://%kbin_domain%/bot)"
+    http_client:
+        default_options:
+            headers:
+                "User-Agent": "MbinBot/0.1 (+https://%kbin_domain%/bot)"
 
-  #esi: true
-  #fragments: true
-  php_errors:
-    log: true
+    #esi: true
+    #fragments: true
+    php_errors:
+        log: true

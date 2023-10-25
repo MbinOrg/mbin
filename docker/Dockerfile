@@ -56,7 +56,7 @@ RUN composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-pr
 
 # Copy repository
 COPY --link ./ $KBIN_HOME
-RUN cp .env.example .env
+RUN cp .env.example_docker .env
 
 # Dump-autoload and run post-install script
 RUN composer dump-autoload --classmap-authoritative --no-dev
@@ -89,7 +89,7 @@ RUN yarn build --mode production
 FROM base as runner
 
 COPY --chown=$USER:$GROUP --link ./ $KBIN_HOME
-RUN cp .env.example .env
+RUN cp .env.example_docker .env
 
 COPY --from=builder-caddy --link /usr/bin/caddy /usr/sbin/caddy
 COPY --from=builder-composer --chown=$USER:$GROUP $KBIN_HOME/vendor $KBIN_HOME/vendor
