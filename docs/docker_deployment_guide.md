@@ -42,19 +42,26 @@ git clone https://github.com/MbinOrg/mbin.git
 cd mbin
 ```
 
-Build the Docker image:
+### Prepare and build Docker image
 
 > **Note**
 > If you're using a version of Docker Engine earlier than 23.0, run `export DOCKER_BUILDKIT=1`, prior to building the image. This does not apply to users running Docker Desktop. More info can be found [here](https://docs.docker.com/build/buildkit/#getting-started)
 
-```bash
-docker build -t mbin -f docker/Dockerfile .
-```
-
-Create config files and storage directories:
+1. First go to the _docker directory_:
 
 ```bash
 cd docker
+```
+
+2. Build the docker image (from the root-directory of the repository):
+
+```bash
+docker build --no-cache -t mbin -f Dockerfile  ..
+```
+
+3. Create config files and storage directories:
+
+```bash
 cp ../.env.example_docker .env
 cp compose.prod.yml compose.override.yml
 mkdir -p storage/media storage/caddy_config storage/caddy_data
@@ -64,7 +71,10 @@ sudo chown $USER:$USER storage/media storage/caddy_config storage/caddy_data
 ### Configure `.env` and `compose.override.yml`
 
 1. Choose your Redis password, PostgreSQL password, RabbitMQ password, and Mercure password.
-2. Place them in the corresponding variables in both `.env` and `compose.override.yml`.
+2. Place the passwords in the corresponding variables in both `.env` and `compose.override.yml`.
+3. Update the `SERVER_NAME`, `KBIN_DOMAIN` and `KBIN_STORAGE_URL` in `.env`.
+4. Update `APP_SECRET` in `.env`, generate a new one via: `node -e  "console.log(require('crypto').randomBytes(16).toString('hex'))"`
+5. _Optionally_: Use a newer PostgreSQL version (current fallback is v13). Update/set the `POSTGRES_VERSION` variable in your `.env` and `compose.override.yml` under `db`.
 
 > **Note**
 > Ensure the `HTTPS` environmental variable is set to `TRUE` in `compose.override.yml` for the `php`, `messenger`, and `messenger_ap` containers **if your environment is using a valid certificate behind a reverse proxy**. This is likely true for most production environments and is required for proper federation, that is, this will ensure the webfinger responses include `https:` in the URLs generated.
@@ -101,11 +111,13 @@ OAUTH_ENCRYPTION_KEY=<Hex string generated in previous step>
 
 By default `docker compose` will execute the `compose.yml` and `compose.override.yml` files.
 
-Run the container in the background (`-d` means detached, but this can also be omitted for testing):
+Run the container in the background (`-d` means detach, but this can also be omitted for testing or debugging purposes):
 
 ```bash
-# Replace <mbin_dir> with Mbin's root directory
-cd <mbin_dir>/docker
+# Go to the docker directory within the git repo
+cd docker
+
+# Starts the containers
 docker compose up -d
 ```
 
@@ -128,6 +140,11 @@ docker compose exec php bin/console kbin:ap:keys:update
 ```
 
 Next, log in and create a magazine named "random" to which unclassified content from the fediverse will flow.
+
+### Debugging / Logging
+
+1. See the running container IDs: `docker ps`
+2. You can see the logs via (use `-f` to follow the output): `docker logs -f <container_id>`
 
 ### Add auxiliary containers to `compose.yml`
 
@@ -159,12 +176,37 @@ If you want to deploy your app on a cluster of machines, you can
 use [Docker Swarm](https://docs.docker.com/engine/swarm/stack-deploy/), which is compatible with the provided Compose
 files.
 
-## Clear cache
+## Upgrade Docker setup
+
+1. Go to the `docker` directory:
 
 ```bash
-docker compose exec php bin/console cache:clear
+cd docker
+```
+
+2. (Re)build a new Mbin docker image (without using cached layers):
+
+```bash
+docker build --no-cache -t mbin -f Dockerfile  ..
+```
+
+3. Bring down the containers and up again (with `-d` for detach):
+
+```bash
+docker compose down
+docker compose up -d
+```
+
+4. Clear the caches, see section below "Clear cache".
+
+## Clear caches
+
+Clear caches on **running** containers:
+
+```bash
+docker compose exec php bin/console cache:clear -n
 docker compose exec redis redis-cli
-> auth REDIS_PASSWORD
+> auth <your_redis_password>
 > FLUSHDB
 ```
 
