@@ -231,7 +231,7 @@ sudo nano /etc/php/8.2/fpm/pool.d/www.conf
 
 With the content (these are personal preferences, adjust to your needs):
 
-```conf
+```ini
 pm = dynamic
 pm.max_children = 60
 pm.start_servers = 10
@@ -352,7 +352,7 @@ sudo chmod 644 /etc/nginx/dhparam.pem
 
 Edit the main NGINX config file: `sudo nano /etc/nginx/nginx.conf` with the following content within the `http {}` section (replace when needed):
 
-```conf
+```nginx
 ssl_protocols TLSv1.2 TLSv1.3; # Requires nginx >= 1.13.0 else only use TLSv1.2
 ssl_prefer_server_ciphers on;
 ssl_dhparam /etc/nginx/dhparam.pem;
@@ -638,14 +638,14 @@ nano .env
 ```
 
 ```ini
-# Use RabbitMQ (recommended):
-RABBITMQ_HOST=127.0.0.1:5672
+# Use RabbitMQ (recommended for production):
 RABBITMQ_PASSWORD=!ChangeThisRabbitPass!
-MESSENGER_TRANSPORT_DSN=amqp://kbin:${RABBITMQ_PASSWORD}@${RABBITMQ_HOST}/%2f/messages
+MESSENGER_TRANSPORT_DSN=amqp://kbin:${RABBITMQ_PASSWORD}@127.0.0.1:5672/%2f/messages
+
 # or Redis:
-MESSENGER_TRANSPORT_DSN=redis://${REDIS_PASSWORD}@${REDIS_HOST}/messages
-# or database:
-MESSENGER_TRANSPORT_DSN=doctrine://default
+#MESSENGER_TRANSPORT_DSN=redis://${REDIS_PASSWORD}@127.0.0.1:6379/messages
+# or PostgreSQL Database (Doctrine):
+#MESSENGER_TRANSPORT_DSN=doctrine://default
 ```
 
 ### Mercure
@@ -751,7 +751,7 @@ sudo nano /etc/supervisor/conf.d/messenger-worker.conf
 
 With the following content:
 
-```conf
+```ini
 [program:messenger-kbin]
 command=php /var/www/kbin/bin/console messenger:consume async --time-limit=1800
 user=www-data
@@ -783,7 +783,7 @@ sudo nano /etc/supervisor/conf.d/mercure.conf
 
 With the following content:
 
-```conf
+```ini
 [program:mercure]
 command=/usr/local/bin/mercure run --config /var/www/kbin/metal/caddy/Caddyfile
 process_name=%(program_name)s_%(process_num)s
@@ -950,7 +950,7 @@ Finally, go to the admin panel, settings tab and check "Captcha enabled" and pre
 
 ## See also
 
-- [Frequently Asked Questions]([../FAQ.md)
+- [Frequently Asked Questions](../FAQ.md)
 
 ## Performance hints
 
