@@ -533,3 +533,47 @@ request_account_deletion_description: Der Administrator wird davon benachrichtig
   dass du dein Konto löschen möchtest.
 request_account_deletion_button: Kontolöschung anfordern
 more_from_domain: Mehr von der Domäne
+resend_account_activation_email_error: Es gab ein Problem bei der Bearbeitung der
+  Anfrage. Eventuell gibt es keinen Account der mit diese E-Mail assoziiert wird oder
+  vielleicht ist der Account bereits aktiviert.
+email_confirm_button_text: Bestätige deine Passwortänderungsanfrage
+errors.server429.title: 429 Zu viele Anfragen
+oauth.consent.to_allow_access: Um den Zugriff zu gestatten, klicken Sie den "Erlauben"
+  Button weiter unten
+email.delete.description: Der folgende Nutzer hat die Löschung seines Accounts angefragt
+oauth.consent.app_requesting_permissions: möchte die folgenden Aktionen in deinem
+  Namen ausführen
+oauth.consent.allow: Erlauben
+custom_css: Eigenes CSS
+block: Blockieren
+oauth2.grant.moderate.magazine.list: Lese eine Liste deine moderierten Magazine.
+errors.server404.title: 404 Nicht Gefunden
+resend_account_activation_email_success: Wenn es einen Account mit dieser E-Mail gibt,
+  werden wir eine neue Aktivierungsmail senden.
+errors.server403.title: 403 Zugriff Verboten
+ignore_magazines_custom_css: Ignoriere das eigene CSS eines Magazins
+sidebars_same_side: Seitenleisten auf der selben Seite
+oauth.consent.deny: Verbieten
+oauth.consent.title: OAUTH2 Zustimmungsformular
+resend_account_activation_email: Account Aktivierungsmail erneut senden
+errors.server500.title: 500 Serverfehler
+alphabetically: Alphabetisch
+show_subscriptions: Zeige Abonnements
+resend_account_activation_email_question: Inaktiver Account?
+resend_account_activation_email_description: Gib die E-Mail-Adresse die mit deinem
+  Account assoziiert ist ein. Wir werden erneut eine Aktivierungsmail für Sie senden.
+errors.server500.description: Verzeihung, auf unserer Seite ist etwas schief gegangen.
+  Wir arbeiten an der Lösung des Problems, bitte versuchen Sie es in Kürze erneut.
+oauth.client_not_granted_message_read_permission: Diese App hat keine Berechtigung
+  erhalten deine Nachrichten zu lesen.
+restrict_oauth_clients: Beschränke OAuth2 Client Erstellung auf Admins
+subscription_sort: Abonnements Sortierung
+unblock: Entblockieren
+oauth.consent.grant_permissions: Gebe Berechtigungen
+oauth2.grant.moderate.magazine.ban.delete: Nutzer in deinen moderierten Magazinen
+  entbannen.
+subscriptions_in_own_sidebar: Abonnements Separat
+oauth.client_identifier.invalid: Ungültige OAuth Client ID!
+oauth.consent.app_has_permissions: kann bereits die folgenden Aktionen ausführen
+email.delete.title: Nutzeraccount Löschanfrage
+email_confirm_link_help: Alternativ können Sie das Folgende in ihren Browser kopieren
