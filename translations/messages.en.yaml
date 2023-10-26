@@ -789,3 +789,8 @@ cancel: Cancel
 password_and_2fa: Password & 2fa
 account_settings_changed: Your account settings have been successfully changed. You
   will need to login again.
+show_subscriptions: Show subscriptions
+subscription_sort: Sort
+alphabetically: Alphabetically
+subscriptions_in_own_sidebar: Subscriptions separate
+sidebars_same_side: Sidebars on the same side
