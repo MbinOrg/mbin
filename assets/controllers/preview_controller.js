@@ -18,7 +18,8 @@ export default class extends Controller {
     async show(event) {
         event.preventDefault();
 
-        let container = this.element.nextElementSibling && this.element.nextElementSibling.classList.contains('js-container')
+        let container = this.element.nextElementSibling
+                && this.element.nextElementSibling.classList.contains('js-container')
             ? this.element.nextElementSibling : null;
 
         if (null === container) {
@@ -51,7 +52,18 @@ export default class extends Controller {
             }
             this.loadScripts(response.html);
         } catch (e) {
-            window.location.href = event.target.href;
+            console.error('preview failed: ', e);
+            let failedHtml =
+                `<div class="preview">
+                    <a class="retry-failed" href="#"
+                        data-action="preview#show"
+                        data-preview-url-param="${event.params.url}"
+                        data-preview-ratio-param="${event.params.ratio}">
+                            Failed to load. Click to retry.
+                    </a>
+                </div>`
+            this.element.nextElementSibling.insertAdjacentHTML('afterbegin', failedHtml);
+            this.element.nextElementSibling.style.display = 'block';
         } finally {
             this.loadingValue = false;
         }
