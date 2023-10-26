@@ -3,6 +3,12 @@
 }
 
 .sidebar-subscriptions {
+  height: fit-content;
+
+  &.inline .subscription-list {
+    max-height: 40em;
+    overflow: auto;
+  }
 
   &.section {
     padding: 0.5rem 0.5rem 1rem;

@@ -1,4 +1,4 @@
-<div class="sidebar-subscriptions section section--top {{ app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SHOW_SUBSCRIPTIONS_IN_SEPARATE')) is not same as 'true' ? 'inline' : '' }}">
+<div class="sidebar-subscriptions section {{ app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SHOW_SUBSCRIPTIONS_IN_SEPARATE')) is not same as 'true' ? 'inline' : 'section--top' }}">
     <h3>{{ 'subscriptions'|trans }}</h3>
     <div class="subscription-list">
         {% for magazine in magazines %}
