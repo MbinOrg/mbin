@@ -16,13 +16,17 @@ export default class extends Controller {
         useThrottle(this, {wait: 1000});
     }
 
-    async show(event) {
+    async retry(event) {
         event.preventDefault();
 
-        if (!this.hasContainerTarget) {
-            console.warn('display target not found, bailing out');
-            return;
-        }
+        this.containerTarget.replaceChildren();
+        this.containerTarget.classList.add('hidden');
+
+        await this.show(event);
+    }
+
+    async show(event) {
+        event.preventDefault();
 
         if (this.containerTarget.hasChildNodes()) {
             this.containerTarget.replaceChildren();
@@ -51,7 +55,7 @@ export default class extends Controller {
             let failedHtml =
                 `<div class="preview">
                     <a class="retry-failed" href="#"
-                        data-action="preview#show"
+                        data-action="preview#retry"
                         data-preview-url-param="${event.params.url}"
                         data-preview-ratio-param="${event.params.ratio}">
                             Failed to load. Click to retry.
