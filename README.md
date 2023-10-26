@@ -18,7 +18,7 @@ Unique Features of Mbin:
 - Up-to-date PHP (Composer) dependency packages and **security/vulnerability** fixes
   - Enabled: GitHub Security advisories, vulnerability reporting, Dependabot and code scanning
 - Improved _code documentation_, making the code easier to understand and contribute
-- **Tight integration** with [Mbin Webplate project](https://hosted.weblate.org/projects/mbin/kbin/) for translations (Two way sync)
+- **Tight integration** with [Mbin Weblate project](https://hosted.weblate.org/projects/mbin/kbin/) for translations (Two way sync)
 - Last but not least, a **community-focus project embracing the Collective Code Construction Contract** (C4). No single maintainer.
 
 ## Instances
@@ -146,9 +146,10 @@ Starting the server:
 2. Check the requirements: `symfony check:requirements`
 3. Install depedencies: `composer install`
 4. Dump `.env` into `.env.local.php` via: `composer dump-env dev`
-5. Clear cache: `APP_ENV=dev APP_DEBUG=1 php bin/console cache:clear -n`
-6. Start Mbin: `symfony server:start`
-7. Go to: [http://127.0.0.1:8000](http://127.0.0.1:8000/)
+5. _Optionally:_ Increase verbosity log level in: `config/packages/monolog.yaml` in the `when@dev` section: `level: debug` (instead of `level: info`),
+6. Clear cache: `APP_ENV=dev APP_DEBUG=1 php bin/console cache:clear -n`
+7. Start Mbin: `symfony server:start`
+8. Go to: [http://127.0.0.1:8000](http://127.0.0.1:8000/)
 
 This will give you a minimal working frontend with PostgreSQL setup. Keep in mind: this will _not_ start federating, for that you also need to setup Mercure to test the full Mbin setup.
 

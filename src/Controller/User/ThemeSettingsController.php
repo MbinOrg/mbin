@@ -52,6 +52,9 @@ class ThemeSettingsController extends AbstractController
     public const RIGHT = 'right';
     public const TOP = 'top';
     public const BOTTOM = 'bottom';
+    public const MAX = 'max';
+    public const AUTO = 'auto';
+    public const FIXED = 'fixed';
 
     public const KEYS = [
         self::ENTRIES_VIEW,
@@ -101,11 +104,9 @@ class ThemeSettingsController extends AbstractController
         '100',
         '120',
         '150',
-        'max',
-        '8k',
-        '4k',
-        '2k',
-        '1080',
+        self::MAX,
+        self::AUTO,
+        self::FIXED,
     ];
 
     public function __invoke(string $key, string $value, Request $request): Response

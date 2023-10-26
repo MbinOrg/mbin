@@ -45,8 +45,10 @@ export default class extends Controller {
         if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
             let resubscribe = (e) => {
                 window.es.close();
-                window.es = Subscribe(topics, cb);
-                window.es.onerror = resubscribe;
+                setTimeout(() => {
+                    window.es = Subscribe(topics, cb);
+                    window.es.onerror = resubscribe;
+                }, 1000);
             };
             window.es.onerror = resubscribe;
         }

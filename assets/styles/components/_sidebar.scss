@@ -351,13 +351,6 @@
         border: var(--kbin-avatar-border);
       }
     }
-
-    &.width-settings {
-      display: flex;
-      @include media-breakpoint-down(lg) {
-        display: none;
-      }
-    }
   }
 
   .settings-list {
@@ -447,6 +440,13 @@
       flex-flow: column wrap;
       gap: 1px;
       align-items: center;
+
+      & .width-setting {
+        display: flex;
+        @include media-breakpoint-down(lg) {
+          display: none;
+        }
+      }
     }
 
     .row {

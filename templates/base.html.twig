@@ -74,7 +74,7 @@
     <div class="kbin-container
       {{ html_classes(app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_CONTAINER_WIDTH'))
         ? 'width--'~app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_CONTAINER_WIDTH'))
-        : 'width--default') }}">
+        : '') }}">
         <main id="main"
               data-controller="lightbox timeago"
               class="{{ html_classes({'view-compact': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_COMPACT')) is same as 'true'}) }}">
