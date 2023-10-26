@@ -45,6 +45,10 @@
     .subscription {
       padding: 0.5rem;
 
+      @include media-breakpoint-down(lg) {
+        min-width: max-content;
+      }
+
       &:not(:last-child) {
         @include media-breakpoint-up(lg) {
           border-bottom: var(--kbin-meta-border);
