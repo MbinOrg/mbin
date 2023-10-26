@@ -36,6 +36,30 @@ There are three levels of tests that we distinguish between:
 
 For more info read: [Symfony Testing guide](https://symfony.com/doc/current/testing.html).
 
+#### Unit Tests
+
+- First increase execution time in your PHP config file: `/etc/php/8.2/fpm/php.ini`:
+
+```ini
+max_execution_time = 120
+```
+
+- Increase/set max_nesting_level in `/etc/php/8.2/fpm/conf.d/20-xdebug.ini`:
+
+```ini
+xdebug.max_nesting_level=512
+```
+
+- Restart the PHP-FPM service: `sudo systemctl restart php8.2-fpm.service`
+- Copy the dot env file: `cp .env.example .env`
+- Install composer packages: `composer install --no-scripts`
+
+Running the unit tests by executing:
+
+```bash
+SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Unit
+```
+
 ### Fixtures
 
 You might want to load random data to database instead of manually adding magazines, users, posts, comments etc.  

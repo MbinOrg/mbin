@@ -94,7 +94,7 @@ Requirements:
 - Increase execution time in PHP config file: `/etc/php/8.2/fpm/php.ini`:
 
 ```ini
-max_execution_time = 60
+max_execution_time = 120
 ```
 
 - Restart the PHP-FPM service: `sudo systemctl restart php8.2-fpm.service`
