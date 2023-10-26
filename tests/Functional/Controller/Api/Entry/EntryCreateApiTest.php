@@ -91,8 +91,6 @@ class EntryCreateApiTest extends WebTestCase
         self::assertEquals('en', $jsonData['lang']);
         self::assertIsArray($jsonData['tags']);
         self::assertSame(['test'], $jsonData['tags']);
-        self::assertIsArray($jsonData['badges']);
-        self::assertEmpty($jsonData['badges']);
         self::assertSame(0, $jsonData['numComments']);
         self::assertSame(0, $jsonData['uv']);
         self::assertSame(0, $jsonData['dv']);
@@ -197,8 +195,6 @@ class EntryCreateApiTest extends WebTestCase
         self::assertEquals('en', $jsonData['lang']);
         self::assertIsArray($jsonData['tags']);
         self::assertSame(['test'], $jsonData['tags']);
-        self::assertIsArray($jsonData['badges']);
-        self::assertEmpty($jsonData['badges']);
         self::assertSame(0, $jsonData['numComments']);
         self::assertSame(0, $jsonData['uv']);
         self::assertSame(0, $jsonData['dv']);
@@ -326,8 +322,6 @@ class EntryCreateApiTest extends WebTestCase
         self::assertEquals('en', $jsonData['lang']);
         self::assertIsArray($jsonData['tags']);
         self::assertSame(['test'], $jsonData['tags']);
-        self::assertIsArray($jsonData['badges']);
-        self::assertEmpty($jsonData['badges']);
         self::assertSame(0, $jsonData['numComments']);
         self::assertSame(0, $jsonData['uv']);
         self::assertSame(0, $jsonData['dv']);

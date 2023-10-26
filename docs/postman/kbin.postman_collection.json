@@ -1495,12 +1495,6 @@
 									"type": "text"
 								},
 								{
-									"key": "badges[]",
-									"value": "",
-									"type": "text",
-									"disabled": true
-								},
-								{
 									"key": "isOc",
 									"value": "false",
 									"type": "text"
@@ -3075,98 +3069,6 @@
 										},
 										{
 											"key": "user_id",
-											"value": "3"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Add badge to magazine",
-							"protocolProfileBehavior": {
-								"disabledSystemHeaders": {
-									"accept": true
-								}
-							},
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Accept",
-										"type": "text",
-										"value": "application/ld+json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"good\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "https://{{host}}/api/moderate/magazine/:magazine_id/badge",
-									"protocol": "https",
-									"host": [
-										"{{host}}"
-									],
-									"path": [
-										"api",
-										"moderate",
-										"magazine",
-										":magazine_id",
-										"badge"
-									],
-									"variable": [
-										{
-											"key": "magazine_id",
-											"value": "2"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Remove badge from magazine",
-							"protocolProfileBehavior": {
-								"disabledSystemHeaders": {
-									"accept": true
-								}
-							},
-							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Accept",
-										"type": "text",
-										"value": "application/ld+json"
-									}
-								],
-								"url": {
-									"raw": "https://{{host}}/api/moderate/magazine/:magazine_id/badge/:badge_id",
-									"protocol": "https",
-									"host": [
-										"{{host}}"
-									],
-									"path": [
-										"api",
-										"moderate",
-										"magazine",
-										":magazine_id",
-										"badge",
-										":badge_id"
-									],
-									"variable": [
-										{
-											"key": "magazine_id",
-											"value": "2"
-										},
-										{
-											"key": "badge_id",
 											"value": "3"
 										}
 									]

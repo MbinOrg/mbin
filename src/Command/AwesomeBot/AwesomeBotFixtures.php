@@ -100,7 +100,6 @@ class AwesomeBotFixtures extends Command
                             'user' => $user,
                             'title' => $li->nodeValue,
                             'url' => $li->firstChild->getAttribute('href'),
-                            'badges' => new ArrayCollection(array_filter($tags, fn ($v) => \is_string($v))),
                         ];
                     }
                 }
@@ -122,7 +121,6 @@ class AwesomeBotFixtures extends Command
             $dto->user = $item['user'];
             $dto->title = substr($item['title'], 0, 255);
             $dto->url = $item['url'];
-            $dto->badges = $item['badges'];
 
             $entry = $this->entryManager->create($dto, $item['user']);
 

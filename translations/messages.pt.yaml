@@ -74,7 +74,6 @@ about_instance: Sobre
 all_magazines: Todas as magazines
 stats: Estatísticas
 fediverse: Fediverse
-awards: Prémios
 ranking: Ranking
 create_new_magazine: Criar uma nova magazine
 add_new_article: Adicionar um novo artigo
@@ -230,7 +229,6 @@ ban: Banir
 filters: Filtros
 approved: Aprovado
 add_moderator: Adicionar moderador
-add_badge: Adicionar distintivo
 bans: Expulsões
 created: Criado
 expires: Expira
@@ -314,7 +312,6 @@ url: URL
 title: Título
 body: Corpo
 tags: Etiquetas
-badges: Distintivos
 is_adult: 18+ / NSFW
 eng: ENG
 oc: OC

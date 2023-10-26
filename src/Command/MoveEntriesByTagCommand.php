@@ -69,7 +69,6 @@ class MoveEntriesByTagCommand extends Command
             $this->moveComments($entry->comments, $magazine);
             $this->moveReports($entry->reports, $magazine);
             $this->moveFavourites($entry->favourites, $magazine);
-            $entry->badges->clear();
 
             $tags = array_diff($entry->tags, [$tag]);
             $entry->tags = \count($tags) ? array_values($tags) : null;

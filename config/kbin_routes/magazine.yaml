@@ -29,12 +29,6 @@ magazine_modlog:
   path: /m/{name}/modlog
   methods: [ GET ]
 
-magazine_awards:
-  controller: App\Controller\Magazine\MagazineAwardController
-  defaults: { category: ~ }
-  path: /m/{name}/awards/{category}
-  methods: [ GET ]
-
 magazine_people:
   controller: App\Controller\Magazine\MagazinePeopleFrontController
   path: /m/{name}/people

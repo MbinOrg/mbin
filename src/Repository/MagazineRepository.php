@@ -241,11 +241,6 @@ class MagazineRepository extends ServiceEntityRepository
         return $pagerfanta;
     }
 
-    public function findBadges(Magazine $magazine): Collection
-    {
-        return $magazine->badges;
-    }
-
     public function findModeratedMagazines(User $user, ?int $page = 1, int $perPage = self::PER_PAGE): PagerfantaInterface
     {
         $dql =

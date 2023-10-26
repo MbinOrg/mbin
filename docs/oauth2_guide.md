@@ -245,8 +245,6 @@ POST /api/client
         - Allows updates to the magazine theme
       - `moderate:magazine_admin:moderators`
         - Allows the addition or removal of moderators to/from an owned magazine
-      - `moderate:magazine_admin:badges`
-        - Allows the addition or removal of badges to/from an owned magazine
       - `moderate:magazine_admin:tags`
         - Allows the addition or removal of tags to/from an owned magazine
       - `moderate:magazine_admin:stats`

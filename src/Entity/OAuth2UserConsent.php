@@ -124,7 +124,6 @@ class OAuth2UserConsent
         'moderate:magazine_admin:update' => 'oauth2.grant.moderate.magazine_admin.update',
         'moderate:magazine_admin:theme' => 'oauth2.grant.moderate.magazine_admin.edit_theme',
         'moderate:magazine_admin:moderators' => 'oauth2.grant.moderate.magazine_admin.moderators',
-        'moderate:magazine_admin:badges' => 'oauth2.grant.moderate.magazine_admin.badges',
         'moderate:magazine_admin:tags' => 'oauth2.grant.moderate.magazine_admin.tags',
         'moderate:magazine_admin:stats' => 'oauth2.grant.moderate.magazine_admin.stats',
         // Admin grants

@@ -76,7 +76,6 @@ about_instance: 關於
 all_magazines: 所有刊版
 stats: 統計
 fediverse: 聯邦宇宙
-awards: 獎牌
 ranking: 排名
 create_new_magazine: 立刊
 add_new_post: 新鋪文
@@ -101,7 +100,6 @@ add_new: 新增
 url: 網址
 title: 標題
 tags: 標籤
-badges: 勳章
 is_adult: 成人內容
 eng: 英文
 oc: 原創
@@ -450,7 +448,6 @@ gold_entry_month_desc: 本月最好的帖子
 gold_comment_month_desc: 本月最好的留言
 gold_post_month_desc: 本月最好的鋪文
 bans: 封鎖
-add_badge: 新增勳章
 add_ban: 新增封鎖
 edited_comment: 編輯了一個留言
 change_magazine: 更改刊版

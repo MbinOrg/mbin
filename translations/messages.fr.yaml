@@ -78,7 +78,6 @@ about_instance: À propos
 all_magazines: Tous les magazines
 stats: Statistiques
 fediverse: Fédivers
-awards: Récompenses
 ranking: Classement
 create_new_magazine: Créer un nouveau magazine
 add_new_link: Ajouter un nouveau lien
@@ -103,7 +102,6 @@ url: URL
 title: Titre
 body: Corps
 tags: Étiquettes
-badges: Insignes
 is_adult: +18 / NSFW
 email_confirm_content: 'Prêt pour activer votre compte Mbin ? Cliquez sur le lien
   ci-dessous :'
@@ -405,7 +403,6 @@ filters: Filtres
 approved: Approuvé
 rejected: Rejeté
 add_moderator: Ajouter un(e) modérateur/trice
-add_badge: Ajouter un badge
 created: Créé
 expires: Expire
 perm: Permanent
@@ -792,5 +789,3 @@ more_from_domain: Plus du domaine
 oauth2.grant.user.profile.edit: Modifier votre profil.
 oauth2.grant.admin.post_comment.purge: Supprimer complètement de votre instance tout
   commentaire sur une publication.
-oauth2.grant.moderate.magazine_admin.badges: Créer ou supprimer des badges des magazines
-  qui vous appartiennent.

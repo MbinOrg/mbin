@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Command\AwesomeBot;
 
-use App\DTO\BadgeDto;
 use App\DTO\MagazineDto;
 use App\Entity\Magazine;
 use App\Repository\UserRepository;
-use App\Service\BadgeManager;
 use App\Service\MagazineManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -27,8 +25,7 @@ class AwesomeBotMagazine extends Command
 {
     public function __construct(
         private readonly UserRepository $repository,
-        private readonly MagazineManager $magazineManager,
-        private readonly BadgeManager $badgeManager
+        private readonly MagazineManager $magazineManager
     ) {
         parent::__construct();
     }
@@ -64,12 +61,6 @@ class AwesomeBotMagazine extends Command
             $dto->setOwner($user);
 
             $magazine = $this->magazineManager->create($dto, $user);
-
-            $this->createBadges(
-                $magazine,
-                $input->getArgument('url'),
-                $input->getArgument('tags') ? explode(',', $input->getArgument('tags')) : []
-            );
         } catch (\Exception $e) {
             $io->error('Can\'t create magazine');
 
@@ -77,30 +68,5 @@ class AwesomeBotMagazine extends Command
         }
 
         return Command::SUCCESS;
-    }
-
-    #[Pure]
-    private function createBadges(Magazine $magazine, string $url, array $tags): Collection
-    {
-        $browser = new HttpBrowser(HttpClient::create());
-        $crawler = $browser->request('GET', $url);
-
-        $content = $crawler->filter('.markdown-body')->first()->children();
-
-        $labels = [];
-        foreach ($content as $elem) {
-            if (\in_array($elem->nodeName, $tags)) {
-                $labels[] = $elem->nodeValue;
-            }
-        }
-
-        $badges = [];
-        foreach ($labels as $label) {
-            $this->badgeManager->create(
-                BadgeDto::create($magazine, $label)
-            );
-        }
-
-        return new ArrayCollection($badges);
     }
 }

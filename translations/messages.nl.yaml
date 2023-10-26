@@ -80,7 +80,6 @@ about_instance: Over
 all_magazines: Alle tijdschriften
 stats: Statistieken
 fediverse: Fediverse
-awards: Bekroningen
 ranking: Klassement
 create_new_magazine: Nieuw tijdschrift maken
 add_new_article: Artikel toevoegen
@@ -111,7 +110,6 @@ add_new: Toevoegen
 url: Url
 title: Titel
 body: Inhoud
-badges: Emblemen
 eng: ENG
 oc: OI
 image: Afbeelding
@@ -412,7 +410,6 @@ filters: Filters
 approved: Goedgekeurd
 rejected: Afgewezen
 add_moderator: Moderator toevoegen
-add_badge: Embleem toekennen
 bans: Verbanningen
 expires: Vervalt op
 perm: Permanent
@@ -629,8 +626,6 @@ oauth2.grant.moderate.magazine_admin.edit_theme: Bewerk de aangepaste CSS van al
   tijdschriften.
 oauth2.grant.moderate.magazine_admin.moderators: Voeg of verwijder moderators op een
   van uw tijdschriften.
-oauth2.grant.moderate.magazine_admin.badges: Maak of verwijder badges uit uw eigen
-  tijdschriften.
 oauth2.grant.moderate.magazine_admin.tags: Maak of verwijder tags uit uw eigen tijdschriften.
 oauth2.grant.moderate.magazine_admin.stats: Bekijk de inhoud, stem en bekijk statistieken
   van uw eigen tijdschriften.

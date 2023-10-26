@@ -93,7 +93,6 @@ class AwesomeBotEntries extends Command
                     $result[] = [
                         'title' => $li->nodeValue,
                         'url' => $li->firstChild->getAttribute('href'),
-                        'badges' => new ArrayCollection(array_filter($tags, fn ($v) => \is_string($v))),
                     ];
                 }
             }
@@ -113,7 +112,6 @@ class AwesomeBotEntries extends Command
             $dto->user = $user;
             $dto->title = substr($item['title'], 0, 255);
             $dto->url = $item['url'];
-            $dto->badges = $item['badges'];
 
             $this->entryManager->create($dto, $user);
         }

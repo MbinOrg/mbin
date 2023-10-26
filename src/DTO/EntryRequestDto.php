@@ -34,16 +34,6 @@ class EntryRequestDto extends ContentRequestDto
     #[OA\Property(type: 'array', items: new OA\Items(type: 'string'), example: ['cat', 'blep', 'cute'])]
     public ?array $tags = null;
 
-    // TODO: Support badges whenever/however they're implemented
-    // #[Groups([
-    //     Entry::ENTRY_TYPE_ARTICLE,
-    //     Entry::ENTRY_TYPE_LINK,
-    //     Entry::ENTRY_TYPE_IMAGE,
-    //     Entry::ENTRY_TYPE_VIDEO,
-    // ])]
-    // #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
-    // public ?array $badges = null;
-
     #[Groups([
         Entry::ENTRY_TYPE_ARTICLE,
         Entry::ENTRY_TYPE_LINK,
@@ -66,8 +56,6 @@ class EntryRequestDto extends ContentRequestDto
         $dto->title = $this->title ?? $dto->title;
         $dto->body = $this->body ?? $dto->body;
         $dto->tags = $this->tags ?? $dto->tags;
-        // TODO: Support for badges when they're implemented
-        // $dto->badges = $this->badges ?? $dto->badges;
         $dto->isAdult = $this->isAdult ?? $dto->isAdult;
         $dto->isOc = $this->isOc ?? $dto->isOc;
         $dto->lang = $this->lang ?? $dto->lang ?? SettingsManager::getValue('KBIN_DEFAULT_LANG');

@@ -43,7 +43,6 @@ class MagazineDto
     public ?bool $isUserSubscribed = null;
     public ?bool $isBlockedByUser = null;
     public ?array $tags = null;
-    public ?Collection $badges = null;
     public ?Collection $moderators = null;
     public ?string $ip = null;
     public ?string $apId = null;

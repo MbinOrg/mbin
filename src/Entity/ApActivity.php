@@ -20,11 +20,7 @@ class ApActivity
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
 
-    #[ManyToOne(targetEntity: User::class, inversedBy: 'awards')]
-    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $user;
-    #[ManyToOne(targetEntity: Magazine::class, inversedBy: 'awards')]
-    #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?Magazine $magazine;
     #[Column(type: 'string', nullable: false)]
     public int $subjectId;

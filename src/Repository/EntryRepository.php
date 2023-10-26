@@ -254,7 +254,6 @@ class EntryRepository extends ServiceEntityRepository implements TagRepositoryIn
             ->leftJoin('u.avatar', 'ua')
             ->leftJoin('m.icon', 'mi')
             ->leftJoin('e.image', 'i')
-            ->leftJoin('e.badges', 'b')
             ->where('e IN (?1)')
             ->setParameter(1, $entries)
             ->getQuery()

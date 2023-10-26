@@ -40,7 +40,6 @@ class MagazineRetrieveApiTest extends WebTestCase
         self::assertNull($jsonData['icon']);
         self::assertNull($jsonData['tags']);
         self::assertEquals('test', $jsonData['name']);
-        self::assertIsArray($jsonData['badges']);
         self::assertIsArray($jsonData['moderators']);
         self::assertCount(1, $jsonData['moderators']);
         self::assertIsArray($jsonData['moderators'][0]);
@@ -78,7 +77,6 @@ class MagazineRetrieveApiTest extends WebTestCase
         self::assertNull($jsonData['icon']);
         self::assertNull($jsonData['tags']);
         self::assertEquals('test', $jsonData['name']);
-        self::assertIsArray($jsonData['badges']);
         self::assertIsArray($jsonData['moderators']);
         self::assertCount(1, $jsonData['moderators']);
         self::assertIsArray($jsonData['moderators'][0]);
@@ -111,7 +109,6 @@ class MagazineRetrieveApiTest extends WebTestCase
         self::assertNull($jsonData['icon']);
         self::assertNull($jsonData['tags']);
         self::assertEquals('test', $jsonData['name']);
-        self::assertIsArray($jsonData['badges']);
         self::assertIsArray($jsonData['moderators']);
         self::assertCount(1, $jsonData['moderators']);
         self::assertIsArray($jsonData['moderators'][0]);
@@ -149,7 +146,6 @@ class MagazineRetrieveApiTest extends WebTestCase
         self::assertNull($jsonData['icon']);
         self::assertNull($jsonData['tags']);
         self::assertEquals('test', $jsonData['name']);
-        self::assertIsArray($jsonData['badges']);
         self::assertIsArray($jsonData['moderators']);
         self::assertCount(1, $jsonData['moderators']);
         self::assertIsArray($jsonData['moderators'][0]);

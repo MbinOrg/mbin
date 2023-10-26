@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace App\Factory;
 
-use App\DTO\BadgeDto;
-use App\DTO\BadgeResponseDto;
 use App\DTO\MagazineBanResponseDto;
 use App\DTO\MagazineDto;
 use App\DTO\MagazineLogResponseDto;
 use App\DTO\MagazineResponseDto;
 use App\DTO\MagazineSmallResponseDto;
-use App\Entity\Badge;
 use App\Entity\Magazine;
 use App\Entity\MagazineBan;
 use App\Entity\MagazineLog;
@@ -61,7 +58,6 @@ class MagazineFactory
         $dto->postCommentCount = $magazine->postCommentCount;
         $dto->isAdult = $magazine->isAdult;
         $dto->tags = $magazine->tags;
-        $dto->badges = $magazine->badges;
         $dto->moderators = $magazine->moderators;
         $dto->apId = $magazine->apId;
         $dto->apProfileId = $magazine->apProfileId;
@@ -140,7 +136,6 @@ class MagazineFactory
             $dto->isUserSubscribed,
             $dto->isBlockedByUser,
             $dto->tags,
-            array_map(fn (Badge|BadgeDto $badge) => new BadgeResponseDto($badge), $dto->badges?->toArray() ?? []),
             array_map(fn (Moderator $moderator) => $this->moderatorFactory->createDto($moderator), $dto->moderators?->toArray() ?? []),
             $dto->apId,
             $dto->apProfileId,

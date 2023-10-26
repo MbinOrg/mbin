@@ -11,7 +11,6 @@ use App\Form\EventListener\DefaultLanguage;
 use App\Form\EventListener\DisableFieldsOnEntryEdit;
 use App\Form\EventListener\ImageListener;
 use App\Form\EventListener\RemoveFieldsOnEntryImageEdit;
-use App\Form\Type\BadgesType;
 use App\Form\Type\LanguageType;
 use App\Form\Type\MagazineAutocompleteType;
 use Symfony\Component\Form\AbstractType;
@@ -48,13 +47,6 @@ class EntryImageType extends AbstractType
                     'delimiter' => ' ',
                 ],
             ])
-            ->add(
-                'badges',
-                BadgesType::class,
-                [
-                    'required' => false,
-                ]
-            )
             ->add(
                 'image',
                 FileType::class,

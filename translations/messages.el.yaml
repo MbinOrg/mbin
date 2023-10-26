@@ -58,7 +58,6 @@ about_instance: Σχετικά
 all_magazines: Όλα τα περιοδικά
 stats: Στατιστικά
 fediverse: Fediverse
-awards: Βραβεία
 ranking: Σειρά κατάταξης
 add_new_article: Προσθήκη νέου νήματος
 add_new_link: Προσθήκη νέου συνδέσμου
@@ -81,7 +80,6 @@ add_new: Προσθήκη νέου
 url: URL
 title: Τίτλος
 tags: Ετικέτες
-badges: Σήματα
 is_adult: 18+ / NSFW
 eng: ENG
 oc: OC
@@ -392,7 +390,6 @@ gold_commentator: Gold σχολιαστής
 gold_comment: Εξαιρετικό σχόλιο
 edited_post: Επεξεργάστηκε μια ανάρτηση
 sidebar_position: Θέση πλευρικής γραμμής
-add_badge: Προσθήκη σήματος
 add_mentions_entries: Προσθήκη ετικετών αναφοράς σε νήματα
 unban_account: Κατάργηση αποκλεισμού λογαριασμού
 browsing_one_thread: Περιηγείστε μόνο ένα νήμα στη συζήτηση! Όλα τα σχόλια είναι διαθέσιμα

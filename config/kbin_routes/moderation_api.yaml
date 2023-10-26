@@ -132,18 +132,6 @@ api_moderate_magazine_unmod_user:
   methods: [ DELETE ]
   format: json
 
-api_moderate_magazine_add_badge:
-  controller: App\Controller\Api\Magazine\Admin\MagazineAddBadgesApi
-  path: /api/moderate/magazine/{magazine_id}/badge
-  methods: [ POST ]
-  format: json
-
-api_moderate_magazine_remove_badge:
-  controller: App\Controller\Api\Magazine\Admin\MagazineRemoveBadgesApi
-  path: /api/moderate/magazine/{magazine_id}/badge/{badge_id}
-  methods: [ DELETE ]
-  format: json
-
 api_moderate_magazine_add_tag:
   controller: App\Controller\Api\Magazine\Admin\MagazineAddTagsApi
   path: /api/moderate/magazine/{magazine_id}/tag/{tag}

@@ -188,7 +188,6 @@ nelmio_api_doc:
                 moderate:magazine_admin:update: Edit any of your owned magazines' rules, description, NSFW status, or icon.
                 moderate:magazine_admin:theme: Edit the custom CSS of any of your owned magazines.
                 moderate:magazine_admin:moderators: Add or remove moderators of any of your owned magazines.
-                moderate:magazine_admin:badges: Create or remove badges from your owned magazines.
                 moderate:magazine_admin:tags: Create or remove tags from your owned magazines.
                 moderate:magazine_admin:stats: View the content, vote, and view stats of your owned magazines.
                 admin: Perform any administrative action on your instance.
@@ -303,7 +302,6 @@ nelmio_api_doc:
                 moderate:magazine_admin:update: Edit any of your owned magazines' rules, description, NSFW status, or icon.
                 moderate:magazine_admin:theme: Edit the custom CSS of any of your owned magazines.
                 moderate:magazine_admin:moderators: Add or remove moderators of any of your owned magazines.
-                moderate:magazine_admin:badges: Create or remove badges from your owned magazines.
                 moderate:magazine_admin:tags: Create or remove tags from your owned magazines.
                 moderate:magazine_admin:stats: View the content, vote, and view stats of your owned magazines.
                 admin: Perform any administrative action on your instance.

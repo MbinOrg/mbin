@@ -74,7 +74,6 @@ privacy_policy: プライバシーポリシー
 about_instance: このインスタンスについて
 all_magazines: すべてのマガジン
 stats: 統計
-awards: 実績
 ranking: ランキング
 add_new_article: 新しいスレッドを追加
 add_new_link: 新しいリンクを追加
@@ -100,7 +99,6 @@ url: URL
 title: タイトル
 body: 本文
 tags: タグ
-badges: バッジ
 is_adult: R-18 / NSFW
 eng: 英語
 oc: オリジナルコンテンツ
@@ -388,7 +386,6 @@ filters: フィルター
 approved: 許可された
 rejected: 拒否された
 add_moderator: モデレーターを追加する
-add_badge: バッジを追加する
 bans: バンの回数
 created: 作成した
 expires: 有効期限

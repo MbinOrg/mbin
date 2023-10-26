@@ -84,7 +84,6 @@ about_instance: About
 all_magazines: All magazines
 stats: Statistics
 fediverse: Fediverse
-awards: Awards
 ranking: Ranking
 create_new_magazine: Create new magazine
 add_new_article: Add new thread
@@ -117,7 +116,6 @@ url: URL
 title: Title
 body: Body
 tags: Tags
-badges: Badges
 is_adult: 18+ / NSFW
 eng: ENG
 oc: OC
@@ -398,7 +396,6 @@ filters: Filters
 approved: Approved
 rejected: Rejected
 add_moderator: Add moderator
-add_badge: Add badge
 bans: Bans
 created: Created
 expires: Expires
@@ -580,8 +577,6 @@ oauth2.grant.moderate.magazine_admin.edit_theme: Edit the custom CSS of any of y
   owned magazines.
 oauth2.grant.moderate.magazine_admin.moderators: Add or remove moderators of any of
   your owned magazines.
-oauth2.grant.moderate.magazine_admin.badges: Create or remove badges from your owned
-  magazines.
 oauth2.grant.moderate.magazine_admin.tags: Create or remove tags from your owned magazines.
 oauth2.grant.moderate.magazine_admin.stats: View the content, vote, and view stats
   of your owned magazines.

@@ -96,7 +96,6 @@ reset_password: Passwort zurücksetzen
 username: Benutzername
 email: E-Mail
 repeat_password: Passwort wiederholen
-awards: Auszeichnungen
 posts: Beiträge
 top: Top
 mod_log: Moderations-Log
@@ -216,7 +215,6 @@ notify_on_new_post_reply: Antworten aller Ebenen zu Beiträgen die ich verfasst 
 notify_on_new_posts: Neue Beiträge in sämtlichen Magazinen die ich abonniert habe
 change_theme: Design ändern
 add_new: Erstellen
-badges: Abzeichen
 body: Inhalt
 is_adult: 18+ / NSFW
 joined: Beigetreten
@@ -335,7 +333,6 @@ instances: Instanzen
 upload_file: Datei hochladen
 from_url: Von Url
 add_moderator: Moderator hinzufügen
-add_badge: 'Abzeichen hinzufügen'
 expires: Läuft ab
 FAQ: FAQ
 type_search_term: Suchbegriff eingeben

@@ -6,7 +6,6 @@ namespace App\Factory;
 
 use App\DTO\EntryDto;
 use App\DTO\EntryResponseDto;
-use App\Entity\Badge;
 use App\Entity\Entry;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -19,7 +18,6 @@ class EntryFactory
         private readonly DomainFactory $domainFactory,
         private readonly MagazineFactory $magazineFactory,
         private readonly UserFactory $userFactory,
-        private readonly BadgeFactory $badgeFactory,
     ) {
     }
 
@@ -41,8 +39,7 @@ class EntryFactory
     public function createResponseDto(EntryDto|Entry $entry): EntryResponseDto
     {
         $dto = $entry instanceof Entry ? $this->createDto($entry) : $entry;
-        $badges = $dto->badges ? array_map(fn (Badge $badge) => $this->badgeFactory->createDto($badge), $dto->badges->toArray()) : null;
-
+        
         return EntryResponseDto::create(
             $dto->getId(),
             $this->magazineFactory->createSmallDto($dto->magazine),
@@ -54,7 +51,6 @@ class EntryFactory
             $dto->body,
             $dto->lang,
             $dto->tags,
-            $badges,
             $dto->comments,
             $dto->uv,
             $dto->dv,
@@ -91,7 +87,6 @@ class EntryFactory
         $dto->isAdult = $entry->isAdult;
         $dto->isOc = $entry->isOc;
         $dto->lang = $entry->lang;
-        $dto->badges = $entry->badges;
         $dto->slug = $entry->slug;
         $dto->views = $entry->views;
         $dto->score = $entry->score;

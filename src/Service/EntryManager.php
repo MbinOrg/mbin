@@ -42,7 +42,6 @@ class EntryManager implements ContentManagerInterface
         private readonly EntryCommentManager $entryCommentManager,
         private readonly UrlCleaner $urlCleaner,
         private readonly Slugger $slugger,
-        private readonly BadgeManager $badgeManager,
         private readonly EntryFactory $factory,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly RateLimiterFactory $entryLimiter,
@@ -93,10 +92,6 @@ class EntryManager implements ContentManagerInterface
         }
 
         $entry = $this->setType($dto, $entry);
-
-        if ($dto->badges) {
-            $this->badgeManager->assign($entry, $dto->badges);
-        }
 
         $this->entityManager->persist($entry);
         $this->entityManager->flush();
@@ -158,9 +153,6 @@ class EntryManager implements ContentManagerInterface
         $entry->isOc = $dto->isOc;
         $entry->lang = $dto->lang;
         $entry->editedAt = new \DateTimeImmutable('@'.time());
-        if ($dto->badges) {
-            $this->badgeManager->assign($entry, $dto->badges);
-        }
         if (empty($entry->body) && empty($entry->title) && null === $entry->image && null === $entry->url) {
             throw new \Exception('Entry body, name, url and image cannot all be empty');
         }

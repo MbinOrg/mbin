@@ -124,8 +124,6 @@ class EntrySetLanguageApiTest extends WebTestCase
         self::assertNull($jsonData['image']);
         self::assertEquals('de', $jsonData['lang']);
         self::assertNull($jsonData['tags']);
-        self::assertIsArray($jsonData['badges']);
-        self::assertEmpty($jsonData['badges']);
         self::assertSame(0, $jsonData['numComments']);
         self::assertSame(0, $jsonData['uv']);
         self::assertSame(0, $jsonData['dv']);
@@ -185,8 +183,6 @@ class EntrySetLanguageApiTest extends WebTestCase
         self::assertNull($jsonData['image']);
         self::assertEquals('elx', $jsonData['lang']);
         self::assertNull($jsonData['tags']);
-        self::assertIsArray($jsonData['badges']);
-        self::assertEmpty($jsonData['badges']);
         self::assertSame(0, $jsonData['numComments']);
         self::assertSame(0, $jsonData['uv']);
         self::assertSame(0, $jsonData['dv']);

@@ -47,7 +47,6 @@ class MagazineFixtures extends BaseFixture implements DependentFixtureInterface
             $dto->title = $magazine['title'];
             $dto->description = $magazine['description'];
             $dto->rules = $magazine['rules'];
-            $dto->badges = $magazine['badges'];
             $dto->icon = $image;
 
             $entity = $this->magazineManager->create($dto, $magazine['user']);
@@ -76,7 +75,6 @@ class MagazineFixtures extends BaseFixture implements DependentFixtureInterface
                 'user' => $this->getReference('user_'.rand(1, UserFixtures::USERS_COUNT)),
                 'description' => rand(0, 3) ? null : $this->faker->realText($this->faker->numberBetween(10, 550)),
                 'rules' => rand(0, 3) ? null : $this->faker->realText($this->faker->numberBetween(10, 550)),
-                'badges' => new ArrayCollection(),
             ];
         }
     }

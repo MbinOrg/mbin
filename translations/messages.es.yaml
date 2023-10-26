@@ -81,7 +81,6 @@ about_instance: Acerca de
 all_magazines: Todos las revistas
 stats: Estadísticas
 fediverse: Fediverso
-awards: Premios
 ranking: Ránking
 create_new_magazine: Crear una nueva revista
 add_new_article: Agregar un nuevo hilo
@@ -119,7 +118,6 @@ email_confirm_title: Confirma tu dirección de correo electrónico.
 down_vote: Votos negativos
 body: Cuerpo
 tags: Etiquetas
-badges: Distintivos
 is_adult: 18+ / NSFW
 eng: ENG
 oc: OC
@@ -388,7 +386,6 @@ filters: Filtros
 approved: Aprobado
 rejected: Rechazado
 add_moderator: Añadir un/a moderador/a
-add_badge: Añadir un distintivo
 bans: Suspensiones
 created: Creado
 expires: Expira

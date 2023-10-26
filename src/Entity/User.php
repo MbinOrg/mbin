@@ -207,9 +207,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[OneToMany(mappedBy: 'user', targetEntity: Notification::class, cascade: ['persist'], fetch: 'EXTRA_LAZY')]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $notifications;
-    #[OneToMany(mappedBy: 'user', targetEntity: Award::class, cascade: ['persist'], fetch: 'EXTRA_LAZY')]
-    #[OrderBy(['createdAt' => 'DESC'])]
-    public Collection $awards;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
@@ -260,7 +257,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         $this->favourites = new ArrayCollection();
         $this->violations = new ArrayCollection();
         $this->notifications = new ArrayCollection();
-        $this->awards = new ArrayCollection();
         $this->lastActive = new \DateTime();
         $this->createdAtTraitConstruct();
         $this->oAuth2UserConsents = new ArrayCollection();

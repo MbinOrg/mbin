@@ -34,7 +34,6 @@ remember_me: Memoru min
 unfollow: Malsekvi
 terms: Servadokondiĉoj
 privacy_policy: Privateca politiko
-awards: Premioj
 ranking: Rangolisto
 add_new_article: Aldoni novan fadenon
 change_theme: Ŝanĝi etoson
@@ -144,7 +143,6 @@ image: Bildo
 title: Titolo
 body: Korpo
 tags: Etikedoj
-badges: Insignoj
 is_adult: 18+ / NSPL
 domain: Domajno
 name: Nomo
@@ -430,7 +428,6 @@ off: Malŝalta
 magazine_panel: Revua panelo
 reject: Malakcepti
 rejected: Malakceptita
-add_badge: Aldoni insignon
 perm: Permanenta
 expired_at: Eksvalidiĝis je
 add_ban: Aldoni forbaron

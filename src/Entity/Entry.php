@@ -136,11 +136,6 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     public Collection $notifications;
     #[OneToMany(mappedBy: 'entry', targetEntity: ViewCounter::class, cascade: ['remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $viewCounters;
-    #[OneToMany(mappedBy: 'entry', targetEntity: EntryBadge::class, cascade: [
-        'remove',
-        'persist',
-    ], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
-    public Collection $badges;
     public array $children = [];
     #[Id]
     #[GeneratedValue]
@@ -177,7 +172,6 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
         $this->favourites = new ArrayCollection();
         $this->notifications = new ArrayCollection();
         $this->viewCounters = new ArrayCollection();
-        $this->badges = new ArrayCollection();
 
         $user->addEntry($this);
 
@@ -207,15 +201,6 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function setBadges(Badge ...$badges)
-    {
-        $this->badges->clear();
-
-        foreach ($badges as $badge) {
-            $this->badges->add(new EntryBadge($this, $badge));
-        }
     }
 
     public function softDelete(): void

@@ -89,18 +89,12 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     #[OneToMany(mappedBy: 'magazine', targetEntity: Report::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY')]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $reports;
-    #[OneToMany(mappedBy: 'magazine', targetEntity: Badge::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY')]
-    #[OrderBy(['id' => 'DESC'])]
-    public Collection $badges;
     #[OneToMany(mappedBy: 'magazine', targetEntity: MagazineLog::class, cascade: [
         'persist',
         'remove',
     ], fetch: 'EXTRA_LAZY')]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $logs;
-    #[OneToMany(mappedBy: 'magazine', targetEntity: Award::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY')]
-    #[OrderBy(['createdAt' => 'DESC'])]
-    public Collection $awards;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
@@ -127,9 +121,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         $this->subscriptions = new ArrayCollection();
         $this->bans = new ArrayCollection();
         $this->reports = new ArrayCollection();
-        $this->badges = new ArrayCollection();
         $this->logs = new ArrayCollection();
-        $this->awards = new ArrayCollection();
 
         $this->addModerator(new Moderator($this, $user, true, true));
 
@@ -360,24 +352,6 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         $ban->expiredAt = new \DateTime('+10 seconds');
 
         return $ban;
-    }
-
-    public function addBadge(Badge ...$badges): self
-    {
-        foreach ($badges as $badge) {
-            if (!$this->badges->contains($badge)) {
-                $this->badges->add($badge);
-            }
-        }
-
-        return $this;
-    }
-
-    public function removeBadge(Badge $badge): self
-    {
-        $this->badges->removeElement($badge);
-
-        return $this;
     }
 
     public function addLog(MagazineLog $log): void

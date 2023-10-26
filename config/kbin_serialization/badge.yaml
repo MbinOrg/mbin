@@ -1,6 +1,0 @@
-App\DTO\BadgeDto:
-  attributes:
-    id:
-      groups: [ 'badge_read' ]
-    name:
-      groups: [ 'badge_read' ]

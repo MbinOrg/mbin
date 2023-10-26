@@ -36,7 +36,6 @@ reset_password: Şifreyi sıfırla
 show_more: Daha fazlası
 about_instance: Hakkında
 fediverse: Fediverse
-awards: Ödüller
 ranking: Sıralama
 follow: Takip et
 unfollow: Takipten çık
@@ -110,7 +109,6 @@ select_magazine: Dergi seçin
 add_new: Yenisini ekle
 title: Başlık
 tags: Etiketler
-badges: Rozetler
 email_confirm_title: E-posta adresinizi onaylayın.
 subscriptions: Abonelikler
 overview: Genel bakış
@@ -266,7 +264,6 @@ perm: Kalıcı
 expires: Süresi doluyor
 created: Oluşturuldu
 bans: Yasaklar
-add_badge: Rozet ekle
 add_moderator: Yönetici ekle
 rejected: Reddedilmiş
 filters: Filtreler

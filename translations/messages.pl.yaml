@@ -33,7 +33,6 @@ filters: Filtry
 approved: Zatwierdzone
 rejected: Odrzucone
 add_moderator: Dodaj moderatora
-add_badge: Dodaj etykietę
 bans: Bany
 created: Utworzono
 expires: Wygasa
@@ -185,7 +184,6 @@ about_instance: O instancji
 all_magazines: Wszystkie magazyny
 stats: Statystyki
 fediverse: Fediwersum
-awards: Odznaczenia
 ranking: Ranking
 create_new_magazine: Utwórz nowy magazyn
 add_new_video: Dodaj video
@@ -214,7 +212,6 @@ url: URL
 title: Tytuł
 body: Treść
 tags: Tagi
-badges: Etykiety
 is_adult: +18 / NSFW
 eng: ENG
 oc: OC
