@@ -9,8 +9,6 @@ use App\Repository\EntryRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\EntryManager;
-use Doctrine\Common\Collections\ArrayCollection;
-use DOMElement;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

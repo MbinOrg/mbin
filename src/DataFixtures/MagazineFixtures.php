@@ -8,7 +8,6 @@ use App\DTO\MagazineDto;
 use App\Repository\ImageRepository;
 use App\Service\ImageManager;
 use App\Service\MagazineManager;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;

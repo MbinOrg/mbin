@@ -39,7 +39,6 @@ class EntryFactory
     public function createResponseDto(EntryDto|Entry $entry): EntryResponseDto
     {
         $dto = $entry instanceof Entry ? $this->createDto($entry) : $entry;
-        
         return EntryResponseDto::create(
             $dto->getId(),
             $this->magazineFactory->createSmallDto($dto->magazine),

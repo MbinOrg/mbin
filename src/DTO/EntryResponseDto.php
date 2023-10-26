@@ -6,7 +6,6 @@ namespace App\DTO;
 
 use App\DTO\Contracts\VisibilityAwareDtoTrait;
 use App\Entity\Entry;
-use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema()]

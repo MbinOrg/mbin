@@ -30,7 +30,6 @@ final class Version20231026044439 extends AbstractMigration
         $this->addSql('DROP TABLE award');
         $this->addSql('DROP TABLE badge');
         $this->addSql('DROP TABLE entry_badge');
-        
         // Dropped Due to src/Entity/ApActivity.php, needs testing
         //$this->addSql('ALTER TABLE ap_activity DROP CONSTRAINT fk_68292518a76ed395');
         //$this->addSql('ALTER TABLE ap_activity DROP CONSTRAINT fk_682925183eb84a1d');
