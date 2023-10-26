@@ -35,6 +35,10 @@ class ThemeSettingsController extends AbstractController
     public const KBIN_FEDERATION_ENABLED = 'kbin_federation_enabled';
     public const KBIN_COMMENTS_SHOW_USER_AVATAR = 'kbin_comments_show_user_avatar';
     public const KBIN_COMMENTS_REPLY_POSITION = 'kbin_comments_reply_position';
+    public const KBIN_GENERAL_SHOW_SUBSCRIPTIONS = 'kbin_general_show_subscriptions';
+    public const KBIN_GENERAL_SHOW_SUBSCRIPTIONS_SORT = 'kbin_general_show_subscriptions_sort';
+    public const KBIN_GENERAL_SHOW_SUBSCRIPTIONS_IN_SEPARATE = 'kbin_general_show_subscriptions_seperate';
+    public const KBIN_GENERAL_SIDEBARS_SAME_SIDE = 'kbin_general_sidebars_same_side';
 
     public const CLASSIC = 'classic';
     public const CHAT = 'chat';
@@ -52,6 +56,8 @@ class ThemeSettingsController extends AbstractController
     public const RIGHT = 'right';
     public const TOP = 'top';
     public const BOTTOM = 'bottom';
+    public const ALPHABETICALLY = 'alphabetically';
+    public const LAST_ACTIVE = 'last_active';
     public const MAX = 'max';
     public const AUTO = 'auto';
     public const FIXED = 'fixed';
@@ -80,6 +86,10 @@ class ThemeSettingsController extends AbstractController
         self::KBIN_LANG,
         self::KBIN_COMMENTS_SHOW_USER_AVATAR,
         self::KBIN_COMMENTS_REPLY_POSITION,
+        self::KBIN_GENERAL_SHOW_SUBSCRIPTIONS,
+        self::KBIN_GENERAL_SHOW_SUBSCRIPTIONS_SORT,
+        self::KBIN_GENERAL_SHOW_SUBSCRIPTIONS_IN_SEPARATE,
+        self::KBIN_GENERAL_SIDEBARS_SAME_SIDE,
     ];
 
     public const VALUES = [

@@ -93,6 +93,7 @@ RUN cp .env.example_docker .env
 
 COPY --from=builder-caddy --link /usr/bin/caddy /usr/sbin/caddy
 COPY --from=builder-composer --chown=$USER:$GROUP $KBIN_HOME/vendor $KBIN_HOME/vendor
+COPY --from=builder-composer --chown=$USER:$GROUP $KBIN_HOME/public/bundles $KBIN_HOME/public/bundles
 COPY --from=builder-yarn --chown=$USER:$GROUP $KBIN_HOME/public $KBIN_HOME/public
 
 COPY --link docker/caddy/Caddyfile /etc/caddy/Caddyfile

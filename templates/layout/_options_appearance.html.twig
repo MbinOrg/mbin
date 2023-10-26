@@ -15,6 +15,20 @@
         {{ component('settings_row_switch', {label: 'infinite_scroll'|trans, help: 'infinite_scroll_help'|trans ,  settingsKey: 'KBIN_GENERAL_INFINITE_SCROLL'}) }}
         {{ component('settings_row_switch', {label: 'sticky_navbar'|trans, help: 'sticky_navbar_help'|trans,  settingsKey: 'KBIN_GENERAL_FIXED_NAVBAR'}) }}
         {{ component('settings_row_switch', {label: 'show_top_bar'|trans, settingsKey: 'KBIN_GENERAL_TOPBAR'}) }}
+
+        {% if app.user is defined and app.user is not same as null %}
+            {{ component('settings_row_switch', {label: 'show_subscriptions'|trans, settingsKey: 'KBIN_GENERAL_SHOW_SUBSCRIPTIONS'}) }}
+            {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SHOW_SUBSCRIPTIONS')) is same as 'true' %}
+                {{ component('settings_row_enum', {label: 'subscription_sort'|trans, settingsKey: 'KBIN_GENERAL_SHOW_SUBSCRIPTIONS_SORT', values: [ {name: 'alphabetically'|trans , value: 'ALPHABETICALLY'}, {name: 'last_active'|trans , value: 'LAST_ACTIVE' } ], defaultValue: 'LAST_ACTIVE'}) }}
+            {% endif %}
+            {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SHOW_SUBSCRIPTIONS')) is same as 'true' %}
+                {{ component('settings_row_switch', {label: 'subscriptions_in_own_sidebar'|trans, settingsKey: 'KBIN_GENERAL_SHOW_SUBSCRIPTIONS_IN_SEPARATE'}) }}
+            {% endif %}
+            {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SHOW_SUBSCRIPTIONS')) is same as 'true' and
+                app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SHOW_SUBSCRIPTIONS_IN_SEPARATE')) is same as 'true' %}
+                {{ component('settings_row_switch', {label: 'sidebars_same_side'|trans, settingsKey: 'KBIN_GENERAL_SIDEBARS_SAME_SIDE'}) }}
+            {% endif %}
+        {% endif %}
     </div>
     <strong>{{ 'threads'|trans }}</strong>
     <div class="settings-section">
