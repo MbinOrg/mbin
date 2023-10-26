@@ -794,3 +794,7 @@ subscription_sort: Sort
 alphabetically: Alphabetically
 subscriptions_in_own_sidebar: Subscriptions separate
 sidebars_same_side: Sidebars on the same side
+page_width: Page width
+page_width_max: Max
+page_width_auto: Auto
+page_width_fixed: Fixed
