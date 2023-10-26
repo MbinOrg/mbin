@@ -31,13 +31,13 @@ final class Version20231026044439 extends AbstractMigration
         $this->addSql('DROP TABLE badge');
         $this->addSql('DROP TABLE entry_badge');
         // Dropped Due to src/Entity/ApActivity.php, needs testing
-        //$this->addSql('ALTER TABLE ap_activity DROP CONSTRAINT fk_68292518a76ed395');
-        //$this->addSql('ALTER TABLE ap_activity DROP CONSTRAINT fk_682925183eb84a1d');
-        //$this->addSql('DROP INDEX idx_682925183eb84a1d');
-        //$this->addSql('DROP INDEX idx_68292518a76ed395');
-        //$this->addSql('ALTER TABLE ap_activity DROP user_id');
-        //$this->addSql('ALTER TABLE ap_activity DROP magazine_id');
-        //$this->addSql('ALTER TABLE "user" ALTER type DROP DEFAULT');
+        // $this->addSql('ALTER TABLE ap_activity DROP CONSTRAINT fk_68292518a76ed395');
+        // $this->addSql('ALTER TABLE ap_activity DROP CONSTRAINT fk_682925183eb84a1d');
+        // $this->addSql('DROP INDEX idx_682925183eb84a1d');
+        // $this->addSql('DROP INDEX idx_68292518a76ed395');
+        // $this->addSql('ALTER TABLE ap_activity DROP user_id');
+        // $this->addSql('ALTER TABLE ap_activity DROP magazine_id');
+        // $this->addSql('ALTER TABLE "user" ALTER type DROP DEFAULT');
     }
 
     public function down(Schema $schema): void
@@ -66,12 +66,12 @@ final class Version20231026044439 extends AbstractMigration
         $this->addSql('ALTER TABLE entry_badge ADD CONSTRAINT fk_7aea2bbbf7a2c2fc FOREIGN KEY (badge_id) REFERENCES badge (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE entry_badge ADD CONSTRAINT fk_7aea2bbbba364942 FOREIGN KEY (entry_id) REFERENCES entry (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         // Dropped Due to src/Entity/ApActivity.php, needs testing
-        //$this->addSql('ALTER TABLE ap_activity ADD user_id INT NOT NULL');
-        //$this->addSql('ALTER TABLE ap_activity ADD magazine_id INT DEFAULT NULL');
-        //$this->addSql('ALTER TABLE ap_activity ADD CONSTRAINT fk_68292518a76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
-        //$this->addSql('ALTER TABLE ap_activity ADD CONSTRAINT fk_682925183eb84a1d FOREIGN KEY (magazine_id) REFERENCES magazine (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
-        //$this->addSql('CREATE INDEX idx_682925183eb84a1d ON ap_activity (magazine_id)');
-        //$this->addSql('CREATE INDEX idx_68292518a76ed395 ON ap_activity (user_id)');
-        //$this->addSql('ALTER TABLE "user" ALTER type SET DEFAULT \'Person\'');
+        // $this->addSql('ALTER TABLE ap_activity ADD user_id INT NOT NULL');
+        // $this->addSql('ALTER TABLE ap_activity ADD magazine_id INT DEFAULT NULL');
+        // $this->addSql('ALTER TABLE ap_activity ADD CONSTRAINT fk_68292518a76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        // $this->addSql('ALTER TABLE ap_activity ADD CONSTRAINT fk_682925183eb84a1d FOREIGN KEY (magazine_id) REFERENCES magazine (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        // $this->addSql('CREATE INDEX idx_682925183eb84a1d ON ap_activity (magazine_id)');
+        // $this->addSql('CREATE INDEX idx_68292518a76ed395 ON ap_activity (user_id)');
+        // $this->addSql('ALTER TABLE "user" ALTER type SET DEFAULT \'Person\'');
     }
 }
