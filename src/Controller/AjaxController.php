@@ -17,7 +17,6 @@ use App\Repository\EntryRepository;
 use App\Repository\NotificationRepository;
 use App\Repository\PostCommentRepository;
 use App\Repository\UserRepository;
-use App\Service\ImageManager;
 use App\Service\UserNoteManager;
 use App\Utils\Embed;
 use Symfony\Component\HttpFoundation\JsonResponse;

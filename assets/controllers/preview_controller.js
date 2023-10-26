@@ -1,40 +1,33 @@
-import {Controller} from '@hotwired/stimulus';
-import {fetch, ok} from "../utils/http";
-import router from "../utils/routing";
+import { Controller } from '@hotwired/stimulus';
 import { useThrottle } from 'stimulus-use'
+import { fetch, ok } from "../utils/http";
+import router from "../utils/routing";
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
     static values = {
         loading: Boolean,
-    }
+    };
 
-    static throttles = ['show']
+    static targets = ['container'];
+    static throttles = ['show'];
 
-    connect(){
+    connect() {
         useThrottle(this, {wait: 1000});
     }
 
     async show(event) {
         event.preventDefault();
 
-        let container = this.element.nextElementSibling
-                && this.element.nextElementSibling.classList.contains('js-container')
-            ? this.element.nextElementSibling : null;
+        if (!this.hasContainerTarget) {
+            console.warn('display target not found, bailing out');
+            return;
+        }
 
-        if (null === container) {
-            container = document.createElement('div');
-            container.classList.add('js-container');
-            container.style.display = 'none';
-            this.element.insertAdjacentHTML('afterend', container.outerHTML);
-        } else {
-            if (container.querySelector('.preview')) {
-                container.querySelector('.preview').remove();
-                if (0 === container.children.length) {
-                    container.remove();
-                }
-                return;
-            }
+        if (this.containerTarget.hasChildNodes()) {
+            this.containerTarget.replaceChildren();
+            this.containerTarget.classList.add('hidden');
+            return
         }
 
         try {
@@ -45,10 +38,12 @@ export default class extends Controller {
             response = await ok(response);
             response = await response.json();
 
-            this.element.nextElementSibling.insertAdjacentHTML('afterbegin', response.html);
-            this.element.nextElementSibling.style.display = 'block';
+            this.containerTarget.innerHTML = response.html;
+            this.containerTarget.classList.remove('hidden');
             if (event.params.ratio) {
-                this.element.nextElementSibling.querySelector('.preview').classList.add('ratio');
+                this.containerTarget
+                    .querySelector('.preview')
+                    .classList.add('ratio');
             }
             this.loadScripts(response.html);
         } catch (e) {
@@ -62,8 +57,8 @@ export default class extends Controller {
                             Failed to load. Click to retry.
                     </a>
                 </div>`
-            this.element.nextElementSibling.insertAdjacentHTML('afterbegin', failedHtml);
-            this.element.nextElementSibling.style.display = 'block';
+            this.containerTarget.innerHTML = failedHtml;
+            this.containerTarget.classList.remove('hidden');
         } finally {
             this.loadingValue = false;
         }
