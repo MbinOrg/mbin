@@ -7,6 +7,7 @@
     <strong>{{ 'general'|trans }}</strong>
     <div class="settings-section">
         {{ component('settings_row_enum', {label: 'sidebar_position'|trans, settingsKey: 'KBIN_GENERAL_SIDEBAR_POSITION', values: [ {name: 'left'|trans , value: 'LEFT'}, {name: 'right'|trans , value: 'RIGHT' } ], defaultValue: 'RIGHT' } ) }}
+        {{ component('settings_row_enum', {label: 'container_width', settingsKey: 'KBIN_CONTAINER_WIDTH', values: [ {name: 'max' , value: 'MAX'}, {name: 'auto' , value: 'AUTO' }, {name: 'fixed' , value: 'FIXED' } ], defaultValue: 'FIXED', class: 'width-setting' } ) }}
         {% if kbin_mercure_enabled() %}
             {{ component('settings_row_switch', {label: 'dynamic_lists'|trans, settingsKey: 'KBIN_GENERAL_DYNAMIC_LISTS'}) }}
         {% endif %}
