@@ -115,7 +115,7 @@ class ThemeSettingsController extends AbstractController
     {
         $response = new Response();
 
-        if (in_array($key, self::KEYS) && in_array($value, self::VALUES)) {
+        if (\in_array($key, self::KEYS) && \in_array($value, self::VALUES)) {
             $response->headers->setCookie(new Cookie($key, $value, strtotime('+1 year')));
         }
 

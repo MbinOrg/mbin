@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Twig\Components;
 
 use App\Controller\User\ThemeSettingsController;
@@ -8,7 +10,6 @@ use App\Entity\MagazineSubscription;
 use App\Entity\User;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\PostMount;
-use function Aws\map;
 
 #[AsTwigComponent('sidebar_subscriptions', 'layout/sidebar_subscriptions.html.twig')]
 class SidebarSubscriptionComponent
@@ -29,16 +30,17 @@ class SidebarSubscriptionComponent
     {
         $max = 50;
         $this->magazines = [];
-        foreach ($this->user->subscriptions as /** @type MagazineSubscription $sub */ $sub) {
+        foreach ($this->user->subscriptions as /* @type MagazineSubscription $sub */ $sub) {
             $this->magazines[] = $sub->magazine;
         }
-        if ($this->sort == ThemeSettingsController::ALPHABETICALLY) {
-            usort($this->magazines, fn($a, $b) => $a->name > $b->name ? 1 : -1);
+        if (ThemeSettingsController::ALPHABETICALLY === $this->sort) {
+            usort($this->magazines, fn ($a, $b) => $a->name > $b->name ? 1 : -1);
         } else {
-            usort($this->magazines, fn($a, $b) => $a->lastActive < $b->lastActive ? 1 : -1);
+            usort($this->magazines, fn ($a, $b) => $a->lastActive < $b->lastActive ? 1 : -1);
         }
-        if (sizeof($this->magazines) > $max)
+        if (\sizeof($this->magazines) > $max) {
             $this->tooManyMagazines = true;
-        $this->magazines = array_slice($this->magazines, 0, $max);
+        }
+        $this->magazines = \array_slice($this->magazines, 0, $max);
     }
 }
