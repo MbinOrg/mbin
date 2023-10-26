@@ -348,8 +348,8 @@
       h1,h2,h3,h4,h5,h6{
         margin: 1rem auto;
       }
-      h1{       
-        font-size: 1.25rem;      
+      h1{
+        font-size: 1.25rem;
       }
       h2{
         font-size: 1.20rem;
@@ -366,7 +366,6 @@
       h6{
         font-size: 1rem;
       }
-      
     }
 
     .no-image-placeholder {
@@ -374,17 +373,12 @@
     }
 
     .rounded-edges .view-compact & figure {
-      border-top-right-radius: 0 !important;
+      border-bottom-right-radius: 0;
     }
 
     @include media-breakpoint-down(sm) {
-      .rounded-edges & figure {
-        border-top-left-radius: 0 !important;
-        border-top-right-radius: 0 !important;
-      }
-
       .rounded-edges .view-compact & figure {
-        border-top-right-radius: var(--kbin-rounded-edges-radius);
+        border-bottom-right-radius: var(--kbin-rounded-edges-radius);
       }
     }
   }
