@@ -197,7 +197,7 @@ docker compose down
 docker compose up -d
 ```
 
-4. Clear the caches, see section below "Clear cache".
+4. Clear the caches, see section below "Clear caches".
 
 ## Clear caches
 
