@@ -456,7 +456,7 @@ kbin_intro_desc: ist eine dezentralisierte Plattform zur Inhaltssammlung und fü
 magazine_panel_tags_info: Nur benutzen wenn du möchtest, dass Inhalte aus dem Fediverse,
   basierend auf Tags, in dieses Magazin eingefügt werden
 sticky_navbar: Statische Navigationsleiste
-kbin_promo_desc: '%link_start%Klone die Repo%link_end% und erweitere das Fediverse'
+kbin_promo_desc: '%link_start%Klone das Repo%link_end% und erweitere das Fediverse'
 browsing_one_thread: Du siehst nur Inhalte aus einem Thema in dieser Diskussion. Alle
   Kommentare sind auf der Beitragsseite verfügbar.
 boost: Boost
