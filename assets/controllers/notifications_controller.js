@@ -48,7 +48,7 @@ export default class extends Controller {
                 setTimeout(() => {
                     window.es = Subscribe(topics, cb);
                     window.es.onerror = resubscribe;
-                }, 1000);
+                }, 10000);
             };
             window.es.onerror = resubscribe;
         }
