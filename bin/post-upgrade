@@ -21,10 +21,10 @@ if [ "$answer" != "${answer#[Yy]}" ]; then
         echo "INFO: Clear composer cache"
         composer clear-cache
         echo "INFO: Install/update JS packages"
-        # Note: Yarn install also require dev dependencies for the build step
-        yarn install
+        # Note: npm install also require dev dependencies for the build step
+        npm ci
         echo "INFO: Build frontend"
-        yarn build
+        npm run build
     else
         # Development
         echo -e "INFO: Environment detected: Development\n"
@@ -39,9 +39,9 @@ if [ "$answer" != "${answer#[Yy]}" ]; then
         echo "INFO: Clear composer cache"
         composer clear-cache
         echo "INFO: Install/update JS packages"
-        NODE_ENV=development yarn install
+        NODE_ENV=development npm ci
         echo "INFO: Build frontend"
-        yarn dev
+        npm run dev
     fi
 
     echo -e "INFO: Upgrade successfully completed!\n"

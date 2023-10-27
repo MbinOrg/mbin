@@ -84,7 +84,7 @@ Done!
 Requirements:
 
 - PHP v8.2
-- NodeJS + Yarn
+- NodeJS
 - Redis
 - PostgreSQL
 - _Optionally:_ Mercure
@@ -143,7 +143,7 @@ local   mbin            mbin                                    md5
 - Restart the PostgreSQL server: `sudo systemctl restart postgresql`
 - Create database: `php bin/console doctrine:database:create`
 - Create tables and database structure: `php bin/console doctrine:migrations:migrate`
-- Build frontend assets: `yarn && yarn dev`
+- Build frontend assets: `npm install && npm run dev`
 
 Starting the server:
 

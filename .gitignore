@@ -17,8 +17,8 @@ tools/vendor/
 # Mbin specific
 .env
 /public/media/*
-package-lock.json
 docker/compose.override.yml
+yarn.lock
 
 ###> symfony/framework-bundle ###
 /.env.local
