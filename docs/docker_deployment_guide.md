@@ -123,7 +123,7 @@ docker compose up -d
 
 See your running containers via: `docker ps`.
 
-Then, you should be able to access the new instance via [http://localhost](http://localhost).  
+Then, you should be able to access the new instance via [http://localhost:8008](http://localhost:8008).  
 You can also access RabbitMQ management UI via [http://localhost:15672](http://localhost:15672).
 
 ### Mbin first setup
