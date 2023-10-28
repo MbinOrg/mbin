@@ -33,15 +33,14 @@ class ContactController extends AbstractController
                     $manager->send($dto);
                 }
 
-                $this->addFlash('success', 'email_was_sent');
+                $this->addFlash('success', 'flash_email_was_sent');
 
                 return $this->redirectToRefererOrHome($request);
             }
-        }  catch (\Exception $e) {
+        } catch (\Exception $e) {
             // Show an error to the user
-            $this->addFlash('error', 'email_failed_to_sent');
+            $this->addFlash('error', 'flash_email_failed_to_sent');
         }
-
 
         return $this->render(
             'page/contact.html.twig', [

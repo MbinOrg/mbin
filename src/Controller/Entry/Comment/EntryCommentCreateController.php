@@ -46,20 +46,27 @@ class EntryCommentCreateController extends AbstractController
         Request $request,
     ): Response {
         $form = $this->getForm($entry, $parent);
-        $form->handleRequest($request);
+        try {
+            // Could thrown an error on event handlers (eg. onPostSubmit if a user upload an incorrect image)
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $dto = $form->getData();
-            $dto->magazine = $magazine;
-            $dto->entry = $entry;
-            $dto->parent = $parent;
-            $dto->ip = $this->ipResolver->resolve();
+            if ($form->isSubmitted() && $form->isValid()) {
+                $dto = $form->getData();
+                $dto->magazine = $magazine;
+                $dto->entry = $entry;
+                $dto->parent = $parent;
+                $dto->ip = $this->ipResolver->resolve();
 
-            if (!$this->isGranted('create_content', $dto->magazine)) {
-                throw new AccessDeniedHttpException();
+                if (!$this->isGranted('create_content', $dto->magazine)) {
+                    throw new AccessDeniedHttpException();
+                }
+                $this->addFlash('success', 'flash_thread_comment_new_success');
+
+                return $this->handleValidRequest($dto, $request);
             }
-
-            return $this->handleValidRequest($dto, $request);
+        } catch (\Exception $e) {
+            // Show an error to the user
+            $this->addFlash('error', 'flash_thread_comment_new_error');
         }
 
         if ($request->isXmlHttpRequest()) {

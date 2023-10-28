@@ -34,12 +34,12 @@ class MagazineThemeController extends AbstractController
             if ($form->isSubmitted() && $form->isValid()) {
                 $magazine = $this->manager->changeTheme($dto);
 
-                $this->addFlash('success', 'magazine_theme_changed_success');
+                $this->addFlash('success', 'flash_magazine_theme_changed_success');
                 $this->redirectToRefererOrHome($request);
             }
         } catch (\Exception $e) {
             // Show an error to the user
-            $this->addFlash('error', 'magazine_theme_changed_error');
+            $this->addFlash('error', 'flash_magazine_theme_changed_error');
         }
 
         return $this->render(

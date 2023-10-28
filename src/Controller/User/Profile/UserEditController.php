@@ -30,15 +30,22 @@ class UserEditController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    public function general(Request $request): Response
+    public function profile(Request $request): Response
     {
         $this->denyAccessUnlessGranted('edit_profile', $this->getUserOrThrow());
 
         $dto = $this->manager->createDto($this->getUserOrThrow());
 
         $form = $this->handleForm($this->createForm(UserBasicType::class, $dto), $dto, $request);
-        if (!$form instanceof FormInterface) {
-            return $form;
+        if (null === $form) {
+            $this->addFlash('error', 'flash_user_edit_profile_error');
+        } else {
+            if (!$form instanceof FormInterface) {
+                return $form;
+            }
+            if ($form->isSubmitted() && $form->isValid()) {
+                $this->addFlash('success', 'flash_user_edit_profile_success');
+            }
         }
 
         return $this->render(
@@ -61,8 +68,12 @@ class UserEditController extends AbstractController
         $dto = $this->manager->createDto($this->getUserOrThrow());
 
         $form = $this->handleForm($this->createForm(UserEmailType::class, $dto), $dto, $request);
-        if (!$form instanceof FormInterface) {
-            return $form;
+        if (null === $form) {
+            $this->addFlash('error', 'flash_user_edit_email_error');
+        } else {
+            if (!$form instanceof FormInterface) {
+                return $form;
+            }
         }
 
         return $this->render(
@@ -85,8 +96,12 @@ class UserEditController extends AbstractController
         $dto = $this->manager->createDto($this->getUserOrThrow());
 
         $form = $this->handleForm($this->createForm(UserPasswordType::class, $dto), $dto, $request);
-        if (!$form instanceof FormInterface) {
-            return $form;
+        if (null === $form) {
+            $this->addFlash('error', 'flash_user_edit_password_error');
+        } else {
+            if (!$form instanceof FormInterface) {
+                return $form;
+            }
         }
 
         return $this->render(
@@ -102,41 +117,51 @@ class UserEditController extends AbstractController
         );
     }
 
+    /**
+     * Handle form submit request.
+     */
     private function handleForm(
         FormInterface $form,
         UserDto $dto,
         Request $request
-    ): FormInterface|Response {
-        $form->handleRequest($request);
+    ): FormInterface|Response|null {
+        try {
+            // Could thrown an error on event handlers (eg. onPostSubmit if a user upload an incorrect image)
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->has('currentPassword')) {
-            if (!$this->userPasswordHasher->isPasswordValid(
-                $this->getUser(),
-                $form->get('currentPassword')->getData()
-            )) {
-                $form->get('currentPassword')->addError(new FormError($this->translator->trans('Password is invalid')));
-            }
-        }
-
-        if ($form->has('newEmail')) {
-            $dto->email = $form->get('newEmail')->getData();
-        }
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $email = $this->getUser()->email;
-            $this->manager->edit($this->getUser(), $dto);
-
-            if ($dto->email !== $email || $dto->plainPassword) {
-                $this->security->logout(false);
-
-                $this->addFlash('success', 'account_settings_changed');
-
-                return $this->redirectToRoute('app_login');
+            if ($form->isSubmitted() && $form->has('currentPassword')) {
+                if (!$this->userPasswordHasher->isPasswordValid(
+                    $this->getUser(),
+                    $form->get('currentPassword')->getData()
+                )) {
+                    $form->get('currentPassword')->addError(new FormError($this->translator->trans('Password is invalid')));
+                }
             }
 
-            return $this->redirectToRoute('user_settings_profile');
-        }
+            if ($form->has('newEmail')) {
+                $dto->email = $form->get('newEmail')->getData();
+            }
 
-        return $form;
+            if ($form->isSubmitted() && $form->isValid()) {
+                $email = $this->getUser()->email;
+                $this->manager->edit($this->getUser(), $dto);
+
+                // Show succcessful message to user and tell them to re-login
+                // In case of an email change or password change
+                if ($dto->email !== $email || $dto->plainPassword) {
+                    $this->security->logout(false);
+
+                    $this->addFlash('success', 'flash_account_settings_changed');
+
+                    return $this->redirectToRoute('app_login');
+                }
+
+                return $this->redirectToRoute('user_settings_profile');
+            }
+
+            return $form;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 }

@@ -54,7 +54,7 @@ class PostCreateController extends AbstractController
                     ]
                 );
             }
-        }  catch (\Exception $e) {
+        } catch (\Exception $e) {
             // Show an error to the user
             $this->addFlash('error', 'flash_post_new_error');
         }
