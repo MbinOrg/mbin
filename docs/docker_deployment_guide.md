@@ -176,7 +176,7 @@ If you want to deploy your app on a cluster of machines, you can
 use [Docker Swarm](https://docs.docker.com/engine/swarm/stack-deploy/), which is compatible with the provided Compose
 files.
 
-### NGINX
+### Mbin NGINX Server Block
 
 NGINX reverse proxy example for the Mbin Docker instance:
 
