@@ -186,7 +186,7 @@ class User2FAController extends AbstractController
             if ($dto->totpSecret) {
                 $this->security->logout(false);
 
-                $this->addFlash('success', 'account_settings_changed');
+                $this->addFlash('success', 'flash_account_settings_changed');
 
                 return $this->redirectToRoute('app_login');
             }
