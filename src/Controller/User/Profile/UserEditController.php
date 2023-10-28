@@ -36,12 +36,13 @@ class UserEditController extends AbstractController
 
         $dto = $this->manager->createDto($this->getUserOrThrow());
 
-        $form = $this->handleForm($this->createForm(UserBasicType::class, $dto), $dto, $request);
-        if (null === $form) {
+        $form = $this->createForm(UserBasicType::class, $dto);
+        $formHandler = $this->handleForm($form, $dto, $request);
+        if (null === $formHandler) {
             $this->addFlash('error', 'flash_user_edit_profile_error');
         } else {
-            if (!$form instanceof FormInterface) {
-                return $form;
+            if (!$formHandler instanceof FormInterface) {
+                return $formHandler;
             }
         }
 
@@ -64,12 +65,13 @@ class UserEditController extends AbstractController
 
         $dto = $this->manager->createDto($this->getUserOrThrow());
 
-        $form = $this->handleForm($this->createForm(UserEmailType::class, $dto), $dto, $request);
-        if (null === $form) {
+        $form = $this->createForm(UserEmailType::class, $dto);
+        $formHandler = $this->handleForm($form, $dto, $request);
+        if (null === $formHandler) {
             $this->addFlash('error', 'flash_user_edit_email_error');
         } else {
-            if (!$form instanceof FormInterface) {
-                return $form;
+            if (!$formHandler instanceof FormInterface) {
+                return $formHandler;
             }
         }
 
@@ -92,12 +94,13 @@ class UserEditController extends AbstractController
 
         $dto = $this->manager->createDto($this->getUserOrThrow());
 
-        $form = $this->handleForm($this->createForm(UserPasswordType::class, $dto), $dto, $request);
-        if (null === $form) {
+        $form = $this->createForm(UserPasswordType::class, $dto);
+        $formHandler = $this->handleForm($form, $dto, $request);
+        if (null === $formHandler) {
             $this->addFlash('error', 'flash_user_edit_password_error');
         } else {
-            if (!$form instanceof FormInterface) {
-                return $form;
+            if (!$formHandler instanceof FormInterface) {
+                return $formHandler;
             }
         }
 
