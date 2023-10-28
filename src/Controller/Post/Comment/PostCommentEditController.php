@@ -108,11 +108,11 @@ class PostCommentEditController extends AbstractController
     {
         $comment = $this->manager->edit($comment, $dto);
 
-        $this->addFlash('success', 'flash_comment_edit_success');
-
         if ($request->isXmlHttpRequest()) {
             return $this->getPostCommentJsonSuccessResponse($comment);
         }
+
+        $this->addFlash('success', 'flash_comment_edit_success');
 
         return $this->redirectToPost($comment->post);
     }

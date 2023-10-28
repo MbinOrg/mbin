@@ -144,11 +144,11 @@ class PostCommentCreateController extends AbstractController
     {
         $comment = $this->manager->create($dto, $this->getUserOrThrow());
 
-        $this->addFlash('success', 'flash_comment_new_success');
-
         if ($request->isXmlHttpRequest()) {
             return $this->getPostCommentJsonSuccessResponse($comment);
         }
+
+        $this->addFlash('success', 'flash_comment_new_success');
 
         return $this->redirectToPost($comment->post);
     }

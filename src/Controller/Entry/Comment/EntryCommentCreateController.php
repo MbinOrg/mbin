@@ -60,7 +60,6 @@ class EntryCommentCreateController extends AbstractController
                 if (!$this->isGranted('create_content', $dto->magazine)) {
                     throw new AccessDeniedHttpException();
                 }
-                $this->addFlash('success', 'flash_comment_new_success');
 
                 return $this->handleValidRequest($dto, $request);
             }
@@ -140,6 +139,8 @@ class EntryCommentCreateController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             return $this->getJsonCommentSuccessResponse($comment);
         }
+
+        $this->addFlash('success', 'flash_comment_new_success');
 
         return $this->redirectToEntry($comment->entry);
     }

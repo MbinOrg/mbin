@@ -52,10 +52,7 @@ class EntryCreateController extends AbstractController
 
                 $entry = $this->manager->create($dto, $this->getUserOrThrow());
 
-                $this->addFlash(
-                    'success',
-                    'flash_thread_new_success'
-                );
+                $this->addFlash('success', 'flash_thread_new_success');
 
                 return $this->redirectToMagazine(
                     $entry->magazine,

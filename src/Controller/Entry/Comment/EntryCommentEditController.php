@@ -96,11 +96,11 @@ class EntryCommentEditController extends AbstractController
     {
         $comment = $this->manager->edit($comment, $dto);
 
-        $this->addFlash('success', 'flash_comment_edit_success');
-
         if ($request->isXmlHttpRequest()) {
             return $this->getJsonCommentSuccessResponse($comment);
         }
+
+        $this->addFlash('success', 'flash_comment_edit_success');
 
         return $this->redirectToEntry($comment->entry);
     }
