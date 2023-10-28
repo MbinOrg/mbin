@@ -6,11 +6,7 @@ COPY --from=composer:2.6.5 /usr/bin/composer /usr/bin/composer
 # Add NodeJS
 RUN apt-get update && apt-get install -y nodejs npm
 
-# Install yarn
-RUN npm install --global yarn
-
 # Add additional APT packages
-
 RUN apt-get update && apt install -y unzip postgresql
 
 # Add additional PHP packages

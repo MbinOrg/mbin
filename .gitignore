@@ -17,8 +17,8 @@ tools/vendor/
 # Mbin specific
 .env
 /public/media/*
-package-lock.json
 docker/compose.override.yml
+yarn.lock
 
 ###> symfony/framework-bundle ###
 /.env.local
@@ -56,6 +56,8 @@ yarn-error.log
 ###> phpunit/phpunit ###
 /phpunit.xml
 .phpunit.result.cache
+clover.xml
+/coverage
 ###< phpunit/phpunit ###
 
 ###> phpstan/phpstan ###
