@@ -881,3 +881,9 @@ close: Close
 bottom: Bottom
 pending: Pending
 flash_thread_new_error: Thread could not be created. Something went wrong.
+email_was_sent: Email has been succesfully sent
+email_failed_to_sent: Email could not be sent
+flash_post_new_success: Post has been succesfully created.
+flash_post_new_error: Post could not be created. Something went wrong.
+magazine_theme_changed_success: Succesfully updated the magazine appearance.
+magazine_theme_changed_error: Failed to update the magazine appearance.
