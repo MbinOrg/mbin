@@ -38,9 +38,8 @@ abstract class WebTestCase extends BaseWebTestCase
 
     protected string $kibbyPath;
 
-    public function __construct($name = null, array $data = [], $dataName = '')
+    public function setUp(): void
     {
-        parent::__construct($name, $data, $dataName);
         $this->users = new ArrayCollection();
         $this->magazines = new ArrayCollection();
         $this->entries = new ArrayCollection();

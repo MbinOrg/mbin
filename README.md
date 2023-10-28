@@ -94,7 +94,7 @@ Requirements:
 - Increase execution time in PHP config file: `/etc/php/8.2/fpm/php.ini`:
 
 ```ini
-max_execution_time = 60
+max_execution_time = 120
 ```
 
 - Restart the PHP-FPM service: `sudo systemctl restart php8.2-fpm.service`
@@ -113,6 +113,11 @@ sudo -u postgres createuser --createdb --createrole --pwprompt mbin
 - Correctly configured `.env` file (`cp .env.example .env`), these are only the changes you need to pay attention to:
 
 ```env
+# Set domain to 127.0.0.1:8000
+SERVER_NAME=127.0.0.1:8000
+KBIN_DOMAIN=127.0.0.1:8000
+KBIN_STORAGE_URL=http://127.0.0.1:8000/media
+
 #Redis (without password)
 REDIS_DNS=redis://127.0.0.1:6379
 
@@ -138,7 +143,7 @@ local   mbin            mbin                                    md5
 - Restart the PostgreSQL server: `sudo systemctl restart postgresql`
 - Create database: `php bin/console doctrine:database:create`
 - Create tables and database structure: `php bin/console doctrine:migrations:migrate`
-- Build frontend assets: `yarn && yarn build`
+- Build frontend assets: `yarn && yarn dev`
 
 Starting the server:
 
@@ -155,7 +160,7 @@ This will give you a minimal working frontend with PostgreSQL setup. Keep in min
 
 _Optionally:_ you could also setup RabbitMQ, but the Doctrine messenger configuration will be sufficient for local development.
 
-More info: [Symfony Local Web Server](https://symfony.com/doc/current/setup/symfony_server.html)
+More info: [Admin guide](docs/admin_guide.md) and [Symfony Local Web Server](https://symfony.com/doc/current/setup/symfony_server.html)
 
 ### Linting
 
