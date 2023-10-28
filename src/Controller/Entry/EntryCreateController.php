@@ -73,13 +73,18 @@ class EntryCreateController extends AbstractController
             );
         } catch (\Exception $e) {
             // Show an error to the user
+            $this->addFlash(
+                'error',
+                'flash_thread_new_error'
+            );
+
             return $this->render(
                 $this->getTemplateName((new EntryPageView(1))->resolveType($type)),
                 [
                     'magazine' => $magazine,
                     'form' => $form->createView(),
                 ],
-                new Response($e->getMessage(), 422)
+                new Response(null, 422)
             );
         }
     }
