@@ -65,8 +65,8 @@ class PostEditController extends AbstractController
                         ]
                     );
                 }
-                
-                $this->addFlash('success', 'flash_post_edit_success');                
+
+                $this->addFlash('success', 'flash_post_edit_success');
 
                 return $this->redirectToPost($post);
             }
