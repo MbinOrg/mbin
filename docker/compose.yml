@@ -11,7 +11,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:2019/metrics || exit 1"]
     ports:
-      - 80:80
+      - 8008:80
     volumes:
       - ./storage/caddy_config:/config
       - ./storage/caddy_data:/data

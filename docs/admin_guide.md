@@ -31,7 +31,7 @@ sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=compose
 
 If you have a firewall installed (or you're behind a NAT), be sure to open port `443` for the web server. Mbin should run behind a reverse proxy like Nginx.
 
-## Install NodeJS & Yarn (frontend tools)
+## Install NodeJS (frontend tools)
 
 1. Prepare & download keyring:
 
@@ -54,14 +54,6 @@ echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.co
 ```bash
 sudo apt-get update
 sudo apt-get install nodejs -y
-```
-
-Install Yarn:
-
-```bash
-curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | sudo tee /usr/share/keyrings/yarnkey.gpg >/dev/null
-echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-sudo apt-get update && sudo apt-get install nodejs yarn
 ```
 
 ## Create new user
@@ -326,8 +318,8 @@ php bin/console doctrine:migrations:migrate
 
 ```bash
 cd /var/www/kbin
-yarn # Installs all NPM dependencies
-yarn build # Builds frontend
+npm install # Installs all NPM dependencies
+npm run build # Builds frontend
 ```
 
 Make sure you have substituted all the passwords and configured the basic services.
