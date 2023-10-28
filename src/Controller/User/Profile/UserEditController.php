@@ -40,10 +40,6 @@ class UserEditController extends AbstractController
         if (null === $form) {
             $this->addFlash('error', 'flash_user_edit_profile_error');
         } else {
-            if ($form->isSubmitted() && $form->isValid()) {
-                $this->addFlash('success', 'flash_user_edit_profile_success');
-            }
-
             if (!$form instanceof FormInterface) {
                 return $form;
             }
@@ -146,6 +142,11 @@ class UserEditController extends AbstractController
             if ($form->isSubmitted() && $form->isValid()) {
                 $email = $this->getUser()->email;
                 $this->manager->edit($this->getUser(), $dto);
+
+                // Check succcessful to use if profile was changed (which contains the about field)
+                if ($form->has('about')) {
+                    $this->addFlash('success', 'flash_user_edit_profile_success');
+                }
 
                 // Show succcessful message to user and tell them to re-login
                 // In case of an email change or password change
