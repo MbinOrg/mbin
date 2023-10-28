@@ -67,7 +67,7 @@ RUN composer run-script --no-dev post-install-cmd && \
 
 FROM node:lts-alpine as builder-nodejs
 
-# Set production default by default
+# Set NodeJS as production by default
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 
