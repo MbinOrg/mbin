@@ -6,3 +6,8 @@ indent_size = 4
 indent_style = space
 indent_size = 4
 quote_type = single
+
+[translations/*.yaml]
+indent_style = space
+indent_size = 2
+quote_type = single
