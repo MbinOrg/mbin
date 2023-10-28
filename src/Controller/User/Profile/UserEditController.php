@@ -40,12 +40,12 @@ class UserEditController extends AbstractController
         if (null === $form) {
             $this->addFlash('error', 'flash_user_edit_profile_error');
         } else {
-            if (!$form instanceof FormInterface) {
-                $this->addFlash('success', 'flash_user_edit_profile_success');
-                return $form;
-            }
             if ($form->isSubmitted() && $form->isValid()) {
                 $this->addFlash('success', 'flash_user_edit_profile_success');
+            }
+
+            if (!$form instanceof FormInterface) {
+                return $form;
             }
         }
 
