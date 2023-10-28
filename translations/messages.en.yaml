@@ -887,11 +887,14 @@ flash_post_new_success: Post has been successfully created.
 flash_post_new_error: Post could not be created. Something went wrong.
 flash_magazine_theme_changed_success: Successfully updated the magazine appearance.
 flash_magazine_theme_changed_error: Failed to update the magazine appearance.
-flash_thread_comment_new_success: Comment has been successfully created.
-flash_thread_comment_new_error: Failed to create comment. Something went wrong.
+flash_comment_new_success: Comment has been successfully created.
+flash_comment_edit_success: Comment has been successfully updated.
+flash_comment_new_error: Failed to create comment. Something went wrong.
+flash_comment_edit_error: Failed to edit comment. Something went wrong.
 flash_user_settings_general_success: User settings successfully saved.
 flash_user_settings_general_error: Failed to save user settings.
 flash_user_edit_profile_error: Failed to save profile settings.
 flash_user_edit_profile_success: User profile settings successfully saved.
 flash_user_edit_email_error: Failed to change email.
 flash_user_edit_password_error: Failed to change password.
+flash_thread_edit_error: Failed to edit thread. Something went wrong.

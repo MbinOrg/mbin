@@ -37,21 +37,26 @@ class EntryEditController extends AbstractController
         $dto = $this->manager->createDto($entry);
 
         $form = $this->createFormByType((new EntryPageView(1))->resolveType($entry->type), $dto);
-        $form->handleRequest($request);
+        try {
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if (!$this->isGranted('create_content', $dto->magazine)) {
-                throw new AccessDeniedHttpException();
+            if ($form->isSubmitted() && $form->isValid()) {
+                if (!$this->isGranted('create_content', $dto->magazine)) {
+                    throw new AccessDeniedHttpException();
+                }
+
+                $entry = $this->manager->edit($entry, $dto);
+
+                $this->addFlash(
+                    'success',
+                    'flash_thread_edit_success'
+                );
+
+                return $this->redirectToEntry($entry);
             }
-
-            $entry = $this->manager->edit($entry, $dto);
-
-            $this->addFlash(
-                'success',
-                'flash_thread_edit_success'
-            );
-
-            return $this->redirectToEntry($entry);
+        } catch (\Exception $e) {
+            // Show an error to the user
+            $this->addFlash('error', 'flash_thread_edit_error');
         }
 
         return $this->render(
