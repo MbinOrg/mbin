@@ -409,12 +409,12 @@ gzip_types
 sudo nano /etc/nginx/sites-available/kbin.conf
 ```
 
-Content of `kbin.conf`:
+With the content:
 
-```kbin.conf
+```conf
 # Redirect HTTP to HTTPS
 server {
-    server_name domain.tld www.domain.tld;
+    server_name domain.tld;
     listen 80;
 
     return 301 https://$host$request_uri;
@@ -422,7 +422,7 @@ server {
 
 server {
     listen 443 ssl http2;
-    server_name domain.tld www.domain.tld;
+    server_name domain.tld;
 
     root /var/www/kbin/public;
 
@@ -518,6 +518,34 @@ server {
     location ~ \.php$ {
         return 404;
     }
+}
+```
+
+**Important:** If also want to also configure your `www.domain.tld` subdomain; our advise is to use a HTTP 301 redirect from the `www` subdomain towards the root domain. Do _NOT_ try to setup a double instance (you want to _avoid_ that ActivityPub will see `www` as a separate instance). See Nginx example below:
+
+```conf
+# Example of a 301 redirect response for the www subdomain
+server {
+    listen 80;
+    server_name www.domain.tld;
+    if ($host = www.domain.tld) {
+        return 301 https://domain.tld$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    http2 on;
+    server_name www.domain.tld;
+
+    # TLS
+    ssl_certificate /etc/letsencrypt/live/domain.tld/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/domain.tld/privkey.pem;
+
+    # Don't leak powered-by
+    fastcgi_hide_header X-Powered-By;
+
+    return 301 https://domain.tld$request_uri;
 }
 ```
 
