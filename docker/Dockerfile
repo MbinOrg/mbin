@@ -82,7 +82,7 @@ COPY package-lock.json $KBIN_HOME
 COPY --from=builder-composer --link $KBIN_HOME/vendor $KBIN_HOME/vendor
 
 # NPM: install package
-RUN npm ci
+RUN npm ci --include=dev
 
 # NPM: build (production by default)
 COPY --link ./ $KBIN_HOME

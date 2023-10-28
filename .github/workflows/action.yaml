@@ -50,8 +50,9 @@ jobs:
             - name: Composer install
               run: composer install --no-dev --no-progress
             - name: NPM install
-              run: npm ci
-
+              run: npm ci --include=dev
+              env:
+                  NODE_ENV: production
             - name: Build frontend (production)
               run: npm run build
 
