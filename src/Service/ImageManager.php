@@ -150,7 +150,7 @@ class ImageManager
         $ext = $this->mimeTypeGuesser->getExtensions($mimeType)[0] ?? null;
 
         if (!$ext) {
-            throw new \RuntimeException("Couldn't guess extension of image");
+            throw new \RuntimeException("Couldn't guess extension of image (invalid image?)");
         }
 
         return sprintf('%s.%s', $hash, $ext);
