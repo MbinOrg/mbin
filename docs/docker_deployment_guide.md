@@ -170,11 +170,86 @@ If you created the file `compose.override.yml` with your configs (`cp compose.pr
 docker compose up -d
 ```
 
-See also the official: [Deploying in Production guide](https://github.com/dunglas/symfony-docker/blob/main/docs/production.md).
+**Important:** The docker instance is can be reached at [http://127.0.0.1:8008](http://127.0.0.1:8008), we strongly advise you to put a reverse proxy (like Nginx) in front of the docker instance. Nginx can could listen on ports 80 and 443 and Nginx should handle SSL/TLS offloading. See also Nginx example below.
 
 If you want to deploy your app on a cluster of machines, you can
 use [Docker Swarm](https://docs.docker.com/engine/swarm/stack-deploy/), which is compatible with the provided Compose
 files.
+
+### NGINX
+
+NGINX reverse proxy example for the Mbin Docker instance:
+
+```conf
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ''      close;
+}
+
+# Redirect HTTP to HTTPS
+server {
+    server_name domain.tld;
+    listen 80;
+
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name domain.tld;
+
+    index index.php;
+
+    charset utf-8;
+
+    # TLS
+    ssl_certificate /etc/letsencrypt/live/domain.tld/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/domain.tld/privkey.pem;
+
+    # Don't leak powered-by
+    fastcgi_hide_header X-Powered-By;
+
+    # Security headers
+    add_header X-Frame-Options "DENY" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "same-origin" always;
+    add_header X-Download-Options "noopen" always;
+    add_header X-Permitted-Cross-Domain-Policies "none" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+
+    client_max_body_size 20M; # Max size of a file that a user can upload
+
+    # Logs
+    error_log /var/log/nginx/mbin_error.log;
+    access_log /var/log/nginx/mbin_access.log;
+
+    location / {
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header HOST $host;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_pass http://127.0.0.1:8008;
+    }
+
+    location /.well-known/mercure {
+        proxy_pass http://127.0.0.1:8080$request_uri;
+        proxy_read_timeout 24h;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+See also the [Admin guide](./admin_guide.md#nginx) for NGINX setup details.
 
 ## Upgrade Docker setup
 
