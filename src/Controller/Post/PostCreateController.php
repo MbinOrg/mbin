@@ -41,10 +41,7 @@ class PostCreateController extends AbstractController
 
                 $this->manager->create($dto, $this->getUserOrThrow());
 
-                $this->addFlash(
-                    'success',
-                    'flash_post_new_success'
-                );
+                $this->addFlash('success', 'flash_post_new_success');
 
                 return $this->redirectToRoute(
                     'magazine_posts',

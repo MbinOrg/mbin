@@ -37,34 +37,42 @@ class PostEditController extends AbstractController
         $dto = $this->manager->createDto($post);
 
         $form = $this->createForm(PostType::class, $dto);
-        $form->handleRequest($request);
+        try {
+            // Could thrown an error on event handlers (eg. onPostSubmit if a user upload an incorrect image)
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if (!$this->isGranted('create_content', $magazine)) {
-                throw new AccessDeniedHttpException();
+            if ($form->isSubmitted() && $form->isValid()) {
+                if (!$this->isGranted('create_content', $magazine)) {
+                    throw new AccessDeniedHttpException();
+                }
+
+                $post = $this->manager->edit($post, $dto);
+
+                $this->addFlash('success', 'flash_post_edit_success');
+
+                if ($request->isXmlHttpRequest()) {
+                    return new JsonResponse(
+                        [
+                            'id' => $post->getId(),
+                            'html' => $this->renderView(
+                                'components/_ajax.html.twig',
+                                [
+                                    'component' => 'post',
+                                    'attributes' => [
+                                        'post' => $post,
+                                        'showMagazineName' => false,
+                                    ],
+                                ]
+                            ),
+                        ]
+                    );
+                }
+
+                return $this->redirectToPost($post);
             }
-
-            $post = $this->manager->edit($post, $dto);
-
-            if ($request->isXmlHttpRequest()) {
-                return new JsonResponse(
-                    [
-                        'id' => $post->getId(),
-                        'html' => $this->renderView(
-                            'components/_ajax.html.twig',
-                            [
-                                'component' => 'post',
-                                'attributes' => [
-                                    'post' => $post,
-                                    'showMagazineName' => false,
-                                ],
-                            ]
-                        ),
-                    ]
-                );
-            }
-
-            return $this->redirectToPost($post);
+        } catch (\Exception $e) {
+            // Show an error to the user
+            $this->addFlash('error', 'flash_post_edit_error');
         }
 
         $criteria = new PostCommentPageView($this->getPageNb($request));
