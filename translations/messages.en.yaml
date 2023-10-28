@@ -899,4 +899,3 @@ flash_user_edit_email_error: Failed to change email.
 flash_user_edit_password_error: Failed to change password.
 flash_thread_edit_error: Failed to edit thread. Something went wrong.
 flash_post_edit_error: Failed to edit post. Something went wrong.
-flash_post_edit_success: Post has been successfully edited.

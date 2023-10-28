@@ -48,8 +48,6 @@ class PostEditController extends AbstractController
 
                 $post = $this->manager->edit($post, $dto);
 
-                $this->addFlash('success', 'flash_post_edit_success');
-
                 if ($request->isXmlHttpRequest()) {
                     return new JsonResponse(
                         [
