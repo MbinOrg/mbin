@@ -889,7 +889,7 @@ flash_magazine_theme_changed_success: Successfully updated the magazine appearan
 flash_magazine_theme_changed_error: Failed to update the magazine appearance.
 flash_thread_comment_new_success: Comment has been successfully created.
 flash_thread_comment_new_error: Failed to create comment. Something went wrong.
-flash_user_settings_general_success: General user settings successfully saved.
+flash_user_settings_general_success: User settings successfully saved.
 flash_user_settings_general_error: Failed to save user settings.
 flash_user_edit_profile_error: Failed to save profile settings.
 flash_user_edit_profile_success: User profile settings successfully saved.
