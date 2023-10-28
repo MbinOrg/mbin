@@ -79,7 +79,7 @@ class EntryCreateController extends AbstractController
                     'magazine' => $magazine,
                     'form' => $form->createView(),
                 ],
-                new Response(null, 422)
+                new Response($e->getMessage(), 422)
             );
         }
     }
