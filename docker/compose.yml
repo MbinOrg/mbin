@@ -6,6 +6,8 @@ services:
       context: ../
       dockerfile: docker/Dockerfile
     image: mbin
+    # Or remove the build and image lines above and use the prebuild image:
+    #image: "ghcr.io/mbinorg/mbin:main"
     restart: unless-stopped
     command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
     healthcheck:
@@ -29,6 +31,8 @@ services:
       context: ../
       dockerfile: docker/Dockerfile
     image: mbin
+    # Or remove the build and image lines above and use the prebuild image:
+    #image: "ghcr.io/mbinorg/mbin:main"
     restart: unless-stopped
     command: php-fpm
     healthcheck:
@@ -51,6 +55,8 @@ services:
       context: ../
       dockerfile: docker/Dockerfile
     image: mbin
+    # Or remove the build and image lines above and use the prebuild image:
+    #image: "ghcr.io/mbinorg/mbin:main"
     restart: unless-stopped
     command: bin/console messenger:consume async --time-limit=3600
     healthcheck:
@@ -69,6 +75,8 @@ services:
       context: ../
       dockerfile: docker/Dockerfile
     image: mbin
+    # Or remove the build and image lines above and use the prebuild image:
+    #image: "ghcr.io/mbinorg/mbin:main"
     restart: unless-stopped
     command: bin/console messenger:consume async_ap --time-limit=3600
     healthcheck:

@@ -53,7 +53,15 @@ cd mbin
 cd docker
 ```
 
-2. Build the docker image (from the root-directory of the repository):
+2. Use the existing Docker image or build the docker image (from the root-directory of the repository).
+
+Fetch the latest Docker image from the `main` branch:
+
+```bash
+docker pull ghcr.io/mbinorg/mbin:main
+```
+
+_OR_ build the image yourself (if you wish):
 
 ```bash
 docker build --no-cache -t mbin -f Dockerfile  ..
