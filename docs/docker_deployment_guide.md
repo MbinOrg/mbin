@@ -181,11 +181,6 @@ files.
 NGINX reverse proxy example for the Mbin Docker instance:
 
 ```conf
-map $http_upgrade $connection_upgrade {
-    default upgrade;
-    ''      close;
-}
-
 # Redirect HTTP to HTTPS
 server {
     server_name domain.tld;
@@ -225,9 +220,6 @@ server {
     access_log /var/log/nginx/mbin_access.log;
 
     location / {
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "Upgrade";
         proxy_set_header HOST $host;
         proxy_set_header X-Forwarded-Host $host;
         proxy_set_header X-Real-IP $remote_addr;
