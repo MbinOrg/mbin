@@ -107,13 +107,13 @@ class User2FAController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    public function qRCode(Request $request): Response
+    public function qrCode(Request $request): Response
     {
         $this->denyAccessUnlessGranted('edit_profile', $this->getUserOrThrow());
 
         $totpSecret = $request->getSession()->get(self::TOTP_SESSION_KEY, null);
         if (null === $totpSecret) {
-            throw new AccessDeniedException('/settings/2fa/qrcode.png');
+            throw new AccessDeniedException('/settings/2fa/qrcode');
         }
         $this->getUserOrThrow()->setTotpSecret($totpSecret);
 
