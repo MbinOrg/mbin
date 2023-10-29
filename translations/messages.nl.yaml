@@ -925,8 +925,7 @@ two_factor_authentication: Tweefactorauthenticatie
 2fa.verify_authentication_code.label:
   Voer een tweefactorcode in om de configuratie
   te verifiëren
-flash_account_settings_changed:
-  Uw accountinstellingen zijn succesvol gewijzigd. U
+flash_account_settings_changed: Uw accountinstellingen zijn succesvol gewijzigd. U
   dient opnieuw in te loggen.
 close: Sluiten
 flash_post_new_success: Het bericht is succesvol aangemaakt.
@@ -950,7 +949,7 @@ bottom: Onderkant
 show_subscriptions: Toon abonnementen
 flash_comment_edit_success: Reactie is succesvol bijgewerkt.
 flash_user_edit_profile_success: Gebruikersprofielinstellingen zijn succesvol opgeslagen.
-subscription_sort: Abonnement sorteren
+subscription_sort: Abonnement sorteren op
 flash_user_settings_general_success: Gebruikersinstellingen succesvol opgeslagen.
 pending: In behandeling
 subscriptions_in_own_sidebar: Abonnementen apart
