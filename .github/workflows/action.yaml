@@ -127,29 +127,29 @@ jobs:
     permissions:
       contents: write
       packages: write
-      steps:
-        - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-        - name: Login to ghcr
-          if: github.event_name != 'pull_request'
-          uses: docker/login-action@v3
-          with:
-            registry: ghcr.io
-            username: ${{ github.repository_owner }}
-            password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Login to ghcr
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-        - name: Docker meta data
-          id: meta
-          uses: docker/metadata-action@v5
-          with:
-            images: mbinorg/mbin
+      - name: Docker meta data
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: mbinorg/mbin
 
-        - name: Build and push Docker image
-          uses: docker/build-push-action@5
-          with:
-            context: .
-            file: ./docker/Dockerfile
-            push: ${{ github.event_name != 'pull_request' }}
-            tags: ${{ steps.meta.outputs.tags }}
-            labels: ${{ steps.meta.outputs.labels }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@5
+        with:
+          context: .
+          file: ./docker/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 # TODO: Integration tests
