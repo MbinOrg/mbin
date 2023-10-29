@@ -212,8 +212,8 @@ user_settings_2fa_disable:
     methods: [POST]
 
 user_settings_2fa_qrcode:
-    controller: App\Controller\User\Profile\User2FAController::qRCode
-    path: /settings/2fa/qrcode.png
+    controller: App\Controller\User\Profile\User2FAController::qrCode
+    path: /settings/2fa/qrcode
     methods: [GET]
 
 user_settings_2fa_backup:
