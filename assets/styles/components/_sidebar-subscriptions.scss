@@ -5,9 +5,28 @@
 .sidebar-subscriptions {
   height: fit-content;
 
+  .sidebar-subscriptions-icons {
+    float: right;
+
+    @include media-breakpoint-down(lg) {
+      display: none;
+    }
+  }
+
   &.inline .subscription-list {
-    max-height: 40em;
+    max-height: 20em;
     overflow: auto;
+    &.lg {
+      max-height: 40em;
+    }
+  }
+
+  &.inline .magazine-subscription-avatar-placeholder {
+    display: inline-block;
+  }
+
+  &:not(.inline) .magazine-subscription-avatar-placeholder {
+    display: none;
   }
 
   &.section {
@@ -70,7 +89,6 @@
 
       .magazine-subscription-avatar-placeholder{
         width: 1.5rem;
-        display: inline-block;
         @include media-breakpoint-down(lg) {
           display: none;
         }
@@ -83,7 +101,8 @@
 
       .magazine-name {
         font-weight: bold;
-        padding: 0.25rem;
+        // padding: 0.25rem;
+        display: inline;
 
         &.has-image {
           @include media-breakpoint-down(lg) {

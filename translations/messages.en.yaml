@@ -794,6 +794,11 @@ subscription_sort: Subscription sort
 alphabetically: Alphabetically
 subscriptions_in_own_sidebar: Subscriptions separate
 sidebars_same_side: Sidebars on the same side
+subscription_sidebar_pop_out: Move subscriptions to separate sidebar
+subscription_sidebar_pop_in: Move subscriptions to the inline panel
+subscription_sidebar_move_left: Move left
+subscription_sidebar_move_right: Move right
+subscription_panel_large: Large subscription panel
 close: Close
 position_bottom: Bottom
 position_top: Top
