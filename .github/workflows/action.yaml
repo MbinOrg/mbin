@@ -124,6 +124,9 @@ jobs:
 
   build-and-publish-docker-image:
     runs-on: ubuntu-latest
+    # Let's only run this on branches and tagged releases only
+    # Because the Docker build takes quite some time.
+    if: github.event_name != 'pull_request'
     permissions:
       contents: write
       packages: write
