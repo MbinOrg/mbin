@@ -145,7 +145,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: mbinorg/mbin
+          images: ghcr.io/mbinorg/mbin
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
