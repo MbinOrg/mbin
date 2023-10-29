@@ -237,7 +237,7 @@ server {
     }
 
     location /.well-known/mercure {
-        proxy_pass http://127.0.0.1:8080$request_uri;
+        proxy_pass http://127.0.0.1:8008$request_uri;
         proxy_read_timeout 24h;
         proxy_http_version 1.1;
         proxy_set_header Connection "";
