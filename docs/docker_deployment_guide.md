@@ -193,8 +193,6 @@ server {
     listen 443 ssl http2;
     server_name domain.tld;
 
-    index index.php;
-
     charset utf-8;
 
     # TLS
