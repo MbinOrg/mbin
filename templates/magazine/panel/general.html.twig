@@ -16,6 +16,7 @@
     {% include 'magazine/panel/_options.html.twig' %}
 
     <h1 hidden>{{ 'general'|trans }}</h1>
+    {% include 'layout/_flash.html.twig' %}
     <div id="content" class="section theme">
         <div class="container">
             {{ form_start(form) }}

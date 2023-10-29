@@ -16,26 +16,31 @@ class ContactController extends AbstractController
 {
     public function __invoke(SiteRepository $repository, ContactManager $manager, IpResolver $ipResolver, Request $request): Response
     {
-        $form = $this->createForm(ContactType::class);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            /**
-             * @var ContactDto $dto
-             */
-            $dto = $form->getData();
-            $dto->ip = $ipResolver->resolve();
-
-            if (!$dto->surname) {
-                $manager->send($dto);
-            }
-
-            $this->addFlash('success', 'email_was_sent');
-
-            return $this->redirectToRefererOrHome($request);
-        }
-
         $site = $repository->findAll();
+
+        $form = $this->createForm(ContactType::class);
+        try {
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                /**
+                 * @var ContactDto $dto
+                 */
+                $dto = $form->getData();
+                $dto->ip = $ipResolver->resolve();
+
+                if (!$dto->surname) {
+                    $manager->send($dto);
+                }
+
+                $this->addFlash('success', 'flash_email_was_sent');
+
+                return $this->redirectToRefererOrHome($request);
+            }
+        } catch (\Exception $e) {
+            // Show an error to the user
+            $this->addFlash('error', 'flash_email_failed_to_sent');
+        }
 
         return $this->render(
             'page/contact.html.twig', [

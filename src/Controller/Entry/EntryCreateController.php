@@ -38,36 +38,48 @@ class EntryCreateController extends AbstractController
         $dto->magazine = $magazine;
 
         $form = $this->createFormByType((new EntryPageView(1))->resolveType($type), $dto);
-        $form->handleRequest($request);
+        try {
+            // Could thrown an error on event handlers (eg. onPostSubmit if a user upload an incorrect image)
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $dto = $form->getData();
-            $dto->ip = $this->ipResolver->resolve();
+            if ($form->isSubmitted() && $form->isValid()) {
+                $dto = $form->getData();
+                $dto->ip = $this->ipResolver->resolve();
 
-            if (!$this->isGranted('create_content', $dto->magazine)) {
-                throw new AccessDeniedHttpException();
+                if (!$this->isGranted('create_content', $dto->magazine)) {
+                    throw new AccessDeniedHttpException();
+                }
+
+                $entry = $this->manager->create($dto, $this->getUserOrThrow());
+
+                $this->addFlash('success', 'flash_thread_new_success');
+
+                return $this->redirectToMagazine(
+                    $entry->magazine,
+                    Criteria::SORT_NEW
+                );
             }
 
-            $entry = $this->manager->create($dto, $this->getUserOrThrow());
-
-            $this->addFlash(
-                'success',
-                'flash_thread_new_success'
+            return $this->render(
+                $this->getTemplateName((new EntryPageView(1))->resolveType($type)),
+                [
+                    'magazine' => $magazine,
+                    'form' => $form->createView(),
+                ],
+                new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200)
             );
+        } catch (\Exception $e) {
+            // Show an error to the user
+            $this->addFlash('error', 'flash_thread_new_error');
 
-            return $this->redirectToMagazine(
-                $entry->magazine,
-                Criteria::SORT_NEW
+            return $this->render(
+                $this->getTemplateName((new EntryPageView(1))->resolveType($type)),
+                [
+                    'magazine' => $magazine,
+                    'form' => $form->createView(),
+                ],
+                new Response(null, 422)
             );
         }
-
-        return $this->render(
-            $this->getTemplateName((new EntryPageView(1))->resolveType($type)),
-            [
-                'magazine' => $magazine,
-                'form' => $form->createView(),
-            ],
-            new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200)
-        );
     }
 }
