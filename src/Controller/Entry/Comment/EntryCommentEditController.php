@@ -44,14 +44,20 @@ class EntryCommentEditController extends AbstractController
         $dto = $this->manager->createDto($comment);
 
         $form = $this->getForm($dto, $comment);
-        $form->handleRequest($request);
+        try {
+            // Could thrown an error on event handlers (eg. onPostSubmit if a user upload an incorrect image)
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if (!$this->isGranted('create_content', $dto->magazine)) {
-                throw new AccessDeniedHttpException();
+            if ($form->isSubmitted() && $form->isValid()) {
+                if (!$this->isGranted('create_content', $dto->magazine)) {
+                    throw new AccessDeniedHttpException();
+                }
+
+                return $this->handleValidRequest($dto, $comment, $request);
             }
-
-            return $this->handleValidRequest($dto, $comment, $request);
+        } catch (\Exception $e) {
+            // Show an error to the user
+            $this->addFlash('error', 'flash_comment_edit_error');
         }
 
         if ($request->isXmlHttpRequest()) {
@@ -93,6 +99,8 @@ class EntryCommentEditController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             return $this->getJsonCommentSuccessResponse($comment);
         }
+
+        $this->addFlash('success', 'flash_comment_edit_success');
 
         return $this->redirectToEntry($comment->entry);
     }
