@@ -60,96 +60,96 @@ jobs:
       - name: Build frontend (production)
         run: npm run build
 
-    unit-test:
-      runs-on: ubuntu-latest
-      container:
-        image: danger89/mbin-pipeline:1.0.0
+  unit-test:
+    runs-on: ubuntu-latest
+    container:
+      image: danger89/mbin-pipeline:1.0.0
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Calculate composer.lock hash
+        id: composer-lock-hash
+        run: |
+          echo "hash=$(md5sum composer.lock)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ steps.composer-lock-hash.outputs.hash }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - run: cp .env.example .env
+      - name: Composer install
+        run: composer install --no-scripts --no-progress
+
+      - name: Run unit tests
+        env:
+          COMPOSER_CACHE_DIR: ${{ steps.composer-cache.outputs.dir }}
+          SYMFONY_DEPRECATIONS_HELPER: disabled
+        run: php bin/phpunit tests/Unit
+
+  fixer-dry-run:
+    runs-on: ubuntu-latest
+    container:
+      image: danger89/mbin-pipeline:1.0.0
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Calculate tools/composer.lock hash
+        id: composer-lock-hash
+        run: |
+          echo "hash=$(md5sum tools/composer.lock)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-tools-${{ steps.composer-lock-hash.outputs.hash }}
+          restore-keys: ${{ runner.os }}-composer-tools-
+
+      - name: Composer tools install
+        run: composer -d tools install --no-scripts --no-progress
+
+      - name: php-cs-fixer dry-run
+        run: tools/vendor/bin/php-cs-fixer fix --dry-run -v --show-progress=none #--format=checkstyle #would be nice if codeberg did something with this like github does.
+
+  build-and-publish-docker-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
       steps:
         - uses: actions/checkout@v4
 
-        - name: Get Composer Cache Directory
-          id: composer-cache
-          run: |
-            echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-        - name: Calculate composer.lock hash
-          id: composer-lock-hash
-          run: |
-            echo "hash=$(md5sum composer.lock)" >> $GITHUB_OUTPUT
-
-        - uses: actions/cache@v3
+        - name: Login to ghcr
+          if: github.event_name != 'pull_request'
+          uses: docker/login-action@v3
           with:
-            path: ${{ steps.composer-cache.outputs.dir }}
-            key: ${{ runner.os }}-composer-${{ steps.composer-lock-hash.outputs.hash }}
-            restore-keys: ${{ runner.os }}-composer-
+            registry: ghcr.io
+            username: ${{ github.repository_owner }}
+            password: ${{ secrets.GITHUB_TOKEN }}
 
-        - run: cp .env.example .env
-        - name: Composer install
-          run: composer install --no-scripts --no-progress
-
-        - name: Run unit tests
-          env:
-            COMPOSER_CACHE_DIR: ${{ steps.composer-cache.outputs.dir }}
-            SYMFONY_DEPRECATIONS_HELPER: disabled
-          run: php bin/phpunit tests/Unit
-
-    fixer-dry-run:
-      runs-on: ubuntu-latest
-      container:
-        image: danger89/mbin-pipeline:1.0.0
-      steps:
-        - uses: actions/checkout@v4
-
-        - name: Get Composer Cache Directory
-          id: composer-cache
-          run: |
-            echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-        - name: Calculate tools/composer.lock hash
-          id: composer-lock-hash
-          run: |
-            echo "hash=$(md5sum tools/composer.lock)" >> $GITHUB_OUTPUT
-
-        - uses: actions/cache@v3
+        - name: Docker meta data
+          id: meta
+          uses: docker/metadata-action@v5
           with:
-            path: ${{ steps.composer-cache.outputs.dir }}
-            key: ${{ runner.os }}-composer-tools-${{ steps.composer-lock-hash.outputs.hash }}
-            restore-keys: ${{ runner.os }}-composer-tools-
+            images: mbinorg/mbin
 
-        - name: Composer tools install
-          run: composer -d tools install --no-scripts --no-progress
-
-        - name: php-cs-fixer dry-run
-          run: tools/vendor/bin/php-cs-fixer fix --dry-run -v --show-progress=none #--format=checkstyle #would be nice if codeberg did something with this like github does.
-
-    build-and-publish-docker-image:
-      runs-on: ubuntu-latest
-      permissions:
-        contents: write
-        packages: write
-        steps:
-          - uses: actions/checkout@v4
-
-          - name: Login to ghcr
-            if: github.event_name != 'pull_request'
-            uses: docker/login-action@v3
-            with:
-              registry: ghcr.io
-              username: ${{ github.repository_owner }}
-              password: ${{ secrets.GITHUB_TOKEN }}
-
-          - name: Docker meta data
-            id: meta
-            uses: docker/metadata-action@v5
-            with:
-              images: mbinorg/mbin
-
-          - name: Build and push Docker image
-            uses: docker/build-push-action@5
-            with:
-              context: .
-              file: ./docker/Dockerfile
-              push: ${{ github.event_name != 'pull_request' }}
-              tags: ${{ steps.meta.outputs.tags }}
-              labels: ${{ steps.meta.outputs.labels }}
+        - name: Build and push Docker image
+          uses: docker/build-push-action@5
+          with:
+            context: .
+            file: ./docker/Dockerfile
+            push: ${{ github.event_name != 'pull_request' }}
+            tags: ${{ steps.meta.outputs.tags }}
+            labels: ${{ steps.meta.outputs.labels }}
 # TODO: Integration tests
