@@ -11,6 +11,7 @@ class SettingsRowEnumComponent
 {
     public string $label;
     public string $help = '';
+    public string $class = '';
     public string $settingsKey;
     public array $values;
     public ?string $defaultValue = null;
