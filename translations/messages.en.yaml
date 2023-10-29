@@ -795,7 +795,8 @@ alphabetically: Alphabetically
 subscriptions_in_own_sidebar: Subscriptions separate
 sidebars_same_side: Sidebars on the same side
 close: Close
-bottom: Bottom
+position_bottom: Bottom
+position_top: Top
 pending: Pending
 flash_thread_new_error: Thread could not be created. Something went wrong.
 flash_email_was_sent: Email has been successfully sent.
