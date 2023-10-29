@@ -845,3 +845,9 @@ pending: In behandeling
 subscriptions_in_own_sidebar: Abonnementen apart
 flash_email_failed_to_sent: E-mail kon niet worden verzonden.
 flash_user_edit_profile_error: Kan profielinstellingen niet opslaan.
+page_width_fixed: Vast
+page_width_auto: Auto
+position_bottom: Onder
+page_width_max: Max
+page_width: Paginabreedte
+position_top: Boven
