@@ -785,8 +785,6 @@ purge_account_desc: Het account volledig opschonen, inclusief het verwijderen va
 2fa.backup_codes.help: U kunt deze codes gebruiken als u niet over een apparaat of
   app voor tweefactorauthenticatie beschikt. Je krijgt ze <strong>niet meer te zien</strong>
   en je kunt ze enkel <strong>slechts één keer</strong> gebruiken.
-account_settings_changed: Uw accountinstellingen zijn succesvol gewijzigd. U dient
-  opnieuw in te loggen.
 2fa.verify: Verifiëren
 2fa.add: Voeg toe aan mijn account
 2fa.disable: Schakel tweefactorauthenticatie uit
