@@ -44,14 +44,20 @@ class PostCommentEditController extends AbstractController
         $dto = $this->manager->createDto($comment);
 
         $form = $this->getCreateForm($dto, $comment);
-        $form->handleRequest($request);
+        try {
+            // Could thrown an error on event handlers (eg. onPostSubmit if a user upload an incorrect image)
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if (!$this->isGranted('create_content', $dto->magazine)) {
-                throw new AccessDeniedHttpException();
+            if ($form->isSubmitted() && $form->isValid()) {
+                if (!$this->isGranted('create_content', $dto->magazine)) {
+                    throw new AccessDeniedHttpException();
+                }
+
+                return $this->handleValidRequest($dto, $comment, $request);
             }
-
-            return $this->handleValidRequest($dto, $comment, $request);
+        } catch (\Exception $e) {
+            // Show an error to the user
+            $this->addFlash('error', 'flash_comment_edit_error');
         }
 
         $criteria = new PostCommentPageView($this->getPageNb($request));
@@ -105,6 +111,8 @@ class PostCommentEditController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             return $this->getPostCommentJsonSuccessResponse($comment);
         }
+
+        $this->addFlash('success', 'flash_comment_edit_success');
 
         return $this->redirectToPost($comment->post);
     }

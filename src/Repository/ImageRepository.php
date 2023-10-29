@@ -27,11 +27,25 @@ class ImageRepository extends ServiceEntityRepository
         $this->imageManager = $imageManager;
     }
 
+    /**
+     * Process and store an uploaded image.
+     *
+     * @param upload file path of uploaded image
+     *
+     * @throws RuntimeException if image type can't be identified
+     */
     public function findOrCreateFromUpload($upload): ?Image
     {
         return $this->findOrCreateFromPath($upload->getPathname());
     }
 
+    /**
+     * Process and store an image from source path.
+     *
+     * @param source file path of the image
+     *
+     * @throws RuntimeException if image type can't be identified
+     */
     public function findOrCreateFromPath(string $source): ?Image
     {
         $fileName = $this->imageManager->getFileName($source);
@@ -59,6 +73,7 @@ class ImageRepository extends ServiceEntityRepository
         try {
             $this->imageManager->store($source, $filePath);
         } catch (\Exception $e) {
+            // TODO: Shouldn't this be logged?
             return null;
         } finally {
             if (file_exists($source)) {
