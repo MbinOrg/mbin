@@ -433,7 +433,6 @@ class MagazineRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
         $sql = '
             SELECT id FROM magazine
-            WHERE ap_id IS NULL
             ORDER BY random()
             LIMIT 5
             ';
