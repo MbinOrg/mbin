@@ -51,7 +51,7 @@ articles: Fadenoj
 photos: Fotoj
 videos: Filmetoj
 share: Kunhavigi
-copy_url: Kopii /kbin URL
+copy_url: Kopii Mbin URL
 copy_url_to_fediverse: Kopii originala URL
 share_on_fediverse: Kunhavigi en Fediverso
 are_you_sure: Ĉu vi certas?
@@ -134,8 +134,7 @@ tokyo_night: Tokia Nokto
 captcha_enabled: «Captcha» ebligita
 up_vote: Akceli
 down_vote: Redukti
-email_confirm_content: 'Ĉu vi pretas aktivigi vian /kbin-konton? Alklaku la suban
-  ligilon:'
+email_confirm_content: 'Ĉu vi pretas aktivigi vian Mbin-konton? Alklaku la suban ligilon:'
 email_verify: Konfirmu la retpoŝtadreson
 select_magazine: Elektu revuon
 add_new: Aldoni novan
@@ -494,11 +493,11 @@ filter.adult.hide: Kaŝi NSPL
 filter.adult.only: Nur NSPL
 filter.fields.only_names: Nur nomoj
 filter.fields.names_and_descriptions: Nomoj kaj priskriboj
-kbin_bot: /kbin Roboto
+kbin_bot: Mbin Roboto
 filter.adult.show: Montri NSPL
 local_and_federated: Loka kaj federaciata
-bot_body_content: "Bonvenon al la /kbin Roboto! Ĉi tiu roboto ludas decidan rolon
-  en ebligado de ActivityPub-funkcio ene de /kbin. Ĝi certigas, ke /kbin povas komuniki
+bot_body_content: "Bonvenon al la Mbin Roboto! Ĉi tiu roboto ludas decidan rolon en
+  ebligado de ActivityPub-funkcio ene de Mbin. Ĝi certigas, ke Mbin povas komuniki
   kaj federacii kun aliaj nodoj en la fediverso.\n\nActivityPub estas malferma norma
   protokolo, kiu permesas al malcentraj sociaj retaj platformoj komuniki kaj interagi
   unu kun la alia. Ĝi ebligas al uzantoj en malsamaj nodoj (serviloj) sekvi, interagi
@@ -507,3 +506,70 @@ bot_body_content: "Bonvenon al la /kbin Roboto! Ĉi tiu roboto ludas decidan rol
   kaj okupiĝi pri sociaj interagoj kiel ŝatado, kundivido kaj komentado pri fadenoj
   aŭ afiŝoj."
 password_confirm_header: Konfirmu vian peton de ŝanĝo de pasvorto.
+oauth2.grant.moderate.magazine.reports.all: Administri raportojn en la revuoj, kiujn
+  vi moderigas.
+resend_account_activation_email_error: Estis problemo dum ĉi tiu peto. Eble ne ekzistas
+  konto asociita kun tiu retpoŝto aŭ eble ĝi jam estas aktivigita.
+federation_page_enabled: Federada paĝo ebligita
+email_confirm_button_text: Konfirmu vian peton de ŝanĝo de pasvorto
+toolbar.bold: Grasa
+errors.server429.title: 429 Tro da Petoj
+toolbar.header: Kapo
+oauth.consent.to_allow_access: Por permesi ĉi tiun aliron, alklaku la butonon 'Permesi'
+  sube
+email.delete.description: La sekva uzanto petis, ke ilia konto estu forigita
+toolbar.ordered_list: Ordigita Listo
+oauth.consent.app_requesting_permissions: ŝatus plenumi la sekvajn agojn en via nomo
+federated_search_only_loggedin: Federacia serĉo limigita se ne ensalutinta
+oauth2.grant.moderate.magazine.reports.action: Akcepti aŭ malakcepti raportojn en
+  la revuoj, kiujn vi moderigas.
+your_account_is_not_active: Via konto ne estas aktivigita. Bonvolu kontroli vian retpoŝton
+  por instrukcioj pri aktivigo de konto aŭ <a href="%link_target%">peti novan retpoŝton
+  pri aktivigo de konto.</a>
+oauth.consent.allow: Permesi
+custom_css: Kutima CSS
+block: Bloki
+toolbar.quote: Citaĵo
+oauth2.grant.moderate.magazine.list: Legi liston de la revuoj, kiujn vi moderigas.
+toolbar.unordered_list: Neordigita Listo
+errors.server404.title: 404 Ne Trovita
+resend_account_activation_email_success: Se konto asociita kun tiu retpoŝtadreso ekzistas,
+  ni sendos novan aktivigan retpoŝton.
+errors.server403.title: 403 Malpermesita
+oauth2.grant.moderate.magazine.reports.read: Legi raportojn en la revuoj, kiujn vi
+  moderigas.
+ignore_magazines_custom_css: Ignori kutimajn CSS-ojn de revuoj
+oauth.consent.deny: Nei
+oauth.consent.title: OAuth2 konsentformularo
+federation_page_allowed_description: Konataj nodoj kun kiuj ni federacias
+resend_account_activation_email: Resendi retpoŝton pri aktivigo de konto
+request_account_deletion_button: Peti Forigon de Konto
+errors.server500.title: 500 Servila eraro
+toolbar.link: Ligilo
+toolbar.mention: Mencio
+resend_account_activation_email_question: Neaktiva konto?
+resend_account_activation_email_description: Enigu la retpoŝtadreson asociitan kun
+  via konto. Ni sendos alian aktivigan retmesaĝon por vi.
+your_account_has_been_banned: Via konto forbaris
+toolbar.code: Kodo
+errors.server500.description: Pardonu, io misfunkciis ĉe nia flanko. Ni laboras por
+  solvi ĉi tiun problemon, bonvolu kontroli baldaŭ.
+oauth.client_not_granted_message_read_permission: Ĉi tiu programo ne ricevis permeson
+  legi viajn mesaĝojn.
+restrict_oauth_clients: Limigi kreadon de Kliento OAuth2 al Administrantoj
+federation_page_disallowed_description: Nodoj kun kiuj ni ne federacias
+request_account_deletion_description: La administranto estos sciigita, ke vi volas,
+  ke via konto estus forigita.
+unblock: Malbloki
+oauth.consent.grant_permissions: Doni Permesojn
+request_account_deletion_title: Forigo de Konto
+oauth2.grant.moderate.magazine.ban.delete: Malforbari uzantojn en la revuoj, kiujn
+  vi moderigas.
+oauth.client_identifier.invalid: Nevalida OAuth Kliento-ID!
+oauth.consent.app_has_permissions: jam povas plenumi la jenajn agojn
+email.delete.title: Peto pri forigo de uzantkonto
+email_confirm_link_help: Alternative vi povas kopii kaj alglui la jenajn en vian retumilon
+toolbar.strikethrough: Trastreki
+toolbar.image: Bildo
+toolbar.italic: Kursiva
+more_from_domain: Pli de domajno
