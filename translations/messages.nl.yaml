@@ -836,7 +836,7 @@ flash_comment_new_success: Reactie is succesvol aangemaakt.
 flash_user_settings_general_error: Kan gebruikersinstellingen niet opslaan.
 alphabetically: Alfabetisch
 flash_email_was_sent: E-mail is succesvol verzonden.
-bottom: Onderkant
+position_bottom: Onderkant
 show_subscriptions: Toon abonnementen
 flash_comment_edit_success: Reactie is succesvol bijgewerkt.
 flash_user_edit_profile_success: Gebruikersprofielinstellingen zijn succesvol opgeslagen.
