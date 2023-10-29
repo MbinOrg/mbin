@@ -11,3 +11,9 @@ quote_type = single
 indent_style = space
 indent_size = 2
 quote_type = single
+
+
+[.github/workflows/*.yaml]
+indent_style = space
+indent_size = 2
+quote_type = single
