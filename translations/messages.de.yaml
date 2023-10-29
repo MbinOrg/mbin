@@ -456,7 +456,7 @@ kbin_intro_desc: ist eine dezentralisierte Plattform zur Inhaltssammlung und fü
 magazine_panel_tags_info: Nur benutzen wenn du möchtest, dass Inhalte aus dem Fediverse,
   basierend auf Tags, in dieses Magazin eingefügt werden
 sticky_navbar: Statische Navigationsleiste
-kbin_promo_desc: '%link_start%Klone die Repo%link_end% und erweitere das Fediverse'
+kbin_promo_desc: '%link_start%Klone das Repo%link_end% und erweitere das Fediverse'
 browsing_one_thread: Du siehst nur Inhalte aus einem Thema in dieser Diskussion. Alle
   Kommentare sind auf der Beitragsseite verfügbar.
 boost: Boost
@@ -614,8 +614,6 @@ oauth2.grant.moderate.post.set_adult: Kennzeichne Beiträge in deinen moderierte
   als NSFW.
 oauth2.grant.moderate.magazine_admin.edit_theme: Bearbeite das Custom CSS deiner eigenen
   Magazine.
-account_settings_changed: Deine Accounteinstellungen wurde erfolgreich geändert. Du
-  musst dich nun erneut anmelden.
 oauth2.grant.moderate.magazine_admin.tags: Erstelle oder Entferne Tags von deinen
   eigenen Magazinen.
 moderation.report.ban_user_description: Willst du den user (%username%) sperren der
