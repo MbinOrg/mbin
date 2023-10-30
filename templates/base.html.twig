@@ -24,6 +24,21 @@
 
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
+        <style>
+            {#
+            This is needed so the magazine names in the subscription panel are correctly overflowing.
+            The max width depends on the max-width of the whole container, which is controlled by a setting (KBIN_PAGE_WIDTH)
+             #}
+            .subscription-list .subscription {
+                {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_PAGE_WIDTH')) is same as constant('App\\Controller\\User\\ThemeSettingsController::MAX') %}
+                    max-width: calc(100vw / 9);
+                {% elseif app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_PAGE_WIDTH')) is same as constant('App\\Controller\\User\\ThemeSettingsController::AUTO') %}
+                    max-width: calc(85vw / 9);
+                {% else %}
+                    max-width: calc(1360px / 9);
+                {% endif%}
+            }
+        </style>
     {% endblock %}
 
     {% block javascripts %}

@@ -63,6 +63,9 @@
 
     .subscription {
       padding: 0.5rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
 
       @include media-breakpoint-down(lg) {
         min-width: max-content;
@@ -79,8 +82,11 @@
       }
 
       .magazine-subscription-avatar {
+        margin: 0;
         height: 1.5rem;
+        max-height: 1.5rem;
         width: 1.5rem;
+        max-width: 1.5rem;
         object-fit: scale-down;
         border-radius: 50%;
         display: inline;

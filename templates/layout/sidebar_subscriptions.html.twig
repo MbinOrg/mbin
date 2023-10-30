@@ -1,4 +1,4 @@
-<div class="sidebar-subscriptions section {{ app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SHOW_SUBSCRIPTIONS_IN_SEPARATE')) is not same as 'true' ? 'inline' : 'section--top' }}">
+<div class="sidebar-subscriptions meta section {{ app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SHOW_SUBSCRIPTIONS_IN_SEPARATE')) is not same as 'true' ? 'inline' : 'section--top' }}">
     <h3>
         {{ 'subscriptions'|trans }}
         <span class="sidebar-subscriptions-icons">
@@ -43,7 +43,7 @@
                 <a href="/m/{{ magazine.name }}">
 
                     {% if magazine.icon %}
-                        <img src="{{ asset(magazine.icon.filePath) | imagine_filter('avatar_thumb') }}" class="magazine-subscription-avatar" alt="{{ magazine.name }}'s icon" />
+                        <img src="{{ asset(magazine.icon.filePath) | imagine_filter('avatar_thumb') }}" class="image-inline magazine-subscription-avatar" alt="{{ magazine.name }}'s icon" />
                     {% else %}
                         <span class="magazine-subscription-avatar-placeholder"></span>
                     {% endif %}
