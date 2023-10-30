@@ -1,248 +1,248 @@
 user_overview:
-  controller: App\Controller\User\UserFrontController::front
-  path: /u/{username}
-  methods: [ GET ]
+    controller: App\Controller\User\UserFrontController::front
+    path: /u/{username}
+    methods: [GET]
 
 user_entries:
-  controller: App\Controller\User\UserFrontController::entries
-  path: /u/{username}/threads
-  methods: [ GET ]
+    controller: App\Controller\User\UserFrontController::entries
+    path: /u/{username}/threads
+    methods: [GET]
 
 user_comments:
-  controller: App\Controller\User\UserFrontController::comments
-  path: /u/{username}/comments
-  methods: [ GET ]
+    controller: App\Controller\User\UserFrontController::comments
+    path: /u/{username}/comments
+    methods: [GET]
 
 user_posts:
-  controller: App\Controller\User\UserFrontController::posts
-  path: /u/{username}/posts
-  methods: [ GET ]
+    controller: App\Controller\User\UserFrontController::posts
+    path: /u/{username}/posts
+    methods: [GET]
 
 user_replies:
-  controller: App\Controller\User\UserFrontController::replies
-  path: /u/{username}/replies
-  methods: [ GET ]
+    controller: App\Controller\User\UserFrontController::replies
+    path: /u/{username}/replies
+    methods: [GET]
 
 user_boosts:
-  controller: App\Controller\User\UserFrontController::boosts
-  path: /u/{username}/boosts
-  methods: [ GET ]
+    controller: App\Controller\User\UserFrontController::boosts
+    path: /u/{username}/boosts
+    methods: [GET]
 
 user_moderated:
-  controller: App\Controller\User\UserFrontController::moderated
-  path: /u/{username}/moderated
-  methods: [ GET ]
+    controller: App\Controller\User\UserFrontController::moderated
+    path: /u/{username}/moderated
+    methods: [GET]
 
 user_subscriptions:
-  controller: App\Controller\User\UserFrontController::subscriptions
-  path: /u/{username}/subscriptions
-  methods: [ GET ]
+    controller: App\Controller\User\UserFrontController::subscriptions
+    path: /u/{username}/subscriptions
+    methods: [GET]
 
 user_followers:
-  controller: App\Controller\User\UserFrontController::followers
-  path: /u/{username}/followers
-  methods: [ GET ]
+    controller: App\Controller\User\UserFrontController::followers
+    path: /u/{username}/followers
+    methods: [GET]
 
 user_following:
-  controller: App\Controller\User\UserFrontController::following
-  path: /u/{username}/following
-  methods: [ GET ]
+    controller: App\Controller\User\UserFrontController::following
+    path: /u/{username}/following
+    methods: [GET]
 
 user_follow:
-  controller: App\Controller\User\UserFollowController::follow
-  path: /u/{username}/follow
-  methods: [ POST ]
+    controller: App\Controller\User\UserFollowController::follow
+    path: /u/{username}/follow
+    methods: [POST]
 
 user_awards:
-  controller: App\Controller\User\UserAwardController
-  defaults: { category: ~ }
-  path: /u/{username}/awards/{awardsCategory}
-  methods: [ GET ]
+    controller: App\Controller\User\UserAwardController
+    defaults: { category: ~ }
+    path: /u/{username}/awards/{awardsCategory}
+    methods: [GET]
 
 user_reputation:
-  controller: App\Controller\User\UserReputationController
-  defaults: { reputationType: ~ }
-  path: /u/{username}/reputation/{reputationType}
-  methods: [ GET ]
+    controller: App\Controller\User\UserReputationController
+    defaults: { reputationType: ~ }
+    path: /u/{username}/reputation/{reputationType}
+    methods: [GET]
 
 user_unfollow:
-  controller: App\Controller\User\UserFollowController::unfollow
-  path: /u/{username}/unfollow
-  methods: [ POST ]
+    controller: App\Controller\User\UserFollowController::unfollow
+    path: /u/{username}/unfollow
+    methods: [POST]
 
 user_block:
-  controller: App\Controller\User\UserBlockController::block
-  path: /u/{username}/block
-  methods: [ POST ]
+    controller: App\Controller\User\UserBlockController::block
+    path: /u/{username}/block
+    methods: [POST]
 
 user_unblock:
-  controller: App\Controller\User\UserBlockController::unblock
-  path: /u/{username}/unblock
-  methods: [ POST ]
+    controller: App\Controller\User\UserBlockController::unblock
+    path: /u/{username}/unblock
+    methods: [POST]
 
 user_purge_content:
-  controller: App\Controller\User\UserDeleteController::purgeContent
-  path: /u/{username}/purge_content
-  methods: [ POST ]
+    controller: App\Controller\User\UserDeleteController::purgeContent
+    path: /u/{username}/purge_content
+    methods: [POST]
 
 user_delete_content:
-  controller: App\Controller\User\UserDeleteController::deleteContent
-  path: /u/{username}/delete_content
-  methods: [ POST ]
+    controller: App\Controller\User\UserDeleteController::deleteContent
+    path: /u/{username}/delete_content
+    methods: [POST]
 
 user_purge_account:
-  controller: App\Controller\User\UserDeleteController::purgeAccount
-  path: /u/{username}/purge_account
-  methods: [ POST ]
+    controller: App\Controller\User\UserDeleteController::purgeAccount
+    path: /u/{username}/purge_account
+    methods: [POST]
 
 user_delete_account:
-  controller: App\Controller\User\UserDeleteController::deleteAccount
-  path: /u/{username}/delete_account
-  methods: [ POST ]
+    controller: App\Controller\User\UserDeleteController::deleteAccount
+    path: /u/{username}/delete_account
+    methods: [POST]
 
 user_delete_request:
-  controller: App\Controller\User\UserDeleteRequestController
-  path: /u/{username}/delete_request
-  methods: [ POST ]
+    controller: App\Controller\User\UserDeleteRequestController
+    path: /u/{username}/delete_request
+    methods: [POST]
 
 user_ban:
-  controller: App\Controller\User\UserBanController::ban
-  path: /u/{username}/ban
-  methods: [ POST ]
+    controller: App\Controller\User\UserBanController::ban
+    path: /u/{username}/ban
+    methods: [POST]
 
 user_unban:
-  controller: App\Controller\User\UserBanController::unban
-  path: /u/{username}/unban
-  methods: [ POST ]
+    controller: App\Controller\User\UserBanController::unban
+    path: /u/{username}/unban
+    methods: [POST]
 
 user_2fa_remove:
-  controller: App\Controller\User\Profile\User2FAController::remove
-  path: /u/{username}/remove
-  methods: [ POST ]
+    controller: App\Controller\User\Profile\User2FAController::remove
+    path: /u/{username}/remove
+    methods: [POST]
 
 user_note:
-  controller: App\Controller\User\UserNoteController
-  path: /u/{username}/note
-  methods: [ POST ]
+    controller: App\Controller\User\UserNoteController
+    path: /u/{username}/note
+    methods: [POST]
 
 notifications_front:
-  controller: App\Controller\User\Profile\UserNotificationController::notifications
-  path: /settings/notifications
-  methods: [ GET ]
+    controller: App\Controller\User\Profile\UserNotificationController::notifications
+    path: /settings/notifications
+    methods: [GET]
 
 notifications_read:
-  controller: App\Controller\User\Profile\UserNotificationController::read
-  path: /settings/notifications/read
-  methods: [ POST ]
+    controller: App\Controller\User\Profile\UserNotificationController::read
+    path: /settings/notifications/read
+    methods: [POST]
 
 notifications_clear:
-  controller: App\Controller\User\Profile\UserNotificationController::clear
-  path: /settings/notifications/clear
-  methods: [ POST ]
+    controller: App\Controller\User\Profile\UserNotificationController::clear
+    path: /settings/notifications/clear
+    methods: [POST]
 
 user_settings_reports:
-  controller: App\Controller\User\Profile\UserReportsController
-  path: /settings/reports/{status}
-  defaults: { status: !php/const \App\Entity\Report::STATUS_ANY }
-  methods: [ GET ]
+    controller: App\Controller\User\Profile\UserReportsController
+    path: /settings/reports/{status}
+    defaults: { status: !php/const \App\Entity\Report::STATUS_ANY }
+    methods: [GET]
 
 user_settings_magazine_blocks:
-  controller: App\Controller\User\Profile\UserBlockController::magazines
-  path: /settings/blocked/magazines
-  methods: [ GET ]
+    controller: App\Controller\User\Profile\UserBlockController::magazines
+    path: /settings/blocked/magazines
+    methods: [GET]
 
 user_settings_domain_blocks:
-  controller: App\Controller\User\Profile\UserBlockController::domains
-  path: /settings/blocked/domains
-  methods: [ GET ]
+    controller: App\Controller\User\Profile\UserBlockController::domains
+    path: /settings/blocked/domains
+    methods: [GET]
 
 user_settings_user_blocks:
-  controller: App\Controller\User\Profile\UserBlockController::users
-  path: /settings/blocked/people
-  methods: [ GET ]
+    controller: App\Controller\User\Profile\UserBlockController::users
+    path: /settings/blocked/people
+    methods: [GET]
 
 user_settings_magazine_subscriptions:
-  controller: App\Controller\User\Profile\UserSubController::magazines
-  path: /settings/subscriptions/magazines
-  methods: [ GET ]
+    controller: App\Controller\User\Profile\UserSubController::magazines
+    path: /settings/subscriptions/magazines
+    methods: [GET]
 
 user_settings_domain_subscriptions:
-  controller: App\Controller\User\Profile\UserSubController::domains
-  path: /settings/subscriptions/domains
-  methods: [ GET ]
+    controller: App\Controller\User\Profile\UserSubController::domains
+    path: /settings/subscriptions/domains
+    methods: [GET]
 
 user_settings_user_subscriptions:
-  controller: App\Controller\User\Profile\UserSubController::users
-  path: /settings/subscriptions/people
-  methods: [ GET ]
+    controller: App\Controller\User\Profile\UserSubController::users
+    path: /settings/subscriptions/people
+    methods: [GET]
 
 user_settings_tips:
-  controller: App\Controller\User\Profile\UserTipController
-  path: /settings/ada
-  methods: [ GET, POST ]
+    controller: App\Controller\User\Profile\UserTipController
+    path: /settings/ada
+    methods: [GET, POST]
 
 user_settings_general:
-  controller: App\Controller\User\Profile\UserSettingController
-  path: /settings/general
-  methods: [ GET, POST ]
+    controller: App\Controller\User\Profile\UserSettingController
+    path: /settings/general
+    methods: [GET, POST]
 
 user_settings_profile:
-  controller: App\Controller\User\Profile\UserEditController::general
-  path: /settings/profile
-  methods: [ GET, POST ]
+    controller: App\Controller\User\Profile\UserEditController::profile
+    path: /settings/profile
+    methods: [GET, POST]
 
 user_settings_email:
-  controller: App\Controller\User\Profile\UserEditController::email
-  path: /settings/email
-  methods: [ GET, POST ]
+    controller: App\Controller\User\Profile\UserEditController::email
+    path: /settings/email
+    methods: [GET, POST]
 
 user_settings_password:
-  controller: App\Controller\User\Profile\UserEditController::password
-  path: /settings/password
-  methods: [ GET, POST ]
+    controller: App\Controller\User\Profile\UserEditController::password
+    path: /settings/password
+    methods: [GET, POST]
 
 user_settings_2fa:
-  controller: App\Controller\User\Profile\User2FAController::enable
-  path: /settings/2fa
-  methods: [ GET, POST ]
+    controller: App\Controller\User\Profile\User2FAController::enable
+    path: /settings/2fa
+    methods: [GET, POST]
 
 user_settings_2fa_disable:
-  controller: App\Controller\User\Profile\User2FAController::disable
-  path: /settings/2fa/disable
-  methods: [ POST ]
+    controller: App\Controller\User\Profile\User2FAController::disable
+    path: /settings/2fa/disable
+    methods: [POST]
 
 user_settings_2fa_qrcode:
-  controller: App\Controller\User\Profile\User2FAController::qRCode
-  path: /settings/2fa/qrcode.png
-  methods: [ GET ]
+    controller: App\Controller\User\Profile\User2FAController::qrCode
+    path: /settings/2fa/qrcode
+    methods: [GET]
 
 user_settings_2fa_backup:
-  controller: App\Controller\User\Profile\User2FAController::backup
-  path: /settings/2fa/backup
-  methods: [ POST ]
+    controller: App\Controller\User\Profile\User2FAController::backup
+    path: /settings/2fa/backup
+    methods: [POST]
 
 user_settings_avatar_delete:
-  controller: App\Controller\User\UserAvatarDeleteController
-  path: /settings/edit/delete_avatar
-  methods: [ POST ]
+    controller: App\Controller\User\UserAvatarDeleteController
+    path: /settings/edit/delete_avatar
+    methods: [POST]
 
 user_settings_cover_delete:
-  controller: App\Controller\User\UserCoverDeleteController
-  path: /settings/edit/delete_cover
-  methods: [ POST ]
+    controller: App\Controller\User\UserCoverDeleteController
+    path: /settings/edit/delete_cover
+    methods: [POST]
 
 user_settings_toggle_theme:
-  controller: App\Controller\User\UserThemeController
-  path: /settings/edit/theme
-  methods: [ GET, POST ]
+    controller: App\Controller\User\UserThemeController
+    path: /settings/edit/theme
+    methods: [GET, POST]
 
 user_settings_stats:
-  controller: App\Controller\User\Profile\UserStatsController
-  defaults: { statsType: content, statsPeriod: ~ }
-  path: /settings/stats/{statsType}/{statsPeriod}
-  methods: [ GET ]
+    controller: App\Controller\User\Profile\UserStatsController
+    defaults: { statsType: content, statsPeriod: ~ }
+    path: /settings/stats/{statsType}/{statsPeriod}
+    methods: [GET]
 
 theme_settings:
-  controller: App\Controller\User\ThemeSettingsController
-  path: /settings/theme/{key}/{value}
-  methods: [ GET ]
+    controller: App\Controller\User\ThemeSettingsController
+    path: /settings/theme/{key}/{value}
+    methods: [GET]

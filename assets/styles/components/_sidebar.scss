@@ -440,6 +440,12 @@
       flex-flow: column wrap;
       gap: 1px;
       align-items: center;
+
+      @include media-breakpoint-down(lg) {
+        & .width-setting {
+          display: none;
+        }
+      }
     }
 
     .row {

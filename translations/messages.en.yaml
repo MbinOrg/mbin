@@ -787,10 +787,38 @@ two_factor_backup: Two-factor authentication backup codes
   a safe place.
 cancel: Cancel
 password_and_2fa: Password & 2fa
-account_settings_changed: Your account settings have been successfully changed. You
-  will need to login again.
+flash_account_settings_changed: Your account settings have been successfully changed.
+  You will need to login again.
 show_subscriptions: Show subscriptions
 subscription_sort: Subscription sort
 alphabetically: Alphabetically
 subscriptions_in_own_sidebar: Subscriptions separate
 sidebars_same_side: Sidebars on the same side
+close: Close
+position_bottom: Bottom
+position_top: Top
+pending: Pending
+flash_thread_new_error: Thread could not be created. Something went wrong.
+flash_email_was_sent: Email has been successfully sent.
+flash_email_failed_to_sent: Email could not be sent.
+flash_post_new_success: Post has been successfully created.
+flash_post_new_error: Post could not be created. Something went wrong.
+flash_magazine_theme_changed_success: Successfully updated the magazine appearance.
+flash_magazine_theme_changed_error: Failed to update the magazine appearance.
+flash_comment_new_success: Comment has been successfully created.
+flash_comment_edit_success: Comment has been successfully updated.
+flash_comment_new_error: Failed to create comment. Something went wrong.
+flash_comment_edit_error: Failed to edit comment. Something went wrong.
+flash_user_settings_general_success: User settings successfully saved.
+flash_user_settings_general_error: Failed to save user settings.
+flash_user_edit_profile_error: Failed to save profile settings.
+flash_user_edit_profile_success: User profile settings successfully saved.
+flash_user_edit_email_error: Failed to change email.
+flash_user_edit_password_error: Failed to change password.
+flash_thread_edit_error: Failed to edit thread. Something went wrong.
+flash_post_edit_error: Failed to edit post. Something went wrong.
+flash_post_edit_success: Post has been successfully edited.
+page_width: Page width
+page_width_max: Max
+page_width_auto: Auto
+page_width_fixed: Fixed

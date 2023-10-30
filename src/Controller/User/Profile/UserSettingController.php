@@ -19,12 +19,19 @@ class UserSettingController extends AbstractController
         $dto = $manager->createDto($this->getUserOrThrow());
 
         $form = $this->createForm(UserSettingsType::class, $dto);
-        $form->handleRequest($request);
+        try {
+            // Could thrown an error
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $manager->update($this->getUserOrThrow(), $dto);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $manager->update($this->getUserOrThrow(), $dto);
 
-            $this->redirectToRefererOrHome($request);
+                $this->addFlash('success', 'flash_user_settings_general_success');
+                $this->redirectToRefererOrHome($request);
+            }
+        } catch (\Exception $e) {
+            // Show an error to the user
+            $this->addFlash('error', 'flash_user_settings_general_error');
         }
 
         return $this->render(
