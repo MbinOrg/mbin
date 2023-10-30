@@ -51,7 +51,7 @@ class NodeInfoController
         return [
             'links' => [
                 [
-                    'rel' => self::NODE_REL_V21,
+                    'rel' => self::NODE_REL_v21,
                     'href' => $this->urlGenerator->generate('ap_node_info_v21', [], UrlGeneratorInterface::ABSOLUTE_URL),
                 ],
                 [
