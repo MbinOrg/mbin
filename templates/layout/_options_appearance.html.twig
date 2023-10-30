@@ -20,11 +20,7 @@
             {{ component('settings_row_switch', {label: 'show_subscriptions'|trans, settingsKey: 'KBIN_GENERAL_SHOW_SUBSCRIPTIONS', defaultValue: 'true'}) }}
             {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SHOW_SUBSCRIPTIONS')) is not same as 'false' %}
                 {{ component('settings_row_enum', {label: 'subscription_sort'|trans, settingsKey: 'KBIN_GENERAL_SHOW_SUBSCRIPTIONS_SORT', values: [ {name: 'alphabetically'|trans , value: 'ALPHABETICALLY'}, {name: 'last_active'|trans , value: 'LAST_ACTIVE' } ], defaultValue: 'LAST_ACTIVE'}) }}
-                {{ component('settings_row_switch', {label: 'subscriptions_in_own_sidebar'|trans, settingsKey: 'KBIN_GENERAL_SHOW_SUBSCRIPTIONS_IN_SEPARATE'}) }}
-
-                {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SHOW_SUBSCRIPTIONS_IN_SEPARATE')) is same as 'true' %}
-                    {{ component('settings_row_switch', {label: 'sidebars_same_side'|trans, settingsKey: 'KBIN_GENERAL_SIDEBARS_SAME_SIDE'}) }}
-                {% else %}
+                {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SHOW_SUBSCRIPTIONS_IN_SEPARATE')) is not same as 'true' %}
                     {{ component('settings_row_switch', {label: 'subscription_panel_large'|trans, settingsKey: 'KBIN_GENERAL_SHOW_SUBSCRIPTIONS_LARGE'}) }}
                 {% endif %}
             {% endif %}
