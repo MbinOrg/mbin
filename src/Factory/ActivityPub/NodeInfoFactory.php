@@ -9,9 +9,9 @@ use App\Service\SettingsManager;
 
 class NodeInfoFactory
 {
-    public const NODE_REL = 'http://nodeinfo.diaspora.software/ns/schema/2.0';
-    public const NODE_PROTOCOL = 'activitypub';
-    public const KBIN_HOMEPAGE = 'https://github.com/MbinOrg';
+    private const NODE_PROTOCOL = 'activitypub';
+    private const MBIN_REPOSITORY_URL = 'https://github.com/MbinOrg/mbin';
+    private const MBIN_VERSION = '1.0.0'; // TODO: Should be read from package.json or composer.json
 
     public function __construct(
         private readonly StatsContentRepository $repository,
@@ -19,14 +19,34 @@ class NodeInfoFactory
     ) {
     }
 
-    public function create(): array
+    /**
+     * Create and return a NodeInfo PHP array depending on the version input.
+     *
+     * @param string $version NodeInfo version string (eg. "2.0")
+     */
+    public function create(string $version): array
     {
+        switch ($version) {
+            case '2.0':
+                $software = [
+                    'name' => 'mbin',
+                    'version' => self::MBIN_VERSION,
+                ];
+                break;
+            case '2.1':
+            default:
+                // Used for 2.1 and as fallback
+                $software = [
+                    'name' => 'mbin',
+                    'version' => self::MBIN_VERSION,
+                    'repository' => self::MBIN_REPOSITORY_URL,
+                ];
+                break;
+        }
+
         return [
-            'version' => '2.0',
-            'software' => [
-                'name' => 'mbin',
-                'version' => '1.0.0',
-            ],
+            'version' => $version,
+            'software' => $software,
             'protocols' => [
                 self::NODE_PROTOCOL,
             ],

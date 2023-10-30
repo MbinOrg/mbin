@@ -13,9 +13,15 @@ ap_node_info:
   path: '/.well-known/nodeinfo'
   methods: [ GET ]
 
-ap_node_info_v2:
-  controller: App\Controller\ActivityPub\NodeInfoController::nodeInfoV2
+ap_node_info_v20:
+  controller: App\Controller\ActivityPub\NodeInfoController::nodeInfoV20
   path: '/nodeinfo/2.0.{_format}'
+  methods: [ GET ]
+  format: json
+
+ap_node_info_v21:
+  controller: App\Controller\ActivityPub\NodeInfoController::nodeInfoV21
+  path: '/nodeinfo/2.1.{_format}'
   methods: [ GET ]
   format: json
 
