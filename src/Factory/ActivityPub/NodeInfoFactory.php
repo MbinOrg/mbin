@@ -64,7 +64,7 @@ class NodeInfoFactory
                 'localComments' => $this->repository->countLocalComments(),
             ],
             'openRegistrations' => $this->settingsManager->get('KBIN_REGISTRATIONS_ENABLED'),
-            'metadata' => new stdClass, // new stdClass  will create a JSON object instead of an array
+            'metadata' => new ArrayObject(), // new ArrayObject will create a JSON object instead of an array
         ];
     }
 }
