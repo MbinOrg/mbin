@@ -18,7 +18,7 @@
             </div>
         {% endfor %}
         {% if tooManyMagazines %}
-            <div class="subscription {{ openMagazine and openMagazine.name is same as magazine.name ? 'active' : '' }}">
+            <div class="subscription">
                 <a href="/u/{{ app.user.username }}/subscriptions">
                     <button class="btn btn__secondary">
                         {{ 'show_more'|trans }}
