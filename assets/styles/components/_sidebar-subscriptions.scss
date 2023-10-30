@@ -6,6 +6,14 @@
 .sidebar-subscriptions {
   height: fit-content;
 
+  &:not(.inline) {
+    padding: 0 0.5rem;
+  }
+
+  &.inline {
+    padding-bottom: unset;
+  }
+
   .sidebar-subscriptions-icons {
     float: right;
 
@@ -14,7 +22,7 @@
     }
   }
 
-  &.inline .subscription-list {
+  .inline .subscription-list {
     max-height: 20em;
     overflow: auto;
     &.lg {
@@ -22,15 +30,15 @@
     }
   }
 
-  &.inline .magazine-subscription-avatar-placeholder {
+  .inline .magazine-subscription-avatar-placeholder {
     display: inline-block;
   }
 
-  &:not(.inline) .magazine-subscription-avatar-placeholder {
+  :not(.inline) .magazine-subscription-avatar-placeholder {
     display: none;
   }
 
-  &.section {
+  .section {
     padding: 0.5rem 0.5rem 0;
 
     @include media-breakpoint-down(lg) {
@@ -47,7 +55,7 @@
   }
   .subscription-list {
 
-    :first-child {
+    &.meta :first-child {
       border-top: unset;
     }
 
