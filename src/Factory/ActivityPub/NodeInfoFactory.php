@@ -64,7 +64,7 @@ class NodeInfoFactory
                 'localComments' => $this->repository->countLocalComments(),
             ],
             'openRegistrations' => $this->settingsManager->get('KBIN_REGISTRATIONS_ENABLED'),
-            'metadata' => [],
+            'metadata' => (object)[],
         ];
     }
 }
