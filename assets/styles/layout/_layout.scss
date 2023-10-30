@@ -15,8 +15,10 @@ body {
     max-width: 100%;
   }
 
-  &.width--auto {
-    max-width: 85%;
+  @include media-breakpoint-up(lg) {
+    &.width--auto {
+      max-width: 85%;
+    }
   }
 }
 
