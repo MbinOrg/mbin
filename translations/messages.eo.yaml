@@ -573,3 +573,27 @@ toolbar.strikethrough: Trastreki
 toolbar.image: Bildo
 toolbar.italic: Kursiva
 more_from_domain: Pli de domajno
+oauth2.grant.moderate.magazine.trash.read: Rigardi rubujon enhavon en revuoj, kiujn
+  vi moderigas.
+oauth2.grant.moderate.magazine_admin.create: Krei novajn revuojn.
+oauth2.grant.moderate.magazine_admin.edit_theme: Redakti la kutiman CSS de iu ajn
+  el viaj posedataj revuoj.
+oauth2.grant.moderate.magazine_admin.tags: Krei aŭ forigi etikedojn de viaj posedataj
+  revuoj.
+oauth2.grant.admin.entry.purge: Tute forigu ajnan fadenon de via nodo.
+oauth2.grant.moderate.magazine_admin.delete: Forigi iujn ajn revuojn, kiujn vi posedas.
+oauth2.grant.moderate.magazine_admin.all: Krei, redakti aŭ forigi revuojn, kiujn vi
+  posedas.
+oauth2.grant.report.general: Raporti fadenojn, afiŝojn aŭ komentojn.
+oauth2.grant.admin.all: Fari ajnan administran agon sur via nodo.
+oauth2.grant.moderate.magazine_admin.update: Redakti iun ajn el viaj posedataj revuoj
+  reguloj, priskribo, NSFL-statuso aŭ ikono.
+oauth2.grant.write.general: Krei aŭ redakti iun ajn el viaj fadenoj, afiŝoj aŭ komentoj.
+oauth2.grant.read.general: Legi ĉiujn enhavojn, al kiuj vi havas aliron.
+oauth2.grant.delete.general: Forigi iujn viajn fadenojn, afiŝojn aŭ komentojn.
+oauth2.grant.moderate.magazine_admin.stats: Rigardi la statistikojn de enhavo, voĉoj
+  kaj vidoj de viaj posedataj revuoj.
+oauth2.grant.moderate.magazine_admin.moderators: Aldoni aŭ forigi moderigantojn de
+  iu ajn el viaj posedataj revuoj.
+oauth2.grant.moderate.magazine_admin.badges: Krei aŭ forigi insignojn de viaj posedataj
+  revuoj.
