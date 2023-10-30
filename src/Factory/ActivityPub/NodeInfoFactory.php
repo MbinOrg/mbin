@@ -50,6 +50,10 @@ class NodeInfoFactory
             'protocols' => [
                 self::NODE_PROTOCOL,
             ],
+            'services' => [
+                'outbound' => [],
+                'inbound' => [],
+            ],
             'usage' => [
                 'users' => [
                     'total' => $this->repository->countUsers(),
@@ -60,6 +64,7 @@ class NodeInfoFactory
                 'localComments' => $this->repository->countLocalComments(),
             ],
             'openRegistrations' => $this->settingsManager->get('KBIN_REGISTRATIONS_ENABLED'),
+            'metadata' => [],
         ];
     }
 }
