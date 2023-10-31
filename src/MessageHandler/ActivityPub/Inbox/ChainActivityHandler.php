@@ -73,12 +73,14 @@ class ChainActivityHandler
             array_pop($message->chain);
         }
 
-        $this->bus->dispatch(
-            new ChainActivityMessage($message->chain, [
-                'id' => $entity->getId(),
-                'type' => \get_class($entity),
-            ], $message->announce, $message->like)
-        );
+        if (!empty($entity)) {
+            $this->bus->dispatch(
+                new ChainActivityMessage($message->chain, [
+                    'id' => $entity->getId(),
+                    'type' => \get_class($entity),
+                ], $message->announce, $message->like)
+            );
+        }
     }
 
     private function unloadStack(array $chain, array $parent, array $announce = null, array $like = null): void
