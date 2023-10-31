@@ -7,7 +7,8 @@ assignees: ''
 
 ---
 
-<!--- If you are considering creating a new feature request, also consider to become a contributor! We are all volunteers, we need developments who implement all the features. --->
+<!--- If you are considering creating a new feature request, also consider to become a contributor and create pull requests! 
+We are all volunteers, we need developers who implement all the features. --->
 
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
