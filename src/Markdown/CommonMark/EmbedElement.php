@@ -32,13 +32,23 @@ class EmbedElement
                         [
                             'class' => 'fas fa-photo-video',
                         ],
-                        ''
                     ),
                 ),
                 new HtmlElement(
                     'a',
-                    ['href' => $url, 'rel' => 'nofollow noopener noreferrer', 'target' => '_blank'],
+                    [
+                        'href' => $url,
+                        'rel' => 'nofollow noopener noreferrer',
+                        'target' => '_blank',
+                    ],
                     $label
+                ),
+                new HtmlElement(
+                    'span',
+                    [
+                        'class' => 'preview-target hidden',
+                        'data-preview-target' => 'container',
+                    ]
                 ),
             ]
         );

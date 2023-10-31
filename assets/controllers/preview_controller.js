@@ -1,46 +1,55 @@
-import {Controller} from '@hotwired/stimulus';
-import {fetch, ok} from "../utils/http";
-import router from "../utils/routing";
+import { Controller } from '@hotwired/stimulus';
 import { useThrottle } from 'stimulus-use'
+import { fetch, ok } from "../utils/http";
+import router from "../utils/routing";
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
     static values = {
         loading: Boolean,
+    };
+
+    static targets = ['container'];
+    static throttles = ['show'];
+
+    connect() {
+        useThrottle(this, {wait: 1000});
+
+        // workaround: give itself a container if it couldn't find one
+        // I am not happy with this
+        if (!this.hasContainerTarget && this.element.matches('span.preview')) {
+            let container = this.createContainerTarget('preview-target');
+            this.element.insertAdjacentElement('beforeend', container);
+            console.warn('unable to find container target, creating one for itself at', this.element.lastChild);
+        }
     }
 
-    static throttles = ['show']
+    createContainerTarget(extraClasses) {
+        let classes = [].concat(extraClasses ?? []);
 
-    connect(){
-        useThrottle(this, {wait: 1000});
+        let div = document.createElement('div');
+        div.classList.add(...classes, 'hidden');
+        div.dataset.previewTarget = 'container';
+
+        return div;
+    }
+
+    async retry(event) {
+        event.preventDefault();
+
+        this.containerTarget.replaceChildren();
+        this.containerTarget.classList.add('hidden');
+
+        await this.show(event);
     }
 
     async show(event) {
         event.preventDefault();
 
-        let element = this.element;
-
-        if (element.classList.contains('preview')) {
-            element = element.parentElement.previousElementSibling;
-            this.element.remove();
-        } else {
-            let container = this.element.nextElementSibling && this.element.nextElementSibling.classList.contains('js-container')
-                ? this.element.nextElementSibling : null;
-
-            if (null === container) {
-                container = document.createElement('div');
-                container.classList.add('js-container');
-                container.style.display = 'none';
-                this.element.insertAdjacentHTML('afterend', container.outerHTML);
-            } else {
-                if (container.querySelector('.preview')) {
-                    container.querySelector('.preview').remove();
-                    if (0 === container.children.length) {
-                        container.remove();
-                    }
-                    return;
-                }
-            }
+        if (this.containerTarget.hasChildNodes()) {
+            this.containerTarget.replaceChildren();
+            this.containerTarget.classList.add('hidden');
+            return
         }
 
         try {
@@ -51,20 +60,27 @@ export default class extends Controller {
             response = await ok(response);
             response = await response.json();
 
-            element.nextElementSibling.insertAdjacentHTML('afterbegin', response.html);
-            element.nextElementSibling.style.display = 'block';
+            this.containerTarget.innerHTML = response.html;
+            this.containerTarget.classList.remove('hidden');
             if (event.params.ratio) {
-                element.nextElementSibling.querySelector('.preview').classList.add('ratio');
+                this.containerTarget
+                    .querySelector('.preview')
+                    .classList.add('ratio');
             }
             this.loadScripts(response.html);
         } catch (e) {
-            const failedHtml = '<div class="preview" data-controller="preview">' + 
-                                '<a class="retry-failed" href="#" ' + 
-                                    'data-action="preview#show" data-preview-url-param="' + event.params.url +
-                                    '" data-preview-ratio-param="' + event.params.ratio + '">' +
-                                'Failed to load. Click to retry.</a></div>';
-            element.nextElementSibling.insertAdjacentHTML('afterbegin', failedHtml);
-            element.nextElementSibling.style.display = 'block';
+            console.error('preview failed: ', e);
+            let failedHtml =
+                `<div class="preview">
+                    <a class="retry-failed" href="#"
+                        data-action="preview#retry"
+                        data-preview-url-param="${event.params.url}"
+                        data-preview-ratio-param="${event.params.ratio}">
+                            Failed to load. Click to retry.
+                    </a>
+                </div>`
+            this.containerTarget.innerHTML = failedHtml;
+            this.containerTarget.classList.remove('hidden');
         } finally {
             this.loadingValue = false;
         }
