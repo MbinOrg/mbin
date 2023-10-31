@@ -86,7 +86,13 @@ Talking about plugins, we advise to also enable the `rabbitmq_management` plugin
 sudo rabbitmq-plugins enable rabbitmq_management
 ```
 
-This allows you to go to the RabbitMQ management page: `http://<server-ip>:15672`. [More info can be found here](https://www.rabbitmq.com/management.html#getting-started). See screenshot below of a typical small instance of Mbin running RabbitMQ management interface:
+Give the kbin user the management tag:
+
+```sh
+sudo rabbitmqctl set_user_tags "kbin" management
+```
+
+Now you can open the RabbitMQ management page: (insecure connection!) `http://<server-ip>:15672` with the username kbin and the password found in the .env file. [More info can be found here](https://www.rabbitmq.com/management.html#getting-started). See screenshot below of a typical small instance of Mbin running RabbitMQ management interface:
 
 ![image](https://github.com/MbinOrg/mbin/assets/628926/ce47213e-13c5-4b57-9fd3-c5b4a64138ef)
 
