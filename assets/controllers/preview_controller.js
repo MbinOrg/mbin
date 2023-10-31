@@ -18,7 +18,7 @@ export default class extends Controller {
         // workaround: give itself a container if it couldn't find one
         // I am not happy with this
         if (!this.hasContainerTarget && this.element.matches('span.preview')) {
-            let container = this.createContainerTarget();
+            let container = this.createContainerTarget('preview-target');
             this.element.insertAdjacentElement('beforeend', container);
             console.warn('unable to find container target, creating one for itself at', this.element.lastChild);
         }

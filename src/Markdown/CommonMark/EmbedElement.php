@@ -46,7 +46,7 @@ class EmbedElement
                 new HtmlElement(
                     'span',
                     [
-                        'class' => 'hidden',
+                        'class' => 'preview-target hidden',
                         'data-preview-target' => 'container',
                     ]
                 ),
