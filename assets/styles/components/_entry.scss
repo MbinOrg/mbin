@@ -8,6 +8,7 @@
                        "vote image shortDesc"
                        "vote image meta"
                        "vote image footer"
+                       "preview preview preview"
                        "body body body";
   grid-template-columns: min-content min-content 1fr;
   grid-template-rows: 1fr min-content;
@@ -40,6 +41,7 @@
                          "shortDesc shortDesc"
                          "meta meta"
                          "footer footer"
+                         "preview preview"
                          "body body";
     grid-template-columns: min-content 1fr;
 
@@ -64,6 +66,7 @@
       grid-template-areas: "title title vote"
                        "meta meta image"
                        "footer footer image"
+                       "preview preview preview"
                        "body body body";
       grid-template-columns: 1fr min-content min-content;
 
@@ -93,6 +96,7 @@
       grid-template-areas: "vote title image"
                        "vote meta image"
                        "vote footer image"
+                       "preview preview preview"
                        "body body body";
       grid-template-columns: min-content 1fr min-content;
 
@@ -252,6 +256,11 @@
     }
   }
 
+  &__preview {
+    grid-area: preview;
+    margin: 0.5rem;
+  }
+
   &__body {
     grid-area: body;
     margin-top: 1.5rem;
@@ -348,8 +357,8 @@
       h1,h2,h3,h4,h5,h6{
         margin: 1rem auto;
       }
-      h1{       
-        font-size: 1.25rem;      
+      h1{
+        font-size: 1.25rem;
       }
       h2{
         font-size: 1.20rem;
@@ -366,7 +375,6 @@
       h6{
         font-size: 1rem;
       }
-      
     }
 
     .no-image-placeholder {
@@ -374,17 +382,12 @@
     }
 
     .rounded-edges .view-compact & figure {
-      border-top-right-radius: 0 !important;
+      border-bottom-right-radius: 0;
     }
 
     @include media-breakpoint-down(sm) {
-      .rounded-edges & figure {
-        border-top-left-radius: 0 !important;
-        border-top-right-radius: 0 !important;
-      }
-
       .rounded-edges .view-compact & figure {
-        border-top-right-radius: var(--kbin-rounded-edges-radius);
+        border-bottom-right-radius: var(--kbin-rounded-edges-radius);
       }
     }
   }
