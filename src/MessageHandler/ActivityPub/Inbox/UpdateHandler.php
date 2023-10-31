@@ -82,8 +82,13 @@ class UpdateHandler
             $fn = 'editPostComment';
         }
 
-        $this->$fn($object, $actor);
+        if (isset($fn, $object, $actor)) {
+            $this->$fn($object, $actor);
+        }
 
+        // Dead-code introduced by Ernest "Temp disable handler dispatch", in commit:
+        // 4573e87f91923b9a5758e0dfacb3870d55ef1166
+        //
         //        if (null === $object->magazine->apId) {
         //            $this->bus->dispatch(
         //                new \App\Message\ActivityPub\Outbox\UpdateMessage(
