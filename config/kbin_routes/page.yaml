@@ -18,12 +18,6 @@ page_terms:
   path: /terms
   methods: [ GET ]
 
-award_list_all:
-  controller: App\Controller\AwardListController
-  defaults: { category: ~ }
-  path: /awards/{category}
-  methods: [ GET ]
-
 stats:
   controller: App\Controller\StatsController
   defaults: { statsType: general, statsPeriod: -1, withFederated: false }
