@@ -52,7 +52,7 @@
         <li class="actions">
             {{ form_start(form, {action: path('post_change_lang', {magazine_name: magazine.name, post_id: post.id})}) }}
             {{ form_row(form.lang, {label: false, row_attr: {class: 'checkbox'}}) }}
-            {{ form_row(form.submit, {label: 'change_language'|trans, attr: {class: 'btn btn__secondary'}}) }}
+            {{ form_row(form.submit, {label: 'change_language'|trans|lower, attr: {class: 'btn btn__secondary'}}) }}
             {{ form_end(form) }}
         </li>
         <li class="actions">
