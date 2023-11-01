@@ -177,8 +177,10 @@
                                 {% endif %}
 
                                 <li>
-                                    <a data-action="clipboard#copy"
-                                       href="{{ entry_url(entry) }}">{{ 'copy_url'|trans }}</a>
+                                    <a target="_blank"
+                                       href="{{ entry.apId ?? path('ap_entry', {magazine_name: entry.magazine.name, entry_id: entry.id}) }}">
+                                        {{ 'open_url_to_fediverse'|trans }}
+                                    </a>
                                 </li>
                                 <li>
                                     <a data-action="clipboard#copy"
@@ -187,10 +189,8 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a target="_blank"
-                                       href="{{ entry.apId ?? path('ap_entry', {magazine_name: entry.magazine.name, entry_id: entry.id}) }}">
-                                        {{ 'open_url_to_fediverse'|trans }}
-                                    </a>
+                                    <a data-action="clipboard#copy"
+                                       href="{{ entry_url(entry) }}">{{ 'copy_url'|trans }}</a>
                                 </li>
                                 {% if is_granted('edit', entry) %}
                                     <li>
