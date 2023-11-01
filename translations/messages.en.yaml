@@ -24,7 +24,7 @@ commented: Commented
 change_view: Change view
 filter_by_time: Filter by time
 filter_by_type: Filter by type
-comments_count: '{0}comments|{1}comment|]1,Inf[ comments'
+comments_count: '{0}Comments|{1}Comment|]1,Inf[ Comments'
 favourites: Favorites
 favourite: Favorite
 more: More

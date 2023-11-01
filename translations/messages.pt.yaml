@@ -274,7 +274,7 @@ active: Ativo
 agree_terms: Consentimento dos %terms_link_start%Termos e Condições%terms_link_end%
   e %policy_link_start%Política de Privacidade%policy_link_end%
 check_email: Verifique o seu email
-comments_count: '{0}comentários|{1}comentário|]1,Inf[ comentários'
+comments_count: '{0}Comentários|{1}Comentário|]1,Inf[ Comentários'
 reset_check_email_desc: Se uma conta com o seu email existir, então um email será
   enviado com um link para redefinir a sua password. Este link irá expirar em %expire%.
 replies: Respostas

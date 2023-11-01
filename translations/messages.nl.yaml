@@ -240,7 +240,7 @@ gold_comment_desc: Deze reactie is 15 keer omhoog gestemd
 type.link: Link
 threads: Gesprekken
 select_channel: Kies een kanaal
-comments_count: '{0}reacties|{1}reactie|]1,Inf[ reacties'
+comments_count: '{0}Reacties|{1}Reactie|]1,Inf[ Reacties'
 replies: Antwoorden
 markdown_howto: Hoe werkt het bewerkveld?
 federated_magazine_info: Dit tijdschrift is van een gefedereerde server en is mogelijk
