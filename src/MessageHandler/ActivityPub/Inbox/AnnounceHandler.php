@@ -40,7 +40,9 @@ class AnnounceHandler
             } else {
                 $object = $this->apHttpClient->getActivityObject($message->payload['object']);
 
-                $this->bus->dispatch(new ChainActivityMessage([$object], null, $message->payload));
+                if (!empty($object)) {
+                    $this->bus->dispatch(new ChainActivityMessage([$object], null, $message->payload));
+                }
 
                 return;
             }
@@ -51,6 +53,9 @@ class AnnounceHandler
                 $this->manager->upvote($entity, $actor);
                 $this->voteHandleSubscriber->clearCache($entity);
 
+                // Dead-code introduced by Ernest "Temp disable handler dispatch", in commit:
+                // 4573e87f91923b9a5758e0dfacb3870d55ef1166
+                //
                 //                if (null === $entity->magazine->apId) {
                 //                    $this->bus->dispatch(
                 //                        new \App\Message\ActivityPub\Outbox\AnnounceMessage(
