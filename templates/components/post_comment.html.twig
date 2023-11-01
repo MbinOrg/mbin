@@ -92,6 +92,7 @@
                                         {{ 'activity'|trans }}
                                     </a>
                                 </li>
+                                <li class="dropdown__separator"></li>
                                 <li>
                                     <a target="_blank"
                                        href="{{ comment.apId ?? path('ap_post_comment', {magazine_name: comment.magazine.name, post_id: comment.post.id, comment_id: comment.id}) }}">
@@ -110,6 +111,7 @@
                                         {{ 'copy_url'|trans }}
                                     </a>
                                 </li>
+                                <li class="dropdown__separator"></li>
                                 {% if is_granted('edit', comment) %}
                                     <li>
                                         <a href="{{ post_comment_edit_url(comment) }}"

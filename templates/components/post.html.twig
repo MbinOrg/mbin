@@ -108,6 +108,7 @@
                                         {{ 'activity'|trans }}
                                     </a>
                                 </li>
+                                <li class="dropdown__separator"></li>
                                 <li>
                                     <a target="_blank"
                                        href="{{ post.apId ?? path('ap_post', {magazine_name: post.magazine.name, post_id: post.id}) }}">
@@ -125,6 +126,7 @@
                                         {{ 'copy_url'|trans }}
                                     </a>
                                 </li>
+                                <li class="dropdown__separator"></li>
                                 {% if is_granted('edit', post) %}
                                     <li>
                                         <a href="{{ post_edit_url(post) }}"

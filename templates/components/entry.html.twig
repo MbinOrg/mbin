@@ -176,6 +176,7 @@
                                     </li>
                                 {% endif %}
 
+                                <li class="dropdown__separator"></li>
                                 <li>
                                     <a target="_blank"
                                        href="{{ entry.apId ?? path('ap_entry', {magazine_name: entry.magazine.name, entry_id: entry.id}) }}">
@@ -192,6 +193,7 @@
                                     <a data-action="clipboard#copy"
                                        href="{{ entry_url(entry) }}">{{ 'copy_url'|trans }}</a>
                                 </li>
+                                <li class="dropdown__separator"></li>
                                 {% if is_granted('edit', entry) %}
                                     <li>
                                         <a href="{{ entry_edit_url(entry) }}"
