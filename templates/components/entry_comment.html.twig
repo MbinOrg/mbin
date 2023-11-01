@@ -107,7 +107,9 @@
                                         {{ 'copy_url'|trans }}
                                     </a>
                                 </li>
-                                <li class="dropdown__separator"></li>
+                                {% if is_granted('edit', comment) or if app.user and comment.isAuthor(app.user) or is_granted('moderate', comment) %}
+                                    <li class="dropdown__separator"></li>
+                                {% endif %}
                                 {% if is_granted('edit', comment) %}
                                     <li>
                                         <a href="{{ entry_comment_edit_url(comment) }}"

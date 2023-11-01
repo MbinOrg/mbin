@@ -193,7 +193,9 @@
                                     <a data-action="clipboard#copy"
                                        href="{{ entry_url(entry) }}">{{ 'copy_url'|trans }}</a>
                                 </li>
-                                <li class="dropdown__separator"></li>
+                                {% if is_granted('edit', entry) or if app.user and entry.isAuthor(app.user) or is_granted('moderate', entry) %}
+                                    <li class="dropdown__separator"></li>
+                                {% endif %}
                                 {% if is_granted('edit', entry) %}
                                     <li>
                                         <a href="{{ entry_edit_url(entry) }}"
