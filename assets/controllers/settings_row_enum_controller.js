@@ -9,7 +9,10 @@ export default class extends Controller {
     change({params: {actionPath, reloadRequired}}) {
         return fetch(actionPath).then(() => {
             if (reloadRequired) {
-                document.querySelector('.settings-list').classList.add('reload-required');
+                document.querySelectorAll('.settings-list')
+                  .forEach((el) => {
+                    el.classList.add('reload-required');
+                });
             }
         });
     }

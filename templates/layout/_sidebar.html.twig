@@ -52,8 +52,13 @@
     <div id="federation" class="section" data-options-target="federation">
         <h3>{{ 'federation'|trans }}</h3>
         <div class="settings-list">
+            <div class="reload-required-section">
+                <button onclick="window.location.reload(); this.classList.add('spin');" class="btn btn-link">
+                    <i class="fa fa-refresh"></i>{{ 'reload_to_apply'|trans }}
+                </button>
+            </div>
             <div class="settings-section">
-              {{ component('settings_row_enum', {label: 'status'|trans, settingsKey: 'KBIN_FEDERATION_ENABLED', values: [ {name: 'local'|trans , value: 'FALSE'}, {name: 'local_and_federated'|trans , value: 'TRUE' } ], defaultValue: 'TRUE' } ) }}
+                {{ component('settings_row_enum', {label: 'status'|trans, settingsKey: 'KBIN_FEDERATION_ENABLED', values: [ {name: 'local'|trans , value: 'FALSE'}, {name: 'local_and_federated'|trans , value: 'TRUE' } ], defaultValue: 'TRUE' } ) }}
             </div>
         </div>
     </div>
