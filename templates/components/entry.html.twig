@@ -186,6 +186,12 @@
                                         {{ 'copy_url_to_fediverse'|trans|lower }}
                                     </a>
                                 </li>
+                                <li>
+                                    <a target="_blank"
+                                       href="{{ entry.apId ?? path('ap_entry', {magazine_name: entry.magazine.name, entry_id: entry.id}) }}">
+                                        {{ 'open_url_to_fediverse'|trans }}
+                                    </a>
+                                </li>
                                 {% if is_granted('edit', entry) %}
                                     <li>
                                         <a href="{{ entry_edit_url(entry) }}"
