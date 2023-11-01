@@ -6,13 +6,13 @@
         <li>
             <a href="{{ post_voters_url(post, 'up') }}"
                class="{{ html_classes({'active': is_route_name('post_voters') and route_has_param('type', 'up')}) }}">
-                {{ 'up_votes'|trans|lower }} ({{ post.countUpVotes }})
+                {{ 'up_votes'|trans }} ({{ post.countUpVotes }})
             </a>
         </li>
         <li>
             <a href="{{ post_favourites_url(post) }}"
                class="{{ html_classes({'active': is_route_name('post_favourites')}) }}">
-                {{ 'favourites'|trans|lower }} ({{ post.favouriteCount }})
+                {{ 'favourites'|trans }} ({{ post.favouriteCount }})
             </a>
         </li>
     </menu>

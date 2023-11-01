@@ -18,7 +18,7 @@
     {% if magazine.moderators|length > 5 %}
         <footer>
             <a href="{{ path('magazine_moderators', {name: magazine.name}) }}"
-               class="stretched-link">{{ 'show_more'|trans|lower }}</a>
+               class="stretched-link">{{ 'show_more'|trans }}</a>
         </footer>
     {% endif %}
 </section>
