@@ -10,8 +10,6 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\ManyToOne;
 
 #[Entity(repositoryClass: ApActivityRepository::class)]
 class ApActivity
@@ -20,11 +18,7 @@ class ApActivity
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
 
-    #[ManyToOne(targetEntity: User::class, inversedBy: 'awards')]
-    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $user;
-    #[ManyToOne(targetEntity: Magazine::class, inversedBy: 'awards')]
-    #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?Magazine $magazine;
     #[Column(type: 'string', nullable: false)]
     public int $subjectId;
