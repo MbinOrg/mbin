@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Traits\CreatedAtTrait;
-use App\Repository\ApActivityRepository;
+use App\Repository\AwardRepository;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -13,8 +13,8 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 
-#[Entity(repositoryClass: ApActivityRepository::class)]
-class ApActivity
+#[Entity(repositoryClass: AwardRepository::class)]
+class Award
 {
     use CreatedAtTrait {
         CreatedAtTrait::__construct as createdAtTraitConstruct;
@@ -24,14 +24,11 @@ class ApActivity
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $user;
     #[ManyToOne(targetEntity: Magazine::class, inversedBy: 'awards')]
-    #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
-    public ?Magazine $magazine;
-    #[Column(type: 'string', nullable: false)]
-    public int $subjectId;
-    #[Column(type: 'string', nullable: false)]
-    public string $type;
-    #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
-    public string $body;
+    #[JoinColumn(onDelete: 'CASCADE')]
+    public Magazine $magazine;
+    #[ManyToOne(targetEntity: AwardType::class, inversedBy: 'awards')]
+    #[JoinColumn(onDelete: 'CASCADE')]
+    public AwardType $type;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
