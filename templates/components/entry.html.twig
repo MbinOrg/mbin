@@ -154,36 +154,36 @@
                             }) }}
                         </li>
                         <li class="dropdown">
-                            <button class="stretched-link" data-subject-target="more">{{ 'more'|trans|lower }}</button>
+                            <button class="stretched-link" data-subject-target="more">{{ 'more'|trans }}</button>
                             <ul class="dropdown__menu" data-controller="clipboard">
                                 <li>
                                     <a href="{{ path('entry_report', {id: entry.id}) }}"
                                        class="{{ html_classes({'active': is_route_name('entry_report')}) }}"
                                        data-action="subject#getForm">
-                                        {{ 'report'|trans|lower }}
+                                        {{ 'report'|trans }}
                                     </a>
                                 </li>
                                 <li>
                                     <a href="{{ entry_voters_url(entry, 'up') }}"
                                        class="{{ html_classes({'active': is_route_name('entry_fav') or is_route_name('entry_voters')}) }}">
-                                        {{ 'activity'|trans|lower }}
+                                        {{ 'activity'|trans }}
                                     </a>
                                 </li>
 
                                 {% if entry.domain %}
                                     <li>
-                                        <a href="{{ path('domain_entries', {name: entry.domain.name}) }}">{{ 'more_from_domain'|trans|lower }}</a>
+                                        <a href="{{ path('domain_entries', {name: entry.domain.name}) }}">{{ 'more_from_domain'|trans }}</a>
                                     </li>
                                 {% endif %}
 
                                 <li>
                                     <a data-action="clipboard#copy"
-                                       href="{{ entry_url(entry) }}">{{ 'copy_url'|trans|lower }}</a>
+                                       href="{{ entry_url(entry) }}">{{ 'copy_url'|trans }}</a>
                                 </li>
                                 <li>
                                     <a data-action="clipboard#copy"
                                        href="{{ entry.apId ?? path('ap_entry', {magazine_name: entry.magazine.name, entry_id: entry.id}) }}">
-                                        {{ 'copy_url_to_fediverse'|trans|lower }}
+                                        {{ 'copy_url_to_fediverse'|trans }}
                                     </a>
                                 </li>
                                 <li>
@@ -196,7 +196,7 @@
                                     <li>
                                         <a href="{{ entry_edit_url(entry) }}"
                                            class="{{ html_classes({'active': is_route_name('entry_edit')}) }}">
-                                            {{ 'edit'|trans|lower }}
+                                            {{ 'edit'|trans }}
                                         </a>
                                     </li>
                                 {% endif %}
@@ -206,7 +206,7 @@
                                               action="{{ entry_delete_url(entry) }}"
                                               onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
                                             <input type="hidden" name="token" value="{{ csrf_token('entry_delete') }}">
-                                            <button type="submit">{{ 'delete'|trans|lower }}</button>
+                                            <button type="submit">{{ 'delete'|trans }}</button>
                                         </form>
                                     </li>
                                 {% endif %}
@@ -215,7 +215,7 @@
                                         <a href="{{ entry_moderate_url(entry) }}"
                                            class="{{ html_classes({'active': is_route_name('entry_moderate')}) }}"
                                            data-action="subject#showModPanel">
-                                            {{ 'moderate'|trans|lower }}
+                                            {{ 'moderate'|trans }}
                                         </a>
                                     </li>
                                 {% endif %}
@@ -234,7 +234,7 @@
                                   action="{{ path('entry_restore', {magazine_name: entry.magazine.name, entry_id: entry.id}) }}"
                                   onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
                                 <input type="hidden" name="token" value="{{ csrf_token('entry_restore') }}">
-                                <button type="submit">{{ 'restore'|trans|lower }}</button>
+                                <button type="submit">{{ 'restore'|trans }}</button>
                             </form>
                         </li>
                         <li data-subject-target="loader" style="display:none">

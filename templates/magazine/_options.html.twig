@@ -3,19 +3,19 @@
         <li>
             <a href="{{ options_url('sortBy', 'newest') }}"
                class="{{ html_classes({'active': route_has_param('sortBy', 'newest')}) }}">
-                {{ 'newest'|trans|lower }}
+                {{ 'newest'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ options_url('sortBy', 'hot') }}"
                class="{{ html_classes({'active': route_has_param('sortBy', 'hot')}) }}">
-                {{ 'hot'|trans|lower }}
+                {{ 'hot'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ options_url('sortBy', 'active') }}"
                class="{{ html_classes({'active': route_has_param('sortBy', 'active')}) }}">
-                {{ 'active'|trans|lower }}
+                {{ 'active'|trans }}
             </a>
         </li>
     </menu>
@@ -26,10 +26,10 @@
                         class="fa-solid fa-layer-group"></i> {{ 'change_view'|trans }}</button>
             <ul class="dropdown__menu">
                 <li><a class="{{ html_classes({'active': route_has_param('view', 'table')}) }}"
-                       href="{{ options_url('view', 'table') }}">{{ 'table_view'|trans|lower }}</a></li>
+                       href="{{ options_url('view', 'table') }}">{{ 'table_view'|trans }}</a></li>
                 <li>
                     <a class="{{ html_classes({'active': route_has_param('view', 'cards')}) }}"
-                       href="{{ options_url('view', 'cards') }}">{{ 'cards_view'|trans|lower }}</a>
+                       href="{{ options_url('view', 'cards') }}">{{ 'cards_view'|trans }}</a>
                 </li>
             </ul>
         </li>
