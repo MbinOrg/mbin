@@ -98,8 +98,8 @@ $transition: 180ms all 120ms ease-out;
   }
 
   .dropdown__separator {
-    border: 1px solid #aaaa;
+    border: var(--kbin-section-border);
     height: 0px;
-    margin: 5px 10px;
+    margin: 2px 5px;
   }
 }
