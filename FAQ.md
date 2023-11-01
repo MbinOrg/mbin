@@ -86,10 +86,18 @@ Talking about plugins, we advise to also enable the `rabbitmq_management` plugin
 sudo rabbitmq-plugins enable rabbitmq_management
 ```
 
-Give the kbin user the management tag:
+Let's create a new admin user in RabbitMQ (replace `<user>` and `password` with a username & password you like to use):
 
 ```sh
-sudo rabbitmqctl set_user_tags "kbin" management
+sudo rabbitmqctl add_user <user> <password>
+```
+
+Give this new user administrator permissions (`-p /` is the virtual host path of RabbitMQ, which is `/` by default):
+
+```sh
+# Again don't forget to change <user> to your username in the lines below
+sudo rabbitmqctl set_user_tags <user> administrator
+sudo rabbitmqctl set_permissions -p / <user> ".*" ".*" ".*"
 ```
 
 Now you can open the RabbitMQ management page: (insecure connection!) `http://<server-ip>:15672` with the username kbin and the password found in the .env file. [More info can be found here](https://www.rabbitmq.com/management.html#getting-started). See screenshot below of a typical small instance of Mbin running RabbitMQ management interface:
