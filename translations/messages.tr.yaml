@@ -67,7 +67,7 @@ magazines: Dergiler
 active: Aktif
 commented: Yorum yapıldı
 change_view: Görünümü değiştir
-comments_count: '{0}yorum|{1}yorum|]1,Inf[ yorumlar'
+comments_count: '{0}Yorum|{1}Yorum|]1,Inf[ Yorumlar'
 favourite: Favori
 down_votes: Azaltır
 no_comments: Yorum yok
