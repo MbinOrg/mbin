@@ -6,13 +6,13 @@
         <li>
             <a href="{{ post_comment_voters_url(comment, 'up') }}"
                class="{{ html_classes({'active': is_route_name('post_comment_voters')}) }}">
-                {{ 'up_votes'|trans|lower }} ({{ comment.countUpVotes }})
+                {{ 'up_votes'|trans }} ({{ comment.countUpVotes }})
             </a>
         </li>
         <li>
             <a href="{{ post_comment_favourites_url(comment) }}"
                class="{{ html_classes({'active': is_route_name('post_comment_favourites')}) }}">
-                {{ 'favourites'|trans|lower }} ({{ comment.favouriteCount }})
+                {{ 'favourites'|trans }} ({{ comment.favouriteCount }})
             </a>
         </li>
     </menu>
