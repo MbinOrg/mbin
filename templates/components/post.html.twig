@@ -69,20 +69,20 @@
                         <li>
                             <a class="stretched-link"
                                href="{{ path('post_comment_create', {magazine_name: post.magazine.name, post_id: post.id, slug: post.slug|length ? post.slug : '-'}) }}"
-                               data-action="subject#getForm">{{ 'reply'|trans|lower }}</a>
+                               data-action="subject#getForm">{{ 'reply'|trans }}</a>
                         </li>
                         {% if not is_route_name('post_single', true) and ((not showCommentsPreview and post.commentCount > 0) or post.commentCount > 2) %}
                             <li data-post-target="expand">
                                 <a class="stretched-link"
                                    href="#{{ get_url_fragment(post) }}"
-                                   data-action="post#expandComments">{{ 'expand'|trans|lower }} (<span
+                                   data-action="post#expandComments">{{ 'expand'|trans }} (<span
                                             data-subject-target="commentsCounter">{{ post.commentCount }}</span>)</a>
                             </li>
                             <li data-post-target="collapse"
                                 style="display: none">
                                 <a class="stretched-link"
                                    href="#{{ get_url_fragment(post) }}"
-                                   data-action="post#collapseComments">{{ 'collapse'|trans|lower }}
+                                   data-action="post#collapseComments">{{ 'collapse'|trans }}
                                     ({{ post.commentCount }})
                                 </a>
                             </li>
@@ -93,30 +93,30 @@
                             }) }}
                         </li>
                         <li class="dropdown">
-                            <button class="stretched-link" data-subject-target="more">{{ 'more'|trans|lower }}</button>
+                            <button class="stretched-link" data-subject-target="more">{{ 'more'|trans }}</button>
                             <ul class="dropdown__menu" data-controller="clipboard">
                                 <li>
                                     <a href="{{ path('post_report', {id: post.id}) }}"
                                        class="{{ html_classes({'active': is_route_name('post_report')}) }}"
                                        data-action="subject#getForm">
-                                        {{ 'report'|trans|lower }}
+                                        {{ 'report'|trans }}
                                     </a>
                                 </li>
                                 <li>
                                     <a href="{{ post_voters_url(post, 'up') }}"
                                        class="{{ html_classes({'active': is_route_name('post_favourites') or is_route_name('post_voters')}) }}">
-                                        {{ 'activity'|trans|lower }}
+                                        {{ 'activity'|trans }}
                                     </a>
                                 </li>
                                 <li>
                                     <a data-action="clipboard#copy" href="{{ post_url(post) }}">
-                                        {{ 'copy_url'|trans|lower }}
+                                        {{ 'copy_url'|trans }}
                                     </a>
                                 </li>
                                 <li>
                                     <a data-action="clipboard#copy"
                                        href="{{ post.apId ?? path('ap_post', {magazine_name: post.magazine.name, post_id: post.id}) }}">
-                                        {{ 'copy_url_to_fediverse'|trans|lower }}
+                                        {{ 'copy_url_to_fediverse'|trans }}
                                     </a>
                                 </li>
                                 {% if is_granted('edit', post) %}
@@ -124,7 +124,7 @@
                                         <a href="{{ post_edit_url(post) }}"
                                            class="{{ html_classes({'active': is_route_name('post_edit')}) }}"
                                            data-action="subject#getForm">
-                                            {{ 'edit'|trans|lower }}
+                                            {{ 'edit'|trans }}
                                         </a>
                                     </li>
                                 {% endif %}
@@ -134,7 +134,7 @@
                                               action="{{ post_delete_url(post) }}"
                                               onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
                                             <input type="hidden" name="token" value="{{ csrf_token('post_delete') }}">
-                                            <button type="submit">{{ 'delete'|trans|lower }}</button>
+                                            <button type="submit">{{ 'delete'|trans }}</button>
                                         </form>
                                     </li>
                                 {% endif %}
@@ -143,7 +143,7 @@
                                         <a href="{{ post_moderate_url(post) }}"
                                            class="{{ html_classes({'active': is_route_name('post_moderate')}) }}"
                                            data-action="subject#showModPanel">
-                                            {{ 'moderate'|trans|lower }}
+                                            {{ 'moderate'|trans }}
                                         </a>
                                     </li>
                                 {% endif %}
@@ -167,7 +167,7 @@
                                   action="{{ path('post_restore', {magazine_name: post.magazine.name, post_id: post.id}) }}"
                                   onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
                                 <input type="hidden" name="token" value="{{ csrf_token('post_restore') }}">
-                                <button type="submit">{{ 'restore'|trans|lower }}</button>
+                                <button type="submit">{{ 'restore'|trans }}</button>
                             </form>
                         </li>
                         <li data-subject-target="loader" style="display:none">
