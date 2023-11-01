@@ -96,4 +96,10 @@ $transition: 180ms all 120ms ease-out;
     color: var(--kbin-button-secondary-text-hover-color) !important;
     background: var(--kbin-button-secondary-hover-bg);
   }
+
+  .dropdown__separator {
+    border: var(--kbin-section-border);
+    height: 0px;
+    margin: 2px 5px;
+  }
 }

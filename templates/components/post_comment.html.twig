@@ -92,10 +92,11 @@
                                         {{ 'activity'|trans }}
                                     </a>
                                 </li>
+                                <li class="dropdown__separator"></li>
                                 <li>
-                                    <a data-action="clipboard#copy"
-                                       href="{{ post_url(comment.post) }}#{{ get_url_fragment(comment) }}">
-                                        {{ 'copy_url'|trans }}
+                                    <a target="_blank"
+                                       href="{{ comment.apId ?? path('ap_post_comment', {magazine_name: comment.magazine.name, post_id: comment.post.id, comment_id: comment.id}) }}">
+                                        {{ 'open_url_to_fediverse'|trans }}
                                     </a>
                                 </li>
                                 <li>
@@ -104,6 +105,15 @@
                                         {{ 'copy_url_to_fediverse'|trans }}
                                     </a>
                                 </li>
+                                <li>
+                                    <a data-action="clipboard#copy"
+                                       href="{{ post_url(comment.post) }}#{{ get_url_fragment(comment) }}">
+                                        {{ 'copy_url'|trans }}
+                                    </a>
+                                </li>
+                                {% if is_granted('edit', comment) or (app.user and comment.isAuthor(app.user)) or is_granted('moderate', comment) %}
+                                    <li class="dropdown__separator"></li>
+                                {% endif %}
                                 {% if is_granted('edit', comment) %}
                                     <li>
                                         <a href="{{ post_comment_edit_url(comment) }}"
