@@ -8,25 +8,25 @@
         <li>
             <a href="{{ path('stats', {statsType: TYPE_GENERAL}) }}"
                class="{{ html_classes({'active': route_has_param('statsType', TYPE_GENERAL) or get_route_param('statsType') is same as null}) }}">
-                {{ TYPE_GENERAL|trans|lower }}
+                {{ TYPE_GENERAL|trans }}
             </a>
         </li>
         <li>
             <a href="{{ path('stats', {statsType: TYPE_CONTENT}) }}"
                class="{{ html_classes({'active': route_has_param('statsType', TYPE_CONTENT)}) }}">
-                {{ TYPE_CONTENT|trans|lower }}
+                {{ TYPE_CONTENT|trans }}
             </a>
         </li>
         <li>
             <a href="{{ path('stats', {statsType: TYPE_VOTES}) }}"
                class="{{ html_classes({'active': route_has_param('statsType', TYPE_VOTES)}) }}">
-                {{ TYPE_VOTES|trans|lower }}
+                {{ TYPE_VOTES|trans }}
             </a>
         </li>
         <li>
             <a href="{{ path('stats', {statsType: TYPE_VIEWS}) }}"
                class="{{ html_classes({'active': route_has_param('statsType', TYPE_VIEWS)}) }}">
-                {{ TYPE_VIEWS|trans|lower }}
+                {{ TYPE_VIEWS|trans }}
             </a>
         </li>
     </menu>

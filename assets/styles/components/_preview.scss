@@ -25,6 +25,14 @@
   }
 }
 
+.preview-target {
+  margin: 0.5rem 0;
+
+  &:not(.hidden) {
+    display: block;
+  }
+}
+
 // Credit: Nicolas Gallagher and SUIT CSS.
 .ratio {
   --aspect-ratio: 16 / 9;

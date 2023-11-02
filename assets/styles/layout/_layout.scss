@@ -10,6 +10,16 @@ body {
 .kbin-container {
   margin: 0 auto;
   max-width: 1360px;
+
+  &.width--max {
+    max-width: 100%;
+  }
+
+  @include media-breakpoint-up(lg) {
+    &.width--auto {
+      max-width: 85%;
+    }
+  }
 }
 
 #middle {

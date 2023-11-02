@@ -6,19 +6,19 @@
         <li>
             <a href="{{ entry_comment_voters_url(comment, 'up') }}"
                class="{{ html_classes({'active': is_route_name('entry_comment_voters') and route_has_param('type', 'up')}) }}">
-                {{ 'up_votes'|trans|lower }} ({{ comment.countUpVotes }})
+                {{ 'up_votes'|trans }} ({{ comment.countUpVotes }})
             </a>
         </li>
         <li>
             <a href="{{ entry_comment_voters_url(comment, 'down') }}"
                class="{{ html_classes({'active': is_route_name('entry_comment_voters') and route_has_param('type', 'down')}) }}">
-                {{ 'down_votes'|trans|lower }} ({{ comment.countDownVotes }})
+                {{ 'down_votes'|trans }} ({{ comment.countDownVotes }})
             </a>
         </li>
         <li>
             <a href="{{ entry_comment_favourites_url(comment) }}"
                class="{{ html_classes({'active': is_route_name('entry_comment_favourites')}) }}">
-                {{ 'favourites'|trans|lower }} ({{ comment.favouriteCount }})
+                {{ 'favourites'|trans }} ({{ comment.favouriteCount }})
             </a>
         </li>
     </menu>

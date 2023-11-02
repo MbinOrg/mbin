@@ -6,55 +6,55 @@
         <li>
             <a href="{{ path('magazine_panel_general', {name: magazine.name}) }}"
                class="{{ html_classes({'active': is_route_name('magazine_panel_general')}) }}">
-                {{ 'general'|trans|lower }}
+                {{ 'general'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ path('magazine_panel_reports', {name: magazine.name}) }}"
                class="{{ html_classes({'active': is_route_name('magazine_panel_reports')}) }}">
-                {{ 'reports'|trans|lower }}
+                {{ 'reports'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ path('magazine_panel_moderators', {name: magazine.name}) }}"
                class="{{ html_classes({'active': is_route_name('magazine_panel_moderators')}) }}">
-                {{ 'moderators'|trans|lower }}
+                {{ 'moderators'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ path('magazine_panel_badges', {name: magazine.name}) }}"
                class="{{ html_classes({'active': is_route_name('magazine_panel_badges')}) }}">
-                {{ 'badges'|trans|lower }}
+                {{ 'badges'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ path('magazine_panel_tags', {name: magazine.name}) }}"
                class="{{ html_classes({'active': is_route_name('magazine_panel_tags')}) }}">
-                {{ 'tags'|trans|lower }}
+                {{ 'tags'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ path('magazine_panel_bans', {name: magazine.name}) }}"
                class="{{ html_classes({'active': is_route_name_contains('_ban')}) }}">
-                {{ 'bans'|trans|lower }}
+                {{ 'bans'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ path('magazine_panel_trash', {name: magazine.name}) }}"
                class="{{ html_classes({'active': is_route_name('magazine_panel_trash')}) }}">
-                {{ 'trash'|trans|lower }}
+                {{ 'trash'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ path('magazine_panel_theme', {name: magazine.name}) }}"
                class="{{ html_classes({'active': is_route_name('magazine_panel_theme')}) }}">
-                {{ 'appearance'|trans|lower }}
+                {{ 'appearance'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ path('magazine_panel_stats', {name: magazine.name}) }}"
                class="{{ html_classes({'active': is_route_name('magazine_panel_stats')}) }}">
-                {{ 'stats'|trans|lower }}
+                {{ 'stats'|trans }}
             </a>
         </li>
     </menu>
