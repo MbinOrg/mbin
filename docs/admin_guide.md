@@ -739,7 +739,7 @@ The content of the `Caddyfile`:
 
 route {
 	mercure {
-		# Transport to use (default to Bolt with max 1000 records)
+		# Transport to use (default to Bolt with max 1000 events)
 		transport_url {$MERCURE_TRANSPORT_URL:bolt://mercure.db?size=1000}
 		# Publisher JWT key
 		publisher_jwt {env.MERCURE_PUBLISHER_JWT_KEY} {env.MERCURE_PUBLISHER_JWT_ALG}
