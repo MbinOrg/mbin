@@ -53,7 +53,7 @@
                 <form action="{{ path('user_delete_account', {username: user.username}) }}" method="POST"
                       onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
                     <input type="hidden" name="token" value="{{ csrf_token('user_delete_account') }}">
-                    <button type="submit" class="btn btn__secondary" title="{{ 'delete_account_desc'|trans }}">
+                    <button type="submit" class="btn btn__danger" title="{{ 'delete_account_desc'|trans }}">
                         <i class="fa fa-dumpster"></i> {{ 'delete_account'|trans }}
                     </button>
                 </form>
