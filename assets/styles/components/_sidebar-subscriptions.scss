@@ -96,6 +96,11 @@
         object-fit: scale-down;
         border-radius: 50%;
         vertical-align: middle;
+        &.onlyMobile {
+          @include media-breakpoint-up(lg) {
+            display: none;
+          }
+        }
       }
 
       .magazine-subscription-avatar-placeholder{
@@ -103,12 +108,17 @@
         @include media-breakpoint-down(lg) {
           display: none;
         }
+        &.onlyMobile {
+          @include media-breakpoint-up(lg) {
+            display: none;
+          }
+        }
       }
 
       &.active {
-        border: var(--kbin-header-border);
-
+        background-color: var(--kbin-bg);
       }
+
       a {
         display: inline-block;
         overflow: hidden;
@@ -121,6 +131,11 @@
 
           &.has-image {
             margin-left: .25rem;
+            &.onlyMobile {
+              @include media-breakpoint-up(lg) {
+                margin-left: 0;
+              }
+            }
             @include media-breakpoint-down(lg) {
               display: none;
             }

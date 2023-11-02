@@ -98,16 +98,16 @@
 {% if user is defined %}
     {% include 'user/_info.html.twig' %}
 {% endif %}
+{% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SHOW')) is not same as 'false' and
+    app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR')) is not same as 'true' and
+    app.user is defined and app.user is not same as null %}
+    {{ component('sidebar_subscriptions', { openMagazine: magazine is defined ? magazine : null, user: app.user, sort: app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SORT')) }) }}
+{% endif %}
 {% if entry is defined and magazine %}
     {% include 'entry/_info.html.twig' %}
 {% endif %}
 {% if post is defined and magazine %}
     {% include 'post/_info.html.twig' %}
-{% endif %}
-{% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SHOW_SUBSCRIPTIONS')) is not same as 'false' and
-    app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SHOW_SUBSCRIPTIONS_IN_SEPARATE')) is not same as 'true' and
-    app.user is defined and app.user is not same as null %}
-    {{ component('sidebar_subscriptions', { openMagazine: magazine is defined ? magazine : null, user: app.user, sort: app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SHOW_SUBSCRIPTIONS_SORT')) }) }}
 {% endif %}
 {% if magazine is defined and magazine %}
     {{ component('magazine_box', {
