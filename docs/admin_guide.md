@@ -705,16 +705,23 @@ nano metal/caddy/Caddyfile
 
 The content of the `Caddyfile`:
 
-```
+```conf
 {
         {$GLOBAL_OPTIONS}
+        # No SSL needed
         auto_https off
         http_port {$HTTP_PORT}
         persist_config off
+
         log {
-                output file /var/www/kbin/var/log/mercure.log
                 # DEBUG, INFO, WARN, ERROR, PANIC, and FATAL
                 level WARN
+                output discard
+                output file /var/www/kbin/var/log/mercure.log {
+                        roll_size 50MiB
+                        roll_keep 3
+                }
+
                 format filter {
                         wrap console
                         fields {
@@ -732,8 +739,8 @@ The content of the `Caddyfile`:
 
 route {
 	mercure {
-		# Transport to use (default to Bolt)
-		transport_url {$MERCURE_TRANSPORT_URL:bolt://mercure.db}
+		# Transport to use (default to Bolt with max 1000 events)
+		transport_url {$MERCURE_TRANSPORT_URL:bolt://mercure.db?size=1000}
 		# Publisher JWT key
 		publisher_jwt {env.MERCURE_PUBLISHER_JWT_KEY} {env.MERCURE_PUBLISHER_JWT_ALG}
 		# Subscriber JWT key
