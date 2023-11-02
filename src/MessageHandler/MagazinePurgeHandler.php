@@ -46,6 +46,8 @@ class MagazinePurgeHandler
             throw new UnrecoverableMessageHandlingException('Magazine not found');
         }
 
+        // TODO: This magazine delete can be improved by introducing missing
+        // cascading in PostgreSQL schema
         $retry = $this->removeReports()
             || $this->removeEntryComments()
             || $this->removeEntries()
@@ -97,7 +99,6 @@ class MagazinePurgeHandler
                 ['id' => 'DESC'],
                 $this->batchSize
             );
-
 
         $retry = false;
 
