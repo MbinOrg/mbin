@@ -26,6 +26,10 @@
     {% endif %}
     {% include 'entry/comment/_options.html.twig' %}
     {% include 'layout/_flash.html.twig' %}
+    {% if magazine is defined and magazine %}
+        {% include 'magazine/_federated_info.html.twig' %}
+        {% include 'magazine/_visibility_info.html.twig' %}
+    {% endif %}
     <div id="content" class="comments-tree">
         {% include 'entry/comment/_list.html.twig' %}
     </div>

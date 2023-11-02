@@ -825,3 +825,11 @@ page_width_fixed: Fixed
 open_url_to_fediverse: Open original URL
 change_my_avatar: Change my avatar
 change_my_cover: Change my cover
+account_settings_changed: Your account settings have been successfully changed. You
+  will need to login again.
+magazine_deletion: Magazine deletion
+delete_magazine: Delete magazine
+restore_magazine: Restore magazine
+purge_magazine: Purge magazine
+magazine_is_deleted: Magazine is deleted. You can <a href="%link_target%">restore</a>
+  it within 30 days.
