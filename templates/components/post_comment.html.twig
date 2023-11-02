@@ -69,7 +69,7 @@
                         <li>
                             <a class="stretched-link"
                                href="{{ post_comment_create_url(comment) }}#add-comment"
-                               data-action="subject#getForm">{{ 'reply'|trans|lower }}</a>
+                               data-action="subject#getForm">{{ 'reply'|trans }}</a>
                         </li>
                         <li>
                             {{ component('boost', {
@@ -77,39 +77,49 @@
                             }) }}
                         </li>
                         <li class="dropdown">
-                            <button class="stretched-link" data-subject-target="more">{{ 'more'|trans|lower }}</button>
+                            <button class="stretched-link" data-subject-target="more">{{ 'more'|trans }}</button>
                             <ul class="dropdown__menu" data-controller="clipboard">
                                 <li>
                                     <a href="{{ path('post_comment_report', {id: comment.id}) }}"
                                        class="{{ html_classes({'active': is_route_name('post_comment_report')}) }}"
                                        data-action="subject#getForm">
-                                        {{ 'report'|trans|lower }}
+                                        {{ 'report'|trans }}
                                     </a>
                                 </li>
                                 <li>
                                     <a href="{{ post_comment_voters_url(comment) }}"
                                        class="{{ html_classes({'active': is_route_name('post_comment_favourites') or is_route_name('post_comment_voters')}) }}">
-                                        {{ 'activity'|trans|lower }}
+                                        {{ 'activity'|trans }}
                                     </a>
                                 </li>
+                                <li class="dropdown__separator"></li>
                                 <li>
-                                    <a data-action="clipboard#copy"
-                                       href="{{ post_url(comment.post) }}#{{ get_url_fragment(comment) }}">
-                                        {{ 'copy_url'|trans|lower }}
+                                    <a target="_blank"
+                                       href="{{ comment.apId ?? path('ap_post_comment', {magazine_name: comment.magazine.name, post_id: comment.post.id, comment_id: comment.id}) }}">
+                                        {{ 'open_url_to_fediverse'|trans }}
                                     </a>
                                 </li>
                                 <li>
                                     <a data-action="clipboard#copy"
                                        href="{{ comment.apId ?? path('ap_post_comment', {magazine_name: comment.magazine.name, post_id: comment.post.id, comment_id: comment.id}) }}">
-                                        {{ 'copy_url_to_fediverse'|trans|lower }}
+                                        {{ 'copy_url_to_fediverse'|trans }}
                                     </a>
                                 </li>
+                                <li>
+                                    <a data-action="clipboard#copy"
+                                       href="{{ post_url(comment.post) }}#{{ get_url_fragment(comment) }}">
+                                        {{ 'copy_url'|trans }}
+                                    </a>
+                                </li>
+                                {% if is_granted('edit', comment) or (app.user and comment.isAuthor(app.user)) or is_granted('moderate', comment) %}
+                                    <li class="dropdown__separator"></li>
+                                {% endif %}
                                 {% if is_granted('edit', comment) %}
                                     <li>
                                         <a href="{{ post_comment_edit_url(comment) }}"
                                            class="{{ html_classes({'active': is_route_name('post_comment_edit')}) }}"
                                            data-action="subject#getForm">
-                                            {{ 'edit'|trans|lower }}
+                                            {{ 'edit'|trans }}
                                         </a>
                                     </li>
                                 {% endif %}
@@ -120,7 +130,7 @@
                                               onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
                                             <input type="hidden" name="token"
                                                    value="{{ csrf_token('post_comment_delete') }}">
-                                            <button type="submit">{{ 'delete'|trans|lower }}</button>
+                                            <button type="submit">{{ 'delete'|trans }}</button>
                                         </form>
                                     </li>
                                 {% endif %}
@@ -129,7 +139,7 @@
                                         <a href="{{ post_comment_moderate_url(comment) }}"
                                            class="{{ html_classes({'active': is_route_name('post_comment_moderate')}) }}"
                                            data-action="subject#showModPanel">
-                                            {{ 'moderate'|trans|lower }}
+                                            {{ 'moderate'|trans }}
                                         </a>
                                     </li>
                                 {% endif %}
@@ -148,7 +158,7 @@
                                   action="{{ path('post_comment_restore', {magazine_name: comment.magazine.name, post_id: comment.post.id, comment_id: comment.id}) }}"
                                   onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
                                 <input type="hidden" name="token" value="{{ csrf_token('post_comment_restore') }}">
-                                <button type="submit">{{ 'restore'|trans|lower }}</button>
+                                <button type="submit">{{ 'restore'|trans }}</button>
                             </form>
                         </li>
                         <li data-subject-target="loader" style="display:none">

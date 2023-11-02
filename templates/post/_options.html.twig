@@ -4,31 +4,31 @@
         <li>
             <a href="{{ options_url('sortBy', 'top') }}"
                class="{{ html_classes({'active': route_has_param('sortBy', 'top')}) }}">
-                {{ 'top'|trans|lower }}
+                {{ 'top'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ options_url('sortBy', 'hot') }}"
                class="{{ html_classes({'active': route_has_param('sortBy', 'hot')}) }}">
-                {{ 'hot'|trans|lower }}
+                {{ 'hot'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ options_url('sortBy', 'newest') }}"
                class="{{ html_classes({'active': route_has_param('sortBy', 'newest')}) }}">
-                {{ 'newest'|trans|lower }}
+                {{ 'newest'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ options_url('sortBy', 'active') }}"
                class="{{ html_classes({'active': route_has_param('sortBy', 'active')}) }}">
-                {{ 'active'|trans|lower }}
+                {{ 'active'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ options_url('sortBy', 'commented') }}"
                class="{{ html_classes({'active': route_has_param('sortBy', 'commented')}) }}">
-                {{ 'commented'|trans|lower }}
+                {{ 'commented'|trans }}
             </a>
         </li>
     </menu>
@@ -47,44 +47,44 @@
                 <li>
                     <a href="{{ options_url('time', '3h') }}"
                        class="{{ html_classes({'active': route_has_param('time', '3h')}) }}">
-                        {{ '3h'|trans|lower }}
+                        {{ '3h'|trans }}
                     </a>
                 </li>
                 <li>
                     <a href="{{ options_url('time', '6h') }}"
                        class="{{ html_classes({'active': route_has_param('time', '6h')}) }}">
-                        {{ '6h'|trans|lower }}
+                        {{ '6h'|trans }}
                     </a>
                 </li>
                 <li>
                     <a href="{{ options_url('time', '12h') }}"
                        class="{{ html_classes({'active': route_has_param('time', '12h')}) }}">
-                        {{ '12h'|trans|lower }}
+                        {{ '12h'|trans }}
                     </a>
                 </li>
-                {% if get_active_sort_option() is not same as 'hot'|trans|lower %}
+                {% if get_active_sort_option() is not same as 'hot'|trans %}
                     <li>
                         <a href="{{ options_url('time', '1d') }}"
                            class="{{ html_classes({'active': route_has_param('time', '1d')}) }}">
-                            {{ '1d'|trans|lower }}
+                            {{ '1d'|trans }}
                         </a>
                     </li>
                     <li>
                         <a href="{{ options_url('time', '1w') }}"
                            class="{{ html_classes({'active': route_has_param('time', '1w')}) }}">
-                            {{ '1w'|trans|lower }}
+                            {{ '1w'|trans }}
                         </a>
                     </li>
                     <li>
                         <a href="{{ options_url('time', '1m') }}"
                            class="{{ html_classes({'active': route_has_param('time', '1m')}) }}">
-                            {{ '1m'|trans|lower }}
+                            {{ '1m'|trans }}
                         </a>
                     </li>
                     <li>
                         <a href="{{ options_url('time', '1y') }}"
                            class="{{ html_classes({'active': route_has_param('time', '1y')}) }}">
-                            {{ '1y'|trans|lower }}
+                            {{ '1y'|trans }}
                         </a>
                     </li>
                 {% endif %}

@@ -8,37 +8,37 @@
         <li>
             <a href="{{ path('admin_dashboard') }}"
                class="{{ html_classes({'active': is_route_name('admin_dashboard')}) }}">
-                {{ 'dashboard'|trans|lower }}
+                {{ 'dashboard'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ path('admin_settings') }}"
                class="{{ html_classes({'active': is_route_name('admin_settings')}) }}">
-                {{ 'settings'|trans|lower }}
+                {{ 'settings'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ path('admin_users') }}"
                class="{{ html_classes({'active': is_route_name('admin_users')}) }}">
-                {{ 'users'|trans|lower }}
+                {{ 'users'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ path('admin_reports') }}"
                class="{{ html_classes({'active': is_route_name('admin_reports')}) }}">
-                {{ 'reports'|trans|lower }}
+                {{ 'reports'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ path('admin_pages', {page: 'about'}) }}"
                class="{{ html_classes({'active': is_route_name('admin_pages')}) }}">
-                {{ 'pages'|trans|lower }}
+                {{ 'pages'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ path('admin_federation') }}"
                class="{{ html_classes({'active': is_route_name('admin_federation')}) }}">
-                {{ 'federation'|trans|lower }}
+                {{ 'federation'|trans }}
             </a>
         </li>
     </menu>

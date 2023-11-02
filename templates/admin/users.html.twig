@@ -18,8 +18,8 @@
         <div class="flex">
             <label class="select">
                 <select onchange="location = this.value;">
-                    <option value="{{ options_url('withFederated', false) }}">{{ 'local'|trans|lower }}</option>
-                    <option value="{{ options_url('withFederated', true) }}" {{ withFederated is same as true ? 'selected' : '' }}>{{ 'federated'|trans|lower }}</option>
+                    <option value="{{ options_url('withFederated', false) }}">{{ 'local'|trans }}</option>
+                    <option value="{{ options_url('withFederated', true) }}" {{ withFederated is same as true ? 'selected' : '' }}>{{ 'federated'|trans }}</option>
                 </select>
             </label>
         </div>
