@@ -91,7 +91,7 @@ class FacebookAuthenticator extends OAuth2Authenticator
 
                     $avatar = $this->getAvatar($facebookUser->getPictureUrl());
 
-                    if($avatar) {
+                    if ($avatar) {
                         $dto->avatar = $this->imageFactory->createDto($avatar);
                     }
 

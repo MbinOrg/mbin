@@ -88,7 +88,6 @@ class GoogleAuthenticator extends OAuth2Authenticator
                 if ($user) {
                     $user->oauthGoogleId = $googleUser->getId();
                 } else {
-
                     $dto = (new UserDto())->create(
                         $slugger->slug($googleUser->getName()).rand(1, 999),
                         $googleUser->getEmail()
@@ -96,7 +95,7 @@ class GoogleAuthenticator extends OAuth2Authenticator
 
                     $avatar = $this->getAvatar($googleUser->getAvatar());
 
-                    if($avatar) {
+                    if ($avatar) {
                         $dto->avatar = $this->imageFactory->createDto($avatar);
                     }
 
