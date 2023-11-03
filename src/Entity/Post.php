@@ -252,6 +252,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     public function updateScore(): self
     {
         $this->score = $this->favouriteCount + $this->getUpVotes()->count() - $this->getDownVotes()->count();
+
         return $this;
     }
 
