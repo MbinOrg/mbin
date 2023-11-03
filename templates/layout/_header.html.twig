@@ -1,5 +1,8 @@
 <header id="header" class="header">
-    <div class="kbin-container">
+    <div class="kbin-container
+          {{ html_classes(app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_PAGE_WIDTH'))
+            ? 'width--'~app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_PAGE_WIDTH'))
+            : '') }}">
         <div class="sr-nav">
             <a href="#content">{{ 'go_to_content'|trans }}</a>
             <a href="#options">{{ 'go_to_filters'|trans }}</a>
@@ -180,7 +183,7 @@
                                 </a>
                             </li>
                         {% endif %}
-                        <li><a href="{{ path('app_logout') }}">{{ 'logout'|trans }}</a></li>
+                        <li><a href="{{ logout_path() }}">{{ 'logout'|trans }}</a></li>
                     </ul>
                 </li>
             {% else %}

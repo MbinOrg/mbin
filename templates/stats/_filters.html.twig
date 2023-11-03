@@ -1,20 +1,20 @@
 <div class="flex">
     <label class="select">
         <select onchange="location = this.value;">
-            <option value="{{ options_url('statsPeriod', -1) }}">{{ 'all'|trans|lower }}</option>
-            <option value="{{ options_url('statsPeriod', 7) }}" {{ period is same as 7 ? 'selected' : '' }}>{{ 'week'|trans|lower }}</option>
+            <option value="{{ options_url('statsPeriod', -1) }}">{{ 'all'|trans }}</option>
+            <option value="{{ options_url('statsPeriod', 7) }}" {{ period is same as 7 ? 'selected' : '' }}>{{ 'week'|trans }}</option>
             <option value="{{ options_url('statsPeriod', 14) }}" {{ period is same as 14 ? 'selected' : '' }}>
-                2 {{ 'weeks'|trans|lower }}</option>
-            <option value="{{ options_url('statsPeriod', 31) }}" {{ period is same as 31 ? 'selected' : '' }}>{{ 'month'|trans|lower }}</option>
+                2 {{ 'weeks'|trans }}</option>
+            <option value="{{ options_url('statsPeriod', 31) }}" {{ period is same as 31 ? 'selected' : '' }}>{{ 'month'|trans }}</option>
             <option value="{{ options_url('statsPeriod', 183) }}" {{ period is same as 183 ? 'selected' : '' }}>
-                6 {{ 'months'|trans|lower }}</option>
-            <option value="{{ options_url('statsPeriod', 365) }}" {{ period is same as 365 ? 'selected' : '' }}>{{ 'year'|trans|lower }}</option>
+                6 {{ 'months'|trans }}</option>
+            <option value="{{ options_url('statsPeriod', 365) }}" {{ period is same as 365 ? 'selected' : '' }}>{{ 'year'|trans }}</option>
         </select>
     </label>
     <label class="select">
         <select onchange="location = this.value;">
-            <option value="{{ options_url('withFederated', false) }}">{{ 'local'|trans|lower }}</option>
-            <option value="{{ options_url('withFederated', true) }}" {{ withFederated is same as true ? 'selected' : '' }}>{{ 'federated'|trans|lower }}</option>
+            <option value="{{ options_url('withFederated', false) }}">{{ 'local'|trans }}</option>
+            <option value="{{ options_url('withFederated', true) }}" {{ withFederated is same as true ? 'selected' : '' }}>{{ 'federated'|trans }}</option>
         </select>
     </label>
 </div>

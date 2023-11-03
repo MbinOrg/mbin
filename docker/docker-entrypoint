@@ -8,25 +8,27 @@ fi
 
 if [ "$1" == "php-fpm" ] || [ "$1" == "php" ] || [ "$1" == "bin/console" ]; then
     # if running as a service install assets
-    if [ "$1" == "php-fpm" ]; then
-        echo "Starting as servce..."
+    echo "Starting as servce..."
 
-        # dump out a config php file if an environment file is found and we are in production
-        if [ "$APP_ENV" == "prod" ]; then
-            cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-            cp "$PHP_INI_DIR/conf.d/app.ini-production" "$PHP_INI_DIR/conf.d/app.prod.or.dev.ini"
-            composer dump-env prod
-        fi
-
-        # install development dependencies if they don't exist
-        if [ "$APP_ENV" == "dev" ]; then
-            cp "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
-            cp "$PHP_INI_DIR/conf.d/app.ini-development" "$PHP_INI_DIR/conf.d/app.prod.or.dev.ini"
-            composer install --prefer-dist --no-scripts --no-progress
-        fi
+    # In production: dump the production PHP config files,
+    # validate the installed packages (no dev) and dump prod config
+    if [ "$APP_ENV" == "prod" ]; then
+        cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+        cp "$PHP_INI_DIR/conf.d/app.ini-production" "$PHP_INI_DIR/conf.d/app.prod.or.dev.ini"
+        composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
+        composer dump-env prod
     fi
 
-    echo "Waiting for db to be ready..." 
+    # In development: dump the development PHP config files,
+    # validate the installed packages (including dev dependencies) and dump dev config
+    if [ "$APP_ENV" == "dev" ]; then
+        cp "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+        cp "$PHP_INI_DIR/conf.d/app.ini-development" "$PHP_INI_DIR/conf.d/app.prod.or.dev.ini"
+        composer install --prefer-dist --no-scripts --no-progress
+        composer dump-env dev
+    fi
+
+    echo "Waiting for db to be ready..."
     ATTEMPTS_LEFT_TO_REACH_DATABASE=60
     until [ $ATTEMPTS_LEFT_TO_REACH_DATABASE -eq 0 ] || DATABASE_ERROR=$(bin/console dbal:run-sql "SELECT 1" 2>&1); do
         if [ $? -eq 255 ]; then
@@ -47,19 +49,21 @@ if [ "$1" == "php-fpm" ] || [ "$1" == "php" ] || [ "$1" == "bin/console" ]; then
         echo "The db is now ready and reachable"
     fi
 
-    if [ "$( find ./migrations -iname '*.php' -print -quit )" ]; then
-        bin/console doctrine:migrations:migrate --no-interaction
-    fi
-
-    if [ -n "$ENABLE_ACL" ]; then
-        if [ "$ENABLE_ACL" -eq 1 ]; then
-            setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX var
-            setfacl -dR -m u:www-data:rwX -m u:"$(whoami)":rwX var
-        else
-            echo "Filesystem ACL is disabled."
+    if [ "$1" == "php-fpm" ]; then
+        if [ "$( find ./migrations -iname '*.php' -print -quit )" ]; then
+            bin/console doctrine:migrations:migrate --no-interaction
         fi
-    else
-        echo "ENABLE_ACL is not set!"
+
+        if [ -n "$ENABLE_ACL" ]; then
+            if [ "$ENABLE_ACL" -eq 1 ]; then
+                setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX var
+                setfacl -dR -m u:www-data:rwX -m u:"$(whoami)":rwX var
+            else
+                echo "Filesystem ACL is disabled."
+            fi
+        else
+            echo "ENABLE_ACL is not set!"
+        fi
     fi
 fi
 

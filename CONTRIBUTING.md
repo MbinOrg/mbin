@@ -7,11 +7,12 @@ We always welcome new supporters and contributors. A quick list below of possibl
 
 ## Code
 
-The code code is mainly written in PHP using the Symfony framework with Twig templating and a bit of JavaScript & CSS.
+The code is mainly written in PHP using the Symfony framework with Twig templating and a bit of JavaScript & CSS.
 
 With an account on [GitHub](https://github.com) you will be able to [fork this repository](https://github.com/MbinOrg/mbin) and `git clone` the repository locally if you wish.
 
-_Note:_ If you are a contributor with GitHub org rights, you do not need to fork the project, instead you are allowed to use branches.
+> _Note_:
+> If you are a contributor with GitHub org rights, you do not need to fork the project, instead you are allowed to use branches.
 
 ### Way of Working
 
@@ -58,6 +59,30 @@ There are three levels of tests that we distinguish between:
 - Application Tests: test high-level functionality, APIs or web calls.
 
 For more info read: [Symfony Testing guide](https://symfony.com/doc/current/testing.html).
+
+#### Unit Tests
+
+- First increase execution time in your PHP config file: `/etc/php/8.2/fpm/php.ini`:
+
+```ini
+max_execution_time = 120
+```
+
+- Increase/set max_nesting_level in `/etc/php/8.2/fpm/conf.d/20-xdebug.ini`:
+
+```ini
+xdebug.max_nesting_level=512
+```
+
+- Restart the PHP-FPM service: `sudo systemctl restart php8.2-fpm.service`
+- Copy the dot env file: `cp .env.example .env`
+- Install composer packages: `composer install --no-scripts`
+
+Running the unit tests by executing:
+
+```bash
+SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Unit
+```
 
 ### Fixtures
 

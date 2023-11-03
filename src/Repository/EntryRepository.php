@@ -356,7 +356,6 @@ class EntryRepository extends ServiceEntityRepository implements TagRepositoryIn
             ->where('e.isAdult = false')
             ->andWhere('e.visibility = :visibility')
             ->andWhere('m.isAdult = false')
-            ->andWhere('e.apId IS NULL')
             ->join('e.magazine', 'm')
             ->orderBy('e.createdAt', 'DESC')
             ->setParameters(['visibility' => VisibilityInterface::VISIBILITY_VISIBLE])

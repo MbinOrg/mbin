@@ -44,8 +44,11 @@ final class AvatarListener implements EventSubscriberInterface
         $upload = $event->getForm()->get($fieldName)->getData();
 
         if ($upload) {
+            // This could throw an error (be sure to catch it in your controller)
             $image = $this->images->findOrCreateFromUpload($upload);
-            $data->$fieldName = $this->factory->createDto($image);
+            if ($image) {
+                $data->$fieldName = $this->factory->createDto($image);
+            }
         }
     }
 

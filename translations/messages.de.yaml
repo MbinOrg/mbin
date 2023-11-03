@@ -220,7 +220,7 @@ badges: Abzeichen
 body: Inhalt
 is_adult: 18+ / NSFW
 joined: Beigetreten
-following: Gefolgt
+following: Folgende
 1d: 1t
 1y: 1j
 links: Links
@@ -271,8 +271,8 @@ show_magazines_icons: Magazin-Icons anzeigen
 rounded_edges: Gerundete Ecken
 removed_post_by: hat den Beitrag entfernt, erstellt von
 restored_post_by: hat den Beitrag wiederhergestellt, erstellt von
-he_banned: Bannen
-he_unbanned: Entbannen
+he_banned: sperren
+he_unbanned: entsperren
 domains: Domänen
 dark: Dunkel
 light: Hell
@@ -285,7 +285,7 @@ flash_register_success: Willkommen an Bord! Dein Konto wurde registriert. Ein le
 flash_thread_new_success: Das Thema wurde erfolgreich erstellt und ist jetzt für andere
   Benutzer sichtbar.
 related_magazines: Ähnliche Magazine
-active_users: Aktive Benutzer
+active_users: Aktive Nutzer
 sidebar: Seitenleiste
 banned_instances: gebannte Instanzen
 header_logo: Header Logo
@@ -360,7 +360,7 @@ silver_link: ausgezeichneter Link
 silver_link_desc: Der Beitrag wurde 10 Mal geboostet
 silver_article_desc: Das Thema wurde 10 Mal geboostet
 silver_photo: ausgezeichnetes Bild
-silver_comment: Ausgezeichneter Kommentar
+silver_comment: Sehr guter Kommentar
 silver_comment_desc: Der Kommentar wurde 10 Mal geboostet
 silver_post: Sehr guter Beitrag
 silver_post_desc: Der Beitrag wurde 10 Mal geboostet
@@ -456,7 +456,7 @@ kbin_intro_desc: ist eine dezentralisierte Plattform zur Inhaltssammlung und fü
 magazine_panel_tags_info: Nur benutzen wenn du möchtest, dass Inhalte aus dem Fediverse,
   basierend auf Tags, in dieses Magazin eingefügt werden
 sticky_navbar: Statische Navigationsleiste
-kbin_promo_desc: '%link_start%Klone die Repo%link_end% und erweitere das Fediverse'
+kbin_promo_desc: '%link_start%Klone das Repo%link_end% und erweitere das Fediverse'
 browsing_one_thread: Du siehst nur Inhalte aus einem Thema in dieser Diskussion. Alle
   Kommentare sind auf der Beitragsseite verfügbar.
 boost: Boost
@@ -522,7 +522,8 @@ toolbar.unordered_list: Liste
 toolbar.mention: Erwähnen
 toolbar.ordered_list: Geordnete Liste
 your_account_is_not_active: Dein Profil wurde noch nicht aktiviert. Bitte prüfe deine
-  E-Mails und klicke den Aktivierungslink um fortzufahren
+  E-Mails und klicke den Aktivierungslink um fortzufahren. Falls du keine Mail erhalten
+  hast frage <a href="%link_target%">eine neue Aktivierungsmail</a> an.
 your_account_has_been_banned: Dein Konto wurde gebannt
 federation_page_enabled: Föderationsseite aktiviert
 federation_page_disallowed_description: Instanzen mit denen wir nicht föderieren
@@ -533,3 +534,295 @@ request_account_deletion_description: Der Administrator wird davon benachrichtig
   dass du dein Konto löschen möchtest.
 request_account_deletion_button: Kontolöschung anfordern
 more_from_domain: Mehr von der Domäne
+resend_account_activation_email_error: Es gab ein Problem bei der Bearbeitung der
+  Anfrage. Eventuell gibt es keinen Account der mit diese E-Mail assoziiert wird oder
+  vielleicht ist der Account bereits aktiviert.
+email_confirm_button_text: Bestätige deine Passwortänderungsanfrage
+errors.server429.title: 429 Zu viele Anfragen
+oauth.consent.to_allow_access: Um den Zugriff zu gestatten, klicken Sie den "Erlauben"
+  Button weiter unten
+email.delete.description: Der folgende Nutzer hat die Löschung seines Accounts angefragt
+oauth.consent.app_requesting_permissions: möchte die folgenden Aktionen in deinem
+  Namen ausführen
+oauth.consent.allow: Erlauben
+custom_css: Eigenes CSS
+block: Blockieren
+oauth2.grant.moderate.magazine.list: Lese eine Liste deine moderierten Magazine.
+errors.server404.title: 404 Nicht Gefunden
+resend_account_activation_email_success: Wenn es einen Account mit dieser E-Mail gibt,
+  werden wir eine neue Aktivierungsmail senden.
+errors.server403.title: 403 Zugriff Verboten
+ignore_magazines_custom_css: Ignoriere das eigene CSS eines Magazins
+sidebars_same_side: Seitenleisten auf der selben Seite
+oauth.consent.deny: Verbieten
+oauth.consent.title: OAUTH2 Zustimmungsformular
+resend_account_activation_email: Account Aktivierungsmail erneut senden
+errors.server500.title: 500 Serverfehler
+alphabetically: Alphabetisch
+show_subscriptions: Zeige Abonnements
+resend_account_activation_email_question: Inaktiver Account?
+resend_account_activation_email_description: Gib die E-Mail-Adresse die mit deinem
+  Account assoziiert ist ein. Wir werden erneut eine Aktivierungsmail für Sie senden.
+errors.server500.description: Es tut uns leid, etwas ist schiefgelaufen. Wir arbeiten
+  daran das Problem zu beheben, bitte versuchen sie es später erneut.
+oauth.client_not_granted_message_read_permission: Diese App hat keine Berechtigung
+  erhalten deine Nachrichten zu lesen.
+restrict_oauth_clients: Beschränke OAuth2 Client Erstellung auf Admins
+subscription_sort: Abonnements Sortierung
+unblock: Entblockieren
+oauth.consent.grant_permissions: Gebe Berechtigungen
+oauth2.grant.moderate.magazine.ban.delete: Nutzer in deinen moderierten Magazinen
+  entbannen.
+subscriptions_in_own_sidebar: Abonnements Separat
+oauth.client_identifier.invalid: Ungültige OAuth Client ID!
+oauth.consent.app_has_permissions: kann bereits die folgenden Aktionen ausführen
+email.delete.title: Nutzeraccount Löschanfrage
+email_confirm_link_help: Alternativ können Sie das Folgende in ihren Browser kopieren
+2fa.authentication_code.label: Authentisierungscode
+oauth2.grant.post.edit: Bearbeite existierende Beiträge.
+oauth2.grant.moderate.post.trash: Lösche oder stelle Beiträge in deinen moderierten
+  Magazinen wieder her.
+moderation.report.approve_report_title: Meldung Zustimmen
+moderation.report.reject_report_title: Meldung Ablehnen
+oauth2.grant.moderate.magazine.reports.all: Bearbeite Meldungen in deinen moderierten
+  Magazinen.
+oauth2.grant.admin.federation.update: Füge hinzu oder entferne Instanzen von der liste
+  der defederierten Instanzen.
+oauth2.grant.user.message.all: Lese deine Nachrichten und sende Nachrichten an andere
+  Nutzer.
+oauth2.grant.moderate.magazine.trash.read: Gelöschte Inhalte in Ihren moderierten
+  Magazinen sehen.
+oauth2.grant.moderate.magazine_admin.create: Erstelle neue Magazine.
+oauth2.grant.post.vote: Favorisiere, booste oder reduziere jeden Beitrag.
+2fa.remove: 2FA Entfernen
+delete_content_desc: Lösche den Inhalt des Users, aber behalte die Antworten anderer
+  Nutzer in den erstellten Themen, Beiträgen und Kommentaren.
+magazine_theme_appearance_custom_css: Eigenes CSS das angewendet wird wenn Inhalte
+  innerhalb deines Magazins angeschaut werden.
+purge_account_desc: Lösche den Account endgültig, inklusive aller Antworten von anderen
+  Nutzern in den erstellten Themen, Beiträgen und Kommentaren.
+2fa.backup_codes.help: Du kannst diese Code nutzen wenn du keinen Zugriff auf dein
+  Zwei-Faktor-Authentifizierung Gerät oder deine App hast. Die Codes werden dir <strong>nicht
+  noch einmal gezeigt werden</strong> und du kannst jeden Code <strong>nur ein einziges
+  Mal</strong> nutzen.
+oauth2.grant.user.oauth_clients.edit: Bearbeite die Berechtigungen die du anderen
+  OAuth2 Apps gegeben hast.
+oauth2.grant.user.all: Lese und bearbeite dein Profil, deine Nachrichten und Benachrichtigungen;
+  Lese und bearbeite Berechtigungen die du anderen Apps gegeben hast; Folge oder blockiere
+  andere Nutzer; Zeige die Nutzer denen du folgst oder die du blockiert hast.
+oauth2.grant.moderate.post.set_adult: Kennzeichne Beiträge in deinen moderierten Magazinen
+  als NSFW.
+oauth2.grant.moderate.magazine_admin.edit_theme: Bearbeite das Custom CSS deiner eigenen
+  Magazine.
+oauth2.grant.moderate.magazine_admin.tags: Erstelle oder Entferne Tags von deinen
+  eigenen Magazinen.
+moderation.report.ban_user_description: Willst du den user (%username%) sperren der
+  diesen Inhalt von dem Magazin erstellt hat?
+oauth2.grant.moderate.entry.pin: Pinne Themen an den Anfang deiner moderierten Magazine.
+oauth2.grant.user.message.read: Lese deine Nachrichten.
+oauth2.grant.admin.entry.purge: Lösche jedes Thema vollständig von deiner Instanz.
+2fa.verify: Verifizieren
+2fa.add: Zu meinem Account hinzufügen
+oauth2.grant.admin.magazine.all: Verschiebe Themen zwischen Magazinen oder lösche
+  Magazine endgültig von deiner Instanz.
+oauth2.grant.admin.instance.settings.read: Zeige die Einstellungen deiner Instanz.
+oauth2.grant.entry.report: Melde jedes Thema.
+oauth2.grant.moderate.post_comment.all: Moderiere Kommentare unter Beiträgen in deinen
+  moderierten Magazinen.
+2fa.disable: Zwei-Faktor-Authentifizierung Deaktivieren
+last_active: Zuletzt Aktiv
+purge_content: Lösche Inhalt endgültig
+oauth2.grant.domain.subscribe: Abonniere oder Deabonniere Domains und zeige die Domains
+  die du abonniert hast.
+magazine_theme_appearance_icon: Eigenes Icon für das Magazin. Wenn keins ausgewählt
+  wird, wird das Standardicon verwendet.
+oauth2.grant.moderate.magazine.ban.create: Sperre Nutzer in deinen moderierten Magazinen.
+oauth2.grant.admin.user.delete: Lösche Nutzer von deiner Instanz.
+oauth2.grant.moderate.post.change_language: Ändere die Sprache von Beiträgen in deinen
+  moderierten Magazinen.
+oauth2.grant.moderate.magazine_admin.delete: Lösche alle deine eigenen Magazine.
+oauth2.grant.moderate.entry_comment.all: Moderiere Kommentare in Themen in deinen
+  moderierten Magazinen.
+oauth2.grant.admin.magazine.move_entry: Verschiebe Themen zwischen Magazinen auf deine
+  Instanz.
+oauth2.grant.post_comment.edit: Bearbeite deine existierenden Kommentare unter Beiträgen.
+oauth2.grant.moderate.post.pin: Pinne Beiträge oben an deine moderierten Magazine
+  an.
+oauth2.grant.entry.create: Erstelle neue Themen.
+oauth2.grant.moderate.magazine.reports.action: Akzeptiere oder Verwerfe Meldungen
+  in deinen moderierten Magazinen.
+oauth2.grant.admin.magazine.purge: Lösche Magazine endgültig von deiner Instanz.
+oauth2.grant.user.notification.read: Lese deine Benachrichtigungen, inklusive Benachrichtigungen
+  zu Nachrichten.
+oauth2.grant.magazine.block: Blockiere oder entblockiere Magazine und zeige Magazine
+  die du blockiert hast.
+oauth2.grant.magazine.subscribe: Abonniere oder deabonniere Magazine und zeige die
+  Magazine die du abonniert hast.
+oauth2.grant.admin.user.all: Sperre, verifiziere oder lösche Nutzer endgültig von
+  deiner Instanz.
+2fa.backup_codes.recommendation: Es wird empfohlen dass du eine Kopie davon an einem
+  sicheren Ort aufbewahrst.
+oauth2.grant.post_comment.report: Melde jeden Kommentar unter einem Beitrag.
+oauth2.grant.magazine.all: Abonniere oder blockiere Magazine und zeige die Magazine
+  die du abonniert oder blockiert hast.
+oauth2.grant.vote.general: Favorisiere, Reduziere oder Booste jedes Thema, Betrag
+  oder Kommentar.
+oauth2.grant.entry.vote: Favorisiere, booste oder reduziere jedes Thema.
+oauth2.grant.moderate.magazine_admin.all: Erstelle, Bearbeite oder Lösche deine eigenen
+  Magazine.
+comment_reply_position_help: Zeige das Kommentar-Formular entweder oben oder unten
+  auf der Seite. Falls "unendliches scrollen" aktiviert ist wird das Formular immer
+  oben auf der Seite angezeigt werden.
+oauth2.grant.post_comment.vote: Favorisiere, booste oder reduziere jeden Kommentar
+  unter einem Beitrag.
+oauth2.grant.user.oauth_clients.read: Lese die Berechtigungen die du anderen OAuth2
+  Apps gegeben hast.
+oauth2.grant.moderate.entry.change_language: Ändere die Sprache von Themen in deinen
+  moderierten Magazinen.
+oauth2.grant.moderate.all: Führe jede Moderationshandlung aus zu der du die Berechtigung
+  in deinen moderierten Magazinen hast.
+oauth2.grant.moderate.magazine.ban.all: Verwalte gesperrte Nutzer in deinen moderierten
+  Magazinen.
+oauth2.grant.moderate.magazine.all: Verwalte Sperren, Meldungen und zeige gelöschte
+  Items in deinen moderierten Magazinen.
+oauth2.grant.admin.federation.all: Zeige und aktualisiere die aktuell defederierten
+  Instanzen.
+oauth2.grant.user.notification.all: Lese und lösche deine Benachrichtigungen.
+oauth2.grant.report.general: Melde Artikel, Beiträge oder Kommentare.
+oauth2.grant.admin.post.purge: Lösche jeden Beitrag endgültig von deiner Instanz.
+oauth2.grant.moderate.magazine.ban.read: Zeige gesperrte Nutzer in deinen moderierten
+  Magazinen.
+oauth2.grant.user.profile.all: Lese und bearbeite dein Profil.
+oauth2.grant.admin.user.ban: Sperre oder entsperre Nutzer von deiner Instanz.
+show_avatars_on_comments: Zeige Kommentar Avatare
+oauth2.grant.admin.all: Führe jede administrative Aktion auf deiner Instanz aus.
+oauth2.grant.post.report: Melde jeden Beitrag.
+oauth2.grant.moderate.magazine.reports.read: Lese Meldungen in deinen moderierten
+  Magazinen.
+oauth2.grant.entry_comment.create: Erstelle neue Kommentare in Themen.
+2fa.qr_code_img.alt: Ein QR-Code der die Einrichtung der Zwei-Faktor-Authentifizierung
+  für deinen Account ermöglicht
+oauth2.grant.user.follow: Folge oder entfolge Nutzern und zeige die Nutzer denen du
+  folgst.
+flash_post_pin_success: Der Beitrag wurde erfolgreich angepinnt.
+oauth2.grant.entry_comment.report: Melde jeden Kommentar in einem Thema.
+moderation.report.approve_report_confirmation: Bist du dir sicher dass du dieser Meldung
+  zustimmen willst?
+oauth2.grant.moderate.entry.all: Moderiere Themen in deinen moderierten Magazinen.
+oauth2.grant.entry_comment.all: Erstelle, Bearbeite oder Lösche deine Kommentare in
+  Themen und favorisiere, booste oder melde jeden Kommentar in einem Thema.
+oauth2.grant.entry_comment.delete: Lösche deine existierenden Kommentare in Themen.
+delete_account_desc: Lösche den Account, aber behalte Antworten andere Nutzer in den
+  erstellten Themen, Beiträgen und Kommentaren.
+subject_reported_exists: Dieser Inhalt wurde bereits gemeldet.
+oauth2.grant.moderate.entry_comment.set_adult: Kennzeichne Kommentare in Themen in
+  deinen moderierten Magazinen als NSFW.
+oauth2.grant.entry.edit: Bearbeite deine existierenden Themen.
+oauth2.grant.moderate.entry_comment.trash: Lösche oder stelle Kommentare in Themen
+  deiner moderierten Magazine wieder her.
+oauth2.grant.moderate.post.all: Moderiere Beiträge in deinen moderierten Magazinen.
+2fa.enable: Zwei-Faktor-Authentifizierung Einrichten
+oauth2.grant.entry_comment.edit: Bearbeite deine existierenden Kommentare in Themen.
+2fa.user_active_tfa.title: Nutzer hat aktive 2FA
+oauth2.grant.moderate.magazine_admin.update: Bearbeite Regeln, Beschreibungen, NSFW
+  Status und Icons deiner eigenen Magazine.
+oauth2.grant.moderate.entry.trash: Lösche oder stelle Themen in deinen moderierten
+  Magazinen wieder her.
+oauth2.grant.user.oauth_clients.all: Lese und Bearbeite die Berechtigungen die du
+  anderen OAuth2 Apps gegeben hast.
+2fa.code_invalid: Der Authentisierungscode ist ungültig
+oauth2.grant.user.profile.read: Lese dein Profil.
+oauth2.grant.admin.oauth_clients.read: Zeige die OAuth2 Clients die auf deiner Instanz
+  existieren und deren Nutzungsstatistik.
+oauth2.grant.write.general: Erstelle oder Beatbeite jedes deiner Themen, Beiträge
+  oder Kommentare.
+single_settings: Einzeln
+oauth2.grant.moderate.post_comment.set_adult: Kennzeichne Kommentare unter Beiträgen
+  in deinen moderierten Magazinen als NSFW.
+oauth2.grant.moderate.post_comment.change_language: Ändere die Sprache von Kommentaren
+  unter Beiträgen in deinen moderierten Magazinen.
+moderation.report.ban_user_title: Nutzer Sperren
+2fa.available_apps: Nutze eine Zwei-Faktor-Authentifizierung-App wie %google_authenticator%,
+  %aegis% (Android) oder %raivo% (iOS) um den QR-Code zu scannen.
+oauth2.grant.admin.user.verify: Verifiziere Nutzer auf deiner Instanz.
+cancel: Abbrechen
+oauth2.grant.entry.delete: Lösche deine existierenden Themen.
+oauth2.grant.admin.instance.information.edit: Aktualisiere die Über, FAQ, Kontakt,
+  Nutzungsbedingungen und Datenschutzerklärung Seiten deiner Instanz.
+oauth2.grant.read.general: Lese alle Inhalte zu denen du Zugang hast.
+oauth2.grant.domain.all: Abonniere oder Blockiere Domains und zeige die Domains die
+  abonniert oder blockiert hast.
+purge_content_desc: Lösche den Inhalt des Nutzers endgültig, inklusive aller Antworten
+  anderer Nutzer in den erstellten Themen, Beiträgen und Kommentaren.
+flash_post_unpin_success: Der Beitrag wurde erfolgreich entpinnt.
+oauth2.grant.post_comment.delete: Lösche deine existierenden Kommentare unter Beiträgen.
+oauth2.grant.admin.oauth_clients.revoke: Widerrufe Zugang zu OAuth2 Clients auf deiner
+  Instanz.
+oauth2.grant.admin.instance.settings.edit: Aktualisiere die Einstellungen deiner Instanz.
+oauth2.grant.moderate.entry.set_adult: Kennzeichne Themen als NSFW in deinen moderierten
+  Magazinen.
+oauth2.grant.delete.general: Lösche jeden deiner Artikel, Beiträge oder Kommentare.
+oauth2.grant.entry_comment.vote: Favorisiere, booste oder reduziere jeden Kommentar
+  in einem Thema.
+oauth2.grant.admin.instance.stats: Zeige die Statistiken deiner Instanz.
+oauth2.grant.admin.instance.settings.all: Zeige oder aktualisiere die Einstellungen
+  deiner Instanz.
+oauth2.grant.entry.all: Erstelle, Bearbeite oder Lösche deine Themen und stimme ab,
+  booste oder melde jedes Thema.
+delete_content: Lösche Inhalt
+two_factor_backup: Zwei-Faktor-Authentifizierung Backup Codes
+magazine_theme_appearance_background_image: Eigenes Hintergrundbild das angezeigt
+  wird wenn Inhalte innerhalb deines Magazins angezeigt werden.
+oauth2.grant.admin.federation.read: Zeige die defederierten Instanzen.
+oauth2.grant.moderate.entry_comment.change_language: Ändere die Sprache von Kommentaren
+  in Themen deiner moderierten Magazine.
+oauth2.grant.moderate.magazine_admin.stats: Zeige den Inhalt, Abstimmung, und Ansichtstatus
+  deiner eigenen Magazine.
+password_and_2fa: Passwort & 2FA
+oauth2.grant.user.message.create: Sende Nachrichten an andere Nutzer.
+oauth2.grant.admin.oauth_clients.all: Zeige oder widerrufe OAuth2 Clients die auf
+  deiner Instanz existieren.
+2fa.backup-create.label: Erstelle neue Backup Codes
+2fa.backup: Deine Zwei-Faktor Backup Codes
+oauth2.grant.post_comment.all: Erstelle, Bearbeite oder Lösche deine Kommentare zu
+  Beiträgen und favorisiere, booste oder melde jeden Kommentar unter einem Beitrag.
+oauth2.grant.admin.user.purge: Lösche Nutzer endgültig von deiner Instanz.
+update_comment: Aktualisiere Kommentar
+2fa.qr_code_link.title: Diesen Link aufzurufen kann deiner Plattform erlauben diese
+  Zwei-Faktor-Authentifizierung zu registrieren
+2fa.backup-create.help: Du Kannst neue Backup Codes erstellen; diese Aktion wird existierende
+  Codes ungültig machen.
+oauth2.grant.user.notification.delete: Lösche deine Benachrichtigungen.
+two_factor_authentication: Zwei-Faktor-Authentifizierung
+show_avatars_on_comments_help: Zeige/Verstecke Nutzeravatare wenn Kommentare in einem
+  einzelnen Thema oder Beitrag angeschaut werden.
+2fa.verify_authentication_code.label: Gebe einen Zwei-Faktor Code ein um die Einrichtung
+  zu verifizieren
+oauth2.grant.post.all: Erstelle, Bearbeite oder Lösche Mikroblogs und stimme ab, booste
+  oder melde jeden Mikroblog.
+oauth2.grant.block.general: Blockiere oder Entblockiere jedes Magazin, Domain, oder
+  Nutzer und zeige die Magazine, Domains und Nutzer die du blockiert hast.
+moderation.report.reject_report_confirmation: Bist du dir sicher dass du diese Meldung
+  Ablehnen willst?
+oauth2.grant.post_comment.create: Erstelle neue Kommentare unter Beiträgen.
+oauth2.grant.user.block: Sperre oder entsperre Nutzer und zeige die Nutzer die blockiert
+  hast.
+oauth2.grant.post.delete: Lösche deine existierenden Beiträge.
+oauth2.grant.subscribe.general: Abonniere oder Folge jedem Magazin, Domain, oder Nutzer
+  und zeige die Magazine, Domains und Nutzer an die du abonniert hast.
+oauth2.grant.moderate.post_comment.trash: Lösche oder stelle Kommentare unter Beiträgen
+  in deinen moderierten Magazinen wieder her.
+oauth2.grant.moderate.magazine_admin.moderators: Hinzufügen oder Entfernen von Moderatoren
+  in deinen eigenen Magazinen.
+oauth2.grant.admin.entry_comment.purge: Lösche jeden Kommentar in einem Thema endgültig
+  von deiner Instanz.
+comment_reply_position: Kommentarantwortposition
+oauth2.grant.post.create: Erstelle neue Beiträge.
+oauth2.grant.domain.block: Blockiere oder Entblockiere Domains und zeige die Domains
+  die du blockiert hast.
+oauth2.grant.admin.instance.all: Zeige und aktualisiere Instanzeinstellungen und -informationen.
+oauth2.grant.user.profile.edit: Bearbeite dein Profil.
+oauth2.grant.admin.post_comment.purge: Lösche jeden Kommentar unter einem Beitrag
+  endgültig von deiner Instanz.
+oauth2.grant.moderate.magazine_admin.badges: Erstelle oder Entferne Abzeichen in deinen
+  eigenen Magazinen.

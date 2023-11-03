@@ -18,6 +18,7 @@ class ThemeSettingsController extends AbstractController
     public const POST_COMMENTS_VIEW = 'post_comments_view';
     public const KBIN_THEME = 'kbin_theme';
     public const KBIN_FONT_SIZE = 'kbin_font_size';
+    public const KBIN_PAGE_WIDTH = 'kbin_page_width';
     public const KBIN_ENTRIES_SHOW_USERS_AVATARS = 'kbin_entries_show_users_avatars';
     public const KBIN_ENTRIES_SHOW_MAGAZINES_ICONS = 'kbin_entries_show_magazines_icons';
     public const KBIN_ENTRIES_SHOW_THUMBNAILS = 'kbin_entries_show_thumbnails';
@@ -34,6 +35,10 @@ class ThemeSettingsController extends AbstractController
     public const KBIN_FEDERATION_ENABLED = 'kbin_federation_enabled';
     public const KBIN_COMMENTS_SHOW_USER_AVATAR = 'kbin_comments_show_user_avatar';
     public const KBIN_COMMENTS_REPLY_POSITION = 'kbin_comments_reply_position';
+    public const KBIN_GENERAL_SHOW_SUBSCRIPTIONS = 'kbin_general_show_subscriptions';
+    public const KBIN_GENERAL_SHOW_SUBSCRIPTIONS_SORT = 'kbin_general_show_subscriptions_sort';
+    public const KBIN_GENERAL_SHOW_SUBSCRIPTIONS_IN_SEPARATE = 'kbin_general_show_subscriptions_seperate';
+    public const KBIN_GENERAL_SIDEBARS_SAME_SIDE = 'kbin_general_sidebars_same_side';
 
     public const CLASSIC = 'classic';
     public const CHAT = 'chat';
@@ -51,6 +56,11 @@ class ThemeSettingsController extends AbstractController
     public const RIGHT = 'right';
     public const TOP = 'top';
     public const BOTTOM = 'bottom';
+    public const ALPHABETICALLY = 'alphabetically';
+    public const LAST_ACTIVE = 'last_active';
+    public const MAX = 'max';
+    public const AUTO = 'auto';
+    public const FIXED = 'fixed';
 
     public const KEYS = [
         self::ENTRIES_VIEW,
@@ -58,6 +68,7 @@ class ThemeSettingsController extends AbstractController
         self::POST_COMMENTS_VIEW,
         self::KBIN_THEME,
         self::KBIN_FONT_SIZE,
+        self::KBIN_PAGE_WIDTH,
         self::KBIN_ENTRIES_SHOW_USERS_AVATARS,
         self::KBIN_ENTRIES_SHOW_MAGAZINES_ICONS,
         self::KBIN_ENTRIES_SHOW_THUMBNAILS,
@@ -75,6 +86,10 @@ class ThemeSettingsController extends AbstractController
         self::KBIN_LANG,
         self::KBIN_COMMENTS_SHOW_USER_AVATAR,
         self::KBIN_COMMENTS_REPLY_POSITION,
+        self::KBIN_GENERAL_SHOW_SUBSCRIPTIONS,
+        self::KBIN_GENERAL_SHOW_SUBSCRIPTIONS_SORT,
+        self::KBIN_GENERAL_SHOW_SUBSCRIPTIONS_IN_SEPARATE,
+        self::KBIN_GENERAL_SIDEBARS_SAME_SIDE,
     ];
 
     public const VALUES = [
@@ -99,6 +114,9 @@ class ThemeSettingsController extends AbstractController
         '100',
         '120',
         '150',
+        self::MAX,
+        self::AUTO,
+        self::FIXED,
     ];
 
     public function __invoke(string $key, string $value, Request $request): Response

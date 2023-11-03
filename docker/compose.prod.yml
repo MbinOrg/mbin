@@ -12,13 +12,16 @@ services:
   db:
     environment:
       - POSTGRES_PASSWORD=!ChangeThisPostgresPass!
+      # For backwards compatibility the default PostgreSQL image version is set to v13.
+      # Feel free to select a newer version of PostgreSQL when starting new.
+      # Don't forget to also update the .env file accordingly
+      #- POSTGRES_VERSION=16
 
   rabbitmq:
     environment:
-      - RABBITMQ_PASSWORD=!ChangeThisRabbitPass!
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+      - RABBITMQ_DEFAULT_PASS=!ChangeThisRabbitPass!
 
-  # Set the following HTTPS variables to TRUE if your environment is using a 
+  # Set the following HTTPS variables to TRUE if your environment is using a
   # valid certificate behind a reverse proxy. This is likely true for most
   # production environments and is required for proper federation, that is, this
   # will ensure the webfinger responses include `https:` in the URLs generated.

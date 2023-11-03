@@ -8,17 +8,26 @@ Mbin is a decentralized content aggregator, voting, discussion and microblogging
 communicate with many other ActivityPub services, including Kbin, Mastodon, Lemmy, Pleroma, Peertube. The initiative aims to
 promote a free and open internet.
 
-Unique Features of Mbin:
+Unique Features of Mbin for server owners & users alike:
 
-- Support of **all** ActivityPub Actor Types (including also "Service" accounts, which are robot accounts)
-- Tons of **GUI improvements**
-- Various **bug fixes**, additional error checking and more to come soon!
-- Improved **admin guide** and setup
+- Tons of **[GUI improvements](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Aclosed+label%3Afrontend)**
+- Support of **all** ActivityPub Actor Types (including also "Service" account support; thus support for robot accounts)
+- Various **[bug fixes](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Aclosed+label%3Abug)**
+- **Up-to-date** PHP packages and **security/vulnerability** issues fixed
 - Support for `application/json` Accept request header on all ActivityPub end-points
-- Up-to-date PHP (Composer) dependency packages and **security/vulnerability** fixes
-  - Enabled: GitHub Security advisories, vulnerability reporting, Dependabot and code scanning
-- Improved _code documentation_, making the code easier to understand and contribute
-- **Tight integration** with [Mbin Webplate project](https://hosted.weblate.org/projects/mbin/kbin/) for translations (Two way sync)
+- Easy migration path from Kbin to Mbin (see "Migrating?" below)
+- Introducing a [FAQ](FAQ.md) page
+
+See also: [all closed PRs](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Aclosed) or [our releases](https://github.com/MbinOrg/mbin/releases).
+
+For developers:
+
+- Improved [bare metal/VM guide](docs/admin_guide.md) and [Docker guide](docs/docker_deployment_guide.md)
+- [Improved Docker setup](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Aclosed+label%3Adocker+)
+- _Developer_ server explained (see "Developers" section down below)
+- GitHub Security advisories, vulnerability reporting, Dependabot and Advanced code scanning enabled
+- Improved **code documentation**
+- **Tight integration** with [Mbin Weblate project](https://hosted.weblate.org/projects/mbin/kbin/) for translations (Two way sync)
 - Last but not least, a **community-focus project embracing the Collective Code Construction Contract** (C4). No single maintainer.
 
 ## Instances
@@ -84,7 +93,7 @@ Done!
 Requirements:
 
 - PHP v8.2
-- NodeJS + Yarn
+- NodeJS
 - Redis
 - PostgreSQL
 - _Optionally:_ Mercure
@@ -94,7 +103,7 @@ Requirements:
 - Increase execution time in PHP config file: `/etc/php/8.2/fpm/php.ini`:
 
 ```ini
-max_execution_time = 60
+max_execution_time = 120
 ```
 
 - Restart the PHP-FPM service: `sudo systemctl restart php8.2-fpm.service`
@@ -113,6 +122,11 @@ sudo -u postgres createuser --createdb --createrole --pwprompt mbin
 - Correctly configured `.env` file (`cp .env.example .env`), these are only the changes you need to pay attention to:
 
 ```env
+# Set domain to 127.0.0.1:8000
+SERVER_NAME=127.0.0.1:8000
+KBIN_DOMAIN=127.0.0.1:8000
+KBIN_STORAGE_URL=http://127.0.0.1:8000/media
+
 #Redis (without password)
 REDIS_DNS=redis://127.0.0.1:6379
 
@@ -138,7 +152,7 @@ local   mbin            mbin                                    md5
 - Restart the PostgreSQL server: `sudo systemctl restart postgresql`
 - Create database: `php bin/console doctrine:database:create`
 - Create tables and database structure: `php bin/console doctrine:migrations:migrate`
-- Build frontend assets: `yarn && yarn build`
+- Build frontend assets: `npm install && npm run dev`
 
 Starting the server:
 
@@ -146,15 +160,16 @@ Starting the server:
 2. Check the requirements: `symfony check:requirements`
 3. Install depedencies: `composer install`
 4. Dump `.env` into `.env.local.php` via: `composer dump-env dev`
-5. Clear cache: `APP_ENV=dev APP_DEBUG=1 php bin/console cache:clear -n`
-6. Start Mbin: `symfony server:start`
-7. Go to: [http://127.0.0.1:8000](http://127.0.0.1:8000/)
+5. _Optionally:_ Increase verbosity log level in: `config/packages/monolog.yaml` in the `when@dev` section: `level: debug` (instead of `level: info`),
+6. Clear cache: `APP_ENV=dev APP_DEBUG=1 php bin/console cache:clear -n`
+7. Start Mbin: `symfony server:start`
+8. Go to: [http://127.0.0.1:8000](http://127.0.0.1:8000/)
 
 This will give you a minimal working frontend with PostgreSQL setup. Keep in mind: this will _not_ start federating, for that you also need to setup Mercure to test the full Mbin setup.
 
 _Optionally:_ you could also setup RabbitMQ, but the Doctrine messenger configuration will be sufficient for local development.
 
-More info: [Symfony Local Web Server](https://symfony.com/doc/current/setup/symfony_server.html)
+More info: [Admin guide](docs/admin_guide.md) and [Symfony Local Web Server](https://symfony.com/doc/current/setup/symfony_server.html)
 
 ### Linting
 

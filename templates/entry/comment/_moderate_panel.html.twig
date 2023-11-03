@@ -2,7 +2,7 @@
     <menu>
         <li>
             <a class="stretched-link"
-               href="{{ path('magazine_panel_ban', {'name': comment.magazine.name, 'username': comment.user.username}) }}">{{ 'ban'|trans|lower }}</a>
+               href="{{ path('magazine_panel_ban', {'name': comment.magazine.name, 'username': comment.user.username}) }}">{{ 'ban'|trans }}</a>
         </li>
         <li>
             <form action="{{ entry_comment_delete_url(comment) }}"
@@ -10,7 +10,7 @@
                   onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
                 <input type="hidden" name="token" value="{{ csrf_token('entry_comment_delete') }}">
                 <button type="submit">
-                    <span>{{ 'delete'|trans|lower }}</span>
+                    <span>{{ 'delete'|trans }}</span>
                 </button>
             </form>
         </li>
@@ -21,7 +21,7 @@
                       onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
                     <input type="hidden" name="token" value="{{ csrf_token('entry_comment_purge') }}">
                     <button type="submit">
-                        <span>{{ 'purge'|trans|lower }}</span>
+                        <span>{{ 'purge'|trans }}</span>
                     </button>
                 </form>
             </li>
@@ -40,7 +40,7 @@
                     <input type="hidden" name="token" value="{{ csrf_token('change_adult') }}">
                     <input name="adult"
                            type="checkbox" {{ comment.isAdult ? 'checked' : '' }}>
-                    <button type="submit">{{ 'is_adult'|trans|lower }}</button>
+                    <button type="submit">{{ 'is_adult'|trans }}</button>
                 </form>
             </div>
         </li>

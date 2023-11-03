@@ -1,8 +1,6 @@
-{% for label, messages in app.flashes %}
-        {% for message in messages %}
-{#            <div class="alert alert__{{ label }}" role="alert">#}
-            <div class="alert alert__success" role="alert">
-                {{ message|trans }}
-            </div>
-        {% endfor %}
+{% for flash_error in app.flashes('error') %}
+    <div class="alert alert__danger">{{ flash_error|trans }}</div>
+{% endfor %}
+{% for flash_success in app.flashes('success') %}
+    <div class="alert alert__success">{{ flash_success|trans }}</div>
 {% endfor %}

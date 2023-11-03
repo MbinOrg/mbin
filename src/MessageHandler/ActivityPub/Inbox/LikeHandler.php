@@ -37,14 +37,16 @@ class LikeHandler
             } else {
                 $object = $this->apHttpClient->getActivityObject($message->payload['object']);
 
-                $this->bus->dispatch(new ChainActivityMessage([$object], null, null, $message->payload));
+                if (!empty($object)) {
+                    $this->bus->dispatch(new ChainActivityMessage([$object], null, null, $message->payload));
+                }
 
                 return;
             }
 
             $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
-            // Check if actor isn't empty
-            if (!empty($actor)) {
+            // Check if actor and entity aren't empty
+            if (!empty($actor) && !empty($entity)) {
                 $this->manager->toggle($actor, $entity, FavouriteManager::TYPE_LIKE);
             }
         } elseif ('Undo' === $message->payload['type']) {
@@ -52,13 +54,16 @@ class LikeHandler
                 $activity = $this->repository->findByObjectId($message->payload['object']['object']);
                 $entity = $this->entityManager->getRepository($activity['type'])->find((int) $activity['id']);
                 $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
-                // Check if actor isn't empty
-                if (!empty($actor)) {
+                // Check if actor and entity aren't empty
+                if (!empty($actor) && !empty($entity)) {
                     $this->manager->toggle($actor, $entity, FavouriteManager::TYPE_UNLIKE);
                 }
             }
         }
 
+        // Dead-code introduced by Ernest "Temp disable handler dispatch", in commit:
+        // 4573e87f91923b9a5758e0dfacb3870d55ef1166
+        //
         //        if (null === $entity->magazine->apId) {
         //            $this->bus->dispatch(
         //                new \App\Message\ActivityPub\Outbox\LikeMessage(

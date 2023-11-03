@@ -56,7 +56,7 @@ RUN composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-pr
 
 # Copy repository
 COPY --link ./ $KBIN_HOME
-RUN cp .env.example .env
+RUN cp .env.example_docker .env
 
 # Dump-autoload and run post-install script
 RUN composer dump-autoload --classmap-authoritative --no-dev
@@ -65,7 +65,11 @@ RUN composer run-script --no-dev post-install-cmd && \
 
 ####################
 
-FROM node:lts-alpine as builder-yarn
+FROM node:alpine as builder-nodejs
+
+# Set NodeJS as production by default
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
 
 # Setup environment
 ENV KBIN_HOME=/var/www/kbin
@@ -74,26 +78,27 @@ WORKDIR $KBIN_HOME
 
 # Copy required files
 COPY package.json $KBIN_HOME
-COPY yarn.lock $KBIN_HOME
+COPY package-lock.json $KBIN_HOME
 COPY --from=builder-composer --link $KBIN_HOME/vendor $KBIN_HOME/vendor
 
-# Yarn: install package
-RUN yarn install --lock-frozen
+# NPM: install package
+RUN npm ci --include=dev
 
-# Yarn: build
+# NPM: build (production by default)
 COPY --link ./ $KBIN_HOME
-RUN yarn build --mode production
+RUN npm run build
 
 ####################
 
 FROM base as runner
 
 COPY --chown=$USER:$GROUP --link ./ $KBIN_HOME
-RUN cp .env.example .env
+RUN cp .env.example_docker .env
 
 COPY --from=builder-caddy --link /usr/bin/caddy /usr/sbin/caddy
 COPY --from=builder-composer --chown=$USER:$GROUP $KBIN_HOME/vendor $KBIN_HOME/vendor
-COPY --from=builder-yarn --chown=$USER:$GROUP $KBIN_HOME/public $KBIN_HOME/public
+COPY --from=builder-composer --chown=$USER:$GROUP $KBIN_HOME/public/bundles $KBIN_HOME/public/bundles
+COPY --from=builder-nodejs --chown=$USER:$GROUP $KBIN_HOME/public $KBIN_HOME/public
 
 COPY --link docker/caddy/Caddyfile /etc/caddy/Caddyfile
 COPY --chmod=755 --link docker/docker-entrypoint ./

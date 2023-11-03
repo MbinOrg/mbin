@@ -58,13 +58,16 @@ class ApHttpClient
                 'headers' => $this->getInstanceHeaders($url),
             ]);
 
-            if (!str_starts_with((string) $r->getStatusCode(), '2')) {
-                throw new InvalidApPostException("Get fail: {$url}, ".$r->getContent(false));
+            $statusCode = $r->getStatusCode();
+            // Accepted status code are 2xx or 410 (used Tombstone types)
+            if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
+                throw new InvalidApPostException("Invalid status code while getting: {$url}, ".$r->getContent(false));
             }
 
             $item->expiresAt(new \DateTime('+1 hour'));
 
-            return $r->getContent();
+            // Read also non-OK responses (like 410) by passing 'false'
+            return $r->getContent(false);
         });
 
         if (!$resp) {

@@ -78,7 +78,7 @@ The browser should succesfully connect to the `https://<yourdomain>/.well-known/
 
 Execute: `sudo rabbitmqctl status`, that should provide details about your RabbitMQ instance. The output should also contain information about which plugins are installed, various usages and on which ports it is listening on (eg. `5672` for AMQP protocol).
 
-Ensure you do not see any connection errors in your `var/log/prod.log` file.
+Ensure you do not see any connection errors in your `var/log/prod-{YYYY-MM-DD}.log` file.
 
 Talking about plugins, we advise to also enable the `rabbitmq_management` plugin by executing:
 
@@ -86,7 +86,21 @@ Talking about plugins, we advise to also enable the `rabbitmq_management` plugin
 sudo rabbitmq-plugins enable rabbitmq_management
 ```
 
-This allows you to go to the RabbitMQ management page: `http://<server-ip>:15672`. [More info can be found here](https://www.rabbitmq.com/management.html#getting-started). See screenshot below of a typical small instance of Mbin running RabbitMQ management interface:
+Let's create a new admin user in RabbitMQ (replace `<user>` and `password` with a username & password you like to use):
+
+```sh
+sudo rabbitmqctl add_user <user> <password>
+```
+
+Give this new user administrator permissions (`-p /` is the virtual host path of RabbitMQ, which is `/` by default):
+
+```sh
+# Again don't forget to change <user> to your username in the lines below
+sudo rabbitmqctl set_user_tags <user> administrator
+sudo rabbitmqctl set_permissions -p / <user> ".*" ".*" ".*"
+```
+
+Now you can open the RabbitMQ management page: (insecure connection!) `http://<server-ip>:15672` with the username and the password provided earlier. [More info can be found here](https://www.rabbitmq.com/management.html#getting-started). See screenshot below of a typical small instance of Mbin running RabbitMQ management interface:
 
 ![image](https://github.com/MbinOrg/mbin/assets/628926/ce47213e-13c5-4b57-9fd3-c5b4a64138ef)
 
@@ -100,10 +114,10 @@ DELETE FROM messenger_messages;
 
 ## Where can I find my logging?
 
-You can find the Mbin logging in the `var/log/` directory from the root folder of the Mbin installation. When running production the file is called `prod.log`, when running development the log file is called `dev.log`.
+You can find the Mbin logging in the `var/log/` directory from the root folder of the Mbin installation. When running production the file is called `prod-{YYYY-MM-DD}.log`, when running development the log file is called `dev-{YYYY-MM-DD}.log`.
 
 ## Should I run development mode?
 
-**NO!** Try to avoid running development mode when you are hosting our own _public_ instance. Running in development mode can cause sensitive data to be leaked, such as secret keys or passwords (eg. via development console). There is no log rotation enabled in development mode and development mode will log a lot of messages to disk (incl. stacktraces).
+**NO!** Try to avoid running development mode when you are hosting our own _public_ instance. Running in development mode can cause sensitive data to be leaked, such as secret keys or passwords (eg. via development console). Development mode will log a lot of messages to disk (incl. stacktraces).
 
-That said, if you are _experiencing serious issues_ with your instance which you cannot resolve by looking at the log file (`prod.log`) or server logs, you can try running in development mode to debug the problem or issue you are having. Enabling development mode **during development** is also very useful.
+That said, if you are _experiencing serious issues_ with your instance which you cannot resolve by looking at the log file (`prod-{YYYY-MM-DD}.log`) or server logs, you can try running in development mode to debug the problem or issue you are having. Enabling development mode **during development** is also very useful.

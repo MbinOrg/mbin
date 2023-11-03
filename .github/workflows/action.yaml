@@ -1,10 +1,14 @@
 name: Mbin Workflow
 on:
   pull_request:
+    branches:
+      - main
+      - develop
   push:
     branches:
-      - develop
       - main
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -12,16 +16,16 @@ jobs:
     container:
       image: danger89/mbin-pipeline:1.0.0
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+      - name: Get NPM cache directory path
+        id: npm-cache-dir-path
+        run: echo "dir=$(npm get cache)" >> $GITHUB_OUTPUT
 
-      - name: Calculate yarn.lock hash
-        id: yarn-lock-hash
+      - name: Calculate package-lock.json hash
+        id: npm-lock-hash
         run: |
-          echo "hash=$(md5sum yarn.lock)" >> $GITHUB_OUTPUT
+          echo "hash=$(md5sum package-lock.json)" >> $GITHUB_OUTPUT
 
       - name: Get Composer Cache Directory
         id: composer-cache
@@ -34,11 +38,11 @@ jobs:
           echo "hash=$(md5sum composer.lock)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v3
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        id: npm-cache # use this to check for `cache-hit` (`steps.npm-cache.outputs.cache-hit != 'true'`)
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ steps.yarn-lock-hash.outputs.hash }}
-          restore-keys: ${{ runner.os }}-yarn-
+          path: ${{ steps.npm-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-npm-${{ steps.npm-lock-hash.outputs.hash }}
+          restore-keys: ${{ runner.os }}-npm-
 
       - uses: actions/cache@v3
         with:
@@ -49,18 +53,19 @@ jobs:
       - run: cp .env.example .env
       - name: Composer install
         run: composer install --no-dev --no-progress
-      - name: Yarn install
-        run: yarn install
-
-      - name: Build frontend
-        run: yarn build
+      - name: NPM install
+        run: npm ci --include=dev
+        env:
+          NODE_ENV: production
+      - name: Build frontend (production)
+        run: npm run build
 
   unit-test:
     runs-on: ubuntu-latest
     container:
       image: danger89/mbin-pipeline:1.0.0
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Get Composer Cache Directory
         id: composer-cache
@@ -93,7 +98,7 @@ jobs:
     container:
       image: danger89/mbin-pipeline:1.0.0
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Get Composer Cache Directory
         id: composer-cache
@@ -117,4 +122,37 @@ jobs:
       - name: php-cs-fixer dry-run
         run: tools/vendor/bin/php-cs-fixer fix --dry-run -v --show-progress=none #--format=checkstyle #would be nice if codeberg did something with this like github does.
 
+  build-and-publish-docker-image:
+    runs-on: ubuntu-latest
+    # Let's only run this on branches and tagged releases only
+    # Because the Docker build takes quite some time.
+    if: github.event_name != 'pull_request'
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to ghcr
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker meta data
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/mbinorg/mbin
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 # TODO: Integration tests

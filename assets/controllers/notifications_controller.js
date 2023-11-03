@@ -40,15 +40,23 @@ export default class extends Controller {
             //
         }
 
-        window.es = Subscribe(topics, cb);
-        // firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1803431
-        if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-            let resubscribe = (e) => {
-                window.es.close();
-                window.es = Subscribe(topics, cb);
+        const eventSource = Subscribe(topics, cb);
+        if (eventSource) {
+            window.es = eventSource;
+            // firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1803431
+            if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+                let resubscribe = (e) => {
+                    window.es.close();
+                    setTimeout(() => {
+                        const eventSource = Subscribe(topics, cb);
+                        if (eventSource) {
+                            window.es = Subscribe(topics, cb);
+                            window.es.onerror = resubscribe;
+                        }
+                    }, 10000);
+                };
                 window.es.onerror = resubscribe;
-            };
-            window.es.onerror = resubscribe;
+            }
         }
     }
 
