@@ -86,9 +86,14 @@ class FacebookAuthenticator extends OAuth2Authenticator
                 } else {
                     $dto = (new UserDto())->create(
                         $slugger->slug($facebookUser->getName()).rand(1, 999),
-                        $facebookUser->getEmail(),
-                        $this->imageFactory->createDto($this->getAvatar($facebookUser->getPictureUrl()))
+                        $facebookUser->getEmail()
                     );
+
+                    $avatar = $this->getAvatar($facebookUser->getPictureUrl());
+
+                    if($avatar) {
+                        $dto->avatar = $this->imageFactory->createDto($avatar);
+                    }
 
                     $dto->plainPassword = bin2hex(random_bytes(20));
                     $dto->ip = $this->ipResolver->resolve();

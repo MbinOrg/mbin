@@ -88,11 +88,17 @@ class GoogleAuthenticator extends OAuth2Authenticator
                 if ($user) {
                     $user->oauthGoogleId = $googleUser->getId();
                 } else {
+
                     $dto = (new UserDto())->create(
                         $slugger->slug($googleUser->getName()).rand(1, 999),
-                        $googleUser->getEmail(),
-                        $this->imageFactory->createDto($this->getAvatar($googleUser->getAvatar()))
+                        $googleUser->getEmail()
                     );
+
+                    $avatar = $this->getAvatar($googleUser->getAvatar());
+
+                    if($avatar) {
+                        $dto->avatar = $this->imageFactory->createDto($avatar);
+                    }
 
                     $dto->plainPassword = bin2hex(random_bytes(20));
                     $dto->ip = $this->ipResolver->resolve();
