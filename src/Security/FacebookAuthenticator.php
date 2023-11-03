@@ -57,7 +57,7 @@ class FacebookAuthenticator extends OAuth2Authenticator
 
         try {
             $provider = $client->getOAuth2Provider();
-            $accessToken = $provider->getAccessToken($accessToken->getToken());
+            $accessToken = $provider->getLongLivedAccessToken($accessToken->getToken());
         } catch (\Exception $e) {
         }
 
