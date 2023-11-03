@@ -7,6 +7,7 @@ namespace App\Security;
 use App\DTO\UserDto;
 use App\Entity\Image;
 use App\Entity\User;
+use App\Factory\ImageFactory;
 use App\Repository\ImageRepository;
 use App\Service\ImageManager;
 use App\Service\IpResolver;
@@ -35,6 +36,7 @@ class FacebookAuthenticator extends OAuth2Authenticator
         private readonly EntityManagerInterface $entityManager,
         private readonly UserManager $userManager,
         private readonly ImageManager $imageManager,
+        private readonly ImageFactory $imageFactory,
         private readonly ImageRepository $imageRepository,
         private readonly IpResolver $ipResolver,
         private readonly Slugger $slugger
@@ -84,9 +86,14 @@ class FacebookAuthenticator extends OAuth2Authenticator
                 } else {
                     $dto = (new UserDto())->create(
                         $slugger->slug($facebookUser->getName()).rand(1, 999),
-                        $facebookUser->getEmail(),
-                        $this->getAvatar($facebookUser->getPictureUrl())
+                        $facebookUser->getEmail()
                     );
+
+                    $avatar = $this->getAvatar($facebookUser->getPictureUrl());
+
+                    if ($avatar) {
+                        $dto->avatar = $this->imageFactory->createDto($avatar);
+                    }
 
                     $dto->plainPassword = bin2hex(random_bytes(20));
                     $dto->ip = $this->ipResolver->resolve();

@@ -7,6 +7,7 @@ namespace App\Security;
 use App\DTO\UserDto;
 use App\Entity\Image;
 use App\Entity\User;
+use App\Factory\ImageFactory;
 use App\Repository\ImageRepository;
 use App\Service\ImageManager;
 use App\Service\IpResolver;
@@ -36,6 +37,7 @@ class GoogleAuthenticator extends OAuth2Authenticator
         private readonly EntityManagerInterface $entityManager,
         private readonly UserManager $userManager,
         private readonly ImageManager $imageManager,
+        private readonly ImageFactory $imageFactory,
         private readonly ImageRepository $imageRepository,
         private readonly RequestStack $requestStack,
         private readonly IpResolver $ipResolver,
@@ -88,9 +90,14 @@ class GoogleAuthenticator extends OAuth2Authenticator
                 } else {
                     $dto = (new UserDto())->create(
                         $slugger->slug($googleUser->getName()).rand(1, 999),
-                        $googleUser->getEmail(),
-                        $this->getAvatar($googleUser->getAvatar())
+                        $googleUser->getEmail()
                     );
+
+                    $avatar = $this->getAvatar($googleUser->getAvatar());
+
+                    if ($avatar) {
+                        $dto->avatar = $this->imageFactory->createDto($avatar);
+                    }
 
                     $dto->plainPassword = bin2hex(random_bytes(20));
                     $dto->ip = $this->ipResolver->resolve();
