@@ -50,7 +50,7 @@ export default class extends Controller {
                     setTimeout(() => {
                         const eventSource = Subscribe(topics, cb);
                         if (eventSource) {
-                            window.es = Subscribe(topics, cb);
+                            window.es = eventSource;
                             window.es.onerror = resubscribe;
                         }
                     }, 10000);
