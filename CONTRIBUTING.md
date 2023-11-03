@@ -7,11 +7,12 @@ We always welcome new supporters and contributors. A quick list below of possibl
 
 ## Code
 
-The code code is mainly written in PHP using the Symfony framework with Twig templating and a bit of JavaScript & CSS.
+The code is mainly written in PHP using the Symfony framework with Twig templating and a bit of JavaScript & CSS.
 
 With an account on [GitHub](https://github.com) you will be able to [fork this repository](https://github.com/MbinOrg/mbin) and `git clone` the repository locally if you wish.
 
-\_Note:\_If you are a contributor with GitHub org rights, you do not need to fork the project, instead you are allowed to use branches.
+> _Note_:
+> If you are a contributor with GitHub org rights, you do not need to fork the project, instead you are allowed to use branches.
 
 Always [create a new Pull Request](https://github.com/MbinOrg/mbin/pulls) in GitHub. Be sure to avoid regression, see below for more info about the coding style as well as testing. All tests in the Pull Request should be green!
 
