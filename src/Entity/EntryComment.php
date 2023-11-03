@@ -244,6 +244,11 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
     {
     }
 
+    public function updateScore(): self
+    {
+        return $this;
+    }
+
     public function getParentSubject(): ?ContentInterface
     {
         return $this->entry;

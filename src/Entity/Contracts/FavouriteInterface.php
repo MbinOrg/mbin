@@ -17,4 +17,6 @@ interface FavouriteInterface extends ContentInterface
     public function isFavored(User $user): bool;
 
     public function updateRanking(): void;
+
+    public function updateScore(): self;
 }

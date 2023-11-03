@@ -281,9 +281,15 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
             $vote->entry = $this;
         }
 
-        $this->score = $this->getUpVotes()->count() - $this->getDownVotes()->count();
+        $this->updateScore();
         $this->updateRanking();
 
+        return $this;
+    }
+
+    public function updateScore(): self
+    {
+        $this->score = $this->getUpVotes()->count() + $this->favouriteCount - $this->getDownVotes()->count();
         return $this;
     }
 
@@ -297,7 +303,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
             }
         }
 
-        $this->score = $this->getUpVotes()->count() - $this->getDownVotes()->count();
+        $this->updateScore();
         $this->updateRanking();
 
         return $this;
