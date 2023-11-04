@@ -119,7 +119,7 @@ cd /var/www/mbin
 git clone https://github.com/MbinOrg/mbin.git .
 ```
 
-### Configure `public/media` folder
+### Create & configure media folder
 
 ```bash
 mkdir public/media
