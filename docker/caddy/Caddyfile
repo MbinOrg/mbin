@@ -18,7 +18,7 @@
     header @static_files Cache-Control max-age=259200
 
     route {
-        root * /var/www/kbin/public
+        root * /var/www/mbin/public
   
         @supports_webp {
             header_regexp Accept image/webp

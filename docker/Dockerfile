@@ -12,17 +12,17 @@ RUN apk update && apk add caddy acl fcgi
 
 # **Environment variables**
 ARG UID=1000
-ENV KBIN_HOME=/var/www/kbin \
-    USER=kbin \
+ENV MBIN_HOME=/var/www/mbin \
+    USER=mbin \
     GROUP=www-data
 
 # Create user
 RUN adduser -u $UID -D -g "" $USER $GROUP
 
 # Create path
-RUN mkdir -p $KBIN_HOME && \
-    chown -R $USER:$GROUP $KBIN_HOME
-WORKDIR $KBIN_HOME
+RUN mkdir -p $MBIN_HOME && \
+    chown -R $USER:$GROUP $MBIN_HOME
+WORKDIR $MBIN_HOME
 
 # PHP configuration (Requires these configuration before "composer install" )
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
@@ -49,13 +49,13 @@ RUN xcaddy build \
 FROM base as builder-composer
 
 # Composer: install package
-COPY composer.* $KBIN_HOME
-COPY symfony.lock $KBIN_HOME
+COPY composer.* $MBIN_HOME
+COPY symfony.lock $MBIN_HOME
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
 
 # Copy repository
-COPY --link ./ $KBIN_HOME
+COPY --link ./ $MBIN_HOME
 RUN cp .env.example_docker .env
 
 # Dump-autoload and run post-install script
@@ -72,33 +72,33 @@ ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 
 # Setup environment
-ENV KBIN_HOME=/var/www/kbin
-RUN mkdir -p $KBIN_HOME
-WORKDIR $KBIN_HOME
+ENV MBIN_HOME=/var/www/mbin
+RUN mkdir -p $MBIN_HOME
+WORKDIR $MBIN_HOME
 
 # Copy required files
-COPY package.json $KBIN_HOME
-COPY package-lock.json $KBIN_HOME
-COPY --from=builder-composer --link $KBIN_HOME/vendor $KBIN_HOME/vendor
+COPY package.json $MBIN_HOME
+COPY package-lock.json $MBIN_HOME
+COPY --from=builder-composer --link $MBIN_HOME/vendor $MBIN_HOME/vendor
 
 # NPM: install package
 RUN npm ci --include=dev
 
 # NPM: build (production by default)
-COPY --link ./ $KBIN_HOME
+COPY --link ./ $MBIN_HOME
 RUN npm run build
 
 ####################
 
 FROM base as runner
 
-COPY --chown=$USER:$GROUP --link ./ $KBIN_HOME
+COPY --chown=$USER:$GROUP --link ./ $MBIN_HOME
 RUN cp .env.example_docker .env
 
 COPY --from=builder-caddy --link /usr/bin/caddy /usr/sbin/caddy
-COPY --from=builder-composer --chown=$USER:$GROUP $KBIN_HOME/vendor $KBIN_HOME/vendor
-COPY --from=builder-composer --chown=$USER:$GROUP $KBIN_HOME/public/bundles $KBIN_HOME/public/bundles
-COPY --from=builder-nodejs --chown=$USER:$GROUP $KBIN_HOME/public $KBIN_HOME/public
+COPY --from=builder-composer --chown=$USER:$GROUP $MBIN_HOME/vendor $MBIN_HOME/vendor
+COPY --from=builder-composer --chown=$USER:$GROUP $MBIN_HOME/public/bundles $MBIN_HOME/public/bundles
+COPY --from=builder-nodejs --chown=$USER:$GROUP $MBIN_HOME/public $MBIN_HOME/public
 
 COPY --link docker/caddy/Caddyfile /etc/caddy/Caddyfile
 COPY --chmod=755 --link docker/docker-entrypoint ./
