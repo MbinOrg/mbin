@@ -11,7 +11,7 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @method Embed|null find($id, $lockMode = null, $lockVersion = null)
  * @method Embed|null findOneBy(array $criteria, array $orderBy = null)
- * @method Embed|null findOneByName(string $name)
+ * @method Embed|null findOneByUrl(string $url)
  * @method Embed[]    findAll()
  * @method Embed[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -24,9 +24,13 @@ class EmbedRepository extends ServiceEntityRepository
 
     public function add(Embed $entity, bool $flush = true): void
     {
-        $this->_em->persist($entity);
-        if ($flush) {
-            $this->_em->flush();
+        // Check if embed url does not exists yet (null),
+        // before we try to insert a new DB record
+        if (null === $this->findOneByUrl($entity->url)) {
+            $this->_em->persist($entity);
+            if ($flush) {
+                $this->_em->flush();
+            }
         }
     }
 
