@@ -129,7 +129,7 @@ sudo chown -R mbin:www-data public/media
 
 ### Configure `var` directory
 
-Create & set permissions to the `var` directory (used for cache and logging files):
+Create & set permissions to the `var` directory (used for cache and log files):
 
 ```bash
 cd /var/www/mbin
