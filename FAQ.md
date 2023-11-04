@@ -150,4 +150,4 @@ If you want to update all the remote users on your instance, you can execute the
 ./bin/console kbin:ap:actor:update
 ```
 
-_Important:_ This may have a lot of performance impact (temporally), if you are running a very large instance. Due to the huge amount of remote users.
+_Important:_ This might have quite a performance impact (temporally), if you are running a very large instance. Due to the huge amount of remote users.
