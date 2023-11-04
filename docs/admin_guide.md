@@ -246,11 +246,6 @@ opcache.interned_strings_buffer=128
 opcache.max_accelerated_files=100000
 ; Enable PHP JIT
 opcache.jit_buffer_size=500M
-
-; Optionally also execute this Symfony preload script after the server start-up
-opcache.preload=/var/www/mbin/config/preload.php
-; required for opcache.preload:
-opcache.preload_user=www-data
 ```
 
 More info: [Symfony Performance docs](https://symfony.com/doc/current/performance.html)
