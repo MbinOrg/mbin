@@ -236,6 +236,11 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
     {
     }
 
+    public function updateScore(): self
+    {
+        return $this;
+    }
+
     public function getParentSubject(): ?ContentInterface
     {
         return $this->post;
