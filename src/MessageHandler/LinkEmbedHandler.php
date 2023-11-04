@@ -7,8 +7,6 @@ namespace App\MessageHandler;
 use App\Message\LinkEmbedMessage;
 use App\Repository\EmbedRepository;
 use App\Utils\Embed;
-use Doctrine\DBAL\DriverManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -18,19 +16,13 @@ class LinkEmbedHandler
     public function __construct(
         private readonly EmbedRepository $embedRepository,
         private readonly Embed $embed,
-        private readonly CacheItemPoolInterface $markdownCache,
-        private EntityManagerInterface $entityManager,
+        private readonly CacheItemPoolInterface $markdownCache
     ) {
     }
 
     public function __invoke(LinkEmbedMessage $message): void
     {
         preg_match_all('#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#', $message->body, $match);
-
-        //DriverManager::getConnection(
-        //    $this->entityManager->getConnection()->getParams(),
-        //    $this->entityManager->getConfiguration()
-        //);
 
         foreach ($match[0] as $url) {
             try {
