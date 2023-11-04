@@ -38,6 +38,7 @@ class FavouriteManager
 
             $subject->favourites->add($favourite);
             $subject->updateCounts();
+            $subject->updateScore();
             $subject->updateRanking();
         } else {
             if (self::TYPE_LIKE === $type) {
@@ -46,6 +47,7 @@ class FavouriteManager
 
             $subject->favourites->removeElement($favourite);
             $subject->updateCounts();
+            $subject->updateScore();
             $subject->updateRanking();
             $favourite = null;
         }
