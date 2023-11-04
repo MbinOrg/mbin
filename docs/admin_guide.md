@@ -699,7 +699,7 @@ MESSENGER_TRANSPORT_DSN=amqp://kbin:${RABBITMQ_PASSWORD}@127.0.0.1:5672/%2f/mess
 
 ### Mercure
 
-More info: [Mercure Website](https://mercure.rocks/), which is used for real-time communication between the server and the clients.
+More info: [Mercure Website](https://mercure.rocks/), Mercure is used in Mbin for real-time communication between the server and the clients.
 
 Download and install Mercure (we are using [Caddyserver.com](https://caddyserver.com/download?package=github.com%2Fdunglas%2Fmercure) mirror to download Mercure):
 
