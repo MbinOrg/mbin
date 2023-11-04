@@ -123,7 +123,7 @@ git clone https://github.com/MbinOrg/mbin.git .
 
 ```bash
 mkdir public/media
-sudo chmod -R 777 public/media
+sudo chmod -R 775 public/media
 sudo chown -R mbin:www-data public/media
 ```
 
@@ -709,11 +709,13 @@ sudo wget "https://caddyserver.com/api/download?os=linux&arch=amd64&p=github.com
 sudo chmod +x /usr/local/bin/mercure
 ```
 
-Prepare folder structure:
+Prepare folder structure with the correct permissions:
 
 ```bash
 cd /var/www/mbin
 mkdir -p metal/caddy
+sudo chmod -R 775 metal/caddy
+sudo chown -R mbin:www-data metal/caddy
 ```
 
 [Caddyfile Global Options](https://caddyserver.com/docs/caddyfile/options)
