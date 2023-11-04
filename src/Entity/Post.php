@@ -249,6 +249,13 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         $this->visibility = VisibilityInterface::VISIBILITY_VISIBLE;
     }
 
+    public function updateScore(): self
+    {
+        $this->score = $this->favouriteCount + $this->getUpVotes()->count() - $this->getDownVotes()->count();
+
+        return $this;
+    }
+
     public function addVote(Vote $vote): self
     {
         Assert::isInstanceOf($vote, PostVote::class);
@@ -258,7 +265,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
             $vote->post = $this;
         }
 
-        $this->score = $this->getUpVotes()->count() - $this->getDownVotes()->count();
+        $this->updateScore();
         $this->updateRanking();
 
         return $this;
@@ -274,7 +281,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
             }
         }
 
-        $this->score = $this->getUpVotes()->count() - $this->getDownVotes()->count();
+        $this->updateScore();
         $this->updateRanking();
 
         return $this;

@@ -225,7 +225,7 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
                 $qb->orderBy('c.upVotes', 'DESC');
                 break;
             case Criteria::SORT_TOP:
-                $qb->orderBy('c.favouriteCount - c.downVotes', 'DESC');
+                $qb->orderBy('c.upVotes + c.favouriteCount - c.downVotes', 'DESC');
                 break;
             case Criteria::SORT_ACTIVE:
                 $qb->orderBy('c.lastActive', 'DESC');
