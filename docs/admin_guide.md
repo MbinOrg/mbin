@@ -119,7 +119,7 @@ cd /var/www/mbin
 git clone https://github.com/MbinOrg/mbin.git .
 ```
 
-### Create & configure media folder
+### Create & configure media directory
 
 ```bash
 mkdir public/media
@@ -127,7 +127,7 @@ sudo chmod -R 775 public/media
 sudo chown -R mbin:www-data public/media
 ```
 
-### Configure `var` folder
+### Configure `var` directory
 
 Create & set permissions to the `var` directory (used for cache and logging files):
 
