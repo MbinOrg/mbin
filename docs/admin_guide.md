@@ -129,7 +129,7 @@ sudo chown -R mbin:www-data public/media
 
 ### Configure `var` folder
 
-Create & set permissions to the `var` directory:
+Create & set permissions to the `var` directory (used for cache and logging files):
 
 ```bash
 cd /var/www/mbin
@@ -228,6 +228,10 @@ upload_max_filesize = 8M
 post_max_size = 8M
 ; Remember the memory limit is per child process
 memory_limit = 256M
+; maximum memory allocated to store the results
+realpath_cache_size = 4096K
+; save the results for 10 minutes (600 seconds)
+realpath_cache_ttl = 600
 ```
 
 Optionally also enable OPCache for improved performances with PHP:
@@ -242,7 +246,14 @@ opcache.interned_strings_buffer=128
 opcache.max_accelerated_files=100000
 ; Enable PHP JIT
 opcache.jit_buffer_size=500M
+
+; Optionally also execute this Symfony preload script after the server start-up
+opcache.preload=/var/www/mbin/config/preload.php
+; required for opcache.preload:
+opcache.preload_user=www-data
 ```
+
+More info: [Symfony Performance docs](https://symfony.com/doc/current/performance.html)
 
 Edit your PHP `www.conf` file as well, to increase the amount of PHP child processes (optional):
 
