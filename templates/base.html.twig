@@ -24,31 +24,6 @@
 
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
-            <style>
-                {#
-                This is needed so the magazine names in the subscription panel are correctly overflowing.
-                The max width depends on the max-width of the whole container, which is controlled by a setting (KBIN_PAGE_WIDTH)
-                 #}
-                .subscription-list .subscription a {
-                    {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR')) is same as 'true' %}
-                        {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_PAGE_WIDTH')) is same as constant('App\\Controller\\User\\ThemeSettingsController::MAX') %}
-                            max-width: calc(100vw / 9 - 3rem);
-                        {% elseif app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_PAGE_WIDTH')) is same as constant('App\\Controller\\User\\ThemeSettingsController::AUTO') %}
-                            max-width: calc(85vw / 9 - 3rem);
-                        {% else %}
-                            max-width: calc(1360px / 9 - 3rem);
-                        {% endif%}
-                    {% else %}
-                        {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_PAGE_WIDTH')) is same as constant('App\\Controller\\User\\ThemeSettingsController::MAX') %}
-                            max-width: calc(100vw / 4 - 3.5rem);
-                        {% elseif app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_PAGE_WIDTH')) is same as constant('App\\Controller\\User\\ThemeSettingsController::AUTO') %}
-                            max-width: calc(85vw / 4 - 3.5rem);
-                        {% else %}
-                            max-width: calc(1360px / 4 - 3.5rem);
-                        {% endif%}
-                    {% endif %}
-                }
-            </style>
     {% endblock %}
 
     {% block javascripts %}

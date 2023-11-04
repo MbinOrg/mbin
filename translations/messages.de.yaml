@@ -574,10 +574,9 @@ oauth.consent.grant_permissions: Gebe Berechtigungen
 oauth2.grant.moderate.magazine.ban.delete: Nutzer in deinen moderierten Magazinen
   entbannen.
 subscriptions_in_own_sidebar: In eigener Seitenleiste
-subscription_sidebar_pop_out: In eigene Seitenleiste verschieben
+subscription_sidebar_pop_out_left: Nach links in eigene Seitenleiste verschieben
+subscription_sidebar_pop_out_right: Nach rechts in eigene Seitenleiste verschieben
 subscription_sidebar_pop_in: In andere Seitenleiste verschieben
-subscription_sidebar_move_left: Nach links verschieben
-subscription_sidebar_move_right: Nach rechts verschieben
 subscription_panel_large: Großes Panel
 subscription_header: Abos
 oauth.client_identifier.invalid: Ungültige OAuth Client ID!
