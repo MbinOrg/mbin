@@ -1,37 +1,57 @@
 admin_users:
-  controller: App\Controller\Admin\AdminUserController
-  defaults: { withFederated: false }
-  path: /admin/users/{withFederated}
-  methods: [ GET ]
+    controller: App\Controller\Admin\AdminUserController
+    defaults: { withFederated: false }
+    path: /admin/users/{withFederated}
+    methods: [GET]
 
 admin_reports:
-  controller: App\Controller\Admin\AdminReportController
-  path: /admin/reports/{status}
-  defaults: { status: !php/const \App\Entity\Report::STATUS_ANY }
-  methods: [ GET ]
+    controller: App\Controller\Admin\AdminReportController
+    path: /admin/reports/{status}
+    defaults: { status: !php/const \App\Entity\Report::STATUS_ANY }
+    methods: [GET]
 
 admin_settings:
-  controller: App\Controller\Admin\AdminSettingsController
-  path: /admin/settings
-  methods: [ GET, POST ]
+    controller: App\Controller\Admin\AdminSettingsController
+    path: /admin/settings
+    methods: [GET, POST]
 
 admin_federation:
-  controller: App\Controller\Admin\AdminFederationController
-  path: /admin/federation
-  methods: [ GET, POST ]
+    controller: App\Controller\Admin\AdminFederationController
+    path: /admin/federation
+    methods: [GET, POST]
 
 admin_pages:
-  controller: App\Controller\Admin\AdminPagesController
-  path: /admin/pages/{page}
-  methods: [ GET, POST ]
+    controller: App\Controller\Admin\AdminPagesController
+    path: /admin/pages/{page}
+    methods: [GET, POST]
+
+admin_deletion_users:
+    controller: App\Controller\Admin\AdminDeletionController::users
+    path: /admin/deletion/users
+    methods: [GET]
+
+admin_deletion_magazines:
+    controller: App\Controller\Admin\AdminDeletionController::magazines
+    path: /admin/deletion/magazines
+    methods: [GET]
+
+admin_moderators:
+    controller: App\Controller\Admin\AdminModeratorController::moderators
+    path: /admin/moderators
+    methods: [GET, POST]
+
+admin_moderator_purge:
+    controller: App\Controller\Admin\AdminModeratorController::removeModerator
+    path: /admin/moderators/purge/{username}
+    methods: [POST]
 
 admin_cc:
-  controller: App\Controller\Admin\AdminClearCacheController
-  path: /admin/cc
-  methods: [ GET ]
+    controller: App\Controller\Admin\AdminClearCacheController
+    path: /admin/cc
+    methods: [GET]
 
 admin_dashboard:
-  controller: App\Controller\Admin\AdminDashboardController
-  path: /admin/{statsPeriod}/{withFederated}
-  defaults: { statsType: content, statsPeriod: -1, withFederated: false }
-  methods: [ GET ]
+    controller: App\Controller\Admin\AdminDashboardController
+    path: /admin/{statsPeriod}/{withFederated}
+    defaults: { statsType: content, statsPeriod: -1, withFederated: false }
+    methods: [GET]
