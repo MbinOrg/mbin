@@ -27,10 +27,10 @@ class LinkEmbedHandler
     {
         preg_match_all('#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#', $message->body, $match);
 
-        DriverManager::getConnection(
-            $this->entityManager->getConnection()->getParams(),
-            $this->entityManager->getConfiguration()
-        );
+        //DriverManager::getConnection(
+        //    $this->entityManager->getConnection()->getParams(),
+        //    $this->entityManager->getConfiguration()
+        //);
 
         foreach ($match[0] as $url) {
             try {
