@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 filter_by_type: Фільтр за типом
 2fa.authentication_code.label: Код автентифікації
 comment: Коментар
@@ -855,6 +854,3 @@ header_logo: Логотип заголовка
 magazine_panel: Панель спільноти
 oauth2.grant.moderate.magazine_admin.badges: Створювати або видаляти значки з ваших
   спільнот.
-=======
-{}
->>>>>>> 362f0b68 (Added translation using Weblate (Ukrainian))
