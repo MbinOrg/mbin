@@ -8,7 +8,7 @@ fi
 
 if [ "$1" == "php-fpm" ] || [ "$1" == "php" ] || [ "$1" == "bin/console" ]; then
     # if running as a service install assets
-    echo "Starting as servce..."
+    echo "Starting as service..."
 
     # In production: dump the production PHP config files,
     # validate the installed packages (no dev) and dump prod config
