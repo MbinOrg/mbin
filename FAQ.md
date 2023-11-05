@@ -124,10 +124,12 @@ That said, if you are _experiencing serious issues_ with your instance which you
 
 ## I changed my .env configuration but the error still appears/new config doesn't seem to be applied?
 
-After you edited your `.env` configuration file on a bare metal/VM setup, you always need to execute the dump-env command manually (this is **not** needed on Docker):
+After you edited your `.env` configuration file on a bare metal/VM setup, you always need to execute the `composer dump-env` command (in Docker you just restart the containers).
+
+Running the `post-upgrade` script will also execute `composer dump-env` for you:
 
 ```bash
-composer dump-env prod
+./bin/post-upgrade
 ```
 
 Followed by restarting the services that are depending on the (new) configuration:
@@ -139,8 +141,6 @@ sudo systemctl restart php8.2-fpm.service
 # Restarting the PHP messenger jobs and Mercure service
 sudo supervisorctl restart all
 ```
-
-_Hint:_ You could also try to run: `./bin/post-upgrade` (which will clear caches, install packages and various other things for you)
 
 ## How to retrieve missing/update remote user data?
 
