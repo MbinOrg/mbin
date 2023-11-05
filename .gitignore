@@ -17,6 +17,7 @@ tools/vendor/
 # Mbin specific
 .env
 /public/media/*
+/public/media
 docker/compose.override.yml
 yarn.lock
 /metal/
