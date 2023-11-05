@@ -158,7 +158,7 @@ Starting the server:
 
 1. Install Symfony CLI: `wget https://get.symfony.com/cli/installer -O - | bash`
 2. Check the requirements: `symfony check:requirements`
-3. Install depedencies: `composer install`
+3. Install dependencies: `composer install`
 4. Dump `.env` into `.env.local.php` via: `composer dump-env dev`
 5. _Optionally:_ Increase verbosity log level in: `config/packages/monolog.yaml` in the `when@dev` section: `level: debug` (instead of `level: info`),
 6. Clear cache: `APP_ENV=dev APP_DEBUG=1 php bin/console cache:clear -n`
