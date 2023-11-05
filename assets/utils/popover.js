@@ -177,7 +177,7 @@ Util.moveFocus = function (element) {
     };
 
     function resetPopoverStyle(popover) {
-        // remove popover inline style before appling new style
+        // remove popover inline style before applying new style
         popover.element.style.maxHeight = '';
         popover.element.style.top = '';
         popover.element.style.bottom = '';
@@ -294,7 +294,7 @@ Util.moveFocus = function (element) {
                 if(element.popoverIsOpen) element.togglePopover(false, false);
             });
         });
-        // take into account additinal scrollable containers
+        // take additional scrollable containers into account
         for(var j = 0; j < scrollingContainers.length; j++) {
             var scrollingContainer = document.querySelector(scrollingContainers[j]);
             if(scrollingContainer) {

@@ -10,20 +10,20 @@ promote a free and open internet.
 
 Unique Features of Mbin for server owners & users alike:
 
-- Tons of **[GUI improvements](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Aclosed+label%3Afrontend)**
+- Tons of **[GUI improvements](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Amerged+label%3Afrontend)**
 - Support of **all** ActivityPub Actor Types (including also "Service" account support; thus support for robot accounts)
-- Various **[bug fixes](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Aclosed+label%3Abug)**
+- Various **[bug fixes](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Amerged+label%3Abug)**
 - **Up-to-date** PHP packages and **security/vulnerability** issues fixed
 - Support for `application/json` Accept request header on all ActivityPub end-points
 - Easy migration path from Kbin to Mbin (see "Migrating?" below)
 - Introducing a [FAQ](FAQ.md) page
 
-See also: [all closed PRs](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Aclosed) or [our releases](https://github.com/MbinOrg/mbin/releases).
+See also: [all merged PRs](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Amerged) or [our releases](https://github.com/MbinOrg/mbin/releases).
 
 For developers:
 
 - Improved [bare metal/VM guide](docs/admin_guide.md) and [Docker guide](docs/docker_deployment_guide.md)
-- [Improved Docker setup](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Aclosed+label%3Adocker+)
+- [Improved Docker setup](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Amerged+label%3Adocker)
 - _Developer_ server explained (see "Developers" section down below)
 - GitHub Security advisories, vulnerability reporting, Dependabot and Advanced code scanning enabled
 - Improved **code documentation**
@@ -158,7 +158,7 @@ Starting the server:
 
 1. Install Symfony CLI: `wget https://get.symfony.com/cli/installer -O - | bash`
 2. Check the requirements: `symfony check:requirements`
-3. Install depedencies: `composer install`
+3. Install dependencies: `composer install`
 4. Dump `.env` into `.env.local.php` via: `composer dump-env dev`
 5. _Optionally:_ Increase verbosity log level in: `config/packages/monolog.yaml` in the `when@dev` section: `level: debug` (instead of `level: info`),
 6. Clear cache: `APP_ENV=dev APP_DEBUG=1 php bin/console cache:clear -n`
