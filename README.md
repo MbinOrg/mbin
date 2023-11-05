@@ -55,11 +55,15 @@ For developers:
 If you want to migrate from Kbin to Mbin (on bare metal), just follow the easy steps below (default branch is `main`):
 
 ```bash
+# How to your current setup folder
 cd /var/www/your-instance
+# Override the git remote
 git remote set-url origin https://github.com/MbinOrg/mbin.git
+# Fetch the latest changes and move to the main branch
 git fetch
 git checkout main
 
+# Execute post upgrade script after migration/update
 ./bin/post-upgrade
 ```
 
