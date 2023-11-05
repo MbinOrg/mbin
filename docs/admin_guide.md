@@ -119,7 +119,7 @@ cd /var/www/mbin
 git clone https://github.com/MbinOrg/mbin.git .
 ```
 
-### Create & configure media folder
+### Create & configure media directory
 
 ```bash
 mkdir public/media
@@ -127,9 +127,9 @@ sudo chmod -R 775 public/media
 sudo chown -R mbin:www-data public/media
 ```
 
-### Configure `var` folder
+### Configure `var` directory
 
-Create & set permissions to the `var` directory:
+Create & set permissions to the `var` directory (used for cache and log files):
 
 ```bash
 cd /var/www/mbin
@@ -228,6 +228,10 @@ upload_max_filesize = 8M
 post_max_size = 8M
 ; Remember the memory limit is per child process
 memory_limit = 256M
+; maximum memory allocated to store the results
+realpath_cache_size = 4096K
+; save the results for 10 minutes (600 seconds)
+realpath_cache_ttl = 600
 ```
 
 Optionally also enable OPCache for improved performances with PHP:
@@ -243,6 +247,8 @@ opcache.max_accelerated_files=100000
 ; Enable PHP JIT
 opcache.jit_buffer_size=500M
 ```
+
+More info: [Symfony Performance docs](https://symfony.com/doc/current/performance.html)
 
 Edit your PHP `www.conf` file as well, to increase the amount of PHP child processes (optional):
 

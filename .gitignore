@@ -19,6 +19,7 @@ tools/vendor/
 /public/media/*
 docker/compose.override.yml
 yarn.lock
+/metal/
 
 ###> symfony/framework-bundle ###
 /.env.local
