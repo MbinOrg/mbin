@@ -225,6 +225,7 @@ Following languages are currently supported/translated:
 ## Credits
 
 - [grumpyDev](https://karab.in/u/grumpyDev): icons, kbin-theme
+- [Emma](https://gitlab.com/postmill/Postmill): Postmill
 - [Ernest](https://codeberg.org/ernest): Kbin
 
 ## License
