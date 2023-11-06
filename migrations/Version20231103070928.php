@@ -14,7 +14,7 @@ final class Version20231103070928 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Introducing visibility default vakue and marked for deletion timestamps columns';
     }
 
     public function up(Schema $schema): void
