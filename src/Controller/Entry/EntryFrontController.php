@@ -9,7 +9,7 @@ use App\Controller\User\ThemeSettingsController;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\PageView\EntryPageView;
-use App\Pagination\Pagerfanta as KbinPagerfanta;
+use App\Pagination\Pagerfanta as MbinPagerfanta;
 use App\Repository\Criteria;
 use App\Repository\EntryRepository;
 use Pagerfanta\PagerfantaInterface;
@@ -330,7 +330,7 @@ class EntryFrontController extends AbstractController
             }
         }
 
-        $pagerfanta = new KbinPagerfanta($pagination->getAdapter());
+        $pagerfanta = new MbinPagerfanta($pagination->getAdapter());
         $pagerfanta->setCurrentPageResults($results);
 
         return $pagerfanta;
