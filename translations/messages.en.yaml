@@ -844,3 +844,5 @@ user_suspend_desc: Suspending your account hides your content on the instance, b
   doesn't permanently remove it, and you can restore it at any time.
 account_banned: The account has been banned.
 account_unbanned: The account has been unbanned.
+account_is_suspended: User account is suspended.
+
