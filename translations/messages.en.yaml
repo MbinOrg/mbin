@@ -835,10 +835,10 @@ magazine_is_deleted: Magazine is deleted. You can <a href="%link_target%">restor
   it within 30 days.
 suspend_account: Suspend account
 request_account_deletion_revoke_button: Revoke the account deletion request.
-reinstate_account: Reinstate account
+unsuspend_account: Unsuspend account
 account_suspended: The account has been suspended.
 delete_account_request_revoke: Your request to delete the account has been revoked.
-account_reinstated: The account has been reinstated.
+account_unsuspend: The account has been unsuspended.
+deletion: Deletion
 user_suspend_desc: Suspending your account hides your content on the instance, but
   doesn't permanently remove it, and you can restore it at any time.
-deletion: Deletion

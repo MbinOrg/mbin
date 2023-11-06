@@ -18,6 +18,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
+ * @method User getUserOrThrow()
+ * @method validateCsrf(), throws an error on invalid token
  * @method User|null getUser()
  */
 abstract class AbstractController extends BaseAbstractController

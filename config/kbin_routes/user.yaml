@@ -115,9 +115,9 @@ user_suspend:
     path: /u/{username}/suspend
     methods: [POST]
 
-user_reinstate:
-    controller: App\Controller\User\UserSuspendController::reinstate
-    path: /u/{username}/reinstate
+user_unsuspend:
+    controller: App\Controller\User\UserSuspendController::unsuspend
+    path: /u/{username}/unsuspend
     methods: [POST]
 
 user_ban:

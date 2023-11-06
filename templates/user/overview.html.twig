@@ -34,6 +34,16 @@
                         <i class="fa fa-ban"></i> {{ user.isBanned ? 'unban_account'|trans : 'ban_account'|trans }}
                     </button>
                 </form>
+
+                <form action="{{ path(user.visibility is same as 'thrashed' ? 'user_unsuspend' : 'user_suspend', {username: user.username}) }}"
+                    method="POST"
+                    onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                    <input type="hidden" name="token" value="{{ csrf_token('user_suspend') }}">
+                    <button type="submit" class="btn btn__primary" title="{{ 'purge_content_desc'|trans }}">
+                        <i class="fa-solid fa-dumpster"></i> {{ user.visibility is same as 'thrashed' ? 'unsuspend_account'|trans : 'suspend_account'|trans }}
+                    </button>
+                </form>
+
                 {% if is_granted('ROLE_ADMIN') %}
                     <hr>
                     <form action="{{ path('user_delete_content', {username: user.username}) }}" method="POST"
