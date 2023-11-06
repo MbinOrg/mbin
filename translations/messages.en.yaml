@@ -798,7 +798,7 @@ subscription_sidebar_pop_out_right: Move to separate sidebar on the right
 subscription_sidebar_pop_out_left: Move to separate sidebar on the left
 subscription_sidebar_pop_in: Move subscriptions to the inline panel
 subscription_panel_large: Large panel
-subscription_header: Subs
+subscription_header: Subscribed Magazines
 close: Close
 position_bottom: Bottom
 position_top: Top

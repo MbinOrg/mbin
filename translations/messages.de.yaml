@@ -578,7 +578,7 @@ subscription_sidebar_pop_out_left: Nach links in eigene Seitenleiste verschieben
 subscription_sidebar_pop_out_right: Nach rechts in eigene Seitenleiste verschieben
 subscription_sidebar_pop_in: In andere Seitenleiste verschieben
 subscription_panel_large: Großes Panel
-subscription_header: Abos
+subscription_header: Abonnierte Magazine
 oauth.client_identifier.invalid: Ungültige OAuth Client ID!
 oauth.consent.app_has_permissions: kann bereits die folgenden Aktionen ausführen
 email.delete.title: Nutzeraccount Löschanfrage
