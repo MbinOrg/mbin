@@ -331,6 +331,8 @@ class EntryFrontController extends AbstractController
         }
 
         $pagerfanta = new MbinPagerfanta($pagination->getAdapter());
+        $pagerfanta->setCurrentPage($pagination->getCurrentPage());
+        $pagerfanta->setMaxNbPages($pagination->getNbPages());
         $pagerfanta->setCurrentPageResults($results);
 
         return $pagerfanta;
