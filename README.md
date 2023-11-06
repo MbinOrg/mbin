@@ -11,8 +11,9 @@ promote a free and open internet.
 Unique Features of Mbin for server owners & users alike:
 
 - Tons of **[GUI improvements](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Amerged+label%3Afrontend)**
-- Support of **all** ActivityPub Actor Types (including also "Service" account support; thus support for robot accounts)
+- A lot of **[enhancements](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Amerged+label%3Aenhancement)**
 - Various **[bug fixes](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Amerged+label%3Abug)**
+- Support of **all** ActivityPub Actor Types (including also "Service" account support; thus support for robot accounts)
 - **Up-to-date** PHP packages and **security/vulnerability** issues fixed
 - Support for `application/json` Accept request header on all ActivityPub end-points
 - Easy migration path from Kbin to Mbin (see "Migrating?" below)
