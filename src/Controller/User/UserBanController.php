@@ -30,6 +30,8 @@ class UserBanController extends AbstractController
             );
         }
 
+        $this->addFlash('success', 'account_banned');
+
         return $this->redirectToRefererOrHome($request);
     }
 
@@ -47,6 +49,8 @@ class UserBanController extends AbstractController
                 ]
             );
         }
+
+        $this->addFlash('success', 'account_unbanned');
 
         return $this->redirectToRefererOrHome($request);
     }
