@@ -34,7 +34,7 @@
                         <i class="fa fa-ban"></i> {{ user.isBanned ? 'unban_account'|trans : 'ban_account'|trans }}
                     </button>
                 </form>
-
+                <hr>
                 <form action="{{ path(user.visibility is same as 'thrashed' ? 'user_unsuspend' : 'user_suspend', {username: user.username}) }}"
                     method="POST"
                     onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
