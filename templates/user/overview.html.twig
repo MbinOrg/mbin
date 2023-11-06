@@ -35,12 +35,12 @@
                     </button>
                 </form>
                 <hr>
-                <form action="{{ path(user.visibility is same as 'thrashed' ? 'user_unsuspend' : 'user_suspend', {username: user.username}) }}"
+                <form action="{{ path(user.visibility === 'thrashed' ? 'user_unsuspend' : 'user_suspend', {username: user.username}) }}"
                     method="POST"
                     onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
                     <input type="hidden" name="token" value="{{ csrf_token('user_suspend') }}">
                     <button type="submit" class="btn btn__primary" title="{{ 'user_suspend_desc'|trans }}">
-                        <i class="fa-solid fa-dumpster"></i> {{ user.visibility is same as 'thrashed' ? 'unsuspend_account'|trans : 'suspend_account'|trans }}
+                        <i class="fa-solid fa-dumpster"></i> {{ user.visibility === 'thrashed' ? 'unsuspend_account'|trans : 'suspend_account'|trans }}
                     </button>
                 </form>
 
