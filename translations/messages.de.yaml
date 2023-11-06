@@ -568,12 +568,17 @@ errors.server500.description: Es tut uns leid, etwas ist schiefgelaufen. Wir arb
 oauth.client_not_granted_message_read_permission: Diese App hat keine Berechtigung
   erhalten deine Nachrichten zu lesen.
 restrict_oauth_clients: Beschränke OAuth2 Client Erstellung auf Admins
-subscription_sort: Abonnements Sortierung
+subscription_sort: Sortierung
 unblock: Entblockieren
 oauth.consent.grant_permissions: Gebe Berechtigungen
 oauth2.grant.moderate.magazine.ban.delete: Nutzer in deinen moderierten Magazinen
   entbannen.
-subscriptions_in_own_sidebar: Abonnements Separat
+subscriptions_in_own_sidebar: In eigener Seitenleiste
+subscription_sidebar_pop_out_left: Nach links in eigene Seitenleiste verschieben
+subscription_sidebar_pop_out_right: Nach rechts in eigene Seitenleiste verschieben
+subscription_sidebar_pop_in: In andere Seitenleiste verschieben
+subscription_panel_large: Großes Panel
+subscription_header: Abonnierte Magazine
 oauth.client_identifier.invalid: Ungültige OAuth Client ID!
 oauth.consent.app_has_permissions: kann bereits die folgenden Aktionen ausführen
 email.delete.title: Nutzeraccount Löschanfrage

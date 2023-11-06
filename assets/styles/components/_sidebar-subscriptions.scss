@@ -2,38 +2,92 @@
   border-radius: 0.5rem;
 }
 
+.kbin-container.width--fixed {
+  .sidebar-subscriptions:not(.inline) .subscription-list .subscription a {
+    max-width: calc(max(305px, 1360px / 6) - 3rem);
+  }
+
+  .sidebar-subscriptions.inline .subscription-list .subscription a {
+    max-width: calc(max(305px, 1360px / 4) - 3rem);
+  }
+}
+
+.kbin-container.width--auto {
+  .sidebar-subscriptions:not(.inline) .subscription-list .subscription a {
+    max-width: calc(max(305px, 85vw / 6) - 3rem);
+  }
+
+  .sidebar-subscriptions.inline .subscription-list .subscription a {
+    max-width: calc(max(305px, 85vw / 4) - 3rem);
+  }
+}
+
+.kbin-container.width--max {
+  .sidebar-subscriptions:not(.inline) .subscription-list .subscription a {
+    max-width: calc(max(305px, 100vw / 6) - 3rem);
+  }
+
+  .sidebar-subscriptions.inline .subscription-list .subscription a {
+    max-width: calc(max(305px, 100vw / 4) - 3rem);
+  }
+}
+
+#sidebar .sidebar-subscriptions,
 .sidebar-subscriptions {
   height: fit-content;
 
-  &.inline .subscription-list {
-    max-height: 40em;
-    overflow: auto;
+  &:not(.inline) {
+    padding: 0 0.5rem;
   }
 
-  &.section {
-    padding: 0.5rem 0.5rem 1rem;
+  &.inline {
+    padding-bottom: unset;
+  }
 
-      &:not(.inline) {
-        @include media-breakpoint-down(lg) {
-          margin: 0.5rem;
-          padding: 0.5rem;
-        }
+  .sidebar-subscriptions-icons {
+    float: right;
+
+    @include media-breakpoint-down(lg) {
+      display: none;
     }
+  }
 
+  .inline .subscription-list {
+    max-height: 20em;
+    overflow: auto;
+    &.lg {
+      max-height: 40em;
+    }
+  }
+
+  .inline .magazine-subscription-avatar-placeholder {
+    display: inline-block;
+  }
+
+  :not(.inline) .magazine-subscription-avatar-placeholder {
+    display: none;
+  }
+
+  .section {
+    padding: 0.5rem 0.5rem 0;
+
+    @include media-breakpoint-down(lg) {
+      padding: 0.5rem;
+    }
   }
 
   h3 {
-    border-bottom: var(--kbin-sidebar-header-border);
-    color: var(--kbin-sidebar-header-text-color);
-    font-size: .8rem;
-    margin: 0;
-    text-transform: uppercase;
+    margin: 0 0 .5rem;
 
     @include media-breakpoint-down(lg) {
       margin: 0;
     }
   }
   .subscription-list {
+
+    &.meta :first-child {
+      border-top: unset;
+    }
 
     @include media-breakpoint-down(lg) {
       display: flex;
@@ -59,35 +113,62 @@
         }
       }
 
+      &:last-child {
+        border-bottom: unset;
+      }
+
       .magazine-subscription-avatar {
+        margin: 0;
         height: 1.5rem;
+        max-height: 1.5rem;
         width: 1.5rem;
+        max-width: 1.5rem;
         object-fit: scale-down;
         border-radius: 50%;
-        display: inline;
         vertical-align: middle;
+        &.onlyMobile {
+          @include media-breakpoint-up(lg) {
+            display: none;
+          }
+        }
       }
 
       .magazine-subscription-avatar-placeholder{
         width: 1.5rem;
-        display: inline-block;
         @include media-breakpoint-down(lg) {
           display: none;
+        }
+        &.onlyMobile {
+          @include media-breakpoint-up(lg) {
+            display: none;
+          }
         }
       }
 
       &.active {
-        border: var(--kbin-header-border);
-
+        background-color: var(--kbin-bg);
       }
 
-      .magazine-name {
-        font-weight: bold;
-        padding: 0.25rem;
+      a {
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
 
-        &.has-image {
-          @include media-breakpoint-down(lg) {
-            display: none;
+        .magazine-name {
+          font-weight: bold;
+          display: inline;
+
+          &.has-image {
+            margin-left: .25rem;
+            &.onlyMobile {
+              @include media-breakpoint-up(lg) {
+                margin-left: 0;
+              }
+            }
+            @include media-breakpoint-down(lg) {
+              display: none;
+            }
           }
         }
       }
