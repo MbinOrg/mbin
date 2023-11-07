@@ -790,10 +790,15 @@ password_and_2fa: Password & 2fa
 flash_account_settings_changed: Your account settings have been successfully changed.
   You will need to login again.
 show_subscriptions: Show subscriptions
-subscription_sort: Subscription sort
+subscription_sort: Sort
 alphabetically: Alphabetically
-subscriptions_in_own_sidebar: Subscriptions separate
+subscriptions_in_own_sidebar: In separate sidebar
 sidebars_same_side: Sidebars on the same side
+subscription_sidebar_pop_out_right: Move to separate sidebar on the right
+subscription_sidebar_pop_out_left: Move to separate sidebar on the left
+subscription_sidebar_pop_in: Move subscriptions to the inline panel
+subscription_panel_large: Large panel
+subscription_header: Subscribed Magazines
 close: Close
 position_bottom: Bottom
 position_top: Top
