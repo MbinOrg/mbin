@@ -75,14 +75,17 @@ class EntrySingleController extends AbstractController
             return $this->getJsonResponse($magazine, $entry, $comments);
         }
 
+        $user = $this->getUser();
+
         $dto = new EntryCommentDto();
-        if ($this->getUser() && $this->getUser()->addMentionsEntries && $entry->user !== $this->getUser()) {
+        if ($user && $user->addMentionsEntries && $entry->user !== $user) {
             $dto->body = $mentionManager->addHandle([$entry->user->username])[0];
         }
 
         return $this->render(
             'entry/single.html.twig',
             [
+                'user' => $user,
                 'magazine' => $magazine,
                 'comments' => $comments,
                 'entry' => $entry,

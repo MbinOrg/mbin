@@ -34,9 +34,12 @@ class UserSettingController extends AbstractController
             $this->addFlash('error', 'flash_user_settings_general_error');
         }
 
+        $user = $this->getUserOrThrow();
+
         return $this->render(
             'user/settings/general.html.twig',
             [
+                'user' => $user,
                 'form' => $form->createView(),
             ],
             new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200)

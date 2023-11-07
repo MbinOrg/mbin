@@ -95,7 +95,7 @@
 {% else %}
     {{ sidebar_top|raw }}
 {% endif %}
-{% if user is defined %}
+{% if user is defined and user %}
     {% include 'user/_info.html.twig' %}
 {% endif %}
 {% if entry is defined and magazine %}
