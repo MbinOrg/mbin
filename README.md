@@ -219,6 +219,7 @@ Following languages are currently supported/translated:
 - Japanese
 - Dutch
 - Polish
+- Ukrainian
 - Turkish
 - Chinese
 
