@@ -91,7 +91,7 @@ try_again: もう一度
 up_vote: ブースト
 down_vote: 「よくない」
 email_confirm_header: こんにちは！メールアドレスを検証してください。
-email_confirm_content: kbinのアカウントアクティブ化をレディ？アカウントを有効にする場合は下のリンクをクリックしてください。
+email_confirm_content: Mbinのアカウントアクティブ化をレディ？アカウントを有効にする場合は下のリンクをクリックしてください。
 email_verify: メールアドレスの検証
 email_confirm_title: メールアドレスを検証してください。
 select_magazine: マガジンを選択
@@ -184,7 +184,7 @@ reset_password: パスワードをリセットする
 repeat_password: パスワードを再入力
 classic_view: クラシック表示
 table_view: テーブル表示
-copy_url: kbinのURLをコピー
+copy_url: MbinのURLをコピー
 edit_link: リンクを編集する
 edit_comment: 上書き保存
 general: 全般
@@ -524,6 +524,6 @@ request_account_deletion_title: アカウント削除
 oauth2.grant.user.notification.delete: 通知を晴れる。
 email.delete.title: ユーザーのアカウント削除を要望する
 comment_reply_position: コメントのレスの位置
-kbin_bot: kbinのボット
+kbin_bot: Mbinのボット
 federation_page_enabled: 連合は使用可能をしました
 show_avatars_on_comments: コメントでアバターを見せる
