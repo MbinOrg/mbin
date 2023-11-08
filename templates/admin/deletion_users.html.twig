@@ -30,28 +30,14 @@
             </li>
         </menu>
     </div>
-<<<<<<< HEAD
-    <div class="section" id="content">
-        <table>
-            <thead>
-              <tr>
-                  <th>{{ 'username'|trans }}</th>
-                  <th>{{ 'reputation_points'|trans }}</th>
-                  <th></th>
-              </tr>
-            </thead>
-            <tbody>
-            {% for user in users %}
-=======
     {% if users|length %}
         <div class="section" id="content">
             <table>
                 <thead>
->>>>>>> b5d89787 (rtr7 (#1217))
                 <tr>
-                    <td>{{ 'username'|trans }}</td>
-                    <td>{{ 'reputation_points'|trans }}</td>
-                    <td></td>
+                    <th>{{ 'username'|trans }}</th>
+                    <th>{{ 'reputation_points'|trans }}</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
