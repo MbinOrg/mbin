@@ -18,11 +18,6 @@ magazine_purge:
     path: /m/{name}/purge
     methods: [POST]
 
-magazine_purge_content:
-    controller: App\Controller\Magazine\MagazineDeleteController::purgeContent
-    path: /m/{name}/purge_content
-    methods: [POST]
-
 magazine_abandoned:
     controller: App\Controller\Magazine\MagazineAbandonedController
     path: /magazines/abandoned
