@@ -15,6 +15,7 @@
 
 {% block body %}
     {% include 'user/settings/_options.html.twig' %}
+    {% include('user/_visibility_info.html.twig') %}
     {% include 'user/settings/sub_pills.html.twig' %}
     {% include 'layout/_domain_activity_list.html.twig' with {list: domains, actor: 'domain'} %}
 {% endblock %}

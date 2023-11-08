@@ -95,7 +95,7 @@
 {% else %}
     {{ sidebar_top|raw }}
 {% endif %}
-{% if user is defined %}
+{% if user is defined and user %}
     {% include 'user/_info.html.twig' %}
 {% endif %}
 {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SHOW')) is not same as 'false' and

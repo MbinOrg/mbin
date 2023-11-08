@@ -65,7 +65,10 @@ class EntryPageFactory
                     ),
             ],
             'name' => $entry->title,
-            'content' => $entry->body ? $this->markdownConverter->convertToHtml($entry->body, [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub]) : null,
+            'content' => $entry->body ? $this->markdownConverter->convertToHtml(
+                $entry->body,
+                [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub]
+            ) : null,
             'summary' => $entry->getShortDesc().' '.implode(
                 ' ',
                 array_map(fn ($val) => '#'.$val, $tags)
@@ -124,7 +127,9 @@ class EntryPageFactory
 
     private function getUrl(Entry $entry): string
     {
-        if (Entry::ENTRY_TYPE_IMAGE === $entry->type) {
+        $imageUrl = $this->imageManager->getUrl($entry->image);
+
+        if (Entry::ENTRY_TYPE_IMAGE === $entry->type && $imageUrl) {
             return $this->imageManager->getUrl($entry->image);
         }
 

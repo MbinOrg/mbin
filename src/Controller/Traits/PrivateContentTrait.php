@@ -7,7 +7,6 @@ namespace App\Controller\Traits;
 use App\Entity\Contracts\ContentInterface;
 
 /**
- * @method getUserOrThrow()
  * @method createAccessDeniedException()
  */
 trait PrivateContentTrait

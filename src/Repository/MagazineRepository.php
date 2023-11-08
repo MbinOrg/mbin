@@ -64,9 +64,7 @@ class MagazineRepository extends ServiceEntityRepository
     public function findOneByName(?string $name): ?Magazine
     {
         return $this->createQueryBuilder('m')
-            ->andWhere('m.visibility = :visibility')
             ->andWhere('LOWER(m.name) = LOWER(:name)')
-            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->setParameter('name', $name)
             ->getQuery()
             ->getOneOrNullResult();
@@ -474,5 +472,30 @@ class MagazineRepository extends ServiceEntityRepository
             ->setMaxResults(1000)
             ->getQuery()
             ->getResult();
+    }
+
+    public function findForDeletionPaginated(int $page): PagerfantaInterface
+    {
+        $query = $this->createQueryBuilder('m')
+            ->where('m.apId IS NULL')
+            ->andWhere('m.visibility = :visibility')
+            ->orderBy('m.markedForDeletionAt', 'ASC')
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_SOFT_DELETED)
+            ->getQuery();
+
+        $pagerfanta = new Pagerfanta(
+            new QueryAdapter(
+                $query
+            )
+        );
+
+        try {
+            $pagerfanta->setMaxPerPage(self::PER_PAGE);
+            $pagerfanta->setCurrentPage($page);
+        } catch (NotValidCurrentPageException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return $pagerfanta;
     }
 }

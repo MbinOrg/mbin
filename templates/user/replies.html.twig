@@ -4,7 +4,7 @@
     {{- 'replies'|trans }} - {{ user.username|username(false) }} - {{ parent() -}}
 {%- endblock -%}
 
-{% block mainClass %}page-user page-user-replies{% endblock %}
+{% block mainClass %}page-user page-user-overview{% endblock %}
 
 {% block header_nav %}
 {% endblock %}
@@ -13,12 +13,17 @@
 {% endblock %}
 
 {% block body %}
-    <header>
-        <h1 hidden>{{ 'replies'|trans }}</h1>
-        <h2 hidden>{{ user.username|username }}</h2>
-    </header>
+    <div class="section section--top">
+        {{ component('user_box', {
+            user: user,
+            stretchedLink: false
+        }) }}
+    </div>
     {% include('user/_options.html.twig') %}
+    {% include('user/_visibility_info.html.twig') %}
     {% include('user/_federated_info.html.twig') %}
+
+    {% if user.visibility is same as 'visible' or is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR') %}
     <div id="content">
         <div class="{{ html_classes('subjects', {
             'show-comment-avatar': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR')) is same as 'true' or not app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR')),
@@ -37,4 +42,5 @@
             {% endif %}
         </div>
     </div>
+    {% endif %}
 {% endblock %}

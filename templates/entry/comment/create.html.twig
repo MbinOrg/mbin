@@ -31,7 +31,10 @@
         }) }}
     {% endif %}
     {% include 'layout/_flash.html.twig' %}
+
+    {% if user.visibility is same as 'visible' %}
     <section id="content" class="section">
         {% include 'entry/comment/_form_comment.html.twig' %}
     </section>
+    {% endif %}
 {% endblock %}

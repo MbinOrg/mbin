@@ -38,7 +38,7 @@
         {% include 'post/comment/_options.html.twig' %}
         {% include 'layout/_flash.html.twig' %}
 
-        {% if(user_settings.comment_reply_position == constant('App\\Controller\\User\\ThemeSettingsController::TOP')) %}
+        {% if user is defined and user and user.visibility is same as 'visible' and (user_settings.comment_reply_position == constant('App\\Controller\\User\\ThemeSettingsController::TOP')) %}
         <section id="comment-add" class="section">
             {% include 'post/comment/_form_comment.html.twig' %}
         </section>
@@ -48,7 +48,7 @@
             {% include 'post/comment/_list.html.twig' %}
         </section>
 
-        {% if(user_settings.comment_reply_position == constant('App\\Controller\\User\\ThemeSettingsController::BOTTOM')) %}
+        {% if user is defined and user and user.visibility is same as 'visible' and (user_settings.comment_reply_position == constant('App\\Controller\\User\\ThemeSettingsController::BOTTOM')) %}
         <section id="comment-add" class="section">
             {% include 'post/comment/_form_comment.html.twig' %}
         </section>

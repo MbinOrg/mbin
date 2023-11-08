@@ -523,10 +523,10 @@ federation_page_enabled: Federation page enabled
 federation_page_allowed_description: Known instances we federate with
 federation_page_disallowed_description: Instances we do not federate with
 federated_search_only_loggedin: Federated search limited if not logged in
-request_account_deletion_title: Account Deletion
+request_account_deletion_title: Account deletion
 request_account_deletion_description: The administrator will be notified that you
   want your account deleted.
-request_account_deletion_button: Request Account Deletion
+request_account_deletion_button: Request account deletion
 more_from_domain: More from domain
 errors.server500.title: 500 Server error
 errors.server500.description: Sorry, something went wrong on our end. We're working
@@ -830,3 +830,24 @@ page_width_fixed: Fixed
 open_url_to_fediverse: Open original URL
 change_my_avatar: Change my avatar
 change_my_cover: Change my cover
+account_settings_changed: Your account settings have been successfully changed. You
+  will need to login again.
+magazine_deletion: Magazine deletion
+delete_magazine: Delete magazine
+restore_magazine: Restore magazine
+purge_magazine: Purge magazine
+magazine_is_deleted: Magazine is deleted. You can <a href="%link_target%">restore</a>
+  it within 30 days.
+suspend_account: Suspend account
+request_account_deletion_revoke_button: Revoke the account deletion request.
+unsuspend_account: Unsuspend account
+account_suspended: The account has been suspended.
+delete_account_request_revoke: Your request to delete the account has been revoked.
+account_unsuspended: The account has been unsuspended.
+deletion: Deletion
+user_suspend_desc: Suspending your account hides your content on the instance, but
+  doesn't permanently remove it, and you can restore it at any time.
+account_banned: The account has been banned.
+account_unbanned: The account has been unbanned.
+account_is_suspended: User account is suspended.
+

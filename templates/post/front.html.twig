@@ -47,18 +47,20 @@
     {% else %}
         <h1 hidden>{{ get_active_sort_option()|trans }}</h1>
     {% endif %}
+    
+    {% if user is defined and user and user.visibility is same as 'visible' %}
     <section class="section section--top">
         {% include 'post/_form_post.html.twig' %}
     </section>
+    {% endif %}
     {% include 'post/_options.html.twig' %}
     {% include 'layout/_flash.html.twig' %}
+    {% if user is defined and user %}
+        {% include('user/_visibility_info.html.twig') %}
+    {% endif %}
     {% if magazine is defined and magazine %}
-        {% if magazine.apId %}
-            <div class="alert alert__info">
-                <p>{{ 'federated_magazine_info'|trans }} <a
-                            href="{{ magazine.apProfileId }}">{{ 'go_to_original_instance'|trans }}</a></p>
-            </div>
-        {% endif %}
+        {% include 'magazine/_federated_info.html.twig' %}
+        {% include 'magazine/_visibility_info.html.twig' %}
     {% endif %}
     <div id="content">
         {% include 'post/_list.html.twig' %}

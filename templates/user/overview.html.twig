@@ -11,14 +11,14 @@
 {% endblock %}
 
 {% block sidebar_top %}
-    {% if is_granted('ROLE_ADMIN') and app.user != user %}
+    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR') and app.user != user %}
         <div class="section magazine">
             <h3>{{ 'admin_panel'|trans }}</h3>
             <div class="panel">
-                {% if user.isTotpAuthenticationEnabled %}
+                {% if user.isTotpAuthenticationEnabled and is_granted('ROLE_ADMIN') %}
                     <form action="{{ path('user_2fa_remove', {username: user.username}) }}"
                           method="POST"
-                           onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                          onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
                         <input type="hidden" name="token" value="{{ csrf_token('user_2fa_remove') }}">
                         <button type="submit" class="btn btn__secondary">
                             <i class="fa fa-mobile"></i> {{ '2fa.remove'|trans }}
@@ -35,53 +35,70 @@
                     </button>
                 </form>
                 <hr>
-                <form action="{{ path('user_delete_content', {username: user.username}) }}" method="POST"
-                      onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
-                    <input type="hidden" name="token" value="{{ csrf_token('user_delete_content') }}">
-                    <button type="submit" class="btn btn__secondary" title="{{ 'delete_content_desc'|trans }}">
-                        <i class="fa fa-dumpster"></i> {{ 'delete_content'|trans }}
+                <form action="{{ path(user.visibility is same as 'trashed' ? 'user_unsuspend' : 'user_suspend', {username: user.username}) }}"
+                    method="POST"
+                    onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                    <input type="hidden" name="token" value="{{ csrf_token('user_suspend') }}">
+                    <button type="submit" class="btn btn__secondary" title="{{ 'user_suspend_desc'|trans }}">
+                        <i class="fa-solid fa-pause"></i> {{ user.visibility is same as 'trashed' ? 'unsuspend_account'|trans : 'suspend_account'|trans }}
                     </button>
                 </form>
-                <form action="{{ path('user_purge_content', {username: user.username}) }}" method="POST"
-                      onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
-                    <input type="hidden" name="token" value="{{ csrf_token('user_purge_content') }}">
-                    <button type="submit" class="btn btn__danger" title="{{ 'purge_content_desc'|trans }}">
-                        <i class="fa-solid fa-dumpster-fire"></i> {{ 'purge_content'|trans }}
-                    </button>
-                </form>
-                <hr>
-                <form action="{{ path('user_delete_account', {username: user.username}) }}" method="POST"
-                      onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
-                    <input type="hidden" name="token" value="{{ csrf_token('user_delete_account') }}">
-                    <button type="submit" class="btn btn__danger" title="{{ 'delete_account_desc'|trans }}">
-                        <i class="fa fa-dumpster"></i> {{ 'delete_account'|trans }}
-                    </button>
-                </form>
-                <form action="{{ path('user_purge_account', {username: user.username}) }}" method="POST"
-                      onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
-                    <input type="hidden" name="token" value="{{ csrf_token('user_purge_account') }}">
-                    <button type="submit" class="btn btn__danger" title="{{ 'purge_account_desc'|trans }}">
-                        <i class="fa-solid fa-dumpster-fire"></i> {{ 'purge_account'|trans }}
-                    </button>
-                </form>
+
+                {% if is_granted('ROLE_ADMIN') %}
+                    <hr>
+                    <form action="{{ path('user_delete_content', {username: user.username}) }}" method="POST"
+                          onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                        <input type="hidden" name="token" value="{{ csrf_token('user_delete_content') }}">
+                        <button type="submit" class="btn btn__secondary" title="{{ 'delete_content_desc'|trans }}">
+                            <i class="fa fa-dumpster"></i> {{ 'delete_content'|trans }}
+                        </button>
+                    </form>
+                    <form action="{{ path('user_purge_content', {username: user.username}) }}" method="POST"
+                          onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                        <input type="hidden" name="token" value="{{ csrf_token('user_purge_content') }}">
+                        <button type="submit" class="btn btn__danger" title="{{ 'purge_content_desc'|trans }}">
+                            <i class="fa-solid fa-dumpster-fire"></i> {{ 'purge_content'|trans }}
+                        </button>
+                    </form>
+                    <hr>
+                    <form action="{{ path('user_delete_account', {username: user.username}) }}" method="POST"
+                          onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                        <input type="hidden" name="token" value="{{ csrf_token('user_delete_account') }}">
+                        <button type="submit" class="btn btn__secondary" title="{{ 'delete_account_desc'|trans }}">
+                            <i class="fa fa-dumpster"></i> {{ 'delete_account'|trans }}
+                        </button>
+                    </form>
+                    <form action="{{ path('user_purge_account', {username: user.username}) }}" method="POST"
+                          onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                        <input type="hidden" name="token" value="{{ csrf_token('user_purge_account') }}">
+                        <button type="submit" class="btn btn__danger" title="{{ 'purge_account_desc'|trans }}">
+                            <i class="fa-solid fa-dumpster-fire"></i> {{ 'purge_account'|trans }}
+                        </button>
+                    </form>
+                {% endif %}
             </div>
         </div>
     {% endif %}
 {% endblock %}
 
-    {% block body %}
-        <div class="section section--top">
-            {{ component('user_box', {
-                user: user,
-                stretchedLink: false
-            }) }}
-        </div>
-        {% include('user/_options.html.twig') %}
-        {% include('user/_federated_info.html.twig') %}
+{% block body %}
+    <div class="section section--top">
+        {{ component('user_box', {
+            user: user,
+            stretchedLink: false
+        }) }}
+    </div>
+    {% include('user/_options.html.twig') %}
+    {% include('layout/_flash.html.twig') %}
+    {% include('user/_visibility_info.html.twig') %}
+    {% include('user/_federated_info.html.twig') %}
+
+    {% if user.visibility is same as 'visible' or is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR') %}
         <div id="content" class="{{ html_classes('overview subjects comments-tree comments', {
             'show-comment-avatar': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR')) is same as 'true' or not app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR')),
             'show-post-avatar': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_USERS_AVATARS')) is same as 'true' or not app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_USERS_AVATARS'))
         }) }}">
             {% include 'layout/_subject_list.html.twig' with {attributes: {dateAsUrl: true}, entryCommentAttributes: {showMagazineName: false}} %}
         </div>
-    {% endblock %}
+    {% endif %}
+{% endblock %}
