@@ -15,7 +15,7 @@
                     </a>
                 {% endif %}
                 {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR')) is not same as 'true' %}
-                    <a href="#" title="{{ 'subscription_sidebar_pop_out_left'|trans }}" aria-label="{{ 'subscription_sidebar_pop_out'|trans }}"
+                    <a href="#" title="{{ 'subscription_sidebar_pop_out_left'|trans }}" aria-label="{{ 'subscription_sidebar_pop_out_left'|trans }}"
                        onclick="fetch('{{ path('theme_settings', {key: constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR'), value: constant('App\\Controller\\User\\ThemeSettingsController::TRUE')}) }}')
                                .then(() => fetch(
                        {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SIDEBAR_POSITION')) is same as constant('App\\Controller\\User\\ThemeSettingsController::LEFT') %}
@@ -28,7 +28,7 @@
                                )">
                        <i class="fa-solid fa-arrow-left"></i>
                     </a>
-                    <a href="#" title="{{ 'subscription_sidebar_pop_out_right'|trans }}" aria-label="{{ 'subscription_sidebar_pop_out'|trans }}"
+                    <a href="#" title="{{ 'subscription_sidebar_pop_out_right'|trans }}" aria-label="{{ 'subscription_sidebar_pop_out_right'|trans }}"
                         onclick="fetch('{{ path('theme_settings', {key: constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR'), value: constant('App\\Controller\\User\\ThemeSettingsController::TRUE')}) }}')
                            .then(() => fetch(
                                 {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SIDEBAR_POSITION')) is not same as constant('App\\Controller\\User\\ThemeSettingsController::LEFT') %}
