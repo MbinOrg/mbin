@@ -33,11 +33,11 @@ added: Añadido
 general: General
 views: Visualizaciones
 created_at: Creado
-owner: Propietaria/o
-subscribers: Suscriptores/as
+owner: Propietario/a
+subscribers: Suscriptores
 down_votes: Votos negativos
 no_comments: No hay comentarios
-online: En linea
+online: En línea
 comments: Comentarios
 posts: Publicaciones
 replies: Respuestas
@@ -109,7 +109,7 @@ email_verify: Confirma la dirección de correo electrónico
 email_confirm_expire: Ten en cuenta que el enlace caducará en una hora.
 select_magazine: Selecciona una revista
 add_new: Añadir nuevo
-url: Enlace
+url: URL
 title: Título
 already_have_account: ¿Tienes una cuenta?
 agree_terms: Consentimiento para %terms_link_start%Terms and Conditions%terms_link_end%
@@ -292,15 +292,15 @@ bronze_magazine: Revista famosa
 bronze_magazine_desc: 20 seguidoras/es han creado una revista
 silver_personality: Personalidad de plata
 silver_personality_desc: 50 seguidoras/es
-silver_commentator_desc: 10 comentarios buenos
+silver_commentator_desc: 10 muy buenos comentarios
 silver_scout: Medalla de plata de explorador
 silver_commentator: Medalla de plata de comentador/a
-silver_scout_desc: 10 enlaces excelentes
+silver_scout_desc: 10 muy buenos enlaces
 silver_redactor: Medalla de plata de redactor
-silver_redactor_desc: 10 hilos excelentes
+silver_redactor_desc: 10 muy buenos hilos
 silver_poster: Medalla de plata de publicador
 silver_poster_desc: 10 publicaciones excelentes
-silver_link: Enlace excelente
+silver_link: Muy buen enlace
 silver_photo: Muy buena foto
 silver_comment: Muy buen comentario
 silver_post: Muy buena publicación
@@ -375,8 +375,8 @@ left: Izquierda
 right: Derecha
 federation: Federación
 status: Status
-on: Activo
-off: Inactivo
+on: Encendido
+off: Apagado
 instances: Instancias
 upload_file: Cargar archivo
 from_url: de una URL
