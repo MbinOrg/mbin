@@ -26,7 +26,7 @@ For developers:
 - Improved [bare metal/VM guide](docs/admin_guide.md) and [Docker guide](docs/docker_deployment_guide.md)
 - [Improved Docker setup](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Amerged+label%3Adocker)
 - _Developer_ server explained (see "Developers" section down below)
-- GitHub Security advisories, vulnerability reporting, Dependabot and Advanced code scanning enabled
+- GitHub Security advisories, vulnerability reporting, [Dependabot](https://github.com/features/security) and [Advanced code scanning](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning) enabled. And we run [`local-php-security-checker`](https://github.com/fabpot/local-php-security-checker).
 - Improved **code documentation**
 - **Tight integration** with [Mbin Weblate project](https://hosted.weblate.org/projects/mbin/kbin/) for translations (Two way sync)
 - Last but not least, a **community-focus project embracing the Collective Code Construction Contract** (C4). No single maintainer.
