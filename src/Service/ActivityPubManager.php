@@ -11,7 +11,9 @@ use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Contracts\ActivityPubActorInterface;
 use App\Entity\Image;
 use App\Entity\Magazine;
+use App\Entity\Moderator;
 use App\Entity\User;
+use App\Exception\InvalidApPostException;
 use App\Factory\ActivityPub\PersonFactory;
 use App\Factory\MagazineFactory;
 use App\Factory\UserFactory;
@@ -25,6 +27,7 @@ use App\Service\ActivityPub\Webfinger\WebFinger;
 use App\Service\ActivityPub\Webfinger\WebFingerFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use League\HTMLToMarkdown\HtmlConverter;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -54,7 +57,8 @@ class ActivityPubManager
         private readonly WebFingerFactory $webFingerFactory,
         private readonly MentionManager $mentionManager,
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly MessageBusInterface $bus
+        private readonly MessageBusInterface $bus,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -105,9 +109,9 @@ class ActivityPubManager
     /**
      * Find an existing actor or create a new one if the actor doesn't yet exists.
      *
-     * @param actorUrlOrHandle actor URL or actor handle
+     * @param string $actorUrlOrHandle actor URL or actor handle
      *
-     * @return User or Magazine or null on error
+     * @return User|Magazine|null or Magazine or null on error
      */
     public function findActorOrCreate(string $actorUrlOrHandle): null|User|Magazine
     {
@@ -210,9 +214,9 @@ class ActivityPubManager
     /**
      * Creates a new user.
      *
-     * @param actorUrl actor URL
+     * @param string $actorUrl actor URL
      *
-     * @return User or null on error
+     * @return ?User or null on error
      */
     private function createUser(string $actorUrl): ?User
     {
@@ -229,12 +233,13 @@ class ActivityPubManager
     /**
      * Update existing user and return user object.
      *
-     * @param actorUrl actor URL
+     * @param string $actorUrl actor URL
      *
-     * @return User or null on error (eg. actor not found)
+     * @return ?User or null on error (e.g. actor not found)
      */
     public function updateUser(string $actorUrl): ?User
     {
+        $this->logger->info("updating user $actorUrl");
         $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
@@ -245,6 +250,7 @@ class ActivityPubManager
             $user->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
             $user->apDomain = parse_url($actor['id'], PHP_URL_HOST);
             $user->apFollowersUrl = $actor['followers'] ?? null;
+            $user->apAttributedToUrl = $actor['attributedTo'] ?? null;
             $user->apPreferredUsername = $actor['preferredUsername'] ?? null;
             $user->apDiscoverable = $actor['discoverable'] ?? true;
             $user->apManuallyApprovesFollowers = $actor['manuallyApprovesFollowers'] ?? false;
@@ -275,6 +281,17 @@ class ActivityPubManager
                     $this->bus->dispatch(new DeleteImageMessage($user->cover->filePath));
                 }
                 $user->cover = $newImage;
+            }
+
+            if (null !== $user->apFollowersUrl) {
+                try {
+                    $followersObj = $this->apHttpClient->getCollectionObject($user->apFollowersUrl);
+                    if (isset($followersObj['totalItems']) and \is_int($followersObj['totalItems'])) {
+                        $user->apFollowersCount = $followersObj['totalItems'];
+                        $user->updateFollowCounts();
+                    }
+                } catch (InvalidApPostException $ignored) {
+                }
             }
 
             // Write to DB
@@ -314,9 +331,9 @@ class ActivityPubManager
     /**
      * Creates a new magazine (Group).
      *
-     * @param actorUrl actor URL
+     * @param string $actorUrl actor URL
      *
-     * @return User or null on error
+     * @return ?Magazine or null on error
      */
     private function createMagazine(string $actorUrl): ?Magazine
     {
@@ -332,12 +349,13 @@ class ActivityPubManager
     /**
      * Update an existing magazine.
      *
-     * @param actorUrl actor URL
+     * @param string $actorUrl actor URL
      *
-     * @return Magazine or null on error
+     * @return ?Magazine or null on error
      */
     public function updateMagazine(string $actorUrl): ?Magazine
     {
+        $this->logger->info("updating magazine $actorUrl");
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         // Check if actor isn't empty (not set/null/empty array/etc.)
@@ -362,6 +380,7 @@ class ActivityPubManager
             $magazine->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
             $magazine->apDomain = parse_url($actor['id'], PHP_URL_HOST);
             $magazine->apFollowersUrl = $actor['followers'] ?? null;
+            $magazine->apAttributedToUrl = $actor['attributedTo'] ?? null;
             $magazine->apPreferredUsername = $actor['preferredUsername'] ?? null;
             $magazine->apDiscoverable = $actor['discoverable'] ?? true;
             $magazine->apPublicUrl = $actor['url'] ?? $actorUrl;
@@ -369,6 +388,72 @@ class ActivityPubManager
             $magazine->apTimeoutAt = null;
             $magazine->apFetchedAt = new \DateTime();
             $magazine->isAdult = (bool) $actor['sensitive'];
+
+            if (null !== $magazine->apFollowersUrl) {
+                try {
+                    $this->logger->info("updating remote followers of magazine $actorUrl");
+                    $followersObj = $this->apHttpClient->getCollectionObject($magazine->apFollowersUrl);
+                    if (isset($followersObj['totalItems']) and \is_int($followersObj['totalItems'])) {
+                        $magazine->apFollowersCount = $followersObj['totalItems'];
+                        $magazine->updateSubscriptionsCount();
+                    }
+                } catch (InvalidApPostException $ignored) {
+                }
+            }
+
+            if (null !== $magazine->apAttributedToUrl) {
+                try {
+                    $this->logger->info("fetching moderators of remote magazine $actorUrl");
+                    $attributedObj = $this->apHttpClient->getCollectionObject($magazine->apAttributedToUrl);
+                    $items = null;
+                    if (isset($attributedObj['items']) and \is_array($attributedObj['items'])) {
+                        $items = $attributedObj['items'];
+                    } elseif (isset($attributedObj['orderedItems']) and \is_array($attributedObj['orderedItems'])) {
+                        $items = $attributedObj['orderedItems'];
+                    }
+
+                    if (null !== $items) {
+                        $moderatorsToRemove = [];
+                        foreach ($magazine->moderators as /* @var $mod Moderator */ $mod) {
+                            if (!$mod->isOwner) {
+                                $moderatorsToRemove[] = $mod->user;
+                            }
+                        }
+                        $indexesNotToRemove = [];
+
+                        foreach ($items as $item) {
+                            if (\is_string($item)) {
+                                $user = $this->findActorOrCreate($item);
+                                if ($user instanceof User) {
+                                    foreach ($moderatorsToRemove as $key => $existMod) {
+                                        if ($existMod->username === $user->username) {
+                                            $indexesNotToRemove[] = $key;
+                                            break;
+                                        }
+                                    }
+                                    if (!$magazine->userIsModerator($user)) {
+                                        $magazine->addModerator(new Moderator($magazine, $user, false, true));
+                                    }
+                                }
+                            }
+                        }
+
+                        foreach ($indexesNotToRemove as $i) {
+                            $moderatorsToRemove[$i] = null;
+                        }
+
+                        foreach ($moderatorsToRemove as $modToRemove) {
+                            if (null === $modToRemove) {
+                                continue;
+                            }
+                            $magazine->removeUserAsModerator($modToRemove);
+                        }
+                    } else {
+                        $this->logger->warning("could not update the moderators of $actorUrl, the response doesn't have a 'items' or 'orderedItems' property or it is not an array");
+                    }
+                } catch (InvalidApPostException $ignored) {
+                }
+            }
 
             $this->entityManager->flush();
 
@@ -464,12 +549,13 @@ class ActivityPubManager
     /**
      * Update existing actor.
      *
-     * @param actorUrl actor URL
+     * @param string $actorUrl actor URL
      *
-     * @return User, Magazine or null on error
+     * @return Magazine|User|null null on error
      */
     public function updateActor(string $actorUrl): null|Magazine|User
     {
+        $this->logger->info("updating actor at $actorUrl");
         $actor = $this->apHttpClient->getActorObject($actorUrl);
 
         // User (We don't make a distinction between bots with type Service as Lemmy does)

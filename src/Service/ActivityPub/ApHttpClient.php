@@ -166,6 +166,39 @@ class ApHttpClient
         return $resp ? json_decode($resp, true) : null;
     }
 
+    public function getCollectionObject(string $apAddress)
+    {
+        $resp = $this->cache->get(
+            'ap_collection'.hash('sha256', $apAddress),
+            function (ItemInterface $item) use ($apAddress) {
+                $this->logger->debug("ApHttpClient:getCollectionObject:url: {$apAddress}");
+                $response = null;
+                try {
+                    // Set-up request
+                    $client = new CurlHttpClient();
+                    $response = $client->request('GET', $apAddress, [
+                        'max_duration' => self::TIMEOUT,
+                        'timeout' => self::TIMEOUT,
+                        'headers' => $this->getInstanceHeaders($apAddress, null, 'get', ApRequestType::ActivityPub),
+                    ]);
+                } catch (\Exception $e) {
+                    $msg = "AP Get fail: {$apAddress}, ";
+                    if (null !== $response) {
+                        $msg .= $response->getContent(false);
+                    }
+                    throw new InvalidApPostException($msg);
+                }
+
+                $item->expiresAt(new \DateTime('+24 hour'));
+
+                // When everything goes OK, return the data
+                return $response->getContent();
+            }
+        );
+
+        return $resp ? json_decode($resp, true) : null;
+    }
+
     public function post(string $url, User|Magazine $actor, array $body = null): void
     {
         $cacheKey = 'ap_'.hash('sha256', $url.':'.$body['id']);
