@@ -51,7 +51,7 @@ class UserBlockController extends AbstractController
             'user/settings/block_domains.html.twig',
             [
                 'user' => $user,
-                'domains' => $repository->findBlockedDomains($this->getPageNb($request), $ $user),
+                'domains' => $repository->findBlockedDomains($this->getPageNb($request), $user),
             ]
         );
     }
