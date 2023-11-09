@@ -858,5 +858,4 @@ cancel_request: Cancel request
 abandoned: Abandoned
 ownership_requests: Ownership requests
 accept: Accept
-pending: Pending
 moderator_requests: Mod requests
