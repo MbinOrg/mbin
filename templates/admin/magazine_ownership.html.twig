@@ -51,7 +51,8 @@
                                     <button type="submit"
                                             class="btn btn__secondary"
                                             title="{{ 'reject'|trans }}">
-                                        <i class="fa-solid fa-ban"></i>
+                                        <i class="fa-solid fa-ban"></i> 
+                                            <span>{{ 'reject'|trans }}</span>
                                     </button>
                                     <input type="hidden" name="token"
                                            value="{{ csrf_token('admin_magazine_ownership_requests_reject') }}">
