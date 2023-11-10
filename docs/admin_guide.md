@@ -361,7 +361,7 @@ sudo nano /etc/postgresql/14/main/postgresql.conf
 
 Then adjust the following settings depending to your server specifications (the configuration below is a good indication for a server with around 32GB of RAM):
 
-```conf
+```ini
 # Increase max connections
 max_connections = 100
 
@@ -507,7 +507,7 @@ sudo nano /etc/nginx/sites-available/mbin.conf
 
 With the content:
 
-```conf
+```ini
 # Redirect HTTP to HTTPS
 server {
     server_name domain.tld;
@@ -619,7 +619,7 @@ server {
 
 **Important:** If also want to also configure your `www.domain.tld` subdomain; our advise is to use a HTTP 301 redirect from the `www` subdomain towards the root domain. Do _NOT_ try to setup a double instance (you want to _avoid_ that ActivityPub will see `www` as a separate instance). See Nginx example below:
 
-```conf
+```nginx
 # Example of a 301 redirect response for the www subdomain
 server {
     listen 80;
@@ -798,7 +798,7 @@ nano metal/caddy/Caddyfile
 
 The content of the `Caddyfile`:
 
-```conf
+```json
 {
         {$GLOBAL_OPTIONS}
         # No SSL needed
