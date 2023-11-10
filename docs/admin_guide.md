@@ -798,7 +798,7 @@ nano metal/caddy/Caddyfile
 
 The content of the `Caddyfile`:
 
-```json
+```conf
 {
         {$GLOBAL_OPTIONS}
         # No SSL needed
