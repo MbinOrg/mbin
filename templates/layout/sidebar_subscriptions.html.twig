@@ -48,7 +48,7 @@
             <ul class="subscription-list meta {{ app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_LARGE_PANEL')) is same as 'true' ? 'lg' : '' }}">
                 {% for magazine in magazines %}
                     <li class="subscription {{ openMagazine and openMagazine.name is same as magazine.name ? 'active' : '' }}">
-                        <a href="/m/{{ magazine.name }}">
+                        <a class="stretched-link" href="/m/{{ magazine.name }}">
 
                             {% if magazine.icon %}
                                 <img src="{{ asset(magazine.icon.filePath) | imagine_filter('avatar_thumb') }}" alt="{{ magazine.name }}'s icon"
