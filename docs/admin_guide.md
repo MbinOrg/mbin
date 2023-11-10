@@ -367,7 +367,8 @@ max_connections = 100
 
 # Increase shared buffers
 shared_buffers = 8GB
-# Enable huge pages if possible (see note down below!)
+# Enable huge pages (Be sure see note down below in order to enable huge pages!)
+# This will fail if you didn't configure huge page under Linux (if you do NOT want to use huge pages, set it to: try instead of: on)
 huge_pages = on
 
 # Increase work memory
