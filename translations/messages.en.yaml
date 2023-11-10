@@ -528,9 +528,9 @@ request_account_deletion_description: The administrator will be notified that yo
   want your account deleted.
 request_account_deletion_button: Request account deletion
 more_from_domain: More from domain
-errors.server500.title: 500 Server error
-errors.server500.description: Sorry, something went wrong on our end. We're working
-  on resolving this issue, please check back soon.
+errors.server500.title: 500 Internal Server Error
+errors.server500.description: Sorry, something went wrong on our end. If you continue to see this error, try contacting the instance owner.
+  If this instance is not working at all, check out %link_start%other Mbin instances%link_end% in the meanwhile until the problem is resolved.
 errors.server429.title: 429 Too Many Requests
 errors.server404.title: 404 Not found
 errors.server403.title: 403 Forbidden

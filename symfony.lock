@@ -623,7 +623,7 @@
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "6.3",
-            "ref": "01dfaa98c58f7a7b5a9b30e6edb7074af7ed9819"
+            "ref": "5e6e46e7bd453880707d920c99be0da5afaaaa22"
         },
         "files": [
             ".env.test",
