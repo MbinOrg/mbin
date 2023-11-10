@@ -72,7 +72,7 @@ class MagazineManager
         $this->entityManager->persist($magazine);
         $this->entityManager->flush();
 
-        $this->subscribe($magazine, $user);
+        //$this->subscribe($magazine, $user);
 
         return $magazine;
     }
