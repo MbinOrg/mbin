@@ -359,7 +359,7 @@ Edit your PostgreSQL configuration file (assuming you're running PostgreSQL v14)
 sudo nano /etc/postgresql/14/main/postgresql.conf
 ```
 
-Then adjust the following settings depending to your server specifications (the configuration below is a good indication for a server with around 32GB of RAM):
+Then adjust the following settings **depending to your server specifications** (the configuration below is a good indication for a server with around 32GB of RAM):
 
 ```ini
 # Increase max connections
