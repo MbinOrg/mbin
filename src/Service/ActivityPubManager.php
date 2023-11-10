@@ -368,7 +368,7 @@ class ActivityPubManager
             $magazine->apDeletedAt = null;
             $magazine->apTimeoutAt = null;
             $magazine->apFetchedAt = new \DateTime();
-            $magazine->isAdult = (bool)$actor['sensitive'];
+            $magazine->isAdult = (bool) $actor['sensitive'];
 
             $this->entityManager->flush();
 
