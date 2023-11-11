@@ -18,12 +18,14 @@
                 {{ 'active'|trans }}
             </a>
         </li>
+        {% if app.user %}
         <li>
             <a href="{{ path('magazine_abandoned') }}"
                class="{{ html_classes({'active': is_route_name('magazine_abandoned')}) }}">
                 {{ 'abandoned'|trans }}
             </a>
         </li>
+        {% endif %}
     </menu>
     <menu class="options__layout">
         <li class="dropdown">
