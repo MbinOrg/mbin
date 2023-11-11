@@ -53,7 +53,7 @@ cd mbin
 cd docker
 ```
 
-2. Use the existing Docker image _OR_ build the docker image (from the root-directory of the repository).
+2. Use the existing Docker image _OR_ build the docker image. Select one of the two options.
 
 #### Build our own Docker image
 
