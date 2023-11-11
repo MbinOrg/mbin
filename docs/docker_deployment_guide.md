@@ -42,7 +42,7 @@ git clone https://github.com/MbinOrg/mbin.git
 cd mbin
 ```
 
-### Prepare and build Docker image
+### Docker image preparation
 
 > **Note**
 > If you're using a version of Docker Engine earlier than 23.0, run `export DOCKER_BUILDKIT=1`, prior to building the image. This does not apply to users running Docker Desktop. More info can be found [here](https://docs.docker.com/build/buildkit/#getting-started)
