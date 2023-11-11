@@ -27,8 +27,10 @@
                 {% endif %}
 
                 {% if comment.user.admin() %}
-                    <span class="user-badge text-muted">{{ 'user_badge_admin'|trans }}</span>
-                {% elseif comment.magazine.userIsModerator(comment.user) or comment.user.moderator() %}
+                    <span class="user-badge">{{ 'user_badge_admin'|trans }}</span>
+                {% elseif comment.user.moderator() %}
+                    <span class="user-badge">{{ 'user_badge_global_moderator'|trans }}</span>
+                {% elseif comment.magazine.userIsModerator(comment.user) %}
                     <span class="user-badge">{{ 'user_badge_moderator'|trans }}</span>
                 {% endif %}
                 <span>, </span>

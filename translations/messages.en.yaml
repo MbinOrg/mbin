@@ -862,4 +862,5 @@ moderator_requests: Mod requests
 action: Action
 user_badge_op: OP
 user_badge_admin: Admin
+user_badge_global_moderator: Global Mod
 user_badge_moderator: Mod
