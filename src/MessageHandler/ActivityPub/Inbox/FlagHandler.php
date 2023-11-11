@@ -87,16 +87,16 @@ class FlagHandler
     {
         $matches = null;
         if (preg_match_all("/\/m\/([a-zA-Z0-9\-_:]+)\/t\/([1-9][0-9]*)\/-\/comment\/([1-9][0-9]*)/", $apUrl, $matches)) {
-            return $this->entryCommentRepository->findOneBy(['id' => $matches[0][3]]);
+            return $this->entryCommentRepository->findOneBy(['id' => $matches[3][0]]);
         }
         if (preg_match_all("/\/m\/([a-zA-Z0-9\-_:]+)\/t\/([1-9][0-9]*)/", $apUrl, $matches)) {
-            return $this->entryRepository->findOneBy(['id' => $matches[0][2]]);
+            return $this->entryRepository->findOneBy(['id' => $matches[2][0]]);
         }
         if (preg_match_all("/\/m\/([a-zA-Z0-9\-_:]+)\/p\/([1-9][0-9]*)\/-\/reply\/([1-9][0-9]*)/", $apUrl, $matches)) {
-            return $this->postCommentRepository->findOneBy(['id' => $matches[0][3]]);
+            return $this->postCommentRepository->findOneBy(['id' => $matches[3][0]]);
         }
         if (preg_match_all("/\/m\/([a-zA-Z0-9\-_:]+)\/p\/([1-9][0-9]*)/", $apUrl, $matches)) {
-            return $this->postRepository->findOneBy(['id' => $matches[0][2]]);
+            return $this->postRepository->findOneBy(['id' => $matches[2][0]]);
         }
 
         return null;
