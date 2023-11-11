@@ -291,6 +291,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         return $this->id;
     }
 
+    public function getApId(): ?string
+    {
+        return $this->apId;
+    }
+
     public function getUsername(): string
     {
         return $this->username;
