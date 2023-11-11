@@ -44,7 +44,7 @@
                                         <div class='action'>
                                             <i class="fa-solid fa-users"></i><span>{{ magazine.subscriptionsCount }}</span>
                                         </div>
-                                        {% if not app.user or not magazine.userIsOwner(app.user) %}
+                                        {% if not app.user or (not magazine.userIsOwner(app.user) and app.user.visibility is same as 'visible') %}
                                             <form action="{{ path('magazine_ownership_request', {name: magazine.name}) }}"
                                                   name="magazine_request_ownership"
                                                   method="post">
