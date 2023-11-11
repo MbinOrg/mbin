@@ -53,19 +53,40 @@ cd mbin
 cd docker
 ```
 
-2. Use the existing Docker image or build the docker image (from the root-directory of the repository).
+2. Use the existing Docker image _OR_ build the docker image (from the root-directory of the repository).
 
-Fetch the latest Docker image from the `main` branch:
+#### Build our own Docker image
 
-```bash
-docker pull ghcr.io/mbinorg/mbin:main
-```
-
-_OR_ build the image yourself (if you wish):
+If you want to build our own image use (_No_ need to update the `compose.yml` file):
 
 ```bash
 docker build --no-cache -t mbin -f Dockerfile  ..
 ```
+
+#### Use Mbin pre-build image
+
+_OR_ use our pre-build images from [ghcr.io](https://ghcr.io). In this case you need to update the `compose.yml` file:
+
+```bash
+nano compose.yml
+```
+
+Find and replace or comment-out the following 4 lines:
+
+```yml
+build:
+  context: ../
+  dockerfile: docker/Dockerfile
+image: mbin
+```
+
+And instead use the following line on all places (`www`, `php`, `messenger` and `messenger_ap` services):
+
+```yml
+image: "ghcr.io/mbinorg/mbin:latest"
+```
+
+**Important:** Do _NOT_ forget to change **ALL LINES** in that matches `image: mbin` to: `image: "ghcr.io/mbinorg/mbin:latest"` in the `compose.yml` file (should 4 matches in total).
 
 3. Create config files and storage directories:
 
