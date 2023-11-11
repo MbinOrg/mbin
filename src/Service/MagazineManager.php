@@ -10,7 +10,9 @@ use App\DTO\MagazineThemeDto;
 use App\DTO\ModeratorDto;
 use App\Entity\Magazine;
 use App\Entity\MagazineBan;
+use App\Entity\MagazineOwnershipRequest;
 use App\Entity\Moderator;
+use App\Entity\ModeratorRequest;
 use App\Entity\User;
 use App\Event\Magazine\MagazineBanEvent;
 use App\Event\Magazine\MagazineBlockedEvent;
@@ -43,7 +45,7 @@ class MagazineManager
         private readonly MagazineSubscriptionRequestRepository $requestRepository,
         private readonly MagazineSubscriptionRepository $subscriptionRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly ImageRepository $imageRepository
+        private readonly ImageRepository $imageRepository,
     ) {
     }
 
@@ -216,11 +218,11 @@ class MagazineManager
         return $ban;
     }
 
-    public function addModerator(ModeratorDto $dto): void
+    public function addModerator(ModeratorDto $dto, ?bool $isOwner = false): void
     {
         $magazine = $dto->magazine;
 
-        $magazine->addModerator(new Moderator($magazine, $dto->user, false, true));
+        $magazine->addModerator(new Moderator($magazine, $dto->user, $isOwner, true));
 
         $this->entityManager->flush();
 
@@ -292,5 +294,80 @@ class MagazineManager
         $this->entityManager->flush();
 
         $this->bus->dispatch(new DeleteImageMessage($image));
+    }
+
+    public function removeSubscriptions(Magazine $magazine): void
+    {
+        foreach ($magazine->subscriptions as $subscription) {
+            $this->unsubscribe($subscription->magazine, $subscription->user);
+        }
+    }
+
+    public function toggleOwnershipRequest(Magazine $magazine, User $user): void
+    {
+        $request = $this->entityManager->getRepository(MagazineOwnershipRequest::class)->findOneBy([
+            'magazine' => $magazine,
+            'user' => $user,
+        ]);
+
+        if ($request) {
+            $this->entityManager->remove($request);
+            $this->entityManager->flush();
+
+            return;
+        }
+
+        $request = new MagazineOwnershipRequest($magazine, $user);
+
+        $this->entityManager->persist($request);
+        $this->entityManager->flush();
+    }
+
+    public function acceptOwnershipRequest(Magazine $magazine, User $user): void
+    {
+        $this->removeModerator($magazine->getOwnerModerator());
+
+        $this->addModerator(new ModeratorDto($magazine, $user), true);
+
+        $request = $this->entityManager->getRepository(MagazineOwnershipRequest::class)->findOneBy([
+            'magazine' => $magazine,
+            'user' => $user,
+        ]);
+
+        $this->entityManager->remove($request);
+        $this->entityManager->flush();
+    }
+
+    public function toggleModeratorRequest(Magazine $magazine, User $user): void
+    {
+        $request = $this->entityManager->getRepository(ModeratorRequest::class)->findOneBy([
+            'magazine' => $magazine,
+            'user' => $user,
+        ]);
+
+        if ($request) {
+            $this->entityManager->remove($request);
+            $this->entityManager->flush();
+
+            return;
+        }
+
+        $request = new ModeratorRequest($magazine, $user);
+
+        $this->entityManager->persist($request);
+        $this->entityManager->flush();
+    }
+
+    public function acceptModeratorRequest(Magazine $magazine, User $user): void
+    {
+        $this->addModerator(new ModeratorDto($magazine, $user));
+
+        $request = $this->entityManager->getRepository(ModeratorRequest::class)->findOneBy([
+            'magazine' => $magazine,
+            'user' => $user,
+        ]);
+
+        $this->entityManager->remove($request);
+        $this->entityManager->flush();
     }
 }

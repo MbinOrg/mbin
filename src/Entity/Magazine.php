@@ -74,6 +74,10 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public ?array $tags = null;
     #[OneToMany(mappedBy: 'magazine', targetEntity: Moderator::class, cascade: ['persist'])]
     public Collection $moderators;
+    #[OneToMany(mappedBy: 'magazine', targetEntity: MagazineOwnershipRequest::class, cascade: ['persist'])]
+    public Collection $ownershipRequests;
+    #[OneToMany(mappedBy: 'magazine', targetEntity: ModeratorRequest::class, cascade: ['persist'])]
+    public Collection $moderatorRequests;
     #[OneToMany(mappedBy: 'magazine', targetEntity: Entry::class)]
     public Collection $entries;
     #[OneToMany(mappedBy: 'magazine', targetEntity: Post::class)]
@@ -124,6 +128,8 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         $this->isAdult = $isAdult;
         $this->icon = $icon;
         $this->moderators = new ArrayCollection();
+        $this->ownershipRequests = new ArrayCollection();
+        $this->moderatorRequests = new ArrayCollection();
         $this->entries = new ArrayCollection();
         $this->posts = new ArrayCollection();
         $this->subscriptions = new ArrayCollection();
@@ -173,6 +179,14 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
             ->andWhere(Criteria::expr()->eq('isOwner', true));
 
         return !$user->moderatorTokens->matching($criteria)->isEmpty();
+    }
+
+    public function getOwnerModerator(): Moderator
+    {
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->eq('isOwner', true));
+
+        return $this->moderators->matching($criteria)->first();
     }
 
     public function getOwner(): User
