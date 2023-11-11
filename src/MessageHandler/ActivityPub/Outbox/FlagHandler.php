@@ -88,6 +88,7 @@ class FlagHandler
 
     #[ArrayShape([
         '@context' => 'mixed',
+        'id' => 'string',
         'type' => 'string',
         'actor' => 'mixed',
         'to' => 'mixed',
@@ -101,9 +102,10 @@ class FlagHandler
 
         return [
             '@context' => $context,
+            'id' => $this->settingsManager->get('KBIN_DOMAIN').'/activities/reports/'.sha1('report'.microtime()),
             'type' => 'Flag',
-            'actor' => $report->reporting->apPublicUrl ?? $this->urlGenerator->generate('ap_user', ['username' => $report->reporting->username]),
-            'to' => [$report->magazine->apPublicUrl ?? $this->urlGenerator->generate('ap_magazine', ['name' => $report->magazine->name])],
+            'actor' => $report->reporting->apPublicUrl ?? $this->urlGenerator->generate('ap_user', ['username' => $report->reporting->username], UrlGeneratorInterface::ABSOLUTE_URL),
+            'to' => [$report->magazine->apPublicUrl ?? $this->urlGenerator->generate('ap_magazine', ['name' => $report->magazine->name], UrlGeneratorInterface::ABSOLUTE_URL)],
             'object' => $objectUrl,
             // apAttributedToUrl is not a standardized field, so it is not implemented by every software that supports groups.
             // Some don't have moderation at all, so it will probably remain optional in the future.

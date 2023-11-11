@@ -36,6 +36,7 @@ class FlagHandler
 
     public function __invoke(FlagMessage $message): void
     {
+        $this->logger->debug('Got FlagMessage: '.json_encode($message));
         $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
         $object = $message->payload['object'];
         $objects = \is_array($object) ? $object : [$object];
