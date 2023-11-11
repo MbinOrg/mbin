@@ -102,7 +102,7 @@ class FlagHandler
 
         return [
             '@context' => $context,
-            'id' => $this->settingsManager->get('KBIN_DOMAIN').'/activities/reports/'.sha1('report'.microtime()),
+            'id' => 'https://' . $this->settingsManager->get('KBIN_DOMAIN').'/activities/reports/' . $report->getId(),
             'type' => 'Flag',
             'actor' => $report->reporting->apPublicUrl ?? $this->urlGenerator->generate('ap_user', ['username' => $report->reporting->username], UrlGeneratorInterface::ABSOLUTE_URL),
             'to' => [$report->magazine->apPublicUrl ?? $this->urlGenerator->generate('ap_magazine', ['name' => $report->magazine->name], UrlGeneratorInterface::ABSOLUTE_URL)],
