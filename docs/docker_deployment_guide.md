@@ -57,7 +57,7 @@ cd docker
 
 #### Build our own Docker image
 
-If you want to build our own image use (_No_ need to update the `compose.yml` file):
+If you want to build our own image, run  (_no_ need to update the `compose.yml` file):
 
 ```bash
 docker build --no-cache -t mbin -f Dockerfile  ..
