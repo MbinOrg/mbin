@@ -442,10 +442,16 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     public function findAdmin(): User
     {
         // @todo orderBy lastActivity
-        return $this->createQueryBuilder('u')
+        $result = $this->createQueryBuilder('u')
             ->andWhere("JSONB_CONTAINS(u.roles, '\"".'ROLE_ADMIN'."\"') = true")
+            ->andWhere('u.isDeleted = false')
             ->getQuery()
-            ->getResult()[0];
+            ->getResult();
+        if (0 === \sizeof($result)) {
+            throw new \Exception('the server must always have an active admin account');
+        }
+
+        return $result[0];
     }
 
     public function findUsersSuggestions(string $query): array
