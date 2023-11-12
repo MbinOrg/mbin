@@ -42,7 +42,7 @@ git clone https://github.com/MbinOrg/mbin.git
 cd mbin
 ```
 
-### Prepare and build Docker image
+### Docker image preparation
 
 > **Note**
 > If you're using a version of Docker Engine earlier than 23.0, run `export DOCKER_BUILDKIT=1`, prior to building the image. This does not apply to users running Docker Desktop. More info can be found [here](https://docs.docker.com/build/buildkit/#getting-started)
@@ -53,11 +53,40 @@ cd mbin
 cd docker
 ```
 
-2. Build the docker image (from the root-directory of the repository):
+2. Use the existing Docker image _OR_ build the docker image. Select one of the two options.
+
+#### Build our own Docker image
+
+If you want to build our own image, run  (_no_ need to update the `compose.yml` file):
 
 ```bash
 docker build --no-cache -t mbin -f Dockerfile  ..
 ```
+
+#### Use Mbin pre-build image
+
+_OR_ use our pre-build images from [ghcr.io](https://ghcr.io). In this case you need to update the `compose.yml` file:
+
+```bash
+nano compose.yml
+```
+
+Find and replace or comment-out the following 4 lines:
+
+```yml
+build:
+  context: ../
+  dockerfile: docker/Dockerfile
+image: mbin
+```
+
+And instead use the following line on all places (`www`, `php`, `messenger` and `messenger_ap` services):
+
+```yml
+image: "ghcr.io/mbinorg/mbin:latest"
+```
+
+**Important:** Do _NOT_ forget to change **ALL LINES** in that matches `image: mbin` to: `image: "ghcr.io/mbinorg/mbin:latest"` in the `compose.yml` file (should be 4 matches in total).
 
 3. Create config files and storage directories:
 
