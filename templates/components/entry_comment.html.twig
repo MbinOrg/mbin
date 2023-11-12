@@ -70,9 +70,9 @@
                     <figure>
                         <a href="{{ uploaded_asset(comment.image.filePath) }}"
                            class="thumb">
-                            <img class="thumb-subject"
+                            <img class="thumb-subject {{ comment.isAdult ? 'image-adult' : '' }}"
                                  src="{{ asset(comment.image.filePath) |imagine_filter('post_thumb') }}"
-                                 {% if comment.isAdult %}style="filter: blur(8px)"{% endif %}
+                                 {% if comment.isAdult %}data-controller="thumb" data-action="mouseover->thumb#adult_image_hover mouseout->thumb#adult_image_hover_out"{% endif %}
                                  alt="{{ comment.image.altText }}">
                         </a>
                     </figure>
