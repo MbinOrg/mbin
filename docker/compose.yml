@@ -2,10 +2,14 @@ version: "3.9"
 
 services:
   www:
+    # Builds the Docker image from scratch
     build:
       context: ../
       dockerfile: docker/Dockerfile
     image: mbin
+    # Or remove the build, context, dockerfile and image lines above and
+    # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
+    #image: "ghcr.io/mbinorg/mbin:latest"
     restart: unless-stopped
     command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
     healthcheck:
@@ -25,10 +29,14 @@ services:
       - php
 
   php:
+    # Builds the Docker image from scratch
     build:
       context: ../
       dockerfile: docker/Dockerfile
     image: mbin
+    # Or remove the build, context, dockerfile and image lines above and
+    # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
+    #image: "ghcr.io/mbinorg/mbin:latest"
     restart: unless-stopped
     command: php-fpm
     healthcheck:
@@ -47,10 +55,14 @@ services:
       - rabbitmq
 
   messenger:
+    # Builds the Docker image from scratch
     build:
       context: ../
       dockerfile: docker/Dockerfile
     image: mbin
+    # Or remove the build, context, dockerfile and image lines above and
+    # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
+    #image: "ghcr.io/mbinorg/mbin:latest"
     restart: unless-stopped
     command: bin/console messenger:consume async --time-limit=3600
     healthcheck:
@@ -65,10 +77,14 @@ services:
       - rabbitmq
 
   messenger_ap:
+    # Builds the Docker image from scratch
     build:
       context: ../
       dockerfile: docker/Dockerfile
     image: mbin
+    # Or remove the build, context, dockerfile and image lines above and
+    # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
+    #image: "ghcr.io/mbinorg/mbin:latest"
     restart: unless-stopped
     command: bin/console messenger:consume async_ap --time-limit=3600
     healthcheck:
