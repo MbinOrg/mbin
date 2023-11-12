@@ -15,6 +15,7 @@ use App\Entity\PostComment;
 use App\Entity\Report;
 use App\Entity\User;
 use App\PageView\MagazinePageView;
+use App\Utils\SubscriptionSort;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -134,6 +135,45 @@ class MagazineRepository extends ServiceEntityRepository
         }
 
         return $pagerfanta;
+    }
+
+    /**
+     * @return Magazine[]
+     */
+    public function findMagazineSubscriptionsOfUser(User $user, SubscriptionSort $sort, int $max): array
+    {
+        $query = $this->createQueryBuilder('m')
+            ->join('m.subscriptions', 'ms')
+            ->join('ms.user', 'u')
+            ->andWhere('u.id = :userId')
+            ->setParameter('userId', $user->getId());
+
+        if (SubscriptionSort::LastActive === $sort) {
+            $query = $query
+                ->orderBy('m.lastActive', 'DESC')
+                ->andWhere('m.lastActive IS NOT NULL');
+        } elseif (SubscriptionSort::Alphabetically === $sort) {
+            $query = $query->orderBy('m.name');
+        }
+
+        $query = $query->getQuery();
+        $query->setMaxResults($max);
+
+        $goodResults = $query->getResult();
+        $remaining = $max - \sizeof($goodResults);
+        if ($remaining > 0) {
+            $query = $this->createQueryBuilder('m')
+                ->join('m.subscriptions', 'ms')
+                ->join('ms.user', 'u')
+                ->andWhere('u.id = :userId')
+                ->andWhere('m.lastActive IS NULL')
+                ->setParameter('userId', $user->getId())
+                ->setMaxResults($remaining);
+            $additionalResults = $query->getQuery()->getResult();
+            $goodResults = array_merge($goodResults, $additionalResults);
+        }
+
+        return $goodResults;
     }
 
     public function findBlockedMagazines(int $page, User $user, int $perPage = self::PER_PAGE): PagerfantaInterface
