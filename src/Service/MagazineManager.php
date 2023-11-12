@@ -240,7 +240,7 @@ class MagazineManager
         ]);
     }
 
-    public function removeModerator(Moderator $moderator): void
+    public function removeModerator(Moderator $moderator, ?User $removedBy): void
     {
         $user = $moderator->user;
 
@@ -248,7 +248,7 @@ class MagazineManager
         $this->entityManager->flush();
 
         $this->clearCommentsCache($user);
-        $this->dispatcher->dispatch(new MagazineModeratorRemovedEvent($moderator->magazine, $moderator->user, $moderator->addedByUser));
+        $this->dispatcher->dispatch(new MagazineModeratorRemovedEvent($moderator->magazine, $moderator->user, $removedBy));
     }
 
     public function changeTheme(MagazineThemeDto $dto): Magazine
@@ -329,7 +329,7 @@ class MagazineManager
 
     public function acceptOwnershipRequest(Magazine $magazine, User $user, ?User $addedBy): void
     {
-        $this->removeModerator($magazine->getOwnerModerator());
+        $this->removeModerator($magazine->getOwnerModerator(), $addedBy);
 
         $this->addModerator(new ModeratorDto($magazine, $user, $addedBy), true);
 

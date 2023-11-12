@@ -6,12 +6,14 @@ namespace App\Controller\ActivityPub\Magazine;
 
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Magazine;
+use App\Entity\Moderator;
 use App\Repository\MagazineRepository;
 use App\Service\ActivityPubManager;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Uid\Uuid;
 
 class MagazineModeratorsController
 {
@@ -40,23 +42,21 @@ class MagazineModeratorsController
     ])]
     private function getCollectionItems(Magazine $magazine): array
     {
-        $moderatorsCount = $this->magazineRepository->findModerators($magazine)->count();
-        $moderators = $this->magazineRepository->findModerators($magazine, perPage: $moderatorsCount);
-        $actors = array_map(fn ($mod) => $mod->user, iterator_to_array($moderators->getCurrentPageResults()));
+        $moderators = $this->magazineRepository->findModerators($magazine, perPage: $magazine->moderators->count());
 
         $items = [];
-        foreach ($actors as $actor) {
+        foreach ($moderators->getCurrentPageResults() as /* @var Moderator $mod */ $mod) {
+            $actor = $mod->user;
             $items[] = $this->manager->getActorProfileId($actor);
         }
 
-        $routeName = 'ap_magazine_moderators';
-        $routeParams = ['name' => $magazine->name];
+        $id = Uuid::v4()->toRfc4122();
 
         return [
             '@context' => ActivityPubActivityInterface::CONTEXT_URL,
             'type' => 'OrderedCollection',
-            'id' => $this->urlGenerator->generate($routeName, $routeParams, UrlGeneratorInterface::ABSOLUTE_URL),
-            'totalItems' => $moderatorsCount,
+            'id' => $this->urlGenerator->generate('ap_object', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL),
+            'totalItems' => \sizeof($items),
             'orderedItems' => $items,
         ];
     }

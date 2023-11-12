@@ -187,20 +187,6 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         return null;
     }
 
-    public function removeUserAsModerator(User $user): void
-    {
-        $user->moderatorTokens->get(-1);
-
-        $criteria = Criteria::create()
-            ->where(Criteria::expr()->eq('magazine', $this));
-
-        foreach ($user->moderatorTokens->matching($criteria) as $item) {
-            /** @var Moderator $mod */
-            $mod = $item;
-            $this->moderators->remove($mod->getId());
-        }
-    }
-
     public function userIsOwner(User $user): bool
     {
         $user->moderatorTokens->get(-1);
@@ -231,6 +217,14 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
             ->where(Criteria::expr()->eq('isOwner', true));
 
         return $this->moderators->matching($criteria)->first()->user;
+    }
+
+    public function getModeratorCount(): int
+    {
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->eq('isOwner', false));
+
+        return $this->moderators->matching($criteria)->count();
     }
 
     public function addEntry(Entry $entry): self
@@ -331,7 +325,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     {
         if (null !== $this->apFollowersCount) {
             $criteria = Criteria::create()
-                ->where(Criteria::expr()->gt('createdAt', $this->apFetchedAt));
+                ->where(Criteria::expr()->gt('createdAt', \DateTimeImmutable::createFromMutable($this->apFetchedAt)));
 
             $newSubscribers = $this->subscriptions->matching($criteria)->count();
             $this->subscriptionsCount = $this->apFollowersCount + $newSubscribers;

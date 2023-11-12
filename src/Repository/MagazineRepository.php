@@ -202,6 +202,10 @@ class MagazineRepository extends ServiceEntityRepository
     ): PagerfantaInterface {
         $criteria = Criteria::create()->orderBy(['createdAt' => 'ASC']);
 
+        if ($magazine->apId) {
+            $criteria->where(Criteria::expr()->eq('isOwner', false));
+        }
+
         $moderators = new Pagerfanta(new SelectableAdapter($magazine->moderators, $criteria));
         try {
             $moderators->setMaxPerPage($perPage);

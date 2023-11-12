@@ -26,6 +26,7 @@ use App\Repository\UserRepository;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\Webfinger\WebFinger;
 use App\Service\ActivityPub\Webfinger\WebFingerFactory;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use League\HTMLToMarkdown\HtmlConverter;
 use Psr\Log\LoggerInterface;
@@ -428,6 +429,8 @@ class ActivityPubManager
                         $items = $attributedObj['orderedItems'];
                     }
 
+                    $this->logger->debug("got moderator items for magazine '$magazine->name': ".json_encode($attributedObj));
+
                     if (null !== $items) {
                         $moderatorsToRemove = [];
                         foreach ($magazine->moderators as /* @var $mod Moderator */ $mod) {
@@ -448,6 +451,7 @@ class ActivityPubManager
                                         }
                                     }
                                     if (!$magazine->userIsModerator($user)) {
+                                        $this->logger->info("adding '$user->username' as moderator in '$magazine->name' because they are a mod upstream, but not locally");
                                         $this->magazineManager->addModerator(new ModeratorDto($magazine, $user, null));
                                     }
                                 }
@@ -462,7 +466,10 @@ class ActivityPubManager
                             if (null === $modToRemove) {
                                 continue;
                             }
-                            $magazine->removeUserAsModerator($modToRemove);
+                            $criteria = Criteria::create()->where(Criteria::expr()->eq('magazine', $magazine));
+                            $modObject = $modToRemove->moderatorTokens->matching($criteria)->first();
+                            $this->logger->info("removing '$modToRemove->username' from '$magazine->name' as mod locally because they are no longer mod upstream");
+                            $this->magazineManager->removeModerator($modObject, null);
                         }
                     } else {
                         $this->logger->warning("could not update the moderators of $actorUrl, the response doesn't have a 'items' or 'orderedItems' property or it is not an array");

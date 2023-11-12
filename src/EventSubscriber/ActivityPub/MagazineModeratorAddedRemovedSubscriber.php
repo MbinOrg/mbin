@@ -20,16 +20,16 @@ class MagazineModeratorAddedRemovedSubscriber implements EventSubscriberInterfac
 
     public function onModeratorAdded(MagazineModeratorAddedEvent $event): void
     {
-        // if the magazine is local then we have authority over it, otherwise the addedBy user has to be defined
-        if (!$event->magazine->apId or null !== $event->addedBy) {
+        // if the magazine is local then we have authority over it, otherwise the addedBy user has to be a local user
+        if (!$event->magazine->apId or (null !== $event->addedBy and !$event->addedBy->apId)) {
             $this->bus->dispatch(new AddMessage($event->addedBy->getId(), $event->magazine->getId(), $event->user->getId()));
         }
     }
 
     public function onModeratorRemoved(MagazineModeratorRemovedEvent $event): void
     {
-        // if the magazine is local then we have authority over it, otherwise the removedBy user has to be defined
-        if (!$event->magazine->apId or null !== $event->removedBy) {
+        // if the magazine is local then we have authority over it, otherwise the removedBy user has to be a local user
+        if (!$event->magazine->apId or (null !== $event->removedBy and !$event->removedBy->apId)) {
             $this->bus->dispatch(new RemoveMessage($event->removedBy->getId(), $event->magazine->getId(), $event->user->getId()));
         }
     }
