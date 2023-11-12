@@ -72,7 +72,7 @@
                            class="thumb">
                             <img class="thumb-subject"
                                  src="{{ asset(comment.image.filePath) |imagine_filter('post_thumb') }}"
-                                 {% if entry.isAdult %}style="filter: blur(8px)"{% endif %}
+                                 {% if comment.isAdult %}style="filter: blur(8px)"{% endif %}
                                  alt="{{ comment.image.altText }}">
                         </a>
                     </figure>
