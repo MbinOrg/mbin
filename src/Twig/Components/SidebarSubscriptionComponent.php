@@ -6,8 +6,9 @@ namespace App\Twig\Components;
 
 use App\Controller\User\ThemeSettingsController;
 use App\Entity\Magazine;
-use App\Entity\MagazineSubscription;
 use App\Entity\User;
+use App\Repository\MagazineRepository;
+use App\Utils\SubscriptionSort;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\PostMount;
 
@@ -25,22 +26,22 @@ class SidebarSubscriptionComponent
 
     public ?string $sort;
 
+    public function __construct(private readonly MagazineRepository $magazineRepository)
+    {
+    }
+
     #[PostMount]
     public function PostMount(): void
     {
         $max = 50;
         $this->magazines = [];
-        foreach ($this->user->subscriptions as /* @type MagazineSubscription $sub */ $sub) {
-            $this->magazines[] = $sub->magazine;
-        }
         if (ThemeSettingsController::ALPHABETICALLY === $this->sort) {
-            usort($this->magazines, fn ($a, $b) => $a->name > $b->name ? 1 : -1);
+            $this->magazines = $this->magazineRepository->findMagazineSubscriptionsOfUser($this->user, SubscriptionSort::Alphabetically, $max);
         } else {
-            usort($this->magazines, fn ($a, $b) => $a->lastActive < $b->lastActive ? 1 : -1);
+            $this->magazines = $this->magazineRepository->findMagazineSubscriptionsOfUser($this->user, SubscriptionSort::LastActive, $max);
         }
-        if (\sizeof($this->magazines) > $max) {
+        if (\sizeof($this->magazines) === $max) {
             $this->tooManyMagazines = true;
         }
-        $this->magazines = \array_slice($this->magazines, 0, $max);
     }
 }
