@@ -14,7 +14,9 @@
                             {% if magazine.icon %}
                                 <figure>
                                     <img width="32" height="32"
+                                         class="{{ magazine.isAdult ? 'image-adult' : '' }}"
                                          src="{{ asset(magazine.icon.filePath) | imagine_filter('avatar_thumb') }}"
+                                         {% if magazine.isAdult %}data-controller="thumb" data-action="mouseover->thumb#adult_image_hover mouseout->thumb#adult_image_hover_out"{% endif %}
                                          alt="{{ magazine.name ~' '~ 'avatar'|trans|lower }}">
                                 </figure>
                             {% endif %}
@@ -76,33 +78,33 @@
                     {% for column in ['threads', 'comments', 'posts', 'hot'] %}
                         <span>
                             <a href="{{ options_url('sortBy', column) }}" class="btn {{ (sortBy is same as column) ? 'btn__primary' : 'btn__secondary' }}">
-                                
+
                                 {% if(column is same as 'hot')%}
                                     {{ 'subscriptions'|trans }}
                                 {% else %}
                                     {{ column|trans }}
                                 {% endif %}
-                                
+
                                 {% if sortBy is same as column %}
                                     <i class="fa-solid fa-sort-amount-desc" aria-sort="descending"></i>
                                 {% endif %}
                             </a>
-                            
+
                         </span>
                     {% endfor %}
                 </div>
                 {% for magazine in magazines %}
                         <div class="magazine">
                             <div class="magazine__top">
-                                <div class="magazine__inline">{{ component('magazine_inline', { magazine: magazine, stretchedLink: true, showAvatar: true, fullName: true}) }}</div>         
-                                <div class="magazine__information">                  
+                                <div class="magazine__inline">{{ component('magazine_inline', { magazine: magazine, stretchedLink: true, showAvatar: true, fullName: true}) }}</div>
+                                <div class="magazine__information">
                                     <span class="magazine__info"><span class="value">{{ magazine.entryCount }}</span><span class="label">{{ 'threads'|trans }}</span></span>
                                     <span class="magazine__info"><span class="value">{{ magazine.entryCommentCount }}</span><span class="label">{{ 'comments'|trans }}</span></span>
                                     <span class="magazine__info"><span class="value">{{ magazine.postCount + magazine.postCommentCount }}</span><span class="label">{{ 'posts'|trans }}</span></span>
                                 </div>
                                 <div class="magazine__sub">{{ component('magazine_sub', {magazine: magazine}) }}</div>
                             </div>
-                            
+
                         </div>
                 {% endfor %}
             </div>
