@@ -15,7 +15,7 @@
 {% block body %}
     <h1>{{ 'moderators'|trans }}</h1>
     <div class="flex">
-        {% if app.user and not magazine.userIsModerator(app.user) %}
+        {% if app.user and not magazine.userIsModerator(app.user) and app.user.visibility is same as 'visible' %}
             <form action="{{ path('magazine_moderator_request', {name: magazine.name}) }}"
                   method="POST"
                   class="float-end mb-2"
