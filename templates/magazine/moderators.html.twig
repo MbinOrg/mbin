@@ -15,7 +15,7 @@
 {% block body %}
     <h1>{{ 'moderators'|trans }}</h1>
     <div class="flex">
-        {% if not app.user or not magazine.userIsModerator(app.user) %}
+        {% if app.user and not magazine.userIsModerator(app.user) and app.user.visibility is same as 'visible' %}
             <form action="{{ path('magazine_moderator_request', {name: magazine.name}) }}"
                   method="POST"
                   class="float-end mb-2"
@@ -31,7 +31,7 @@
                 </button>
             </form>
         {% endif %}
-        {% if not app.user or not magazine.userIsOwner(app.user) and magazine.isAbandoned() %}
+        {% if magazine.isAbandoned() and app.user and not magazine.userIsOwner(app.user) and app.user.visibility is same as 'visible' %}
             <form action="{{ path('magazine_ownership_request', {name: magazine.name}) }}"
                   name="magazine_request_ownership"
                   class="float-end mb-2"
