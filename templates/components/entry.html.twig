@@ -88,6 +88,7 @@
                                rel="{{ get_rel(is_route_name('entry_single') ? entry.url : entry_url(entry)) }}">
                                 <img class="thumb-subject"
                                      src="{{ asset(entry.image.filePath) |imagine_filter('entry_thumb') }}"
+                                     {% if entry.isAdult %}style="filter: blur(8px)"{% endif %}
                                      alt="{{ entry.image.altText }}">
                             </a>
                         </figure>
@@ -100,6 +101,7 @@
                                class="{{ html_classes({'thumb': is_route_name('entry_single')}) }}">
                                 <img class="thumb-subject"
                                      src="{{ asset(entry.image.filePath) |imagine_filter('entry_thumb') }}"
+                                     {% if entry.isAdult %}style="filter: blur(8px)"{% endif %}
                                      alt="{{ entry.image.altText }}">
                             </a>
                         </figure>
