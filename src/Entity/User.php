@@ -461,7 +461,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public function updateFollowCounts(): void
     {
         if (null !== $this->apFollowersCount) {
-            $this->followersCount = $this->apFollowersCount;
+            $criteria = Criteria::create()
+                ->where(Criteria::expr()->gt('createdAt', $this->apFetchedAt));
+
+            $newFollowers = $this->followers->matching($criteria)->count();
+            $this->followersCount = $this->apFollowersCount + $newFollowers;
         } else {
             $this->followersCount = $this->followers->count();
         }

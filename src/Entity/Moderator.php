@@ -29,6 +29,9 @@ class Moderator
     #[ManyToOne(targetEntity: Magazine::class, inversedBy: 'moderators')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public Magazine $magazine;
+    #[ManyToOne(targetEntity: User::class, inversedBy: 'moderatorTokens')]
+    #[JoinColumn(nullable: true)]
+    public ?User $addedByUser;
     #[Column(type: 'boolean', nullable: false)]
     public bool $isOwner = false;
     #[Column(type: 'boolean', nullable: false)]
@@ -38,10 +41,11 @@ class Moderator
     #[Column(type: 'integer')]
     private int $id;
 
-    public function __construct(Magazine $magazine, User $user, $isOwner = false, $isConfirmed = false)
+    public function __construct(Magazine $magazine, User $user, User $addedByUser = null, $isOwner = false, $isConfirmed = false)
     {
         $this->magazine = $magazine;
         $this->user = $user;
+        $this->addedByUser = $addedByUser;
         $this->isOwner = $isOwner;
         $this->isConfirmed = $isConfirmed;
 

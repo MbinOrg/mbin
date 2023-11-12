@@ -15,6 +15,7 @@ use App\Entity\PostComment;
 use App\Entity\Report;
 use App\Entity\User;
 use App\PageView\MagazinePageView;
+use App\Service\SettingsManager;
 use App\Utils\SubscriptionSort;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
@@ -48,7 +49,7 @@ class MagazineRepository extends ServiceEntityRepository
         self::SORT_NEWEST,
     ];
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly SettingsManager $settingsManager)
     {
         parent::__construct($registry, Magazine::class);
     }
@@ -570,5 +571,21 @@ class MagazineRepository extends ServiceEntityRepository
         }
 
         return $pagerfanta;
+    }
+
+    public function getMagazineFromModeratorsUrl($target): ?Magazine
+    {
+        if ($this->settingsManager->isLocalUrl($target)) {
+            $matches = [];
+            if (preg_match_all("/\/m\/([a-zA-Z0-9\-_:]+)\/moderators/", $target, $matches)) {
+                $magName = $matches[1][0];
+
+                return $this->findOneByName($magName);
+            }
+        } else {
+            return $this->findOneBy(['apAttributedToUrl' => $target]);
+        }
+
+        return null;
     }
 }

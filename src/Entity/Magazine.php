@@ -11,6 +11,7 @@ use App\Entity\Traits\ActivityPubActorTrait;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\VisibilityTrait;
 use App\Repository\MagazineRepository;
+use App\Service\MagazineManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -133,11 +134,17 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         $this->badges = new ArrayCollection();
         $this->logs = new ArrayCollection();
 
-        $this->addModerator(new Moderator($this, $user, true, true));
+        $this->addModerator(new Moderator($this, $user, null, true, true));
 
         $this->createdAtTraitConstruct();
     }
 
+    /**
+     * Only use this to add a moderator if you don't want that action to be federated.
+     * If you want this action to be federated, use @see MagazineManager::addModerator().
+     *
+     * @return $this
+     */
     public function addModerator(Moderator $moderator): self
     {
         if (!$this->moderators->contains($moderator)) {
@@ -162,6 +169,22 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
             ->andWhere(Criteria::expr()->eq('isConfirmed', true));
 
         return !$user->moderatorTokens->matching($criteria)->isEmpty();
+    }
+
+    public function getUserAsModeratorOrNull(User $user): ?Moderator
+    {
+        $user->moderatorTokens->get(-1);
+
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->eq('magazine', $this))
+            ->andWhere(Criteria::expr()->eq('isConfirmed', true));
+
+        $col = $user->moderatorTokens->matching($criteria);
+        if (!$col->isEmpty()) {
+            return $col->first();
+        }
+
+        return null;
     }
 
     public function removeUserAsModerator(User $user): void
@@ -307,7 +330,11 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public function updateSubscriptionsCount(): void
     {
         if (null !== $this->apFollowersCount) {
-            $this->subscriptionsCount = $this->apFollowersCount;
+            $criteria = Criteria::create()
+                ->where(Criteria::expr()->gt('createdAt', $this->apFetchedAt));
+
+            $newSubscribers = $this->subscriptions->matching($criteria)->count();
+            $this->subscriptionsCount = $this->apFollowersCount + $newSubscribers;
         } else {
             $this->subscriptionsCount = $this->subscriptions->count();
         }
@@ -430,5 +457,18 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public function getApName(): string
     {
         return $this->name;
+    }
+
+    public function hasSameHostAsUser(User $actor): bool
+    {
+        if (!$actor->apId and !$this->apId) {
+            return true;
+        }
+
+        if ($actor->apId and $this->apId) {
+            return parse_url($actor->apId, PHP_URL_HOST) === parse_url($this->apId, PHP_URL_HOST);
+        }
+
+        return false;
     }
 }

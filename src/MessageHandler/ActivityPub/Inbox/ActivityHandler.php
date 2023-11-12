@@ -6,11 +6,13 @@ namespace App\MessageHandler\ActivityPub\Inbox;
 
 use App\Entity\User;
 use App\Message\ActivityPub\Inbox\ActivityMessage;
+use App\Message\ActivityPub\Inbox\AddMessage;
 use App\Message\ActivityPub\Inbox\AnnounceMessage;
 use App\Message\ActivityPub\Inbox\CreateMessage;
 use App\Message\ActivityPub\Inbox\DeleteMessage;
 use App\Message\ActivityPub\Inbox\FollowMessage;
 use App\Message\ActivityPub\Inbox\LikeMessage;
+use App\Message\ActivityPub\Inbox\RemoveMessage;
 use App\Message\ActivityPub\Inbox\UpdateMessage;
 use App\Service\ActivityPub\SignatureValidator;
 use App\Service\ActivityPubManager;
@@ -107,6 +109,12 @@ readonly class ActivityHandler
                 break;
             case 'Update':
                 $this->bus->dispatch(new UpdateMessage($payload));
+                break;
+            case 'Add':
+                $this->bus->dispatch(new AddMessage($payload));
+                break;
+            case 'Remove':
+                $this->bus->dispatch(new RemoveMessage($payload));
                 break;
         }
     }

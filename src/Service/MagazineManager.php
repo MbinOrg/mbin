@@ -16,6 +16,8 @@ use App\Entity\ModeratorRequest;
 use App\Entity\User;
 use App\Event\Magazine\MagazineBanEvent;
 use App\Event\Magazine\MagazineBlockedEvent;
+use App\Event\Magazine\MagazineModeratorAddedEvent;
+use App\Event\Magazine\MagazineModeratorRemovedEvent;
 use App\Event\Magazine\MagazineSubscribedEvent;
 use App\Factory\MagazineFactory;
 use App\Message\DeleteImageMessage;
@@ -222,11 +224,12 @@ class MagazineManager
     {
         $magazine = $dto->magazine;
 
-        $magazine->addModerator(new Moderator($magazine, $dto->user, $isOwner, true));
+        $magazine->addModerator(new Moderator($magazine, $dto->user, $dto->addedBy, $isOwner, true));
 
         $this->entityManager->flush();
 
         $this->clearCommentsCache($dto->user);
+        $this->dispatcher->dispatch(new MagazineModeratorAddedEvent($magazine, $dto->user, $dto->addedBy));
     }
 
     private function clearCommentsCache(User $user)
@@ -245,6 +248,7 @@ class MagazineManager
         $this->entityManager->flush();
 
         $this->clearCommentsCache($user);
+        $this->dispatcher->dispatch(new MagazineModeratorRemovedEvent($moderator->magazine, $moderator->user, $moderator->addedByUser));
     }
 
     public function changeTheme(MagazineThemeDto $dto): Magazine
@@ -323,11 +327,11 @@ class MagazineManager
         $this->entityManager->flush();
     }
 
-    public function acceptOwnershipRequest(Magazine $magazine, User $user): void
+    public function acceptOwnershipRequest(Magazine $magazine, User $user, ?User $addedBy): void
     {
         $this->removeModerator($magazine->getOwnerModerator());
 
-        $this->addModerator(new ModeratorDto($magazine, $user), true);
+        $this->addModerator(new ModeratorDto($magazine, $user, $addedBy), true);
 
         $request = $this->entityManager->getRepository(MagazineOwnershipRequest::class)->findOneBy([
             'magazine' => $magazine,
@@ -358,9 +362,9 @@ class MagazineManager
         $this->entityManager->flush();
     }
 
-    public function acceptModeratorRequest(Magazine $magazine, User $user): void
+    public function acceptModeratorRequest(Magazine $magazine, User $user, ?User $addedBy): void
     {
-        $this->addModerator(new ModeratorDto($magazine, $user));
+        $this->addModerator(new ModeratorDto($magazine, $user, $addedBy));
 
         $request = $this->entityManager->getRepository(ModeratorRequest::class)->findOneBy([
             'magazine' => $magazine,

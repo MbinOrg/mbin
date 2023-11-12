@@ -7,6 +7,7 @@ namespace App\Service;
 use App\ActivityPub\Server;
 use App\DTO\ActivityPub\ImageDto;
 use App\DTO\ActivityPub\VideoDto;
+use App\DTO\ModeratorDto;
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Contracts\ActivityPubActorInterface;
 use App\Entity\Image;
@@ -180,6 +181,21 @@ class ActivityPubManager
         }
 
         return null;
+    }
+
+    /**
+     * @throws \LogicException when the returned actor is not a user or is null
+     */
+    public function findUserActorOrCreateOrThrow(string $actorUrlOrHandle): User
+    {
+        $object = $this->findActorOrCreate($actorUrlOrHandle);
+        if (!$object) {
+            throw new \LogicException("could not find actor for 'object' property at: '$actorUrlOrHandle'");
+        } elseif (!$object instanceof User) {
+            throw new \LogicException("could not find user actor for 'object' property at: '$actorUrlOrHandle'");
+        }
+
+        return $object;
     }
 
     public function webfinger(string $id): WebFinger
@@ -432,7 +448,7 @@ class ActivityPubManager
                                         }
                                     }
                                     if (!$magazine->userIsModerator($user)) {
-                                        $magazine->addModerator(new Moderator($magazine, $user, false, true));
+                                        $this->magazineManager->addModerator(new ModeratorDto($magazine, $user, null));
                                     }
                                 }
                             }

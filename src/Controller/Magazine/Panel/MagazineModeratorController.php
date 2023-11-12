@@ -34,6 +34,7 @@ class MagazineModeratorController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $dto->addedBy = $this->getUserOrThrow();
             $this->manager->addModerator($dto);
         }
 
