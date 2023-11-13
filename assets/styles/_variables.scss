@@ -15,7 +15,7 @@ $aspect-ratios: (
 ) !default;
 
 :root {
-  --kbin-body-font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --kbin-body-font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --kbin-body-font-size: 1rem;
   --kbin-body-font-weight: 400;
   --kbin-body-line-height: 1.5;
@@ -128,7 +128,7 @@ $aspect-ratios: (
   --kbin-vote-text-hover-color: #000;
   --kbin-upvoted-color: #0f5132;
   --kbin-downvoted-color: #842029;
-  
+
   //boost
   --kbin-boosted-color: var(--kbin-upvoted-color);
 
@@ -161,4 +161,3 @@ $aspect-ratios: (
   --kbin-font-awesome-font-family: "Font Awesome 6 Free";
 
 }
-
