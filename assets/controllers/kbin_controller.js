@@ -12,7 +12,6 @@ export default class extends ApplicationController {
         useDebounce(this, {wait: 800})
         this.handleDropdowns();
         this.handleOptionsBarScroll();
-        this.handleDefaultTheme();
     }
 
     handleDropdowns() {
@@ -47,27 +46,11 @@ export default class extends ApplicationController {
         }
     }
 
-    handleDefaultTheme() {
-        if (!document.querySelector('body').classList.contains('theme--default')) {
-            return;
-        }
-
-        let preferredTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-
-        const now = new Date();
-        const expireTime = now.getTime() + 60 * 60 * 1000;
-        const expireDate = new Date(expireTime).toUTCString();
-        document.cookie = `kbin_theme=${preferredTheme}; expires=${expireDate}; path=/`;
-
-        document.querySelector('body').classList.remove('theme--default');
-        document.querySelector('body').classList.add(`theme--${preferredTheme}`);
-    }
-
     /**
      * Handles interaction with the mobile nav button, opening the sidebar
-     * @param {*} e 
+     * @param {*} e
      */
-    handleNavToggleClick(e) {      
+    handleNavToggleClick(e) {
         const sidebar = document.getElementById('sidebar');
         sidebar.classList.toggle('open');
     }
