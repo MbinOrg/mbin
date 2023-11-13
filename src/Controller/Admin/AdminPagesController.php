@@ -23,7 +23,7 @@ class AdminPagesController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    public function __invoke(Request $request, ?string $page = 'about'): Response
+    public function __invoke(Request $request, ?string $page = 'announcement'): Response
     {
         $entity = $this->repository->findAll();
         if (!\count($entity)) {
@@ -33,7 +33,16 @@ class AdminPagesController extends AbstractController
         }
 
         $form = $this->createForm(PageType::class, (new PageDto())->create($entity->{$page} ?? ''));
-        $form->handleRequest($request);
+
+        try {
+            $form->handleRequest($request);
+        } catch (\Exception $e) {
+            $entity->{$page} = '';
+            $this->entityManager->persist($entity);
+            $this->entityManager->flush();
+
+            return $this->redirectToRefererOrHome($request);
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entity->{$page} = $form->getData()->body;
