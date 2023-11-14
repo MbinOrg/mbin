@@ -29,6 +29,8 @@
                     <span class="user-badge">{{ 'user_badge_global_moderator'|trans }}</span>
                 {% elseif comment.magazine.userIsModerator(comment.user) %}
                     <span class="user-badge">{{ 'user_badge_moderator'|trans }}</span>
+                {% elseif (comment.user.type) == "Service" %}
+                    <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
                 {% endif %}
                 <span>, </span>
 
