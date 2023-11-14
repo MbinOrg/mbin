@@ -23,11 +23,13 @@ class UserReportsController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function __invoke(MagazineRepository $repository, Request $request, string $status): Response
     {
-        $reports = $this->repository->findByUserPaginated($this->getUserOrThrow(), $this->getPageNb($request), status: $status);
+        $user = $this->getUserOrThrow();
+        $reports = $this->repository->findByUserPaginated($user, $this->getPageNb($request), status: $status);
 
         return $this->render(
             'user/settings/reports.html.twig',
             [
+                'user' => $user,
                 'reports' => $reports,
             ]
         );

@@ -93,6 +93,16 @@ jobs:
           SYMFONY_DEPRECATIONS_HELPER: disabled
         run: php bin/phpunit tests/Unit
 
+  security-check:
+    runs-on: ubuntu-latest
+    container:
+      image: danger89/mbin-pipeline:1.0.0
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run security checker
+        run: local-php-security-checker
+
   fixer-dry-run:
     runs-on: ubuntu-latest
     container:

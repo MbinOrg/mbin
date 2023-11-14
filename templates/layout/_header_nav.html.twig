@@ -13,7 +13,7 @@
     </li>
     <li>
         <a href="{{ navbar_people_url(magazine ?? null) }}"
-           class="{{ html_classes({'active': is_route_name_contains('people') or user is defined and not is_route_name_contains('messages')}) }}">
+           class="{{ html_classes({'active': (is_route_name_contains('people') or is_route_name_starts_with('user')) and not is_route_name_contains('settings') }) }}">
             {{ 'people'|trans }}
         </a>
     </li>
@@ -26,8 +26,5 @@
         </li>
     {% endif %}
 {% else %}
-    <li>
-        {% include 'layout/_header_bread.html.twig' %}
-    </li>
     {{ header_nav|raw }}
 {% endif %}

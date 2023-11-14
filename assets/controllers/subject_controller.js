@@ -36,9 +36,8 @@ export default class extends Controller {
         }
 
         this.checkHeight();
-        this.handleAdultThumbs()
     }
-    
+
     async getForm(event) {
         event.preventDefault();
 
@@ -74,7 +73,7 @@ export default class extends Controller {
                         textarea.selectionEnd = firstLineEnd + 1;
                     }
                 }
-                
+
                 textarea.focus();
             }
         } catch (e) {
@@ -407,23 +406,6 @@ export default class extends Controller {
     expand() {
         if (!this.isExpandedValue) {
             this.moreBtn.click();
-        }
-    }
-
-    handleAdultThumbs() {
-        // @todo temporary fix
-        const adultBadge = this.element.querySelector('.danger');
-        if (adultBadge && (adultBadge.textContent.includes('18') || adultBadge.textContent.toLowerCase().includes('nsfw'))) {
-            const image = this.element.querySelector('.thumb-subject');
-            if (image) {
-                image.style.filter = 'blur(8px)';
-                image.addEventListener('mouseenter', () => {
-                    image.style.filter = 'none';
-                });
-                image.addEventListener('mouseleave', () => {
-                    image.style.filter = 'blur(8px)';
-                });
-            }
         }
     }
 }

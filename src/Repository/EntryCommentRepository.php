@@ -79,7 +79,8 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
         $qb = $this->createQueryBuilder('c')
             ->select('c', 'u')
             ->join('c.user', 'u')
-            ->andWhere('c.visibility IN (:visibility)');
+            ->andWhere('c.visibility IN (:visibility)')
+            ->andWhere('u.visibility IN (:visible)');
 
         if ($user && VisibilityInterface::VISIBILITY_VISIBLE === $criteria->visibility) {
             $qb->orWhere(
@@ -96,7 +97,8 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
                 VisibilityInterface::VISIBILITY_VISIBLE,
                 VisibilityInterface::VISIBILITY_TRASHED,
             ]
-        );
+        )
+            ->setParameter('visible', VisibilityInterface::VISIBILITY_VISIBLE);
 
         $this->addTimeClause($qb, $criteria);
         $this->filter($qb, $criteria);
@@ -225,7 +227,7 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
                 $qb->orderBy('c.upVotes', 'DESC');
                 break;
             case Criteria::SORT_TOP:
-                $qb->orderBy('c.favouriteCount - c.downVotes', 'DESC');
+                $qb->orderBy('c.upVotes + c.favouriteCount - c.downVotes', 'DESC');
                 break;
             case Criteria::SORT_ACTIVE:
                 $qb->orderBy('c.lastActive', 'DESC');

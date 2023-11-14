@@ -1,8 +1,8 @@
 # Mbin
 
-Mbin is a fork of kbin, community-focused. Feel free to discuss on [Matrix](https://matrix.to/#/#mbin:melroy.org) and to create Pull Requests.
+Mbin is a fork of [/kbin](https://codeberg.org/Kbin/kbin-core), community-focused. Feel free to discuss on [Matrix](https://matrix.to/#/#mbin:melroy.org) and to create Pull Requests.
 
-**Important:** Mbin is focused on what the community wants, pull requests can be merged by any repo member. Discussions take place on [Matrix](https://matrix.to/#/#mbin:melroy.org) then _consensus_ has to be reached by the community. If approved by the community, no additional reviews are required on the PR. It's built entirely on trust.
+**Important:** Mbin is focused on what the community wants, pull requests can be merged by any repo owner (with merge rights in GitHub). Discussions take place on [Matrix](https://matrix.to/#/#mbin:melroy.org) then _consensus_ has to be reached by the community. If approved by the community, only one approval on the PR is required by one of the Mbin maintainers. It's built entirely on trust.
 
 Mbin is a decentralized content aggregator, voting, discussion and microblogging platform running on the fediverse network. It can
 communicate with many other ActivityPub services, including Kbin, Mastodon, Lemmy, Pleroma, Peertube. The initiative aims to
@@ -10,22 +10,23 @@ promote a free and open internet.
 
 Unique Features of Mbin for server owners & users alike:
 
-- Tons of **[GUI improvements](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Aclosed+label%3Afrontend)**
+- Tons of **[GUI improvements](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Amerged+label%3Afrontend)**
+- A lot of **[enhancements](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Amerged+label%3Aenhancement)**
+- Various **[bug fixes](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Amerged+label%3Abug)**
 - Support of **all** ActivityPub Actor Types (including also "Service" account support; thus support for robot accounts)
-- Various **[bug fixes](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Aclosed+label%3Abug)**
 - **Up-to-date** PHP packages and **security/vulnerability** issues fixed
 - Support for `application/json` Accept request header on all ActivityPub end-points
 - Easy migration path from Kbin to Mbin (see "Migrating?" below)
 - Introducing a [FAQ](FAQ.md) page
 
-See also: [all closed PRs](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Aclosed) or [our releases](https://github.com/MbinOrg/mbin/releases).
+See also: [all merged PRs](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Amerged) or [our releases](https://github.com/MbinOrg/mbin/releases).
 
 For developers:
 
 - Improved [bare metal/VM guide](docs/admin_guide.md) and [Docker guide](docs/docker_deployment_guide.md)
-- [Improved Docker setup](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Aclosed+label%3Adocker+)
+- [Improved Docker setup](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Amerged+label%3Adocker)
 - _Developer_ server explained (see "Developers" section down below)
-- GitHub Security advisories, vulnerability reporting, Dependabot and Advanced code scanning enabled
+- GitHub Security advisories, vulnerability reporting, [Dependabot](https://github.com/features/security) and [Advanced code scanning](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning) enabled. And we run [`local-php-security-checker`](https://github.com/fabpot/local-php-security-checker).
 - Improved **code documentation**
 - **Tight integration** with [Mbin Weblate project](https://hosted.weblate.org/projects/mbin/kbin/) for translations (Two way sync)
 - Last but not least, a **community-focus project embracing the Collective Code Construction Contract** (C4). No single maintainer.
@@ -55,11 +56,15 @@ For developers:
 If you want to migrate from Kbin to Mbin (on bare metal), just follow the easy steps below (default branch is `main`):
 
 ```bash
+# How to your current setup folder
 cd /var/www/your-instance
+# Override the git remote
 git remote set-url origin https://github.com/MbinOrg/mbin.git
+# Fetch the latest changes and move to the main branch
 git fetch
 git checkout main
 
+# Execute post upgrade script after migration/update
 ./bin/post-upgrade
 ```
 
@@ -158,7 +163,7 @@ Starting the server:
 
 1. Install Symfony CLI: `wget https://get.symfony.com/cli/installer -O - | bash`
 2. Check the requirements: `symfony check:requirements`
-3. Install depedencies: `composer install`
+3. Install dependencies: `composer install`
 4. Dump `.env` into `.env.local.php` via: `composer dump-env dev`
 5. _Optionally:_ Increase verbosity log level in: `config/packages/monolog.yaml` in the `when@dev` section: `level: debug` (instead of `level: info`),
 6. Clear cache: `APP_ENV=dev APP_DEBUG=1 php bin/console cache:clear -n`
@@ -214,13 +219,15 @@ Following languages are currently supported/translated:
 - Japanese
 - Dutch
 - Polish
+- Ukrainian
 - Turkish
 - Chinese
 
 ## Credits
 
 - [grumpyDev](https://karab.in/u/grumpyDev): icons, kbin-theme
-- [Ernest](https://codeberg.org/ernest): Kbin
+- [Emma](https://gitlab.com/postmill/Postmill): Postmill
+- [Ernest](https://github.com/ernestwisniewski): Kbin
 
 ## License
 

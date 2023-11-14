@@ -50,6 +50,7 @@ class PostFrontController extends AbstractController
         return $this->render(
             'post/front.html.twig',
             [
+                'user' => $user,
                 'posts' => $posts,
                 'form' => $this->createForm(PostType::class)->setData(new PostDto())->createView(),
             ]
@@ -89,6 +90,7 @@ class PostFrontController extends AbstractController
         return $this->render(
             'post/front.html.twig',
             [
+                'user' => $user,
                 'posts' => $posts,
                 'form' => $this->createForm(PostType::class)->setData(new PostDto())->createView(),
             ]
@@ -98,6 +100,8 @@ class PostFrontController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function moderated(?string $sortBy, ?string $time, PostRepository $repository, Request $request): Response
     {
+        $user = $this->getUserOrThrow();
+
         $criteria = new PostPageView($this->getPageNb($request));
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setFederation('false' === $request->cookies->get(ThemeSettingsController::KBIN_FEDERATION_ENABLED, true) ? Criteria::AP_LOCAL : Criteria::AP_ALL)
@@ -124,6 +128,7 @@ class PostFrontController extends AbstractController
         return $this->render(
             'post/front.html.twig',
             [
+                'user' => $user,
                 'posts' => $posts,
                 'form' => $this->createForm(PostType::class)->setData(new PostDto())->createView(),
             ]
@@ -133,6 +138,8 @@ class PostFrontController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function favourite(?string $sortBy, ?string $time, PostRepository $repository, Request $request): Response
     {
+        $user = $this->getUserOrThrow();
+
         $criteria = new PostPageView($this->getPageNb($request));
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setFederation('false' === $request->cookies->get(ThemeSettingsController::KBIN_FEDERATION_ENABLED, true) ? Criteria::AP_LOCAL : Criteria::AP_ALL)
@@ -159,6 +166,7 @@ class PostFrontController extends AbstractController
         return $this->render(
             'post/front.html.twig',
             [
+                'user' => $user,
                 'posts' => $posts,
                 'form' => $this->createForm(PostType::class)->setData(new PostDto())->createView(),
             ]
@@ -211,6 +219,7 @@ class PostFrontController extends AbstractController
         return $this->render(
             'post/front.html.twig',
             [
+                'user' => $user,
                 'magazine' => $magazine,
                 'posts' => $posts,
                 'form' => $this->createForm(PostType::class)->setData($dto)->createView(),

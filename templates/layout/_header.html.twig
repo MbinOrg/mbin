@@ -21,6 +21,9 @@
                 </a>
             </div>
             <menu class="head-nav__menu">
+                <li>
+                    {% include 'layout/_header_bread.html.twig' %}
+                </li>
                 {% include 'layout/_header_nav.html.twig' %}
             </menu>
         </nav>
@@ -180,6 +183,14 @@
                                 <a href="{{ path('admin_dashboard') }}"
                                    class="{{ html_classes({'active': is_route_name_starts_with('admin')}) }}">
                                     {{ 'admin_panel'|trans }}
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if is_granted('ROLE_MODERATOR') %}
+                            <li>
+                                <a href="{{ path('admin_reports') }}"
+                                   class="{{ html_classes({'active': is_route_name_starts_with('admin')}) }}">
+                                    {{ 'reports'|trans }}
                                 </a>
                             </li>
                         {% endif %}

@@ -17,12 +17,15 @@ class UserSubController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function magazines(MagazineRepository $repository, Request $request): Response
     {
+        $user = $this->getUserOrThrow();
+
         return $this->render(
             'user/settings/sub_magazines.html.twig',
             [
+                'user' => $user,
                 'magazines' => $repository->findSubscribedMagazines(
                     $this->getPageNb($request),
-                    $this->getUserOrThrow()
+                    $user
                 ),
             ]
         );
@@ -31,10 +34,13 @@ class UserSubController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function users(UserRepository $repository, Request $request): Response
     {
+        $user = $this->getUserOrThrow();
+
         return $this->render(
             'user/settings/sub_users.html.twig',
             [
-                'users' => $repository->findFollowing($this->getPageNb($request), $this->getUserOrThrow()),
+                'user' => $user,
+                'users' => $repository->findFollowing($this->getPageNb($request), $user),
             ]
         );
     }
@@ -42,10 +48,13 @@ class UserSubController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function domains(DomainRepository $repository, Request $request): Response
     {
+        $user = $this->getUserOrThrow();
+
         return $this->render(
             'user/settings/sub_domains.html.twig',
             [
-                'domains' => $repository->findSubscribedDomains($this->getPageNb($request), $this->getUserOrThrow()),
+                'user' => $user,
+                'domains' => $repository->findSubscribedDomains($this->getPageNb($request), $user),
             ]
         );
     }

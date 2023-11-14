@@ -14,7 +14,8 @@
 
 {% block body %}
     {% include 'magazine/panel/_options.html.twig' %}
-
+    {% include 'magazine/_visibility_info.html.twig' %}
+    
     <h1 hidden>{{ 'general'|trans }}</h1>
     {% include 'layout/_flash.html.twig' %}
     <div id="content" class="section theme">
@@ -44,6 +45,61 @@
                 {{ form_row(form.submit, { 'label': 'done'|trans, 'attr': {'class': 'btn btn__primary'} }) }}
             </div>
             {{ form_end(form) }}
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <h2>{{ 'magazine_deletion'|trans }}</h2>
+            <div>
+                <div class="mb-2">
+                    {% if magazine.visibility is same as 'visible' %}
+                        <form action="{{ path('magazine_delete', {name: magazine.name}) }}" method="POST"
+                              onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                            <input type="hidden" name="token" value="{{ csrf_token('magazine_delete') }}">
+                            <button type="submit" class="btn btn__primary">
+                                <i class="fa-solid fa-dumpster"></i> <span>{{ 'delete_magazine'|trans }}</span>
+                            </button>
+                        </form>
+                    {% else %}
+                        <form action="{{ path('magazine_restore', {name: magazine.name}) }}" method="POST"
+                              onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                            <input type="hidden" name="token" value="{{ csrf_token('magazine_restore') }}">
+                            <button type="submit" class="btn btn__primary">
+                                <i class="fa-solid fa-dumpster"></i> <span>{{ 'restore_magazine'|trans }}</span>
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+                <div class="mb-2">
+                    <form action="{{ path('magazine_remove_subscriptions', {name: magazine.name}) }}" method="POST"
+                          onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                        <input type="hidden" name="token" value="{{ csrf_token('magazine_remove_subscriptions') }}">
+                        <button type="submit" class="btn btn__danger">
+                            <i class="fa-solid fa-users-slash"></i> <span>{{ 'remove_subscriptions'|trans }}</span>
+                        </button>
+                    </form>
+                </div>
+                {% if is_granted('purge', magazine) %}
+                    <div class="mb-2">
+                        <form action="{{ path('magazine_purge_content', {name: magazine.name}) }}" method="POST"
+                              onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                            <input type="hidden" name="token" value="{{ csrf_token('magazine_purge_content') }}">
+                            <button type="submit" class="btn btn__danger">
+                                <i class="fa-solid fa-dumpster"></i> <span>{{ 'purge_content'|trans }}</span>
+                            </button>
+                        </form>
+                    </div>
+                    <div>
+                        <form action="{{ path('magazine_purge', {name: magazine.name}) }}" method="POST"
+                              onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                            <input type="hidden" name="token" value="{{ csrf_token('magazine_purge') }}">
+                            <button type="submit" class="btn btn__danger">
+                                <i class="fa-solid fa-dumpster-fire"></i> <span>{{ 'purge_magazine'|trans }}</span>
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
         </div>
     </div>
 {% endblock %}

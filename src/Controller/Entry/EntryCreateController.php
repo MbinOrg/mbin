@@ -36,6 +36,7 @@ class EntryCreateController extends AbstractController
     {
         $dto = new EntryDto();
         $dto->magazine = $magazine;
+        $user = $this->getUserOrThrow();
 
         $form = $this->createFormByType((new EntryPageView(1))->resolveType($type), $dto);
         try {
@@ -64,6 +65,7 @@ class EntryCreateController extends AbstractController
                 $this->getTemplateName((new EntryPageView(1))->resolveType($type)),
                 [
                     'magazine' => $magazine,
+                    'user' => $user,
                     'form' => $form->createView(),
                 ],
                 new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200)
@@ -76,6 +78,7 @@ class EntryCreateController extends AbstractController
                 $this->getTemplateName((new EntryPageView(1))->resolveType($type)),
                 [
                     'magazine' => $magazine,
+                    'user' => $user,
                     'form' => $form->createView(),
                 ],
                 new Response(null, 422)

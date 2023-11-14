@@ -76,11 +76,13 @@ class EntryCommentCreateController extends AbstractController
             );
         }
 
+        $user = $this->getUserOrThrow();
         $criteria = new EntryCommentPageView($this->getPageNb($request));
         $criteria->entry = $entry;
 
         return $this->getEntryCommentPageResponse(
             'entry/comment/create.html.twig',
+            $user,
             $criteria,
             $form,
             $request,

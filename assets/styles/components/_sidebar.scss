@@ -1,4 +1,5 @@
-#sidebar {
+#sidebar,
+.sidebar-subscriptions {
   font-size: .85rem;
   opacity: 1;
   padding-bottom: 1rem;
@@ -172,10 +173,6 @@
 
       &:first-child {
         border-top: var(--kbin-meta-border);
-      }
-
-      span {
-        color: var(--kbin-meta-text-color);
       }
 
       a {

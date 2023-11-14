@@ -20,7 +20,23 @@
                 data-action="notifications:Notification@window->subject#notification">
             <header>
                 {% if comment.isAdult %}<span class="badge danger">18+</span>{% endif %}
-                {{ component('user_inline', {user: comment.user, showAvatar: false}) }},
+                {{ component('user_inline', {user: comment.user, showAvatar: false}) }}
+
+                {% if comment.post.user.id() is same as comment.user.id() %}
+                    <span class="user-badge">{{ 'user_badge_op'|trans }}</span>
+                {% endif %}
+
+                {% if comment.user.admin() %}
+                    <span class="user-badge">{{ 'user_badge_admin'|trans }}</span>
+                {% elseif comment.user.moderator() %}
+                    <span class="user-badge">{{ 'user_badge_global_moderator'|trans }}</span>
+                {% elseif comment.magazine.userIsModerator(comment.user) %}
+                    <span class="user-badge">{{ 'user_badge_moderator'|trans }}</span>
+                {% elseif (comment.user.type) == "Service" %}
+                    <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
+                {% endif %}
+                <span>, </span>
+
                 {% if dateAsUrl %}
                     <a href="{{ post_url(comment.post) ~ '#post-comment-' ~ comment.id }}"
                        class="link-muted">{{ component('date', {date: comment.createdAt}) }}</a>
@@ -58,8 +74,9 @@
                     <figure>
                         <a href="{{ uploaded_asset(comment.image.filePath) }}"
                            class="thumb">
-                            <img class="thumb-subject"
+                            <img class="thumb-subject {{ comment.isAdult ? 'image-adult' : '' }}"
                                  src="{{ asset(comment.image.filePath) |imagine_filter('post_thumb') }}"
+                                 {% if comment.isAdult %}data-controller="thumb" data-action="mouseover->thumb#adult_image_hover mouseout->thumb#adult_image_hover_out"{% endif %}
                                  alt="{{ comment.image.altText }}">
                         </a>
                     </figure>

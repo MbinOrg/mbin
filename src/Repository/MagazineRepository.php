@@ -15,6 +15,7 @@ use App\Entity\PostComment;
 use App\Entity\Report;
 use App\Entity\User;
 use App\PageView\MagazinePageView;
+use App\Utils\SubscriptionSort;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -64,9 +65,7 @@ class MagazineRepository extends ServiceEntityRepository
     public function findOneByName(?string $name): ?Magazine
     {
         return $this->createQueryBuilder('m')
-            ->andWhere('m.visibility = :visibility')
             ->andWhere('LOWER(m.name) = LOWER(:name)')
-            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->setParameter('name', $name)
             ->getQuery()
             ->getOneOrNullResult();
@@ -76,8 +75,7 @@ class MagazineRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('m')
             ->andWhere('m.visibility = :visibility')
-            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
-        ;
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
 
         if ($criteria->query) {
             $restrictions = 'LOWER(m.name) LIKE LOWER(:q) OR LOWER(m.title) LIKE LOWER(:q)';
@@ -139,6 +137,45 @@ class MagazineRepository extends ServiceEntityRepository
         return $pagerfanta;
     }
 
+    /**
+     * @return Magazine[]
+     */
+    public function findMagazineSubscriptionsOfUser(User $user, SubscriptionSort $sort, int $max): array
+    {
+        $query = $this->createQueryBuilder('m')
+            ->join('m.subscriptions', 'ms')
+            ->join('ms.user', 'u')
+            ->andWhere('u.id = :userId')
+            ->setParameter('userId', $user->getId());
+
+        if (SubscriptionSort::LastActive === $sort) {
+            $query = $query
+                ->orderBy('m.lastActive', 'DESC')
+                ->andWhere('m.lastActive IS NOT NULL');
+        } elseif (SubscriptionSort::Alphabetically === $sort) {
+            $query = $query->orderBy('m.name');
+        }
+
+        $query = $query->getQuery();
+        $query->setMaxResults($max);
+
+        $goodResults = $query->getResult();
+        $remaining = $max - \sizeof($goodResults);
+        if ($remaining > 0) {
+            $query = $this->createQueryBuilder('m')
+                ->join('m.subscriptions', 'ms')
+                ->join('ms.user', 'u')
+                ->andWhere('u.id = :userId')
+                ->andWhere('m.lastActive IS NULL')
+                ->setParameter('userId', $user->getId())
+                ->setMaxResults($remaining);
+            $additionalResults = $query->getQuery()->getResult();
+            $goodResults = array_merge($goodResults, $additionalResults);
+        }
+
+        return $goodResults;
+    }
+
     public function findBlockedMagazines(int $page, User $user, int $perPage = self::PER_PAGE): PagerfantaInterface
     {
         $pagerfanta = new Pagerfanta(
@@ -157,8 +194,11 @@ class MagazineRepository extends ServiceEntityRepository
         return $pagerfanta;
     }
 
-    public function findModerators(Magazine $magazine, ?int $page = 1, int $perPage = self::PER_PAGE): PagerfantaInterface
-    {
+    public function findModerators(
+        Magazine $magazine,
+        ?int $page = 1,
+        int $perPage = self::PER_PAGE
+    ): PagerfantaInterface {
         $criteria = Criteria::create()->orderBy(['createdAt' => 'ASC']);
 
         $moderators = new Pagerfanta(new SelectableAdapter($magazine->moderators, $criteria));
@@ -246,8 +286,11 @@ class MagazineRepository extends ServiceEntityRepository
         return $magazine->badges;
     }
 
-    public function findModeratedMagazines(User $user, ?int $page = 1, int $perPage = self::PER_PAGE): PagerfantaInterface
-    {
+    public function findModeratedMagazines(
+        User $user,
+        ?int $page = 1,
+        int $perPage = self::PER_PAGE
+    ): PagerfantaInterface {
         $dql =
             'SELECT m FROM '.Magazine::class.' m WHERE m IN ('.
             'SELECT IDENTITY(md.magazine) FROM '.Moderator::class.' md WHERE md.user = :user) ORDER BY m.apId DESC, m.lastActive DESC';
@@ -474,5 +517,58 @@ class MagazineRepository extends ServiceEntityRepository
             ->setMaxResults(1000)
             ->getQuery()
             ->getResult();
+    }
+
+    public function findForDeletionPaginated(int $page): PagerfantaInterface
+    {
+        $query = $this->createQueryBuilder('m')
+            ->where('m.apId IS NULL')
+            ->andWhere('m.visibility = :visibility')
+            ->orderBy('m.markedForDeletionAt', 'ASC')
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_SOFT_DELETED)
+            ->getQuery();
+
+        $pagerfanta = new Pagerfanta(
+            new QueryAdapter(
+                $query
+            )
+        );
+
+        try {
+            $pagerfanta->setMaxPerPage(self::PER_PAGE);
+            $pagerfanta->setCurrentPage($page);
+        } catch (NotValidCurrentPageException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return $pagerfanta;
+    }
+
+    public function findAbandoned(int $page = 1): PagerfantaInterface
+    {
+        $query = $this->createQueryBuilder('m')
+            ->where('mod.magazine IS NOT NULL')
+            ->andWhere('mod.isOwner = true')
+            ->andWhere('u.lastActive < :date')
+            ->join('m.moderators', 'mod')
+            ->join('mod.user', 'u')
+            ->setParameter('date', new \DateTime('-1 month'))
+            ->orderBy('u.lastActive', 'ASC')
+            ->getQuery();
+
+        $pagerfanta = new Pagerfanta(
+            new QueryAdapter(
+                $query
+            )
+        );
+
+        try {
+            $pagerfanta->setMaxPerPage(self::PER_PAGE);
+            $pagerfanta->setCurrentPage($page);
+        } catch (NotValidCurrentPageException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return $pagerfanta;
     }
 }

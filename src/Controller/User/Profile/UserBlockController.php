@@ -17,10 +17,13 @@ class UserBlockController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function magazines(MagazineRepository $repository, Request $request): Response
     {
+        $user = $this->getUserOrThrow();
+
         return $this->render(
             'user/settings/block_magazines.html.twig',
             [
-                'magazines' => $repository->findBlockedMagazines($this->getPageNb($request), $this->getUserOrThrow()),
+                'user' => $user,
+                'magazines' => $repository->findBlockedMagazines($this->getPageNb($request), $user),
             ]
         );
     }
@@ -28,10 +31,13 @@ class UserBlockController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function users(UserRepository $repository, Request $request): Response
     {
+        $user = $this->getUserOrThrow();
+
         return $this->render(
             'user/settings/block_users.html.twig',
             [
-                'users' => $repository->findBlockedUsers($this->getPageNb($request), $this->getUserOrThrow()),
+                'user' => $user,
+                'users' => $repository->findBlockedUsers($this->getPageNb($request), $user),
             ]
         );
     }
@@ -39,10 +45,13 @@ class UserBlockController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function domains(DomainRepository $repository, Request $request): Response
     {
+        $user = $this->getUserOrThrow();
+
         return $this->render(
             'user/settings/block_domains.html.twig',
             [
-                'domains' => $repository->findBlockedDomains($this->getPageNb($request), $this->getUserOrThrow()),
+                'user' => $user,
+                'domains' => $repository->findBlockedDomains($this->getPageNb($request), $user),
             ]
         );
     }

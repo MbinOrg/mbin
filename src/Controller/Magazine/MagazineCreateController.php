@@ -25,6 +25,7 @@ class MagazineCreateController extends AbstractController
     {
         $form = $this->createForm(MagazineType::class);
         $form->handleRequest($request);
+        $user = $this->getUserOrThrow();
 
         if ($form->isSubmitted() && $form->isValid()) {
             $dto = $form->getData();
@@ -39,6 +40,7 @@ class MagazineCreateController extends AbstractController
         return $this->render(
             'magazine/create.html.twig',
             [
+                'user' => $user,
                 'form' => $form->createView(),
             ],
             new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200)

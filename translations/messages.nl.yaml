@@ -634,9 +634,11 @@ oauth2.grant.moderate.magazine_admin.badges: Maak of verwijder badges uit uw eig
 oauth2.grant.moderate.magazine_admin.tags: Maak of verwijder tags uit uw eigen tijdschriften.
 oauth2.grant.moderate.magazine_admin.stats: Bekijk de inhoud, stem en bekijk statistieken
   van uw eigen tijdschriften.
-errors.server500.title: 500 Server foutmelding
-errors.server500.description: Sorry! Er is iets fout gegaan aan onze kant. We werken
-  aan een oplossing voor dit probleem. Kom binnenkort graag terug.
+errors.server500.title: 500 Interne Server Foutmelding
+errors.server500.description: Sorry! Er is iets fout gegaan aan onze kant. Als u deze
+  fout blijft zien, kunt u contact opnemen met de eigenaar van deze instantie. Als
+  deze instantie helemaal niet werkt, bekijk dan in de tussentijd %link_start%andere
+  Mbin-instanties%link_end% totdat het probleem is opgelost.
 errors.server429.title: 429 Te Veel Verzoeken
 errors.server404.title: 404 Niet Gevonden
 errors.server403.title: 403 Verboden
@@ -772,7 +774,7 @@ moderation.report.ban_user_description: Wilt u de gebruiker (%username%) verbann
   die deze inhoud heeft gemaakt van dit tijdschrift?
 moderation.report.approve_report_confirmation: Weet u zeker dat u dit rapport wilt
   goedkeuren?
-subject_reported_exists: Je hebt deze inhoud al gerapporteerd.
+subject_reported_exists: Deze inhoud is al reeks gerapporteerd.
 moderation.report.ban_user_title: Verban gebruiker
 moderation.report.reject_report_confirmation: Weet u zeker dat u dit rapport wilt
   afwijzen?
@@ -839,10 +841,10 @@ flash_email_was_sent: E-mail is succesvol verzonden.
 show_subscriptions: Toon abonnementen
 flash_comment_edit_success: Reactie is succesvol bijgewerkt.
 flash_user_edit_profile_success: Gebruikersprofielinstellingen zijn succesvol opgeslagen.
-subscription_sort: Abonnement sorteren
+subscription_sort: Sorteren
 flash_user_settings_general_success: Gebruikersinstellingen succesvol opgeslagen.
 pending: In behandeling
-subscriptions_in_own_sidebar: Abonnementen apart
+subscriptions_in_own_sidebar: In aparte zijbalk
 flash_email_failed_to_sent: E-mail kon niet worden verzonden.
 flash_user_edit_profile_error: Kan profielinstellingen niet opslaan.
 page_width_fixed: Vast
@@ -851,3 +853,31 @@ position_bottom: Onder
 page_width_max: Max
 page_width: Paginabreedte
 position_top: Boven
+change_my_cover: Verander mijn cover
+open_url_to_fediverse: Originele URL openen
+change_my_avatar: Verander mijn avatar
+restore_magazine: Tijdschrift herstellen
+account_settings_changed: Uw accountinstellingen zijn succesvol gewijzigd. U dient
+  opnieuw in te loggen.
+suspend_account: Account opschorten
+account_suspended: Het account is opgeschort.
+subscription_header: Geabonneerde tijdschriften
+deletion: Verwijdering
+account_unbanned: Het account is gedeblokkeerd.
+magazine_is_deleted: Tijdschrift is verwijderd. U kunt het binnen 30 dagen <a href="%link_target%">herstellen</a>.
+account_is_suspended: Gebruikersaccount is opschorting is opgeheven.
+delete_account_request_revoke: Uw verzoek om het account te verwijderen is ingetrokken.
+user_suspend_desc: Als u uw account opschort, wordt uw inhoud op de instantie verborgen,
+  maar niet permanent verwijderd. U kunt deze op elk gewenst moment herstellen.
+account_unsuspended: De account is niet langer opgeschort.
+subscription_panel_large: Groot paneel
+unsuspend_account: Account opschorting opheffen
+account_banned: Het account is geblokkeerd.
+request_account_deletion_revoke_button: Trek het verzoek voor accountverwijdering
+  in.
+delete_magazine: Tijdschrift verwijderen
+subscription_sidebar_pop_out_right: Ga naar de aparte zijbalk aan de rechterkant
+subscription_sidebar_pop_out_left: Ga naar de aparte zijbalk aan de linkerkant
+purge_magazine: Tijdschrift opruimen
+magazine_deletion: Tijdschrift verwijderen
+subscription_sidebar_pop_in: Verplaats abonnementen naar het inline paneel

@@ -76,6 +76,7 @@ class PostCommentCreateController extends AbstractController
             );
         }
 
+        $user = $this->getUserOrThrow();
         $criteria = new PostCommentPageView($this->getPageNb($request));
         $criteria->post = $post;
 
@@ -84,6 +85,7 @@ class PostCommentCreateController extends AbstractController
         return $this->render(
             'post/comment/create.html.twig',
             [
+                'user' => $user,
                 'magazine' => $magazine,
                 'post' => $post,
                 'comments' => $comments,

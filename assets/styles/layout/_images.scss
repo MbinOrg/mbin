@@ -1,4 +1,16 @@
 .image-inline {
     display: inline-block;
     overflow: hidden;
+
+    // inline icons/avatars that are nsfw
+    // likely are used with .stretched-link,
+    // so this is to get the mouse events above the link
+    &.image-adult {
+      position: relative;
+      z-index: 2;
+    }
+}
+
+.image-adult {
+  filter: blur(8px);
 }

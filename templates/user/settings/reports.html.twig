@@ -15,6 +15,7 @@
 
 {% block body %}
     {% include 'user/settings/_options.html.twig' %}
+    {% include('user/_visibility_info.html.twig') %}
     <h1 hidden>{{ 'reports'|trans }}</h1>
     {{ component('report_list', {reports: reports, routeName: 'user_settings_reports'}) }}
 {% endblock %}

@@ -18,11 +18,40 @@ This guide is aimed for Debian / Ubuntu distribution servers, but it could run o
 
 ## System Prerequisites
 
+Bring your system up-to-date:
+
 ```bash
 sudo apt-get update && sudo apt-get upgrade -y
-sudo apt-get install software-properties-common python3-launchpadlib acl -y
+```
+
+Install prequirements:
+
+```bash
+sudo apt-get install lsb-release ca-certificates curl wget unzip gnupg apt-transport-https software-properties-common python3-launchpadlib git redis-server postgresql postgresql-contrib nginx acl -y
+```
+
+On **Ubuntu 22.04 LTS** or older, prepare latest PHP package repositoy (8.2) by using a Ubuntu PPA (this step is optional for Ubuntu 23.10 or later) via:
+
+```bash
 sudo add-apt-repository ppa:ondrej/php -y
-sudo apt-get install git redis-server postgresql postgresql-contrib nginx php8.2-common php8.2-fpm php8.2-cli php8.2-amqp php8.2-pgsql php8.2-gd php8.2-curl php8.2-simplexml php8.2-dom php8.2-xml php8.2-redis php8.2-mbstring php8.2-intl unzip -y
+```
+
+On **Debian 12** or later, you can install the latest PHP package repository (this step is optional for Debian 13 or later) via:
+
+```bash
+sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+```
+
+Install PHP 8.2 with some important PHP extensions:
+
+```bash
+sudo apt-get update
+sudo apt-get install php8.2 php8.2-common php8.2-fpm php8.2-cli php8.2-amqp php8.2-pgsql php8.2-gd php8.2-curl php8.2-xml php8.2-redis php8.2-mbstring php8.2-zip php8.2-bz2 php8.2-intl -y
+```
+
+Install Docker composer:
+
+```bash
 sudo curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
 sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
 ```
@@ -35,9 +64,9 @@ If you have a firewall installed (or you're behind a NAT), be sure to open port 
 
 1. Prepare & download keyring:
 
+_Note:_ we assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
+
 ```bash
-sudo apt-get update
-sudo apt-get install -y ca-certificates curl gnupg
 sudo mkdir -p /etc/apt/keyrings
 curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
 ```
@@ -59,17 +88,17 @@ sudo apt-get install nodejs -y
 ## Create new user
 
 ```bash
-sudo adduser kbin
-sudo usermod -aG sudo kbin
-sudo usermod -aG www-data kbin
-sudo su - kbin
+sudo adduser mbin
+sudo usermod -aG sudo mbin
+sudo usermod -aG www-data mbin
+sudo su - mbin
 ```
 
 ## Create folder
 
 ```bash
-sudo mkdir -p /var/www/kbin
-sudo chown kbin:www-data /var/www/kbin
+sudo mkdir -p /var/www/mbin
+sudo chown mbin:www-data /var/www/mbin
 ```
 
 ## Generate Secrets
@@ -86,24 +115,24 @@ for counter in {1..2}; do node -e "console.log(require('crypto').randomBytes(16)
 ### Clone git repository
 
 ```bash
-cd /var/www/kbin
+cd /var/www/mbin
 git clone https://github.com/MbinOrg/mbin.git .
 ```
 
-### Configure `public/media` folder
+### Create & configure media directory
 
 ```bash
 mkdir public/media
-sudo chmod -R 777 public/media
-sudo chown -R kbin:www-data public/media
+sudo chmod -R 775 public/media
+sudo chown -R mbin:www-data public/media
 ```
 
-### Configure `var` folder
+### Configure `var` directory
 
-Create & set permissions to the `var` directory:
+Create & set permissions to the `var` directory (used for cache and log files):
 
 ```bash
-cd /var/www/kbin
+cd /var/www/mbin
 mkdir var
 
 # See also: https://symfony.com/doc/current/setup/file_permissions.html
@@ -199,6 +228,10 @@ upload_max_filesize = 8M
 post_max_size = 8M
 ; Remember the memory limit is per child process
 memory_limit = 256M
+; maximum memory allocated to store the results
+realpath_cache_size = 4096K
+; save the results for 10 minutes (600 seconds)
+realpath_cache_ttl = 600
 ```
 
 Optionally also enable OPCache for improved performances with PHP:
@@ -214,6 +247,8 @@ opcache.max_accelerated_files=100000
 ; Enable PHP JIT
 opcache.jit_buffer_size=500M
 ```
+
+More info: [Symfony Performance docs](https://symfony.com/doc/current/performance.html)
 
 Edit your PHP `www.conf` file as well, to increase the amount of PHP child processes (optional):
 
@@ -309,15 +344,77 @@ sudo -u postgres createuser --createdb --createrole --pwprompt kbin
 Create tables and database structure:
 
 ```bash
-cd /var/www/kbin
+cd /var/www/mbin
 php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
 ```
 
+#### PostgreSQL configuration
+
+For production, you **do want to change** the default PostgreSQL settings (since the default configuration is _not_ recommended).
+
+Edit your PostgreSQL configuration file (assuming you're running PostgreSQL v14):
+
+```bash
+sudo nano /etc/postgresql/14/main/postgresql.conf
+```
+
+Then adjust the following settings **depending to your server specifications** (the configuration below is a good indication for a server with around 32GB of RAM):
+
+```ini
+# Increase max connections
+max_connections = 100
+
+# Increase shared buffers
+shared_buffers = 8GB
+# Enable huge pages (Be sure to check the note down below in order to enable huge pages!)
+# This will fail if you didn't configure huge pages under Linux (if you do NOT want to use huge pages, set it to: try instead of: on)
+huge_pages = on
+
+# Increase work memory
+work_mem = 20MB
+# Increase maintenance work memory
+maintenance_work_mem = 1GB
+
+# Should be posix under Linux anyway, just to be sure...
+dynamic_shared_memory_type = posix
+
+# Increase the number of IO current disk operations (especially useful for SSDs)
+effective_io_concurrency = 200
+
+# Increase the number of work processes (do not exceed your number of CPU cores)
+# Adjusting this setting, means you should also change:
+# max_parallel_workers, max_parallel_maintenance_workers and max_parallel_workers_per_gather
+max_worker_processes = 16
+
+# Increase parallel workers per gather
+max_parallel_workers_per_gather = 4
+max_parallel_maintenance_workers = 4
+# Maximum number of work processes that can be used in parallel operations (we set it the same as max_worker_processes)
+# You should *not* increase this value more than max_worker_processes
+max_parallel_workers = 16
+
+# Write ahead log sizes (unless you expect to write more than 1GB/hour of data in the DB)
+max_wal_size = 8GB
+min_wal_size = 2GB
+checkpoint_completion_target = 0.9
+
+# Query tuning
+# Set to 1.1 for SSDs.
+# Increase this number (eg. 4.0) if you are running on slow spinning disks
+random_page_cost = 1.1
+
+# Increase the cache size, increasing the likelihood of index scans (if we have enough RAM memory)
+# Try to aim for: RAM size * 0.8 (on a dedicated server)
+effective_cache_size = 25GB
+```
+
+**Note:** We try to set `huge_pages` to: `on` in PostgreSQL, in order to make this works you need to [enable huge pages under Linux (click here)](https://www.enterprisedb.com/blog/tuning-debian-ubuntu-postgresql) as well! Please follow that guide. and play around with your kernel configurations.
+
 ### Yarn
 
 ```bash
-cd /var/www/kbin
+cd /var/www/mbin
 npm install # Installs all NPM dependencies
 npm run build # Builds frontend
 ```
@@ -406,12 +503,12 @@ gzip_types
 #### Mbin Nginx Server Block
 
 ```bash
-sudo nano /etc/nginx/sites-available/kbin.conf
+sudo nano /etc/nginx/sites-available/mbin.conf
 ```
 
 With the content:
 
-```conf
+```ini
 # Redirect HTTP to HTTPS
 server {
     server_name domain.tld;
@@ -424,7 +521,7 @@ server {
     listen 443 ssl http2;
     server_name domain.tld;
 
-    root /var/www/kbin/public;
+    root /var/www/mbin/public;
 
     index index.php;
 
@@ -449,8 +546,8 @@ server {
     client_max_body_size 20M; # Max size of a file that a user can upload
 
     # Logs
-    error_log /var/log/nginx/kbin_error.log;
-    access_log /var/log/nginx/kbin_access.log;
+    error_log /var/log/nginx/mbin_error.log;
+    access_log /var/log/nginx/mbin_access.log;
 
     location / {
         # try to serve file directly, fallback to app.php
@@ -523,7 +620,7 @@ server {
 
 **Important:** If also want to also configure your `www.domain.tld` subdomain; our advise is to use a HTTP 301 redirect from the `www` subdomain towards the root domain. Do _NOT_ try to setup a double instance (you want to _avoid_ that ActivityPub will see `www` as a separate instance). See Nginx example below:
 
-```conf
+```nginx
 # Example of a 301 redirect response for the www subdomain
 server {
     listen 80;
@@ -552,7 +649,7 @@ server {
 Enable the NGINX site, using a symlink:
 
 ```bash
-sudo ln -s /etc/nginx/sites-available/kbin.conf /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/mbin.conf /etc/nginx/sites-enabled/
 ```
 
 Restart (or reload) NGINX:
@@ -587,11 +684,11 @@ sudo ln -s /snap/bin/certbot /usr/bin/certbot
 
 Generate a TLS certificate for your domain(s):
 
-```
+```bash
 sudo certbot certonly --standalone -d domain.tld -d www.domain.tld
 
-# Or if you wish not to use the standalone mode:
-#sudo certbot --nginx -d domain.tld -d www.domain.tld
+# Or if you wish not to use the standalone mode but the Nginx plugin:
+sudo certbot --nginx -d domain.tld -d www.domain.tld
 ```
 
 ### Symfony Messenger (Queues)
@@ -600,9 +697,9 @@ sudo certbot certonly --standalone -d domain.tld -d www.domain.tld
 
 [RabbitMQ Install](https://www.rabbitmq.com/install-debian.html#apt-quick-start-cloudsmith)
 
-```bash
-sudo apt-get install curl gnupg apt-transport-https -y
+_Note:_ we assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
 
+```bash
 ## Team RabbitMQ's main signing key
 curl -1sLf "https://keys.openpgp.org/vks/v1/by-fingerprint/0A9AF2115F4687BD29803A206B73A36E6026DFCA" | sudo gpg --dearmor | sudo tee /usr/share/keyrings/com.rabbitmq.team.gpg > /dev/null
 ## Community mirror of Cloudsmith: modern Erlang repository
@@ -653,7 +750,7 @@ sudo rabbitmqctl delete_user 'guest'
 #### Configure Queue Messenger Handler
 
 ```bash
-cd /var/www/kbin
+cd /var/www/mbin
 nano .env
 ```
 
@@ -670,26 +767,23 @@ MESSENGER_TRANSPORT_DSN=amqp://kbin:${RABBITMQ_PASSWORD}@127.0.0.1:5672/%2f/mess
 
 ### Mercure
 
-[Mercure Website](https://mercure.rocks/)
+More info: [Mercure Website](https://mercure.rocks/), Mercure is used in Mbin for real-time communication between the server and the clients.
 
-> Visit https://caddyserver.com/download?package=github.com%2Fdunglas%2Fmercure%2Fcaddy
-> Select your server architecture from the drop down list
-> Mercure is selected here. You _do need_ to select your server's architecture if it differs
-> Copy the download button's link.
-
-Download and install Mercure:
+Download and install Mercure (we are using [Caddyserver.com](https://caddyserver.com/download?package=github.com%2Fdunglas%2Fmercure) mirror to download Mercure):
 
 ```bash
-sudo wget "https://caddyserver.com/api/download?os=linux&arch=amd64&p=github.com%2Fdunglas%2Fmercure%2Fcaddy&idempotency=51465666707202" -O /usr/local/bin/mercure
+sudo wget "https://caddyserver.com/api/download?os=linux&arch=amd64&p=github.com%2Fdunglas%2Fmercure%2Fcaddy&idempotency=69982897825265" -O /usr/local/bin/mercure
 
 sudo chmod +x /usr/local/bin/mercure
 ```
 
-Prepare folder structure:
+Prepare folder structure with the correct permissions:
 
 ```bash
-cd /var/www/kbin
+cd /var/www/mbin
 mkdir -p metal/caddy
+sudo chmod -R 775 metal/caddy
+sudo chown -R mbin:www-data metal/caddy
 ```
 
 [Caddyfile Global Options](https://caddyserver.com/docs/caddyfile/options)
@@ -717,7 +811,7 @@ The content of the `Caddyfile`:
                 # DEBUG, INFO, WARN, ERROR, PANIC, and FATAL
                 level WARN
                 output discard
-                output file /var/www/kbin/var/log/mercure.log {
+                output file /var/www/mbin/var/log/mercure.log {
                         roll_size 50MiB
                         roll_keep 3
                 }
@@ -779,8 +873,8 @@ sudo nano /etc/supervisor/conf.d/messenger-worker.conf
 With the following content:
 
 ```ini
-[program:messenger-kbin]
-command=php /var/www/kbin/bin/console messenger:consume async --time-limit=1800
+[program:messenger-mbin]
+command=php /var/www/mbin/bin/console messenger:consume async --time-limit=1800
 user=www-data
 numprocs=2
 startsecs=0
@@ -790,7 +884,7 @@ startretries=10
 process_name=%(program_name)s_%(process_num)02d
 
 [program:messenger-ap]
-command=php /var/www/kbin/bin/console messenger:consume async_ap --time-limit=1800
+command=php /var/www/mbin/bin/console messenger:consume async_ap --time-limit=1800
 user=www-data
 numprocs=2
 startsecs=0
@@ -812,11 +906,11 @@ With the following content:
 
 ```ini
 [program:mercure]
-command=/usr/local/bin/mercure run --config /var/www/kbin/metal/caddy/Caddyfile
+command=/usr/local/bin/mercure run --config /var/www/mbin/metal/caddy/Caddyfile
 process_name=%(program_name)s_%(process_num)s
 numprocs=1
 environment=MERCURE_PUBLISHER_JWT_KEY="{!SECRET!!KEY!-32_3-!}",MERCURE_SUBSCRIBER_JWT_KEY="{!SECRET!!KEY!-32_3-!}",SERVER_NAME=":3000",HTTP_PORT="3000"
-directory=/var/www/kbin/metal/caddy
+directory=/var/www/mbin/metal/caddy
 autostart=true
 autorestart=true
 startsecs=5
@@ -855,7 +949,7 @@ Next, log in and create a magazine named "random" to which unclassified content 
 
 ### Upgrades
 
-If you perform a kbin upgrade (eg. `git pull`), be aware to _always_ execute the following Bash script:
+If you perform a Mbin upgrade (eg. `git pull`), be aware to _always_ execute the following Bash script:
 
 ```bash
 ./bin/post-upgrade
@@ -884,24 +978,24 @@ Supervisor jobs (Mercure and Messenger):
 
 - `sudo tail -f /var/log/supervisor/mercure*.log`
 - `sudo tail -f /var/log/supervisor/messenger-ap*.log`
-- `sudo tail -f /var/log/supervisor/messenger-kbin*.log`
+- `sudo tail -f /var/log/supervisor/messenger-mbin*.log`
 
 The separate Mercure log:
 
-- `sudo tail -f /var/www/kbin/var/log/mercure.log`
+- `sudo tail -f /var/www/mbin/var/log/mercure.log`
 
 Application Logs (prod or dev logs):
 
-- `tail -f /var/www/kbin/var/log/prod-{YYYY-MM-DD}.log`
+- `tail -f /var/www/mbin/var/log/prod-{YYYY-MM-DD}.log`
 
 Or:
 
-- `tail -f /var/www/kbin/var/log/dev-{YYYY-MM-DD}.log`
+- `tail -f /var/www/mbin/var/log/dev-{YYYY-MM-DD}.log`
 
 Web-server (Nginx):
 
-- `sudo tail -f /var/log/nginx/kbin_access.log`
-- `sudo tail -f /var/log/nginx/kbin_error.log`
+- `sudo tail -f /var/log/nginx/mbin_access.log`
+- `sudo tail -f /var/log/nginx/mbin_error.log`
 
 ### Debugging
 

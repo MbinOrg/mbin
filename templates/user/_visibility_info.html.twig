@@ -1,0 +1,5 @@
+{% if user is defined and user and user.visibility is same as 'trashed' %}
+    <div class="alert alert__danger">
+        <p>{{ 'account_is_suspended'|trans }}</p>
+    </div>
+{% endif %} 

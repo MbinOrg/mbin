@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{%- block title -%}
+    {{- 'deletion'|trans }} - {{ parent() -}}
+{%- endblock -%}
+
+{% block mainClass %}page-admin-deletion{% endblock %}
+
+{% block header_nav %}
+{% endblock %}
+
+{% block sidebar_top %}
+{% endblock %}
+
+{% block body %}
+    {% include 'admin/_options.html.twig' %}
+    <div class="pills">
+        <menu>
+            <li>
+                <a href="{{ path('admin_deletion_users') }}"
+                   class="{{ html_classes({'active': is_route_name('admin_deletion_users')}) }}">
+                    {{ 'users'|trans }}
+                </a>
+            </li>
+            <li>
+                <a href="{{ path('admin_deletion_magazines') }}"
+                   class="{{ html_classes({'active': is_route_name('admin_deletion_magazines')}) }}">
+                    {{ 'magazines'|trans }}
+                </a>
+            </li>
+        </menu>
+    </div>
+    {% if  magazines|length %}
+        <div class="section" id="content">
+            <table>
+                <thead>
+                <tr>
+                    <th>{{ 'name'|trans }}</th>
+                    <th>{{ 'threads'|trans }}</th>
+                    <th>{{ 'comments'|trans }}</th>
+                    <th>{{ 'posts'|trans }}</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for magazine in magazines %}
+                    <tr>
+                        <td>{{ component('magazine_inline', { magazine: magazine, stretchedLink: true, showAvatar: true}) }}</td>
+                        <td>{{ magazine.entryCount }}</td>
+                        <td>{{ magazine.entryCommentCount }}</td>
+                        <td>{{ magazine.postCount + magazine.postCommentCount }}</td>
+                        <td>{{ component('date', {date: magazine.markedForDeletionAt}) }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <aside class="section section--muted">
+            <p>{{ 'empty'|trans }}</p>
+        </aside>
+    {% endif %}
+    {% if(magazines.haveToPaginate is defined and magazines.haveToPaginate) %}
+        {{ pagerfanta(magazines, null, {'pageParameter':'[p]'}) }}
+    {% endif %}
+{% endblock %}

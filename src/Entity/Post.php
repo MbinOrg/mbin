@@ -88,7 +88,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     public ?array $mentions = null;
     #[OneToMany(mappedBy: 'post', targetEntity: PostComment::class, orphanRemoval: true)]
     public Collection $comments;
-    #[OneToMany(mappedBy: 'post', targetEntity: PostVote::class, cascade: ['persist'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'post', targetEntity: PostVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $votes;
     #[OneToMany(mappedBy: 'post', targetEntity: PostReport::class, cascade: ['remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $reports;
@@ -249,6 +249,13 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         $this->visibility = VisibilityInterface::VISIBILITY_VISIBLE;
     }
 
+    public function updateScore(): self
+    {
+        $this->score = $this->favouriteCount + $this->getUpVotes()->count() - $this->getDownVotes()->count();
+
+        return $this;
+    }
+
     public function addVote(Vote $vote): self
     {
         Assert::isInstanceOf($vote, PostVote::class);
@@ -258,7 +265,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
             $vote->post = $this;
         }
 
-        $this->score = $this->getUpVotes()->count() - $this->getDownVotes()->count();
+        $this->updateScore();
         $this->updateRanking();
 
         return $this;
@@ -274,7 +281,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
             }
         }
 
-        $this->score = $this->getUpVotes()->count() - $this->getDownVotes()->count();
+        $this->updateScore();
         $this->updateRanking();
 
         return $this;

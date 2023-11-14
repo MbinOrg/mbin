@@ -1,6 +1,6 @@
 <section class="section user-info">
     <h3>{{ user.username|username }}</h3>
-    {% if not is_route_name('user_overview') %}
+    {% if is_route_name_starts_with('user_settings') %}
         <div class="row">
             {% if user.avatar %}
                 <figure>
@@ -19,7 +19,7 @@
     <ul class="info">
         <li>{{ 'joined'|trans }}: {{ component('date', {date: user.createdAt}) }}</li>
         {%- set TYPE_ENTRY = constant('App\\Repository\\ReputationRepository::TYPE_ENTRY') -%}
-        <li><a href="#" class="stretched-link">{{ 'reputation_points'|trans }}:</a> {{ get_reputation_total(user) }}</li>
+        <li><a href="{{ path('user_reputation', {username: user.username, reputationType: TYPE_ENTRY}) }}" class="stretched-link">{{ 'reputation_points'|trans }}:</a> {{ get_reputation_total(user) }}</li>
         <li><a href="{{ path('user_moderated', {username: user.username}) }}"
                class="stretched-link">{{ 'moderated'|trans }}:</a> {{ count_user_moderated(user) }}
         </li>

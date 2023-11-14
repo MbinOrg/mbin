@@ -261,6 +261,31 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $pagerfanta;
     }
 
+    public function findForDeletionPaginated(int $page): PagerfantaInterface
+    {
+        $query = $this->createQueryBuilder('u')
+            ->where('u.apId IS NULL')
+            ->andWhere('u.visibility = :visibility')
+            ->orderBy('u.markedForDeletionAt', 'ASC')
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_SOFT_DELETED)
+            ->getQuery();
+
+        $pagerfanta = new Pagerfanta(
+            new QueryAdapter(
+                $query
+            )
+        );
+
+        try {
+            $pagerfanta->setMaxPerPage(self::PER_PAGE);
+            $pagerfanta->setCurrentPage($page);
+        } catch (NotValidCurrentPageException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return $pagerfanta;
+    }
+
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
         if (!$user instanceof User) {
@@ -345,9 +370,12 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $qb->orderBy('u.lastActive', 'DESC');
     }
 
-    public function findUsersPaginated(int $page, string $group = self::USERS_ALL, int $perPage = self::PER_PAGE): PagerfantaInterface
-    {
-        $query = $this->findUsersQueryBuilder($group)->getQuery();
+    public function findWithAboutPaginated(
+        int $page,
+        string $group = self::USERS_ALL,
+        int $perPage = self::PER_PAGE
+    ): PagerfantaInterface {
+        $query = $this->findWithAboutQueryBuilder($group)->getQuery();
 
         $pagerfanta = new Pagerfanta(
             new QueryAdapter(
@@ -388,8 +416,11 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $qb->orderBy('u.lastActive', 'DESC');
     }
 
-    public function findBannedPaginated(int $page, string $group = self::USERS_ALL, int $perPage = self::PER_PAGE): PagerfantaInterface
-    {
+    public function findBannedPaginated(
+        int $page,
+        string $group = self::USERS_ALL,
+        int $perPage = self::PER_PAGE
+    ): PagerfantaInterface {
         $query = $this->findBannedQueryBuilder($group)->getQuery();
 
         $pagerfanta = new Pagerfanta(
@@ -411,10 +442,16 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     public function findAdmin(): User
     {
         // @todo orderBy lastActivity
-        return $this->createQueryBuilder('u')
+        $result = $this->createQueryBuilder('u')
             ->andWhere("JSONB_CONTAINS(u.roles, '\"".'ROLE_ADMIN'."\"') = true")
+            ->andWhere('u.isDeleted = false')
             ->getQuery()
-            ->getResult()[0];
+            ->getResult();
+        if (0 === \sizeof($result)) {
+            throw new \Exception('the server must always have an active admin account');
+        }
+
+        return $result[0];
     }
 
     public function findUsersSuggestions(string $query): array
@@ -530,5 +567,28 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->setParameter('arr', $arr)
             ->getQuery()
             ->getResult();
+    }
+
+    public function findModerators(int $page = 1): PagerfantaInterface
+    {
+        $query = $this->createQueryBuilder('u')
+            ->where("JSONB_CONTAINS(u.roles, '\"".'ROLE_MODERATOR'."\"') = true")
+            ->andWhere('u.visibility = :visibility')
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
+
+        $pagerfanta = new Pagerfanta(
+            new QueryAdapter(
+                $query
+            )
+        );
+
+        try {
+            $pagerfanta->setMaxPerPage(self::PER_PAGE);
+            $pagerfanta->setCurrentPage($page);
+        } catch (NotValidCurrentPageException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return $pagerfanta;
     }
 }

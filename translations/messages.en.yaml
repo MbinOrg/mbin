@@ -523,14 +523,14 @@ federation_page_enabled: Federation page enabled
 federation_page_allowed_description: Known instances we federate with
 federation_page_disallowed_description: Instances we do not federate with
 federated_search_only_loggedin: Federated search limited if not logged in
-request_account_deletion_title: Account Deletion
+request_account_deletion_title: Account deletion
 request_account_deletion_description: The administrator will be notified that you
   want your account deleted.
-request_account_deletion_button: Request Account Deletion
+request_account_deletion_button: Request account deletion
 more_from_domain: More from domain
-errors.server500.title: 500 Server error
-errors.server500.description: Sorry, something went wrong on our end. We're working
-  on resolving this issue, please check back soon.
+errors.server500.title: 500 Internal Server Error
+errors.server500.description: Sorry, something went wrong on our end. If you continue to see this error, try contacting the instance owner.
+  If this instance is not working at all, check out %link_start%other Mbin instances%link_end% in the meanwhile until the problem is resolved.
 errors.server429.title: 429 Too Many Requests
 errors.server404.title: 404 Not found
 errors.server403.title: 403 Forbidden
@@ -790,10 +790,15 @@ password_and_2fa: Password & 2fa
 flash_account_settings_changed: Your account settings have been successfully changed.
   You will need to login again.
 show_subscriptions: Show subscriptions
-subscription_sort: Subscription sort
+subscription_sort: Sort
 alphabetically: Alphabetically
-subscriptions_in_own_sidebar: Subscriptions separate
+subscriptions_in_own_sidebar: In separate sidebar
 sidebars_same_side: Sidebars on the same side
+subscription_sidebar_pop_out_right: Move to separate sidebar on the right
+subscription_sidebar_pop_out_left: Move to separate sidebar on the left
+subscription_sidebar_pop_in: Move subscriptions to the inline panel
+subscription_panel_large: Large panel
+subscription_header: Subscribed Magazines
 close: Close
 position_bottom: Bottom
 position_top: Top
@@ -823,3 +828,41 @@ page_width_max: Max
 page_width_auto: Auto
 page_width_fixed: Fixed
 open_url_to_fediverse: Open original URL
+change_my_avatar: Change my avatar
+change_my_cover: Change my cover
+account_settings_changed: Your account settings have been successfully changed. You
+  will need to login again.
+magazine_deletion: Magazine deletion
+delete_magazine: Delete magazine
+restore_magazine: Restore magazine
+purge_magazine: Purge magazine
+magazine_is_deleted: Magazine is deleted. You can <a href="%link_target%">restore</a>
+  it within 30 days.
+suspend_account: Suspend account
+request_account_deletion_revoke_button: Revoke the account deletion request.
+unsuspend_account: Unsuspend account
+account_suspended: The account has been suspended.
+delete_account_request_revoke: Your request to delete the account has been revoked.
+account_unsuspended: The account has been unsuspended.
+deletion: Deletion
+user_suspend_desc: Suspending your account hides your content on the instance, but
+  doesn't permanently remove it, and you can restore it at any time.
+account_banned: The account has been banned.
+account_unbanned: The account has been unbanned.
+account_is_suspended: User account is suspended.
+remove_following: Remove following
+remove_subscriptions: Remove subscriptions
+apply_for_moderator: Apply for moderator
+request_magazine_ownership: Request magazine ownership
+cancel_request: Cancel request
+abandoned: Abandoned
+ownership_requests: Ownership requests
+accept: Accept
+moderator_requests: Mod requests
+action: Action
+user_badge_op: OP
+user_badge_admin: Admin
+user_badge_global_moderator: Global Mod
+user_badge_moderator: Mod
+user_badge_bot: Bot
+announcement: Announcement

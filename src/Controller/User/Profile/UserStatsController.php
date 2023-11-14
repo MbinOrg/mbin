@@ -20,7 +20,9 @@ class UserStatsController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function __invoke(?string $statsType, ?int $statsPeriod, Request $request): Response
     {
-        $this->denyAccessUnlessGranted('edit_profile', $this->getUserOrThrow());
+        $user = $this->getUserOrThrow();
+
+        $this->denyAccessUnlessGranted('edit_profile', $user);
 
         $statsType = $this->manager->resolveType($statsType);
 
@@ -39,19 +41,19 @@ class UserStatsController extends AbstractController
 
         $results = match ($statsType) {
             StatsRepository::TYPE_VIEWS => $statsPeriod
-                ? $this->manager->drawDailyViewsStatsByTime($start, $this->getUserOrThrow())
-                : $this->manager->drawMonthlyViewsChart($this->getUserOrThrow()),
+                ? $this->manager->drawDailyViewsStatsByTime($start, $user)
+                : $this->manager->drawMonthlyViewsChart($user),
             StatsRepository::TYPE_VOTES => $statsPeriod
-                ? $this->manager->drawDailyVotesStatsByTime($start, $this->getUserOrThrow())
-                : $this->manager->drawMonthlyVotesChart($this->getUserOrThrow()),
+                ? $this->manager->drawDailyVotesStatsByTime($start, $user)
+                : $this->manager->drawMonthlyVotesChart($user),
             default => $statsPeriod
-                ? $this->manager->drawDailyContentStatsByTime($start, $this->getUserOrThrow())
-                : $this->manager->drawMonthlyContentChart($this->getUserOrThrow())
+                ? $this->manager->drawDailyContentStatsByTime($start, $user)
+                : $this->manager->drawMonthlyContentChart($user)
         };
 
         return $this->render(
             'user/settings/stats.html.twig', [
-                'user' => $this->getUserOrThrow(),
+                'user' => $user,
                 'period' => $statsPeriod,
                 'chart' => $results,
                 'withFederated' => false,

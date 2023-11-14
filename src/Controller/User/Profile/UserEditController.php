@@ -32,9 +32,10 @@ class UserEditController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function profile(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('edit_profile', $this->getUserOrThrow());
+        $user = $this->getUserOrThrow();
+        $this->denyAccessUnlessGranted('edit_profile', $user);
 
-        $dto = $this->manager->createDto($this->getUserOrThrow());
+        $dto = $this->manager->createDto($user);
 
         $form = $this->createForm(UserBasicType::class, $dto);
         $formHandler = $this->handleForm($form, $dto, $request);
@@ -49,6 +50,7 @@ class UserEditController extends AbstractController
         return $this->render(
             'user/settings/profile.html.twig',
             [
+                'user' => $user,
                 'form' => $form->createView(),
             ],
             new Response(
@@ -61,9 +63,10 @@ class UserEditController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function email(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('edit_profile', $this->getUserOrThrow());
+        $user = $this->getUserOrThrow();
+        $this->denyAccessUnlessGranted('edit_profile', $user);
 
-        $dto = $this->manager->createDto($this->getUserOrThrow());
+        $dto = $this->manager->createDto($user);
 
         $form = $this->createForm(UserEmailType::class, $dto);
         $formHandler = $this->handleForm($form, $dto, $request);
@@ -78,6 +81,7 @@ class UserEditController extends AbstractController
         return $this->render(
             'user/settings/email.html.twig',
             [
+                'user' => $user,
                 'form' => $form->createView(),
             ],
             new Response(
@@ -90,9 +94,10 @@ class UserEditController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function password(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('edit_profile', $this->getUserOrThrow());
+        $user = $this->getUserOrThrow();
+        $this->denyAccessUnlessGranted('edit_profile', $user);
 
-        $dto = $this->manager->createDto($this->getUserOrThrow());
+        $dto = $this->manager->createDto($user);
 
         $form = $this->createForm(UserPasswordType::class, $dto);
         $formHandler = $this->handleForm($form, $dto, $request);
@@ -107,8 +112,9 @@ class UserEditController extends AbstractController
         return $this->render(
             'user/settings/password.html.twig',
             [
+                'user' => $user,
                 'form' => $form->createView(),
-                'has2fa' => $this->getUserOrThrow()->isTotpAuthenticationEnabled(),
+                'has2fa' => $user->isTotpAuthenticationEnabled(),
             ],
             new Response(
                 null,

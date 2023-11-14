@@ -72,7 +72,7 @@ In the Mbin Admin settings, be sure to also enable Mercure:
 
 When you visit your own Mbin instance domain, you can validate whether a connection was successfully established between your browser (client) and Mercure (server), by going to the browser developer toolbar and visit the "Network" tab.
 
-The browser should succesfully connect to the `https://<yourdomain>/.well-known/mercure` URL (thus without any errors). Since it's streaming data, don't expect any response from Mercure.
+The browser should successfully connect to the `https://<yourdomain>/.well-known/mercure` URL (thus without any errors). Since it's streaming data, don't expect any response from Mercure.
 
 ## How do I know RabbitMQ is working?
 
@@ -121,3 +121,33 @@ You can find the Mbin logging in the `var/log/` directory from the root folder o
 **NO!** Try to avoid running development mode when you are hosting our own _public_ instance. Running in development mode can cause sensitive data to be leaked, such as secret keys or passwords (eg. via development console). Development mode will log a lot of messages to disk (incl. stacktraces).
 
 That said, if you are _experiencing serious issues_ with your instance which you cannot resolve by looking at the log file (`prod-{YYYY-MM-DD}.log`) or server logs, you can try running in development mode to debug the problem or issue you are having. Enabling development mode **during development** is also very useful.
+
+## I changed my .env configuration but the error still appears/new config doesn't seem to be applied?
+
+After you edited your `.env` configuration file on a bare metal/VM setup, you always need to execute the `composer dump-env` command (in Docker you just restart the containers).
+
+Running the `post-upgrade` script will also execute `composer dump-env` for you:
+
+```bash
+./bin/post-upgrade
+```
+
+Followed by restarting the services that are depending on the (new) configuration:
+
+```bash
+# Clear PHP Opcache by restarting the PHP FPM service
+sudo systemctl restart php8.2-fpm.service
+
+# Restarting the PHP messenger jobs and Mercure service
+sudo supervisorctl restart all
+```
+
+## How to retrieve missing/update remote user data?
+
+If you want to update all the remote users on your instance, you can execute the following command (which will also re-download the avatars):
+
+```bash
+./bin/console kbin:ap:actor:update
+```
+
+_Important:_ This might have quite a performance impact (temporally), if you are running a very large instance. Due to the huge amount of remote users.

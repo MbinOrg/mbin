@@ -9,6 +9,7 @@ use App\Controller\User\ThemeSettingsController;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\PageView\EntryPageView;
+use App\Pagination\Pagerfanta as MbinPagerfanta;
 use App\Repository\Criteria;
 use App\Repository\EntryRepository;
 use Pagerfanta\PagerfantaInterface;
@@ -47,7 +48,12 @@ class EntryFrontController extends AbstractController
         $user = $this->getUser();
         $criteria = new EntryPageView($this->getPageNb($request));
         $criteria->showSortOption($criteria->resolveSort($sortBy))
-            ->setFederation('false' === $request->cookies->get(ThemeSettingsController::KBIN_FEDERATION_ENABLED, true) ? Criteria::AP_LOCAL : Criteria::AP_ALL)
+            ->setFederation(
+                'false' === $request->cookies->get(
+                    ThemeSettingsController::KBIN_FEDERATION_ENABLED,
+                    true
+                ) ? Criteria::AP_LOCAL : Criteria::AP_ALL
+            )
             ->setTime($criteria->resolveTime($time))
             ->setType($criteria->resolveType($type));
 
@@ -57,6 +63,8 @@ class EntryFrontController extends AbstractController
 
         $method = $criteria->resolveSort($sortBy);
         $posts = $this->$method($criteria);
+
+        $posts = $this->handleCrossposts($posts);
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse(
@@ -86,7 +94,12 @@ class EntryFrontController extends AbstractController
 
         $criteria = new EntryPageView($this->getPageNb($request));
         $criteria->showSortOption($criteria->resolveSort($sortBy))
-            ->setFederation('false' === $request->cookies->get(ThemeSettingsController::KBIN_FEDERATION_ENABLED, true) ? Criteria::AP_LOCAL : Criteria::AP_ALL)
+            ->setFederation(
+                'false' === $request->cookies->get(
+                    ThemeSettingsController::KBIN_FEDERATION_ENABLED,
+                    true
+                ) ? Criteria::AP_LOCAL : Criteria::AP_ALL
+            )
             ->setTime($criteria->resolveTime($time))
             ->setType($criteria->resolveType($type));
         $criteria->subscribed = true;
@@ -124,7 +137,12 @@ class EntryFrontController extends AbstractController
     {
         $criteria = new EntryPageView($this->getPageNb($request));
         $criteria->showSortOption($criteria->resolveSort($sortBy))
-            ->setFederation('false' === $request->cookies->get(ThemeSettingsController::KBIN_FEDERATION_ENABLED, true) ? Criteria::AP_LOCAL : Criteria::AP_ALL)
+            ->setFederation(
+                'false' === $request->cookies->get(
+                    ThemeSettingsController::KBIN_FEDERATION_ENABLED,
+                    true
+                ) ? Criteria::AP_LOCAL : Criteria::AP_ALL
+            )
             ->setTime($criteria->resolveTime($time))
             ->setType($criteria->resolveType($type));
         $criteria->moderated = true;
@@ -160,7 +178,12 @@ class EntryFrontController extends AbstractController
     {
         $criteria = new EntryPageView($this->getPageNb($request));
         $criteria->showSortOption($criteria->resolveSort($sortBy))
-            ->setFederation('false' === $request->cookies->get(ThemeSettingsController::KBIN_FEDERATION_ENABLED, true) ? Criteria::AP_LOCAL : Criteria::AP_ALL)
+            ->setFederation(
+                'false' === $request->cookies->get(
+                    ThemeSettingsController::KBIN_FEDERATION_ENABLED,
+                    true
+                ) ? Criteria::AP_LOCAL : Criteria::AP_ALL
+            )
             ->setTime($criteria->resolveTime($time))
             ->setType($criteria->resolveType($type));
         $criteria->favourite = true;
@@ -207,7 +230,12 @@ class EntryFrontController extends AbstractController
 
         $criteria = (new EntryPageView($this->getPageNb($request)));
         $criteria->showSortOption($criteria->resolveSort($sortBy))
-            ->setFederation('false' === $request->cookies->get(ThemeSettingsController::KBIN_FEDERATION_ENABLED, true) ? Criteria::AP_LOCAL : Criteria::AP_ALL)
+            ->setFederation(
+                'false' === $request->cookies->get(
+                    ThemeSettingsController::KBIN_FEDERATION_ENABLED,
+                    true
+                ) ? Criteria::AP_LOCAL : Criteria::AP_ALL
+            )
             ->setTime($criteria->resolveTime($time))
             ->setType($criteria->resolveType($type));
         $criteria->magazine = $magazine;
@@ -272,5 +300,55 @@ class EntryFrontController extends AbstractController
     private function commented(EntryPageView $criteria): PagerfantaInterface
     {
         return $this->repository->findByCriteria($criteria->showSortOption(Criteria::SORT_COMMENTED));
+    }
+
+    private function handleCrossposts($pagination): PagerfantaInterface
+    {
+        $posts = $pagination->getCurrentPageResults();
+
+        $firstIndexes = [];
+        $tmp = [];
+        $duplicates = [];
+
+        foreach ($posts as $post) {
+            $groupingField = !empty($post->url) ? $post->url : $post->title;
+
+            if (!\in_array($groupingField, $firstIndexes)) {
+                $tmp[] = $post;
+                $firstIndexes[] = $groupingField;
+            } else {
+                if (!\in_array($groupingField, array_column($duplicates, 'groupingField'), true)) {
+                    $duplicates[] = (object) [
+                        'groupingField' => $groupingField,
+                        'items' => [],
+                    ];
+                }
+
+                $duplicateIndex = array_search($groupingField, array_column($duplicates, 'groupingField'));
+                $duplicates[$duplicateIndex]->items[] = $post;
+
+                $post->cross = true;
+            }
+        }
+
+        $results = [];
+        foreach ($tmp as $item) {
+            $results[] = $item;
+            $groupingField = !empty($item->url) ? $item->url : $item->title;
+
+            $duplicateIndex = array_search($groupingField, array_column($duplicates, 'groupingField'));
+            if (false !== $duplicateIndex) {
+                foreach ($duplicates[$duplicateIndex]->items as $duplicateItem) {
+                    $results[] = $duplicateItem;
+                }
+            }
+        }
+
+        $pagerfanta = new MbinPagerfanta($pagination->getAdapter());
+        $pagerfanta->setCurrentPage($pagination->getCurrentPage());
+        $pagerfanta->setMaxNbPages($pagination->getNbPages());
+        $pagerfanta->setCurrentPageResults($results);
+
+        return $pagerfanta;
     }
 }

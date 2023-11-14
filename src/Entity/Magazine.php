@@ -68,10 +68,16 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public ?string $customCss = null;
     #[Column(type: 'datetimetz', nullable: true)]
     public ?\DateTime $lastActive = null;
+    #[Column(type: 'datetimetz', nullable: true)]
+    public ?\DateTime $markedForDeletionAt = null;
     #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
     public ?array $tags = null;
     #[OneToMany(mappedBy: 'magazine', targetEntity: Moderator::class, cascade: ['persist'])]
     public Collection $moderators;
+    #[OneToMany(mappedBy: 'magazine', targetEntity: MagazineOwnershipRequest::class, cascade: ['persist'])]
+    public Collection $ownershipRequests;
+    #[OneToMany(mappedBy: 'magazine', targetEntity: ModeratorRequest::class, cascade: ['persist'])]
+    public Collection $moderatorRequests;
     #[OneToMany(mappedBy: 'magazine', targetEntity: Entry::class)]
     public Collection $entries;
     #[OneToMany(mappedBy: 'magazine', targetEntity: Post::class)]
@@ -122,6 +128,8 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         $this->isAdult = $isAdult;
         $this->icon = $icon;
         $this->moderators = new ArrayCollection();
+        $this->ownershipRequests = new ArrayCollection();
+        $this->moderatorRequests = new ArrayCollection();
         $this->entries = new ArrayCollection();
         $this->posts = new ArrayCollection();
         $this->subscriptions = new ArrayCollection();
@@ -171,6 +179,19 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
             ->andWhere(Criteria::expr()->eq('isOwner', true));
 
         return !$user->moderatorTokens->matching($criteria)->isEmpty();
+    }
+
+    public function isAbandoned(): bool
+    {
+        return $this->getOwner()->lastActive < new \DateTime('-1 month');
+    }
+
+    public function getOwnerModerator(): Moderator
+    {
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->eq('isOwner', true));
+
+        return $this->moderators->matching($criteria)->first();
     }
 
     public function getOwner(): User
@@ -298,6 +319,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
 
     public function softDelete(): void
     {
+        $this->markedForDeletionAt = new \DateTime();
         $this->visibility = VisibilityInterface::VISIBILITY_SOFT_DELETED;
     }
 
@@ -308,6 +330,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
 
     public function restore(): void
     {
+        $this->markedForDeletionAt = null;
         $this->visibility = VisibilityInterface::VISIBILITY_VISIBLE;
     }
 

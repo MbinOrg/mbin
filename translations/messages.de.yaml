@@ -105,7 +105,7 @@ random_posts: Zufällige Beiträge
 login_or_email: Login oder E-Mail
 reply: Antworten
 show_more: Mehr anzeigen
-to: zu
+to: an
 in: in
 all_magazines: Alle Magazine
 stats: Statistiken
@@ -195,7 +195,7 @@ content: Inhalt
 change_language: Sprache wechseln
 type.smart_contract: Smart Contract
 hot: Heiß
-unfollow: Entfolgen
+unfollow: Nicht mehr folgen
 subscribed: Abonniert
 subscriptions: Abonnements
 chat_view: Chat-Ansicht
@@ -208,7 +208,7 @@ messages: Nachrichten
 privacy: Datenschutz
 notify_on_new_entry_reply: Kommentare aller Ebenen in Themen die ich verfasst habe
 notify_on_new_entry_comment_reply: Antworten zu meinen Kommentaren in allen Themen
-notify_on_new_post_comment_reply: Antworten zu meinen Kommentaren zu jeglichen Beiträgen
+notify_on_new_post_comment_reply: Antworten zu meinen Mikroblog-Kommentaren
 notify_on_new_entry: Neue Themen (Links und Artikel) in sämtlichen Magazinen die ich
   abonniert habe
 save: Speichern
@@ -287,7 +287,7 @@ flash_thread_new_success: Das Thema wurde erfolgreich erstellt und ist jetzt fü
 related_magazines: Ähnliche Magazine
 active_users: Aktive Nutzer
 sidebar: Seitenleiste
-banned_instances: gebannte Instanzen
+banned_instances: Gesperrte Instanzen
 header_logo: Header Logo
 flash_thread_edit_success: Das Thema wurde erfolgreich bearbeitet.
 flash_thread_delete_success: Das Thema wurde erfolgreich gelöscht.
@@ -421,7 +421,7 @@ edited_comment: Kommentar bearbeitet
 added_new_post: Neuen Beitrag hinzugefügt
 added_new_reply: Antwort wurde hinzugefügt
 wrote_message: Schrieb eine Nachricht
-banned: Hat dich gebannt
+banned: Hat dich gesperrt
 mentioned_you: Hat dich erwähnt
 bronze_article_desc: Das Thema wurde 5 Mal geboostet
 bronze_magazine: Populäres Magazin
@@ -524,7 +524,8 @@ toolbar.ordered_list: Geordnete Liste
 your_account_is_not_active: Dein Profil wurde noch nicht aktiviert. Bitte prüfe deine
   E-Mails und klicke den Aktivierungslink um fortzufahren. Falls du keine Mail erhalten
   hast frage <a href="%link_target%">eine neue Aktivierungsmail</a> an.
-your_account_has_been_banned: Dein Konto wurde gebannt
+your_account_has_been_banned: E-Mails für Anweisungen zur Kontoaktivierung oder <a href="%link_target%">fordere
+  eine neue E-Mail zur Aktivierung an</a>
 federation_page_enabled: Föderationsseite aktiviert
 federation_page_disallowed_description: Instanzen mit denen wir nicht föderieren
 federation_page_allowed_description: Bekannte Instanzen mit denen wir föderieren
@@ -568,12 +569,17 @@ errors.server500.description: Es tut uns leid, etwas ist schiefgelaufen. Wir arb
 oauth.client_not_granted_message_read_permission: Diese App hat keine Berechtigung
   erhalten deine Nachrichten zu lesen.
 restrict_oauth_clients: Beschränke OAuth2 Client Erstellung auf Admins
-subscription_sort: Abonnements Sortierung
+subscription_sort: Sortierung
 unblock: Entblockieren
 oauth.consent.grant_permissions: Gebe Berechtigungen
 oauth2.grant.moderate.magazine.ban.delete: Nutzer in deinen moderierten Magazinen
   entbannen.
-subscriptions_in_own_sidebar: Abonnements Separat
+subscriptions_in_own_sidebar: In eigener Seitenleiste
+subscription_sidebar_pop_out_left: Nach links in eigene Seitenleiste verschieben
+subscription_sidebar_pop_out_right: Nach rechts in eigene Seitenleiste verschieben
+subscription_sidebar_pop_in: In andere Seitenleiste verschieben
+subscription_panel_large: Großes Panel
+subscription_header: Abonnierte Magazine
 oauth.client_identifier.invalid: Ungültige OAuth Client ID!
 oauth.consent.app_has_permissions: kann bereits die folgenden Aktionen ausführen
 email.delete.title: Nutzeraccount Löschanfrage
