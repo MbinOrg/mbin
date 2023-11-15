@@ -27,6 +27,7 @@ class InstanceSettingsRetrieveApiTest extends WebTestCase
         'KBIN_FEDERATION_PAGE_ENABLED',
         'KBIN_ADMIN_ONLY_OAUTH_CLIENTS',
         'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN',
+        'MBIN_DEFAULT_THEME',
     ];
 
     public function testApiCannotRetrieveInstanceSettingsAnonymous(): void

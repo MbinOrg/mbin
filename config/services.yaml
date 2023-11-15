@@ -19,6 +19,8 @@ parameters:
     kbin_ap_route_condition: 'request.getAcceptableContentTypes() and request.getAcceptableContentTypes()[0] in ["application/activity+json", "application/ld+json", "application/json"]'
     kbin_storage_url: "%env(KBIN_STORAGE_URL)%"
 
+    mbin_default_theme: "%env(MBIN_DEFAULT_THEME)%"
+
     amazon.s3.key: "%env(S3_KEY)%"
     amazon.s3.secret: "%env(S3_SECRET)%"
     amazon.s3.bucket: "%env(S3_BUCKET)%"
@@ -129,6 +131,7 @@ services:
             $kbinCaptchaEnabled: "%env(bool:KBIN_CAPTCHA_ENABLED)%"
             $kbinFederationPageEnabled: "%env(bool:KBIN_FEDERATION_PAGE_ENABLED)%"
             $kbinAdminOnlyOauthClients: "%env(bool:KBIN_ADMIN_ONLY_OAUTH_CLIENTS)%"
+            $mbinDefaultTheme: "%mbin_default_theme%"
 
     # Markdown
     App\Markdown\Factory\EnvironmentFactory:

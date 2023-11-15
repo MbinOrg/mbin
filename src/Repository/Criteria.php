@@ -100,6 +100,24 @@ abstract class Criteria
     public ?string $domain = null;
     public ?array $languages = null;
 
+    public const THEME_MBIN = 'theme--mbin';
+    public const THEME_KBIN = 'theme--kbin';
+    public const THEME_LIGHT = 'theme--light';
+    public const THEME_DARK = 'theme--dark';
+    public const THEME_SOLARIZED_LIGHT = 'theme--solarized-light';
+    public const THEME_SOLARIZED_DARK = 'theme--solarized-dark';
+    public const THEME_TOKYO_NIGHT = 'theme--tokyo-night';
+
+    public const THEME_OPTIONS = [
+        SELF::THEME_MBIN,
+        SELF::THEME_KBIN,
+        SELF::THEME_LIGHT,
+        SELF::THEME_DARK,
+        SELF::THEME_SOLARIZED_LIGHT,
+        SELF::THEME_SOLARIZED_DARK,
+        SELF::THEME_TOKYO_NIGHT,
+    ];
+
     public function __construct(int $page)
     {
         $this->page = $page;

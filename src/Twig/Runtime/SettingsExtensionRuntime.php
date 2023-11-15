@@ -78,4 +78,10 @@ class SettingsExtensionRuntime implements RuntimeExtensionInterface
     {
         return $this->settings->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
     }
+
+    #[Pure]
+    public function mbinDefaultTheme(): string
+    {
+        return $this->settings->get('MBIN_DEFAULT_THEME');
+    }
 }

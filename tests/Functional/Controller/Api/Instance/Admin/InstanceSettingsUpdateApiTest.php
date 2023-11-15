@@ -27,6 +27,7 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
         'KBIN_FEDERATION_PAGE_ENABLED',
         'KBIN_ADMIN_ONLY_OAUTH_CLIENTS',
         'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN',
+        'MBIN_DEFAULT_THEME',
     ];
 
     public function testApiCannotUpdateInstanceSettingsAnonymous(): void
@@ -100,6 +101,7 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'KBIN_FEDERATION_PAGE_ENABLED' => false,
             'KBIN_ADMIN_ONLY_OAUTH_CLIENTS' => true,
             'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN' => false,
+            'MBIN_DEFAULT_THEME' => 'theme--default',
         ];
 
         $client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);
@@ -131,6 +133,7 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'KBIN_FEDERATION_PAGE_ENABLED' => true,
             'KBIN_ADMIN_ONLY_OAUTH_CLIENTS' => false,
             'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN' => true,
+            'MBIN_DEFAULT_THEME' => 'theme--light',
         ];
 
         $client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);
