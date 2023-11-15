@@ -1,0 +1,5 @@
+{% if content is not empty %}
+<div class="announcement announcement__info">
+    {{ content|markdown|raw }}
+</div>
+{% endif %}

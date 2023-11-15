@@ -72,6 +72,7 @@
         'sidebars-same-side': app.user is defined and app.user is not same as null and app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR')) is same as 'true' and app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SIDEBARS_SAME_SIDE')) is same as 'true',
     }) }}" data-controller="kbin notifications">
 {% include 'layout/_header.html.twig' with {header_nav: block('header_nav')} %}
+{{ component('announcement') }}
 <div id="middle" class="{%- block mainClass -%}page{%- endblock %}">
     <div class="kbin-container
       {{ html_classes(app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_PAGE_WIDTH'))

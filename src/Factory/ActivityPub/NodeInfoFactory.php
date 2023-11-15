@@ -11,7 +11,7 @@ class NodeInfoFactory
 {
     private const NODE_PROTOCOL = 'activitypub';
     private const MBIN_REPOSITORY_URL = 'https://github.com/MbinOrg/mbin';
-    private const MBIN_VERSION = '1.0.0'; // TODO: Should be read from package.json or composer.json
+    private const MBIN_VERSION = '1.1.0'; // TODO: Should come from git tags?
 
     public function __construct(
         private readonly StatsContentRepository $repository,
