@@ -428,6 +428,12 @@ select {
   font-size: .85rem;
 }
 
+.select-flex {
+  select {
+    width: 100%;
+  }
+}
+
 .actions {
   @include media-breakpoint-down(sm) {
     text-align: right;

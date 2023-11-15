@@ -124,6 +124,7 @@ services:
             $kbinDefaultLang: "%kbin_default_lang%"
             $kbinContactEmail: "%kbin_contact_email%"
             $kbinSenderEmail: "%kbin_sender_email%"
+            $mbinDefaultTheme: "%mbin_default_theme%"
             $kbinJsEnabled: "%env(bool:KBIN_JS_ENABLED)%"
             $kbinFederationEnabled: "%env(bool:KBIN_FEDERATION_ENABLED)%"
             $kbinRegistrationsEnabled: "%env(bool:KBIN_REGISTRATIONS_ENABLED)%"
@@ -131,7 +132,6 @@ services:
             $kbinCaptchaEnabled: "%env(bool:KBIN_CAPTCHA_ENABLED)%"
             $kbinFederationPageEnabled: "%env(bool:KBIN_FEDERATION_PAGE_ENABLED)%"
             $kbinAdminOnlyOauthClients: "%env(bool:KBIN_ADMIN_ONLY_OAUTH_CLIENTS)%"
-            $mbinDefaultTheme: "%mbin_default_theme%"
 
     # Markdown
     App\Markdown\Factory\EnvironmentFactory:

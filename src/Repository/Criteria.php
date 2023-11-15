@@ -100,22 +100,22 @@ abstract class Criteria
     public ?string $domain = null;
     public ?array $languages = null;
 
-    public const THEME_MBIN = 'theme--mbin';
-    public const THEME_KBIN = 'theme--kbin';
-    public const THEME_LIGHT = 'theme--light';
-    public const THEME_DARK = 'theme--dark';
-    public const THEME_SOLARIZED_LIGHT = 'theme--solarized-light';
-    public const THEME_SOLARIZED_DARK = 'theme--solarized-dark';
-    public const THEME_TOKYO_NIGHT = 'theme--tokyo-night';
+    public const THEME_MBIN = 'mbin';
+    public const THEME_KBIN = 'kbin';
+    public const THEME_LIGHT = 'light';
+    public const THEME_DARK = 'dark';
+    public const THEME_SOLARIZED_LIGHT = 'solarized-light';
+    public const THEME_SOLARIZED_DARK = 'solarized-dark';
+    public const THEME_TOKYO_NIGHT = 'tokyo-night';
 
     public const THEME_OPTIONS = [
-        SELF::THEME_MBIN,
-        SELF::THEME_KBIN,
-        SELF::THEME_LIGHT,
-        SELF::THEME_DARK,
-        SELF::THEME_SOLARIZED_LIGHT,
-        SELF::THEME_SOLARIZED_DARK,
-        SELF::THEME_TOKYO_NIGHT,
+      'Mbin' => SELF::THEME_MBIN,
+      '/kbin' => SELF::THEME_KBIN,
+      'light' => SELF::THEME_LIGHT,
+      'dark' => SELF::THEME_DARK,
+      'solarized_light' => SELF::THEME_SOLARIZED_LIGHT,
+      'solarized_dark' => SELF::THEME_SOLARIZED_DARK,
+      'tokyo_night' => SELF::THEME_TOKYO_NIGHT,
     ];
 
     public function __construct(int $page)

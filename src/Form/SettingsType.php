@@ -25,6 +25,9 @@ class SettingsType extends AbstractType
             ->add('KBIN_META_TITLE')
             ->add('KBIN_META_DESCRIPTION')
             ->add('KBIN_META_KEYWORDS')
+            ->add('MBIN_DEFAULT_THEME', ChoiceType::class, [
+              'choices' => Criteria::THEME_OPTIONS,
+            ])
             ->add('KBIN_HEADER_LOGO', CheckboxType::class, ['required' => false])
             ->add('KBIN_REGISTRATIONS_ENABLED', CheckboxType::class, ['required' => false])
             ->add('KBIN_CAPTCHA_ENABLED', CheckboxType::class, ['required' => false])
@@ -33,17 +36,6 @@ class SettingsType extends AbstractType
             ->add('KBIN_FEDERATION_PAGE_ENABLED', CheckboxType::class, ['required' => false])
             ->add('KBIN_ADMIN_ONLY_OAUTH_CLIENTS', CheckboxType::class, ['required' => false])
             ->add('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', CheckboxType::class, ['required' => false])
-            ->add('MBIN_DEFAULT_THEME', ChoiceType::class, [
-                'choices' => [
-                    'mbin' => Criteria::THEME_MBIN,
-                    'kbin' => Criteria::THEME_KBIN,
-                    'light' => Criteria::THEME_LIGHT,
-                    'dark' => Criteria::THEME_DARK,
-                    'solarized_light' => Criteria::THEME_SOLARIZED_LIGHT,
-                    'solarized_dark' => Criteria::THEME_SOLARIZED_DARK,
-                    'tokyo_night' => Criteria::THEME_TOKYO_NIGHT,
-                ],
-            ])
             ->add('submit', SubmitType::class);
     }
 
