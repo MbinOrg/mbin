@@ -8,7 +8,7 @@
         </div>
     {% endif %}
     <div class="row">
-        {% if computed.magazine.icon and showCover %}
+        {% if computed.magazine.icon and showCover and (app.user or magazine.isAdult is same as false) %}
             <figure>
                 <img class="image-inline {{ magazine.isAdult ? 'image-adult' : '' }}"
                      src="{{ asset(computed.magazine.icon.filePath) | imagine_filter('post_thumb') }}"

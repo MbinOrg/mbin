@@ -171,6 +171,14 @@
     color: var(--kbin-meta-text-color);
     font-size: .85rem;
   }
+
+  .stretched-link {
+    small {
+      &.badge.danger {
+        color: var(--kbin-danger-color);
+      }
+    }
+  }
 }
 
 td {
@@ -272,7 +280,7 @@ td {
     }
 
     &__sub{
-      
+
     }
 
     &__information{
@@ -299,7 +307,7 @@ td {
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      
+
       .value{
         font-weight: bold;
       }

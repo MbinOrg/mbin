@@ -1,7 +1,7 @@
 <a href="{{ path('front_magazine', {name: magazine.name}) }}"
    class="{{ html_classes('magazine-inline', {'stretched-link': stretchedLink }) }}"
    title="{{ ('@'~magazine.name)|username(true) }}">
-    {% if magazine.icon and showAvatar %}
+    {% if magazine.icon and showAvatar and (app.user or magazine.isAdult is same as false) %}
         <img class="image-inline {{ magazine.isAdult ? 'image-adult' : '' }}"
              width="30" height="30"
              style="max-width: 30px; max-height: 30px;"
