@@ -28,19 +28,11 @@ class NodeInfoController
     }
 
     /**
-     * Returning NodeInfo JSON response for path: nodeinfo/2.0.
+     * Returning NodeInfo JSON response for path: nodeinfo/2.x.
      */
-    public function nodeInfoV20(): JsonResponse
+    public function nodeInfoV2(string $version): JsonResponse
     {
-        return new JsonResponse($this->nodeInfoFactory->create('2.0'));
-    }
-
-    /**
-     * Returning NodeInfo JSON response for path: nodeinfo/2.1.
-     */
-    public function nodeInfoV21(): JsonResponse
-    {
-        return new JsonResponse($this->nodeInfoFactory->create('2.1'));
+        return new JsonResponse($this->nodeInfoFactory->create($version));
     }
 
     /**
