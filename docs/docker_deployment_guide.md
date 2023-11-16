@@ -57,7 +57,7 @@ cd docker
 
 #### Build our own Docker image
 
-If you want to build our own image, run  (_no_ need to update the `compose.yml` file):
+If you want to build our own image, run (_no_ need to update the `compose.yml` file):
 
 ```bash
 docker build --no-cache -t mbin -f Dockerfile  ..
@@ -306,9 +306,16 @@ docker compose exec redis redis-cli
 
 ## Backup and restore
 
+Backup:
+
 ```bash
-docker exec -it container_id pg_dump -U kbin mbin > dump.sql
-docker compose exec -T database psql -U kbin mbin < dump.sql
+docker compose exec -it db pg_dump -U kbin kbin > dump.sql
+```
+
+Restore:
+
+```bash
+docker compose exec -T db psql -U kbin kbin < dump.sql
 ```
 
 ## See also
