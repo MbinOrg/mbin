@@ -110,12 +110,12 @@ abstract class Criteria
 
     public const THEME_OPTIONS = [
       // 'Mbin' => SELF::THEME_MBIN, // TODO uncomment when theme is ready
-      '/kbin' => SELF::THEME_KBIN,
-      'light' => SELF::THEME_LIGHT,
-      'dark' => SELF::THEME_DARK,
-      'solarized_light' => SELF::THEME_SOLARIZED_LIGHT,
-      'solarized_dark' => SELF::THEME_SOLARIZED_DARK,
-      'tokyo_night' => SELF::THEME_TOKYO_NIGHT,
+      '/kbin' => self::THEME_KBIN,
+      'light' => self::THEME_LIGHT,
+      'dark' => self::THEME_DARK,
+      'solarized_light' => self::THEME_SOLARIZED_LIGHT,
+      'solarized_dark' => self::THEME_SOLARIZED_DARK,
+      'tokyo_night' => self::THEME_TOKYO_NIGHT,
     ];
 
     public function __construct(int $page)
