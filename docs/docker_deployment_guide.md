@@ -315,7 +315,7 @@ docker compose exec -it db pg_dump -U kbin kbin > dump.sql
 Restore:
 
 ```bash
-cat dump.sql | docker compose exec -i db psql -U kbin kbin
+docker compose exec -T db psql -U kbin mbin < dump.sql
 ```
 
 ## See also
