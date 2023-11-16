@@ -132,7 +132,7 @@ Running the `post-upgrade` script will also execute `composer dump-env` for you:
 ./bin/post-upgrade
 ```
 
-**Important:** If you want to switch between `prod` to `dev` (or visa vers), you need explicitly execute: `composer dump-env dev` or `composer dump-env prod` respectively.
+**Important:** If you want to switch between `prod` to `dev` (or vice versa), you need explicitly execute: `composer dump-env dev` or `composer dump-env prod` respectively.
 
 Followed by restarting the services that are depending on the (new) configuration:
 
