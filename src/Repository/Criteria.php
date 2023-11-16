@@ -109,7 +109,7 @@ abstract class Criteria
     public const THEME_TOKYO_NIGHT = 'tokyo-night';
 
     public const THEME_OPTIONS = [
-      'Mbin' => SELF::THEME_MBIN,
+      // 'Mbin' => SELF::THEME_MBIN, // TODO uncomment when theme is ready
       '/kbin' => SELF::THEME_KBIN,
       'light' => SELF::THEME_LIGHT,
       'dark' => SELF::THEME_DARK,

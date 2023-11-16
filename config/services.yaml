@@ -19,7 +19,10 @@ parameters:
     kbin_ap_route_condition: 'request.getAcceptableContentTypes() and request.getAcceptableContentTypes()[0] in ["application/activity+json", "application/ld+json", "application/json"]'
     kbin_storage_url: "%env(KBIN_STORAGE_URL)%"
 
-    mbin_default_theme: "%env(MBIN_DEFAULT_THEME)%"
+    # Grab the default theme to use from the MBIN_DEFAULT_THEME env var
+    # with a fall back of tokyo-night if not set
+    default_theme: tokyo-night
+    mbin_default_theme: "%env(default:default_theme:MBIN_DEFAULT_THEME)%"
 
     amazon.s3.key: "%env(S3_KEY)%"
     amazon.s3.secret: "%env(S3_SECRET)%"

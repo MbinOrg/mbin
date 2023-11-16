@@ -866,3 +866,5 @@ user_badge_global_moderator: Global Mod
 user_badge_moderator: Mod
 user_badge_bot: Bot
 announcement: Announcement
+keywords: Keywords
+default_theme: Default theme
