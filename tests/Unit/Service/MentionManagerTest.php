@@ -35,7 +35,7 @@ class MentionManagerTest extends WebTestCase
         $this->assertEquals($output, $manager->extract($input));
     }
 
-    public function provider(): array
+    public static function provider(): array
     {
         return [
             ['Lorem @john ipsum', ['@john']],
