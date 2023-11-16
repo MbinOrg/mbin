@@ -593,7 +593,7 @@ server {
 
     # assets, documents, archives, media
     location ~* \.(?:css(\.map)?|js(\.map)?|jpe?g|png|tgz|gz|rar|bz2|doc|pdf|ptt|tar|gif|ico|cur|heic|webp|tiff?|mp3|m4a|aac|ogg|midi?|wav|mp4|mov|webm|mpe?g|avi|ogv|flv|wmv)$ {
-        expires    25d;
+        expires    30d;
         add_header Access-Control-Allow-Origin "*";
         add_header Cache-Control "public, no-transform";
         access_log off;
@@ -601,7 +601,7 @@ server {
 
     # svg, fonts
     location ~* \.(?:svgz?|ttf|ttc|otf|eot|woff2?)$ {
-        expires    25d;
+        expires    30d;
         add_header Access-Control-Allow-Origin "*";
         add_header Cache-Control "public, no-transform";
         access_log off;

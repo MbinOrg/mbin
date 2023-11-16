@@ -8,6 +8,7 @@ use App\Entity\Entry;
 use App\Service\ImageManager;
 use App\Service\SettingsManager;
 use Embed\Embed as BaseEmbed;
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -19,8 +20,18 @@ class Embed
     public ?string $image = null;
     public ?string $html = null;
 
-    public function __construct(private CacheInterface $cache, private SettingsManager $settings)
+    public function __construct(
+        private CacheInterface $cache,
+        private SettingsManager $settings,
+        private LoggerInterface $logger,
+    ) {
+    }
+
+    public function __clone(): void
     {
+        unset($this->cache);
+        unset($this->settings);
+        unset($this->logger);
     }
 
     public function fetch($url): self
@@ -28,6 +39,14 @@ class Embed
         if ($this->settings->isLocalUrl($url)) {
             return $this;
         }
+
+        $this->logger->debug('Embed:fetch: leftover data', [
+            'url' => $this->url,
+            'title' => $this->title,
+            'description' => $this->description,
+            'image' => $this->image,
+            'html' => $this->html,
+        ]);
 
         return $this->cache->get(
             'embed_'.md5($url),
@@ -38,29 +57,35 @@ class Embed
                     $embed = (new BaseEmbed())->get($url);
                     $oembed = $embed->getOEmbed();
                 } catch (\Exception $e) {
+                    $this->logger->info('Embed:fetch: fetch failed: '.$e->getMessage());
                     $c = clone $this;
-                    unset($c->cache);
-                    unset($c->settings);
 
                     return $c;
                 }
 
-                $this->url = $url;
-                $this->title = $embed->title;
-                $this->description = $embed->description;
-                $this->image = (string) $embed->image;
-                $this->html = $this->cleanIframe($oembed->html('html'));
+                $c = clone $this;
+
+                $c->url = $url;
+                $c->title = $embed->title;
+                $c->description = $embed->description;
+                $c->image = (string) $embed->image;
+                $c->html = $this->cleanIframe($oembed->html('html'));
 
                 try {
-                    if (!$this->html && $embed->code) {
-                        $this->html = $this->cleanIframe($embed->code->html);
+                    if (!$c->html && $embed->code) {
+                        $c->html = $this->cleanIframe($embed->code->html);
                     }
                 } catch (\TypeError $e) {
+                    $this->logger->info('Embed:fetch: html prepare failed: '.$e->getMessage());
                 }
 
-                $c = clone $this;
-                unset($c->cache);
-                unset($c->settings);
+                $this->logger->debug('Embed:fetch: fetch success, returning', [
+                    'url' => $c->url,
+                    'title' => $c->title,
+                    'description' => $c->description,
+                    'image' => $c->image,
+                    'html' => $c->html,
+                ]);
 
                 return $c;
             }
@@ -74,18 +99,6 @@ class Embed
         }
 
         return $html;
-
-        //        $types = [
-        //            str_starts_with($html, '<iframe'),
-        //            str_starts_with($html, '<video'),
-        //            str_starts_with($html, '<img'),
-        //        ];
-        //
-        //        if (count(array_unique($types)) === 1) {
-        //            return null;
-        //        }
-        //
-        //        return preg_replace('/(height)(=)"([\d]+)"/', '${1}${2}"auto"', $html);
     }
 
     public function getType(): string
