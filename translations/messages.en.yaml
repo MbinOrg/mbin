@@ -751,7 +751,7 @@ magazine_is_deleted: Magazine is deleted. You can <a href="%link_target%">restor
   it within 30 days.
 mute_account: Mute account
 request_account_deletion_revoke_button: Revoke the account deletion request.
-unmuted_account: Unmute account
+unmute_account: Unmute account
 account_muted: The account has been muted.
 delete_account_request_revoke: Your request to delete the account has been revoked.
 account_unmuted: The account has been unmuted.

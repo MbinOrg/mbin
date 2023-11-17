@@ -40,7 +40,7 @@
                     onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
                     <input type="hidden" name="token" value="{{ csrf_token('user_mute') }}">
                     <button type="submit" class="btn btn__secondary" title="{{ 'user_mute_desc'|trans }}">
-                        <i class="fa-solid fa-pause"></i> {{ user.visibility is same as 'trashed' ? 'unmuted_account'|trans : 'muted_account'|trans }}
+                        <i class="fa-solid {{ user.visibility is same as 'trashed' ? 'fa-volume-up' : 'fa-volume-mute' }}"></i> <span>{{ user.visibility is same as 'trashed' ? 'unmute_account'|trans : 'mute_account'|trans }}</span>
                     </button>
                 </form>
 
