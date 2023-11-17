@@ -42,7 +42,7 @@ class Unique extends Constraint
             throw new InvalidOptionsException('`fields` option must have at least one field', ['fields']);
         }
 
-        if ('' === $this->entityClass) {
+        if (null === $entityClass || '' === $entityClass) {
             throw new InvalidOptionsException('Bad entity class', ['entityClass']);
         }
     }
