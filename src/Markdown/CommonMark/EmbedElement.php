@@ -53,4 +53,16 @@ class EmbedElement
             ]
         );
     }
+
+    public static function buildDestructed(string $url, string $label = null): HtmlElement
+    {
+        return new HtmlElement(
+            'span',
+            [],
+            [
+                new HtmlElement('i', ['class' => 'fas fa-photo-video']),
+                $label ? sprintf(' %s (%s)', $label, $url) : ' '.$url,
+            ]
+        );
+    }
 }
