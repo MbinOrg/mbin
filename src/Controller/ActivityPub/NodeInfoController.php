@@ -28,19 +28,11 @@ class NodeInfoController
     }
 
     /**
-     * Returning NodeInfo JSON response for path: nodeinfo/2.0.
+     * Returning NodeInfo JSON response for path: nodeinfo/2.x.
      */
-    public function nodeInfoV20(): JsonResponse
+    public function nodeInfoV2(string $version): JsonResponse
     {
-        return new JsonResponse($this->nodeInfoFactory->create('2.0'));
-    }
-
-    /**
-     * Returning NodeInfo JSON response for path: nodeinfo/2.1.
-     */
-    public function nodeInfoV21(): JsonResponse
-    {
-        return new JsonResponse($this->nodeInfoFactory->create('2.1'));
+        return new JsonResponse($this->nodeInfoFactory->create($version));
     }
 
     /**
@@ -52,11 +44,11 @@ class NodeInfoController
             'links' => [
                 [
                     'rel' => self::NODE_REL_v21,
-                    'href' => $this->urlGenerator->generate('ap_node_info_v21', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                    'href' => $this->urlGenerator->generate('ap_node_info_v2', ['version' => '2.0'], UrlGeneratorInterface::ABSOLUTE_URL),
                 ],
                 [
                     'rel' => self::NODE_REL_v20,
-                    'href' => $this->urlGenerator->generate('ap_node_info_v20', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                    'href' => $this->urlGenerator->generate('ap_node_info_v2', ['version' => '2.1'], UrlGeneratorInterface::ABSOLUTE_URL),
                 ],
             ],
         ];
