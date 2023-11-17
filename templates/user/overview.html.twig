@@ -35,12 +35,12 @@
                     </button>
                 </form>
                 <hr>
-                <form action="{{ path(user.visibility is same as 'trashed' ? 'user_unsuspend' : 'user_suspend', {username: user.username}) }}"
+                <form action="{{ path(user.visibility is same as 'trashed' ? 'user_unmute' : 'user_mute', {username: user.username}) }}"
                     method="POST"
                     onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
-                    <input type="hidden" name="token" value="{{ csrf_token('user_suspend') }}">
-                    <button type="submit" class="btn btn__secondary" title="{{ 'user_suspend_desc'|trans }}">
-                        <i class="fa-solid fa-pause"></i> {{ user.visibility is same as 'trashed' ? 'unsuspend_account'|trans : 'suspend_account'|trans }}
+                    <input type="hidden" name="token" value="{{ csrf_token('user_mute') }}">
+                    <button type="submit" class="btn btn__secondary" title="{{ 'user_mute_desc'|trans }}">
+                        <i class="fa-solid fa-pause"></i> {{ user.visibility is same as 'trashed' ? 'unmuted_account'|trans : 'muted_account'|trans }}
                     </button>
                 </form>
 

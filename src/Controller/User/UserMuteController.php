@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class UserSuspendController extends AbstractController
+class UserMuteController extends AbstractController
 {
     public function __construct(
         private readonly UserManager $userManager
@@ -20,25 +20,25 @@ class UserSuspendController extends AbstractController
     }
 
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
-    public function suspend(User $user, Request $request): Response
+    public function mute(User $user, Request $request): Response
     {
-        $this->validateCsrf('user_suspend', $request->request->get('token'));
+        $this->validateCsrf('user_mute', $request->request->get('token'));
 
-        $this->userManager->suspend($user);
+        $this->userManager->mute($user);
 
-        $this->addFlash('success', 'account_suspended');
+        $this->addFlash('success', 'account_muted');
 
         return $this->redirectToRefererOrHome($request);
     }
 
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
-    public function unsuspend(User $user, Request $request): Response
+    public function unmute(User $user, Request $request): Response
     {
-        $this->validateCsrf('user_suspend', $request->request->get('token'));
+        $this->validateCsrf('user_mute', $request->request->get('token'));
 
-        $this->userManager->unsuspend($user);
+        $this->userManager->unmute($user);
 
-        $this->addFlash('success', 'account_unsuspended');
+        $this->addFlash('success', 'account_unmuted');
 
         return $this->redirectToRefererOrHome($request);
     }

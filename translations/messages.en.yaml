@@ -749,18 +749,18 @@ restore_magazine: Restore magazine
 purge_magazine: Purge magazine
 magazine_is_deleted: Magazine is deleted. You can <a href="%link_target%">restore</a>
   it within 30 days.
-suspend_account: Suspend account
+mute_account: Mute account
 request_account_deletion_revoke_button: Revoke the account deletion request.
-unsuspend_account: Unsuspend account
-account_suspended: The account has been suspended.
+unmuted_account: Unmute account
+account_muted: The account has been muted.
 delete_account_request_revoke: Your request to delete the account has been revoked.
-account_unsuspended: The account has been unsuspended.
+account_unmuted: The account has been unmuted.
 deletion: Deletion
-user_suspend_desc: Suspending your account hides your content on the instance, but
-  doesn't permanently remove it, and you can restore it at any time.
+user_mute_desc: Muting an account hides the content on the instance, but
+  doesn't permanently remove it, and you can restore it at any time. The content also still federates.
 account_banned: The account has been banned.
 account_unbanned: The account has been unbanned.
-account_is_suspended: User account is suspended.
+account_is_muted: User account is muted.
 remove_following: Remove following
 remove_subscriptions: Remove subscriptions
 apply_for_moderator: Apply for moderator

@@ -317,11 +317,10 @@ class UserManager
     }
 
     /**
-     * Suspend user, will eventually be deleted (TODO).
+     * Mute user, will hide content on instance.
      */
-    public function suspend(User $user): void
+    public function mute(User $user): void
     {
-        $user->markedForDeletionAt = null; // Not yet implemented
         $user->visibility = VisibilityInterface::VISIBILITY_TRASHED;
 
         $this->entityManager->persist($user);
@@ -329,11 +328,14 @@ class UserManager
     }
 
     /**
-     * Unsuspend user.
+     * Unmute user.
      */
-    public function unsuspend(User $user): void
+    public function unmute(User $user): void
     {
-        $this->revokeDeleteRequest($user);
+        $user->visibility = VisibilityInterface::VISIBILITY_VISIBLE;
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
     }
 
     public function removeFollowing(User $user): void

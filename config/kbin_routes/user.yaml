@@ -104,14 +104,14 @@ user_delete_request_revoke:
     path: /u/{username}/delete_request_revoke
     methods: [POST]
 
-user_suspend:
-    controller: App\Controller\User\UserSuspendController::suspend
-    path: /u/{username}/suspend
+user_mute:
+    controller: App\Controller\User\UserMuteController::mute
+    path: /u/{username}/mute
     methods: [POST]
 
-user_unsuspend:
-    controller: App\Controller\User\UserSuspendController::unsuspend
-    path: /u/{username}/unsuspend
+user_unmute:
+    controller: App\Controller\User\UserMuteController::unmute
+    path: /u/{username}/unmute
     methods: [POST]
 
 user_ban:
