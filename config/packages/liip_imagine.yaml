@@ -1,4 +1,5 @@
 # Documentation on how to configure the bundle can be found at: https://symfony.com/doc/current/bundles/LiipImagineBundle/basic-usage.html
+
 liip_imagine:
     resolvers:
         kbin.liip_resolver:
@@ -23,7 +24,8 @@ liip_imagine:
         quality: 90
 
     controller:
-        redirect_response_code: 301
+        # Set this value to 301 if you want to enable image resolve redirects using 301 *cached* responses (eg. when behind Nginx)
+        redirect_response_code: 302
 
     webp:
         generate: true
