@@ -1,17 +1,17 @@
 .theme--default {
   @media (prefers-color-scheme: dark) {
-    @import 'dark';
+    @include theme-dark;
   }
 
   @media (prefers-color-scheme: light) {
-    @import 'light';
+    @include theme-light;
   }
 }
 
 .theme--dark {
-  @import 'dark';
+  @include theme-dark;
 }
 
 .theme--light {
-  @import 'light';
+  @include theme-light;
 }
