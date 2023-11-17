@@ -10,7 +10,10 @@ services:
     # Or remove the build, context, dockerfile and image lines above and
     # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
     #image: "ghcr.io/mbinorg/mbin:latest"
+    container_name: mbin-www
     restart: unless-stopped
+    networks:
+      - mbin_external_network
     command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:2019/metrics || exit 1"]
@@ -37,7 +40,10 @@ services:
     # Or remove the build, context, dockerfile and image lines above and
     # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
     #image: "ghcr.io/mbinorg/mbin:latest"
+    container_name: mbin-php
     restart: unless-stopped
+    networks:
+      - mbin_external_network
     command: php-fpm
     healthcheck:
       test:
@@ -47,6 +53,8 @@ services:
         ]
     volumes:
       - ./storage/media:/var/www/mbin/public/media
+    # If you want to change configs locally, without rebuilding the image use:
+    #  - ../config:/var/www/mbin/config
     env_file:
       - .env
     depends_on:
@@ -63,12 +71,17 @@ services:
     # Or remove the build, context, dockerfile and image lines above and
     # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
     #image: "ghcr.io/mbinorg/mbin:latest"
+    container_name: mbin-messenger
     restart: unless-stopped
+    networks:
+      - mbin_external_network
     command: bin/console messenger:consume async --time-limit=3600
     healthcheck:
       test: ["CMD-SHELL", "ps aux | grep 'messenger[:]consume' || exit 1"]
     volumes:
       - ./storage/media:/var/www/mbin/public/media
+    # If you want to change configs locally, without rebuilding the image use:
+    #  - ../config:/var/www/mbin/config
     env_file:
       - .env
     depends_on:
@@ -85,12 +98,17 @@ services:
     # Or remove the build, context, dockerfile and image lines above and
     # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
     #image: "ghcr.io/mbinorg/mbin:latest"
+    container_name: mbin-messenger-ap
     restart: unless-stopped
+    networks:
+      - mbin_external_network
     command: bin/console messenger:consume async_ap --time-limit=3600
     healthcheck:
       test: ["CMD-SHELL", "ps aux | grep 'messenger[:]consume' || exit 1"]
     volumes:
       - ./storage/media:/var/www/mbin/public/media
+    # If you want to change configs locally, without rebuilding the image use:
+    #  - ../config:/var/www/mbin/config
     env_file:
       - .env
     depends_on:
@@ -100,7 +118,10 @@ services:
 
   redis:
     image: redis:alpine
+    container_name: mbin-redis
     restart: unless-stopped
+    networks:
+      - mbin_external_network
     command: /bin/sh -c "redis-server --requirepass $${REDIS_PASSWORD}"
     volumes:
       - ./storage/redis:/data
@@ -109,7 +130,10 @@ services:
 
   db:
     image: postgres:${POSTGRES_VERSION:-13}-alpine
+    container_name: mbin-db
     restart: unless-stopped
+    networks:
+      - mbin_external_network
     volumes:
       - ./storage/postgres:/var/lib/postgresql/data
     environment:
@@ -118,7 +142,10 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
+    container_name: mbin-rabbitmq
     restart: unless-stopped
+    networks:
+      - mbin_external_network
     environment:
       - RABBITMQ_DEFAULT_USER=kbin
     volumes:
@@ -130,6 +157,9 @@ services:
   # traffic and forward to http://www:80
   #nginx:
   #  image: nginx
+  #  container_name: mbin-nginx
+  #  networks:
+  #    - mbin_external_network
   #  ports:
   #    - 443:443
   #  volumes:
@@ -139,9 +169,14 @@ services:
   # More info: https://hub.docker.com/r/ixdotai/smtp
   #mailserver:
   #  image: ixdotai/smtp:latest
+  #  networks:
+  #    - mbin_external_network
   #  environment:
   #    - SMARTHOST_ADDRESS=mail.mysmtp.com
   #    - SMARTHOST_PORT=587
   #    - SMARTHOST_USER=myuser
   #    - SMARTHOST_PASSWORD=secret
   #    - SMARTHOST_ALIASES=*.mysmtp.com
+
+networks:
+  mbin_external_network:
