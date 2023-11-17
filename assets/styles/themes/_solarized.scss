@@ -1,0 +1,17 @@
+.theme--solarized {
+  @media (prefers-color-scheme: dark) {
+    @import 'solarized-dark';
+  }
+
+  @media (prefers-color-scheme: light) {
+    @import 'solarized-light';
+  }
+}
+
+.theme--solarized-dark {
+  @import 'solarized-dark';
+}
+
+.theme--solarized-light {
+  @import 'solarized-light';
+}

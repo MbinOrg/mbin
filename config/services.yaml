@@ -20,8 +20,8 @@ parameters:
     kbin_storage_url: "%env(KBIN_STORAGE_URL)%"
 
     # Grab the default theme to use from the MBIN_DEFAULT_THEME env var
-    # with a fall back of tokyo-night if not set
-    default_theme: tokyo-night
+    # with a fall back of light/dark auto detection based on user setting
+    default_theme: default
     mbin_default_theme: "%env(default:default_theme:MBIN_DEFAULT_THEME)%"
 
     amazon.s3.key: "%env(S3_KEY)%"
