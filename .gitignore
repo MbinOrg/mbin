@@ -38,6 +38,7 @@ yarn.lock
 .phpunit
 .phpunit.result.cache
 /phpunit.xml
+.phpunit.cache/
 ###< symfony/phpunit-bridge ###
 
 ###> symfony/webpack-encore-bundle ###
