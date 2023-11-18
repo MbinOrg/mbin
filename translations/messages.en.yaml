@@ -221,6 +221,9 @@ dark: Dark
 light: Light
 solarized_light: Solarized Light
 solarized_dark: Solarized Dark
+default_theme: Default theme
+default_theme_auto: Light/Dark (Auto Detect)
+solarized_auto: Solarized (Auto Detect)
 font_size: Font size
 size: Size
 boosts: Boosts
@@ -866,3 +869,4 @@ user_badge_global_moderator: Global Mod
 user_badge_moderator: Mod
 user_badge_bot: Bot
 announcement: Announcement
+keywords: Keywords
