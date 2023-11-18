@@ -29,6 +29,7 @@ class NodeInfoController
 
     /**
      * Returning NodeInfo JSON response for path: nodeinfo/2.x.
+     * @param string $version version number of NodeInfo
      */
     public function nodeInfoV2(string $version): JsonResponse
     {
