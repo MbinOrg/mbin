@@ -68,10 +68,11 @@ class EntryCommentEditController extends AbstractController
             );
         }
 
+        $user = $this->getUserOrThrow();
         $criteria = new EntryCommentPageView($this->getPageNb($request));
         $criteria->entry = $entry;
 
-        return $this->getEntryCommentPageResponse('entry/comment/edit.html.twig', $criteria, $form, $request, $comment);
+        return $this->getEntryCommentPageResponse('entry/comment/edit.html.twig', $user, $criteria, $form, $request, $comment);
     }
 
     private function getForm(EntryCommentDto $dto, EntryComment $comment): FormInterface
