@@ -1,0 +1,17 @@
+.theme--default {
+  @media (prefers-color-scheme: dark) {
+    @include theme-dark;
+  }
+
+  @media (prefers-color-scheme: light) {
+    @include theme-light;
+  }
+}
+
+.theme--dark {
+  @include theme-dark;
+}
+
+.theme--light {
+  @include theme-light;
+}

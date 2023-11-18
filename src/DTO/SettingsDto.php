@@ -18,6 +18,7 @@ class SettingsDto implements \JsonSerializable
         public string $KBIN_DEFAULT_LANG,
         public string $KBIN_CONTACT_EMAIL,
         public string $KBIN_SENDER_EMAIL,
+        public string $MBIN_DEFAULT_THEME,
         public bool $KBIN_JS_ENABLED,
         public bool $KBIN_FEDERATION_ENABLED,
         public bool $KBIN_REGISTRATIONS_ENABLED,
@@ -42,6 +43,7 @@ class SettingsDto implements \JsonSerializable
         $dto->KBIN_DEFAULT_LANG = $this->KBIN_DEFAULT_LANG ?? $dto->KBIN_DEFAULT_LANG;
         $dto->KBIN_CONTACT_EMAIL = $this->KBIN_CONTACT_EMAIL ?? $dto->KBIN_CONTACT_EMAIL;
         $dto->KBIN_SENDER_EMAIL = $this->KBIN_SENDER_EMAIL ?? $dto->KBIN_SENDER_EMAIL;
+        $dto->MBIN_DEFAULT_THEME = $this->MBIN_DEFAULT_THEME ?? $dto->MBIN_DEFAULT_THEME;
         $dto->KBIN_JS_ENABLED = $this->KBIN_JS_ENABLED ?? $dto->KBIN_JS_ENABLED;
         $dto->KBIN_FEDERATION_ENABLED = $this->KBIN_FEDERATION_ENABLED ?? $dto->KBIN_FEDERATION_ENABLED;
         $dto->KBIN_REGISTRATIONS_ENABLED = $this->KBIN_REGISTRATIONS_ENABLED ?? $dto->KBIN_REGISTRATIONS_ENABLED;
@@ -67,6 +69,7 @@ class SettingsDto implements \JsonSerializable
             'KBIN_DEFAULT_LANG' => $this->KBIN_DEFAULT_LANG,
             'KBIN_CONTACT_EMAIL' => $this->KBIN_CONTACT_EMAIL,
             'KBIN_SENDER_EMAIL' => $this->KBIN_SENDER_EMAIL,
+            'MBIN_DEFAULT_THEME' => $this->MBIN_DEFAULT_THEME,
             'KBIN_JS_ENABLED' => $this->KBIN_JS_ENABLED,
             'KBIN_FEDERATION_ENABLED' => $this->KBIN_FEDERATION_ENABLED,
             'KBIN_REGISTRATIONS_ENABLED' => $this->KBIN_REGISTRATIONS_ENABLED,

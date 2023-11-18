@@ -5,36 +5,36 @@
        title="{{ 'kbin' }} {{ 'theme'|trans }}"
        aria-label="{{ 'kbin' }} {{ 'theme'|trans }}"
        rel="nofollow">
-        <div class="{{ html_classes('theme', 'kbin', constant('App\\Controller\\User\\ThemeSettingsController::KBIN') == theme ? 'active' : '' ) }}"></div>
+        <div class="theme kbin"></div>
     </a>
     <a href="{{ path('theme_settings', {key: theme_key, value: 'light'}) }}"
        title="{{ 'light'|trans }} {{ 'theme'|trans }}"
        aria-label="{{ 'light'|trans }} {{ 'theme'|trans }}"
        rel="nofollow">
-        <div class="{{ html_classes('theme', 'light', constant('App\\Controller\\User\\ThemeSettingsController::LIGHT') == theme ? 'active' : '' ) }}"></div>
+        <div class="theme light"></div>
     </a>
     <a href="{{ path('theme_settings', {key: theme_key, value: 'dark'}) }}"
        title="{{ 'dark'|trans }} {{ 'theme'|trans }}"
        aria-label="{{ 'dark'|trans }} {{ 'theme'|trans }}"
        rel="nofollow">
-        <div class="{{ html_classes('theme', 'dark', constant('App\\Controller\\User\\ThemeSettingsController::DARK') == theme ? 'active' : '' ) }}"></div>
+        <div class="theme dark"></div>
     </a>
     <a href="{{ path('theme_settings', {key: theme_key, value: 'solarized-light'}) }}"
        title="{{ 'solarized_light'|trans }} {{ 'theme'|trans }}"
        aria-label="{{ 'solarized_light'|trans }} {{ 'theme'|trans }}"
        rel="nofollow">
-        <div class="{{ html_classes('theme', 'solarized-light', constant('App\\Controller\\User\\ThemeSettingsController::SOLARIZED_LIGHT') == theme ? 'active' : '' ) }}"></div>
+        <div class="theme solarized-light"></div>
     </a>
     <a href="{{ path('theme_settings', {key: theme_key, value: 'solarized-dark'}) }}"
        title="{{ 'solarized_dark'|trans }} {{ 'theme'|trans }}"
        aria-label="{{ 'solarized_dark'|trans }} {{ 'theme'|trans }}"
        rel="nofollow">
-        <div class="{{ html_classes('theme', 'solarized-dark', constant('App\\Controller\\User\\ThemeSettingsController::SOLARIZED_DARK') == theme ? 'active' : '' ) }}"></div>
+        <div class="theme solarized-dark"></div>
     </a>
     <a href="{{ path('theme_settings', {key: theme_key, value: 'tokyo-night'}) }}"
        title="{{ 'tokyo_night'|trans }} {{ 'theme'|trans }}"
        aria-label="{{ 'tokyo_night'|trans }} {{ 'theme'|trans }}"
        rel="nofollow">
-        <div class="{{ html_classes('theme', 'tokyo-night', constant('App\\Controller\\User\\ThemeSettingsController::TOKYO_NIGHT') == theme ? 'active' : '' ) }}"></div>
+        <div class="theme tokyo-night"></div>
     </a>
 </div>
