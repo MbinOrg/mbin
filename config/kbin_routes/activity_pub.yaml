@@ -1,144 +1,140 @@
 ap_webfinger:
-  controller: App\Controller\ActivityPub\WebFingerController
-  path: '/.well-known/webfinger'
-  methods: [ GET ]
+    controller: App\Controller\ActivityPub\WebFingerController
+    path: '/.well-known/webfinger'
+    methods: [GET]
 
 ap_hostmeta:
-  controller: App\Controller\ActivityPub\HostMetaController
-  path: '/.well-known/host-meta'
-  methods: [ GET ]
+    controller: App\Controller\ActivityPub\HostMetaController
+    path: '/.well-known/host-meta'
+    methods: [GET]
 
 ap_node_info:
-  controller: App\Controller\ActivityPub\NodeInfoController::nodeInfo
-  path: '/.well-known/nodeinfo'
-  methods: [ GET ]
+    controller: App\Controller\ActivityPub\NodeInfoController::nodeInfo
+    path: '/.well-known/nodeinfo'
+    methods: [GET]
 
-ap_node_info_v20:
-  controller: App\Controller\ActivityPub\NodeInfoController::nodeInfoV20
-  path: '/nodeinfo/2.0.{_format}'
-  methods: [ GET ]
-  format: json
-
-ap_node_info_v21:
-  controller: App\Controller\ActivityPub\NodeInfoController::nodeInfoV21
-  path: '/nodeinfo/2.1.{_format}'
-  methods: [ GET ]
-  format: json
+ap_node_info_v2:
+    controller: App\Controller\ActivityPub\NodeInfoController::nodeInfoV2
+    path: '/nodeinfo/{version}.{_format}'
+    methods: [GET]
+    requirements:
+        version: '2.0|2.1'
+    format: json
 
 ap_instance:
-  controller: App\Controller\ActivityPub\InstanceController
-  path: '/i/actor'
-  methods: [ GET ]
+    controller: App\Controller\ActivityPub\InstanceController
+    path: '/i/actor'
+    methods: [GET]
 
 ap_instance_front:
-  controller: App\Controller\ActivityPub\InstanceController
-  path: '/'
-  methods: [ GET ]
-  condition: '%kbin_ap_route_condition%'
+    controller: App\Controller\ActivityPub\InstanceController
+    path: '/'
+    methods: [GET]
+    condition: '%kbin_ap_route_condition%'
 
 ap_instance_inbox:
-  controller: App\Controller\ActivityPub\SharedInboxController
-  path: /i/inbox
-  methods: [ POST ]
+    controller: App\Controller\ActivityPub\SharedInboxController
+    path: /i/inbox
+    methods: [POST]
 
 ap_instance_outbox:
-  controller: App\Controller\ActivityPub\InstanceOutboxController
-  path: /i/outbox
-  methods: [ POST ]
+    controller: App\Controller\ActivityPub\InstanceOutboxController
+    path: /i/outbox
+    methods: [POST]
 
 ap_shared_inbox:
-  controller: App\Controller\ActivityPub\SharedInboxController
-  path: /f/inbox
-  methods: [ POST ]
+    controller: App\Controller\ActivityPub\SharedInboxController
+    path: /f/inbox
+    methods: [POST]
 
 ap_object:
-  controller: App\Controller\ActivityPub\ObjectController
-  path: /f/object/{id}
-  methods: [ GET ]
-  condition: '%kbin_ap_route_condition%'
+    controller: App\Controller\ActivityPub\ObjectController
+    path: /f/object/{id}
+    methods: [GET]
+    condition: '%kbin_ap_route_condition%'
 
 ap_user:
-  controller: App\Controller\ActivityPub\User\UserController
-  path: /u/{username}
-  methods: [ GET ]
-  condition: '%kbin_ap_route_condition%'
+    controller: App\Controller\ActivityPub\User\UserController
+    path: /u/{username}
+    methods: [GET]
+    condition: '%kbin_ap_route_condition%'
 
 ap_user_inbox:
-  controller: App\Controller\ActivityPub\User\UserInboxController
-  path: /u/{username}/inbox
-  methods: [ POST ]
+    controller: App\Controller\ActivityPub\User\UserInboxController
+    path: /u/{username}/inbox
+    methods: [POST]
 
 ap_user_outbox:
-  controller: App\Controller\ActivityPub\User\UserOutboxController
-  path: /u/{username}/outbox
-  methods: [ GET ]
-  condition: '%kbin_ap_route_condition%'
+    controller: App\Controller\ActivityPub\User\UserOutboxController
+    path: /u/{username}/outbox
+    methods: [GET]
+    condition: '%kbin_ap_route_condition%'
 
 ap_user_followers:
-  controller: App\Controller\ActivityPub\User\UserFollowersController::followers
-  path: /u/{username}/followers
-  methods: [ GET ]
-  condition: '%kbin_ap_route_condition%'
+    controller: App\Controller\ActivityPub\User\UserFollowersController::followers
+    path: /u/{username}/followers
+    methods: [GET]
+    condition: '%kbin_ap_route_condition%'
 
 ap_user_following:
-  controller: App\Controller\ActivityPub\User\UserFollowersController::following
-  path: /u/{username}/following
-  methods: [ GET ]
-  condition: '%kbin_ap_route_condition%'
+    controller: App\Controller\ActivityPub\User\UserFollowersController::following
+    path: /u/{username}/following
+    methods: [GET]
+    condition: '%kbin_ap_route_condition%'
 
 ap_magazine:
-  controller: App\Controller\ActivityPub\Magazine\MagazineController
-  path: /m/{name}
-  methods: [ GET ]
-  condition: '%kbin_ap_route_condition%'
+    controller: App\Controller\ActivityPub\Magazine\MagazineController
+    path: /m/{name}
+    methods: [GET]
+    condition: '%kbin_ap_route_condition%'
 
 ap_magazine_inbox:
-  controller: App\Controller\ActivityPub\Magazine\MagazineInboxController
-  path: /m/{name}/inbox
-  methods: [ POST ]
+    controller: App\Controller\ActivityPub\Magazine\MagazineInboxController
+    path: /m/{name}/inbox
+    methods: [POST]
 
 ap_magazine_outbox:
-  controller: App\Controller\ActivityPub\Magazine\MagazineOutboxController
-  path: /m/{name}/outbox
-  methods: [ GET ]
-  condition: '%kbin_ap_route_condition%'
+    controller: App\Controller\ActivityPub\Magazine\MagazineOutboxController
+    path: /m/{name}/outbox
+    methods: [GET]
+    condition: '%kbin_ap_route_condition%'
 
 ap_magazine_followers:
-  controller: App\Controller\ActivityPub\Magazine\MagazineFollowersController
-  path: /m/{name}/followers
-  methods: [ GET ]
-  condition: '%kbin_ap_route_condition%'
+    controller: App\Controller\ActivityPub\Magazine\MagazineFollowersController
+    path: /m/{name}/followers
+    methods: [GET]
+    condition: '%kbin_ap_route_condition%'
 
 ap_magazine_moderators:
-  controller: App\Controller\ActivityPub\Magazine\MagazineModeratorsController
-  path: /m/{name}/moderators
-  methods: [ GET ]
-  condition: '%kbin_ap_route_condition%'
+    controller: App\Controller\ActivityPub\Magazine\MagazineModeratorsController
+    path: /m/{name}/moderators
+    methods: [GET]
+    condition: '%kbin_ap_route_condition%'
 
 ap_entry:
-  controller: App\Controller\ActivityPub\EntryController
-  defaults: { slug: -, sortBy: hot }
-  path: /m/{magazine_name}/t/{entry_id}/{slug}/{sortBy}
-  methods: [ GET ]
-  condition: '%kbin_ap_route_condition%'
+    controller: App\Controller\ActivityPub\EntryController
+    defaults: { slug: -, sortBy: hot }
+    path: /m/{magazine_name}/t/{entry_id}/{slug}/{sortBy}
+    methods: [GET]
+    condition: '%kbin_ap_route_condition%'
 
 ap_entry_comment:
-  controller: App\Controller\ActivityPub\EntryCommentController
-  defaults: { slug: -, }
-  path: /m/{magazine_name}/t/{entry_id}/{slug}/comment/{comment_id}
-  methods: [ GET ]
-  condition: '%kbin_ap_route_condition%'
+    controller: App\Controller\ActivityPub\EntryCommentController
+    defaults: { slug: - }
+    path: /m/{magazine_name}/t/{entry_id}/{slug}/comment/{comment_id}
+    methods: [GET]
+    condition: '%kbin_ap_route_condition%'
 
 ap_post:
-  controller: App\Controller\ActivityPub\PostController
-  defaults: { slug: -, }
-  path: /m/{magazine_name}/p/{post_id}/{slug}
-  methods: [ GET ]
-  condition: '%kbin_ap_route_condition%'
+    controller: App\Controller\ActivityPub\PostController
+    defaults: { slug: - }
+    path: /m/{magazine_name}/p/{post_id}/{slug}
+    methods: [GET]
+    condition: '%kbin_ap_route_condition%'
 
 ap_post_comment:
-  controller: App\Controller\ActivityPub\PostCommentController
-  defaults: { slug: -, }
-  path: /m/{magazine_name}/p/{post_id}/{slug}/reply/{comment_id}
-  methods: [ GET ]
-  condition: '%kbin_ap_route_condition%'
+    controller: App\Controller\ActivityPub\PostCommentController
+    defaults: { slug: - }
+    path: /m/{magazine_name}/p/{post_id}/{slug}/reply/{comment_id}
+    methods: [GET]
+    condition: '%kbin_ap_route_condition%'

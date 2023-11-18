@@ -19,6 +19,11 @@ parameters:
     kbin_ap_route_condition: 'request.getAcceptableContentTypes() and request.getAcceptableContentTypes()[0] in ["application/activity+json", "application/ld+json", "application/json"]'
     kbin_storage_url: "%env(KBIN_STORAGE_URL)%"
 
+    # Grab the default theme to use from the MBIN_DEFAULT_THEME env var
+    # with a fall back of light/dark auto detection based on user setting
+    default_theme: default
+    mbin_default_theme: "%env(default:default_theme:MBIN_DEFAULT_THEME)%"
+
     amazon.s3.key: "%env(S3_KEY)%"
     amazon.s3.secret: "%env(S3_SECRET)%"
     amazon.s3.bucket: "%env(S3_BUCKET)%"
@@ -122,6 +127,7 @@ services:
             $kbinDefaultLang: "%kbin_default_lang%"
             $kbinContactEmail: "%kbin_contact_email%"
             $kbinSenderEmail: "%kbin_sender_email%"
+            $mbinDefaultTheme: "%mbin_default_theme%"
             $kbinJsEnabled: "%env(bool:KBIN_JS_ENABLED)%"
             $kbinFederationEnabled: "%env(bool:KBIN_FEDERATION_ENABLED)%"
             $kbinRegistrationsEnabled: "%env(bool:KBIN_REGISTRATIONS_ENABLED)%"

@@ -25,6 +25,7 @@ class SettingsManager
         private readonly string $kbinDefaultLang,
         private readonly string $kbinContactEmail,
         private readonly string $kbinSenderEmail,
+        private readonly string $mbinDefaultTheme,
         private readonly bool $kbinJsEnabled,
         private readonly bool $kbinFederationEnabled,
         private readonly bool $kbinRegistrationsEnabled,
@@ -45,6 +46,7 @@ class SettingsManager
                 $this->find($results, 'KBIN_DEFAULT_LANG') ?? $this->kbinDefaultLang,
                 $this->find($results, 'KBIN_CONTACT_EMAIL') ?? $this->kbinContactEmail,
                 $this->find($results, 'KBIN_SENDER_EMAIL') ?? $this->kbinSenderEmail,
+                $this->find($results, 'MBIN_DEFAULT_THEME') ?? $this->mbinDefaultTheme,
                 $this->find($results, 'KBIN_JS_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? $this->kbinJsEnabled,
                 $this->find(
                     $results,

@@ -19,7 +19,7 @@ class SluggerTest extends WebTestCase
         $this->assertEquals($output, $slugger->camelCase($input));
     }
 
-    public function provider(): array
+    public static function provider(): array
     {
         return [
             ['Lorem ipsum', 'loremIpsum'],
