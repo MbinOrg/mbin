@@ -14,7 +14,7 @@ final class Version20231119145850 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Improve db optimization';
     }
 
     public function up(Schema $schema): void
@@ -27,5 +27,7 @@ final class Version20231119145850 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
+        $this->addSql('DROP INDEX user_username_lower_idx');
+        $this->addSql('DROP INDEX user_email_lower_idx');
     }
 }
