@@ -19,6 +19,10 @@ final class Version20231119012320 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        // Significant db performance improvement
+        $this->addSql('CREATE INDEX user_username_lower_idx ON "user" (lower(username))');
+        $this->addSql('CREATE INDEX user_email_lower_idx ON "user" (lower(email))');
+
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('DROP SEQUENCE award_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE award_type_id_seq CASCADE');
