@@ -22,12 +22,10 @@ final class Version20231119145850 extends AbstractMigration
         // Significant db performance improvement
         $this->addSql('CREATE INDEX user_username_lower_idx ON "user" (lower(username))');
         $this->addSql('CREATE INDEX user_email_lower_idx ON "user" (lower(email))');
-
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-
     }
 }
