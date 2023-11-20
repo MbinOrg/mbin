@@ -80,7 +80,6 @@ about_instance: Over
 all_magazines: Alle tijdschriften
 stats: Statistieken
 fediverse: Fediverse
-ranking: Klassement
 create_new_magazine: Nieuw tijdschrift maken
 add_new_article: Artikel toevoegen
 add_new_link: Link toevoegen
@@ -219,7 +218,6 @@ he_banned: Verbannen
 he_unbanned: Toelaten
 read_all: Alles als gelezen markeren
 show_all: Alles tonen
-ranking_disabled: Klassement is uitgeschakeld
 flash_thread_new_success: Het gesprek is succesvol aangemaakt en zichtbaar voor andere
   gebruikers.
 flash_thread_edit_success: Het gesprek is succesvol bewerkt.

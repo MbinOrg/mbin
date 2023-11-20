@@ -36,7 +36,6 @@ reset_password: Şifreyi sıfırla
 show_more: Daha fazlası
 about_instance: Hakkında
 fediverse: Fediverse
-ranking: Sıralama
 follow: Takip et
 unfollow: Takipten çık
 reply: Cevapla
@@ -292,7 +291,6 @@ notify_on_new_post_reply: Gönderilerimdeki bütün cevaplar
 notify_on_new_post_comment_reply: Gönderilerdeki yorumlarıma gelen cevaplar
 he_banned: ban
 he_unbanned: yasağı kaldır
-ranking_disabled: Sıralama devre dışı bırakıldı
 show_all: Hepsini göster
 about: Hakkında
 too_many_requests: Limit aşıldı, lütfen daha sonra tekrar deneyiniz.

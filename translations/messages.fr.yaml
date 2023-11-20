@@ -78,7 +78,6 @@ about_instance: À propos
 all_magazines: Tous les magazines
 stats: Statistiques
 fediverse: Fédivers
-ranking: Classement
 create_new_magazine: Créer un nouveau magazine
 add_new_link: Ajouter un nouveau lien
 add_new_photo: Ajouter une nouvelle photo
@@ -271,7 +270,6 @@ removed_post_by: a supprimé une publication de
 restored_post_by: a rétabli la publication de
 read_all: Lire tout
 show_all: Afficher tout
-ranking_disabled: Classement désactivé
 flash_register_success: Bienvenue à bord ! Votre compte est maintenant enregistré.
   Une dernière étape - vérifiez votre boîte de réception pour y trouver un lien d'activation
   qui donnera vie à votre compte.

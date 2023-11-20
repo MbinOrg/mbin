@@ -76,7 +76,6 @@ about_instance: 關於
 all_magazines: 所有刊版
 stats: 統計
 fediverse: 聯邦宇宙
-ranking: 排名
 create_new_magazine: 立刊
 add_new_post: 新鋪文
 add_new_article: 新帖文
@@ -285,7 +284,6 @@ federation: 聯邦
 add_moderator: 新增管理員
 report_issue: 回報問題
 flash_magazine_edit_success: 成功編輯刊版。
-ranking_disabled: 排名已停用
 flash_magazine_new_success: 成功立刊。 你現在可以新增內容或瀏覽刊版管理面板。
 set_magazines_bar_empty_desc: 如果留空，活躍的刊版便會顯示於上列。
 too_many_requests: 請求己達上限，請稍候再試。

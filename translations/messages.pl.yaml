@@ -92,7 +92,6 @@ restored_post_by: przywrócił post utworzony przez
 he_banned: ban
 he_unbanned: odbanuj
 show_all: Pokaż wszystko
-ranking_disabled: Ranking jest wyłączony
 flash_thread_new_success: Treść została poprawnie utworzona i za chwilę będzie widoczna
   dla innych.
 flash_thread_edit_success: Treść została poprawnie zedytowana.
@@ -176,7 +175,6 @@ about_instance: O instancji
 all_magazines: Wszystkie magazyny
 stats: Statystyki
 fediverse: Fediwersum
-ranking: Ranking
 create_new_magazine: Utwórz nowy magazyn
 add_new_video: Dodaj video
 add_new_article: Dodaj nowy wątek
