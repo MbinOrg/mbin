@@ -84,7 +84,6 @@ about_instance: About
 all_magazines: All magazines
 stats: Statistics
 fediverse: Fediverse
-ranking: Ranking
 create_new_magazine: Create new magazine
 add_new_article: Add new thread
 add_new_link: Add new link
@@ -242,7 +241,6 @@ he_banned: ban
 he_unbanned: unban
 read_all: Read all
 show_all: Show all
-ranking_disabled: Ranking is disabled
 flash_register_success: Welcome aboard! Your account is now registered. One last step
   - check your inbox for an activation link that will bring your account to life.
 flash_thread_new_success: The thread has been created successfully and is now visible
