@@ -81,7 +81,6 @@ about_instance: Acerca de
 all_magazines: Todos las revistas
 stats: Estadísticas
 fediverse: Fediverso
-ranking: Ránking
 create_new_magazine: Crear una nueva revista
 add_new_article: Agregar un nuevo hilo
 add_new_link: Añadir un nuevo enlace
@@ -195,7 +194,6 @@ he_banned: suspender
 he_unbanned: cancelar la suspensión
 read_all: Leer todo
 show_all: Mostrar todo
-ranking_disabled: Ránking desactivado
 flash_register_success: ¡Bienvenida/o a bordo! Su cuenta ya está registrada. Un último
   paso - consulte su bandeja de entrada para recibir un enlace de activación que dará
   vida a su cuenta.

@@ -145,7 +145,6 @@ about_instance: A proposito
 all_magazines: Tutte le riviste
 stats: Statistiche
 fediverse: Fediverso
-ranking: Graduatoria
 create_new_magazine: Crea una nuova rivista
 add_new_article: Aggiungi un nuovo thread
 add_new_link: Aggiungi un nuovo link
@@ -265,7 +264,6 @@ removed_post_by: ha rimosso un post di
 restored_post_by: ha ripristinato un post di
 read_all: Leggi tutto
 show_all: Mostra tutto
-ranking_disabled: La graduatoria è disattivata
 Password is invalid: La password non è valida.
 check_email: Controlla la tua email
 joined: Iscritto

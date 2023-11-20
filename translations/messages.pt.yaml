@@ -74,7 +74,6 @@ about_instance: Sobre
 all_magazines: Todas as magazines
 stats: Estatísticas
 fediverse: Fediverse
-ranking: Ranking
 create_new_magazine: Criar uma nova magazine
 add_new_article: Adicionar um novo artigo
 add_new_link: Adicionar um novo link
@@ -296,7 +295,6 @@ notify_on_new_posts: Notificar-me de novas postagens numa magazine subscrita
 theme: Tema
 show_users_avatars: Mostrar os avatars dos utilizadores
 restored_thread_by: restaurou tópico por
-ranking_disabled: Ranking está desativado
 add_new: Adicionar novo
 url: URL
 title: Título

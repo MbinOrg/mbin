@@ -74,7 +74,6 @@ privacy_policy: プライバシーポリシー
 about_instance: このインスタンスについて
 all_magazines: すべてのマガジン
 stats: 統計
-ranking: ランキング
 add_new_article: 新しいスレッドを追加
 add_new_link: 新しいリンクを追加
 add_new_post: 新しい投稿を追加
@@ -233,7 +232,6 @@ he_banned: バンする
 he_unbanned: バン解除
 read_all: 全部既読にする
 show_all: 全部表示する
-ranking_disabled: ランキングを無効
 flash_thread_new_success: スレッドが作成されました。他のユーザーがスレッドを見られます。
 flash_thread_edit_success: スレッド編集ができました。
 flash_thread_delete_success: スレッドを削除しました。

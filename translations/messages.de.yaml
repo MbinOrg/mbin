@@ -109,7 +109,6 @@ in: in
 all_magazines: Alle Magazine
 stats: Statistiken
 fediverse: Fediverse
-ranking: Rangfolge
 add_new_link: Neuen Link hinzufügen
 create_new_magazine: Neues Magazin hinzufügen
 contact: Kontakt
@@ -292,7 +291,6 @@ flash_thread_edit_success: Das Thema wurde erfolgreich bearbeitet.
 flash_thread_delete_success: Das Thema wurde erfolgreich gelöscht.
 flash_thread_pin_success: Das Thema wurde erfolgreich angeheftet.
 flash_thread_unpin_success: Das Thema wurde erfolgreich losgeheftet.
-ranking_disabled: Platzierung ist deaktiviert
 flash_magazine_edit_success: Das Magazin wurde erfolgreich bearbeitet.
 too_many_requests: Grenzwert überschritten, bitte versuche es später nochmal.
 set_magazines_bar_desc: Füge die Namen der Magazine hinter dem Komma ein

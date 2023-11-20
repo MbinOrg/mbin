@@ -58,7 +58,6 @@ about_instance: Σχετικά
 all_magazines: Όλα τα περιοδικά
 stats: Στατιστικά
 fediverse: Fediverse
-ranking: Σειρά κατάταξης
 add_new_article: Προσθήκη νέου νήματος
 add_new_link: Προσθήκη νέου συνδέσμου
 add_new_photo: Προσθήκη νέας φωτογραφίας
@@ -203,7 +202,6 @@ he_banned: ban
 he_unbanned: unban
 read_all: Ανάγνωση όλων
 show_all: Εμφάνιση όλων
-ranking_disabled: Η κατάταξη είναι απενεργοποιημένη
 flash_thread_edit_success: Το νήμα επεξεργάστηκε επιτυχώς.
 flash_thread_delete_success: Το νήμα διαγράφηκε επιτυχώς.
 flash_thread_pin_success: Το νήμα καρφιτσώθηκε επιτυχώς.
