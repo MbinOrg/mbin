@@ -58,7 +58,6 @@ about_instance: Σχετικά
 all_magazines: Όλα τα περιοδικά
 stats: Στατιστικά
 fediverse: Fediverse
-awards: Βραβεία
 ranking: Σειρά κατάταξης
 add_new_article: Προσθήκη νέου νήματος
 add_new_link: Προσθήκη νέου συνδέσμου
@@ -212,59 +211,6 @@ flash_thread_unpin_success: Το νήμα ξεκαρφιτσώθηκε επιτ�
 flash_magazine_edit_success: Το περιοδικό έχει επεξεργαστεί επιτυχώς.
 too_many_requests: Υπέρβαση του ορίου, δοκιμάστε ξανά αργότερα.
 set_magazines_bar_desc: προσθέστε τα ονόματα των περιοδικών μετά το κόμμα
-gold: Χρυσός
-silver: Ασημένιος
-bronze: Χάλκινος
-bronze_autobiographer: Αυτοβιογράφος
-bronze_autobiographer_desc: Για τη συμπλήρωση όλων των πεδίων στο προφίλ
-bronze_personality: Χάλκινη προσωπικότητα
-bronze_personality_desc: 20 ακόλουθοι
-bronze_commentator: Χάλκινος σχολιαστής
-bronze_scout: Χάλκινος ανιχνευτής
-bronze_scout_desc: 10 καλοί σύνδεσμοι
-bronze_redactor: Χάλκινος συντάκτης
-bronze_redactor_desc: 10 καλά νήματα
-bronze_poster_desc: 10 καλές αναρτήσεις
-bronze_article: Χάλκινο νήμα
-bronze_comment: Καλό σχόλιο
-bronze_post: Καλή ανάρτηση
-bronze_ranking: Νούμερο 3
-bronze_ranking_desc: 3η θέση στην κατάταξη
-bronze_popular_entry: Δημοφιλές Νήμα
-bronze_magazine: Διάσημο περιοδικό
-bronze_magazine_desc: Δημιούργησε περιοδικό με 20 ακολούθους
-silver_personality: Silver προσωπικότητα
-silver_personality_desc: 50 ακόλουθοι
-silver_commentator_desc: 10 πολύ καλά σχόλια
-silver_scout: Silver ανιχνευτής
-silver_scout_desc: 10 πολύ καλοί σύνδεσμοι
-silver_redactor: Silver συντάκτης
-silver_link: Πολύ καλός σύνδεσμος
-silver_article: Silver νήμα
-silver_photo: Πολύ καλή φωτογραφία
-silver_post: Πολύ καλή ανάρτηση
-silver_ranking: Νούμερο 2
-silver_ranking_desc: 2η θέση στην κατάταξη
-silver_popular_entry: Δημοφιλές Νήμα
-silver_magazine: Δημοφιλές περιοδικό
-silver_magazine_desc: 50 ακόλουθοι δημιούργησαν περιοδικό
-silver_entry_week: Νήμα της εβδομάδας
-silver_comment_week: Σχόλιο της εβδομάδας
-silver_comment_week_desc: Το καλύτερο σχόλιο της εβδομάδας
-silver_post_week: Ανάρτηση της εβδομάδας
-gold_personality: Gold προσωπικότητα
-gold_personality_desc: 100 ακόλουθοι
-gold_post: Εξαιρετική ανάρτηση
-gold_ranking: Νούμερο 1
-gold_ranking_desc: 1η θέση στην κατάταξη
-gold_popular_entry: Δημοφιλές Νήμα
-gold_magazine: Δημοφιλές περιοδικό
-gold_magazine_desc: 100 ακόλουθοι δημιούργησαν περιοδικό
-gold_entry_month: Νήμα του μήνα
-gold_comment_month: Σχόλιο του μήνα
-gold_comment_month_desc: Το καλύτερο σχόλιο του μήνα
-gold_post_month: Ανάρτηση του μήνα
-gold_post_month_desc: Η καλύτερη ανάρτηση του μήνα
 added_new_thread: Πρόσθεσε νέο νήμα
 edited_thread: Επεξεργάστηκε ένα νήμα
 mod_remove_your_thread: Ένας συντονιστής αφαίρεσε το νήμα σου
@@ -361,20 +307,10 @@ show_magazines_icons: Εμφάνιση εικονιδίων περιοδικών
 restored_thread_by: έχει επαναφέρει ένα νήμα από
 new_password_repeat: Επιβεβαίωση νέου κωδικού πρόσβασης
 removed_post_by: έχει αφαιρέσει την ανάρτηση από
-bronze_link: Καλός σύνδεσμος
 flash_thread_new_success: Το νήμα δημιουργήθηκε επιτυχημένα και είναι ορατό σε άλλους
   χρήστες.
-bronze_photo: Καλή φωτογραφία
-bronze_popular_entry_desc: Νήμα με 1000 επισκέψεις
-silver_commentator: Silver σχολιαστής
-silver_redactor_desc: 10 πολύ καλά νήματα
-silver_poster_desc: 10 πολύ καλές αναρτήσεις
-silver_comment: Πολύ καλό σχόλιο
-silver_popular_entry_desc: Το νήμα επισκέφτηκε 5000 φορές
 flash_magazine_new_success: Το περιοδικό δημιουργήθηκε επιτυχώς. Τώρα μπορείς να προσθέσεις
   νέο περιεχόμενο ή να εξερευνήσεις τον πίνακα διαχείρισης του περιοδικού.
-silver_entry_week_desc: Το καλύτερο νήμα της εβδομάδας
-silver_post_week_desc: Η καλύτερη ανάρτηση της εβδομάδας
 replied_to_your_comment: Απάντησε στο σχόλιό σου
 purge: Eκκαθάριση
 show_top_bar: Εμφάνιση μπάρας κορυφής
@@ -388,8 +324,6 @@ related_entries: Σχετικά νήματα
 header_logo: Λογότυπο επικεφαλίδας
 set_magazines_bar_empty_desc: εάν το πεδίο είναι κενό, τα ενεργά περιοδικά εμφανίζονται
   στη γραμμή.
-gold_commentator: Gold σχολιαστής
-gold_comment: Εξαιρετικό σχόλιο
 edited_post: Επεξεργάστηκε μια ανάρτηση
 sidebar_position: Θέση πλευρικής γραμμής
 add_badge: Προσθήκη σήματος
@@ -397,11 +331,8 @@ add_mentions_entries: Προσθήκη ετικετών αναφοράς σε ν
 unban_account: Κατάργηση αποκλεισμού λογαριασμού
 browsing_one_thread: Περιηγείστε μόνο ένα νήμα στη συζήτηση! Όλα τα σχόλια είναι διαθέσιμα
   στη σελίδα ανάρτησης.
-bronze_commentator_desc: 10 καλά σχόλια
-gold_popular_entry_desc: Το νήμα επισκέφτηκε 10000 φορές
 Your account is not active: Ο λογαριασμός σας δεν είναι ενεργός.
 random_magazines: Τυχαία περιοδικά
-gold_entry_month_desc: Το καλύτερο νήμα του μήνα
 removed: Αφαιρέθηκε από συντονιστή
 deleted: Διαγράφηκε από τον συγγραφέα
 mod_log_alert: ΠΡΟΕΙΔΟΠΟΙΗΣΗ - Το αρχείο καταγραφής του συντονιστή μπορεί να περιέχει
@@ -433,34 +364,7 @@ flash_register_success: Καλώς ήρθες, ο λογαριασμός σου 
   Ένα τελευταίο βήμα! - Στα εισερχόμενά σου θα βρεις έναν σύνδεσμο ενεργοποίησης ώστε
   να ενεργοποιήσεις τον λογαριασμό σου.
 set_magazines_bar: Μπάρα περιοδικών
-bronze_poster: Bronze poster
-bronze_link_desc: Η ανάρτηση έχει ενισχυθεί 5 φορές
-bronze_article_desc: Το νήμα έχει ενισχυθεί 5 φορές
-bronze_photo_desc: Η φωτογραφία έχει ενισχυθεί 5 φορές
-bronze_comment_desc: Το σχόλιο έχει ενισχυθεί 5 φορές
-bronze_post_desc: Η ανάρτηση έχει ενισχυθεί 5 φορές
-silver_poster: Silver poster
-silver_link_desc: Η ανάρτηση έχει ενισχυθεί 10 φορές
-silver_article_desc: Το νήμα έχει ενισχυθεί 10 φορές
-silver_photo_desc: Η φωτογραφία έχει ενισχυθεί 10 φορές
-silver_comment_desc: Το σχόλιο έχει ενισχυθεί 10 φορές
-silver_post_desc: Η ανάρτηση έχει ενισχυθεί 10 φορές
-gold_commentator_desc: 10 εξαιρετικά σχόλια
-gold_scout: Gold ανιχνευτής
-gold_scout_desc: 10 εξαιρετικοί σύνδεσμοι
-gold_redactor: Gold συντάκτης
-gold_redactor_desc: 10 εξαιρετικά νήματα
-gold_poster_desc: 10 εξαιρετικές αναρτήσεις
-gold_link: Εξαιρετικός σύνδεσμος
-gold_link_desc: Η ανάρτηση έχει ενισχυθεί 15 φορές
-gold_article: Gold νήμα
-gold_article_desc: Το νήμα έχει ενισχυθεί 15 φορές
-gold_photo: Εξαιρετική φωτογραφία
-gold_photo_desc: Η φωτογραφία έχει ενισχυθεί 15 φορές
-gold_comment_desc: Το σχόλιο έχει ενισχυθεί 15 φορές
-gold_post_desc: Η ανάρτηση έχει ενισχυθεί 15 φορές
 banned: Σε απαγόρευσε
-gold_poster: Gold poster
 ban_expired: Η απαγόρευση έληξε
 ban: Απαγόρευση
 bans: Απαγορεύσεις

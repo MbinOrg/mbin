@@ -105,15 +105,6 @@ set_magazines_bar: Pasek magazynów
 set_magazines_bar_desc: podaj nazwy magazynów oddzielone przecinkiem
 set_magazines_bar_empty_desc: jeżeli pole jest puste, na pasku wyświetlane będą aktywne
   magazyny.
-gold: Złote
-silver: Srebrne
-bronze: Brązowe
-bronze_autobiographer: Autobiograf
-bronze_personality: Brązowa osobistość
-bronze_personality_desc: 20 obserwujących
-bronze_commentator: Brązowy komentator
-bronze_commentator_desc: Dodanie 10 dobrych komentarzy
-bronze_scout: Brązowy zwiadowca
 trash: Kosz
 type.magazine: Magazyn
 thread: Treść
@@ -185,7 +176,6 @@ about_instance: O instancji
 all_magazines: Wszystkie magazyny
 stats: Statystyki
 fediverse: Fediwersum
-awards: Odznaczenia
 ranking: Ranking
 create_new_magazine: Utwórz nowy magazyn
 add_new_video: Dodaj video
@@ -274,78 +264,6 @@ settings: Ustawienia
 general: Ogólne
 profile: Profil
 blocked: Blokady
-bronze_redactor: Brązowy redaktor
-bronze_redactor_desc: Dodanie 10 dobrych artykułów
-bronze_poster: Brązowy wpisowicz
-bronze_poster_desc: Dodanie 10 dobrych wpisów
-bronze_link: Dobry link
-bronze_article: Dobry artykuł
-bronze_article_desc: Artykuł zdobył 5 punktów
-bronze_photo: Dobra fotografia
-bronze_photo_desc: Fotografia zdobyła 5 punktów
-bronze_comment: Dobry komentarz
-bronze_post: Dobry post
-bronze_post_desc: Post zdobył 5 punktów
-bronze_ranking: Numer 3
-bronze_ranking_desc: 3 miejsce w rankingu
-bronze_popular_entry: Popularna treść
-bronze_popular_entry_desc: Treść odwiedzona 1000 razy
-bronze_magazine: Znany magazyn
-silver_personality: Srebrna osobistość
-silver_personality_desc: 50 obserwujących
-silver_commentator: Srebrny komentator
-silver_commentator_desc: Dodanie 10 bardzo dobrych komentarzy
-silver_scout: Srebrny zwiadowca
-silver_scout_desc: Dodanie 10 bardzo dobrych linków
-silver_redactor: Srebrny redaktor
-silver_poster: Srebrny wpisowicz
-silver_poster_desc: Dodanie 10 bardzo dobrych wpisów
-silver_link: Bardzo dobry link
-silver_link_desc: Link zdobył 10 punktów
-silver_article: Bardzo dobry artykuł
-silver_photo: Bardzo dobra fotografia
-silver_photo_desc: Fotografia zdobyła 10 punktów
-silver_comment: Bardzo dobry komentarz
-silver_comment_desc: Komentarz zdobył 10 punktów
-silver_post: Bardzo dobry post
-silver_post_desc: Post zdobył 10 punktów
-silver_ranking: Numer 2
-silver_popular_entry: Sławna treść
-silver_popular_entry_desc: Treść odwiedzona 5000 razy
-silver_magazine: Popularny magazyn
-silver_magazine_desc: 50 obserwujących stworzony magazyn
-silver_entry_week: Treść tygodnia
-silver_entry_week_desc: Najlepsza treść tygodnia
-silver_comment_week_desc: Najlepszy komentarz tygodnia
-silver_post_week: Komentarz tygodnia
-silver_post_week_desc: Najlepszy post tygodnia
-gold_personality_desc: 100 obserwujących
-gold_commentator: Złoty komentator
-gold_scout: Złoty zwiadowca
-gold_scout_desc: Dodanie 10 świetnych linków
-gold_redactor: Złoty redaktor
-gold_redactor_desc: Dodanie 10 świetnych artykułów
-gold_poster: Złoty wpisowicz
-gold_poster_desc: Dodanie 10 świetnych wpisów
-gold_link: Świetny link
-gold_article: Świetny artykuł
-gold_article_desc: Artykuł zdobył 15 punktów
-gold_photo: Świetna fotografia
-gold_photo_desc: Fotografia zdobyła 15 punktów
-gold_comment: Świetny komentarz
-gold_post: Świetny post
-gold_post_desc: Post zdobył 15 punktów
-gold_ranking: Numer 1
-gold_ranking_desc: 1 miejsce w rankingu
-gold_popular_entry: Sławna treść
-gold_popular_entry_desc: Treść odwiedzona 10000 razy
-gold_magazine: Sławny magazyn
-gold_entry_month: Treść tygodnia
-gold_entry_month_desc: Najlepsza treść tygodnia
-gold_comment_month: Komentarz tygodnia
-gold_comment_month_desc: Najlepszy komentarz tygodnia
-gold_post_month: Post miesiąca
-gold_post_month_desc: Najlepszy post tygodnia
 edited_thread: Edytował/a treść
 mod_remove_your_thread: Moderator usunął twoją treść
 added_new_thread: Dodał/a nową treść
@@ -425,20 +343,6 @@ flash_register_success: Twoje konto zostało zarejestrowane. Sprawdź swoją skr
   e-mail, wysłaliśmy wiadomość z linkiem aktywacyjnym.
 flash_magazine_new_success: Magazyn został poprawnie utworzony. Możesz dodawać nowe
   treści lub zapoznać się z panelem administratora.
-bronze_autobiographer_desc: Za uzupełnienie wszystkich pól w profilu
-bronze_scout_desc: Dodanie 10 dobrych linków
-bronze_link_desc: Link zdobył 5 punktów
-bronze_comment_desc: Komentarz zdobył 5 punktów
-bronze_magazine_desc: 20 obserwujących stworzony magazyn
-silver_redactor_desc: Dodanie 10 bardzo dobrych artykułów
-silver_article_desc: Artykuł zdobył 10 punktów
-silver_ranking_desc: 2 miejsce w rankingu
-silver_comment_week: Komentarz tygodnia
-gold_personality: Złota osobistość
-gold_commentator_desc: Dodanie 10 świetnych komentarzy
-gold_link_desc: Link zdobył 15 punktów
-gold_comment_desc: Komentarz zdobył 15 punktów
-gold_magazine_desc: 50 obserwujących stworzony magazyn
 mod_log_alert: W modlogu możesz trafić na drastyczne treści usunięte przez moderatorów.
   Upewnij się, że wiesz co robisz...
 mod_remove_your_post: Moderator usunął twój post
