@@ -72,32 +72,11 @@ show_profile_subscriptions: Mostra le iscrizioni alla rivista
 flash_thread_new_success: Il thread è stato creato con successo ed è ora visibile
   agli altri utenti.
 set_magazines_bar_desc: aggiungi il nome della rivista dopo la virgola
-bronze_autobiographer_desc: Per aver completato tutti i campi del profilo
-bronze_link_desc: Il post è stato potenziato 5 volte
-bronze_article_desc: Il thread è stato potenziato 5 volte
-bronze_photo_desc: La foto è stata potenziata 5 volte
-bronze_comment_desc: Il commento è stato potenziato 5 volte
-bronze_post_desc: Il post è stato potenziato 5 volte
 flash_thread_delete_success: Il thread è stato eliminato con successo.
 flash_thread_unpin_success: Il thread è stato rimosso dai fissati in evidenza con
   successo.
 flash_magazine_edit_success: La rivista è stata modificata con successo.
 too_many_requests: Limite superato, riprova più tardi.
-bronze_ranking_desc: 3° posto in classifica
-silver_article_desc: Il thread è stato potenziato 10 volte
-silver_comment_desc: Il commento è stato potenziato 10 volte
-silver_post_desc: Il post è stato potenziato 10 volte
-silver_entry_week_desc: Il miglior thread della settimana
-silver_comment_week_desc: Il miglior commento della settimana
-silver_ranking_desc: 2° posto in classifica
-gold_link_desc: Il post è stato potenziato 15 volte
-gold_article_desc: Il thread è stato potenziato 15 volte
-gold_photo_desc: La foto è stata potenziata 15 volte
-gold_comment_desc: Il commento è stato potenziato 15 volte
-gold_entry_month_desc: Il miglior thread del mese
-gold_comment_month_desc: Il miglior commento del mese
-gold_post_month_desc: Il miglior post del mese
-gold_ranking_desc: 1° posto in classifica
 mod_remove_your_thread: Un moderatore ha rimosso il tuo thread
 add_mentions_posts: Aggiungi tag di menzione degli utenti nei post
 Your account is not active: Il tuo account non è attivo.
@@ -144,12 +123,8 @@ agree_terms: Acconsenti ai %terms_link_start%Termini e condizioni%terms_link_end
   e all'%policy_link_start%Informativa sulla privacy%policy_link_end%
 notify_on_new_entry_comment_reply: Avvisami in caso di risposte ai commenti dei miei
   thread
-silver_link_desc: Il post è stato potenziato 10 volte
-silver_photo_desc: La foto è stata potenziata 10 volte
-gold_post_desc: Il post è stato potenziato 15 volte
 flash_thread_edit_success: Il thread è stato modificato con successo.
 flash_thread_pin_success: Il thread è stato fissato in evidenza con successo.
-silver_post_week_desc: Il miglior post della settimana
 mod_deleted_your_comment: Un moderatore ha cancellato il tuo commento
 mod_remove_your_post: Un moderatore ha rimosso il tuo post
 add_mentions_entries: Aggiungi tag di menzione degli utenti nei contenuti
@@ -170,7 +145,6 @@ about_instance: A proposito
 all_magazines: Tutte le riviste
 stats: Statistiche
 fediverse: Fediverso
-awards: Riconoscimenti
 ranking: Graduatoria
 create_new_magazine: Crea una nuova rivista
 add_new_article: Aggiungi un nuovo thread
@@ -292,22 +266,6 @@ restored_post_by: ha ripristinato un post di
 read_all: Leggi tutto
 show_all: Mostra tutto
 ranking_disabled: La graduatoria è disattivata
-gold: Oro
-silver: Argento
-bronze: Bronzo
-bronze_personality_desc: 20 seguaci
-bronze_commentator_desc: 10 commenti buoni
-bronze_scout_desc: 10 collegamenti buoni
-bronze_redactor_desc: 10 thread buoni
-bronze_poster_desc: 10 post buoni
-bronze_link: Collegamento buono
-bronze_photo: Buona foto
-bronze_comment: Buon commento
-bronze_post: Buon post
-bronze_ranking: Numero 3
-bronze_popular_entry: Thread popolare
-bronze_popular_entry_desc: Thread visitato 1000 volte
-bronze_magazine: Rivista famosa
 Password is invalid: La password non è valida.
 check_email: Controlla la tua email
 joined: Iscritto
@@ -326,60 +284,6 @@ featured_magazines: Riviste in primo piano
 he_banned: sospendi
 he_unbanned: rimuovi sospensione
 set_magazines_bar: Barra delle riviste
-bronze_autobiographer: Autobiografo
-bronze_personality: Personalità medaglia di bronzo
-bronze_commentator: Commentatore di bronzo
-bronze_scout: Scout medaglia di bronzo
-bronze_redactor: Redattore medaglia di bronzo
-bronze_poster: Postatore medaglia di bronzo
-bronze_article: Articolo medaglia di bronzo
-silver_personality: Personalità medaglia d'argento
-silver_personality_desc: 50 seguaci
-bronze_magazine_desc: 20 seguaci hanno creato una rivista
-silver_commentator: Commentatore medaglia d'argento
-silver_commentator_desc: 10 ottimi commenti
-silver_scout: Scout medaglia d'argento
-silver_scout_desc: 10 ottimi link
-silver_redactor: Redattore medaglia d'argento
-silver_redactor_desc: 10 ottimi thread
-silver_poster: Postatore medaglia d'argento
-silver_poster_desc: 10 ottimi post
-silver_link: Link ottimi
-silver_article: Thread medaglia d'argento
-silver_photo: Foto ottima
-silver_comment: Commento ottimo
-silver_post: Post ottimo
-silver_ranking: Numero 2
-silver_popular_entry: Thread popolari
-silver_popular_entry_desc: Thread visitato 5000 volte
-silver_magazine: Rivista popolare
-silver_magazine_desc: 50 seguaci hanno creato una rivista
-silver_entry_week: Thread della settimana
-silver_comment_week: Commento della settimana
-silver_post_week: Post della settimana
-gold_personality: Personalità medaglia d'oro
-gold_personality_desc: 100 seguaci
-gold_commentator: Commentatore medaglia d'oro
-gold_commentator_desc: 10 commenti eccellenti
-gold_scout: Scout medaglia d'oro
-gold_scout_desc: 10 link eccellenti
-gold_redactor: Redattore medaglia d'oro
-gold_redactor_desc: 10 thread eccellenti
-gold_poster: Postatore medaglia d'oro
-gold_poster_desc: 10 post eccellenti
-gold_link: Link eccellente
-gold_article: Thread medaglia d'oro
-gold_photo: Foto eccellente
-gold_comment: Commento eccellente
-gold_post: Post eccellente
-gold_ranking: Numero 1
-gold_popular_entry: Thread popolare
-gold_popular_entry_desc: Thread visitato 10000 volte
-gold_magazine: Rivista popolare
-gold_magazine_desc: 100 seguaci hanno creato una rivista
-gold_entry_month: Thread del mese
-gold_comment_month: Commento del mese
-gold_post_month: Post del mese
 added_new_thread: Ha aggiunto un nuovo thread
 edited_thread: Ha modificato un thread
 added_new_comment: Ha aggiunto un nuovo commento

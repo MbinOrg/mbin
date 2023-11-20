@@ -78,7 +78,6 @@ about_instance: À propos
 all_magazines: Tous les magazines
 stats: Statistiques
 fediverse: Fédivers
-awards: Récompenses
 ranking: Classement
 create_new_magazine: Créer un nouveau magazine
 add_new_link: Ajouter un nouveau lien
@@ -285,88 +284,7 @@ flash_thread_unpin_success: Le fil a été désépinglé.
 flash_magazine_edit_success: Le magazine a été modifié.
 too_many_requests: Limite dépassée, veuillez réessayer plus tard.
 set_magazines_bar: Barre des magazines
-gold: Or
-silver: Argent
-bronze: Bronze
-bronze_autobiographer: Autobiographe
-bronze_personality: Personnalité bronze
-bronze_personality_desc: 20 suiveurs
-bronze_autobiographer_desc: Pour avoir complété tous les champs du profil
-bronze_commentator: Commentateur/trice bronze
-bronze_commentator_desc: 10 bons commentaires
-bronze_scout: Scout(e) bronze
-bronze_scout_desc: 10 bons liens
-bronze_redactor_desc: 10 bons fils
 set_magazines_bar_desc: ajoutez les noms de magazines après la virgule
-bronze_poster_desc: 10 bons messages
-bronze_link: Bon lien
-bronze_link_desc: Le message a été partagé 5 fois
-bronze_article: Fil de bronze
-bronze_photo: Bonne photo
-bronze_photo_desc: La photo a été partagée 5 fois
-bronze_comment: Bon commentaire
-bronze_comment_desc: Le commentaire a été partagé 5 fois
-bronze_post: Bon message
-bronze_post_desc: Le message a été partagé 5 fois
-bronze_ranking: Numéro 3
-bronze_ranking_desc: Troisième rang du classement
-bronze_popular_entry: Fil populaire
-silver_personality: Personnalité argent
-silver_personality_desc: 50 suiveurs
-silver_commentator: Commentateur/trice argent
-silver_scout: Scout(e) argent
-silver_scout_desc: 10 très bons liens
-silver_redactor_desc: 10 très bons fils
-silver_poster: Messager argent
-silver_poster_desc: 10 très bons messages
-silver_link: Très bon lien
-silver_article: Fil d'argent
-silver_article_desc: Le fil a été partagé 10 fois
-silver_photo: Très bonne photo
-silver_photo_desc: La photo a été partagée 10 fois
-silver_comment: Très bon commentaire
-silver_post: Très bon message
-silver_post_desc: Le message a été partagé 10 fois
-silver_ranking: Numéro 2
-silver_ranking_desc: Deuxième rang du classement
-silver_popular_entry: Fil populaire
-silver_popular_entry_desc: Fil visité 5000 fois
-silver_magazine: Magazine populaire
-silver_entry_week: Fil de la semaine
-silver_comment_week: Commentaire de la semaine
-silver_comment_week_desc: Meilleur commentaire de la semaine
-silver_post_week: Message de la semaine
-silver_post_week_desc: Meilleur message de la semaine
-gold_personality: Personnalité or
-gold_personality_desc: 100 suiveurs
-gold_commentator_desc: 10 commentaires excellents
-gold_scout: Scout(e) or
-gold_scout_desc: 10 liens excellents
-silver_redactor: Rédacteur/trice argent
-gold_redactor: Rédacteur/trice or
-gold_redactor_desc: 10 excellents fils
-gold_poster: Messager or
-gold_link: Lien excellent
-gold_link_desc: Le message a été partagé 15 fois
-gold_article: Fil d'or
-gold_article_desc: Le fil a été partagé 15 fois
-gold_photo: Photo excellente
-gold_comment: Commentaire excellent
-gold_comment_desc: Le commentaire a été partagé 15 fois
-bronze_magazine_desc: 20 suiveurs ont créé un magazine
-silver_magazine_desc: 50 suiveurs ont créé un magazine
-gold_post: Message excellent
-gold_ranking: Numéro 1
-gold_ranking_desc: Premier rang du classement
-gold_popular_entry: Fil populaire
-gold_popular_entry_desc: Fil visité 10000 fois
-gold_magazine: Magazine populaire
-gold_entry_month_desc: Le meilleur fil du mois
-gold_comment_month: Commentaire du mois
-gold_comment_month_desc: Meilleur commentaire du mois
-gold_post_month: Message du mois
-gold_post_month_desc: Le meilleur message du mois
-gold_magazine_desc: 100 suiveurs ont créé un magazine
 edited_thread: Fil modifié
 added_new_thread: a ajouté un nouveau fil
 added_new_comment: A ajouté un nouveau commentaire
@@ -414,26 +332,12 @@ trash: Corbeille
 icon: Icône
 done: Terminé
 pin: Épingler
-bronze_redactor: Rédacteur/trice bronze
-bronze_poster: Messager bronze
 flash_magazine_new_success: Le magazine a été créé. Vous pouvez désormais ajouter
   du nouveau contenu ou explorer le panneau d’administration du magazine.
-bronze_article_desc: Le fil a été partagé 5 fois
-bronze_popular_entry_desc: Fil visité 1000 fois
-bronze_magazine: Magazine célèbre
-silver_commentator_desc: 10 très bons commentaires
-silver_link_desc: Le lien a été partagé 10 fois
-silver_comment_desc: Le commentaire a été partagé 10 fois
-silver_entry_week_desc: Meilleur fil de la semaine
-gold_commentator: Commentateur/trice or
-gold_poster_desc: 10 messages excellents
-gold_photo_desc: La photo a été partagée 15 fois
-gold_entry_month: Fil du mois
 set_magazines_bar_empty_desc: si le champ est vide, les magazines actifs seront affichés
   sur la barre.
 wrote_message: A écrit un message
 send_message: Envoyer un message
-gold_post_desc: Le message a été partagé 15 fois
 sidebar_position: Position de la barre latérale
 mod_log_alert: ATTENTION - Le journal de modération peut contenir des éléments désagréables
   ou choquants qui ont été supprimés par les modérateurs. Soyez prudents.
