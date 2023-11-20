@@ -24,11 +24,6 @@ stats:
   path: /stats/{statsType}/{statsPeriod}/{withFederated}
   methods: [ GET ]
 
-ranking:
-  controller: App\Controller\RankingController
-  path: /ranking
-  methods: [ GET ]
-
 page_federation:
   controller: App\Controller\FederationController
   path: /federation
