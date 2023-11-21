@@ -80,8 +80,6 @@ about_instance: Over
 all_magazines: Alle tijdschriften
 stats: Statistieken
 fediverse: Fediverse
-awards: Bekroningen
-ranking: Klassement
 create_new_magazine: Nieuw tijdschrift maken
 add_new_article: Artikel toevoegen
 add_new_link: Link toevoegen
@@ -220,23 +218,12 @@ he_banned: Verbannen
 he_unbanned: Toelaten
 read_all: Alles als gelezen markeren
 show_all: Alles tonen
-ranking_disabled: Klassement is uitgeschakeld
 flash_thread_new_success: Het gesprek is succesvol aangemaakt en zichtbaar voor andere
   gebruikers.
 flash_thread_edit_success: Het gesprek is succesvol bewerkt.
-bronze_article_desc: Dit gesprek is 5 keer omhoog gestemd
-bronze_photo_desc: Deze foto is 5 keer omhoog gestemd
-bronze_comment_desc: Deze reactie is 5 keer omhoog gestemd
 flash_thread_delete_success: Het gesprek is succesvol verwijderd.
 flash_thread_pin_success: Het gesprek is succesvol vastgemaakt.
 flash_thread_unpin_success: Het gesprek is succesvol losgemaakt.
-silver_article_desc: Dit gesprek is 10 keer omhoog gestemd
-silver_photo_desc: Deze foto is 10 keer omhoog gestemd
-silver_post_desc: Dit bericht is 10 keer omhoog gestemd
-gold_article_desc: Dit gesprek is 15 keer omhoog gestemd
-gold_link_desc: Dit bericht is 15 keer omhoog gestemd
-gold_photo_desc: Deze foto is 15 keer omhoog gestemd
-gold_comment_desc: Deze reactie is 15 keer omhoog gestemd
 type.link: Link
 threads: Gesprekken
 select_channel: Kies een kanaal
@@ -255,11 +242,6 @@ reset_check_email_desc: 'Als er een account bestaat dat overeenkomt met je e-mai
   dan ontvang je op korte termijn een email met een link om je wachtwoord opnieuw
   in te stellen. Deze link vervalt over %expire%.'
 boosts: Omhoogstemmen
-bronze_link_desc: Dit bericht is 5 keer omhoog gestemd
-bronze_post_desc: Dit bericht is 5 keer omhoog gestemd
-silver_link_desc: Dit bericht is 10 keer omhoog gestemd
-silver_comment_desc: Deze reactie is 10 keer omhoog gestemd
-gold_post_desc: Dit bericht is 15 keer omhoog gestemd
 tags: Labels
 is_adult: 18+/NSFW
 image_alt: Afbeeldingslabel
@@ -271,9 +253,7 @@ are_you_sure: Weet je het zeker?
 edit_comment: Wijzigingen opslaan
 reports: Gemelde berichten
 banned_instances: Verbannen instanties
-gold_entry_month: Gesprek van de maand
 deleted: Verwijderd door de auteur
-gold_post_month_desc: Het beste bericht van de maand
 sticky_navbar: Bovenbalk meeschuiven
 mod_log_alert: WAARSCHUWING - Het moderatielogboek kan onaangename of schrijnende
   inhoud verwijderd door moderators bevatten. Wees voorzichtig.
@@ -294,84 +274,6 @@ set_magazines_bar: Tijdschriftenbalk
 set_magazines_bar_desc: Voeg tijdschriftnamen toe achter de komma
 set_magazines_bar_empty_desc: Als het veld blanco is, dan worden actieve tijdschriften
   op de balk getoond.
-gold: Goud
-silver: Zilver
-bronze: Brons
-bronze_autobiographer: Autobiograaf
-bronze_autobiographer_desc: Voor het volledig invullen van je profiel
-bronze_personality: Bronzen persoonlijkheid
-bronze_personality_desc: 20 volgers
-bronze_commentator: Bronzen reageerder
-bronze_commentator_desc: 10 goede reacties
-bronze_scout_desc: 10 goede links
-bronze_scout: Bronzen padvinder
-bronze_redactor: Bronzen redacteur
-bronze_redactor_desc: 10 goede gesprekken
-bronze_poster: Bronzen berichtgever
-bronze_poster_desc: 10 goede berichten
-bronze_link: Goede link
-bronze_article: Bronzen gesprek
-bronze_photo: Goede foto
-bronze_comment: Goede reactie
-bronze_post: Goed bericht
-bronze_ranking: Nummer 3
-bronze_ranking_desc: 3e plaats in het klassement
-bronze_popular_entry: Populair gesprek
-bronze_popular_entry_desc: Het gesprek is 1000 keer bekeken
-bronze_magazine: Beroemd tijdschrift
-bronze_magazine_desc: 20 volgers hebben tijdschrift gemaakt
-silver_personality: Zilveren persoonlijkheid
-silver_personality_desc: 50 volgers
-silver_commentator: Zilveren reageerder
-silver_commentator_desc: 10 zeer goede reacties
-silver_scout: Zilveren padvinder
-silver_scout_desc: 10 zeer goede links
-silver_redactor: Zilveren redacteur
-silver_redactor_desc: 10 zeer goede gesprekken
-silver_poster: Zilveren berichtgever
-silver_poster_desc: 10 zeer goede berichten
-silver_link: Zeer goede link
-silver_article: Zilveren gesprek
-silver_photo: Zeer goede foto
-silver_comment: Zeer goede reactie
-silver_post: Zeer goed bericht
-silver_ranking: Nummer 2
-silver_ranking_desc: 2e plaats in het klassement
-silver_popular_entry: Populair gesprek
-silver_popular_entry_desc: Het gesprek is 5000 keer bekeken
-silver_magazine: Populair tijdschrift
-silver_magazine_desc: 50 volgers hebben tijdschrift gemaakt
-silver_entry_week: Gesprek van de week
-silver_entry_week_desc: Het beste gesprek van de week
-silver_comment_week: Reactie van de week
-silver_comment_week_desc: De beste reactie van de week
-silver_post_week: Bericht van de week
-silver_post_week_desc: Het beste bericht van de week
-gold_personality: Gouden persoonlijkheid
-gold_personality_desc: 100 volgers
-gold_commentator: Gouden reageerder
-gold_commentator_desc: 10 geweldige reacties
-gold_scout: Gouden padvinder
-gold_scout_desc: 10 geweldige links
-gold_redactor: Gouden redacteur
-gold_redactor_desc: 10 geweldige gesprekken
-gold_poster: Gouden berichtgever
-gold_poster_desc: 10 geweldige berichten
-gold_link: Geweldige link
-gold_article: Gouden gesprek
-gold_photo: Geweldige foto
-gold_comment: Geweldige reactie
-gold_post: Geweldig bericht
-gold_ranking: Nummer 1
-gold_ranking_desc: 1e plaats in het klassement
-gold_popular_entry: Populair gesprek
-gold_popular_entry_desc: Het gesprek is 10.000 keer bekeken
-gold_magazine: Populair tijdschrift
-gold_magazine_desc: 100 volgers hebben tijdschrift gemaakt
-gold_entry_month_desc: Het beste gesprek van de maand
-gold_comment_month: Reactie van de maand
-gold_comment_month_desc: De beste reactie van de maand
-gold_post_month: Bericht van de maand
 mod_remove_your_thread: Een moderator heeft je gesprek verwijderd
 added_new_thread: Gesprek toegevoegd
 edited_thread: Gesprek bewerkt

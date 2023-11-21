@@ -81,8 +81,6 @@ about_instance: Acerca de
 all_magazines: Todos las revistas
 stats: Estadísticas
 fediverse: Fediverso
-awards: Premios
-ranking: Ránking
 create_new_magazine: Crear una nueva revista
 add_new_article: Agregar un nuevo hilo
 add_new_link: Añadir un nuevo enlace
@@ -196,7 +194,6 @@ he_banned: suspender
 he_unbanned: cancelar la suspensión
 read_all: Leer todo
 show_all: Mostrar todo
-ranking_disabled: Ránking desactivado
 flash_register_success: ¡Bienvenida/o a bordo! Su cuenta ya está registrada. Un último
   paso - consulte su bandeja de entrada para recibir un enlace de activación que dará
   vida a su cuenta.
@@ -214,16 +211,7 @@ set_magazines_bar: Barra de revistas
 set_magazines_bar_desc: añade el nombre de la revista tras la coma
 set_magazines_bar_empty_desc: si el campo está vacío, las revistas activas se mostrarán
   en la barra.
-gold: Oro
-silver: Plata
-bronze: Bronce
-bronze_autobiographer: Autobiografía
 up_votes: Votos positivos
-silver_article: Hilo medalla de plata
-silver_popular_entry_desc: Hilo visitado 5000 veces
-silver_comment_week_desc: El mejor comentario de la semana
-gold_scout_desc: 10 enlaces excelentes
-gold_article: Hilo medalla de oro
 edit_comment: Guardar cambios
 settings: Configuración
 profile: Perfil
@@ -268,79 +256,7 @@ solarized_light: Claro Solarizado
 solarized_dark: Oscuro Solarizado
 font_size: Tamaño de la fuente
 size: Tamaño
-bronze_autobiographer_desc: Para rellenar todos los campos del perfil
-bronze_personality_desc: 20 seguidoras/es
-bronze_commentator_desc: 10 comentarios buenos
-bronze_scout_desc: 10 enlaces buenos
-bronze_redactor_desc: 10 hilos buenos
-bronze_poster_desc: 10 publicaciones buenas
-bronze_link: Buen enlace
-bronze_article: Hilo de bronce
-bronze_photo: Buena foto
-bronze_comment: Buen comentario
-bronze_post: Buena publicación
-bronze_ranking: Número 3
-bronze_ranking_desc: Tercer puesto en el ranking
-bronze_popular_entry: Hilo popular
-bronze_poster: Medalla de bronce de publicador
-bronze_redactor: Medalla de bronce de redactor
-bronze_scout: Medalla de bronce de explorador
-bronze_commentator: Comentador medalla de bronce
-bronze_personality: Personalidad medalla de bronce
-bronze_popular_entry_desc: Hilo visitado 1000 veces
-bronze_magazine: Revista famosa
-bronze_magazine_desc: 20 seguidoras/es han creado una revista
-silver_personality: Personalidad de plata
-silver_personality_desc: 50 seguidoras/es
-silver_commentator_desc: 10 muy buenos comentarios
-silver_scout: Medalla de plata de explorador
-silver_commentator: Medalla de plata de comentador/a
-silver_scout_desc: 10 muy buenos enlaces
-silver_redactor: Medalla de plata de redactor
-silver_redactor_desc: 10 muy buenos hilos
-silver_poster: Medalla de plata de publicador
-silver_poster_desc: 10 publicaciones excelentes
-silver_link: Muy buen enlace
-silver_photo: Muy buena foto
-silver_comment: Muy buen comentario
-silver_post: Muy buena publicación
-silver_ranking: Número 2
-silver_ranking_desc: Segundo puesto en el ranking
-silver_popular_entry: Hilo popular
-silver_magazine: Revista popular
-silver_magazine_desc: 50 seguidores han creado este magazin
-silver_entry_week: Hilo de la semana
-silver_entry_week_desc: El mejor hilo de la semana
-silver_comment_week: Comentario de la semana
-silver_post_week: Publicación de la semana
-silver_post_week_desc: La mejor publicación de la semana
-gold_personality: Personalidad medalla de oro
-gold_personality_desc: 100 seguidoras/es
-gold_commentator: Comentador/a medalla de oro
-gold_commentator_desc: 10 comentarios excelentes
-gold_redactor: Redactor medalla de oro
-gold_redactor_desc: 10 hilos excelentes
-gold_poster: Publicador medalla de oro
-gold_scout: Explorador medalla de oro
-gold_poster_desc: 10 excelentes publicaciones
-gold_link: Enlace excelente
-gold_photo: Excelente fotografía
-gold_comment: Excelente comentario
-gold_post: Excelente publicación
-gold_ranking: Número 1
-gold_ranking_desc: Primer puesto en el ranking
-gold_popular_entry: Hilo popular
-gold_popular_entry_desc: Hilo visitado 10000 veces
-gold_magazine: Revista popular
-gold_magazine_desc: 100 seguidoras/es han creado esta revista
-gold_entry_month: Hilo del mes
-gold_entry_month_desc: El mejor hilo del mes
-gold_comment_month: Comentario del mes
-gold_comment_month_desc: El mejor comentario del mes
-gold_post_month: Publicación del mes
-gold_post_month_desc: La mejor publicación del mes
 up_vote: Impulsar
-bronze_article_desc: El hilo ha sido impulsado 5 veces
 mod_log_alert: En el registro de moderación podrás encontrar contenido desagradable
   u ofensivo eliminado por los/as moderadores/as. Asegúrate de saber lo que estás
   haciendo.
@@ -464,22 +380,8 @@ browsing_one_thread: Estás viendo solo un hilo de la discusión! En la página 
   publicación puedes encontrar todos los comentarios.
 return: Ir atrás
 kbin_promo_desc: '%link_start%Clona el repositorio%link_end% y desarrolla el Fediverso'
-bronze_link_desc: La publicación ha sido impulsada 5 veces
 boosts: Reposts
-bronze_photo_desc: La foto ha sido impulsada 5 veces
-bronze_comment_desc: El comentario ha sido impulsado 5 veces
-bronze_post_desc: El post ha sido impulsado 5 veces
-silver_article_desc: El hilo ha sido reposteado 10 veces
-silver_comment_desc: El comentario ha sido reposteado 10 veces
-silver_post_desc: La publicación ha sido reposteada 10 veces
-gold_link_desc: La publicación ha sido reposteada 15 veces
-gold_article_desc: El hilo ha sido impulsado 15 veces
-gold_photo_desc: La foto ha sido reposteada 15 veces
-gold_comment_desc: El comentario ha sido reposteado 15 veces
-gold_post_desc: La publicación ha sido reposteada 15 veces
 boost: Repostear
-silver_link_desc: La publicación ha sido reposteada 10 veces
-silver_photo_desc: La foto ha sido reposteada 10 veces
 mercure_enabled: Mercure habilitado
 report_issue: Informar de un problema
 tokyo_night: Noche de Tokio
