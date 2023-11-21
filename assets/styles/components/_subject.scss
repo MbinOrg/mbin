@@ -78,6 +78,10 @@
       padding: .25rem;
     }
 
+    input {
+      width: 10rem;
+    }
+
     .actions form {
       display: flex;
     }
@@ -85,8 +89,8 @@
     input,
     select,
     input[type=checkbox] {
-      border: var(--kbin-meta-border);
-      border-radius: 0 !important;
+      // border: var(--kbin-meta-border);
+      // border-radius: 0 !important;
       margin-right: .25rem;
     }
 
@@ -95,9 +99,9 @@
       text-decoration: underline;
     }
 
-    button, input[type='submit'], a {
-      @include kbin-btn-link;
-    }
+    // button, input[type='submit'], a {
+    //   @include kbin-btn-link;
+    // }
   }
 }
 

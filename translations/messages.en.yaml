@@ -252,6 +252,8 @@ flash_thread_unpin_success: The thread has been successfully unpinned.
 flash_magazine_new_success: The magazine has been created successfully. You can now
   add new content or explore the magazine's administration panel.
 flash_magazine_edit_success: The magazine has been successfully edited.
+flash_thread_mark_as_adult_success: The thread has been successfully marked as NSFW.
+flash_thread_unmark_as_adult_success: The thread has been successfully unmarked as NSFW.
 too_many_requests: Limit exceeded, please try again later.
 set_magazines_bar: Magazines bar
 set_magazines_bar_desc: add the magazine names after the comma
@@ -317,6 +319,8 @@ pin: Pin
 unpin: Unpin
 change_magazine: Change magazine
 change_language: Change language
+mark_as_adult: Mark NSFW
+unmark_as_adult: Unmark NSFW
 change: Change
 pinned: Pinned
 preview: Preview
