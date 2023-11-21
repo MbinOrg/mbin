@@ -22,11 +22,6 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ApActivityRepository extends ServiceEntityRepository
 {
-    private const TYPE_MAP = [
-        'p' => [Post::class, PostComment::class],
-        't' => [Entry::class, EntryComment::class],
-    ];
-
     public function __construct(ManagerRegistry $registry, private SettingsManager $settingsManager)
     {
         parent::__construct($registry, ApActivity::class);
@@ -34,41 +29,63 @@ class ApActivityRepository extends ServiceEntityRepository
 
     public function findByObjectId(string $apId): ?array
     {
-        $exploded = [];
-
         $parsed = parse_url($apId);
-        if ($parsed['host'] === $this->settingsManager->get('KBIN_DOMAIN') && isset(self::TYPE_MAP[$parsed['path'][3]])) {
+        if ($parsed['host'] === $this->settingsManager->get('KBIN_DOMAIN')) {
             $exploded = array_filter(explode('/', $parsed['path']));
             $id = end($exploded);
-            $type = self::TYPE_MAP[$exploded[3]][\count($exploded)];
+            if ('p' === $exploded[3]) {
+                if (4 === \count($exploded)) {
+                    return [
+                        'id' => $id,
+                        'type' => Post::class,
+                    ];
+                } else {
+                    return [
+                        'id' => $id,
+                        'type' => PostComment::class,
+                    ];
+                }
+            }
 
-            return ['id' => $id, 'type' => $type];
+            if ('t' === $exploded[3]) {
+                if (4 === \count($exploded)) {
+                    return [
+                        'id' => $id,
+                        'type' => Entry::class,
+                    ];
+                } else {
+                    return [
+                        'id' => $id,
+                        'type' => EntryComment::class,
+                    ];
+                }
+            }
         }
 
+        $entryClass = Entry::class;
+        $entryCommentClass = EntryComment::class;
+        $postClass = Post::class;
+        $postCommentClass = PostComment::class;
+
         $conn = $this->_em->getConnection();
-        $sql = '
-            SELECT id, :type AS type
-            FROM (
-                SELECT id, :entryClass AS type FROM entry
-                UNION
-                SELECT id, :entryCommentClass FROM entry_comment
-                UNION
-                SELECT id, :postClass FROM post
-                UNION
-                SELECT id, :postCommentClass FROM post_comment
-            ) AS combined
-            WHERE ap_id = :apId
-            LIMIT 1';
+        $sql = '(SELECT id, type
+                FROM (
+                    VALUES
+                        (:entryId, :entryClass),
+                        (:entryCommentId, :entryCommentClass),
+                        (:postId, :postClass),
+                        (:postCommentId, :postCommentClass)
+                ) AS data(id, type)
+                WHERE id = :apId)';
 
-        $stmt = $conn->prepare($sql)->executeQuery([
-            'type' => self::TYPE_MAP[$parsed['path'][3]][\count($exploded)],
-            'entryClass' => Entry::class,
-            'entryCommentClass' => EntryComment::class,
-            'postClass' => Post::class,
-            'postCommentClass' => PostComment::class,
-            'apId' => $apId,
-        ]);
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('entryClass', $entryClass);
+        $stmt->bindValue('entryCommentClass', $entryCommentClass);
+        $stmt->bindValue('postClass', $postClass);
+        $stmt->bindValue('postCommentClass', $postCommentClass);
+        $stmt->bindValue('apId', $apId);
+        $results = $stmt->executeQuery()->fetchAllAssociative();
 
-        return $stmt->fetchAllAssociative() ?: null;
+        return \count($results) ? $results[0] : null;
     }
 }
