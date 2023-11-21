@@ -59,7 +59,7 @@ class ApActivityRepository extends ServiceEntityRepository
             ) AS combined
             WHERE ap_id = :apId
             LIMIT 1';
-        
+
         $stmt = $conn->prepare($sql)->executeQuery([
             'type' => self::TYPE_MAP[$parsed['path'][3]][\count($exploded)],
             'entryClass' => Entry::class,
