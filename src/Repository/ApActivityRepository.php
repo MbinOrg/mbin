@@ -69,23 +69,23 @@ class ApActivityRepository extends ServiceEntityRepository
 
         $conn = $this->_em->getConnection();
         $sql = '(
-        SELECT
-            id,
-            CASE
-                WHEN table_name = \'entry\' THEN :entryClass
-                WHEN table_name = \'entry_comment\' THEN :entryCommentClass
-                WHEN table_name = \'post\' THEN :postClass
-                WHEN table_name = \'post_comment\' THEN :postCommentClass
-            END AS type
-        FROM (
-            SELECT id, \'entry\' AS table_name FROM entry WHERE ap_id = :apId
-            UNION ALL
-            SELECT id, \'entry_comment\' FROM entry_comment WHERE ap_id = :apId
-            UNION ALL
-            SELECT id, \'post\' FROM post WHERE ap_id = :apId
-            UNION ALL
-            SELECT id, \'post_comment\' FROM post_comment WHERE ap_id = :apId
-        ) AS combined_result)';
+            SELECT 
+                id,
+                CASE
+                    WHEN entry.ap_id IS NOT NULL THEN :entryClass
+                    WHEN entry_comment.ap_id IS NOT NULL THEN :entryCommentClass
+                    WHEN post.ap_id IS NOT NULL THEN :postClass
+                    WHEN post_comment.ap_id IS NOT NULL THEN :postCommentClass
+                END AS type
+            FROM entry
+            LEFT JOIN entry_comment ON entry.id = entry_comment.entry_id
+            LEFT JOIN post ON entry.id = post.entry_id
+            LEFT JOIN post_comment ON post.id = post_comment.post_id
+            WHERE entry.ap_id = :apId
+                OR entry_comment.ap_id = :apId
+                OR post.ap_id = :apId
+                OR post_comment.ap_id = :apId;
+        )';
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('entryClass', $entryClass);
