@@ -154,18 +154,18 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
         }
 
         if ($criteria->tag) {
-            $qb->andWhere("JSONB_CONTAINS(c.tags, '\"".$criteria->tag."\"') = true");
+            $qb->andWhere('jsonb_exists(c.tags, :tag)')
+                ->setParameter('tag', $criteria->tag);
         }
 
         if ($criteria->subscribed) {
             $qb->andWhere(
-                'c.magazine IN (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :follower) 
-                OR 
-                c.user IN (SELECT IDENTITY(uf.following) FROM '.UserFollow::class.' uf WHERE uf.follower = :follower)
-                OR
-                c.user = :follower
-                OR
-                ce.domain IN (SELECT IDENTITY(ds.domain) FROM '.DomainSubscription::class.' ds WHERE ds.user = :follower)'
+                $qb->expr()->orX(
+                    'c.magazine IN (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :follower)',
+                    'c.user IN (SELECT IDENTITY(uf.following) FROM '.UserFollow::class.' uf WHERE uf.follower = :follower)',
+                    'c.user = :follower',
+                    'ce.domain IN (SELECT IDENTITY(ds.domain) FROM '.DomainSubscription::class.' ds WHERE ds.user = :follower)'
+                )
             );
             $qb->setParameter('follower', $user);
         }
@@ -228,10 +228,8 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
                 $qb->orderBy('c.lastActive', 'DESC');
                 break;
             case Criteria::SORT_NEW:
-                $qb->orderBy('c.createdAt', 'DESC');
-                break;
             case Criteria::SORT_OLD:
-                $qb->orderBy('c.createdAt', 'ASC');
+                $qb->orderBy('c.createdAt', (Criteria::SORT_NEW === $criteria->sortOption) ? 'DESC' : 'ASC');
                 break;
             default:
                 $qb->addOrderBy('c.lastActive', 'DESC');
