@@ -9,9 +9,11 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
+use App\Entity\DomainBlock;
 use App\Entity\DomainSubscription;
 use App\Entity\EntryComment;
 use App\Entity\EntryCommentFavourite;
+use App\Entity\MagazineBlock;
 use App\Entity\MagazineSubscription;
 use App\Entity\Moderator;
 use App\Entity\User;
@@ -179,22 +181,25 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
         }
 
         if ($user && (!$criteria->magazine || !$criteria->magazine->userIsModerator($user)) && !$criteria->moderated) {
-            $blockedSubquery = function ($qb, $alias, $field) use ($user) {
-                $qb
-                    ->andWhere("$alias.$field NOT IN (SELECT IDENTITY(ub.blocked) FROM ".UserBlock::class.' ub WHERE ub.blocker = :blocker)')
-                    ->setParameter('blocker', $user);
-            };
+            $qb->andWhere(
+                'c.user NOT IN (SELECT IDENTITY(ub.blocked) FROM '.UserBlock::class.' ub WHERE ub.blocker = :blocker)'
+            );
 
-            $qb
-                ->where($qb->expr()->notIn('c.user', $blockedSubquery))
-                ->andWhere($qb->expr()->notIn('ce.user', $blockedSubquery))
-                ->andWhere($qb->expr()->notIn('c.magazine', $blockedSubquery))
-                ->andWhere(
-                    $qb->expr()->orX(
-                        $qb->expr()->isNull('ce.domain'),
-                        $qb->expr()->notIn('ce.domain', $blockedSubquery)
-                    )
+            $qb->andWhere(
+                'ce.user NOT IN (SELECT IDENTITY(ubc.blocked) FROM '.UserBlock::class.' ubc WHERE ubc.blocker = :blocker)'
+            );
+
+            $qb->andWhere(
+                'c.magazine NOT IN (SELECT IDENTITY(mb.magazine) FROM '.MagazineBlock::class.' mb WHERE mb.user = :blocker)'
+            );
+
+            if (!$criteria->domain) {
+                $qb->andWhere(
+                    'ce.domain IS null OR ce.domain NOT IN (SELECT IDENTITY(db.domain) FROM '.DomainBlock::class.' db WHERE db.user = :blocker)'
                 );
+            }
+
+            $qb->setParameter('blocker', $user);
         }
 
         if ($criteria->onlyParents) {
@@ -284,9 +289,10 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
             return; // No need to query if there are no comments
         }
 
-        $this->createQueryBuilder('c')
-            ->select('PARTIAL c.{id}')
-            ->addSelect('cp', 'cpu', 'cpe')
+        $qb = $this->createQueryBuilder('c');
+
+        $qb
+            ->select('PARTIAL c.{id}', 'cp', 'cpu', 'cpe')
             ->leftJoin('c.parent', 'cp')
             ->leftJoin('cp.user', 'cpu')
             ->leftJoin('cp.entry', 'cpe')
