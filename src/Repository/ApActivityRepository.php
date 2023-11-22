@@ -68,8 +68,8 @@ class ApActivityRepository extends ServiceEntityRepository
         $postCommentClass = PostComment::class;
 
         $conn = $this->_em->getConnection();
-        $sql = '
-        (SELECT
+        $sql = '(
+        SELECT
             id,
             CASE
                 WHEN table_name = \'entry\' THEN :entryClass
@@ -77,16 +77,15 @@ class ApActivityRepository extends ServiceEntityRepository
                 WHEN table_name = \'post\' THEN :postClass
                 WHEN table_name = \'post_comment\' THEN :postCommentClass
             END AS type
-        FROM
-            (
-                SELECT id, \'entry\' AS table_name FROM entry WHERE ap_id = :apId
-                UNION
-                SELECT id, \'entry_comment\' FROM entry_comment WHERE ap_id = :apId
-                UNION
-                SELECT id, \'post\' FROM post WHERE ap_id = :apId
-                UNION
-                SELECT id, \'post_comment\' FROM post_comment WHERE ap_id = :apId
-            ) AS combined_result)';
+        FROM (
+            SELECT id, \'entry\' AS table_name FROM entry WHERE ap_id = :apId
+            UNION ALL
+            SELECT id, \'entry_comment\' FROM entry_comment WHERE ap_id = :apId
+            UNION ALL
+            SELECT id, \'post\' FROM post WHERE ap_id = :apId
+            UNION ALL
+            SELECT id, \'post_comment\' FROM post_comment WHERE ap_id = :apId
+        ) AS combined_result)';
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('entryClass', $entryClass);
