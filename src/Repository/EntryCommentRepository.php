@@ -243,70 +243,63 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
 
     public function hydrateChildren(EntryComment ...$comments): void
     {
-        if (empty($comments)) {
-            return; // No need to query if there are no comments
-        }
-
-        $ids = array_map(fn (EntryComment $comment) => $comment->getRoot(), $comments);
-
         $children = $this->createQueryBuilder('c')
             ->andWhere('c.root IN (:ids)')
-            ->setParameter('ids', $ids)
-            ->getQuery()
-            ->getResult();
+            ->setParameter('ids', $comments)
+            ->getQuery()->getResult();
 
         $this->hydrate(...$children);
     }
 
     public function hydrate(EntryComment ...$comments): void
     {
-        if (empty($comments)) {
-            return; // No need to query if there are no comments
-        }
-
-        $qb = $this->createQueryBuilder('c');
-        $qb
+        $this->createQueryBuilder('c')
             ->select('PARTIAL c.{id}')
-            ->addSelect('u', 'e', 'v', 'em', 'f')
+            ->addSelect('u')
+            ->addSelect('e')
+            ->addSelect('v')
+            ->addSelect('em')
+            ->addSelect('f')
             ->join('c.user', 'u')
             ->join('c.entry', 'e')
             ->join('c.votes', 'v')
             ->leftJoin('c.favourites', 'f')
             ->join('e.magazine', 'em')
-            ->where($qb->expr()->in('c', ':comments'))
-            ->setParameter('comments', $comments);
+            ->where('c IN (?1)')
+            ->setParameter(1, $comments)
+            ->getQuery()
+            ->execute();
 
-        // Left join for child comments
-        $qb
-            ->addSelect('cc', 'ccu', 'ccua', 'ccv', 'ccf')
+        $this->createQueryBuilder('c')
+            ->select('PARTIAL c.{id}')
+            ->addSelect('cc')
+            ->addSelect('ccu')
+            ->addSelect('ccua')
+            ->addSelect('ccv')
+            ->addSelect('ccf')
             ->leftJoin('c.children', 'cc')
             ->join('cc.user', 'ccu')
             ->leftJoin('ccu.avatar', 'ccua')
             ->leftJoin('cc.votes', 'ccv')
-            ->leftJoin('cc.favourites', 'ccf');
-
-        $qb
-            ->andWhere($qb->expr()->in('c', ':comments'))
-            ->setParameter('comments', $comments);
-
-        $qb->getQuery()->execute();
+            ->leftJoin('cc.favourites', 'ccf')
+            ->where('c IN (?1)')
+            ->setParameter(1, $comments)
+            ->getQuery()
+            ->execute();
     }
 
     public function hydrateParents(EntryComment ...$comments): void
     {
-        if (empty($comments)) {
-            return; // No need to query if there are no comments
-        }
-
-        $qb = $this->createQueryBuilder('c');
-
-        $qb
-            ->select('PARTIAL c.{id}', 'cp', 'cpu', 'cpe')
+        $this->createQueryBuilder('c')
+            ->select('PARTIAL c.{id}')
+            ->addSelect('cp')
+            ->addSelect('cpu')
+            ->addSelect('cpe')
             ->leftJoin('c.parent', 'cp')
             ->leftJoin('cp.user', 'cpu')
             ->leftJoin('cp.entry', 'cpe')
-            ->where($qb->expr()->in('c', ':comments'))
-            ->setParameter('comments', $comments)
+            ->where('c IN (?1)')
+            ->setParameter(1, $comments)
             ->getQuery()
             ->execute();
     }
