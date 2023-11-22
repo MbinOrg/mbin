@@ -38,8 +38,9 @@ class DomainRepository extends ServiceEntityRepository
         $pagerfanta = new Pagerfanta($adapter);
 
         try {
-            $pagerfanta->setMaxPerPage(self::PER_PAGE);
-            $pagerfanta->setCurrentPage($page);
+            $pagerfanta
+                ->setMaxPerPage(self::PER_PAGE)
+                ->setCurrentPage($page);
         } catch (NotValidCurrentPageException $e) {
             throw new NotFoundHttpException();
         }
@@ -53,8 +54,9 @@ class DomainRepository extends ServiceEntityRepository
         $pagerfanta = new Pagerfanta($adapter);
 
         try {
-            $pagerfanta->setMaxPerPage(self::PER_PAGE);
-            $pagerfanta->setCurrentPage($page);
+            $pagerfanta
+                ->setMaxPerPage(self::PER_PAGE)
+                ->setCurrentPage($page);
         } catch (NotValidCurrentPageException $e) {
             throw new NotFoundHttpException();
         }
@@ -68,8 +70,9 @@ class DomainRepository extends ServiceEntityRepository
         $pagerfanta = new Pagerfanta($adapter);
 
         try {
-            $pagerfanta->setMaxPerPage(self::PER_PAGE);
-            $pagerfanta->setCurrentPage($page);
+            $pagerfanta
+                ->setMaxPerPage(self::PER_PAGE)
+                ->setCurrentPage($page);
         } catch (NotValidCurrentPageException $e) {
             throw new NotFoundHttpException();
         }

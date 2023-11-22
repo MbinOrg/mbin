@@ -55,16 +55,13 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
 
     public function findByCriteria(Criteria $criteria): PagerfantaInterface
     {
-        $pagerfanta = new Pagerfanta(
-            new QueryAdapter(
-                $this->getEntryQueryBuilder($criteria),
-                false
-            )
-        );
+        $adapter = new QueryAdapter($this->getEntryQueryBuilder($criteria), false);
+        $pagerfanta = new Pagerfanta($adapter);
 
         try {
-            $pagerfanta->setMaxPerPage($criteria->perPage ?? self::PER_PAGE);
-            $pagerfanta->setCurrentPage($criteria->page);
+            $pagerfanta
+                ->setMaxPerPage($criteria->perPage ?? self::PER_PAGE)
+                ->setCurrentPage($criteria->page);
         } catch (NotValidCurrentPageException $e) {
             throw new NotFoundHttpException();
         }
@@ -84,10 +81,17 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
 
         if ($user && VisibilityInterface::VISIBILITY_VISIBLE === $criteria->visibility) {
             $qb->orWhere(
-                'c.user IN (SELECT IDENTITY(cuf.following) FROM '.UserFollow::class.' cuf WHERE cuf.follower = :cUser AND c.visibility = :cVisibility)'
+                $qb->expr()->in(
+                    'c.user',
+                    $this->createQueryBuilder('cuf')
+                        ->select('IDENTITY(cuf.following)')
+                        ->from(UserFollow::class, 'cuf')
+                        ->where('cuf.follower = :cUser AND c.visibility = :cVisibility')
+                        ->getDQL()
+                )
             )
-                ->setParameter('cUser', $user)
-                ->setParameter('cVisibility', VisibilityInterface::VISIBILITY_PRIVATE);
+            ->setParameter('cUser', $user)
+            ->setParameter('cVisibility', VisibilityInterface::VISIBILITY_PRIVATE);
         }
 
         $qb->setParameter(
@@ -98,7 +102,7 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
                 VisibilityInterface::VISIBILITY_TRASHED,
             ]
         )
-            ->setParameter('visible', VisibilityInterface::VISIBILITY_VISIBLE);
+        ->setParameter('visible', VisibilityInterface::VISIBILITY_VISIBLE);
 
         $this->addTimeClause($qb, $criteria);
         $this->filter($qb, $criteria);
@@ -109,10 +113,8 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
     private function addTimeClause(QueryBuilder $qb, Criteria $criteria): void
     {
         if (Criteria::TIME_ALL !== $criteria->time) {
-            $since = $criteria->getSince();
-
             $qb->andWhere('c.createdAt > :time')
-                ->setParameter('time', $since, Types::DATETIMETZ_IMMUTABLE);
+                ->setParameter('time', $criteria->getSince(), Types::DATETIMETZ_IMMUTABLE);
         }
     }
 
