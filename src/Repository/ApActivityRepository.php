@@ -79,13 +79,13 @@ class ApActivityRepository extends ServiceEntityRepository
             END AS type
         FROM
             (
-                SELECT id, \'entry\' AS table_name FROM entry WHERE ap_id = :apId LIMIT 1
+                SELECT id, \'entry\' AS table_name FROM entry WHERE ap_id = :apId
                 UNION
-                SELECT id, \'entry_comment\' FROM entry_comment WHERE ap_id = :apId LIMIT 1
+                SELECT id, \'entry_comment\' FROM entry_comment WHERE ap_id = :apId
                 UNION
-                SELECT id, \'post\' FROM post WHERE ap_id = :apId LIMIT 1
+                SELECT id, \'post\' FROM post WHERE ap_id = :apId
                 UNION
-                SELECT id, \'post_comment\' FROM post_comment WHERE ap_id = :apId LIMIT 1
+                SELECT id, \'post_comment\' FROM post_comment WHERE ap_id = :apId
             ) AS combined_result)';
 
         $stmt = $conn->prepare($sql);
