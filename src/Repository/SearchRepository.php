@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
+use App\Entity\Entry;
+use App\Entity\EntryComment;
 use App\Entity\Magazine;
 use App\Entity\Moderator;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\Adapter\ArrayAdapter;
@@ -90,7 +94,7 @@ class SearchRepository
             throw new NotFoundHttpException();
         }
 
-        $result = (array) $pagerfanta->getCurrentPageResults();
+        $result = $pagerfanta->getCurrentPageResults();
 
         return $this->buildResult($result, $page, $countAll);
     }
@@ -128,7 +132,7 @@ class SearchRepository
             throw new NotFoundHttpException();
         }
 
-        $result = (array) $pagerfanta->getCurrentPageResults();
+        $result = $pagerfanta->getCurrentPageResults();
 
         return $this->buildResult($result, $page, $countAll);
     }
@@ -141,9 +145,9 @@ class SearchRepository
         (SELECT id, created_at, 'entry' AS type FROM entry WHERE ap_id ILIKE :url) 
         UNION ALL
         (SELECT id, created_at, 'entry_comment' AS type FROM entry_comment WHERE ap_id ILIKE :url)
-        UNION  ALL
+        UNION ALL
         (SELECT id, created_at, 'post' AS type FROM post WHERE ap_id ILIKE :url)
-        UNION  ALL
+        UNION ALL
         (SELECT id, created_at, 'post_comment' AS type FROM post_comment WHERE ap_id ILIKE :url)
         ORDER BY created_at DESC
         ";
@@ -167,17 +171,25 @@ class SearchRepository
         $result = $pagerfanta->getCurrentPageResults();
 
         $objects = [];
-
-        $types = ['entry', 'entry_comment', 'post', 'post_comment'];
-
-        foreach ($types as $type) {
-            $overviewIds = $this->getOverviewIds((array) $result, $type);
-
-            if ($overviewIds) {
-                $entityClass = "App\\Entity\\$type";
-                $repository = $this->entityManager->getRepository($entityClass);
-                $objects = array_merge($objects, $repository->findBy(['id' => $overviewIds]));
-            }
+        if ($this->getOverviewIds((array) $result, 'entry')) {
+            $objects = $this->entityManager->getRepository(Entry::class)->findBy(
+                ['id' => $this->getOverviewIds((array) $result, 'entry')]
+            );
+        }
+        if ($this->getOverviewIds((array) $result, 'entry_comment')) {
+            $objects = $this->entityManager->getRepository(EntryComment::class)->findBy(
+                ['id' => $this->getOverviewIds((array) $result, 'entry_comment')]
+            );
+        }
+        if ($this->getOverviewIds((array) $result, 'post')) {
+            $objects = $this->entityManager->getRepository(Post::class)->findBy(
+                ['id' => $this->getOverviewIds((array) $result, 'post')]
+            );
+        }
+        if ($this->getOverviewIds((array) $result, 'post_comment')) {
+            $objects = $this->entityManager->getRepository(Post::class)->findBy(
+                ['id' => $this->getOverviewIds((array) $result, 'post_comment')]
+            );
         }
 
         return $objects ?? [];
@@ -192,32 +204,32 @@ class SearchRepository
 
     private function buildResult(array $result, $page, $countAll)
     {
-        $overviewIds = [
-            'entry' => $this->getOverviewIds($result, 'entry'),
-            'entry_comment' => $this->getOverviewIds($result, 'entry_comment'),
-            'post' => $this->getOverviewIds($result, 'post'),
-            'post_comment' => $this->getOverviewIds($result, 'post_comment'),
-        ];
+        $entries = $this->entityManager->getRepository(Entry::class)->findBy(
+            ['id' => $this->getOverviewIds((array) $result, 'entry')]
+        );
+        $entryComments = $this->entityManager->getRepository(EntryComment::class)->findBy(
+            ['id' => $this->getOverviewIds((array) $result, 'entry_comment')]
+        );
+        $post = $this->entityManager->getRepository(Post::class)->findBy(
+            ['id' => $this->getOverviewIds((array) $result, 'post')]
+        );
+        $postComment = $this->entityManager->getRepository(PostComment::class)->findBy(
+            ['id' => $this->getOverviewIds((array) $result, 'post_comment')]
+        );
 
-        $objects = [];
-        foreach ($overviewIds as $type => $ids) {
-            if ($ids) {
-                $entityClass = "App\\Entity\\$type";
-                $repository = $this->entityManager->getRepository($entityClass);
-                $objects = array_merge($objects, $repository->findBy(['id' => $ids]));
-            }
-        }
+        $result = array_merge($entries, $entryComments, $post, $postComment);
+        uasort($result, fn ($a, $b) => $a->getCreatedAt() > $b->getCreatedAt() ? -1 : 1);
 
-        // Sort the objects by createdAt property
-        usort($objects, fn ($a, $b) => $a->getCreatedAt() > $b->getCreatedAt() ? -1 : 1);
-
-        // Create a Pagerfanta instance with the sorted array
-        $pagerfanta = new Pagerfanta(new ArrayAdapter($objects));
+        $pagerfanta = new Pagerfanta(
+            new ArrayAdapter(
+                $result
+            )
+        );
 
         try {
             $pagerfanta->setMaxPerPage(self::PER_PAGE);
             $pagerfanta->setCurrentPage($page);
-            $pagerfanta->setMaxNbPages($countAll > 0 ? (int) ceil($countAll / self::PER_PAGE) : 1);
+            $pagerfanta->setMaxNbPages($countAll > 0 ? ((int) ceil($countAll / self::PER_PAGE)) : 1);
         } catch (NotValidCurrentPageException $e) {
             throw new NotFoundHttpException();
         }
