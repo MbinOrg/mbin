@@ -89,8 +89,6 @@
     input,
     select,
     input[type=checkbox] {
-      // border: var(--kbin-meta-border);
-      // border-radius: 0 !important;
       margin-right: .25rem;
     }
 
@@ -99,9 +97,6 @@
       text-decoration: underline;
     }
 
-    // button, input[type='submit'], a {
-    //   @include kbin-btn-link;
-    // }
   }
 }
 

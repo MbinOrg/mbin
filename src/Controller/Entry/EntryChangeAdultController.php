@@ -36,7 +36,7 @@ class EntryChangeAdultController extends AbstractController
 
         $this->addFlash(
             'success',
-            $entry->isAdult ? 'flash_thread_mark_as_adult_success' : 'flash_thread_unmark_as_adult_success'
+            $entry->isAdult ? 'flash_mark_as_adult_success' : 'flash_unmark_as_adult_success'
         );
 
         return $this->redirectToRefererOrHome($request);

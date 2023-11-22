@@ -57,7 +57,7 @@
                       method="post"
                       onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
                     <input type="hidden" name="token" value="{{ csrf_token('change_magazine') }}">
-                    <input id="change_magazine_new_magazine" required="required" name="change_magazine[new_magazine]">
+                    <input id="change_magazine_new_magazine" required="required" placeholder="{{ post.magazine.name }}" name="change_magazine[new_magazine]">
                     <button type="submit" class="btn btn__secondary">
                         {{ 'change_magazine'|trans }}
                     </button>
