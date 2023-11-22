@@ -23,7 +23,6 @@
         <li>
             <form action="{{ path('magazine_panel_ban', {'name': entry.magazine.name, 'username': entry.user.username}) }}"
                   method="get">
-                <input type="hidden" name="token" value="{{ csrf_token('entry_user_ban') }}">
                 <button type="submit" class="btn btn__secondary">
                     <i class="fa fa-ban"></i> <span>{{ 'ban'|trans }}</span>
                 </button>
