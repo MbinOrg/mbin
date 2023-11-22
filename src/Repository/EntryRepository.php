@@ -26,7 +26,6 @@ use App\Repository\Contract\TagRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Exception\NotValidCurrentPageException;
@@ -35,7 +34,6 @@ use Pagerfanta\PagerfantaInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * @method Entry|null find($id, $lockMode = null, $lockVersion = null)
@@ -382,34 +380,6 @@ class EntryRepository extends ServiceEntityRepository implements TagRepositoryIn
             ->where('e.tags IS NOT NULL')
             ->getQuery()
             ->getResult();
-    }
-
-    private function countAll(EntryPageView|Criteria $criteria): int
-    {
-        return $this->cache->get(
-            'entries_count_'.$criteria->magazine?->name,
-            function (ItemInterface $item) use ($criteria): int {
-                $item->expiresAfter(60);
-
-                if (!$criteria->magazine) {
-                    $query = $this->_em->createQuery(
-                        'SELECT COUNT(p.id) FROM App\Entity\Entry p WHERE p.visibility = :visibility'
-                    )
-                        ->setParameter('visibility', 'visible');
-                } else {
-                    $query = $this->_em->createQuery(
-                        'SELECT COUNT(p.id) FROM App\Entity\Entry p WHERE p.visibility = :visibility AND p.magazine = :magazine'
-                    )
-                        ->setParameters(['visibility' => 'visible', 'magazine' => $criteria->magazine]);
-                }
-
-                try {
-                    return $query->getSingleScalarResult();
-                } catch (NoResultException $e) {
-                    return 0;
-                }
-            }
-        );
     }
 
     public function findCross(Entry $entry): array
