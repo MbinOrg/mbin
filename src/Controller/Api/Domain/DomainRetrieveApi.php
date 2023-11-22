@@ -147,14 +147,12 @@ class DomainRetrieveApi extends DomainBaseApi
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
         $request = $this->request->getCurrentRequest();
-        $perPage = self::constrainPerPage($request->get('perPage', DomainRepository::PER_PAGE));
 
         if ($q = $request->get('q')) {
             $domains = $searchManager->findDomainsPaginated($q, $this->getPageNb($request), $perPage);
         } else {
             $domains = $repository->findAllPaginated(
-                $this->getPageNb($request),
-                $perPage
+                $this->getPageNb($request)
             );
         }
 

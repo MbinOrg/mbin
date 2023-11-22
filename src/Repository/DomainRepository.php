@@ -34,15 +34,11 @@ class DomainRepository extends ServiceEntityRepository
     public function findAllPaginated(?int $page): PagerfantaInterface
     {
         $qb = $this->createQueryBuilder('d');
-
-        $pagerfanta = new Pagerfanta(
-            new QueryAdapter(
-                $qb
-            )
-        );
+        $adapter = new QueryAdapter($qb);
+        $pagerfanta = new Pagerfanta($adapter);
 
         try {
-            $pagerfanta->setMaxPerPage($criteria->perPage ?? self::PER_PAGE);
+            $pagerfanta->setMaxPerPage(self::PER_PAGE);
             $pagerfanta->setCurrentPage($page);
         } catch (NotValidCurrentPageException $e) {
             throw new NotFoundHttpException();
@@ -53,11 +49,8 @@ class DomainRepository extends ServiceEntityRepository
 
     public function findSubscribedDomains(int $page, User $user): PagerfantaInterface
     {
-        $pagerfanta = new Pagerfanta(
-            new CollectionAdapter(
-                $user->subscribedDomains
-            )
-        );
+        $adapter = new CollectionAdapter($user->subscribedDomains);
+        $pagerfanta = new Pagerfanta($adapter);
 
         try {
             $pagerfanta->setMaxPerPage(self::PER_PAGE);
@@ -71,11 +64,8 @@ class DomainRepository extends ServiceEntityRepository
 
     public function findBlockedDomains(int $page, User $user): PagerfantaInterface
     {
-        $pagerfanta = new Pagerfanta(
-            new CollectionAdapter(
-                $user->blockedDomains
-            )
-        );
+        $adapter = new CollectionAdapter($user->blockedDomains);
+        $pagerfanta = new Pagerfanta($adapter);
 
         try {
             $pagerfanta->setMaxPerPage(self::PER_PAGE);
