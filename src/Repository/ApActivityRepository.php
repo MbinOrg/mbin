@@ -30,35 +30,19 @@ class ApActivityRepository extends ServiceEntityRepository
     public function findByObjectId(string $apId): ?array
     {
         $parsed = parse_url($apId);
+
         if ($parsed['host'] === $this->settingsManager->get('KBIN_DOMAIN')) {
             $exploded = array_filter(explode('/', $parsed['path']));
             $id = end($exploded);
-            if ('p' === $exploded[3]) {
-                if (4 === \count($exploded)) {
-                    return [
-                        'id' => $id,
-                        'type' => Post::class,
-                    ];
-                } else {
-                    return [
-                        'id' => $id,
-                        'type' => PostComment::class,
-                    ];
-                }
-            }
 
-            if ('t' === $exploded[3]) {
-                if (4 === \count($exploded)) {
-                    return [
-                        'id' => $id,
-                        'type' => Entry::class,
-                    ];
-                } else {
-                    return [
-                        'id' => $id,
-                        'type' => EntryComment::class,
-                    ];
-                }
+            $type = 'p' === $exploded[3] ? (4 === \count($exploded) ? Post::class : PostComment::class) :
+                    ('t' === $exploded[3] ? (4 === \count($exploded) ? Entry::class : EntryComment::class) : null);
+
+            if (null !== $type) {
+                return [
+                    'id' => $id,
+                    'type' => $type,
+                ];
             }
         }
 
