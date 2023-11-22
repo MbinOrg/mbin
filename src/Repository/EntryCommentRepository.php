@@ -81,17 +81,10 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
 
         if ($user && VisibilityInterface::VISIBILITY_VISIBLE === $criteria->visibility) {
             $qb->orWhere(
-                $qb->expr()->in(
-                    'c.user',
-                    $this->createQueryBuilder('cuf')
-                        ->select('IDENTITY(cuf.following)')
-                        ->from(UserFollow::class, 'cuf')
-                        ->where('cuf.follower = :cUser AND c.visibility = :cVisibility')
-                        ->getDQL()
-                )
+                'c.user IN (SELECT IDENTITY(cuf.following) FROM '.UserFollow::class.' cuf WHERE cuf.follower = :cUser AND c.visibility = :cVisibility)'
             )
-            ->setParameter('cUser', $user)
-            ->setParameter('cVisibility', VisibilityInterface::VISIBILITY_PRIVATE);
+                ->setParameter('cUser', $user)
+                ->setParameter('cVisibility', VisibilityInterface::VISIBILITY_PRIVATE);
         }
 
         $qb->setParameter(
@@ -102,7 +95,7 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
                 VisibilityInterface::VISIBILITY_TRASHED,
             ]
         )
-        ->setParameter('visible', VisibilityInterface::VISIBILITY_VISIBLE);
+            ->setParameter('visible', VisibilityInterface::VISIBILITY_VISIBLE);
 
         $this->addTimeClause($qb, $criteria);
         $this->filter($qb, $criteria);
@@ -132,10 +125,13 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
         }
 
         if ($criteria->magazine) {
-            $qb->join('c.entry', 'e', Join::WITH, 'e.magazine = :magazine AND e.visibility = :visible')
-                ->setParameters(['magazine' => $criteria->magazine, 'visible' => VisibilityInterface::VISIBILITY_VISIBLE]);
+            $qb->join('c.entry', 'e', Join::WITH, 'e.magazine = :magazine')
+                ->setParameter('magazine', $criteria->magazine)
+                ->andWhere('e.visibility = :visible')
+                ->setParameter('visible', VisibilityInterface::VISIBILITY_VISIBLE);
         } else {
-            $qb->join('c.entry', 'e', Join::WITH, 'e.visibility = :visible')
+            $qb->join('c.entry', 'e')
+                ->andWhere('e.visibility = :visible')
                 ->setParameter('visible', VisibilityInterface::VISIBILITY_VISIBLE);
         }
 
@@ -147,8 +143,8 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
         $qb->join('c.entry', 'ce');
 
         if ($criteria->domain) {
-            $qb->join('ce.domain', 'ced')
-                ->andWhere('ced.name = :domain')
+            $qb->andWhere('ced.name = :domain')
+                ->join('ce.domain', 'ced')
                 ->setParameter('domain', $criteria->domain);
         }
 
@@ -162,21 +158,29 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
         }
 
         if ($criteria->subscribed) {
-            $qb
-                ->leftJoin(MagazineSubscription::class, 'ms', Join::WITH, 'c.magazine = IDENTITY(ms.magazine) AND ms.user = :follower')
-                ->leftJoin(UserFollow::class, 'uf', Join::WITH, 'c.user = IDENTITY(uf.following) AND uf.follower = :follower')
-                ->leftJoin(DomainSubscription::class, 'ds', Join::WITH, 'ce.domain = IDENTITY(ds.domain) AND ds.user = :follower')
-                ->andWhere('c.user = :follower')
-                ->setParameter('follower', $user);
+            $qb->andWhere(
+                'c.magazine IN (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :follower) 
+                OR 
+                c.user IN (SELECT IDENTITY(uf.following) FROM '.UserFollow::class.' uf WHERE uf.follower = :follower)
+                OR
+                c.user = :follower
+                OR
+                ce.domain IN (SELECT IDENTITY(ds.domain) FROM '.DomainSubscription::class.' ds WHERE ds.user = :follower)'
+            );
+            $qb->setParameter('follower', $user);
         }
 
         if ($criteria->moderated) {
-            $qb->andWhere('c.magazine IN (SELECT IDENTITY(cm.magazine) FROM '.Moderator::class.' cm WHERE cm.user = :user)');
+            $qb->andWhere(
+                'c.magazine IN (SELECT IDENTITY(cm.magazine) FROM '.Moderator::class.' cm WHERE cm.user = :user)'
+            );
             $qb->setParameter('user', $this->security->getUser());
         }
 
         if ($criteria->favourite) {
-            $qb->andWhere('c.id IN (SELECT IDENTITY(cf.entryComment) FROM '.EntryCommentFavourite::class.' cf WHERE cf.user = :user)');
+            $qb->andWhere(
+                'c.id IN (SELECT IDENTITY(cf.entryComment) FROM '.EntryCommentFavourite::class.' cf WHERE cf.user = :user)'
+            );
             $qb->setParameter('user', $this->security->getUser());
         }
 
@@ -208,23 +212,30 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
 
         if (!$user || $user->hideAdult) {
             $qb->join('e.magazine', 'm')
-               ->orWhere('m.isAdult = :isAdult')
-               ->orWhere('e.isAdult = :isAdult')
-               ->setParameter('isAdult', false);
+                ->andWhere('m.isAdult = :isAdult')
+                ->andWhere('e.isAdult = :isAdult')
+                ->setParameter('isAdult', false);
         }
 
-        $sortOptions = [
-            Criteria::SORT_HOT => 'c.upVotes',
-            Criteria::SORT_TOP => 'c.upVotes + c.favouriteCount - c.downVotes',
-            Criteria::SORT_ACTIVE => 'c.lastActive',
-            Criteria::SORT_NEW => 'c.createdAt',
-            Criteria::SORT_OLD => 'c.createdAt',
-        ];
-
-        $orderBy = $sortOptions[$criteria->sortOption] ?? 'c.lastActive';
-        $orderDirection = \in_array($criteria->sortOption, [Criteria::SORT_NEW, Criteria::SORT_OLD]) ? 'DESC' : 'ASC';
-
-        $qb->orderBy($orderBy, $orderDirection);
+        switch ($criteria->sortOption) {
+            case Criteria::SORT_HOT:
+                $qb->orderBy('c.upVotes', 'DESC');
+                break;
+            case Criteria::SORT_TOP:
+                $qb->orderBy('c.upVotes + c.favouriteCount - c.downVotes', 'DESC');
+                break;
+            case Criteria::SORT_ACTIVE:
+                $qb->orderBy('c.lastActive', 'DESC');
+                break;
+            case Criteria::SORT_NEW:
+                $qb->orderBy('c.createdAt', 'DESC');
+                break;
+            case Criteria::SORT_OLD:
+                $qb->orderBy('c.createdAt', 'ASC');
+                break;
+            default:
+                $qb->addOrderBy('c.lastActive', 'DESC');
+        }
 
         $qb->addOrderBy('c.createdAt', 'DESC');
         $qb->addOrderBy('c.id', 'DESC');
