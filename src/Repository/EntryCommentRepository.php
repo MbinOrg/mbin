@@ -9,11 +9,9 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
-use App\Entity\DomainBlock;
 use App\Entity\DomainSubscription;
 use App\Entity\EntryComment;
 use App\Entity\EntryCommentFavourite;
-use App\Entity\MagazineBlock;
 use App\Entity\MagazineSubscription;
 use App\Entity\Moderator;
 use App\Entity\User;
@@ -132,13 +130,10 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
         }
 
         if ($criteria->magazine) {
-            $qb->join('c.entry', 'e', Join::WITH, 'e.magazine = :magazine')
-                ->setParameter('magazine', $criteria->magazine)
-                ->andWhere('e.visibility = :visible')
-                ->setParameter('visible', VisibilityInterface::VISIBILITY_VISIBLE);
+            $qb->join('c.entry', 'e', Join::WITH, 'e.magazine = :magazine AND e.visibility = :visible')
+                ->setParameters(['magazine' => $criteria->magazine, 'visible' => VisibilityInterface::VISIBILITY_VISIBLE]);
         } else {
-            $qb->join('c.entry', 'e')
-                ->andWhere('e.visibility = :visible')
+            $qb->join('c.entry', 'e', Join::WITH, 'e.visibility = :visible')
                 ->setParameter('visible', VisibilityInterface::VISIBILITY_VISIBLE);
         }
 
@@ -150,8 +145,8 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
         $qb->join('c.entry', 'ce');
 
         if ($criteria->domain) {
-            $qb->andWhere('ced.name = :domain')
-                ->join('ce.domain', 'ced')
+            $qb->join('ce.domain', 'ced')
+                ->andWhere('ced.name = :domain')
                 ->setParameter('domain', $criteria->domain);
         }
 
@@ -165,52 +160,41 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
         }
 
         if ($criteria->subscribed) {
-            $qb->andWhere(
-                'c.magazine IN (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :follower) 
-                OR 
-                c.user IN (SELECT IDENTITY(uf.following) FROM '.UserFollow::class.' uf WHERE uf.follower = :follower)
-                OR
-                c.user = :follower
-                OR
-                ce.domain IN (SELECT IDENTITY(ds.domain) FROM '.DomainSubscription::class.' ds WHERE ds.user = :follower)'
-            );
-            $qb->setParameter('follower', $user);
+            $qb
+                ->leftJoin(MagazineSubscription::class, 'ms', Join::WITH, 'c.magazine = IDENTITY(ms.magazine) AND ms.user = :follower')
+                ->leftJoin(UserFollow::class, 'uf', Join::WITH, 'c.user = IDENTITY(uf.following) AND uf.follower = :follower')
+                ->leftJoin(DomainSubscription::class, 'ds', Join::WITH, 'ce.domain = IDENTITY(ds.domain) AND ds.user = :follower')
+                ->andWhere('c.user = :follower')
+                ->setParameter('follower', $user);
         }
 
         if ($criteria->moderated) {
-            $qb->andWhere(
-                'c.magazine IN (SELECT IDENTITY(cm.magazine) FROM '.Moderator::class.' cm WHERE cm.user = :user)'
-            );
+            $qb->andWhere('c.magazine IN (SELECT IDENTITY(cm.magazine) FROM '.Moderator::class.' cm WHERE cm.user = :user)');
             $qb->setParameter('user', $this->security->getUser());
         }
 
         if ($criteria->favourite) {
-            $qb->andWhere(
-                'c.id IN (SELECT IDENTITY(cf.entryComment) FROM '.EntryCommentFavourite::class.' cf WHERE cf.user = :user)'
-            );
+            $qb->andWhere('c.id IN (SELECT IDENTITY(cf.entryComment) FROM '.EntryCommentFavourite::class.' cf WHERE cf.user = :user)');
             $qb->setParameter('user', $this->security->getUser());
         }
 
         if ($user && (!$criteria->magazine || !$criteria->magazine->userIsModerator($user)) && !$criteria->moderated) {
-            $qb->andWhere(
-                'c.user NOT IN (SELECT IDENTITY(ub.blocked) FROM '.UserBlock::class.' ub WHERE ub.blocker = :blocker)'
-            );
+            $blockedSubquery = function ($qb, $alias, $field) use ($user) {
+                $qb
+                    ->andWhere("$alias.$field NOT IN (SELECT IDENTITY(ub.blocked) FROM ".UserBlock::class.' ub WHERE ub.blocker = :blocker)')
+                    ->setParameter('blocker', $user);
+            };
 
-            $qb->andWhere(
-                'ce.user NOT IN (SELECT IDENTITY(ubc.blocked) FROM '.UserBlock::class.' ubc WHERE ubc.blocker = :blocker)'
-            );
-
-            $qb->andWhere(
-                'c.magazine NOT IN (SELECT IDENTITY(mb.magazine) FROM '.MagazineBlock::class.' mb WHERE mb.user = :blocker)'
-            );
-
-            if (!$criteria->domain) {
-                $qb->andWhere(
-                    'ce.domain IS null OR ce.domain NOT IN (SELECT IDENTITY(db.domain) FROM '.DomainBlock::class.' db WHERE db.user = :blocker)'
+            $qb
+                ->where($qb->expr()->notIn('c.user', $blockedSubquery))
+                ->andWhere($qb->expr()->notIn('ce.user', $blockedSubquery))
+                ->andWhere($qb->expr()->notIn('c.magazine', $blockedSubquery))
+                ->andWhere(
+                    $qb->expr()->orX(
+                        $qb->expr()->isNull('ce.domain'),
+                        $qb->expr()->notIn('ce.domain', $blockedSubquery)
+                    )
                 );
-            }
-
-            $qb->setParameter('blocker', $user);
         }
 
         if ($criteria->onlyParents) {
@@ -219,30 +203,23 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
 
         if (!$user || $user->hideAdult) {
             $qb->join('e.magazine', 'm')
-                ->andWhere('m.isAdult = :isAdult')
-                ->andWhere('e.isAdult = :isAdult')
-                ->setParameter('isAdult', false);
+               ->orWhere('m.isAdult = :isAdult')
+               ->orWhere('e.isAdult = :isAdult')
+               ->setParameter('isAdult', false);
         }
 
-        switch ($criteria->sortOption) {
-            case Criteria::SORT_HOT:
-                $qb->orderBy('c.upVotes', 'DESC');
-                break;
-            case Criteria::SORT_TOP:
-                $qb->orderBy('c.upVotes + c.favouriteCount - c.downVotes', 'DESC');
-                break;
-            case Criteria::SORT_ACTIVE:
-                $qb->orderBy('c.lastActive', 'DESC');
-                break;
-            case Criteria::SORT_NEW:
-                $qb->orderBy('c.createdAt', 'DESC');
-                break;
-            case Criteria::SORT_OLD:
-                $qb->orderBy('c.createdAt', 'ASC');
-                break;
-            default:
-                $qb->addOrderBy('c.lastActive', 'DESC');
-        }
+        $sortOptions = [
+            Criteria::SORT_HOT => 'c.upVotes',
+            Criteria::SORT_TOP => 'c.upVotes + c.favouriteCount - c.downVotes',
+            Criteria::SORT_ACTIVE => 'c.lastActive',
+            Criteria::SORT_NEW => 'c.createdAt',
+            Criteria::SORT_OLD => 'c.createdAt',
+        ];
+
+        $orderBy = $sortOptions[$criteria->sortOption] ?? 'c.lastActive';
+        $orderDirection = \in_array($criteria->sortOption, [Criteria::SORT_NEW, Criteria::SORT_OLD]) ? 'DESC' : 'ASC';
+
+        $qb->orderBy($orderBy, $orderDirection);
 
         $qb->addOrderBy('c.createdAt', 'DESC');
         $qb->addOrderBy('c.id', 'DESC');
@@ -252,63 +229,69 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
 
     public function hydrateChildren(EntryComment ...$comments): void
     {
+        if (empty($comments)) {
+            return; // No need to query if there are no comments
+        }
+
+        $ids = array_map(fn (EntryComment $comment) => $comment->getRoot(), $comments);
+
         $children = $this->createQueryBuilder('c')
             ->andWhere('c.root IN (:ids)')
-            ->setParameter('ids', $comments)
-            ->getQuery()->getResult();
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
 
         $this->hydrate(...$children);
     }
 
     public function hydrate(EntryComment ...$comments): void
     {
-        $this->createQueryBuilder('c')
+        if (empty($comments)) {
+            return; // No need to query if there are no comments
+        }
+
+        $qb = $this->createQueryBuilder('c');
+        $qb
             ->select('PARTIAL c.{id}')
-            ->addSelect('u')
-            ->addSelect('e')
-            ->addSelect('v')
-            ->addSelect('em')
-            ->addSelect('f')
+            ->addSelect('u', 'e', 'v', 'em', 'f')
             ->join('c.user', 'u')
             ->join('c.entry', 'e')
             ->join('c.votes', 'v')
             ->leftJoin('c.favourites', 'f')
             ->join('e.magazine', 'em')
-            ->where('c IN (?1)')
-            ->setParameter(1, $comments)
-            ->getQuery()
-            ->execute();
+            ->where($qb->expr()->in('c', ':comments'))
+            ->setParameter('comments', $comments);
 
-        $this->createQueryBuilder('c')
-            ->select('PARTIAL c.{id}')
-            ->addSelect('cc')
-            ->addSelect('ccu')
-            ->addSelect('ccua')
-            ->addSelect('ccv')
-            ->addSelect('ccf')
+        // Left join for child comments
+        $qb
+            ->addSelect('cc', 'ccu', 'ccua', 'ccv', 'ccf')
             ->leftJoin('c.children', 'cc')
             ->join('cc.user', 'ccu')
             ->leftJoin('ccu.avatar', 'ccua')
             ->leftJoin('cc.votes', 'ccv')
-            ->leftJoin('cc.favourites', 'ccf')
-            ->where('c IN (?1)')
-            ->setParameter(1, $comments)
-            ->getQuery()
-            ->execute();
+            ->leftJoin('cc.favourites', 'ccf');
+
+        $qb
+            ->andWhere($qb->expr()->in('c', ':comments'))
+            ->setParameter('comments', $comments);
+
+        $qb->getQuery()->execute();
     }
 
     public function hydrateParents(EntryComment ...$comments): void
     {
+        if (empty($comments)) {
+            return; // No need to query if there are no comments
+        }
+
         $this->createQueryBuilder('c')
             ->select('PARTIAL c.{id}')
-            ->addSelect('cp')
-            ->addSelect('cpu')
-            ->addSelect('cpe')
+            ->addSelect('cp', 'cpu', 'cpe')
             ->leftJoin('c.parent', 'cp')
             ->leftJoin('cp.user', 'cpu')
             ->leftJoin('cp.entry', 'cpe')
-            ->where('c IN (?1)')
-            ->setParameter(1, $comments)
+            ->where($qb->expr()->in('c', ':comments'))
+            ->setParameter('comments', $comments)
             ->getQuery()
             ->execute();
     }
@@ -316,9 +299,10 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
     public function findToDelete(User $user, int $limit): array
     {
         return $this->createQueryBuilder('c')
-            ->where('c.visibility != :visibility')
+            ->andWhere('c.visibility != :visibility')
             ->andWhere('c.user = :user')
-            ->setParameters(['visibility' => VisibilityInterface::VISIBILITY_SOFT_DELETED, 'user' => $user])
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_SOFT_DELETED)
+            ->setParameter('user', $user)
             ->orderBy('c.id', 'DESC')
             ->setMaxResults($limit)
             ->getQuery()
@@ -328,7 +312,7 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
     public function findWithTags(): array
     {
         return $this->createQueryBuilder('c')
-            ->where('c.tags IS NOT NULL')
+            ->andWhere('c.tags IS NOT NULL')
             ->getQuery()
             ->getResult();
     }

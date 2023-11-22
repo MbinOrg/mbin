@@ -86,6 +86,7 @@ abstract class Criteria
 
     public int $page = 1;
     public ?Magazine $magazine = null;
+    public ?Entry $entry = null;
     public ?User $user = null;
     public ?int $perPage = null;
     public bool $moderated = false;

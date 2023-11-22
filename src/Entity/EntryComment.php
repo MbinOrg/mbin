@@ -235,6 +235,11 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
         return array_values($this->tags ?? []);
     }
 
+    public function getRoot(): ?EntryComment
+    {
+        return $this->root;
+    }
+
     public function __sleep()
     {
         return [];
