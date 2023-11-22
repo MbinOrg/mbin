@@ -10,6 +10,7 @@ use App\Markdown\CommonMark\Node\CommunityLink;
 use App\Markdown\CommonMark\Node\MentionLink;
 use App\Markdown\CommonMark\Node\RoutedMentionLink;
 use App\Markdown\CommonMark\Node\TagLink;
+use App\Markdown\CommonMark\Node\UnresolvableLink;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
 use App\Repository\EmbedRepository;
@@ -19,6 +20,7 @@ use App\Utils\Embed;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Link;
 use League\CommonMark\Node\Inline\Text;
 use League\CommonMark\Node\Node;
+use League\CommonMark\Node\StringContainerInterface;
 use League\CommonMark\Renderer\ChildNodeRendererInterface;
 use League\CommonMark\Renderer\NodeRendererInterface;
 use League\CommonMark\Util\HtmlElement;
@@ -66,15 +68,26 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
             );
         }
 
-        if ($node->firstChild() instanceof Text) {
-            $title = $childRenderer->renderNodes([$node->firstChild()]);
+        // skip rendering links inside the label (not allowed)
+        if ($node->hasChildren()) {
+            $cnodes = [];
+            foreach ($node->children() as $n) {
+                if (
+                    ($n instanceof Link && $n instanceof StringContainerInterface)
+                    || $n instanceof UnresolvableLink
+                ) {
+                    $cnodes[] = new Text($n->getLiteral());
+                } else {
+                    $cnodes[] = $n;
+                }
+            }
+            $title = $childRenderer->renderNodes($cnodes);
         }
 
         if (
             !$this->isMentionType($node)
-                && (ImageManager::isImageUrl($url)
-                    || $this->isEmbed($url, $title)
-                )
+            && (ImageManager::isImageUrl($url) || $this->isEmbed($url, $title))
+            && RenderTarget::Page === $renderTarget
         ) {
             return EmbedElement::buildEmbed($url, $title);
         }
@@ -124,14 +137,7 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
         };
 
         if (RenderTarget::ActivityPub === $renderTarget) {
-            $attr = array_intersect_key(
-                $attr,
-                array_flip([
-                    'class',
-                    'title',
-                    'rel',
-                ])
-            );
+            $attr = array_intersect_key($attr, ['class', 'title', 'rel']);
         }
 
         return $attr;
