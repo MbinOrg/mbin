@@ -44,24 +44,25 @@ abstract class StatsRepository extends ServiceEntityRepository
         $period = new \DatePeriod($this->start, $interval, $to);
 
         $results = [];
+        $entriesByDay = [];
+
+        // Organize entries by day for efficient lookup
+        foreach ($entries as $entry) {
+            $dayKey = (new \DateTime($entry['day']))->format('Y-m-d');
+            $entriesByDay[$dayKey] = $entry;
+        }
+
         foreach ($period as $d) {
-            $existed = array_filter(
-                $entries,
-                fn ($entry) => (new \DateTime($entry['day']))->format('Y-m-d') === $d->format('Y-m-d')
-            );
+            $dayKey = $d->format('Y-m-d');
 
-            if (!empty($existed)) {
-                $existed = current($existed);
+            if (isset($entriesByDay[$dayKey])) {
+                $existed = $entriesByDay[$dayKey];
                 $existed['day'] = new \DateTime($existed['day']);
-
-                $results[] = $existed;
-                continue;
+            } else {
+                $existed = ['day' => $d, 'count' => 0];
             }
 
-            $results[] = [
-                'day' => $d,
-                'count' => 0,
-            ];
+            $results[] = $existed;
         }
 
         return $results;
@@ -74,27 +75,11 @@ abstract class StatsRepository extends ServiceEntityRepository
 
         $results = [];
         for ($y = $startYear; $y <= $currentYear; ++$y) {
-            for ($m = 1; $m <= 12; ++$m) {
-                if ($y === $currentYear && $m > $currentMonth) {
-                    break;
-                }
-
-                if ($y === $startYear && $m < $startMonth) {
-                    continue;
-                }
-
+            for ($m = max($startMonth, 1); $m <= min($currentMonth, 12); ++$m) {
                 $existed = array_filter($entries, fn ($entry) => $entry['month'] === $m && (int) $entry['year'] === $y);
 
-                if (!empty($existed)) {
-                    $results[] = current($existed);
-                    continue;
-                }
-
-                $results[] = [
-                    'month' => $m,
-                    'year' => $y,
-                    'count' => 0,
-                ];
+                $resultEntry = !empty($existed) ? current($existed) : ['month' => $m, 'year' => $y, 'count' => 0];
+                $results[] = $resultEntry;
             }
         }
 

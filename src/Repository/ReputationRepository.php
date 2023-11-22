@@ -63,11 +63,30 @@ class ReputationRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()
             ->getConnection();
 
-        $sql = 'SELECT
-            COALESCE((SELECT SUM((up_votes * 2) - down_votes + favourite_count) FROM entry WHERE user_id = :user), 0) +
-            COALESCE((SELECT SUM((up_votes * 2) - down_votes + favourite_count) FROM entry_comment WHERE user_id = :user), 0) +
-            COALESCE((SELECT SUM((up_votes * 2) - down_votes + favourite_count) FROM post WHERE user_id = :user), 0) +
-            COALESCE((SELECT SUM((up_votes * 2) - down_votes + favourite_count) FROM post_comment WHERE user_id = :user), 0) as total';
+        $sql = 'SELECT COALESCE(SUM((up_votes * 2) - down_votes + favourite_count), 0) AS total
+            FROM (
+                SELECT up_votes, down_votes, favourite_count
+                FROM entry
+                WHERE user_id = :user
+            
+                UNION ALL
+            
+                SELECT up_votes, down_votes, favourite_count
+                FROM entry_comment
+                WHERE user_id = :user
+            
+                UNION ALL
+            
+                SELECT up_votes, down_votes, favourite_count
+                FROM post
+                WHERE user_id = :user
+            
+                UNION ALL
+            
+                SELECT up_votes, down_votes, favourite_count
+                FROM post_comment
+                WHERE user_id = :user
+            ) AS user_activities;';
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('user', $user->getId());

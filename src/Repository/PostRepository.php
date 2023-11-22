@@ -18,14 +18,12 @@ use App\Entity\PostFavourite;
 use App\Entity\User;
 use App\Entity\UserBlock;
 use App\Entity\UserFollow;
-use App\PageView\EntryPageView;
 use App\PageView\PostPageView;
 use App\Pagination\AdapterFactory;
 use App\Repository\Contract\TagRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Exception\NotValidCurrentPageException;
@@ -34,7 +32,6 @@ use Pagerfanta\PagerfantaInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * @method Post|null find($id, $lockMode = null, $lockVersion = null)
@@ -407,35 +404,5 @@ class PostRepository extends ServiceEntityRepository implements TagRepositoryInt
             ->where('p.tags IS NOT NULL')
             ->getQuery()
             ->getResult();
-    }
-
-    private function countAll(EntryPageView|Criteria $criteria): int
-    {
-        return $this->cache->get(
-            'posts_count_'.$criteria->magazine?->name,
-            function (ItemInterface $item) use ($criteria): int {
-                $item->expiresAfter(60);
-
-                if (!$criteria->magazine) {
-                    $query = $this->_em->createQuery(
-                        'SELECT COUNT(p.id) FROM App\Entity\Post p WHERE p.visibility = :visibility'
-                    )
-                        ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
-                } else {
-                    $query = $this->_em->createQuery(
-                        'SELECT COUNT(p.id) FROM App\Entity\Post p WHERE p.visibility = :visibility AND p.magazine = :magazine'
-                    )
-                        ->setParameters(
-                            ['visibility' => VisibilityInterface::VISIBILITY_VISIBLE, 'magazine' => $criteria->magazine]
-                        );
-                }
-
-                try {
-                    return $query->getSingleScalarResult();
-                } catch (NoResultException $e) {
-                    return 0;
-                }
-            }
-        );
     }
 }

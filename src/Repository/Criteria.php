@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\Magazine;
+use App\Entity\Post;
 use App\Entity\User;
 
 abstract class Criteria
@@ -87,6 +88,7 @@ abstract class Criteria
     public int $page = 1;
     public ?Magazine $magazine = null;
     public ?Entry $entry = null;
+    public ?Post $post = null;
     public ?User $user = null;
     public ?int $perPage = null;
     public bool $moderated = false;
