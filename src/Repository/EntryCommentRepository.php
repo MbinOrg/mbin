@@ -55,13 +55,16 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
 
     public function findByCriteria(Criteria $criteria): PagerfantaInterface
     {
-        $adapter = new QueryAdapter($this->getEntryQueryBuilder($criteria), false);
-        $pagerfanta = new Pagerfanta($adapter);
+        $pagerfanta = new Pagerfanta(
+            new QueryAdapter(
+                $this->getEntryQueryBuilder($criteria),
+                false
+            )
+        );
 
         try {
-            $pagerfanta
-                ->setMaxPerPage($criteria->perPage ?? self::PER_PAGE)
-                ->setCurrentPage($criteria->page);
+            $pagerfanta->setMaxPerPage($criteria->perPage ?? self::PER_PAGE);
+            $pagerfanta->setCurrentPage($criteria->page);
         } catch (NotValidCurrentPageException $e) {
             throw new NotFoundHttpException();
         }
@@ -106,8 +109,10 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
     private function addTimeClause(QueryBuilder $qb, Criteria $criteria): void
     {
         if (Criteria::TIME_ALL !== $criteria->time) {
+            $since = $criteria->getSince();
+
             $qb->andWhere('c.createdAt > :time')
-                ->setParameter('time', $criteria->getSince(), Types::DATETIMETZ_IMMUTABLE);
+                ->setParameter('time', $since, Types::DATETIMETZ_IMMUTABLE);
         }
     }
 
@@ -154,18 +159,18 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
         }
 
         if ($criteria->tag) {
-            $qb->andWhere('jsonb_exists(c.tags, :tag)')
-                ->setParameter('tag', $criteria->tag);
+            $qb->andWhere("JSONB_CONTAINS(c.tags, '\"".$criteria->tag."\"') = true");
         }
 
         if ($criteria->subscribed) {
             $qb->andWhere(
-                $qb->expr()->orX(
-                    'c.magazine IN (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :follower)',
-                    'c.user IN (SELECT IDENTITY(uf.following) FROM '.UserFollow::class.' uf WHERE uf.follower = :follower)',
-                    'c.user = :follower',
-                    'ce.domain IN (SELECT IDENTITY(ds.domain) FROM '.DomainSubscription::class.' ds WHERE ds.user = :follower)'
-                )
+                'c.magazine IN (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :follower) 
+                OR 
+                c.user IN (SELECT IDENTITY(uf.following) FROM '.UserFollow::class.' uf WHERE uf.follower = :follower)
+                OR
+                c.user = :follower
+                OR
+                ce.domain IN (SELECT IDENTITY(ds.domain) FROM '.DomainSubscription::class.' ds WHERE ds.user = :follower)'
             );
             $qb->setParameter('follower', $user);
         }
@@ -228,8 +233,10 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
                 $qb->orderBy('c.lastActive', 'DESC');
                 break;
             case Criteria::SORT_NEW:
+                $qb->orderBy('c.createdAt', 'DESC');
+                break;
             case Criteria::SORT_OLD:
-                $qb->orderBy('c.createdAt', (Criteria::SORT_NEW === $criteria->sortOption) ? 'DESC' : 'ASC');
+                $qb->orderBy('c.createdAt', 'ASC');
                 break;
             default:
                 $qb->addOrderBy('c.lastActive', 'DESC');
@@ -307,10 +314,9 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
     public function findToDelete(User $user, int $limit): array
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.visibility != :visibility')
+            ->where('c.visibility != :visibility')
             ->andWhere('c.user = :user')
-            ->setParameter('visibility', VisibilityInterface::VISIBILITY_SOFT_DELETED)
-            ->setParameter('user', $user)
+            ->setParameters(['visibility' => VisibilityInterface::VISIBILITY_SOFT_DELETED, 'user' => $user])
             ->orderBy('c.id', 'DESC')
             ->setMaxResults($limit)
             ->getQuery()
@@ -320,7 +326,7 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
     public function findWithTags(): array
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.tags IS NOT NULL')
+            ->where('c.tags IS NOT NULL')
             ->getQuery()
             ->getResult();
     }
