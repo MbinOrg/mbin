@@ -69,22 +69,13 @@ class ApActivityRepository extends ServiceEntityRepository
 
         $conn = $this->_em->getConnection();
         $sql = '(
-            SELECT 
-                id,
-                CASE
-                    WHEN entry.ap_id IS NOT NULL THEN :entryClass
-                    WHEN entry_comment.ap_id IS NOT NULL THEN :entryCommentClass
-                    WHEN post.ap_id IS NOT NULL THEN :postClass
-                    WHEN post_comment.ap_id IS NOT NULL THEN :postCommentClass
-                END AS type
+            SELECT  COALESCE(entry.id, entry_comment.id, post.id, post_comment.id) AS id,
+                    COALESCE(:entryClass, :entryCommentClass, :postClass, :postCommentClass) AS type
             FROM entry
-            LEFT JOIN entry_comment ON entry.id = entry_comment.entry_id
-            LEFT JOIN post ON entry.id = post.entry_id
-            LEFT JOIN post_comment ON post.id = post_comment.post_id
-            WHERE entry.ap_id = :apId
-                OR entry_comment.ap_id = :apId
-                OR post.ap_id = :apId
-                OR post_comment.ap_id = :apId;
+            LEFT JOIN entry_comment ON entry.ap_id = entry_comment.ap_id
+            LEFT JOIN post ON entry.ap_id = post.ap_id
+            LEFT JOIN post_comment ON entry.ap_id = post_comment.ap_id
+            WHERE entry.ap_id = :apId OR entry_comment.ap_id = :apId OR post.ap_id = :apId OR post_comment.ap_id = :apId;
         )';
 
         $stmt = $conn->prepare($sql);
