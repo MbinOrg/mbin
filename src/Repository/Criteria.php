@@ -186,13 +186,6 @@ abstract class Criteria
             'newest' => Criteria::SORT_NEW,
             'oldest' => Criteria::SORT_OLD,
             'commented' => Criteria::SORT_COMMENTED,
-
-            'ważne' => Criteria::SORT_TOP,
-            'gorące' => Criteria::SORT_HOT,
-            'aktywne' => Criteria::SORT_ACTIVE,
-            'najnowsze' => Criteria::SORT_NEW,
-            'najstarsze' => Criteria::SORT_OLD,
-            'komentowane' => Criteria::SORT_COMMENTED,
         ];
     }
 
@@ -216,12 +209,6 @@ abstract class Criteria
             '1y' => Criteria::TIME_YEAR,
             '∞' => Criteria::TIME_ALL,
             'all' => Criteria::TIME_ALL,
-            'wszystko' => Criteria::TIME_ALL,
-            '3g' => Criteria::TIME_3_HOURS,
-            '6g' => Criteria::TIME_6_HOURS,
-            '12g' => Criteria::TIME_12_HOURS,
-            '1t' => Criteria::TIME_WEEK,
-            '1r' => Criteria::TIME_YEAR,
         ];
 
         return $routes[$value] ?? null;
@@ -241,12 +228,6 @@ abstract class Criteria
             'photos' => Entry::ENTRY_TYPE_IMAGE,
             'image' => Entry::ENTRY_TYPE_IMAGE,
             'images' => Entry::ENTRY_TYPE_IMAGE,
-
-            'artykuł' => Entry::ENTRY_TYPE_ARTICLE,
-            'artykuły' => Entry::ENTRY_TYPE_ARTICLE,
-            'linki' => Entry::ENTRY_TYPE_LINK,
-            'obraz' => Entry::ENTRY_TYPE_IMAGE,
-            'obrazy' => Entry::ENTRY_TYPE_IMAGE,
         ];
 
         return $routes[$value] ?? null;
