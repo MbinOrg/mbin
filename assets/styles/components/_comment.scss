@@ -29,7 +29,8 @@ $comment-margin-sm: .3rem;
   grid-gap: .5rem;
   grid-template-areas: "avatar header vote"
                          "avatar body body"
-                         "avatar footer footer";
+                         "avatar footer footer"
+                         "moderate moderate moderate";
   grid-template-columns: min-content auto min-content;
   margin: .5rem 0;
   padding: 0.5rem 0.75rem;
@@ -39,7 +40,8 @@ $comment-margin-sm: .3rem;
   @include media-breakpoint-down(sm) {
     grid-template-areas: "avatar header vote"
                          "body body body"
-                         "footer footer footer";
+                         "footer footer footer"
+                         "moderate moderate moderate";
   }
 
   &:hover,
@@ -110,33 +112,6 @@ $comment-margin-sm: .3rem;
   }
 
 
-  menu {
-    column-gap: 1rem;
-    display: grid;
-    grid-area: meta;
-    grid-auto-columns: max-content;
-    grid-auto-flow: column;
-    list-style: none;
-    opacity: .75;
-    position: relative;
-    z-index: 4;
-
-    & > a.active,
-    & > li button.active, {
-      text-decoration: underline;
-    }
-
-    button,
-    a {
-      font-size: .8rem;
-      @include kbin-btn-link;
-    }
-
-    li:first-child a {
-      padding-left: 0;
-    }
-  }
-
   .vote {
     display: flex;
     gap: .5rem;
@@ -153,6 +128,33 @@ $comment-margin-sm: .3rem;
     font-size: .75rem;
     font-weight: 300;
     grid-area: footer;
+
+    menu {
+      column-gap: 1rem;
+      display: grid;
+      grid-area: meta;
+      grid-auto-columns: max-content;
+      grid-auto-flow: column;
+      list-style: none;
+      opacity: .75;
+      position: relative;
+      z-index: 4;
+
+      & > a.active,
+      & > li button.active, {
+        text-decoration: underline;
+      }
+
+      button,
+      a {
+        font-size: .8rem;
+        @include kbin-btn-link;
+      }
+
+      li:first-child a {
+        padding-left: 0;
+      }
+    }
 
     menu, .boosts {
       opacity: .75;

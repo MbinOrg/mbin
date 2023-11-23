@@ -59,6 +59,12 @@
   }
 }
 
+div.moderate-inline {
+  grid-area: moderate;
+  // this is to appear below the more menu
+  z-index: -1;
+}
+
 .moderate-panel {
   margin: .5rem 0 !important;
   position: relative;
