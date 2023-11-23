@@ -13,6 +13,7 @@ use App\Service\SearchManager;
 use App\Service\SettingsManager;
 use App\Service\SubjectOverviewManager;
 use App\Utils\RegPatterns;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -25,7 +26,8 @@ class SearchController extends AbstractController
         private readonly MessageBusInterface $bus,
         private readonly ApHttpClient $apHttpClient,
         private readonly SubjectOverviewManager $overviewManager,
-        private readonly SettingsManager $settingsManager
+        private readonly SettingsManager $settingsManager,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -44,14 +46,17 @@ class SearchController extends AbstractController
             );
         }
 
+        $this->logger->debug("searching for $query");
         $objects = [];
         if (str_contains($query, '@') && (!$this->settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN') || $this->getUser())) {
             $name = str_starts_with($query, '@') ? $query : '@'.$query;
             preg_match(RegPatterns::AP_USER, $name, $matches);
             if (\count(array_filter($matches)) >= 4) {
+                $this->logger->debug("searching for a matched webfinger $query");
                 try {
                     $webfinger = $this->activityPubManager->webfinger($name);
                     foreach ($webfinger->getProfileIds() as $profileId) {
+                        $this->logger->debug("Found '$profileId' at '$name'");
                         $object = $this->activityPubManager->findActorOrCreate($profileId);
                         // Check if object is not empty
                         if (!empty($object)) {
@@ -68,8 +73,13 @@ class SearchController extends AbstractController
                         }
                     }
                 } catch (\Exception $e) {
+                    $this->logger->warning("an error occurred during lookup of '$query': ".\get_class($e).": {$e->getMessage()}", [$e]);
                 }
+            } else {
+                $this->logger->debug("query doesn't match the pattern...", [$matches]);
             }
+        } else {
+            $this->logger->debug('something bla bla bla', [str_contains($query, '@'), !$this->settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN'), $this->getUser()]);
         }
 
         if (false !== filter_var($query, FILTER_VALIDATE_URL)) {

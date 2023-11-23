@@ -90,7 +90,7 @@ class ApHttpClient
             'wf_'.hash('sha256', $url),
             function (ItemInterface $item) use ($url) {
                 $this->logger->debug("ApHttpClient:getWebfingerObject:url: {$url}");
-
+                $r = null;
                 try {
                     $client = new CurlHttpClient();
                     $r = $client->request('GET', $url, [
@@ -99,7 +99,11 @@ class ApHttpClient
                         'headers' => $this->getInstanceHeaders($url, null, 'get', ApRequestType::WebFinger),
                     ]);
                 } catch (\Exception $e) {
-                    throw new InvalidApPostException("WebFinger Get fail: {$url}, ".$r->getContent(false));
+                    $msg = "WebFinger Get fail: {$url}, ex: ".\get_class($e).": {$e->getMessage()}";
+                    if (null !== $r) {
+                        $msg .= ', '.$r->getContent(false);
+                    }
+                    throw new InvalidApPostException($msg);
                 }
 
                 $item->expiresAt(new \DateTime('+1 hour'));
@@ -122,7 +126,7 @@ class ApHttpClient
             'ap_'.hash('sha256', $apProfileId),
             function (ItemInterface $item) use ($apProfileId) {
                 $this->logger->debug("ApHttpClient:getActorObject:url: {$apProfileId}");
-
+                $response = null;
                 try {
                     // Set-up request
                     $client = new CurlHttpClient();
@@ -153,7 +157,11 @@ class ApHttpClient
                         $this->magazineRepository->save($magazine, true);
                     }
 
-                    throw new InvalidApPostException("AP Get fail: {$apProfileId}, ".$response->getContent(false));
+                    $msg = "AP Get fail: {$apProfileId}, ex: ".\get_class($e).": {$e->getMessage()}";
+                    if (null !== $response) {
+                        $msg .= ', '.$response->getContent(false);
+                    }
+                    throw new InvalidApPostException($msg);
                 }
 
                 $item->expiresAt(new \DateTime('+1 hour'));
@@ -182,9 +190,9 @@ class ApHttpClient
                         'headers' => $this->getInstanceHeaders($apAddress, null, 'get', ApRequestType::ActivityPub),
                     ]);
                 } catch (\Exception $e) {
-                    $msg = "AP Get fail: {$apAddress}, ";
+                    $msg = "AP Get fail: {$apAddress}, ex: ".\get_class($e).": {$e->getMessage()}";
                     if (null !== $response) {
-                        $msg .= $response->getContent(false);
+                        $msg .= ', '.$response->getContent(false);
                     }
                     throw new InvalidApPostException($msg);
                 }

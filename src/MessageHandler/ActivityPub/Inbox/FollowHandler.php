@@ -54,10 +54,12 @@ class FollowHandler
                         );
                         break;
                     case 'Accept':
-                        $this->handleAccept(
-                            $actor,
-                            $this->activityPubManager->findActorOrCreate($message->payload['object']['actor'])
-                        );
+                        if ($actor instanceof User) {
+                            $this->handleAccept(
+                                $actor,
+                                $this->activityPubManager->findActorOrCreate($message->payload['object']['actor'])
+                            );
+                        }
                         break;
                     case 'Reject':
                         $this->handleReject(

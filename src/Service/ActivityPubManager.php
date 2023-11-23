@@ -117,8 +117,10 @@ class ActivityPubManager
      */
     public function findActorOrCreate(string $actorUrlOrHandle): null|User|Magazine
     {
+        $this->logger->debug("searching for actor at '$actorUrlOrHandle'");
         if (str_contains($actorUrlOrHandle, $this->settingsManager->get('KBIN_DOMAIN').'/m/')) {
             $magazine = str_replace('https://'.$this->settingsManager->get('KBIN_DOMAIN').'/m/', '', $actorUrlOrHandle);
+            $this->logger->debug("found magazine '$magazine'");
 
             return $this->magazineRepository->findOneByName($magazine);
         }
@@ -139,6 +141,8 @@ class ActivityPubManager
             $name = explode('/', $actorUrl);
             $name = end($name);
 
+            $this->logger->debug("found user $name");
+
             return $this->userRepository->findOneBy(['username' => $name]);
         }
 
@@ -148,6 +152,7 @@ class ActivityPubManager
             // User (we don't make a distinction between bots with type Service as Lemmy does)
             if (\in_array($actor['type'], self::USER_TYPES)) {
                 $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
+                $this->logger->debug("found remote user at $actorUrl");
                 if (!$user) {
                     $user = $this->createUser($actorUrl);
                 } else {
@@ -166,6 +171,7 @@ class ActivityPubManager
             if ('Group' === $actor['type']) {
                 // User
                 $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
+                $this->logger->debug("found magazine at $actorUrl");
                 if (!$magazine) {
                     $magazine = $this->createMagazine($actorUrl);
                 } else {
@@ -201,6 +207,7 @@ class ActivityPubManager
 
     public function webfinger(string $id): WebFinger
     {
+        $this->logger->debug("fetching webfinger $id");
         $this->webFingerFactory::setServer($this->server->create());
 
         if (false === filter_var($id, FILTER_VALIDATE_URL)) {
@@ -587,5 +594,30 @@ class ActivityPubManager
         }
 
         return $this->updateMagazine($actorUrl);
+    }
+
+    public function findOrCreateMagazineByToAndCC(array $object): Magazine|null
+    {
+        $potentialGroups = array_filter(array_merge($object['to'], $object['cc']), fn ($s) => null !== $s and ActivityPubActivityInterface::PUBLIC_URL !== $s);
+        $magazine = $this->magazineRepository->findByApGroupProfileId($potentialGroups);
+        if ($magazine and $magazine->apId and $magazine->apFetchedAt->modify('+1 Day') < (new \DateTime())) {
+            $this->bus->dispatch(new UpdateActorMessage($magazine->apPublicUrl));
+        }
+
+        if (null === $magazine) {
+            foreach ($potentialGroups as $potentialGroup) {
+                $result = $this->findActorOrCreate($potentialGroup);
+                if ($result instanceof Magazine) {
+                    $magazine = $result;
+                    break;
+                }
+            }
+        }
+
+        if (null === $magazine) {
+            $magazine = $this->magazineRepository->findOneByName('random');
+        }
+
+        return $magazine;
     }
 }
