@@ -170,11 +170,6 @@ class StatsManager
             'content' => StatsRepository::TYPE_CONTENT,
             'views' => StatsRepository::TYPE_VIEWS,
             'votes' => StatsRepository::TYPE_VOTES,
-
-            'ogólne' => StatsRepository::TYPE_GENERAL,
-            'treści' => StatsRepository::TYPE_CONTENT,
-            'wyświetlenia' => StatsRepository::TYPE_VIEWS,
-            'głosy' => StatsRepository::TYPE_VOTES,
         ];
 
         return $routes[$value] ?? $routes[$default ?? StatsRepository::TYPE_GENERAL];
