@@ -449,18 +449,22 @@ class ActivityPubManager
 
                         foreach ($items as $item) {
                             if (\is_string($item)) {
-                                $user = $this->findActorOrCreate($item);
-                                if ($user instanceof User) {
-                                    foreach ($moderatorsToRemove as $key => $existMod) {
-                                        if ($existMod->username === $user->username) {
-                                            $indexesNotToRemove[] = $key;
-                                            break;
+                                try {
+                                    $user = $this->findActorOrCreate($item);
+                                    if ($user instanceof User) {
+                                        foreach ($moderatorsToRemove as $key => $existMod) {
+                                            if ($existMod->username === $user->username) {
+                                                $indexesNotToRemove[] = $key;
+                                                break;
+                                            }
+                                        }
+                                        if (!$magazine->userIsModerator($user)) {
+                                            $this->logger->info("adding '$user->username' as moderator in '$magazine->name' because they are a mod upstream, but not locally");
+                                            $this->magazineManager->addModerator(new ModeratorDto($magazine, $user, null));
                                         }
                                     }
-                                    if (!$magazine->userIsModerator($user)) {
-                                        $this->logger->info("adding '$user->username' as moderator in '$magazine->name' because they are a mod upstream, but not locally");
-                                        $this->magazineManager->addModerator(new ModeratorDto($magazine, $user, null));
-                                    }
+                                } catch (\Exception) {
+                                    $this->logger->warning("Something went wrong while fetching actor '$item' as moderator of '$magazine->name'");
                                 }
                             }
                         }

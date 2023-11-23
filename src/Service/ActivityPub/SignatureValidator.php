@@ -55,13 +55,23 @@ readonly class SignatureValidator
 
         // @TODO this check appears to essentially be 'attributedTo' !== id
         if (isset($payload['object']['attributedTo']) && \is_array($payload['object'])) {
-            if (parse_url($payload['object']['attributedTo'], PHP_URL_HOST) !== $keyDomain) {
-                throw new InvalidApSignatureException('Supplied key domain does not match domain of incoming activities "attributedTo" property');
+            $attributedTo = $payload['object']['attributedTo'];
+            if (\is_string($attributedTo)) {
+                $attributedTo = [$attributedTo];
+            }
+            foreach ($attributedTo as $author) {
+                $url = $author;
+                if (!\is_string($author) and isset($author['id'])) {
+                    $url = $author['id'];
+                }
+                if (parse_url($url, PHP_URL_HOST) !== $keyDomain) {
+                    throw new InvalidApSignatureException("Supplied key domain does not match domain of incoming activities 'attributedTo' property. attributedTo: '$url', keyId : '$keyDomain'");
+                }
             }
         }
 
         if (!$keyDomain || !$idDomain || $keyDomain !== $idDomain) {
-            throw new InvalidApSignatureException('Supplied key domain does not match domain of incoming activity.');
+            throw new InvalidApSignatureException("Supplied key domain does not match domain of incoming activity. idDomain: '$idDomain' keyDomain: '$keyDomain'");
         }
 
         $actorUrl = \is_array($payload['actor']) ? $payload['actor'][0] : $payload['actor'];

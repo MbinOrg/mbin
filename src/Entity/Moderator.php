@@ -29,7 +29,7 @@ class Moderator
     #[ManyToOne(targetEntity: Magazine::class, inversedBy: 'moderators')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public Magazine $magazine;
-    #[ManyToOne(targetEntity: User::class, inversedBy: 'moderatorTokens')]
+    #[ManyToOne(targetEntity: User::class)]
     #[JoinColumn(nullable: true)]
     public ?User $addedByUser;
     #[Column(type: 'boolean', nullable: false)]
