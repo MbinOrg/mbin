@@ -9,7 +9,9 @@ use App\Event\ActivityPub\WebfingerResponseEvent;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\Webfinger\WebFingerParameters;
 use App\Service\ImageManager;
+use App\Service\SettingsManager;
 use JetBrains\PhpStorm\ArrayShape;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -22,6 +24,8 @@ class UserWebFingerProfileSubscriber implements EventSubscriberInterface
         private readonly WebFingerParameters $webfingerParameters,
         private readonly UserRepository $userRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly SettingsManager $settingsManager,
+        private readonly LoggerInterface $logger,
         private readonly ImageManager $imageManager
     ) {
     }
@@ -40,28 +44,44 @@ class UserWebFingerProfileSubscriber implements EventSubscriberInterface
         $params = $this->webfingerParameters->getParams();
         $jsonRd = $event->jsonRd;
 
-        if (isset($params[WebFingerParameters::ACCOUNT_KEY_NAME]) && $actor = $this->getActor(
-            $params[WebFingerParameters::ACCOUNT_KEY_NAME]
-        )) {
-            $accountHref = $this->urlGenerator->generate(
-                'ap_user',
-                ['username' => $actor->getUserIdentifier()],
-                UrlGeneratorInterface::ABSOLUTE_URL
-            );
+        if (isset($params[WebFingerParameters::ACCOUNT_KEY_NAME])) {
+            $query = $params[WebFingerParameters::ACCOUNT_KEY_NAME];
+            $this->logger->debug("got webfinger query for $query");
 
-            $link = new JsonRdLink();
-            $link->setRel('self')
-                ->setType('application/activity+json')
-                ->setHref($accountHref);
-            $jsonRd->addLink($link);
-
-            if ($actor->avatar) {
+            $domain = $this->settingsManager->get('KBIN_DOMAIN');
+            if ($domain === $query) {
+                $accountHref = $this->urlGenerator->generate('ap_instance', [], UrlGeneratorInterface::ABSOLUTE_URL);
                 $link = new JsonRdLink();
-                $link->setRel('http://webfinger.net/rel/avatar')
-                    ->setHref(
-                        $this->imageManager->getUrl($actor->avatar),
-                    ); // @todo media url
+                $link->setRel('self')
+                    ->setType('application/activity+json')
+                    ->setHref($accountHref);
                 $jsonRd->addLink($link);
+
+                return;
+            }
+
+            $actor = $this->getActor($query);
+            if ($actor) {
+                $accountHref = $this->urlGenerator->generate(
+                    'ap_user',
+                    ['username' => $actor->getUserIdentifier()],
+                    UrlGeneratorInterface::ABSOLUTE_URL
+                );
+
+                $link = new JsonRdLink();
+                $link->setRel('self')
+                    ->setType('application/activity+json')
+                    ->setHref($accountHref);
+                $jsonRd->addLink($link);
+
+                if ($actor->avatar) {
+                    $link = new JsonRdLink();
+                    $link->setRel('http://webfinger.net/rel/avatar')
+                        ->setHref(
+                            $this->imageManager->getUrl($actor->avatar),
+                        ); // @todo media url
+                    $jsonRd->addLink($link);
+                }
             }
         }
     }
