@@ -47,9 +47,8 @@ export default class extends Controller {
         event.preventDefault();
 
         if (this.containerTarget.hasChildNodes()) {
-            this.containerTarget.replaceChildren();
-            this.containerTarget.classList.add('hidden');
-            return
+            this.containerTarget.classList.toggle('hidden');
+            return;
         }
 
         try {
