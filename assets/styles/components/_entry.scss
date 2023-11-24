@@ -334,7 +334,7 @@
 
   &:hover,
   &:focus-within {
-    menu,
+    footer menu,
     .entry__meta {
       @include fade-in(.5s, .75);
     }

@@ -177,7 +177,7 @@
 
   &:hover,
   &:focus-within {
-    header, menu, footer menu, footer .boosts {
+    header, footer menu, footer .boosts {
       @include fade-in(.5s, .75);
     }
   }
