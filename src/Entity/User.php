@@ -70,6 +70,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         self::HOMEPAGE_FAV,
     ];
 
+    public const USER_TYPE_PERSON = 'Person';
+    public const USER_TYPE_SERVICE = 'Service';
+    public const USER_TYPE_ORG = 'Organization';
+    public const USER_TYPE_APP = 'Application';
+    public const USER_TYPES = [
+        self::USER_TYPE_PERSON,
+        self::USER_TYPE_SERVICE,
+        self::USER_TYPE_ORG,
+        self::USER_TYPE_APP,
+    ];
+
     #[ManyToOne(targetEntity: Image::class, cascade: ['persist'])]
     #[JoinColumn(nullable: true)]
     public ?Image $avatar = null;
@@ -84,7 +95,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public array $roles = [];
     #[Column(type: 'integer', nullable: false)]
     public int $followersCount = 0;
-    #[Column(type: 'string', nullable: false, options: ['default' => User::HOMEPAGE_ALL])]
+    #[Column(type: 'string', nullable: false, options: ['default' => self::HOMEPAGE_ALL])]
     public string $homepage = self::HOMEPAGE_ALL;
     #[Column(type: 'text', nullable: true)]
     public ?string $about = null;
@@ -230,7 +241,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     private array $totpBackupCodes = [];
     #[OneToMany(mappedBy: 'user', targetEntity: OAuth2UserConsent::class, orphanRemoval: true)]
     private Collection $oAuth2UserConsents;
-    #[Column(type: 'string', nullable: false)]
+    #[Column(type: 'string', nullable: false, options: ['default' => self::USER_TYPE_PERSON])]
     public string $type;
 
     public function __construct(
