@@ -630,19 +630,27 @@ class ActivityPubManager
         $res = [];
         if (isset($object['to']) and \is_array($object['to'])) {
             $res = $object['to'];
+        } elseif (isset($object['to']) and \is_string($object['to'])) {
+            $res[] = $object['to'];
         }
 
         if (isset($object['cc']) and \is_array($object['cc'])) {
-            $res = array_merge($res, $object['to']);
+            $res = array_merge($res, $object['cc']);
+        } elseif (isset($object['cc']) and \is_string($object['cc'])) {
+            $res[] = $object['cc'];
         }
 
         if (isset($object['object']) and \is_array($object['object'])) {
             if (isset($object['object']['to']) and \is_array($object['object']['to'])) {
                 $res = array_merge($res, $object['object']['to']);
+            } elseif (isset($object['object']['to']) and \is_string($object['object']['to'])) {
+                $res[] = $object['object']['to'];
             }
 
             if (isset($object['object']['cc']) and \is_array($object['object']['cc'])) {
                 $res = array_merge($res, $object['object']['cc']);
+            } elseif (isset($object['object']['cc']) and \is_string($object['object']['cc'])) {
+                $res[] = $object['object']['cc'];
             }
         }
 
