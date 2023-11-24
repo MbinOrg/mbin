@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service\ActivityPub;
 
 use App\Exception\InvalidApSignatureException;
+use JetBrains\PhpStorm\ArrayShape;
 
 /*
  * source:
@@ -16,14 +17,13 @@ class HttpSignature
 {
     /**
      * Splits a signature header string into component pieces.
-     *
-     * @return array{
-     *   keyId: string,
-     *   algorithm: string,
-     *   headers: string,
-     *   signature: string,
-     * }
      */
+    #[ArrayShape([
+        'keyId' => 'string',
+        'algorithm' => 'string',
+        'headers' => 'string',
+        'signature' => 'string',
+    ])]
     public static function parseSignatureHeader(string $signature): array
     {
         $parts = explode(',', $signature);

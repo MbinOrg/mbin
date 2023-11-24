@@ -602,7 +602,7 @@ class ActivityPubManager
 
     public function findOrCreateMagazineByToAndCC(array $object): Magazine|null
     {
-        $potentialGroups = array_filter(array_merge($object['to'], $object['cc']), fn ($s) => null !== $s and ActivityPubActivityInterface::PUBLIC_URL !== $s);
+        $potentialGroups = self::getReceivers($object);
         $magazine = $this->magazineRepository->findByApGroupProfileId($potentialGroups);
         if ($magazine and $magazine->apId and $magazine->apFetchedAt->modify('+1 Day') < (new \DateTime())) {
             $this->bus->dispatch(new UpdateActorMessage($magazine->apPublicUrl));
@@ -623,5 +623,31 @@ class ActivityPubManager
         }
 
         return $magazine;
+    }
+
+    public static function getReceivers(array $object): array
+    {
+        $res = [];
+        if (isset($object['to']) and \is_array($object['to'])) {
+            $res = $object['to'];
+        }
+
+        if (isset($object['cc']) and \is_array($object['cc'])) {
+            $res = array_merge($res, $object['to']);
+        }
+
+        if (isset($object['object']) and \is_array($object['object'])) {
+            if (isset($object['object']['to']) and \is_array($object['object']['to'])) {
+                $res = array_merge($res, $object['object']['to']);
+            }
+
+            if (isset($object['object']['cc']) and \is_array($object['object']['cc'])) {
+                $res = array_merge($res, $object['object']['cc']);
+            }
+        }
+
+        $res = array_filter($res, fn ($i) => null !== $i and ActivityPubActivityInterface::PUBLIC_URL !== $i);
+
+        return array_unique($res);
     }
 }
