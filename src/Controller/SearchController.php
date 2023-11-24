@@ -78,8 +78,6 @@ class SearchController extends AbstractController
             } else {
                 $this->logger->debug("query doesn't match the pattern...", [$matches]);
             }
-        } else {
-            $this->logger->debug('something bla bla bla', [str_contains($query, '@'), !$this->settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN'), $this->getUser()]);
         }
 
         if (false !== filter_var($query, FILTER_VALIDATE_URL)) {

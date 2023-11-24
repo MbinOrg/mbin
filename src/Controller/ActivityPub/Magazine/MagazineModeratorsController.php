@@ -13,7 +13,6 @@ use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Uid\Uuid;
 
 class MagazineModeratorsController
 {
@@ -50,12 +49,10 @@ class MagazineModeratorsController
             $items[] = $this->manager->getActorProfileId($actor);
         }
 
-        $id = Uuid::v4()->toRfc4122();
-
         return [
             '@context' => ActivityPubActivityInterface::CONTEXT_URL,
             'type' => 'OrderedCollection',
-            'id' => $this->urlGenerator->generate('ap_object', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL),
+            'id' => $this->urlGenerator->generate('ap_magazine_moderators', ['name' => $magazine->name], UrlGeneratorInterface::ABSOLUTE_URL),
             'totalItems' => \sizeof($items),
             'orderedItems' => $items,
         ];

@@ -415,7 +415,7 @@ class ActivityPubManager
 
             if (null !== $magazine->apFollowersUrl) {
                 try {
-                    $this->logger->info("updating remote followers of magazine $actorUrl");
+                    $this->logger->debug("updating remote followers of magazine $actorUrl");
                     $followersObj = $this->apHttpClient->getCollectionObject($magazine->apFollowersUrl);
                     if (isset($followersObj['totalItems']) and \is_int($followersObj['totalItems'])) {
                         $magazine->apFollowersCount = $followersObj['totalItems'];
@@ -427,7 +427,7 @@ class ActivityPubManager
 
             if (null !== $magazine->apAttributedToUrl) {
                 try {
-                    $this->logger->info("fetching moderators of remote magazine $actorUrl");
+                    $this->logger->debug("fetching moderators of remote magazine $actorUrl");
                     $attributedObj = $this->apHttpClient->getCollectionObject($magazine->apAttributedToUrl);
                     $items = null;
                     if (isset($attributedObj['items']) and \is_array($attributedObj['items'])) {
