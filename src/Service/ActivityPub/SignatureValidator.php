@@ -49,11 +49,6 @@ readonly class SignatureValidator
 
         $signature = HttpSignature::parseSignatureHeader($signature);
 
-        // use the signature supplied in the payload if there is one
-        if (isset($payload['signature']) and isset($payload['signature']['signatureValue'])) {
-            $signature['signature'] = $payload['signature']['signatureValue'];
-        }
-
         $this->validateUrl($signature['keyId']);
         $this->validateUrl($id = \is_array($payload['id']) ? $payload['id'][0] : $payload['id']);
 
