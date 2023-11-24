@@ -61,7 +61,7 @@ class ApHttpClient
             $statusCode = $r->getStatusCode();
             // Accepted status code are 2xx or 410 (used Tombstone types)
             if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
-                throw new InvalidApPostException("Invalid status code while getting: {$url}, ".$r->getContent(false));
+                throw new InvalidApPostException("Invalid status code while getting: {$url} : $statusCode, ".$r->getContent(false));
             }
 
             $item->expiresAt(new \DateTime('+1 hour'));
@@ -166,8 +166,8 @@ class ApHttpClient
 
                 $item->expiresAt(new \DateTime('+1 hour'));
 
-                // When everything goes OK, return the data
-                return $response->getContent();
+                // When everything goes OK, return the data. Pass false so it doesn't throw on 410 errors
+                return $response->getContent(false);
             }
         );
 
