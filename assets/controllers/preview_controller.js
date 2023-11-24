@@ -75,7 +75,7 @@ export default class extends Controller {
                         data-action="preview#retry"
                         data-preview-url-param="${event.params.url}"
                         data-preview-ratio-param="${event.params.ratio}">
-                            Failed to load. Click to retry.
+                            Failed to load. Click here to retry.
                     </a>
                 </div>`
             this.containerTarget.innerHTML = failedHtml;
