@@ -33,6 +33,11 @@ class PostChangeAdultController extends AbstractController
 
         $this->entityManager->flush();
 
+        $this->addFlash(
+            'success',
+            $post->isAdult ? 'flash_mark_as_adult_success' : 'flash_unmark_as_adult_success'
+        );
+
         return $this->redirectToRefererOrHome($request);
     }
 }
