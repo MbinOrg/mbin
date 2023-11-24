@@ -35,13 +35,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ActivityPubManager
 {
-    public const USER_TYPES = [
-        'Person',
-        'Service',
-        'Organization',
-        'Application',
-    ];
-
     public function __construct(
         private readonly Server $server,
         private readonly UserRepository $userRepository,
@@ -150,7 +143,7 @@ class ActivityPubManager
         // Check if actor isn't empty (not set/null/empty array/etc.) and check if actor type is set
         if (!empty($actor) && isset($actor['type'])) {
             // User (we don't make a distinction between bots with type Service as Lemmy does)
-            if (\in_array($actor['type'], self::USER_TYPES)) {
+            if (\in_array($actor['type'], User::USER_TYPES)) {
                 $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
                 $this->logger->debug("found remote user at $actorUrl");
                 if (!$user) {
@@ -593,7 +586,7 @@ class ActivityPubManager
         $actor = $this->apHttpClient->getActorObject($actorUrl);
 
         // User (We don't make a distinction between bots with type Service as Lemmy does)
-        if (\in_array($actor['type'], self::USER_TYPES)) {
+        if (\in_array($actor['type'], User::USER_TYPES)) {
             return $this->updateUser($actorUrl);
         }
 
