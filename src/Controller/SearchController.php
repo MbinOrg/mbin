@@ -46,17 +46,17 @@ class SearchController extends AbstractController
             );
         }
 
-        $this->logger->debug("searching for $query");
+        $this->logger->debug('searching for {query}', ['query' => $query]);
         $objects = [];
         if (str_contains($query, '@') && (!$this->settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN') || $this->getUser())) {
             $name = str_starts_with($query, '@') ? $query : '@'.$query;
             preg_match(RegPatterns::AP_USER, $name, $matches);
             if (\count(array_filter($matches)) >= 4) {
-                $this->logger->debug("searching for a matched webfinger $query");
+                $this->logger->debug('searching for a matched webfinger {query}', ['query' => $query]);
                 try {
                     $webfinger = $this->activityPubManager->webfinger($name);
                     foreach ($webfinger->getProfileIds() as $profileId) {
-                        $this->logger->debug("Found '$profileId' at '$name'");
+                        $this->logger->debug('Found "{pId}" at "{name}"', ['pId' => $profileId, 'name' => $name]);
                         $object = $this->activityPubManager->findActorOrCreate($profileId);
                         // Check if object is not empty
                         if (!empty($object)) {
@@ -73,7 +73,11 @@ class SearchController extends AbstractController
                         }
                     }
                 } catch (\Exception $e) {
-                    $this->logger->warning("an error occurred during lookup of '$query': ".\get_class($e).": {$e->getMessage()}", [$e]);
+                    $this->logger->warning('an error occurred during lookup of "{query}": {exClass}: {exMsg}', [
+                        'query' => $query,
+                        'exClass' => \get_class($e),
+                        'exMsg' => $e->getMessage(),
+                    ]);
                 }
             } else {
                 $this->logger->debug("query doesn't match the pattern...", [$matches]);

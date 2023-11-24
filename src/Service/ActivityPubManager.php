@@ -110,10 +110,10 @@ class ActivityPubManager
      */
     public function findActorOrCreate(string $actorUrlOrHandle): null|User|Magazine
     {
-        $this->logger->debug("searching for actor at '$actorUrlOrHandle'");
+        $this->logger->debug('searching for actor at "{handle}"', ['handle' => $actorUrlOrHandle]);
         if (str_contains($actorUrlOrHandle, $this->settingsManager->get('KBIN_DOMAIN').'/m/')) {
             $magazine = str_replace('https://'.$this->settingsManager->get('KBIN_DOMAIN').'/m/', '', $actorUrlOrHandle);
-            $this->logger->debug("found magazine '$magazine'");
+            $this->logger->debug('found magazine "{magName}"', ['magName' => $magazine]);
 
             return $this->magazineRepository->findOneByName($magazine);
         }
@@ -134,7 +134,7 @@ class ActivityPubManager
             $name = explode('/', $actorUrl);
             $name = end($name);
 
-            $this->logger->debug("found user $name");
+            $this->logger->debug('found user "{user}"', ['user' => $name]);
 
             return $this->userRepository->findOneBy(['username' => $name]);
         }
@@ -145,7 +145,7 @@ class ActivityPubManager
             // User (we don't make a distinction between bots with type Service as Lemmy does)
             if (\in_array($actor['type'], User::USER_TYPES)) {
                 $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
-                $this->logger->debug("found remote user at $actorUrl");
+                $this->logger->debug('found remote user at "{url}"', ['url' => $actorUrl]);
                 if (!$user) {
                     $user = $this->createUser($actorUrl);
                 } else {
@@ -164,7 +164,7 @@ class ActivityPubManager
             if ('Group' === $actor['type']) {
                 // User
                 $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
-                $this->logger->debug("found magazine at $actorUrl");
+                $this->logger->debug('found magazine at "{url]"', ['url' => $actorUrl]);
                 if (!$magazine) {
                     $magazine = $this->createMagazine($actorUrl);
                 } else {
@@ -200,7 +200,7 @@ class ActivityPubManager
 
     public function webfinger(string $id): WebFinger
     {
-        $this->logger->debug("fetching webfinger $id");
+        $this->logger->debug('fetching webfinger "{id}"', ['id' => $id]);
         $this->webFingerFactory::setServer($this->server->create());
 
         if (false === filter_var($id, FILTER_VALIDATE_URL)) {
@@ -256,7 +256,7 @@ class ActivityPubManager
      */
     public function updateUser(string $actorUrl): ?User
     {
-        $this->logger->info("updating user $actorUrl");
+        $this->logger->info('updating user {name}', ['name' => $actorUrl]);
         $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
@@ -372,7 +372,7 @@ class ActivityPubManager
      */
     public function updateMagazine(string $actorUrl): ?Magazine
     {
-        $this->logger->info("updating magazine $actorUrl");
+        $this->logger->info('updating magazine "{magName}"', ['magName' => $actorUrl]);
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         // Check if actor isn't empty (not set/null/empty array/etc.)
@@ -408,7 +408,7 @@ class ActivityPubManager
 
             if (null !== $magazine->apFollowersUrl) {
                 try {
-                    $this->logger->debug("updating remote followers of magazine $actorUrl");
+                    $this->logger->debug('updating remote followers of magazine "{magUrl}"', ['magUrl' => $actorUrl]);
                     $followersObj = $this->apHttpClient->getCollectionObject($magazine->apFollowersUrl);
                     if (isset($followersObj['totalItems']) and \is_int($followersObj['totalItems'])) {
                         $magazine->apFollowersCount = $followersObj['totalItems'];
@@ -420,7 +420,7 @@ class ActivityPubManager
 
             if (null !== $magazine->apAttributedToUrl) {
                 try {
-                    $this->logger->debug("fetching moderators of remote magazine $actorUrl");
+                    $this->logger->debug('fetching moderators of remote magazine "{magUrl}"', ['magUrl' => $actorUrl]);
                     $attributedObj = $this->apHttpClient->getCollectionObject($magazine->apAttributedToUrl);
                     $items = null;
                     if (isset($attributedObj['items']) and \is_array($attributedObj['items'])) {
@@ -429,7 +429,7 @@ class ActivityPubManager
                         $items = $attributedObj['orderedItems'];
                     }
 
-                    $this->logger->debug("got moderator items for magazine '$magazine->name': ".json_encode($attributedObj));
+                    $this->logger->debug('got moderator items for magazine "{magName}": {json}', ['magName' => $magazine->name, 'json' => json_encode($attributedObj)]);
 
                     if (null !== $items) {
                         $moderatorsToRemove = [];
@@ -452,12 +452,12 @@ class ActivityPubManager
                                             }
                                         }
                                         if (!$magazine->userIsModerator($user)) {
-                                            $this->logger->info("adding '$user->username' as moderator in '$magazine->name' because they are a mod upstream, but not locally");
+                                            $this->logger->info('adding "{user}" as moderator in "{magName}" because they are a mod upstream, but not locally', ['user' => $user->username, 'magName' => $magazine->name]);
                                             $this->magazineManager->addModerator(new ModeratorDto($magazine, $user, null));
                                         }
                                     }
                                 } catch (\Exception) {
-                                    $this->logger->warning("Something went wrong while fetching actor '$item' as moderator of '$magazine->name'");
+                                    $this->logger->warning('Something went wrong while fetching actor "{actor}" as moderator of "{magName}"', ['actor' => $item, 'magName' => $magazine->name]);
                                 }
                             }
                         }
@@ -472,11 +472,11 @@ class ActivityPubManager
                             }
                             $criteria = Criteria::create()->where(Criteria::expr()->eq('magazine', $magazine));
                             $modObject = $modToRemove->moderatorTokens->matching($criteria)->first();
-                            $this->logger->info("removing '$modToRemove->username' from '$magazine->name' as mod locally because they are no longer mod upstream");
+                            $this->logger->info('removing "{exMod}" from "{magName}" as mod locally because they are no longer mod upstream', ['exMod' => $modToRemove->username, 'magName' => $magazine->name]);
                             $this->magazineManager->removeModerator($modObject, null);
                         }
                     } else {
-                        $this->logger->warning("could not update the moderators of $actorUrl, the response doesn't have a 'items' or 'orderedItems' property or it is not an array");
+                        $this->logger->warning('could not update the moderators of "{url}", the response doesn\'t have a "items" or "orderedItems" property or it is not an array', ['url' => $actorUrl]);
                     }
                 } catch (InvalidApPostException $ignored) {
                 }
@@ -582,7 +582,7 @@ class ActivityPubManager
      */
     public function updateActor(string $actorUrl): null|Magazine|User
     {
-        $this->logger->info("updating actor at $actorUrl");
+        $this->logger->info('updating actor at {url}', ['url' => $actorUrl]);
         $actor = $this->apHttpClient->getActorObject($actorUrl);
 
         // User (We don't make a distinction between bots with type Service as Lemmy does)

@@ -44,7 +44,7 @@ readonly class ActivityHandler
             try {
                 $this->signatureValidator->validate($message->request, $message->headers, $message->payload);
             } catch (InboxForwardingException $exception) {
-                $this->logger->info("The message was forwarded by $exception->receivedFrom. Dispatching a new activity message '$exception->realOrigin'");
+                $this->logger->info("The message was forwarded by {receivedFrom}. Dispatching a new activity message '{origin}'", ['receivedFrom' => $exception->receivedFrom, 'origin' => $exception->realOrigin]);
                 $body = $this->apHttpClient->getActivityObject($exception->realOrigin, false);
                 $this->bus->dispatch(new ActivityMessage($body));
 

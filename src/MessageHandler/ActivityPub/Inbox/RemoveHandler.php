@@ -38,9 +38,23 @@ class RemoveHandler
         $objectMod = $targetMag->getUserAsModeratorOrNull($object);
 
         if (null === $objectMod) {
-            $this->logger->warning("the user '$object->username' ({$object->getId()}) is not a moderator of $targetMag->name ({$targetMag->getId()}) and can therefore not be removed as one. Discarding message");
+            $this->logger->warning('the user "{toRemove}" ({toRemoveId}) is not a moderator of {magName} ({magId}) and can therefore not be removed as one. Discarding message', [
+                'toRemove' => $object->username,
+                'toRemoveId' => $object->getId(),
+                'magName' => $targetMag->name,
+                'magId' => $targetMag->getId(),
+            ]);
+
+            return;
         }
-        $this->logger->info("'$actor->username' ({$actor->getId()}) removed '$object->username' ({$object->getId()}) as moderator from '$targetMag->name' ({$targetMag->getId()})");
+        $this->logger->info(' "{actor}" ({actorId}) removed "{removed}" ({removedId}) as moderator from "{magName}" ({magId})', [
+            'actor' => $actor->username,
+            'actorId' => $actor->getId(),
+            'removed' => $object->username,
+            'removedId' => $object->getId(),
+            'magName' => $targetMag->name,
+            'magId' => $targetMag->getId(),
+        ]);
         $this->magazineManager->removeModerator($objectMod, $actor);
     }
 }

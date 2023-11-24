@@ -38,11 +38,23 @@ class AddHandler
         $object = $this->activityPubManager->findUserActorOrCreateOrThrow($payload['object']);
 
         if ($targetMag->userIsModerator($object)) {
-            $this->logger->warning("the user '$object->username' ({$object->getId()}) already is a moderator of $targetMag->name ({$targetMag->getId()}). Discarding message");
+            $this->logger->warning('the user "{added}" ({addedId}) already is a moderator of "{magName}" ({magId}). Discarding message', [
+                'added' => $object->username,
+                'addedId' => $object->getId(),
+                'magName' => $targetMag->name,
+                'magId' => $targetMag->getId(),
+            ]);
 
             return;
         }
-        $this->logger->info("'$actor->username' ({$actor->getId()}) added '$object->username' ({$object->getId()}) as moderator to '$targetMag->name' ({$targetMag->getId()})");
+        $this->logger->info('"{actor}" ({actorId}) added "{added}" ({addedId}) as moderator to "{magName}" ({magId})', [
+            'actor' => $actor->username,
+            'actorId' => $actor->getId(),
+            'added' => $object->username,
+            'addedId' => $object->getId(),
+            'magName' => $targetMag->name,
+            'magId' => $targetMag->getId(),
+        ]);
         $this->magazineManager->addModerator(new ModeratorDto($targetMag, $object, $actor));
     }
 }
