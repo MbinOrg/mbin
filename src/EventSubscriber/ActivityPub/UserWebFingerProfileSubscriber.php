@@ -76,7 +76,7 @@ class UserWebFingerProfileSubscriber implements EventSubscriberInterface
 
                 if ($actor->avatar) {
                     $link = new JsonRdLink();
-                    $link->setRel('http://webfinger.net/rel/avatar')
+                    $link->setRel('https://webfinger.net/rel/avatar')
                         ->setHref(
                             $this->imageManager->getUrl($actor->avatar),
                         ); // @todo media url
