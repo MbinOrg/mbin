@@ -8,6 +8,7 @@
                        "vote image shortDesc"
                        "vote image meta"
                        "vote image footer"
+                       "moderate moderate moderate"
                        "preview preview preview"
                        "body body body";
   grid-template-columns: min-content min-content 1fr;
@@ -21,6 +22,7 @@
                        "vote shortDesc"
                        "vote meta"
                        "vote footer"
+                       "moderate moderate"
                        "body body";
     grid-template-columns: min-content 1fr;
   }
@@ -41,6 +43,7 @@
                          "shortDesc shortDesc"
                          "meta meta"
                          "footer footer"
+                         "moderate moderate"
                          "preview preview"
                          "body body";
     grid-template-columns: min-content 1fr;
@@ -58,6 +61,7 @@
                            "shortDesc shortDesc"
                            "meta meta"
                            "footer footer"
+                           "moderate moderate"
                            "body body";
       grid-template-columns: min-content 1fr;
     }
@@ -66,6 +70,7 @@
       grid-template-areas: "title title vote"
                        "meta meta image"
                        "footer footer image"
+                       "moderate moderate moderate"
                        "preview preview preview"
                        "body body body";
       grid-template-columns: 1fr min-content min-content;
@@ -86,6 +91,7 @@
                        "shortDesc shortDesc"
                        "meta meta"
                        "footer footer"
+                       "moderate moderate"
                        "body body";
       grid-template-columns: 1fr min-content;
     }
@@ -96,6 +102,7 @@
       grid-template-areas: "vote title image"
                        "vote meta image"
                        "vote footer image"
+                       "moderate moderate moderate"
                        "preview preview preview"
                        "body body body";
       grid-template-columns: min-content 1fr min-content;
@@ -327,7 +334,7 @@
 
   &:hover,
   &:focus-within {
-    menu,
+    footer menu,
     .entry__meta {
       @include fade-in(.5s, .75);
     }
@@ -411,7 +418,8 @@
 }
 
 .entry-cross {
-  grid-template-areas: "vote meta" !important;
+  grid-template-areas: "vote meta"
+                       "moderate moderate" !important;
   grid-template-columns: min-content 1fr !important;
   margin-top: -.5rem;
 

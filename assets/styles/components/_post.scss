@@ -28,7 +28,8 @@
   grid-template-areas: "avatar header vote"
                          "avatar body body"
                          "avatar meta meta"
-                         "avatar footer footer";
+                         "avatar footer footer"
+                         "moderate moderate moderate";
   grid-template-columns: min-content auto min-content;
   margin: 0 0 .5rem;
   padding: 0.75rem;
@@ -39,7 +40,8 @@
     grid-template-areas: "avatar header vote"
                          "body body body"
                          "meta meta meta"
-                         "footer footer footer";
+                         "footer footer footer"
+                         "moderate moderate moderate";
   }
 
   &:hover,
@@ -92,37 +94,6 @@
     }
   }
 
-  menu {
-    column-gap: 1rem;
-    display: grid;
-    grid-area: meta;
-    grid-auto-columns: max-content;
-    grid-auto-flow: column;
-    list-style: none;
-    opacity: .75;
-    position: relative;
-    z-index: 4;
-
-    & > li {
-      line-height: 1rem;
-    }
-
-    & > a.active,
-    & > li button.active {
-      text-decoration: underline;
-    }
-
-    button,
-    a {
-      font-size: .8rem;
-      @include kbin-btn-link;
-    }
-
-    li:first-child a {
-      padding-left: 0;
-    }
-  }
-
   .vote {
     display: flex;
     gap: .5rem;
@@ -142,6 +113,37 @@
     menu, .boosts {
       font-size: .75rem;
       opacity: .75;
+    }
+
+    menu {
+      column-gap: 1rem;
+      display: grid;
+      grid-area: meta;
+      grid-auto-columns: max-content;
+      grid-auto-flow: column;
+      list-style: none;
+      opacity: .75;
+      position: relative;
+      z-index: 4;
+
+      & > li {
+        line-height: 1rem;
+      }
+
+      & > a.active,
+      & > li button.active {
+        text-decoration: underline;
+      }
+
+      button,
+      a {
+        font-size: .8rem;
+        @include kbin-btn-link;
+      }
+
+      li:first-child a {
+        padding-left: 0;
+      }
     }
 
     a {
@@ -175,7 +177,7 @@
 
   &:hover,
   &:focus-within {
-    header, menu, footer menu, footer .boosts {
+    header, footer menu, footer .boosts {
       @include fade-in(.5s, .75);
     }
   }

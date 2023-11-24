@@ -59,8 +59,13 @@
   }
 }
 
+div.moderate-inline {
+  grid-area: moderate;
+  // this is to appear below the more menu
+  z-index: -1;
+}
+
 .moderate-panel {
-  margin: .5rem 0 !important;
   position: relative;
   z-index: 2;
 
@@ -78,6 +83,10 @@
       padding: .25rem;
     }
 
+    input {
+      width: 10rem;
+    }
+
     .actions form {
       display: flex;
     }
@@ -85,8 +94,6 @@
     input,
     select,
     input[type=checkbox] {
-      border: var(--kbin-meta-border);
-      border-radius: 0 !important;
       margin-right: .25rem;
     }
 
@@ -95,9 +102,6 @@
       text-decoration: underline;
     }
 
-    button, input[type='submit'], a {
-      @include kbin-btn-link;
-    }
   }
 }
 
