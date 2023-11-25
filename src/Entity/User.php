@@ -39,6 +39,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
     new UniqueConstraint(name: 'user_username_idx', columns: ['username']),
 ])]
 #[Index(columns: ['visibility'], name: 'user_visibility_idx')]
+#[Index(columns: ['muted'], name: 'user_muted_idx')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, VisibilityInterface, TwoFactorInterface, BackupCodeInterface, EquatableInterface, ActivityPubActorInterface, ApiResourceInterface
 {
     use ActivityPubActorTrait;
@@ -243,6 +244,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     private Collection $oAuth2UserConsents;
     #[Column(type: 'string', nullable: false, options: ['default' => self::USER_TYPE_PERSON])]
     public string $type;
+    #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
+    public bool $muted = false;
 
     public function __construct(
         string $email,
