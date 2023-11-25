@@ -161,6 +161,7 @@
             </div>
         </footer>
     </aside>
+    <aside class="meta entry__preview hidden" data-preview-target="container"></aside>
     {% if not app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_THUMBNAILS')) or app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_THUMBNAILS')) is same as 'true' %}
     {% endif %}
     {% if entry.visibility in ['visible', 'private'] %}
