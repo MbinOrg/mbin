@@ -1,3 +1,9 @@
+{% with %}
+
+{% set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_PREVIEW'), 'false') %}
+{% set DYNAMIC_LISTS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_DYNAMIC_LISTS'), 'false') %}
+{% set VIEW_STYLE = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::ENTRY_COMMENTS_VIEW'), 'tree') %}
+
 {% if not app.user or (app.user and not app.user.isBlocked(comment.user)) %}
     {% if comment.visibility is same as 'private' and (not app.user or not app.user.isFollower(comment.user)) %}
         <div class="section section--small {{ 'comment-level--' ~ this.getLevel() }}"
@@ -9,12 +15,12 @@
             class: html_classes('section comment entry-comment subject ' ~ 'comment-level--' ~ this.getLevel(),{
                 'own': app.user and comment.isAuthor(app.user),
                 'author': comment.isAuthor(comment.entry.user),
-                'show-preview': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_PREVIEW')) is same as 'true',
+                'show-preview': SHOW_PREVIEW is same as 'true' and not comment.isAdult
             })}).without('id') }}
                 id="entry-comment-{{ comment.id }}"
                 data-controller="comment subject mentions"
                 data-subject-parent-value="{{ comment.parent ? comment.parent.id : '' }}"
-                data-action="{{- app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_DYNAMIC_LISTS')) is same as 'true' ? 'notifications:Notification@window->subject#notification' : '' -}}">
+                data-action="{{- DYNAMIC_LISTS is same as 'true' ? 'notifications:Notification@window->subject#notification' : '' -}}">
             <header>
                 {% if comment.isAdult %}<span class="badge danger">18+</span>{% endif %}
                 {{ component('user_inline', {user: comment.user, showAvatar: false}) }}
@@ -199,7 +205,9 @@
             comment: comment,
             level: level,
             showNested: true,
-            view: app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::ENTRY_COMMENTS_VIEW'), 'tree')
+            view: VIEW_STYLE
         }) }}
     {% endif %}
 {% endif %}
+
+{% endwith %}
