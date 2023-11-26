@@ -651,7 +651,7 @@ class ActivityPubManager
 
         return array_unique($res);
     }
-  
+
     private function isImageAttachment(array $object): bool
     {
         // attachment object has acceptable object type
