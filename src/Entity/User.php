@@ -439,7 +439,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
             }
         }
 
-        $this->updateFollowCounts($following);
+        $following->updateFollowCounts();
 
         return $this;
     }
@@ -469,9 +469,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         return $this->follows->matching($criteria)->count() > 0;
     }
 
-    public function updateFollowCounts(User $following)
+    public function updateFollowCounts(): void
     {
-        $following->followersCount = $following->followers->count();
+        if (null !== $this->apFollowersCount) {
+            $criteria = Criteria::create();
+            if ($this->apFetchedAt) {
+                $criteria->where(Criteria::expr()->gt('createdAt', \DateTimeImmutable::createFromMutable($this->apFetchedAt)));
+            }
+
+            $newFollowers = $this->followers->matching($criteria)->count();
+            $this->followersCount = $this->apFollowersCount + $newFollowers;
+        } else {
+            $this->followersCount = $this->followers->count();
+        }
     }
 
     public function unfollow(User $following): void
@@ -493,7 +503,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
             }
         }
 
-        $this->updateFollowCounts($followingUser);
+        $followingUser->updateFollowCounts();
     }
 
     public function toggleTheme(): self
