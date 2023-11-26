@@ -211,10 +211,25 @@ export default class extends Controller {
         }
     }
 
+    /**
+     * hideDropdownMenu is a helper to close drop down menus via a small
+     * hack of hiding it temporarily to cancel :hover states and bringing
+     * it back after. Hiding and showing too quickly results in the :hover
+     * state remaining in effect
+     */
+    async hideDropdownMenu(element) {
+      let dropdownMenu = this.element.querySelector('.dropdown .dropdown__menu');
+      dropdownMenu.classList.add('hidden');
+      await new Promise(r => setTimeout(r, 500));
+      dropdownMenu.classList.remove('hidden');
+    }
+
     async showModPanel(event) {
         event.preventDefault();
 
-        let container = this.element.querySelector('.moderate-inline')
+        this.hideDropdownMenu(this.element);
+
+        let container = this.element.querySelector('.moderate-inline');
         if (null !== container) {
             // moderate panel was already added to this post, toggle
             // hidden on it to show/hide it and exit
