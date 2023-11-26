@@ -38,9 +38,7 @@
             <li>{{ 'created_at'|trans }}:
                 {{ component('date', {date: computed.magazine.createdAt}) }}
             </li>
-            <li>{{ 'owner'|trans }}: <span>{{ component('user_inline', {user: computed.magazine.owner}) }}</span></li>
             <li>{{ 'subscribers'|trans }}: <span>{{ computed.magazine.subscriptionsCount }}</span></li>
-            <li>{{ 'online'|trans }}: <span>-</span></li>
         </ul>
     {% endif %}
     {% if showMeta %}
