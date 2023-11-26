@@ -324,7 +324,7 @@ class ActivityPubManager
     {
         $images = array_filter(
             $attachment,
-            fn ($val) => \in_array($val['type'], ['Document', 'Image']) && ImageManager::isImageUrl($val['url'])
+            fn ($val) => $this->isImageAttachment($val)
         ); // @todo multiple images
 
         if (\count($images)) {
@@ -539,7 +539,7 @@ class ActivityPubManager
     {
         $images = array_filter(
             $attachment,
-            fn ($val) => \in_array($val['type'], ['Document', 'Image']) && ImageManager::isImageUrl($val['url'])
+            fn ($val) => $this->isImageAttachment($val)
         );
 
         array_shift($images);
@@ -650,5 +650,19 @@ class ActivityPubManager
         $res = array_filter($res, fn ($i) => null !== $i and ActivityPubActivityInterface::PUBLIC_URL !== $i);
 
         return array_unique($res);
+    }
+  
+    private function isImageAttachment(array $object): bool
+    {
+        // attachment object has acceptable object type
+        if (!\in_array($object['type'], ['Document', 'Image'])) {
+            return false;
+        }
+
+        // attachment is either:
+        // - has `mediaType` field and is a recognized image types
+        // - image url looks like a link to image
+        return (!empty($object['mediaType']) && ImageManager::isImageType($object['mediaType']))
+            || ImageManager::isImageUrl($object['url']);
     }
 }

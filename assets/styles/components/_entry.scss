@@ -419,6 +419,7 @@
 
 .entry-cross {
   grid-template-areas: "vote meta"
+                       "preview preview"
                        "moderate moderate" !important;
   grid-template-columns: min-content 1fr !important;
   margin-top: -.5rem;
@@ -441,6 +442,12 @@
     margin-right: 0 !important;
   }
 
+  @include media-breakpoint-down(sm) {
+    .vote {
+      margin-left: var(--kbin-entry-element-spacing) !important;
+    }
+  }
+
   footer {
     margin-bottom: 0;
   }
@@ -453,6 +460,10 @@
     align-self: center;
     margin-left: 0;
     margin-bottom: 0 !important;
+  }
+
+  .entry__preview {
+    opacity: 1.0;
   }
 }
 
