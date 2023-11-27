@@ -49,6 +49,11 @@ class PostNoteFactory
             $tags[] = $post->magazine->name;
         }
 
+        $body = $this->tagManager->joinTagsToBody(
+            $post->body,
+            $tags
+        );
+
         $note = array_merge($note ?? [], [
             'id' => $this->getActivityPubId($post),
             'type' => 'Note',
@@ -70,13 +75,14 @@ class PostNoteFactory
             'sensitive' => $post->isAdult(),
             'stickied' => $post->sticky,
             'content' => $this->markdownConverter->convertToHtml(
-                $this->tagManager->joinTagsToBody(
-                    $post->body,
-                    $tags
-                ),
+                $body,
                 [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub],
             ),
             'mediaType' => 'text/html',
+            'source' => $post->body ? [
+                'content' => $body,
+                'mediaType' => 'text/markdown',
+            ] : null,
             'url' => $this->getActivityPubId($post),
             'tag' => array_merge(
                 $this->tagsWrapper->build($tags),
