@@ -11,7 +11,7 @@
                     </a>
                     <small>{{ component('date', {date: moderator.createdAt}) }}</small>
                 </div>
-                {% if is_granted('edit', magazine) and not moderator.isOwner %}
+                {% if is_granted('edit', magazine) and not moderator.isOwner and (magazine.apId is same as null or moderator.user.apId is same as null) %}
                     <div class="actions">
                         <form method="post"
                               action="{{ path('magazine_panel_moderator_purge', {magazine_name: magazine.name, moderator_id: moderator.id}) }}"
