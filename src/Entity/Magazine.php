@@ -200,7 +200,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
 
     public function isAbandoned(): bool
     {
-        return $this->getOwner()->lastActive < new \DateTime('-1 month');
+        return (!$this->apId and $this->getOwner()->lastActive < new \DateTime('-1 month'));
     }
 
     public function getOwnerModerator(): Moderator
