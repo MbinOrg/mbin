@@ -74,6 +74,10 @@ class EntryPageFactory
                 array_map(fn ($val) => '#'.$val, $tags)
             ),
             'mediaType' => 'text/html',
+            'source' => $entry->body ? [
+                'content' => $entry->body,
+                'mediaType' => 'text/markdown',
+            ] : null,
             'url' => $this->getUrl($entry),
             'tag' => array_merge(
                 $this->tagsWrapper->build($tags),
