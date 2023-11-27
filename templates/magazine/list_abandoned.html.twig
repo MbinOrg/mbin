@@ -44,14 +44,14 @@
                                         <div class='action'>
                                             <i class="fa-solid fa-users"></i><span>{{ magazine.subscriptionsCount }}</span>
                                         </div>
-                                        {% if not app.user or (not magazine.userIsOwner(app.user) and app.user.visibility is same as 'visible') %}
+                                        {% if app.user and not magazine.userIsOwner(app.user) and app.user.visibility is same as 'visible' %}
                                             <form action="{{ path('magazine_ownership_request', {name: magazine.name}) }}"
                                                   name="magazine_request_ownership"
                                                   method="post">
                                                 <button type="submit"
                                                         class="btn btn__secondary action">
                                                     <i class="fa-sharp fa-solid fa-hand-point-up"></i>
-                                                    {% if not app.user or not app.user.hasMagazineOwnershipRequest(magazine) %}
+                                                    {% if not app.user.hasMagazineOwnershipRequest(magazine) %}
                                                         <span>{{ 'request_magazine_ownership'|trans }}</span>
                                                     {% else %}
                                                         <span>{{ 'cancel_request'|trans }}</span>
