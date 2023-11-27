@@ -1,11 +1,13 @@
 <section class="user-list section">
     <h3 style="display: flex;justify-content: space-between;">
         {{ 'moderators'|trans }}
+        {% if app.user and magazine.apId is same as null and not magazine.userIsModerator(app.user) and app.user.visibility is same as 'visible' %}
         <a href="{{ path('magazine_moderators', {name: magazine.name}) }}">
             <i class="fa-solid fa-hand-point-up"
                title="{{ 'apply_for_moderator'|trans }}"></i> {% if is_granted('edit', magazine) and magazine.moderatorRequests|length %}
                 <small>({{ magazine.moderatorRequests|length }})</small>{% endif %}
         </a>
+        {% endif %}
     </h3>
     <ul>
         {% for moderator in magazine.moderators|slice(0, 5) %}
