@@ -17,7 +17,6 @@ use App\Entity\PostComment;
 use App\Entity\User;
 use App\Factory\ImageFactory;
 use App\Repository\ApActivityRepository;
-use App\Repository\MagazineRepository;
 use App\Service\ActivityPubManager;
 use App\Service\EntryCommentManager;
 use App\Service\PostCommentManager;
@@ -32,7 +31,6 @@ class Note
         private readonly PostManager $postManager,
         private readonly EntryCommentManager $entryCommentManager,
         private readonly PostCommentManager $postCommentManager,
-        private readonly MagazineRepository $magazineRepository,
         private readonly ActivityPubManager $activityPubManager,
         private readonly EntityManagerInterface $entityManager,
         private readonly MarkdownConverter $markdownConverter,
@@ -189,11 +187,7 @@ class Note
         array $object,
     ): ActivityPubActivityInterface {
         $dto = new PostDto();
-        $dto->magazine = $this->magazineRepository->findByApGroupProfileId(
-            array_merge($object['to'], $object['cc'])
-        ) ?? $this->magazineRepository->findOneByName(
-            'random'
-        );
+        $dto->magazine = $this->activityPubManager->findOrCreateMagazineByToAndCC($object);
         $dto->apId = $object['id'];
 
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);

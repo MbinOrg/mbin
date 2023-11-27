@@ -34,7 +34,7 @@ class AdminMagazineOwnershipRequestController extends AbstractController
     {
         $this->validateCsrf('admin_magazine_ownership_requests_accept', $request->request->get('token'));
 
-        $this->manager->acceptOwnershipRequest($magazine, $user);
+        $this->manager->acceptOwnershipRequest($magazine, $user, $this->getUserOrThrow());
 
         return $this->redirectToRefererOrHome($request);
     }

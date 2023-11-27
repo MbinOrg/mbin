@@ -54,7 +54,7 @@ class GroupWebFingerSubscriber implements EventSubscriberInterface
 
             $jsonRd->addAlias($accountHref);
             $link = new JsonRdLink();
-            $link->setRel('http://webfinger.net/rel/profile-page')
+            $link->setRel('https://webfinger.net/rel/profile-page')
                 ->setType('text/html')
                 ->setHref($accountHref);
             $jsonRd->addLink($link);

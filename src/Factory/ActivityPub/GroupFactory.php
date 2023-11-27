@@ -48,7 +48,7 @@ class GroupFactory
             ],
             'summary' => $magazine->description,
             'sensitive' => $magazine->isAdult,
-            'moderators' => $this->urlGenerator->generate(
+            'attributedTo' => $this->urlGenerator->generate(
                 'ap_magazine_moderators',
                 ['name' => $magazine->name],
                 UrlGeneratorInterface::ABSOLUTE_URL

@@ -145,6 +145,8 @@ class ImageRepository extends ServiceEntityRepository
 
             return Blurhash::encode($pixels, $components_x, $components_y);
         } catch (\Exception $e) {
+            $this->logger->info('Failed to calculate blurhash: '.$e->getMessage());
+
             return null;
         }
     }

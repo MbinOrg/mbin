@@ -49,7 +49,7 @@
             {{ _self.meta_item( 'comments'|trans, path('magazine_entry_comments', {'name': computed.magazine.name}), computed.magazine.entryCommentCount) }}
             {{ _self.meta_item( 'posts'|trans, path('magazine_posts', {'name': computed.magazine.name}), computed.magazine.postCount) }}
             {{ _self.meta_item( 'replies'|trans, path('magazine_posts', {'name': computed.magazine.name}), computed.magazine.postCommentCount) }}
-            {{ _self.meta_item( 'moderators'|trans, path('magazine_moderators', {'name': computed.magazine.name}), computed.magazine.moderators|length) }}
+            {{ _self.meta_item( 'moderators'|trans, path('magazine_moderators', {'name': computed.magazine.name}), computed.magazine.getModeratorCount()) }}
             {{ _self.meta_item( 'mod_log'|trans, path('magazine_modlog', {'name': computed.magazine.name}), computed.magazine.logs|length) }}
         </ul>
     {% endif %}
