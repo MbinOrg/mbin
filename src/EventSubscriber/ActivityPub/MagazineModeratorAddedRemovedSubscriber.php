@@ -52,6 +52,10 @@ class MagazineModeratorAddedRemovedSubscriber implements EventSubscriberInterfac
 
     private function deleteCache(Magazine $magazine): void
     {
+        if (!$magazine->apId) {
+          return;
+        }
+
         try {
             $this->cache->delete('ap_'.hash('sha256', $magazine->apProfileId));
             $this->cache->delete('ap_'.hash('sha256', $magazine->apId));
