@@ -53,7 +53,11 @@ class MagazineModeratorAddedRemovedSubscriber implements EventSubscriberInterfac
     private function deleteCache(Magazine $magazine): void
     {
         if (!$magazine->apId) {
+<<<<<<< HEAD
           return;
+=======
+            return;
+>>>>>>> origin
         }
 
         try {
