@@ -15,6 +15,7 @@ use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
 use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
 use Endroid\QrCode\Writer\PngWriter;
+use Psr\Log\LoggerInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Totp\TotpAuthenticatorInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
@@ -38,6 +39,7 @@ class User2FAController extends AbstractController
         private readonly TotpAuthenticatorInterface $totpAuthenticator,
         private readonly TranslatorInterface $translator,
         private readonly Security $security,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -174,27 +176,35 @@ class User2FAController extends AbstractController
     ): FormInterface|Response {
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()
-                && $form->has('totpCode')
-                && !$this->setupHasValidCode($dto->totpSecret, $form->get('totpCode')->getData())) {
-            $form->get('totpCode')->addError(new FormError($this->translator->trans('2fa.code_invalid')));
+        if (!$form->isSubmitted()) {
+            return $form;
         }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->manager->edit($this->getUser(), $dto);
+        if ($form->has('totpCode')
+                && !$this->setupHasValidCode($dto->totpSecret, $form->get('totpCode')->getData())) {
+            $form->get('totpCode')->addError(new FormError($this->translator->trans('2fa.code_invalid')));
 
-            if ($dto->totpSecret) {
-                $this->security->logout(false);
+            return $form;
+        }
 
-                $this->addFlash('success', 'flash_account_settings_changed');
+        if (!$form->isValid()) {
+            $this->logger->warning('2fa an error occurred submitting the form "{errors}"', ['errors' => $form->getErrors()]);
+            $form->get('totpCode')->addError(new FormError($this->translator->trans('2fa.setup_error')));
 
-                return $this->redirectToRoute('app_login');
-            }
+            return $form;
+        }
 
+        $this->manager->edit($this->getUser(), $dto);
+
+        if (!$dto->totpSecret) {
             return $this->redirectToRoute('user_settings_profile');
         }
 
-        return $form;
+        $this->security->logout(false);
+
+        $this->addFlash('success', 'flash_account_settings_changed');
+
+        return $this->redirectToRoute('app_login');
     }
 
     private function setupHasValidCode(string $totpSecret, string $submittedCode): bool
