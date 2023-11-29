@@ -673,6 +673,7 @@ two_factor_backup: Two-factor authentication backup codes
 2fa.authentication_code.label: Authentication Code
 2fa.verify: Verify
 2fa.code_invalid: The authentication code is not valid
+2fa.setup_error: Error enabling 2FA for account
 2fa.enable: Setup two-factor authentication
 2fa.disable: Disable two-factor authentication
 2fa.backup: Your two-factor backup codes
