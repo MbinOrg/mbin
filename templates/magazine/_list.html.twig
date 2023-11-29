@@ -11,7 +11,7 @@
                 <ul>
                     {% for magazine in magazines %}
                         <li>
-                            {% if magazine.icon %}
+                            {% if magazine.icon and (app.user or magazine.isAdult is same as false) %}
                                 <figure>
                                     <img width="32" height="32"
                                          class="image-inline {{ magazine.isAdult ? 'image-adult' : '' }}"
@@ -22,7 +22,7 @@
                             {% endif %}
                             <div>
                                 <a href="{{ path('front_magazine', {name: magazine.name}) }}"
-                                   class="stretched-link">{{ magazine.name }}</a>
+                                   class="stretched-link">{{ magazine.name }} {% if magazine.isAdult %}<small class="badge danger">18+</small>{% endif %}</a>
                                 <small>{{ component('date', {date: magazine.createdAt}) }}</small>
                             </div>
                         </li>

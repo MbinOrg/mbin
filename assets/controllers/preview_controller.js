@@ -47,9 +47,8 @@ export default class extends Controller {
         event.preventDefault();
 
         if (this.containerTarget.hasChildNodes()) {
-            this.containerTarget.replaceChildren();
-            this.containerTarget.classList.add('hidden');
-            return
+            this.containerTarget.classList.toggle('hidden');
+            return;
         }
 
         try {
@@ -76,7 +75,7 @@ export default class extends Controller {
                         data-action="preview#retry"
                         data-preview-url-param="${event.params.url}"
                         data-preview-ratio-param="${event.params.ratio}">
-                            Failed to load. Click to retry.
+                            Failed to load. Click here to retry.
                     </a>
                 </div>`
             this.containerTarget.innerHTML = failedHtml;

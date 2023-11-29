@@ -15,7 +15,7 @@
 {% block body %}
     {% include 'magazine/panel/_options.html.twig' %}
     {% include 'magazine/_visibility_info.html.twig' %}
-    
+
     <h1 hidden>{{ 'general'|trans }}</h1>
     {% include 'layout/_flash.html.twig' %}
     <div id="content" class="section theme">
@@ -70,6 +70,7 @@
                         </form>
                     {% endif %}
                 </div>
+                {% if is_granted('ROLE_ADMIN') %}
                 <div class="mb-2">
                     <form action="{{ path('magazine_remove_subscriptions', {name: magazine.name}) }}" method="POST"
                           onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
@@ -79,6 +80,7 @@
                         </button>
                     </form>
                 </div>
+                {% endif %}
                 {% if is_granted('purge', magazine) %}
                     <div class="mb-2">
                         <form action="{{ path('magazine_purge_content', {name: magazine.name}) }}" method="POST"

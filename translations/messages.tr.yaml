@@ -36,8 +36,6 @@ reset_password: Şifreyi sıfırla
 show_more: Daha fazlası
 about_instance: Hakkında
 fediverse: Fediverse
-awards: Ödüller
-ranking: Sıralama
 follow: Takip et
 unfollow: Takipten çık
 reply: Cevapla
@@ -182,22 +180,6 @@ yes: Evet
 no: Hayır
 show_thumbnails: Küçük resimleri göster
 rounded_edges: Yuvarlak kenarlar
-gold_scout_desc: 10 mükemmel bağlantı
-gold_scout: Altın izci
-gold_commentator: Altın yorumcu
-gold_personality_desc: 100 takipçi
-gold_personality: Altın kişilik
-silver_post_week_desc: Haftanın en iyi gönderisi
-silver_post_week: Haftanın gönderisi
-silver_comment_week_desc: Haftanın en iyi yorumu
-silver_comment_week: Haftanın yorumu
-silver_magazine: Popüler dergi
-silver_ranking_desc: Sıralamada 2. sıra
-silver_ranking: 2 Numara
-silver_post_desc: Gönderi 10 defa boost'landı
-silver_post: Çok iyi gönderi
-silver_comment_desc: Yorum 10 defa boost'landı
-silver_comment: Çok iyi yorum
 subject_reported: İçerik rapor edildi.
 show_top_bar: Üst çubuğu göster
 infinite_scroll: Sonsuz kaydırma
@@ -217,22 +199,6 @@ added_new_post: Yeni gönderi eklendi
 replied_to_your_comment: Yorumunuza cevap verdi
 edited_comment: Bir yorum düzenlendi
 added_new_comment: Yeri yorum ekledi
-gold_post_month_desc: Ayın en iyi gönderileri
-gold_post_month: Ayın en iyi gönderisi
-gold_comment_month_desc: Ayın en iyi yorumu
-gold_comment_month: Ayın yorumu
-gold_magazine_desc: 100 takipçi dergi oluşturdu
-gold_magazine: Popüler dergi
-gold_ranking_desc: Sıralamada 1. sırada
-gold_ranking: 1 numara
-gold_post_desc: Gönderi 15 defa boost'landı
-gold_post: Mükemmel gönderi
-gold_comment_desc: Yorum 15 defa boost'landı
-gold_comment: Mükemmel yorum
-gold_photo_desc: Fotoğraf 15 defa boost'landı
-gold_photo: Mükemmel fotoğraf
-gold_link: Mükemmel bağlantı
-gold_redactor: Altın redaktör
 registration_disabled: Kayıt devre dışı
 registrations_enabled: Kayıt etkinleştirildi
 type_search_term: Arama terimini yaz
@@ -317,41 +283,25 @@ appearance: Görünüm
 mod_log_alert: UYARI - Modlog'da yöneticiler tarafından kaldırılmış önemli gönderiler
   bula bilirsiniz. Ne yaptığınızı bildiğinizden emin olun.
 show_profile_subscriptions: Dergi aboneliklerini göster
-gold_poster_desc: 10 mükemmel gönderi
 new_email_repeat: Yeni e-postayı onayla
-gold_commentator_desc: 10 mükemmel yorum
 show_users_avatars: Kullanıcı avatarını göster
-silver_magazine_desc: 50 takipçi dergi oluşturdu
 body: Gövde
 rules: Kurallar
 notify_on_new_post_reply: Gönderilerimdeki bütün cevaplar
 notify_on_new_post_comment_reply: Gönderilerdeki yorumlarıma gelen cevaplar
 he_banned: ban
 he_unbanned: yasağı kaldır
-ranking_disabled: Sıralama devre dışı bırakıldı
 show_all: Hepsini göster
 about: Hakkında
-bronze_personality: Bronz kişilik
-bronze_personality_desc: 20 takipçi
-bronze_commentator_desc: 10 iyi yorum
 too_many_requests: Limit aşıldı, lütfen daha sonra tekrar deneyiniz.
 flash_thread_edit_success: Başlık başarıyla düzenlendi.
 flash_thread_delete_success: Başlık başarıyla silindi.
 flash_thread_pin_success: Başlık başarıyla sabitlendi.
 flash_thread_unpin_success: Başlığın sabitlenmesi başarıyla kaldırıldı.
-gold: Altın
-silver: Gümüş
-bronze: Bronz
 set_magazines_bar_empty_desc: Alan boş ise aktif dergiler bar üzerinde gösterilir.
-bronze_post: İyi gönderi
-bronze_post_desc: Bu gönderi 5 defa boostlandı
-bronze_ranking: Numara 3
-silver_personality_desc: 50 takipçi
-bronze_photo: İyi fotoğraf
 flash_register_success: Aramıza hoş geldin! Hesabın başarıyla kaydedildi. Son bir
   adım kaldı! - Gelen kutunu kontrol et, hesabını aktif hale getirecek bir aktivasyon
   bağlantısı gönderdik.
-bronze_article: Bronz başlık
 flash_thread_new_success: Başlık başarıyla oluşturuldu ve artık diğer kullanıcılara
   görünebilir durumda.
 flash_magazine_new_success: Magazin başarıyla oluşturuldu. Artık yeni içerik ekleyebilirsiniz
@@ -392,61 +342,13 @@ read_all: Hepsini oku
 flash_magazine_edit_success: Magazin başarılı bir şekilde düzenlendi.
 set_magazines_bar: Derginin bar'ları
 set_magazines_bar_desc: virgülden sonra magazin isimlerini ekle
-bronze_autobiographer: Otobiyografici
-bronze_autobiographer_desc: Tüm profil alanlarının doldurulması için
-bronze_commentator: Bronz yorumcu
-bronze_scout: Bronz izci
-bronze_scout_desc: 10 iyi bağlantı
-bronze_redactor: Bronz redaktör
-bronze_redactor_desc: 10 iyi konu
-bronze_poster: Bronz kullanıcı
-bronze_poster_desc: 10 iyi gönderi
-bronze_link: İyi bağlantı
-bronze_link_desc: Gönderi 5 defa boost'landı
-bronze_article_desc: Konu 5 defa boost'landı
-bronze_photo_desc: Fotoğraf 5 defa boost'landı
-bronze_comment: İyi yorum
-bronze_comment_desc: Yorum 5 defa boost'landı
-bronze_ranking_desc: Sıralamada 3. sıra
-bronze_popular_entry: Popüler konu
-bronze_popular_entry_desc: Konu 1000 defa ziyaret edildi
-bronze_magazine: Ünlü dergi
-bronze_magazine_desc: 20 takipçi dergi oluşturdu
-silver_personality: Gümüş kişilik
-silver_commentator: Gümüş yorumcu
-silver_commentator_desc: 10 çok iyi yorum
-silver_scout: Gümüş izci
-silver_scout_desc: 10 çok iyi bağlantı
-silver_redactor: Gümüş redaktör
-silver_redactor_desc: 10 çok iyi konu
-silver_poster: Gümüş kullanıcı
-silver_poster_desc: 10 çok iyi gönderi
-silver_link: Çok iyi bağlantı
-silver_link_desc: Gönderi 10 defa boost'landı
-silver_article: Gümüş konu
-silver_article_desc: Konu 10 defa boost'landı
-silver_photo: Çok iyi fotoğraf
-silver_photo_desc: Fotoğraf 10 defa boost'landı
-silver_popular_entry: Popüler Konu
-silver_popular_entry_desc: Konu 5000 defa ziyaret edildi
-silver_entry_week: Haftanın konusu
-silver_entry_week_desc: Haftanın en iyi konusu
-gold_poster: Altın kullanıcı
-gold_link_desc: Gönderi 15 defa boost'landı
-gold_article: Altın konu
-gold_article_desc: Konu 15 defa boost'landı
 articles: Başlıklar
-gold_redactor_desc: 10 mükemmel konu
 sidebar_position: Yanbar pozisyonu
 federation: Federasyon
 add_ban: Yasaklama ekle
 image_alt: Resim alternatif metni
 1m: 1 ay
 1w: 1 hafta
-gold_popular_entry: Popüler Konu
-gold_popular_entry_desc: Konu 10000 defa ziyaret edildi
-gold_entry_month: Ayın konusu
-gold_entry_month_desc: Ayın en iyi konusu
 added_new_thread: Yeni konu eklendi
 edited_thread: Konu düzenlendi
 mod_remove_your_thread: Bir yönetici konunuzu kaldırdı

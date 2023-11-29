@@ -115,8 +115,6 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     public ?\DateTime $lastActive = null;
     #[Column(type: 'string', nullable: true)]
     public ?string $ip = null;
-    #[Column(type: 'integer', options: ['default' => 0])]
-    public int $adaAmount = 0;
     #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
     public ?array $tags = null;
     #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
@@ -403,13 +401,6 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
         $this->views = $views;
 
         return $this;
-    }
-
-    public function getAdaAmount(): string
-    {
-        $amount = $this->adaAmount / 1000000;
-
-        return $amount > 0 ? (string) $amount : '';
     }
 
     public function isAdult(): bool

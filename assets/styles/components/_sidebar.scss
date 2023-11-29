@@ -281,6 +281,12 @@
         .theme--light & {
           outline: 2px solid var(--kbin-sidebar-settings-switch-on-bg);
         }
+
+        .theme--default & {
+          @media (prefers-color-scheme: light) {
+            outline: 2px solid var(--kbin-sidebar-settings-switch-on-bg);
+          }
+        }
       }
 
       &.dark {
@@ -290,6 +296,12 @@
 
         .theme--dark & {
           outline: 2px solid var(--kbin-sidebar-settings-switch-on-bg);
+        }
+
+        .theme--default & {
+          @media (prefers-color-scheme: dark) {
+            outline: 2px solid var(--kbin-sidebar-settings-switch-on-bg);
+          }
         }
       }
 
@@ -311,6 +323,12 @@
         .theme--solarized-light & {
           outline: 2px solid var(--kbin-sidebar-settings-switch-on-bg);
         }
+
+        .theme--solarized & {
+          @media (prefers-color-scheme: light) {
+            outline: 2px solid var(--kbin-sidebar-settings-switch-on-bg);
+          }
+        }
       }
 
       &.solarized-dark {
@@ -320,6 +338,12 @@
 
         .theme--solarized-dark & {
           outline: 2px solid var(--kbin-sidebar-settings-switch-on-bg);
+        }
+
+        .theme--solarized & {
+          @media (prefers-color-scheme: dark) {
+            outline: 2px solid var(--kbin-sidebar-settings-switch-on-bg);
+          }
         }
       }
 

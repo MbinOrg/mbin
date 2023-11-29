@@ -19,6 +19,11 @@ parameters:
     kbin_ap_route_condition: 'request.getAcceptableContentTypes() and request.getAcceptableContentTypes()[0] in ["application/activity+json", "application/ld+json", "application/json"]'
     kbin_storage_url: "%env(KBIN_STORAGE_URL)%"
 
+    # Grab the default theme to use from the MBIN_DEFAULT_THEME env var
+    # with a fall back of light/dark auto detection based on user setting
+    default_theme: default
+    mbin_default_theme: "%env(default:default_theme:MBIN_DEFAULT_THEME)%"
+
     amazon.s3.key: "%env(S3_KEY)%"
     amazon.s3.secret: "%env(S3_SECRET)%"
     amazon.s3.bucket: "%env(S3_BUCKET)%"
@@ -49,9 +54,9 @@ parameters:
 
     html5_validation: true
 
-    front_sort_options: top|hot|active|newest|oldest|commented|ważne|gorące|aktywne|najnowsze|najstarsze|komentowane
-    front_time_options: 6h|12h|1d|1w|1m|1y|all|wszystko|∞
-    stats_type: general|content|views|votes|ogólne|treści|głosy|wyświetlenia
+    front_sort_options: top|hot|active|newest|oldest|commented
+    front_time_options: 6h|12h|1d|1w|1m|1y|all|∞
+    stats_type: general|content|views|votes
 
     number_regex: "[1-9][0-9]{0,17}"
     username_regex: '\w{2,25}|!deleted\d+'
@@ -63,6 +68,14 @@ parameters:
     mercure_subscriptions_token: "%env(MERCURE_JWT_SECRET)%"
 
     sso_only_mode: "%env(bool:default::SSO_ONLY_MODE)%"
+
+    exif_default_uploaded: 'sanitize'
+    exif_default_external: 'none'
+
+    exif_clean_mode_uploaded: '%env(enum:\App\Utils\ExifCleanMode:default:exif_default_uploaded:EXIF_CLEAN_MODE_UPLOADED)%'
+    exif_clean_mode_external: '%env(enum:\App\Utils\ExifCleanMode:default:exif_default_external:EXIF_CLEAN_MODE_EXTERNAL)%'
+    exif_exiftool_path: '%env(default::EXIF_EXIFTOOL_PATH)%'
+    exif_exiftool_timeout: '%env(int:default::EXIF_EXIFTOOL_TIMEOUT)%'
 
 services:
     # default configuration for services in *this* file
@@ -122,6 +135,7 @@ services:
             $kbinDefaultLang: "%kbin_default_lang%"
             $kbinContactEmail: "%kbin_contact_email%"
             $kbinSenderEmail: "%kbin_sender_email%"
+            $mbinDefaultTheme: "%mbin_default_theme%"
             $kbinJsEnabled: "%env(bool:KBIN_JS_ENABLED)%"
             $kbinFederationEnabled: "%env(bool:KBIN_FEDERATION_ENABLED)%"
             $kbinRegistrationsEnabled: "%env(bool:KBIN_REGISTRATIONS_ENABLED)%"

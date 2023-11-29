@@ -7,11 +7,14 @@ namespace App\Service;
 use App\ActivityPub\Server;
 use App\DTO\ActivityPub\ImageDto;
 use App\DTO\ActivityPub\VideoDto;
+use App\DTO\ModeratorDto;
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Contracts\ActivityPubActorInterface;
 use App\Entity\Image;
 use App\Entity\Magazine;
+use App\Entity\Moderator;
 use App\Entity\User;
+use App\Exception\InvalidApPostException;
 use App\Factory\ActivityPub\PersonFactory;
 use App\Factory\MagazineFactory;
 use App\Factory\UserFactory;
@@ -23,20 +26,15 @@ use App\Repository\UserRepository;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\Webfinger\WebFinger;
 use App\Service\ActivityPub\Webfinger\WebFingerFactory;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use League\HTMLToMarkdown\HtmlConverter;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ActivityPubManager
 {
-    public const USER_TYPES = [
-        'Person',
-        'Service',
-        'Organization',
-        'Application',
-    ];
-
     public function __construct(
         private readonly Server $server,
         private readonly UserRepository $userRepository,
@@ -54,7 +52,8 @@ class ActivityPubManager
         private readonly WebFingerFactory $webFingerFactory,
         private readonly MentionManager $mentionManager,
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly MessageBusInterface $bus
+        private readonly MessageBusInterface $bus,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -105,14 +104,16 @@ class ActivityPubManager
     /**
      * Find an existing actor or create a new one if the actor doesn't yet exists.
      *
-     * @param actorUrlOrHandle actor URL or actor handle
+     * @param string $actorUrlOrHandle actor URL or actor handle
      *
-     * @return User or Magazine or null on error
+     * @return User|Magazine|null or Magazine or null on error
      */
     public function findActorOrCreate(string $actorUrlOrHandle): null|User|Magazine
     {
+        $this->logger->debug('searching for actor at "{handle}"', ['handle' => $actorUrlOrHandle]);
         if (str_contains($actorUrlOrHandle, $this->settingsManager->get('KBIN_DOMAIN').'/m/')) {
             $magazine = str_replace('https://'.$this->settingsManager->get('KBIN_DOMAIN').'/m/', '', $actorUrlOrHandle);
+            $this->logger->debug('found magazine "{magName}"', ['magName' => $magazine]);
 
             return $this->magazineRepository->findOneByName($magazine);
         }
@@ -133,6 +134,8 @@ class ActivityPubManager
             $name = explode('/', $actorUrl);
             $name = end($name);
 
+            $this->logger->debug('found user "{user}"', ['user' => $name]);
+
             return $this->userRepository->findOneBy(['username' => $name]);
         }
 
@@ -140,8 +143,9 @@ class ActivityPubManager
         // Check if actor isn't empty (not set/null/empty array/etc.) and check if actor type is set
         if (!empty($actor) && isset($actor['type'])) {
             // User (we don't make a distinction between bots with type Service as Lemmy does)
-            if (\in_array($actor['type'], self::USER_TYPES)) {
+            if (\in_array($actor['type'], User::USER_TYPES)) {
                 $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
+                $this->logger->debug('found remote user at "{url}"', ['url' => $actorUrl]);
                 if (!$user) {
                     $user = $this->createUser($actorUrl);
                 } else {
@@ -160,6 +164,7 @@ class ActivityPubManager
             if ('Group' === $actor['type']) {
                 // User
                 $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
+                $this->logger->debug('found magazine at "{url]"', ['url' => $actorUrl]);
                 if (!$magazine) {
                     $magazine = $this->createMagazine($actorUrl);
                 } else {
@@ -178,8 +183,24 @@ class ActivityPubManager
         return null;
     }
 
+    /**
+     * @throws \LogicException when the returned actor is not a user or is null
+     */
+    public function findUserActorOrCreateOrThrow(string $actorUrlOrHandle): User
+    {
+        $object = $this->findActorOrCreate($actorUrlOrHandle);
+        if (!$object) {
+            throw new \LogicException("could not find actor for 'object' property at: '$actorUrlOrHandle'");
+        } elseif (!$object instanceof User) {
+            throw new \LogicException("could not find user actor for 'object' property at: '$actorUrlOrHandle'");
+        }
+
+        return $object;
+    }
+
     public function webfinger(string $id): WebFinger
     {
+        $this->logger->debug('fetching webfinger "{id}"', ['id' => $id]);
         $this->webFingerFactory::setServer($this->server->create());
 
         if (false === filter_var($id, FILTER_VALIDATE_URL)) {
@@ -210,9 +231,9 @@ class ActivityPubManager
     /**
      * Creates a new user.
      *
-     * @param actorUrl actor URL
+     * @param string $actorUrl actor URL
      *
-     * @return User or null on error
+     * @return ?User or null on error
      */
     private function createUser(string $actorUrl): ?User
     {
@@ -229,12 +250,13 @@ class ActivityPubManager
     /**
      * Update existing user and return user object.
      *
-     * @param actorUrl actor URL
+     * @param string $actorUrl actor URL
      *
-     * @return User or null on error (eg. actor not found)
+     * @return ?User or null on error (e.g. actor not found)
      */
     public function updateUser(string $actorUrl): ?User
     {
+        $this->logger->info('updating user {name}', ['name' => $actorUrl]);
         $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
@@ -245,6 +267,7 @@ class ActivityPubManager
             $user->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
             $user->apDomain = parse_url($actor['id'], PHP_URL_HOST);
             $user->apFollowersUrl = $actor['followers'] ?? null;
+            $user->apAttributedToUrl = $actor['attributedTo'] ?? null;
             $user->apPreferredUsername = $actor['preferredUsername'] ?? null;
             $user->apDiscoverable = $actor['discoverable'] ?? true;
             $user->apManuallyApprovesFollowers = $actor['manuallyApprovesFollowers'] ?? false;
@@ -277,6 +300,17 @@ class ActivityPubManager
                 $user->cover = $newImage;
             }
 
+            if (null !== $user->apFollowersUrl) {
+                try {
+                    $followersObj = $this->apHttpClient->getCollectionObject($user->apFollowersUrl);
+                    if (isset($followersObj['totalItems']) and \is_int($followersObj['totalItems'])) {
+                        $user->apFollowersCount = $followersObj['totalItems'];
+                        $user->updateFollowCounts();
+                    }
+                } catch (InvalidApPostException $ignored) {
+                }
+            }
+
             // Write to DB
             $this->entityManager->flush();
 
@@ -290,7 +324,7 @@ class ActivityPubManager
     {
         $images = array_filter(
             $attachment,
-            fn ($val) => \in_array($val['type'], ['Document', 'Image']) && ImageManager::isImageUrl($val['url'])
+            fn ($val) => $this->isImageAttachment($val)
         ); // @todo multiple images
 
         if (\count($images)) {
@@ -314,9 +348,9 @@ class ActivityPubManager
     /**
      * Creates a new magazine (Group).
      *
-     * @param actorUrl actor URL
+     * @param string $actorUrl actor URL
      *
-     * @return User or null on error
+     * @return ?Magazine or null on error
      */
     private function createMagazine(string $actorUrl): ?Magazine
     {
@@ -332,12 +366,13 @@ class ActivityPubManager
     /**
      * Update an existing magazine.
      *
-     * @param actorUrl actor URL
+     * @param string $actorUrl actor URL
      *
-     * @return Magazine or null on error
+     * @return ?Magazine or null on error
      */
     public function updateMagazine(string $actorUrl): ?Magazine
     {
+        $this->logger->info('updating magazine "{magName}"', ['magName' => $actorUrl]);
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         // Check if actor isn't empty (not set/null/empty array/etc.)
@@ -362,6 +397,7 @@ class ActivityPubManager
             $magazine->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
             $magazine->apDomain = parse_url($actor['id'], PHP_URL_HOST);
             $magazine->apFollowersUrl = $actor['followers'] ?? null;
+            $magazine->apAttributedToUrl = $actor['attributedTo'] ?? null;
             $magazine->apPreferredUsername = $actor['preferredUsername'] ?? null;
             $magazine->apDiscoverable = $actor['discoverable'] ?? true;
             $magazine->apPublicUrl = $actor['url'] ?? $actorUrl;
@@ -369,6 +405,82 @@ class ActivityPubManager
             $magazine->apTimeoutAt = null;
             $magazine->apFetchedAt = new \DateTime();
             $magazine->isAdult = (bool) $actor['sensitive'];
+
+            if (null !== $magazine->apFollowersUrl) {
+                try {
+                    $this->logger->debug('updating remote followers of magazine "{magUrl}"', ['magUrl' => $actorUrl]);
+                    $followersObj = $this->apHttpClient->getCollectionObject($magazine->apFollowersUrl);
+                    if (isset($followersObj['totalItems']) and \is_int($followersObj['totalItems'])) {
+                        $magazine->apFollowersCount = $followersObj['totalItems'];
+                        $magazine->updateSubscriptionsCount();
+                    }
+                } catch (InvalidApPostException $ignored) {
+                }
+            }
+
+            if (null !== $magazine->apAttributedToUrl) {
+                try {
+                    $this->logger->debug('fetching moderators of remote magazine "{magUrl}"', ['magUrl' => $actorUrl]);
+                    $attributedObj = $this->apHttpClient->getCollectionObject($magazine->apAttributedToUrl);
+                    $items = null;
+                    if (isset($attributedObj['items']) and \is_array($attributedObj['items'])) {
+                        $items = $attributedObj['items'];
+                    } elseif (isset($attributedObj['orderedItems']) and \is_array($attributedObj['orderedItems'])) {
+                        $items = $attributedObj['orderedItems'];
+                    }
+
+                    $this->logger->debug('got moderator items for magazine "{magName}": {json}', ['magName' => $magazine->name, 'json' => json_encode($attributedObj)]);
+
+                    if (null !== $items) {
+                        $moderatorsToRemove = [];
+                        foreach ($magazine->moderators as /* @var $mod Moderator */ $mod) {
+                            if (!$mod->isOwner) {
+                                $moderatorsToRemove[] = $mod->user;
+                            }
+                        }
+                        $indexesNotToRemove = [];
+
+                        foreach ($items as $item) {
+                            if (\is_string($item)) {
+                                try {
+                                    $user = $this->findActorOrCreate($item);
+                                    if ($user instanceof User) {
+                                        foreach ($moderatorsToRemove as $key => $existMod) {
+                                            if ($existMod->username === $user->username) {
+                                                $indexesNotToRemove[] = $key;
+                                                break;
+                                            }
+                                        }
+                                        if (!$magazine->userIsModerator($user)) {
+                                            $this->logger->info('adding "{user}" as moderator in "{magName}" because they are a mod upstream, but not locally', ['user' => $user->username, 'magName' => $magazine->name]);
+                                            $this->magazineManager->addModerator(new ModeratorDto($magazine, $user, null));
+                                        }
+                                    }
+                                } catch (\Exception) {
+                                    $this->logger->warning('Something went wrong while fetching actor "{actor}" as moderator of "{magName}"', ['actor' => $item, 'magName' => $magazine->name]);
+                                }
+                            }
+                        }
+
+                        foreach ($indexesNotToRemove as $i) {
+                            $moderatorsToRemove[$i] = null;
+                        }
+
+                        foreach ($moderatorsToRemove as $modToRemove) {
+                            if (null === $modToRemove) {
+                                continue;
+                            }
+                            $criteria = Criteria::create()->where(Criteria::expr()->eq('magazine', $magazine));
+                            $modObject = $modToRemove->moderatorTokens->matching($criteria)->first();
+                            $this->logger->info('removing "{exMod}" from "{magName}" as mod locally because they are no longer mod upstream', ['exMod' => $modToRemove->username, 'magName' => $magazine->name]);
+                            $this->magazineManager->removeModerator($modObject, null);
+                        }
+                    } else {
+                        $this->logger->warning('could not update the moderators of "{url}", the response doesn\'t have a "items" or "orderedItems" property or it is not an array', ['url' => $actorUrl]);
+                    }
+                } catch (InvalidApPostException $ignored) {
+                }
+            }
 
             $this->entityManager->flush();
 
@@ -427,7 +539,7 @@ class ActivityPubManager
     {
         $images = array_filter(
             $attachment,
-            fn ($val) => \in_array($val['type'], ['Document', 'Image']) && ImageManager::isImageUrl($val['url'])
+            fn ($val) => $this->isImageAttachment($val)
         );
 
         array_shift($images);
@@ -464,19 +576,93 @@ class ActivityPubManager
     /**
      * Update existing actor.
      *
-     * @param actorUrl actor URL
+     * @param string $actorUrl actor URL
      *
-     * @return User, Magazine or null on error
+     * @return Magazine|User|null null on error
      */
     public function updateActor(string $actorUrl): null|Magazine|User
     {
+        $this->logger->info('updating actor at {url}', ['url' => $actorUrl]);
         $actor = $this->apHttpClient->getActorObject($actorUrl);
 
         // User (We don't make a distinction between bots with type Service as Lemmy does)
-        if (\in_array($actor['type'], self::USER_TYPES)) {
+        if (\in_array($actor['type'], User::USER_TYPES)) {
             return $this->updateUser($actorUrl);
         }
 
         return $this->updateMagazine($actorUrl);
+    }
+
+    public function findOrCreateMagazineByToAndCC(array $object): Magazine|null
+    {
+        $potentialGroups = self::getReceivers($object);
+        $magazine = $this->magazineRepository->findByApGroupProfileId($potentialGroups);
+        if ($magazine and $magazine->apId and $magazine->apFetchedAt->modify('+1 Day') < (new \DateTime())) {
+            $this->bus->dispatch(new UpdateActorMessage($magazine->apPublicUrl));
+        }
+
+        if (null === $magazine) {
+            foreach ($potentialGroups as $potentialGroup) {
+                $result = $this->findActorOrCreate($potentialGroup);
+                if ($result instanceof Magazine) {
+                    $magazine = $result;
+                    break;
+                }
+            }
+        }
+
+        if (null === $magazine) {
+            $magazine = $this->magazineRepository->findOneByName('random');
+        }
+
+        return $magazine;
+    }
+
+    public static function getReceivers(array $object): array
+    {
+        $res = [];
+        if (isset($object['to']) and \is_array($object['to'])) {
+            $res = $object['to'];
+        } elseif (isset($object['to']) and \is_string($object['to'])) {
+            $res[] = $object['to'];
+        }
+
+        if (isset($object['cc']) and \is_array($object['cc'])) {
+            $res = array_merge($res, $object['cc']);
+        } elseif (isset($object['cc']) and \is_string($object['cc'])) {
+            $res[] = $object['cc'];
+        }
+
+        if (isset($object['object']) and \is_array($object['object'])) {
+            if (isset($object['object']['to']) and \is_array($object['object']['to'])) {
+                $res = array_merge($res, $object['object']['to']);
+            } elseif (isset($object['object']['to']) and \is_string($object['object']['to'])) {
+                $res[] = $object['object']['to'];
+            }
+
+            if (isset($object['object']['cc']) and \is_array($object['object']['cc'])) {
+                $res = array_merge($res, $object['object']['cc']);
+            } elseif (isset($object['object']['cc']) and \is_string($object['object']['cc'])) {
+                $res[] = $object['object']['cc'];
+            }
+        }
+
+        $res = array_filter($res, fn ($i) => null !== $i and ActivityPubActivityInterface::PUBLIC_URL !== $i);
+
+        return array_unique($res);
+    }
+
+    private function isImageAttachment(array $object): bool
+    {
+        // attachment object has acceptable object type
+        if (!\in_array($object['type'], ['Document', 'Image'])) {
+            return false;
+        }
+
+        // attachment is either:
+        // - has `mediaType` field and is a recognized image types
+        // - image url looks like a link to image
+        return (!empty($object['mediaType']) && ImageManager::isImageType($object['mediaType']))
+            || ImageManager::isImageUrl($object['url']);
     }
 }

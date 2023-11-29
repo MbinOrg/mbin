@@ -89,6 +89,8 @@ SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Unit
 You might want to load random data to database instead of manually adding magazines, users, posts, comments etc.  
 To do so, execute: `bin/console doctrine:fixtures:load --append --no-debug`
 
+If you want to do the same but with the Docker setup, execute: `docker compose exec php bin/console doctrine:fixtures:load --append --no-debug` (from the `docker` directory)
+
 Please note, that the command may take some time and data will not be visible during the process, but only after the finish.
 
 - Omit `--append` flag to override data currently stored in the database

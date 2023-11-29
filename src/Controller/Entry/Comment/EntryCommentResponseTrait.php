@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Entry\Comment;
 
 use App\Entity\EntryComment;
+use App\Entity\User;
 use App\PageView\EntryCommentPageView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,6 +20,7 @@ trait EntryCommentResponseTrait
 {
     private function getEntryCommentPageResponse(
         string $template,
+        User $user,
         EntryCommentPageView $criteria,
         FormInterface $form,
         Request $request,
@@ -31,6 +33,7 @@ trait EntryCommentResponseTrait
         return $this->render(
             $template,
             [
+                'user' => $user,
                 'magazine' => $criteria->entry->magazine,
                 'entry' => $criteria->entry,
                 'parent' => $parent,

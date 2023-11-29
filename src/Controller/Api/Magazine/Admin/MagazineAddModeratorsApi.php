@@ -89,7 +89,7 @@ class MagazineAddModeratorsApi extends MagazineBaseApi
         User $user,
         MagazineManager $manager,
         MagazineFactory $factory,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
@@ -102,6 +102,7 @@ class MagazineAddModeratorsApi extends MagazineBaseApi
         $dto = new ModeratorDto($magazine);
 
         $dto->user = $user;
+        $dto->addedBy = $this->getUserOrThrow();
 
         $manager->addModerator($dto);
 

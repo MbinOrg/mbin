@@ -7,16 +7,18 @@
         <ul>
             {% for subject in list %}
                 <li>
-                    {% if attribute(subject, actor).icon %}
+                    {% if attribute(subject, actor).icon and (app.user or attribute(subject, actor).isAdult is same as false) %}
                         <figure>
                             <img width="32" height="32"
+                                 class="image-inline {{ attribute(subject, actor).isAdult ? 'image-adult' : '' }}"
                                  src="{{ asset(attribute(subject, actor).icon.filePath) | imagine_filter('avatar_thumb') }}"
-                                 alt="{{ attribute(subject, actor).name ~' '~ 'cover'|trans|lower }}">
+                                 {% if attribute(subject, actor).isAdult %}data-controller="thumb" data-action="mouseover->thumb#adult_image_hover mouseout->thumb#adult_image_hover_out"{% endif %}
+                                 alt="{{ attribute(subject, actor).name ~' '~ 'icon'|trans|lower }}">
                         </figure>
                     {% endif %}
                     <div>
                         <a href="{{ path('front_magazine', {name: attribute(subject, actor).name}) }}"
-                           class="stretched-link">{{ attribute(subject, actor).name }}</a>
+                           class="stretched-link">{{ attribute(subject, actor).name }} {% if attribute(subject, actor).isAdult %}<small class="badge danger">18+</small>{% endif %}</a>
                         <small>{{ component('date', {date: subject.createdAt}) }}</small>
                     </div>
                 </li>

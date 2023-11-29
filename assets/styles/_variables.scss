@@ -15,7 +15,40 @@ $aspect-ratios: (
 ) !default;
 
 :root {
+  // ---------------------------------------------------------------------------
+  // Variables that are common to all themes
+  // ---------------------------------------------------------------------------
+
+  --kbin-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+
+  --kbin-rounded-edges-radius: .5rem;
+
+  // buttons
+  --kbin-button-danger-bg:  #842029;
+  --kbin-button-danger-hover-bg: #921d27;
+  --kbin-button-danger-text-color: #fff;
+  --kbin-button-danger-text-hover-color: #fff;
+  --kbin-button-danger-border: 1px dashed #842029;
+
+  // topbar
+  --kbin-topbar-link-color: #fff;
+
+  // alerts
+  --kbin-alert-success-bg: var(--kbin-success-color);
+  --kbin-alert-success-border: 1px solid var(--kbin-success-color);
+  --kbin-alert-success-text-color: #fff;
+  --kbin-alert-success-link-color: #fff;
+
+  // fontawesome
+  --kbin-font-awesome-font-family: "Font Awesome 6 Free";
+
+  // fonts
   --kbin-body-font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  // ---------------------------------------------------------------------------
+  // Default theme variables
+  // ---------------------------------------------------------------------------
+
   --kbin-body-font-size: 1rem;
   --kbin-body-font-weight: 400;
   --kbin-body-line-height: 1.5;
@@ -24,7 +57,6 @@ $aspect-ratios: (
 
   --kbin-bg: #ecf0f1;
   --kbin-bg-nth: #fafafa;
-  --kbin-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 
   --kbin-text-color: #212529;
   --kbin-link-color: #37769e;
@@ -39,8 +71,6 @@ $aspect-ratios: (
 
   --kbin-own-color: #0f5132;
   --kbin-author-color: #842029;
-
-  --kbin-rounded-edges-radius: .5rem;
 
   // section
   --kbin-section-bg: #fff;
@@ -89,12 +119,6 @@ $aspect-ratios: (
   --kbin-button-secondary-text-hover-color: var(--kbin-text-color);
   --kbin-button-secondary-border: 1px dashed #e5eaec;
 
-  --kbin-button-danger-bg:  #842029;
-  --kbin-button-danger-hover-bg: #921d27;
-  --kbin-button-danger-text-color: #fff;
-  --kbin-button-danger-text-hover-color: #fff;
-  --kbin-button-danger-border: 1px dashed #842029;
-
   // header
   --kbin-header-bg: #110045;
   --kbin-header-text-color: #fff;
@@ -107,12 +131,11 @@ $aspect-ratios: (
   // topbar
   --kbin-topbar-bg: #0a0026;
   --kbin-topbar-active-bg: #150a37;
-  --kbin-topbar-link-color: #fff;
   --kbin-topbar-active-link-color: #fff;
   --kbin-topbar-hover-bg: #150a37;
   --kbin-topbar-border: 1px solid  #150a37;
 
-  //sidebar
+  // sidebar
   --kbin-sidebar-header-text-color: #909ea2;
   --kbin-sidebar-header-border: 1px solid #e5eaec;
   --kbin-sidebar-settings-row-bg: #E5EAEC;
@@ -122,14 +145,14 @@ $aspect-ratios: (
   --kbin-sidebar-settings-switch-off-bg: #b5c4c9;
   --kbin-sidebar-settings-switch-hover-bg: #9992BC;
 
-  //vote
+  // vote
   --kbin-vote-bg: #f3f3f3;
   --kbin-vote-text-color: #b6b6b6;
   --kbin-vote-text-hover-color: #000;
   --kbin-upvoted-color: #0f5132;
   --kbin-downvoted-color: #842029;
-  
-  //boost
+
+  // boost
   --kbin-boosted-color: var(--kbin-upvoted-color);
 
   // alerts
@@ -143,12 +166,7 @@ $aspect-ratios: (
   --kbin-alert-danger-text-color: var(--kbin-danger-color);
   --kbin-alert-danger-link-color: var(--kbin-danger-color);
 
-  --kbin-alert-success-bg: var(--kbin-success-color);
-  --kbin-alert-success-border: 1px solid var(--kbin-success-color);
-  --kbin-alert-success-text-color: #fff;
-  --kbin-alert-success-link-color: #fff;
-
-  //entry
+  // entry
   --kbin-entry-link-visited-color: #7e8f99;
 
   // footer
@@ -157,8 +175,4 @@ $aspect-ratios: (
   --kbin-footer-link-color: #fff;
   --kbin-footer-link-hover-color: var(--kbin-header-link-hover-color);
 
-  //fontawesome
-  --kbin-font-awesome-font-family: "Font Awesome 6 Free";
-
 }
-

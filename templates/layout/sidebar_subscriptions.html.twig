@@ -1,63 +1,72 @@
-<aside class="sidebar-subscriptions {{ app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR')) is not same as 'true' ? 'inline' : '' }}">
-    <section class="section {{ app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR')) is not same as 'true' ? 'inline' : 'section--top' }}">
+{% with %}
+{% set KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR = constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR') %}
+{% set KBIN_SUBSCRIPTIONS_SIDEBARS_SAME_SIDE = constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SIDEBARS_SAME_SIDE') %}
+{% set KBIN_GENERAL_SIDEBAR_POSITION = constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SIDEBAR_POSITION') %}
+{% set KBIN_SUBSCRIPTIONS_LARGE_PANEL = constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_LARGE_PANEL') %}
+{% set KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON = constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON') %}
+{# for whatever reason doing {% set TRUE = ... %} would crash #}
+{% set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') %}
+{% set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') %}
+{% set V_LEFT = constant('App\\Controller\\User\\ThemeSettingsController::LEFT') %}
+<aside class="{{ html_classes('sidebar-subscriptions', { 'inline': app.request.cookies.get(KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR) is not same as V_TRUE }) }}">
+    <section
+        class="{{ html_classes('section', app.request.cookies.get(KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR) is not same as V_TRUE ? 'inline' : 'section--top') }}"
+        data-controller="subs-panel"
+        data-subs-panel-sidebar-position-value="{{ app.request.cookies.get(KBIN_GENERAL_SIDEBAR_POSITION) }}"
+    >
         <h3>
             {{ 'subscription_header'|trans }}
             <span class="sidebar-subscriptions-icons">
-                {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR')) is same as constant('App\\Controller\\User\\ThemeSettingsController::TRUE') %}
-                    <a href="#" style="margin-right: .5em;" title="{{ 'subscription_sidebar_pop_in'|trans }}" aria-label="{{ 'subscription_sidebar_pop_in'|trans }}"
-                        onclick="fetch('{{ path('theme_settings', {key: constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR'), value: constant('App\\Controller\\User\\ThemeSettingsController::FALSE')}) }}').then(() => document.location.reload())">
-                        {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SIDEBAR_POSITION')) is same as constant('App\\Controller\\User\\ThemeSettingsController::LEFT') and app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SIDEBARS_SAME_SIDE')) is same as constant('App\\Controller\\User\\ThemeSettingsController::TRUE') or
-                            app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SIDEBAR_POSITION')) is not same as constant('App\\Controller\\User\\ThemeSettingsController::LEFT') and app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SIDEBARS_SAME_SIDE')) is not same as constant('App\\Controller\\User\\ThemeSettingsController::TRUE') %}
+                {% if app.request.cookies.get(KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR) is same as V_TRUE %}
+                    <a href="#"
+                        style="margin-right: .5em;"
+                        title="{{ 'subscription_sidebar_pop_in'|trans }}"
+                        aria-label="{{ 'subscription_sidebar_pop_in'|trans }}"
+                        data-action="subs-panel#reattach"
+                    >
+                        {% if app.request.cookies.get(KBIN_GENERAL_SIDEBAR_POSITION) is same as V_LEFT
+                                and app.request.cookies.get(KBIN_SUBSCRIPTIONS_SIDEBARS_SAME_SIDE) is same as V_TRUE
+                            or app.request.cookies.get(KBIN_GENERAL_SIDEBAR_POSITION) is not same as V_LEFT
+                                and app.request.cookies.get(KBIN_SUBSCRIPTIONS_SIDEBARS_SAME_SIDE) is not same as V_TRUE %}
                             <i class="fa-solid fa-arrow-right"></i>
                         {% else %}
                             <i class="fa-solid fa-arrow-left"></i>
                         {% endif %}
                     </a>
                 {% endif %}
-                {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR')) is not same as 'true' %}
-                    <a href="#" title="{{ 'subscription_sidebar_pop_out_left'|trans }}" aria-label="{{ 'subscription_sidebar_pop_out_left'|trans }}"
-                       onclick="fetch('{{ path('theme_settings', {key: constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR'), value: constant('App\\Controller\\User\\ThemeSettingsController::TRUE')}) }}')
-                               .then(() => fetch(
-                       {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SIDEBAR_POSITION')) is same as constant('App\\Controller\\User\\ThemeSettingsController::LEFT') %}
-                           '{{ path('theme_settings', {key: constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SIDEBARS_SAME_SIDE'), value: constant('App\\Controller\\User\\ThemeSettingsController::TRUE')}) }}'
-                       {% else %}
-                           '{{ path('theme_settings', {key: constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SIDEBARS_SAME_SIDE'), value: constant('App\\Controller\\User\\ThemeSettingsController::FALSE')}) }}'
-                       {% endif %}
-                               )
-                               .then(() => document.location.reload())
-                               )">
+                {% if app.request.cookies.get(KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR) is not same as V_TRUE %}
+                    <a href="#"
+                        title="{{ 'subscription_sidebar_pop_out_left'|trans }}"
+                        aria-label="{{ 'subscription_sidebar_pop_out_left'|trans }}"
+                        data-action="subs-panel#popLeft"
+                    >
                        <i class="fa-solid fa-arrow-left"></i>
                     </a>
-                    <a href="#" title="{{ 'subscription_sidebar_pop_out_right'|trans }}" aria-label="{{ 'subscription_sidebar_pop_out_right'|trans }}"
-                        onclick="fetch('{{ path('theme_settings', {key: constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR'), value: constant('App\\Controller\\User\\ThemeSettingsController::TRUE')}) }}')
-                           .then(() => fetch(
-                                {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SIDEBAR_POSITION')) is not same as constant('App\\Controller\\User\\ThemeSettingsController::LEFT') %}
-                                    '{{ path('theme_settings', {key: constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SIDEBARS_SAME_SIDE'), value: constant('App\\Controller\\User\\ThemeSettingsController::TRUE')}) }}'
-                                {% else %}
-                                    '{{ path('theme_settings', {key: constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SIDEBARS_SAME_SIDE'), value: constant('App\\Controller\\User\\ThemeSettingsController::FALSE')}) }}'
-                                {% endif %}
-                                )
-                                .then(() => document.location.reload())
-                           )">
+                    <a href="#"
+                        title="{{ 'subscription_sidebar_pop_out_right'|trans }}"
+                        aria-label="{{ 'subscription_sidebar_pop_out_right'|trans }}"
+                        data-action="subs-panel#popRight"
+                    >
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 {% endif %}
             </span>
         </h3>
         <div>
-            <ul class="subscription-list meta {{ app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_LARGE_PANEL')) is same as 'true' ? 'lg' : '' }}">
+            <ul class="{{ html_classes('subscription-list', 'meta', { 'lg': app.request.cookies.get(KBIN_SUBSCRIPTIONS_LARGE_PANEL) is same as V_TRUE }) }}">
                 {% for magazine in magazines %}
-                    <li class="subscription {{ openMagazine and openMagazine.name is same as magazine.name ? 'active' : '' }}">
-                        <a class="stretched-link" href="/m/{{ magazine.name }}">
+                    <li class="{{ html_classes('subscription', { 'active': openMagazine and openMagazine.name is same as magazine.name }) }}">
+                        <a class="stretched-link" href="{{ path('front_magazine', {name: magazine.name}) }}">
 
                             {% if magazine.icon %}
-                                <img src="{{ asset(magazine.icon.filePath) | imagine_filter('avatar_thumb') }}" alt="{{ magazine.name }}'s icon"
-                                     class="image-inline magazine-subscription-avatar {{ app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON')) is same as 'false' ? 'onlyMobile' : '' }}"  />
+                                <img src="{{ asset(magazine.icon.filePath) | imagine_filter('avatar_thumb') }}"
+                                     alt="{{ magazine.name }}'s icon"
+                                     class="{{ html_classes('image-inline', 'magazine-subscription-avatar', { 'onlyMobile': app.request.cookies.get(KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON) is same as V_FALSE }) }}" />
                             {% else %}
-                                <span class="magazine-subscription-avatar-placeholder {{ app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON')) is same as 'false' ? 'onlyMobile' : '' }}"></span>
+                                <span class="{{ html_classes('magazine-subscription-avatar-placeholder', { 'onlyMobile': app.request.cookies.get(KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON) is same as V_FALSE }) }}"></span>
                             {% endif %}
 
-                            <span class="magazine-name {{ magazine.icon ? 'has-image' : '' }}  {{ app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON')) is same as 'false' ? 'onlyMobile' : '' }}">
+                            <span class="{{ html_classes('magazine-name', { 'has-image': magazine.icon, 'onlyMobile': app.request.cookies.get(KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON) is same as V_FALSE }) }}">
                                 {{ magazine.title ?? magazine.name }}
                             </span>
                         </a>
@@ -65,7 +74,7 @@
                 {% endfor %}
                 {% if tooManyMagazines %}
                     <div class="subscription">
-                        <a href="/u/{{ app.user.username }}/subscriptions">
+                        <a href="{{ path('user_subscriptions', {username: app.user.username}) }}">
                             <button class="btn btn__secondary">
                                 {{ 'show_more'|trans }}
                             </button>
@@ -76,3 +85,4 @@
         </div>
     </section>
 </aside>
+{% endwith %}

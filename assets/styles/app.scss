@@ -3,6 +3,10 @@
 @import '@fortawesome/fontawesome-free/scss/brands';
 @import 'mixins/animations';
 @import 'mixins/kbin';
+@import 'mixins/theme-dark';
+@import 'mixins/theme-light';
+@import 'mixins/theme-solarized-dark';
+@import 'mixins/theme-solarized-light';
 @import 'variables';
 @import 'layout/breakpoints';
 @import 'layout/typo';
@@ -29,7 +33,6 @@
 @import 'components/subject';
 @import 'components/login';
 @import 'components/modlog';
-@import 'components/awards';
 @import 'components/notifications';
 @import 'components/messages';
 @import 'components/footer';
@@ -45,8 +48,7 @@
 @import 'pages/post_single';
 @import 'pages/post_front';
 @import 'themes/kbin';
-@import 'themes/dark';
-@import 'themes/solarized-dark';
-@import 'themes/solarized-light';
+@import 'themes/default';
+@import 'themes/solarized';
 @import 'themes/tokyo-night';
 @import 'glightbox/dist/css/glightbox.min.css';

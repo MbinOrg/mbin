@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\ActivityPub;
 
+use App\Exception\InboxForwardingException;
 use App\Exception\InvalidApSignatureException;
 use App\Message\ActivityPub\Inbox\ActivityMessage;
 use App\Service\ActivityPubManager;
@@ -31,6 +32,7 @@ readonly class SignatureValidator
      * @param string $body    The body of the incoming request
      *
      * @throws InvalidApSignatureException The HTTP request was not signed appropriately
+     * @throws InboxForwardingException
      */
     public function validate(array $request, array $headers, string $body): void
     {
@@ -53,15 +55,56 @@ readonly class SignatureValidator
         $keyDomain = parse_url($signature['keyId'], PHP_URL_HOST);
         $idDomain = parse_url($id, PHP_URL_HOST);
 
-        // @TODO this check appears to essentially be 'attributedTo' !== id
-        if (isset($payload['object']['attributedTo']) && \is_array($payload['object'])) {
-            if (parse_url($payload['object']['attributedTo'], PHP_URL_HOST) !== $keyDomain) {
-                throw new InvalidApSignatureException('Supplied key domain does not match domain of incoming activities "attributedTo" property');
+        $actorKeyIdMismatch = false;
+        $firstActorHost = null;
+        $erroredActor = null;
+
+        if (isset($payload['actor'])) {
+            $actors = $payload['actor'];
+            if (\is_string($actors)) {
+                $actors = [$actors];
+            }
+            foreach ($actors as $actor) {
+                $url = $actor;
+                if (!\is_string($actor) and isset($actor['id'])) {
+                    $url = $actor['id'];
+                }
+                $host = parse_url($url, PHP_URL_HOST);
+                if (!$firstActorHost) {
+                    $firstActorHost = $host;
+                }
+                if ($host !== $keyDomain) {
+                    $actorKeyIdMismatch = true;
+                    $erroredActor = $url;
+                    break;
+                }
             }
         }
 
+        $forwardedMessage = false;
+        $keyAndIdMismatch = false;
         if (!$keyDomain || !$idDomain || $keyDomain !== $idDomain) {
-            throw new InvalidApSignatureException('Supplied key domain does not match domain of incoming activity.');
+            $keyAndIdMismatch = true;
+        }
+
+        if ($keyAndIdMismatch or $actorKeyIdMismatch and $firstActorHost === $idDomain) {
+            foreach (ActivityPubManager::getReceivers($payload) as $item) {
+                // if the payload has an inbox of the keyId domain than this is a case of inbox forwarding
+                // and we should dispatch a new message to get the activity from the "real" host
+                $itemDomain = parse_url($item, PHP_URL_HOST);
+                if ($itemDomain === $keyDomain) {
+                    $forwardedMessage = true;
+                    break;
+                }
+            }
+        }
+
+        if ($forwardedMessage) {
+            throw new InboxForwardingException($signature['keyId'], $id);
+        } elseif ($actorKeyIdMismatch) {
+            throw new InvalidApSignatureException("Supplied key domain does not match domain of incoming activities 'actor' property. actor: '$erroredActor', keyId : '$keyDomain'");
+        } elseif ($keyAndIdMismatch) {
+            throw new InvalidApSignatureException("Supplied key domain does not match domain of incoming activity. idDomain: '$idDomain' keyDomain: '$keyDomain'");
         }
 
         $actorUrl = \is_array($payload['actor']) ? $payload['actor'][0] : $payload['actor'];
@@ -69,7 +112,6 @@ readonly class SignatureValidator
         $user = $this->activityPubManager->findActorOrCreate($actorUrl);
         if (!empty($user)) {
             $pkey = openssl_pkey_get_public($this->client->getActorObject($user->apProfileId)['publicKey']['publicKeyPem']);
-
             $this->verifySignature($pkey, $signature, $headers, $request['uri'], $body);
         }
     }

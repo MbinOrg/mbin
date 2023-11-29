@@ -20,7 +20,7 @@ class TagManagerTest extends WebTestCase
         $this->assertEquals($output, $manager->extract($input, 'kbin'));
     }
 
-    public function provider(): array
+    public static function provider(): array
     {
         return [
             ['Lorem #acme ipsum', ['acme']],
