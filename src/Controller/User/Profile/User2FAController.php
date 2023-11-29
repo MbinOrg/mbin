@@ -188,7 +188,10 @@ class User2FAController extends AbstractController
         }
 
         if (!$form->isValid()) {
-            $this->logger->warning('2fa an error occurred submitting the form "{errors}"', ['errors' => $form->getErrors()]);
+            $this->logger->warning('2fa error occurred user "{username}" submitting the form "{errors}"', [
+                'username' => $dto->username,
+                'errors' => $form->getErrors(),
+            ]);
             $form->get('totpCode')->addError(new FormError($this->translator->trans('2fa.setup_error')));
 
             return $form;
