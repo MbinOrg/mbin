@@ -1,3 +1,4 @@
+{%- set STATUS_PENDING = constant('App\\Entity\\Report::STATUS_PENDING') -%}
 <header id="header" class="header">
     <div class="kbin-container
           {{ html_classes(app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_PAGE_WIDTH'))
@@ -188,7 +189,7 @@
                         {% endif %}
                         {% if is_granted('ROLE_MODERATOR') %}
                             <li>
-                                <a href="{{ path('admin_reports') }}"
+                                <a href="{{ path('admin_reports', {status: STATUS_PENDING}) }}"
                                    class="{{ html_classes({'active': is_route_name_starts_with('admin')}) }}">
                                     {{ 'reports'|trans }}
                                 </a>
