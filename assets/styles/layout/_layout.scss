@@ -201,6 +201,7 @@ figure {
   textarea,
   select,
   button,
+  details,
   .preview img,
   .preview iframe,
   .dropdown__menu,
@@ -385,6 +386,50 @@ p > code {
   background: var(--kbin-bg);
   padding: 0.2rem .4rem;
   font-size: .85rem;
+}
+
+details {
+  border: var(--mbin-details-border);
+  border-left: 2px solid var(--mbin-details-detail-color);
+  padding: .5rem;
+  margin: .5rem 0;
+
+  summary {
+    padding-left: .5rem;
+    cursor: pointer;
+
+    > * {
+      display: inline;
+    }
+
+    &:empty::after {
+      content: var(--mbin-details-detail-label);
+    }
+  }
+
+  .content {
+    margin-top: .5rem;
+    padding-top: .5rem;
+    padding-left: .5rem;
+  }
+
+  &.spoiler {
+    border-left: 2px solid var(--mbin-details-spoiler-color);
+
+    summary:empty::after {
+      content: var(--mbin-details-spoiler-label);
+    }
+  }
+
+  &[open] .content {
+    border-top: var(--mbin-details-separator-border);
+  }
+
+  @include media-breakpoint-down(sm) {
+    summary, .content {
+      padding-left: .25rem;
+    }
+  }
 }
 
 .markdown {
