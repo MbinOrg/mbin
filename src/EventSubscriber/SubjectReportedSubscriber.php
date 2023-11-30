@@ -21,18 +21,22 @@ class SubjectReportedSubscriber implements EventSubscriberInterface
     public function onSubjectReported(SubjectReportedEvent $reportedEvent): void
     {
         $this->logger->debug($reportedEvent->report->reported->username.' was reported for '.$reportedEvent->report->reason);
-        if (!$reportedEvent->report->magazine->apId) {
+        if (!$reportedEvent->report->magazine->apId and 'random' !== $reportedEvent->report->magazine->name) {
             return;
         }
 
-        $this->logger->debug('was on a remote magazine, dispatching a new FlagMessage');
+        if ($reportedEvent->report->magazine->apId) {
+            $this->logger->debug('was on a remote magazine, dispatching a new FlagMessage');
+        } elseif ('random' === $reportedEvent->report->magazine->name) {
+            $this->logger->debug('was on the random magazine, dispatching a new FlagMessage');
+        }
         $this->bus->dispatch(new FlagMessage($reportedEvent->report->getId()));
     }
 
     public static function getSubscribedEvents(): array
     {
         return [
-            'App\\Event\\Report\\SubjectReportedEvent' => 'onSubjectReported',
+            SubjectReportedEvent::class => 'onSubjectReported',
         ];
     }
 }

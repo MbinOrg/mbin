@@ -17,6 +17,7 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\InheritanceType;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Symfony\Component\Uid\Uuid;
 
 #[Entity(repositoryClass: ReportRepository::class)]
 #[InheritanceType('SINGLE_TABLE')]
@@ -68,6 +69,10 @@ abstract class Report
     public int $weight = 1;
     #[Column(type: 'string', nullable: false)]
     public string $status = self::STATUS_PENDING;
+
+    // this is nullable to be compatible with previous versions
+    #[Column(type: 'string', unique: true, nullable: true)]
+    public string $uuid;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
@@ -79,7 +84,7 @@ abstract class Report
         $this->reported = $reported;
         $this->magazine = $magazine;
         $this->reason = $reason;
-
+        $this->uuid = Uuid::v4()->toRfc4122();
         $this->createdAtTraitConstruct();
     }
 
