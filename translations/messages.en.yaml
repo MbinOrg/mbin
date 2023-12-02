@@ -756,8 +756,7 @@ account_muted: The account has been muted.
 delete_account_request_revoke: Your request to delete the account has been revoked.
 account_unmuted: The account has been unmuted.
 deletion: Deletion
-user_mute_desc: Muting an account hides the content on the instance, but
-  doesn't permanently remove it, and you can restore it at any time. The content also still federates.
+user_mute_desc: Muting an account only hides the content on this instance. The content also still federates.
 account_banned: The account has been banned.
 account_unbanned: The account has been unbanned.
 account_is_muted: User account is muted.
