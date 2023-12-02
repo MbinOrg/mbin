@@ -80,7 +80,8 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
             ->select('c', 'u')
             ->join('c.user', 'u')
             ->andWhere('c.visibility IN (:visibility)')
-            ->andWhere('u.visibility IN (:visible)');
+            ->andWhere('u.visibility IN (:visible)')
+            ->andWhere('u.muted = false');
 
         if ($user && VisibilityInterface::VISIBILITY_VISIBLE === $criteria->visibility) {
             $qb->orWhere(
