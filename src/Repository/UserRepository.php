@@ -367,7 +367,12 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
                 break;
         }
 
-        return $qb->orderBy('u.lastActive', 'DESC');
+        $qb->andWhere('u.visibility = :visible')
+            ->andWhere('u.muted = false')
+            ->orderBy('u.lastActive', 'DESC')
+            ->setParameter('visible', VisibilityInterface::VISIBILITY_VISIBLE);
+
+        return $qb;
     }
 
     public function findWithAboutPaginated(
@@ -574,6 +579,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         $query = $this->createQueryBuilder('u')
             ->where("JSONB_CONTAINS(u.roles, '\"".'ROLE_MODERATOR'."\"') = true")
             ->andWhere('u.visibility = :visibility')
+            ->andWhere('u.muted = false')
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
 
         $pagerfanta = new Pagerfanta(

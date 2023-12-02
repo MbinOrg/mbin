@@ -14,7 +14,7 @@
 
 {% block body %}
     {% include 'entry/_create_options.html.twig' %}
-    {% include('user/_visibility_info.html.twig') %}
+    {% include('user/_muted_info.html.twig') %}
 
     {% if user.visibility is same as 'visible' %}
     <h1 hidden>{{ 'create_new_magazine'|trans }}</h1>

@@ -83,7 +83,8 @@ class PostRepository extends ServiceEntityRepository implements TagRepositoryInt
             ->join('p.magazine', 'm')
             ->join('p.user', 'u')
             ->andWhere('m.visibility = :visible')
-            ->andWhere('u.visibility = :visible');
+            ->andWhere('u.visibility = :visible')
+            ->andWhere('u.muted = false');
 
         if ($user && VisibilityInterface::VISIBILITY_VISIBLE === $criteria->visibility) {
             $qb->orWhere(

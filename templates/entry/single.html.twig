@@ -37,7 +37,7 @@
         {{ component('entries_cross', {entry: entry}) }}
         {% include 'layout/_flash.html.twig' %}
         {% include 'entry/comment/_options.html.twig' %}
-        {% include('user/_visibility_info.html.twig') %}
+        {% include('user/_muted_info.html.twig') %}
         
         {% if user is defined and user and user.visibility is same as 'visible' and (user_settings.comment_reply_position == constant('App\\Controller\\User\\ThemeSettingsController::TOP')) %}
             <div id="comment-add" class="section">

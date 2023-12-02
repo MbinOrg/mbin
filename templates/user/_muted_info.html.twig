@@ -1,0 +1,5 @@
+{% if user is defined and user and user.muted %}
+    <div class="alert alert__info">
+        <p>{{ 'account_is_muted'|trans }}</p>
+    </div>
+{% endif %} 

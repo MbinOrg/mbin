@@ -321,8 +321,7 @@ class UserManager
      */
     public function mute(User $user): void
     {
-        $user->visibility = VisibilityInterface::VISIBILITY_TRASHED;
-
+        $user->muted = true;
         $this->entityManager->persist($user);
         $this->entityManager->flush();
     }
@@ -332,8 +331,7 @@ class UserManager
      */
     public function unmute(User $user): void
     {
-        $user->visibility = VisibilityInterface::VISIBILITY_VISIBLE;
-
+        $user->muted = false;
         $this->entityManager->persist($user);
         $this->entityManager->flush();
     }

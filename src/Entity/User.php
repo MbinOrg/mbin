@@ -801,6 +801,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         return new TotpConfiguration($this->totpSecret, TotpConfiguration::ALGORITHM_SHA1, 30, 6);
     }
 
+    public function getMuted(): bool
+    {
+        return $this->muted;
+    }
+
     /**
      * @param string[]|null $codes
      */

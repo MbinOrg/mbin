@@ -78,7 +78,8 @@ class PostCommentRepository extends ServiceEntityRepository implements TagReposi
             ->select('c', 'u')
             ->join('c.user', 'u')
             ->andWhere('c.visibility IN (:visibility)')
-            ->andWhere('u.visibility = :visible');
+            ->andWhere('u.visibility = :visible')
+            ->andWhere('u.muted = false');
 
         if ($user && VisibilityInterface::VISIBILITY_VISIBLE === $criteria->visibility) {
             $qb->orWhere(
