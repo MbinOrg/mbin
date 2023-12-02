@@ -144,13 +144,10 @@
     }
 
     .image-filler {
-      position: absolute;
-      background-position: center;
-      filter: blur(8px);
-      width: 110%;
-      height: 110%;
-      top: -5%;
-      left: -5%;
+      img {
+        object-fit: cover;
+        filter: brightness(85%);
+      }
     }
 
     .rounded-edges & {

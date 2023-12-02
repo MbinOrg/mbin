@@ -141,7 +141,7 @@ $comment-margin-sm: .3rem;
       z-index: 4;
 
       & > a.active,
-      & > li button.active, {
+      & > li button.active {
         text-decoration: underline;
       }
 
@@ -171,6 +171,7 @@ $comment-margin-sm: .3rem;
     figure img {
       margin: .5rem 0;
       max-width: 100%;
+      border: var(--kbin-avatar-border);
     }
   }
 
