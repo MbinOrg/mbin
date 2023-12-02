@@ -316,26 +316,6 @@ class UserManager
         $this->entityManager->flush();
     }
 
-    /**
-     * Suspend user, will eventually be deleted (TODO).
-     */
-    public function suspend(User $user): void
-    {
-        $user->markedForDeletionAt = null; // Not yet implemented
-        $user->visibility = VisibilityInterface::VISIBILITY_TRASHED;
-
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-    }
-
-    /**
-     * Unsuspend user.
-     */
-    public function unsuspend(User $user): void
-    {
-        $this->revokeDeleteRequest($user);
-    }
-
     public function removeFollowing(User $user): void
     {
         foreach ($user->follows as $follow) {
