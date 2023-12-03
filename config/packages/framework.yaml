@@ -1,13 +1,14 @@
 framework:
-    secret: "%env(APP_SECRET)%"
+    secret: '%env(APP_SECRET)%'
     #csrf_protection: true
+    annotations: false
     http_method_override: false
     handle_all_throwables: true
 
     # Enables session support. Note that the session will ONLY be started if you read or write from it.
     # Remove or comment this section to explicitly disable session support.
     session:
-        handler_id: "%env(REDIS_DNS)%"
+        handler_id: '%env(REDIS_DNS)%'
         cookie_secure: auto
         cookie_samesite: lax
         gc_maxlifetime: 604800 # Match the remember_me lifetime
@@ -16,7 +17,7 @@ framework:
     http_client:
         default_options:
             headers:
-                "User-Agent": "MbinBot/0.1 (+https://%kbin_domain%/bot)"
+                'User-Agent': 'MbinBot/0.1 (+https://%kbin_domain%/bot)'
 
     #esi: true
     #fragments: true
