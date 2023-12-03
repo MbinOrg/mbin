@@ -59,9 +59,9 @@
                 {% if comment.visibility in ['visible', 'private'] or (comment.visibility is same as 'trashed' and this.canSeeTrashed) %}
                     {{ comment.body|markdown|raw }}
                 {% elseif(comment.visibility is same as 'trashed') %}
-                    <p class="text-muted">{{ 'deleted_by_moderator'|trans }}</p>
+                    <p class="text-muted"><i>{{ 'deleted_by_moderator'|trans }}</i></p>
                 {% elseif(comment.visibility is same as 'soft_deleted') %}
-                    <p class="text-muted">{{ 'deleted_by_author'|trans }}</p>
+                    <p class="text-muted"><i>{{ 'deleted_by_author'|trans }}</i></p>
                 {% endif %}
             </div>
             {% if comment.visibility in ['visible', 'private'] %}
