@@ -49,9 +49,9 @@
                         </h2>
                     {% endif %}
                 {% elseif(entry.visibility is same as 'trashed') %}
-                    <p class="text-muted"><i>{{ 'deleted_by_moderator'|trans }}</i></p>
+                    <p class="text-muted font-italic">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
                 {% elseif(entry.visibility is same as 'soft_deleted') %}
-                    <p class="text-muted"><i>{{ 'deleted_by_author'|trans }}</i></p>
+                    <p class="text-muted font-italic">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
                 {% endif %}
             </header>
             {% if entry.visibility in ['visible', 'private'] or (entry.visibility is same as 'trashed' and this.canSeeTrashed) %}
