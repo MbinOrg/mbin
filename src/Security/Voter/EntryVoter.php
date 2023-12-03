@@ -85,7 +85,7 @@ class EntryVoter extends Voter
 
     private function canComment(Entry $entry, User $user): bool
     {
-        return (!$entry->magazine->isBanned($user) && !$user->isBanned);
+        return !$entry->magazine->isBanned($user) && !$user->isBanned;
     }
 
     private function canVote(Entry $entry, User $user): bool

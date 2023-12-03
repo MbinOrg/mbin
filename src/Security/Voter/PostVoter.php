@@ -81,7 +81,7 @@ class PostVoter extends Voter
 
     private function canComment(Post $post, User $user): bool
     {
-        return (!$post->magazine->isBanned($user) && !$user->isBanned());
+        return !$post->magazine->isBanned($user) && !$user->isBanned();
     }
 
     private function canVote(Post $post, User $user): bool
