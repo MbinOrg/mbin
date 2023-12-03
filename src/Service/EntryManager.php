@@ -64,11 +64,11 @@ class EntryManager implements ContentManagerInterface
             }
         }
 
-        $entry = $this->factory->createFromDto($dto, $user);
-
-        if ($dto->magazine->isBanned($user)) {
+        if ($dto->magazine->isBanned($user) || $user->isBanned()) {
             throw new UserBannedException();
         }
+
+        $entry = $this->factory->createFromDto($dto, $user);
 
         $entry->lang = $dto->lang;
         $entry->isAdult = $dto->isAdult || $entry->magazine->isAdult;
