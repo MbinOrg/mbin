@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{%- block title -%}
+    {{- 'comments'|trans }} - {{ entry.title }} - {{ parent() -}}
+{%- endblock -%}
+
+{% block header_nav %}
+{% endblock %}
+
+{% block sidebar_top %}
+{% endblock %}
+
+{% block body %}
+    {{ component('entry', {
+        entry: entry,
+        isSingle: true,
+        showShortSentence: false,
+        showBody:false
+    }) }}
+    <div class="alert alert__info">
+        <p>{{ 'browsing_one_thread'|trans }}</p>
+        <p><a href="{{ entry_url(entry) }}"><i class="fa-solid fa-arrow-left"></i> {{ 'return'|trans }}</a></p>
+    </div>
+    {% if parent is defined and parent %}
+    <section class="{{ html_classes('comments entry-comments comments-tree', { 'show-comment-avatar' : app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR')) is same as 'true' or not app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR'))}) }}" data-controller="subject-list" data-action="{{- app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_DYNAMIC_LISTS')) is same as 'true' ? 'notifications:EntryCommentCreatedNotification@window->subject-list#addComment' : 'notifications:EntryCommentCreatedNotification@window->subject-list#increaseCounter' -}}">
+        {{ component('entry_comment', {
+            comment: parent,
+            showEntryTitle: false,
+            showNested: true
+        }) }}
+    </section>
+    {% endif %}
+{% endblock %}
