@@ -15,11 +15,20 @@ use App\Service\ActivityPub\Wrapper\TagsWrapper;
 use App\Service\ActivityPubManager;
 use App\Service\MentionManager;
 use App\Service\TagManager;
-use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class PostNoteFactory
 {
+    public const ADDITIONAL_CONTEXTS = [
+        'lemmy' => 'https://join-lemmy.org/ns#',
+        'ostatus' => 'http://ostatus.org#',
+        'peertube' => 'https://joinpeertube.org/ns#',
+        'commentsEnabled' => 'peertube:commentsEnabled',
+        'sensitive' => 'as:sensitive',
+        'stickied' => 'lemmy:stickied',
+        'votersCount' => 'toot:votersCount',
+    ];
+
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly GroupFactory $groupFactory,
@@ -40,7 +49,7 @@ class PostNoteFactory
             $note['@context'] = [
                 ActivityPubActivityInterface::CONTEXT_URL,
                 ActivityPubActivityInterface::SECURITY_URL,
-                self::getContext(),
+                self::ADDITIONAL_CONTEXTS,
             ];
         }
 
@@ -103,20 +112,6 @@ class PostNoteFactory
         $note['to'] = array_unique(array_merge($note['to'], $this->activityPubManager->createCcFromBody($post->body)));
 
         return $note;
-    }
-
-    #[ArrayShape([
-        'ostatus' => 'string',
-        'sensitive' => 'string',
-        'votersCount' => 'string',
-    ])]
-    public static function getContext(): array
-    {
-        return [
-            'ostatus' => 'http://ostatus.org#',
-            'sensitive' => 'as:sensitive',
-            'votersCount' => 'toot:votersCount',
-        ];
     }
 
     public function getActivityPubId(Post $post): string

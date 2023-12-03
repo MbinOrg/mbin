@@ -18,6 +18,16 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class EntryPageFactory
 {
+    public const ADDITIONAL_CONTEXTS = [
+        'lemmy' => 'https://join-lemmy.org/ns#',
+        'ostatus' => 'http://ostatus.org#',
+        'peertube' => 'https://joinpeertube.org/ns#',
+        'commentsEnabled' => 'peeertube:commentsEnabled',
+        'sensitive' => 'as:sensitive',
+        'stickied' => 'lemmy:stickied',
+        'votersCount' => 'toot:votersCount',
+    ];
+
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly GroupFactory $groupFactory,
@@ -37,7 +47,7 @@ class EntryPageFactory
             $page['@context'] = [
                 ActivityPubActivityInterface::CONTEXT_URL,
                 ActivityPubActivityInterface::SECURITY_URL,
-                PostNoteFactory::getContext(),
+                self::ADDITIONAL_CONTEXTS,
             ];
         }
 

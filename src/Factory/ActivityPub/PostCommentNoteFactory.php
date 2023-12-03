@@ -38,7 +38,7 @@ class PostCommentNoteFactory
             $note['@context'] = [
                 ActivityPubActivityInterface::CONTEXT_URL,
                 ActivityPubActivityInterface::SECURITY_URL,
-                PostNoteFactory::getContext(),
+                PostNoteFactory::ADDITIONAL_CONTEXTS,
             ];
         }
 

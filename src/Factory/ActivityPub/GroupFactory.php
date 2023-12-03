@@ -11,6 +11,12 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class GroupFactory
 {
+    public const ADDITIONAL_CONTEXTS = [
+        'lemmy' => 'https://join-lemmy.org/ns#',
+        'postingRestrictedToMods' => 'lemmy:postingRestrictedToMods',
+        'sensitive' => 'as:sensitive',
+    ];
+
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly ImageManager $imageManager
@@ -21,7 +27,11 @@ class GroupFactory
     {
         $group = [
             'type' => 'Group',
-            '@context' => [ActivityPubActivityInterface::CONTEXT_URL, ActivityPubActivityInterface::SECURITY_URL],
+            '@context' => [
+                ActivityPubActivityInterface::CONTEXT_URL,
+                ActivityPubActivityInterface::SECURITY_URL,
+                self::ADDITIONAL_CONTEXTS,
+            ],
             'id' => $this->getActivityPubId($magazine),
             'name' => $magazine->title, // lemmy
             'preferredUsername' => $magazine->name,

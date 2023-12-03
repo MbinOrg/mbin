@@ -61,13 +61,13 @@ class UserOutboxController extends AbstractController
     }
 
     #[ArrayShape([
-     '@context' => 'string',
-     'type' => 'string',
-     'partOf' => 'string',
-     'id' => 'string',
-     'totalItems' => 'int',
-     'orderedItems' => 'array',
- ])]
+        '@context' => 'string',
+        'type' => 'string',
+        'partOf' => 'string',
+        'id' => 'string',
+        'totalItems' => 'int',
+        'orderedItems' => 'array',
+    ])]
     private function getCollectionItems(
         User $user,
         int $page
@@ -85,7 +85,7 @@ class UserOutboxController extends AbstractController
             $activity,
             $items,
             $page,
-            PostNoteFactory::getContext()
+            PostNoteFactory::ADDITIONAL_CONTEXTS
         );
     }
 }
