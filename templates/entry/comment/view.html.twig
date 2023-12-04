@@ -10,6 +10,14 @@
 {% block sidebar_top %}
 {% endblock %}
 
+{% if showNested is not defined %}
+	{% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::ENTRY_COMMENTS_VIEW')) is same as constant('App\\Controller\\User\\ThemeSettingsController::CHAT') %}
+		{% set showNested = false %}
+	{% else %}
+		{% set showNested = true %}
+	{% endif %}
+{% endif %}
+
 {% block body %}
     {{ component('entry', {
         entry: entry,
@@ -26,7 +34,8 @@
         {{ component('entry_comment', {
             comment: parent,
             showEntryTitle: false,
-            showNested: true
+            showMagazineName: false,
+            showNested: showNested and parent.children|length
         }) }}
     </section>
     {% endif %}

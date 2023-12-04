@@ -42,10 +42,6 @@ class EntryCommentViewController extends AbstractController
         ?EntryComment $parent,
         Request $request,
     ): Response {
-
-        // $criteria = new EntryCommentPageView($this->getPageNb($request));
-        // $criteria->entry = $entry;
-
         return $this->render(
             'entry/comment/view.html.twig',
             [
