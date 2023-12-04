@@ -8,14 +8,12 @@ use App\Entity\User;
 use App\Service\MentionManager;
 use App\Service\UserManager;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Contracts\Cache\CacheInterface;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class UserExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         private readonly Security $security,
-        private readonly CacheInterface $cache,
         private readonly MentionManager $mentionManager,
         private readonly UserManager $userManager
     ) {
