@@ -23,10 +23,13 @@ class PostNoteFactory
         'lemmy' => 'https://join-lemmy.org/ns#',
         'ostatus' => 'http://ostatus.org#',
         'peertube' => 'https://joinpeertube.org/ns#',
-        'commentsEnabled' => 'peertube:commentsEnabled',
+        'toot' => 'http://joinmastodon.org/ns#',
         'sensitive' => 'as:sensitive',
-        'stickied' => 'lemmy:stickied',
+        'blurhash' => 'toot:blurhash',
+        'focalPoint' => 'toot:focalPoint',
         'votersCount' => 'toot:votersCount',
+        'commentsEnabled' => 'peertube:commentsEnabled',
+        'stickied' => 'lemmy:stickied',
     ];
 
     public function __construct(
