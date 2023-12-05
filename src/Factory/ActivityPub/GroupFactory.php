@@ -13,8 +13,8 @@ class GroupFactory
 {
     public const ADDITIONAL_CONTEXTS = [
         'lemmy' => 'https://join-lemmy.org/ns#',
-        'postingRestrictedToMods' => 'lemmy:postingRestrictedToMods',
         'sensitive' => 'as:sensitive',
+        'postingRestrictedToMods' => 'lemmy:postingRestrictedToMods',
     ];
 
     public function __construct(

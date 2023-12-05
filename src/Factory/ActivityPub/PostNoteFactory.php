@@ -19,19 +19,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class PostNoteFactory
 {
-    public const ADDITIONAL_CONTEXTS = [
-        'lemmy' => 'https://join-lemmy.org/ns#',
-        'ostatus' => 'http://ostatus.org#',
-        'peertube' => 'https://joinpeertube.org/ns#',
-        'toot' => 'http://joinmastodon.org/ns#',
-        'sensitive' => 'as:sensitive',
-        'blurhash' => 'toot:blurhash',
-        'focalPoint' => 'toot:focalPoint',
-        'votersCount' => 'toot:votersCount',
-        'commentsEnabled' => 'peertube:commentsEnabled',
-        'stickied' => 'lemmy:stickied',
-    ];
-
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly GroupFactory $groupFactory,
@@ -52,7 +39,7 @@ class PostNoteFactory
             $note['@context'] = [
                 ActivityPubActivityInterface::CONTEXT_URL,
                 ActivityPubActivityInterface::SECURITY_URL,
-                self::ADDITIONAL_CONTEXTS,
+                ActivityPubActivityInterface::ADDITIONAL_CONTEXTS,
             ];
         }
 
