@@ -258,11 +258,11 @@ readonly class UserManager
 
     public function ban(User $user): void
     {
-        $user->isBanned = true;
-
         if ($user->isAdmin() || $user->isModerator()) {
             throw new UserCannotBeBanned();
         }
+
+        $user->isBanned = true;
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
