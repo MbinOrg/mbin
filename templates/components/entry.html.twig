@@ -87,7 +87,9 @@
                     {% if entry.type is same as 'link' or entry.type is same as 'video' %}
                         <figure>
                             <div class="image-filler" aria-hidden="true">
-                                {{ component('blurhash_image', {blurhash: entry.image.blurhash}) }}
+                                {% if entry.image.blurhash %}
+                                    {{ component('blurhash_image', {blurhash: entry.image.blurhash}) }}
+                                {% endif %}
                             </div>
                             <a href="{{ is_route_name('entry_single') ? entry.url : entry_url(entry) }}"
                                rel="{{ get_rel(is_route_name('entry_single') ? entry.url : entry_url(entry)) }}">
@@ -100,7 +102,9 @@
                     {% elseif entry.type is same as 'image' or entry.type is same as 'article' %}
                         <figure>
                             <div class="image-filler" aria-hidden="true">
-                                {{ component('blurhash_image', {blurhash: entry.image.blurhash}) }}
+                                {% if entry.image.blurhash %}
+                                    {{ component('blurhash_image', {blurhash: entry.image.blurhash}) }}
+                                {% endif %}
                             </div>
                             <a href="{{ is_route_name('entry_single') ? uploaded_asset(entry.image.filePath) : entry_url(entry) }}"
                                class="{{ html_classes({'thumb': is_route_name('entry_single')}) }}">
