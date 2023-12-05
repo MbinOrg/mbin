@@ -38,6 +38,7 @@ class Question
         private readonly MarkdownConverter $markdownConverter,
         private readonly SettingsManager $settingsManager,
         private readonly ImageFactory $imageFactory,
+        private readonly ApObjectExtractor $objectExtractor,
     ) {
     }
 
@@ -46,6 +47,14 @@ class Question
         $current = $this->repository->findByObjectId($object['id']);
         if ($current) {
             return $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
+        }
+
+        if (\is_string($object['to'])) {
+            $object['to'] = [$object['to']];
+        }
+
+        if (\is_string($object['cc'])) {
+            $object['cc'] = [$object['cc']];
         }
 
         if (isset($object['inReplyTo']) && $replyTo = $object['inReplyTo']) {
@@ -79,14 +88,6 @@ class Question
             return $this->$fn($object, $parent, $root);
         }
 
-        if (\is_string($object['to'])) {
-            $object['to'] = [$object['to']];
-        }
-
-        if (\is_string($object['cc'])) {
-            $object['cc'] = [$object['cc']];
-        }
-
         return $this->createPost($object);
     }
 
@@ -108,25 +109,15 @@ class Question
             if ($image = $this->activityPubManager->handleImages($object['attachment'])) {
                 $dto->image = $this->imageFactory->createDto($image);
             }
-
-            if ($images = $this->activityPubManager->handleExternalImages($object['attachment'])) {
-                $object['content'] .= '<br><br>';
-                foreach ($images as $image) {
-                    $object['content'] .= "<a href='{$image->url}'>{$image->name}</a><br>";
-                }
-            }
-
-            if ($videos = $this->activityPubManager->handleExternalVideos($object['attachment'])) {
-                $object['content'] .= '<br><br>';
-                foreach ($videos as $video) {
-                    $object['content'] .= "<a href='{$video->url}'>{$video->name}</a><br>";
-                }
-            }
         }
 
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
         if (!empty($actor)) {
-            $dto->body = $this->markdownConverter->convert($object['content']);
+            $dto->body = $this->objectExtractor->getMarkdownBody($object);
+            if ($media = $this->objectExtractor->getExternalMediaBody($object)) {
+                $dto->body .= $media;
+            }
+
             $dto->visibility = $this->getVisibility($object, $actor);
             $this->handleDate($dto, $object['published']);
             if (isset($object['sensitive'])) {
@@ -196,25 +187,15 @@ class Question
             if ($image = $this->activityPubManager->handleImages($object['attachment'])) {
                 $dto->image = $this->imageFactory->createDto($image);
             }
-
-            if ($images = $this->activityPubManager->handleExternalImages($object['attachment'])) {
-                $object['content'] .= '<br><br>';
-                foreach ($images as $image) {
-                    $object['content'] .= "<a href='{$image->url}'>{$image->name}</a><br>";
-                }
-            }
-
-            if ($videos = $this->activityPubManager->handleExternalVideos($object['attachment'])) {
-                $object['content'] .= '<br><br>';
-                foreach ($videos as $video) {
-                    $object['content'] .= "<a href='{$video->url}'>{$video->name}</a><br>";
-                }
-            }
         }
 
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
         if (!empty($actor)) {
-            $dto->body = $this->markdownConverter->convert($object['content']);
+            $dto->body = $this->objectExtractor->getMarkdownBody($object);
+            if ($media = $this->objectExtractor->getExternalMediaBody($object)) {
+                $dto->body .= $media;
+            }
+
             $dto->visibility = $this->getVisibility($object, $actor);
             $this->handleDate($dto, $object['published']);
             if (isset($object['sensitive'])) {
@@ -248,25 +229,15 @@ class Question
             if ($image = $this->activityPubManager->handleImages($object['attachment'])) {
                 $dto->image = $this->imageFactory->createDto($image);
             }
-
-            if ($images = $this->activityPubManager->handleExternalImages($object['attachment'])) {
-                $object['content'] .= '<br><br>';
-                foreach ($images as $image) {
-                    $object['content'] .= "<a href='{$image->url}'>{$image->name}</a><br>";
-                }
-            }
-
-            if ($videos = $this->activityPubManager->handleExternalVideos($object['attachment'])) {
-                $object['content'] .= '<br><br>';
-                foreach ($videos as $video) {
-                    $object['content'] .= "<a href='{$video->url}'>{$video->name}</a><br>";
-                }
-            }
         }
 
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
         if (!empty($actor)) {
-            $dto->body = $this->markdownConverter->convert($object['content']);
+            $dto->body = $this->objectExtractor->getMarkdownBody($object);
+            if ($media = $this->objectExtractor->getExternalMediaBody($object)) {
+                $dto->body .= $media;
+            }
+
             $dto->visibility = $this->getVisibility($object, $actor);
             $this->handleDate($dto, $object['published']);
             if (isset($object['sensitive'])) {

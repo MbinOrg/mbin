@@ -32,7 +32,7 @@ See also our [contributing page](CONTRIBUTING.md).
 ## How can I contribute?
 
 New contributors are always _warmly welcomed_ to join us. The most valuable contributions come from helping with bug fixes and features through Pull Requests.
-As well as helping out with [translations](https://hosted.weblate.org/projects/mbin/) and documentation.
+As well as helping out with [translations](https://hosted.weblate.org/engage/mbin/) and documentation.
 
 Read more on our [contributing page](CONTRIBUTING.md).
 

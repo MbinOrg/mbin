@@ -15,6 +15,7 @@ use App\Factory\PostCommentFactory;
 use App\Factory\PostFactory;
 use App\Message\ActivityPub\Inbox\UpdateMessage;
 use App\Repository\ApActivityRepository;
+use App\Service\ActivityPub\ApObjectExtractor;
 use App\Service\ActivityPub\MarkdownConverter;
 use App\Service\ActivityPubManager;
 use App\Service\EntryCommentManager;
@@ -45,6 +46,7 @@ class UpdateHandler
         private readonly PostFactory $postFactory,
         private readonly PostCommentFactory $postCommentFactory,
         private readonly MessageBusInterface $bus,
+        private readonly ApObjectExtractor $objectExtractor,
     ) {
     }
 
@@ -107,7 +109,7 @@ class UpdateHandler
         $dto->title = $this->payload['object']['name'];
 
         if (!empty($this->payload['object']['content'])) {
-            $dto->body = $this->markdownConverter->convert($this->payload['object']['content']);
+            $dto->body = $this->objectExtractor->getMarkdownBody($this->payload['object']);
         } else {
             $dto->body = null;
         }
@@ -120,7 +122,7 @@ class UpdateHandler
         $dto = $this->entryCommentFactory->createDto($comment);
 
         if (!empty($this->payload['object']['content'])) {
-            $dto->body = $this->markdownConverter->convert($this->payload['object']['content']);
+            $dto->body = $this->objectExtractor->getMarkdownBody($this->payload['object']);
         } else {
             $dto->body = null;
         }
@@ -133,7 +135,7 @@ class UpdateHandler
         $dto = $this->postFactory->createDto($post);
 
         if (!empty($this->payload['object']['content'])) {
-            $dto->body = $this->markdownConverter->convert($this->payload['object']['content']);
+            $dto->body = $this->objectExtractor->getMarkdownBody($this->payload['object']);
         } else {
             $dto->body = null;
         }
@@ -146,7 +148,7 @@ class UpdateHandler
         $dto = $this->postCommentFactory->createDto($comment);
 
         if (!empty($this->payload['object']['content'])) {
-            $dto->body = $this->markdownConverter->convert($this->payload['object']['content']);
+            $dto->body = $this->objectExtractor->getMarkdownBody($this->payload['object']);
         } else {
             $dto->body = null;
         }

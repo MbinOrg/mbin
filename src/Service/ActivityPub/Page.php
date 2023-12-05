@@ -28,6 +28,7 @@ class Page
         private readonly EntityManagerInterface $entityManager,
         private readonly SettingsManager $settingsManager,
         private readonly ImageFactory $imageFactory,
+        private readonly ApObjectExtractor $objectExtractor,
     ) {
     }
 
@@ -65,7 +66,7 @@ class Page
                 $dto->image = $this->imageFactory->createDto($image);
             }
 
-            $dto->body = !empty($object['content']) ? $this->markdownConverter->convert($object['content']) : null;
+            $dto->body = $this->objectExtractor->getMarkdownBody($object);
             $dto->visibility = $this->getVisibility($object, $actor);
             $this->handleUrl($dto, $object);
             $this->handleDate($dto, $object['published']);

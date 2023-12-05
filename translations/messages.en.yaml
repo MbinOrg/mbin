@@ -772,3 +772,5 @@ user_badge_moderator: Mod
 user_badge_bot: Bot
 announcement: Announcement
 keywords: Keywords
+deleted_by_moderator: Thread, post or comment was deleted by the moderator
+deleted_by_author: Thread, post or comment was deleted by the author

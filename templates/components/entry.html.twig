@@ -49,9 +49,9 @@
                         </h2>
                     {% endif %}
                 {% elseif(entry.visibility is same as 'trashed') %}
-                    <p class="text-muted">{{ 'deleted_by_moderator' }}</p>
+                    <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
                 {% elseif(entry.visibility is same as 'soft_deleted') %}
-                    <p class="text-muted">{{ 'deleted_by_author' }}</p>
+                    <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
                 {% endif %}
             </header>
             {% if entry.visibility in ['visible', 'private'] or (entry.visibility is same as 'trashed' and this.canSeeTrashed) %}
@@ -212,7 +212,7 @@
                                     <li>
                                         <form method="post"
                                               action="{{ entry_delete_url(entry) }}"
-                                              onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                                              data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                                             <input type="hidden" name="token" value="{{ csrf_token('entry_delete') }}">
                                             <button type="submit">{{ 'delete'|trans }}</button>
                                         </form>
@@ -240,7 +240,7 @@
                         <li>
                             <form method="post"
                                   action="{{ path('entry_restore', {magazine_name: entry.magazine.name, entry_id: entry.id}) }}"
-                                  onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                                  data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                                 <input type="hidden" name="token" value="{{ csrf_token('entry_restore') }}">
                                 <button type="submit">{{ 'restore'|trans }}</button>
                             </form>

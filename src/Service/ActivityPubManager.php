@@ -164,7 +164,7 @@ class ActivityPubManager
             if ('Group' === $actor['type']) {
                 // User
                 $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
-                $this->logger->debug('found magazine at "{url]"', ['url' => $actorUrl]);
+                $this->logger->debug('found magazine at "{url}"', ['url' => $actorUrl]);
                 if (!$magazine) {
                     $magazine = $this->createMagazine($actorUrl);
                 } else {

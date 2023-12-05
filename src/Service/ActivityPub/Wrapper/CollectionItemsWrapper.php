@@ -33,7 +33,8 @@ class CollectionItemsWrapper
         array $context = null
     ): array {
         $result = [
-            '@context' => $context ? array_merge([ActivityPubActivityInterface::CONTEXT_URL], [$context])
+            '@context' => $context
+                ? array_merge([ActivityPubActivityInterface::CONTEXT_URL], [$context])
                 : ActivityPubActivityInterface::CONTEXT_URL,
             'type' => 'OrderedCollectionPage',
             'partOf' => $this->urlGenerator->generate($routeName, $routeParams, UrlGeneratorInterface::ABSOLUTE_URL),
