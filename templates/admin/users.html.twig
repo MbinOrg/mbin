@@ -15,9 +15,9 @@
 {% block body %}
     {% include 'admin/_options.html.twig' %}
     <div class="section" id="content">
-        <div class="flex">
+        <div class="flex" data-controller="selection">
             <label class="select">
-                <select onchange="location = this.value;">
+                <select data-action="selection#changeLocation">"
                     <option value="{{ options_url('withFederated', false) }}">{{ 'local'|trans }}</option>
                     <option value="{{ options_url('withFederated', true) }}" {{ withFederated is same as true ? 'selected' : '' }}>{{ 'federated'|trans }}</option>
                 </select>

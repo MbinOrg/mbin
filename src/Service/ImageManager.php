@@ -15,8 +15,12 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ImageManager
 {
-    public const IMAGE_MIMETYPES = ['image/jpeg', 'image/jpg', 'image/gif', 'image/png'];
-    public const IMAGE_MIMETYPE_STR = 'image/jpeg, image/jpg, image/gif, image/png';
+    public const IMAGE_MIMETYPES = [
+        'image/jpeg', 'image/jpg', 'image/gif', 'image/png',
+        'image/jxl', 'image/heic', 'image/heif',
+        'image/webp', 'image/avif',
+    ];
+    public const IMAGE_MIMETYPE_STR = 'image/jpeg, image/jpg, image/gif, image/png, image/jxl, image/heic, image/heif, image/webp, image/avif';
     public const MAX_IMAGE_BYTES = 6000000;
 
     public function __construct(
@@ -35,6 +39,11 @@ class ImageManager
         $types = array_map(fn ($type) => str_replace('image/', '', $type), self::IMAGE_MIMETYPES);
 
         return \in_array($urlExt, $types);
+    }
+
+    public static function isImageType(string $mediaType): bool
+    {
+        return \in_array($mediaType, self::IMAGE_MIMETYPES);
     }
 
     public function store(string $source, string $filePath): bool
@@ -96,7 +105,7 @@ class ImageManager
                     'timeout' => 5,
                     'max_duration' => 5,
                     'headers' => [
-                        'Accept' => implode(', ', self::IMAGE_MIMETYPES),
+                        'Accept' => implode(', ', array_diff(self::IMAGE_MIMETYPES, ['image/webp', 'image/avif'])),
                     ],
                     'on_progress' => function (int $downloaded, int $downloadSize) {
                         if (
@@ -117,7 +126,7 @@ class ImageManager
 
             $this->validate($tempFile);
         } catch (\Exception $e) {
-            if ($fh) {
+            if ($fh && \is_resource($fh)) {
                 fclose($fh);
             }
             unlink($tempFile);

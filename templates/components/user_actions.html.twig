@@ -34,5 +34,9 @@
             </button>
             <input type="hidden" name="token" value="{{ csrf_token('block') }}">
         </form>
+    {% elseif app.user is same as user and is_route_name_starts_with('user') and not is_route_name_contains('settings') %}
+        <a href="{{ path('user_settings_profile') }}" title="{{ 'edit_my_profile'|trans }}" aria-label="{{ 'edit_my_profile'|trans }}">
+            <button class="btn btn__secondary">{{ 'edit_my_profile'|trans }}</button>
+        </a>
     {% endif %}
 </aside>

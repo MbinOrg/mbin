@@ -9,11 +9,17 @@ use App\Entity\User;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
 use App\Service\ImageManager;
-use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class PersonFactory
 {
+    public const ADDITIONAL_CONTEXTS = [
+        'schema' => 'http://schema.org#',
+        'manuallyApprovesFollowers' => 'as:manuallyApprovesFollowers',
+        'PropertyValue' => 'schema:PropertyValue',
+        'value' => 'schema:value',
+    ];
+
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly ImageManager $imageManager,
@@ -27,7 +33,7 @@ class PersonFactory
             $person['@context'] = [
                 ActivityPubActivityInterface::CONTEXT_URL,
                 ActivityPubActivityInterface::SECURITY_URL,
-                $this->getContext(),
+                self::ADDITIONAL_CONTEXTS,
             ];
         }
 
@@ -99,22 +105,6 @@ class PersonFactory
         }
 
         return $person;
-    }
-
-    #[ArrayShape([
-        'manuallyApprovesFollowers' => 'string',
-        'schema' => 'string',
-        'PropertyValue' => 'string',
-        'value' => 'string',
-    ])]
-    public function getContext(): array
-    {
-        return [
-            'manuallyApprovesFollowers' => 'as:manuallyApprovesFollowers',
-            'schema' => 'http://schema.org#',
-            'PropertyValue' => 'schema:PropertyValue',
-            'value' => 'schema:value',
-        ];
     }
 
     public function getActivityPubId(User $user): string

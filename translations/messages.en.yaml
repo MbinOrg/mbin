@@ -673,6 +673,7 @@ two_factor_backup: Two-factor authentication backup codes
 2fa.authentication_code.label: Authentication Code
 2fa.verify: Verify
 2fa.code_invalid: The authentication code is not valid
+2fa.setup_error: Error enabling 2FA for account
 2fa.enable: Setup two-factor authentication
 2fa.disable: Disable two-factor authentication
 2fa.backup: Your two-factor backup codes
@@ -739,6 +740,7 @@ page_width_fixed: Fixed
 open_url_to_fediverse: Open original URL
 change_my_avatar: Change my avatar
 change_my_cover: Change my cover
+edit_my_profile: Edit my profile
 account_settings_changed: Your account settings have been successfully changed. You
   will need to login again.
 magazine_deletion: Magazine deletion
@@ -776,3 +778,5 @@ user_badge_moderator: Mod
 user_badge_bot: Bot
 announcement: Announcement
 keywords: Keywords
+deleted_by_moderator: Thread, post or comment was deleted by the moderator
+deleted_by_author: Thread, post or comment was deleted by the author

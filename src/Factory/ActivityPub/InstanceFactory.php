@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Factory\ActivityPub;
 
+use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Service\ActivityPub\ApHttpClient;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -21,7 +22,13 @@ class InstanceFactory
         $actor = 'https://'.$this->kbinDomain.'/i/actor';
 
         return [
-            '@context' => 'https://www.w3.org/ns/activitystreams',
+            '@context' => [
+                ActivityPubActivityInterface::CONTEXT_URL,
+                ActivityPubActivityInterface::SECURITY_URL,
+                [
+                    'manuallyApprovesFollowers' => 'as:manuallyApprovesFollowers',
+                ],
+            ],
             'id' => $actor,
             'type' => 'Application',
             'name' => 'Mbin',

@@ -63,9 +63,9 @@
                 {% if comment.visibility in ['visible', 'private'] or (comment.visibility is same as 'trashed' and this.canSeeTrashed) %}
                     {{ comment.body|markdown|raw }}
                 {% elseif(comment.visibility is same as 'trashed') %}
-                    <p class="text-muted">{{ 'deleted_by_moderator' }}</p>
+                    <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
                 {% elseif(comment.visibility is same as 'soft_deleted') %}
-                    <p class="text-muted">{{ 'deleted_by_author' }}</p>
+                    <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
                 {% endif %}
             </div>
             {% if comment.visibility in ['visible', 'private'] %}
@@ -149,7 +149,7 @@
                                     <li>
                                         <form method="post"
                                               action="{{ post_comment_delete_url(comment) }}"
-                                              onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                                              data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                                             <input type="hidden" name="token"
                                                    value="{{ csrf_token('post_comment_delete') }}">
                                             <button type="submit">{{ 'delete'|trans }}</button>
@@ -178,7 +178,7 @@
                         <li>
                             <form method="post"
                                   action="{{ path('post_comment_restore', {magazine_name: comment.magazine.name, post_id: comment.post.id, comment_id: comment.id}) }}"
-                                  onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                                  data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                                 <input type="hidden" name="token" value="{{ csrf_token('post_comment_restore') }}">
                                 <button type="submit">{{ 'restore'|trans }}</button>
                             </form>

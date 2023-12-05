@@ -38,7 +38,7 @@
                             <aside class="magazine__subscribe">
                                 <form action="{{ path('magazine_panel_moderator_request_accept', {name: request.magazine.name, username: request.user.username}) }}"
                                       name="ownership_requests_accept"
-                                      onsubmit="return confirm('{{ 'are_you_sure'|trans }}');"
+                                      data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}"
                                       method="post">
                                     <button type="submit"
                                             title="{{ 'accept'|trans }}"
@@ -49,12 +49,12 @@
                                 </form>
                                 <form action="{{ path('magazine_panel_moderator_request_reject', {name: request.magazine.name, username: request.user.username}) }}"
                                       name="ownership_requests_reject"
-                                      onsubmit="return confirm('{{ 'are_you_sure'|trans }}');"
+                                      data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}"
                                       method="post">
                                     <button type="submit"
                                             class="btn btn__secondary"
                                             title="{{ 'reject'|trans }}">
-                                        <i class="fa-solid fa-ban"></i>
+                                        <i class="fa-solid fa-ban"></i> <span>{{ 'reject'|trans }}</span>
                                     </button>
                                     <input type="hidden" name="token"
                                            value="{{ csrf_token('magazine_panel_moderator_request_reject') }}">

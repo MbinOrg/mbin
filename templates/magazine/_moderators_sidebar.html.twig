@@ -1,25 +1,29 @@
 <section class="user-list section">
     <h3 style="display: flex;justify-content: space-between;">
         {{ 'moderators'|trans }}
+        {% if app.user and magazine.apId is same as null and app.user.visibility is same as 'visible' %}
         <a href="{{ path('magazine_moderators', {name: magazine.name}) }}">
             <i class="fa-solid fa-hand-point-up"
                title="{{ 'apply_for_moderator'|trans }}"></i> {% if is_granted('edit', magazine) and magazine.moderatorRequests|length %}
                 <small>({{ magazine.moderatorRequests|length }})</small>{% endif %}
         </a>
+        {% endif %}
     </h3>
     <ul>
         {% for moderator in magazine.moderators|slice(0, 5) %}
-            <li>
-                {% if moderator.user.avatar %}
-                  <img class="image-inline"
-                       width="30"
-                       height="30"
-                       src="{{ asset(moderator.user.avatar.filePath) | imagine_filter('avatar_thumb') }}"
-                       alt="{{ moderator.user.username ~ ' ' ~ 'avatar'|trans|lower }}">
-                {% endif %}
-                <a href="{{ path('user_overview', {username: moderator.user.username}) }}"
-                   class="stretched-link">{{ moderator.user.username|username }}</a>
-            </li>
+            {% if magazine.apId is same as null or not moderator.isOwner %}
+                <li>
+                    {% if moderator.user.avatar %}
+                      <img class="image-inline"
+                           width="30"
+                           height="30"
+                           src="{{ asset(moderator.user.avatar.filePath) | imagine_filter('avatar_thumb') }}"
+                           alt="{{ moderator.user.username ~ ' ' ~ 'avatar'|trans|lower }}">
+                    {% endif %}
+                    <a href="{{ path('user_overview', {username: moderator.user.username}) }}"
+                       class="stretched-link">{{ moderator.user.username|username }}</a>
+                </li>
+            {% endif %}
         {% endfor %}
     </ul>
     {% if magazine.moderators|length > 5 %}
