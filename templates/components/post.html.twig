@@ -143,7 +143,7 @@
                                     <li>
                                         <form method="post"
                                               action="{{ post_delete_url(post) }}"
-                                              onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                                              data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                                             <input type="hidden" name="token" value="{{ csrf_token('post_delete') }}">
                                             <button type="submit">{{ 'delete'|trans }}</button>
                                         </form>
@@ -176,7 +176,7 @@
                         <li>
                             <form method="post"
                                   action="{{ path('post_restore', {magazine_name: post.magazine.name, post_id: post.id}) }}"
-                                  onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                                  data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                                 <input type="hidden" name="token" value="{{ csrf_token('post_restore') }}">
                                 <button type="submit">{{ 'restore'|trans }}</button>
                             </form>
