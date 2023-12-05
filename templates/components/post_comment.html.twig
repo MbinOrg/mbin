@@ -1,7 +1,5 @@
-{% with %}
-
-{% set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_PREVIEW'), 'false') %}
-{% set VIEW_STYLE = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::POST_COMMENTS_VIEW'), 'tree') %}
+{%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_PREVIEW'), 'false') -%}
+{%- set VIEW_STYLE = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::POST_COMMENTS_VIEW'), 'tree') -%}
 
 {% if withPost %}
     {{ component('post', {post: comment.post}) }}
@@ -216,5 +214,3 @@
         }) }}
     {% endif %}
 {% endif %}
-
-{% endwith %}

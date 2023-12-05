@@ -1,6 +1,4 @@
-{% with %}
-
-{% set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_PREVIEW'), 'false') %}
+{%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_PREVIEW'), 'false') -%}
 
 {% if not app.user or (app.user and not app.user.isBlocked(post.user)) %}
     {% if post.visibility is same as 'private' and (not app.user or not app.user.isFollower(post.user)) %}
@@ -209,5 +207,3 @@
         {{ component('post_comments_preview', {post: post, 'data-post-target': 'preview'}) }}
     {% endif %}
 {% endif %}
-
-{% endwith %}

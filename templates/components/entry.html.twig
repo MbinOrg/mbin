@@ -1,9 +1,7 @@
-{% with %}
-
-{% set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_PREVIEW'), 'false') %}
-{% set SHOW_THUMBNAILS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_THUMBNAILS'), 'true') %}
-{% set SHOW_USER_AVATARS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_USERS_AVATARS'), 'true') %}
-{% set SHOW_MAGAZINE_ICONS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_MAGAZINES_ICONS'), 'true') %}
+{%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_PREVIEW'), 'false') -%}
+{%- set SHOW_THUMBNAILS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_THUMBNAILS'), 'true') -%}
+{%- set SHOW_USER_AVATARS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_USERS_AVATARS'), 'true') -%}
+{%- set SHOW_MAGAZINE_ICONS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_MAGAZINES_ICONS'), 'true') -%}
 
 {% if not app.user or (app.user and not app.user.isBlocked(entry.user)) %}
     {% if entry.visibility is same as 'private' and (not app.user or not app.user.isFollower(entry.user)) %}
@@ -273,5 +271,3 @@
         </article>
     {% endif %}
 {% endif %}
-
-{% endwith %}
