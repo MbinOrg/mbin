@@ -21,7 +21,7 @@ class TagsWrapper
                 ['name' => $tag],
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
-            'tag' => '#'.$tag,
+            'name' => '#'.$tag,
         ], $tags);
     }
 }
