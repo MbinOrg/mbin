@@ -1,3 +1,6 @@
+{%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_PREVIEW'), 'false') -%}
+{%- set VIEW_STYLE = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::POST_COMMENTS_VIEW'), 'tree') -%}
+
 {% if withPost %}
     {{ component('post', {post: comment.post}) }}
 {% endif %}
@@ -12,7 +15,7 @@
             class: html_classes('section comment post-comment subject ' ~ 'comment-level--' ~ this.getLevel(),{
                 'own': app.user and comment.isAuthor(app.user),
                 'author': comment.isAuthor(comment.post.user),
-                'show-preview': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_PREVIEW')) is same as 'true'
+                'show-preview': SHOW_PREVIEW is same as 'true' and not comment.isAdult
             })}).without('id') }}
                 id="post-comment-{{ comment.id }}"
                 data-controller="comment subject mentions"
@@ -139,7 +142,7 @@
             comment: comment,
             level: level,
             showNested: true,
-            view: app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::POST_COMMENTS_VIEW'), 'tree')
+            view: VIEW_STYLE
         }) }}
     {% endif %}
 {% endif %}

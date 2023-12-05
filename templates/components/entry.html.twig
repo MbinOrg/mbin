@@ -1,3 +1,8 @@
+{%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_PREVIEW'), 'false') -%}
+{%- set SHOW_THUMBNAILS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_THUMBNAILS'), 'true') -%}
+{%- set SHOW_USER_AVATARS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_USERS_AVATARS'), 'true') -%}
+{%- set SHOW_MAGAZINE_ICONS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_MAGAZINES_ICONS'), 'true') -%}
+
 {% if not app.user or (app.user and not app.user.isBlocked(entry.user)) %}
     {% if entry.visibility is same as 'private' and (not app.user or not app.user.isFollower(entry.user)) %}
         <div class="section section--small"
@@ -9,9 +14,9 @@
     {% else %}
         <article{{ attributes.defaults({
             class: html_classes('entry section subject', {
-                'no-image': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_THUMBNAILS')) is same as 'false',
+                'no-image': SHOW_THUMBNAILS is same as 'false',
                 'own': app.user and entry.isAuthor(app.user),
-                'show-preview': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_PREVIEW')) is same as 'true'
+                'show-preview': SHOW_PREVIEW is same as 'true' and not entry.isAdult
             })}).without('id') }}
                 id="entry-{{ entry.id }}"
                 data-controller="subject preview mentions"
@@ -69,15 +74,15 @@
                 {% endif %}
             {% endif %}
             <aside class="meta entry__meta">
-                <span>{{ component('user_inline', {user: entry.user, showAvatar: app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_USERS_AVATARS')) == false or app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_USERS_AVATARS')) is same as 'true'}) -}}</span>
+                <span>{{ component('user_inline', {user: entry.user, showAvatar: SHOW_USER_AVATARS is same as 'true'}) -}}</span>
                 <span>,</span>
                 <span>{{ component('date', {date: entry.createdAt}) }}</span>
                 <span>{{ component('date_edited', {createdAt: entry.createdAt, editedAt: entry.editedAt}) }}</span>
                 {% if showMagazineName %}
-                    <span>{{ 'to'|trans }} {{ component('magazine_inline', {magazine: entry.magazine, showAvatar: app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_MAGAZINES_ICONS')) == false or app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_MAGAZINES_ICONS')) is same as 'true'}) }}</span>
+                    <span>{{ 'to'|trans }} {{ component('magazine_inline', {magazine: entry.magazine, showAvatar: SHOW_MAGAZINE_ICONS is same as 'true'}) }}</span>
                 {% endif %}
             </aside>
-            {% if not app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_THUMBNAILS')) or app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_THUMBNAILS')) is same as 'true' %}
+            {% if SHOW_THUMBNAILS is same as 'true' %}
                 {% if entry.image %}
                     {% if entry.type is same as 'link' or entry.type is same as 'video' %}
                         <figure>
