@@ -261,7 +261,7 @@ class ApHttpClient
         $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
         unset($headers['(request-target)']);
         $headers['Signature'] = $signatureHeader;
-        $headers['User-Agent'] = 'MbinBot/0.1 (+https://'.$this->kbinDomain.'/bot)';
+        $headers['User-Agent'] = 'MbinBot/1.2.0 (+https://'.$this->kbinDomain.'/bot)';
         $headers['Accept'] = 'application/activity+json, application/ld+json';
         $headers['Content-Type'] = 'application/activity+json';
 
@@ -281,7 +281,7 @@ class ApHttpClient
         $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
         unset($headers['(request-target)']);
         $headers['Signature'] = $signatureHeader;
-        $headers['User-Agent'] = 'MbinBot/0.1 (+https://'.$this->kbinDomain.'/bot)';
+        $headers['User-Agent'] = 'MbinBot/1.2.0 (+https://'.$this->kbinDomain.'/bot)';
         if (ApRequestType::WebFinger === $requestType) {
             $headers['Accept'] = 'application/jrd+json';
             $headers['Content-Type'] = 'application/jrd+json';
