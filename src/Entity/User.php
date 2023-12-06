@@ -116,6 +116,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public ?string $oauthGoogleId = null;
     #[Column(type: 'string', nullable: true)]
     public ?string $oauthFacebookId = null;
+    #[Column(name: 'oauth_privacyportal_id', type: 'string', nullable: true)]
+    public ?string $oauthPrivacyPortalId = null;
     #[Column(type: 'string', nullable: true)]
     public ?string $oauthKeycloakId = null;
     #[Column(type: 'string', nullable: true)]

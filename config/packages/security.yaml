@@ -37,6 +37,7 @@ security:
                 - App\Security\FacebookAuthenticator
                 - App\Security\GoogleAuthenticator
                 - App\Security\GithubAuthenticator
+                - App\Security\PrivacyPortalAuthenticator
                 - App\Security\KeycloakAuthenticator
                 - App\Security\SimpleLoginAuthenticator
                 - App\Security\ZitadelAuthenticator
