@@ -1,12 +1,21 @@
+{%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
+{%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
+{%- set V_CHAT = constant('App\\Controller\\User\\ThemeSettingsController::CHAT') -%}
+{%- set V_TREE = constant('App\\Controller\\User\\ThemeSettingsController::TREE') -%}
+
+{%- set DYNAMIC_LISTS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_DYNAMIC_LISTS'), V_FALSE) -%}
+{%- set SHOW_COMMENT_USER_AVATARS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR'), V_TRUE) -%}
+{%- set VIEW_STYLE = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::ENTRY_COMMENTS_VIEW'), V_TREE) -%}
+
 {% if showNested is not defined %}
-	{% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::ENTRY_COMMENTS_VIEW')) is same as constant('App\\Controller\\User\\ThemeSettingsController::CHAT') %}
+	{% if VIEW_STYLE is same as V_CHAT %}
 		{% set showNested = false %}
 	{% else %}
 		{% set showNested = true %}
 	{% endif %}
 {% endif %}
 
-<section class="{{ html_classes('comments entry-comments comments-tree', { 'show-comment-avatar' : app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR')) is same as 'true' or not app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR'))}) }}" data-controller="subject-list" data-action="{{- app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_DYNAMIC_LISTS')) is same as 'true' ? 'notifications:EntryCommentCreatedNotification@window->subject-list#addComment' : 'notifications:EntryCommentCreatedNotification@window->subject-list#increaseCounter' -}}">
+<section class="{{ html_classes('comments entry-comments comments-tree', { 'show-comment-avatar' : SHOW_COMMENT_USER_AVATARS is same as V_TRUE}, 'comments-view-style--'~VIEW_STYLE) }}" data-controller="subject-list" data-action="{{- DYNAMIC_LISTS is same as V_TRUE ? 'notifications:EntryCommentCreatedNotification@window->subject-list#addComment' : 'notifications:EntryCommentCreatedNotification@window->subject-list#increaseCounter' -}}">
 	{% for comment in comments %}
 		{{ component('entry_comment', {
             comment: comment,
@@ -23,7 +32,7 @@
 		<aside class="section section--muted">
 			<p>{{ 'no_comments'|trans }}</p>
 		</aside>
-	{% elseif app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::ENTRY_COMMENTS_VIEW')) is null or app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::ENTRY_COMMENTS_VIEW')) is same as constant('App\\Controller\\User\\ThemeSettingsController::TREE') %}
+	{% elseif VIEW_STYLE is same as V_TREE %}
 		<div class="comment-line--2"></div>
 		<div class="comment-line--3"></div>
 		<div class="comment-line--4"></div>
