@@ -144,16 +144,19 @@
     }
 
     .image-filler {
+      background: var(--kbin-vote-bg);
       position: absolute;
-      background-position: center;
-      filter: blur(8px);
-      width: 110%;
-      height: 110%;
-      top: -5%;
-      left: -5%;
+      width: 100%;
+      height: 100%;
+
+      img {
+        object-fit: cover;
+        filter: brightness(85%);
+      }
     }
 
-    .rounded-edges & {
+    .rounded-edges &,
+    .rounded-edges & .image-filler {
       border-radius: var(--kbin-rounded-edges-radius);
     }
 
