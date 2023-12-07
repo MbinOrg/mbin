@@ -12,6 +12,7 @@ use App\Factory\ActivityPub\PersonFactory;
 use App\Repository\MagazineRepository;
 use App\Repository\SiteRepository;
 use App\Repository\UserRepository;
+use App\Service\ProjectInfoService;
 use JetBrains\PhpStorm\ArrayShape;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\CurlHttpClient;
@@ -42,7 +43,8 @@ class ApHttpClient
         private readonly CacheInterface $cache,
         private readonly UserRepository $userRepository,
         private readonly MagazineRepository $magazineRepository,
-        private readonly SiteRepository $siteRepository
+        private readonly SiteRepository $siteRepository,
+        private readonly ProjectInfoService $projectInfo
     ) {
     }
 
@@ -261,7 +263,7 @@ class ApHttpClient
         $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
         unset($headers['(request-target)']);
         $headers['Signature'] = $signatureHeader;
-        $headers['User-Agent'] = 'MbinBot/1.2.0 (+https://'.$this->kbinDomain.'/bot)';
+        $headers['User-Agent'] = $projectInfo->getUserAgent().'/'.$projectInfo->getVersion().' (+https://'.$this->kbinDomain.'/bot)';
         $headers['Accept'] = 'application/activity+json, application/ld+json';
         $headers['Content-Type'] = 'application/activity+json';
 
@@ -281,7 +283,7 @@ class ApHttpClient
         $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
         unset($headers['(request-target)']);
         $headers['Signature'] = $signatureHeader;
-        $headers['User-Agent'] = 'MbinBot/1.2.0 (+https://'.$this->kbinDomain.'/bot)';
+        $headers['User-Agent'] = $projectInfo->getUserAgent().'/'.$projectInfo->getVersion().' (+https://'.$this->kbinDomain.'/bot)';
         if (ApRequestType::WebFinger === $requestType) {
             $headers['Accept'] = 'application/jrd+json';
             $headers['Content-Type'] = 'application/jrd+json';
