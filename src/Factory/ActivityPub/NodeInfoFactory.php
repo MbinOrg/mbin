@@ -29,17 +29,17 @@ class NodeInfoFactory
         switch ($version) {
             case '2.0':
                 $software = [
-                    'name' => $projectInfo->getName(),
-                    'version' => $projectInfo->getVersion(),
+                    'name' => $this->projectInfo->getName(),
+                    'version' => $this->projectInfo->getVersion(),
                 ];
                 break;
             case '2.1':
             default:
                 // Used for 2.1 and as fallback
                 $software = [
-                    'name' => $projectInfo->getName(),
-                    'version' => $projectInfo->getVersion(),
-                    'repository' => $projectInfo->getRepositoryURL(),
+                    'name' => $this->projectInfo->getName(),
+                    'version' => $this->projectInfo->getVersion(),
+                    'repository' => $this->projectInfo->getRepositoryURL(),
                 ];
                 break;
         }
