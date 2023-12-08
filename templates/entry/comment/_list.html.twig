@@ -8,38 +8,44 @@
 {%- set VIEW_STYLE = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::ENTRY_COMMENTS_VIEW'), V_TREE) -%}
 
 {% if showNested is not defined %}
-	{% if VIEW_STYLE is same as V_CHAT %}
-		{% set showNested = false %}
-	{% else %}
-		{% set showNested = true %}
-	{% endif %}
+    {% if VIEW_STYLE is same as V_CHAT %}
+        {% set showNested = false %}
+    {% else %}
+        {% set showNested = true %}
+    {% endif %}
 {% endif %}
-
-<section class="{{ html_classes('comments entry-comments comments-tree', { 'show-comment-avatar' : SHOW_COMMENT_USER_AVATARS is same as V_TRUE}, 'comments-view-style--'~VIEW_STYLE) }}" data-controller="subject-list" data-action="{{- DYNAMIC_LISTS is same as V_TRUE ? 'notifications:EntryCommentCreatedNotification@window->subject-list#addComment' : 'notifications:EntryCommentCreatedNotification@window->subject-list#increaseCounter' -}}">
-	{% for comment in comments %}
-		{{ component('entry_comment', {
+{% set autoAction = 'notifications:EntryCommentCreatedNotification@window->subject-list#addComment' %}
+{% set manualAction = 'notifications:EntryCommentCreatedNotification@window->subject-list#increaseCounter' %}
+<div class="{{ html_classes('comments entry-comments comments-tree', {
+        'show-comment-avatar' : SHOW_COMMENT_USER_AVATARS is same as V_TRUE },
+        'comments-view-style--'~VIEW_STYLE
+    ) }}"
+    data-controller="subject-list"
+    data-action="{{- DYNAMIC_LISTS is same as V_TRUE ? autoAction : manualAction -}}">
+    {% for comment in comments %}
+    {{ component('entry_comment', {
             comment: comment,
             showNested: showNested,
             dateAsUrl: dateAsUrl is defined ? dateAsUrl : false,
             showMagazineName: magazine is not defined or not magazine,
             showEntryTitle: entry is not defined or not entry
         }) }}
-	{% endfor %}
-	{% if(comments.haveToPaginate is defined and comments.haveToPaginate) %}
-		{{ pagerfanta(comments, null, {'pageParameter':'[p]'}) }}
-	{% endif %}
-	{% if not comments|length %}
-		<aside class="section section--muted">
-			<p>{{ 'no_comments'|trans }}</p>
-		</aside>
-	{% elseif VIEW_STYLE is same as V_TREE %}
-		<div class="comment-line--2"></div>
-		<div class="comment-line--3"></div>
-		<div class="comment-line--4"></div>
-		<div class="comment-line--5"></div>
-		<div class="comment-line--6"></div>
-		<div class="comment-line--7"></div>
-		<div class="comment-line--8"></div>
-		<div class="comment-line--9"></div>
-	{% endif %}
-</section>
+    {% endfor %}
+    {% if(comments.haveToPaginate is defined and comments.haveToPaginate) %}
+        {{ pagerfanta(comments, null, {'pageParameter':'[p]'}) }}
+    {% endif %}
+    {% if not comments|length %}
+        <aside class="section section--muted">
+            <p>{{ 'no_comments'|trans }}</p>
+        </aside>
+    {% elseif VIEW_STYLE is same as V_TREE %}
+        <div class="comment-line--2"></div>
+        <div class="comment-line--3"></div>
+        <div class="comment-line--4"></div>
+        <div class="comment-line--5"></div>
+        <div class="comment-line--6"></div>
+        <div class="comment-line--7"></div>
+        <div class="comment-line--8"></div>
+        <div class="comment-line--9"></div>
+    {% endif %}
+</div>
