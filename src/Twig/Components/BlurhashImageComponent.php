@@ -22,8 +22,10 @@ final class BlurhashImageComponent
 
     public function createImage(string $blurhash, int $width = 20, int $height = 20): string
     {
+        $context = [$blurhash, $width, $height];
+
         return $this->cache->get(
-            'bh_'.hash('sha256', $blurhash),
+            'bh_'.hash('sha256', serialize($context)),
             function (ItemInterface $item) use ($blurhash, $width, $height) {
                 $item->expiresAfter(3600);
 

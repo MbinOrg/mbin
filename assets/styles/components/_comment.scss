@@ -165,12 +165,8 @@ $comment-margin-sm: .3rem;
     }
 
     figure {
-      margin: 0;
-    }
-
-    figure img {
+      display: block;
       margin: .5rem 0;
-      max-width: 100%;
     }
   }
 

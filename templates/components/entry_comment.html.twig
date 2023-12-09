@@ -77,15 +77,11 @@
             {% endif %}
             <footer>
                 {% if (comment.visibility in ['visible', 'private'] or comment.visibility is same as 'trashed' and this.canSeeTrashed) and comment.image %}
-                    <figure>
-                        <a href="{{ uploaded_asset(comment.image.filePath) }}"
-                           class="thumb">
-                            <img class="thumb-subject {{ comment.isAdult ? 'image-adult' : '' }}"
-                                 src="{{ asset(comment.image.filePath) |imagine_filter('post_thumb') }}"
-                                 {% if comment.isAdult %}data-controller="thumb" data-action="mouseover->thumb#adult_image_hover mouseout->thumb#adult_image_hover_out"{% endif %}
-                                 alt="{{ comment.image.altText }}">
-                        </a>
-                    </figure>
+                    {{ include('components/_figure_image.html.twig', {
+                        image: comment.image,
+                        isAdult: comment.isAdult,
+                        thumbFilter: 'post_thumb'
+                    }) }}
                 {% endif %}
                 {% if comment.visibility in ['visible', 'private'] %}
                     <menu>

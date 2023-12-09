@@ -780,3 +780,7 @@ announcement: Announcement
 keywords: Keywords
 deleted_by_moderator: Thread, post or comment was deleted by the moderator
 deleted_by_author: Thread, post or comment was deleted by the author
+sensitive_warning: Sensitive content
+sensitive_toggle: Toggle visibility of sensitive content
+sensitive_show: Click to show
+sensitive_hide: Click to hide

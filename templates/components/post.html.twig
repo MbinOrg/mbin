@@ -56,14 +56,11 @@
             {% endif %}
             <footer>
                 {% if post.image %}
-                    <figure>
-                        <a class="thumb" href="{{ uploaded_asset(post.image.filePath) }}">
-                            <img class="thumb-subject {{ post.isAdult ? 'image-adult' : '' }}"
-                                 src="{{ asset(post.image.filePath) |imagine_filter('post_thumb') }}"
-                                 {% if post.isAdult %}data-controller="thumb" data-action="mouseover->thumb#adult_image_hover mouseout->thumb#adult_image_hover_out"{% endif %}
-                                 alt="{{ post.image.altText }}">
-                        </a>
-                    </figure>
+                    {{ include('components/_figure_image.html.twig', {
+                        image: post.image,
+                        isAdult: post.isAdult,
+                        thumbFilter: 'post_thumb'
+                    }) }}
                 {% endif %}
                 {% if post.visibility in ['visible', 'private'] %}
                     <menu>
