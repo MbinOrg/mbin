@@ -27,7 +27,8 @@ class UserLastActiveUpdateCommand extends Command
         $repo = $this->entityManager->getRepository(User::class);
 
         foreach ($repo->findAll() as $user) {
-            $activity = $repo->findPublicActivity(1, $user);
+            $hideAdult = false;
+            $activity = $repo->findPublicActivity(1, $user, $hideAdult);
             if ($activity->count()) {
                 $user->lastActive = $activity->getCurrentPageResults()[0]->lastActive;
             }

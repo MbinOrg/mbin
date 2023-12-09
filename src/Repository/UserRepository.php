@@ -80,34 +80,43 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $this->getPublicActivityQuery($user)->rowCount();
     }
 
-    private function getPublicActivityQuery(User $user): Result
+    private function getPublicActivityQuery(User $user, bool $hideAdult): Result
     {
+        $adultFilter = "";
+        if($hideAdult) {
+            $adultFilter = " AND is_adult = :isAdult";
+        }
+
         $conn = $this->_em->getConnection();
         $sql = "
         (SELECT id, created_at, 'entry' AS type FROM entry
-        WHERE user_id = :userId AND visibility = :visibility)
+        WHERE user_id = :userId AND visibility = :visibility".$adultFilter.")
         UNION
         (SELECT id, created_at, 'entry_comment' AS type FROM entry_comment
-        WHERE user_id = :userId AND visibility = :visibility)
+        WHERE user_id = :userId AND visibility = :visibility".$adultFilter.")
         UNION
         (SELECT id, created_at, 'post' AS type FROM post
-        WHERE user_id = :userId AND visibility = :visibility)
+        WHERE user_id = :userId AND visibility = :visibility".$adultFilter.")
         UNION
         (SELECT id, created_at, 'post_comment' AS type FROM post_comment
-        WHERE user_id = :userId AND visibility = :visibility)
+        WHERE user_id = :userId AND visibility = :visibility".$adultFilter.")
         ORDER BY created_at DESC";
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('userId', $user->getId());
         $stmt->bindValue('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
 
+        if ($hideAdult) {
+            $stmt->bindValue('isAdult', 'false');
+        }
+
         return $stmt->executeQuery();
     }
 
-    public function findPublicActivity(int $page, User $user): PagerfantaInterface
+    public function findPublicActivity(int $page, User $user, bool $hideAdult): PagerfantaInterface
     {
         // @todo union adapter
-        $stmt = $this->getPublicActivityQuery($user);
+        $stmt = $this->getPublicActivityQuery($user, $hideAdult);
 
         $pagerfanta = new Pagerfanta(
             new ArrayAdapter(

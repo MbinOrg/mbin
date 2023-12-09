@@ -72,7 +72,8 @@ class UserOutboxController extends AbstractController
         User $user,
         int $page
     ): array {
-        $activity = $this->userRepository->findPublicActivity($page, $user);
+        $hideAdult = false;
+        $activity = $this->userRepository->findPublicActivity($page, $user, $hideAdult);
 
         $items = [];
         foreach ($activity as $item) {
