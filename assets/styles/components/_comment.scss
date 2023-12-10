@@ -194,6 +194,13 @@ $comment-margin-sm: .3rem;
   }
 }
 
+.comments-view-style--tree,
+.comments-view-style--classic {
+    .comment-level--1:not(:first-child) {
+        margin-top: 0.5rem;
+    }
+}
+
 .comments-tree {
   position: relative;
 

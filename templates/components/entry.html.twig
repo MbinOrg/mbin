@@ -1,7 +1,10 @@
-{%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_PREVIEW'), 'false') -%}
-{%- set SHOW_THUMBNAILS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_THUMBNAILS'), 'true') -%}
-{%- set SHOW_USER_AVATARS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_USERS_AVATARS'), 'true') -%}
-{%- set SHOW_MAGAZINE_ICONS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_MAGAZINES_ICONS'), 'true') -%}
+{%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
+{%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
+
+{%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_PREVIEW'), V_FALSE) -%}
+{%- set SHOW_THUMBNAILS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_THUMBNAILS'), V_TRUE) -%}
+{%- set SHOW_USER_AVATARS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_USERS_AVATARS'), V_TRUE) -%}
+{%- set SHOW_MAGAZINE_ICONS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_MAGAZINES_ICONS'), V_TRUE) -%}
 
 {% if not app.user or (app.user and not app.user.isBlocked(entry.user)) %}
     {% if entry.visibility is same as 'private' and (not app.user or not app.user.isFollower(entry.user)) %}
@@ -14,9 +17,9 @@
     {% else %}
         <article{{ attributes.defaults({
             class: html_classes('entry section subject', {
-                'no-image': SHOW_THUMBNAILS is same as 'false',
+                'no-image': SHOW_THUMBNAILS is same as V_FALSE,
                 'own': app.user and entry.isAuthor(app.user),
-                'show-preview': SHOW_PREVIEW is same as 'true' and not entry.isAdult
+                'show-preview': SHOW_PREVIEW is same as V_TRUE and not entry.isAdult
             })}).without('id') }}
                 id="entry-{{ entry.id }}"
                 data-controller="subject preview mentions"
@@ -74,15 +77,15 @@
                 {% endif %}
             {% endif %}
             <aside class="meta entry__meta">
-                <span>{{ component('user_inline', {user: entry.user, showAvatar: SHOW_USER_AVATARS is same as 'true'}) -}}</span>
+                <span>{{ component('user_inline', {user: entry.user, showAvatar: SHOW_USER_AVATARS is same as V_TRUE}) -}}</span>
                 <span>,</span>
                 <span>{{ component('date', {date: entry.createdAt}) }}</span>
                 <span>{{ component('date_edited', {createdAt: entry.createdAt, editedAt: entry.editedAt}) }}</span>
                 {% if showMagazineName %}
-                    <span>{{ 'to'|trans }} {{ component('magazine_inline', {magazine: entry.magazine, showAvatar: SHOW_MAGAZINE_ICONS is same as 'true'}) }}</span>
+                    <span>{{ 'to'|trans }} {{ component('magazine_inline', {magazine: entry.magazine, showAvatar: SHOW_MAGAZINE_ICONS is same as V_TRUE}) }}</span>
                 {% endif %}
             </aside>
-            {% if SHOW_THUMBNAILS is same as 'true' %}
+            {% if SHOW_THUMBNAILS is same as V_TRUE %}
                 {% if entry.image %}
                     {% if entry.type is same as 'link' or entry.type is same as 'video' %}
                         <figure>

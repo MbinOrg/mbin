@@ -1,4 +1,7 @@
-{%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_PREVIEW'), 'false') -%}
+{%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
+{%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
+
+{%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_PREVIEW'), V_FALSE) -%}
 
 {% if not app.user or (app.user and not app.user.isBlocked(post.user)) %}
     {% if post.visibility is same as 'private' and (not app.user or not app.user.isFollower(post.user)) %}
@@ -10,7 +13,7 @@
         <blockquote{{ attributes.defaults({
             class: html_classes('section post subject ', {
                 'own': app.user and post.isAuthor(app.user),
-                'show-preview': SHOW_PREVIEW is same as 'true' and not post.isAdult
+                'show-preview': SHOW_PREVIEW is same as V_TRUE and not post.isAdult
             })}).without('id') }}
                 id="post-{{ post.id }}"
                 data-controller="post subject mentions"
