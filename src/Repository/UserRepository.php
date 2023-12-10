@@ -82,33 +82,29 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
     private function getPublicActivityQuery(User $user, bool $hideAdult): Result
     {
-        $adultFilter = '';
-        if ($hideAdult) {
-            $adultFilter = 'AND is_adult = :isAdult';
-        }
-
         $conn = $this->_em->getConnection();
         $sql = "
         (SELECT id, created_at, 'entry' AS type FROM entry
-        WHERE user_id = :userId AND visibility = :visibility $adultFilter)
+        WHERE user_id = :userId AND visibility = :visibility
+        AND is_adult = CASE WHEN :hideAdult THEN false ELSE is_adult END)
         UNION
         (SELECT id, created_at, 'entry_comment' AS type FROM entry_comment
-        WHERE user_id = :userId AND visibility = :visibility $adultFilter)
+        WHERE user_id = :userId AND visibility = :visibility
+        AND is_adult = CASE WHEN :hideAdult THEN false ELSE is_adult END)
         UNION
         (SELECT id, created_at, 'post' AS type FROM post
-        WHERE user_id = :userId AND visibility = :visibility $adultFilter)
+        WHERE user_id = :userId AND visibility = :visibility
+        AND is_adult = CASE WHEN :hideAdult THEN false ELSE is_adult END)
         UNION
         (SELECT id, created_at, 'post_comment' AS type FROM post_comment
-        WHERE user_id = :userId AND visibility = :visibility $adultFilter)
+        WHERE user_id = :userId AND visibility = :visibility
+        AND is_adult = CASE WHEN :hideAdult THEN false ELSE is_adult END)
         ORDER BY created_at DESC";
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('userId', $user->getId());
         $stmt->bindValue('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
-
-        if ($hideAdult) {
-            $stmt->bindValue('isAdult', false, \PDO::PARAM_BOOL);
-        }
+        $stmt->bindValue('hideAdult', $hideAdult, \PDO::PARAM_BOOL);
 
         return $stmt->executeQuery();
     }
