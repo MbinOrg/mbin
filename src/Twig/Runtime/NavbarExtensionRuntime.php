@@ -22,14 +22,14 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
         if ($magazine instanceof Magazine) {
             return $this->urlGenerator->generate('front_magazine', [
                 'name' => $magazine->name,
-                ...$this->getActiveOptions()
+                ...$this->getActiveOptions(),
             ]);
         }
 
         if ($domain = $this->requestStack->getCurrentRequest()->get('domain')) {
             return $this->urlGenerator->generate('domain_entries', [
                 'name' => $domain->name,
-                ...$this->getActiveOptions()
+                ...$this->getActiveOptions(),
             ]);
         }
 
@@ -60,7 +60,7 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
         if ($magazine instanceof Magazine) {
             return $this->urlGenerator->generate('magazine_posts', [
                 'name' => $magazine->name,
-                ...$this->getActiveOptions()
+                ...$this->getActiveOptions(),
             ]);
         }
 
@@ -114,10 +114,10 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
         $options = [];
 
         // don't add the current options if they are the defaults
-        if ($sortOption !== 'hot') {
+        if ('hot' !== $sortOption) {
             $options['sortBy'] = $sortOption;
         }
-        if ($timeOption !== '∞') {
+        if ('∞' !== $timeOption) {
             $options['time'] = $timeOption;
         }
 
