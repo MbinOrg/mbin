@@ -1,5 +1,9 @@
-{%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_PREVIEW'), 'false') -%}
-{%- set VIEW_STYLE = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::POST_COMMENTS_VIEW'), 'tree') -%}
+{%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
+{%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
+{%- set V_TREE = constant('App\\Controller\\User\\ThemeSettingsController::TREE') -%}
+
+{%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_PREVIEW'), V_FALSE) -%}
+{%- set VIEW_STYLE = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::POST_COMMENTS_VIEW'), V_TREE) -%}
 
 {% if withPost %}
     {{ component('post', {post: comment.post}) }}
@@ -15,7 +19,7 @@
             class: html_classes('section comment post-comment subject ' ~ 'comment-level--' ~ this.getLevel(),{
                 'own': app.user and comment.isAuthor(app.user),
                 'author': comment.isAuthor(comment.post.user),
-                'show-preview': SHOW_PREVIEW is same as 'true' and not comment.isAdult
+                'show-preview': SHOW_PREVIEW is same as V_TRUE and not comment.isAdult
             })}).without('id') }}
                 id="post-comment-{{ comment.id }}"
                 data-controller="comment subject mentions"
