@@ -82,9 +82,9 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
     private function getPublicActivityQuery(User $user, bool $hideAdult): Result
     {
-        $adultFilter = "";
-        if($hideAdult) {
-            $adultFilter = " AND is_adult = :isAdult";
+        $adultFilter = '';
+        if ($hideAdult) {
+            $adultFilter = ' AND is_adult = :isAdult';
         }
 
         $conn = $this->_em->getConnection();
