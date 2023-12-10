@@ -107,7 +107,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         $stmt->bindValue('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
 
         if ($hideAdult) {
-            $stmt->bindValue('isAdult', 'false');
+            $stmt->bindValue('isAdult', false, \PDO::PARAM_BOOL);
         }
 
         return $stmt->executeQuery();
