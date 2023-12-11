@@ -701,7 +701,6 @@ sudo cronjob -e
 43 5 * * * sudo certbot renew --pre-hook "sudo systemctl stop nginx" --post-hook "sudo systemctl start nginx"
 ```
 
-
 ### Additional Mbin configuration files
 
 These are additional configuration YAML file changes in the `config` directory.
