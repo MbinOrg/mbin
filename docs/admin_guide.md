@@ -692,7 +692,7 @@ sudo certbot certonly --standalone -d domain.tld -d www.domain.tld
 sudo certbot --nginx -d domain.tld -d www.domain.tld
 ```
 
-For Debian/Ubuntu systemes, running nginx on port 80, set up a daily job to update your certificates (at 5h43m)
+For Debian/Ubuntu systems running NGINX on port 80, set up a daily job to update your certificates (at 05h43m)
 ```bash
 sudo cronjob -e
 ```
