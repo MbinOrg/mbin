@@ -692,6 +692,16 @@ sudo certbot certonly --standalone -d domain.tld -d www.domain.tld
 sudo certbot --nginx -d domain.tld -d www.domain.tld
 ```
 
+For Debian/Ubuntu systemes, running nginx on port 80, set up a daily job to update your certificates (at 5h43m)
+```bash
+sudo cronjob -e
+```
+
+```ini
+43 5 * * * sudo certbot renew --pre-hook "sudo systemctl stop nginx" --post-hook "sudo systemctl start nginx"
+```
+
+
 ### Additional Mbin configuration files
 
 These are additional configuration YAML file changes in the `config` directory.
