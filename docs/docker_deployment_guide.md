@@ -65,7 +65,7 @@ docker build --no-cache -t mbin -f Dockerfile  ..
 
 #### Use Mbin pre-build image
 
-_OR_ use our pre-build images from [ghcr.io](https://ghcr.io). In this case you need to update the `compose.yml` file:
+_OR_ use our pre-built images from [ghcr.io](https://ghcr.io). In this case you need to update the `compose.yml` file:
 
 ```bash
 nano compose.yml
