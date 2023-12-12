@@ -37,7 +37,10 @@ class UserFrontController extends AbstractController
             $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
         }
 
-        $activity = $repository->findPublicActivity($this->getPageNb($request), $user);
+        $requestedByUser = $this->getUser();
+        $hideAdult = (!$requestedByUser || $requestedByUser->hideAdult);
+
+        $activity = $repository->findPublicActivity($this->getPageNb($request), $user, $hideAdult);
 
         return $this->render(
             'user/overview.html.twig',
