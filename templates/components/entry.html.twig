@@ -90,12 +90,14 @@
                     {% if entry.type is same as 'link' or entry.type is same as 'video' %}
                         {{ include('components/_figure_entry.html.twig', {
                             entry: entry,
-                            singleRoute: entry.url
+                            singleRoute: entry.url,
+                            setRel: true
                         }) }}
                     {% elseif entry.type is same as 'image' or entry.type is same as 'article' %}
                         {{ include('components/_figure_entry.html.twig', {
                             entry: entry,
-                            singleRoute: uploaded_asset(entry.image.filePath)
+                            singleRoute: uploaded_asset(entry.image.filePath),
+                            lightbox: true
                         }) }}
                     {% endif %}
                 {% else %}

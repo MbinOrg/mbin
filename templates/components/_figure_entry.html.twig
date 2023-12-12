@@ -1,7 +1,8 @@
 {# this fragment is only meant to be used in entry component #}
 {% with {
     sensitiveId: 'sensitive-check-'~entry.image.id,
-    isSingle: is_route_name('entry_single')
+    isSingle: is_route_name('entry_single'),
+    route: isSingle ? singleRoute : entry_url(entry)
 } %}
 <figure>
     <div class="image-filler" aria-hidden="true">
@@ -15,8 +16,10 @@
                class="sensitive-state"
                aria-label="{{ 'sensitive_toggle'|trans }}">
     {% endif %}
-    <a href="{{ isSingle ? singleRoute : entry_url(entry) }}"
-       class="{{ html_classes('sensitive-checked--show', {'thumb': isSingle}) }}">
+    <a href="{{ route }}"
+       class="{{ html_classes('sensitive-checked--show', {'thumb': isSingle and lightbox|default(false)}) }}"
+       rel="{{ setRel ? get_rel(route) : '' }}"
+    >
         <img class="thumb-subject"
              src="{{ asset(entry.image.filePath)|imagine_filter('entry_thumb') }}"
              alt="{{ entry.image.altText }}">
