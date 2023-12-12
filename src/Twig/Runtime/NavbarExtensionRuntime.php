@@ -114,10 +114,12 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
         // don't use sortBy or time options on comment pages
         // for the navbar links, so sorting comments by new does not mean
         // changing the entry and microblog views to newest
-        if ($this->isRouteName('entry_single')
+        if ($this->isRouteNameStartsWith('entry_single')
+            || $this->isRouteNameStartsWith('post_single')
             || $this->isRouteNameStartsWith('entry_comment')
             || $this->isRouteNameStartsWith('post_comment')
-            || $this->isRouteName('post_single')) {
+            || $this->isRouteName('magazine_list_all')
+        ) {
             return $options;
         }
 
