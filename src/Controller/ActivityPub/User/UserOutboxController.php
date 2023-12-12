@@ -53,10 +53,12 @@ class UserOutboxController extends AbstractController
     ])]
     private function getCollectionInfo(User $user): array
     {
+        $hideAdult = false;
+
         return $this->collectionInfoWrapper->build(
             'ap_user_outbox',
             ['username' => $user->username],
-            $this->userRepository->countPublicActivity($user)
+            $this->userRepository->countPublicActivity($user, $hideAdult)
         );
     }
 
@@ -72,7 +74,8 @@ class UserOutboxController extends AbstractController
         User $user,
         int $page
     ): array {
-        $activity = $this->userRepository->findPublicActivity($page, $user);
+        $hideAdult = false;
+        $activity = $this->userRepository->findPublicActivity($page, $user, $hideAdult);
 
         $items = [];
         foreach ($activity as $item) {
