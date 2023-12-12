@@ -75,9 +75,9 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->getOneOrNullResult();
     }
 
-    public function countPublicActivity(User $user): int
+    public function countPublicActivity(User $user, bool $hideAdult): int
     {
-        return $this->getPublicActivityQuery($user)->rowCount();
+        return $this->getPublicActivityQuery($user, $hideAdult)->rowCount();
     }
 
     private function getPublicActivityQuery(User $user, bool $hideAdult): Result
