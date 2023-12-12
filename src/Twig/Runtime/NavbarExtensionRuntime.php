@@ -33,22 +33,22 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
             ]);
         }
 
-        if (str_starts_with($this->getCurrentRouteName(), 'tag')) {
+        if ($this->isRouteNameStartsWith('tag')) {
             return $this->urlGenerator->generate(
                 'tag_entries',
                 ['name' => $this->requestStack->getCurrentRequest()->get('name')]
             );
         }
 
-        if (str_ends_with($this->getCurrentRouteName(), '_subscribed')) {
+        if ($this->isRouteNameEndWith('_subscribed')) {
             return $this->urlGenerator->generate('front_subscribed', $this->getActiveOptions());
         }
 
-        if (str_ends_with($this->getCurrentRouteName(), '_favourite')) {
+        if ($this->isRouteNameEndWith('_favourite')) {
             return $this->urlGenerator->generate('front_favourite', $this->getActiveOptions());
         }
 
-        if (str_ends_with($this->getCurrentRouteName(), '_moderated')) {
+        if ($this->isRouteNameEndWith('_moderated')) {
             return $this->urlGenerator->generate('front_moderated', $this->getActiveOptions());
         }
 
@@ -64,22 +64,22 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
             ]);
         }
 
-        if (str_starts_with($this->getCurrentRouteName(), 'tag')) {
+        if ($this->isRouteNameStartsWith('tag')) {
             return $this->urlGenerator->generate(
                 'tag_posts',
                 ['name' => $this->requestStack->getCurrentRequest()->get('name')]
             );
         }
 
-        if (str_ends_with($this->getCurrentRouteName(), '_subscribed')) {
+        if ($this->isRouteNameEndWith('_subscribed')) {
             return $this->urlGenerator->generate('posts_subscribed', $this->getActiveOptions());
         }
 
-        if (str_ends_with($this->getCurrentRouteName(), '_favourite')) {
+        if ($this->isRouteNameEndWith('_favourite')) {
             return $this->urlGenerator->generate('posts_favourite', $this->getActiveOptions());
         }
 
-        if (str_ends_with($this->getCurrentRouteName(), '_moderated')) {
+        if ($this->isRouteNameEndWith('_moderated')) {
             return $this->urlGenerator->generate('posts_moderated', $this->getActiveOptions());
         }
 
@@ -88,7 +88,7 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
 
     public function navbarPeopleUrl(?Magazine $magazine): string
     {
-        if (str_starts_with($this->getCurrentRouteName(), 'tag')) {
+        if ($this->isRouteNameStartsWith('tag')) {
             return $this->urlGenerator->generate(
                 'tag_people',
                 ['name' => $this->requestStack->getCurrentRequest()->get('name')]
@@ -109,11 +109,25 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
 
     private function getActiveOptions(): array
     {
-        $sortOption = $this->getActiveSortOption();
-        $timeOption = $this->getActiveTimeOption();
         $options = [];
 
-        // don't add the current options if they are the defaults
+        // don't use sortBy or time options on comment pages
+        // for the navbar links, so sorting comments by new does not mean
+        // changing the entry and microblog views to newest
+        if ($this->isRouteName('entry_single')
+            || $this->isRouteNameStartsWith('entry_comment')
+            || $this->isRouteNameStartsWith('post_comment')
+            || $this->isRouteName('post_single')) {
+            return $options;
+        }
+
+        $sortOption = $this->getActiveSortOption();
+        $timeOption = $this->getActiveTimeOption();
+
+        // don't add the current options if they are the defaults.
+        // this isn't bad, but keeps urls shorter for instance
+        // showing /microblog rather than /microblog/hot/∞
+        // which would be equivalent anyways
         if ('hot' !== $sortOption) {
             $options['sortBy'] = $sortOption;
         }
@@ -132,5 +146,20 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
     private function getActiveTimeOption(): string
     {
         return $this->requestStack->getCurrentRequest()->get('time') ?? '∞';
+    }
+
+    private function isRouteNameStartsWith(string $needle): bool
+    {
+        return str_starts_with($this->getCurrentRouteName(), $needle);
+    }
+
+    private function isRouteNameEndWith(string $needle): bool
+    {
+        return str_ends_with($this->getCurrentRouteName(), $needle);
+    }
+
+    private function isRouteName(string $needle): bool
+    {
+        return $this->getCurrentRouteName() === $needle;
     }
 }
