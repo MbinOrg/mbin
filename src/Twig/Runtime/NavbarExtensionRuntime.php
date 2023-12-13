@@ -20,66 +20,75 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
     public function navbarThreadsUrl(?Magazine $magazine): string
     {
         if ($magazine instanceof Magazine) {
-            return $this->urlGenerator->generate('front_magazine', ['name' => $magazine->name]);
+            return $this->urlGenerator->generate('front_magazine', [
+                'name' => $magazine->name,
+                ...$this->getActiveOptions(),
+            ]);
         }
 
         if ($domain = $this->requestStack->getCurrentRequest()->get('domain')) {
-            return $this->urlGenerator->generate('domain_entries', ['name' => $domain->name]);
+            return $this->urlGenerator->generate('domain_entries', [
+                'name' => $domain->name,
+                ...$this->getActiveOptions(),
+            ]);
         }
 
-        if (str_starts_with($this->getCurrentRouteName(), 'tag')) {
+        if ($this->isRouteNameStartsWith('tag')) {
             return $this->urlGenerator->generate(
                 'tag_entries',
                 ['name' => $this->requestStack->getCurrentRequest()->get('name')]
             );
         }
 
-        if (str_ends_with($this->getCurrentRouteName(), '_subscribed')) {
-            return $this->urlGenerator->generate('front_subscribed');
+        if ($this->isRouteNameEndWith('_subscribed')) {
+            return $this->urlGenerator->generate('front_subscribed', $this->getActiveOptions());
         }
 
-        if (str_ends_with($this->getCurrentRouteName(), '_favourite')) {
-            return $this->urlGenerator->generate('front_favourite');
+        if ($this->isRouteNameEndWith('_favourite')) {
+            return $this->urlGenerator->generate('front_favourite', $this->getActiveOptions());
         }
 
-        if (str_ends_with($this->getCurrentRouteName(), '_moderated')) {
-            return $this->urlGenerator->generate('front_moderated');
+        if ($this->isRouteNameEndWith('_moderated')) {
+            return $this->urlGenerator->generate('front_moderated', $this->getActiveOptions());
         }
 
-        return $this->urlGenerator->generate('front');
+        return $this->urlGenerator->generate('front', $this->getActiveOptions());
     }
 
     public function navbarPostsUrl(?Magazine $magazine): string
     {
         if ($magazine instanceof Magazine) {
-            return $this->urlGenerator->generate('magazine_posts', ['name' => $magazine->name]);
+            return $this->urlGenerator->generate('magazine_posts', [
+                'name' => $magazine->name,
+                ...$this->getActiveOptions(),
+            ]);
         }
 
-        if (str_starts_with($this->getCurrentRouteName(), 'tag')) {
+        if ($this->isRouteNameStartsWith('tag')) {
             return $this->urlGenerator->generate(
                 'tag_posts',
                 ['name' => $this->requestStack->getCurrentRequest()->get('name')]
             );
         }
 
-        if (str_ends_with($this->getCurrentRouteName(), '_subscribed')) {
-            return $this->urlGenerator->generate('posts_subscribed');
+        if ($this->isRouteNameEndWith('_subscribed')) {
+            return $this->urlGenerator->generate('posts_subscribed', $this->getActiveOptions());
         }
 
-        if (str_ends_with($this->getCurrentRouteName(), '_favourite')) {
-            return $this->urlGenerator->generate('posts_favourite');
+        if ($this->isRouteNameEndWith('_favourite')) {
+            return $this->urlGenerator->generate('posts_favourite', $this->getActiveOptions());
         }
 
-        if (str_ends_with($this->getCurrentRouteName(), '_moderated')) {
-            return $this->urlGenerator->generate('posts_moderated');
+        if ($this->isRouteNameEndWith('_moderated')) {
+            return $this->urlGenerator->generate('posts_moderated', $this->getActiveOptions());
         }
 
-        return $this->urlGenerator->generate('posts_front');
+        return $this->urlGenerator->generate('posts_front', $this->getActiveOptions());
     }
 
     public function navbarPeopleUrl(?Magazine $magazine): string
     {
-        if (str_starts_with($this->getCurrentRouteName(), 'tag')) {
+        if ($this->isRouteNameStartsWith('tag')) {
             return $this->urlGenerator->generate(
                 'tag_people',
                 ['name' => $this->requestStack->getCurrentRequest()->get('name')]
@@ -96,5 +105,62 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
     private function getCurrentRouteName(): string
     {
         return $this->requestStack->getCurrentRequest()->get('_route') ?? 'front';
+    }
+
+    private function getActiveOptions(): array
+    {
+        $options = [];
+
+        // don't use sortBy or time options on comment pages
+        // for the navbar links, so sorting comments by new does not mean
+        // changing the entry and microblog views to newest
+        if (!$this->isRouteName('root')
+            && !$this->isRouteNameStartsWith('front')
+            && !$this->isRouteNameStartsWith('posts')
+            && !$this->isRouteName('magazine_posts')
+        ) {
+            return $options;
+        }
+
+        $sortOption = $this->getActiveSortOption();
+        $timeOption = $this->getActiveTimeOption();
+
+        // don't add the current options if they are the defaults.
+        // this isn't bad, but keeps urls shorter for instance
+        // showing /microblog rather than /microblog/hot/∞
+        // which would be equivalent anyways
+        if ('hot' !== $sortOption) {
+            $options['sortBy'] = $sortOption;
+        }
+        if ('∞' !== $timeOption) {
+            $options['time'] = $timeOption;
+        }
+
+        return $options;
+    }
+
+    private function getActiveSortOption(): string
+    {
+        return $this->requestStack->getCurrentRequest()->get('sortBy') ?? 'hot';
+    }
+
+    private function getActiveTimeOption(): string
+    {
+        return $this->requestStack->getCurrentRequest()->get('time') ?? '∞';
+    }
+
+    private function isRouteNameStartsWith(string $needle): bool
+    {
+        return str_starts_with($this->getCurrentRouteName(), $needle);
+    }
+
+    private function isRouteNameEndWith(string $needle): bool
+    {
+        return str_ends_with($this->getCurrentRouteName(), $needle);
+    }
+
+    private function isRouteName(string $needle): bool
+    {
+        return $this->getCurrentRouteName() === $needle;
     }
 }

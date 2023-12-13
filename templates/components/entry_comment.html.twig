@@ -1,3 +1,11 @@
+{%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
+{%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
+{%- set V_TREE = constant('App\\Controller\\User\\ThemeSettingsController::TREE') -%}
+
+{%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_PREVIEW'), V_FALSE) -%}
+{%- set DYNAMIC_LISTS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_DYNAMIC_LISTS'), V_FALSE) -%}
+{%- set VIEW_STYLE = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::ENTRY_COMMENTS_VIEW'), V_TREE) -%}
+
 {% if not app.user or (app.user and not app.user.isBlocked(comment.user)) %}
     {% if comment.visibility is same as 'private' and (not app.user or not app.user.isFollower(comment.user)) %}
         <div class="section section--small {{ 'comment-level--' ~ this.getLevel() }}"
@@ -9,12 +17,12 @@
             class: html_classes('section comment entry-comment subject ' ~ 'comment-level--' ~ this.getLevel(),{
                 'own': app.user and comment.isAuthor(app.user),
                 'author': comment.isAuthor(comment.entry.user),
-                'show-preview': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_PREVIEW')) is same as 'true',
+                'show-preview': SHOW_PREVIEW is same as V_TRUE and not comment.isAdult
             })}).without('id') }}
                 id="entry-comment-{{ comment.id }}"
                 data-controller="comment subject mentions"
                 data-subject-parent-value="{{ comment.parent ? comment.parent.id : '' }}"
-                data-action="{{- app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_DYNAMIC_LISTS')) is same as 'true' ? 'notifications:Notification@window->subject#notification' : '' -}}">
+                data-action="{{- DYNAMIC_LISTS is same as V_TRUE ? 'notifications:Notification@window->subject#notification' : '' -}}">
             <header>
                 {% if comment.isAdult %}<span class="badge danger">18+</span>{% endif %}
                 {{ component('user_inline', {user: comment.user, showAvatar: false}) }}
@@ -69,15 +77,11 @@
             {% endif %}
             <footer>
                 {% if (comment.visibility in ['visible', 'private'] or comment.visibility is same as 'trashed' and this.canSeeTrashed) and comment.image %}
-                    <figure>
-                        <a href="{{ uploaded_asset(comment.image.filePath) }}"
-                           class="thumb">
-                            <img class="thumb-subject {{ comment.isAdult ? 'image-adult' : '' }}"
-                                 src="{{ asset(comment.image.filePath) |imagine_filter('post_thumb') }}"
-                                 {% if comment.isAdult %}data-controller="thumb" data-action="mouseover->thumb#adult_image_hover mouseout->thumb#adult_image_hover_out"{% endif %}
-                                 alt="{{ comment.image.altText }}">
-                        </a>
-                    </figure>
+                    {{ include('components/_figure_image.html.twig', {
+                        image: comment.image,
+                        isAdult: comment.isAdult,
+                        thumbFilter: 'post_thumb'
+                    }) }}
                 {% endif %}
                 {% if comment.visibility in ['visible', 'private'] %}
                     <menu>
@@ -89,75 +93,7 @@
                         <li>
                             {{ component('boost', {subject: comment}) }}
                         </li>
-                        <li class="dropdown">
-                            <button class="stretched-link" data-subject-target="more">{{ 'more'|trans }}</button>
-                            <ul class="dropdown__menu" data-controller="clipboard">
-                                <li>
-                                    <a href="{{ path('entry_comment_report', {id: comment.id}) }}"
-                                       class="{{ html_classes({'active': is_route_name('entry_comment_report')}) }}"
-                                       data-action="subject#getForm">
-                                        {{ 'report'|trans }}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ entry_comment_voters_url(comment, 'up') }}"
-                                       class="{{ html_classes({'active': is_route_name('entry_comment_favourites') or is_route_name('entry_comment_voters')}) }}">
-                                        {{ 'activity'|trans }}
-                                    </a>
-                                </li>
-                                <li class="dropdown__separator"></li>
-                                <li>
-                                    <a target="_blank"
-                                       href="{{ comment.apId ?? path('ap_entry_comment', {magazine_name: comment.magazine.name, entry_id: comment.entry.id, comment_id: comment.id}) }}">
-                                        {{ 'open_url_to_fediverse'|trans }}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a data-action="clipboard#copy"
-                                       href="{{ comment.apId ?? path('ap_entry_comment', {magazine_name: comment.magazine.name, entry_id: comment.entry.id, comment_id: comment.id}) }}">
-                                        {{ 'copy_url_to_fediverse'|trans }}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a data-action="clipboard#copy"
-                                       href="{{ entry_url(comment.entry) }}#{{ get_url_fragment(comment) }}">
-                                        {{ 'copy_url'|trans }}
-                                    </a>
-                                </li>
-                                {% if is_granted('edit', comment) or (app.user and comment.isAuthor(app.user)) or is_granted('moderate', comment) %}
-                                    <li class="dropdown__separator"></li>
-                                {% endif %}
-                                {% if is_granted('edit', comment) %}
-                                    <li>
-                                        <a href="{{ entry_comment_edit_url(comment) }}"
-                                           class="{{ html_classes({'active': is_route_name('entry_comment_edit')}) }}"
-                                           data-action="subject#getForm">
-                                            {{ 'edit'|trans }}
-                                        </a>
-                                    </li>
-                                {% endif %}
-                                {% if app.user and comment.isAuthor(app.user) %}
-                                    <li>
-                                        <form method="post"
-                                              action="{{ entry_comment_delete_url(comment) }}"
-                                              data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
-                                            <input type="hidden" name="token"
-                                                   value="{{ csrf_token('entry_comment_delete') }}">
-                                            <button type="submit">{{ 'delete'|trans }}</button>
-                                        </form>
-                                    </li>
-                                {% endif %}
-                                {% if is_granted('moderate', comment) %}
-                                    <li>
-                                        <a href="{{ entry_comment_moderate_url(comment) }}"
-                                           class="{{ html_classes({'active': is_route_name('entry_comment_moderate')}) }}"
-                                           data-action="subject#showModPanel">
-                                            {{ 'moderate'|trans }}
-                                        </a>
-                                    </li>
-                                {% endif %}
-                            </ul>
-                        </li>
+                        {% include 'entry/comment/_menu.html.twig' %}
                         <li data-subject-target="loader" style="display:none">
                             <div class="loader" role="status">
                                 <span class="visually-hidden">Loading...</span>
@@ -199,7 +135,7 @@
             comment: comment,
             level: level,
             showNested: true,
-            view: app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::ENTRY_COMMENTS_VIEW'), 'tree')
+            view: VIEW_STYLE
         }) }}
     {% endif %}
 {% endif %}
