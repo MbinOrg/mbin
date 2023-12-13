@@ -112,14 +112,20 @@ class ImageRepository extends ServiceEntityRepository
 
     public function blurhash(string $filePath): ?string
     {
+        $maxWidth = 20;
+
+        $componentsX = 4;
+        $componentsY = 3;
+
         try {
             $image = imagecreatefromstring(file_get_contents($filePath));
             $width = imagesx($image);
             $height = imagesy($image);
 
-            $max_width = 20;
-            if ($width > $max_width) {
-                $image = imagescale($image, $max_width);
+            if ($width > $maxWidth) {
+                // resizing image with ratio exceeds max width would yield image with height < 1 and fail
+                $ratio = $width / $height;
+                $image = imagescale($image, $maxWidth, $componentsY * $ratio < $maxWidth ? -1 : $componentsY);
                 if (!$image) {
                     throw new \Exception('Could not scale image');
                 }
@@ -140,10 +146,7 @@ class ImageRepository extends ServiceEntityRepository
                 $pixels[] = $row;
             }
 
-            $components_x = 4;
-            $components_y = 3;
-
-            return Blurhash::encode($pixels, $components_x, $components_y);
+            return Blurhash::encode($pixels, $componentsX, $componentsY);
         } catch (\Exception $e) {
             $this->logger->info('Failed to calculate blurhash: '.$e->getMessage());
 
