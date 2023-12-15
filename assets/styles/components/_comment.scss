@@ -141,7 +141,7 @@ $comment-margin-sm: .3rem;
       z-index: 4;
 
       & > a.active,
-      & > li button.active, {
+      & > li button.active {
         text-decoration: underline;
       }
 
@@ -165,12 +165,8 @@ $comment-margin-sm: .3rem;
     }
 
     figure {
-      margin: 0;
-    }
-
-    figure img {
+      display: block;
       margin: .5rem 0;
-      max-width: 100%;
     }
   }
 
@@ -192,6 +188,13 @@ $comment-margin-sm: .3rem;
   blockquote {
     margin: 0;
   }
+}
+
+.comments-view-style--tree,
+.comments-view-style--classic {
+    .comment-level--1:not(:first-child) {
+        margin-top: 0.5rem;
+    }
 }
 
 .comments-tree {

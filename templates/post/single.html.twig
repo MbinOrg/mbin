@@ -39,19 +39,19 @@
         {% include 'layout/_flash.html.twig' %}
 
         {% if user is defined and user and user.visibility is same as 'visible' and (user_settings.comment_reply_position == constant('App\\Controller\\User\\ThemeSettingsController::TOP')) %}
-        <section id="comment-add" class="section">
-            {% include 'post/comment/_form_comment.html.twig' %}
-        </section>
+            <div id="comment-add" class="section">
+                {% include 'post/comment/_form_comment.html.twig' %}
+            </div>
         {% endif %}
 
-        <section id="comments">
+        <div id="comments">
             {% include 'post/comment/_list.html.twig' %}
-        </section>
+        </div>
 
         {% if user is defined and user and user.visibility is same as 'visible' and (user_settings.comment_reply_position == constant('App\\Controller\\User\\ThemeSettingsController::BOTTOM')) %}
-        <section id="comment-add" class="section">
-            {% include 'post/comment/_form_comment.html.twig' %}
-        </section>
+            <div id="comment-add" class="section">
+                {% include 'post/comment/_form_comment.html.twig' %}
+            </div>
         {% endif %}
 
         {% include 'post/_options_activity.html.twig' %}

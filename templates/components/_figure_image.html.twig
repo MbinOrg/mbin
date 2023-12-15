@@ -1,0 +1,37 @@
+<figure>
+    <div class="figure-container">
+        <div class="figure-thumb">
+            <a href="{{ uploaded_asset(image.filePath) }}" class="thumb">
+                <img src="{{ asset(image.filePath)|imagine_filter(thumbFilter) }}"
+                     alt="{{ image.altText }}">
+            </a>
+        </div>
+        {% if isAdult %}
+            {% with {sensitiveId: 'sensitive-check-'~image.id} %}
+            <input id="{{ sensitiveId }}"
+                   type="checkbox"
+                   class="sensitive-state"
+                   aria-label="{{ 'sensitive_toggle'|trans }}">
+            <label for="{{ sensitiveId }}"
+                   class="sensitive-button sensitive-button-show sensitive-checked--hide"
+                   title="{{ 'sensitive_show'|trans }}">
+                <div class="figure-blur" aria-hidden="true">
+                    {{ component('blurhash_image', {blurhash: image.blurhash, width: 32, height: 32}) }}
+                </div>
+                <div class="sensitive-button-label">
+                    {{ 'sensitive_warning'|trans }} <br>
+                    {{ 'sensitive_show'|trans }}
+                </div>
+            </label>
+            <label for="{{ sensitiveId }}"
+                   class="sensitive-button sensitive-button-hide sensitive-checked--show"
+                   title="{{ 'sensitive_hide'|trans }}"
+                   aria-label="{{ 'sensitive_hide'|trans }}">
+                <div class="sensitive-button-label" >
+                    <i class="fa-solid fa-eye-slash"></i>
+                </div>
+            </label>
+            {% endwith %}
+        {% endif %}
+    </div>
+</figure>
