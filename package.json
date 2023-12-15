@@ -14,7 +14,7 @@
         "stimulus-textarea-autogrow": "^4.1.0",
         "stimulus-use": "^0.52.1",
         "timeago.js": "^4.0.2",
-        "chart.js": "^3.8.2",
+        "chart.js": "^3.8.0 <3.9",
         "core-js": "^3.34.0",
         "file-loader": "^6.2.0",
         "regenerator-runtime": "^0.14.0",
