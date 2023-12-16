@@ -2,8 +2,15 @@
 {% with {
     sensitive_id: 'sensitive-check-%s-%s'|format(entry.id, entry.image.id),
     is_single: is_route_name('entry_single'),
-    route: is_single ? single_route : entry_url(entry)
 } %}
+{% if type is same as 'image' %}
+    {% set single_route = uploaded_asset(entry.image.filePath) %}
+    {% set lightbox = true %}
+{% elseif type is same as 'link' %}
+    {% set single_route = entry.url %}
+    {% set set_rel = true %}
+{% endif %}
+{% set route = is_single ? single_route : entry_url(entry) %}
 <figure>
     <div class="image-filler" aria-hidden="true">
         {% if entry.image.blurhash %}
@@ -17,8 +24,10 @@
                aria-label="{{ 'sensitive_toggle'|trans }}">
     {% endif %}
     <a href="{{ route }}"
-       class="{{ html_classes('sensitive-checked--show', {'thumb': is_single and lightbox|default(false)}) }}"
-       rel="{{ setRel ? get_rel(route) : '' }}"
+       class="{{ html_classes('sensitive-checked--show', {
+            'thumb': is_single and lightbox|default(false)
+       }) }}"
+       rel="{{ set_rel ? get_rel(route) : '' }}"
     >
         <img class="thumb-subject"
              src="{{ asset(entry.image.filePath)|imagine_filter('entry_thumb') }}"
