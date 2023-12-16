@@ -2,17 +2,17 @@
     <div class="figure-container">
         <div class="figure-thumb">
             <a href="{{ uploaded_asset(image.filePath) }}" class="thumb">
-                <img src="{{ asset(image.filePath)|imagine_filter(thumbFilter) }}"
+                <img src="{{ asset(image.filePath)|imagine_filter(thumb_filter) }}"
                      alt="{{ image.altText }}">
             </a>
         </div>
-        {% if isAdult %}
-            {% with {sensitiveId: 'sensitive-check-'~image.id} %}
-            <input id="{{ sensitiveId }}"
+        {% if is_adult %}
+            {% with {sensitive_id: 'sensitive-check-%s-%s'|format(parent_id, image.id) } %}
+            <input id="{{ sensitive_id }}"
                    type="checkbox"
                    class="sensitive-state"
                    aria-label="{{ 'sensitive_toggle'|trans }}">
-            <label for="{{ sensitiveId }}"
+            <label for="{{ sensitive_id }}"
                    class="sensitive-button sensitive-button-show sensitive-checked--hide"
                    title="{{ 'sensitive_show'|trans }}">
                 <div class="figure-blur" aria-hidden="true">
@@ -23,7 +23,7 @@
                     {{ 'sensitive_show'|trans }}
                 </div>
             </label>
-            <label for="{{ sensitiveId }}"
+            <label for="{{ sensitive_id }}"
                    class="sensitive-button sensitive-button-hide sensitive-checked--show"
                    title="{{ 'sensitive_hide'|trans }}"
                    aria-label="{{ 'sensitive_hide'|trans }}">

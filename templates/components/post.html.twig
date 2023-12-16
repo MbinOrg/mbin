@@ -58,8 +58,9 @@
                 {% if post.image %}
                     {{ include('components/_figure_image.html.twig', {
                         image: post.image,
-                        isAdult: post.isAdult,
-                        thumbFilter: 'post_thumb'
+                        parent_id: post.id,
+                        is_adult: post.isAdult,
+                        thumb_filter: 'post_thumb'
                     }) }}
                 {% endif %}
                 {% if post.visibility in ['visible', 'private'] %}

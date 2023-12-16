@@ -1,8 +1,8 @@
 {# this fragment is only meant to be used in entry component #}
 {% with {
-    sensitiveId: 'sensitive-check-'~entry.image.id,
-    isSingle: is_route_name('entry_single'),
-    route: isSingle ? singleRoute : entry_url(entry)
+    sensitive_id: 'sensitive-check-%s-%s'|format(entry.id, entry.image.id),
+    is_single: is_route_name('entry_single'),
+    route: is_single ? single_route : entry_url(entry)
 } %}
 <figure>
     <div class="image-filler" aria-hidden="true">
@@ -11,13 +11,13 @@
         {% endif %}
     </div>
     {% if entry.isAdult %}
-        <input id="{{ sensitiveId }}"
+        <input id="{{ sensitive_id }}"
                type="checkbox"
                class="sensitive-state"
                aria-label="{{ 'sensitive_toggle'|trans }}">
     {% endif %}
     <a href="{{ route }}"
-       class="{{ html_classes('sensitive-checked--show', {'thumb': isSingle and lightbox|default(false)}) }}"
+       class="{{ html_classes('sensitive-checked--show', {'thumb': is_single and lightbox|default(false)}) }}"
        rel="{{ setRel ? get_rel(route) : '' }}"
     >
         <img class="thumb-subject"
@@ -25,7 +25,7 @@
              alt="{{ entry.image.altText }}">
     </a>
     {% if entry.isAdult %}
-        <label for="{{ sensitiveId }}"
+        <label for="{{ sensitive_id }}"
                class="sensitive-button sensitive-button-show sensitive-checked--hide"
                title="{{ 'sensitive_show'|trans }}"
                aria-label="{{ 'sensitive_show'|trans }}">
@@ -33,7 +33,7 @@
                 <i class="fa-solid fa-eye"></i>
             </div>
         </label>
-        <label for="{{ sensitiveId }}"
+        <label for="{{ sensitive_id }}"
                class="sensitive-button sensitive-button-hide sensitive-checked--show"
                title="{{ 'sensitive_hide'|trans }}"
                aria-label="{{ 'sensitive_hide'|trans }}">
