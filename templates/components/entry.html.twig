@@ -88,17 +88,9 @@
             {% if SHOW_THUMBNAILS is same as V_TRUE %}
                 {% if entry.image %}
                     {% if entry.type is same as 'link' or entry.type is same as 'video' %}
-                        {{ include('components/_figure_entry.html.twig', {
-                            entry: entry,
-                            singleRoute: entry.url,
-                            setRel: true
-                        }) }}
+                        {{ include('components/_figure_entry.html.twig', {entry: entry, type: 'link'}) }}
                     {% elseif entry.type is same as 'image' or entry.type is same as 'article' %}
-                        {{ include('components/_figure_entry.html.twig', {
-                            entry: entry,
-                            singleRoute: uploaded_asset(entry.image.filePath),
-                            lightbox: true
-                        }) }}
+                        {{ include('components/_figure_entry.html.twig', {entry: entry, type: 'image'}) }}
                     {% endif %}
                 {% else %}
                     <div class="no-image-placeholder">

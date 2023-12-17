@@ -80,8 +80,9 @@
                 {% if (comment.visibility in ['visible', 'private'] or comment.visibility is same as 'trashed' and this.canSeeTrashed) and comment.image %}
                     {{ include('components/_figure_image.html.twig', {
                         image: comment.image,
-                        isAdult: comment.isAdult,
-                        thumbFilter: 'post_thumb'
+                        parent_id: comment.id,
+                        is_adult: comment.isAdult,
+                        thumb_filter: 'post_thumb'
                     }) }}
                 {% endif %}
                 {% if comment.visibility in ['visible', 'private'] %}
