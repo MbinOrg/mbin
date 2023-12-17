@@ -1,7 +1,7 @@
 // loaded under .theme--light
 // or .theme--default with prefers-color-scheme: light
 @mixin theme-light {
-  --kbin-body-font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --kbin-body-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"
   --kbin-body-font-size: 1rem;
   --kbin-body-font-weight: 400;
   --kbin-body-line-height: 1.5;
