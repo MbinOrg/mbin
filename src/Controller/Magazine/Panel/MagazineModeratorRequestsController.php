@@ -36,7 +36,7 @@ class MagazineModeratorRequestsController extends AbstractController
     {
         $this->validateCsrf('magazine_panel_moderator_request_accept', $request->request->get('token'));
 
-        $this->manager->acceptModeratorRequest($magazine, $user);
+        $this->manager->acceptModeratorRequest($magazine, $user, $this->getUserOrThrow());
 
         return $this->redirectToRefererOrHome($request);
     }

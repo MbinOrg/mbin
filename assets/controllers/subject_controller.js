@@ -214,16 +214,17 @@ export default class extends Controller {
     async showModPanel(event) {
         event.preventDefault();
 
-        let container = this.element.nextElementSibling && this.element.nextElementSibling.classList.contains('js-container') ? this.element.nextElementSibling : null;
-        if (null === container) {
-            container = document.createElement('div');
-            container.classList.add('js-container');
-            this.element.insertAdjacentHTML('afterend', container.outerHTML);
-        } else {
-            if (container.querySelector('.moderate-panel')) {
-                return;
-            }
+        let container = this.element.querySelector('.moderate-inline')
+        if (null !== container) {
+            // moderate panel was already added to this post, toggle
+            // hidden on it to show/hide it and exit
+            container.classList.toggle('hidden');
+            return;
         }
+
+        container = document.createElement('div');
+        container.classList.add('moderate-inline');
+        this.element.insertAdjacentHTML('beforeend', container.outerHTML);
 
         try {
             this.loadingValue = true;
@@ -233,7 +234,7 @@ export default class extends Controller {
             response = await ok(response);
             response = await response.json();
 
-            this.element.nextElementSibling.insertAdjacentHTML('afterbegin', response.html);
+            this.element.querySelector('.moderate-inline').insertAdjacentHTML('afterbegin', response.html);
         } catch (e) {
             window.location.href = event.target.href;
         } finally {

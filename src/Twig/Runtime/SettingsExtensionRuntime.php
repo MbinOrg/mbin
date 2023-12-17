@@ -54,6 +54,12 @@ class SettingsExtensionRuntime implements RuntimeExtensionInterface
         return $this->settings->get('KBIN_DEFAULT_LANG');
     }
 
+    #[Pure]
+    public function mbinDefaultTheme(): string
+    {
+        return $this->settings->get('MBIN_DEFAULT_THEME');
+    }
+
     public function kbinHeaderLogo(): bool
     {
         return $this->settings->get('KBIN_HEADER_LOGO');

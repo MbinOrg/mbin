@@ -1,0 +1,24 @@
+.announcement {
+  padding: 0.75rem;
+  position: relative;
+
+  p {
+    margin: 0;
+    text-align: center;
+  }
+
+  a{
+    font-weight: bold;
+  }
+
+  &__info {
+    background: var(--kbin-alert-info-bg);
+    border: var(--kbin-alert-info-border);
+    color: var(--kbin-alert-info-text-color);
+
+    a {
+      color: var(--kbin-alert-info-link-color);    
+    }
+  }
+
+}

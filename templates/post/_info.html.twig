@@ -16,7 +16,6 @@
     {{ component('user_actions', {user: post.user}) }}
     <ul class="info">
         <li>{{ 'added'|trans }}: {{ component('date', {date: post.createdAt}) }}</li>
-        <li>{{ 'online'|trans }}: <span>-</span></li>
         <li>{{ 'up_votes'|trans }}:
             <span>{{ post.countUpvotes }}</span>
         </li>

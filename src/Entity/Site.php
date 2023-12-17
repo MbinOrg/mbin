@@ -21,6 +21,8 @@ class Site
     #[Column(type: 'text', nullable: true)]
     public ?string $about = null;
     #[Column(type: 'text', nullable: true)]
+    public ?string $announcement = null;
+    #[Column(type: 'text', nullable: true)]
     public ?string $contact = null;
     #[Column(type: 'text', nullable: true)]
     public ?string $privateKey = null;

@@ -70,6 +70,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         self::HOMEPAGE_FAV,
     ];
 
+    public const USER_TYPE_PERSON = 'Person';
+    public const USER_TYPE_SERVICE = 'Service';
+    public const USER_TYPE_ORG = 'Organization';
+    public const USER_TYPE_APP = 'Application';
+    public const USER_TYPES = [
+        self::USER_TYPE_PERSON,
+        self::USER_TYPE_SERVICE,
+        self::USER_TYPE_ORG,
+        self::USER_TYPE_APP,
+    ];
+
     #[ManyToOne(targetEntity: Image::class, cascade: ['persist'])]
     #[JoinColumn(nullable: true)]
     public ?Image $avatar = null;
@@ -84,7 +95,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public array $roles = [];
     #[Column(type: 'integer', nullable: false)]
     public int $followersCount = 0;
-    #[Column(type: 'string', nullable: false, options: ['default' => User::HOMEPAGE_ALL])]
+    #[Column(type: 'string', nullable: false, options: ['default' => self::HOMEPAGE_ALL])]
     public string $homepage = self::HOMEPAGE_ALL;
     #[Column(type: 'text', nullable: true)]
     public ?string $about = null;
@@ -218,9 +229,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     #[OneToMany(mappedBy: 'user', targetEntity: Notification::class, cascade: ['persist'], fetch: 'EXTRA_LAZY')]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $notifications;
-    #[OneToMany(mappedBy: 'user', targetEntity: Award::class, cascade: ['persist'], fetch: 'EXTRA_LAZY')]
-    #[OrderBy(['createdAt' => 'DESC'])]
-    public Collection $awards;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
@@ -233,7 +241,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     private array $totpBackupCodes = [];
     #[OneToMany(mappedBy: 'user', targetEntity: OAuth2UserConsent::class, orphanRemoval: true)]
     private Collection $oAuth2UserConsents;
-    #[Column(type: 'string', nullable: false)]
+    #[Column(type: 'string', nullable: false, options: ['default' => self::USER_TYPE_PERSON])]
     public string $type;
 
     public function __construct(
@@ -273,7 +281,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         $this->favourites = new ArrayCollection();
         $this->violations = new ArrayCollection();
         $this->notifications = new ArrayCollection();
-        $this->awards = new ArrayCollection();
         $this->lastActive = new \DateTime();
         $this->createdAtTraitConstruct();
         $this->oAuth2UserConsents = new ArrayCollection();
@@ -432,7 +439,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
             }
         }
 
-        $this->updateFollowCounts($following);
+        $following->updateFollowCounts();
 
         return $this;
     }
@@ -462,9 +469,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         return $this->follows->matching($criteria)->count() > 0;
     }
 
-    public function updateFollowCounts(User $following)
+    public function updateFollowCounts(): void
     {
-        $following->followersCount = $following->followers->count();
+        if (null !== $this->apFollowersCount) {
+            $criteria = Criteria::create();
+            if ($this->apFetchedAt) {
+                $criteria->where(Criteria::expr()->gt('createdAt', \DateTimeImmutable::createFromMutable($this->apFetchedAt)));
+            }
+
+            $newFollowers = $this->followers->matching($criteria)->count();
+            $this->followersCount = $this->apFollowersCount + $newFollowers;
+        } else {
+            $this->followersCount = $this->followers->count();
+        }
     }
 
     public function unfollow(User $following): void
@@ -486,7 +503,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
             }
         }
 
-        $this->updateFollowCounts($followingUser);
+        $followingUser->updateFollowCounts();
     }
 
     public function toggleTheme(): self

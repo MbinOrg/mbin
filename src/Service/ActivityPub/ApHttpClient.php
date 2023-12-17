@@ -12,6 +12,7 @@ use App\Factory\ActivityPub\PersonFactory;
 use App\Repository\MagazineRepository;
 use App\Repository\SiteRepository;
 use App\Repository\UserRepository;
+use App\Service\ProjectInfoService;
 use JetBrains\PhpStorm\ArrayShape;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\CurlHttpClient;
@@ -42,7 +43,8 @@ class ApHttpClient
         private readonly CacheInterface $cache,
         private readonly UserRepository $userRepository,
         private readonly MagazineRepository $magazineRepository,
-        private readonly SiteRepository $siteRepository
+        private readonly SiteRepository $siteRepository,
+        private readonly ProjectInfoService $projectInfo
     ) {
     }
 
@@ -61,7 +63,7 @@ class ApHttpClient
             $statusCode = $r->getStatusCode();
             // Accepted status code are 2xx or 410 (used Tombstone types)
             if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
-                throw new InvalidApPostException("Invalid status code while getting: {$url}, ".$r->getContent(false));
+                throw new InvalidApPostException("Invalid status code while getting: {$url} : $statusCode, ".$r->getContent(false));
             }
 
             $item->expiresAt(new \DateTime('+1 hour'));
@@ -90,7 +92,7 @@ class ApHttpClient
             'wf_'.hash('sha256', $url),
             function (ItemInterface $item) use ($url) {
                 $this->logger->debug("ApHttpClient:getWebfingerObject:url: {$url}");
-
+                $r = null;
                 try {
                     $client = new CurlHttpClient();
                     $r = $client->request('GET', $url, [
@@ -99,7 +101,11 @@ class ApHttpClient
                         'headers' => $this->getInstanceHeaders($url, null, 'get', ApRequestType::WebFinger),
                     ]);
                 } catch (\Exception $e) {
-                    throw new InvalidApPostException("WebFinger Get fail: {$url}, ".$r->getContent(false));
+                    $msg = "WebFinger Get fail: {$url}, ex: ".\get_class($e).": {$e->getMessage()}";
+                    if (null !== $r) {
+                        $msg .= ', '.$r->getContent(false);
+                    }
+                    throw new InvalidApPostException($msg);
                 }
 
                 $item->expiresAt(new \DateTime('+1 hour'));
@@ -122,7 +128,7 @@ class ApHttpClient
             'ap_'.hash('sha256', $apProfileId),
             function (ItemInterface $item) use ($apProfileId) {
                 $this->logger->debug("ApHttpClient:getActorObject:url: {$apProfileId}");
-
+                $response = null;
                 try {
                     // Set-up request
                     $client = new CurlHttpClient();
@@ -153,10 +159,47 @@ class ApHttpClient
                         $this->magazineRepository->save($magazine, true);
                     }
 
-                    throw new InvalidApPostException("AP Get fail: {$apProfileId}, ".$response->getContent(false));
+                    $msg = "AP Get fail: {$apProfileId}, ex: ".\get_class($e).": {$e->getMessage()}";
+                    if (null !== $response) {
+                        $msg .= ', '.$response->getContent(false);
+                    }
+                    throw new InvalidApPostException($msg);
                 }
 
                 $item->expiresAt(new \DateTime('+1 hour'));
+
+                // When everything goes OK, return the data. Pass false so it doesn't throw on 410 errors
+                return $response->getContent(false);
+            }
+        );
+
+        return $resp ? json_decode($resp, true) : null;
+    }
+
+    public function getCollectionObject(string $apAddress)
+    {
+        $resp = $this->cache->get(
+            'ap_collection'.hash('sha256', $apAddress),
+            function (ItemInterface $item) use ($apAddress) {
+                $this->logger->debug("ApHttpClient:getCollectionObject:url: {$apAddress}");
+                $response = null;
+                try {
+                    // Set-up request
+                    $client = new CurlHttpClient();
+                    $response = $client->request('GET', $apAddress, [
+                        'max_duration' => self::TIMEOUT,
+                        'timeout' => self::TIMEOUT,
+                        'headers' => $this->getInstanceHeaders($apAddress, null, 'get', ApRequestType::ActivityPub),
+                    ]);
+                } catch (\Exception $e) {
+                    $msg = "AP Get fail: {$apAddress}, ex: ".\get_class($e).": {$e->getMessage()}";
+                    if (null !== $response) {
+                        $msg .= ', '.$response->getContent(false);
+                    }
+                    throw new InvalidApPostException($msg);
+                }
+
+                $item->expiresAt(new \DateTime('+24 hour'));
 
                 // When everything goes OK, return the data
                 return $response->getContent();
@@ -220,7 +263,7 @@ class ApHttpClient
         $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
         unset($headers['(request-target)']);
         $headers['Signature'] = $signatureHeader;
-        $headers['User-Agent'] = 'MbinBot/0.1 (+https://'.$this->kbinDomain.'/bot)';
+        $headers['User-Agent'] = $this->projectInfo->getUserAgent().'/'.$this->projectInfo->getVersion().' (+https://'.$this->kbinDomain.'/bot)';
         $headers['Accept'] = 'application/activity+json, application/ld+json';
         $headers['Content-Type'] = 'application/activity+json';
 
@@ -240,7 +283,7 @@ class ApHttpClient
         $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
         unset($headers['(request-target)']);
         $headers['Signature'] = $signatureHeader;
-        $headers['User-Agent'] = 'MbinBot/0.1 (+https://'.$this->kbinDomain.'/bot)';
+        $headers['User-Agent'] = $this->projectInfo->getUserAgent().'/'.$this->projectInfo->getVersion().' (+https://'.$this->kbinDomain.'/bot)';
         if (ApRequestType::WebFinger === $requestType) {
             $headers['Accept'] = 'application/jrd+json';
             $headers['Content-Type'] = 'application/jrd+json';

@@ -38,7 +38,7 @@ class PostCommentNoteFactory
             $note['@context'] = [
                 ActivityPubActivityInterface::CONTEXT_URL,
                 ActivityPubActivityInterface::SECURITY_URL,
-                PostNoteFactory::getContext(),
+                ActivityPubActivityInterface::ADDITIONAL_CONTEXTS,
             ];
         }
 
@@ -71,6 +71,10 @@ class PostCommentNoteFactory
                 [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub],
             ),
             'mediaType' => 'text/html',
+            'source' => $comment->body ? [
+                'content' => $comment->body,
+                'mediaType' => 'text/markdown',
+            ] : null,
             'url' => $this->getActivityPubId($comment),
             'tag' => array_merge(
                 $this->tagsWrapper->build($tags),

@@ -34,8 +34,6 @@ remember_me: Memoru min
 unfollow: Malsekvi
 terms: Servadokondiĉoj
 privacy_policy: Privateca politiko
-awards: Premioj
-ranking: Rangolisto
 add_new_article: Aldoni novan fadenon
 change_theme: Ŝanĝi etoson
 useful: Utila
@@ -217,12 +215,8 @@ restored_comment_by: restaŭris komenton de
 restored_post_by: restaŭris afiŝon de
 read_all: Legi ĉion
 show_all: Montri ĉion
-ranking_disabled: Rango estas malŝaltita
 set_magazines_bar: Revuoj breto
 set_magazines_bar_desc: aldonu la revuonomojn post la komo
-gold: Oro
-silver: Arĝento
-bronze: Bronzo
 flash_thread_new_success: La fadeno estis kreita sukcese kaj nun videblas por aliaj
   uzantoj.
 flash_thread_edit_success: La fadeno estas sukcese redaktita.
@@ -242,7 +236,6 @@ removed_thread_by: forigis fadenon de
 too_many_requests: Limo superita, bonvolu provi denove poste.
 set_magazines_bar_empty_desc: se la kampo estas malplena, aktivaj revuoj estas montrataj
   sur la breto.
-bronze_autobiographer: Aŭtobiografiisto
 edit_link: Redakti ligilon
 edit_comment: Konservi ŝanĝojn
 profile: Profilo
@@ -265,16 +258,6 @@ try_again: Provu denove
 blocked: Blokita
 he_banned: forbari
 he_unbanned: malforbari
-bronze_commentator_desc: 10 bonaj komentoj
-bronze_redactor_desc: 10 bonaj fadenoj
-bronze_link: Bona ligilo
-bronze_post: Bona afiŝo
-bronze_magazine_desc: 20 sekvantoj kreis revuon
-silver_personality_desc: 50 sekvantoj
-silver_scout_desc: 10 bonegaj ligiloj
-gold_scout_desc: 10 elstaraj ligiloj
-gold_link: Elstara ligilo
-gold_photo: Elstara foto
 banned: Forbaris vin
 deleted: Forigita de la aŭtoro
 mentioned_you: Menciis vin
@@ -293,26 +276,6 @@ Your account is not active: Via konto ne estas aktiva.
 related_entries: Rilataj fadenoj
 related_magazines: Rilataj revuoj
 banned_instances: Forbaritaj nodoj
-bronze_personality_desc: 20 sekvantoj
-bronze_scout_desc: 10 bonaj ligiloj
-bronze_poster_desc: 10 bonaj afiŝoj
-bronze_photo: Bona foto
-bronze_comment: Bona komento
-bronze_popular_entry: Populara fadeno
-silver_commentator_desc: 10 bonegaj komentoj
-silver_redactor_desc: 10 bonegaj fadenoj
-silver_poster_desc: 10 bonegaj afiŝoj
-silver_link: Bonega ligilo
-silver_photo: Bonega foto
-silver_comment: Bonega komento
-silver_post: Bonega afiŝo
-silver_magazine_desc: 50 sekvantoj kreis revuon
-gold_personality_desc: 100 sekvantoj
-gold_redactor_desc: 10 elstaraj fadenoj
-gold_poster_desc: 10 elstaraj afiŝoj
-gold_comment: Elstara komento
-gold_post: Elstara afiŝo
-gold_magazine_desc: 100 sekvantoj kreis revuon
 wrote_message: Skribis mesaĝon
 instances: Nodoj
 upload_file: Alŝuti dosieron
@@ -331,69 +294,8 @@ delete_account: Forigi konton
 ban_account: Forbari konton
 unban_account: Malforbari konton
 moderated: Moderigita
-bronze_personality: Bronza personeco
-bronze_commentator: Bronza komentisto
-bronze_autobiographer_desc: Por plenigi ĉiujn profilokampojn
 solarized_light: Hele sunlumigita
 solarized_dark: Malhele Sunlumigita
-bronze_ranking_desc: 3-a loko en la rangolisto
-bronze_popular_entry_desc: Fadeno 1000-foje vizitita
-bronze_magazine: Fama revuo
-silver_personality: Arĝenta karaktero
-silver_commentator: Arĝenta komentanto
-silver_scout: Arĝenta skolto
-silver_redactor: Arĝenta redaktoro
-silver_poster: Arĝenta afiŝanto
-silver_link_desc: La afiŝo estis 10-foje diskonigita
-silver_article: Arĝenta fadeno
-silver_article_desc: La fadeno estis 10-foje diskonigita
-silver_photo_desc: La foto estis 10-foje diskonigita
-silver_post_desc: La afiŝo estis 10-foje diskonigita
-silver_comment_desc: La komento estis 10-foje diskonigita
-bronze_scout: Bronza skolto
-bronze_redactor: Bronza redaktoro
-bronze_article: Bronza fadeno
-bronze_article_desc: La fadeno estis akcelita 5 fojojn
-bronze_photo_desc: La foto estis akcelita 5 fojojn
-bronze_comment_desc: La komento estis akcelita 5 fojojn
-silver_ranking: 2-a
-silver_ranking_desc: 2-a loko en la rangolisto
-bronze_poster: Bronza afiŝanto
-bronze_link_desc: La afiŝo estis akcelita 5 fojojn
-bronze_post_desc: La afiŝo estis akcelita 5 fojojn
-bronze_ranking: Numero 3
-gold_ranking: 1-a
-gold_ranking_desc: 1-a loko en la rangolisto
-silver_popular_entry: Populara fadeno
-silver_popular_entry_desc: Fadeno 5000-foje vizitita
-silver_magazine: Populara revuo
-silver_entry_week: Fadeno de la semajno
-silver_comment_week: Komento de la semajno
-silver_comment_week_desc: La plej bona komento de la semajno
-silver_post_week: Afiŝo de la semajno
-silver_post_week_desc: La plej bona afiŝo de la semajno
-gold_personality: Ora karaktero
-gold_commentator: Ora komentanto
-gold_scout: Ora skolto
-gold_redactor: Ora redaktoro
-gold_poster: Ora afiŝanto
-gold_link_desc: La afiŝo estis 15-foje diskonigita
-gold_article: Ora fadeno
-gold_article_desc: La fadeno estis 15-foje diskonigita
-gold_photo_desc: La foto estis 15-foje diskonigita
-gold_comment_desc: La komento estis 15-foje diskonigita
-gold_popular_entry: Populara fadeno
-gold_magazine: Populara revuo
-gold_entry_month: Fadeno de la monato
-gold_comment_month: Komento de la monato
-gold_comment_month_desc: La plej bona komento de la monato
-gold_post_month: Afiŝo de la monato
-gold_post_month_desc: La plej bona afiŝo de la monato
-silver_entry_week_desc: La plej bona fadeno de la semajno
-gold_commentator_desc: 10 elstaraj komentoj
-gold_post_desc: La afiŝo estis 15-foje diskonigita
-gold_popular_entry_desc: Fadeno 10000-foje vizitita
-gold_entry_month_desc: La plej bona fadeno de la monato
 mod_log_alert: AVERTO - La kontrol-protokolo povus enhavi malagrablan aŭ afliktan
   enhavon, kiu estis forigita de moderigantoj. Bonvolu esti singarda.
 added_new_thread: Aldonis novan fadenon

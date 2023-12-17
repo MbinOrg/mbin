@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Service\ActivityPub;
 
+use App\DTO\EntryCommentDto;
 use App\DTO\EntryDto;
+use App\DTO\PostCommentDto;
+use App\DTO\PostDto;
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\User;
 use App\Factory\ImageFactory;
 use App\Repository\ApActivityRepository;
-use App\Repository\MagazineRepository;
 use App\Service\ActivityPubManager;
 use App\Service\EntryManager;
 use App\Service\SettingsManager;
@@ -21,12 +23,12 @@ class Page
     public function __construct(
         private readonly ApActivityRepository $repository,
         private readonly MarkdownConverter $markdownConverter,
-        private readonly MagazineRepository $magazineRepository,
         private readonly EntryManager $entryManager,
         private readonly ActivityPubManager $activityPubManager,
         private readonly EntityManagerInterface $entityManager,
         private readonly SettingsManager $settingsManager,
         private readonly ImageFactory $imageFactory,
+        private readonly ApObjectExtractor $objectExtractor,
     ) {
     }
 
@@ -51,12 +53,9 @@ class Page
                 $object['cc'] = [$object['cc']];
             }
 
+            $magazine = $this->activityPubManager->findOrCreateMagazineByToAndCC($object);
             $dto = new EntryDto();
-            $dto->magazine = $this->magazineRepository->findByApGroupProfileId(
-                array_merge($object['to'], $object['cc'])
-            ) ?? $this->magazineRepository->findOneByName(
-                'random'
-            );
+            $dto->magazine = $magazine;
             $dto->title = $object['name'];
             $dto->apId = $object['id'];
 
@@ -67,7 +66,7 @@ class Page
                 $dto->image = $this->imageFactory->createDto($image);
             }
 
-            $dto->body = !empty($object['content']) ? $this->markdownConverter->convert($object['content']) : null;
+            $dto->body = $this->objectExtractor->getMarkdownBody($object);
             $dto->visibility = $this->getVisibility($object, $actor);
             $this->handleUrl($dto, $object);
             $this->handleDate($dto, $object['published']);

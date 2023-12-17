@@ -11,6 +11,9 @@ oneup_flysystem:
     #    bucket: "%amazon.s3.bucket%"
     #    options:
     #      ACL: public-read
+    ## If using an s3 bucket with owner-full-control and no ACL, the following may work:
+    ##    options:
+    ##      ACL: ''
 
   filesystems:
     public_uploads_filesystem:

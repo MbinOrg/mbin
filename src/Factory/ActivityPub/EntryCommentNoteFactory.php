@@ -38,7 +38,7 @@ class EntryCommentNoteFactory
             $note['@context'] = [
                 ActivityPubActivityInterface::CONTEXT_URL,
                 ActivityPubActivityInterface::SECURITY_URL,
-                PostNoteFactory::getContext(),
+                ActivityPubActivityInterface::ADDITIONAL_CONTEXTS,
             ];
         }
 
@@ -68,6 +68,10 @@ class EntryCommentNoteFactory
             ],
             'content' => $this->markdownConverter->convertToHtml($comment->body, [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub]),
             'mediaType' => 'text/html',
+            'source' => $comment->body ? [
+                'content' => $comment->body,
+                'mediaType' => 'text/markdown',
+            ] : null,
             'url' => $this->getActivityPubId($comment),
             'tag' => array_merge(
                 $this->tagsWrapper->build($tags),

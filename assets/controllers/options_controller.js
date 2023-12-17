@@ -10,11 +10,16 @@ export default class extends Controller {
     connect() {
         const activeTabFragment = window.location.hash;
 
-        if (activeTabFragment) {
-            this.actionsTarget.querySelector(`a[href="${activeTabFragment}"]`).classList.add('active');
-
-            this.activeTabValue = activeTabFragment.substring(1);
+        if (!activeTabFragment) {
+          return;
         }
+
+        if (activeTabFragment !== '#federation' && activeTabFragment !== '#settings') {
+          return;
+        }
+
+        this.actionsTarget.querySelector(`a[href="${activeTabFragment}"]`).classList.add('active');
+        this.activeTabValue = activeTabFragment.substring(1);
     }
 
     /** @param {ActionEvent} e */
@@ -49,5 +54,10 @@ export default class extends Controller {
 
     closeMobileSidebar() {
         document.getElementById('sidebar').classList.remove('open');
+    }
+
+    appearanceReloadRequired(event) {
+        event.target.classList.add('spin');
+        window.location.reload();
     }
 }

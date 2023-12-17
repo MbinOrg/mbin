@@ -5,10 +5,15 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Image;
+use App\Event\ImagePostProcessEvent;
 use App\Service\ImageManager;
+use App\Utils\ImageOrigin;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use kornrunner\Blurhash\Blurhash;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @method Image|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,12 +24,13 @@ use kornrunner\Blurhash\Blurhash;
  */
 class ImageRepository extends ServiceEntityRepository
 {
-    private ImageManager $imageManager;
-
-    public function __construct(ManagerRegistry $registry, ImageManager $imageManager)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly ImageManager $imageManager,
+        private readonly EventDispatcherInterface $dispatcher,
+        private readonly LoggerInterface $logger,
+    ) {
         parent::__construct($registry, Image::class);
-        $this->imageManager = $imageManager;
     }
 
     /**
@@ -34,9 +40,9 @@ class ImageRepository extends ServiceEntityRepository
      *
      * @throws RuntimeException if image type can't be identified
      */
-    public function findOrCreateFromUpload($upload): ?Image
+    public function findOrCreateFromUpload(UploadedFile $upload): ?Image
     {
-        return $this->findOrCreateFromPath($upload->getPathname());
+        return $this->findOrCreateFromSource($upload->getPathname(), ImageOrigin::Uploaded);
     }
 
     /**
@@ -47,6 +53,19 @@ class ImageRepository extends ServiceEntityRepository
      * @throws RuntimeException if image type can't be identified
      */
     public function findOrCreateFromPath(string $source): ?Image
+    {
+        return $this->findOrCreateFromSource($source, ImageOrigin::External);
+    }
+
+    /**
+     * Process and store an image from source file given path.
+     *
+     * @param source file path of the image
+     * @param origin where the image comes from
+     *
+     * @throws RuntimeException if image type can't be identified
+     */
+    private function findOrCreateFromSource(string $source, ImageOrigin $origin): ?Image
     {
         $fileName = $this->imageManager->getFileName($source);
         $filePath = $this->imageManager->getFilePath($source);
@@ -66,14 +85,21 @@ class ImageRepository extends ServiceEntityRepository
         $image = new Image($fileName, $filePath, $sha256, $width, $height, $blurhash);
 
         if (!$image->width || !$image->height) {
+            // why get size again?
             [$width, $height] = @getimagesize($source);
             $image->setDimensions($width, $height);
         }
 
+        $this->dispatcher->dispatch(new ImagePostProcessEvent($source, $origin));
+
         try {
             $this->imageManager->store($source, $filePath);
         } catch (\Exception $e) {
-            // TODO: Shouldn't this be logged?
+            $this->logger->warning(
+                'findOrCreateFromSource: failed to store image file: '.$e->getMessage(),
+                ['origin' => $origin],
+            );
+
             return null;
         } finally {
             if (file_exists($source)) {
@@ -119,6 +145,8 @@ class ImageRepository extends ServiceEntityRepository
 
             return Blurhash::encode($pixels, $components_x, $components_y);
         } catch (\Exception $e) {
+            $this->logger->info('Failed to calculate blurhash: '.$e->getMessage());
+
             return null;
         }
     }

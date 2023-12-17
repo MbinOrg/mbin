@@ -14,15 +14,26 @@
 
 {% block body %}
     <h1>{{ 'messages'|trans }}</h1>
+    {% set purgedUsers = 0 %}
     {% for thread in threads %}
-        <div class="{{ html_classes('section section--small thread', {'opacity-50': not thread.countNewMessages(app.user) }) }}">
-            <div>
-                {{ (thread.messages|length - 1)|format_number }} {{ 'replies'|trans }}
-                - {{ component('user_inline', {user: thread.otherParticipants(app.user)[0]}) }} - <a
-                        href="{{ path('messages_single', {'id': thread.id}) }}">{{ thread.title }}</a>
+        {% if thread.otherParticipants(app.user)[0] is defined %}
+            <div class="{{ html_classes('section section--small thread', {'opacity-50': not thread.countNewMessages(app.user) }) }}">
+                <div>
+                    {{ (thread.messages|length - 1)|format_number }} {{ 'replies'|trans }}
+                    - {{ component('user_inline', {user: thread.otherParticipants(app.user)[0]}) }} - <a
+                            href="{{ path('messages_single', {'id': thread.id}) }}">{{ thread.title }}</a>
+                </div>
+                <span>{{ component('date', {date: thread.updatedAt}) }}</span>
             </div>
-            <span>{{ component('date', {date: thread.updatedAt}) }}</span>
-        </div>
+        {% else %}
+            {% set purgedUsers = purgedUsers + 1 %}
+        {% endif %}
+
+        {% if threads|length == purgedUsers %}
+            <aside class="section section--muted">
+                <p>{{ 'empty'|trans }}</p>
+            </aside>
+        {% endif %}
     {% endfor %}
     {% if(threads.haveToPaginate is defined and threads.haveToPaginate) %}
         {{ pagerfanta(threads, null, {'pageParameter':'[p]'}) }}

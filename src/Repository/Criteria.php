@@ -100,6 +100,28 @@ abstract class Criteria
     public ?string $domain = null;
     public ?array $languages = null;
 
+    public const THEME_MBIN = 'mbin';
+    public const THEME_KBIN = 'kbin';
+    public const THEME_AUTO = 'default';
+    public const THEME_LIGHT = 'light';
+    public const THEME_DARK = 'dark';
+    public const THEME_SOLARIZED_AUTO = 'solarized';
+    public const THEME_SOLARIZED_LIGHT = 'solarized-light';
+    public const THEME_SOLARIZED_DARK = 'solarized-dark';
+    public const THEME_TOKYO_NIGHT = 'tokyo-night';
+
+    public const THEME_OPTIONS = [
+      // 'Mbin' => SELF::THEME_MBIN, // TODO uncomment when theme is ready
+      '/kbin' => self::THEME_KBIN,
+      'default_theme_auto' => self::THEME_AUTO,
+      'light' => self::THEME_LIGHT,
+      'dark' => self::THEME_DARK,
+      'solarized_auto' => self::THEME_SOLARIZED_AUTO,
+      'solarized_light' => self::THEME_SOLARIZED_LIGHT,
+      'solarized_dark' => self::THEME_SOLARIZED_DARK,
+      'tokyo_night' => self::THEME_TOKYO_NIGHT,
+    ];
+
     public function __construct(int $page)
     {
         $this->page = $page;
@@ -164,13 +186,6 @@ abstract class Criteria
             'newest' => Criteria::SORT_NEW,
             'oldest' => Criteria::SORT_OLD,
             'commented' => Criteria::SORT_COMMENTED,
-
-            'ważne' => Criteria::SORT_TOP,
-            'gorące' => Criteria::SORT_HOT,
-            'aktywne' => Criteria::SORT_ACTIVE,
-            'najnowsze' => Criteria::SORT_NEW,
-            'najstarsze' => Criteria::SORT_OLD,
-            'komentowane' => Criteria::SORT_COMMENTED,
         ];
     }
 
@@ -194,12 +209,6 @@ abstract class Criteria
             '1y' => Criteria::TIME_YEAR,
             '∞' => Criteria::TIME_ALL,
             'all' => Criteria::TIME_ALL,
-            'wszystko' => Criteria::TIME_ALL,
-            '3g' => Criteria::TIME_3_HOURS,
-            '6g' => Criteria::TIME_6_HOURS,
-            '12g' => Criteria::TIME_12_HOURS,
-            '1t' => Criteria::TIME_WEEK,
-            '1r' => Criteria::TIME_YEAR,
         ];
 
         return $routes[$value] ?? null;
@@ -219,12 +228,6 @@ abstract class Criteria
             'photos' => Entry::ENTRY_TYPE_IMAGE,
             'image' => Entry::ENTRY_TYPE_IMAGE,
             'images' => Entry::ENTRY_TYPE_IMAGE,
-
-            'artykuł' => Entry::ENTRY_TYPE_ARTICLE,
-            'artykuły' => Entry::ENTRY_TYPE_ARTICLE,
-            'linki' => Entry::ENTRY_TYPE_LINK,
-            'obraz' => Entry::ENTRY_TYPE_IMAGE,
-            'obrazy' => Entry::ENTRY_TYPE_IMAGE,
         ];
 
         return $routes[$value] ?? null;

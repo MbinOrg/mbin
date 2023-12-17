@@ -1,3 +1,4 @@
+{%- set STATUS_PENDING = constant('App\\Entity\\Report::STATUS_PENDING') -%}
 <aside class="options options--top options-activity" id="options">
     <div class="options__title">
         <h2>{{ 'magazine_panel'|trans }}</h2>
@@ -10,7 +11,7 @@
             </a>
         </li>
         <li>
-            <a href="{{ path('magazine_panel_reports', {name: magazine.name}) }}"
+            <a href="{{ path('magazine_panel_reports', {name: magazine.name, status: STATUS_PENDING}) }}"
                class="{{ html_classes({'active': is_route_name('magazine_panel_reports')}) }}">
                 {{ 'reports'|trans }}
             </a>
@@ -64,33 +65,4 @@
             </a>
         </li>
     </menu>
-    {% if is_route_name('magazine_panel_reports') %}
-        <menu class="options__filters">
-            <li class="dropdown">
-                <button aria-label="{{ 'filter_by_time'|trans }}"
-                        title="{{ 'filter_by_time'|trans }}"><i
-                            class="fa-solid fa-filter"></i> {{ 'filters'|trans }}</button>
-                <ul class="dropdown__menu">
-                    <li>
-                        <a href=""
-                           class="active">
-                            {{ 'all'|trans }}
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#"
-                           class="">
-                            {{ 'approved'|trans }}
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#"
-                           class="">
-                            {{ 'rejected'|trans }}
-                        </a>
-                    </li>
-                </ul>
-            </li>
-        </menu>
-    {% endif %}
 </aside>

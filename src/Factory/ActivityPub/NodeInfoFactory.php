@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace App\Factory\ActivityPub;
 
 use App\Repository\StatsContentRepository;
+use App\Service\ProjectInfoService;
 use App\Service\SettingsManager;
 
 class NodeInfoFactory
 {
     private const NODE_PROTOCOL = 'activitypub';
-    private const MBIN_REPOSITORY_URL = 'https://github.com/MbinOrg/mbin';
-    private const MBIN_VERSION = '1.0.0'; // TODO: Should be read from package.json or composer.json
 
     public function __construct(
         private readonly StatsContentRepository $repository,
-        private readonly SettingsManager $settingsManager
+        private readonly SettingsManager $settingsManager,
+        private readonly ProjectInfoService $projectInfo
     ) {
     }
 
@@ -29,17 +29,17 @@ class NodeInfoFactory
         switch ($version) {
             case '2.0':
                 $software = [
-                    'name' => 'mbin',
-                    'version' => self::MBIN_VERSION,
+                    'name' => $this->projectInfo->getName(),
+                    'version' => $this->projectInfo->getVersion(),
                 ];
                 break;
             case '2.1':
             default:
                 // Used for 2.1 and as fallback
                 $software = [
-                    'name' => 'mbin',
-                    'version' => self::MBIN_VERSION,
-                    'repository' => self::MBIN_REPOSITORY_URL,
+                    'name' => $this->projectInfo->getName(),
+                    'version' => $this->projectInfo->getVersion(),
+                    'repository' => $this->projectInfo->getRepositoryURL(),
                 ];
                 break;
         }

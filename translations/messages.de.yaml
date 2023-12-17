@@ -96,7 +96,6 @@ reset_password: Passwort zurücksetzen
 username: Benutzername
 email: E-Mail
 repeat_password: Passwort wiederholen
-awards: Auszeichnungen
 posts: Beiträge
 top: Top
 mod_log: Moderations-Log
@@ -110,7 +109,6 @@ in: in
 all_magazines: Alle Magazine
 stats: Statistiken
 fediverse: Fediverse
-ranking: Rangfolge
 add_new_link: Neuen Link hinzufügen
 create_new_magazine: Neues Magazin hinzufügen
 contact: Kontakt
@@ -293,31 +291,12 @@ flash_thread_edit_success: Das Thema wurde erfolgreich bearbeitet.
 flash_thread_delete_success: Das Thema wurde erfolgreich gelöscht.
 flash_thread_pin_success: Das Thema wurde erfolgreich angeheftet.
 flash_thread_unpin_success: Das Thema wurde erfolgreich losgeheftet.
-ranking_disabled: Platzierung ist deaktiviert
 flash_magazine_edit_success: Das Magazin wurde erfolgreich bearbeitet.
 too_many_requests: Grenzwert überschritten, bitte versuche es später nochmal.
-gold: Gold
-silver: Silber
-bronze: Bronze
-bronze_autobiographer: Autobiograf
-bronze_autobiographer_desc: Für die Vervollständigung aller Profilfelder
-bronze_personality: Bronze Persönlichkeit
-bronze_personality_desc: 20 Folgende
-bronze_commentator: Bronze Kommentator
-bronze_commentator_desc: 10 gute Kommentare
-bronze_scout: Bronzener Kundschafter
-bronze_scout_desc: 10 gute Links
-bronze_redactor: Bronze Redakteur
-bronze_redactor_desc: 10 gute Themen
-bronze_poster: Bronze Beitragender
-bronze_poster_desc: 10 gute Beiträge
 set_magazines_bar_desc: Füge die Namen der Magazine hinter dem Komma ein
 set_magazines_bar_empty_desc: Wenn das Feld leer ist werden aktive Magazine auf der
   Magazinbar dargestellt.
 set_magazines_bar: Magazinbar
-bronze_link_desc: Der Beitrag wurde 5 mal geboostet
-bronze_photo_desc: Das Bild wurde 5 Mal geboosted
-bronze_comment_desc: Der Kommentar wurde 5 Mal geboosted
 added_new_thread: Ein neues Thema wurde hinzugefügt
 mod_deleted_your_comment: Ein Moderator hat deinen Kommentar entfernt
 mod_remove_your_post: Ein Moderator hat deinen Beitrag entfernt
@@ -351,70 +330,14 @@ delete_account_request_send: Deine Anfrage um dein Konto zu löschen wurde abges
 auto_preview: Automatische Medienvorschau
 inactive: Inaktiv
 mod_remove_your_thread: Ein Moderator hat dein Thema entfernt
-bronze_ranking_desc: 3ter Platz in der Rangliste
 mod_log_alert: WARNUNG - Der Modlog kann unangenehme oder verstörende Inhalte enthalten,
   welche von Moderatoren entfernt wurden. Bitte bedenke, was du tust.
-bronze_ranking: Nummer 3
-silver_poster_desc: 10 sehr gute Beiträge
-silver_link: ausgezeichneter Link
-silver_link_desc: Der Beitrag wurde 10 Mal geboostet
-silver_article_desc: Das Thema wurde 10 Mal geboostet
-silver_photo: ausgezeichnetes Bild
-silver_comment: Sehr guter Kommentar
-silver_comment_desc: Der Kommentar wurde 10 Mal geboostet
-silver_post: Sehr guter Beitrag
-silver_post_desc: Der Beitrag wurde 10 Mal geboostet
-silver_ranking: Nummer 2
-silver_ranking_desc: 2ter Platz in der Rangliste
-silver_popular_entry: Beliebtes Thema
-silver_magazine: Beliebtes Magazin
-silver_entry_week: Thema der Woche
-silver_entry_week_desc: Das beste Thema in dieser Woche
-silver_comment_week: Kommentar der Woche
-silver_comment_week_desc: Der beste Kommentar in dieser Woche
-silver_post_week: Beitrag der Woche
-silver_post_week_desc: Der beste Beitrag in dieser Woche
-gold_personality_desc: 100 Follower
-gold_commentator_desc: 10 ausgezeichnete Kommentare
-gold_scout_desc: 10 ausgezeichnete Links
-gold_redactor_desc: 10 ausgezeichnete Themen
-gold_poster_desc: 10 ausgezeichnete Beiträge
-gold_link: Ausgezeichneter Link
-gold_link_desc: Der Beitrag wurde 15 Mal geboostet
-gold_photo: Ausgezeichnetes Bild
-gold_photo_desc: Das Bild wurde 15 Mal geboostet
-gold_comment: Ausgezeichneter Kommentar
-gold_comment_desc: Der Kommentar wurde 15 Mal geboostet
-gold_post: Ausgezeichneter Beitrag
-gold_post_desc: Der Beitrag wurde 15 Mal geboostet
-gold_ranking: Nummer 1
-gold_popular_entry: Beliebtes Thema
-gold_popular_entry_desc: Thema wurde 10000 Mal angesehen
-gold_magazine: Beliebtes Magazin
-gold_entry_month: Thema des Monats
-gold_entry_month_desc: Das beste Thema in diesem Monat
-gold_comment_month: Kommentar des Monats
-gold_post_month: Beitrag des Monats
-gold_post_month_desc: Der beste Beitrag in diesem Monat
-silver_photo_desc: Das Bild wurde 10 Mal geboostet
-silver_popular_entry_desc: Das Thema wurde 5000 Mal angesehen
-gold_article_desc: Das Thema wurde 15 Mal geboostet
-gold_ranking_desc: Erster Platz in der Rangliste
-gold_comment_month_desc: Der beste Kommentar in diesem Monat
 removed_thread_by: hat ein Thema entfernt, erstellt von
 restored_thread_by: hat ein Thema wiederhergestellt, erstellt von
 removed_comment_by: hat einen Kommentar entfernt, erstellt von
 restored_comment_by: hat den Kommentar wiederhergestellt, erstellt von
 flash_magazine_new_success: Das Magazin wurde erfolgreich erstellt. Du kannst nun
   neue Inhalte hinzufügen oder die Administrationsansicht des Magazins öffnen.
-bronze_link: Guter Link
-bronze_article: Bronze Thema
-bronze_photo: Gutes Bild
-bronze_comment: Guter Kommentar
-bronze_post: Guter Post
-bronze_post_desc: Der Beitrag wurde 5 Mal geboostet
-bronze_popular_entry: Beliebtes Thema
-bronze_popular_entry_desc: Das Thema wurde 1000 Mal angesehen
 edited_thread: Thema wurde bearbeitet
 added_new_comment: Neuer Kommentar hinzugefügt
 edited_comment: Kommentar bearbeitet
@@ -423,18 +346,6 @@ added_new_reply: Antwort wurde hinzugefügt
 wrote_message: Schrieb eine Nachricht
 banned: Hat dich gesperrt
 mentioned_you: Hat dich erwähnt
-bronze_article_desc: Das Thema wurde 5 Mal geboostet
-bronze_magazine: Populäres Magazin
-silver_personality: Silber Personalität
-silver_commentator: Silber Kommentator
-silver_poster: Silber Beitragender
-silver_article: Silber Thema
-silver_personality_desc: 50 Follower
-silver_commentator_desc: 10 sehr gute Kommentare
-silver_scout_desc: 10 sehr gute Links
-silver_redactor_desc: 10 sehr gute Themen
-silver_redactor: Silber Redakteur
-bronze_magazine_desc: 20 Personen beteiligten sich an dem Magazin
 subject_reported: Beitrag wurde gemeldet.
 sidebar_position: Position der Seitenleiste
 federation: Föderation
@@ -460,12 +371,6 @@ kbin_promo_desc: '%link_start%Klone das Repo%link_end% und erweitere das Fediver
 browsing_one_thread: Du siehst nur Inhalte aus einem Thema in dieser Diskussion. Alle
   Kommentare sind auf der Beitragsseite verfügbar.
 boost: Boost
-silver_scout: Silberner Kundschafter
-gold_personality: Goldene Persönlichkeit
-gold_scout: Goldener Kundschafter
-gold_redactor: Goldener Redakteur
-gold_poster: Goldener Poster
-gold_article: Goldenes Thema
 icon: Icon
 magazine_panel: Magazin Ansicht
 ban: Sperre
@@ -476,9 +381,6 @@ admin_panel: Admin-Leiste
 add_mentions_posts: Erwähnungs-Tags in Beiträgen hinzufügen
 ban_account: Account sperren
 add_mentions_entries: Erwähnungs-Tags in Themen hinzufügen
-gold_commentator: Goldener Kommentator
-gold_magazine_desc: 100 Personen beteiligten sich an dem Magazin
-silver_magazine_desc: 50 Personen beteiligten sich an dem Magazin
 ban_expired: Sperre abgelaufen
 mercure_enabled: Mercure aktiviert
 report_issue: Fehler melden
@@ -524,8 +426,8 @@ toolbar.ordered_list: Geordnete Liste
 your_account_is_not_active: Dein Profil wurde noch nicht aktiviert. Bitte prüfe deine
   E-Mails und klicke den Aktivierungslink um fortzufahren. Falls du keine Mail erhalten
   hast frage <a href="%link_target%">eine neue Aktivierungsmail</a> an.
-your_account_has_been_banned: E-Mails für Anweisungen zur Kontoaktivierung oder <a href="%link_target%">fordere
-  eine neue E-Mail zur Aktivierung an</a>
+your_account_has_been_banned: E-Mails für Anweisungen zur Kontoaktivierung oder <a
+  href="%link_target%">fordere eine neue E-Mail zur Aktivierung an</a>
 federation_page_enabled: Föderationsseite aktiviert
 federation_page_disallowed_description: Instanzen mit denen wir nicht föderieren
 federation_page_allowed_description: Bekannte Instanzen mit denen wir föderieren

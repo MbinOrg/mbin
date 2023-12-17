@@ -15,7 +15,6 @@ use App\Service\ActivityPub\Wrapper\TagsWrapper;
 use App\Service\ActivityPubManager;
 use App\Service\MentionManager;
 use App\Service\TagManager;
-use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class PostNoteFactory
@@ -40,7 +39,7 @@ class PostNoteFactory
             $note['@context'] = [
                 ActivityPubActivityInterface::CONTEXT_URL,
                 ActivityPubActivityInterface::SECURITY_URL,
-                self::getContext(),
+                ActivityPubActivityInterface::ADDITIONAL_CONTEXTS,
             ];
         }
 
@@ -48,6 +47,11 @@ class PostNoteFactory
         if ('random' !== $post->magazine->name && !$post->magazine->apId) { // @todo
             $tags[] = $post->magazine->name;
         }
+
+        $body = $this->tagManager->joinTagsToBody(
+            $post->body,
+            $tags
+        );
 
         $note = array_merge($note ?? [], [
             'id' => $this->getActivityPubId($post),
@@ -70,13 +74,14 @@ class PostNoteFactory
             'sensitive' => $post->isAdult(),
             'stickied' => $post->sticky,
             'content' => $this->markdownConverter->convertToHtml(
-                $this->tagManager->joinTagsToBody(
-                    $post->body,
-                    $tags
-                ),
+                $body,
                 [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub],
             ),
             'mediaType' => 'text/html',
+            'source' => $post->body ? [
+                'content' => $body,
+                'mediaType' => 'text/markdown',
+            ] : null,
             'url' => $this->getActivityPubId($post),
             'tag' => array_merge(
                 $this->tagsWrapper->build($tags),
@@ -97,20 +102,6 @@ class PostNoteFactory
         $note['to'] = array_unique(array_merge($note['to'], $this->activityPubManager->createCcFromBody($post->body)));
 
         return $note;
-    }
-
-    #[ArrayShape([
-        'ostatus' => 'string',
-        'sensitive' => 'string',
-        'votersCount' => 'string',
-    ])]
-    public static function getContext(): array
-    {
-        return [
-            'ostatus' => 'http://ostatus.org#',
-            'sensitive' => 'as:sensitive',
-            'votersCount' => 'toot:votersCount',
-        ];
     }
 
     public function getActivityPubId(Post $post): string

@@ -74,8 +74,6 @@ about_instance: Sobre
 all_magazines: Todas as magazines
 stats: Estatísticas
 fediverse: Fediverse
-awards: Prémios
-ranking: Ranking
 create_new_magazine: Criar uma nova magazine
 add_new_article: Adicionar um novo artigo
 add_new_link: Adicionar um novo link
@@ -182,15 +180,6 @@ he_banned: banir
 he_unbanned: desbanir
 read_all: Ler tudo
 show_all: Mostrar tudo
-gold_popular_entry: Tópico popular
-gold_popular_entry_desc: Tópico visitado 10000 vezes
-gold_magazine: Magazine popular
-gold_magazine_desc: Magazine com 100 seguidores
-gold_entry_month_desc: O melhor tópico do mês
-gold_comment_month: Comentário do mês
-gold_comment_month_desc: O melhor comentário do mês
-gold_post_month: Postagem do mês
-gold_post_month_desc: A melhor postagem do mês
 added_new_thread: Adicionado um novo tópico
 edited_thread: Editado um tópico
 mod_remove_your_thread: Um moderador removeu o seu tópico
@@ -284,10 +273,8 @@ federated_magazine_info: A magazine do servidor federado pode estar incompleta.
 remember_me: Lembrar-me
 username: Username
 table_view: Vista de tabela
-gold_entry_month: Tópico do mês
 edited_post: Editada uma postagem
 12h: 12h
-gold_ranking_desc: 1º lugar no ranking
 deleted: Apagado pelo autor
 1y: 1a
 mod_log_alert: No Modlog pode encontrar conteúdo removido drasticamente por moderadores.
@@ -308,7 +295,6 @@ notify_on_new_posts: Notificar-me de novas postagens numa magazine subscrita
 theme: Tema
 show_users_avatars: Mostrar os avatars dos utilizadores
 restored_thread_by: restaurou tópico por
-ranking_disabled: Ranking está desativado
 add_new: Adicionar novo
 url: URL
 title: Título
@@ -356,27 +342,3 @@ set_magazines_bar: Barra de magazines
 set_magazines_bar_desc: adicione os nomes dos magazines após a virgula
 set_magazines_bar_empty_desc: se o espaço estiver vazio, magazines ativos serão mostrados
   na barra
-gold: Ouro
-silver: Prata
-bronze: Bronze
-bronze_autobiographer: Autobiógrafo
-bronze_autobiographer_desc: Por completar todos os espaços no perfil
-bronze_personality: Personalidade bronze
-bronze_personality_desc: 20 seguidores
-bronze_commentator: Comentador bronze
-bronze_commentator_desc: 10 comentários bons
-bronze_scout: Escuteiro bronze
-bronze_scout_desc: 10 links bons
-bronze_redactor: Redator bronze
-bronze_redactor_desc: 10 artigos bons
-bronze_poster: Postador bronze
-bronze_poster_desc: 10 posts bons
-bronze_link: Link bom
-bronze_photo: Boa foto
-bronze_link_desc: Este post tem 5 boosts
-bronze_article: Artigo bronze
-bronze_photo_desc: Esta foto tem 5 boosts
-bronze_comment: Bom comentário
-bronze_comment_desc: Este comentário tem 5 boosts
-bronze_post: Bom post
-bronze_article_desc: Este artigo tem 5 boosts

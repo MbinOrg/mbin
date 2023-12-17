@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace App\MessageHandler\ActivityPub\Inbox;
 
 use App\Entity\User;
+use App\Exception\InboxForwardingException;
 use App\Message\ActivityPub\Inbox\ActivityMessage;
+use App\Message\ActivityPub\Inbox\AddMessage;
 use App\Message\ActivityPub\Inbox\AnnounceMessage;
 use App\Message\ActivityPub\Inbox\CreateMessage;
 use App\Message\ActivityPub\Inbox\DeleteMessage;
 use App\Message\ActivityPub\Inbox\FollowMessage;
 use App\Message\ActivityPub\Inbox\LikeMessage;
+use App\Message\ActivityPub\Inbox\RemoveMessage;
 use App\Message\ActivityPub\Inbox\UpdateMessage;
+use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\SignatureValidator;
 use App\Service\ActivityPubManager;
 use App\Service\SettingsManager;
@@ -27,6 +31,7 @@ readonly class ActivityHandler
         private SettingsManager $settingsManager,
         private MessageBusInterface $bus,
         private ActivityPubManager $manager,
+        private ApHttpClient $apHttpClient,
         private LoggerInterface $logger
     ) {
     }
@@ -36,7 +41,15 @@ readonly class ActivityHandler
         $payload = @json_decode($message->payload, true);
 
         if ($message->request && $message->headers) {
-            $this->signatureValidator->validate($message->request, $message->headers, $message->payload);
+            try {
+                $this->signatureValidator->validate($message->request, $message->headers, $message->payload);
+            } catch (InboxForwardingException $exception) {
+                $this->logger->info("The message was forwarded by {receivedFrom}. Dispatching a new activity message '{origin}'", ['receivedFrom' => $exception->receivedFrom, 'origin' => $exception->realOrigin]);
+                $body = $this->apHttpClient->getActivityObject($exception->realOrigin, false);
+                $this->bus->dispatch(new ActivityMessage($body));
+
+                return;
+            }
         }
 
         if (isset($payload['payload'])) {
@@ -107,6 +120,12 @@ readonly class ActivityHandler
                 break;
             case 'Update':
                 $this->bus->dispatch(new UpdateMessage($payload));
+                break;
+            case 'Add':
+                $this->bus->dispatch(new AddMessage($payload));
+                break;
+            case 'Remove':
+                $this->bus->dispatch(new RemoveMessage($payload));
                 break;
         }
     }

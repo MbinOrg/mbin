@@ -53,12 +53,6 @@ user_follow:
     path: /u/{username}/follow
     methods: [POST]
 
-user_awards:
-    controller: App\Controller\User\UserAwardController
-    defaults: { category: ~ }
-    path: /u/{username}/awards/{awardsCategory}
-    methods: [GET]
-
 user_reputation:
     controller: App\Controller\User\UserReputationController
     defaults: { reputationType: ~ }

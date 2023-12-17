@@ -559,7 +559,8 @@ server {
 
     location /.well-known/mercure {
         proxy_pass http://127.0.0.1:3000$request_uri;
-        proxy_read_timeout 24h;
+        # Increase this time-out if you want clients have a Mercure connection open for longer (eg. 24h)
+        proxy_read_timeout 2h;
         proxy_http_version 1.1;
         proxy_set_header Connection "";
 
@@ -592,7 +593,7 @@ server {
 
     # assets, documents, archives, media
     location ~* \.(?:css(\.map)?|js(\.map)?|jpe?g|png|tgz|gz|rar|bz2|doc|pdf|ptt|tar|gif|ico|cur|heic|webp|tiff?|mp3|m4a|aac|ogg|midi?|wav|mp4|mov|webm|mpe?g|avi|ogv|flv|wmv)$ {
-        expires    25d;
+        expires    30d;
         add_header Access-Control-Allow-Origin "*";
         add_header Cache-Control "public, no-transform";
         access_log off;
@@ -600,7 +601,7 @@ server {
 
     # svg, fonts
     location ~* \.(?:svgz?|ttf|ttc|otf|eot|woff2?)$ {
-        expires    25d;
+        expires    30d;
         add_header Access-Control-Allow-Origin "*";
         add_header Cache-Control "public, no-transform";
         access_log off;
@@ -690,6 +691,24 @@ sudo certbot certonly --standalone -d domain.tld -d www.domain.tld
 # Or if you wish not to use the standalone mode but the Nginx plugin:
 sudo certbot --nginx -d domain.tld -d www.domain.tld
 ```
+
+### Additional Mbin configuration files
+
+These are additional configuration YAML file changes in the `config` directory.
+
+#### Image redirect response code
+
+Assuming you **are using Nginx** (as described above, with the correct configs), you can reduce the server load by changing the image redirect response code from `302` to `301`, which allows the client to cache the complete response. Edit the following file (from the root directory of Mbin):
+
+```bash
+nano config/packages/liip_imagine.yaml
+```
+
+And now change: `redirect_response_code: 302` to: `redirect_response_code: 301`. If you are experience image loading issues, validate your Nginx configuration or revert back your changes to `302`.
+
+---
+
+_Hint:_ There are also other configuration files, eg. `config/packages/monolog.yaml` where you can change logging settings if you wish, but this is not required (these defaults are fine for production).
 
 ### Symfony Messenger (Queues)
 
@@ -1041,6 +1060,31 @@ oneup_flysystem:
       adapter: kbin.s3_adapter
       alias: League\Flysystem\Filesystem
 ```
+
+### Image metadata cleaning with `exiftool` (optional)
+
+To use this feature, install `exiftool` (`libimage-exiftool-perl` package for Ubuntu/Debian)
+and make sure `exiftool` executable exist and and visible in PATH
+
+Available options in `.env`:
+
+```sh
+# available modes: none, sanitize, scrub
+# can be set differently for user uploaded and external media
+EXIF_CLEAN_MODE_UPLOADED=sanitize
+EXIF_CLEAN_MODE_EXTERNAL=none
+# path to exiftool binary, leave blank for auto PATH search
+EXIF_EXIFTOOL_PATH=
+# max execution time for exiftool in seconds, defaults to 10 seconds
+EXIF_EXIFTOOL_TIMEOUT=10
+```
+
+Available cleaning modes:
+
+- `none`: no metadata cleaning would be done.
+- `sanitize`: removes GPS and serial number metadata. this is the default for uploaded images.
+- `scrub`: removes most of image metadata save for those needed for proper image rendering
+  and XMP IPTC attribution metadata.
 
 ### Captcha (optional)
 

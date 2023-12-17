@@ -17,7 +17,6 @@ use App\Entity\PostComment;
 use App\Entity\User;
 use App\Factory\ImageFactory;
 use App\Repository\ApActivityRepository;
-use App\Repository\MagazineRepository;
 use App\Service\ActivityPubManager;
 use App\Service\EntryCommentManager;
 use App\Service\PostCommentManager;
@@ -32,12 +31,12 @@ class Note
         private readonly PostManager $postManager,
         private readonly EntryCommentManager $entryCommentManager,
         private readonly PostCommentManager $postCommentManager,
-        private readonly MagazineRepository $magazineRepository,
         private readonly ActivityPubManager $activityPubManager,
         private readonly EntityManagerInterface $entityManager,
         private readonly MarkdownConverter $markdownConverter,
         private readonly SettingsManager $settingsManager,
         private readonly ImageFactory $imageFactory,
+        private readonly ApObjectExtractor $objectExtractor,
     ) {
     }
 
@@ -46,6 +45,14 @@ class Note
         $current = $this->repository->findByObjectId($object['id']);
         if ($current) {
             return $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
+        }
+
+        if (\is_string($object['to'])) {
+            $object['to'] = [$object['to']];
+        }
+
+        if (\is_string($object['cc'])) {
+            $object['cc'] = [$object['cc']];
         }
 
         if (isset($object['inReplyTo']) && $replyTo = $object['inReplyTo']) {
@@ -79,14 +86,6 @@ class Note
             return $this->$fn($object, $parent, $root);
         }
 
-        if (\is_string($object['to'])) {
-            $object['to'] = [$object['to']];
-        }
-
-        if (\is_string($object['cc'])) {
-            $object['cc'] = [$object['cc']];
-        }
-
         return $this->createPost($object);
     }
 
@@ -104,29 +103,20 @@ class Note
         $dto->entry = $root;
         $dto->apId = $object['id'];
 
-        if (isset($object['attachment'])) {
-            if ($image = $this->activityPubManager->handleImages($object['attachment'])) {
-                $dto->image = $this->imageFactory->createDto($image);
-            }
-
-            if ($images = $this->activityPubManager->handleExternalImages($object['attachment'])) {
-                $object['content'] .= '<br><br>';
-                foreach ($images as $image) {
-                    $object['content'] .= "<a href='{$image->url}'>{$image->name}</a><br>";
-                }
-            }
-
-            if ($videos = $this->activityPubManager->handleExternalVideos($object['attachment'])) {
-                $object['content'] .= '<br><br>';
-                foreach ($videos as $video) {
-                    $object['content'] .= "<a href='{$video->url}'>{$video->name}</a><br>";
-                }
-            }
+        if (
+            isset($object['attachment'])
+            && $image = $this->activityPubManager->handleImages($object['attachment'])
+        ) {
+            $dto->image = $this->imageFactory->createDto($image);
         }
 
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
         if (!empty($actor)) {
-            $dto->body = $this->markdownConverter->convert($object['content']);
+            $dto->body = $this->objectExtractor->getMarkdownBody($object);
+            if ($media = $this->objectExtractor->getExternalMediaBody($object)) {
+                $dto->body .= $media;
+            }
+
             $dto->visibility = $this->getVisibility($object, $actor);
             $this->handleDate($dto, $object['published']);
             if (isset($object['sensitive'])) {
@@ -189,11 +179,7 @@ class Note
         array $object,
     ): ActivityPubActivityInterface {
         $dto = new PostDto();
-        $dto->magazine = $this->magazineRepository->findByApGroupProfileId(
-            array_merge($object['to'], $object['cc'])
-        ) ?? $this->magazineRepository->findOneByName(
-            'random'
-        );
+        $dto->magazine = $this->activityPubManager->findOrCreateMagazineByToAndCC($object);
         $dto->apId = $object['id'];
 
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
@@ -202,27 +188,18 @@ class Note
                 throw new \Exception('User is banned.');
             }
 
-            if (isset($object['attachment'])) {
-                if ($image = $this->activityPubManager->handleImages($object['attachment'])) {
-                    $dto->image = $this->imageFactory->createDto($image);
-                }
-
-                if ($images = $this->activityPubManager->handleExternalImages($object['attachment'])) {
-                    $object['content'] .= '<br><br>';
-                    foreach ($images as $image) {
-                        $object['content'] .= "<a href='{$image->url}'>{$image->name}</a><br>";
-                    }
-                }
-
-                if ($videos = $this->activityPubManager->handleExternalVideos($object['attachment'])) {
-                    $object['content'] .= '<br><br>';
-                    foreach ($videos as $video) {
-                        $object['content'] .= "<a href='{$video->url}'>{$video->name}</a><br>";
-                    }
-                }
+            if (
+                isset($object['attachment'])
+                && $image = $this->activityPubManager->handleImages($object['attachment'])
+            ) {
+                $dto->image = $this->imageFactory->createDto($image);
             }
 
-            $dto->body = $this->markdownConverter->convert($object['content']);
+            $dto->body = $this->objectExtractor->getMarkdownBody($object);
+            if ($media = $this->objectExtractor->getExternalMediaBody($object)) {
+                $dto->body .= $media;
+            }
+
             $dto->visibility = $this->getVisibility($object, $actor);
             $this->handleDate($dto, $object['published']);
             if (isset($object['sensitive'])) {
@@ -260,29 +237,20 @@ class Note
         $dto->post = $root;
         $dto->apId = $object['id'];
 
-        if (isset($object['attachment'])) {
-            if ($image = $this->activityPubManager->handleImages($object['attachment'])) {
-                $dto->image = $this->imageFactory->createDto($image);
-            }
-
-            if ($images = $this->activityPubManager->handleExternalImages($object['attachment'])) {
-                $object['content'] .= '<br><br>';
-                foreach ($images as $image) {
-                    $object['content'] .= "<a href='{$image->url}'>{$image->name}</a><br>";
-                }
-            }
-
-            if ($videos = $this->activityPubManager->handleExternalVideos($object['attachment'])) {
-                $object['content'] .= '<br><br>';
-                foreach ($videos as $video) {
-                    $object['content'] .= "<a href='{$video->url}'>{$video->name}</a><br>";
-                }
-            }
+        if (
+            isset($object['attachment'])
+            && $image = $this->activityPubManager->handleImages($object['attachment'])
+        ) {
+            $dto->image = $this->imageFactory->createDto($image);
         }
 
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
         if (!empty($actor)) {
-            $dto->body = $this->markdownConverter->convert($object['content']);
+            $dto->body = $this->objectExtractor->getMarkdownBody($object);
+            if ($media = $this->objectExtractor->getExternalMediaBody($object)) {
+                $dto->body .= $media;
+            }
+
             $dto->visibility = $this->getVisibility($object, $actor);
             $this->handleDate($dto, $object['published']);
             if (isset($object['sensitive'])) {

@@ -28,8 +28,9 @@ class MagazineVisibilityListener
 
         if (VisibilityInterface::VISIBILITY_VISIBLE !== $magazine->visibility) {
             if (null === $this->security->getUser()
-                || false === $magazine->userIsOwner($this->security->getUser())
-                && false === $this->security->isGranted('ROLE_ADMIN')) {
+                || (false === $magazine->userIsOwner($this->security->getUser())
+                && false === $this->security->isGranted('ROLE_ADMIN')
+                && false === $this->security->isGranted('ROLE_MODERATOR'))) {
                 throw new NotFoundHttpException();
             }
         }
