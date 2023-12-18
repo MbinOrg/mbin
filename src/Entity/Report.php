@@ -17,6 +17,7 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\InheritanceType;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\UniqueConstraint;
 use Symfony\Component\Uid\Uuid;
 
 #[Entity(repositoryClass: ReportRepository::class)]
@@ -28,6 +29,7 @@ use Symfony\Component\Uid\Uuid;
     'post' => 'PostReport',
     'post_comment' => 'PostCommentReport',
 ])]
+#[UniqueConstraint(name: 'report_uuid_idx', columns: ['uuid'])]
 abstract class Report
 {
     use CreatedAtTrait {
