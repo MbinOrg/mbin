@@ -21,6 +21,11 @@
             {{ form_row(form.email, {label: 'email'}) }}
             {{ form_row(form.message, {label: 'message'}) }}
             {{ form_row(form.surname, {label: false, attr: {style: 'display:none !important'}}) }}
+            {% if kbin_captcha_enabled() %}
+                    {{ form_row(form.captcha, {
+                        label: false
+                    }) }}
+                {% endif %}
             <div class="actions">
                 {{ form_row(form.submit, {label: 'send', attr: {class: 'btn btn__primary'}}) }}
             </div>

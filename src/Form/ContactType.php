@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\DTO\ContactDto;
+use App\Form\EventListener\CaptchaListener;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -14,6 +15,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ContactType extends AbstractType
 {
+    public function __construct(
+        private readonly CaptchaListener $captchaListener,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -22,6 +28,8 @@ class ContactType extends AbstractType
             ->add('email', EmailType::class)
             ->add('message', TextareaType::class)
             ->add('submit', SubmitType::class);
+
+        $builder->addEventSubscriber($this->captchaListener);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
