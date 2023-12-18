@@ -37,6 +37,10 @@ class Embed
     public function fetch($url): self
     {
         if ($this->settings->isLocalUrl($url)) {
+            if (ImageManager::isImageUrl($url)) {
+                return $this->createLocalImage($url);
+            }
+
             return $this;
         }
 
@@ -99,6 +103,15 @@ class Embed
         }
 
         return $html;
+    }
+
+    private function createLocalImage(string $url): self
+    {
+        $c = clone $this;
+        $c->url = $url;
+        $c->html = sprintf('<img src="%s">', $url);
+
+        return $c;
     }
 
     public function getType(): string
