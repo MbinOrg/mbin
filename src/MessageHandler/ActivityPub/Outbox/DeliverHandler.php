@@ -36,7 +36,7 @@ class DeliverHandler
         }
         $this->logger->debug("Getting Actor for url: $url");
         $actor = $this->manager->findActorOrCreate($url);
-        
+
         if (!$actor) {
             $this->logger->debug('got no actor :(');
 
