@@ -27,9 +27,13 @@ class DeliverHandler
             return;
         }
 
-        $actor = $this->manager->findActorOrCreate(
-            $message->payload['object']['attributedTo'] ?? $message->payload['actor']
-        );
+        if ('Announce' !== $message->payload['type']) {
+            $actor = $this->manager->findActorOrCreate(
+                $message->payload['object']['attributedTo'] ?? $message->payload['actor']
+            );
+        } else {
+            $actor = $this->manager->findActorOrCreate($message->payload['actor']);
+        }
 
         if (!$actor) {
             return;
