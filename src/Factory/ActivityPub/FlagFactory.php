@@ -83,21 +83,21 @@ class FlagFactory
             Entry::class => $this->urlGenerator->generate('ap_entry', [
                 'magazine_name' => $subject->magazine->name,
                 'entry_id' => $subject->getId(),
-            ]),
+            ], UrlGeneratorInterface::ABSOLUTE_URL),
             EntryComment::class => $this->urlGenerator->generate('ap_entry_comment', [
                 'magazine_name' => $subject->magazine->name,
                 'entry_id' => $subject->entry->getId(),
                 'comment_id' => $subject->getId(),
-            ]),
+            ], UrlGeneratorInterface::ABSOLUTE_URL),
             Post::class => $this->urlGenerator->generate('ap_post', [
                 'magazine_name' => $subject->magazine->name,
                 'post_id' => $subject->getId(),
-            ]),
+            ], UrlGeneratorInterface::ABSOLUTE_URL),
             PostComment::class => $this->urlGenerator->generate('ap_post_comment', [
                 'magazine_name' => $subject->magazine->name,
                 'post_id' => $subject->post->getId(),
                 'comment_id' => $subject->getId(),
-            ]),
+            ], UrlGeneratorInterface::ABSOLUTE_URL),
             default => throw new \LogicException("can't handle ".\get_class($subject)),
         };
     }

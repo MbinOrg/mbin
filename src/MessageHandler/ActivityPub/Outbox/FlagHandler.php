@@ -37,7 +37,7 @@ class FlagHandler
         $this->logger->debug('found the report: '.json_encode($report));
         $inboxes = $this->getInboxUrls($report);
         if (0 === \sizeof($inboxes)) {
-            $this->logger->debug("couldn't find any inboxes to send the FlagMessage to");
+            $this->logger->info("couldn't find any inboxes to send the FlagMessage to");
 
             return;
         }
