@@ -28,15 +28,6 @@
     }
   }
 
- &__layout{
-    li{
-      button{
-        border-bottom-left-radius: 0px!important;
-        border-bottom-right-radius: 0px!important;
-      }
-    }
-  }
-
   .scroll {
     position: static;
     align-self: center;
@@ -48,7 +39,7 @@
     .scroll-left,
     .scroll-right{
       padding: 0.5rem;
-      cursor: pointer;   
+      cursor: pointer;
       color: var(--kbin-button-secondary-text-color);
 
       &:hover,
@@ -58,9 +49,9 @@
     }
   }
 
-  &__filters{
+  &__view{
 
-    li:first-of-type{
+    li:not(:last-of-type){
       button{
         border-bottom-left-radius: 0px!important;
         border-bottom-right-radius: 0px!important;
@@ -69,9 +60,9 @@
     li:last-of-type{
       button{
         border-bottom-left-radius: 0px!important;
-      }  
+      }
     }
-    
+
   }
 
   &--top {
@@ -132,12 +123,20 @@
     text-transform: uppercase;
   }
 
-  &__layout button,
-  &__filters button {
+  &__view button {
     font-size: 0;
 
-    i, span {
+    i {
       font-size: .85rem;
+    }
+
+    span {
+      font-size: .85rem;
+      margin-left: 0.5rem;
+
+      @include media-breakpoint-down(lg) {
+          display: none;
+      }
     }
   }
 }

@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace App\Twig\Runtime;
 
+use App\Repository\Criteria;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class ContextExtensionRuntime implements RuntimeExtensionInterface
 {
-    public function __construct(private readonly RequestStack $requestStack)
-    {
+    public function __construct(
+        private readonly RequestStack $requestStack,
+        private readonly TranslatorInterface $translator,
+    ) {
     }
 
     public function isRouteNameContains(string $needle): bool
@@ -61,5 +65,18 @@ class ContextExtensionRuntime implements RuntimeExtensionInterface
     public function getRouteParam(string $name): ?string
     {
         return $this->requestStack->getCurrentRequest()->get($name);
+    }
+
+    public function getTimeParamTranslated(): string
+    {
+        $paramValue = $this->getRouteParam('time');
+        if (!\in_array($paramValue, Criteria::TIME_ROUTES_EN)
+            || '∞' === $paramValue
+            || 'all' === $paramValue
+        ) {
+            return $this->translator->trans('all_time');
+        }
+
+        return $this->translator->trans($paramValue);
     }
 }
