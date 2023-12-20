@@ -6,7 +6,7 @@ reply: Отговор
 save: Запазване
 weeks: Седмици
 subscribe: Абониране
-FAQ: ЧЗВ
+FAQ: Често задавани въпроси
 title: Заглавие
 moderators: Модератори
 thread: Нишка
@@ -41,7 +41,7 @@ delete: Изтриване
 1m: 1м
 article: Нишка
 url: URL адрес
-faq: ЧЗВ
+faq: Често задавани въпроси
 6h: 6ч
 body: Тяло
 user_badge_bot: Бот
@@ -201,7 +201,7 @@ go_to_original_instance: Разгледай повече в оригинална
 edit_link: Редактиране на връзката
 change_my_avatar: Промяна на моя лик
 domains: Домейни
-overview: Преглед
+overview: Обзор
 classic_view: Класически изглед
 messages: Съобщения
 boost: Подсилване
@@ -277,3 +277,45 @@ note: Бележка
 comment_reply_position: Позиция на отговор на коментари
 badges: Значки
 position_top: Отгоре
+preview: Преглед
+dashboard: Табло
+close: Затваряне
+show_thumbnails: Показване на миниатюри
+flash_post_new_success: Публикацията е създадена успешно.
+copy_url: Копиране на Mbin URL адрес
+flash_comment_edit_error: Неуспешно редактиране на коментара. Нещо се обърка.
+flash_comment_new_error: Неуспешно създаване на коментар. Нещо се обърка.
+subscribed: Абониран
+flash_post_new_error: Публикацията не можа да бъде създадена. Нещо се обърка.
+page_width_fixed: Фиксир.
+removed_thread_by: премахна нишка от
+flash_thread_edit_success: Нишката е редактирана успешно.
+restored_post_by: възстанови публикация от
+flash_post_edit_error: Неуспешно редактиране на публикацията. Нещо се обърка.
+page_width_auto: Авто.
+flash_post_edit_success: Публикацията е редактирана успешно.
+meta: Мета
+right: Дясно
+flash_user_edit_password_error: Неуспешна промяна на паролата.
+oauth.consent.allow: Разрешаване
+custom_css: Персонализиран CSS
+ignore_magazines_custom_css: Игнориране на персонализирания CSS на общностите
+flash_thread_edit_error: Неуспешно редактиране на нишката. Нещо се обърка.
+oauth.consent.deny: Отказване
+flash_user_edit_email_error: Неуспешна промяна на адреса на е-поща.
+page_width_max: Макс.
+page_width: Ширина на страницата
+flash_comment_new_success: Коментарът е създаден успешно.
+flash_user_settings_general_error: Неуспешно запазване на потребителските настройки.
+removed_comment_by: премахна коментар от
+left: Ляво
+restored_comment_by: възстанови коментар от
+flash_user_edit_profile_success: Настройките на профила са запазени успешно.
+subscription_sort: Сортиране
+flash_user_settings_general_success: Потребителските настройки са запазени успешно.
+flash_thread_delete_success: Нишката е изтрита успешно.
+restored_thread_by: възстанови нишка от
+contact_email: Е-поща за контакт
+removed_post_by: премахна публикация от
+show_magazines_icons: Показване на иконките на общностите
+flash_user_edit_profile_error: Неуспешно запазване на настройките на профила.
