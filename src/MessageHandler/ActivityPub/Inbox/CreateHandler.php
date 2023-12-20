@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\MessageHandler\ActivityPub\Inbox;
 
+use App\Entity\Entry;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\CreateMessage;
+use App\Message\ActivityPub\Outbox\AnnounceMessage;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -21,6 +24,7 @@ class CreateHandler
         private readonly Note $note,
         private readonly Page $page,
         private readonly MessageBusInterface $bus,
+        private readonly LoggerInterface $logger,
         private readonly ApActivityRepository $repository
     ) {
     }
@@ -28,6 +32,7 @@ class CreateHandler
     public function __invoke(CreateMessage $message)
     {
         $this->object = $message->payload;
+        $this->logger->debug('Got a CreateMessage of type {t}', [$message->payload['type'], $message->payload]);
 
         if ('Note' === $this->object['type']) {
             $this->handleChain();
@@ -56,12 +61,18 @@ class CreateHandler
                 return;
             }
         }
-
         $this->note->create($this->object);
+        // @TODO announce the created comment
     }
 
-    private function handlePage()
+    private function handlePage(): void
     {
-        $this->page->create($this->object);
+        $page = $this->page->create($this->object);
+        if ($page instanceof Entry) {
+            if (null !== $page->apId and null === $page->magazine->apId) {
+                // local magazine, but remote post
+                $this->bus->dispatch(new AnnounceMessage(null, $page->magazine->getId(), $page->getId(), \get_class($page)));
+            }
+        }
     }
 }

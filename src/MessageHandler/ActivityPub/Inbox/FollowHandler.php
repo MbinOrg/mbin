@@ -13,6 +13,7 @@ use App\Service\ActivityPubManager;
 use App\Service\MagazineManager;
 use App\Service\UserManager;
 use JetBrains\PhpStorm\ArrayShape;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -23,12 +24,14 @@ class FollowHandler
         private readonly UserManager $userManager,
         private readonly MagazineManager $magazineManager,
         private readonly ApHttpClient $client,
+        private readonly LoggerInterface $logger,
         private readonly AcceptWrapper $acceptWrapper
     ) {
     }
 
-    public function __invoke(FollowMessage $message)
+    public function __invoke(FollowMessage $message): void
     {
+        $this->logger->debug('got a FollowMessage: {message}', [$message]);
         $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
         // Check if actor is not empty
         if (!empty($actor)) {

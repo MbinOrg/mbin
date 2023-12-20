@@ -89,6 +89,8 @@ readonly class ActivityHandler
             }
         }
 
+        $this->logger->debug('handling an activity message of type {type}: {payload}', [$payload['type'], $payload]);
+
         switch ($payload['type']) {
             case 'Create':
                 $this->bus->dispatch(new CreateMessage($payload['object']));
