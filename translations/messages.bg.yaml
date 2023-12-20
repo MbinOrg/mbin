@@ -69,7 +69,7 @@ week: Седмица
 settings: Настройки
 add_media: Добавяне на мултимедия
 add_comment: Добавяне на коментар
-months: Месеци
+months: Месеца
 type.video: Видео
 articles: Нишки
 accept: Приемане
@@ -88,7 +88,7 @@ edit_my_profile: Редактиране на моя профил
 deleted: Изтрито от автора
 reputation_points: Репутационни точки
 share_on_fediverse: Споделяне във Федивърса
-federated_magazine_info: Тази общност е от федеративен сървър и може да е непълна.
+federated_magazine_info: Тази общност е от федериран сървър и може да е непълна.
 down_vote: Редуциране
 following: Последвани
 top: Топ
@@ -110,7 +110,7 @@ cards_view: Картиен изглед
 change_password: Промяна на паролата
 email_verify: Потвърди адрес на е-поща
 copy_url_to_fediverse: Копиране на оригиналния URL адрес
-favourites: Фаворизирани
+favourites: Фаворизирания
 blocked: Блокиран
 delete_account: Изтрий акаунта
 all: Всички
@@ -129,7 +129,7 @@ cover: Корица
 subscribers: Абонирани
 type.magazine: Общност
 show_more: Покажи повече
-down_votes: Редуцирани
+down_votes: Редуцирания
 login_or_email: Потребителско име или адрес на е-поща
 from_url: От url адрес
 add_new_link: Добавяне на нова връзка
@@ -207,7 +207,7 @@ messages: Съобщения
 boost: Подсилване
 empty: Празно
 change_language: Промяна на езика
-federated_user_info: Този профил е от федеративен сървър и може да е непълен.
+federated_user_info: Този профил е от федериран сървър и може да е непълен.
 request_account_deletion_title: Изтриване на акаунта
 pages: Страници
 magazines: Общности
@@ -234,5 +234,46 @@ follow: Последване
 toolbar.italic: Курсив
 more_from_domain: Още от домейна
 oauth2.grant.user.profile.edit: Редактиране на профила.
-approved: Одобрено
+approved: Одобрени
 check_email: Провери своята е-поща
+already_have_account: Вече имате акаунт?
+votes: Гласувания
+send_message: Изпращане на съобщение
+message: Съобщение
+filter.fields.only_names: Само имена
+local_and_federated: Локални и федерирани
+firstname: Собствено име
+tags: Тагове
+reason: Причина
+edit: Редактиране
+oc: ОС
+position_bottom: Отдолу
+people_local: Локални
+in: в
+rejected: Отхвърлени
+filters: Филтри
+show_avatars_on_comments: Показване на ликовете в коментарите
+select_magazine: Избери общност
+to: до
+dont_have_account: Нямате акаунт?
+federated: Федерирани
+moderated: Модерирани
+collapse: Свиване
+local: Локални
+go_to_footer: Към долен колонтитул
+ratio: Съотношение
+go_to_search: Към търсене
+go_to_filters: Към филтрите
+general: Общи
+expand: Разтваряне
+go_to_content: Към съдържанието
+people_federated: Федерирани
+pending: В очакване
+reject: Отхвърляне
+is_adult: 18+ / Деликатно
+agree_terms: Съгласие с %terms_link_start%Общите условия%terms_link_end% и %policy_link_start%Политиката
+  за поверителност%policy_link_end%
+note: Бележка
+comment_reply_position: Позиция на отговор на коментари
+badges: Значки
+position_top: Отгоре
