@@ -225,7 +225,6 @@ Following languages are currently supported/translated:
 - Japanese
 - Polish
 - Portuguese
-- Russian
 - Spanish
 - Turkish
 - Ukrainian
