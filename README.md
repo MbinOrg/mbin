@@ -213,19 +213,22 @@ tools/vendor/bin/php-cs-fixer fix
 
 Following languages are currently supported/translated:
 
+- Bulgarian
+- Chinese
+- Dutch
 - English
+- Esperanto
+- French
 - German
 - Greek
-- Esperanto
-- Spanish
-- French
 - Italian
 - Japanese
-- Dutch
 - Polish
-- Ukrainian
+- Portuguese
+- Russian
+- Spanish
 - Turkish
-- Chinese
+- Ukrainian
 
 ## Credits
 
