@@ -78,6 +78,62 @@ class OAuth2ClientApiTest extends WebTestCase
         self::assertIsArray($jsonData);
     }
 
+    public function testApiCanCreateWorkingPublicClient(): void
+    {
+        $client = self::createClient();
+
+        $requestData = [
+            'name' => '/kbin API Created Test Client',
+            'description' => 'An OAuth2 client for testing purposes, created via the API',
+            'contactEmail' => 'test@kbin.test',
+            'public' => 'true',
+            'redirectUris' => [
+                'https://localhost:3002',
+            ],
+            'grants' => [
+                'authorization_code',
+                'refresh_token',
+            ],
+            'scopes' => [
+                'read',
+                'write',
+                'admin:oauth_clients:read',
+            ],
+        ];
+
+        $client->jsonRequest('POST', '/api/client', $requestData);
+
+        self::assertResponseIsSuccessful();
+
+        $clientData = self::getJsonResponse($client);
+        self::assertIsArray($clientData);
+        self::assertArrayKeysMatch(self::CLIENT_RESPONSE_KEYS, $clientData);
+        self::assertNotNull($clientData['identifier']);
+        self::assertNull($clientData['secret']);
+        self::assertEquals($requestData['name'], $clientData['name']);
+        self::assertEquals($requestData['contactEmail'], $clientData['contactEmail']);
+        self::assertEquals($requestData['description'], $clientData['description']);
+        self::assertNull($clientData['user']);
+        self::assertIsArray($clientData['redirectUris']);
+        self::assertEquals($requestData['redirectUris'], $clientData['redirectUris']);
+        self::assertIsArray($clientData['grants']);
+        self::assertEquals($requestData['grants'], $clientData['grants']);
+        self::assertIsArray($clientData['scopes']);
+        self::assertEquals($requestData['scopes'], $clientData['scopes']);
+        self::assertNull($clientData['image']);
+
+        $client->loginUser($this->getUserByUsername('JohnDoe'));
+
+        $jsonData = self::getPublicAuthorizationCodeTokenResponse(
+            $client,
+            clientId: $clientData['identifier'],
+            redirectUri: $clientData['redirectUris'][0],
+        );
+
+        self::assertResponseIsSuccessful();
+        self::assertIsArray($jsonData);
+    }
+
     public function testApiCanCreateWorkingClientWithImage(): void
     {
         $client = self::createClient();
