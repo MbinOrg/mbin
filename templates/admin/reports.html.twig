@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {%- block title -%}
-    {{- 'federation'|trans }} - {{ parent() -}}
+    {{- 'reports'|trans }} - {{ parent() -}}
 {%- endblock -%}
 
 {% block mainClass %}page-admin-federation{% endblock %}
@@ -13,6 +13,9 @@
 {% endblock %}
 
 {% block body %}
-    {% include 'admin/_options.html.twig' %}
-        {{ component('report_list', {reports: reports}) }}
+    {# global mods can see this page, but not navigate to any other menu option, so hiding it for now #}
+    {% if is_granted('ROLE_ADMIN') %}
+        {% include 'admin/_options.html.twig' %}
+    {% endif %}
+    {{ component('report_list', {reports: reports}) }}
 {% endblock %}
