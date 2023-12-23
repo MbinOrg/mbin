@@ -25,7 +25,7 @@ class AnnounceWrapper
             'id' => $this->urlGenerator->generate('ap_object', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL),
             'type' => 'Announce',
             'actor' => $user,
-            'object' => $object['id'],
+            'object' => $object,
             'to' => [ActivityPubActivityInterface::PUBLIC_URL, $object['attributedTo']],
             'cc' => $object['cc'] ?? [],
             'published' => (new \DateTime())->format(DATE_ATOM),

@@ -15,7 +15,7 @@
                     <div class="actions">
                         <form method="post"
                               action="{{ path('magazine_panel_moderator_purge', {magazine_name: magazine.name, moderator_id: moderator.id}) }}"
-                              onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                              data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                             <input type="hidden" name="token" value="{{ csrf_token('remove_moderator') }}">
                             <button type="submit" class="btn btn__secondary">{{ 'delete'|trans }}</button>
                         </form>

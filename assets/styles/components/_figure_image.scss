@@ -1,0 +1,128 @@
+// main wrapper
+.figure-container {
+  position: relative;
+  width: fit-content;
+  height: fit-content;
+}
+
+// main image thumbnail
+.figure-thumb {
+  .thumb {
+    display: block;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// blurhash image obscuring main image
+.figure-blur {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  img {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    object-fit: cover;
+  }
+}
+
+// checkbox to store sensitive state
+input.sensitive-state {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
+// button to toggle sensitive
+.sensitive-button {
+  position: absolute;
+
+  &-label {
+    background: var(--kbin-button-secondary-bg);
+    padding: .5rem;
+
+    font-weight: normal;
+    font-size: .8rem;
+    text-align: center;
+
+    opacity: .8;
+
+    i {
+      font-size: 1rem;
+    }
+
+    .rounded-edges & {
+      border-radius: var(--kbin-rounded-edges-radius);
+    }
+
+    &:hover,
+    &:active {
+      opacity: 1;
+    }
+  }
+
+  &-show {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    .sensitive-button-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+    }
+  }
+
+  &-hide {
+    top: .5rem;
+    right: .5rem;
+
+    .sensitive-button-label {
+      opacity: .5;
+      line-height: 1rem;
+
+      i {
+        font-size: .9rem;
+      }
+
+      &:hover,
+      &:active {
+        opacity: .7;
+      }
+    }
+  }
+}
+
+// the magic part: toggle visibility depending on sensitive state
+.sensitive-state {
+  ~ .sensitive-checked--hide {
+    display: initial;
+  }
+
+  ~ .sensitive-checked--show {
+    display: none;
+  }
+}
+
+.sensitive-state:checked {
+  ~ .sensitive-checked--hide {
+    display: none;
+  }
+
+  ~ .sensitive-checked--show {
+    display: revert;
+  }
+}

@@ -1,0 +1,375 @@
+comment: Коментар
+size: Размер
+user_badge_moderator: Мод
+month: Месец
+reply: Отговор
+save: Запазване
+weeks: Седмици
+subscribe: Абониране
+FAQ: Често задавани въпроси
+title: Заглавие
+moderators: Модератори
+thread: Нишка
+user: Потребител
+trash: Кошче
+1w: 1с
+default_theme: Тема по подразбиране
+fediverse: Федивърс
+type.link: Връзка
+rss: RSS
+microblog: Микроблог
+user_badge_admin: Админ
+no: Не
+unpin: Откачване
+videos: Видеа
+icon: Иконка
+type.photo: Снимка
+online: На линия
+email: Е-поща
+theme: Тема
+year: Година
+name: Име
+yes: Да
+filter.fields.names_and_descriptions: Имена и описания
+username: Потребителско име
+light: Светла
+terms: Условия на услугата
+type.article: Нишка
+people: Хора
+12h: 12ч
+delete: Изтриване
+1m: 1м
+article: Нишка
+url: URL адрес
+faq: Често задавани въпроси
+6h: 6ч
+body: Тяло
+user_badge_bot: Бот
+threads: Нишки
+about: Относно
+owner: Собственик
+privacy_policy: Политика за поверителност
+toolbar.link: Връзка
+stats: Статистика
+keywords: Ключови думи
+dark: Тъмна
+cancel: Отмяна
+no_comments: Няма коментари
+content: Съдържание
+users: Потребители
+search: Търсене
+error: Грешка
+logout: Отписване
+replies: Отговори
+photos: Снимки
+1y: 1г
+login: Вписване
+week: Седмица
+1d: 1д
+settings: Настройки
+add_media: Добавяне на мултимедия
+add_comment: Добавяне на коментар
+months: Месеца
+type.video: Видео
+articles: Нишки
+accept: Приемане
+share: Споделяне
+add: Добавяне
+about_instance: Относно
+comments: Коментари
+unsubscribe: Отабониране
+pin: Закачване
+profile: Профил
+user_badge_op: ОП
+done: Готово
+3h: 3ч
+filter_by_type: Филтриране по тип
+edit_my_profile: Редактиране на моя профил
+deleted: Изтрито от автора
+reputation_points: Репутационни точки
+share_on_fediverse: Споделяне във Федивърса
+federated_magazine_info: Тази общност е от федериран сървър и може да е непълна.
+down_vote: Редуциране
+following: Последвани
+top: Топ
+reports: Доклади
+writing: Писане
+change_view: Промяна на изгледа
+created_at: Създадено
+toolbar.bold: Удебеляване
+federation: Федериране
+toolbar.header: Заглавка
+cards: Карти
+comments_count: '{0}Коментара|{1}Коментар|]1,Inf[ Коментара'
+you_cant_login: Забравена парола?
+password: Парола
+random_posts: Случайни публикации
+add_new: Добавяне на ново
+oldest: Най-стари
+cards_view: Картиен изглед
+change_password: Промяна на паролата
+email_verify: Потвърди адреса на е-поща
+copy_url_to_fediverse: Копиране на оригиналния URL адрес
+favourites: Фаворизирания
+blocked: Блокирани
+delete_account: Изтрий акаунта
+all: Всички
+change: Промяна
+new_password: Нова парола
+newest: Най-нови
+select_channel: Избери канал
+tree_view: Дървовиден изглед
+followers: Последователи
+activity: Дейност
+add_post: Добавяне на публикацията
+hot: Популярни
+on: Вкл.
+unfollow: Отпоследване
+cover: Корица
+subscribers: Абонирани
+type.magazine: Общност
+show_more: Покажи повече
+down_votes: Редуцирания
+login_or_email: Потребителско име или адрес на е-поща
+from_url: От url адрес
+add_new_link: Добавяне на нова връзка
+added: Добавено
+new_password_repeat: Потвърди новата парола
+related_magazines: Подобни общности
+appearance: Външен вид
+remember_me: Запомни ме
+description: Описание
+current_password: Текуща парола
+add_moderator: Добавяне на модератор
+edit_photo: Редактиране на снимката
+off: Изкл.
+compact_view: Компактен изглед
+block: Блокиране
+table_view: Табличен изглед
+help: Помощ
+create_new_magazine: Създаване на нова общност
+toolbar.quote: Цитат
+enter_your_post: Въведи своята публикация
+add_new_photo: Добавяне на нова снимка
+change_my_cover: Промяна на моята корица
+register: Регистриране
+add_new_article: Добавяне на нова нишка
+send: Изпращане
+active_users: Активни хора
+add_new_post: Добавяне на нова публикация
+contact: За контакт
+open_url_to_fediverse: Отваряне на оригиналния URL адрес
+notifications: Известия
+change_theme: Промяна на темата
+instance: Инстанция
+subject_reported: Съдържанието бе докладвано.
+add_new_video: Добавяне на ново видео
+rules: Правила
+columns: Колони
+alphabetically: По азбучен ред
+up_votes: Подсилвания
+report: Докладване
+active: Активни
+status: Състояние
+new_email: Нов адрес на е-поща
+mod_log: Дневник на модерирането
+views: Прегледи
+events: Събития
+more: Още
+up_vote: Подсилване
+related_entries: Подобни нишки
+try_again: Повторен опит
+resend_account_activation_email_question: Неактивен акаунт?
+random_magazines: Случайни общности
+links: Връзки
+upload_file: Качване на файл
+change_email: Промяна на адреса на е-поща
+instances: Инстанции
+random_entries: Случайни нишки
+markdown_howto: Как работи редакторът?
+reputation: Репутация
+reset_password: Нулиране на паролата
+commented: Коментирани
+toolbar.code: Код
+subscriptions: Абонаменти
+filter_by_time: Филтриране по време
+edit_post: Редактиране на публикацията
+joined: Присъедини се
+removed: Премахнато от модератор
+domain: Домейн
+go_to_original_instance: Разгледай повече в оригиналната инстанция.
+edit_link: Редактиране на връзката
+change_my_avatar: Промяна на моя лик
+domains: Домейни
+overview: Обзор
+classic_view: Класически изглед
+messages: Съобщения
+boost: Подсилване
+empty: Празно
+change_language: Промяна на езика
+federated_user_info: Този профил е от федериран сървър и може да е непълен.
+request_account_deletion_title: Изтриване на акаунта
+pages: Страници
+magazines: Общности
+useful: Полезно
+chat_view: Чат изглед
+all_magazines: Всички общности
+enter_your_comment: Въведи своя коментар
+favourite: Фаворизиране
+oauth2.grant.user.notification.delete: Изчистване на известията.
+show_users_avatars: Показване на ликовете на потребителите
+magazine: Общност
+privacy: Поверителност
+repeat_password: Повтори паролата
+old_email: Настоящ адрес на е-поща
+posts: Публикации
+related_posts: Подобни публикации
+boosts: Подсилвания
+approve: Одобряване
+toolbar.strikethrough: Зачертано
+change_magazine: Промяна на общността
+homepage: Начална страница
+avatar: Лик
+follow: Последване
+toolbar.italic: Курсив
+more_from_domain: Още от домейна
+oauth2.grant.user.profile.edit: Редактиране на профила.
+approved: Одобрени
+check_email: Провери своята е-поща
+already_have_account: Вече имате акаунт?
+votes: Гласувания
+send_message: Изпращане на съобщение
+message: Съобщение
+filter.fields.only_names: Само имена
+local_and_federated: Локални и федерирани
+firstname: Собствено име
+tags: Тагове
+reason: Причина
+edit: Редактиране
+oc: ОС
+position_bottom: Отдолу
+people_local: Локални
+in: в
+rejected: Отхвърлени
+filters: Филтри
+show_avatars_on_comments: Показване на ликовете в коментарите
+select_magazine: Избери общност
+to: до
+dont_have_account: Нямате акаунт?
+federated: Федерирани
+moderated: Модерирани
+collapse: Свиване
+local: Локални
+go_to_footer: Към долен колонтитул
+ratio: Съотношение
+go_to_search: Към търсене
+go_to_filters: Към филтрите
+general: Общи
+expand: Разтваряне
+go_to_content: Към съдържанието
+people_federated: Федерирани
+pending: В очакване
+reject: Отхвърляне
+is_adult: 18+ / Деликатно
+agree_terms: Съгласие с %terms_link_start%Общите условия%terms_link_end% и %policy_link_start%Политиката
+  за поверителност%policy_link_end%
+note: Бележка
+comment_reply_position: Позиция на отговор на коментари
+badges: Значки
+position_top: Отгоре
+preview: Преглед
+dashboard: Табло
+close: Затваряне
+show_thumbnails: Показване на миниатюри
+flash_post_new_success: Публикацията е създадена успешно.
+copy_url: Копиране на Mbin URL адрес
+flash_comment_edit_error: Неуспешно редактиране на коментара. Нещо се обърка.
+flash_comment_new_error: Неуспешно създаване на коментар. Нещо се обърка.
+subscribed: Абониран
+flash_post_new_error: Публикацията не можа да бъде създадена. Нещо се обърка.
+page_width_fixed: Фикс
+removed_thread_by: премахна нишка от
+flash_thread_edit_success: Нишката е редактирана успешно.
+restored_post_by: възстанови публикация от
+flash_post_edit_error: Неуспешно редактиране на публикацията. Нещо се обърка.
+page_width_auto: Авто
+flash_post_edit_success: Публикацията е редактирана успешно.
+meta: Мета
+right: Отдясно
+flash_user_edit_password_error: Неуспешна промяна на паролата.
+oauth.consent.allow: Разрешаване
+custom_css: Персонализиран CSS
+ignore_magazines_custom_css: Игнориране на персонализирания CSS на общностите
+flash_thread_edit_error: Неуспешно редактиране на нишката. Нещо се обърка.
+oauth.consent.deny: Отказване
+flash_user_edit_email_error: Неуспешна промяна на адреса на е-поща.
+page_width_max: Макс
+page_width: Ширина на страницата
+flash_comment_new_success: Коментарът е създаден успешно.
+flash_user_settings_general_error: Неуспешно запазване на потребителските настройки.
+removed_comment_by: премахна коментар от
+left: Отляво
+restored_comment_by: възстанови коментар от
+flash_user_edit_profile_success: Настройките на профила са запазени успешно.
+subscription_sort: Сортиране
+flash_user_settings_general_success: Потребителските настройки са запазени успешно.
+flash_thread_delete_success: Нишката е изтрита успешно.
+restored_thread_by: възстанови нишка от
+contact_email: Е-поща за контакт
+removed_post_by: премахна публикация от
+show_magazines_icons: Показване на иконките на общностите
+flash_user_edit_profile_error: Неуспешно запазване на настройките на профила.
+kbin_bot: Mbin Бот
+added_new_reply: Добави нов отговор
+featured_magazines: Представени общности
+mod_remove_your_thread: Модератор премахна твоя нишка
+font_size: Размер на шрифта
+filter.adult.hide: Скриване на длк. сдрж.
+are_you_sure: Сигурен ли си?
+Your account is not active: Вашият акаунт не е активен.
+2fa.disable: Изключване на двуфакторното удостоверяване
+added_new_comment: Добави нов коментар
+toolbar.ordered_list: Подреден списък
+email_confirm_content: 'Готов ли си да активираш своя Mbin акаунт? Щракни върху връзката
+  по-долу:'
+sidebar_position: Позиция на страничната лента
+image_alt: Алтернативен текст на изображение
+filter.adult.show: Показване на длк. сдрж.
+filter.adult.only: Само длк. сдрж.
+email_confirm_header: Здравей! Потвърди своя адрес на е-поща.
+image: Изображение
+sidebar: Странична лента
+toolbar.unordered_list: Неподреден списък
+rounded_edges: Заоблени ръбове
+edited_thread: Редактира нишка
+preferred_languages: Филтриране по език на нишките и публикациите
+request_account_deletion_button: Поискване на изтриване на акаунта
+2fa.enable: Настройване на двуфакторно удостоверяване
+auto_preview: Автоматичен преглед на мултимедията
+wrote_message: Написа съобщение
+mod_deleted_your_comment: Модератор изтри твой коментар
+toolbar.mention: Споменаване
+edit_article: Редактиране на нишката
+email_confirm_title: Потвърди своя адрес на е-поща.
+added_new_thread: Добави нова нишка
+two_factor_backup: Резервни кодове за двуфакторно удостоверяване
+request_account_deletion_description: Администраторът ще бъде уведомен, че искаш акаунтът
+  ти да бъде изтрит.
+edit_comment: Запазване на промените
+edited_comment: Редактира коментар
+mod_remove_your_post: Модератор премахна твоя публикация
+password_and_2fa: Парола & 2фу
+infinite_scroll: Безкрайно превъртане
+email_confirm_expire: Моля, имай предвид, че връзката ще изтече след час.
+2fa.backup: Твоите резервни кодове за двуфакторно удостоверяване
+all_time: Всичко
+Password is invalid: Паролата е невалидна.
+edited_post: Редактира публикация
+added_new_post: Добави нова публикация
+two_factor_authentication: Двуфакторно удостоверяване
+replied_to_your_comment: Отговори на твой коментар
+2fa.verify_authentication_code.label: Въведи двуфакторен код, за да потвърдиш настройката
+flash_magazine_edit_success: Общността е редактирана успешно.
+toolbar.image: Изображение
+new_email_repeat: Потвърди новия адрес на е-поща
+hide_adult: Скриване на деликатно съдържание

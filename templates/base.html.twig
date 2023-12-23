@@ -30,15 +30,8 @@
         {{ encore_entry_script_tags('app') }}
         {% if kbin_mercure_enabled() %}
         {#        <script type="application/json" id="mercure-url">{{ mercure()|raw }}</script> #}
-        <script type="application/json"
-                id="mercure-url">{{- 'https://' ~ kbin_domain() ~ '/.well-known/mercure' }}</script>
+        <script type="application/json" id="mercure-url">{{- 'https://' ~ kbin_domain() ~ '/.well-known/mercure' }}</script>
         {% endif %}
-        <script>
-            window.KBIN_USER = "{{ app.user ? app.user.id : null }}";
-            window.KBIN_MAGAZINE = "{{ magazine is defined and magazine ? magazine.id : null }}"
-            window.KBIN_ENTRY_ID = "{{ entry is defined and entry ? entry.id : null }}"
-            window.KBIN_POST_ID = "{{ post is defined and post ? post.id : null }}"
-        </script>
         <script>
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register(
@@ -70,7 +63,13 @@
         'sidebar-left': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SIDEBAR_POSITION')) is same as constant('App\\Controller\\User\\ThemeSettingsController::LEFT'),
         'subs-show': app.user is defined and app.user is not same as null and app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SHOW')) is not same as 'false' and app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR')) is same as 'true',
         'sidebars-same-side': app.user is defined and app.user is not same as null and app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR')) is same as 'true' and app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SIDEBARS_SAME_SIDE')) is same as 'true',
-    }) }}" data-controller="kbin notifications">
+    }) }}"
+        data-controller="kbin notifications"
+        data-notifications-user-value="{{ app.user ? app.user.id : null }}"
+        data-notifications-magazine-value="{{ magazine is defined and magazine ? magazine.id : null }}"
+        data-notifications-entry-id-value="{{ entry is defined and entry ? entry.id : null }}"
+        data-notifications-post-id-value="{{ post is defined and post ? post.id : null }}"
+    >
 {% include 'layout/_header.html.twig' with {header_nav: block('header_nav')} %}
 {{ component('announcement') }}
 <div id="middle" class="{%- block mainClass -%}page{%- endblock %}">
@@ -79,7 +78,7 @@
         ? 'width--'~app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_PAGE_WIDTH'))
         : '') }}">
         <main id="main"
-              data-controller="lightbox timeago"
+              data-controller="lightbox timeago confirmation"
               class="{{ html_classes({'view-compact': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_COMPACT')) is same as 'true'}) }}">
             {% block body %}{% endblock %}
         </main>

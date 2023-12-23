@@ -20,7 +20,7 @@
             <form action="{{ path('magazine_moderator_request', {name: magazine.name}) }}"
                   method="POST"
                   class="float-end mb-2"
-                  onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                  data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                 <input type="hidden" name="token" value="{{ csrf_token('moderator_request') }}">
                 <button type="submit" class="btn btn__secondary">
                     <i class="fa-solid fa-hand-point-up"></i>

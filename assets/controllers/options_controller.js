@@ -55,4 +55,9 @@ export default class extends Controller {
     closeMobileSidebar() {
         document.getElementById('sidebar').classList.remove('open');
     }
+
+    appearanceReloadRequired(event) {
+        event.target.classList.add('spin');
+        window.location.reload();
+    }
 }

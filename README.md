@@ -8,6 +8,10 @@ Mbin is a decentralized content aggregator, voting, discussion and microblogging
 communicate with many other ActivityPub services, including Kbin, Mastodon, Lemmy, Pleroma, Peertube. The initiative aims to
 promote a free and open internet.
 
+[![Mbin Workflow](https://github.com/MbinOrg/mbin/actions/workflows/action.yaml/badge.svg?branch=main)](https://github.com/MbinOrg/mbin/actions/workflows/action.yaml?query=branch%3Amain)
+[![Psalm Security Scan](https://github.com/MbinOrg/mbin/actions/workflows/psalm.yml/badge.svg?branch=main)](https://github.com/MbinOrg/mbin/actions/workflows/psalm.yml?query=branch%3Amain)
+[![Translation status](https://hosted.weblate.org/widgets/mbin/-/svg-badge.svg)](https://hosted.weblate.org/engage/mbin/)
+
 Unique Features of Mbin for server owners & users alike:
 
 - Tons of **[GUI improvements](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Amerged+label%3Afrontend)**
@@ -28,7 +32,7 @@ For developers:
 - _Developer_ server explained (see "Developers" section down below)
 - GitHub Security advisories, vulnerability reporting, [Dependabot](https://github.com/features/security) and [Advanced code scanning](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning) enabled. And we run [`local-php-security-checker`](https://github.com/fabpot/local-php-security-checker).
 - Improved **code documentation**
-- **Tight integration** with [Mbin Weblate project](https://hosted.weblate.org/projects/mbin/kbin/) for translations (Two way sync)
+- **Tight integration** with [Mbin Weblate project](https://hosted.weblate.org/engage/mbin/) for translations (Two way sync)
 - Last but not least, a **community-focus project embracing the Collective Code Construction Contract** (C4). No single maintainer.
 
 ## Instances
@@ -46,7 +50,7 @@ For developers:
 
 - [Official repository on GitHub](https://github.com/MbinOrg/mbin)
 - [Matrix Space for discussions](https://matrix.to/#/#mbin:melroy.org)
-- [Translations](https://hosted.weblate.org/projects/mbin/)
+- [Translations](https://hosted.weblate.org/engage/mbin/)
 - [Contribution guidelines](CONTRIBUTING.md) - please read first, including before opening an issue!
 
 ## Getting Started
@@ -209,19 +213,21 @@ tools/vendor/bin/php-cs-fixer fix
 
 Following languages are currently supported/translated:
 
+- Bulgarian
+- Chinese
+- Dutch
 - English
+- Esperanto
+- French
 - German
 - Greek
-- Esperanto
-- Spanish
-- French
 - Italian
 - Japanese
-- Dutch
 - Polish
-- Ukrainian
+- Portuguese
+- Spanish
 - Turkish
-- Chinese
+- Ukrainian
 
 ## Credits
 

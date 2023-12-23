@@ -1,3 +1,8 @@
+{%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
+{%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
+
+{%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_PREVIEW'), V_FALSE) -%}
+
 {% if not app.user or (app.user and not app.user.isBlocked(post.user)) %}
     {% if post.visibility is same as 'private' and (not app.user or not app.user.isFollower(post.user)) %}
         <div class="section section--small"
@@ -8,7 +13,7 @@
         <blockquote{{ attributes.defaults({
             class: html_classes('section post subject ', {
                 'own': app.user and post.isAuthor(app.user),
-                'show-preview': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_PREVIEW')) is same as 'true'
+                'show-preview': SHOW_PREVIEW is same as V_TRUE and not post.isAdult
             })}).without('id') }}
                 id="post-{{ post.id }}"
                 data-controller="post subject mentions"
@@ -51,14 +56,12 @@
             {% endif %}
             <footer>
                 {% if post.image %}
-                    <figure>
-                        <a class="thumb" href="{{ uploaded_asset(post.image.filePath) }}">
-                            <img class="thumb-subject {{ post.isAdult ? 'image-adult' : '' }}"
-                                 src="{{ asset(post.image.filePath) |imagine_filter('post_thumb') }}"
-                                 {% if post.isAdult %}data-controller="thumb" data-action="mouseover->thumb#adult_image_hover mouseout->thumb#adult_image_hover_out"{% endif %}
-                                 alt="{{ post.image.altText }}">
-                        </a>
-                    </figure>
+                    {{ include('components/_figure_image.html.twig', {
+                        image: post.image,
+                        parent_id: post.id,
+                        is_adult: post.isAdult,
+                        thumb_filter: 'post_thumb'
+                    }) }}
                 {% endif %}
                 {% if post.visibility in ['visible', 'private'] %}
                     <menu>
@@ -93,73 +96,7 @@
                                 subject: post
                             }) }}
                         </li>
-                        <li class="dropdown">
-                            <button class="stretched-link" data-subject-target="more">{{ 'more'|trans }}</button>
-                            <ul class="dropdown__menu" data-controller="clipboard">
-                                <li>
-                                    <a href="{{ path('post_report', {id: post.id}) }}"
-                                       class="{{ html_classes({'active': is_route_name('post_report')}) }}"
-                                       data-action="subject#getForm">
-                                        {{ 'report'|trans }}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ post_voters_url(post, 'up') }}"
-                                       class="{{ html_classes({'active': is_route_name('post_favourites') or is_route_name('post_voters')}) }}">
-                                        {{ 'activity'|trans }}
-                                    </a>
-                                </li>
-                                <li class="dropdown__separator"></li>
-                                <li>
-                                    <a target="_blank"
-                                       href="{{ post.apId ?? path('ap_post', {magazine_name: post.magazine.name, post_id: post.id}) }}">
-                                        {{ 'open_url_to_fediverse'|trans }}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a data-action="clipboard#copy"
-                                       href="{{ post.apId ?? path('ap_post', {magazine_name: post.magazine.name, post_id: post.id}) }}">
-                                        {{ 'copy_url_to_fediverse'|trans }}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a data-action="clipboard#copy" href="{{ post_url(post) }}">
-                                        {{ 'copy_url'|trans }}
-                                    </a>
-                                </li>
-                                {% if is_granted('edit', post) or (app.user and post.isAuthor(app.user)) or is_granted('moderate', post) %}
-                                    <li class="dropdown__separator"></li>
-                                {% endif %}
-                                {% if is_granted('edit', post) %}
-                                    <li>
-                                        <a href="{{ post_edit_url(post) }}"
-                                           class="{{ html_classes({'active': is_route_name('post_edit')}) }}"
-                                           data-action="subject#getForm">
-                                            {{ 'edit'|trans }}
-                                        </a>
-                                    </li>
-                                {% endif %}
-                                {% if app.user and post.isAuthor(app.user) %}
-                                    <li>
-                                        <form method="post"
-                                              action="{{ post_delete_url(post) }}"
-                                              onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
-                                            <input type="hidden" name="token" value="{{ csrf_token('post_delete') }}">
-                                            <button type="submit">{{ 'delete'|trans }}</button>
-                                        </form>
-                                    </li>
-                                {% endif %}
-                                {% if is_granted('moderate', post) %}
-                                    <li>
-                                        <a href="{{ post_moderate_url(post) }}"
-                                           class="{{ html_classes({'active': is_route_name('post_moderate')}) }}"
-                                           data-action="subject#showModPanel">
-                                            {{ 'moderate'|trans }}
-                                        </a>
-                                    </li>
-                                {% endif %}
-                            </ul>
-                        </li>
+                        {% include 'post/_menu.html.twig' %}
                         <li data-subject-target="loader" style="display:none">
                             <div class="loader" role="status">
                                 <span class="visually-hidden">Loading...</span>
@@ -176,7 +113,7 @@
                         <li>
                             <form method="post"
                                   action="{{ path('post_restore', {magazine_name: post.magazine.name, post_id: post.id}) }}"
-                                  onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                                  data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                                 <input type="hidden" name="token" value="{{ csrf_token('post_restore') }}">
                                 <button type="submit">{{ 'restore'|trans }}</button>
                             </form>
