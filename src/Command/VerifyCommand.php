@@ -17,7 +17,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'mbin:user:verify',
-    description: 'This command allows you to activate or deactivate a user.',
+    description: 'This command allows you to manually activate or deactivate a user, bypassing email verification.',
 )]
 class VerifyCommand extends Command
 {
@@ -32,8 +32,8 @@ class VerifyCommand extends Command
     protected function configure(): void
     {
         $this->addArgument('username', InputArgument::REQUIRED)
-            ->addOption('activate', 'a', InputOption::VALUE_NONE, 'Activate user')
-            ->addOption('deactivate', 'd', InputOption::VALUE_NONE, 'Deactivate user');
+            ->addOption('activate', 'a', InputOption::VALUE_NONE, 'Activate user, bypass email verification')
+            ->addOption('deactivate', 'd', InputOption::VALUE_NONE, 'Deactivate user, require email verification');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -50,11 +50,9 @@ class VerifyCommand extends Command
         }
 
         if (!$activate && !$deactivate) {
-
             if ($user->isVerified) {
                 $io->success('The provided user is verified.');
-            }
-            else {
+            } else {
                 $io->success('The provided user is unverified.');
             }
 
