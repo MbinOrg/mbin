@@ -17,7 +17,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'mbin:user:verify',
-    description: 'This command allows you to manually activate or deactivate a user, bypassing email verification.',
+    description: 'This command allows you to manually activate or deactivate a user, bypassing email verification requirement.',
 )]
 class VerifyCommand extends Command
 {
@@ -32,8 +32,8 @@ class VerifyCommand extends Command
     protected function configure(): void
     {
         $this->addArgument('username', InputArgument::REQUIRED)
-            ->addOption('activate', 'a', InputOption::VALUE_NONE, 'Activate user, bypass email verification')
-            ->addOption('deactivate', 'd', InputOption::VALUE_NONE, 'Deactivate user, require email verification');
+            ->addOption('activate', 'a', InputOption::VALUE_NONE, 'Activate user, bypass email verification.')
+            ->addOption('deactivate', 'd', InputOption::VALUE_NONE, 'Deactivate user, require email (re)verification.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -44,16 +44,16 @@ class VerifyCommand extends Command
         $user = $this->repository->findOneByUsername($input->getArgument('username'));
 
         if (!$user) {
-            $io->error('User does not exist.');
+            $io->error('User does not exist!');
 
             return Command::FAILURE;
         }
 
         if (!$activate && !$deactivate) {
             if ($user->isVerified) {
-                $io->success('The provided user is verified.');
+                $io->success('The provided user is verified and can login.');
             } else {
-                $io->success('The provided user is unverified.');
+                $io->success('The provided user is unverified and cannot login.');
             }
 
             return Command::SUCCESS;
@@ -63,12 +63,12 @@ class VerifyCommand extends Command
             $user->isVerified = true;
             $this->entityManager->flush();
 
-            $io->success('The user has been activated.');
+            $io->success('The user has been activated and can login.');
         } elseif ($deactivate) {
             $user->isVerified = false;
             $this->entityManager->flush();
 
-            $io->success('The user has been deactivated.');
+            $io->success('The user has been deactivated and cannot login.');
         }
 
         return Command::SUCCESS;
