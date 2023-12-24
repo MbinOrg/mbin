@@ -140,12 +140,6 @@ $green: #859900;
   //entry
   --kbin-entry-link-visited-color: #586e75;
 
-  // footer
-  --kbin-footer-bg: var(--kbin-section-bg);
-  --kbin-footer-text-color: var(--kbin-text-color);
-  --kbin-footer-link-color: var(--kbin-link-color);
-  --kbin-footer-link-hover-color: var(--kbin-link-hover-color);
-
   .options--top,
   .section--top {
     border-top: var(--kbin-options-border) !important;
