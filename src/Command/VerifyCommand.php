@@ -59,8 +59,7 @@ class VerifyCommand extends Command
             $this->entityManager->flush();
 
             $io->success('The user has been deactivated and cannot login.');
-        }
-        else {
+        } else {
             if ($user->isVerified) {
                 $io->success('The user is verified and can login.');
             } else {
