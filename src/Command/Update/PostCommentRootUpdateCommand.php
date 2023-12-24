@@ -13,7 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
-    name: 'kbin:post:comments:root:update',
+    name: 'mbin:post:comments:root:update',
     description: 'This command allows generate root id for comments.',
 )]
 class PostCommentRootUpdateCommand extends Command

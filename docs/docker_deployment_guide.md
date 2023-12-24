@@ -160,12 +160,12 @@ You can also access RabbitMQ management UI via [http://localhost:15672](http://l
 Create new admin user (without email verification), please change the `username`, `email` and `password` below:
 
 ```bash
-docker compose exec php bin/console kbin:user:create <username> <email@example.com> <password>
-docker compose exec php bin/console kbin:user:admin <username>
+docker compose exec php bin/console mbin:user:create <username> <email@example.com> <password>
+docker compose exec php bin/console mbin:user:admin <username>
 ```
 
 ```bash
-docker compose exec php bin/console kbin:ap:keys:update
+docker compose exec php bin/console mbin:ap:keys:update
 ```
 
 Next, log in and create a magazine named "random" to which unclassified content from the fediverse will flow.

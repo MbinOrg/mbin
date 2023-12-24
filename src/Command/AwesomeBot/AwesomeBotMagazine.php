@@ -22,7 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\HttpClient\HttpClient;
 
-#[AsCommand(name: 'kbin:awesome-bot:magazine:create')]
+#[AsCommand(name: 'mbin:awesome-bot:magazine:create')]
 class AwesomeBotMagazine extends Command
 {
     public function __construct(

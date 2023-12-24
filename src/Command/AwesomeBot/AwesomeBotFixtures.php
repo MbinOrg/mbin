@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\HttpClient\HttpClient;
 
-#[AsCommand(name: 'kbin:awesome-bot:fixtures:create')]
+#[AsCommand(name: 'mbin:awesome-bot:fixtures:create')]
 class AwesomeBotFixtures extends Command
 {
     public function __construct(
@@ -332,7 +332,7 @@ class AwesomeBotFixtures extends Command
     private function preapreMagazines(OutputInterface $output, array $entry)
     {
         try {
-            $command = $this->getApplication()->find('kbin:user:create');
+            $command = $this->getApplication()->find('mbin:user:create');
             $arguments = [
                 'username' => $entry['username'],
                 'email' => $entry['username'].'@karab.in',
@@ -344,7 +344,7 @@ class AwesomeBotFixtures extends Command
         }
 
         try {
-            $command = $this->getApplication()->find('kbin:awesome-bot:magazine:create');
+            $command = $this->getApplication()->find('mbin:awesome-bot:magazine:create');
             $arguments = [
                 'username' => 'demo',
                 'magazine_name' => $entry['magazine_name'],
