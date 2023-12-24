@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'kbin:user:admin',
+    name: 'mbin:user:admin',
     description: 'This command allows you to grant administrator privileges to the user.',
 )]
 class AdminCommand extends Command

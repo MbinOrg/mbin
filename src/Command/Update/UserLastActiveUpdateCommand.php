@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
-    name: 'kbin:users:lastActive:update',
+    name: 'mbin:users:lastActive:update',
     description: 'This command allows set user last active date.'
 )]
 class UserLastActiveUpdateCommand extends Command

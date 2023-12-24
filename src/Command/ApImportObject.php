@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(
-    name: 'kbin:ap:import',
+    name: 'mbin:ap:import',
     description: 'This command allows you import AP resource.'
 )]
 class ApImportObject extends Command

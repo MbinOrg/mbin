@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'kbin:magazine:sub',
+    name: 'mbin:magazine:sub',
     description: 'This command allows subscribe magazine.',
 )]
 class SubMagazineCommand extends Command

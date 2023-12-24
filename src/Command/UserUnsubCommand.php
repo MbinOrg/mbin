@@ -13,7 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'kbin:user:unsub')]
+#[AsCommand(name: 'mbin:user:unsub')]
 class UserUnsubCommand extends Command
 {
     public function __construct(

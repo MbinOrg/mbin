@@ -38,7 +38,7 @@ class AdminCommandTest extends KernelTestCase
     {
         $application = new Application(self::bootKernel());
 
-        $this->command = $application->find('kbin:user:admin');
+        $this->command = $application->find('mbin:user:admin');
         $this->repository = $this->getContainer()->get(UserRepository::class);
     }
 }

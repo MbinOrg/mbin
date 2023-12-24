@@ -49,16 +49,6 @@ class VerifyCommand extends Command
             return Command::FAILURE;
         }
 
-        if (!$activate && !$deactivate) {
-            if ($user->isVerified) {
-                $io->success('The user is verified and can login.');
-            } else {
-                $io->success('The user is unverified and cannot login.');
-            }
-
-            return Command::SUCCESS;
-        }
-
         if ($activate) {
             $user->isVerified = true;
             $this->entityManager->flush();
@@ -69,6 +59,13 @@ class VerifyCommand extends Command
             $this->entityManager->flush();
 
             $io->success('The user has been deactivated and cannot login.');
+        }
+        else {
+            if ($user->isVerified) {
+                $io->success('The user is verified and can login.');
+            } else {
+                $io->success('The user is unverified and cannot login.');
+            }
         }
 
         return Command::SUCCESS;
