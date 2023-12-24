@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
-    name: 'kbin:magazine:tags',
+    name: 'mbin:magazine:tags',
     description: 'This command allows remove magazine name from tags.'
 )]
 class RemoveMagazineNameFromTagsCommand extends Command

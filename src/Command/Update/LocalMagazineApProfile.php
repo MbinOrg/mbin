@@ -13,7 +13,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsCommand(
-    name: 'kbin:update:magazines:ap_profile',
+    name: 'mbin:update:magazines:ap_profile',
     description: 'This command allows generate Ap profile.',
 )]
 class LocalMagazineApProfile extends Command

@@ -18,7 +18,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
-    name: 'kbin:ap:keys:update',
+    name: 'mbin:ap:keys:update',
     description: 'This command allows generate keys for AP Actors.',
 )]
 class ApKeysUpdateCommand extends Command
