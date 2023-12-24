@@ -51,9 +51,9 @@ class VerifyCommand extends Command
 
         if (!$activate && !$deactivate) {
             if ($user->isVerified) {
-                $io->success('The provided user is verified and can login.');
+                $io->success('The user is verified and can login.');
             } else {
-                $io->success('The provided user is unverified and cannot login.');
+                $io->success('The user is unverified and cannot login.');
             }
 
             return Command::SUCCESS;
