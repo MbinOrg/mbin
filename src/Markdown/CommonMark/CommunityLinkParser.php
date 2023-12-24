@@ -41,13 +41,9 @@ class CommunityLinkParser implements InlineParserInterface
         $isRemote = $this->isRemoteCommunity($domain);
 
         if ($isRemote) {
-            if ($magazine = $this->magazineRepository->findOneByName($fullHandle)) {
-                if (!$magazine->apPublicUrl) {
-                    $ctx->getContainer()->appendChild(new UnresolvableLink('!'.$handle));
+            $magazine = $this->magazineRepository->findOneByName($fullHandle);
 
-                    return true;
-                }
-
+            if (!$magazine->apPublicUrl) {
                 $ctx->getContainer()->appendChild(
                     new CommunityLink(
                         $magazine->apPublicUrl,
@@ -57,17 +53,15 @@ class CommunityLinkParser implements InlineParserInterface
                         MentionType::RemoteMagazine,
                     ),
                 );
-
-                return true;
+            } elseif (!$magazine) {
+                $ctx->getContainer()->appendChild(
+                    new ActorSearchLink(
+                        $this->urlGenerator->generate('search', ['q' => $fullHandle], UrlGeneratorInterface::ABSOLUTE_URL),
+                        '!'.$handle,
+                        '!'.$fullHandle,
+                    )
+                );
             }
-
-            $ctx->getContainer()->appendChild(
-                new ActorSearchLink(
-                    $this->urlGenerator->generate('search', ['q' => $fullHandle], UrlGeneratorInterface::ABSOLUTE_URL),
-                    '!'.$handle,
-                    '!'.$fullHandle,
-                )
-            );
 
             return true;
         }
