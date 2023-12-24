@@ -42,7 +42,7 @@ class CommunityLinkParser implements InlineParserInterface
 
         if ($isRemote) {
             $magazine = $this->magazineRepository->findOneByName($fullHandle);
-        
+
             if ($magazine && $magazine->apPublicUrl) {
                 $ctx->getContainer()->appendChild(
                     new CommunityLink(
@@ -53,9 +53,10 @@ class CommunityLinkParser implements InlineParserInterface
                         MentionType::RemoteMagazine,
                     ),
                 );
+
                 return true;
             }
-        
+
             $ctx->getContainer()->appendChild(
                 new ActorSearchLink(
                     $this->urlGenerator->generate('search', ['q' => $fullHandle], UrlGeneratorInterface::ABSOLUTE_URL),
@@ -63,6 +64,7 @@ class CommunityLinkParser implements InlineParserInterface
                     '!'.$fullHandle,
                 )
             );
+
             return true;
         }
 
