@@ -14,7 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
-    name: 'kbin:posts:magazines',
+    name: 'mbin:posts:magazines',
     description: 'This command allows assing post to magazine.'
 )]
 class PostMagazinesUpdateCommand extends Command

@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(
-    name: 'kbin:ap:actor:update',
+    name: 'mbin:ap:actor:update',
     description: 'This command allows refresh remote users.'
 )]
 class NoteVisibilityUpdateCommand extends Command

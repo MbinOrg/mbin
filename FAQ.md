@@ -149,7 +149,7 @@ sudo supervisorctl restart all
 If you want to update all the remote users on your instance, you can execute the following command (which will also re-download the avatars):
 
 ```bash
-./bin/console kbin:ap:actor:update
+./bin/console mbin:ap:actor:update
 ```
 
 _Important:_ This might have quite a performance impact (temporally), if you are running a very large instance. Due to the huge amount of remote users.

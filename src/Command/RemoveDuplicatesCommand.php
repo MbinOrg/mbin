@@ -13,7 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'kbin:post:remove-duplicates')]
+#[AsCommand(name: 'mbin:post:remove-duplicates')]
 class RemoveDuplicatesCommand extends Command
 {
     public function __construct(
