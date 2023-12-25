@@ -127,4 +127,11 @@
   --kbin-footer-text-color: #fff;
   --kbin-footer-link-color: #fff;
   --kbin-footer-link-hover-color: var(--kbin-header-link-hover-color);
+
+  // details
+  --mbin-details-border: var(--kbin-section-border);
+  --mbin-details-separator-border: var(--kbin-meta-border);
+
+  --mbin-details-detail-color: var(--kbin-link-hover-color);
+  --mbin-details-spoiler-color: var(--kbin-danger-color);
 }
