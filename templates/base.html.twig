@@ -24,6 +24,9 @@
 
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
+        <style>
+            {% include 'components/_details_label.css.twig' %}
+        </style>
     {% endblock %}
 
     {% block javascripts %}
