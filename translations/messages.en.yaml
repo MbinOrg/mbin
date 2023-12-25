@@ -46,6 +46,7 @@ mod_log: Moderation log
 add_comment: Add comment
 add_post: Add post
 add_media: Add media
+remove_media: Remove media
 markdown_howto: How does the editor work?
 enter_your_comment: Enter your comment
 enter_your_post: Enter your post
@@ -90,6 +91,7 @@ add_new_link: Add new link
 add_new_photo: Add new photo
 add_new_post: Add new post
 add_new_video: Add new video
+jump_to_top: Jump to top
 contact: Contact
 faq: FAQ
 rss: RSS
@@ -178,6 +180,7 @@ edit_photo: Edit photo
 delete: Delete
 edit_post: Edit post
 edit_comment: Save changes
+menu: Menu
 settings: Settings
 general: General
 profile: Profile

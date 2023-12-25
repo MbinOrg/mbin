@@ -42,6 +42,8 @@
                  alt="{{ post.image.altText }}">
             <button formaction="{{ path('post_image_delete', {magazine_name: post.magazine.name, post_id: post.id}) }}"
                     class="btn-link"
+                    aria-label="{{ 'remove_media'|trans }}"
+                    title="{{ 'remove_media'|trans }}"
                     data-action="confirmation#ask subject#removeImage"
                     data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                 <i class="fa-solid fa-xmark"></i>
