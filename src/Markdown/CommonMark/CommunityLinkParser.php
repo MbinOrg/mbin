@@ -41,7 +41,9 @@ class CommunityLinkParser implements InlineParserInterface
         $isRemote = $this->isRemoteCommunity($domain);
 
         if ($isRemote) {
-            if ($magazine = $this->magazineRepository->findOneByName($fullHandle)) {
+            $magazine = $this->magazineRepository->findOneByName($fullHandle);
+
+            if ($magazine && $magazine->apPublicUrl) {
                 $ctx->getContainer()->appendChild(
                     new CommunityLink(
                         $magazine->apPublicUrl,

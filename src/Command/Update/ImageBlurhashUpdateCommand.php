@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(
-    name: 'kbin:blurhash:update',
+    name: 'mbin:blurhash:update',
     description: 'This command allows generate blurhash for images.',
 )]
 class ImageBlurhashUpdateCommand extends Command
