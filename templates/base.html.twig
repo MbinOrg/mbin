@@ -102,7 +102,7 @@
 {% include 'layout/_topbar.html.twig' %}
 <div id="popover" class="popover js-popover section section--small" role="dialog"></div>
 <div id="scroll-top" data-controller="scroll-top" style="display: none;" data-action="click->scroll-top#scrollTop" title="{{ 'jump_to_top'|trans }}" aria-label="{{ 'jump_to_top'|trans }}">
-    <i class="fa-solid fa-arrow-up"></i> <small class="hidden">0</small>
+    <i class="fa-solid fa-arrow-up" aria-hidden="true"></i> <small class="hidden">0</small>
 </div>
 </body>
 </html>

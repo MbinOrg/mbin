@@ -35,7 +35,7 @@
                     title="{{ 'remove_media'|trans }}"
                     data-action="confirmation#ask subject#removeImage"
                     data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
-                <i class="fa-solid fa-xmark"></i>
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
             </button>
         {% endif %}
         <li class="{{ html_classes('dropdown', {'hidden': hasImage}) }}">
@@ -43,7 +43,7 @@
                     class="btn btn__secondary"
                     aria-label="{{ 'add_media'|trans }}"
                     title="{{ 'add_media'|trans }}">
-                <i class="fa-solid fa-photo-film"></i>
+                <i class="fa-solid fa-photo-film" aria-hidden="true"></i>
             </button>
             <div class="dropdown__menu">
                 {% include 'layout/_form_media.html.twig' %}
