@@ -95,7 +95,7 @@ class ImageRepository extends ServiceEntityRepository
         try {
             $this->imageManager->store($source, $filePath);
         } catch (\Exception $e) {
-            $this->logger->warning(
+            $this->logger->error(
                 'findOrCreateFromSource: failed to store image file: '.$e->getMessage(),
                 ['origin' => $origin],
             );

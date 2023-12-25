@@ -17,7 +17,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(
-    name: 'kbin:actor:update',
+    name: 'mbin:actor:update',
     description: 'This command will allow you to update remote user info.',
 )]
 class ActorUpdateCommand extends Command

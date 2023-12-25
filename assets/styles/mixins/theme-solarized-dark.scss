@@ -140,6 +140,13 @@ $green: #859900;
   //entry
   --kbin-entry-link-visited-color: #586e75;
 
+  // details
+  --mbin-details-border: var(--kbin-section-border);
+  --mbin-details-separator-border: var(--kbin-meta-border);
+
+  --mbin-details-detail-color: #{$blue};
+  --mbin-details-spoiler-color: var(--kbin-danger-color);
+
   .options--top,
   .section--top {
     border-top: var(--kbin-options-border) !important;

@@ -169,4 +169,13 @@ $aspect-ratios: (
   // entry
   --kbin-entry-link-visited-color: #7e8f99;
 
+  // details
+  --mbin-details-border: var(--kbin-section-border);
+  --mbin-details-separator-border: var(--kbin-meta-border);
+
+  --mbin-details-detail-color: var(--kbin-link-hover-color);
+  --mbin-details-spoiler-color: var(--kbin-danger-color);
+
+  --mbin-details-detail-label: "Details";
+  --mbin-details-spoiler-label: "Spoiler";
 }

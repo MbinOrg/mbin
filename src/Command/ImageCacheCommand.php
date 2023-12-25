@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
-    name: 'kbin:cache:build',
+    name: 'mbin:cache:build',
     description: 'This command allows you to rebuild image thumbs cache.'
 )]
 class ImageCacheCommand extends Command

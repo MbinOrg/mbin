@@ -956,12 +956,12 @@ sudo supervisorctl restart all
 Create new admin user (without email verification), please change the `username`, `email` and `password` below:
 
 ```bash
-php bin/console kbin:user:create <username> <email@example.com> <password>
-php bin/console kbin:user:admin <username>
+php bin/console mbin:user:create <username> <email@example.com> <password>
+php bin/console mbin:user:admin <username>
 ```
 
 ```bash
-php bin/console kbin:ap:keys:update
+php bin/console mbin:ap:keys:update
 ```
 
 Next, log in and create a magazine named "random" to which unclassified content from the fediverse will flow.

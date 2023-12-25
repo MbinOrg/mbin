@@ -13,7 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'kbin:magazine:unsub')]
+#[AsCommand(name: 'mbin:magazine:unsub')]
 class MagazineUnsubCommand extends Command
 {
     public function __construct(

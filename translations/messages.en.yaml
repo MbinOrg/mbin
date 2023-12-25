@@ -783,4 +783,6 @@ sensitive_warning: Sensitive content
 sensitive_toggle: Toggle visibility of sensitive content
 sensitive_show: Click to show
 sensitive_hide: Click to hide
+details: Details
+spoiler: Spoiler
 all_time: All time

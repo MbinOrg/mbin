@@ -15,7 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
-    name: 'kbin:tag:update',
+    name: 'mbin:tag:update',
     description: 'This command allows refresh entries tags.'
 )]
 class TagsUpdateCommand extends Command

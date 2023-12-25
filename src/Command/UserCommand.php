@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'kbin:user:create',
+    name: 'mbin:user:create',
     description: 'This command allows you to create user, optionally granting administrator privileges.',
 )]
 class UserCommand extends Command
