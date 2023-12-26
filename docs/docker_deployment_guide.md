@@ -307,7 +307,7 @@ docker compose exec redis redis-cli
 > FLUSHDB
 ```
 
-### Manual user activation
+## Manual user activation
 
 Activate a user account (bypassing email verification), please change the `username` below:
 
