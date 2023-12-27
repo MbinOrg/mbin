@@ -110,7 +110,7 @@
     font-weight: 300;
     grid-area: footer;
 
-    menu, .boosts {
+    .boosts {
       font-size: .75rem;
       opacity: .75;
     }
@@ -122,6 +122,7 @@
       grid-auto-columns: max-content;
       grid-auto-flow: column;
       list-style: none;
+      font-size: .8rem;
       opacity: .75;
       position: relative;
       z-index: 4;

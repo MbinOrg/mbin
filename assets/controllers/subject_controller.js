@@ -2,7 +2,7 @@ import {Controller} from '@hotwired/stimulus';
 import {fetch, ok} from "../utils/http";
 import {useIntersection} from 'stimulus-use'
 import router from "../utils/routing";
-import getIntIdFromElement, {getLevel, getTypeFromNotification} from "../utils/kbin";
+import getIntIdFromElement, {getLevel, getDepth, getTypeFromNotification} from "../utils/kbin";
 import GLightbox from 'glightbox';
 
 /* stimulusFetch: 'lazy' */
@@ -118,8 +118,11 @@ export default class extends Controller {
                 div.innerHTML = response.html;
 
                 let level = getLevel(this.element);
+                let depth = getDepth(this.element);
 
+                div.firstElementChild.classList.remove('comment-level--1');
                 div.firstElementChild.classList.add('comment-level--' + (level >= 10 ? 10 : level + 1));
+                div.firstElementChild.dataset.commentCollapseDepthValue = depth + 1;
 
                 if (this.element.nextElementSibling && this.element.nextElementSibling.classList.contains('comments')) {
                     this.element.nextElementSibling.appendChild(div.firstElementChild);
@@ -132,6 +135,7 @@ export default class extends Controller {
                 this.containerTarget.innerHTML = '';
             }
         } catch (e) {
+            console.error(e);
             // this.containerTarget.innerHTML = '';
         } finally {
             this.application
