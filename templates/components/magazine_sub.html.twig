@@ -1,5 +1,7 @@
 <aside{{ attributes.defaults({class: 'magazine__subscribe', 'data-controller': 'subs'}) }}>
-    <div class="action" title="{{ 'subscribers'|trans }}" aria-label="{{ 'subscribers'|trans }}">
+    <div class="action"
+        title="{{ magazine.subscriptionsCount ~ ' ' ~ 'subscribers_count'|trans({'%count%': magazine.subscriptionsCount}) }}"
+        aria-label="{{ magazine.subscriptionsCount ~ ' ' ~ 'subscribers_count'|trans({'%count%': magazine.subscriptionsCount}) }}">
         <i class="fa-solid fa-users" aria-hidden="true"></i><span>{{ magazine.subscriptionsCount }}</span>
     </div>
     <form action="{{ path('magazine_' ~ (is_magazine_subscribed(magazine) ? 'unsubscribe' : 'subscribe'), {name: magazine.name}) }}"

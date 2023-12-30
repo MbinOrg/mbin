@@ -25,6 +25,8 @@ change_view: Change view
 filter_by_time: Filter by time
 filter_by_type: Filter by type
 comments_count: '{0}Comments|{1}Comment|]1,Inf[ Comments'
+subscribers_count: '{0}Subscribers|{1}Subscriber|]1,Inf[ Subscribers'
+followers_count: '{0}Followers|{1}Follower|]1,Inf[ Followers'
 favourites: Favorites
 favourite: Favorite
 more: More
@@ -91,7 +93,6 @@ add_new_link: Add new link
 add_new_photo: Add new photo
 add_new_post: Add new post
 add_new_video: Add new video
-jump_to_top: Jump to top
 contact: Contact
 faq: FAQ
 rss: RSS

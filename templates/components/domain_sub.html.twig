@@ -1,5 +1,7 @@
 <aside{{ attributes.defaults({class: 'domain__subscribe', 'data-controller': 'subs'}) }}>
-    <div class="action" title="{{ 'subscribers'|trans }}" aria-label="{{ 'subscribers'|trans }}">
+    <div class="action"
+        title="{{ domain.subscriptionsCount ~ ' ' ~ 'subscribers_count'|trans({'%count%': domain.subscriptionsCount}) }}"
+        aria-label="{{ domain.subscriptionsCount ~ ' ' ~ 'subscribers_count'|trans({'%count%': domain.subscriptionsCount}) }}">
         <i class="fa-solid fa-users" aria-hidden="true"></i> <span>{{ domain.subscriptionsCount }}</span>
     </div>
     <form action="{{ path('domain_' ~ (is_domain_subscribed(domain) ? 'unsubscribe' : 'subscribe'), {name: domain.name}) }}"
