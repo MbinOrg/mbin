@@ -53,6 +53,7 @@ services:
         ]
     volumes:
       - ./storage/media:/var/www/mbin/public/media
+      - ./storage/logs:/var/www/mbin/var/log
     # If you want to change configs locally, without rebuilding the image use:
     #  - ../config:/var/www/mbin/config
     env_file:
@@ -80,6 +81,7 @@ services:
       test: ["CMD-SHELL", "ps aux | grep 'messenger[:]consume' || exit 1"]
     volumes:
       - ./storage/media:/var/www/mbin/public/media
+      - ./storage/logs:/var/www/mbin/var/log
     # If you want to change configs locally, without rebuilding the image use:
     #  - ../config:/var/www/mbin/config
     env_file:
@@ -107,6 +109,7 @@ services:
       test: ["CMD-SHELL", "ps aux | grep 'messenger[:]consume' || exit 1"]
     volumes:
       - ./storage/media:/var/www/mbin/public/media
+      - ./storage/logs:/var/www/mbin/var/log
     # If you want to change configs locally, without rebuilding the image use:
     #  - ../config:/var/www/mbin/config
     env_file:
