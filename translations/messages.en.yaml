@@ -406,8 +406,8 @@ filter.adult.only: Only NSFW
 local_and_federated: Local and federated
 filter.fields.only_names: Only names
 filter.fields.names_and_descriptions: Names and descriptions
-kbin_bot: Mbin Bot
-bot_body_content: "Welcome to the Mbin Bot! This bot plays a crucial role in enabling
+kbin_bot: Mbin Agent
+bot_body_content: "Welcome to the Mbin Agent! This agent plays a crucial role in enabling
   ActivityPub functionality within Mbin. It ensures that Mbin can communicate and
   federate with other instances in the fediverse.\n\nActivityPub is an open standard
   protocol that allows decentralized social networking platforms to communicate and
