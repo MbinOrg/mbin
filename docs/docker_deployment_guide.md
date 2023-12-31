@@ -307,6 +307,14 @@ docker compose exec redis redis-cli
 > FLUSHDB
 ```
 
+## Manual user activation
+
+Activate a user account (bypassing email verification), please change the `username` below:
+
+```bash
+docker compose exec php bin/console mbin:user:verify <username> -a
+```
+
 ## Backup and restore
 
 Backup:
