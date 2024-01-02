@@ -60,11 +60,11 @@ class PostManager implements ContentManagerInterface
             }
         }
 
-        $post = $this->factory->createFromDto($dto, $user);
-
-        if ($dto->magazine->isBanned($user)) {
+        if ($dto->magazine->isBanned($user) || $user->isBanned()) {
             throw new UserBannedException();
         }
+
+        $post = $this->factory->createFromDto($dto, $user);
 
         $post->lang = $dto->lang;
         $post->isAdult = $dto->isAdult || $post->magazine->isAdult;
