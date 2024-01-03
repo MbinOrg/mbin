@@ -25,6 +25,8 @@ change_view: Change view
 filter_by_time: Filter by time
 filter_by_type: Filter by type
 comments_count: '{0}Comments|{1}Comment|]1,Inf[ Comments'
+subscribers_count: '{0}Subscribers|{1}Subscriber|]1,Inf[ Subscribers'
+followers_count: '{0}Followers|{1}Follower|]1,Inf[ Followers'
 favourites: Favorites
 favourite: Favorite
 more: More
@@ -46,6 +48,7 @@ mod_log: Moderation log
 add_comment: Add comment
 add_post: Add post
 add_media: Add media
+remove_media: Remove media
 markdown_howto: How does the editor work?
 enter_your_comment: Enter your comment
 enter_your_post: Enter your post
@@ -178,6 +181,7 @@ edit_photo: Edit photo
 delete: Delete
 edit_post: Edit post
 edit_comment: Save changes
+menu: Menu
 settings: Settings
 general: General
 profile: Profile
