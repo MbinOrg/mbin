@@ -24,7 +24,6 @@
         <div class="kbin-container">
             <nav class="head-nav"  data-action="click->kbin#toggleNav">
                 <div class="brand">
-                    <div><i class="fa-solid fa-bars"></i></div>
                     <a href="{{ app.user ? path(app.user.homepage) : '/' }}">
                         {% if kbin_header_logo() %}
                             <img id="logo" src="{{ asset('mbin_logo.svg') }}" alt="{{ kbin_title() }}">

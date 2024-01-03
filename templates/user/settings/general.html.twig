@@ -57,7 +57,7 @@
                       class="mb-2">
                     <input type="hidden" name="token" value="{{ csrf_token('user_delete') }}">
                     <button type="submit" class="btn btn__danger">
-                        <i class="fa-solid fa-dumpster-fire"></i> {{ 'request_account_deletion_revoke_button'|trans }}
+                        <i class="fa-solid fa-dumpster-fire" aria-hidden="true"></i> {{ 'request_account_deletion_revoke_button'|trans }}
                     </button>
                 </form>
             {% else %}
@@ -66,7 +66,7 @@
                       class="mb-2">
                     <input type="hidden" name="token" value="{{ csrf_token('user_delete') }}">
                     <button type="submit" class="btn btn__danger">
-                        <i class="fa-solid fa-dumpster-fire"></i> {{ 'request_account_deletion_button'|trans }}
+                        <i class="fa-solid fa-dumpster-fire" aria-hidden="true"></i> {{ 'request_account_deletion_button'|trans }}
                     </button>
                 </form>
             {% endif %}

@@ -36,7 +36,7 @@
                title="{{ 'sensitive_show'|trans }}"
                aria-label="{{ 'sensitive_show'|trans }}">
             <div class="sensitive-button-label">
-                <i class="fa-solid fa-eye"></i>
+                <i class="fa-solid fa-eye" aria-hidden="true"></i>
             </div>
         </label>
         <label for="{{ sensitive_id }}"
@@ -44,7 +44,7 @@
                title="{{ 'sensitive_hide'|trans }}"
                aria-label="{{ 'sensitive_hide'|trans }}">
             <div class="sensitive-button-label">
-                <i class="fa-solid fa-eye-slash"></i>
+                <i class="fa-solid fa-eye-slash" aria-hidden="true"></i>
             </div>
         </label>
     {% endif %}

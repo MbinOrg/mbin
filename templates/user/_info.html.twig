@@ -26,7 +26,7 @@
         {% if app.user is not same as user %}
             <li><a href="{{ path('messages_create', {username: user.username}) }}"
                    class="stretched-link">{{ 'send_message'|trans }}</a> <i
-                        class="fa-solid fa-envelope"></i></li>
+                        class="fa-solid fa-envelope" aria-hidden="true"></i></li>
         {% endif %}
     </ul>
 </section>
