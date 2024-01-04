@@ -28,7 +28,7 @@ class EmbedRepository extends ServiceEntityRepository
         // before we try to insert a new DB record
         if (null === $this->findOneByUrl($entity->url)) {
 
-            //URL length limitation of VARCHAR(255) in db schema
+            //Do not exceed URL length limit defined by db schema
             try {
                 $this->_em->persist($entity);
 
