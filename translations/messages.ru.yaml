@@ -102,13 +102,13 @@ reset_check_email_desc: Если мы нашли аккаунт связанны
   получить ссылку для сброса пароля. Ссылка доступна до %expire%.
 reset_check_email_desc2: Если вы не получили письмо проверьте папку со спамом
 try_again: Попробовать еще раз
-up_vote: Согласен!
+up_vote: Согласен
 down_vote: Против
-email_confirm_header: Привет! Подтверди свою почту
+email_confirm_header: Привет! Подтверди свою почту.
 email_confirm_content: 'Готов активировать аккаунт в Mbin? Переходи по ссылке ниже:'
 email_verify: Проверить почту
-email_confirm_expire: Учтите что ссылка доступна лишь час
-email_confirm_title: Подтвердите свой email
+email_confirm_expire: Учтите что ссылка доступна лишь час.
+email_confirm_title: Подтвердите свой email.
 select_magazine: Выберите журнал
 add_new: Добавить новый
 url: Ссылка
@@ -247,10 +247,10 @@ flash_thread_new_success: Ветка успешно создана и тепер
 flash_thread_edit_success: Ветка успешно отредактирована.
 flash_thread_delete_success: Ветка была успешно удалёна.
 flash_thread_pin_success: Ветак успешно закреплена.
-flash_thread_unpin_success: Ветка успешно откреплёна
+flash_thread_unpin_success: Ветка успешно откреплёна.
 flash_magazine_new_success: Журнал успешно создан. Сейчас можно изучить панель администратора
-  и добавить новый контент
-flash_magazine_edit_success: Журнал успешно изменён
+  и добавить новый контент.
+flash_magazine_edit_success: Журнал успешно изменён.
 flash_mark_as_adult_success: Пост отмечен как NSFW.
 flash_unmark_as_adult_success: Пост больше не имеет отметки NSFW.
 too_many_requests: Лимит запросов пекрвышен, попробуйте ещё раз позднее.
@@ -285,7 +285,7 @@ message: Сообщение
 infinite_scroll: Бесконечная прокрутка
 show_top_bar: Показать активную панель
 sticky_navbar: Липкая панель навигации
-subject_reported: Содержимое было зарегистрировано
+subject_reported: Содержимое было зарегистрировано.
 sidebar_position: Положение боковой панели
 left: Слева
 right: Справа
@@ -351,9 +351,9 @@ registration_disabled: Регистрация отключена
 restore: Восстановление
 add_mentions_entries: Добавить записи упоминаний
 add_mentions_posts: Добавить записи постов
-Password is invalid: Неправильный пароль!
-Your account is not active: Ваш аккаунт не был активирован
-Your account has been banned: Ваш аккаунт был заблокирован!
+Password is invalid: Неправильный пароль.
+Your account is not active: Ваш аккаунт не был активирован.
+Your account has been banned: Ваш аккаунт был заблокирован.
 firstname: Имя
 send: отправить
 active_users: Активные полльзователи
@@ -363,7 +363,7 @@ delete_account: Удалить Аккаунт
 purge_account: Удалять account
 ban_account: Заблокировать аккаунт
 unban_account: Разблокировать аккаунт
-delete_account_request_send: Ваш запрос на удаление аккаунт был отправлен
+delete_account_request_send: Ваш запрос на удаление аккаунт был отправлен.
 related_magazines: Связанные журналы
 random_magazines: Случайные журналы
 magazine_panel_tags_info: Информация о тегах панели лурнала
@@ -372,7 +372,8 @@ auto_preview: Авто предпросмотр
 dynamic_lists: Динамические списки
 banned_instances: Забаненные экземпляры
 kbin_intro_title: Информация о сервисе
-kbin_intro_desc: Инофрмационное описание сервиса
+kbin_intro_desc: является децентрализованной платформой для агрегирования контента
+  и микроблогинга, которая работает в сети Fediverse.
 kbin_promo_title: Создайте ваш вариант
 kbin_promo_desc: '%link_start%Clone repo%link_end% and develop fediverse'
 captcha_enabled: Капча включена
