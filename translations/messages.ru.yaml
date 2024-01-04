@@ -160,7 +160,7 @@ cards_view: Просмотр карточек
 1m: 1 месяц
 1y: 1 год
 links: Ссылки
-articles: Статьи
+articles: Ветки
 photos: Фоторграфии
 videos: Видео
 report: Отчёт
@@ -170,14 +170,14 @@ copy_url_to_fediverse: Копировать оригинальный URL
 share_on_fediverse: Поделиться в Федерации
 edit: Редактировать
 are_you_sure: Вы уверены?
-moderate: Умеренный
+moderate: Модерация
 reason: Причина
 edit_link: Изменить ссылку
-edit_article: Изменить статью
+edit_article: Изменить ветку
 edit_photo: Изменить фото
 delete: Удалить
-edit_post: Изменить пост
-edit_comment: Редактировать комментарий
+edit_post: Редактировать пост
+edit_comment: Сохранить изменения
 settings: Настройки
 general: Основные
 profile: Профиль
