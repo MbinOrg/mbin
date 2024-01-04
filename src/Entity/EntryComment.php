@@ -143,6 +143,11 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
         return $this->id;
     }
 
+    public function getApId(): ?string
+    {
+        return $this->apId;
+    }
+
     public function addVote(Vote $vote): self
     {
         Assert::isInstanceOf($vote, EntryCommentVote::class);

@@ -150,6 +150,11 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         return $this->id;
     }
 
+    public function getApId(): ?string
+    {
+        return $this->apId;
+    }
+
     public function getBestComments(User $user = null): Collection
     {
         $criteria = Criteria::create()
