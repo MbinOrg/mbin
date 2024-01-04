@@ -1,5 +1,5 @@
 type.link: Ссылка
-type.article: Статья
+type.article: Ветка
 type.photo: Фото
 type.video: Видео
 type.smart_contract: Смарт контракт
@@ -20,7 +20,7 @@ hot: Горячее
 active: Активное
 newest: Новейшее
 oldest: Более старое
-commented: Прокоментированное
+commented: Прокоментированно
 change_view: Изменить вид
 filter_by_time: Сортировка по времени
 filter_by_type: Сортировка по типу
@@ -35,33 +35,33 @@ up_votes: Голос За
 down_votes: Голос против
 no_comments: Нет комментариев
 created_at: Создано
-owner: создатель
-subscribers: Подписчики
+owner: Владелец
+subscribers: Подписки
 online: Онлайн
 comments: Комментарии
 posts: Посты
 replies: Ответы
 moderators: Модераторы
 mod_log: Лог модерации
-add_comment: Добавить коммент
+add_comment: Добавить комментарий
 add_post: Добавить пост
-add_media: Добавить изображение
+add_media: Добавить медиа
 markdown_howto: Как работает наш редактор?
 enter_your_comment: Введите комментарий
 enter_your_post: Введите содержимое поста
 activity: Активность
 cover: Обложка
-related_posts: Похожие посты
+related_posts: Связанные посты
 random_posts: Случайный пост
 federated_magazine_info: Данный журнал из другого инстанса и информация может быть
   неполной.
 federated_user_info: Данный профиль из другого инстанса и информация может быть неполной.
 go_to_original_instance: Перейти на оригинальный инстанс.
 empty: Здесь ничего нет
-subscribe: Подписаться
-unsubscribe: Отписаться
-follow: Отслеживать
-unfollow: Перестать отслеживать
+subscribe: Подписка
+unsubscribe: Отписки
+follow: Подписаться
+unfollow: Отписаться
 reply: Ответить
 login_or_email: Логин или почта
 password: Пароль
@@ -86,7 +86,7 @@ all_magazines: Все журналы
 stats: Статистика
 fediverse: Федерация
 create_new_magazine: Создать новый журнал
-add_new_article: Добавить новую статью
+add_new_article: Добавить новую ветку
 add_new_link: Добавить новую ссылку
 add_new_photo: Добавить новое фото
 add_new_post: Добавить новый пост
@@ -102,13 +102,13 @@ reset_check_email_desc: Если мы нашли аккаунт связанны
   получить ссылку для сброса пароля. Ссылка доступна до %expire%.
 reset_check_email_desc2: Если вы не получили письмо проверьте папку со спамом
 try_again: Попробовать еще раз
-up_vote: Согласен
-down_vote: Против
-email_confirm_header: Привет! Подтверди свою почту.
+up_vote: Продвинуть
+down_vote: Уменьшить
+email_confirm_header: Привет! Подтвердите вашу почту.
 email_confirm_content: 'Готов активировать аккаунт в Mbin? Переходи по ссылке ниже:'
-email_verify: Проверить почту
+email_verify: Проверить адрес почты
 email_confirm_expire: Учтите что ссылка доступна лишь час.
-email_confirm_title: Подтвердите свой email.
+email_confirm_title: Подтвердите название вашей почты
 select_magazine: Выберите журнал
 add_new: Добавить новый
 url: Ссылка
@@ -125,8 +125,8 @@ name: Имя
 description: Описание
 rules: Правила
 domain: Домен
-followers: Фоловеры
-following: Следовать
+followers: Подписчики
+following: Подписываться
 subscriptions: Подписки
 overview: Обзор
 cards: Карточки
@@ -135,15 +135,15 @@ user: Пользователь
 joined: Присоединиться
 moderated: Модерируется
 ratio: Соотношение
-people_local: Местные люди
-people_federated: Люди в федерации
+people_local: Местные
+people_federated: В федерации
 reputation_points: Очки репутации
 related_tags: Связанные теги
 go_to_content: Перейти к контенту
 go_to_filters: Перейти к фильтрам
 go_to_search: Перейти к поиску
 go_to_footer: Перейти в конец сайта
-subscribed: Подписался
+subscribed: Подписан
 all: Все
 logout: Выход
 classic_view: Стандартное отображение
@@ -190,14 +190,14 @@ homepage: Домашняя страница
 hide_adult: Скрыть NSFW контент
 featured_magazines: Избранные журналы
 privacy: Приватное
-show_profile_subscriptions: Показать мои подписки
+show_profile_subscriptions: Показать журналы в подписках
 show_profile_followings: Показать профили подписчиков
 notify_on_new_entry_reply: Уведомление о новом ответе
-notify_on_new_entry_comment_reply: Уведомление о новом комментарии в ответе
-notify_on_new_post_reply: Уведомление об ответе в новом посте
-notify_on_new_post_comment_reply: Уведомление о новом комментарии в посте
-notify_on_new_entry: Уведомления о новой записи
-notify_on_new_posts: Уведомление о новом посте
+notify_on_new_entry_comment_reply: Ответы на мои комментарии в любой ветке
+notify_on_new_post_reply: Любой уровень ответа в моих постах
+notify_on_new_post_comment_reply: Ответы на мои комментарии в любом посте
+notify_on_new_entry: Новые ветки в любом журнале из моих подписок
+notify_on_new_posts: Новые посты в любом журнале из моих подписок
 save: Сохранить
 about: О
 old_email: Текущая электронная почта
@@ -236,8 +236,8 @@ removed_comment_by: Комментарий удалён
 restored_comment_by: Комментарий восстановлен
 removed_post_by: Пост удалён
 restored_post_by: Пост восстановлен
-he_banned: Заблокирован
-he_unbanned: Разблокирован
+he_banned: Бан
+he_unbanned: Разбан
 read_all: Прочитать всё
 show_all: Показать всё
 flash_register_success: Добро пожаловать! Ваша учетная запись зарегистрирована. Последний
@@ -246,40 +246,40 @@ flash_register_success: Добро пожаловать! Ваша учетная
 flash_thread_new_success: Ветка успешно создана и теперь видна другим пользователям.
 flash_thread_edit_success: Ветка успешно отредактирована.
 flash_thread_delete_success: Ветка была успешно удалёна.
-flash_thread_pin_success: Ветак успешно закреплена.
+flash_thread_pin_success: Ветка успешно закреплена.
 flash_thread_unpin_success: Ветка успешно откреплёна.
 flash_magazine_new_success: Журнал успешно создан. Сейчас можно изучить панель администратора
   и добавить новый контент.
 flash_magazine_edit_success: Журнал успешно изменён.
 flash_mark_as_adult_success: Пост отмечен как NSFW.
 flash_unmark_as_adult_success: Пост больше не имеет отметки NSFW.
-too_many_requests: Лимит запросов пекрвышен, попробуйте ещё раз позднее.
+too_many_requests: Лимит запросов превышен, попробуйте ещё раз позднее.
 set_magazines_bar: Активная панель журнала
 set_magazines_bar_desc: Добавить названия журналов после запятой
 set_magazines_bar_empty_desc: Если поле пустое, активные журналы отображаются на активной
   панели.
 mod_log_alert: ВНИМАНИЕ! - Данный материал может содержать неприятный или опасный
   контент! Это было удалено модераторами. Пожалуйста, будьте внимательны.
-added_new_thread: Добавлен в новыю ветку
+added_new_thread: Добавлен в новую ветку
 edited_thread: Отредактированная ветка
 mod_remove_your_thread: Модератор удалил вашу ветку
 added_new_comment: Добавлен новый комментарий
 edited_comment: Отредактированный комментарий
-replied_to_your_comment: Ответил на ваш окмментарий
-mod_deleted_your_comment: Модератор удалил ваш комментраий
+replied_to_your_comment: Ответил на ваш комментарий
+mod_deleted_your_comment: Модератор удалил ваш комментарий
 added_new_post: Добавлен новый пост
 edited_post: Отредактированный пост
 mod_remove_your_post: Модератор удалил ваш пост
 added_new_reply: Добавлен новый ответ
 wrote_message: Написал сообщение
-banned: Заблокировал вас
+banned: Забанил вас
 removed: Перемещён модератором
 deleted: Удалён автором
 mentioned_you: Упомянул тебя
 comment: Комментарий
 post: Пост
-ban_expired: Блокировка окончена
-purge: Удалять
+ban_expired: Бан окончен
+purge: Очистить
 send_message: Написать сообщение
 message: Сообщение
 infinite_scroll: Бесконечная прокрутка
@@ -293,24 +293,24 @@ federation: Федерация
 status: Статус
 on: Включен
 off: выключен
-instances: Пример
+instances: Инстансы
 upload_file: Загрузить файл
 from_url: От отправителя
 magazine_panel: Панель журнала
 reject: Отклонить
 approve: Согласиться
-ban: Блокировка
+ban: Бан
 filters: Фильтры
-approved: Разрешённые
+approved: Согласовано
 rejected: Отклонённые
 add_moderator: Добавить модератора
 add_badge: Добавить обозначение
-bans: Заблокированные
+bans: Баны
 created: Созданные
 expires: Истекает
 perm: Постоянный
 expired_at: Истёк в
-add_ban: Добавить в блокировку
+add_ban: Добавить в бан
 trash: Мусор
 icon: Иконка
 done: Сделано
@@ -323,12 +323,12 @@ unmark_as_adult: Снять отметку NSFW
 change: Выбрать
 pinned: Закрепить
 preview: Предпросмотр
-article: Статья
+article: Ветка
 reputation: Репутация
 note: Заметка
 writing: Письмо
 users: Пользователи
-content: Содержание
+content: Контент
 week: Неделя
 weeks: Недели
 month: Месяц
@@ -349,49 +349,52 @@ federation_enabled: Федерация включена
 registrations_enabled: Регистрация включена
 registration_disabled: Регистрация отключена
 restore: Восстановление
-add_mentions_entries: Добавить записи упоминаний
-add_mentions_posts: Добавить записи постов
+add_mentions_entries: Добавить тэги в ветки
+add_mentions_posts: Добавить тэги в посты
 Password is invalid: Неправильный пароль.
 Your account is not active: Ваш аккаунт не был активирован.
 Your account has been banned: Ваш аккаунт был заблокирован.
 firstname: Имя
-send: отправить
-active_users: Активные полльзователи
-random_entries: Случайная упоминание
-related_entries: Связанные упоминания
+send: Отправить
+active_users: Активные пользователи
+random_entries: Случайные ветки
+related_entries: Связанные ветки
 delete_account: Удалить Аккаунт
-purge_account: Удалять account
-ban_account: Заблокировать аккаунт
-unban_account: Разблокировать аккаунт
-delete_account_request_send: Ваш запрос на удаление аккаунт был отправлен.
+purge_account: Очистить аккаунт
+ban_account: Забанить аккаунт
+unban_account: Разбанить аккаунт
+delete_account_request_send: Ваш запрос на удаление аккаунт будет отправлен.
 related_magazines: Связанные журналы
 random_magazines: Случайные журналы
-magazine_panel_tags_info: Информация о тегах панели лурнала
+magazine_panel_tags_info: Предоставить, только если вы хотите, чтобы контент из Федиверса
+  был включен в этот журнал на основе тегов
 sidebar: Боковая панель
 auto_preview: Авто предпросмотр
 dynamic_lists: Динамические списки
-banned_instances: Забаненные экземпляры
-kbin_intro_title: Информация о сервисе
+banned_instances: Забаненные инстансы
+kbin_intro_title: Посмотреть Федиверс
 kbin_intro_desc: является децентрализованной платформой для агрегирования контента
   и микроблогинга, которая работает в сети Fediverse.
-kbin_promo_title: Создайте ваш вариант
-kbin_promo_desc: '%link_start%Clone repo%link_end% and develop fediverse'
+kbin_promo_title: Создайте ваш инстанс
+kbin_promo_desc: '%Начальная ссылка%Клонировать репозиторий%Конечная ссылка% и развивайте
+  Федиверс'
 captcha_enabled: Капча включена
 header_logo: Логотип заголовка
-browsing_one_thread: Вы просматриваете только одну ветку
-return: Возрат
+browsing_one_thread: Вы просматриваете только одну ветку обсуждения! Все комментарии
+  доступны на странице поста.
+return: Вернуться
 boost: Продвигать
 mercure_enabled: Включено
 report_issue: Описание релиза
 tokyo_night: Ночной Токио
 preferred_languages: Языковая фильтрация в ветках и постах
 infinite_scroll_help: Автоматически загружать контент, когда вы дочитаете страницу
-  до конца
+  до конца.
 sticky_navbar_help: Навигационная панель будет находиться вверху, пока вы прокручиваете
-  вниз
-auto_preview_help: Автоматически расширить поле предпросмотра медиа
+  вниз.
+auto_preview_help: Автоматически увеличить поле просмотра медиа
 reload_to_apply: Перезагрузить страницу для принятия изменений
-filter.origin.label: Выбрать происхождение
+filter.origin.label: Выбрать оригинал
 filter.fields.label: Выбрать поля для поиска
 filter.adult.label: Выберите отображать или нет NSFW
 filter.adult.hide: Скрыть NSFW
@@ -412,34 +415,34 @@ password_confirm_header: Подтвердите запрос на изменен
 your_account_is_not_active: Ваш аккаунт не может быть активирован. Пожалуйста, проверьте
   инструкцию для активации в вашей электронной почте <a href="%link_target%">Сделать
   новый запрос для активации аккаунта.</a>
-your_account_has_been_banned: Баш аккаунт был заблокирован
-toolbar.bold: Bold
-toolbar.italic: Italic
+your_account_has_been_banned: Баш аккаунт был забанен
+toolbar.bold: Жирный шрифт
+toolbar.italic: Италик
 toolbar.strikethrough: Выделенный
 toolbar.header: Заголовок
 toolbar.quote: Цитировать
 toolbar.code: Код
-toolbar.link: Ссылка
+toolbar.link: Ссылка на панель инструментов
 toolbar.image: Изображение
 toolbar.unordered_list: Неуопрядоченный список
 toolbar.ordered_list: Упорядоченный список
 toolbar.mention: Упомянуть
 federation_page_enabled: Страница федерации включена
-federation_page_allowed_description: Известные сервисы Федерации
-federation_page_disallowed_description: Сервисы не подключенные к Федерации
+federation_page_allowed_description: Известные инстансы Федерации
+federation_page_disallowed_description: Инстансы не подключенные к Федерации
 federated_search_only_loggedin: Ограниченный поиск в Федерации, если нет регистрации
 request_account_deletion_title: Удаление аккаунта
 request_account_deletion_description: Администратор уведомлён о вашем желании удалить
-  аккаунт
-request_account_deletion_button: Запрос на удаление аккаунта
+  аккаунт.
+request_account_deletion_button: Запрашиваемый аккаунт удалён
 more_from_domain: Больше о домене
-errors.server500.title: 500 Internal Server Error
+errors.server500.title: 500 - внутренняя ошибка сервера.
 errors.server500.description: Что-то пошло не так с нашей стороны. Если вы продолжите
-  видеть эту ошибку, попробуйте связаться с владельцем сервиса.
-errors.server429.title: 429 Too Many Requests
-errors.server404.title: 404 Not found
-errors.server403.title: 403 Forbidden
-email_confirm_button_text: Подтвердите ваш запрос на изменение пароля
+  видеть эту ошибку, попробуйте связаться с владельцем инстанса.
+errors.server429.title: 429 - много запросов
+errors.server404.title: 404 - страница не найдена.
+errors.server403.title: 403 - недоступно.
+email_confirm_button_text: Подтвердите ваш запрос на изменение пароля.
 email_confirm_link_help: Если не смогли перейти автоматически, скопируйте ссылку и
   откройте в вашем барузере
 email.delete.title: Запрос на удаление аккаунта
@@ -447,7 +450,7 @@ email.delete.description: Запрос на удаление аккаунта п
 resend_account_activation_email_question: Неактивный аккаунт?
 resend_account_activation_email: Ещё раз отправить запрос на активацию аккаунта
 resend_account_activation_email_error: Ошибка при отправке запроса. Запрос отправлен
-  ошибочно или аккаунт уже активирован
+  ошибочно или аккаунт уже активирован.
 resend_account_activation_email_success: Если учетная запись, связанная с этим электронным
   письмом существует, мы отправим новое электронное письмо с активацией.
 resend_account_activation_email_description: Введите адрес электронной почты, связанный
@@ -721,7 +724,7 @@ subscription_sidebar_pop_out_right: Переместить отдельную б
 subscription_sidebar_pop_out_left: Переместить отдельную боковую панель на лево.
 subscription_sidebar_pop_in: Переместить подписки во встроенную панель.
 subscription_panel_large: Большая панель.
-subscription_header: Подписанный журнал.
+subscription_header: Подписки на журналы
 close: Звкрыто.
 position_bottom: Нижний.
 position_top: Верхний.
@@ -789,7 +792,7 @@ user_badge_global_moderator: Глобальный мод.
 user_badge_moderator: Мод.
 user_badge_bot: Бот.
 announcement: Объявление.
-keywords: Ключевые слова.
+keywords: Ключевые слова
 deleted_by_moderator: Ветка, пост или комментарий были удалены модератором.
 deleted_by_author: Ветка, пост или комментарий были удалены автором.
 sensitive_warning: Деликатный контент.
@@ -797,9 +800,9 @@ sensitive_toggle: Изменить видимость конфиденциаль
 sensitive_show: Нажать чтобы посмотреть.
 sensitive_hide: Нажать чтобы скрыть.
 all_time: Всё время.
-subscribers_count: '{0}Подипсчиков|{1}Подписчик|]1,Inf[ Подписчиков'
+subscribers_count: '{0}Подписки|{1}Подписка|]1,Inf[ Подписок'
 menu: Меню
-followers_count: '{0}Отслеживающих|{1}Отслеживающий|]1,Inf[ Отслеживающих'
+followers_count: '{0}Подписчиков|{1}Подписчик|]1,Inf[ Подписчиков'
 remove_media: Удалить медиа
 details: Детали
 spoiler: Спойлер
