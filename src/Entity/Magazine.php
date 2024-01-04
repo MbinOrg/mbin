@@ -160,6 +160,11 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         return $this->id;
     }
 
+    public function getApId(): ?string
+    {
+        return $this->apId;
+    }
+
     public function userIsModerator(User $user): bool
     {
         $user->moderatorTokens->get(-1);

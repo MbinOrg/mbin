@@ -135,6 +135,11 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
         return $this->id;
     }
 
+    public function getApId(): ?string
+    {
+        return $this->apId;
+    }
+
     public function addVote(Vote $vote): self
     {
         Assert::isInstanceOf($vote, PostCommentVote::class);
