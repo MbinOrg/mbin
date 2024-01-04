@@ -31,8 +31,8 @@ more: Больше
 avatar: Аватар
 added: Добавлено
 views: Просмотрено
-up_votes: За
-down_votes: Против
+up_votes: Голос За
+down_votes: Голос против
 no_comments: Нет комментариев
 created_at: Создано
 owner: создатель
@@ -53,10 +53,10 @@ activity: Активность
 cover: Обложка
 related_posts: Похожие посты
 random_posts: Случайный пост
-federated_magazine_info: Данный журнал с другого инстанса и информация может быть
-  неполной
-federated_user_info: Данный профиль с другого инстанса и информация может быть неполной
-go_to_original_instance: Перейти на оригинальный инстанс
+federated_magazine_info: Данный журнал из другого инстанса и информация может быть
+  неполной.
+federated_user_info: Данный профиль из другого инстанса и информация может быть неполной.
+go_to_original_instance: Перейти на оригинальный инстанс.
 empty: Здесь ничего нет
 subscribe: Подписаться
 unsubscribe: Отписаться
@@ -181,21 +181,21 @@ edit_comment: Редактировать комментарий
 settings: Настройки
 general: Основные
 profile: Профиль
-blocked: Заблокированные
+blocked: Заблокировано
 reports: Отчёты
 notifications: Уведомления
 messages: Сообщения
-appearance: Вид
+appearance: Появление
 homepage: Домашняя страница
 hide_adult: Скрыть NSFW контент
 featured_magazines: Избранные журналы
 privacy: Приватное
-show_profile_subscriptions: Показать профили подисчиков
-show_profile_followings: Показать профили фоловеров
+show_profile_subscriptions: Показать мои подписки
+show_profile_followings: Показать профили подписчиков
 notify_on_new_entry_reply: Уведомление о новом ответе
 notify_on_new_entry_comment_reply: Уведомление о новом комментраии в ответе
-notify_on_new_post_reply: Уведомление о новом посте
-notify_on_new_post_comment_reply: уведомление о новом коменнтарии в посте
+notify_on_new_post_reply: Уведомление об ответе в новом посте
+notify_on_new_post_comment_reply: Уведомление о новом комментарии в посте
 notify_on_new_entry: Уведомления о новой записи
 notify_on_new_posts: Уведомление о новом посте
 save: Сохранить
@@ -796,3 +796,7 @@ sensitive_toggle: Изменить видимость конфиденциаль
 sensitive_show: Нажать чтобы посмотреть.
 sensitive_hide: Нажать чтобы скрыть.
 all_time: Всё время.
+subscribers_count: '{0}Подипсчиков|{1}Подписчик|]1,Inf[ Подписчиков'
+menu: Меню
+followers_count: '{0}Отслеживающих|{1}Отслеживающий|]1,Inf[ Отслеживающих'
+remove_media: Удалить медиа
