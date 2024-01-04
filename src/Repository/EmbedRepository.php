@@ -27,9 +27,14 @@ class EmbedRepository extends ServiceEntityRepository
         // Check if embed url does not exists yet (null),
         // before we try to insert a new DB record
         if (null === $this->findOneByUrl($entity->url)) {
-            $this->_em->persist($entity);
-            if ($flush) {
-                $this->_em->flush();
+
+            // Limited by VARCHAR(255) in db schema
+            if (strlen($entity->url) <= 255){
+                $this->_em->persist($entity);
+
+                if ($flush) {
+                    $this->_em->flush();
+                }
             }
         }
     }
