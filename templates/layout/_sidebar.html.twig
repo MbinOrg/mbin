@@ -1,3 +1,9 @@
+{%- set V_SHOW_RELATED_COMPONENTS = not is_route_name_contains('settings')
+and not is_route_name_starts_with('page')
+and not is_route_name_starts_with('admin')
+and not is_route_name('stats')
+and not is_route_name('modlog') -%}
+
 <div class="sidebar-options" data-controller="options" data-options-active-tab-value="none">
     <div class="section options--top options top-options">
         <menu>
@@ -115,12 +121,14 @@
     }) }}
     {% include 'magazine/_moderators_sidebar.html.twig' %}
 {% endif %}
+{% if V_SHOW_RELATED_COMPONENTS %}
 {{ component('related_magazines', {magazine: magazine is defined and magazine ? magazine.name : null, tag: tag is defined and tag ? tag : null}) }}
 {% if not is_route_name_contains('people') %}
     {{ component('active_users', {magazine: magazine is defined and magazine ? magazine : null}) }}
 {% endif %}
 {{ component('related_posts', {magazine: magazine is defined and magazine ? magazine.name : null, tag: tag is defined and tag ? tag : null}) }}
 {{ component('related_entries', {magazine: magazine is defined and magazine ? magazine.name : null, tag: tag is defined and tag ? tag : null}) }}
+{% endif %}
 <div class="section section--no-bg kbin-promo">
     <img height="47" src="{{ asset('favicon.svg') }}" alt="Clone repo">
     <div>
