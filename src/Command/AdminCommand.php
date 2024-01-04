@@ -50,7 +50,7 @@ class AdminCommand extends Command
         $this->entityManager->flush();
 
         $remove ? $io->success('Administrator privileges have been revoked.')
-            : $io->success('Administrator privileges has been granted.');
+            : $io->success('Administrator privileges have been granted.');
 
         return Command::SUCCESS;
     }

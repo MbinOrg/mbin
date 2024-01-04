@@ -317,6 +317,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         return $this;
     }
 
+    public function setOrRemoveModeratorRole(bool $remove = false): self
+    {
+        $this->roles = ['ROLE_MODERATOR'];
+
+        if ($remove) {
+            $this->roles = [];
+        }
+
+        return $this;
+    }
+
     public function getPassword(): string
     {
         return (string) $this->password;
