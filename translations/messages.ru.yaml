@@ -800,3 +800,5 @@ subscribers_count: '{0}Подипсчиков|{1}Подписчик|]1,Inf[ По
 menu: Меню
 followers_count: '{0}Отслеживающих|{1}Отслеживающий|]1,Inf[ Отслеживающих'
 remove_media: Удалить медиа
+details: Детали
+spoiler: Спойлер
