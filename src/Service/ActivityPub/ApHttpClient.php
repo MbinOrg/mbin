@@ -191,6 +191,12 @@ class ApHttpClient
                         'timeout' => self::TIMEOUT,
                         'headers' => $this->getInstanceHeaders($apAddress, null, 'get', ApRequestType::ActivityPub),
                     ]);
+
+                    $statusCode = $response->getStatusCode();
+                    // Accepted status code are 2xx or 410 (used Tombstone types)
+                    if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
+                        throw new InvalidApPostException("Invalid status code while getting: {$apAddress} : $statusCode, ".$response->getContent(false));
+                    }
                 } catch (\Exception $e) {
                     $msg = "AP Get fail: {$apAddress}, ex: ".\get_class($e).": {$e->getMessage()}";
                     if (null !== $response) {
