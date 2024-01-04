@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\Embed;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 
 /**
  * @method Embed|null find($id, $lockMode = null, $lockVersion = null)
@@ -17,7 +18,9 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class EmbedRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly LoggerInterface $logger, )
     {
         parent::__construct($registry, Embed::class);
     }
@@ -27,8 +30,7 @@ class EmbedRepository extends ServiceEntityRepository
         // Check if embed url does not exists yet (null),
         // before we try to insert a new DB record
         if (null === $this->findOneByUrl($entity->url)) {
-
-            //Do not exceed URL length limit defined by db schema
+            // Do not exceed URL length limit defined by db schema
             try {
                 $this->_em->persist($entity);
 
@@ -36,6 +38,7 @@ class EmbedRepository extends ServiceEntityRepository
                     $this->_em->flush();
                 }
             } catch (\Exception $e) {
+                $this->logger->debug('URL exceeds allowed length: {url}', ['url' => $entity->url]);
             }
         }
     }
