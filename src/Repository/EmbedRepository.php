@@ -38,7 +38,7 @@ class EmbedRepository extends ServiceEntityRepository
                     $this->_em->flush();
                 }
             } catch (\Exception $e) {
-                $this->logger->debug('URL exceeds allowed length: {url}', ['url' => $entity->url]);
+                $this->logger->debug('Embed URL exceeds allowed length: {url, length}', ['url' => $entity->url, \strlen($entity->url)]);
             }
         }
     }
