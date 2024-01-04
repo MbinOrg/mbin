@@ -193,7 +193,7 @@ privacy: Приватное
 show_profile_subscriptions: Показать мои подписки
 show_profile_followings: Показать профили подписчиков
 notify_on_new_entry_reply: Уведомление о новом ответе
-notify_on_new_entry_comment_reply: Уведомление о новом комментраии в ответе
+notify_on_new_entry_comment_reply: Уведомление о новом комментарии в ответе
 notify_on_new_post_reply: Уведомление об ответе в новом посте
 notify_on_new_post_comment_reply: Уведомление о новом комментарии в посте
 notify_on_new_entry: Уведомления о новой записи
