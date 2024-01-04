@@ -29,3 +29,9 @@ page_federation:
   path: /federation
   methods: [ GET ]
 
+page_instances:
+  controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+  path: /instances
+  defaults:
+    route: page_federation
+    permanent: true
