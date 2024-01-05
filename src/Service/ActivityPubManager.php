@@ -261,7 +261,7 @@ class ActivityPubManager
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         // Check if actor isn't empty (not set/null/empty array/etc.)
-        if (!empty($actor) && \is_array($actor)) {
+        if (isset($actor['endpoints']['sharedInbox']) || isset($actor['inbox'])) {
             // Update the following user columns
             $user->type = $actor['type'] ?? 'Person';
             $user->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
@@ -376,7 +376,7 @@ class ActivityPubManager
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         // Check if actor isn't empty (not set/null/empty array/etc.)
-        if (!empty($actor) && \is_array($actor)) {
+        if (isset($actor['endpoints']['sharedInbox']) || isset($actor['inbox'])) {
             if (isset($actor['summary'])) {
                 $converter = new HtmlConverter(['strip_tags' => true]);
                 $magazine->description = stripslashes($converter->convert($actor['summary']));
