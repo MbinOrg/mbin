@@ -82,8 +82,12 @@ readonly class ActivityHandler
         $this->handle($payload);
     }
 
-    private function handle(array $payload)
+    private function handle(?array $payload)
     {
+        if (\is_null($payload)) {
+            return;
+        }
+
         if ('Announce' === $payload['type']) {
             if (\is_array($payload['object'])) {
                 $payload = $payload['object'];
@@ -176,9 +180,9 @@ readonly class ActivityHandler
         }
     }
 
-    private function verifyInstanceDomain(string $id): bool
+    private function verifyInstanceDomain(?string $id): bool
     {
-        if (\in_array(
+        if (!\is_null($id) && \in_array(
             str_replace('www.', '', parse_url($id, PHP_URL_HOST)),
             $this->settingsManager->get('KBIN_BANNED_INSTANCES') ?? []
         )) {
