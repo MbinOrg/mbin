@@ -261,7 +261,7 @@ class ActivityPubManager
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         // Check if actor isn't empty (not set/null/empty array/etc.)
-        if (!empty($actor) && is_array($actor)) {
+        if (!empty($actor) && \is_array($actor)) {
             // Update the following user columns
             $user->type = $actor['type'] ?? 'Person';
             $user->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
@@ -376,7 +376,7 @@ class ActivityPubManager
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         // Check if actor isn't empty (not set/null/empty array/etc.)
-        if (!empty($actor)) {
+        if (!empty($actor) && \is_array($actor)) {
             if (isset($actor['summary'])) {
                 $converter = new HtmlConverter(['strip_tags' => true]);
                 $magazine->description = stripslashes($converter->convert($actor['summary']));
@@ -585,9 +585,15 @@ class ActivityPubManager
         $this->logger->info('updating actor at {url}', ['url' => $actorUrl]);
         $actor = $this->apHttpClient->getActorObject($actorUrl);
 
-        // User (We don't make a distinction between bots with type Service as Lemmy does)
-        if (\in_array($actor['type'], User::USER_TYPES)) {
-            return $this->updateUser($actorUrl);
+        try {
+            // User (We don't make a distinction between bots with type Service as Lemmy does)
+            if (\in_array($actor['type'], User::USER_TYPES)) {
+                return $this->updateUser($actorUrl);
+            }
+        } catch (\Exception $e) {
+            $this->logger->info('failed to update actor at {url}', ['url' => $actorUrl]);
+
+            return null;
         }
 
         return $this->updateMagazine($actorUrl);
