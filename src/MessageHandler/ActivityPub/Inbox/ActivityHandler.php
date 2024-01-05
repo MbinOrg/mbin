@@ -176,7 +176,7 @@ readonly class ActivityHandler
         }
     }
 
-    private function verifyInstanceDomain(string $id): bool
+    private function verifyInstanceDomain(?string $id): bool
     {
         if (!$id && \in_array(
             str_replace('www.', '', parse_url($id, PHP_URL_HOST)),
