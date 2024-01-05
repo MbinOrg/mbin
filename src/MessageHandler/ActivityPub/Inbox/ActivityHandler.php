@@ -82,8 +82,12 @@ readonly class ActivityHandler
         $this->handle($payload);
     }
 
-    private function handle(array $payload)
+    private function handle(?array $payload)
     {
+        if (\is_null($payload)) {
+            return;
+        }
+
         if ('Announce' === $payload['type']) {
             if (\is_array($payload['object'])) {
                 $payload = $payload['object'];
