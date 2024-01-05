@@ -178,7 +178,7 @@ readonly class ActivityHandler
 
     private function verifyInstanceDomain(string $id): bool
     {
-        if (\in_array(
+        if (!$id && \in_array(
             str_replace('www.', '', parse_url($id, PHP_URL_HOST)),
             $this->settingsManager->get('KBIN_BANNED_INSTANCES') ?? []
         )) {
