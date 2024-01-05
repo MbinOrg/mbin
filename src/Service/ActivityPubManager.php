@@ -261,7 +261,7 @@ class ActivityPubManager
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         // Check if actor isn't empty (not set/null/empty array/etc.)
-        if (!empty($actor)) {
+        if (!empty($actor) && is_array($actor)) {
             // Update the following user columns
             $user->type = $actor['type'] ?? 'Person';
             $user->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
