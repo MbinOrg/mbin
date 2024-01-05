@@ -108,8 +108,12 @@ class ActivityPubManager
      *
      * @return User|Magazine|null or Magazine or null on error
      */
-    public function findActorOrCreate(string $actorUrlOrHandle): null|User|Magazine
+    public function findActorOrCreate(?string $actorUrlOrHandle): null|User|Magazine
     {
+        if (\is_null($actorUrlOrHandle)) {
+            return null;
+        }
+
         $this->logger->debug('searching for actor at "{handle}"', ['handle' => $actorUrlOrHandle]);
         if (str_contains($actorUrlOrHandle, $this->settingsManager->get('KBIN_DOMAIN').'/m/')) {
             $magazine = str_replace('https://'.$this->settingsManager->get('KBIN_DOMAIN').'/m/', '', $actorUrlOrHandle);
