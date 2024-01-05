@@ -585,15 +585,9 @@ class ActivityPubManager
         $this->logger->info('updating actor at {url}', ['url' => $actorUrl]);
         $actor = $this->apHttpClient->getActorObject($actorUrl);
 
-        try {
-            // User (We don't make a distinction between bots with type Service as Lemmy does)
-            if (\in_array($actor['type'], User::USER_TYPES)) {
-                return $this->updateUser($actorUrl);
-            }
-        } catch (\Exception $e) {
-            $this->logger->info('failed to update actor at {url}', ['url' => $actorUrl]);
-
-            return null;
+        // User (We don't make a distinction between bots with type Service as Lemmy does)
+        if (isset($actor['type']) && \in_array($actor['type'], User::USER_TYPES)) {
+            return $this->updateUser($actorUrl);
         }
 
         return $this->updateMagazine($actorUrl);
