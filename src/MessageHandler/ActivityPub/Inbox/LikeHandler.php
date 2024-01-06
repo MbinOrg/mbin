@@ -29,34 +29,36 @@ class LikeHandler
 
     public function __invoke(LikeMessage $message): void
     {
-        if ('Like' === $message->payload['type']) {
-            $activity = $this->repository->findByObjectId($message->payload['object']);
+        if (isset($message->payload['type'])) {
+            if ('Like' === $message->payload['type']) {
+                $activity = $this->repository->findByObjectId($message->payload['object']);
 
-            if ($activity) {
-                $entity = $this->entityManager->getRepository($activity['type'])->find((int) $activity['id']);
-            } else {
-                $object = $this->apHttpClient->getActivityObject($message->payload['object']);
+                if ($activity) {
+                    $entity = $this->entityManager->getRepository($activity['type'])->find((int) $activity['id']);
+                } else {
+                    $object = $this->apHttpClient->getActivityObject($message->payload['object']);
 
-                if (!empty($object)) {
-                    $this->bus->dispatch(new ChainActivityMessage([$object], null, null, $message->payload));
+                    if (!empty($object)) {
+                        $this->bus->dispatch(new ChainActivityMessage([$object], null, null, $message->payload));
+                    }
+
+                    return;
                 }
 
-                return;
-            }
-
-            $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
-            // Check if actor and entity aren't empty
-            if (!empty($actor) && !empty($entity)) {
-                $this->manager->toggle($actor, $entity, FavouriteManager::TYPE_LIKE);
-            }
-        } elseif ('Undo' === $message->payload['type']) {
-            if ('Like' === $message->payload['object']['type']) {
-                $activity = $this->repository->findByObjectId($message->payload['object']['object']);
-                $entity = $this->entityManager->getRepository($activity['type'])->find((int) $activity['id']);
                 $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
                 // Check if actor and entity aren't empty
                 if (!empty($actor) && !empty($entity)) {
-                    $this->manager->toggle($actor, $entity, FavouriteManager::TYPE_UNLIKE);
+                    $this->manager->toggle($actor, $entity, FavouriteManager::TYPE_LIKE);
+                }
+            } elseif ('Undo' === $message->payload['type']) {
+                if ('Like' === $message->payload['object']['type']) {
+                    $activity = $this->repository->findByObjectId($message->payload['object']['object']);
+                    $entity = $this->entityManager->getRepository($activity['type'])->find((int) $activity['id']);
+                    $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
+                    // Check if actor and entity aren't empty
+                    if (!empty($actor) && !empty($entity)) {
+                        $this->manager->toggle($actor, $entity, FavouriteManager::TYPE_UNLIKE);
+                    }
                 }
             }
         }

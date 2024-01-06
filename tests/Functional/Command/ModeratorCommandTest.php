@@ -12,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class AdminCommandTest extends KernelTestCase
+class ModeratorCommandTest extends KernelTestCase
 {
     private Command $command;
     private ?UserRepository $repository;
@@ -25,20 +25,20 @@ class AdminCommandTest extends KernelTestCase
         $this->getContainer()->get(UserManager::class)
             ->create($dto, false);
 
-        $this->assertFalse($this->repository->findOneByUsername('actor')->isAdmin());
+        $this->assertFalse($this->repository->findOneByUsername('actor')->isModerator());
 
         $tester = new CommandTester($this->command);
         $tester->execute(['username' => 'actor']);
 
-        $this->assertStringContainsString('Administrator privileges have been granted.', $tester->getDisplay());
-        $this->assertTrue($this->repository->findOneByUsername('actor')->isAdmin());
+        $this->assertStringContainsString('Global moderator privileges have been granted.', $tester->getDisplay());
+        $this->assertTrue($this->repository->findOneByUsername('actor')->isModerator());
     }
 
     protected function setUp(): void
     {
         $application = new Application(self::bootKernel());
 
-        $this->command = $application->find('mbin:user:admin');
+        $this->command = $application->find('mbin:user:moderator');
         $this->repository = $this->getContainer()->get(UserRepository::class);
     }
 }

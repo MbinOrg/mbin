@@ -291,6 +291,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         return $this->id;
     }
 
+    public function getApId(): ?string
+    {
+        return $this->apId;
+    }
+
     public function getUsername(): string
     {
         return $this->username;
@@ -304,6 +309,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public function setOrRemoveAdminRole(bool $remove = false): self
     {
         $this->roles = ['ROLE_ADMIN'];
+
+        if ($remove) {
+            $this->roles = [];
+        }
+
+        return $this;
+    }
+
+    public function setOrRemoveModeratorRole(bool $remove = false): self
+    {
+        $this->roles = ['ROLE_MODERATOR'];
 
         if ($remove) {
             $this->roles = [];

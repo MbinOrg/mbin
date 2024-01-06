@@ -3,7 +3,7 @@ about:
   path: /about
   methods: [ GET ]
 
-bot:
-  controller: App\Controller\BotController
-  path: /bot
+agent:
+  controller: App\Controller\AgentController
+  path: /agent
   methods: [ GET ]

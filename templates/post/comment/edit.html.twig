@@ -19,7 +19,7 @@
     {% include 'layout/_flash.html.twig' %}
     <div class="alert alert__info">
         <p>{{ 'browsing_one_thread'|trans }}</p>
-        <p><a href="{{ post_url(comment.post) }}"><i class="fa-solid fa-arrow-left"></i> {{ 'return'|trans }}</a></p>
+        <p><a href="{{ post_url(comment.post) }}"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> {{ 'return'|trans }}</a></p>
     </div>
     <div id="content">
         <section class="section">

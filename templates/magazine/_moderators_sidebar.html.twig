@@ -2,10 +2,11 @@
     <h3 style="display: flex;justify-content: space-between;">
         {{ 'moderators'|trans }}
         {% if app.user and magazine.apId is same as null and app.user.visibility is same as 'visible' %}
-        <a href="{{ path('magazine_moderators', {name: magazine.name}) }}">
-            <i class="fa-solid fa-hand-point-up"
-               title="{{ 'apply_for_moderator'|trans }}"></i> {% if is_granted('edit', magazine) and magazine.moderatorRequests|length %}
-                <small>({{ magazine.moderatorRequests|length }})</small>{% endif %}
+        <a href="{{ path('magazine_moderators', {name: magazine.name}) }}" title="{{ 'apply_for_moderator'|trans }}" aria-label="{{ 'apply_for_moderator'|trans }}">
+            <i class="fa-solid fa-hand-point-up" aria-hidden="true"></i>
+                {% if is_granted('edit', magazine) and magazine.moderatorRequests|length %}
+                    <small>({{ magazine.moderatorRequests|length }})</small>
+                {% endif %}
         </a>
         {% endif %}
     </h3>

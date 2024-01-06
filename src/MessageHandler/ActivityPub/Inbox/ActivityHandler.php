@@ -11,6 +11,7 @@ use App\Message\ActivityPub\Inbox\AddMessage;
 use App\Message\ActivityPub\Inbox\AnnounceMessage;
 use App\Message\ActivityPub\Inbox\CreateMessage;
 use App\Message\ActivityPub\Inbox\DeleteMessage;
+use App\Message\ActivityPub\Inbox\FlagMessage;
 use App\Message\ActivityPub\Inbox\FollowMessage;
 use App\Message\ActivityPub\Inbox\LikeMessage;
 use App\Message\ActivityPub\Inbox\RemoveMessage;
@@ -81,13 +82,19 @@ readonly class ActivityHandler
         $this->handle($payload);
     }
 
-    private function handle(array $payload)
+    private function handle(?array $payload)
     {
+        if (\is_null($payload)) {
+            return;
+        }
+
         if ('Announce' === $payload['type']) {
             if (\is_array($payload['object'])) {
                 $payload = $payload['object'];
             }
         }
+
+        $this->logger->debug("Got activity message of type '{$payload['type']}'");
 
         switch ($payload['type']) {
             case 'Create':
@@ -126,6 +133,9 @@ readonly class ActivityHandler
                 break;
             case 'Remove':
                 $this->bus->dispatch(new RemoveMessage($payload));
+                break;
+            case 'Flag':
+                $this->bus->dispatch(new FlagMessage($payload));
                 break;
         }
     }
@@ -170,9 +180,9 @@ readonly class ActivityHandler
         }
     }
 
-    private function verifyInstanceDomain(string $id): bool
+    private function verifyInstanceDomain(?string $id): bool
     {
-        if (\in_array(
+        if (!\is_null($id) && \in_array(
             str_replace('www.', '', parse_url($id, PHP_URL_HOST)),
             $this->settingsManager->get('KBIN_BANNED_INSTANCES') ?? []
         )) {

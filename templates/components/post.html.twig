@@ -67,7 +67,9 @@
                     <menu>
                         {% if post.sticky %}
                             <li>
-                                <i class="fa-solid fa-thumbtack" aria-label="{{ 'pinned'|trans }}"></i>
+                                <span aria-label="{{ 'pinned'|trans }}">
+                                    <i class="fa-solid fa-thumbtack" aria-hidden="true"></i>
+                                </span>
                             </li>
                         {% endif %}
                         <li>

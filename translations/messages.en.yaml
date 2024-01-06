@@ -25,6 +25,8 @@ change_view: Change view
 filter_by_time: Filter by time
 filter_by_type: Filter by type
 comments_count: '{0}Comments|{1}Comment|]1,Inf[ Comments'
+subscribers_count: '{0}Subscribers|{1}Subscriber|]1,Inf[ Subscribers'
+followers_count: '{0}Followers|{1}Follower|]1,Inf[ Followers'
 favourites: Favorites
 favourite: Favorite
 more: More
@@ -46,6 +48,7 @@ mod_log: Moderation log
 add_comment: Add comment
 add_post: Add post
 add_media: Add media
+remove_media: Remove media
 markdown_howto: How does the editor work?
 enter_your_comment: Enter your comment
 enter_your_post: Enter your post
@@ -177,6 +180,7 @@ edit_photo: Edit photo
 delete: Delete
 edit_post: Edit post
 edit_comment: Save changes
+menu: Menu
 settings: Settings
 general: General
 profile: Profile
@@ -401,8 +405,8 @@ filter.adult.only: Only NSFW
 local_and_federated: Local and federated
 filter.fields.only_names: Only names
 filter.fields.names_and_descriptions: Names and descriptions
-kbin_bot: Mbin Bot
-bot_body_content: "Welcome to the Mbin Bot! This bot plays a crucial role in enabling
+kbin_bot: Mbin Agent
+bot_body_content: "Welcome to the Mbin Agent! This agent plays a crucial role in enabling
   ActivityPub functionality within Mbin. It ensures that Mbin can communicate and
   federate with other instances in the fediverse.\n\nActivityPub is an open standard
   protocol that allows decentralized social networking platforms to communicate and

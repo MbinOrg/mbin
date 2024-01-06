@@ -191,6 +191,12 @@ class ApHttpClient
                         'timeout' => self::TIMEOUT,
                         'headers' => $this->getInstanceHeaders($apAddress, null, 'get', ApRequestType::ActivityPub),
                     ]);
+
+                    $statusCode = $response->getStatusCode();
+                    // Accepted status code are 2xx or 410 (used Tombstone types)
+                    if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
+                        throw new InvalidApPostException("Invalid status code while getting: {$apAddress} : $statusCode, ".$response->getContent(false));
+                    }
                 } catch (\Exception $e) {
                     $msg = "AP Get fail: {$apAddress}, ex: ".\get_class($e).": {$e->getMessage()}";
                     if (null !== $response) {
@@ -263,7 +269,7 @@ class ApHttpClient
         $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
         unset($headers['(request-target)']);
         $headers['Signature'] = $signatureHeader;
-        $headers['User-Agent'] = $this->projectInfo->getUserAgent().'/'.$this->projectInfo->getVersion().' (+https://'.$this->kbinDomain.'/bot)';
+        $headers['User-Agent'] = $this->projectInfo->getUserAgent().'/'.$this->projectInfo->getVersion().' (+https://'.$this->kbinDomain.'/agent)';
         $headers['Accept'] = 'application/activity+json, application/ld+json';
         $headers['Content-Type'] = 'application/activity+json';
 
@@ -283,7 +289,7 @@ class ApHttpClient
         $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
         unset($headers['(request-target)']);
         $headers['Signature'] = $signatureHeader;
-        $headers['User-Agent'] = $this->projectInfo->getUserAgent().'/'.$this->projectInfo->getVersion().' (+https://'.$this->kbinDomain.'/bot)';
+        $headers['User-Agent'] = $this->projectInfo->getUserAgent().'/'.$this->projectInfo->getVersion().' (+https://'.$this->kbinDomain.'/agent)';
         if (ApRequestType::WebFinger === $requestType) {
             $headers['Accept'] = 'application/jrd+json';
             $headers['Content-Type'] = 'application/jrd+json';
