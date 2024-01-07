@@ -142,6 +142,20 @@
             <li><a href="{{ path('modlog') }}">{{ 'mod_log'|trans }}</a></li>
             <li aria-hidden="true">&#9679;</li>
             <li><a href="{{ path('stats') }}">{{ 'stats'|trans }}</a></li>
+            <li aria-hidden="true">&#9679;</li>
+            {% if magazine is defined and magazine %}
+                {% set args = {'magazine': magazine.name ?? '' } %}
+            {% elseif user is defined and user %}
+                {% set args = {'user': user.username ?? '' } %}
+            {% elseif tag is defined and tag %}
+                {% set args = {'tag': tag ?? '' } %}
+            {% elseif domain is defined and domain %}
+                {% set args = {'domain': domain.name ?? '' } %}
+            {% else %}
+                {% set args = {} %}
+            {% endif %}
+            <li><a href="{{ path('feed_rss', args) }}">{{ 'rss'|trans }}</a>
+            </li>
         </ul>
         <div class="about-seperator"></div>
         <ul class="about-mbin">
@@ -162,21 +176,6 @@
                         <option value="{{ code }}" {{ code is same as current ? 'selected' : '' }}>{{ code|language_name(code) }}</option>
                     {% endfor %}
                 </select>
-            </li>
-            {% if magazine is defined and magazine %}
-                {% set args = {'magazine': magazine.name ?? '' } %}
-            {% elseif user is defined and user %}
-                {% set args = {'user': user.username ?? '' } %}
-            {% elseif tag is defined and tag %}
-                {% set args = {'tag': tag ?? '' } %}
-            {% elseif domain is defined and domain %}
-                {% set args = {'domain': domain.name ?? '' } %}
-            {% else %}
-                {% set args = {} %}
-            {% endif %}
-            <li><a href="{{ path('feed_rss', args) }}"
-                   title="{{ 'rss'|trans }}"
-                   aria-label="{{ 'rss'|trans }}"><i class="fa-solid fa-rss"></i></a>
             </li>
         </ul>
     </div>
