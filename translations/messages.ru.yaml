@@ -142,7 +142,6 @@ related_tags: Связанные теги
 go_to_content: Перейти к контенту
 go_to_filters: Перейти к фильтрам
 go_to_search: Перейти к поиску
-go_to_footer: Перейти в конец сайта
 subscribed: Подписан
 all: Все
 logout: Выход
@@ -418,7 +417,7 @@ your_account_has_been_banned: Баш аккаунт был забанен
 toolbar.bold: Жирный шрифт
 toolbar.italic: Италик
 toolbar.strikethrough: Выделенный
-toolbar.header: Заголовок
+toolbar.header: Заглавие
 toolbar.quote: Цитировать
 toolbar.code: Код
 toolbar.link: Ссылка на панель инструментов
