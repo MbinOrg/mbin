@@ -479,7 +479,6 @@ filter.origin.label: Виберіть походження
   автентифікації, наприклад %google_authenticator%, %aegis% (Android) чи %raivo% (iOS).
 resend_account_activation_email_question: Неактивний обліковий запис?
 unban_account: Допустити обліковий запис
-go_to_footer: Перейти до нижнього колонтитула
 random_magazines: Випадкові спільноти
 links: Посилання
 upload_file: Додати файл
