@@ -571,6 +571,46 @@
     }
   }
 
+  .about {
+    ul {
+      padding: 0;
+      opacity: 0.8;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      li {
+        padding: 0.1rem;
+        list-style: none;
+        display: inline;
+      }
+
+      &.about-mbin {
+          text-align: center;
+      }
+    }
+
+    .about-options {
+      li {
+        display: flex;
+        justify-content: center;
+      }
+
+      select {
+        padding: 0.4rem;
+        background: var(--kbin-section-bg);
+        color: var(--kbin-button-secondary-text-color);
+      }
+    }
+
+    .about-seperator {
+      border: var(--kbin-section-border);
+      height: 0;
+      margin: 2px 5px;
+    }
+  }
+
   .kbin-promo {
     display: flex;
     gap: 1rem;
@@ -641,29 +681,6 @@
         display: none;
       }
     }
-  }
-
-  .footer-sidebar{
-    background-color: unset;
-    padding: 0px;
-
-    .kbin-container {
-      grid-template-areas: none;
-      grid-template-columns: none;
-    }
-
-    section{
-      background-color: var(--kbin-section-bg);
-      border: var(--kbin-section-border);
-      color: var(--kbin-section-text-color);
-      margin-bottom: 0.5rem;
-      padding: 0.5rem 0.5rem 1rem;
-    }
-
-    @include media-breakpoint-up(sm){
-      display: none;
-    }
-
   }
 }
 
