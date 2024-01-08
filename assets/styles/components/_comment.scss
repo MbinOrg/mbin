@@ -27,7 +27,7 @@ $comment-margin-sm: .3rem;
   display: grid;
   font-size: .9rem;
   grid-gap: .5rem;
-  grid-template-areas: "avatar header vote"
+  grid-template-areas: "avatar header aside"
                          "avatar body body"
                          "avatar footer footer"
                          "moderate moderate moderate";
@@ -38,7 +38,7 @@ $comment-margin-sm: .3rem;
   z-index: 2;
 
   @include media-breakpoint-down(sm) {
-    grid-template-areas: "avatar header vote"
+    grid-template-areas: "avatar header aside"
                          "body body body"
                          "footer footer footer"
                          "moderate moderate moderate";
@@ -78,8 +78,24 @@ $comment-margin-sm: .3rem;
     }
   }
 
-  aside.vote {
-    grid-area: vote;
+  .aside {
+    grid-area: aside;
+    display: flex;
+    gap: .5rem;
+  }
+
+  .comment-collapse {
+    cursor: pointer;
+    display: none;
+    white-space: nowrap;
+
+    > a {
+      padding: 0 .25rem;
+    }
+  }
+
+  .expand-label {
+    display: none;
   }
 
   div {
@@ -135,6 +151,7 @@ $comment-margin-sm: .3rem;
     menu {
       column-gap: 1rem;
       display: flex;
+      flex: 1;
       grid-area: meta;
       list-style: none;
       opacity: .75;
@@ -143,10 +160,6 @@ $comment-margin-sm: .3rem;
 
       a, button {
         font-size: .8rem;
-      }
-
-      > li {
-        width: max-content;
       }
 
       > a.active,
@@ -167,16 +180,6 @@ $comment-margin-sm: .3rem;
       display: block;
       margin: .5rem 0;
     }
-
-    .comment-collapse {
-      cursor: pointer;
-      margin-left: auto;
-      display: none;
-    }
-
-    .expand-label {
-      display: none;
-    }
   }
 
   .loader {
@@ -193,18 +196,15 @@ $comment-margin-sm: .3rem;
 
   &.collapsed {
     border-style: dashed;
-    grid-template-areas: "avatar header footer";
+    grid-template-areas: "avatar header aside";
     grid-template-columns: min-content auto min-content;
 
-    > :not(header, figure, footer) {
+    > :not(header, figure, .aside) {
       display: none;
     }
 
-    footer {
-      > :not(menu),
-      menu > :not(.comment-collapse) {
-        display: none;
-      }
+    .aside > :not(.comment-collapse) {
+      display: none;
     }
 
     header a {
@@ -213,6 +213,10 @@ $comment-margin-sm: .3rem;
 
     > figure img {
       filter: grayscale(.25) opacity(.75);
+    }
+
+    .comment-collapse {
+      opacity: .75;
     }
 
     .collapse-label {
