@@ -36,3 +36,8 @@ export function getLevel(element) {
     let level = parseInt(element.className.replace('comment-level--1', '').split('--')[1]);
     return isNaN(level) ? 1 : level;
 }
+
+export function getDepth(element) {
+    let depth = parseInt(element.dataset.commentCollapseDepthValue);
+    return isNaN(depth) ? 1 : depth;
+}

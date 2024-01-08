@@ -1,6 +1,7 @@
 {%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
 {%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
 {%- set V_TREE = constant('App\\Controller\\User\\ThemeSettingsController::TREE') -%}
+{%- set V_CLASSIC = constant('App\\Controller\\User\\ThemeSettingsController::CLASSIC') -%}
 
 {%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_PREVIEW'), V_FALSE) -%}
 {%- set DYNAMIC_LISTS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_DYNAMIC_LISTS'), V_FALSE) -%}
@@ -14,13 +15,14 @@
         </div>
     {% else %}
         <blockquote{{ attributes.defaults({
-            class: html_classes('section comment entry-comment subject ' ~ 'comment-level--' ~ this.getLevel(),{
+            class: html_classes('section comment entry-comment subject', 'comment-level--' ~ this.getLevel(), {
                 'own': app.user and comment.isAuthor(app.user),
                 'author': comment.isAuthor(comment.entry.user),
-                'show-preview': SHOW_PREVIEW is same as V_TRUE and not comment.isAdult
+                'show-preview': SHOW_PREVIEW is same as V_TRUE and not comment.isAdult,
             })}).without('id') }}
                 id="entry-comment-{{ comment.id }}"
-                data-controller="comment subject mentions"
+                data-controller="comment subject mentions comment-collapse"
+                data-comment-collapse-depth-value="{{ level }}"
                 data-subject-parent-value="{{ comment.parent ? comment.parent.id : '' }}"
                 data-action="{{- DYNAMIC_LISTS is same as V_TRUE ? 'notifications:Notification@window->subject#notification' : '' -}}">
             <header>
@@ -73,7 +75,29 @@
                 {% endif %}
             </div>
             {% if comment.visibility in ['visible', 'private'] %}
-                {{ component('vote', {subject: comment}) }}
+                <div class="aside">
+                    {{ component('vote', { subject: comment }) }}
+                    <aside class="comment-collapse">
+                        <a data-action="comment-collapse#toggleCollapse">
+                            <span data-comment-collapse-target="counter"></span>
+                            {% if showNested and comment.children|length > 0 %}
+                                <span class="collapse-label" aria-label="{{ 'collapse'|trans }}" title="{{ 'collapse'|trans }}">
+                                    <i class="fa-solid fa-angles-up"></i>
+                                </span>
+                                <span class="expand-label" aria-label="{{ 'expand'|trans }}" title="{{ 'expand'|trans }}">
+                                    <i class="fa-solid fa-angles-down"></i>
+                                </span>
+                            {% else %}
+                                <span class="collapse-label" aria-label="{{ 'hide'|trans }}" title="{{ 'hide'|trans }}">
+                                    <i class="fa-solid fa-angle-up"></i>
+                                </span>
+                                <span class="expand-label" aria-label="{{ 'show'|trans }}" title="{{ 'show'|trans }}">
+                                    <i class="fa-solid fa-angle-down"></i>
+                                </span>
+                            {% endif %}
+                        </a>
+                    </aside>
+                </div>
             {% endif %}
             <footer>
                 {% if (comment.visibility in ['visible', 'private'] or comment.visibility is same as 'trashed' and this.canSeeTrashed) and comment.image %}
