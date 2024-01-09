@@ -45,17 +45,8 @@ class EntryPageFactory
         }
 
         $cc = [];
-        if ($entry->apId) {
-            $actorObject = $this->client->getActorObject($entry->user->apProfileId);
-            if (isset($actorObject['followers'])) {
-                $cc = [$actorObject['followers']];
-            }
-        } else {
-            $cc = [$this->urlGenerator->generate(
-                'ap_user_followers',
-                ['username' => $entry->user->username],
-                UrlGeneratorInterface::ABSOLUTE_URL
-            )];
+        if ($followersUrl = $entry->user->getFollowerUrl($this->client, $this->urlGenerator, null !== $entry->apId)) {
+            $cc[] = $followersUrl;
         }
 
         $page = array_merge($page ?? [], [
