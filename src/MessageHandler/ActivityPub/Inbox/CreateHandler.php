@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\MessageHandler\ActivityPub\Inbox;
 
 use App\Entity\Entry;
+use App\Entity\EntryComment;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\CreateMessage;
 use App\Message\ActivityPub\Outbox\AnnounceMessage;
@@ -51,7 +54,7 @@ class CreateHandler
         }
     }
 
-    private function handleChain()
+    private function handleChain(): void
     {
         if (isset($this->object['inReplyTo']) && $this->object['inReplyTo']) {
             $existed = $this->repository->findByObjectId($this->object['inReplyTo']);
@@ -61,8 +64,14 @@ class CreateHandler
                 return;
             }
         }
-        $this->note->create($this->object);
-        // @TODO announce the created comment
+
+        $note = $this->note->create($this->object);
+        if ($note instanceof EntryComment or $note instanceof Post or $note instanceof PostComment) {
+            if (null !== $note->apId and null === $note->magazine->apId) {
+                // local magazine, but remote post
+                $this->bus->dispatch(new AnnounceMessage(null, $note->magazine->getId(), $note->getId(), \get_class($note)));
+            }
+        }
     }
 
     private function handlePage(): void

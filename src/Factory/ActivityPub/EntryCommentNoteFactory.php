@@ -123,13 +123,7 @@ class EntryCommentNoteFactory
 
     private function getReplyTo(EntryComment $comment): string
     {
-        if ($comment->apId) {
-            return $comment->apId;
-        }
-
-        return $comment->parent ? $this->getActivityPubId($comment->parent) : $this->pageFactory->getActivityPubId(
-            $comment->entry
-        );
+        return $comment->parent ? $this->getActivityPubId($comment->parent) : $this->pageFactory->getActivityPubId($comment->entry);
     }
 
     private function getReplyToAuthor(EntryComment $comment): string

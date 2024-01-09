@@ -127,13 +127,7 @@ class PostCommentNoteFactory
 
     private function getReplyTo(PostComment $comment): string
     {
-        if ($comment->apId) {
-            return $comment->apId;
-        }
-
-        return $comment->parent ? $this->getActivityPubId($comment->parent) : $this->postNoteFactory->getActivityPubId(
-            $comment->post
-        );
+        return $comment->parent ? $this->getActivityPubId($comment->parent) : $this->postNoteFactory->getActivityPubId($comment->post);
     }
 
     private function getReplyToAuthor(PostComment $comment): string
