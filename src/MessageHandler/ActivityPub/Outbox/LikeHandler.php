@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\MessageHandler\ActivityPub\Outbox;
 
+use App\Entity\Entry;
+use App\Entity\EntryComment;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use App\Factory\ActivityPub\ActivityFactory;
 use App\Message\ActivityPub\Outbox\LikeMessage;
 use App\Repository\MagazineRepository;
@@ -39,6 +43,7 @@ class LikeHandler
         }
 
         $user = $this->userRepository->find($message->userId);
+        /** @var Entry|EntryComment|Post|PostComment $object */
         $object = $this->entityManager->getRepository($message->objectType)->find($message->objectId);
 
         $activity = $this->likeWrapper->build(
@@ -53,7 +58,7 @@ class LikeHandler
         $inboxes = array_filter(array_unique(array_merge(
             $this->userRepository->findAudience($user),
             $this->magazineRepository->findAudience($object->magazine),
-            [$object->user->apInboxUrl]
+            [$object->user->apInboxUrl, $object->magazine->apId ? $object->magazine->apInboxUrl : null]
         )));
         $this->deliverManager->deliver($inboxes, $activity);
     }
