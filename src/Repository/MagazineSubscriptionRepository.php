@@ -67,7 +67,6 @@ class MagazineSubscriptionRepository extends ServiceEntityRepository
             ->addSelect('u')
             ->join('ms.user', 'u')
             ->andWhere('ms.magazine = :magazine')
-            ->andWhere('u.apId IS NULL')
             ->setParameter('magazine', $magazine)
             ->getQuery();
 
