@@ -67,7 +67,7 @@ class PostCommentNotificationManager implements ContentNotificationManagerInterf
         $mentions = MentionManager::clearLocal($this->mentionManager->extract($subject->body));
 
         foreach ($this->mentionManager->getUsersFromArray($mentions) as $user) {
-            if (!$user->apId) {
+            if (!$user->apId and !$user->isBlocked($subject->getUser())) {
                 $notification = new PostCommentMentionedNotification($user, $subject);
                 $this->entityManager->persist($notification);
             }
@@ -99,13 +99,15 @@ class PostCommentNotificationManager implements ContentNotificationManagerInterf
             return $exclude;
         }
 
-        $notification = new PostCommentReplyNotification($comment->parent->user, $comment);
-        $this->notifyUser($notification);
+        if (!$comment->parent->user->isBlocked($comment->user)) {
+            $notification = new PostCommentReplyNotification($comment->parent->user, $comment);
+            $this->notifyUser($notification);
 
-        $this->entityManager->persist($notification);
-        $this->entityManager->flush();
+            $this->entityManager->persist($notification);
+            $this->entityManager->flush();
 
-        $exclude[] = $notification->user;
+            $exclude[] = $notification->user;
+        }
 
         return $exclude;
     }
