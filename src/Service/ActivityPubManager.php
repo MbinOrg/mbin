@@ -394,7 +394,9 @@ class ActivityPubManager
                 $magazine->icon = $newImage;
             }
 
-            if ($actor['preferredUsername']) {
+            if ($actor['name']) {
+                $magazine->title = $actor['name'];
+            } elseif ($actor['preferredUsername']) {
                 $magazine->title = $actor['preferredUsername'];
             }
 
