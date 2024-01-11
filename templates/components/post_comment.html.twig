@@ -1,7 +1,6 @@
 {%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
 {%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
 {%- set V_TREE = constant('App\\Controller\\User\\ThemeSettingsController::TREE') -%}
-{%- set V_CLASSIC = constant('App\\Controller\\User\\ThemeSettingsController::CLASSIC') -%}
 
 {%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_PREVIEW'), V_FALSE) -%}
 {%- set VIEW_STYLE = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::POST_COMMENTS_VIEW'), V_TREE) -%}
