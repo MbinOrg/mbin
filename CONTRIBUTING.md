@@ -16,11 +16,11 @@ With an account on [GitHub](https://github.com) you will be able to [fork this r
 
 ### Way of Working
 
-See below our agreements / guidelines how we work together in the project (in random order):
+See below our agreements / guidelines for how we work together in the project (in random order):
 
 - Respect each other naturally.
 - [Discuss](https://matrix.to/#/#mbin:melroy.org) (big) issues/changes in the community first and have some consensus (WIP: we are still looking into some voting tool that might help here).
-- Always [create a new Pull Request](https://github.com/MbinOrg/mbin/pulls) in GitHub. Thus feature/topic branches are allowed (despite what C4 spec says). Eg. Do _NOT_ merge directly to the `main` branch!
+- Always [create a new Pull Request](https://github.com/MbinOrg/mbin/pulls) in GitHub. Thus feature/topic branches are allowed (despite what C4 spec says). Eg. Do _NOT_ merge directly to the `main` branch without a PR!
 - If a Pull Request isn't ready yet, mark it as a "Draft Pull Request" within GitHub. When creating a Pull Request you have a drop-down arrow on the "Create pull request" button to make a draft during the creation of a PR, see:
 ![Draft PR](https://github.com/MbinOrg/mbin/assets/628926/0800231e-6f0a-47e6-83df-d4bc8d9abb0d)
 
@@ -28,16 +28,16 @@ See below our agreements / guidelines how we work together in the project (in ra
 ![Tests passing](https://github.com/MbinOrg/mbin/assets/628926/c8cb8778-a60c-49bf-99a2-0770e7148e25)
 
 - Pull Requests require at least one (1) other maintainer approval before the PR gets merged (built-in peer review process).
-- If a contributor has merge right, do _not_ merge a PR on their behalf (unless the contibutor agrees you can merge it).
-  Leave it to the contributor when to merge the PR. This is to also avoid regression or merging unfinished work by accident.
+- If a contributor has merge rights, do _not_ merge a PR on their behalf (unless the contributor agrees you can merge it).
+  Let the contributor decide when to merge the PR. This is partly to avoid regression or merging of unfinished work by accident.
   - In case of an _external_ contributor who does not have merge rights, anybody in the community with merge rights can merge the PR.
 - Existing GitHub Organization owners are allowed to add other GitHub users to the repository or to the GitHub organization. That being said, _be careful_ who to add and discuss on [Matrix](https://matrix.to/#/#mbin:melroy.org) first.
-- Do _NOT_ remove GitHub Organization owners based on "inactive for an extended period of time" (despite what C4 specs says). Since we did not yet define extended period of time.
+- Do _NOT_ remove GitHub Organization owners based on "inactive for an extended period of time" (despite what C4 spec says), as we have not yet defined the extended period of time.
 - Comply with the [Collective Code Construction Contract (C4) - revision 3](C4.md) rules.
 
 The model loosely is based on Collective Code Construction Contract ('C4' for short). For [the complete C4 rules read this spec (rev 3)](C4.md). However, we follow the model but might _deviate_ or _extend_ on this specification (now or in the future). In those cases we deviate or extend; see the bullet list defined above.
 
-External source: [C4 spec hosted on zeromq.org](https://rfc.zeromq.org/spec/42/)
+External source: [C4 spec hosted on zeromq.org](https://rfc.zeromq.org/spec/44/)
 
 ### Coding Style Guide
 
