@@ -42,11 +42,6 @@ class InstanceRetrieveStatsApi extends InstanceBaseApi
         content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\BadRequestErrorSchema::class))
     )]
     #[OA\Response(
-        response: 401,
-        description: 'Permission denied due to missing or expired token',
-        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\UnauthorizedErrorSchema::class))
-    )]
-    #[OA\Response(
         response: 429,
         description: 'You are being rate limited',
         content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\TooManyRequestsErrorSchema::class)),
@@ -170,11 +165,6 @@ class InstanceRetrieveStatsApi extends InstanceBaseApi
         content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\BadRequestErrorSchema::class))
     )]
     #[OA\Response(
-        response: 401,
-        description: 'Permission denied due to missing or expired token',
-        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\UnauthorizedErrorSchema::class))
-    )]
-    #[OA\Response(
         response: 429,
         description: 'You are being rate limited',
         content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\TooManyRequestsErrorSchema::class)),
@@ -294,11 +284,6 @@ class InstanceRetrieveStatsApi extends InstanceBaseApi
         response: 400,
         description: 'Invalid parameters',
         content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\BadRequestErrorSchema::class))
-    )]
-    #[OA\Response(
-        response: 401,
-        description: 'Permission denied due to missing or expired token',
-        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\UnauthorizedErrorSchema::class))
     )]
     #[OA\Response(
         response: 429,

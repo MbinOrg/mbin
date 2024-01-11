@@ -24,11 +24,6 @@ class InstanceRetrieveFederationApi extends InstanceBaseApi
         ]
     )]
     #[OA\Response(
-        response: 401,
-        description: 'Permission denied due to expired token',
-        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\UnauthorizedErrorSchema::class))
-    )]
-    #[OA\Response(
         response: 429,
         description: 'You are being rate limited',
         content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\TooManyRequestsErrorSchema::class)),

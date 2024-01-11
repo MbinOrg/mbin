@@ -2,33 +2,26 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Api\Magazine;
+namespace App\Controller\Api\Instance;
 
-use App\DTO\MagazineThemeResponseDto;
-use App\Entity\Magazine;
-use App\Factory\MagazineFactory;
+use App\Service\ProjectInfoService;
+use App\Service\SettingsManager;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 
-class MagazineRetrieveThemeApi extends MagazineBaseApi
+class InstanceRetrieveInfoApi extends InstanceBaseApi
 {
     #[OA\Response(
         response: 200,
-        description: 'Theme retrieved',
-        content: new Model(type: MagazineThemeResponseDto::class),
+        description: 'Get general instance information (eg. software name and version)',
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\InfoSchema::class)),
         headers: [
             new OA\Header(header: 'X-RateLimit-Remaining', schema: new OA\Schema(type: 'integer'), description: 'Number of requests left until you will be rate limited'),
             new OA\Header(header: 'X-RateLimit-Retry-After', schema: new OA\Schema(type: 'integer'), description: 'Unix timestamp to retry the request after'),
             new OA\Header(header: 'X-RateLimit-Limit', schema: new OA\Schema(type: 'integer'), description: 'Number of requests available'),
         ]
-    )]
-    #[OA\Response(
-        response: 404,
-        description: 'Magazine not found',
-        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\NotFoundErrorSchema::class))
     )]
     #[OA\Response(
         response: 429,
@@ -40,30 +33,31 @@ class MagazineRetrieveThemeApi extends MagazineBaseApi
             new OA\Header(header: 'X-RateLimit-Limit', schema: new OA\Schema(type: 'integer'), description: 'Number of requests available'),
         ]
     )]
-    #[OA\Parameter(
-        name: 'magazine_id',
-        in: 'path',
-        description: 'The id of the magazine to retrieve the theme from',
-        schema: new OA\Schema(type: 'integer'),
-    )]
-    #[OA\Tag(name: 'magazine')]
+    #[OA\Tag(name: 'instance')]
     /**
-     * Retrieve the magazine's theme.
+     * Retrieve instance information (like the software name and version plus general website info).
      */
     public function __invoke(
-        #[MapEntity(id: 'magazine_id')]
-        Magazine $magazine,
-        MagazineFactory $magazineFactory,
+        SettingsManager $settings,
+        ProjectInfoService $projectInfo,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
-
-        $imageDto = $magazine->icon ? $this->imageFactory->createDto($magazine->icon) : null;
-        $dto = MagazineThemeResponseDto::create($magazineFactory->createDto($magazine), $magazine->customCss, $imageDto);
+        $body = [
+            'softwareName' => $projectInfo->getName(),
+            'softwareVersion' => $projectInfo->getVersion(),
+            'softwareRepository' => $projectInfo->getRepositoryURL(),
+            'websiteDomain' => $settings->get('KBIN_DOMAIN'),
+            'websiteContactEmail' => $settings->get('KBIN_CONTACT_EMAIL'),
+            'websiteTitle' => $settings->get('KBIN_TITLE'),
+            'websiteOpenRegistrations' => $settings->get('KBIN_REGISTRATIONS_ENABLED'),
+            'websiteFederationEnabled' => $settings->get('KBIN_FEDERATION_ENABLED'),
+            'websiteDefaultLang' => $settings->get('KBIN_DEFAULT_LANG'),
+        ];
 
         return new JsonResponse(
-            $dto,
+            $body,
             headers: $headers
         );
     }
