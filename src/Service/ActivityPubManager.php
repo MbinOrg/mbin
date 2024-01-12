@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\ActivityPub\Server;
 use App\DTO\ActivityPub\ImageDto;
 use App\DTO\ActivityPub\VideoDto;
 use App\DTO\ModeratorDto;
@@ -36,7 +35,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class ActivityPubManager
 {
     public function __construct(
-        private readonly Server $server,
         private readonly UserRepository $userRepository,
         private readonly UserManager $userManager,
         private readonly UserFactory $userFactory,
@@ -204,7 +202,6 @@ class ActivityPubManager
     public function webfinger(string $id): WebFinger
     {
         $this->logger->debug('fetching webfinger "{id}"', ['id' => $id]);
-        $this->webFingerFactory::setServer($this->server->create());
 
         if (false === filter_var($id, FILTER_VALIDATE_URL)) {
             $id = ltrim($id, '@');
@@ -438,7 +435,8 @@ class ActivityPubManager
 
                     if (null !== $items) {
                         $moderatorsToRemove = [];
-                        foreach ($magazine->moderators as /* @var $mod Moderator */ $mod) {
+                        /** @var Moderator $mod */
+                        foreach ($magazine->moderators as $mod) {
                             if (!$mod->isOwner) {
                                 $moderatorsToRemove[] = $mod->user;
                             }
