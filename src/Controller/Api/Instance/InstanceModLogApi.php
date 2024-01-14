@@ -38,11 +38,6 @@ class InstanceModLogApi extends InstanceBaseApi
         ]
     )]
     #[OA\Response(
-        response: 401,
-        description: 'Permission denied due to expired token',
-        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\UnauthorizedErrorSchema::class))
-    )]
-    #[OA\Response(
         response: 404,
         description: 'Page not found',
         content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\NotFoundErrorSchema::class))

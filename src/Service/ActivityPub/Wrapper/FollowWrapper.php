@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\ActivityPub\Wrapper;
 
+use App\Entity\Contracts\ActivityPubActivityInterface;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Uid\Uuid;
@@ -28,7 +29,7 @@ class FollowWrapper
         $id = Uuid::v4()->toRfc4122();
 
         return [
-            '@context' => 'https://www.w3.org/ns/activitystreams',
+            '@context' => ActivityPubActivityInterface::CONTEXT_URL,
             'id' => $this->urlGenerator->generate('ap_object', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL),
             'type' => 'Follow',
             'actor' => $follower,
