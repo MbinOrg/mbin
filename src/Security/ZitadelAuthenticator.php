@@ -95,7 +95,7 @@ class ZitadelAuthenticator extends OAuth2Authenticator
                 $dto->ip = $this->ipResolver->resolve();
 
                 $user = $this->userManager->create($dto, false);
-                $user->oauthKeycloakId = $zitadelUser->getId();
+                $user->oauthZitadelId = $zitadelUser->getId();
                 $user->isVerified = true;
 
                 $this->entityManager->persist($user);
