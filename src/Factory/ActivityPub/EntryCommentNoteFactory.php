@@ -9,6 +9,7 @@ use App\Entity\EntryComment;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
 use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ContextsProvider;
 use App\Service\ActivityPub\Wrapper\ImageWrapper;
 use App\Service\ActivityPub\Wrapper\MentionsWrapper;
 use App\Service\ActivityPub\Wrapper\TagsWrapper;
@@ -20,6 +21,7 @@ class EntryCommentNoteFactory
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly ContextsProvider $contextProvider,
         private readonly GroupFactory $groupFactory,
         private readonly ImageWrapper $imageWrapper,
         private readonly TagsWrapper $tagsWrapper,
@@ -35,11 +37,7 @@ class EntryCommentNoteFactory
     public function create(EntryComment $comment, bool $context = false): array
     {
         if ($context) {
-            $note['@context'] = [
-                ActivityPubActivityInterface::CONTEXT_URL,
-                ActivityPubActivityInterface::SECURITY_URL,
-                ActivityPubActivityInterface::ADDITIONAL_CONTEXTS,
-            ];
+            $note['@context'] = $this->contextProvider->referencedContexts();
         }
 
         $tags = $comment->tags ?? [];
@@ -47,9 +45,8 @@ class EntryCommentNoteFactory
             $tags[] = $comment->magazine->name;
         }
 
-        $note = [
+        $note = array_merge($note ?? [], [
             'type' => 'Note',
-            '@context' => [ActivityPubActivityInterface::CONTEXT_URL, ActivityPubActivityInterface::SECURITY_URL],
             'id' => $this->getActivityPubId($comment),
             'attributedTo' => $this->activityPubManager->getActorProfileId($comment->user),
             'inReplyTo' => $this->getReplyTo($comment),
@@ -78,7 +75,7 @@ class EntryCommentNoteFactory
                 $this->mentionsWrapper->build($comment->mentions ?? [], $comment->body)
             ),
             'published' => $comment->createdAt->format(DATE_ATOM),
-        ];
+        ]);
 
         $note['contentMap'] = [
             $comment->lang => $note['content'],

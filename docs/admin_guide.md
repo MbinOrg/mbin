@@ -956,12 +956,12 @@ sudo supervisorctl restart all
 Create new admin user (without email verification), please change the `username`, `email` and `password` below:
 
 ```bash
-php bin/console kbin:user:create <username> <email@example.com> <password>
-php bin/console kbin:user:admin <username>
+php bin/console mbin:user:create <username> <email@example.com> <password>
+php bin/console mbin:user:admin <username>
 ```
 
 ```bash
-php bin/console kbin:ap:keys:update
+php bin/console mbin:ap:keys:update
 ```
 
 Next, log in and create a magazine named "random" to which unclassified content from the fediverse will flow.
@@ -975,6 +975,14 @@ If you perform a Mbin upgrade (eg. `git pull`), be aware to _always_ execute the
 ```
 
 And when needed also execute: `sudo redis-cli FLUSHDB` to get rid of Redis cache issues. And reload the PHP FPM service if you have OPCache enabled.
+
+### Manual user activation
+
+Activate a user account (bypassing email verification), please change the `username` below:
+
+```bash
+php bin/console mbin:user:verify <username> -a
+```
 
 ### Backup and restore
 

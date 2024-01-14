@@ -103,9 +103,9 @@ COPY --from=builder-nodejs --chown=$USER:$GROUP $MBIN_HOME/public $MBIN_HOME/pub
 COPY --link docker/caddy/Caddyfile /etc/caddy/Caddyfile
 COPY --chmod=755 --link docker/docker-entrypoint ./
 
-RUN mkdir -p public/media /data /config && \
-    chown -R $USER:$GROUP public/media /data /config .env && \
-    chmod 777 public/media
+RUN mkdir -p public/media var/log /data /config && \
+    chown -R $USER:$GROUP public/media var /data /config .env && \
+    chmod 777 public/media var
 
 # Switch user
 USER $USER:$GROUP

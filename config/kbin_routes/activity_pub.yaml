@@ -138,3 +138,15 @@ ap_post_comment:
     path: /m/{magazine_name}/p/{post_id}/{slug}/reply/{comment_id}
     methods: [GET]
     condition: '%kbin_ap_route_condition%'
+
+ap_report:
+    controller: App\Controller\ActivityPub\ReportController
+    path: /reports/{report_id}
+    methods: [GET]
+    condition: '%kbin_ap_route_condition%'
+
+ap_contexts:
+    controller: App\Controller\ActivityPub\ContextsController
+    path: /contexts.{_format}
+    methods: [GET]
+    format: jsonld

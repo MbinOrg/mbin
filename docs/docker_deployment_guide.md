@@ -93,8 +93,8 @@ image: "ghcr.io/mbinorg/mbin:latest"
 ```bash
 cp ../.env.example_docker .env
 cp compose.prod.yml compose.override.yml
-mkdir -p storage/media storage/caddy_config storage/caddy_data
-sudo chown $USER:$USER storage/media storage/caddy_config storage/caddy_data
+mkdir -p storage/media storage/caddy_config storage/caddy_data storage/logs
+sudo chown $USER:$USER storage/media storage/caddy_config storage/caddy_data storage/logs
 ```
 
 ### Configure `.env` and `compose.override.yml`
@@ -160,20 +160,23 @@ You can also access RabbitMQ management UI via [http://localhost:15672](http://l
 Create new admin user (without email verification), please change the `username`, `email` and `password` below:
 
 ```bash
-docker compose exec php bin/console kbin:user:create <username> <email@example.com> <password>
-docker compose exec php bin/console kbin:user:admin <username>
+docker compose exec php bin/console mbin:user:create <username> <email@example.com> <password>
+docker compose exec php bin/console mbin:user:admin <username>
 ```
 
 ```bash
-docker compose exec php bin/console kbin:ap:keys:update
+docker compose exec php bin/console mbin:ap:keys:update
 ```
 
 Next, log in and create a magazine named "random" to which unclassified content from the fediverse will flow.
 
 ### Debugging / Logging
 
-1. See the running container IDs: `docker ps`
-2. You can see the logs via (use `-f` to follow the output): `docker logs -f <container_id>`
+1. List the running service containers with `docker compose ps`
+2. You can see the logs with `docker compose logs -f <service>` (use `-f` to follow the output)
+3. for `php`, `messenger` and `messenger_ap` services, the application log is also available at
+   `storage/logs` directory on the host, named after the running environment and date
+   (e.g. `storage/logs/prod-2023-12-01.log`)
 
 ### Add auxiliary containers to `compose.yml`
 
@@ -302,6 +305,14 @@ docker compose exec php bin/console cache:clear -n
 docker compose exec redis redis-cli
 > auth <your_redis_password>
 > FLUSHDB
+```
+
+## Manual user activation
+
+Activate a user account (bypassing email verification), please change the `username` below:
+
+```bash
+docker compose exec php bin/console mbin:user:verify <username> -a
 ```
 
 ## Backup and restore

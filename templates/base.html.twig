@@ -24,6 +24,9 @@
 
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
+        <style>
+            {% include 'components/_details_label.css.twig' %}
+        </style>
     {% endblock %}
 
     {% block javascripts %}
@@ -95,11 +98,10 @@
     </div>
 </div>
 
-{% include 'layout/_footer.html.twig' with {inSidebar: true} %}
 {% include 'layout/_topbar.html.twig' %}
 <div id="popover" class="popover js-popover section section--small" role="dialog"></div>
-<div id="scroll-top" data-controller="scroll-top" style="display: none;" data-action="click->scroll-top#scrollTop">
-    <i class="fa-solid fa-arrow-up"></i> <small class="hidden">0</small>
+<div id="scroll-top" data-controller="scroll-top" style="display: none;" data-action="click->scroll-top#scrollTop" aria-hidden="true">
+    <i class="fa-solid fa-arrow-up" aria-hidden="true"></i> <small class="hidden">0</small>
 </div>
 </body>
 </html>

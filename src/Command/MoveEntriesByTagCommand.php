@@ -22,7 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'kbin:entries:move',
+    name: 'mbin:entries:move',
     description: 'This command will allow you to move the entries to the new magazine based on the tag.'
 )]
 class MoveEntriesByTagCommand extends Command

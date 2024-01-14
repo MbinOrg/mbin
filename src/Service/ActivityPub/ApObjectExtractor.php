@@ -50,14 +50,28 @@ class ApObjectExtractor
             if ($images = $this->activityPubManager->handleExternalImages($attachments)) {
                 $body .= "\n\n".implode(
                     "  \n",
-                    array_map(fn ($image) => "![{$image->name}]({$image->url})", $images)
+                    array_map(
+                        fn ($image) => sprintf(
+                            '![%s](%s)',
+                            preg_replace('/\r\n|\r|\n/', ' ', $image->name),
+                            $image->url
+                        ),
+                        $images
+                    )
                 );
             }
 
             if ($videos = $this->activityPubManager->handleExternalVideos($attachments)) {
                 $body .= "\n\n".implode(
                     "  \n",
-                    array_map(fn ($video) => "![{$video->name}]({$video->url})", $videos)
+                    array_map(
+                        fn ($video) => sprintf(
+                            '![%s](%s)',
+                            preg_replace('/\r\n|\r|\n/', ' ', $video->name),
+                            $video->url
+                        ),
+                        $videos
+                    )
                 );
             }
         }

@@ -9,6 +9,7 @@ use App\Entity\Post;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
 use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ContextsProvider;
 use App\Service\ActivityPub\Wrapper\ImageWrapper;
 use App\Service\ActivityPub\Wrapper\MentionsWrapper;
 use App\Service\ActivityPub\Wrapper\TagsWrapper;
@@ -21,6 +22,7 @@ class PostNoteFactory
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly ContextsProvider $contextProvider,
         private readonly GroupFactory $groupFactory,
         private readonly ImageWrapper $imageWrapper,
         private readonly TagsWrapper $tagsWrapper,
@@ -36,11 +38,7 @@ class PostNoteFactory
     public function create(Post $post, bool $context = false): array
     {
         if ($context) {
-            $note['@context'] = [
-                ActivityPubActivityInterface::CONTEXT_URL,
-                ActivityPubActivityInterface::SECURITY_URL,
-                ActivityPubActivityInterface::ADDITIONAL_CONTEXTS,
-            ];
+            $note['@context'] = $this->contextProvider->referencedContexts();
         }
 
         $tags = $post->tags ?? [];

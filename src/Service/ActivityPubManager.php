@@ -108,8 +108,12 @@ class ActivityPubManager
      *
      * @return User|Magazine|null or Magazine or null on error
      */
-    public function findActorOrCreate(string $actorUrlOrHandle): null|User|Magazine
+    public function findActorOrCreate(?string $actorUrlOrHandle): null|User|Magazine
     {
+        if (\is_null($actorUrlOrHandle)) {
+            return null;
+        }
+
         $this->logger->debug('searching for actor at "{handle}"', ['handle' => $actorUrlOrHandle]);
         if (str_contains($actorUrlOrHandle, $this->settingsManager->get('KBIN_DOMAIN').'/m/')) {
             $magazine = str_replace('https://'.$this->settingsManager->get('KBIN_DOMAIN').'/m/', '', $actorUrlOrHandle);
@@ -261,7 +265,7 @@ class ActivityPubManager
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         // Check if actor isn't empty (not set/null/empty array/etc.)
-        if (!empty($actor)) {
+        if (isset($actor['endpoints']['sharedInbox']) || isset($actor['inbox'])) {
             // Update the following user columns
             $user->type = $actor['type'] ?? 'Person';
             $user->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
@@ -376,7 +380,7 @@ class ActivityPubManager
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         // Check if actor isn't empty (not set/null/empty array/etc.)
-        if (!empty($actor)) {
+        if (isset($actor['endpoints']['sharedInbox']) || isset($actor['inbox'])) {
             if (isset($actor['summary'])) {
                 $converter = new HtmlConverter(['strip_tags' => true]);
                 $magazine->description = stripslashes($converter->convert($actor['summary']));
@@ -390,7 +394,9 @@ class ActivityPubManager
                 $magazine->icon = $newImage;
             }
 
-            if ($actor['preferredUsername']) {
+            if ($actor['name']) {
+                $magazine->title = $actor['name'];
+            } elseif ($actor['preferredUsername']) {
                 $magazine->title = $actor['preferredUsername'];
             }
 
@@ -586,7 +592,7 @@ class ActivityPubManager
         $actor = $this->apHttpClient->getActorObject($actorUrl);
 
         // User (We don't make a distinction between bots with type Service as Lemmy does)
-        if (\in_array($actor['type'], User::USER_TYPES)) {
+        if (isset($actor['type']) && \in_array($actor['type'], User::USER_TYPES)) {
             return $this->updateUser($actorUrl);
         }
 

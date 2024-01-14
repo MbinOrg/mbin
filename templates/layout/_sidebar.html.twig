@@ -8,7 +8,7 @@
                             data-action="options#closeMobileSidebar:prevent"
                             title="{{ 'close'|trans }}"
                             aria-label="{{ 'close'|trans }}">
-                        <i class="fa-solid fa-close"></i>
+                        <i class="fa-solid fa-close" aria-hidden="true"></i>
                     </a>
                 </li>
                 <li class='federation-button'>
@@ -18,7 +18,7 @@
                     data-options-tab-param="federation"
                     title="{{ 'federation'|trans }}"
                     aria-label="{{ 'federation'|trans }}">
-                        <i class="fa-solid fa-circle-nodes"></i>
+                        <i class="fa-solid fa-circle-nodes" aria-hidden="true"></i>
                     </a>
                 </li>
                 <li class='settings-button'>
@@ -28,16 +28,15 @@
                     data-options-tab-param="settings"
                     title="{{ 'settings'|trans }}"
                     aria-label="{{ 'settings'|trans }}">
-                        <i class="fa-solid fa-gear"></i>
+                        <i class="fa-solid fa-gear" aria-hidden="true"></i>
                     </a>
                 </li>
                 <li class='home-button'>
                     <a
                             href="/"
-                            data-action="options#home"
                             title="{{ 'homepage'|trans }}"
                             aria-label="{{ 'homepage'|trans }}">
-                        <i class="fa-solid fa-home"></i>
+                        <i class="fa-solid fa-home" aria-hidden="true"></i>
                     </a>
                 </li>
             </ul>
@@ -122,6 +121,65 @@
 {% endif %}
 {{ component('related_posts', {magazine: magazine is defined and magazine ? magazine.name : null, tag: tag is defined and tag ? tag : null}) }}
 {{ component('related_entries', {magazine: magazine is defined and magazine ? magazine.name : null, tag: tag is defined and tag ? tag : null}) }}
+<section class="about section">
+    <h3>{{ kbin_domain() }}</h3>
+    <div class="container">
+        <ul>
+            <li><a href="{{ path('about') }}">{{ 'about_instance'|trans }}</a></li>
+            <li aria-hidden="true">&#9679;</li>
+            <li><a href="{{ path('page_contact') }}">{{ 'contact'|trans }}</a></li>
+            <li aria-hidden="true">&#9679;</li>
+            <li><a href="{{ path('page_faq') }}">{{ 'faq'|trans }}</a></li>
+            <li aria-hidden="true">&#9679;</li>
+            <li><a href="{{ path('page_terms') }}">{{ 'terms'|trans }}</a></li>
+            <li aria-hidden="true">&#9679;</li>
+            <li><a href="{{ path('page_privacy_policy') }}">{{ 'privacy_policy'|trans }}</a></li>
+            <li aria-hidden="true">&#9679;</li>
+            {% if kbin_federation_page_enabled() %}
+                <li><a href="{{ path('page_federation') }}">{{ 'federation'|trans }}</a></li>
+                <li aria-hidden="true">&#9679;</li>
+            {% endif %}
+            <li><a href="{{ path('modlog') }}">{{ 'mod_log'|trans }}</a></li>
+            <li aria-hidden="true">&#9679;</li>
+            <li><a href="{{ path('stats') }}">{{ 'stats'|trans }}</a></li>
+            <li aria-hidden="true">&#9679;</li>
+            {% if magazine is defined and magazine %}
+                {% set args = {'magazine': magazine.name ?? '' } %}
+            {% elseif user is defined and user %}
+                {% set args = {'user': user.username ?? '' } %}
+            {% elseif tag is defined and tag %}
+                {% set args = {'tag': tag ?? '' } %}
+            {% elseif domain is defined and domain %}
+                {% set args = {'domain': domain.name ?? '' } %}
+            {% else %}
+                {% set args = {} %}
+            {% endif %}
+            <li><a href="{{ path('feed_rss', args) }}">{{ 'rss'|trans }}</a>
+            </li>
+        </ul>
+        <div class="about-seperator"></div>
+        <ul class="about-mbin">
+            <li>Powered by <a href="https://github.com/MbinOrg/mbin" target="_blank" rel="no-referrer">Mbin</a></li>
+            <li aria-hidden="true">&#9679;</li>
+            <li>{{ mbin_current_version() }}</li>
+            <li aria-hidden="true">&#9679;</li>
+            <li><a href="https://github.com/MbinOrg/mbin/issues" target="_blank" rel="no-referrer">{{ 'report_issue'|trans }}</a></li>
+        </ul>
+        <ul class="about-options">
+            {% set header_accept_language = app.request.headers.has('accept_language')
+                ? app.request.headers.get('accept_language')|slice(0,2)
+                : null %}
+            {% set current = app.request.cookies.get('kbin_lang') ?? header_accept_language ?? kbin_default_lang() %}
+            <li>
+                <select data-action="kbin#changeLang">
+                    {% for code in ['bg', 'de', 'el', 'en', 'eo', 'es', 'fr', 'it', 'ja', 'nl', 'pl', 'pt', 'ru', 'tr', 'uk', 'zh_TW'] %}
+                        <option value="{{ code }}" {{ code is same as current ? 'selected' : '' }}>{{ code|language_name(code) }}</option>
+                    {% endfor %}
+                </select>
+            </li>
+        </ul>
+    </div>
+</section>
 <div class="section section--no-bg kbin-promo">
     <img height="47" src="{{ asset('favicon.svg') }}" alt="Clone repo">
     <div>
@@ -132,5 +190,3 @@
             })|raw }}</p>
     </div>
 </div>
-
-{% include 'layout/_footer.html.twig' %}

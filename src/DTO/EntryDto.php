@@ -89,6 +89,11 @@ class EntryDto implements ContentVisibilityInterface
         return $this->id;
     }
 
+    public function getApId(): ?string
+    {
+        return $this->apId;
+    }
+
     public function setId(int $id): void
     {
         $this->id = $id;

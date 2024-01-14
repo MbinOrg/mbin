@@ -242,7 +242,6 @@ oc: OC
 people_federated: Föderiert
 tree_view: Strukturansicht
 related_tags: Verwandte Tags
-go_to_footer: Zur Fußleiste springen
 appearance: Design
 homepage: Startseite
 hide_adult: 18+ Inhalte verbergen
@@ -295,8 +294,8 @@ flash_magazine_edit_success: Das Magazin wurde erfolgreich bearbeitet.
 too_many_requests: Grenzwert überschritten, bitte versuche es später nochmal.
 set_magazines_bar_desc: Füge die Namen der Magazine hinter dem Komma ein
 set_magazines_bar_empty_desc: Wenn das Feld leer ist werden aktive Magazine auf der
-  Magazinbar dargestellt.
-set_magazines_bar: Magazinbar
+  Magazin-Leiste angezeigt.
+set_magazines_bar: Magazin-Leiste
 added_new_thread: Ein neues Thema wurde hinzugefügt
 mod_deleted_your_comment: Ein Moderator hat deinen Kommentar entfernt
 mod_remove_your_post: Ein Moderator hat deinen Beitrag entfernt
@@ -399,12 +398,12 @@ filter.adult.only: Nur NSFW
 local_and_federated: Lokal und föderiert
 filter.fields.only_names: Nur Namen
 filter.fields.names_and_descriptions: Namen und Beschreibungen
-kbin_bot: Mbin Bot
+kbin_bot: Mbin Agent
 filter.fields.label: Wähle Felder für die Suche
-bot_body_content: "Willkommen beim Mbin Bot! Der Bot spielt eine entscheidende Rolle
-  um die ActivityPub-Funktionalität für Mbin bereitzustellen. Er stellt sicher, dass
-  Mbin mit anderen Instanzen des Fediverse kommunizieren und föderieren kann.\n\n
-  ActivityPub ist ein offenes Protokoll dass dezentralen sozialen Netzwerken ermöglicht
+bot_body_content: "Willkommen beim Mbin Agenten! Der Agent spielt eine entscheidende
+  Rolle um die ActivityPub-Funktionalität für Mbin bereitzustellen. Er stellt sicher,
+  dass Mbin mit anderen Instanzen des Fediverse kommunizieren und föderieren kann.\n
+  \nActivityPub ist ein offenes Protokoll dass dezentralen sozialen Netzwerken ermöglicht
   miteinander zu kommunizieren und zu interagieren. Es ermöglicht Nutzern auf unterschiedlichen
   Instanzen (Servern) anderen Nutzern zu folgen, mit ihnen zu interagieren und Inhalte
   innerhalb des föderierten sozialen Netzwerk, bekannt als das Fediverse zu teilen.
@@ -805,7 +804,7 @@ action: Aktion
 flash_mark_as_adult_success: Die NSFW Markierung wurde dem Post erfolgreich hinzugefügt.
 cancel_request: Anfrage abbrechen
 unsuspend_account: Konto Suspendierung aufheben
-deleted_by_moderator: Them, Post oder Kommentar wurde durch den Moderator gelöscht
+deleted_by_moderator: Thema, Post oder Kommentar wurde durch den Moderator gelöscht
 flash_unmark_as_adult_success: Die NSFW Markierung wurde vom Post erfolgreich entfernt.
 abandoned: Verlassen
 account_banned: Dieses Konto wurde gesperrt.
@@ -825,3 +824,10 @@ user_badge_op: OP
 purge_magazine: Magazin permanent löschen
 magazine_deletion: Magazin Löschung
 position_top: Oberseite
+subscribers_count: '{0}Abonnenten|{1}Abonennt|]1,Inf[ Abonnenten'
+followers_count: '{0}Follower|{1}Follower|]1,Inf[ Follower'
+remove_media: Medien entfernen
+menu: Menü
+all_time: Gesamt
+details: Details
+spoiler: Spoiler

@@ -56,7 +56,7 @@
                               data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                             <input type="hidden" name="token" value="{{ csrf_token('magazine_delete') }}">
                             <button type="submit" class="btn btn__primary">
-                                <i class="fa-solid fa-dumpster"></i> <span>{{ 'delete_magazine'|trans }}</span>
+                                <i class="fa-solid fa-dumpster" aria-hidden="true"></i> <span>{{ 'delete_magazine'|trans }}</span>
                             </button>
                         </form>
                     {% else %}
@@ -64,7 +64,7 @@
                               data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                             <input type="hidden" name="token" value="{{ csrf_token('magazine_restore') }}">
                             <button type="submit" class="btn btn__primary">
-                                <i class="fa-solid fa-dumpster"></i> <span>{{ 'restore_magazine'|trans }}</span>
+                                <i class="fa-solid fa-dumpster" aria-hidden="true"></i> <span>{{ 'restore_magazine'|trans }}</span>
                             </button>
                         </form>
                     {% endif %}
@@ -75,7 +75,7 @@
                           data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                         <input type="hidden" name="token" value="{{ csrf_token('magazine_remove_subscriptions') }}">
                         <button type="submit" class="btn btn__danger">
-                            <i class="fa-solid fa-users-slash"></i> <span>{{ 'remove_subscriptions'|trans }}</span>
+                            <i class="fa-solid fa-users-slash" aria-hidden="true"></i> <span>{{ 'remove_subscriptions'|trans }}</span>
                         </button>
                     </form>
                 </div>
@@ -86,7 +86,7 @@
                               data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                             <input type="hidden" name="token" value="{{ csrf_token('magazine_purge_content') }}">
                             <button type="submit" class="btn btn__danger">
-                                <i class="fa-solid fa-dumpster"></i> <span>{{ 'purge_content'|trans }}</span>
+                                <i class="fa-solid fa-dumpster" aria-hidden="true"></i> <span>{{ 'purge_content'|trans }}</span>
                             </button>
                         </form>
                     </div>
@@ -95,7 +95,7 @@
                               data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                             <input type="hidden" name="token" value="{{ csrf_token('magazine_purge') }}">
                             <button type="submit" class="btn btn__danger">
-                                <i class="fa-solid fa-dumpster-fire"></i> <span>{{ 'purge_magazine'|trans }}</span>
+                                <i class="fa-solid fa-dumpster-fire" aria-hidden="true"></i> <span>{{ 'purge_magazine'|trans }}</span>
                             </button>
                         </form>
                     </div>

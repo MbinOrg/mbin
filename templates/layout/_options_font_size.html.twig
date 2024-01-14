@@ -4,27 +4,27 @@
        title="150% {{ 'size'|trans }}"
        aria-label="150% {{ 'size'|trans }}"
        rel="nofollow">
-        <i style="font-size:150%" class="fa-solid fa-font"></i>
+        <i style="font-size:150%" class="fa-solid fa-font" aria-hidden="true"></i>
     </a>
     <a href="{{ path('theme_settings', {key: constant('App\\Controller\\User\\ThemeSettingsController::KBIN_FONT_SIZE'), value: '120'}) }}"
        class="link-muted font-size {{ app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_FONT_SIZE')) is same as '120' ? 'active' : ''}}"
        title="120% {{ 'size'|trans }}"
        aria-label="120% {{ 'size'|trans }}"
        rel="nofollow">
-        <i style="font-size:120%" class="fa-solid fa-font"></i>
+        <i style="font-size:120%" class="fa-solid fa-font" aria-hidden="true"></i>
     </a>
     <a href="{{ path('theme_settings', {key: constant('App\\Controller\\User\\ThemeSettingsController::KBIN_FONT_SIZE'), value: '100'}) }}"
        class="link-muted font-size {{ app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_FONT_SIZE')) is null or app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_FONT_SIZE')) is same as '100'? 'active' : ''}}"
        title="100% {{ 'size'|trans }}"
        aria-label="100% {{ 'size'|trans }}"
        rel="nofollow">
-        <i class="fa-solid fa-font"></i>
+        <i class="fa-solid fa-font" aria-hidden="true"></i>
     </a>
     <a href="{{ path('theme_settings', {key: constant('App\\Controller\\User\\ThemeSettingsController::KBIN_FONT_SIZE'), value: '90'}) }}"
        class="link-muted font-size {{ app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_FONT_SIZE')) is same as '90' ? 'active' : ''}}"
        title="90 {{ 'size'|trans }}"
        aria-label="90% {{ 'size'|trans }}"
        rel="nofollow">
-        <i style="font-size:90%" class="fa-solid fa-font"></i>
+        <i style="font-size:90%" class="fa-solid fa-font" aria-hidden="true"></i>
     </a>
 </div>

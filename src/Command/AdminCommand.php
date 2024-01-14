@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'kbin:user:admin',
+    name: 'mbin:user:admin',
     description: 'This command allows you to grant administrator privileges to the user.',
 )]
 class AdminCommand extends Command
@@ -50,7 +50,7 @@ class AdminCommand extends Command
         $this->entityManager->flush();
 
         $remove ? $io->success('Administrator privileges have been revoked.')
-            : $io->success('Administrator privileges has been granted.');
+            : $io->success('Administrator privileges have been granted.');
 
         return Command::SUCCESS;
     }

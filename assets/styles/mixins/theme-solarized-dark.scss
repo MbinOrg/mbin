@@ -140,11 +140,12 @@ $green: #859900;
   //entry
   --kbin-entry-link-visited-color: #586e75;
 
-  // footer
-  --kbin-footer-bg: var(--kbin-section-bg);
-  --kbin-footer-text-color: var(--kbin-text-color);
-  --kbin-footer-link-color: var(--kbin-link-color);
-  --kbin-footer-link-hover-color: var(--kbin-link-hover-color);
+  // details
+  --mbin-details-border: var(--kbin-section-border);
+  --mbin-details-separator-border: var(--kbin-meta-border);
+
+  --mbin-details-detail-color: #{$blue};
+  --mbin-details-spoiler-color: var(--kbin-danger-color);
 
   .options--top,
   .section--top {
