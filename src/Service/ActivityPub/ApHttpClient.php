@@ -236,7 +236,7 @@ class ApHttpClient
         ]);
 
         if (!str_starts_with((string) $response->getStatusCode(), '2')) {
-            throw new InvalidApPostException("Post fail: {$url}, ".$response->getContent(false).' '.json_encode($body));
+            throw new InvalidApPostException("Post fail: {$url}, ".substr($response->getContent(false), 0, 1000).' '.json_encode($body));
         }
 
         // build cache
