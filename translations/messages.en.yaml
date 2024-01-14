@@ -58,6 +58,8 @@ related_posts: Related posts
 random_posts: Random posts
 federated_magazine_info: This magazine is from a federated server and may be incomplete.
 federated_user_info: This profile is from a federated server and may be incomplete.
+stale_magazine_info: "This magazine was last updated %days% day(s) ago. Content will not include recent posts."
+disconnected_magazine_info: This magazine is not receiving updates. Subscribe to see up-to-date content.
 go_to_original_instance: Browse more on the original instance.
 empty: Empty
 subscribe: Subscribe
