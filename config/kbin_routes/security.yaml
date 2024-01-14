@@ -32,7 +32,7 @@ app_login:
 app_resend_email_activation:
   controller: App\Controller\Security\ResendActivationEmailController::resend
   path: /resend-email-activation/
-  
+
 app_consent:
   controller: App\Controller\Security\LoginController::consent
   path: /consent
@@ -81,6 +81,16 @@ oauth_keycloak_connect:
 oauth_keycloak_verify:
   controller: App\Controller\Security\KeycloakController::verify
   path: /oauth/keycloak/verify
+  methods: [ GET ]
+
+oauth_zitadel_connect:
+  controller: App\Controller\Security\ZitadelController::connect
+  path: /oauth/zitadel/connect
+  methods: [ GET ]
+
+oauth_zitadel_verify:
+  controller: App\Controller\Security\ZitadelController::verify
+  path: /oauth/zitadel/verify
   methods: [ GET ]
 
 oauth_create_client:
