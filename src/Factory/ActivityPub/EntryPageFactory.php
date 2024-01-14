@@ -9,6 +9,7 @@ use App\Entity\Entry;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
 use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ContextsProvider;
 use App\Service\ActivityPub\Wrapper\ImageWrapper;
 use App\Service\ActivityPub\Wrapper\MentionsWrapper;
 use App\Service\ActivityPub\Wrapper\TagsWrapper;
@@ -20,6 +21,7 @@ class EntryPageFactory
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly ContextsProvider $contextProvider,
         private readonly GroupFactory $groupFactory,
         private readonly ImageManager $imageManager,
         private readonly ImageWrapper $imageWrapper,
@@ -34,11 +36,7 @@ class EntryPageFactory
     public function create(Entry $entry, bool $context = false): array
     {
         if ($context) {
-            $page['@context'] = [
-                ActivityPubActivityInterface::CONTEXT_URL,
-                ActivityPubActivityInterface::SECURITY_URL,
-                ActivityPubActivityInterface::ADDITIONAL_CONTEXTS,
-            ];
+            $page['@context'] = $this->contextProvider->referencedContexts();
         }
 
         $tags = $entry->tags ?? [];

@@ -25,6 +25,9 @@ security:
         image_resolver:
             pattern: ^/media/cache/resolve
             security: false
+        ap_contexts:
+            pattern: ^/contexts(\.jsonld)?$
+            security: false
         main:
             lazy: true
             provider: app_user_provider
