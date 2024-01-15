@@ -38,7 +38,6 @@ class AnnounceHandler
         private readonly ActivityPubManager $activityPubManager,
         private readonly ActivityFactory $activityFactory,
         private readonly DeliverManager $deliverManager,
-        private readonly MessageBusInterface $bus,
         private readonly SettingsManager $settingsManager,
     ) {
     }
@@ -77,7 +76,7 @@ class AnnounceHandler
         $inboxes = [];
 
         if ($actor instanceof User) {
-            $inboxes = \array_merge(
+            $inboxes = array_merge(
                 $this->userRepository->findAudience($actor),
                 $this->activityPubManager->createInboxesFromCC($activity, $actor),
                 $this->magazineRepository->findAudience($object->magazine),
@@ -85,7 +84,7 @@ class AnnounceHandler
             );
         } elseif ($actor instanceof Magazine) {
             $createHost = parse_url($object->apId, PHP_URL_HOST);
-            $inboxes = \array_filter(\array_merge(
+            $inboxes = array_filter(array_merge(
                 $this->magazineRepository->findAudience($actor),
                 $this->magazineRepository->findAudience($object->magazine),
                 [$object->user->apInboxUrl]
