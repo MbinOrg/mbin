@@ -31,30 +31,15 @@ class MagazineFollowersController extends AbstractController
         }
 
         if (!$request->get('page')) {
-            $data = $this->getCollectionInfo($magazine);
+            $data = $this->collectionInfoWrapper->build('ap_magazine_followers', ['name' => $magazine->name], $magazine->subscriptionsCount);
         } else {
             $data = $this->getCollectionItems($magazine, (int) $request->get('page'));
         }
 
         $response = new JsonResponse($data);
-
         $response->headers->set('Content-Type', 'application/activity+json');
 
         return $response;
-    }
-
-    #[ArrayShape([
-        '@context' => 'string',
-        'type' => 'string',
-        'id' => 'string',
-        'first' => 'string',
-        'totalItems' => 'int',
-    ])]
-    private function getCollectionInfo(Magazine $magazine): array
-    {
-        $count = $this->magazineSubscriptionRepository->findMagazineSubscribers(1, $magazine)->count();
-
-        return $this->collectionInfoWrapper->build('ap_magazine_followers', ['name' => $magazine->name], $count);
     }
 
     #[ArrayShape([
