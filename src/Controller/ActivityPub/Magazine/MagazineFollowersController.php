@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\ActivityPub\Magazine;
 
+use App\Controller\AbstractController;
 use App\Entity\Magazine;
 use App\Repository\MagazineSubscriptionRepository;
 use App\Service\ActivityPub\Wrapper\CollectionInfoWrapper;
@@ -13,7 +14,7 @@ use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class MagazineFollowersController
+class MagazineFollowersController extends AbstractController
 {
     public function __construct(
         private readonly ActivityPubManager $manager,
@@ -25,6 +26,10 @@ class MagazineFollowersController
 
     public function __invoke(Magazine $magazine, Request $request): JsonResponse
     {
+        if ($magazine->apId) {
+            throw $this->createNotFoundException();
+        }
+
         if (!$request->get('page')) {
             $data = $this->getCollectionInfo($magazine);
         } else {
