@@ -452,6 +452,9 @@ Follow the prompts to create TLS certificates for your domain(s). If you don't a
 
 ```bash
 sudo certbot certonly
+
+# Or if you wish not to use the standalone mode but the Nginx plugin:
+sudo certbot --nginx -d domain.tld
 ```
 
 ### NGINX
