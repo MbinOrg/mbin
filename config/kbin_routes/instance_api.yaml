@@ -33,3 +33,9 @@ api_instance_retrieve_defederated_instances:
   path: /api/defederated
   methods: [ GET ]
   format: json
+
+api_instance_retrieve_info:
+  controller: App\Controller\Api\Instance\InstanceRetrieveInfoApi
+  path: /api/info
+  methods: [ GET ]
+  format: json
