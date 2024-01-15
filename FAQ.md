@@ -163,4 +163,4 @@ getInstancePrivateKey(): Return value must be of type string, null returned
 ```
 
 At time of writing, `getInstancePrivateKey()` [calls out to the Redis cache](https://github.com/MbinOrg/mbin/blob/main/src/Service/ActivityPub/ApHttpClient.php#L348)
-first, so any updates to the keys requires a `DEL instance_private_key` (or `FLUSHDB` to be certain, as documented here: [bare metal](https://github.com/MbinOrg/mbin/blob/main/docs/admin_guide.md#upgrades) and [docker](https://github.com/MbinOrg/mbin/blob/main/docs/docker_deployment_guide.md#clear-caches))
+first, so any updates to the keys requires a `DEL instance_private_key instance_public_key` (or `FLUSHDB` to be certain, as documented here: [bare metal](https://github.com/MbinOrg/mbin/blob/main/docs/admin_guide.md#upgrades) and [docker](https://github.com/MbinOrg/mbin/blob/main/docs/docker_deployment_guide.md#clear-caches))
