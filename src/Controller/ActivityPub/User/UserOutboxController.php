@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller\ActivityPub\User;
 
 use App\Controller\AbstractController;
-use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\Wrapper\CollectionInfoWrapper;
@@ -88,7 +87,6 @@ class UserOutboxController extends AbstractController
             $activity,
             $items,
             $page,
-            ActivityPubActivityInterface::ADDITIONAL_CONTEXTS
         );
     }
 }

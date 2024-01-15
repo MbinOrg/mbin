@@ -63,7 +63,7 @@ class ApHttpClient
             $statusCode = $r->getStatusCode();
             // Accepted status code are 2xx or 410 (used Tombstone types)
             if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
-                throw new InvalidApPostException("Invalid status code while getting: {$url} : $statusCode, ".$r->getContent(false));
+                throw new InvalidApPostException("Invalid status code while getting: {$url} : $statusCode, ".substr($r->getContent(false), 0, 1000));
             }
 
             $item->expiresAt(new \DateTime('+1 hour'));
@@ -195,7 +195,7 @@ class ApHttpClient
                     $statusCode = $response->getStatusCode();
                     // Accepted status code are 2xx or 410 (used Tombstone types)
                     if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
-                        throw new InvalidApPostException("Invalid status code while getting: {$apAddress} : $statusCode, ".$response->getContent(false));
+                        throw new InvalidApPostException("Invalid status code while getting: {$apAddress} : $statusCode, ".substr($response->getContent(false), 0, 1000));
                     }
                 } catch (\Exception $e) {
                     $msg = "AP Get fail: {$apAddress}, ex: ".\get_class($e).": {$e->getMessage()}";
@@ -236,7 +236,7 @@ class ApHttpClient
         ]);
 
         if (!str_starts_with((string) $response->getStatusCode(), '2')) {
-            throw new InvalidApPostException("Post fail: {$url}, ".$response->getContent(false).' '.json_encode($body));
+            throw new InvalidApPostException("Post fail: {$url}, ".substr($response->getContent(false), 0, 1000).' '.json_encode($body));
         }
 
         // build cache
