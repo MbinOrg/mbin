@@ -185,7 +185,7 @@ MAILER_DSN=sendmail://default
 MAILER_DSN=gmail+smtp://user%40domain.com:pass@smtp.gmail.com
 # Or remote SMTP with TLS on port 587:
 MAILER_DSN=smtp://username:password@smtpserver.tld:587?encryption=tls&auth_mode=log
-# Or remote SMTP with SSL on port 465
+# Or remote SMTP with SSL on port 465:
 MAILER_DSN=smtp://username:password@smtpserver.tld:465?encryption=ssl&auth_mode=log
 ```
 
