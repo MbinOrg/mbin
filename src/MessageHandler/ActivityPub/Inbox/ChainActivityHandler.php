@@ -10,6 +10,7 @@ use App\Entity\PostComment;
 use App\Message\ActivityPub\Inbox\AnnounceMessage;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\LikeMessage;
+use App\Message\ActivityPub\Outbox\AnnounceMessage as OutboxAnnounceMessage;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\Note;
@@ -100,7 +101,7 @@ class ChainActivityHandler
             if ($createdObject and ($createdObject instanceof EntryComment or $createdObject instanceof Post or $createdObject instanceof PostComment)) {
                 if (null !== $createdObject->apId and null === $createdObject->magazine->apId) {
                     // local magazine, but remote post
-                    $this->bus->dispatch(new \App\Message\ActivityPub\Outbox\AnnounceMessage(null, $createdObject->magazine->getId(), $createdObject->getId(), \get_class($createdObject)));
+                    $this->bus->dispatch(new OutboxAnnounceMessage(null, $createdObject->magazine->getId(), $createdObject->getId(), \get_class($createdObject)));
                 }
             }
 
