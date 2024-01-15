@@ -34,6 +34,7 @@ use App\Service\PostManager;
 use App\Service\UserManager;
 use App\Service\VoteManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -55,7 +56,8 @@ class DeleteUserHandler
         private readonly VoteManager $voteManager,
         private readonly FavouriteManager $favouriteManager,
         private readonly MessageBusInterface $bus,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -148,7 +150,11 @@ class DeleteUserHandler
         foreach ($subscriptions as $subscription) {
             $retry = true;
 
-            $this->magazineManager->unsubscribe($subscription->magazine, $this->user);
+            try {
+                $this->magazineManager->unsubscribe($subscription->magazine, $this->user);
+            } catch (\Exception $e) {
+                $this->logger->warning('Unable to unsubscribe to magazine while deleting the user (but continue with deletion). Error message: '.$e->getMessage());
+            }
         }
 
         return $retry;
@@ -171,7 +177,11 @@ class DeleteUserHandler
         foreach ($subscriptions as $subscription) {
             $retry = true;
 
-            $this->magazineManager->unblock($subscription->magazine, $this->user);
+            try {
+                $this->magazineManager->unblock($subscription->magazine, $this->user);
+            } catch (\Exception $e) {
+                $this->logger->warning('Unable to unblock from magazine while deleting the user (but continue with deletion). Error message: '.$e->getMessage());
+            }
         }
 
         return $retry;
@@ -194,7 +204,11 @@ class DeleteUserHandler
         foreach ($subscriptions as $subscription) {
             $retry = true;
 
-            $this->userManager->unfollow($this->user, $subscription->following);
+            try {
+                $this->userManager->unfollow($this->user, $subscription->following);
+            } catch (\Exception $e) {
+                $this->logger->warning('Unable to unfollow other user while deleting the user (but continue with deletion). Error message: '.$e->getMessage());
+            }
         }
 
         return $retry;
@@ -217,7 +231,11 @@ class DeleteUserHandler
         foreach ($subscriptions as $subscription) {
             $retry = true;
 
-            $this->userManager->unblock($this->user, $subscription->blocked);
+            try {
+                $this->userManager->unblock($this->user, $subscription->blocked);
+            } catch (\Exception $e) {
+                $this->logger->warning('Unable to unblock user while deleting the user (but continue with deletion). Error message: '.$e->getMessage());
+            }
         }
 
         return $retry;
@@ -242,7 +260,11 @@ class DeleteUserHandler
 
             foreach ($subjects as $subject) {
                 $retry = true;
-                $this->voteManager->vote(VotableInterface::VOTE_NONE, $subject, $this->user);
+                try {
+                    $this->voteManager->vote(VotableInterface::VOTE_NONE, $subject, $this->user);
+                } catch (\Exception $e) {
+                    $this->logger->warning('Unable to remove vote while deleting the user (but continue with deletion). Error message: '.$e->getMessage());
+                }
             }
         }
 
@@ -271,7 +293,11 @@ class DeleteUserHandler
 
         foreach ($comments as $comment) {
             $retry = true;
-            $this->entryCommentManager->{$this->op}($this->user, $comment);
+            try {
+                $this->entryCommentManager->{$this->op}($this->user, $comment);
+            } catch (\Exception $e) {
+                $this->logger->warning('Unable to '.$this->op.' thread comment while deleting the user (but continue with deletion). Error message: '.$e->getMessage());
+            }
         }
 
         return $retry;
@@ -299,7 +325,11 @@ class DeleteUserHandler
 
         foreach ($entries as $entry) {
             $retry = true;
-            $this->entryManager->{$this->op}($this->user, $entry);
+            try {
+                $this->entryManager->{$this->op}($this->user, $entry);
+            } catch (\Exception $e) {
+                $this->logger->warning('Unable to '.$this->op.' thread while deleting the user (but continue with deletion). Error message: '.$e->getMessage());
+            }
         }
 
         return $retry;
@@ -327,7 +357,11 @@ class DeleteUserHandler
 
         foreach ($comments as $comment) {
             $retry = true;
-            $this->postCommentManager->{$this->op}($this->user, $comment);
+            try {
+                $this->postCommentManager->{$this->op}($this->user, $comment);
+            } catch (\Exception $e) {
+                $this->logger->warning('Unable to '.$this->op.' post comment while deleting the user (but continue with deletion). Error message: '.$e->getMessage());
+            }
         }
 
         return $retry;
@@ -355,7 +389,11 @@ class DeleteUserHandler
 
         foreach ($posts as $post) {
             $retry = true;
-            $this->postManager->{$this->op}($this->user, $post);
+            try {
+                $this->postManager->{$this->op}($this->user, $post);
+            } catch (\Exception $e) {
+                $this->logger->warning('Unable to '.$this->op.' post while deleting the user (but continue with deletion). Error message: '.$e->getMessage());
+            }
         }
 
         return $retry;
@@ -378,10 +416,18 @@ class DeleteUserHandler
         foreach ($messages as $message) {
             $retry = true;
 
-            $message->thread->removeMessage($message);
+            try {
+                $message->thread->removeMessage($message);
+            } catch (\Exception $e) {
+                $this->logger->warning('Unable to remove thread message while deleting the user (but continue with deletion). Error message: '.$e->getMessage());
+            }
 
             if (0 === \count($message->thread->messages)) {
-                $this->entityManager->remove($message->thread);
+                try {
+                    $this->entityManager->remove($message->thread);
+                } catch (\Exception $e) {
+                    $this->logger->warning('Unable to remove thread while deleting the user (but continue with deletion). Error message: '.$e->getMessage());
+                }
             }
         }
 
@@ -411,7 +457,11 @@ class DeleteUserHandler
 
         foreach ($subjects as $subject) {
             $retry = true;
-            $this->favouriteManager->toggle($this->user, $subject->getSubject(), FavouriteManager::TYPE_UNLIKE);
+            try {
+                $this->favouriteManager->toggle($this->user, $subject->getSubject(), FavouriteManager::TYPE_UNLIKE);
+            } catch (\Exception $e) {
+                $this->logger->warning('Unable to remove favourite while deleting the user (but continue with deletion). Error message: '.$e->getMessage());
+            }
         }
 
         return $retry;
