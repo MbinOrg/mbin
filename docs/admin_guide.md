@@ -427,7 +427,7 @@ Make sure you have substituted all the passwords and configured the basic servic
 #### Let's Encrypt (TLS)
 
 > **Note**
-> The certbot authors recommend installing through snap as some distros' versions from apt tend to fall out of date; see https://eff-certbot.readthedocs.io/en/latest/install.html for more.
+> The Certbot authors recommend installing through snap as some distros' versions from APT tend to fall out-of-date; see https://eff-certbot.readthedocs.io/en/latest/install.html#snap-recommended for more.
 
 Install Snapd:
 
