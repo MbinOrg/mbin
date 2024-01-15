@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\ActivityPub\Magazine;
 
+use App\Controller\AbstractController;
 use App\Entity\Magazine;
 use App\Repository\MagazineSubscriptionRepository;
 use App\Service\ActivityPub\Wrapper\CollectionInfoWrapper;
@@ -13,7 +14,7 @@ use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class MagazineFollowersController
+class MagazineFollowersController extends AbstractController
 {
     public function __construct(
         private readonly ActivityPubManager $manager,
@@ -25,31 +26,20 @@ class MagazineFollowersController
 
     public function __invoke(Magazine $magazine, Request $request): JsonResponse
     {
+        if ($magazine->apId) {
+            throw $this->createNotFoundException();
+        }
+
         if (!$request->get('page')) {
-            $data = $this->getCollectionInfo($magazine);
+            $data = $this->collectionInfoWrapper->build('ap_magazine_followers', ['name' => $magazine->name], $magazine->subscriptionsCount);
         } else {
             $data = $this->getCollectionItems($magazine, (int) $request->get('page'));
         }
 
         $response = new JsonResponse($data);
-
         $response->headers->set('Content-Type', 'application/activity+json');
 
         return $response;
-    }
-
-    #[ArrayShape([
-        '@context' => 'string',
-        'type' => 'string',
-        'id' => 'string',
-        'first' => 'string',
-        'totalItems' => 'int',
-    ])]
-    private function getCollectionInfo(Magazine $magazine): array
-    {
-        $count = $this->magazineSubscriptionRepository->findMagazineSubscribers(1, $magazine)->count();
-
-        return $this->collectionInfoWrapper->build('ap_magazine_followers', ['name' => $magazine->name], $count);
     }
 
     #[ArrayShape([
