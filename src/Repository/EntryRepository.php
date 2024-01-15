@@ -23,6 +23,7 @@ use App\Entity\UserFollow;
 use App\PageView\EntryPageView;
 use App\Pagination\AdapterFactory;
 use App\Repository\Contract\TagRepositoryInterface;
+use App\Service\SettingsManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Types\Types;
@@ -54,6 +55,7 @@ class EntryRepository extends ServiceEntityRepository implements TagRepositoryIn
         private readonly Security $security,
         private readonly CacheInterface $cache,
         private readonly AdapterFactory $adapterFactory,
+        private readonly SettingsManager $settingsManager,
     ) {
         parent::__construct($registry, Entry::class);
     }
@@ -361,13 +363,15 @@ class EntryRepository extends ServiceEntityRepository implements TagRepositoryIn
     {
         $qb = $this->createQueryBuilder('e');
 
-        return $qb
-            ->where('e.isAdult = false')
+        $qb = $qb->where('e.isAdult = false')
             ->andWhere('e.visibility = :visibility')
             ->andWhere('m.visibility = :visibility')
             ->andWhere('u.visibility = :visibility')
-            ->andWhere('m.isAdult = false')
-            ->join('e.magazine', 'm')
+            ->andWhere('m.isAdult = false');
+        if ($this->settingsManager->get('KBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
+            $qb = $qb->andWhere('e.apId IS NULL');
+        }
+        return $qb->join('e.magazine', 'm')
             ->join('e.user', 'u')
             ->orderBy('e.createdAt', 'DESC')
             ->setParameters(['visibility' => VisibilityInterface::VISIBILITY_VISIBLE])

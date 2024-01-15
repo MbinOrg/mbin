@@ -88,6 +88,11 @@ class SettingsExtensionRuntime implements RuntimeExtensionInterface
         return $this->settings->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
     }
 
+    public function kbinSidebarSectionsLocalOnly(): bool
+    {
+        return $this->settings->get('KBIN_SIDEBAR_SECTIONS_LOCAL_ONLY');
+    }
+
     public function mbinCurrentVersion(): string
     {
         return $this->projectInfo->getVersion();

@@ -29,7 +29,8 @@ class SettingsDto implements \JsonSerializable
         public bool $KBIN_MERCURE_ENABLED,
         public bool $KBIN_FEDERATION_PAGE_ENABLED,
         public bool $KBIN_ADMIN_ONLY_OAUTH_CLIENTS,
-        public bool $KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN
+        public bool $KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN,
+        public bool $KBIN_SIDEBAR_SECTIONS_LOCAL_ONLY
     ) {
     }
 
@@ -54,6 +55,7 @@ class SettingsDto implements \JsonSerializable
         $dto->KBIN_FEDERATION_PAGE_ENABLED = $this->KBIN_FEDERATION_PAGE_ENABLED ?? $dto->KBIN_FEDERATION_PAGE_ENABLED;
         $dto->KBIN_ADMIN_ONLY_OAUTH_CLIENTS = $this->KBIN_ADMIN_ONLY_OAUTH_CLIENTS ?? $dto->KBIN_ADMIN_ONLY_OAUTH_CLIENTS;
         $dto->KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN = $this->KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN ?? $dto->KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN;
+        $dto->KBIN_SIDEBAR_SECTIONS_LOCAL_ONLY = $this->KBIN_SIDEBAR_SECTIONS_LOCAL_ONLY ?? $dto->KBIN_SIDEBAR_SECTIONS_LOCAL_ONLY;
 
         return $dto;
     }
@@ -80,6 +82,7 @@ class SettingsDto implements \JsonSerializable
             'KBIN_FEDERATION_PAGE_ENABLED' => $this->KBIN_FEDERATION_PAGE_ENABLED,
             'KBIN_ADMIN_ONLY_OAUTH_CLIENTS' => $this->KBIN_ADMIN_ONLY_OAUTH_CLIENTS,
             'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN' => $this->KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN,
+            'KBIN_SIDEBAR_SECTIONS_LOCAL_ONLY' => $this->KBIN_SIDEBAR_SECTIONS_LOCAL_ONLY,
         ];
     }
 }

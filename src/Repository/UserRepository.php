@@ -12,6 +12,7 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
 use App\Entity\UserFollow;
+use App\Service\SettingsManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Result;
 use Doctrine\ORM\QueryBuilder;
@@ -46,7 +47,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         self::USERS_REMOTE,
     ];
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly SettingsManager $settingsManager)
     {
         parent::__construct($registry, User::class);
     }
@@ -551,8 +552,12 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
                 ->andWhere('u.isBanned = false')
                 ->andWhere('u.apDeletedAt IS NULL')
                 ->andWhere('u.apTimeoutAt IS NULL')
-                ->andWhere('u.avatar IS NOT NULL')
-                ->join('u.avatar', 'a')
+                ->andWhere('u.avatar IS NOT NULL');
+            if ($this->settingsManager->get('KBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
+                $results = $results->andWhere('u.apId IS NULL');
+            }
+
+            $results = $results->join('u.avatar', 'a')
                 ->orderBy('u.lastActive', 'DESC')
                 ->setParameters(['lastActive' => (new \DateTime())->modify('-7 days')])
                 ->setMaxResults(35)

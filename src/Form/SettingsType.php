@@ -36,6 +36,7 @@ class SettingsType extends AbstractType
             ->add('KBIN_FEDERATION_PAGE_ENABLED', CheckboxType::class, ['required' => false])
             ->add('KBIN_ADMIN_ONLY_OAUTH_CLIENTS', CheckboxType::class, ['required' => false])
             ->add('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', CheckboxType::class, ['required' => false])
+            ->add('KBIN_SIDEBAR_SECTIONS_LOCAL_ONLY', CheckboxType::class, ['required' => false])
             ->add('submit', SubmitType::class);
     }
 
