@@ -153,3 +153,14 @@ If you want to update all the remote users on your instance, you can execute the
 ```
 
 _Important:_ This might have quite a performance impact (temporally), if you are running a very large instance. Due to the huge amount of remote users.
+
+## Running `php bin/console mbin:ap:keys:update` does not appear to set keys
+
+If you're seeing this error in logs:
+
+```
+getInstancePrivateKey(): Return value must be of type string, null returned
+```
+
+At time of writing, `getInstancePrivateKey()` [calls out to the Redis cache](https://github.com/MbinOrg/mbin/blob/main/src/Service/ActivityPub/ApHttpClient.php#L348)
+first, so any updates to the keys requires a `DEL instance_private_key instance_public_key` (or `FLUSHDB` to be certain, as documented here: [bare metal](https://github.com/MbinOrg/mbin/blob/main/docs/admin_guide.md#upgrades) and [docker](https://github.com/MbinOrg/mbin/blob/main/docs/docker_deployment_guide.md#clear-caches))

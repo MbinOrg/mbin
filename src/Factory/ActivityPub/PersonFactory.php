@@ -4,24 +4,18 @@ declare(strict_types=1);
 
 namespace App\Factory\ActivityPub;
 
-use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\User;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
+use App\Service\ActivityPub\ContextsProvider;
 use App\Service\ImageManager;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class PersonFactory
 {
-    public const ADDITIONAL_CONTEXTS = [
-        'schema' => 'http://schema.org#',
-        'manuallyApprovesFollowers' => 'as:manuallyApprovesFollowers',
-        'PropertyValue' => 'schema:PropertyValue',
-        'value' => 'schema:value',
-    ];
-
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly ContextsProvider $contextProvider,
         private readonly ImageManager $imageManager,
         private readonly MarkdownConverter $markdownConverter
     ) {
@@ -30,11 +24,7 @@ class PersonFactory
     public function create(User $user, bool $context = true): array
     {
         if ($context) {
-            $person['@context'] = [
-                ActivityPubActivityInterface::CONTEXT_URL,
-                ActivityPubActivityInterface::SECURITY_URL,
-                self::ADDITIONAL_CONTEXTS,
-            ];
+            $person['@context'] = $this->contextProvider->referencedContexts();
         }
 
         $person = array_merge(

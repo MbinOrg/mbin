@@ -59,11 +59,10 @@ class ActivityPubManager
 
     public function getActorProfileId(ActivityPubActorInterface $actor): string
     {
-        /**
-         * @var $actor User
-         */
-        if (!$actor->apId) {
-            return $this->personFactory->getActivityPubId($actor);
+        if ($actor instanceof User) {
+            if (!$actor->apId) {
+                return $this->personFactory->getActivityPubId($actor);
+            }
         }
 
         // @todo blid webfinger
