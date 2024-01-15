@@ -23,7 +23,6 @@ use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 class AnnounceHandler
@@ -73,21 +72,22 @@ class AnnounceHandler
             $activity = $this->undoWrapper->build($activity);
         }
 
-        $inboxes = [];
+        $inboxes = array_merge(
+            $this->magazineRepository->findAudience($object->magazine),
+            [$object->user->apInboxUrl, $object->magazine->apId ? $object->magazine->apInboxUrl : null]
+        );
 
         if ($actor instanceof User) {
             $inboxes = array_merge(
+                $inboxes,
                 $this->userRepository->findAudience($actor),
                 $this->activityPubManager->createInboxesFromCC($activity, $actor),
-                $this->magazineRepository->findAudience($object->magazine),
-                [$object->user->apInboxUrl]
             );
         } elseif ($actor instanceof Magazine) {
             $createHost = parse_url($object->apId, PHP_URL_HOST);
             $inboxes = array_filter(array_merge(
+                $inboxes,
                 $this->magazineRepository->findAudience($actor),
-                $this->magazineRepository->findAudience($object->magazine),
-                [$object->user->apInboxUrl]
             ), fn ($item) => null !== $item and $createHost !== parse_url($item, PHP_URL_HOST));
         }
 
