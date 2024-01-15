@@ -343,6 +343,7 @@ class PostRepository extends ServiceEntityRepository implements TagRepositoryInt
         if ($this->settingsManager->get('KBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
             $qb = $qb->andWhere('p.apId IS NULL');
         }
+
         return $qb->join('p.magazine', 'm')
             ->orderBy('p.createdAt', 'DESC')
             ->setParameters(['visibility' => VisibilityInterface::VISIBILITY_VISIBLE])

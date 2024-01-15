@@ -371,6 +371,7 @@ class EntryRepository extends ServiceEntityRepository implements TagRepositoryIn
         if ($this->settingsManager->get('KBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
             $qb = $qb->andWhere('e.apId IS NULL');
         }
+
         return $qb->join('e.magazine', 'm')
             ->join('e.user', 'u')
             ->orderBy('e.createdAt', 'DESC')
