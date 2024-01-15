@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security;
 
 use App\Provider\Zitadel;
@@ -21,4 +23,3 @@ class ZitadelProviderFactory extends ProviderFactory
         $resolver->setDefined(['base_url']);
     }
 }
-

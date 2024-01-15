@@ -6,6 +6,7 @@ namespace App\Security;
 
 use App\DTO\UserDto;
 use App\Entity\User;
+use App\Provider\ZitadelResourceOwner;
 use App\Repository\UserRepository;
 use App\Service\IpResolver;
 use App\Service\UserManager;
@@ -13,7 +14,6 @@ use App\Utils\Slugger;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
-use thepaperpilot\OAuth2\Client\Provider\ZitadelResourceOwner;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

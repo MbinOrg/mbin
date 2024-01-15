@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Provider;
 
 use League\OAuth2\Client\Provider\AbstractProvider;
@@ -23,27 +25,27 @@ class Zitadel extends AbstractProvider
 
     protected function getBaseUrl()
     {
-        return rtrim($this->baseUrl, '/') . '/';
+        return rtrim($this->baseUrl, '/').'/';
     }
 
     protected function getAuthorizationHeaders($token = null)
     {
-        return ['Authorization' => 'Bearer ' . $token];
+        return ['Authorization' => 'Bearer '.$token];
     }
 
     public function getBaseAuthorizationUrl()
     {
-        return $this->getBaseUrl() . 'oauth/v2/authorize';
+        return $this->getBaseUrl().'oauth/v2/authorize';
     }
 
     public function getBaseAccessTokenUrl(array $params)
     {
-        return $this->getBaseUrl() . 'oauth/v2/token';
+        return $this->getBaseUrl().'oauth/v2/token';
     }
 
     public function getResourceOwnerDetailsUrl(AccessToken $token)
     {
-        return $this->getBaseUrl() . 'oidc/v1/userinfo';
+        return $this->getBaseUrl().'oidc/v1/userinfo';
     }
 
     protected function getDefaultScopes()
