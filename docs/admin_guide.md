@@ -178,11 +178,15 @@ KBIN_STORAGE_URL=https://domain.tld/media
 POSTGRES_VERSION=14
 
 # Configure email, eg. using SMTP
-MAILER_DSN=smtp://127.0.0.1:25?encryption=ssl&auth_mode=login&username=&password=
+MAILER_DSN=smtp://127.0.0.1 # When you have a local SMTP server listening
 # But if already have Postfix configured, just use sendmail:
 MAILER_DSN=sendmail://default
 # Or Gmail (%40 = @-sign) use:
-MAILER_DSN=gmail+smtp://user%40domain.com:pass@default
+MAILER_DSN=gmail+smtp://user%40domain.com:pass@smtp.gmail.com
+# Or remote SMTP with TLS on port 587:
+MAILER_DSN=smtp://username:password@smtpserver.tld:587?encryption=tls&auth_mode=log
+# Or remote SMTP with SSL on port 465:
+MAILER_DSN=smtp://username:password@smtpserver.tld:465?encryption=ssl&auth_mode=log
 ```
 
 OAuth2 keys for API credential grants:
@@ -421,6 +425,39 @@ npm run build # Builds frontend
 
 Make sure you have substituted all the passwords and configured the basic services.
 
+#### Let's Encrypt (TLS)
+
+> **Note**
+> The Certbot authors recommend installing through snap as some distros' versions from APT tend to fall out-of-date; see https://eff-certbot.readthedocs.io/en/latest/install.html#snap-recommended for more.
+
+Install Snapd:
+
+```bash
+sudo apt-get install snapd
+```
+
+Install Certbot:
+
+```bash
+sudo snap install core; sudo snap refresh core
+sudo snap install --classic certbot
+```
+
+Add symlink:
+
+```bash
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+```
+
+Follow the prompts to create TLS certificates for your domain(s). If you don't already have NGINX up, you can use standalone mode.
+
+```bash
+sudo certbot certonly
+
+# Or if you wish not to use the standalone mode but the Nginx plugin:
+sudo certbot --nginx -d domain.tld
+```
+
 ### NGINX
 
 We will use NGINX as reverse proxy between the public site and various backend services (static files, PHP and Mercure).
@@ -443,7 +480,6 @@ Edit the main NGINX config file: `sudo nano /etc/nginx/nginx.conf` with the foll
 
 ```nginx
 ssl_protocols TLSv1.2 TLSv1.3; # Requires nginx >= 1.13.0 else only use TLSv1.2
-ssl_prefer_server_ciphers on;
 ssl_dhparam /etc/nginx/dhparam.pem;
 ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305;
 ssl_prefer_server_ciphers off;
@@ -657,39 +693,6 @@ Restart (or reload) NGINX:
 
 ```bash
 sudo systemctl restart nginx
-```
-
-#### Let's Encrypt (TLS)
-
-> **Note**
-> This is installed via snap to reduce system dependencies ran, and the preferred way. Run in standalone mode to not mess with the default config and minimize errors all around. If you prefer no snaps you can install other ways though, however is the preferred way to install from let's encrypt.
-
-Install Snapd:
-
-```bash
-sudo apt-get install snapd
-```
-
-Install Certbot:
-
-```bash
-sudo snap install core; sudo snap refresh core
-sudo snap install --classic certbot
-```
-
-Add symlink:
-
-```bash
-sudo ln -s /snap/bin/certbot /usr/bin/certbot
-```
-
-Generate a TLS certificate for your domain(s):
-
-```bash
-sudo certbot certonly --standalone -d domain.tld -d www.domain.tld
-
-# Or if you wish not to use the standalone mode but the Nginx plugin:
-sudo certbot --nginx -d domain.tld -d www.domain.tld
 ```
 
 ### Additional Mbin configuration files
