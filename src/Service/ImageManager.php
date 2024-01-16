@@ -46,6 +46,25 @@ class ImageManager
         return \in_array($mediaType, self::IMAGE_MIMETYPES);
     }
 
+    public function isRemoteImage(string $url): bool
+    {
+        $isImage = false;
+
+        if ($tempFile = $this->download($url)) {
+            try {
+                if ($mimeDetected = $this->mimeTypeGuesser->guessMimeType($tempFile)) {
+                    $isImage = self::isImageType($mimeDetected);
+                }
+            } catch (\Exception $e) {
+                // don't do anything, wait for clean up and return false
+            } finally {
+                unlink($tempFile);
+            }
+        }
+
+        return $isImage;
+    }
+
     public function store(string $source, string $filePath): bool
     {
         $fh = fopen($source, 'rb');

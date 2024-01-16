@@ -662,10 +662,15 @@ class ActivityPubManager
             return false;
         }
 
-        // attachment is either:
-        // - has `mediaType` field and is a recognized image types
-        // - image url looks like a link to image
+        /*
+         * attachment is either:
+         * - has `mediaType` field and is a recognized image types
+         * - image url looks like a link to image
+         * - detected mime type from the image file is recognized image type
+         *   (yes it'll download the file to inspect, hope this doesn't happen too often)
+         */
         return (!empty($object['mediaType']) && ImageManager::isImageType($object['mediaType']))
-            || ImageManager::isImageUrl($object['url']);
+            || ImageManager::isImageUrl($object['url'])
+            || $this->imageManager->isRemoteImage($object['url']);
     }
 }
