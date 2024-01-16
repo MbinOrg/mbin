@@ -9,7 +9,7 @@
    id="svg1"
    inkscape:version="1.3.2 (1:1.3.2+202311252150+091e20ef0f)"
    sodipodi:docname="mbin-notext.svg"
-   inkscape:export-filename="../../../public/favicon.svg"
+   inkscape:export-filename="../../../public/logo.png"
    inkscape:export-xdpi="78"
    inkscape:export-ydpi="78"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -28,15 +28,15 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      showgrid="false"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="60.457628"
-     inkscape:cy="61.164735"
+     inkscape:zoom="2.0000001"
+     inkscape:cx="84.249998"
+     inkscape:cy="277.74999"
      inkscape:window-width="1920"
      inkscape:window-height="1008"
      inkscape:window-x="1920"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg1"
+     inkscape:current-layer="layer1"
      showguides="true">
     <inkscape:grid
        type="axonomgrid"
@@ -343,7 +343,7 @@
          inkscape:label="ground bg"
          inkscape:path-effect="#path-effect21-5"
          inkscape:original-d="M 19.286818,102.03349 H 175.17139 l -11.547,-19.999996 h -40.41452 l -12.99038,-22.5 -12.990386,22.5 -12.990381,-22.5 -12.990381,22.5 H 30.833821 Z"
-         transform="matrix(1.0007262,0,0,1,5.7633805,20.000958)" />
+         transform="matrix(1.0008988,0,0,0.99978755,5.7594201,20.022636)" />
     </g>
   </g>
 </svg>
