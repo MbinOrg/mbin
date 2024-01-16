@@ -341,7 +341,7 @@ class PostRepository extends ServiceEntityRepository implements TagRepositoryInt
             ->andWhere('p.visibility = :visibility')
             ->andWhere('m.isAdult = false');
         if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
-            $qb = $qb->andWhere('p.apId IS NULL');
+            $qb = $qb->andWhere('m.apId IS NULL');
         }
 
         return $qb->join('p.magazine', 'm')
