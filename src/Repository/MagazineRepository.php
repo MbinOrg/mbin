@@ -482,7 +482,7 @@ class MagazineRepository extends ServiceEntityRepository
         $sql = '
             SELECT id FROM magazine
             ';
-        if ($this->settingsManager->get('KBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
+        if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
             $sql .= 'WHERE ap_id IS NULL';
         }
         $sql .= '

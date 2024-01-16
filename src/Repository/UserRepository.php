@@ -553,7 +553,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
                 ->andWhere('u.apDeletedAt IS NULL')
                 ->andWhere('u.apTimeoutAt IS NULL')
                 ->andWhere('u.avatar IS NOT NULL');
-            if ($this->settingsManager->get('KBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
+            if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
                 $results = $results->andWhere('u.apId IS NULL');
             }
 

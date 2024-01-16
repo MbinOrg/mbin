@@ -340,7 +340,7 @@ class PostRepository extends ServiceEntityRepository implements TagRepositoryInt
         $qb = $qb->where('p.isAdult = false')
             ->andWhere('p.visibility = :visibility')
             ->andWhere('m.isAdult = false');
-        if ($this->settingsManager->get('KBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
+        if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
             $qb = $qb->andWhere('p.apId IS NULL');
         }
 
