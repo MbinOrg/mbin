@@ -8,8 +8,8 @@ export default class extends Controller {
 
     // map: allowed enclosure key -> max repeats
     enclosureKeys = {
-        '`': 1, '~': 1, '"': 1, "'": 1,
-        '*': 2, '_': 2,
+        '`': 1, '"': 1, "'": 1,
+        '*': 2, '_': 2, '~': 2,
     };
 
     handleInput (event) {
@@ -45,7 +45,6 @@ export default class extends Controller {
 
     toggleFormattingEnclosure(encl, maxLength = 1) {
         const start = this.element.selectionStart, end = this.element.selectionEnd;
-        const ranged = start != end;
         const before = this.element.value.substring(0, start),
             inner = this.element.value.substring(start, end),
             after = this.element.value.substring(end);
@@ -56,12 +55,14 @@ export default class extends Controller {
         // remove enclosure when it's at the max
         const finalEnclosure = encl.repeat(maxLength);
         if (before.endsWith(finalEnclosure) && after.startsWith(finalEnclosure)) {
-            this.element.selectionStart = start - finalEnclosure.length;
-            this.element.selectionEnd = end + finalEnclosure.length;
+            const outerStart = start - finalEnclosure.length,
+                outerEnd = end + finalEnclosure.length;
 
-            // TODO: find a way to do this that isn't deprecated?
-            // it seems like this was never actually replaced by anything
-            document.execCommand('delete', false, null);
+            this.element.selectionStart = outerStart;
+            this.element.selectionEnd = outerEnd;
+
+            // no need for delete command as insertText should deletes selection by itself
+            // ref: https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand#inserttext
             document.execCommand('insertText', false, inner);
 
             this.element.selectionStart = start - finalEnclosure.length;
@@ -70,9 +71,6 @@ export default class extends Controller {
 
         // add a new enclosure
         else {
-            if (ranged) {
-                document.execCommand('delete', false, null);
-            }
             document.execCommand('insertText', false, encl + inner + encl);
 
             this.element.selectionStart = start + encl.length;
