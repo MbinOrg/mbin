@@ -33,7 +33,7 @@ enum ApRequestType
 
 class ApHttpClient
 {
-    public const TIMEOUT = 5;
+    public const TIMEOUT = 8;
 
     public function __construct(
         private readonly string $kbinDomain,
