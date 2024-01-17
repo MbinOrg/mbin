@@ -66,9 +66,10 @@ class CreateHandler
         }
 
         $note = $this->note->create($this->object);
-        if ($note instanceof EntryComment or $note instanceof Post or $note instanceof PostComment) {
-            if (null !== $note->apId and null === $note->magazine->apId) {
-                // local magazine, but remote post
+        // TODO atm post and post comment are not announced, because of the micro blog spam towards lemmy. If we implement magazine name as hashtag to be optional than this may be reverted
+        if ($note instanceof EntryComment /* or $note instanceof Post or $note instanceof PostComment */) {
+            if (null !== $note->apId and null === $note->magazine->apId and 'random' !== $note->magazine->name) {
+                // local magazine, but remote post. Random magazine is ignored, as it should not be federated at all
                 $this->bus->dispatch(new AnnounceMessage(null, $note->magazine->getId(), $note->getId(), \get_class($note)));
             }
         }
@@ -78,8 +79,8 @@ class CreateHandler
     {
         $page = $this->page->create($this->object);
         if ($page instanceof Entry) {
-            if (null !== $page->apId and null === $page->magazine->apId) {
-                // local magazine, but remote post
+            if (null !== $page->apId and null === $page->magazine->apId and 'random' !== $page->magazine->name) {
+                // local magazine, but remote post. Random magazine is ignored, as it should not be federated at all
                 $this->bus->dispatch(new AnnounceMessage(null, $page->magazine->getId(), $page->getId(), \get_class($page)));
             }
         }
