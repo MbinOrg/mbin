@@ -143,7 +143,6 @@ services:
             $kbinCaptchaEnabled: "%env(bool:KBIN_CAPTCHA_ENABLED)%"
             $kbinFederationPageEnabled: "%env(bool:KBIN_FEDERATION_PAGE_ENABLED)%"
             $kbinAdminOnlyOauthClients: "%env(bool:KBIN_ADMIN_ONLY_OAUTH_CLIENTS)%"
-            $mbinSidebarSectionsLocalOnly: "%env(bool:MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY)%"
 
     # Markdown
     App\Markdown\Factory\EnvironmentFactory:
