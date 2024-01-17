@@ -512,9 +512,9 @@
      inkscape:document-rotation="0"
      inkscape:current-layer="layer4"
      inkscape:document-units="px"
-     inkscape:cy="491.72368"
-     inkscape:cx="561.62159"
-     inkscape:zoom="0.6151829"
+     inkscape:cy="429.31034"
+     inkscape:cx="652.29885"
+     inkscape:zoom="0.87"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0"
      borderopacity="1.0"
@@ -536,7 +536,7 @@
        id="page1"
        margin="64"
        bleed="0"
-       inkscape:export-filename="../../../docs/images/mbin.png"
+       inkscape:export-filename="../../../public/mbin-og.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" /><sodipodi:guide
        position="94.280904,315"
@@ -585,7 +585,7 @@
        inkscape:label="grid top (ref bottom)"
        style="display:inline" /><g
        id="g2"
-       transform="translate(43.916892,154.20656)"
+       transform="matrix(1,0,0,1.0958561,41.346835,139.73148)"
        inkscape:label="text"><rect
          style="display:none;opacity:1;fill:#29144a;fill-opacity:1;stroke:none;stroke-width:4.39823;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
          id="rect35"
