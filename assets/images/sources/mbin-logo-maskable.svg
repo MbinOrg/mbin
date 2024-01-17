@@ -28,15 +28,15 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      showgrid="false"
-     inkscape:zoom="2"
-     inkscape:cx="19"
-     inkscape:cy="163.75"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="-4.5961941"
+     inkscape:cy="204.70741"
      inkscape:window-width="1920"
      inkscape:window-height="1048"
      inkscape:window-x="3840"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="svg1"
      showguides="true">
     <inkscape:grid
        type="axonomgrid"
@@ -360,7 +360,7 @@
        inkscape:label="ground bg"
        inkscape:path-effect="#path-effect21-5"
        inkscape:original-d="M 19.286818,102.03349 H 175.17139 l -11.547,-19.999996 h -40.41452 l -12.99038,-22.5 -12.990386,22.5 -12.990381,-22.5 -12.990381,22.5 H 30.833821 Z"
-       transform="matrix(1.0010224,0,0,0.99951715,5.4665579,25.238969)" />
+       transform="matrix(1.0020153,0,0,1.0098175,5.3578789,24.18799)" />
   </g>
   <path
      style="font-size:40px;line-height:1.25;font-family:SEGEK;-inkscape-font-specification:'SEGEK, Normal';white-space:pre;fill:#ffffff;stroke-width:1.41781"
