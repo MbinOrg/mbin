@@ -481,6 +481,11 @@ class MagazineRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
         $sql = '
             SELECT id FROM magazine
+            ';
+        if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
+            $sql .= 'WHERE ap_id IS NULL';
+        }
+        $sql .= '
             ORDER BY random()
             LIMIT 5
             ';
