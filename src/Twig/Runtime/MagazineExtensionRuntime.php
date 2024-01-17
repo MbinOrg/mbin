@@ -39,6 +39,7 @@ class MagazineExtensionRuntime implements RuntimeExtensionInterface
     public function hasLocalSubscribers(Magazine $magazine): bool
     {
         $subscribers = $this->magazineSubscriptionRepository->findMagazineSubscribers(1, $magazine);
+
         return $subscribers->getNbResults() > 0;
     }
 }
