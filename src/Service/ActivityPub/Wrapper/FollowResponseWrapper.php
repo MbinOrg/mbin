@@ -9,11 +9,10 @@ use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Uid\Uuid;
 
-class AcceptWrapper
+class FollowResponseWrapper
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
-        private FollowWrapper $followWrapper
     ) {
     }
 
@@ -24,11 +23,8 @@ class AcceptWrapper
         'actor' => 'string',
         'object' => 'string',
     ])]
-    public function build(
-        string $user,
-        string $actor,
-        string $remoteId,
-    ): array {
+    public function build(string $user, string $actor, string $remoteId, bool $isReject = false): array
+    {
         $id = Uuid::v4()->toRfc4122();
 
         return [
@@ -37,8 +33,8 @@ class AcceptWrapper
                 'ap_object',
                 ['id' => $id],
                 UrlGeneratorInterface::ABSOLUTE_URL
-            ).'#accept',
-            'type' => 'Accept',
+            ).($isReject ? '#reject' : '#accept'),
+            'type' => $isReject ? 'Reject' : 'Accept',
             'actor' => $user,
             'object' => [
                 'id' => $remoteId,
