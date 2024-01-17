@@ -1,24 +1,24 @@
-{% if magazine.apId %}
-    <div class="alert alert__info">
-        <p>{{ 'federated_magazine_info'|trans }} <a
-                    href="{{ magazine.apProfileId }}">{{ 'go_to_original_instance'|trans }}</a></p>
-    </div>
-{% endif %}
-
-{% if not magazine_has_local_subscribers(magazine) %}
-    <div class="alert alert__info">
-        <p>{{ 'disconnected_magazine_info'|trans }}</p>
-    </div>
-{% endif %}
-
-{% if magazine.apFetchedAt %}
-    {% set fetchedAt = magazine.apFetchedAt|date('U') %}
-    {% set currentTime = "now"|date('U') %}
-    {% set secondsDifference = currentTime - fetchedAt %}
-    {% set daysDifference = (secondsDifference / 86400)|round(0, 'floor') %} {# Convert seconds to days #}
-    {% if daysDifference > 0 %}
+{% if magazine.apId %}   {# I.e. if we're federated #}
+    {% if entries is defined and entries and not entries.hasNextPage %}
+        {# Then show a link to original if we're at the end of content #}
         <div class="alert alert__info">
-            <p>{{ 'stale_magazine_info'|trans({'%days%': daysDifference}) }}</p>
+            <p>{{ 'federated_magazine_info'|trans }} <a
+             href="{{ magazine.apProfileId }}">{{ 'go_to_original_instance'|trans }}</a></p>
+        </div>
+    {% endif %}
+
+    {% if not magazine_has_local_subscribers(magazine) %}
+        {# Also show a warning if we're not actively receiving updates #}
+        {% set fetchedAt = magazine.apFetchedAt|date('U') %}
+        {% if fetchedAt %}
+            {% set currentTime = "now"|date('U') %}
+            {% set secondsDifference = currentTime - fetchedAt %}
+            {% set daysDifference = (secondsDifference / 86400)|round(0, 'floor') %} {# Convert seconds to days #}
+        {% else %}
+            {% set daysDifference = '???' %}
+        {% endif %}
+        <div class="alert alert__info">
+            <p>{{ 'disconnected_magazine_info'|trans({'%days%': daysDifference}) }}</p>
         </div>
     {% endif %}
 {% endif %}
