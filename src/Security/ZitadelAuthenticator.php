@@ -80,7 +80,8 @@ class ZitadelAuthenticator extends OAuth2Authenticator
                     return $user;
                 }
 
-                $username = $slugger->slug($zitadelUser->toArray()['username']);
+                $email = $zitadelUser->toArray()['preferred_username'];
+                $username = $slugger->slug(substr($email, 0, strrpos($email, '@')));
 
                 if ($this->userRepository->count(['username' => $username]) > 0) {
                     $username .= rand(1, 999);

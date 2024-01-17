@@ -215,7 +215,3 @@ services:
         class: App\Feed\Provider
         arguments: ['@App\Service\FeedManager']
 
-    App\Security\ZitadelProviderFactory:
-        tags:
-            - { name: oauth2.provider.factory, alias: zitadel }
-
