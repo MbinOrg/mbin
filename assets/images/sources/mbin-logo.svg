@@ -2,14 +2,14 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="1024"
-   height="1024"
-   viewBox="0 0 1024 1024"
+   width="320"
+   height="320"
+   viewBox="0 0 320 320"
    version="1.1"
    id="svg1"
    inkscape:version="1.3.2 (1:1.3.2+202311252150+091e20ef0f)"
    sodipodi:docname="mbin-logo.svg"
-   inkscape:export-filename="../../../public/mbin_logo.png"
+   inkscape:export-filename="../../../public/assets/icons/icon-1024x1024.svg"
    inkscape:export-xdpi="307.20001"
    inkscape:export-ydpi="307.20001"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -56,14 +56,14 @@
        gridanglez="30"
        visible="false" />
     <sodipodi:guide
-       position="160,213.72136"
+       position="160,917.72136"
        orientation="-1,0"
        id="guide1"
        inkscape:locked="false"
        inkscape:label=""
        inkscape:color="rgb(0,134,229)" />
     <sodipodi:guide
-       position="-56.499999,5.0000083"
+       position="-56.499999,709.00001"
        orientation="0,-1"
        id="guide4"
        inkscape:locked="false" />
