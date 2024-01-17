@@ -11,6 +11,7 @@ use App\Entity\Traits\ActivityPubActorTrait;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\VisibilityTrait;
 use App\Repository\UserRepository;
+use App\Service\ActivityPub\ApHttpClient;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -29,6 +30,7 @@ use Scheb\TwoFactorBundle\Model\BackupCodeInterface;
 use Scheb\TwoFactorBundle\Model\Totp\TotpConfiguration;
 use Scheb\TwoFactorBundle\Model\Totp\TotpConfigurationInterface;
 use Scheb\TwoFactorBundle\Model\Totp\TwoFactorInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -867,5 +869,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
             ->where(Criteria::expr()->eq('magazine', $magazine));
 
         return $this->magazineOwnershipRequests->matching($criteria)->count() > 0;
+    }
+
+    public function getFollowerUrl(ApHttpClient $client, UrlGeneratorInterface $urlGenerator, bool $isRemote): ?string
+    {
+        if ($isRemote) {
+            $actorObject = $client->getActorObject($this->apProfileId);
+            if ($actorObject and isset($actorObject['followers']) and \is_string($actorObject['followers'])) {
+                return $actorObject['followers'];
+            }
+
+            return null;
+        } else {
+            return $urlGenerator->generate(
+                'ap_user_followers',
+                ['username' => $this->username],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
+        }
     }
 }

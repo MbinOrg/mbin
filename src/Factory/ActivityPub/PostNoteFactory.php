@@ -51,6 +51,11 @@ class PostNoteFactory
             $tags
         );
 
+        $cc = [];
+        if ($followersUrl = $post->user->getFollowerUrl($this->client, $this->urlGenerator, null !== $post->apId)) {
+            $cc[] = $followersUrl;
+        }
+
         $note = array_merge($note ?? [], [
             'id' => $this->getActivityPubId($post),
             'type' => 'Note',
@@ -60,15 +65,7 @@ class PostNoteFactory
                 $this->groupFactory->getActivityPubId($post->magazine),
                 ActivityPubActivityInterface::PUBLIC_URL,
             ],
-            'cc' => [
-                $post->apId
-                    ? ($this->client->getActorObject($post->user->apProfileId)['followers']) ?? []
-                    : $this->urlGenerator->generate(
-                        'ap_user_followers',
-                        ['username' => $post->user->username],
-                        UrlGeneratorInterface::ABSOLUTE_URL
-                    ),
-            ],
+            'cc' => $cc,
             'sensitive' => $post->isAdult(),
             'stickied' => $post->sticky,
             'content' => $this->markdownConverter->convertToHtml(
