@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="320"
-   height="320"
-   viewBox="0 0 320 320"
+   width="1024"
+   height="1024"
+   viewBox="0 0 1024 1024"
    version="1.1"
    id="svg1"
    inkscape:version="1.3.2 (1:1.3.2+202311252150+091e20ef0f)"
@@ -28,12 +28,12 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      showgrid="false"
-     inkscape:zoom="11.313709"
-     inkscape:cx="181.41708"
-     inkscape:cy="172.66664"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="167.93785"
+     inkscape:cy="199.75766"
      inkscape:window-width="1920"
-     inkscape:window-height="1008"
-     inkscape:window-x="1920"
+     inkscape:window-height="1048"
+     inkscape:window-x="3840"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1"
@@ -73,8 +73,8 @@
     <rect
        x="24.411255"
        y="279.42432"
-       width="212.46253"
-       height="78.889647"
+       width="212.46252"
+       height="78.889648"
        id="rect1" />
     <inkscape:path-effect
        effect="fillet_chamfer"
