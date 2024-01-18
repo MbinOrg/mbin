@@ -7,6 +7,7 @@ namespace App\Service\ActivityPub;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Exception\InvalidApPostException;
+use App\Exception\InvalidWebfingerException;
 use App\Factory\ActivityPub\GroupFactory;
 use App\Factory\ActivityPub\PersonFactory;
 use App\Repository\MagazineRepository;
@@ -105,7 +106,7 @@ class ApHttpClient
                     if (null !== $r) {
                         $msg .= ', '.$r->getContent(false);
                     }
-                    throw new InvalidApPostException($msg);
+                    throw new InvalidWebfingerException($msg);
                 }
 
                 $item->expiresAt(new \DateTime('+1 hour'));
