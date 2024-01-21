@@ -25,6 +25,24 @@ class EntryFrontController extends AbstractController
     {
     }
 
+    public function root(?string $sortBy, ?string $time, ?string $type, Request $request): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user) {
+            return $this->front($sortBy, $time, $type, $request);
+        }
+
+        $filter = match ($user->homepage) {
+            User::HOMEPAGE_SUB => 'subscribed',
+            User::HOMEPAGE_MOD => 'moderated',
+            User::HOMEPAGE_FAV => 'favourite',
+            default => 'front',
+        };
+
+        return $this->front($sortBy, $time, $type, $filter, $request);
+    }
+
     public function front(?string $sortBy, ?string $time, ?string $type, ?string $filter, Request $request): Response
     {
         $user = $this->getUser();
@@ -56,7 +74,7 @@ class EntryFrontController extends AbstractController
             $this->denyAccessUnlessGranted('ROLE_USER');
             $criteria->favourite = true;
         } elseif ($filter && $filter !== Criteria::FRONT_ALL) {
-            throw $this->createNotFoundException();
+            //throw $this->createNotFoundException();
         }
 
         if (null !== $user && 0 < \count($user->preferredLanguages)) {
@@ -65,6 +83,8 @@ class EntryFrontController extends AbstractController
 
         $method = $criteria->resolveSort($sortBy);
         $posts = $this->$method($criteria);
+
+        $posts = $this->handleCrossposts($posts);
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse(
@@ -83,7 +103,6 @@ class EntryFrontController extends AbstractController
             'entry/front.html.twig',
             [
                 'entries' => $posts,
-                'criteria' => $criteria,
             ]
         );
     }
@@ -141,7 +160,6 @@ class EntryFrontController extends AbstractController
             [
                 'magazine' => $magazine,
                 'entries' => $listing,
-                'criteria' => $criteria,
             ],
             $response
         );

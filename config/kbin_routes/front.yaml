@@ -1,11 +1,12 @@
-front:
-  controller: App\Controller\Entry\EntryFrontController::front
+root: &root
+  controller: App\Controller\Entry\EntryFrontController::root
   defaults: { sortBy: hot, time: '∞', type: ~ }
   path: /{sortBy}/{time}/{type}
   methods: [GET]
   requirements: { sortBy: "%front_sort_options%" }
 
-front_routed:
+front:
+  <<: *root
   controller: App\Controller\Entry\EntryFrontController::front
   defaults: { filter: all, sortBy: hot, time: '∞', type: ~ }
   path: /{filter}/{sortBy}/{time}/{type}
@@ -15,6 +16,8 @@ front_routed:
     sortBy: "%front_sort_options%"
 
 front_magazine:
+  <<: *root
   controller: App\Controller\Entry\EntryFrontController::magazine
-  defaults: { sortBy: hot, time: '∞', type: ~ }
   path: /m/{name}/{sortBy}/{time}/{type}
+
+

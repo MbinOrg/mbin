@@ -1,5 +1,3 @@
-{% set newRouteName = criteria.subscribed or criteria.moderated or criteria.favourite ? 'front_routed' : 'front' %}
-
 <aside class="options options--top" id="options">
     <div></div>
     <menu class="options__filter">
@@ -10,31 +8,31 @@
             </button>
             <ul class="dropdown__menu">
                 <li>
-                    <a href="{{ options_url('sortBy', 'top', newRouteName) }}"
+                    <a href="{{ options_url('sortBy', 'top', 'front') }}"
                     class="{{ html_classes({'active': route_has_param('sortBy', 'top')}) }}">
                         {{ 'top'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('sortBy', 'hot', newRouteName) }}"
+                    <a href="{{ options_url('sortBy', 'hot', 'front') }}"
                     class="{{ html_classes({'active': route_has_param('sortBy', 'hot')}) }}">
                         {{ 'hot'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('sortBy', 'newest', newRouteName) }}"
+                    <a href="{{ options_url('sortBy', 'newest', 'front') }}"
                     class="{{ html_classes({'active': route_has_param('sortBy', 'newest')}) }}">
                         {{ 'newest'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('sortBy', 'active', newRouteName) }}"
+                    <a href="{{ options_url('sortBy', 'active', 'front') }}"
                     class="{{ html_classes({'active': route_has_param('sortBy', 'active')}) }}">
                         {{ 'active'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('sortBy', 'commented', newRouteName) }}"
+                    <a href="{{ options_url('sortBy', 'commented', 'front') }}"
                     class="{{ html_classes({'active': route_has_param('sortBy', 'commented')}) }}">
                         {{ 'commented'|trans }}
                     </a>
@@ -48,48 +46,48 @@
             </button>
             <ul class="dropdown__menu">
                 <li>
-                    <a href="{{ options_url('time', '∞', newRouteName) }}"
+                    <a href="{{ options_url('time', '∞', 'front') }}"
                        class="{{ html_classes({'active': route_has_param('time', '∞') or not get_route_param('time')}) }}">
                         {{ 'all_time'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('time', '3h', newRouteName) }}"
+                    <a href="{{ options_url('time', '3h', 'front') }}"
                        class="{{ html_classes({'active': route_has_param('time', '3h')}) }}">
                         {{ '3h'|trans }}
                     </a></li>
                 <li>
-                    <a href="{{ options_url('time', '6h', newRouteName) }}"
+                    <a href="{{ options_url('time', '6h', 'front') }}"
                        class="{{ html_classes({'active': route_has_param('time', '6h')}) }}">
                         {{ '6h'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('time', '12h', newRouteName) }}"
+                    <a href="{{ options_url('time', '12h', 'front') }}"
                        class="{{ html_classes({'active': route_has_param('time', '12h')}) }}">
                         {{ '12h'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('time', '1d', newRouteName) }}"
+                    <a href="{{ options_url('time', '1d', 'front') }}"
                        class="{{ html_classes({'active': route_has_param('time', '1d')}) }}">
                         {{ '1d'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('time', '1w', newRouteName) }}"
+                    <a href="{{ options_url('time', '1w', 'front') }}"
                        class="{{ html_classes({'active': route_has_param('time', '1w')}) }}">
                         {{ '1w'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('time', '1m', newRouteName) }}"
+                    <a href="{{ options_url('time', '1m', 'front') }}"
                        class="{{ html_classes({'active': route_has_param('time', '1m')}) }}">
                         {{ '1m'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('time', '1y', newRouteName) }}"
+                    <a href="{{ options_url('time', '1y', 'front') }}"
                        class="{{ html_classes({'active': route_has_param('time', '1y')}) }}">
                         {{ '1y'|trans }}
                     </a>
@@ -104,31 +102,31 @@
             </button>
             <ul class="dropdown__menu">
                 <li>
-                    <a href="{{ options_url('type', 'all', newRouteName) }}"
+                    <a href="{{ options_url('type', 'all', 'front') }}"
                     class="{{ html_classes({'active': route_has_param('type', 'all') or not get_route_param('type')}) }}">
                         {{ 'all'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('type', 'links', newRouteName) }}"
+                    <a href="{{ options_url('type', 'links', 'front') }}"
                     class="{{ html_classes({'active': route_has_param('type', 'links')}) }}">
                         {{ 'links'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('type', 'articles', newRouteName) }}"
+                    <a href="{{ options_url('type', 'articles', 'front') }}"
                     class="{{ html_classes({'active': route_has_param('type', 'articles')}) }}">
                         {{ 'articles'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('type', 'photos', newRouteName) }}"
+                    <a href="{{ options_url('type', 'photos', 'front') }}"
                     class="{{ html_classes({'active': route_has_param('type', 'photos') }) }}">
                         {{ 'photos'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('type', 'videos', newRouteName) }}"
+                    <a href="{{ options_url('type', 'videos', 'front') }}"
                     class="{{ html_classes({'active': criteria.getOption('type') == 'videos'}) }}">
                         {{ 'videos'|trans }}
                     </a>
@@ -143,15 +141,15 @@
             </button>
             <ul class="dropdown__menu">
                 <li>
-                    <a href="{{ options_url('filter', 'sub', 'front_routed') }}"
+                    <a href="{{ options_url('filter', 'sub', 'front') }}"
                         class="{{ html_classes({'active': criteria.subscribed }) }}">{{ 'subscribed'|trans }}</a>
                 </li>
                 <li>
-                    <a href="{{ options_url('filter', 'mod', 'front_routed') }}"
+                    <a href="{{ options_url('filter', 'mod', 'front') }}"
                         class="{{ html_classes({'active': criteria.moderated }) }}">{{ 'moderated'|trans }}</a>
                 </li>
                 <li>
-                    <a href="{{ options_url('filter', 'fav', 'front_routed') }}"
+                    <a href="{{ options_url('filter', 'fav', 'front') }}"
                         class="{{ html_classes({'active': criteria.favourite }) }}">{{ 'favourites'|trans }}</a>
                 </li>
                 <li>
