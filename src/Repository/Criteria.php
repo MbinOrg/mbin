@@ -18,9 +18,10 @@ abstract class Criteria
     public const ENTRY_TYPE_ALL = 'all';
 
     public const FRONT_FEATURED = 'featured';
+    public const FRONT_FAVORITE = 'favorite';
     public const FRONT_SUBSCRIBED = 'subscribed';
-    public const FRONT_ALL = 'all';
     public const FRONT_MODERATED = 'moderated';
+    public const FRONT_ALL = 'all';
 
     public const SORT_ACTIVE = 'active';
     public const SORT_HOT = 'hot';
@@ -45,7 +46,7 @@ abstract class Criteria
     public const AP_FEDERATED = 'federated';
 
     public const FRONT_PAGE_OPTIONS = [
-        self::FRONT_FEATURED,
+        self::FRONT_FAVORITE,
         self::FRONT_SUBSCRIBED,
         self::FRONT_ALL,
         self::FRONT_MODERATED,
@@ -222,6 +223,7 @@ abstract class Criteria
     {
         // @todo
         $routes = [
+            'all' => Criteria::ENTRY_TYPE_ALL,
             'article' => Entry::ENTRY_TYPE_ARTICLE,
             'articles' => Entry::ENTRY_TYPE_ARTICLE,
             'link' => Entry::ENTRY_TYPE_LINK,
@@ -234,7 +236,7 @@ abstract class Criteria
             'images' => Entry::ENTRY_TYPE_IMAGE,
         ];
 
-        return $routes[$value] ?? null;
+        return $routes[$value] ?? Criteria::ENTRY_TYPE_ALL;
     }
 
     public function resolveFront(): ?string
@@ -244,7 +246,7 @@ abstract class Criteria
         } else if ($this->moderated) {
             return Criteria::FRONT_MODERATED;
         } else if ($this->favourite) {
-            return Criteria::FRONT_FEATURED;
+            return Criteria::FRONT_FAVORITE;
         } else {
             return Criteria::FRONT_ALL;
         }

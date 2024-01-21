@@ -30,14 +30,14 @@ class EntryFrontController extends AbstractController
         $user = $this->getUser();
 
         if (!$user) {
-            return $this->front($sortBy, $time, $type, $request);
+            return $this->front($sortBy, $time, $type, 'all', $request);
         }
 
         $filter = match ($user->homepage) {
             User::HOMEPAGE_SUB => 'subscribed',
             User::HOMEPAGE_MOD => 'moderated',
             User::HOMEPAGE_FAV => 'favourite',
-            default => 'front',
+            default => 'all',
         };
 
         return $this->front($sortBy, $time, $type, $filter, $request);
@@ -103,6 +103,7 @@ class EntryFrontController extends AbstractController
             'entry/front.html.twig',
             [
                 'entries' => $posts,
+                'criteria' => $criteria,
             ]
         );
     }
