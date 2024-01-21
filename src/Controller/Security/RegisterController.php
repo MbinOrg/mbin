@@ -23,7 +23,7 @@ class RegisterController extends AbstractController
         }
 
         if ($this->getUser()) {
-            return $this->redirectToRoute('front_subscribed');
+            return $this->redirectToRoute('front');
         }
 
         $form = $this->createForm(UserRegisterType::class);

@@ -56,7 +56,7 @@ class KbinAuthenticator extends AbstractLoginFormAuthenticator
         /** @var User $user */
         $user = $token->getUser();
 
-        return new RedirectResponse($this->urlGenerator->generate($user->homepage));
+        return new RedirectResponse($this->urlGenerator->generate('front'));
     }
 
     protected function getLoginUrl(Request $request): string

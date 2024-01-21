@@ -4,13 +4,13 @@
             <a class="stretched-link" href="{{ path('front') }}">{{ 'all'|trans }}</a>
         </li>
         <li class="{{ html_classes({'active': is_route_name_contains('_subscribed')}) }}">
-            <a class="stretched-link" href="{{ path('front_subscribed') }}">{{ 'subscribed'|trans }}</a>
+            <a class="stretched-link" href="{{ path('front') }}">{{ 'subscribed'|trans }}</a>
         </li>
         <li class="{{ html_classes({'active': is_route_name_contains('_moderated')}) }}">
-            <a class="stretched-link" href="{{ path('front_moderated') }}">{{ 'moderated'|trans }}</a>
+            <a class="stretched-link" href="{{ path('front') }}">{{ 'moderated'|trans }}</a>
         </li>
         <li class="{{ html_classes({'active': is_route_name_contains('_favourite')}) }}">
-            <a class="stretched-link" href="{{ path('front_favourite') }}">{{ 'favourites'|trans }}</a>
+            <a class="stretched-link" href="{{ path('front') }}">{{ 'favourites'|trans }}</a>
         </li>
         <li>
             <a class="stretched-link" href="#">•</a>

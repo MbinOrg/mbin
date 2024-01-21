@@ -25,27 +25,15 @@ class EntryFrontController extends AbstractController
     {
     }
 
-    public function root(?string $sortBy, ?string $time, ?string $type, Request $request): Response
+    public function front(?string $sortBy, ?string $time, ?string $type, ?string $filter, Request $request): Response
     {
         $user = $this->getUser();
 
-        if (!$user) {
-            return $this->front($sortBy, $time, $type, $request);
+        if (!$user)
+        {
+            $filter = Criteria::FRONT_ALL;
         }
 
-        $front = match ($user->homepage) {
-            User::HOMEPAGE_SUB => 'subscribed',
-            User::HOMEPAGE_MOD => 'moderated',
-            User::HOMEPAGE_FAV => 'favourite',
-            default => 'front',
-        };
-
-        return $this->$front($sortBy, $time, $type, $request);
-    }
-
-    public function front(?string $sortBy, ?string $time, ?string $type, Request $request): Response
-    {
-        $user = $this->getUser();
         $criteria = new EntryPageView($this->getPageNb($request));
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setFederation(
@@ -57,14 +45,26 @@ class EntryFrontController extends AbstractController
             ->setTime($criteria->resolveTime($time))
             ->setType($criteria->resolveType($type));
 
+        if ($filter === 'sub') {
+            $this->denyAccessUnlessGranted('ROLE_USER');
+            $user = $this->getUserOrThrow();
+            $criteria->subscribed = true;
+        } elseif ($filter === 'mod') {
+            $this->denyAccessUnlessGranted('ROLE_USER');
+            $criteria->moderated = true;
+        } elseif ($filter === 'fav') {
+            $this->denyAccessUnlessGranted('ROLE_USER');
+            $criteria->favourite = true;
+        } elseif ($filter && $filter !== Criteria::FRONT_ALL) {
+            throw $this->createNotFoundException();
+        }
+
         if (null !== $user && 0 < \count($user->preferredLanguages)) {
             $criteria->languages = $user->preferredLanguages;
         }
 
         $method = $criteria->resolveSort($sortBy);
         $posts = $this->$method($criteria);
-
-        $posts = $this->handleCrossposts($posts);
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse(
@@ -83,133 +83,7 @@ class EntryFrontController extends AbstractController
             'entry/front.html.twig',
             [
                 'entries' => $posts,
-            ]
-        );
-    }
-
-    #[IsGranted('ROLE_USER')]
-    public function subscribed(?string $sortBy, ?string $time, ?string $type, Request $request): Response
-    {
-        $user = $this->getUserOrThrow();
-
-        $criteria = new EntryPageView($this->getPageNb($request));
-        $criteria->showSortOption($criteria->resolveSort($sortBy))
-            ->setFederation(
-                'false' === $request->cookies->get(
-                    ThemeSettingsController::KBIN_FEDERATION_ENABLED,
-                    true
-                ) ? Criteria::AP_LOCAL : Criteria::AP_ALL
-            )
-            ->setTime($criteria->resolveTime($time))
-            ->setType($criteria->resolveType($type));
-        $criteria->subscribed = true;
-
-        if (0 < \count($user->preferredLanguages)) {
-            $criteria->languages = $user->preferredLanguages;
-        }
-
-        $method = $criteria->resolveSort($sortBy);
-        $listing = $this->$method($criteria);
-
-        if ($request->isXmlHttpRequest()) {
-            return new JsonResponse(
-                [
-                    'html' => $this->renderView(
-                        'entry/_list.html.twig',
-                        [
-                            'entries' => $listing,
-                        ]
-                    ),
-                ]
-            );
-        }
-
-        return $this->render(
-            'entry/front.html.twig',
-            [
-                'entries' => $listing,
-            ]
-        );
-    }
-
-    #[IsGranted('ROLE_USER')]
-    public function moderated(?string $sortBy, ?string $time, ?string $type, Request $request): Response
-    {
-        $criteria = new EntryPageView($this->getPageNb($request));
-        $criteria->showSortOption($criteria->resolveSort($sortBy))
-            ->setFederation(
-                'false' === $request->cookies->get(
-                    ThemeSettingsController::KBIN_FEDERATION_ENABLED,
-                    true
-                ) ? Criteria::AP_LOCAL : Criteria::AP_ALL
-            )
-            ->setTime($criteria->resolveTime($time))
-            ->setType($criteria->resolveType($type));
-        $criteria->moderated = true;
-
-        // We do not set language filter for moderated view.
-
-        $method = $criteria->resolveSort($sortBy);
-        $listing = $this->$method($criteria);
-
-        if ($request->isXmlHttpRequest()) {
-            return new JsonResponse(
-                [
-                    'html' => $this->renderView(
-                        'entry/_list.html.twig',
-                        [
-                            'entries' => $listing,
-                        ]
-                    ),
-                ]
-            );
-        }
-
-        return $this->render(
-            'entry/front.html.twig',
-            [
-                'entries' => $listing,
-            ]
-        );
-    }
-
-    #[IsGranted('ROLE_USER')]
-    public function favourite(?string $sortBy, ?string $time, ?string $type, Request $request): Response
-    {
-        $criteria = new EntryPageView($this->getPageNb($request));
-        $criteria->showSortOption($criteria->resolveSort($sortBy))
-            ->setFederation(
-                'false' === $request->cookies->get(
-                    ThemeSettingsController::KBIN_FEDERATION_ENABLED,
-                    true
-                ) ? Criteria::AP_LOCAL : Criteria::AP_ALL
-            )
-            ->setTime($criteria->resolveTime($time))
-            ->setType($criteria->resolveType($type));
-        $criteria->favourite = true;
-
-        // No language criteria for favourites, either
-
-        $method = $criteria->resolveSort($sortBy);
-        $listing = $this->$method($criteria);
-
-        if ($request->isXmlHttpRequest()) {
-            return new JsonResponse(
-                [
-                    'html' => $this->renderView(
-                        'entry/_list.html.twig',
-                        [
-                            'entries' => $listing,
-                        ]
-                    ),
-                ]
-            );
-        }
-
-        return $this->render(
-            'entry/front.html.twig',
-            [
-                'entries' => $listing,
+                'criteria' => $criteria,
             ]
         );
     }
@@ -267,6 +141,7 @@ class EntryFrontController extends AbstractController
             [
                 'magazine' => $magazine,
                 'entries' => $listing,
+                'criteria' => $criteria,
             ],
             $response
         );

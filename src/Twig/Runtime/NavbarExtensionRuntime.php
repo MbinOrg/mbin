@@ -40,18 +40,6 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
             );
         }
 
-        if ($this->isRouteNameEndWith('_subscribed')) {
-            return $this->urlGenerator->generate('front_subscribed', $this->getActiveOptions());
-        }
-
-        if ($this->isRouteNameEndWith('_favourite')) {
-            return $this->urlGenerator->generate('front_favourite', $this->getActiveOptions());
-        }
-
-        if ($this->isRouteNameEndWith('_moderated')) {
-            return $this->urlGenerator->generate('front_moderated', $this->getActiveOptions());
-        }
-
         return $this->urlGenerator->generate('front', $this->getActiveOptions());
     }
 

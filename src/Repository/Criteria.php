@@ -11,13 +11,17 @@ use App\Entity\User;
 
 abstract class Criteria
 {
-    public const ENTRY_TYPE_ARTICLE = 'article';
-    public const ENTRY_TYPE_LINK = 'link';
+    public const ENTRY_TYPE_ARTICLE = 'articles';
+    public const ENTRY_TYPE_LINK = 'links';
+    public const ENTRY_TYPE_VIDEO = 'videos';
+    public const ENTRY_TYPE_IMAGE = 'images';
+    public const ENTRY_TYPE_ALL = 'all';
 
     public const FRONT_FEATURED = 'featured';
     public const FRONT_SUBSCRIBED = 'subscribed';
     public const FRONT_ALL = 'all';
     public const FRONT_MODERATED = 'moderated';
+
     public const SORT_ACTIVE = 'active';
     public const SORT_HOT = 'hot';
     public const SORT_NEW = 'newest';
@@ -90,7 +94,7 @@ abstract class Criteria
     public ?int $perPage = null;
     public bool $moderated = false;
     public bool $favourite = false;
-    public ?string $type = null;
+    public string $type = self::ENTRY_TYPE_ALL;
     public string $sortOption = EntryRepository::SORT_DEFAULT;
     public string $time = EntryRepository::TIME_DEFAULT;
     public string $visibility = VisibilityInterface::VISIBILITY_VISIBLE;
@@ -233,6 +237,19 @@ abstract class Criteria
         return $routes[$value] ?? null;
     }
 
+    public function resolveFront(): ?string
+    {
+        if ($this->subscribed) {
+            return Criteria::FRONT_SUBSCRIBED;
+        } else if ($this->moderated) {
+            return Criteria::FRONT_MODERATED;
+        } else if ($this->favourite) {
+            return Criteria::FRONT_FEATURED;
+        } else {
+            return Criteria::FRONT_ALL;
+        }
+    }
+
     public function setVisibility(string $visibility): self
     {
         $this->visibility = $visibility;
@@ -264,6 +281,20 @@ abstract class Criteria
             Criteria::TIME_6_HOURS => $since->modify('-6 hours'),
             Criteria::TIME_3_HOURS => $since->modify('-3 hours'),
             default => throw new \LogicException(),
+        };
+    }
+
+    public function getOption(string $key): string
+    {
+        return match ($key) {
+            'sort' => $this->sortOption,
+            'time' => $this->time,
+            'type' => $this->type,
+            'visibility' => $this->visibility,
+            'federation' => $this->federation,
+            'tag' => $this->tag,
+            'domain' => $this->domain,
+            default => throw new \LogicException(`Unknown option $key`),
         };
     }
 }
