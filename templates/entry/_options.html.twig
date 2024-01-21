@@ -141,6 +141,10 @@
             </button>
             <ul class="dropdown__menu">
                 <li>
+                    <a href="{{ options_url('filter', 'all', 'front') }}"
+                        class="{{ html_classes({'active': not criteria.favourite and not criteria.moderated and not criteria.subscribed}) }}">{{ 'all'|trans }}</a>
+                </li>
+                <li>
                     <a href="{{ options_url('filter', 'sub', 'front') }}"
                         class="{{ html_classes({'active': criteria.subscribed }) }}">{{ 'subscribed'|trans }}</a>
                 </li>
@@ -152,10 +156,6 @@
                     <a href="{{ options_url('filter', 'fav', 'front') }}"
                         class="{{ html_classes({'active': criteria.favourite }) }}">{{ 'favourites'|trans }}</a>
                 </li>
-                <li>
-                    <a href="{{ options_url('filter', 'all', 'front') }}"
-                        class="{{ html_classes({'active': not criteria.favourite and not criteria.moderated and not criteria.subscribed}) }}">{{ 'all'|trans }}</a>
-                </li>
             </ul>
         </li>
         <li class="dropdown">
@@ -166,16 +166,16 @@
             </button>
             <ul class="dropdown__menu">
                 <li>
+                    <a href="{{ options_url('federation', 'all') }}"
+                        class="{{ html_classes({'active': criteria.federation == 'local' }) }}">{{ 'all'|trans }}</a>
+                </li>
+                <li>
                     <a href="{{ options_url('federation', 'local') }}"
                         class="{{ html_classes({'active': criteria.federation == 'local' }) }}">{{ 'local'|trans }}</a>
                 </li>
                 <li>
                     <a href="{{ options_url('federation', 'federated') }}"
                         class="{{ html_classes({'active': criteria.federation == 'local' }) }}">{{ 'federated'|trans }}</a>
-                </li>
-                <li>
-                    <a href="{{ options_url('federation', 'all') }}"
-                        class="{{ html_classes({'active': criteria.federation == 'local' }) }}">{{ 'all'|trans }}</a>
                 </li>
             </ul>
         </li>
