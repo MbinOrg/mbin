@@ -44,7 +44,6 @@ class MagazineAutocompleteType extends AbstractType
                 }
 
                 $qb->andWhere('entity.name LIKE :filter OR entity.title LIKE :filter')
-                    ->andWhere('entity.apId IS NULL')
                     ->andWhere('entity.visibility = :visibility')
                     ->setParameter('filter', '%'.$query.'%')
                     ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
