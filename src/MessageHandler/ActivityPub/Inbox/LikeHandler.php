@@ -71,8 +71,8 @@ class LikeHandler
         }
 
         if (isset($entity) and isset($actor) and ($entity instanceof Entry or $entity instanceof EntryComment or $entity instanceof Post or $entity instanceof PostComment)) {
-            if (!$entity->magazine->apId and $actor->apId) {
-                // local magazine, but remote user
+            if (!$entity->magazine->apId and $actor->apId and 'random' !== $entity->magazine->name) {
+                // local magazine, but remote user. Don't announce for random magazine
                 $this->bus->dispatch(new AnnounceLikeMessage($actor->getId(), $entity->getId(), \get_class($entity), 'Undo' === $message->payload['type']));
             }
         }

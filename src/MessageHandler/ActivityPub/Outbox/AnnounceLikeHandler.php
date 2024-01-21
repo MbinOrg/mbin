@@ -49,6 +49,17 @@ class AnnounceLikeHandler
         $user = $this->userRepository->find($message->userId);
         /** @var Entry|EntryComment|Post|PostComment $object */
         $object = $this->entityManager->getRepository($message->objectType)->find($message->objectId);
+
+        // blacklist remote magazines
+        if (null !== $object->magazine->apId) {
+            return;
+        }
+
+        // blacklist the random magazine
+        if ('random' === $object->magazine->name) {
+            return;
+        }
+
         $activityObject = $this->activityFactory->create($object);
         $likeActivity = $this->likeWrapper->build($this->personFactory->getActivityPubId($user), $activityObject);
 
