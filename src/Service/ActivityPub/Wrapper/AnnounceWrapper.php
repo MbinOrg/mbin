@@ -14,11 +14,15 @@ class AnnounceWrapper
     {
     }
 
-    public function build(
-        string $user,
-        array $object,
-    ): array {
+    public function build(string $user, array $object): array
+    {
         $id = Uuid::v4()->toRfc4122();
+
+        $to = [ActivityPubActivityInterface::PUBLIC_URL];
+
+        if (isset($object['attributedTo'])) {
+            $to[] = $object['attributedTo'];
+        }
 
         return [
             '@context' => ActivityPubActivityInterface::CONTEXT_URL,
@@ -26,7 +30,7 @@ class AnnounceWrapper
             'type' => 'Announce',
             'actor' => $user,
             'object' => $object,
-            'to' => [ActivityPubActivityInterface::PUBLIC_URL, $object['attributedTo']],
+            'to' => $to,
             'cc' => $object['cc'] ?? [],
             'published' => (new \DateTime())->format(DATE_ATOM),
         ];
