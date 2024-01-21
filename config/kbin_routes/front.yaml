@@ -1,6 +1,6 @@
 root: &root
   controller: App\Controller\Entry\EntryFrontController::root
-  defaults: { sortBy: hot, time: '∞', type: ~, federation: all }
+  defaults: { sortBy: hot, time: '∞', type: 'all', federation: all }
   path: /{sortBy}/{time}/{type}/{federation}
   methods: [GET]
   requirements: { sortBy: "%front_sort_options%" }
@@ -8,7 +8,7 @@ root: &root
 front:
   <<: *root
   controller: App\Controller\Entry\EntryFrontController::front
-  defaults: { filter: all, sortBy: hot, time: '∞', type: ~, federation: all }
+  defaults: { filter: all, sortBy: hot, time: '∞', type: , federation: all }
   path: /{filter}/{sortBy}/{time}/{type}/{federation}
   methods: [GET]
   requirements:
@@ -18,6 +18,6 @@ front:
 front_magazine:
   <<: *root
   controller: App\Controller\Entry\EntryFrontController::magazine
-  path: /m/{name}/{sortBy}/{time}/{type}
+  path: /m/{name}/{sortBy}/{time}/{type}/{federation}
 
 

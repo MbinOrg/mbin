@@ -27,23 +27,15 @@ class EntryFrontController extends AbstractController
 
     public function root(?string $sortBy, ?string $time, ?string $type, string $federation, Request $request): Response
     {
-        $user = $this->getUser();
-
-        if (!$user) {
-            return $this->front($sortBy, $time, $type, 'all', $federation, $request);
-        }
-
-        $filter = match ($user->homepage) {
-            User::HOMEPAGE_SUB => 'subscribed',
-            User::HOMEPAGE_MOD => 'moderated',
-            User::HOMEPAGE_FAV => 'favourite',
-            default => 'all',
-        };
-
-        return $this->front($sortBy, $time, $type, $filter, $federation, $request);
+        return $this->front($sortBy, $time, $type, $request->query->get('filter'), $federation, $request);
     }
 
-    public function front(?string $sortBy, ?string $time, ?string $type, ?string $filter, string $federation, Request $request): Response
+    public function front(?string $sortBy,
+        ?string $time,
+        ?string $type,
+        ?string $filter,
+        string $federation,
+        Request $request): Response
     {
         $user = $this->getUser();
 
@@ -109,6 +101,7 @@ class EntryFrontController extends AbstractController
         ?string $sortBy,
         ?string $time,
         ?string $type,
+        string $federation,
         Request $request
     ): Response {
         $user = $this->getUser();
@@ -119,14 +112,26 @@ class EntryFrontController extends AbstractController
 
         $criteria = (new EntryPageView($this->getPageNb($request)));
         $criteria->showSortOption($criteria->resolveSort($sortBy))
-            ->setFederation(
-                'false' === $request->cookies->get(
-                    ThemeSettingsController::KBIN_FEDERATION_ENABLED,
-                    true
-                ) ? Criteria::AP_LOCAL : Criteria::AP_ALL
-            )
+            ->setFederation($federation)
             ->setTime($criteria->resolveTime($time))
             ->setType($criteria->resolveType($type));
+
+        $filter = $request->query->get('filter');
+
+        if ($filter === 'sub') {
+            $this->denyAccessUnlessGranted('ROLE_USER');
+            $user = $this->getUserOrThrow();
+            $criteria->subscribed = true;
+        } elseif ($filter === 'mod') {
+            $this->denyAccessUnlessGranted('ROLE_USER');
+            $criteria->moderated = true;
+        } elseif ($filter === 'fav') {
+            $this->denyAccessUnlessGranted('ROLE_USER');
+            $criteria->favourite = true;
+        } elseif ($filter && $filter !== Criteria::FRONT_ALL) {
+            //throw $this->createNotFoundException();
+        }
+    
         $criteria->magazine = $magazine;
         $criteria->stickiesFirst = true;
 
@@ -156,6 +161,7 @@ class EntryFrontController extends AbstractController
             [
                 'magazine' => $magazine,
                 'entries' => $listing,
+                'criteria' => $criteria,
             ],
             $response
         );
