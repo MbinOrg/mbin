@@ -8,37 +8,37 @@
             </button>
             <ul class="dropdown__menu">
                 <li>
-                    <a href="{{ options_url('sortBy', 'top', 'front') }}"
-                    class="{{ html_classes({'active': route_has_param('sortBy', 'top')}) }}">
-                        {{ 'top'|trans }}
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ options_url('sortBy', 'hot', 'front') }}"
-                    class="{{ html_classes({'active': route_has_param('sortBy', 'hot')}) }}">
-                        {{ 'hot'|trans }}
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ options_url('sortBy', 'newest', 'front') }}"
-                    class="{{ html_classes({'active': route_has_param('sortBy', 'newest')}) }}">
-                        {{ 'newest'|trans }}
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ options_url('sortBy', 'active', 'front') }}"
-                    class="{{ html_classes({'active': route_has_param('sortBy', 'active')}) }}">
-                        {{ 'active'|trans }}
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ options_url('sortBy', 'commented', 'front') }}"
-                    class="{{ html_classes({'active': route_has_param('sortBy', 'commented')}) }}">
-                        {{ 'commented'|trans }}
-                    </a>
-                </li>
-            </ul>
+            <a href="{{ options_url('sortBy', 'top', 'front') }}"
+               class="{{ html_classes({'active': route_has_param('sortBy', 'top')}) }}">
+                {{ 'top'|trans }}
+            </a>
         </li>
+        <li>
+            <a href="{{ options_url('sortBy', 'hot', 'front') }}"
+               class="{{ html_classes({'active': route_has_param('sortBy', 'hot')}) }}">
+                {{ 'hot'|trans }}
+            </a>
+        </li>
+        <li>
+            <a href="{{ options_url('sortBy', 'newest', 'front') }}"
+               class="{{ html_classes({'active': route_has_param('sortBy', 'newest')}) }}">
+                {{ 'newest'|trans }}
+            </a>
+        </li>
+        <li>
+            <a href="{{ options_url('sortBy', 'active', 'front') }}"
+               class="{{ html_classes({'active': route_has_param('sortBy', 'active')}) }}">
+                {{ 'active'|trans }}
+            </a>
+        </li>
+        <li>
+            <a href="{{ options_url('sortBy', 'commented', 'front') }}"
+               class="{{ html_classes({'active': route_has_param('sortBy', 'commented')}) }}">
+                {{ 'commented'|trans }}
+            </a>
+        </li>
+    </ul>
+    </li>
         <li class="dropdown">
             <button aria-label="{{ 'filter_by_time'|trans }}"
                     title="{{ 'filter_by_time'|trans }}"><i
@@ -98,36 +98,36 @@
             <button
                     aria-label="{{ 'filter_by_type'|trans }}"
                     title="{{ 'filter_by_type'|trans }}"><i
-                            class="fa-solid fa-images" aria-hidden="true"></i> <span>{{ criteria.resolveType(criteria.getOption('type'))|trans }}</span>
+                        class="fa-solid fa-images" aria-hidden="true"></i> <span>{{ criteria.resolveType(criteria.getOption('type'))|trans }}</span>
             </button>
             <ul class="dropdown__menu">
                 <li>
                     <a href="{{ options_url('type', 'all', 'front') }}"
-                    class="{{ html_classes({'active': route_has_param('type', 'all') or not get_route_param('type')}) }}">
+                       class="{{ html_classes({'active': route_has_param('type', 'all') or not get_route_param('type')}) }}">
                         {{ 'all'|trans }}
                     </a>
                 </li>
                 <li>
                     <a href="{{ options_url('type', 'links', 'front') }}"
-                    class="{{ html_classes({'active': route_has_param('type', 'links')}) }}">
+                       class="{{ html_classes({'active': route_has_param('type', 'links')}) }}">
                         {{ 'links'|trans }}
                     </a>
                 </li>
                 <li>
                     <a href="{{ options_url('type', 'articles', 'front') }}"
-                    class="{{ html_classes({'active': route_has_param('type', 'articles')}) }}">
+                       class="{{ html_classes({'active': route_has_param('type', 'articles')}) }}">
                         {{ 'articles'|trans }}
                     </a>
                 </li>
                 <li>
                     <a href="{{ options_url('type', 'photos', 'front') }}"
-                    class="{{ html_classes({'active': route_has_param('type', 'photos') }) }}">
+                       class="{{ html_classes({'active': route_has_param('type', 'photos') }) }}">
                         {{ 'photos'|trans }}
                     </a>
                 </li>
                 <li>
                     <a href="{{ options_url('type', 'videos', 'front') }}"
-                    class="{{ html_classes({'active': criteria.getOption('type') == 'videos'}) }}">
+                       class="{{ html_classes({'active': criteria.getOption('type') == 'videos'}) }}">
                         {{ 'videos'|trans }}
                     </a>
                 </li>
@@ -155,6 +155,28 @@
                 <li>
                     <a href="{{ options_url('filter', 'all', 'front') }}"
                         class="{{ html_classes({'active': not criteria.favourite and not criteria.moderated and not criteria.subscribed}) }}">{{ 'all'|trans }}</a>
+                </li>
+            </ul>
+        </li>
+    </menu>
+    <menu class="options__view">
+        <li class="dropdown">
+            <button aria-label="{{ 'change_view'|trans }}"
+                    title="{{ 'change_view'|trans }}"><i
+                        class="fa-solid fa-layer-group" aria-hidden="true"></i>
+            </button>
+            <ul class="dropdown__menu">
+                <li>
+                    <a class="{{ html_classes({'active': not app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_COMPACT')) or app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_COMPACT')) is same as 'false'}) }}"
+                       href="{{ path('theme_settings', {key: constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_COMPACT'), value: 'false'}) }}">
+                        {{ 'classic_view'|trans }}
+                    </a>
+                </li>
+                <li>
+                    <a class="{{ html_classes({'active': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_COMPACT')) is same as 'true'}) }}"
+                       href="{{ path('theme_settings', {key: constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_COMPACT'), value: 'true'}) }}">
+                        {{ 'compact_view'|trans }}
+                    </a>
                 </li>
             </ul>
         </li>
