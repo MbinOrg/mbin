@@ -25,12 +25,12 @@ class EntryFrontController extends AbstractController
     {
     }
 
-    public function root(?string $sortBy, ?string $time, ?string $type, Request $request): Response
+    public function root(?string $sortBy, ?string $time, ?string $type, string $federation, Request $request): Response
     {
         $user = $this->getUser();
 
         if (!$user) {
-            return $this->front($sortBy, $time, $type, 'all', $request);
+            return $this->front($sortBy, $time, $type, 'all', $federation, $request);
         }
 
         $filter = match ($user->homepage) {
@@ -40,10 +40,10 @@ class EntryFrontController extends AbstractController
             default => 'all',
         };
 
-        return $this->front($sortBy, $time, $type, $filter, $request);
+        return $this->front($sortBy, $time, $type, $filter, $federation, $request);
     }
 
-    public function front(?string $sortBy, ?string $time, ?string $type, ?string $filter, Request $request): Response
+    public function front(?string $sortBy, ?string $time, ?string $type, ?string $filter, string $federation, Request $request): Response
     {
         $user = $this->getUser();
 
@@ -54,12 +54,7 @@ class EntryFrontController extends AbstractController
 
         $criteria = new EntryPageView($this->getPageNb($request));
         $criteria->showSortOption($criteria->resolveSort($sortBy))
-            ->setFederation(
-                'false' === $request->cookies->get(
-                    ThemeSettingsController::KBIN_FEDERATION_ENABLED,
-                    true
-                ) ? Criteria::AP_LOCAL : Criteria::AP_ALL
-            )
+            ->setFederation($federation)
             ->setTime($criteria->resolveTime($time))
             ->setType($criteria->resolveType($type));
 

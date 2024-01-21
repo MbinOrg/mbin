@@ -158,6 +158,27 @@
                 </li>
             </ul>
         </li>
+        <li class="dropdown">
+            <button
+                    aria-label="{{ 'filter_by_federation'|trans }}"
+                    title="{{ 'filter_by_federation'|trans }}"><i
+                            class="fa-solid fa-earth-africa" aria-hidden="true"></i> <span>{{ criteria.federation|trans }}</span>
+            </button>
+            <ul class="dropdown__menu">
+                <li>
+                    <a href="{{ options_url('federation', 'local') }}"
+                        class="{{ html_classes({'active': criteria.federation == 'local' }) }}">{{ 'local'|trans }}</a>
+                </li>
+                <li>
+                    <a href="{{ options_url('federation', 'federated') }}"
+                        class="{{ html_classes({'active': criteria.federation == 'local' }) }}">{{ 'federated'|trans }}</a>
+                </li>
+                <li>
+                    <a href="{{ options_url('federation', 'all') }}"
+                        class="{{ html_classes({'active': criteria.federation == 'local' }) }}">{{ 'all'|trans }}</a>
+                </li>
+            </ul>
+        </li>
     </menu>
     <menu class="options__view">
         <li class="dropdown">

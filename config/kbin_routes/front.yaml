@@ -1,15 +1,15 @@
 root: &root
   controller: App\Controller\Entry\EntryFrontController::root
-  defaults: { sortBy: hot, time: '∞', type: ~ }
-  path: /{sortBy}/{time}/{type}
+  defaults: { sortBy: hot, time: '∞', type: ~, federation: all }
+  path: /{sortBy}/{time}/{type}/{federation}
   methods: [GET]
   requirements: { sortBy: "%front_sort_options%" }
 
 front:
   <<: *root
   controller: App\Controller\Entry\EntryFrontController::front
-  defaults: { filter: all, sortBy: hot, time: '∞', type: ~ }
-  path: /{filter}/{sortBy}/{time}/{type}
+  defaults: { filter: all, sortBy: hot, time: '∞', type: ~, federation: all }
+  path: /{filter}/{sortBy}/{time}/{type}/{federation}
   methods: [GET]
   requirements:
     filter: 'sub|fav|mod|all'
