@@ -146,39 +146,41 @@
                 </li>
             </ul>
         </li>
-        <li class="dropdown">
-            <button
-                    aria-label="{{ 'filter_by_subscription'|trans }}"
-                    title="{{ 'filter_by_subscription'|trans }}">
-                <i aria-hidden="true" class="fa-solid
-                    {% if criteria.favourite %} fa-heart
-                    {% elseif criteria.subscribed %} fa-folder-plus
-                    {% elseif criteria.moderated %} fa-shield-halved
-                    {% else %} fa-earth-americas {% endif %}">
-                </i>                    
-                {% if criteria.favourite or criteria.moderated or criteria.subscribed %}
-                    <span class="hide-on-mobile">{{ criteria.resolveSubscriptionFilter()|trans }}</span>
-                {% endif %}                                                
-            </button>
-            <ul class="dropdown__menu">
-                <li>
-                    <a href="{{ options_url('filter', 'all') }}"
-                        class="{{ html_classes({'active': not criteria.favourite and not criteria.moderated and not criteria.subscribed}) }}">{{ 'all'|trans }}</a>
-                </li>
-                <li>
-                    <a href="{{ options_url('filter', 'sub') }}"
-                        class="{{ html_classes({'active': criteria.subscribed }) }}">{{ 'subscribed'|trans }}</a>
-                </li>
-                <li>
-                    <a href="{{ options_url('filter', 'mod') }}"
-                        class="{{ html_classes({'active': criteria.moderated }) }}">{{ 'moderated'|trans }}</a>
-                </li>
-                <li>
-                    <a href="{{ options_url('filter', 'fav') }}"
-                        class="{{ html_classes({'active': criteria.favourite }) }}">{{ 'favourites'|trans }}</a>
-                </li>
-            </ul>
-        </li>
+        {% if app.user %}
+            <li class="dropdown">
+                <button
+                        aria-label="{{ 'filter_by_subscription'|trans }}"
+                        title="{{ 'filter_by_subscription'|trans }}">
+                    <i aria-hidden="true" class="fa-solid
+                        {% if criteria.favourite %} fa-heart
+                        {% elseif criteria.subscribed %} fa-folder-plus
+                        {% elseif criteria.moderated %} fa-shield-halved
+                        {% else %} fa-earth-americas {% endif %}">
+                    </i>                    
+                    {% if criteria.favourite or criteria.moderated or criteria.subscribed %}
+                        <span class="hide-on-mobile">{{ criteria.resolveSubscriptionFilter()|trans }}</span>
+                    {% endif %}                                                
+                </button>
+                <ul class="dropdown__menu">
+                    <li>
+                        <a href="{{ options_url('filter', 'all') }}"
+                            class="{{ html_classes({'active': not criteria.favourite and not criteria.moderated and not criteria.subscribed}) }}">{{ 'all'|trans }}</a>
+                    </li>
+                    <li>
+                        <a href="{{ options_url('filter', 'sub') }}"
+                            class="{{ html_classes({'active': criteria.subscribed }) }}">{{ 'subscribed'|trans }}</a>
+                    </li>
+                    <li>
+                        <a href="{{ options_url('filter', 'mod') }}"
+                            class="{{ html_classes({'active': criteria.moderated }) }}">{{ 'moderated'|trans }}</a>
+                    </li>
+                    <li>
+                        <a href="{{ options_url('filter', 'fav') }}"
+                            class="{{ html_classes({'active': criteria.favourite }) }}">{{ 'favourites'|trans }}</a>
+                    </li>
+                </ul>
+            </li>
+        {% endif %}
         <li class="dropdown">
             <button
                     aria-label="{{ 'filter_by_federation'|trans }}"

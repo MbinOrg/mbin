@@ -39,10 +39,21 @@ class EntryFrontController extends AbstractController
     {
         $user = $this->getUser();
 
-        if (!$user) {
-            $filter = 'all';
+        if ($filter == null) {
+            if ($request->query->get('filter') !== null) {
+                $filter = $request->query->get('filter');
+            } else if ($user) {
+                $filter = match ($user->homepage) {
+                    User::HOMEPAGE_SUB => 'sub',
+                    User::HOMEPAGE_MOD => 'mod',
+                    User::HOMEPAGE_FAV => 'fav',
+                    default => 'all',
+                };
+            } else {
+                $filter = 'all';
+            }
         }
-    
+
         $criteria = new EntryPageView($this->getPageNb($request));
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setFederation($federation)
@@ -60,7 +71,7 @@ class EntryFrontController extends AbstractController
             $this->denyAccessUnlessGranted('ROLE_USER');
             $criteria->favourite = true;
         } elseif ($filter && $filter !== 'all') {
-            //throw $this->createNotFoundException();
+            throw new LogicException('Invalid filter ' . $filter); 
         }
 
         if (null !== $user && 0 < \count($user->preferredLanguages)) {
@@ -128,7 +139,7 @@ class EntryFrontController extends AbstractController
             $this->denyAccessUnlessGranted('ROLE_USER');
             $criteria->favourite = true;
         } elseif ($filter && $filter !== 'all') {
-            //throw $this->createNotFoundException();
+            throw new LogicException('Invalid filter ' . $filter);
         }
     
         $criteria->magazine = $magazine;
