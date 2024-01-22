@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller\Entry;
 
 use App\Controller\AbstractController;
-use App\Controller\User\ThemeSettingsController;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\PageView\EntryPageView;
@@ -17,7 +16,6 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class EntryFrontController extends AbstractController
 {
@@ -39,10 +37,10 @@ class EntryFrontController extends AbstractController
     {
         $user = $this->getUser();
 
-        if ($filter == null) {
-            if ($request->query->get('filter') !== null) {
+        if (null === $filter) {
+            if (null !== $request->query->get('filter')) {
                 $filter = $request->query->get('filter');
-            } else if ($user) {
+            } elseif ($user) {
                 $filter = match ($user->homepage) {
                     User::HOMEPAGE_SUB => 'sub',
                     User::HOMEPAGE_MOD => 'mod',
@@ -60,18 +58,18 @@ class EntryFrontController extends AbstractController
             ->setTime($criteria->resolveTime($time))
             ->setType($criteria->resolveType($type));
 
-        if ($filter === 'sub') {
+        if ('sub' === $filter) {
             $this->denyAccessUnlessGranted('ROLE_USER');
             $user = $this->getUserOrThrow();
             $criteria->subscribed = true;
-        } elseif ($filter === 'mod') {
+        } elseif ('mod' === $filter) {
             $this->denyAccessUnlessGranted('ROLE_USER');
             $criteria->moderated = true;
-        } elseif ($filter === 'fav') {
+        } elseif ('fav' === $filter) {
             $this->denyAccessUnlessGranted('ROLE_USER');
             $criteria->favourite = true;
-        } elseif ($filter && $filter !== 'all') {
-            throw new LogicException('Invalid filter ' . $filter); 
+        } elseif ($filter && 'all' !== $filter) {
+            throw new LogicException('Invalid filter '.$filter);
         }
 
         if (null !== $user && 0 < \count($user->preferredLanguages)) {
@@ -128,20 +126,20 @@ class EntryFrontController extends AbstractController
 
         $filter = $request->query->get('filter');
 
-        if ($filter === 'sub') {
+        if ('sub' === $filter) {
             $this->denyAccessUnlessGranted('ROLE_USER');
             $user = $this->getUserOrThrow();
             $criteria->subscribed = true;
-        } elseif ($filter === 'mod') {
+        } elseif ('mod' === $filter) {
             $this->denyAccessUnlessGranted('ROLE_USER');
             $criteria->moderated = true;
-        } elseif ($filter === 'fav') {
+        } elseif ('fav' === $filter) {
             $this->denyAccessUnlessGranted('ROLE_USER');
             $criteria->favourite = true;
-        } elseif ($filter && $filter !== 'all') {
-            throw new LogicException('Invalid filter ' . $filter);
+        } elseif ($filter && 'all' !== $filter) {
+            throw new LogicException('Invalid filter '.$filter);
         }
-    
+
         $criteria->magazine = $magazine;
         $criteria->stickiesFirst = true;
 

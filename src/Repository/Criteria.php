@@ -184,7 +184,7 @@ abstract class Criteria
 
     public function resolveTime(?string $value, bool $reverse = false): ?string
     {
-// @todo
+        // @todo
         $routes = [
             '3h' => Criteria::TIME_3_HOURS,
             '6h' => Criteria::TIME_6_HOURS,
@@ -196,18 +196,19 @@ abstract class Criteria
             '∞' => Criteria::TIME_ALL,
             'all' => Criteria::TIME_ALL,
         ];
-    
+
         if ($reverse) {
-            if ($value == 'all' || $value == '∞' || $value == null) {
+            if ('all' === $value || '∞' === $value || null === $value) {
                 return '∞';
             }
             $reversedRoutes = array_flip($routes);
+
             return $reversedRoutes[$value] ?? '∞';
-        } else {    
+        } else {
             return $routes[$value] ?? null;
         }
     }
-    
+
     public function resolveType(?string $value): ?string
     {
         // @todo
@@ -228,7 +229,7 @@ abstract class Criteria
         return $routes[$value] ?? 'all';
     }
 
-    public function translateType(): string 
+    public function translateType(): string
     {
         return match ($this->resolveType($this->type)) {
             Entry::ENTRY_TYPE_ARTICLE => 'threads',
@@ -243,9 +244,9 @@ abstract class Criteria
     {
         if ($this->subscribed) {
             return 'subscribed';
-        } else if ($this->moderated) {
+        } elseif ($this->moderated) {
             return 'moderated';
-        } else if ($this->favourite) {
+        } elseif ($this->favourite) {
             return 'favourites';
         } else {
             return 'all';
@@ -296,7 +297,7 @@ abstract class Criteria
             'federation' => $this->federation,
             'tag' => $this->tag,
             'domain' => $this->domain,
-            default => throw new \LogicException(`Unknown option $key`),
+            default => throw new \LogicException(shell_exec("Unknown option $key")),
         };
     }
- }
+}
