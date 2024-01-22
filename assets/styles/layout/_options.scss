@@ -163,6 +163,12 @@
     text-transform: uppercase;
   }
 
+  .hide-on-mobile {
+    @include media-breakpoint-down(lg) {
+      display: none;
+    }
+  }
+
   &__filter button {
     font-size: 0;
 
@@ -173,10 +179,6 @@
     span {
       font-size: .85rem;
       margin-left: 0.5rem;
-
-      @include media-breakpoint-down(lg) {
-          display: none;
-      }
     }
   }
 

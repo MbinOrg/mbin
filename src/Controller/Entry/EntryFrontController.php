@@ -39,11 +39,10 @@ class EntryFrontController extends AbstractController
     {
         $user = $this->getUser();
 
-        if (!$user)
-        {
-            $filter = Criteria::FRONT_ALL;
+        if (!$user) {
+            $filter = 'all';
         }
-
+    
         $criteria = new EntryPageView($this->getPageNb($request));
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setFederation($federation)
@@ -60,7 +59,7 @@ class EntryFrontController extends AbstractController
         } elseif ($filter === 'fav') {
             $this->denyAccessUnlessGranted('ROLE_USER');
             $criteria->favourite = true;
-        } elseif ($filter && $filter !== Criteria::FRONT_ALL) {
+        } elseif ($filter && $filter !== 'all') {
             //throw $this->createNotFoundException();
         }
 
@@ -128,7 +127,7 @@ class EntryFrontController extends AbstractController
         } elseif ($filter === 'fav') {
             $this->denyAccessUnlessGranted('ROLE_USER');
             $criteria->favourite = true;
-        } elseif ($filter && $filter !== Criteria::FRONT_ALL) {
+        } elseif ($filter && $filter !== 'all') {
             //throw $this->createNotFoundException();
         }
     

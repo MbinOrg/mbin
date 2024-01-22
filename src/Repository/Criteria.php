@@ -11,12 +11,6 @@ use App\Entity\User;
 
 abstract class Criteria
 {
-    public const FRONT_FEATURED = 'featured';
-    public const FRONT_FAVORITE = 'favorite';
-    public const FRONT_SUBSCRIBED = 'subscribed';
-    public const FRONT_MODERATED = 'moderated';
-    public const FRONT_ALL = 'all';
-
     public const SORT_ACTIVE = 'active';
     public const SORT_HOT = 'hot';
     public const SORT_NEW = 'newest';
@@ -38,13 +32,6 @@ abstract class Criteria
     public const AP_ALL = 'all';
     public const AP_LOCAL = 'local';
     public const AP_FEDERATED = 'federated';
-
-    public const FRONT_PAGE_OPTIONS = [
-        self::FRONT_FAVORITE,
-        self::FRONT_SUBSCRIBED,
-        self::FRONT_ALL,
-        self::FRONT_MODERATED,
-    ];
 
     public const SORT_OPTIONS = [
         self::SORT_ACTIVE,
@@ -252,16 +239,16 @@ abstract class Criteria
         };
     }
 
-    public function resolveFront(): ?string
+    public function resolveSubscriptionFilter(): ?string
     {
         if ($this->subscribed) {
-            return Criteria::FRONT_SUBSCRIBED;
+            return 'subscribed';
         } else if ($this->moderated) {
-            return Criteria::FRONT_MODERATED;
+            return 'moderated';
         } else if ($this->favourite) {
-            return Criteria::FRONT_FAVORITE;
+            return 'favourites';
         } else {
-            return Criteria::FRONT_ALL;
+            return 'all';
         }
     }
 
