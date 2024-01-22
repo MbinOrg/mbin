@@ -4,36 +4,37 @@
         <li class="dropdown">
             <button aria-label="{{ 'sort_by'|trans }}"
                     title="{{ 'sort_by'|trans }}"><i
-                        class="fa-solid fa-sort" aria-hidden="true"></i> <span>{{ get_active_sort_option()|trans }}</span>
+                        class="fa-solid fa-sort" aria-hidden="true"></i>
+                <span>{{ criteria.getOption('sort')|trans }}</span>
             </button>
             <ul class="dropdown__menu">
                 <li>
             <a href="{{ options_url('sortBy', 'top') }}"
-               class="{{ html_classes({'active': route_has_param('sortBy', 'top')}) }}">
+               class="{{ html_classes({'active': criteria.getOption('sort') == 'top'}) }}">
                 {{ 'top'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ options_url('sortBy', 'hot') }}"
-               class="{{ html_classes({'active': route_has_param('sortBy', 'hot')}) }}">
+               class="{{ html_classes({'active': criteria.getOption('sort') == 'hot'}) }}">
                 {{ 'hot'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ options_url('sortBy', 'newest') }}"
-               class="{{ html_classes({'active': route_has_param('sortBy', 'newest')}) }}">
+               class="{{ html_classes({'active': criteria.getOption('sort') == 'newest'}) }}">
                 {{ 'newest'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ options_url('sortBy', 'active') }}"
-               class="{{ html_classes({'active': route_has_param('sortBy', 'active')}) }}">
+               class="{{ html_classes({'active': criteria.getOption('sort') == 'active'}) }}">
                 {{ 'active'|trans }}
             </a>
         </li>
         <li>
             <a href="{{ options_url('sortBy', 'commented') }}"
-               class="{{ html_classes({'active': route_has_param('sortBy', 'commented')}) }}">
+               class="{{ html_classes({'active': criteria.getOption('sort') == 'commented'}) }}">
                 {{ 'commented'|trans }}
             </a>
         </li>
@@ -42,53 +43,56 @@
         <li class="dropdown">
             <button aria-label="{{ 'filter_by_time'|trans }}"
                     title="{{ 'filter_by_time'|trans }}"><i
-                        class="fa-solid fa-clock" aria-hidden="true"></i> <span>{{ get_time_param_translated() }}</span>
+                        class="fa-solid fa-clock" aria-hidden="true"></i>
+                {% if criteria.getOption('time') != '∞' %}
+                    <span>{{ criteria.getOption('time')|trans }}</span>
+                {% endif %}
             </button>
             <ul class="dropdown__menu">
                 <li>
                     <a href="{{ options_url('time', '∞') }}"
-                       class="{{ html_classes({'active': route_has_param('time', '∞') or not get_route_param('time')}) }}">
+                       class="{{ html_classes({'active': criteria.getOption('time') == '∞'}) }}">
                         {{ 'all_time'|trans }}
                     </a>
                 </li>
                 <li>
                     <a href="{{ options_url('time', '3h') }}"
-                       class="{{ html_classes({'active': route_has_param('time', '3h')}) }}">
+                       class="{{ html_classes({'active': criteria.getOption('time') == '3h' }) }}">
                         {{ '3h'|trans }}
                     </a></li>
                 <li>
                     <a href="{{ options_url('time', '6h') }}"
-                       class="{{ html_classes({'active': route_has_param('time', '6h')}) }}">
+                       class="{{ html_classes({'active': criteria.getOption('time') == '6h' }) }}">
                         {{ '6h'|trans }}
                     </a>
                 </li>
                 <li>
                     <a href="{{ options_url('time', '12h') }}"
-                       class="{{ html_classes({'active': route_has_param('time', '12h')}) }}">
+                       class="{{ html_classes({'active': criteria.getOption('time') == '12h' }) }}">
                         {{ '12h'|trans }}
                     </a>
                 </li>
                 <li>
                     <a href="{{ options_url('time', '1d') }}"
-                       class="{{ html_classes({'active': route_has_param('time', '1d')}) }}">
+                       class="{{ html_classes({'active': criteria.getOption('time') == '1d' }) }}">
                         {{ '1d'|trans }}
                     </a>
                 </li>
                 <li>
                     <a href="{{ options_url('time', '1w') }}"
-                       class="{{ html_classes({'active': route_has_param('time', '1w')}) }}">
+                       class="{{ html_classes({'active': criteria.getOption('time') == '1w' }) }}">
                         {{ '1w'|trans }}
                     </a>
                 </li>
                 <li>
                     <a href="{{ options_url('time', '1m') }}"
-                       class="{{ html_classes({'active': route_has_param('time', '1m')}) }}">
+                       class="{{ html_classes({'active': criteria.getOption('time') == '1m' }) }}">
                         {{ '1m'|trans }}
                     </a>
                 </li>
                 <li>
                     <a href="{{ options_url('time', '1y') }}"
-                       class="{{ html_classes({'active': route_has_param('time', '1y')}) }}">
+                       class="{{ html_classes({'active': criteria.getOption('time') == '1y' }) }}">
                         {{ '1y'|trans }}
                     </a>
                 </li>
@@ -98,30 +102,33 @@
             <button
                     aria-label="{{ 'filter_by_type'|trans }}"
                     title="{{ 'filter_by_type'|trans }}"><i
-                        class="fa-solid fa-images" aria-hidden="true"></i> <span>{{ criteria.resolveType(criteria.getOption('type'))|trans }}</span>
+                        class="fa-solid fa-images" aria-hidden="true"></i>
+                {% if criteria.getOption('type') != 'all' %}
+                    <span>{{ criteria.getOption('type') |trans }}</span>
+                {% endif %}                        
             </button>
             <ul class="dropdown__menu">
                 <li>
                     <a href="{{ options_url('type', 'all') }}"
-                       class="{{ html_classes({'active': route_has_param('type', 'all') or not get_route_param('type')}) }}">
+                       class="{{ html_classes({'active': criteria.getOption('type') == 'all' }) }}">
                         {{ 'all'|trans }}
                     </a>
                 </li>
                 <li>
                     <a href="{{ options_url('type', 'links') }}"
-                       class="{{ html_classes({'active': route_has_param('type', 'links')}) }}">
+                       class="{{ html_classes({'active': criteria.getOption('type') == 'links' }) }}">
                         {{ 'links'|trans }}
                     </a>
                 </li>
                 <li>
                     <a href="{{ options_url('type', 'articles') }}"
-                       class="{{ html_classes({'active': route_has_param('type', 'articles')}) }}">
-                        {{ 'articles'|trans }}
+                       class="{{ html_classes({'active': criteria.getOption('type') == 'threads' }) }}">
+                        {{ 'threads'|trans }}
                     </a>
                 </li>
                 <li>
                     <a href="{{ options_url('type', 'photos') }}"
-                       class="{{ html_classes({'active': route_has_param('type', 'photos') }) }}">
+                       class="{{ html_classes({'active': criteria.getOption('type') == 'photos' }) }}">
                         {{ 'photos'|trans }}
                     </a>
                 </li>
@@ -137,7 +144,10 @@
             <button
                     aria-label="{{ 'filter_by_subscription'|trans }}"
                     title="{{ 'filter_by_subscription'|trans }}"><i
-                            class="fa-solid fa-folder-plus" aria-hidden="true"></i> <span>{{ criteria.resolveFront()|trans }}</span>
+                            class="fa-solid fa-folder-plus" aria-hidden="true"></i>
+                {% if criteria.favourite or criteria.moderated or criteria.subscribed %}
+                    <span>{{ criteria.resolveFront()|trans }}</span>
+                {% endif %}                                                
             </button>
             <ul class="dropdown__menu">
                 <li>
@@ -162,20 +172,23 @@
             <button
                     aria-label="{{ 'filter_by_federation'|trans }}"
                     title="{{ 'filter_by_federation'|trans }}"><i
-                            class="fa-solid fa-earth-africa" aria-hidden="true"></i> <span>{{ criteria.federation|trans }}</span>
+                            class="fa-solid fa-earth-africa" aria-hidden="true"></i>
+                {% if criteria.getOption('federation') != 'all' %}
+                    <span>{{ criteria.federation|trans }}</span>
+                {% endif %}                           
             </button>
             <ul class="dropdown__menu">
                 <li>
                     <a href="{{ options_url('federation', 'all') }}"
-                        class="{{ html_classes({'active': criteria.federation == 'local' }) }}">{{ 'all'|trans }}</a>
+                        class="{{ html_classes({'active': criteria.getOption('federation') == 'all' }) }}">{{ 'all'|trans }}</a>
                 </li>
                 <li>
                     <a href="{{ options_url('federation', 'local') }}"
-                        class="{{ html_classes({'active': criteria.federation == 'local' }) }}">{{ 'local'|trans }}</a>
+                        class="{{ html_classes({'active': criteria.getOption('federation') == 'local' }) }}">{{ 'local'|trans }}</a>
                 </li>
                 <li>
                     <a href="{{ options_url('federation', 'federated') }}"
-                        class="{{ html_classes({'active': criteria.federation == 'local' }) }}">{{ 'federated'|trans }}</a>
+                        class="{{ html_classes({'active': criteria.getOption('federation') == 'federated' }) }}">{{ 'federated'|trans }}</a>
                 </li>
             </ul>
         </li>

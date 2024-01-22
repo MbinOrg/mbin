@@ -11,12 +11,6 @@ use App\Entity\User;
 
 abstract class Criteria
 {
-    public const ENTRY_TYPE_ARTICLE = 'articles';
-    public const ENTRY_TYPE_LINK = 'links';
-    public const ENTRY_TYPE_VIDEO = 'videos';
-    public const ENTRY_TYPE_IMAGE = 'images';
-    public const ENTRY_TYPE_ALL = 'all';
-
     public const FRONT_FEATURED = 'featured';
     public const FRONT_FAVORITE = 'favorite';
     public const FRONT_SUBSCRIBED = 'subscribed';
@@ -95,7 +89,7 @@ abstract class Criteria
     public ?int $perPage = null;
     public bool $moderated = false;
     public bool $favourite = false;
-    public string $type = self::ENTRY_TYPE_ALL;
+    public string $type = 'all';
     public string $sortOption = EntryRepository::SORT_DEFAULT;
     public string $time = EntryRepository::TIME_DEFAULT;
     public string $visibility = VisibilityInterface::VISIBILITY_VISIBLE;
@@ -201,9 +195,9 @@ abstract class Criteria
         return $routes[$value] ?? $routes['hot'];
     }
 
-    public function resolveTime(?string $value): ?string
+    public function resolveTime(?string $value, bool $reverse = false): ?string
     {
-        // @todo
+// @todo
         $routes = [
             '3h' => Criteria::TIME_3_HOURS,
             '6h' => Criteria::TIME_6_HOURS,
@@ -215,15 +209,23 @@ abstract class Criteria
             '∞' => Criteria::TIME_ALL,
             'all' => Criteria::TIME_ALL,
         ];
-
-        return $routes[$value] ?? null;
+    
+        if ($reverse) {
+            if ($value == 'all' || $value == '∞' || $value == null) {
+                return '∞';
+            }
+            $reversedRoutes = array_flip($routes);
+            return $reversedRoutes[$value] ?? '∞';
+        } else {    
+            return $routes[$value] ?? null;
+        }
     }
-
+    
     public function resolveType(?string $value): ?string
     {
         // @todo
         $routes = [
-            'all' => Criteria::ENTRY_TYPE_ALL,
+            'all' => 'all',
             'article' => Entry::ENTRY_TYPE_ARTICLE,
             'articles' => Entry::ENTRY_TYPE_ARTICLE,
             'link' => Entry::ENTRY_TYPE_LINK,
@@ -236,7 +238,18 @@ abstract class Criteria
             'images' => Entry::ENTRY_TYPE_IMAGE,
         ];
 
-        return $routes[$value] ?? Criteria::ENTRY_TYPE_ALL;
+        return $routes[$value] ?? 'all';
+    }
+
+    public function translateType(): string 
+    {
+        return match ($this->resolveType($this->type)) {
+            Entry::ENTRY_TYPE_ARTICLE => 'threads',
+            Entry::ENTRY_TYPE_LINK => 'links',
+            Entry::ENTRY_TYPE_VIDEO => 'videos',
+            Entry::ENTRY_TYPE_IMAGE => 'photos',
+            default => 'all',
+        };
     }
 
     public function resolveFront(): ?string
@@ -289,9 +302,9 @@ abstract class Criteria
     public function getOption(string $key): string
     {
         return match ($key) {
-            'sort' => $this->sortOption,
-            'time' => $this->time,
-            'type' => $this->type,
+            'sort' => $this->resolveSort($this->sortOption),
+            'time' => $this->resolveTime($this->time, true),
+            'type' => $this->translateType(),
             'visibility' => $this->visibility,
             'federation' => $this->federation,
             'tag' => $this->tag,
@@ -299,4 +312,4 @@ abstract class Criteria
             default => throw new \LogicException(`Unknown option $key`),
         };
     }
-}
+ }
