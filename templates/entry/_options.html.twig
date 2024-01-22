@@ -166,14 +166,16 @@
                         <a href="{{ options_url('filter', 'all') }}"
                             class="{{ html_classes({'active': not criteria.favourite and not criteria.moderated and not criteria.subscribed}) }}">{{ 'all'|trans }}</a>
                     </li>
-                    <li>
-                        <a href="{{ options_url('filter', 'sub') }}"
-                            class="{{ html_classes({'active': criteria.subscribed }) }}">{{ 'subscribed'|trans }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ options_url('filter', 'mod') }}"
-                            class="{{ html_classes({'active': criteria.moderated }) }}">{{ 'moderated'|trans }}</a>
-                    </li>
+                    {% if not is_route_name_contains('_magazine') %}
+                        <li>
+                            <a href="{{ options_url('filter', 'sub') }}"
+                                class="{{ html_classes({'active': criteria.subscribed }) }}">{{ 'subscribed'|trans }}</a>
+                        </li>
+                        <li>
+                            <a href="{{ options_url('filter', 'mod') }}"
+                                class="{{ html_classes({'active': criteria.moderated }) }}">{{ 'moderated'|trans }}</a>
+                        </li>
+                    {% endif %}
                     <li>
                         <a href="{{ options_url('filter', 'fav') }}"
                             class="{{ html_classes({'active': criteria.favourite }) }}">{{ 'favourites'|trans }}</a>
