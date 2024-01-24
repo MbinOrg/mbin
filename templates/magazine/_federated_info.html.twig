@@ -9,16 +9,16 @@
 
     {% if not magazine_has_local_subscribers(magazine) %}
         {# Also show a warning if we're not actively receiving updates #}
-        {% set fetchedAt = magazine.apFetchedAt|date('U') %}
-        {% if fetchedAt %}
-            {% set currentTime = "now"|date('U') %}
-            {% set secondsDifference = currentTime - fetchedAt %}
-            {% set daysDifference = (secondsDifference / 86400)|round(0, 'floor') %} {# Convert seconds to days #}
-        {% else %}
-            {% set daysDifference = '???' %}
-        {% endif %}
+        {% set lastActive = magazine.lastActive|date('U') %}
         <div class="alert alert__info">
-            <p>{{ 'disconnected_magazine_info'|trans({'%days%': daysDifference}) }}</p>
+            {% if lastActive %}
+                {% set currentTime = "now"|date('U') %}
+                {% set secondsDifference = currentTime - lastActive %}
+                {% set daysDifference = (secondsDifference / 86400)|round(0, 'floor') %}
+                <p>{{ 'disconnected_magazine_info'|trans({'%days%': daysDifference}) }}</p>
+            {% else %}
+                <p>{{ 'always_disconnected_magazine_info'|trans }}</p>
+            {% endif %}
         </div>
     {% endif %}
 {% endif %}
