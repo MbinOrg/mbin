@@ -8,6 +8,9 @@ use App\DTO\UserDto;
 use App\Entity\User;
 use App\Provider\ZitadelResourceOwner;
 use App\Repository\UserRepository;
+use App\Factory\ImageFactory;
+use App\Repository\ImageRepository;
+use App\Service\ImageManager;
 use App\Service\IpResolver;
 use App\Service\UserManager;
 use App\Utils\Slugger;
@@ -32,6 +35,9 @@ class ZitadelAuthenticator extends OAuth2Authenticator
         private readonly RouterInterface $router,
         private readonly EntityManagerInterface $entityManager,
         private readonly UserManager $userManager,
+        private readonly ImageManager $imageManager,
+        private readonly ImageFactory $imageFactory,
+        private readonly ImageRepository $imageRepository,
         private readonly IpResolver $ipResolver,
         private readonly Slugger $slugger,
         private readonly UserRepository $userRepository,
