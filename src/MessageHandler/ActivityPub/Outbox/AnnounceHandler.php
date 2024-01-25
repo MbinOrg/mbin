@@ -12,18 +12,17 @@ use App\Entity\PostComment;
 use App\Entity\User;
 use App\Factory\ActivityPub\ActivityFactory;
 use App\Message\ActivityPub\Outbox\AnnounceMessage;
-use App\Message\ActivityPub\Outbox\DeliverMessage;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\Wrapper\AnnounceWrapper;
 use App\Service\ActivityPub\Wrapper\CreateWrapper;
 use App\Service\ActivityPub\Wrapper\UndoWrapper;
 use App\Service\ActivityPubManager;
+use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 class AnnounceHandler
@@ -37,7 +36,7 @@ class AnnounceHandler
         private readonly CreateWrapper $createWrapper,
         private readonly ActivityPubManager $activityPubManager,
         private readonly ActivityFactory $activityFactory,
-        private readonly MessageBusInterface $bus,
+        private readonly DeliverManager $deliverManager,
         private readonly SettingsManager $settingsManager,
     ) {
     }
@@ -73,31 +72,26 @@ class AnnounceHandler
             $activity = $this->undoWrapper->build($activity);
         }
 
+        $inboxes = array_merge(
+            $this->magazineRepository->findAudience($object->magazine),
+            [$object->user->apInboxUrl, $object->magazine->apId ? $object->magazine->apInboxUrl : null]
+        );
+
         if ($actor instanceof User) {
-            $this->deliver(array_filter($this->userRepository->findAudience($actor)), $activity);
-            $this->deliver(array_filter($this->activityPubManager->createInboxesFromCC($activity, $actor)), $activity);
-            $this->deliver(array_filter($this->magazineRepository->findAudience($object->magazine)), $activity);
-            $this->deliver([$object->user->apInboxUrl], $activity);
+            $inboxes = array_merge(
+                $inboxes,
+                $this->userRepository->findAudience($actor),
+                $this->activityPubManager->createInboxesFromCC($activity, $actor),
+            );
         } elseif ($actor instanceof Magazine) {
             $createHost = parse_url($object->apId, PHP_URL_HOST);
-            $this->deliver(array_filter($this->magazineRepository->findAudience($actor), fn ($item) => null !== $item and $createHost !== parse_url($item, PHP_URL_HOST)), $activity);
+            $inboxes = array_filter(array_merge(
+                $inboxes,
+                $this->magazineRepository->findAudience($actor),
+            ), fn ($item) => null !== $item and $createHost !== parse_url($item, PHP_URL_HOST));
         }
-    }
 
-    private function deliver(array $followers, array $activity): void
-    {
-        foreach ($followers as $follower) {
-            if (!$follower) {
-                continue;
-            }
-
-            $inboxUrl = \is_string($follower) ? $follower : $follower->apInboxUrl;
-
-            if ($this->settingsManager->isBannedInstance($inboxUrl)) {
-                continue;
-            }
-
-            $this->bus->dispatch(new DeliverMessage($inboxUrl, $activity));
-        }
+        $inboxes = array_filter(array_unique($inboxes));
+        $this->deliverManager->deliver($inboxes, $activity);
     }
 }
