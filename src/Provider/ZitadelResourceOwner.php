@@ -40,6 +40,11 @@ class ZitadelResourceOwner implements ResourceOwnerInterface
         return $this->getResponseValue('preferred_username');
     }
 
+    public function getPictureUrl()
+    {
+        return $this->getResponseValue('picture');
+    }
+
     public function toArray()
     {
         return $this->response;

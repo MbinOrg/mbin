@@ -92,11 +92,18 @@ class ZitadelAuthenticator extends OAuth2Authenticator
                     $zitadelUser->getEmail()
                 );
 
+                $avatar = $this->getAvatar($zitadelUser->getPictureUrl());
+
+                if ($avatar) {
+                    $dto->avatar = $this->imageFactory->createDto($avatar);
+                }
+
                 $dto->plainPassword = bin2hex(random_bytes(20));
                 $dto->ip = $this->ipResolver->resolve();
 
                 $user = $this->userManager->create($dto, false);
                 $user->oauthZitadelId = $zitadelUser->getId();
+                $user->avatar = $this->getAvatar($zitadelUser->getPictureUrl());
                 $user->isVerified = true;
 
                 $this->entityManager->persist($user);
@@ -108,6 +115,29 @@ class ZitadelAuthenticator extends OAuth2Authenticator
                 $rememberBadge,
             ]
         );
+    }
+
+    private function getAvatar(?string $pictureUrl): ?Image
+    {
+        if (!$pictureUrl) {
+            return null;
+        }
+
+        try {
+            $tempFile = $this->imageManager->download($pictureUrl);
+        } catch (\Exception $e) {
+            $tempFile = null;
+        }
+
+        if ($tempFile) {
+            $image = $this->imageRepository->findOrCreateFromPath($tempFile);
+            if ($image) {
+                $this->entityManager->persist($image);
+                $this->entityManager->flush();
+            }
+        }
+
+        return $image ?? null;
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
