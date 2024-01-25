@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Security;
 
 use App\DTO\UserDto;
+use App\Entity\Image;
 use App\Entity\User;
 use App\Provider\ZitadelResourceOwner;
 use App\Repository\UserRepository;
