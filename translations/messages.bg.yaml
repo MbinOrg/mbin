@@ -14,7 +14,7 @@ user: Потребител
 trash: Кошче
 1w: 1с
 default_theme: Тема по подразбиране
-fediverse: Федивърс
+fediverse: Федивселена
 type.link: Връзка
 rss: RSS
 microblog: Микроблог
@@ -53,7 +53,7 @@ toolbar.link: Връзка
 stats: Статистика
 keywords: Ключови думи
 dark: Тъмна
-cancel: Отмяна
+cancel: Отказ
 no_comments: Няма коментари
 content: Съдържание
 users: Потребители
@@ -87,7 +87,7 @@ filter_by_type: Филтриране по тип
 edit_my_profile: Редактиране на моя профил
 deleted: Изтрито от автора
 reputation_points: Репутационни точки
-share_on_fediverse: Споделяне във Федивърса
+share_on_fediverse: Споделяне във Федивселената
 federated_magazine_info: Тази общност е от федериран сървър и може да е непълна.
 down_vote: Редуциране
 following: Последвани
@@ -372,3 +372,17 @@ flash_magazine_edit_success: Общността е редактирана усп
 toolbar.image: Изображение
 new_email_repeat: Потвърди новия адрес на е-поща
 hide_adult: Скриване на деликатно съдържание
+menu: Меню
+dynamic_lists: Динамични списъци
+report_issue: Докладване на проблем
+2fa.authentication_code.label: Код за удостоверяване
+2fa.code_invalid: Кодът за удостоверяване не е валиден
+user_badge_global_moderator: Глобален Мод
+sensitive_show: Щракни, за показване
+restore: Възстановяване
+sensitive_hide: Щракни, за скриване
+announcement: Оповестяване
+hide: Скриване
+show: Показване
+details: Подробности
+spoiler: Спойлер
