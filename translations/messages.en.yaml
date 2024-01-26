@@ -746,6 +746,8 @@ page_width: Page width
 page_width_max: Max
 page_width_auto: Auto
 page_width_fixed: Fixed
+filter_labels: Filter Labels
+auto: Auto
 open_url_to_fediverse: Open original URL
 change_my_avatar: Change my avatar
 change_my_cover: Change my cover

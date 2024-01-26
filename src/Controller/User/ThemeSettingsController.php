@@ -32,6 +32,7 @@ class ThemeSettingsController extends AbstractController
     public const KBIN_GENERAL_FIXED_NAVBAR = 'kbin_general_fixed_navbar';
     public const KBIN_GENERAL_SIDEBAR_POSITION = 'kbin_general_sidebar_position';
     public const KBIN_GENERAL_DYNAMIC_LISTS = 'kbin_general_dynamic_lists';
+    public const KBIN_GENERAL_FILTER_LABELS = 'kbin_general_filter_labels';
     public const KBIN_FEDERATION_ENABLED = 'kbin_federation_enabled';
     public const KBIN_COMMENTS_SHOW_USER_AVATAR = 'kbin_comments_show_user_avatar';
     public const KBIN_COMMENTS_REPLY_POSITION = 'kbin_comments_reply_position';
@@ -63,6 +64,8 @@ class ThemeSettingsController extends AbstractController
     public const MAX = 'max';
     public const AUTO = 'auto';
     public const FIXED = 'fixed';
+    public const ON = 'on';
+    public const OFF = 'off';
 
     public const KEYS = [
         self::ENTRIES_VIEW,
@@ -80,6 +83,7 @@ class ThemeSettingsController extends AbstractController
         self::KBIN_GENERAL_TOPBAR,
         self::KBIN_GENERAL_FIXED_NAVBAR,
         self::KBIN_GENERAL_SIDEBAR_POSITION,
+        self::KBIN_GENERAL_FILTER_LABELS,
         self::KBIN_ENTRIES_SHOW_PREVIEW,
         self::KBIN_POSTS_SHOW_PREVIEW,
         self::KBIN_POSTS_SHOW_USERS_AVATARS,
@@ -115,6 +119,8 @@ class ThemeSettingsController extends AbstractController
         self::BOTTOM,
         self::ALPHABETICALLY,
         self::LAST_ACTIVE,
+        self::ON,
+        self::OFF,
         '80',
         '90',
         '100',

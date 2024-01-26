@@ -1,3 +1,5 @@
+{% set showFilterLabels = app.request.cookies.get('kbin_general_filter_labels') %}
+
 <aside class="options options--top" id="options">
     <div></div>
     <menu class="options__filter">
@@ -9,42 +11,42 @@
             </button>
             <ul class="dropdown__menu">
                 <li>
-            <a href="{{ options_url('sortBy', 'top') }}"
-               class="{{ html_classes({'active': criteria.getOption('sort') == 'top'}) }}">
-                {{ 'top'|trans }}
-            </a>
+                    <a href="{{ options_url('sortBy', 'top') }}"
+                    class="{{ html_classes({'active': criteria.getOption('sort') == 'top'}) }}">
+                        {{ 'top'|trans }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ options_url('sortBy', 'hot') }}"
+                    class="{{ html_classes({'active': criteria.getOption('sort') == 'hot'}) }}">
+                        {{ 'hot'|trans }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ options_url('sortBy', 'newest') }}"
+                    class="{{ html_classes({'active': criteria.getOption('sort') == 'newest'}) }}">
+                        {{ 'newest'|trans }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ options_url('sortBy', 'active') }}"
+                    class="{{ html_classes({'active': criteria.getOption('sort') == 'active'}) }}">
+                        {{ 'active'|trans }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ options_url('sortBy', 'commented') }}"
+                    class="{{ html_classes({'active': criteria.getOption('sort') == 'commented'}) }}">
+                        {{ 'commented'|trans }}
+                    </a>
+                </li>
+            </ul>
         </li>
-        <li>
-            <a href="{{ options_url('sortBy', 'hot') }}"
-               class="{{ html_classes({'active': criteria.getOption('sort') == 'hot'}) }}">
-                {{ 'hot'|trans }}
-            </a>
-        </li>
-        <li>
-            <a href="{{ options_url('sortBy', 'newest') }}"
-               class="{{ html_classes({'active': criteria.getOption('sort') == 'newest'}) }}">
-                {{ 'newest'|trans }}
-            </a>
-        </li>
-        <li>
-            <a href="{{ options_url('sortBy', 'active') }}"
-               class="{{ html_classes({'active': criteria.getOption('sort') == 'active'}) }}">
-                {{ 'active'|trans }}
-            </a>
-        </li>
-        <li>
-            <a href="{{ options_url('sortBy', 'commented') }}"
-               class="{{ html_classes({'active': criteria.getOption('sort') == 'commented'}) }}">
-                {{ 'commented'|trans }}
-            </a>
-        </li>
-    </ul>
-    </li>
         <li class="dropdown">
             <button aria-label="{{ 'filter_by_time'|trans }}"
                     title="{{ 'filter_by_time'|trans }}">
                 <i aria-hidden="true" class="fa-solid fa-clock"></i>
-                {% if criteria.getOption('time') != '∞' %}
+                {% if showFilterLabels == 'on' or (showFilterLabels == 'auto' and criteria.getOption('time') != '∞') %}
                     <span>{{ criteria.getOption('time')|trans }}</span>
                 {% endif %}
             </button>
@@ -109,7 +111,7 @@
                     {% elseif criteria.getOption('type') == 'videos' %} fa-regular fa-file-video
                     {% else %} fa-solid fa-question {% endif %}">
                 </i>
-                {% if criteria.getOption('type') != 'all' %}
+                {% if showFilterLabels == 'on' or (showFilterLabels == 'auto' and criteria.getOption('type') != 'all') %}
                     <span class="hide-on-mobile">{{ criteria.getOption('type')|trans }}</span>
                 {% endif %}
             </button>
@@ -151,8 +153,8 @@
                         {% elseif criteria.subscribed %} fa-folder-plus
                         {% elseif criteria.moderated %} fa-shield-halved
                         {% else %} fa-earth-americas {% endif %}">
-                    </i>                    
-                    {% if criteria.favourite or criteria.moderated or criteria.subscribed %}
+                    </i>    
+                    {% if showFilterLabels == 'on' or (showFilterLabels == 'auto' and (criteria.favourite or criteria.moderated or criteria.subscribed)) %}
                         <span class="hide-on-mobile">{{ criteria.resolveSubscriptionFilter()|trans }}</span>
                     {% endif %}                                                
                 </button>
@@ -192,7 +194,7 @@
                     {% elseif criteria.getOption('federation') == 'federated' %} fa-network-wired
                     {% else %} fa-question {% endif %}">
                 </i>
-                {% if criteria.getOption('federation') != 'all' %}
+                {% if showFilterLabels == 'on' or (showFilterLabels == 'auto' and criteria.getOption('federation') != 'all') %}
                     <span class="hide-on-mobile">{{ criteria.federation|trans }}</span>
                 {% endif %}                           
             </button>
