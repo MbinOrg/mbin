@@ -151,10 +151,6 @@
     scrollbar-width: none;
   }
 
-  &__filter {
-    justify-content: start;
-  }
-
   &__main::-webkit-scrollbar {
     display: none;
   }
@@ -163,6 +159,10 @@
     align-self: center;
     margin: 0 .5rem;
     text-transform: uppercase;
+  }
+
+  &__filter {
+    justify-content: start;
   }
 
   .hide-on-mobile {
