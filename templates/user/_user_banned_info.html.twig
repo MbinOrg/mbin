@@ -1,4 +1,4 @@
-{% if user is defined and user and user.is_banned == true %}
+{% if user is defined and user and user.is_banned is true %}
     <div class="alert alert__danger">
         <p>{{ 'account_banned'|trans }}</p>
     </div>
