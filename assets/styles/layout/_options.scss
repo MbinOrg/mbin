@@ -28,26 +28,17 @@
     }
   }
 
-  .options__filter .dropdown__menu {
-    /* Positioning for dropdown menus inside .options__main */
-    left: 0;
-    right: auto; /* Reset the right property */
-    top: 100%; /* Position it below the trigger element */
-    transform: none;
-    min-width: 10rem;
-    
-  }
-  
+  .options__filter .dropdown__menu,
   .options__filter .dropdown:hover .dropdown__menu,
   .options__filter .dropdown:focus-within .dropdown__menu {
-    /* Positioning for dropdown menus inside .options__main */
-    left: 0;
-    right: auto; /* Reset the right property */
-    top: 100%; /* Position it below the trigger element */
-    transform: none;
-    min-width: 10rem;
+      /* Positioning for dropdown menus inside .options__main */
+      left: 0;
+      right: auto; /* Reset the right property */
+      top: 100%; /* Position it below the trigger element */
+      transform: none;
+      min-width: 10rem;
   }
-
+  
   .scroll {
     position: static;
     align-self: center;
