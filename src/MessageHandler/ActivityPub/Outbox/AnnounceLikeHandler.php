@@ -9,34 +9,38 @@ use App\Entity\EntryComment;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Factory\ActivityPub\ActivityFactory;
-use App\Message\ActivityPub\Outbox\LikeMessage;
+use App\Factory\ActivityPub\PersonFactory;
+use App\Message\ActivityPub\Outbox\AnnounceLikeMessage;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
+use App\Service\ActivityPub\Wrapper\AnnounceWrapper;
 use App\Service\ActivityPub\Wrapper\LikeWrapper;
 use App\Service\ActivityPub\Wrapper\UndoWrapper;
-use App\Service\ActivityPubManager;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsMessageHandler]
-class LikeHandler
+class AnnounceLikeHandler
 {
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly MagazineRepository $magazineRepository,
         private readonly EntityManagerInterface $entityManager,
-        private readonly LikeWrapper $likeWrapper,
+        private readonly AnnounceWrapper $announceWrapper,
         private readonly UndoWrapper $undoWrapper,
-        private readonly ActivityPubManager $activityPubManager,
+        private readonly LikeWrapper $likeWrapper,
         private readonly ActivityFactory $activityFactory,
         private readonly SettingsManager $settingsManager,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly PersonFactory $personFactory,
         private readonly DeliverManager $deliverManager,
     ) {
     }
 
-    public function __invoke(LikeMessage $message): void
+    public function __invoke(AnnounceLikeMessage $message): void
     {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;
@@ -46,19 +50,32 @@ class LikeHandler
         /** @var Entry|EntryComment|Post|PostComment $object */
         $object = $this->entityManager->getRepository($message->objectType)->find($message->objectId);
 
-        $activity = $this->likeWrapper->build(
-            $this->activityPubManager->getActorProfileId($user),
-            $this->activityFactory->create($object),
-        );
-
-        if ($message->removeLike) {
-            $activity = $this->undoWrapper->build($activity);
+        // blacklist remote magazines
+        if (null !== $object->magazine->apId) {
+            return;
         }
 
+        // blacklist the random magazine
+        if ('random' === $object->magazine->name) {
+            return;
+        }
+
+        $activityObject = $this->activityFactory->create($object);
+        $likeActivity = $this->likeWrapper->build($this->personFactory->getActivityPubId($user), $activityObject);
+
+        if ($message->undo) {
+            $likeActivity = $this->undoWrapper->build($likeActivity);
+        }
+
+        $activity = $this->announceWrapper->build(
+            $this->urlGenerator->generate('ap_magazine', ['name' => $object->magazine->name], UrlGeneratorInterface::ABSOLUTE_URL),
+            $likeActivity
+        );
+
         $inboxes = array_filter(array_unique(array_merge(
-            $this->userRepository->findAudience($user),
             $this->magazineRepository->findAudience($object->magazine),
-            [$object->user->apInboxUrl, $object->magazine->apId ? $object->magazine->apInboxUrl : null]
+            $this->userRepository->findAudience($user),
+            [$object->user->apInboxUrl]
         )));
         $this->deliverManager->deliver($inboxes, $activity);
     }

@@ -435,6 +435,7 @@ federation_page_enabled: Federation page enabled
 federation_page_allowed_description: Known instances we federate with
 federation_page_disallowed_description: Instances we do not federate with
 federated_search_only_loggedin: Federated search limited if not logged in
+sidebar_sections_local_only: Restrict "Random X" and "Active People" sections to local only
 request_account_deletion_title: Account deletion
 request_account_deletion_description: The administrator will be notified that you
   want your account deleted.

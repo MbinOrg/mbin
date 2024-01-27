@@ -14,6 +14,7 @@
 
 {% block body %}
     <h1 hidden>{{ 'contact'|trans }}</h1>
+    {% include 'layout/_flash.html.twig' %}
     <div id="content" class="section section--top">
         <div class="container">
             {{ form_start(form) }}
