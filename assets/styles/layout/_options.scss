@@ -76,10 +76,21 @@
 
   }
 
-  &__filter{
-    button{
+  &__filter {
+    button {
       border-bottom-left-radius: 0px!important;
       border-bottom-right-radius: 0px!important;
+
+      font-size: 0;
+
+      i {
+        font-size: .85rem;
+      }
+  
+      span {
+        font-size: .85rem;
+        margin-left: 0.5rem;
+      }  
     }
   }
 
@@ -157,19 +168,6 @@
   .hide-on-mobile {
     @include media-breakpoint-down(lg) {
       display: none;
-    }
-  }
-
-  &__filter button {
-    font-size: 0;
-
-    i {
-      font-size: .85rem;
-    }
-
-    span {
-      font-size: .85rem;
-      margin-left: 0.5rem;
     }
   }
 
