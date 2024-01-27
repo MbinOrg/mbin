@@ -104,12 +104,19 @@
             <button aria-label="{{ 'filter_by_type'|trans }}"
                     title="{{ 'filter_by_type'|trans }}">
                 <i aria-hidden="true" class="
-                    {% if criteria.getOption('type') == 'all' %} fa-solid fa-file
-                    {% elseif criteria.getOption('type') == 'links' %} fa-regular fa-file-code
-                    {% elseif criteria.getOption('type') == 'threads' %} fa-regular fa-file-lines
-                    {% elseif criteria.getOption('type') == 'photos' %} fa-regular fa-file-image
-                    {% elseif criteria.getOption('type') == 'videos' %} fa-regular fa-file-video
-                    {% else %} fa-solid fa-question {% endif %}">
+                    {% if criteria.getOption('type') == 'all' %}
+                        fa-solid fa-file
+                    {% elseif criteria.getOption('type') == 'links' %}
+                        fa-regular fa-file-code
+                    {% elseif criteria.getOption('type') == 'threads' %}
+                        fa-regular fa-file-lines
+                    {% elseif criteria.getOption('type') == 'photos' %}
+                        fa-regular fa-file-image
+                    {% elseif criteria.getOption('type') == 'videos' %}
+                        fa-regular fa-file-video
+                    {% else %}
+                        fa-solid fa-question
+                    {% endif %}">
                 </i>
                 {% if showFilterLabels == 'on' or (showFilterLabels == 'auto' and criteria.getOption('type') != 'all') %}
                     <span class="hide-on-mobile">{{ criteria.getOption('type')|trans }}</span>
@@ -149,10 +156,15 @@
                         aria-label="{{ 'filter_by_subscription'|trans }}"
                         title="{{ 'filter_by_subscription'|trans }}">
                     <i aria-hidden="true" class="fa-solid
-                        {% if criteria.favourite %} fa-heart
-                        {% elseif criteria.subscribed %} fa-folder-plus
-                        {% elseif criteria.moderated %} fa-shield-halved
-                        {% else %} fa-earth-americas {% endif %}">
+                        {% if criteria.favourite %}
+                            fa-heart
+                        {% elseif criteria.subscribed %}
+                            fa-folder-plus
+                        {% elseif criteria.moderated %}
+                            fa-shield-halved
+                        {% else %}
+                            fa-earth-americas
+                        {% endif %}">
                     </i>    
                     {% if showFilterLabels == 'on' or (showFilterLabels == 'auto' and (criteria.favourite or criteria.moderated or criteria.subscribed)) %}
                         <span class="hide-on-mobile">{{ criteria.resolveSubscriptionFilter()|trans }}</span>
@@ -189,10 +201,15 @@
                     aria-label="{{ 'filter_by_federation'|trans }}"
                     title="{{ 'filter_by_federation'|trans }}">
                 <i aria-hidden="true" class="fa-solid
-                    {% if criteria.getOption('federation') == 'all' %} fa-circle-nodes
-                    {% elseif criteria.getOption('federation') == 'local' %} fa-house-chimney
-                    {% elseif criteria.getOption('federation') == 'federated' %} fa-network-wired
-                    {% else %} fa-question {% endif %}">
+                    {% if criteria.getOption('federation') == 'all' %}
+                        fa-circle-nodes
+                    {% elseif criteria.getOption('federation') == 'local' %}
+                        fa-house-chimney
+                    {% elseif criteria.getOption('federation') == 'federated' %}
+                        fa-network-wired
+                    {% else %}
+                        fa-question
+                    {% endif %}">
                 </i>
                 {% if showFilterLabels == 'on' or (showFilterLabels == 'auto' and criteria.getOption('federation') != 'all') %}
                     <span class="hide-on-mobile">{{ criteria.federation|trans }}</span>
