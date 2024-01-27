@@ -1,4 +1,4 @@
-{% set showFilterLabels = app.request.cookies.get('kbin_general_filter_labels') %}
+{% set showFilterLabels = app.request.cookies.get('kbin_general_filter_labels')|default('on') %}
 
 <aside class="options options--top" id="options">
     <div></div>
