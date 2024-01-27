@@ -99,6 +99,7 @@
     {% include('user/_options.html.twig') %}
     {% include('layout/_flash.html.twig') %}
     {% include('user/_visibility_info.html.twig') %}
+    {% include('user/_user_banned_info.html.twig') %}
     {% include('user/_federated_info.html.twig') %}
 
     {% if user.visibility is same as 'visible' or is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR') %}
