@@ -8,7 +8,7 @@ root: &root
 front:
   <<: *root
   controller: App\Controller\Entry\EntryFrontController::front
-  defaults: { filter: all, sortBy: hot, time: '∞', type: , federation: all }
+  defaults: { filter: all, sortBy: hot, time: '∞', type: 'all', federation: all }
   path: /{filter}/{sortBy}/{time}/{type}/{federation}
   methods: [GET]
   requirements:
