@@ -26,6 +26,7 @@ change_view: Change view
 filter_by_time: Filter by time
 filter_by_type: Filter by type
 filter_by_subscription: Filter by subscription
+filter_by_federation: Filter by federation status
 comments_count: '{0}Comments|{1}Comment|]1,Inf[ Comments'
 subscribers_count: '{0}Subscribers|{1}Subscriber|]1,Inf[ Subscribers'
 followers_count: '{0}Followers|{1}Follower|]1,Inf[ Followers'
