@@ -895,20 +895,10 @@ sudo nano /etc/supervisor/conf.d/messenger-worker.conf
 With the following content:
 
 ```ini
-[program:messenger-mbin]
-command=php /var/www/mbin/bin/console messenger:consume async --time-limit=1800
+[program:messenger]
+command=php /var/www/mbin/bin/console messenger:consume async async_ap failed --time-limit=3600
 user=www-data
-numprocs=2
-startsecs=0
-autostart=true
-autorestart=true
-startretries=10
-process_name=%(program_name)s_%(process_num)02d
-
-[program:messenger-ap]
-command=php /var/www/mbin/bin/console messenger:consume async_ap --time-limit=1800
-user=www-data
-numprocs=2
+numprocs=4
 startsecs=0
 autostart=true
 autorestart=true
