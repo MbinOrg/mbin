@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Security;
 
-use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
