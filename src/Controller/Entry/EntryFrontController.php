@@ -28,23 +28,12 @@ class EntryFrontController extends AbstractController
         return $this->front($sortBy, $time, $type, $request->query->get('filter'), $federation, $request);
     }
 
-    public function front(?string $sortBy, ?string $time, ?string $type, ?string $filter, string $federation, Request $request): Response
+    public function front(?string $sortBy, ?string $time, ?string $type, string $filter, string $federation, Request $request): Response
     {
         $user = $this->getUser();
 
-        if (null === $filter) {
-            if (null !== $request->query->get('filter')) {
-                $filter = $request->query->get('filter');
-            } elseif ($user) {
-                $filter = match ($user->homepage) {
-                    User::HOMEPAGE_SUB => 'sub',
-                    User::HOMEPAGE_MOD => 'mod',
-                    User::HOMEPAGE_FAV => 'fav',
-                    default => 'all',
-                };
-            } else {
-                $filter = 'all';
-            }
+        if ('_default' === $filter) {
+            $filter = $this->filterFor($user);
         }
 
         $criteria = new EntryPageView($this->getPageNb($request));
@@ -96,6 +85,20 @@ class EntryFrontController extends AbstractController
                 'criteria' => $criteria,
             ]
         );
+    }
+
+    public function front_redirect(?string $sortBy, ?string $time, ?string $type, string $federation, Request $request): Response
+    {
+        $user = $this->getUser(); // Fetch the user
+        $filter = $this->filterFor($user); // Determine the filter based on the user
+    
+        return $this->redirectToRoute('front', [
+            'filter' => $filter,
+            'sortBy' => $sortBy,
+            'time' => $time,
+            'type' => $type,
+            'federation' => $federation,
+        ]);
     }
 
     public function magazine(
@@ -168,6 +171,20 @@ class EntryFrontController extends AbstractController
             ],
             $response
         );
+    }
+
+    private function filterFor(?User $user): string
+    {
+        if ($user) {
+            return match ($user->homepage) {
+                User::HOMEPAGE_SUB => 'sub',
+                User::HOMEPAGE_MOD => 'mod',
+                User::HOMEPAGE_FAV => 'fav',
+                default => 'all',
+            };
+        } else {
+            return 'all'; // Global default
+        }
     }
 
     private function hot(EntryPageView $criteria): PagerfantaInterface
