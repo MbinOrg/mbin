@@ -91,7 +91,7 @@ class EntryFrontController extends AbstractController
     {
         $user = $this->getUser(); // Fetch the user
         $filter = $this->filterFor($user); // Determine the filter based on the user
-    
+
         return $this->redirectToRoute('front', [
             'filter' => $filter,
             'sortBy' => $sortBy,
