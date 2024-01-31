@@ -21,14 +21,15 @@
             <header>
                 {% if post.isAdult %}<span class="badge danger">18+</span>{% endif %}
                 {{ component('user_inline', {user: post.user, showAvatar: false}) }}
+                {% if (post.user.type) == "Service" %}
+                    <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
+                {% endif %}
                 {% if post.user.admin() %}
                     <span class="user-badge">{{ 'user_badge_admin'|trans }}</span>
                 {% elseif post.user.moderator() %}
                     <span class="user-badge">{{ 'user_badge_global_moderator'|trans }}</span>
                 {% elseif post.magazine.userIsModerator(post.user) %}
                     <span class="user-badge">{{ 'user_badge_moderator'|trans }}</span>
-                {% elseif (post.user.type) == "Service" %}
-                    <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
                 {% endif %}
                 <span>, </span>
                 {% if dateAsUrl %}
