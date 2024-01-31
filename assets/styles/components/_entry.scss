@@ -291,6 +291,13 @@
     align-items: center;
     column-gap: 0.25rem;
 
+    .user-badge {
+      border: var(--kbin-section-border);
+      padding: 0.25rem 0.5rem;
+      margin-left: .25rem;
+      border-radius: var(--kbin-rounded-edges-radius);
+    }
+
     .edited {
       font-style: italic;
     }
