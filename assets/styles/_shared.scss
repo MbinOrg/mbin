@@ -1,0 +1,8 @@
+// a file for shared CSS styling between multiple components or views
+
+.user-badge {
+  border: var(--kbin-section-border);
+  padding: 0.25rem 0.5rem;
+  margin-left: .25rem;
+  border-radius: var(--kbin-rounded-edges-radius);
+}
