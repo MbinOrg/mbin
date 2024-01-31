@@ -33,9 +33,11 @@
                         <h1>
                             <a class="link-muted stretched-link"
                               href="{{ path('user_overview', {'username': user.username}) }}">{{ user.username|username(false) }}</a>
+
                             {% if (user.type) == "Service" %}
                               <code title="{{ 'user_badge_bot'|trans }}">{{ 'user_badge_bot'|trans }}</code>
                             {% endif %}
+
                             {% if user.admin() %}
                               <code title="{{ 'user_badge_admin'|trans }}">{{ 'user_badge_admin'|trans }}</code>
                             {% elseif user.moderator() %}
@@ -45,9 +47,11 @@
                     {% else %}
                         <h1>
                             {{ user.apPreferredUsername ?? user.username|username(false) }}
+
                             {% if (user.type) == "Service" %}
                                 <code title="{{ 'user_badge_bot'|trans }}">{{ 'user_badge_bot'|trans }}</code>
                             {% endif %}
+
                             {% if user.admin() %}
                                 <code title="{{ 'user_badge_admin'|trans }}">{{ 'user_badge_admin'|trans }}</code>
                             {% elseif user.moderator() %}

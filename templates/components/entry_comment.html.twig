@@ -35,6 +35,7 @@
                 {% if (comment.user.type) == "Service" %}
                     <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
                 {% endif %}
+
                 {% if comment.user.admin() %}
                     <span class="user-badge">{{ 'user_badge_admin'|trans }}</span>
                 {% elseif comment.user.moderator() %}

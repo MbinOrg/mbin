@@ -78,9 +78,11 @@
             {% endif %}
             <aside class="meta entry__meta">
                 <span>{{ component('user_inline', {user: entry.user, showAvatar: SHOW_USER_AVATARS is same as V_TRUE}) -}}</span>
+
                 {% if (entry.user.type) == "Service" %}
                     <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
                 {% endif %}
+
                 {% if entry.user.admin() %}
                     <span class="user-badge">{{ 'user_badge_admin'|trans }}</span>
                 {% elseif entry.user.moderator() %}
