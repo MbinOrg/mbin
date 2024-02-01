@@ -140,8 +140,8 @@ Followed by restarting the services that are depending on the (new) configuratio
 # Clear PHP Opcache by restarting the PHP FPM service
 sudo systemctl restart php8.2-fpm.service
 
-# Restarting the PHP messenger jobs and Mercure service
-sudo supervisorctl restart all
+# Restarting the PHP messenger jobs and Mercure service (also reread the latest configuration)
+sudo supervisorctl reread && sudo supervisorctl update && sudo supervisorctl restart all
 ```
 
 ## How to retrieve missing/update remote user data?
