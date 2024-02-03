@@ -46,14 +46,14 @@
             <button aria-label="{{ 'filter_by_time'|trans }}"
                     title="{{ 'filter_by_time'|trans }}">
                 <i aria-hidden="true" class="fa-solid fa-clock"></i>
-                {% if showFilterLabels == 'on' or (showFilterLabels == 'auto' and criteria.getOption('time') != '∞') %}
+                {% if showFilterLabels == 'on' or (showFilterLabels == 'auto' and criteria.getOption('time') != 'all') %}
                     <span>{{ criteria.getOption('time')|trans }}</span>
                 {% endif %}
             </button>
             <ul class="dropdown__menu">
                 <li>
                     <a href="{{ options_url('time', '∞') }}"
-                       class="{{ html_classes({'active': criteria.getOption('time') == '∞'}) }}">
+                       class="{{ html_classes({'active': criteria.getOption('time') == 'all'}) }}">
                         {{ 'all_time'|trans }}
                     </a>
                 </li>
