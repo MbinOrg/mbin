@@ -297,7 +297,8 @@ abstract class Criteria
             'federation' => $this->federation,
             'tag' => $this->tag,
             'domain' => $this->domain,
-            default => throw new \LogicException(shell_exec("Unknown option $key")),
+            'subscription' => $this->resolveSubscriptionFilter(),
+            default => throw new \LogicException("Unknown option: " . $key),
         };
     }
 }
