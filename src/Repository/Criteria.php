@@ -291,7 +291,7 @@ abstract class Criteria
     {
         return match ($key) {
             'sort' => $this->resolveSort($this->sortOption),
-            'time' => $this->resolveTime($this->time, true) === '∞' ? 'all' : $this->resolveTime($this->time, true),
+            'time' => '∞' === $this->resolveTime($this->time, true) ? 'all' : $this->resolveTime($this->time, true),
             'type' => $this->translateType(),
             'visibility' => $this->visibility,
             'federation' => $this->federation,
