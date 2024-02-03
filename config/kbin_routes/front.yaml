@@ -28,5 +28,3 @@ front_magazine:
   <<: *root
   controller: App\Controller\Entry\EntryFrontController::magazine
   path: /m/{name}/{sortBy}/{time}/{type}/{federation}
-
-

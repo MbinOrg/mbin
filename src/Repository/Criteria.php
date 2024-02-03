@@ -298,7 +298,7 @@ abstract class Criteria
             'tag' => $this->tag,
             'domain' => $this->domain,
             'subscription' => $this->resolveSubscriptionFilter(),
-            default => throw new \LogicException("Unknown option: " . $key),
+            default => throw new \LogicException('Unknown option: '.$key),
         };
     }
 }

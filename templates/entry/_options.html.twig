@@ -165,10 +165,10 @@
                         {% else %}
                             fa-earth-americas
                         {% endif %}">
-                    </i>    
+                    </i>
                     {% if showFilterLabels == 'on' or (showFilterLabels == 'auto' and (criteria.favourite or criteria.moderated or criteria.subscribed)) %}
                         <span class="hide-on-mobile">{{ criteria.resolveSubscriptionFilter()|trans }}</span>
-                    {% endif %}                                                
+                    {% endif %}
                 </button>
                 <ul class="dropdown__menu">
                     <li>
@@ -213,7 +213,7 @@
                 </i>
                 {% if showFilterLabels == 'on' or (showFilterLabels == 'auto' and criteria.getOption('federation') != 'all') %}
                     <span class="hide-on-mobile">{{ criteria.federation|trans }}</span>
-                {% endif %}                           
+                {% endif %}
             </button>
             <ul class="dropdown__menu">
                 <li>
