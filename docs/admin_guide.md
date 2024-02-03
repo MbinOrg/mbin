@@ -715,6 +715,15 @@ _Hint:_ There are also other configuration files, eg. `config/packages/monolog.y
 
 ### Symfony Messenger (Queues)
 
+The symphony messengers are background workers for a lot of different task, the biggest one being handling all the ActivityPub traffic.  
+We have 4 different queues:
+1. `async` (with jobs coming from your local instance, i.e. posting something to a magazine and delivering that to all followers)
+2. `async_ap` (with jobs coming from remote instances, i.e. someone posted something to a remote magazine you're subscribed to)
+3. `failed` jobs from the first two queues that have been retried, but failed. They get retried a few times again, before they end up in
+4. `dead` dead jobs that will not be retried
+
+We need the `dead` queue so that messages that throw a `UnrecoverableMessageHandlingException`, which is used to indicate that a message should not be retried and go straight to the supplied failure queue
+
 #### Install RabbitMQ (Recommended, but optional)
 
 [RabbitMQ Install](https://www.rabbitmq.com/install-debian.html#apt-quick-start-cloudsmith)
@@ -881,6 +890,9 @@ mercure fmt metal/caddy/Caddyfile --overwrite
 Mercure will be configured further in the next section (Supervisor).
 
 ### Setup Supervisor
+We use Supervisor to run our background workers, aka. "Messengers".
+
+Install Supervisor:
 
 ```bash
 sudo apt-get install supervisor
@@ -907,6 +919,8 @@ process_name=%(program_name)s_%(process_num)02d
 ```
 
 Save and close the file.
+
+Note: you can increase the number of running messenger jobs if your queue is building up (i.e. more messages are coming in than your messengers can handle)
 
 We also use supervisor for running Mercure job:
 
