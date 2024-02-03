@@ -165,12 +165,6 @@
     justify-content: start;
   }
 
-  .hide-on-mobile {
-    @include media-breakpoint-down(lg) {
-      display: none;
-    }
-  }
-
   &__view button {
     font-size: 0;
 
