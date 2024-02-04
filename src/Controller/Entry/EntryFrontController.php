@@ -8,9 +8,11 @@ use App\Controller\AbstractController;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\PageView\EntryPageView;
+use App\PageView\PostPageView;
 use App\Pagination\Pagerfanta as MbinPagerfanta;
 use App\Repository\Criteria;
 use App\Repository\EntryRepository;
+use App\Repository\PostRepository;
 use Pagerfanta\PagerfantaInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,59 +21,76 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EntryFrontController extends AbstractController
 {
-    public function __construct(private readonly EntryRepository $repository)
+    public function __construct(private readonly EntryRepository $entryRepository, private readonly PostRepository $postRepository)
     {
     }
 
     public function root(?string $sortBy, ?string $time, ?string $type, string $federation, Request $request): Response
     {
-        return $this->front($sortBy, $time, $type, $request->query->get('filter'), $federation, $request);
+        return $this->front($sortBy, $time, $type, $request->query->get('subscription'), $federation, $request);
     }
 
-    public function front(?string $sortBy, ?string $time, ?string $type, string $filter, string $federation, Request $request): Response
+    public function front(?string $sortBy, ?string $time, ?string $type, string $subscription, string $federation, string $content, Request $request): Response
     {
         $user = $this->getUser();
 
-        if ('_default' === $filter) {
-            $filter = $this->filterFor($user);
+        if ('_default' === $subscription) {
+            $subscription = $this->subscriptionFor($user);
         }
 
-        $criteria = new EntryPageView($this->getPageNb($request));
+        if ('threads' === $content) {
+            $criteria = new EntryPageView($this->getPageNb($request));
+            $criteria->setContent('threads');
+        } elseif ('microblog' === $content) {
+            $criteria = new PostPageView($this->getPageNb($request));
+            $criteria->setContent('microblog');
+        } else {
+            throw new LogicException('Invalid content '.$content);
+        }
+
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setFederation($federation)
             ->setTime($criteria->resolveTime($time))
             ->setType($criteria->resolveType($type));
 
-        if ('sub' === $filter) {
+        if ('sub' === $subscription) {
             $this->denyAccessUnlessGranted('ROLE_USER');
             $user = $this->getUserOrThrow();
             $criteria->subscribed = true;
-        } elseif ('mod' === $filter) {
+        } elseif ('mod' === $subscription) {
             $this->denyAccessUnlessGranted('ROLE_USER');
             $criteria->moderated = true;
-        } elseif ('fav' === $filter) {
+        } elseif ('fav' === $subscription) {
             $this->denyAccessUnlessGranted('ROLE_USER');
             $criteria->favourite = true;
-        } elseif ($filter && 'all' !== $filter) {
-            throw new LogicException('Invalid filter '.$filter);
+        } elseif ($subscription && 'all' !== $subscription) {
+            throw new LogicException('Invalid subscription filter '.$subscription);
         }
 
         if (null !== $user && 0 < \count($user->preferredLanguages)) {
             $criteria->languages = $user->preferredLanguages;
         }
 
-        $method = $criteria->resolveSort($sortBy);
-        $posts = $this->$method($criteria);
+        if ('threads' === $content) {
+            $posts = $this->entryRepository->findByCriteria($criteria);
+            $posts = $this->handleCrossposts($posts);
 
-        $posts = $this->handleCrossposts($posts);
+            $content_tmpl = 'entry/';
+            $content_key = 'entries';
+        } elseif ('microblog' === $content) {
+            $posts = $this->postRepository->findByCriteria($criteria);
+
+            $content_tmpl = 'post/';
+            $content_key = 'posts';
+        }
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse(
                 [
                     'html' => $this->renderView(
-                        'entry/_list.html.twig',
+                        $content_tmpl . '_list.html.twig',
                         [
-                            'entries' => $posts,
+                            $content_key => $posts,
                         ]
                     ),
                 ]
@@ -79,9 +98,9 @@ class EntryFrontController extends AbstractController
         }
 
         return $this->render(
-            'entry/front.html.twig',
+            $content_tmpl . 'front.html.twig',
             [
-                'entries' => $posts,
+                $content_key => $posts,
                 'criteria' => $criteria,
             ]
         );
@@ -90,14 +109,15 @@ class EntryFrontController extends AbstractController
     public function front_redirect(?string $sortBy, ?string $time, ?string $type, string $federation, Request $request): Response
     {
         $user = $this->getUser(); // Fetch the user
-        $filter = $this->filterFor($user); // Determine the filter based on the user
+        $subscription = $this->subscriptionFor($user); // Determine the subscription filter based on the user
 
         return $this->redirectToRoute('front', [
-            'filter' => $filter,
+            'subscription' => $subscription,
             'sortBy' => $sortBy,
             'time' => $time,
             'type' => $type,
             'federation' => $federation,
+            'content' => 'threads',
         ]);
     }
 
@@ -108,6 +128,7 @@ class EntryFrontController extends AbstractController
         ?string $time,
         ?string $type,
         string $federation,
+        string $content,
         Request $request
     ): Response {
         $user = $this->getUser();
@@ -116,26 +137,35 @@ class EntryFrontController extends AbstractController
             $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
         }
 
-        $criteria = (new EntryPageView($this->getPageNb($request)));
+        if ('threads' === $content) {
+            $criteria = new EntryPageView($this->getPageNb($request));
+            $criteria->setContent('threads');
+        } elseif ('microblog' === $content) {
+            $criteria = new PostPageView($this->getPageNb($request));
+            $criteria->setContent('microblog');
+        } else {
+            throw new LogicException('Invalid content '.$content);
+        }
+
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setFederation($federation)
             ->setTime($criteria->resolveTime($time))
             ->setType($criteria->resolveType($type));
 
-        $filter = $request->query->get('filter');
+        $subscription = $request->query->get('subscription');
 
-        if ('sub' === $filter) {
+        if ('sub' === $subscription) {
             $this->denyAccessUnlessGranted('ROLE_USER');
             $user = $this->getUserOrThrow();
             $criteria->subscribed = true;
-        } elseif ('mod' === $filter) {
+        } elseif ('mod' === $subscription) {
             $this->denyAccessUnlessGranted('ROLE_USER');
             $criteria->moderated = true;
-        } elseif ('fav' === $filter) {
+        } elseif ('fav' === $subscription) {
             $this->denyAccessUnlessGranted('ROLE_USER');
             $criteria->favourite = true;
-        } elseif ($filter && 'all' !== $filter) {
-            throw new LogicException('Invalid filter '.$filter);
+        } elseif ($subscription && 'all' !== $subscription) {
+            throw new LogicException('Invalid subscription filter '.$subscription);
         }
 
         $criteria->magazine = $magazine;
@@ -145,17 +175,26 @@ class EntryFrontController extends AbstractController
             $criteria->languages = $user->preferredLanguages;
         }
 
-        $method = $criteria->resolveSort($sortBy);
-        $listing = $this->$method($criteria);
+        if ('threads' === $content) {
+            $listing = $this->entryRepository->findByCriteria($criteria);
+
+            $content_tmpl = 'entry/';
+            $content_key = 'entries';
+        } elseif ('microblog' === $content) {
+            $listing = $this->postRepository->findByCriteria($criteria);
+
+            $content_tmpl = 'post/';
+            $content_key = 'posts';
+        }
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse(
                 [
                     'html' => $this->renderView(
-                        'entry/_list.html.twig',
+                        $content_tmpl . '_list.html.twig',
                         [
                             'magazine' => $magazine,
-                            'entries' => $listing,
+                            $content_key => $listing,
                         ]
                     ),
                 ]
@@ -163,17 +202,17 @@ class EntryFrontController extends AbstractController
         }
 
         return $this->render(
-            'entry/front.html.twig',
+            $content_tmpl . 'front.html.twig',
             [
                 'magazine' => $magazine,
-                'entries' => $listing,
+                $content_key => $listing,
                 'criteria' => $criteria,
             ],
             $response
         );
     }
 
-    private function filterFor(?User $user): string
+    private function subscriptionFor(?User $user): string
     {
         if ($user) {
             return match ($user->homepage) {
@@ -185,36 +224,6 @@ class EntryFrontController extends AbstractController
         } else {
             return 'all'; // Global default
         }
-    }
-
-    private function hot(EntryPageView $criteria): PagerfantaInterface
-    {
-        return $this->repository->findByCriteria($criteria->showSortOption(Criteria::SORT_HOT));
-    }
-
-    private function top(EntryPageView $criteria): PagerfantaInterface
-    {
-        return $this->repository->findByCriteria($criteria->showSortOption(Criteria::SORT_TOP));
-    }
-
-    private function active(EntryPageView $criteria): PagerfantaInterface
-    {
-        return $this->repository->findByCriteria($criteria->showSortOption(Criteria::SORT_ACTIVE));
-    }
-
-    private function newest(EntryPageView $criteria): PagerfantaInterface
-    {
-        return $this->repository->findByCriteria($criteria->showSortOption(Criteria::SORT_NEW));
-    }
-
-    private function oldest(EntryPageView $criteria): PagerfantaInterface
-    {
-        return $this->repository->findByCriteria($criteria->showSortOption(Criteria::SORT_OLD));
-    }
-
-    private function commented(EntryPageView $criteria): PagerfantaInterface
-    {
-        return $this->repository->findByCriteria($criteria->showSortOption(Criteria::SORT_COMMENTED));
     }
 
     private function handleCrossposts($pagination): PagerfantaInterface

@@ -33,6 +33,9 @@ abstract class Criteria
     public const AP_LOCAL = 'local';
     public const AP_FEDERATED = 'federated';
 
+    public const CONTENT_THREADS = 'threads';
+    public const CONTENT_MICROBLOG = 'microblog';
+
     public const SORT_OPTIONS = [
         self::SORT_ACTIVE,
         self::SORT_HOT,
@@ -74,14 +77,15 @@ abstract class Criteria
     public ?Magazine $magazine = null;
     public ?User $user = null;
     public ?int $perPage = null;
-    public bool $moderated = false;
-    public bool $favourite = false;
     public string $type = 'all';
     public string $sortOption = EntryRepository::SORT_DEFAULT;
     public string $time = EntryRepository::TIME_DEFAULT;
     public string $visibility = VisibilityInterface::VISIBILITY_VISIBLE;
     public string $federation = self::AP_ALL;
+    public string $content = self::CONTENT_THREADS;
     public bool $subscribed = false;
+    public bool $moderated = false;
+    public bool $favourite = false;
     public ?string $tag = null;
     public ?string $domain = null;
     public ?array $languages = null;
@@ -129,6 +133,12 @@ abstract class Criteria
         return $this;
     }
 
+    public function setContent(string $content): self
+    {
+        $this->content = $content;
+        return $this;
+    }
+    
     public function setTag(string $name): self
     {
         $this->tag = $name;
@@ -295,6 +305,7 @@ abstract class Criteria
             'type' => $this->translateType(),
             'visibility' => $this->visibility,
             'federation' => $this->federation,
+            'content' => $this->content,
             'tag' => $this->tag,
             'domain' => $this->domain,
             'subscription' => $this->resolveSubscriptionFilter(),

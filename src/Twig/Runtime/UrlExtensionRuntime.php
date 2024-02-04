@@ -252,13 +252,17 @@ class UrlExtensionRuntime implements RuntimeExtensionInterface
         ]);
     }
 
-    public function optionsUrl(string $name, string $value, string $routeName = null): string
+    // Hopefully $additionalParams is temporary
+    public function optionsUrl(string $name, string $value, string $routeName = null, array $additionalParams = []): string
     {
         $route = $routeName ?? $this->requestStack->getCurrentRequest()->attributes->get('_route');
         $params = $this->requestStack->getCurrentRequest()->attributes->all()['_route_params'];
         $params = [...$params, ...$this->requestStack->getCurrentRequest()->query->all()];
 
         $params[$name] = $value;
+        foreach ($additionalParams as $key => $val) {
+            $params[$key] = $val;
+        }
 
         return $this->urlGenerator->generate($route, $params);
     }

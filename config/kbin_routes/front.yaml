@@ -1,6 +1,6 @@
 root: &root
   controller: App\Controller\Entry\EntryFrontController::root
-  defaults: { sortBy: hot, time: '∞', type: all, federation: all }
+  defaults: { sortBy: hot, time: '∞', type: all, federation: all, content: threads }
   path: /_dummy_do_not_use/
   methods: [GET]
   requirements: { sortBy: "%front_sort_options%" }
@@ -8,11 +8,11 @@ root: &root
 front:
   <<: *root
   controller: App\Controller\Entry\EntryFrontController::front
-  defaults: { filter: _default, sortBy: hot, time: '∞', type: all, federation: all }
-  path: /{filter}/{sortBy}/{time}/{type}/{federation}
+  defaults: { subscription: _default, sortBy: hot, time: '∞', type: all, federation: all, content: threads }
+  path: /{subscription}/{sortBy}/{time}/{type}/{federation}/{content}
   methods: [GET]
   requirements:
-    filter: 'sub|fav|mod|all|_default'
+    subscription: 'sub|fav|mod|all|_default'
     sortBy: "%front_sort_options%"
 
 front_redirect:
@@ -27,4 +27,5 @@ front_redirect:
 front_magazine:
   <<: *root
   controller: App\Controller\Entry\EntryFrontController::magazine
-  path: /m/{name}/{sortBy}/{time}/{type}/{federation}
+  defaults: { sortBy: hot, time: '∞', type: all, federation: all, content: threads }
+  path: /m/{name}/{sortBy}/{time}/{type}/{federation}/{content}

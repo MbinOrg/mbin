@@ -172,24 +172,24 @@
                 </button>
                 <ul class="dropdown__menu">
                     <li>
-                        <a href="{{ options_url('filter', 'all') }}" class="{{ html_classes({'active': not criteria.favourite and not criteria.moderated and not criteria.subscribed}) }}">
+                        <a href="{{ options_url('subscription', 'all') }}" class="{{ html_classes({'active': not criteria.favourite and not criteria.moderated and not criteria.subscribed}) }}">
                             <i class="fa-solid fa-earth-americas" aria-hidden="true"></i> &nbsp; {{ 'all'|trans }}
                         </a>
                     </li>
                     {% if not is_route_name_contains('_magazine') %}
                         <li>
-                            <a href="{{ options_url('filter', 'sub') }}" class="{{ html_classes({'active': criteria.subscribed }) }}">
+                            <a href="{{ options_url('subscription', 'sub') }}" class="{{ html_classes({'active': criteria.subscribed }) }}">
                                 <i class="fa-solid fa-folder-plus" aria-hidden="true"></i> &nbsp; {{ 'subscribed'|trans }}
                             </a>
                         </li>
                         <li>
-                            <a href="{{ options_url('filter', 'mod') }}" class="{{ html_classes({'active': criteria.moderated }) }}">
+                            <a href="{{ options_url('subscription', 'mod') }}" class="{{ html_classes({'active': criteria.moderated }) }}">
                                 <i class="fa-solid fa-shield-halved" aria-hidden="true"></i> &nbsp;{{ 'moderated'|trans }}
                             </a>
                         </li>
                     {% endif %}
                     <li>
-                        <a href="{{ options_url('filter', 'fav') }}" class="{{ html_classes({'active': criteria.favourite }) }}">
+                        <a href="{{ options_url('subscription', 'fav') }}" class="{{ html_classes({'active': criteria.favourite }) }}">
                             <i class="fa-solid fa-heart" aria-hidden="true"></i> &nbsp; {{ 'favourites'|trans }}
                         </a>
                     </li>
