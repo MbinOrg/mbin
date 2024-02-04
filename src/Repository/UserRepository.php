@@ -316,8 +316,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     public function findByUsernames(array $users): array
     {
         return $this->createQueryBuilder('u')
-            ->where('u.username IN (?1)')
-            ->setParameter(1, $users)
+            ->where('LOWER(u.username) IN (?1)')
+            ->setParameter(1, array_map('mb_strtolower', $users))
             ->getQuery()
             ->getResult();
     }
