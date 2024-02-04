@@ -10,7 +10,6 @@ use App\Entity\User;
 use App\PageView\EntryPageView;
 use App\PageView\PostPageView;
 use App\Pagination\Pagerfanta as MbinPagerfanta;
-use App\Repository\Criteria;
 use App\Repository\EntryRepository;
 use App\Repository\PostRepository;
 use Pagerfanta\PagerfantaInterface;
@@ -88,7 +87,7 @@ class EntryFrontController extends AbstractController
             return new JsonResponse(
                 [
                     'html' => $this->renderView(
-                        $content_tmpl . '_list.html.twig',
+                        $content_tmpl.'_list.html.twig',
                         [
                             $content_key => $posts,
                         ]
@@ -98,7 +97,7 @@ class EntryFrontController extends AbstractController
         }
 
         return $this->render(
-            $content_tmpl . 'front.html.twig',
+            $content_tmpl.'front.html.twig',
             [
                 $content_key => $posts,
                 'criteria' => $criteria,
@@ -204,7 +203,7 @@ class EntryFrontController extends AbstractController
             return new JsonResponse(
                 [
                     'html' => $this->renderView(
-                        $content_tmpl . '_list.html.twig',
+                        $content_tmpl.'_list.html.twig',
                         [
                             'magazine' => $magazine,
                             $content_key => $listing,
@@ -215,7 +214,7 @@ class EntryFrontController extends AbstractController
         }
 
         return $this->render(
-            $content_tmpl . 'front.html.twig',
+            $content_tmpl.'front.html.twig',
             [
                 'magazine' => $magazine,
                 $content_key => $listing,

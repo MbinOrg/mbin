@@ -136,9 +136,10 @@ abstract class Criteria
     public function setContent(string $content): self
     {
         $this->content = $content;
+
         return $this;
     }
-    
+
     public function setTag(string $name): self
     {
         $this->tag = $name;
