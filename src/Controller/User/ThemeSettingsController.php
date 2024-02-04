@@ -33,7 +33,6 @@ class ThemeSettingsController extends AbstractController
     public const KBIN_GENERAL_SIDEBAR_POSITION = 'kbin_general_sidebar_position';
     public const KBIN_GENERAL_DYNAMIC_LISTS = 'kbin_general_dynamic_lists';
     public const KBIN_GENERAL_FILTER_LABELS = 'kbin_general_filter_labels';
-    public const KBIN_FEDERATION_ENABLED = 'kbin_federation_enabled';
     public const KBIN_COMMENTS_SHOW_USER_AVATAR = 'kbin_comments_show_user_avatar';
     public const KBIN_COMMENTS_REPLY_POSITION = 'kbin_comments_reply_position';
     public const KBIN_SUBSCRIPTIONS_SHOW = 'kbin_subscriptions_show';
@@ -88,7 +87,6 @@ class ThemeSettingsController extends AbstractController
         self::KBIN_POSTS_SHOW_PREVIEW,
         self::KBIN_POSTS_SHOW_USERS_AVATARS,
         self::KBIN_GENERAL_DYNAMIC_LISTS,
-        self::KBIN_FEDERATION_ENABLED,
         self::KBIN_LANG,
         self::KBIN_COMMENTS_SHOW_USER_AVATAR,
         self::KBIN_COMMENTS_REPLY_POSITION,
