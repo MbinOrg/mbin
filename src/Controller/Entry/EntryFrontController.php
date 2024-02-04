@@ -106,19 +106,32 @@ class EntryFrontController extends AbstractController
         );
     }
 
-    public function front_redirect(?string $sortBy, ?string $time, ?string $type, string $federation, Request $request): Response
+    // $name is magazine name, for compatibility
+    public function front_redirect(?string $sortBy, ?string $time, ?string $type, string $federation, string $content, ?string $name, Request $request): Response
     {
         $user = $this->getUser(); // Fetch the user
         $subscription = $this->subscriptionFor($user); // Determine the subscription filter based on the user
 
-        return $this->redirectToRoute('front', [
-            'subscription' => $subscription,
-            'sortBy' => $sortBy,
-            'time' => $time,
-            'type' => $type,
-            'federation' => $federation,
-            'content' => 'threads',
-        ]);
+        if ($magazine) {
+            return $this->redirectToRoute('front_magazine', [
+                'name' => $name,
+                'subscription' => $subscription,
+                'sortBy' => $sortBy,
+                'time' => $time,
+                'type' => $type,
+                'federation' => $federation,
+                'content' => $content,
+            ]);
+        } else {
+            return $this->redirectToRoute('front', [
+                'subscription' => $subscription,
+                'sortBy' => $sortBy,
+                'time' => $time,
+                'type' => $type,
+                'federation' => $federation,
+                'content' => $content,
+            ]);
+        }
     }
 
     public function magazine(

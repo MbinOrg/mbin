@@ -18,8 +18,8 @@ front:
 front_redirect:
   <<: *root
   controller: App\Controller\Entry\EntryFrontController::front_redirect
-  defaults: { sortBy: hot, time: '∞', type: all, federation: all }
-  path: /{sortBy}/{time}/{type}/{federation}
+  defaults: { sortBy: hot, time: '∞', type: all, federation: all, content: threads }
+  path: /{sortBy}/{time}/{type}/{federation}/{content}
   methods: [GET]
   requirements:
     sortBy: "%front_sort_options%"
@@ -29,3 +29,46 @@ front_magazine:
   controller: App\Controller\Entry\EntryFrontController::magazine
   defaults: { sortBy: hot, time: '∞', type: all, federation: all, content: threads }
   path: /m/{name}/{sortBy}/{time}/{type}/{federation}/{content}
+
+
+# Microblog compatibility stuff, redirects from the old routes' URLs
+
+posts_front:
+  <<: *root
+  controller: App\Controller\Entry\EntryFrontController::front_redirect
+  defaults: { sortBy: hot, time: '∞', type: all, federation: all, content: microblog }
+  path: /microblog/{sortBy}/{time}
+  methods: [ GET ]
+  requirements: { sortBy: "%front_sort_options%" }
+
+posts_subscribed:
+  <<: *root
+  controller: App\Controller\Entry\EntryFrontController::front_redirect
+  defaults: { sortBy: hot, time: '∞', type: all, federation: all, content: microblog, subscription: 'sub' }
+  path: /sub/microblog/{sortBy}/{time}
+  methods: [ GET ]
+  requirements: { sortBy: "%front_sort_options%" }
+
+posts_moderated:
+  <<: *root
+  controller: App\Controller\Entry\EntryFrontController::front_redirect
+  defaults: { sortBy: hot, time: '∞', type: all, federation: all, content: microblog, subscription: 'mod' }
+  path: /mod/microblog/{sortBy}/{time}
+  methods: [ GET ]
+  requirements: { sortBy: "%front_sort_options%" }
+
+posts_favourite:
+  <<: *root
+  controller: App\Controller\Entry\EntryFrontController::front_redirect
+  defaults: { sortBy: hot, time: '∞', type: all, federation: all, content: microblog, subscription: 'fav' }
+  path: /fav/microblog/{sortBy}/{time}
+  methods: [ GET ]
+  requirements: { sortBy: "%front_sort_options%" }
+
+magazine_posts:
+  <<: *root
+  controller: App\Controller\Entry\EntryFrontController::front_redirect
+  defaults: { sortBy: hot, time: '∞', type: all, federation: all, content: microblog }
+  path: /m/{name}/microblog/{sortBy}/{time}
+  methods: [ GET ]
+  requirements: { sortBy: "%front_sort_options%" }

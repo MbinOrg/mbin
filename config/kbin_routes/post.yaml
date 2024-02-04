@@ -88,41 +88,6 @@ post_comment_boost:
   path: /pcb/{id}
   methods: [ POST ]
 
-posts_front:
-  controller: App\Controller\Post\PostFrontController::front
-  defaults: { sortBy: hot, time: ~ }
-  path: /microblog/{sortBy}/{time}
-  methods: [ GET ]
-  requirements: { sortBy: "%front_sort_options%" }
-
-posts_subscribed:
-  controller: App\Controller\Post\PostFrontController::subscribed
-  defaults: { sortBy: hot, time: ~ }
-  path: /sub/microblog/{sortBy}/{time}
-  methods: [ GET ]
-  requirements: { sortBy: "%front_sort_options%" }
-
-posts_moderated:
-  controller: App\Controller\Post\PostFrontController::moderated
-  defaults: { sortBy: hot, time: ~ }
-  path: /mod/microblog/{sortBy}/{time}
-  methods: [ GET ]
-  requirements: { sortBy: "%front_sort_options%" }
-
-posts_favourite:
-  controller: App\Controller\Post\PostFrontController::favourite
-  defaults: { sortBy: hot, time: ~ }
-  path: /fav/microblog/{sortBy}/{time}
-  methods: [ GET ]
-  requirements: { sortBy: "%front_sort_options%" }
-
-magazine_posts:
-  controller: App\Controller\Post\PostFrontController::magazine
-  defaults: { sortBy: hot, time: ~ }
-  path: /m/{name}/microblog/{sortBy}/{time}
-  methods: [ GET ]
-  requirements: { sortBy: "%front_sort_options%" }
-
 post_pin:
   controller: App\Controller\Post\PostPinController
   defaults: { slug: - }
