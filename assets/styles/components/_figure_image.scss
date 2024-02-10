@@ -42,6 +42,46 @@ input.sensitive-state {
   width: 0;
   height: 0;
   opacity: 0;
+  z-index: -1;
+}
+
+.figure-badge {
+  position: absolute;
+  pointer-events: none;
+
+  &-label {
+    background: var(--kbin-button-secondary-bg);
+    padding: .5rem;
+
+    font-weight: normal;
+    font-size: .8rem;
+    text-align: center;
+
+    opacity: .5;
+
+    i {
+      font-size: 1rem;
+    }
+
+    .rounded-edges & {
+      border-radius: var(--kbin-rounded-edges-radius);
+    }
+
+    &:hover,
+    &:active {
+      opacity: .7;
+    }
+  }
+
+  &.alt {
+    bottom: .5rem;
+    right: .5rem;
+
+    .figure-badge-label {
+      font-weight: 500;
+      line-height: .8rem;
+    }
+  }
 }
 
 // button to toggle sensitive

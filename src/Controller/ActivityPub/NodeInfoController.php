@@ -46,11 +46,11 @@ class NodeInfoController
             'links' => [
                 [
                     'rel' => self::NODE_REL_v21,
-                    'href' => $this->urlGenerator->generate('ap_node_info_v2', ['version' => '2.0'], UrlGeneratorInterface::ABSOLUTE_URL),
+                    'href' => $this->urlGenerator->generate('ap_node_info_v2', ['version' => '2.1'], UrlGeneratorInterface::ABSOLUTE_URL),
                 ],
                 [
                     'rel' => self::NODE_REL_v20,
-                    'href' => $this->urlGenerator->generate('ap_node_info_v2', ['version' => '2.1'], UrlGeneratorInterface::ABSOLUTE_URL),
+                    'href' => $this->urlGenerator->generate('ap_node_info_v2', ['version' => '2.0'], UrlGeneratorInterface::ABSOLUTE_URL),
                 ],
             ],
         ];
