@@ -124,7 +124,7 @@ activity: Дейност
 add_post: Добавяне на публикация
 hot: Популярни
 on: Вкл.
-unfollow: Отпоследване
+unfollow: Отследване
 cover: Корица
 subscribers: Абонирани
 type.magazine: Общност
@@ -167,7 +167,7 @@ add_new_video: Добавяне на ново видео
 rules: Правила
 columns: Колони
 alphabetically: По азбучен ред
-up_votes: Препубликации
+up_votes: Подсилвания
 report: Докладване
 active: Активни
 status: Състояние
@@ -176,7 +176,7 @@ mod_log: Дневник на модерирането
 views: Прегледи
 events: Събития
 more: Още
-up_vote: Препубликуване
+up_vote: Подсилване
 related_entries: Подобни нишки
 try_again: Повторен опит
 resend_account_activation_email_question: Неактивен акаунт?
@@ -204,7 +204,7 @@ domains: Домейни
 overview: Обзор
 classic_view: Класически изглед
 messages: Съобщения
-boost: Препубликуване
+boost: Подсилване
 empty: Празно
 change_language: Промяна на езика
 federated_user_info: Този профил е от федериран сървър и може да е непълен.
@@ -224,7 +224,7 @@ repeat_password: Повтори паролата
 old_email: Текущ адрес на ел. поща
 posts: Публикации
 related_posts: Подобни публикации
-boosts: Препубликации
+boosts: Подсилвания
 approve: Одобряване
 toolbar.strikethrough: Зачертано
 change_magazine: Промяна на общността
@@ -411,3 +411,18 @@ deletion: Изтриване
 errors.server500.title: 500 Вътрешна грешка на сървъра
 show_subscriptions: Показване на абонаментите
 abandoned: Изоставени
+show_profile_followings: Показване на следваните потребители
+notify_on_new_entry_reply: Коментари на всички нива в нишки, които съм създал
+notify_on_new_post_comment_reply: Отговори на мои коментари във всички публикации
+notify_on_new_post_reply: Отговори на всички нива в публикации, които съм създал
+subscription_header: Абонаменти за общности
+action: Действие
+related_tags: Подобни тагове
+show_profile_subscriptions: Показване на абонаментите за общности
+notify_on_new_posts: Нови публикации във всяка общност, за която съм абониран
+add_mentions_entries: Добавяне на тагове за споменаване в нишките
+add_mentions_posts: Добавяне на тагове за споменаване в публикациите
+notify_on_new_entry_comment_reply: Отговори на мои коментари във всички нишки
+notify_on_new_entry: Нови нишки (връзки или статии) във всяка общност, за която съм
+  абониран
+unblock: Отблокиране
