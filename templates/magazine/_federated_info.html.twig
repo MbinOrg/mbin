@@ -2,8 +2,9 @@
     {% if entries is defined and entries and not entries.hasNextPage %}
         {# Then show a link to original if we're at the end of content #}
         <div class="alert alert__info">
-            <p>{{ 'federated_magazine_info'|trans }} <a
-             href="{{ magazine.apProfileId }}">{{ 'go_to_original_instance'|trans }}</a></p>
+            <p>
+                {{ 'federated_magazine_info'|trans }} <a href="{{ magazine.apProfileId }}">{{ 'go_to_original_instance'|trans }}</a>
+            </p>
         </div>
     {% endif %}
 
