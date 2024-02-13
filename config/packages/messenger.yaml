@@ -25,7 +25,7 @@ framework:
             failed:
                 failure_transport: dead
                 retry_strategy:
-                    max_retries: 5
+                    max_retries: 3
                     delay: 1800000
                     multiplier: 2
                 dsn: "doctrine://default?queue_name=failed"
