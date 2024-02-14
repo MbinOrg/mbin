@@ -9,22 +9,31 @@ framework:
             async:
                 dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
                 retry_strategy:
-                    max_retries: 0
-                    delay: 1800000
-                    multiplier: 2
-                    max_delay: 0
+                    max_retries: 5
+                    delay: 600000
+                    multiplier: 10
+                    max_delay: 604800000
                 serializer: messenger.transport.symfony_serializer
             async_ap:
                 dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
                 retry_strategy:
-                    max_retries: 0
-                    delay: 1800000
-                    multiplier: 2
-                    max_delay: 0
+                    max_retries: 5
+                    delay: 600000
+                    multiplier: 10
+                    max_delay: 604800000
                 serializer: messenger.transport.symfony_serializer
             failed:
+                failure_transport: dead
+                retry_strategy:
+                    max_retries: 3
+                    delay: 1800000
+                    multiplier: 2
                 dsn: "doctrine://default?queue_name=failed"
                 serializer: messenger.transport.symfony_serializer
+            dead:
+                dsn: "doctrine://default?queue_name=dead"
+                serializer: messenger.transport.symfony_serializer
+
 
         routing:
             # Route your messages to the transports

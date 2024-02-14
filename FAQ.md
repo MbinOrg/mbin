@@ -104,12 +104,52 @@ Now you can open the RabbitMQ management page: (insecure connection!) `http://<s
 
 ![image](https://github.com/MbinOrg/mbin/assets/628926/ce47213e-13c5-4b57-9fd3-c5b4a64138ef)
 
+## Messenger Queue is building up even though my messengers are idling
+
+We recently changed the messenger config to retry failed messages 5 times, instead of sending them straight to the `failed` queue.
+RabbitMQ will now have new queues being added for the different delays (so a message does not get retried 5 times per second):
+
+![image](docs/images/rabbit_queue_tab_cut.png)
+
+The global overview from rabbitmq shows the ready messages for all queues combined. Messages in the retry queues count as ready messages the whole time they are in there, 
+so for a correct ready count you have to go to the queue specific overview.
+
+| Overview                                        | Queue Tab                                  | "Message" Queue Overview                           |
+|-------------------------------------------------|--------------------------------------------|----------------------------------------------------|
+| ![image](docs/images/rabbit_queue_overview.png) | ![image](docs/images/rabbit_queue_tab.png) | ![image](docs/images/rabbit_messages_overview.png) |
+
+## RabbitMQ Prometheus exporter
+
+See [RabbitMQ Docs](https://rabbitmq.com/prometheus.html)
+
+If you are running the prometheus exporter plugin you do not have queue specific metrics by default.
+There is another endpoint with the default config that you can scrape, that will return queue metrics for our default virtual host `/`: `/metrics/detailed?vhost=%2F&family=queue_metrics`
+
+Example scrape config:
+
+```yaml
+scrape_configs:
+  - job_name: 'mbin-rabbit_queues'
+    static_configs:
+      - targets: ['example.org']
+    metrics_path: '/metrics/detailed'
+    params:
+      vhost: ['/']
+      family: ['queue_coarse_metrics', 'queue_consumer_count', 'channel_queue_metrics']
+```
+
 ## How to clean-up all failed messages?
 
-If you wish to **delete all failed messages** at once, execute the following PostgreSQL query (assuming you're connected to the correct PostgreSQL database):
+If you wish to **delete all messages** at once, execute the following PostgreSQL query (assuming you're connected to the correct PostgreSQL database):
 
 ```sql
 DELETE FROM messenger_messages;
+```
+
+If you want to delete only the messages that are no longer being worked on you can execute this query:
+
+```sql
+DELETE FROM messenger_messages WHERE queue_name = 'dead';
 ```
 
 ## Where can I find my logging?
