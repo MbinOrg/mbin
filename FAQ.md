@@ -102,21 +102,21 @@ sudo rabbitmqctl set_permissions -p / <user> ".*" ".*" ".*"
 
 Now you can open the RabbitMQ management page: (insecure connection!) `http://<server-ip>:15672` with the username and the password provided earlier. [More info can be found here](https://www.rabbitmq.com/management.html#getting-started). See screenshot below of a typical small instance of Mbin running RabbitMQ management interface:
 
-![image](https://github.com/MbinOrg/mbin/assets/628926/ce47213e-13c5-4b57-9fd3-c5b4a64138ef)
+![Typical load on very small instances](docs/images/rabbit_small_load_typical.png)
 
 ## Messenger Queue is building up even though my messengers are idling
 
 We recently changed the messenger config to retry failed messages 5 times, instead of sending them straight to the `failed` queue.
 RabbitMQ will now have new queues being added for the different delays (so a message does not get retried 5 times per second):
 
-![image](docs/images/rabbit_queue_tab_cut.png)
+![Queue overview](docs/images/rabbit_queue_tab_cut.png)
 
-The global overview from rabbitmq shows the ready messages for all queues combined. Messages in the retry queues count as ready messages the whole time they are in there, 
+The global overview from rabbitmq shows the ready messages for all queues combined. Messages in the retry queues count as ready messages the whole time they are in there,
 so for a correct ready count you have to go to the queue specific overview.
 
-| Overview                                        | Queue Tab                                  | "Message" Queue Overview                           |
-|-------------------------------------------------|--------------------------------------------|----------------------------------------------------|
-| ![image](docs/images/rabbit_queue_overview.png) | ![image](docs/images/rabbit_queue_tab.png) | ![image](docs/images/rabbit_messages_overview.png) |
+| Overview                                                  | Queue Tab                                           | "Message" Queue Overview                                            |
+| --------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------- |
+| ![Queued messages](docs/images/rabbit_queue_overview.png) | ![Queue overview](docs/images/rabbit_queue_tab.png) | ![Message Queue Overview](docs/images/rabbit_messages_overview.png) |
 
 ## RabbitMQ Prometheus exporter
 
@@ -129,13 +129,18 @@ Example scrape config:
 
 ```yaml
 scrape_configs:
-  - job_name: 'mbin-rabbit_queues'
+  - job_name: "mbin-rabbit_queues"
     static_configs:
-      - targets: ['example.org']
-    metrics_path: '/metrics/detailed'
+      - targets: ["example.org"]
+    metrics_path: "/metrics/detailed"
     params:
-      vhost: ['/']
-      family: ['queue_coarse_metrics', 'queue_consumer_count', 'channel_queue_metrics']
+      vhost: ["/"]
+      family:
+        [
+          "queue_coarse_metrics",
+          "queue_consumer_count",
+          "channel_queue_metrics",
+        ]
 ```
 
 ## How to clean-up all failed messages?
