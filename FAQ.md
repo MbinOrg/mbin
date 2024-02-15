@@ -140,13 +140,13 @@ scrape_configs:
 
 ## How to clean-up all failed messages?
 
-If you wish to **delete all messages** at once, execute the following PostgreSQL query (assuming you're connected to the correct PostgreSQL database):
+If you wish to **delete all messages** (`dead` and `failed`) at once, execute the following PostgreSQL query (assuming you're connected to the correct PostgreSQL database):
 
 ```sql
 DELETE FROM messenger_messages;
 ```
 
-If you want to delete only the messages that are no longer being worked on you can execute this query:
+If you want to delete only the messages that are no longer being worked (`dead`) on you can execute this query:
 
 ```sql
 DELETE FROM messenger_messages WHERE queue_name = 'dead';
