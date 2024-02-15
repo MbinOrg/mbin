@@ -2,6 +2,7 @@
   <img
       class="user-avatar image-inline"
       width="20" height="20"
+      loading="lazy"
       src="{{ asset(user.avatar.filePath) | imagine_filter('avatar_thumb') }}"
       alt="{{ user.username ~ ' avatar' }}"
   >
