@@ -14,7 +14,8 @@
                     href="{{ uploaded_asset(image.filePath) }}"
                     class="thumb"
                     data-description="{{ image.altText ? '.'~lightbox_alt_id : ''}}">
-                    <img src="{{ asset(image.filePath)|imagine_filter(thumb_filter) }}"
+                    <img loading="lazy"
+                         src="{{ asset(image.filePath)|imagine_filter(thumb_filter) }}"
                          alt="{{ image.altText }}">
                 </a>
             </div>

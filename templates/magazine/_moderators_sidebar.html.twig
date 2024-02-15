@@ -18,6 +18,7 @@
                       <img class="image-inline"
                            width="30"
                            height="30"
+                           loading="lazy"
                            src="{{ asset(moderator.user.avatar.filePath) | imagine_filter('avatar_thumb') }}"
                            alt="{{ moderator.user.username ~ ' ' ~ 'avatar'|trans|lower }}">
                     {% endif %}
