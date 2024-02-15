@@ -21,6 +21,7 @@
                 {% if image %}
                     <figure>
                         <img class="thumb-subject oauth-client-logo"
+                                loading="lazy"
                                 src="{{ asset(image.filePath) |imagine_filter('entry_thumb') }}"
                                 alt="{{ image.altText }}">
                     </figure>
