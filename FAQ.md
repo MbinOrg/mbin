@@ -106,7 +106,7 @@ Now you can open the RabbitMQ management page: (insecure connection!) `http://<s
 
 ## Messenger Queue is building up even though my messengers are idling
 
-We recently changed the messenger config to retry failed messages 5 times, instead of sending them straight to the `failed` queue.
+We recently changed the messenger config to retry failed messages 3 times, instead of sending them straight to the `failed` queue.
 RabbitMQ will now have new queues being added for the different delays (so a message does not get retried 5 times per second):
 
 ![image](docs/images/rabbit_queue_tab_cut.png)
@@ -140,13 +140,13 @@ scrape_configs:
 
 ## How to clean-up all failed messages?
 
-If you wish to **delete all messages** at once, execute the following PostgreSQL query (assuming you're connected to the correct PostgreSQL database):
+If you wish to **delete all messages** (`dead` and `failed`) at once, execute the following PostgreSQL query (assuming you're connected to the correct PostgreSQL database):
 
 ```sql
 DELETE FROM messenger_messages;
 ```
 
-If you want to delete only the messages that are no longer being worked on you can execute this query:
+If you want to delete only the messages that are no longer being worked (`dead`) on you can execute this query:
 
 ```sql
 DELETE FROM messenger_messages WHERE queue_name = 'dead';

@@ -5,6 +5,7 @@
             <figure>
                 <img class="image-inline"
                      width="100" height="100"
+                     loading="lazy"
                      src="{{ asset(post.user.avatar.filePath) | imagine_filter('avatar_thumb') }}"
                      alt="{{ post.user.username ~' '~ 'avatar'|trans|lower }}">
             </figure>

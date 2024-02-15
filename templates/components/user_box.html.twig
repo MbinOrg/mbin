@@ -7,6 +7,7 @@
             <img class="cover image-inline"
                  height="220"
                  width="100%"
+                 loading="lazy"
                  src="{{ asset(user.cover.filePath)|imagine_filter('user_cover') }}"
                  alt="{{ user.username ~' '~ 'cover'|trans|lower  }}">
           {% if app.user is same as user and is_route_name_starts_with('user') and not is_route_name_contains('settings') %}
