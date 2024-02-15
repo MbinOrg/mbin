@@ -100,7 +100,7 @@ sudo rabbitmqctl set_user_tags <user> administrator
 sudo rabbitmqctl set_permissions -p / <user> ".*" ".*" ".*"
 ```
 
-Now you can open the RabbitMQ management page: (insecure connection!) `http://<server-ip>:15672` with the username and the password provided earlier. [More info can be found here](https://www.rabbitmq.com/management.html#getting-started). See screenshot below of a typical small instance of Mbin running RabbitMQ management interface:
+Now you can open the RabbitMQ management page: (insecure connection!) `http://<server-ip>:15672` with the username and the password provided earlier. [More info can be found here](https://www.rabbitmq.com/management.html#getting-started). See screenshot below of a typical small instance of Mbin running RabbitMQ management interface ("Queued message" of 4k or even 10k is normal after recent Mbin changes, see down below for more info):
 
 ![Typical load on very small instances](docs/images/rabbit_small_load_typical.png)
 
