@@ -26,6 +26,5 @@ final class Version20240204141515 extends AbstractMigration
     public function down(Schema $schema): void
     {
         $this->addSql('ALTER TABLE "user" ALTER COLUMN username TYPE VARCHAR(35)');
-        $this->addSql('DROP EXTENSION citext');
     }
 }
