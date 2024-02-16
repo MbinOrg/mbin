@@ -52,7 +52,7 @@ class ImageManager
 
         try {
             if (filesize($source) > self::MAX_IMAGE_BYTES) {
-                throw new ImageDownloadTooLargeException();
+                throw new ImageDownloadTooLargeException('the image is too large, max size is '.self::MAX_IMAGE_BYTES);
             }
 
             $this->validate($source);
@@ -64,8 +64,6 @@ class ImageManager
             }
 
             return true;
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
         } finally {
             \is_resource($fh) and fclose($fh);
         }
