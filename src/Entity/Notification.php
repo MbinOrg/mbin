@@ -22,7 +22,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
     'entry_created' => 'EntryCreatedNotification',
     'entry_edited' => 'EntryEditedNotification',
     'entry_deleted' => 'EntryDeletedNotification',
-    'entry_mentioned' => 'PostCommentMentionedNotification',
+    'entry_mentioned' => 'EntryMentionedNotification',
     'entry_comment_created' => 'EntryCommentCreatedNotification',
     'entry_comment_edited' => 'EntryCommentEditedNotification',
     'entry_comment_reply' => 'EntryCommentReplyNotification',

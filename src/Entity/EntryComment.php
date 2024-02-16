@@ -47,7 +47,7 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
     }
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'entryComments')]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $user;
     #[ManyToOne(targetEntity: Entry::class, inversedBy: 'comments')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -62,7 +62,7 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
     #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?EntryComment $parent = null;
     #[ManyToOne(targetEntity: EntryComment::class, inversedBy: 'nested')]
-    #[JoinColumn(nullable: true)]
+    #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?EntryComment $root = null;
     #[Column(type: 'text', length: 4500)]
     public ?string $body = null;
@@ -80,10 +80,10 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
     public ?array $tags = null;
     #[Column(type: 'json', nullable: true)]
     public ?array $mentions = null;
-    #[OneToMany(mappedBy: 'parent', targetEntity: EntryComment::class, orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'parent', targetEntity: EntryComment::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'ASC'])]
     public Collection $children;
-    #[OneToMany(mappedBy: 'root', targetEntity: EntryComment::class, orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'root', targetEntity: EntryComment::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'ASC'])]
     public Collection $nested;
     #[OneToMany(mappedBy: 'comment', targetEntity: EntryCommentVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
