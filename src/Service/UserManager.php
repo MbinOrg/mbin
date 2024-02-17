@@ -214,11 +214,11 @@ readonly class UserManager
         }
 
         if ($oldAvatar && $user->avatar !== $oldAvatar) {
-            $this->bus->dispatch(new DeleteImageMessage($oldAvatar->filePath));
+            $this->bus->dispatch(new DeleteImageMessage($oldAvatar->getId()));
         }
 
         if ($oldCover && $user->cover !== $oldCover) {
-            $this->bus->dispatch(new DeleteImageMessage($oldCover->filePath));
+            $this->bus->dispatch(new DeleteImageMessage($oldCover->getId()));
         }
 
         if ($mailUpdated) {
@@ -282,7 +282,7 @@ readonly class UserManager
             return;
         }
 
-        $image = $user->avatar->filePath;
+        $image = $user->avatar->getId();
 
         $user->avatar = null;
 
@@ -298,7 +298,7 @@ readonly class UserManager
             return;
         }
 
-        $image = $user->cover->filePath;
+        $image = $user->cover->getId();
 
         $user->cover = null;
 

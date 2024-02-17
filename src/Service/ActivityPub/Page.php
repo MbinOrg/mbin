@@ -63,10 +63,8 @@ class Page
             $dto->title = $object['name'];
             $dto->apId = $object['id'];
 
-            if (
-                (isset($object['attachment']) || isset($object['image']))
-                && $image = $this->activityPubManager->handleImages($object['attachment'])
-            ) {
+            if ((isset($object['attachment']) || isset($object['image'])) && $image = $this->activityPubManager->handleImages($object['attachment'])) {
+                $this->logger->debug("adding image to entry '{title}', {image}", ['title' => $dto->title, 'image' => $image->getId()]);
                 $dto->image = $this->imageFactory->createDto($image);
             }
 

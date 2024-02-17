@@ -25,6 +25,7 @@ use App\Utils\Slugger;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
@@ -35,6 +36,7 @@ use Webmozart\Assert\Assert;
 class PostManager implements ContentManagerInterface
 {
     public function __construct(
+        private readonly LoggerInterface $logger,
         private readonly Slugger $slugger,
         private readonly MentionManager $mentionManager,
         private readonly PostCommentManager $postCommentManager,
@@ -70,6 +72,7 @@ class PostManager implements ContentManagerInterface
         $post->isAdult = $dto->isAdult || $post->magazine->isAdult;
         $post->slug = $this->slugger->slug($dto->body ?? $dto->magazine->name.' '.$dto->image->altText);
         $post->image = $dto->image ? $this->imageRepository->find($dto->image->id) : null;
+        $this->logger->debug('setting image to {imageId}, dto was {dtoImageId}', ['imageId' => $post->image?->getId() ?? 'none', 'dtoImageId' => $dto->image?->id ?? 'none']);
         if ($post->image && !$post->image->altText) {
             $post->image->altText = $dto->imageAlt;
         }
@@ -116,7 +119,7 @@ class PostManager implements ContentManagerInterface
         $this->entityManager->flush();
 
         if ($oldImage && $post->image !== $oldImage) {
-            $this->bus->dispatch(new DeleteImageMessage($oldImage->filePath));
+            $this->bus->dispatch(new DeleteImageMessage($oldImage->getId()));
         }
 
         $this->dispatcher->dispatch(new PostEditedEvent($post));
@@ -160,7 +163,7 @@ class PostManager implements ContentManagerInterface
     {
         $this->dispatcher->dispatch(new PostBeforePurgeEvent($post, $user));
 
-        $image = $post->image?->filePath;
+        $image = $post->image?->getId();
 
         $sort = new Criteria(null, ['createdAt' => Criteria::DESC]);
         foreach ($post->comments->matching($sort) as $comment) {
@@ -210,7 +213,7 @@ class PostManager implements ContentManagerInterface
 
     public function detachImage(Post $post): void
     {
-        $image = $post->image->filePath;
+        $image = $post->image->getId();
 
         $post->image = null;
 

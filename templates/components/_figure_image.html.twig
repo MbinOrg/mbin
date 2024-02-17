@@ -11,11 +11,11 @@
         <div class="figure-container">
             <div class="figure-thumb">
                 <a
-                    href="{{ uploaded_asset(image.filePath) }}"
+                    href="{{ uploaded_asset(image) }}"
                     class="thumb"
                     data-description="{{ image.altText ? '.'~lightbox_alt_id : ''}}">
                     <img loading="lazy"
-                         src="{{ asset(image.filePath)|imagine_filter(thumb_filter) }}"
+                         src="{{ image.filePath ? asset(image.filePath)|imagine_filter(thumb_filter) : image.sourceUrl }}"
                          alt="{{ image.altText }}">
                 </a>
             </div>
