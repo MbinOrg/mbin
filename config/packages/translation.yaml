@@ -1,4 +1,5 @@
 framework:
+<<<<<<< ours
   default_locale: "%env(KBIN_DEFAULT_LANG)%"
   translator:
     default_path: "%kernel.project_dir%/translations"
@@ -13,3 +14,11 @@ framework:
 #        dsn: "%env(LOKALISE_DSN)%"
 #      phrase:
 #        dsn: "%env(PHRASE_DSN)%"
+=======
+    default_locale: en
+    translator:
+        default_path: '%kernel.project_dir%/translations'
+        fallbacks:
+            - en
+        providers:
+>>>>>>> theirs
