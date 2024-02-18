@@ -34,10 +34,6 @@
     </source>
 
     <extensions>
-<<<<<<< HEAD
         <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" />
-=======
-        <extension class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" />
->>>>>>> 1c650e59 (Revert "Upsing PHPUnit 10, there is no extensions element anymore")
     </extensions>
 </phpunit>
