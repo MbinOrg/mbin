@@ -34,6 +34,7 @@
            rel="{{ (type is same as 'link') ? get_rel(route) : '' }}"
            data-description="{{ is_single_image and image.altText ? '.'~lightbox_alt_id : '' }}">
             <img class="thumb-subject"
+                 loading="lazy"
                  src="{{ asset(image.filePath)|imagine_filter('entry_thumb') }}"
                  alt="{{ image.altText }}">
         </a>
