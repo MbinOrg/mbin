@@ -710,12 +710,12 @@
         "version": "v2.4.0"
     },
     "symfony/stimulus-bundle": {
-        "version": "2.12",
+        "version": "2.14",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
-            "version": "2.9",
-            "ref": "05c45071c7ecacc1e48f94bc43c1f8d4405fb2b2"
+            "version": "2.13",
+            "ref": "6acd9ff4f7fd5626d2962109bd4ebab351d43c43"
         },
         "files": [
             "assets/bootstrap.js",
