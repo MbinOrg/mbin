@@ -6,8 +6,9 @@
                 <figure>
                     <div class="row">
                         {% if post.image %}
-                                <img src="{{ asset(post.image.filePath) | imagine_filter('post_thumb') }}"
-                                     alt="{{ post.image.alt|default('') }}">
+                                <img loading="lazy"
+                                    src="{{ asset(post.image.filePath) | imagine_filter('post_thumb') }}"
+                                    alt="{{ post.image.alt|default('') }}">
                             </a>
                         {% endif %}
                         {% if post.body %}

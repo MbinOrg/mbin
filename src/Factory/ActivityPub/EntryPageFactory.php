@@ -64,7 +64,7 @@ class EntryPageFactory
                 $entry->body,
                 [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub]
             ) : null,
-            'summary' => $entry->getShortDesc().' '.implode(
+            'summary' => $entry->getShortTitle().' '.implode(
                 ' ',
                 array_map(fn ($val) => '#'.$val, $tags)
             ),
