@@ -34,13 +34,6 @@
         {#        <script type="application/json" id="mercure-url">{{ mercure()|raw }}</script> #}
         <script type="application/json" id="mercure-url">{{- 'https://' ~ kbin_domain() ~ '/.well-known/mercure' }}</script>
         {% endif %}
-        <script>
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register(
-                    '/sw.js'
-                );
-            }
-        </script>
     {% endblock %}
 </head>
 <body class="{{ html_classes(app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_THEME'))
