@@ -33,11 +33,13 @@ class ApObjectExtractor
             // markdown source isn't found but object's content is specified
             // to be markdown, also return them
             return $content;
-        } else {
+        } elseif ($content && \is_string($content)) {
             // assuming default content mediaType of text/html,
             // returning html -> markdown conversion of content
             return $this->markdownConverter->convert($content);
         }
+
+        return null;
     }
 
     public function getExternalMediaBody(array $object): ?string
