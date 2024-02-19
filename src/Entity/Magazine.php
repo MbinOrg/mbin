@@ -69,6 +69,12 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public ?string $customCss = null;
     #[Column(type: 'datetimetz', nullable: true)]
     public ?\DateTime $lastActive = null;
+    /**
+     * @var \DateTime|null this is set if this is a remote magazine.
+     *                     This is the last time we had an update from the origin of the magazine
+     */
+    #[Column(type: 'datetimetz', nullable: true)]
+    public ?\DateTime $lastOriginUpdate = null;
     #[Column(type: 'datetimetz', nullable: true)]
     public ?\DateTime $markedForDeletionAt = null;
     #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
