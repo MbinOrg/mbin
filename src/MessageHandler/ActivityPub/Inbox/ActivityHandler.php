@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\MessageHandler\ActivityPub\Inbox;
 
+use App\Entity\Magazine;
 use App\Entity\User;
 use App\Exception\InboxForwardingException;
 use App\Message\ActivityPub\Inbox\ActivityMessage;
@@ -20,6 +21,7 @@ use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\SignatureValidator;
 use App\Service\ActivityPubManager;
 use App\Service\SettingsManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -28,6 +30,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 readonly class ActivityHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private SignatureValidator $signatureValidator,
         private SettingsManager $settingsManager,
         private MessageBusInterface $bus,
@@ -89,6 +92,12 @@ readonly class ActivityHandler
         }
 
         if ('Announce' === $payload['type']) {
+            $actor = $this->manager->findActorOrCreate($payload['actor']);
+            if ($actor instanceof Magazine) {
+                $actor->lastOriginUpdate = new \DateTime();
+                $this->entityManager->persist($actor);
+                $this->entityManager->flush();
+            }
             if (\is_array($payload['object'])) {
                 $payload = $payload['object'];
             }
