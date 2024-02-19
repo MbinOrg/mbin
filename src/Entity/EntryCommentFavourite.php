@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 class EntryCommentFavourite extends Favourite
 {
     #[ManyToOne(targetEntity: EntryComment::class, inversedBy: 'favourites')]
-    #[JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?EntryComment $entryComment = null;
 
     public function __construct(User $user, EntryComment $comment)

@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
 
-/**
- * @ORM\Entity()
- */
+#[Entity]
 class EntryMentionedNotification extends Notification
 {
-    /**
-     * @ORM\ManyToOne(targetEntity="Entry", inversedBy="notifications")
-     */
+    #[ManyToOne(targetEntity: Entry::class, inversedBy: 'notifications')]
     public ?Entry $entry;
 
     public function __construct(User $receiver, Entry $entry)
