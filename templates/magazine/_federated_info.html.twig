@@ -10,7 +10,7 @@
 
     {% if not magazine_has_local_subscribers(magazine) %}
         {# Also show a warning if we're not actively receiving updates #}
-        {% set lastActive = magazine.lastActive|date('U') %}
+        {% set lastActive = magazine.lastOriginUpdate|date('U') %}
         <div class="alert alert__info">
             {% if lastActive %}
                 {% set currentTime = "now"|date('U') %}
