@@ -10,11 +10,11 @@
 
     {% if not magazine_has_local_subscribers(magazine) %}
         {# Also show a warning if we're not actively receiving updates #}
-        {% set lastActive = magazine.lastOriginUpdate|date('U') %}
+        {% set lastOriginUpdate = magazine.lastOriginUpdate %}
         <div class="alert alert__info">
-            {% if lastActive %}
+            {% if lastOriginUpdate is not null %}
                 {% set currentTime = "now"|date('U') %}
-                {% set secondsDifference = currentTime - lastActive %}
+                {% set secondsDifference = currentTime - (lastOriginUpdate|date('U')) %}
                 {% set daysDifference = (secondsDifference / 86400)|round(0, 'floor') %}
                 <p>{{ 'disconnected_magazine_info'|trans({'%days%': daysDifference}) }}</p>
             {% else %}
