@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 
 #[Entity]
 class PostMentionedNotification extends Notification
 {
     #[ManyToOne(targetEntity: Post::class, inversedBy: 'notifications')]
+    #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?Post $post;
 
     public function __construct(User $receiver, Post $post)
