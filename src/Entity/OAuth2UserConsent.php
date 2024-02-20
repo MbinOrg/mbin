@@ -167,7 +167,7 @@ class OAuth2UserConsent
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'oAuth2UserConsents')]
-    #[ORM\JoinColumn(name: 'user_id', nullable: false)]
+    #[ORM\JoinColumn(name: 'user_id', nullable: false, onDelete: 'CASCADE')]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'oAuth2UserConsents')]
