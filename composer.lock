@@ -6021,16 +6021,16 @@
         },
         {
             "name": "pagerfanta/doctrine-collections-adapter",
-            "version": "v4.2.0",
+            "version": "v4.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Pagerfanta/doctrine-collections-adapter.git",
-                "reference": "ef2a7e14d24b3c99eda490aa5b44332cabfe3141"
+                "reference": "d50fb0cb5c14a6d75ca661d16114c9de094e2bca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Pagerfanta/doctrine-collections-adapter/zipball/ef2a7e14d24b3c99eda490aa5b44332cabfe3141",
-                "reference": "ef2a7e14d24b3c99eda490aa5b44332cabfe3141",
+                "url": "https://api.github.com/repos/Pagerfanta/doctrine-collections-adapter/zipball/d50fb0cb5c14a6d75ca661d16114c9de094e2bca",
+                "reference": "d50fb0cb5c14a6d75ca661d16114c9de094e2bca",
                 "shasum": ""
             },
             "require": {
@@ -6039,7 +6039,7 @@
                 "php": "^8.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "^10.2"
+                "phpunit/phpunit": "^10.3"
             },
             "type": "library",
             "autoload": {
@@ -6061,31 +6061,31 @@
                 "pagerfanta"
             ],
             "support": {
-                "source": "https://github.com/Pagerfanta/doctrine-collections-adapter/tree/v4.2.0"
+                "source": "https://github.com/Pagerfanta/doctrine-collections-adapter/tree/v4.3.1"
             },
-            "time": "2023-07-10T22:06:56+00:00"
+            "time": "2024-02-01T01:28:44+00:00"
         },
         {
             "name": "pagerfanta/doctrine-dbal-adapter",
-            "version": "v4.2.0",
+            "version": "v4.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Pagerfanta/doctrine-dbal-adapter.git",
-                "reference": "ec5bd50cd11c94ef75f84c241d85f153fc6e4704"
+                "reference": "dccccbc0efb41caad13508d28b66105b735a3c79"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Pagerfanta/doctrine-dbal-adapter/zipball/ec5bd50cd11c94ef75f84c241d85f153fc6e4704",
-                "reference": "ec5bd50cd11c94ef75f84c241d85f153fc6e4704",
+                "url": "https://api.github.com/repos/Pagerfanta/doctrine-dbal-adapter/zipball/dccccbc0efb41caad13508d28b66105b735a3c79",
+                "reference": "dccccbc0efb41caad13508d28b66105b735a3c79",
                 "shasum": ""
             },
             "require": {
-                "doctrine/dbal": "^3.5",
+                "doctrine/dbal": "^3.5 || ^4.0",
                 "pagerfanta/core": "^3.7 || ^4.0",
                 "php": "^8.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "^10.2"
+                "phpunit/phpunit": "^10.3"
             },
             "type": "library",
             "autoload": {
@@ -6107,32 +6107,32 @@
                 "pagerfanta"
             ],
             "support": {
-                "source": "https://github.com/Pagerfanta/doctrine-dbal-adapter/tree/v4.2.0"
+                "source": "https://github.com/Pagerfanta/doctrine-dbal-adapter/tree/v4.3.1"
             },
-            "time": "2023-07-10T22:06:56+00:00"
+            "time": "2024-01-27T17:14:45+00:00"
         },
         {
             "name": "pagerfanta/doctrine-orm-adapter",
-            "version": "v4.2.0",
+            "version": "v4.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Pagerfanta/doctrine-orm-adapter.git",
-                "reference": "81cd6b61449469ca511cb14df6d5ecbf9331d695"
+                "reference": "faf3d8841e2dff37e3fddd928813a5dd6bc0d40a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Pagerfanta/doctrine-orm-adapter/zipball/81cd6b61449469ca511cb14df6d5ecbf9331d695",
-                "reference": "81cd6b61449469ca511cb14df6d5ecbf9331d695",
+                "url": "https://api.github.com/repos/Pagerfanta/doctrine-orm-adapter/zipball/faf3d8841e2dff37e3fddd928813a5dd6bc0d40a",
+                "reference": "faf3d8841e2dff37e3fddd928813a5dd6bc0d40a",
                 "shasum": ""
             },
             "require": {
-                "doctrine/orm": "^2.14",
+                "doctrine/orm": "^2.14 || ^3.0",
                 "pagerfanta/core": "^3.7 || ^4.0",
                 "php": "^8.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "^10.2",
-                "symfony/cache": "^5.4 || ^6.2"
+                "phpunit/phpunit": "^10.3",
+                "symfony/cache": "^5.4 || ^6.3 || ^7.0"
             },
             "type": "library",
             "autoload": {
@@ -6154,22 +6154,22 @@
                 "pagerfanta"
             ],
             "support": {
-                "source": "https://github.com/Pagerfanta/doctrine-orm-adapter/tree/v4.2.0"
+                "source": "https://github.com/Pagerfanta/doctrine-orm-adapter/tree/v4.3.1"
             },
-            "time": "2023-07-10T22:06:56+00:00"
+            "time": "2024-01-27T17:20:48+00:00"
         },
         {
             "name": "pagerfanta/twig",
-            "version": "v4.2.0",
+            "version": "v4.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Pagerfanta/twig.git",
-                "reference": "7284d6ff3537e42c36d94bfba8659d7791102853"
+                "reference": "0a372f49d2bdca376f3bbbb1cebacafa7d845765"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Pagerfanta/twig/zipball/7284d6ff3537e42c36d94bfba8659d7791102853",
-                "reference": "7284d6ff3537e42c36d94bfba8659d7791102853",
+                "url": "https://api.github.com/repos/Pagerfanta/twig/zipball/0a372f49d2bdca376f3bbbb1cebacafa7d845765",
+                "reference": "0a372f49d2bdca376f3bbbb1cebacafa7d845765",
                 "shasum": ""
             },
             "require": {
@@ -6178,7 +6178,7 @@
                 "twig/twig": "^2.13 || ^3.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^10.2"
+                "phpunit/phpunit": "^10.3"
             },
             "type": "library",
             "autoload": {
@@ -6198,9 +6198,9 @@
                 "pagerfanta"
             ],
             "support": {
-                "source": "https://github.com/Pagerfanta/twig/tree/v4.2.0"
+                "source": "https://github.com/Pagerfanta/twig/tree/v4.3.1"
             },
-            "time": "2023-07-10T22:06:56+00:00"
+            "time": "2023-09-28T23:06:30+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
