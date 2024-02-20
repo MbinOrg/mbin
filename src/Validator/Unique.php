@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Validator;
 
-use Attribute;
 use Symfony\Component\Validator\Attribute\HasNamedArguments;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Exception\InvalidOptionsException;
