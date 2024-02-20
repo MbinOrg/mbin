@@ -151,84 +151,60 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public ?string $customCss = null;
     #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
     public bool $ignoreMagazinesCustomCss = false;
-    #[OneToMany(mappedBy: 'user', targetEntity: Moderator::class)]
+    #[OneToMany(mappedBy: 'user', targetEntity: Moderator::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $moderatorTokens;
-    #[OneToMany(mappedBy: 'user', targetEntity: MagazineOwnershipRequest::class)]
+    #[OneToMany(mappedBy: 'user', targetEntity: MagazineOwnershipRequest::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $magazineOwnershipRequests;
-    #[OneToMany(mappedBy: 'user', targetEntity: ModeratorRequest::class)]
+    #[OneToMany(mappedBy: 'user', targetEntity: ModeratorRequest::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $moderatorRequests;
-    #[OneToMany(mappedBy: 'user', targetEntity: Entry::class)]
+    #[OneToMany(mappedBy: 'user', targetEntity: Entry::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $entries;
-    #[OneToMany(mappedBy: 'user', targetEntity: EntryVote::class, fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'user', targetEntity: EntryVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $entryVotes;
-    #[OneToMany(mappedBy: 'user', targetEntity: EntryComment::class, fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'user', targetEntity: EntryComment::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $entryComments; // @todo
-    #[OneToMany(mappedBy: 'user', targetEntity: EntryCommentVote::class, fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'user', targetEntity: EntryCommentVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $entryCommentVotes;
-    #[OneToMany(mappedBy: 'user', targetEntity: Post::class, fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'user', targetEntity: Post::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $posts;
-    #[OneToMany(mappedBy: 'user', targetEntity: PostVote::class, fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'user', targetEntity: PostVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $postVotes;
-    #[OneToMany(mappedBy: 'user', targetEntity: PostComment::class, fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'user', targetEntity: PostComment::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $postComments;
-    #[OneToMany(mappedBy: 'user', targetEntity: PostCommentVote::class, fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'user', targetEntity: PostCommentVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $postCommentVotes;
-    #[OneToMany(mappedBy: 'user', targetEntity: MagazineSubscription::class, cascade: [
-        'persist',
-        'remove',
-    ], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'user', targetEntity: MagazineSubscription::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $subscriptions;
-    #[OneToMany(mappedBy: 'user', targetEntity: DomainSubscription::class, cascade: [
-        'persist',
-        'remove',
-    ], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'user', targetEntity: DomainSubscription::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $subscribedDomains;
-    #[OneToMany(mappedBy: 'follower', targetEntity: UserFollow::class, cascade: [
-        'persist',
-        'remove',
-    ], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'follower', targetEntity: UserFollow::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $follows;
-    #[OneToMany(mappedBy: 'following', targetEntity: UserFollow::class, cascade: [
-        'persist',
-        'remove',
-    ], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'following', targetEntity: UserFollow::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $followers;
-    #[OneToMany(mappedBy: 'blocker', targetEntity: UserBlock::class, cascade: [
-        'persist',
-        'remove',
-    ], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'blocker', targetEntity: UserBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $blocks;
-    #[OneToMany(mappedBy: 'blocked', targetEntity: UserBlock::class, cascade: [
-        'persist',
-        'remove',
-    ], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'blocked', targetEntity: UserBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public ?Collection $blockers;
-    #[OneToMany(mappedBy: 'user', targetEntity: MagazineBlock::class, cascade: [
-        'persist',
-        'remove',
-    ], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'user', targetEntity: MagazineBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $blockedMagazines;
-    #[OneToMany(mappedBy: 'user', targetEntity: DomainBlock::class, cascade: [
-        'persist',
-        'remove',
-    ], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'user', targetEntity: DomainBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $blockedDomains;
     #[OneToMany(mappedBy: 'reporting', targetEntity: Report::class, cascade: ['persist'], fetch: 'EXTRA_LAZY')]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $reports;
-    #[OneToMany(mappedBy: 'user', targetEntity: Favourite::class, cascade: ['persist'], fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'user', targetEntity: Favourite::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $favourites;
-    #[OneToMany(mappedBy: 'reported', targetEntity: Report::class, cascade: ['persist'], fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'reported', targetEntity: Report::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $violations;
-    #[OneToMany(mappedBy: 'user', targetEntity: Notification::class, cascade: ['persist'], fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'user', targetEntity: Notification::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $notifications;
     #[Id]
