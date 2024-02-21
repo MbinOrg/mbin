@@ -7,7 +7,7 @@
         <img class="image-inline"
              width="30" height="30"
              loading="lazy"
-             src="{{ asset(user.avatar.filePath ?? "") | imagine_filter('avatar_thumb') }}"
+             src="{{ user.avatar.filePath ? (asset(user.avatar.filePath) | imagine_filter('avatar_thumb')) : user.avatar.sourceUrl }}"
              alt="{{ user.username ~' '~ 'avatar'|trans|lower }}">
     {% endif %}
     {{ user.apPreferredUsername ?? user.username|username -}}
