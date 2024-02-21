@@ -92,6 +92,14 @@ class ChainActivityHandler
         $object = end($chain);
 
         if (!empty($object)) {
+            if (\is_string($object)) {
+                if (false !== filter_var($object, FILTER_VALIDATE_URL)) {
+                    $object = $this->client->getActivityObject($object);
+                } else {
+                    // if the object is a string, but not an url it is not valid and therefore nothing should be done
+                    return;
+                }
+            }
             $createdObject = match ($this->getType($object)) {
                 'Question', 'Note' => $this->note->create($object),
                 'Page' => $this->page->create($object),
