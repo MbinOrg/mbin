@@ -81,6 +81,8 @@ class EntryFrontController extends AbstractController
 
             $content_tmpl = 'post/';
             $content_key = 'posts';
+        } else {
+            throw new LogicException('Invalid content filter '.$content);
         }
 
         if ($request->isXmlHttpRequest()) {
