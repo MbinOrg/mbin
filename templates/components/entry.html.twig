@@ -137,7 +137,7 @@
                             </li>
                         {% endif %}
                         {% if entry.hasEmbed %}
-                            {% set image = entry.image ? uploaded_asset(entry.image) : '' %}
+                            {% set image = entry.image ? uploaded_asset(entry.image) : null %}
                             <li>
                                 <button class="show-preview"
                                         data-action="preview#show"
