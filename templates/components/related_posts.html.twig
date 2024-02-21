@@ -7,9 +7,8 @@
                     <div class="row">
                         {% if post.image %}
                                 <img loading="lazy"
-                                    src="{{ asset(post.image.filePath) | imagine_filter('post_thumb') }}"
+                                    src="{{ post.image.filePath ? (asset(post.image.filePath)|imagine_filter('post_thumb')) : post.image.sourceUrl }}"
                                     alt="{{ post.image.alt|default('') }}">
-                            </a>
                         {% endif %}
                         {% if post.body %}
                             <blockquote class="content">
