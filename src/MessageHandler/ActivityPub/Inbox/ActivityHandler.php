@@ -12,6 +12,7 @@ use App\Message\ActivityPub\Inbox\AddMessage;
 use App\Message\ActivityPub\Inbox\AnnounceMessage;
 use App\Message\ActivityPub\Inbox\CreateMessage;
 use App\Message\ActivityPub\Inbox\DeleteMessage;
+use App\Message\ActivityPub\Inbox\DislikeMessage;
 use App\Message\ActivityPub\Inbox\FlagMessage;
 use App\Message\ActivityPub\Inbox\FollowMessage;
 use App\Message\ActivityPub\Inbox\LikeMessage;
@@ -103,7 +104,7 @@ readonly class ActivityHandler
             }
         }
 
-        $this->logger->debug("Got activity message of type '{$payload['type']}'");
+        $this->logger->debug('Got activity message of type {type}: {message}', ['type' => $payload['type'], 'message' => json_encode($payload)]);
 
         switch ($payload['type']) {
             case 'Create':
@@ -120,6 +121,9 @@ readonly class ActivityHandler
                 break;
             case 'Like':
                 $this->bus->dispatch(new LikeMessage($payload));
+                break;
+            case 'Dislike':
+                $this->bus->dispatch(new DislikeMessage($payload));
                 break;
             case 'Follow':
                 $this->bus->dispatch(new FollowMessage($payload));
@@ -157,22 +161,19 @@ readonly class ActivityHandler
             $type = $payload['type'];
         }
 
-        if ('Follow' === $type) {
-            $this->bus->dispatch(new FollowMessage($payload));
-
-            return;
-        }
-
-        if ('Announce' === $type) {
-            $this->bus->dispatch(new AnnounceMessage($payload));
-
-            return;
-        }
-
-        if ('Like' === $type) {
-            $this->bus->dispatch(new LikeMessage($payload));
-
-            return;
+        switch ($type) {
+            case 'Follow':
+                $this->bus->dispatch(new FollowMessage($payload));
+                break;
+            case 'Announce':
+                $this->bus->dispatch(new AnnounceMessage($payload));
+                break;
+            case 'Like':
+                $this->bus->dispatch(new LikeMessage($payload));
+                break;
+            case 'Dislike':
+                $this->bus->dispatch(new DislikeMessage($payload));
+                break;
         }
     }
 
