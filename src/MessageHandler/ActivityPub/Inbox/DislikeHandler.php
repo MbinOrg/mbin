@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\MessageHandler\ActivityPub\Inbox;
 
+use App\Entity\Contracts\VotableInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Entity\User;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
-use App\Message\ActivityPub\Inbox\LikeMessage;
-use App\Message\ActivityPub\Outbox\AnnounceLikeMessage;
+use App\Message\ActivityPub\Inbox\DislikeMessage;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPubManager;
@@ -21,26 +22,26 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-class LikeHandler
+class DislikeHandler
 {
     public function __construct(
         private readonly ActivityPubManager $activityPubManager,
-        private readonly VoteManager $voteManager,
         private readonly ApActivityRepository $repository,
         private readonly EntityManagerInterface $entityManager,
         private readonly MessageBusInterface $bus,
         private readonly FavouriteManager $manager,
         private readonly ApHttpClient $apHttpClient,
+        private readonly VoteManager $voteManager,
     ) {
     }
 
-    public function __invoke(LikeMessage $message): void
+    public function __invoke(DislikeMessage $message)
     {
         if (!isset($message->payload['type'])) {
             return;
         }
 
-        if ('Like' === $message->payload['type']) {
+        if ('Dislike' === $message->payload['type']) {
             $activity = $this->repository->findByObjectId($message->payload['object']);
 
             if ($activity) {
@@ -49,7 +50,7 @@ class LikeHandler
                 $object = $this->apHttpClient->getActivityObject($message->payload['object']);
 
                 if (!empty($object)) {
-                    $this->bus->dispatch(new ChainActivityMessage([$object], null, null, $message->payload));
+                    $this->bus->dispatch(new ChainActivityMessage([$object], null, null, null, $message->payload));
                 }
 
                 return;
@@ -58,25 +59,19 @@ class LikeHandler
             $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
             // Check if actor and entity aren't empty
             if (!empty($actor) && !empty($entity)) {
-                $this->manager->toggle($actor, $entity, FavouriteManager::TYPE_LIKE);
+                if ($actor instanceof User && ($entity instanceof Entry || $entity instanceof EntryComment || $entity instanceof Post || $entity instanceof PostComment)) {
+                    $this->voteManager->vote(VotableInterface::VOTE_DOWN, $entity, $actor);
+                }
             }
         } elseif ('Undo' === $message->payload['type']) {
-            if ('Like' === $message->payload['object']['type']) {
+            if ('Dislike' === $message->payload['object']['type']) {
                 $activity = $this->repository->findByObjectId($message->payload['object']['object']);
                 $entity = $this->entityManager->getRepository($activity['type'])->find((int) $activity['id']);
                 $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
                 // Check if actor and entity aren't empty
-                if (!empty($actor) && !empty($entity)) {
-                    $this->manager->toggle($actor, $entity, FavouriteManager::TYPE_UNLIKE);
+                if ($actor instanceof User && ($entity instanceof Entry || $entity instanceof EntryComment || $entity instanceof Post || $entity instanceof PostComment)) {
                     $this->voteManager->removeVote($entity, $actor);
                 }
-            }
-        }
-
-        if (isset($entity) and isset($actor) and ($entity instanceof Entry or $entity instanceof EntryComment or $entity instanceof Post or $entity instanceof PostComment)) {
-            if (!$entity->magazine->apId and $actor->apId and 'random' !== $entity->magazine->name) {
-                // local magazine, but remote user. Don't announce for random magazine
-                $this->bus->dispatch(new AnnounceLikeMessage($actor->getId(), $entity->getId(), \get_class($entity), 'Undo' === $message->payload['type']));
             }
         }
     }
