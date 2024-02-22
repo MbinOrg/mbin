@@ -24,10 +24,10 @@ class Vote implements VoteInterface
     #[Column(type: 'integer', nullable: false)]
     public int $choice;
     #[ManyToOne(targetEntity: User::class)]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $user;
     #[ManyToOne(targetEntity: User::class)]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $author;
     #[Id]
     #[GeneratedValue]
