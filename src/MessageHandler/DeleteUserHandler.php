@@ -46,12 +46,9 @@ class DeleteUserHandler
         $this->sendDeleteMessages();
         $this->userManager->detachAvatar($this->user);
         $this->userManager->detachCover($this->user);
-        $images = $this->userManager->getAllImagesOfUser($this->user);
+        $images = $this->userManager->getAllImageFilePathsOfUser($this->user);
         foreach ($images as $image) {
-            if ($image->filePath) {
-                $this->imageManager->remove($image->filePath);
-            }
-            $this->entityManager->remove($image);
+            $this->imageManager->remove($image);
         }
 
         // delete the original user, so all the content is cascade deleted

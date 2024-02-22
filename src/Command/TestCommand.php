@@ -39,7 +39,7 @@ class TestCommand extends Command
         $user = $this->userRepository->findOneByUsername($userArg);
         if ($user) {
             print_r($this->userManager->getAllInboxesOfInteractions($user));
-            print_r($this->userManager->getAllImagesOfUser($user));
+            print_r($this->userManager->getAllImageFilePathsOfUser($user));
         } else {
             echo "there is no such user\n";
         }

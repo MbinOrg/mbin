@@ -6,11 +6,6 @@ namespace App\Service;
 
 use App\DTO\UserDto;
 use App\Entity\Contracts\VisibilityInterface;
-use App\Entity\Entry;
-use App\Entity\EntryComment;
-use App\Entity\Image;
-use App\Entity\Post;
-use App\Entity\PostComment;
 use App\Entity\User;
 use App\Entity\UserFollowRequest;
 use App\Event\User\UserBlockEvent;
@@ -497,38 +492,26 @@ readonly class UserManager
     }
 
     /**
-     * @return Image[]
+     * @return string[]
      */
-    public function getAllImagesOfUser(User $user): array
+    public function getAllImageFilePathsOfUser(User $user): array
     {
         $sql = '
-            SELECT i1 FROM entry e INNER JOIN image i1 ON e.image_id = i1.id WHERE user_id = :userId
+            SELECT i1.file_path FROM entry e INNER JOIN image i1 ON e.image_id = i1.id WHERE user_id = :userId AND i1.file_path IS NOT NULL
             UNION DISTINCT 
-            SELECT i2 FROM post p INNER JOIN image i2 ON p.image_id = i2.id WHERE user_id = :userId
+            SELECT i2.file_path FROM post p INNER JOIN image i2 ON p.image_id = i2.id WHERE user_id = :userId AND i2.file_path IS NOT NULL
             UNION DISTINCT 
-            SELECT i3 FROM entry_comment ec INNER JOIN image i3 ON ec.image_id = i3.id WHERE user_id = :userId
+            SELECT i3.file_path FROM entry_comment ec INNER JOIN image i3 ON ec.image_id = i3.id WHERE user_id = :userId AND i3.file_path IS NOT NULL
             UNION DISTINCT 
-            SELECT i4 FROM post_comment pc INNER JOIN image i4 ON pc.image_id = i4.id WHERE user_id = :userId
+            SELECT i4.file_path FROM post_comment pc INNER JOIN image i4 ON pc.image_id = i4.id WHERE user_id = :userId AND i4.file_path IS NOT NULL
         ';
-
-        $dql = '
-            SELECT i1 FROM '.Entry::class.' e INNER JOIN '.Image::class.' i1 ON e.imageId = i1.id WHERE userId = :userId
-            UNION DISTINCT 
-            SELECT i2 FROM '.Post::class.' p INNER JOIN '.Image::class.' i2 ON p.imageId = i2.id WHERE userId = :userId
-            UNION DISTINCT 
-            SELECT i3 FROM '.EntryComment::class.' ec INNER JOIN '.Image::class.' i3 ON ec.imageId = i3.id WHERE userId = :userId
-            UNION DISTINCT 
-            SELECT i4 FROM '.PostComment::class.' pc INNER JOIN '.Image::class.' i4 ON pc.imageId = i4.id WHERE userId = :userId
-        ';
-
         $rsm = new ResultSetMapping();
-        $rsm->addEntityResult(Image::class, 'i1');
-        $rsm->addEntityResult(Image::class, 'i2');
-        $rsm->addEntityResult(Image::class, 'i3');
-        $rsm->addEntityResult(Image::class, 'i4');
+        $rsm->addScalarResult('file_path', 0);
 
-        return $this->entityManager->createQuery($dql)
+        $result = $this->entityManager->createNativeQuery($sql, $rsm)
             ->setParameter(':userId', $user->getId())
-            ->getResult();
+            ->getScalarResult();
+
+        return array_filter(array_map(fn ($row) => $row[0], $result));
     }
 }
