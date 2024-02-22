@@ -6,6 +6,11 @@ namespace App\Service;
 
 use App\DTO\UserDto;
 use App\Entity\Contracts\VisibilityInterface;
+use App\Entity\Entry;
+use App\Entity\EntryComment;
+use App\Entity\Image;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use App\Entity\User;
 use App\Entity\UserFollowRequest;
 use App\Event\User\UserBlockEvent;
@@ -23,6 +28,7 @@ use App\Repository\UserFollowRequestRepository;
 use App\Security\EmailVerifier;
 use App\Service\ActivityPub\KeysGenerator;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -228,9 +234,9 @@ readonly class UserManager
         return $user;
     }
 
-    public function delete(User $user, bool $purge = false, bool $contentOnly = false): void
+    public function delete(User $user): void
     {
-        $this->bus->dispatch(new DeleteUserMessage($user->getId(), $purge, $contentOnly));
+        $this->bus->dispatch(new DeleteUserMessage($user->getId()));
     }
 
     public function createDto(User $user): UserDto
@@ -366,5 +372,163 @@ readonly class UserManager
                 return $this->reputationRepository->getUserReputationTotal($user);
             }
         );
+    }
+
+    public function getAllInboxesOfInteractions(User $user): array
+    {
+        $sql = '
+            SELECT res.ap_inbox_url FROM magazine_subscription
+                INNER JOIN public.magazine res ON magazine_subscription.magazine_id = res.id
+                INNER JOIN public.user u on magazine_subscription.user_id = u.id
+                    WHERE u.id = :id
+            UNION DISTINCT
+                -- users followed by the user
+                SELECT res.ap_inbox_url FROM user_follow
+                    INNER JOIN public.user res on user_follow.follower_id = res.id
+                        WHERE user_follow.following_id = :id
+            UNION DISTINCT
+                -- users following the user
+                SELECT res.ap_inbox_url FROM user_follow
+                    INNER JOIN public.user res on user_follow.following_id = res.id
+                        WHERE user_follow.follower_id = :id
+            UNION DISTINCT
+                -- magazines the user posted microblogs to
+                SELECT res.ap_inbox_url FROM post
+                    INNER JOIN public.magazine res on post.magazine_id = res.id
+                        WHERE post.user_id = :id AND res.ap_id IS NOT NULL
+            UNION DISTINCT
+                -- magazines the user posted threads to
+                SELECT res.ap_inbox_url FROM entry
+                    INNER JOIN public.magazine res on entry.magazine_id = res.id
+                        WHERE entry.user_id = :id AND res.ap_id IS NOT NULL
+            UNION DISTINCT
+                -- magazine the user posted microblog comments to
+                SELECT res.ap_inbox_url FROM post_comment
+                    INNER JOIN public.magazine res on post_comment.magazine_id = res.id
+                        WHERE post_comment.user_id = :id AND res.ap_id IS NOT NULL
+            UNION DISTINCT
+                -- author of micro blogs the user commented on
+                SELECT res.ap_inbox_url FROM post_comment
+                    INNER JOIN public.post p on post_comment.post_id = p.id
+                    INNER JOIN public.user res on p.user_id = res.id
+                        WHERE post_comment.user_id = :id AND res.ap_id IS NOT NULL
+            UNION DISTINCT
+                -- author of the microblog comment the user commented on
+                SELECT res.ap_inbox_url FROM post_comment pc1
+                    INNER JOIN post_comment pc2 ON pc1.parent_id=pc2.id
+                    INNER JOIN public.user res ON pc2.user_id=res.id
+                        WHERE pc1.user_id = :id AND res.ap_id IS NOT NULL
+            UNION DISTINCT
+                -- magazine the user posted thread comments to
+                SELECT res.ap_inbox_url FROM entry_comment
+                    INNER JOIN public.magazine res on entry_comment.magazine_id = res.id
+                        WHERE entry_comment.user_id = :id AND res.ap_id IS NOT NULL
+            UNION DISTINCT
+                -- author of threads the user commented on
+                SELECT res.ap_inbox_url FROM entry_comment
+                    INNER JOIN public.entry e on entry_comment.entry_id = e.id
+                    INNER JOIN public.user res on e.user_id = res.id
+                        WHERE entry_comment.user_id = :id AND res.ap_id IS NOT NULL
+            UNION DISTINCT
+                -- author of thread comments the user commented on
+                SELECT res.ap_inbox_url FROM entry_comment ec1
+                    INNER JOIN entry_comment ec2 ON ec1.parent_id=ec2.id
+                    INNER JOIN public.user res ON ec2.user_id=res.id
+                        WHERE ec1.user_id = :id AND res.ap_id IS NOT NULL
+            
+            UNION DISTINCT
+                -- author of thread the user voted on
+                SELECT res.ap_inbox_url FROM entry_vote
+                    INNER JOIN public.user res on entry_vote.author_id = res.id
+                        WHERE entry_vote.user_id = :id AND res.ap_id IS NOT NULL
+            UNION DISTINCT 
+                -- magazine of thread the user voted on
+                SELECT res.ap_inbox_url FROM entry_vote
+                    INNER JOIN entry ON entry_vote.entry_id = entry.id
+                    INNER JOIN magazine res ON entry.magazine_id=res.id
+                        WHERE entry_vote.user_id = :id AND res.ap_id IS NOT NULL
+            
+            UNION DISTINCT
+                -- author of thread comment the user voted on
+                SELECT res.ap_inbox_url FROM entry_comment_vote
+                    INNER JOIN public.user res on entry_comment_vote.author_id = res.id
+                        WHERE entry_comment_vote.user_id = :id AND res.ap_id IS NOT NULL
+            UNION DISTINCT 
+                -- magazine of thread comment the user voted on
+                SELECT res.ap_inbox_url FROM entry_comment_vote
+                    INNER JOIN entry_comment ON entry_comment_vote.comment_id = entry_comment.id
+                    INNER JOIN magazine res ON entry_comment.magazine_id=res.id
+                        WHERE entry_comment_vote.user_id = :id AND res.ap_id IS NOT NULL
+            
+            UNION DISTINCT
+                -- author of microblog the user voted on
+                SELECT res.ap_inbox_url FROM post_vote
+                    INNER JOIN public.user res on post_vote.author_id = res.id
+                        WHERE post_vote.user_id = :id AND res.ap_id IS NOT NULL
+            UNION DISTINCT 
+                -- magazine of microblog the user voted on
+                SELECT res.ap_inbox_url FROM post_vote
+                    INNER JOIN entry ON post_vote.post_id = entry.id
+                    INNER JOIN magazine res ON entry.magazine_id=res.id
+                        WHERE post_vote.user_id = :id AND res.ap_id IS NOT NULL
+            
+            UNION DISTINCT
+                -- author of microblog comment the user voted on
+                SELECT res.ap_inbox_url FROM post_comment_vote
+                    INNER JOIN public.user res on post_comment_vote.author_id = res.id
+                        WHERE post_comment_vote.user_id = :id AND res.ap_id IS NOT NULL
+            UNION DISTINCT 
+                -- magazine of microblog comment the user voted on
+                SELECT res.ap_inbox_url FROM post_comment_vote
+                    INNER JOIN post_comment ON post_comment_vote.comment_id = post_comment.id
+                    INNER JOIN magazine res ON post_comment.magazine_id=res.id
+                        WHERE post_comment_vote.user_id = :id AND res.ap_id IS NOT NULL
+        ';
+
+        $rsm = new ResultSetMapping();
+        $rsm->addScalarResult('ap_inbox_url', 0);
+
+        $result = $this->entityManager->createNativeQuery($sql, $rsm)
+            ->setParameter(':id', $user->getId())
+            // ->execute([":id" => $user->getId()]);
+            ->getScalarResult();
+
+        return array_filter(array_map(fn ($row) => $row[0], $result));
+    }
+
+    /**
+     * @return Image[]
+     */
+    public function getAllImagesOfUser(User $user): array
+    {
+        $sql = '
+            SELECT i1 FROM entry e INNER JOIN image i1 ON e.image_id = i1.id WHERE user_id = :userId
+            UNION DISTINCT 
+            SELECT i2 FROM post p INNER JOIN image i2 ON p.image_id = i2.id WHERE user_id = :userId
+            UNION DISTINCT 
+            SELECT i3 FROM entry_comment ec INNER JOIN image i3 ON ec.image_id = i3.id WHERE user_id = :userId
+            UNION DISTINCT 
+            SELECT i4 FROM post_comment pc INNER JOIN image i4 ON pc.image_id = i4.id WHERE user_id = :userId
+        ';
+
+        $dql = '
+            SELECT i1 FROM '.Entry::class.' e INNER JOIN '.Image::class.' i1 ON e.imageId = i1.id WHERE userId = :userId
+            UNION DISTINCT 
+            SELECT i2 FROM '.Post::class.' p INNER JOIN '.Image::class.' i2 ON p.imageId = i2.id WHERE userId = :userId
+            UNION DISTINCT 
+            SELECT i3 FROM '.EntryComment::class.' ec INNER JOIN '.Image::class.' i3 ON ec.imageId = i3.id WHERE userId = :userId
+            UNION DISTINCT 
+            SELECT i4 FROM '.PostComment::class.' pc INNER JOIN '.Image::class.' i4 ON pc.imageId = i4.id WHERE userId = :userId
+        ';
+
+        $rsm = new ResultSetMapping();
+        $rsm->addEntityResult(Image::class, 'i1');
+        $rsm->addEntityResult(Image::class, 'i2');
+        $rsm->addEntityResult(Image::class, 'i3');
+        $rsm->addEntityResult(Image::class, 'i4');
+
+        return $this->entityManager->createQuery($dql)
+            ->setParameter(':userId', $user->getId())
+            ->getResult();
     }
 }

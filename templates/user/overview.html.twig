@@ -54,33 +54,11 @@
                         </button>
                     </form>
                     <hr>
-                    <form action="{{ path('user_delete_content', {username: user.username}) }}" method="POST"
-                          data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
-                        <input type="hidden" name="token" value="{{ csrf_token('user_delete_content') }}">
-                        <button type="submit" class="btn btn__secondary" title="{{ 'delete_content_desc'|trans }}">
-                            <i class="fa fa-dumpster" aria-hidden="true"></i> <span>{{ 'delete_content'|trans }}</span>
-                        </button>
-                    </form>
-                    <form action="{{ path('user_purge_content', {username: user.username}) }}" method="POST"
-                          data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
-                        <input type="hidden" name="token" value="{{ csrf_token('user_purge_content') }}">
-                        <button type="submit" class="btn btn__danger" title="{{ 'purge_content_desc'|trans }}">
-                            <i class="fa-solid fa-dumpster-fire" aria-hidden="true"></i> <span>{{ 'purge_content'|trans }}</span>
-                        </button>
-                    </form>
-                    <hr>
                     <form action="{{ path('user_delete_account', {username: user.username}) }}" method="POST"
                           data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                         <input type="hidden" name="token" value="{{ csrf_token('user_delete_account') }}">
                         <button type="submit" class="btn btn__secondary" title="{{ 'delete_account_desc'|trans }}">
                             <i class="fa fa-dumpster" aria-hidden="true"></i> <span>{{ 'delete_account'|trans }}</span>
-                        </button>
-                    </form>
-                    <form action="{{ path('user_purge_account', {username: user.username}) }}" method="POST"
-                          data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
-                        <input type="hidden" name="token" value="{{ csrf_token('user_purge_account') }}">
-                        <button type="submit" class="btn btn__danger" title="{{ 'purge_account_desc'|trans }}">
-                            <i class="fa-solid fa-dumpster-fire" aria-hidden="true"></i> <span>{{ 'purge_account'|trans }}</span>
                         </button>
                     </form>
                 {% endif %}

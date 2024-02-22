@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Service\ActivityPub\Wrapper;
 
 use App\Entity\Contracts\ActivityPubActivityInterface;
+use App\Entity\User;
 use App\Factory\ActivityPub\ActivityFactory;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Uid\Uuid;
 
 class DeleteWrapper
 {
@@ -40,6 +42,25 @@ class DeleteWrapper
             ],
             'to' => $item['to'],
             'cc' => $item['cc'],
+        ];
+    }
+
+    public function buildForUser(User $user): array
+    {
+        $id = Uuid::v4()->toRfc4122();
+        $userId = $this->urlGenerator->generate('ap_user', ['username' => $user->username], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        return [
+            '@context' => ActivityPubActivityInterface::CONTEXT_URL,
+            'id' => $this->urlGenerator->generate('ap_object', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL),
+            'type' => 'Delete',
+            'actor' => $userId,
+            'object' => [
+                'id' => $userId,
+                'type' => 'Tombstone',
+            ],
+            'to' => [ActivityPubActivityInterface::PUBLIC_URL],
+            'cc' => [$this->urlGenerator->generate('ap_user_followers', ['username' => $user->username])],
         ];
     }
 }
