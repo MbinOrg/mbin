@@ -108,7 +108,7 @@ class EntryFrontController extends AbstractController
         $user = $this->getUser(); // Fetch the user
         $subscription = $this->subscriptionFor($user); // Determine the subscription filter based on the user
 
-        if ($magazine) {
+        if ($name) {
             return $this->redirectToRoute('front_magazine', [
                 'name' => $name,
                 'subscription' => $subscription,
