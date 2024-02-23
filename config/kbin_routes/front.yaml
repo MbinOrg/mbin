@@ -1,10 +1,10 @@
 front:
   controller: App\Controller\Entry\EntryFrontController::front
-  defaults: { subscription: _default, sortBy: hot, time: '∞', type: all, federation: all, content: threads }
+  defaults: { subscription: def, sortBy: hot, time: '∞', type: all, federation: all, content: threads }
   path: /{subscription}/{sortBy}/{time}/{type}/{federation}/{content}
   methods: [GET]
   requirements:
-    subscription: 'sub|fav|mod|all|_default'
+    subscription: 'sub|fav|mod|all|def'
     sortBy: "%front_sort_options%"
 
 front_redirect:
@@ -57,6 +57,6 @@ posts_favourite:
 magazine_posts:
   controller: App\Controller\Entry\EntryFrontController::front_redirect
   defaults: { sortBy: hot, time: '∞', type: all, federation: all, content: microblog }
-  path: /m/{name}/microblog/{sortBy}/{time}
+  path: /m/{name}/microblog/{sortBy}/{time}/{type}/{federation}
   methods: [ GET ]
   requirements: { sortBy: "%front_sort_options%" }
