@@ -193,6 +193,14 @@ abstract class Criteria
         return $routes[$value] ?? $routes['hot'];
     }
 
+    // resolveTime() converts our internal values into ones for human presenation
+    // $reverse = true indicates converting back, from human values to internal ones
+
+    // This whole approach is a mess; this translation layer is temporary until
+    // we have time to take a pass through the whole codebase and convert so there's
+    // no such thing as multiple alternate value strings and translation layers
+    // between them. This is just a temporary measure to produce desired output
+    // until the whole layer goes away.
     public function resolveTime(?string $value, bool $reverse = false): ?string
     {
         // @todo
