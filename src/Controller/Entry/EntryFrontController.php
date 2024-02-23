@@ -39,7 +39,7 @@ class EntryFrontController extends AbstractController
             $criteria = new PostPageView($this->getPageNb($request));
             $criteria->setContent('microblog');
         } else {
-            throw new LogicException('Invalid content '.$content);
+            throw new \LogicException('Invalid content '.$content);
         }
 
         $criteria->showSortOption($criteria->resolveSort($sortBy))
@@ -58,7 +58,7 @@ class EntryFrontController extends AbstractController
             $this->denyAccessUnlessGranted('ROLE_USER');
             $criteria->favourite = true;
         } elseif ($subscription && 'all' !== $subscription) {
-            throw new LogicException('Invalid subscription filter '.$subscription);
+            throw new \LogicException('Invalid subscription filter '.$subscription);
         }
 
         if (null !== $user && 0 < \count($user->preferredLanguages)) {
@@ -77,7 +77,7 @@ class EntryFrontController extends AbstractController
             $content_tmpl = 'post/';
             $content_key = 'posts';
         } else {
-            throw new LogicException('Invalid content filter '.$content);
+            throw new \LogicException('Invalid content filter '.$content);
         }
 
         if ($request->isXmlHttpRequest()) {
@@ -153,7 +153,7 @@ class EntryFrontController extends AbstractController
             $criteria = new PostPageView($this->getPageNb($request));
             $criteria->setContent('microblog');
         } else {
-            throw new LogicException('Invalid content '.$content);
+            throw new \LogicException('Invalid content '.$content);
         }
 
         $criteria->showSortOption($criteria->resolveSort($sortBy))
@@ -174,7 +174,7 @@ class EntryFrontController extends AbstractController
             $this->denyAccessUnlessGranted('ROLE_USER');
             $criteria->favourite = true;
         } elseif ($subscription && 'all' !== $subscription) {
-            throw new LogicException('Invalid subscription filter '.$subscription);
+            throw new \LogicException('Invalid subscription filter '.$subscription);
         }
 
         $criteria->magazine = $magazine;
