@@ -1,12 +1,4 @@
-root: &root
-  controller: App\Controller\Entry\EntryFrontController::root
-  defaults: { sortBy: hot, time: '∞', type: all, federation: all, content: threads }
-  path: /_dummy_do_not_use/
-  methods: [GET]
-  requirements: { sortBy: "%front_sort_options%" }
-
 front:
-  <<: *root
   controller: App\Controller\Entry\EntryFrontController::front
   defaults: { subscription: _default, sortBy: hot, time: '∞', type: all, federation: all, content: threads }
   path: /{subscription}/{sortBy}/{time}/{type}/{federation}/{content}
@@ -16,7 +8,6 @@ front:
     sortBy: "%front_sort_options%"
 
 front_redirect:
-  <<: *root
   controller: App\Controller\Entry\EntryFrontController::front_redirect
   defaults: { sortBy: hot, time: '∞', type: all, federation: all, content: threads }
   path: /{sortBy}/{time}/{type}/{federation}/{content}
@@ -25,16 +16,17 @@ front_redirect:
     sortBy: "%front_sort_options%"
 
 front_magazine:
-  <<: *root
   controller: App\Controller\Entry\EntryFrontController::magazine
   defaults: { sortBy: hot, time: '∞', type: all, federation: all, content: threads }
   path: /m/{name}/{sortBy}/{time}/{type}/{federation}/{content}
+  methods: [GET]
+  requirements:
+    sortBy: "%front_sort_options%"
 
 
 # Microblog compatibility stuff, redirects from the old routes' URLs
 
 posts_front:
-  <<: *root
   controller: App\Controller\Entry\EntryFrontController::front_redirect
   defaults: { sortBy: hot, time: '∞', type: all, federation: all, content: microblog }
   path: /microblog/{sortBy}/{time}
@@ -42,7 +34,6 @@ posts_front:
   requirements: { sortBy: "%front_sort_options%" }
 
 posts_subscribed:
-  <<: *root
   controller: App\Controller\Entry\EntryFrontController::front_redirect
   defaults: { sortBy: hot, time: '∞', type: all, federation: all, content: microblog, subscription: 'sub' }
   path: /sub/microblog/{sortBy}/{time}
@@ -50,7 +41,6 @@ posts_subscribed:
   requirements: { sortBy: "%front_sort_options%" }
 
 posts_moderated:
-  <<: *root
   controller: App\Controller\Entry\EntryFrontController::front_redirect
   defaults: { sortBy: hot, time: '∞', type: all, federation: all, content: microblog, subscription: 'mod' }
   path: /mod/microblog/{sortBy}/{time}
@@ -58,7 +48,6 @@ posts_moderated:
   requirements: { sortBy: "%front_sort_options%" }
 
 posts_favourite:
-  <<: *root
   controller: App\Controller\Entry\EntryFrontController::front_redirect
   defaults: { sortBy: hot, time: '∞', type: all, federation: all, content: microblog, subscription: 'fav' }
   path: /fav/microblog/{sortBy}/{time}
@@ -66,7 +55,6 @@ posts_favourite:
   requirements: { sortBy: "%front_sort_options%" }
 
 magazine_posts:
-  <<: *root
   controller: App\Controller\Entry\EntryFrontController::front_redirect
   defaults: { sortBy: hot, time: '∞', type: all, federation: all, content: microblog }
   path: /m/{name}/microblog/{sortBy}/{time}

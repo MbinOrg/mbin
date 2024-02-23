@@ -24,11 +24,6 @@ class EntryFrontController extends AbstractController
     {
     }
 
-    public function root(?string $sortBy, ?string $time, ?string $type, string $federation, Request $request): Response
-    {
-        return $this->front($sortBy, $time, $type, $request->query->get('subscription'), $federation, $request);
-    }
-
     public function front(?string $sortBy, ?string $time, ?string $type, string $subscription, string $federation, string $content, Request $request): Response
     {
         $user = $this->getUser();
