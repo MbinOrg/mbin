@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller\Entry\Comment;
 
 use App\Controller\AbstractController;
-use App\Controller\User\ThemeSettingsController;
 use App\Entity\Magazine;
 use App\PageView\EntryCommentPageView;
 use App\Repository\Criteria;
