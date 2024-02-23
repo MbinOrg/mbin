@@ -28,7 +28,7 @@ class EntryFrontController extends AbstractController
     {
         $user = $this->getUser();
 
-        if ('_default' === $subscription) {
+        if ('def' === $subscription) {
             $subscription = $this->subscriptionFor($user);
         }
 
