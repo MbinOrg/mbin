@@ -13,9 +13,8 @@ class MagazineExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         private readonly Security $security,
-        MagazineSubscriptionRepository $magazineSubscriptionRepository)
+        private readonly MagazineSubscriptionRepository $magazineSubscriptionRepository)
     {
-        $this->magazineSubscriptionRepository = $magazineSubscriptionRepository;
     }
 
     public function isSubscribed(Magazine $magazine): bool
