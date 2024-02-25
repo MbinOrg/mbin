@@ -22,7 +22,7 @@ class ApObjectExtractor
         $source = $object['source'] ?? null;
 
         // object has no content nor source to extract body from
-        if (empty($content) && empty($source)) {
+        if (null === $content && null === $source) {
             return null;
         }
 
@@ -39,7 +39,7 @@ class ApObjectExtractor
             return $this->markdownConverter->convert($content);
         }
 
-        return null;
+        return '';
     }
 
     public function getExternalMediaBody(array $object): ?string
