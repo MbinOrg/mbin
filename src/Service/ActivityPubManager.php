@@ -286,7 +286,7 @@ class ActivityPubManager
             if (isset($actor['icon'])) {
                 $newImage = $this->handleImages([$actor['icon']]);
                 if ($user->avatar && $newImage !== $user->avatar) {
-                    $this->bus->dispatch(new DeleteImageMessage($user->avatar->filePath));
+                    $this->bus->dispatch(new DeleteImageMessage($user->avatar->getId()));
                 }
                 $user->avatar = $newImage;
             }
@@ -295,7 +295,7 @@ class ActivityPubManager
             if (isset($actor['image'])) {
                 $newImage = $this->handleImages([$actor['image']]);
                 if ($user->cover && $newImage !== $user->cover) {
-                    $this->bus->dispatch(new DeleteImageMessage($user->cover->filePath));
+                    $this->bus->dispatch(new DeleteImageMessage($user->cover->getId()));
                 }
                 $user->cover = $newImage;
             }
@@ -331,9 +331,12 @@ class ActivityPubManager
             try {
                 if ($tempFile = $this->imageManager->download($images[0]['url'])) {
                     $image = $this->imageRepository->findOrCreateFromPath($tempFile);
+                    $image->sourceUrl = $images[0]['url'];
                     if ($image && isset($images[0]['name'])) {
                         $image->altText = $images[0]['name'];
                     }
+                    $this->entityManager->persist($image);
+                    $this->entityManager->flush();
                 }
             } catch (\Exception $e) {
                 return null;
@@ -385,7 +388,7 @@ class ActivityPubManager
             if (isset($actor['icon'])) {
                 $newImage = $this->handleImages([$actor['icon']]);
                 if ($magazine->icon && $newImage !== $magazine->icon) {
-                    $this->bus->dispatch(new DeleteImageMessage($magazine->icon->filePath));
+                    $this->bus->dispatch(new DeleteImageMessage($magazine->icon->getId()));
                 }
                 $magazine->icon = $newImage;
             }

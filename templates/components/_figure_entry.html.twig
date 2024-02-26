@@ -5,7 +5,7 @@
     {% set lightbox_alt_id = 'thumb-alt-%s-%s'|format(entry.id, image.id) %}
 
     {% if type is same as 'image' %}
-        {% set route = is_single ? uploaded_asset(image.filePath) : entry_url(entry) %}
+        {% set route = is_single ? uploaded_asset(image) : entry_url(entry) %}
     {% elseif type is same as 'link' %}
         {% set route = is_single ? entry.url : entry_url(entry) %}
     {% endif %}
@@ -35,7 +35,7 @@
            data-description="{{ is_single_image and image.altText ? '.'~lightbox_alt_id : '' }}">
             <img class="thumb-subject"
                  loading="lazy"
-                 src="{{ asset(image.filePath)|imagine_filter('entry_thumb') }}"
+                 src="{{ image.filePath ? asset(image.filePath)|imagine_filter('entry_thumb') : image.sourceUrl }}"
                  alt="{{ image.altText }}">
         </a>
         {% if entry.isAdult %}
