@@ -95,7 +95,6 @@ class ImageRepository extends ServiceEntityRepository
 
         try {
             $this->imageManager->store($source, $filePath);
-            $this->logger->debug('stored the image');
 
             return $image;
         } catch (ImageDownloadTooLargeException $e) {
