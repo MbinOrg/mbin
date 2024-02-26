@@ -7,7 +7,7 @@
                     <div class="row">
                         {% if entry.image %}
                             <img loading="lazy"
-                                src="{{ asset(entry.image.filePath) | imagine_filter('entry_thumb') }}"
+                                src="{{ entry.image.filePath ? (asset(entry.image.filePath)|imagine_filter('entry_thumb')) : entry.image.sourceUrl }}"
                                 alt="{{ entry.image.alt|default('') }}">
                         {% endif %}
                         <blockquote class="content">

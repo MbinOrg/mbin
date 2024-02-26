@@ -60,7 +60,7 @@
 
                             {% if magazine.icon %}
                                 <img loading="lazy"
-                                    src="{{ asset(magazine.icon.filePath) | imagine_filter('avatar_thumb') }}"
+                                    src="{{ magazine.icon.filePath ? (asset(magazine.icon.filePath)|imagine_filter('avatar_thumb')) : magazine.icon.sourceUrl }}"
                                     alt="{{ magazine.name }}'s icon"
                                     class="{{ html_classes('image-inline', 'magazine-subscription-avatar', { 'onlyMobile': app.request.cookies.get(KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON) is same as V_FALSE }) }}" />
                             {% else %}

@@ -12,7 +12,7 @@
             <figure>
                 <img class="image-inline {{ magazine.isAdult ? 'image-adult' : '' }}"
                      loading="lazy"
-                     src="{{ asset(computed.magazine.icon.filePath) | imagine_filter('post_thumb') }}"
+                     src="{{ computed.magazine.icon.filePath ? (asset(computed.magazine.icon.filePath)|imagine_filter('post_thumb')) : computed.magazine.icon.sourceUrl }}"
                      {% if magazine.isAdult %}data-controller="thumb" data-action="mouseover->thumb#adult_image_hover mouseout->thumb#adult_image_hover_out"{% endif %}
                      alt="{{ computed.magazine.name ~ ' ' ~ 'icon'|trans|lower }}" width="260">
             </figure>

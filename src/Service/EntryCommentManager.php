@@ -114,7 +114,7 @@ class EntryCommentManager implements ContentManagerInterface
         $this->entityManager->flush();
 
         if ($oldImage && $comment->image !== $oldImage) {
-            $this->bus->dispatch(new DeleteImageMessage($oldImage->filePath));
+            $this->bus->dispatch(new DeleteImageMessage($oldImage->getId()));
         }
 
         $this->dispatcher->dispatch(new EntryCommentEditedEvent($comment));
@@ -159,7 +159,7 @@ class EntryCommentManager implements ContentManagerInterface
         $this->dispatcher->dispatch(new EntryCommentBeforePurgeEvent($comment, $user));
 
         $magazine = $comment->entry->magazine;
-        $image = $comment->image?->filePath;
+        $image = $comment->image?->getId();
         $comment->entry->removeComment($comment);
 
         $this->entityManager->remove($comment);
@@ -198,7 +198,7 @@ class EntryCommentManager implements ContentManagerInterface
 
     public function detachImage(EntryComment $comment): void
     {
-        $image = $comment->image->filePath;
+        $image = $comment->image->getId();
 
         $comment->image = null;
 

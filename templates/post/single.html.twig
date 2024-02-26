@@ -8,9 +8,9 @@
 
 {% block image %}
     {%- if post.image -%}
-        {{- uploaded_asset(post.image.filePath) -}}
+        {{- uploaded_asset(post.image) -}}
     {%- elseif post.magazine.icon -%}
-        {{- uploaded_asset(post.magazine.icon.filePath) -}}
+        {{- uploaded_asset(post.magazine.icon) -}}
     {%- else -%}
         {{- parent() -}}
     {%- endif -%}

@@ -20,8 +20,11 @@ use Doctrine\ORM\Mapping\UniqueConstraint;
 #[Cache(usage: 'NONSTRICT_READ_WRITE')]
 class Image
 {
-    #[Column(type: 'string', nullable: false)]
-    public string $filePath;
+    #[Column(type: 'string', nullable: true)]
+    /**
+     * If this is NULL it is only a remote image, probably because the image was too big.
+     */
+    public ?string $filePath;
     #[Column(type: 'string', nullable: false)]
     public string $fileName;
     #[Column(type: 'binary', length: 32, nullable: false)]
