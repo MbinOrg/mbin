@@ -6,7 +6,6 @@ namespace App\Service;
 
 use App\Exception\CorruptedFileException;
 use App\Exception\ImageDownloadTooLargeException;
-use Exception;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
@@ -50,7 +49,7 @@ class ImageManager
     }
 
     /**
-     * @throws Exception if the file could not be found
+     * @throws \Exception if the file could not be found
      */
     public function store(string $source, string $filePath): bool
     {
@@ -66,7 +65,7 @@ class ImageManager
             $this->publicUploadsFilesystem->writeStream($filePath, $fh);
 
             if (!$this->publicUploadsFilesystem->has($filePath)) {
-                throw new Exception('File not found');
+                throw new \Exception('File not found');
             }
 
             return true;
@@ -121,7 +120,7 @@ class ImageManager
 
             $this->validate($tempFile);
             $this->logger->debug('downloaded file from {url}', ['url' => $url]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             if ($fh && \is_resource($fh)) {
                 fclose($fh);
             }
@@ -189,7 +188,7 @@ class ImageManager
     {
         try {
             return $this->publicUploadsFilesystem->mimeType($image->filePath);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return 'none';
         }
     }
