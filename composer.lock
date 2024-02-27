@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "16d06971ec4447dcb2a7fe2028ee1a8d",
+    "content-hash": "a64116e193cff34bc3f0c34b3445af5e",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -13304,22 +13304,21 @@
         },
         {
             "name": "symfony/ux-autocomplete",
-            "version": "v2.15.0",
+            "version": "v2.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ux-autocomplete.git",
-                "reference": "6f900c939b284ebcb743b63f324591aef3774a76"
+                "reference": "0966e60072be7a5b5cb433675254c7e9e4c93517"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ux-autocomplete/zipball/6f900c939b284ebcb743b63f324591aef3774a76",
-                "reference": "6f900c939b284ebcb743b63f324591aef3774a76",
+                "url": "https://api.github.com/repos/symfony/ux-autocomplete/zipball/0966e60072be7a5b5cb433675254c7e9e4c93517",
+                "reference": "0966e60072be7a5b5cb433675254c7e9e4c93517",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.1",
                 "symfony/dependency-injection": "^6.3|^7.0",
-                "symfony/deprecation-contracts": "^2.5|^3",
                 "symfony/http-foundation": "^6.3|^7.0",
                 "symfony/http-kernel": "^6.3|^7.0",
                 "symfony/property-access": "^6.3|^7.0",
@@ -13331,7 +13330,7 @@
             "require-dev": {
                 "doctrine/collections": "^1.6.8|^2.0",
                 "doctrine/doctrine-bundle": "^2.4.3",
-                "doctrine/orm": "^2.9.4|^3.0",
+                "doctrine/orm": "^2.9.4",
                 "fakerphp/faker": "^1.22",
                 "mtdowling/jmespath.php": "^2.6",
                 "symfony/form": "^6.3|^7.0",
@@ -13376,7 +13375,7 @@
                 "symfony-ux"
             ],
             "support": {
-                "source": "https://github.com/symfony/ux-autocomplete/tree/v2.15.0"
+                "source": "https://github.com/symfony/ux-autocomplete/tree/v2.14.0"
             },
             "funding": [
                 {
@@ -13392,7 +13391,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-02-20T16:11:17+00:00"
+            "time": "2024-01-30T15:40:36+00:00"
         },
         {
             "name": "symfony/ux-chartjs",
