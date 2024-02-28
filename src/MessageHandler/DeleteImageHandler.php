@@ -43,7 +43,5 @@ class DeleteImageHandler
         }
 
         $this->imageManager->remove($image->getPath());
-
-        
     }
 }
