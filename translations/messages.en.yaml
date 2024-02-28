@@ -435,15 +435,18 @@ federation_page_enabled: Federation page enabled
 federation_page_allowed_description: Known instances we federate with
 federation_page_disallowed_description: Instances we do not federate with
 federated_search_only_loggedin: Federated search limited if not logged in
-sidebar_sections_local_only: Restrict "Random X" and "Active People" sections to local only
+sidebar_sections_local_only: Restrict "Random X" and "Active People" sections to local
+  only
 request_account_deletion_title: Account deletion
 request_account_deletion_description: The administrator will be notified that you
   want your account deleted.
 request_account_deletion_button: Request account deletion
 more_from_domain: More from domain
 errors.server500.title: 500 Internal Server Error
-errors.server500.description: Sorry, something went wrong on our end. If you continue to see this error, try contacting the instance owner.
-  If this instance is not working at all, check out %link_start%other Mbin instances%link_end% in the meanwhile until the problem is resolved.
+errors.server500.description: Sorry, something went wrong on our end. If you continue
+  to see this error, try contacting the instance owner. If this instance is not working
+  at all, check out %link_start%other Mbin instances%link_end% in the meanwhile until
+  the problem is resolved.
 errors.server429.title: 429 Too Many Requests
 errors.server404.title: 404 Not found
 errors.server403.title: 403 Forbidden
@@ -691,7 +694,7 @@ two_factor_backup: Two-factor authentication backup codes
   for your account
 2fa.qr_code_link.title: Visiting this link may allow your platform to register this
   two-factor authentication
-2fa.user_active_tfa.title: User has active 2fa
+2fa.user_active_tfa.title: User has active 2FA
 2fa.available_apps: Use a two-factor authentication app such as %google_authenticator%,
   %aegis% (Android) or %raivo% (iOS) to scan the QR-code.
 2fa.backup_codes.help: You can use these codes when you don't have your two-factor
@@ -700,7 +703,7 @@ two_factor_backup: Two-factor authentication backup codes
 2fa.backup_codes.recommendation: It is recommended that you keep a copy of them in
   a safe place.
 cancel: Cancel
-password_and_2fa: Password & 2fa
+password_and_2fa: Password & 2FA
 flash_account_settings_changed: Your account settings have been successfully changed.
   You will need to login again.
 show_subscriptions: Show subscriptions
