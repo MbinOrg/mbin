@@ -14,7 +14,7 @@ class MediaExtensionRuntime implements RuntimeExtensionInterface
     ) {
     }
 
-    public function getPublicPath(Image $image): string
+    public function getPublicPath(Image $image): ?string
     {
         if ($image->filePath) {
             return $this->storageUrl.'/'.$image->filePath;

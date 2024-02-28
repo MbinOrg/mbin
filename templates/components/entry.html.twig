@@ -137,7 +137,6 @@
                             </li>
                         {% endif %}
                         {% if entry.hasEmbed %}
-                            {% if entry.image is defined %}
                                 {% set image = entry.image ? uploaded_asset(entry.image) : null %}
                                 <li>
                                     <button class="show-preview"
