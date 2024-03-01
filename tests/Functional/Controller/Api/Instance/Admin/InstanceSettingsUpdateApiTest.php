@@ -32,6 +32,7 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
         'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY',
         'MBIN_SSO_REGISTRATIONS_ENABLED',
         'MBIN_RESTRICT_MAGAZINE_CREATION',
+        'MBIN_DOWNVOTES_MODE',
     ];
 
     public function testApiCannotUpdateInstanceSettingsAnonymous(): void
@@ -108,8 +109,12 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'MBIN_PRIVATE_INSTANCE' => true,
             'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN' => false,
             'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY' => false,
+<<<<<<< HEAD
             'MBIN_SSO_REGISTRATIONS_ENABLED' => true,
             'MBIN_RESTRICT_MAGAZINE_CREATION' => false,
+=======
+            'MBIN_DOWNVOTES_MODE' => 'enabled',
+>>>>>>> af53dc07 (WIP downvotes modes)
         ];
 
         $client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);
@@ -144,8 +149,12 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'MBIN_PRIVATE_INSTANCE' => false,
             'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN' => true,
             'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY' => true,
+<<<<<<< HEAD
             'MBIN_SSO_REGISTRATIONS_ENABLED' => false,
             'MBIN_RESTRICT_MAGAZINE_CREATION' => true,
+=======
+            'MBIN_DOWNVOTES_MODE' => 'hidden',
+>>>>>>> af53dc07 (WIP downvotes modes)
         ];
 
         $client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);
