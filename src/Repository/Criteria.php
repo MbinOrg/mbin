@@ -111,6 +111,16 @@ abstract class Criteria
       'solarized_dark' => self::THEME_SOLARIZED_DARK,
       'tokyo_night' => self::THEME_TOKYO_NIGHT,
     ];
+    
+    public const DOWNVOTES_DISABLED = 'disabled';
+    public const DOWNVOTES_HIDDEN = 'hidden';
+    public const DOWNVOTES_ENABLED = 'enabled';
+
+    public const DOWNVOTE_MODES = [
+        'disabled' => self::DOWNVOTES_DISABLED,
+        'hidden' => self::DOWNVOTES_DISABLED,
+        'enabled' => self::DOWNVOTES_DISABLED
+    ];
 
     public function __construct(int $page)
     {

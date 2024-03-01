@@ -33,7 +33,7 @@
         </button>
         <input type="hidden" name="token" value="{{ csrf_token('favourite') }}">
     </form>
-    {% if showDownvote %}
+    {% if showDownvote and mbin_downvotes_mode() != "disabled" %}
         <form method="post"
               action="{{ downUrl }}"
               class="{{ html_classes('vote__down', {
@@ -43,7 +43,10 @@
                     title="{{ 'down_vote'|trans }}"
                     aria-label="{{ 'down_vote'|trans }}"
                     data-action="subject#vote">
-                <span data-subject-target="downvoteCounter">{{ subject.countDownvotes }}</span> <span><i class="fa-solid fa-arrow-down" aria-hidden="true"></i></span>
+                {% if mbin_downvotes_mode() != 'hidden' %}
+                    <span data-subject-target="downvoteCounter">{{ subject.countDownvotes }}</span>
+                    {% endif %}
+                <span><i class="fa-solid fa-arrow-down" aria-hidden="true"></i></span>
             </button>
             <input type="hidden" name="token" value="{{ csrf_token('vote') }}">
         </form>

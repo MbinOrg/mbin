@@ -31,6 +31,10 @@
             {{ form_row(form.KBIN_META_KEYWORDS, {label: 'keywords'}) }}
             <h2>{{ 'instance'|trans }}</h2>
             {{ form_row(form.KBIN_TITLE, {label: 'title'}) }}
+            <div class="select-flex">
+                {{ form_label(form.MBIN_DOWNVOTES_MODE, 'downvotes_mode') }}
+                {{ form_widget(form.MBIN_DOWNVOTES_MODE, {attr: {'aria-label': 'change_downvotes_mode'|trans}}) }}
+            </div>
             <div class="checkbox">
                 {{ form_label(form.KBIN_HEADER_LOGO, 'header_logo') }}
                 {{ form_widget(form.KBIN_HEADER_LOGO) }}

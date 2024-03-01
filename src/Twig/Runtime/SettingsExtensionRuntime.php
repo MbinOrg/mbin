@@ -94,6 +94,11 @@ class SettingsExtensionRuntime implements RuntimeExtensionInterface
         return $this->settings->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
     }
 
+    public function mbinDownvotesMode(): string
+    {
+        return $this->settings->get('MBIN_DOWNVOTES_MODE');
+    }
+
     public function mbinCurrentVersion(): string
     {
         return $this->projectInfo->getVersion();
