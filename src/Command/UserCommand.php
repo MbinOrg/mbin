@@ -17,8 +17,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'kbin:user:create',
-    description: 'This command allows you to create user, optionally granting administrator privileges.',
+    name: 'mbin:user:create',
+    description: 'This command allows you to create user, optionally granting administrator or global moderator privileges.',
 )]
 class UserCommand extends Command
 {
@@ -36,7 +36,8 @@ class UserCommand extends Command
             ->addArgument('email', InputArgument::REQUIRED)
             ->addArgument('password', InputArgument::REQUIRED)
             ->addOption('remove', 'r', InputOption::VALUE_NONE, 'Remove user')
-            ->addOption('admin', null, InputOption::VALUE_NONE, 'Grant administrator privileges');
+            ->addOption('admin', null, InputOption::VALUE_NONE, 'Grant administrator privileges')
+            ->addOption('moderator', null, InputOption::VALUE_NONE, 'Grant global moderator privileges');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -75,6 +76,10 @@ class UserCommand extends Command
 
         if ($input->getOption('admin')) {
             $user->setOrRemoveAdminRole();
+        }
+
+        if ($input->getOption('moderator')) {
+            $user->setOrRemoveModeratorRole();
         }
 
         $user->isVerified = true;

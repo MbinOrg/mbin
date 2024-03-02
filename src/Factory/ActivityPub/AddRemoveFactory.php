@@ -7,6 +7,7 @@ namespace App\Factory\ActivityPub;
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Magazine;
 use App\Entity\User;
+use App\Service\ActivityPub\ContextsProvider;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Uid\Uuid;
@@ -15,6 +16,7 @@ class AddRemoveFactory
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly ContextsProvider $contextProvider,
     ) {
     }
 
@@ -44,15 +46,29 @@ class AddRemoveFactory
         $id = Uuid::v4()->toRfc4122();
 
         return [
-            '@context' => [ActivityPubActivityInterface::CONTEXT_URL, ActivityPubActivityInterface::SECURITY_URL],
-            'id' => $this->urlGenerator->generate('ap_object', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL),
-            'actor' => $actor->apId ?? $this->urlGenerator->generate('ap_user', ['username' => $actor->username], UrlGeneratorInterface::ABSOLUTE_URL),
+            '@context' => $this->contextProvider->referencedContexts(),
+            'id' => $this->urlGenerator->generate(
+                'ap_object', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL
+            ),
+            'actor' => $actor->apId ?? $this->urlGenerator->generate(
+                'ap_user', ['username' => $actor->username], UrlGeneratorInterface::ABSOLUTE_URL
+            ),
             'to' => [ActivityPubActivityInterface::PUBLIC_URL],
-            'object' => $targetUser->apId ?? $this->urlGenerator->generate('ap_user', ['username' => $targetUser->username], UrlGeneratorInterface::ABSOLUTE_URL),
-            'cc' => [$magazine->apId ?? $this->urlGenerator->generate('ap_magazine', ['name' => $magazine->name], UrlGeneratorInterface::ABSOLUTE_URL)],
+            'object' => $targetUser->apId ?? $this->urlGenerator->generate(
+                'ap_user', ['username' => $targetUser->username], UrlGeneratorInterface::ABSOLUTE_URL
+            ),
+            'cc' => [
+                $magazine->apId ?? $this->urlGenerator->generate(
+                    'ap_magazine', ['name' => $magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
+                ),
+            ],
             'type' => $type,
-            'target' => $magazine->apAttributedToUrl ?? $this->urlGenerator->generate('ap_magazine_moderators', ['name' => $magazine->name], UrlGeneratorInterface::ABSOLUTE_URL),
-            'audience' => $magazine->apId ?? $this->urlGenerator->generate('ap_magazine', ['name' => $magazine->name], UrlGeneratorInterface::ABSOLUTE_URL),
+            'target' => $magazine->apAttributedToUrl ?? $this->urlGenerator->generate(
+                'ap_magazine_moderators', ['name' => $magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
+            ),
+            'audience' => $magazine->apId ?? $this->urlGenerator->generate(
+                'ap_magazine', ['name' => $magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
+            ),
         ];
     }
 }

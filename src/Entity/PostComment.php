@@ -47,7 +47,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
     }
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'postComments')]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $user;
     #[ManyToOne(targetEntity: Post::class, inversedBy: 'comments')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -133,6 +133,11 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
     public function getId(): int
     {
         return $this->id;
+    }
+
+    public function getApId(): ?string
+    {
+        return $this->apId;
     }
 
     public function addVote(Vote $vote): self

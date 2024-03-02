@@ -27,6 +27,7 @@ use App\Utils\UrlCleaner;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
@@ -37,6 +38,7 @@ use Webmozart\Assert\Assert;
 class EntryManager implements ContentManagerInterface
 {
     public function __construct(
+        private readonly LoggerInterface $logger,
         private readonly TagManager $tagManager,
         private readonly MentionManager $mentionManager,
         private readonly EntryCommentManager $entryCommentManager,
@@ -64,16 +66,18 @@ class EntryManager implements ContentManagerInterface
             }
         }
 
-        $entry = $this->factory->createFromDto($dto, $user);
-
-        if ($dto->magazine->isBanned($user)) {
+        if ($dto->magazine->isBanned($user) || $user->isBanned()) {
             throw new UserBannedException();
         }
+
+        $this->logger->debug('creating entry from dto');
+        $entry = $this->factory->createFromDto($dto, $user);
 
         $entry->lang = $dto->lang;
         $entry->isAdult = $dto->isAdult || $entry->magazine->isAdult;
         $entry->slug = $this->slugger->slug($dto->title);
         $entry->image = $dto->image ? $this->imageRepository->find($dto->image->id) : null;
+        $this->logger->debug('setting image to {imageId}, dto was {dtoImageId}', ['imageId' => $entry->image?->getId() ?? 'none', 'dtoImageId' => $dto->image?->id ?? 'none']);
         if ($entry->image && !$entry->image->altText) {
             $entry->image->altText = $dto->imageAlt;
         }
@@ -85,6 +89,9 @@ class EntryManager implements ContentManagerInterface
         $entry->visibility = $dto->visibility;
         $entry->apId = $dto->apId;
         $entry->magazine->lastActive = new \DateTime();
+        if (null !== $entry->user->apDomain && $entry->magazine->apDomain === $entry->user->apDomain) {
+            $entry->magazine->lastOriginUpdate = new \DateTime();
+        }
         $entry->user->lastActive = new \DateTime();
         $entry->lastActive = $dto->lastActive ?? $entry->lastActive;
         $entry->createdAt = $dto->createdAt ?? $entry->createdAt;
@@ -168,7 +175,7 @@ class EntryManager implements ContentManagerInterface
         $this->entityManager->flush();
 
         if ($oldImage && $entry->image !== $oldImage) {
-            $this->bus->dispatch(new DeleteImageMessage($oldImage->filePath));
+            $this->bus->dispatch(new DeleteImageMessage($oldImage->getId()));
         }
 
         $this->dispatcher->dispatch(new EntryEditedEvent($entry));
@@ -212,7 +219,7 @@ class EntryManager implements ContentManagerInterface
     {
         $this->dispatcher->dispatch(new EntryBeforePurgeEvent($entry, $user));
 
-        $image = $entry->image?->filePath;
+        $image = $entry->image?->getId();
 
         $sort = new Criteria(null, ['createdAt' => Criteria::DESC]);
         foreach ($entry->comments->matching($sort) as $comment) {
@@ -259,7 +266,7 @@ class EntryManager implements ContentManagerInterface
 
     public function detachImage(Entry $entry): void
     {
-        $image = $entry->image->filePath;
+        $image = $entry->image->getId();
 
         $entry->image = null;
 

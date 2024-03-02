@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Factory\ActivityPub;
 
-use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\User;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
+use App\Service\ActivityPub\ContextsProvider;
 use App\Service\ImageManager;
-use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class PersonFactory
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly ContextsProvider $contextProvider,
         private readonly ImageManager $imageManager,
         private readonly MarkdownConverter $markdownConverter
     ) {
@@ -24,11 +24,7 @@ class PersonFactory
     public function create(User $user, bool $context = true): array
     {
         if ($context) {
-            $person['@context'] = [
-                ActivityPubActivityInterface::CONTEXT_URL,
-                ActivityPubActivityInterface::SECURITY_URL,
-                $this->getContext(),
-            ];
+            $person['@context'] = $this->contextProvider->referencedContexts();
         }
 
         $person = array_merge(
@@ -99,22 +95,6 @@ class PersonFactory
         }
 
         return $person;
-    }
-
-    #[ArrayShape([
-        'manuallyApprovesFollowers' => 'string',
-        'schema' => 'string',
-        'PropertyValue' => 'string',
-        'value' => 'string',
-    ])]
-    public function getContext(): array
-    {
-        return [
-            'manuallyApprovesFollowers' => 'as:manuallyApprovesFollowers',
-            'schema' => 'http://schema.org#',
-            'PropertyValue' => 'schema:PropertyValue',
-            'value' => 'schema:value',
-        ];
     }
 
     public function getActivityPubId(User $user): string

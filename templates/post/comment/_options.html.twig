@@ -30,11 +30,12 @@
     {% else %}
         <div class="options__title"><h2>{{ 'comments'|trans }} ({{ post.commentCount }})</h2></div>
     {% endif %}
-    <menu class="options__layout">
+    <menu class="options__view">
         <li class="dropdown">
             <button aria-label="{{ 'change_view'|trans }}"
                     title="{{ 'change_view'|trans }}"><i
-                        class="fa-solid fa-layer-group"></i> {{ 'change_view'|trans }}</button>
+                        class="fa-solid fa-layer-group" aria-hidden="true"></i>
+            </button>
             <ul class="dropdown__menu">
                 <li>
                     <a class="{{ html_classes({'active': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::POST_COMMENTS_VIEW')) is same as constant('App\\Controller\\User\\ThemeSettingsController::CLASSIC')}) }}"

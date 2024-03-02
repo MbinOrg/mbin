@@ -4,13 +4,19 @@ declare(strict_types=1);
 
 namespace App\MessageHandler\ActivityPub\Inbox;
 
+use App\Entity\EntryComment;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use App\Message\ActivityPub\Inbox\AnnounceMessage;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
+use App\Message\ActivityPub\Inbox\DislikeMessage;
 use App\Message\ActivityPub\Inbox\LikeMessage;
+use App\Message\ActivityPub\Outbox\AnnounceMessage as OutboxAnnounceMessage;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -18,6 +24,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 class ChainActivityHandler
 {
     public function __construct(
+        private readonly LoggerInterface $logger,
         private readonly ApHttpClient $client,
         private readonly MessageBusInterface $bus,
         private readonly ApActivityRepository $repository,
@@ -29,7 +36,7 @@ class ChainActivityHandler
     public function __invoke(ChainActivityMessage $message): void
     {
         if ($message->parent) {
-            $this->unloadStack($message->chain, $message->parent, $message->announce, $message->like);
+            $this->unloadStack($message->chain, $message->parent, $message->announce, $message->like, $message->dislike);
 
             return;
         }
@@ -40,14 +47,14 @@ class ChainActivityHandler
             if (isset($object['inReplyTo']) && $object['inReplyTo']) {
                 if ($existed = $this->repository->findByObjectId($object['inReplyTo'])) {
                     $this->bus->dispatch(
-                        new ChainActivityMessage($message->chain, $existed, $message->announce, $message->like)
+                        new ChainActivityMessage($message->chain, $existed, $message->announce, $message->like, $message->dislike)
                     );
 
                     return;
                 }
 
                 $message->chain[] = $this->client->getActivityObject($object['inReplyTo']);
-                $this->bus->dispatch(new ChainActivityMessage($message->chain, null, $message->announce, $message->like));
+                $this->bus->dispatch(new ChainActivityMessage($message->chain, null, $message->announce, $message->like, $message->dislike));
 
                 return;
             }
@@ -78,32 +85,46 @@ class ChainActivityHandler
                 new ChainActivityMessage($message->chain, [
                     'id' => $entity->getId(),
                     'type' => \get_class($entity),
-                ], $message->announce, $message->like)
+                ], $message->announce, $message->like, $message->dislike)
             );
         }
     }
 
-    private function unloadStack(array $chain, array $parent, array $announce = null, array $like = null): void
+    private function unloadStack(array $chain, array $parent, array $announce = null, array $like = null, array $dislike = null): void
     {
         $object = end($chain);
 
         if (!empty($object)) {
-            match ($this->getType($object)) {
-                'Question' => $this->note->create($object),
-                'Note' => $this->note->create($object),
+            if (\is_string($object)) {
+                if (false !== filter_var($object, FILTER_VALIDATE_URL)) {
+                    $object = $this->client->getActivityObject($object);
+                } else {
+                    // if the object is a string, but not an url it is not valid and therefore nothing should be done
+                    return;
+                }
+            }
+            $createdObject = match ($this->getType($object)) {
+                'Question', 'Note' => $this->note->create($object),
                 'Page' => $this->page->create($object),
                 default => null
             };
 
+            if ($createdObject and ($createdObject instanceof EntryComment or $createdObject instanceof Post or $createdObject instanceof PostComment)) {
+                if (null !== $createdObject->apId and null === $createdObject->magazine->apId) {
+                    // local magazine, but remote post
+                    $this->bus->dispatch(new OutboxAnnounceMessage(null, $createdObject->magazine->getId(), $createdObject->getId(), \get_class($createdObject)));
+                }
+            }
+
             array_pop($chain);
 
             if (\count(array_filter($chain))) {
-                $this->bus->dispatch(new ChainActivityMessage($chain, $parent, $announce, $like));
+                $this->bus->dispatch(new ChainActivityMessage($chain, $parent, $announce, $like, $dislike));
 
                 return;
             }
         }
-
+        // only one of $announce, $like and $dislike should ever be set
         if ($announce) {
             $this->bus->dispatch(new AnnounceMessage($announce));
 
@@ -112,6 +133,12 @@ class ChainActivityHandler
 
         if ($like) {
             $this->bus->dispatch(new LikeMessage($like));
+
+            return;
+        }
+
+        if ($dislike) {
+            $this->bus->dispatch(new DislikeMessage($dislike));
 
             return;
         }

@@ -32,16 +32,17 @@
             </a>
         </li>
     </menu>
-    <menu class="options__filters">
+    <menu class="options__view">
         <li class="dropdown">
             <button aria-label="{{ 'filter_by_time'|trans }}"
                     title="{{ 'filter_by_time'|trans }}"><i
-                        class="fa-solid fa-arrow-up-wide-short"></i> {{ 'filter_by_time'|trans }}</button>
+                        class="fa-solid fa-clock" aria-hidden="true"></i> <span>{{ get_time_param_translated() }}</span>
+            </button>
             <ul class="dropdown__menu">
                 <li>
                     <a href="{{ options_url('time', '∞') }}"
                        class="{{ html_classes({'active': route_has_param('time', '∞') or not get_route_param('time')}) }}">
-                        {{ '∞' }}
+                        {{ 'all_time'|trans }}
                     </a>
                 </li>
                 <li>

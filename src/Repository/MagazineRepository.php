@@ -260,7 +260,7 @@ class MagazineRepository extends ServiceEntityRepository
         $dql = 'SELECT r FROM '.Report::class.' r WHERE r.magazine = :magazine';
 
         if (Report::STATUS_ANY !== $status) {
-            $dql .= ' AND WHERE r.status = :status';
+            $dql .= ' AND r.status = :status';
         }
 
         $dql .= " ORDER BY CASE WHEN r.status = 'pending' THEN 1 ELSE 2 END, r.weight DESC, r.createdAt DESC";
@@ -481,6 +481,11 @@ class MagazineRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
         $sql = '
             SELECT id FROM magazine
+            ';
+        if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
+            $sql .= 'WHERE ap_id IS NULL';
+        }
+        $sql .= '
             ORDER BY random()
             LIMIT 5
             ';

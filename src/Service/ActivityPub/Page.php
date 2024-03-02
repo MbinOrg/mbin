@@ -17,6 +17,7 @@ use App\Service\ActivityPubManager;
 use App\Service\EntryManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 
 class Page
 {
@@ -28,6 +29,8 @@ class Page
         private readonly EntityManagerInterface $entityManager,
         private readonly SettingsManager $settingsManager,
         private readonly ImageFactory $imageFactory,
+        private readonly ApObjectExtractor $objectExtractor,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -41,6 +44,8 @@ class Page
 
             $current = $this->repository->findByObjectId($object['id']);
             if ($current) {
+                $this->logger->debug('Page already exists, not creating it');
+
                 return $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
             }
 
@@ -58,14 +63,12 @@ class Page
             $dto->title = $object['name'];
             $dto->apId = $object['id'];
 
-            if (
-                (isset($object['attachment']) || isset($object['image']))
-                && $image = $this->activityPubManager->handleImages($object['attachment'])
-            ) {
+            if ((isset($object['attachment']) || isset($object['image'])) && $image = $this->activityPubManager->handleImages($object['attachment'])) {
+                $this->logger->debug("adding image to entry '{title}', {image}", ['title' => $dto->title, 'image' => $image->getId()]);
                 $dto->image = $this->imageFactory->createDto($image);
             }
 
-            $dto->body = !empty($object['content']) ? $this->markdownConverter->convert($object['content']) : null;
+            $dto->body = $this->objectExtractor->getMarkdownBody($object);
             $dto->visibility = $this->getVisibility($object, $actor);
             $this->handleUrl($dto, $object);
             $this->handleDate($dto, $object['published']);
@@ -84,6 +87,8 @@ class Page
             } else {
                 $dto->lang = $this->settingsManager->get('KBIN_DEFAULT_LANG');
             }
+
+            $this->logger->debug('creating page');
 
             return $this->entryManager->create(
                 $dto,

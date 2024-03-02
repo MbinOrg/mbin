@@ -1,6 +1,8 @@
 <aside{{ attributes.defaults({class: 'user__actions', 'data-controller': 'subs'}) }}>
-    <div class='action'>
-        <i class="fa-solid fa-users"></i><span>{{ user.followersCount }}</span>
+    <div class="action"
+        title="{{ user.followersCount ~ ' ' ~ 'followers_count'|trans({'%count%': user.followersCount}) }}"
+        aria-label="{{ user.followersCount ~ ' ' ~ 'followers_count'|trans({'%count%': user.followersCount}) }}">
+        <i class="fa-solid fa-users" aria-hidden="true"></i><span>{{ user.followersCount }}</span>
     </div>
     {% if not app.user or app.user is not same as user %}
         <form action="{{ path('user_' ~ (is_user_followed(user) ? 'unfollow' : 'follow'), {username: user.username}) }}"
@@ -10,9 +12,9 @@
                     class="{{ html_classes('btn btn__secondary action', {'active': is_user_followed(user)}) }}"
                     data-action="subs#send">
             {% if is_user_followed(user) %}
-                    <i class="fa-solid fa-user-minus"></i> <span>{{'unfollow'|trans}}</span>
+                    <i class="fa-solid fa-user-minus" aria-hidden="true"></i> <span>{{'unfollow'|trans}}</span>
             {% else %}
-                    <i class="fa-solid fa-user-plus"></i> <span>{{'follow'|trans}}</span>
+                    <i class="fa-solid fa-user-plus" aria-hidden="true"></i> <span>{{'follow'|trans}}</span>
             {% endif %}
 
             </button>
@@ -26,13 +28,17 @@
                     data-action="subs#send">
 
             {% if is_user_blocked(user) %}
-                    <i class="fa-solid fa-user"></i> <span>{{'unblock'|trans}}</span>
+                    <i class="fa-solid fa-user" aria-hidden="true"></i> <span>{{'unblock'|trans}}</span>
             {% else %}
-                    <i class="fa-solid fa-user-slash"></i> <span>{{'block'|trans}}</span>
+                    <i class="fa-solid fa-user-slash" aria-hidden="true"></i> <span>{{'block'|trans}}</span>
             {% endif %}
 
             </button>
             <input type="hidden" name="token" value="{{ csrf_token('block') }}">
         </form>
+    {% elseif app.user is same as user and is_route_name_starts_with('user') and not is_route_name_contains('settings') %}
+        <a href="{{ path('user_settings_profile') }}" title="{{ 'edit_my_profile'|trans }}" aria-label="{{ 'edit_my_profile'|trans }}">
+            <button class="btn btn__secondary">{{ 'edit_my_profile'|trans }}</button>
+        </a>
     {% endif %}
 </aside>

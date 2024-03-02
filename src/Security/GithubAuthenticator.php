@@ -57,11 +57,12 @@ class GithubAuthenticator extends OAuth2Authenticator
                     return $existingUser;
                 }
 
-                $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $githubUser->getEmail()]
+                $user = $this->entityManager->getRepository(User::class)->findOneBy(
+                    ['email' => $githubUser->getEmail()]
                 );
 
                 if ($user) {
-                    $user->oauthFacebookId = $githubUser->getId();
+                    $user->oauthGithubId = $githubUser->getId();
                 } else {
                     $dto = (new UserDto())->create(
                         $slugger->slug($githubUser->getNickname()).rand(1, 999),

@@ -10,12 +10,14 @@ use App\Entity\User;
 use App\Entity\UserFollowRequest;
 use App\Event\User\UserBlockEvent;
 use App\Event\User\UserFollowEvent;
+use App\Exception\UserCannotBeBanned;
 use App\Factory\UserFactory;
 use App\Message\DeleteImageMessage;
 use App\Message\DeleteUserMessage;
 use App\Message\UserCreatedMessage;
 use App\Message\UserUpdatedMessage;
 use App\Repository\ImageRepository;
+use App\Repository\ReputationRepository;
 use App\Repository\UserFollowRepository;
 use App\Repository\UserFollowRequestRepository;
 use App\Security\EmailVerifier;
@@ -30,23 +32,27 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
-class UserManager
+readonly class UserManager
 {
     public function __construct(
-        private readonly UserFactory $factory,
-        private readonly UserPasswordHasherInterface $passwordHasher,
-        private readonly TokenStorageInterface $tokenStorage,
-        private readonly RequestStack $requestStack,
-        private readonly EventDispatcherInterface $dispatcher,
-        private readonly MessageBusInterface $bus,
-        private readonly EmailVerifier $verifier,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly RateLimiterFactory $userRegisterLimiter,
-        private readonly UserFollowRequestRepository $requestRepository,
-        private readonly UserFollowRepository $userFollowRepository,
-        private readonly ImageRepository $imageRepository,
-        private readonly Security $security,
+        private UserFactory $factory,
+        private UserPasswordHasherInterface $passwordHasher,
+        private TokenStorageInterface $tokenStorage,
+        private RequestStack $requestStack,
+        private EventDispatcherInterface $dispatcher,
+        private MessageBusInterface $bus,
+        private EmailVerifier $verifier,
+        private EntityManagerInterface $entityManager,
+        private RateLimiterFactory $userRegisterLimiter,
+        private UserFollowRequestRepository $requestRepository,
+        private UserFollowRepository $userFollowRepository,
+        private ImageRepository $imageRepository,
+        private Security $security,
+        private CacheInterface $cache,
+        private ReputationRepository $reputationRepository
     ) {
     }
 
@@ -208,11 +214,11 @@ class UserManager
         }
 
         if ($oldAvatar && $user->avatar !== $oldAvatar) {
-            $this->bus->dispatch(new DeleteImageMessage($oldAvatar->filePath));
+            $this->bus->dispatch(new DeleteImageMessage($oldAvatar->getId()));
         }
 
         if ($oldCover && $user->cover !== $oldCover) {
-            $this->bus->dispatch(new DeleteImageMessage($oldCover->filePath));
+            $this->bus->dispatch(new DeleteImageMessage($oldCover->getId()));
         }
 
         if ($mailUpdated) {
@@ -252,6 +258,10 @@ class UserManager
 
     public function ban(User $user): void
     {
+        if ($user->isAdmin() || $user->isModerator()) {
+            throw new UserCannotBeBanned();
+        }
+
         $user->isBanned = true;
 
         $this->entityManager->persist($user);
@@ -272,7 +282,7 @@ class UserManager
             return;
         }
 
-        $image = $user->avatar->filePath;
+        $image = $user->avatar->getId();
 
         $user->avatar = null;
 
@@ -288,7 +298,7 @@ class UserManager
             return;
         }
 
-        $image = $user->cover->filePath;
+        $image = $user->cover->getId();
 
         $user->cover = null;
 
@@ -341,5 +351,20 @@ class UserManager
         foreach ($user->follows as $follow) {
             $this->unfollow($user, $follow->following);
         }
+    }
+
+    /**
+     * Get user reputation total add it behind a cache.
+     */
+    public function getReputationTotal(User $user): int
+    {
+        return $this->cache->get(
+            "user_reputation_{$user->getId()}",
+            function (ItemInterface $item) use ($user) {
+                $item->expiresAfter(60);
+
+                return $this->reputationRepository->getUserReputationTotal($user);
+            }
+        );
     }
 }

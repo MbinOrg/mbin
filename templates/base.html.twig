@@ -4,6 +4,7 @@
       ? app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_FONT_SIZE'))~'%'
       : '100%' }}">
 <head>
+    <meta charset="UTF-8">
     <title>{%- block title -%}{{ kbin_meta_title() }}{%- endblock -%}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,47 +20,22 @@
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     <link rel="apple-touch-icon" href="{{ asset('assets/icons/apple-touch-icon.png') }}">
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+    <link rel="preload" href="{{ asset('mbin_logo.svg') }}" as="image">
 
     <link rel="manifest" href="{{ asset('manifest.json') }}"/>
 
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
+        <link rel="stylesheet" href="{{ path('custom_style', {magazine: magazine.name|default(null)}) }}">
     {% endblock %}
 
     {% block javascripts %}
         {{ encore_entry_script_tags('app') }}
         {% if kbin_mercure_enabled() %}
         {#        <script type="application/json" id="mercure-url">{{ mercure()|raw }}</script> #}
-        <script type="application/json"
-                id="mercure-url">{{- 'https://' ~ kbin_domain() ~ '/.well-known/mercure' }}</script>
+        <script type="application/json" id="mercure-url">{{- 'https://' ~ kbin_domain() ~ '/.well-known/mercure' }}</script>
         {% endif %}
-        <script>
-            window.KBIN_USER = "{{ app.user ? app.user.id : null }}";
-            window.KBIN_MAGAZINE = "{{ magazine is defined and magazine ? magazine.id : null }}"
-            window.KBIN_ENTRY_ID = "{{ entry is defined and entry ? entry.id : null }}"
-            window.KBIN_POST_ID = "{{ post is defined and post ? post.id : null }}"
-        </script>
-        <script>
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register(
-                    '/sw.js'
-                );
-            }
-        </script>
     {% endblock %}
-
-    {% if not app.user or not app.user.ignoreMagazinesCustomCss %}
-        {% if magazine is defined and magazine %}
-            <style>
-                {{ magazine.customCss }}
-            </style>
-        {% endif %}
-    {% endif %}
-    {% if app.user and app.user.customCss %}
-        <style>
-            {{ app.user.customCss }}
-        </style>
-    {% endif %}
 </head>
 <body class="{{ html_classes(app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_THEME'))
     ? 'theme--'~app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_THEME'))
@@ -70,7 +46,13 @@
         'sidebar-left': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SIDEBAR_POSITION')) is same as constant('App\\Controller\\User\\ThemeSettingsController::LEFT'),
         'subs-show': app.user is defined and app.user is not same as null and app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SHOW')) is not same as 'false' and app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR')) is same as 'true',
         'sidebars-same-side': app.user is defined and app.user is not same as null and app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR')) is same as 'true' and app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SIDEBARS_SAME_SIDE')) is same as 'true',
-    }) }}" data-controller="kbin notifications">
+    }) }}"
+        data-controller="kbin notifications"
+        data-notifications-user-value="{{ app.user ? app.user.id : null }}"
+        data-notifications-magazine-value="{{ magazine is defined and magazine ? magazine.id : null }}"
+        data-notifications-entry-id-value="{{ entry is defined and entry ? entry.id : null }}"
+        data-notifications-post-id-value="{{ post is defined and post ? post.id : null }}"
+    >
 {% include 'layout/_header.html.twig' with {header_nav: block('header_nav')} %}
 {{ component('announcement') }}
 <div id="middle" class="{%- block mainClass -%}page{%- endblock %}">
@@ -79,7 +61,7 @@
         ? 'width--'~app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_PAGE_WIDTH'))
         : '') }}">
         <main id="main"
-              data-controller="lightbox timeago"
+              data-controller="lightbox timeago confirmation"
               class="{{ html_classes({'view-compact': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_COMPACT')) is same as 'true'}) }}">
             {% block body %}{% endblock %}
         </main>
@@ -96,11 +78,10 @@
     </div>
 </div>
 
-{% include 'layout/_footer.html.twig' with {inSidebar: true} %}
 {% include 'layout/_topbar.html.twig' %}
 <div id="popover" class="popover js-popover section section--small" role="dialog"></div>
-<div id="scroll-top" data-controller="scroll-top" style="display: none;" data-action="click->scroll-top#scrollTop">
-    <i class="fa-solid fa-arrow-up"></i> <small class="hidden">0</small>
+<div id="scroll-top" data-controller="scroll-top" style="display: none;" data-action="click->scroll-top#scrollTop" aria-hidden="true">
+    <i class="fa-solid fa-arrow-up" aria-hidden="true"></i> <small class="hidden">0</small>
 </div>
 </body>
 </html>

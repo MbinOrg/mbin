@@ -43,7 +43,7 @@ $aspect-ratios: (
   --kbin-font-awesome-font-family: "Font Awesome 6 Free";
 
   // fonts
-  --kbin-body-font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --kbin-body-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 
   // ---------------------------------------------------------------------------
   // Default theme variables
@@ -169,10 +169,13 @@ $aspect-ratios: (
   // entry
   --kbin-entry-link-visited-color: #7e8f99;
 
-  // footer
-  --kbin-footer-bg: #110045;
-  --kbin-footer-text-color: #fff;
-  --kbin-footer-link-color: #fff;
-  --kbin-footer-link-hover-color: var(--kbin-header-link-hover-color);
+  // details
+  --mbin-details-border: var(--kbin-section-border);
+  --mbin-details-separator-border: var(--kbin-meta-border);
 
+  --mbin-details-detail-color: var(--kbin-link-hover-color);
+  --mbin-details-spoiler-color: var(--kbin-danger-color);
+
+  --mbin-details-detail-label: "Details";
+  --mbin-details-spoiler-label: "Spoiler";
 }

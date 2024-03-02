@@ -39,22 +39,23 @@ class CommunityLinkParser implements InlineParserInterface
 
         $fullHandle = $handle.'@'.$domain;
         $isRemote = $this->isRemoteCommunity($domain);
+        $magazine = $this->magazineRepository->findOneByName($isRemote ? $fullHandle : $handle);
+
+        if ($magazine) {
+            $ctx->getContainer()->appendChild(
+                new CommunityLink(
+                    $this->urlGenerator->generate('front_magazine', ['name' => $magazine->name]),
+                    '!'.$handle,
+                    '!'.($isRemote ? $magazine->apId : $magazine->name),
+                    $isRemote ? $magazine->apId : $magazine->name,
+                    $isRemote ? MentionType::RemoteMagazine : MentionType::Magazine,
+                ),
+            );
+
+            return true;
+        }
 
         if ($isRemote) {
-            if ($magazine = $this->magazineRepository->findOneByName($fullHandle)) {
-                $ctx->getContainer()->appendChild(
-                    new CommunityLink(
-                        $magazine->apPublicUrl,
-                        '!'.$handle,
-                        '!'.$magazine->apId,
-                        $magazine->apId,
-                        MentionType::RemoteMagazine,
-                    ),
-                );
-
-                return true;
-            }
-
             $ctx->getContainer()->appendChild(
                 new ActorSearchLink(
                     $this->urlGenerator->generate('search', ['q' => $fullHandle], UrlGeneratorInterface::ABSOLUTE_URL),

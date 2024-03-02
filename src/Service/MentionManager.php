@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\EntryComment;
 use App\Entity\PostComment;
+use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Utils\RegPatterns;
 
@@ -23,6 +24,9 @@ class MentionManager
     ) {
     }
 
+    /**
+     * @return User[]
+     */
     public function getUsersFromArray(?array $users): array
     {
         if ($users) {

@@ -132,7 +132,6 @@ reputation_points: Aantal reputatiepunten
 related_tags: Verwante labels
 go_to_content: Ga naar inhoud
 go_to_filters: Ga naar filters
-go_to_footer: Ga naar voettekst
 subscribed: Geabonneerd
 all: Alles
 logout: Uitloggen
@@ -402,11 +401,11 @@ filter.fields.only_names: Enkel op namen
 filter.fields.names_and_descriptions: Namen en beschrijvingen
 filter.adult.label: Kies of u NSFW (niet veilig voor werk) wilt weergeven
 local_and_federated: Lokaal en gefedereerd
-kbin_bot: Mbin Bot
-bot_body_content: "Welkom bij de Mbin Bot! Deze bot speelt een cruciale rol bij het
-  inschakelen van de ActivityPub-functionaliteit binnen Mbin. Het zorgt ervoor dat
-  Mbin kan communiceren en federeren met andere instanties in de fediverse.\n\nActivityPub
-  is een open standaardprotocol waarmee gedecentraliseerde sociale netwerkplatforms
+kbin_bot: Mbin Agent
+bot_body_content: "Welkom bij de Mbin Agent! Deze bot agent speelt een cruciale rol
+  bij het inschakelen van de ActivityPub-functionaliteit binnen Mbin. Het zorgt ervoor
+  dat Mbin kan communiceren en federeren met andere instanties in de fediverse.\n\n
+  ActivityPub is een open standaardprotocol waarmee gedecentraliseerde sociale netwerkplatforms
   met elkaar kunnen communiceren en interacteren. Het stelt gebruikers in staat om
   op verschillende instanties (servers) inhoud te volgen, te gebruiken en te delen
   via het gefedereerde sociale netwerk dat bekend staat als het fediverse. Het biedt
@@ -783,3 +782,46 @@ subscription_sidebar_pop_out_left: Ga naar de aparte zijbalk aan de linkerkant
 purge_magazine: Tijdschrift opruimen
 magazine_deletion: Tijdschrift verwijderen
 subscription_sidebar_pop_in: Verplaats abonnementen naar het inline paneel
+edit_my_profile: Bewerk mijn profiel
+user_badge_moderator: Mod
+default_theme: Standaard thema
+remove_following: Verwijder volgen
+mark_as_adult: Markeer NSFW
+user_badge_admin: Admin
+2fa.setup_error: Fout bij het inschakelen van 2FA voor account
+user_badge_global_moderator: Globale Mod
+apply_for_moderator: Solliciteer als moderator
+unmark_as_adult: Onmarkeer NSFW
+deleted_by_author: Gesprek, bericht of reactie is verwijderd door de auteur
+solarized_auto: Gesolariseerd (Automatische detectie)
+announcement: Aankondiging
+sensitive_toggle: Schakel de zichtbaarheid van gevoelige inhoud in of uit
+sensitive_show: Klik om te tonen
+user_badge_bot: Bot
+ownership_requests: Eigendomsverzoeken
+sensitive_warning: Gevoelige inhoud
+keywords: Trefwoorden
+moderator_requests: Mod verzoeken
+default_theme_auto: Licht/Donker (Automatische detectie)
+action: Actie
+flash_mark_as_adult_success: Het bericht is succesvol gemarkeerd als NSFW.
+cancel_request: Annuleer verzoek
+deleted_by_moderator: Gesprek, bericht of reactie is verwijderd door de moderator
+flash_unmark_as_adult_success: Het bericht is met succes ongemarkeerd als NSFW.
+abandoned: Verlaten
+remove_subscriptions: Verwijder abonnementen
+sensitive_hide: Klik om te verbergen
+request_magazine_ownership: Vraag tijdschrifteigendom aan
+accept: Accepteer
+user_badge_op: OP
+subscribers_count: '{0}Abonnees|{1}Abonnee|]1,Inf[ Abonnees'
+menu: Menu
+details: Details
+followers_count: '{0}Volgers|{1}Volger|]1,Inf[ Volgers'
+remove_media: Media verwijderen
+all_time: Alle tijden
+spoiler: Spoiler
+show: Tonen
+hide: Verbergen
+sidebar_sections_local_only: Beperk de secties 'Random X' en 'Actieve mensen' tot
+  alleen lokaal

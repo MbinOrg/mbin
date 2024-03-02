@@ -242,7 +242,6 @@ oc: OC
 people_federated: Föderiert
 tree_view: Strukturansicht
 related_tags: Verwandte Tags
-go_to_footer: Zur Fußleiste springen
 appearance: Design
 homepage: Startseite
 hide_adult: 18+ Inhalte verbergen
@@ -295,8 +294,8 @@ flash_magazine_edit_success: Das Magazin wurde erfolgreich bearbeitet.
 too_many_requests: Grenzwert überschritten, bitte versuche es später nochmal.
 set_magazines_bar_desc: Füge die Namen der Magazine hinter dem Komma ein
 set_magazines_bar_empty_desc: Wenn das Feld leer ist werden aktive Magazine auf der
-  Magazinbar dargestellt.
-set_magazines_bar: Magazinbar
+  Magazin-Leiste angezeigt.
+set_magazines_bar: Magazin-Leiste
 added_new_thread: Ein neues Thema wurde hinzugefügt
 mod_deleted_your_comment: Ein Moderator hat deinen Kommentar entfernt
 mod_remove_your_post: Ein Moderator hat deinen Beitrag entfernt
@@ -399,12 +398,12 @@ filter.adult.only: Nur NSFW
 local_and_federated: Lokal und föderiert
 filter.fields.only_names: Nur Namen
 filter.fields.names_and_descriptions: Namen und Beschreibungen
-kbin_bot: Mbin Bot
+kbin_bot: Mbin Agent
 filter.fields.label: Wähle Felder für die Suche
-bot_body_content: "Willkommen beim Mbin Bot! Der Bot spielt eine entscheidende Rolle
-  um die ActivityPub-Funktionalität für Mbin bereitzustellen. Er stellt sicher, dass
-  Mbin mit anderen Instanzen des Fediverse kommunizieren und föderieren kann.\n\n
-  ActivityPub ist ein offenes Protokoll dass dezentralen sozialen Netzwerken ermöglicht
+bot_body_content: "Willkommen beim Mbin Agenten! Der Agent spielt eine entscheidende
+  Rolle um die ActivityPub-Funktionalität für Mbin bereitzustellen. Er stellt sicher,
+  dass Mbin mit anderen Instanzen des Fediverse kommunizieren und föderieren kann.\n
+  \nActivityPub ist ein offenes Protokoll dass dezentralen sozialen Netzwerken ermöglicht
   miteinander zu kommunizieren und zu interagieren. Es ermöglicht Nutzern auf unterschiedlichen
   Instanzen (Servern) anderen Nutzern zu folgen, mit ihnen zu interagieren und Inhalte
   innerhalb des föderierten sozialen Netzwerk, bekannt als das Fediverse zu teilen.
@@ -460,14 +459,16 @@ sidebars_same_side: Seitenleisten auf der selben Seite
 oauth.consent.deny: Verbieten
 oauth.consent.title: OAUTH2 Zustimmungsformular
 resend_account_activation_email: Account Aktivierungsmail erneut senden
-errors.server500.title: 500 Serverfehler
+errors.server500.title: 500 Interner Serverfehler
 alphabetically: Alphabetisch
 show_subscriptions: Zeige Abonnements
 resend_account_activation_email_question: Inaktiver Account?
 resend_account_activation_email_description: Gib die E-Mail-Adresse die mit deinem
   Account assoziiert ist ein. Wir werden erneut eine Aktivierungsmail für Sie senden.
-errors.server500.description: Es tut uns leid, etwas ist schiefgelaufen. Wir arbeiten
-  daran das Problem zu beheben, bitte versuchen sie es später erneut.
+errors.server500.description: Es tut uns leid, etwas ist schiefgelaufen. Sollte dieser
+  Fehler bestehen kontaktieren Sie bitte den Instanz Besitzer. Wenn diese Instanz
+  überhaupt nicht funktioniert kann eine %link_start%andere Mbin Instanz%link_end%
+  verwendet werden bis das Problem gelöst ist.
 oauth.client_not_granted_message_read_permission: Diese App hat keine Berechtigung
   erhalten deine Nachrichten zu lesen.
 restrict_oauth_clients: Beschränke OAuth2 Client Erstellung auf Admins
@@ -734,3 +735,99 @@ oauth2.grant.admin.post_comment.purge: Lösche jeden Kommentar unter einem Beitr
   endgültig von deiner Instanz.
 oauth2.grant.moderate.magazine_admin.badges: Erstelle oder Entferne Abzeichen in deinen
   eigenen Magazinen.
+edit_my_profile: Mein Profil bearbeiten
+user_badge_moderator: Mod
+flash_account_settings_changed: Die Kontoeinstellungen wurden erfolgreich geändert.
+  Du musst dich erneut anmelden.
+close: Schließen
+restore_magazine: Magazin wiederherstellen
+flash_post_new_success: Post wurde erfolgreich erstellt.
+flash_comment_edit_error: Kommentar konnte nicht bearbeitet werden. Etwas ist schief
+  gegangen.
+flash_comment_new_error: Kommentar konnte nicht erstellt werden. Etwas ist schief
+  gegangen.
+account_settings_changed: Die Kontoeinstellungen wurden erfolgreich geändert. Du musst
+  dich erneut anmelden.
+suspend_account: Konto suspendieren
+flash_post_new_error: Post konnte nicht erstellt werden. Etwas ist schief gegangen.
+default_theme: Standard Design
+page_width_fixed: Festgelegt
+flash_thread_new_error: Thema konnte nicht erstellt werden. Etwas ist schief gelaufen.
+remove_following: Folgen entfernen
+account_suspended: Das Konto wurde suspendiert.
+mark_as_adult: NSFW Markierung Anwenden
+user_badge_admin: Admin
+flash_magazine_theme_changed_error: Die Magazin Darstellung konnte nicht aktualisiert
+  werden.
+flash_post_edit_error: Post konnte nicht bearbeitet werden. Etwas ist schief gegangen.
+2fa.setup_error: Fehler bei der 2FA Aktivierung für das Konto
+page_width_auto: Automatisch
+flash_post_edit_success: Post erfolgreich bearbeitet.
+flash_user_edit_password_error: Passwort konnte nicht geändert werden.
+user_badge_global_moderator: Globaler Mod
+apply_for_moderator: Als Moderator bewerben
+unmark_as_adult: NSFW Markierung entfernen
+position_bottom: Unterseite
+deletion: Löschung
+deleted_by_author: Thema, Post oder Kommentar wurde durch den Author gelöscht
+account_unbanned: Dieses Konto wurde entsperrt.
+solarized_auto: Solarized (Auto Detektion)
+flash_magazine_theme_changed_success: Die Magazin Darstellung wurde erfolgreich aktualisiert.
+change_my_cover: Mein Deckblatt ändern
+flash_thread_edit_error: Thema konnte nicht bearbeitet werden. Etwas ist schief gegangen.
+announcement: Ankündigung
+flash_user_edit_email_error: Email konnte nicht geändert werden.
+page_width_max: Maximal
+sensitive_toggle: Sichtbarkeit für sensible Inhalte umschalten
+magazine_is_deleted: Magazin ist gelöscht. Du kannst es innerhalb von 30 Tagen <a
+  href="%link_target%">wiederherstellen</a>.
+sensitive_show: Klicke zum anzeigen
+open_url_to_fediverse: Ursprüngliche URL öffnen
+page_width: Seiten Breite
+user_badge_bot: Bot
+flash_comment_new_success: Kommentar wurde erfolgreich erstellt.
+flash_user_settings_general_error: Nutzer Einstellungen konnten nicht gespeichert
+  werden.
+account_is_suspended: Dieses Nutzerkonto ist suspendiert.
+delete_account_request_revoke: Deine Anfrage auf Kontolöschung wurde zurückgezogen.
+user_suspend_desc: Dein Konto suspendieren versteckt deine Inhalte auf der Instanz,
+  löscht diese aber nicht permanent, du kannst die Inhalte jederzeit wiederherstellen.
+ownership_requests: Eigentümer Anfragen
+flash_email_was_sent: Email wurde erfolgreich versandt.
+account_unsuspended: Die Kontosuspendierung wurde aufgehoben.
+sensitive_warning: Sensibler Inhalt
+keywords: Schlüsselwörter
+moderator_requests: Moderator Anfragen
+default_theme_auto: Hell/Dunkel (Auto Detektion)
+flash_comment_edit_success: Kommentar wurde erfolgreich aktualisiert.
+action: Aktion
+flash_mark_as_adult_success: Die NSFW Markierung wurde dem Post erfolgreich hinzugefügt.
+cancel_request: Anfrage abbrechen
+unsuspend_account: Konto Suspendierung aufheben
+deleted_by_moderator: Thema, Post oder Kommentar wurde durch den Moderator gelöscht
+flash_unmark_as_adult_success: Die NSFW Markierung wurde vom Post erfolgreich entfernt.
+abandoned: Verlassen
+account_banned: Dieses Konto wurde gesperrt.
+change_my_avatar: Meinen Avatar ändern
+flash_user_edit_profile_success: Nutzer Profil Einstellungen erfolgreich gespeichert.
+flash_user_settings_general_success: Nutzer Einstellungen erfolgreich gespeichert.
+remove_subscriptions: Abonnements entfernen
+request_account_deletion_revoke_button: Anforderung zur Kontolöschung zurückziehen.
+delete_magazine: Magazin löschen
+sensitive_hide: Klicke zum verstecken
+request_magazine_ownership: Magazin Eigentümerschaft beantragen
+pending: Unerledigt
+accept: Akzeptieren
+flash_email_failed_to_sent: Email konnte nicht gesendet werden.
+flash_user_edit_profile_error: Profil Einstellungen konnten nicht gespeichert werden.
+user_badge_op: OP
+purge_magazine: Magazin permanent löschen
+magazine_deletion: Magazin Löschung
+position_top: Oberseite
+subscribers_count: '{0}Abonnenten|{1}Abonennt|]1,Inf[ Abonnenten'
+followers_count: '{0}Follower|{1}Follower|]1,Inf[ Follower'
+remove_media: Medien entfernen
+menu: Menü
+all_time: Gesamt
+details: Details
+spoiler: Spoiler

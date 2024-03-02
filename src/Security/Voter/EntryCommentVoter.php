@@ -81,7 +81,7 @@ class EntryCommentVoter extends Voter
         //            return false;
         //        }
 
-        if ($comment->entry->magazine->isBanned($user)) {
+        if ($comment->entry->magazine->isBanned($user) || $user->isBanned()) {
             return false;
         }
 

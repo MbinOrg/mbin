@@ -20,10 +20,10 @@
             <form action="{{ path('magazine_moderator_request', {name: magazine.name}) }}"
                   method="POST"
                   class="float-end mb-2"
-                  onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                  data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                 <input type="hidden" name="token" value="{{ csrf_token('moderator_request') }}">
                 <button type="submit" class="btn btn__secondary">
-                    <i class="fa-solid fa-hand-point-up"></i>
+                    <i class="fa-solid fa-hand-point-up" aria-hidden="true"></i>
                     {% if not app.user.hasModeratorRequest(magazine) %}
                         <span>{{ 'apply_for_moderator'|trans }}</span>
                     {% else %}
@@ -39,7 +39,7 @@
                   method="post">
                 <button type="submit"
                         class="btn btn__secondary">
-                    <i class="fa-sharp fa-solid fa-hand-point-up"></i>
+                    <i class="fa-sharp fa-solid fa-hand-point-up" aria-hidden="true"></i>
                     {% if not app.user or not app.user.hasMagazineOwnershipRequest(magazine) %}
                         <span>{{ 'request_magazine_ownership'|trans }}</span>
                     {% else %}

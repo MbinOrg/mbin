@@ -9,6 +9,7 @@ use App\Entity\PostComment;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
 use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ContextsProvider;
 use App\Service\ActivityPub\Wrapper\ImageWrapper;
 use App\Service\ActivityPub\Wrapper\MentionsWrapper;
 use App\Service\ActivityPub\Wrapper\TagsWrapper;
@@ -20,6 +21,7 @@ class PostCommentNoteFactory
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly ContextsProvider $contextProvider,
         private readonly PostNoteFactory $postNoteFactory,
         private readonly ImageWrapper $imageWrapper,
         private readonly GroupFactory $groupFactory,
@@ -35,16 +37,17 @@ class PostCommentNoteFactory
     public function create(PostComment $comment, bool $context = false): array
     {
         if ($context) {
-            $note['@context'] = [
-                ActivityPubActivityInterface::CONTEXT_URL,
-                ActivityPubActivityInterface::SECURITY_URL,
-                PostNoteFactory::getContext(),
-            ];
+            $note['@context'] = $this->contextProvider->referencedContexts();
         }
 
         $tags = $comment->tags ?? [];
         if ('random' !== $comment->magazine->name && !$comment->magazine->apId) { // @todo
             $tags[] = $comment->magazine->name;
+        }
+
+        $cc = [$this->groupFactory->getActivityPubId($comment->magazine)];
+        if ($followersUrl = $comment->user->getFollowerUrl($this->client, $this->urlGenerator, null !== $comment->apId)) {
+            $cc[] = $followersUrl;
         }
 
         $note = array_merge($note ?? [], [
@@ -55,16 +58,7 @@ class PostCommentNoteFactory
             'to' => [
                 ActivityPubActivityInterface::PUBLIC_URL,
             ],
-            'cc' => [
-                $this->groupFactory->getActivityPubId($comment->magazine),
-                $comment->apId
-                    ? ($this->client->getActorObject($comment->user->apProfileId)['followers']) ?? []
-                    : $this->urlGenerator->generate(
-                        'ap_user_followers',
-                        ['username' => $comment->user->username],
-                        UrlGeneratorInterface::ABSOLUTE_URL
-                    ),
-            ],
+            'cc' => $cc,
             'sensitive' => $comment->post->isAdult(),
             'content' => $this->markdownConverter->convertToHtml(
                 $comment->body,
@@ -133,13 +127,7 @@ class PostCommentNoteFactory
 
     private function getReplyTo(PostComment $comment): string
     {
-        if ($comment->apId) {
-            return $comment->apId;
-        }
-
-        return $comment->parent ? $this->getActivityPubId($comment->parent) : $this->postNoteFactory->getActivityPubId(
-            $comment->post
-        );
+        return $comment->parent ? $this->getActivityPubId($comment->parent) : $this->postNoteFactory->getActivityPubId($comment->post);
     }
 
     private function getReplyToAuthor(PostComment $comment): string

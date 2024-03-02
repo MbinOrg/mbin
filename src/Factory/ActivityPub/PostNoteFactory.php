@@ -9,19 +9,20 @@ use App\Entity\Post;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
 use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ContextsProvider;
 use App\Service\ActivityPub\Wrapper\ImageWrapper;
 use App\Service\ActivityPub\Wrapper\MentionsWrapper;
 use App\Service\ActivityPub\Wrapper\TagsWrapper;
 use App\Service\ActivityPubManager;
 use App\Service\MentionManager;
 use App\Service\TagManager;
-use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class PostNoteFactory
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly ContextsProvider $contextProvider,
         private readonly GroupFactory $groupFactory,
         private readonly ImageWrapper $imageWrapper,
         private readonly TagsWrapper $tagsWrapper,
@@ -37,11 +38,7 @@ class PostNoteFactory
     public function create(Post $post, bool $context = false): array
     {
         if ($context) {
-            $note['@context'] = [
-                ActivityPubActivityInterface::CONTEXT_URL,
-                ActivityPubActivityInterface::SECURITY_URL,
-                self::getContext(),
-            ];
+            $note['@context'] = $this->contextProvider->referencedContexts();
         }
 
         $tags = $post->tags ?? [];
@@ -54,6 +51,11 @@ class PostNoteFactory
             $tags
         );
 
+        $cc = [];
+        if ($followersUrl = $post->user->getFollowerUrl($this->client, $this->urlGenerator, null !== $post->apId)) {
+            $cc[] = $followersUrl;
+        }
+
         $note = array_merge($note ?? [], [
             'id' => $this->getActivityPubId($post),
             'type' => 'Note',
@@ -63,15 +65,7 @@ class PostNoteFactory
                 $this->groupFactory->getActivityPubId($post->magazine),
                 ActivityPubActivityInterface::PUBLIC_URL,
             ],
-            'cc' => [
-                $post->apId
-                    ? ($this->client->getActorObject($post->user->apProfileId)['followers']) ?? []
-                    : $this->urlGenerator->generate(
-                        'ap_user_followers',
-                        ['username' => $post->user->username],
-                        UrlGeneratorInterface::ABSOLUTE_URL
-                    ),
-            ],
+            'cc' => $cc,
             'sensitive' => $post->isAdult(),
             'stickied' => $post->sticky,
             'content' => $this->markdownConverter->convertToHtml(
@@ -103,20 +97,6 @@ class PostNoteFactory
         $note['to'] = array_unique(array_merge($note['to'], $this->activityPubManager->createCcFromBody($post->body)));
 
         return $note;
-    }
-
-    #[ArrayShape([
-        'ostatus' => 'string',
-        'sensitive' => 'string',
-        'votersCount' => 'string',
-    ])]
-    public static function getContext(): array
-    {
-        return [
-            'ostatus' => 'http://ostatus.org#',
-            'sensitive' => 'as:sensitive',
-            'votersCount' => 'toot:votersCount',
-        ];
     }
 
     public function getActivityPubId(Post $post): string

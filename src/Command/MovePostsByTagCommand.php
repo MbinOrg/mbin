@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'kbin:posts:move',
+    name: 'mbin:posts:move',
     description: 'This command will allow you to move the posts to the new magazine based on the tag.'
 )]
 class MovePostsByTagCommand extends Command

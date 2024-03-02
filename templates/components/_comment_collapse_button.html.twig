@@ -1,0 +1,20 @@
+<aside class="comment-collapse">
+    <a data-action="comment-collapse#toggleCollapse">
+        <span data-comment-collapse-target="counter"></span>
+        {% if showNested and comment.children|length > 0 %}
+            <span class="collapse-label" aria-label="{{ 'collapse'|trans }}" title="{{ 'collapse'|trans }}">
+                <i class="fa-solid fa-angles-up"></i>
+            </span>
+            <span class="expand-label" aria-label="{{ 'expand'|trans }}" title="{{ 'expand'|trans }}">
+                <i class="fa-solid fa-angles-down"></i>
+            </span>
+        {% else %}
+            <span class="collapse-label" aria-label="{{ 'hide'|trans }}" title="{{ 'hide'|trans }}">
+                <i class="fa-solid fa-angle-up"></i>
+            </span>
+            <span class="expand-label" aria-label="{{ 'show'|trans }}" title="{{ 'show'|trans }}">
+                <i class="fa-solid fa-angle-down"></i>
+            </span>
+        {% endif %}
+    </a>
+</aside>

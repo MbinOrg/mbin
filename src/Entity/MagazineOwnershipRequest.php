@@ -24,7 +24,7 @@ class MagazineOwnershipRequest
     }
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'magazineOwnershipRequests')]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $user;
     #[ManyToOne(targetEntity: Magazine::class, inversedBy: 'ownershipRequests')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]

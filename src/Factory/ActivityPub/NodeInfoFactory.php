@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace App\Factory\ActivityPub;
 
 use App\Repository\StatsContentRepository;
+use App\Service\ProjectInfoService;
 use App\Service\SettingsManager;
 
 class NodeInfoFactory
 {
     private const NODE_PROTOCOL = 'activitypub';
-    private const MBIN_REPOSITORY_URL = 'https://github.com/MbinOrg/mbin';
-    private const MBIN_VERSION = '1.1.0'; // TODO: Should come from git tags?
 
     public function __construct(
         private readonly StatsContentRepository $repository,
-        private readonly SettingsManager $settingsManager
+        private readonly SettingsManager $settingsManager,
+        private readonly ProjectInfoService $projectInfo
     ) {
     }
 
@@ -29,17 +29,17 @@ class NodeInfoFactory
         switch ($version) {
             case '2.0':
                 $software = [
-                    'name' => 'mbin',
-                    'version' => self::MBIN_VERSION,
+                    'name' => $this->projectInfo->getName(),
+                    'version' => $this->projectInfo->getVersion(),
                 ];
                 break;
             case '2.1':
             default:
                 // Used for 2.1 and as fallback
                 $software = [
-                    'name' => 'mbin',
-                    'version' => self::MBIN_VERSION,
-                    'repository' => self::MBIN_REPOSITORY_URL,
+                    'name' => $this->projectInfo->getName(),
+                    'version' => $this->projectInfo->getVersion(),
+                    'repository' => $this->projectInfo->getRepositoryURL(),
                 ];
                 break;
         }
@@ -64,7 +64,10 @@ class NodeInfoFactory
                 'localComments' => $this->repository->countLocalComments(),
             ],
             'openRegistrations' => $this->settingsManager->get('KBIN_REGISTRATIONS_ENABLED'),
-            'metadata' => (object) [],
+            'metadata' => [
+                'nodeName' => $this->settingsManager->get('KBIN_META_TITLE'),
+                'nodeDescription' => $this->settingsManager->get('KBIN_META_DESCRIPTION'),
+            ],
         ];
     }
 }

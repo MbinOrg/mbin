@@ -14,6 +14,7 @@
 
 {% block body %}
     <h1 hidden>{{ 'contact'|trans }}</h1>
+    {% include 'layout/_flash.html.twig' %}
     <div id="content" class="section section--top">
         <div class="container">
             {{ form_start(form) }}
@@ -21,6 +22,11 @@
             {{ form_row(form.email, {label: 'email'}) }}
             {{ form_row(form.message, {label: 'message'}) }}
             {{ form_row(form.surname, {label: false, attr: {style: 'display:none !important'}}) }}
+            {% if kbin_captcha_enabled() %}
+                    {{ form_row(form.captcha, {
+                        label: false
+                    }) }}
+                {% endif %}
             <div class="actions">
                 {{ form_row(form.submit, {label: 'send', attr: {class: 'btn btn__primary'}}) }}
             </div>

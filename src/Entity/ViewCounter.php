@@ -17,7 +17,7 @@ use Tchoulom\ViewCounterBundle\Model\ViewCountable;
 class ViewCounter extends BaseViewCounter
 {
     #[ManyToOne(targetEntity: Entry::class, cascade: ['persist'], inversedBy: 'viewCounters')]
-    #[JoinColumn]
+    #[JoinColumn(onDelete: 'CASCADE')]
     public ViewCountable $entry;
 
     public function getPage(): ?ViewCountable

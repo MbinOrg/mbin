@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
-    name: 'kbin:users:lastActive:update',
+    name: 'mbin:users:lastActive:update',
     description: 'This command allows set user last active date.'
 )]
 class UserLastActiveUpdateCommand extends Command
@@ -25,9 +25,10 @@ class UserLastActiveUpdateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $repo = $this->entityManager->getRepository(User::class);
+        $hideAdult = false;
 
         foreach ($repo->findAll() as $user) {
-            $activity = $repo->findPublicActivity(1, $user);
+            $activity = $repo->findPublicActivity(1, $user, $hideAdult);
             if ($activity->count()) {
                 $user->lastActive = $activity->getCurrentPageResults()[0]->lastActive;
             }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Factory\ActivityPub;
 
 use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ContextsProvider;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class InstanceFactory
@@ -13,6 +14,7 @@ class InstanceFactory
         private string $kbinDomain,
         private readonly ApHttpClient $client,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly ContextsProvider $contextProvider,
     ) {
     }
 
@@ -21,7 +23,7 @@ class InstanceFactory
         $actor = 'https://'.$this->kbinDomain.'/i/actor';
 
         return [
-            '@context' => 'https://www.w3.org/ns/activitystreams',
+            '@context' => $this->contextProvider->referencedContexts(),
             'id' => $actor,
             'type' => 'Application',
             'name' => 'Mbin',

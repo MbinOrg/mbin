@@ -30,7 +30,7 @@ class AdminCommandTest extends KernelTestCase
         $tester = new CommandTester($this->command);
         $tester->execute(['username' => 'actor']);
 
-        $this->assertStringContainsString('Administrator privileges has been granted.', $tester->getDisplay());
+        $this->assertStringContainsString('Administrator privileges have been granted.', $tester->getDisplay());
         $this->assertTrue($this->repository->findOneByUsername('actor')->isAdmin());
     }
 
@@ -38,7 +38,7 @@ class AdminCommandTest extends KernelTestCase
     {
         $application = new Application(self::bootKernel());
 
-        $this->command = $application->find('kbin:user:admin');
+        $this->command = $application->find('mbin:user:admin');
         $this->repository = $this->getContainer()->get(UserRepository::class);
     }
 }

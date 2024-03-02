@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Image;
 use App\Event\ImagePostProcessEvent;
+use App\Exception\ImageDownloadTooLargeException;
 use App\Service\ImageManager;
 use App\Utils\ImageOrigin;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -60,10 +61,8 @@ class ImageRepository extends ServiceEntityRepository
     /**
      * Process and store an image from source file given path.
      *
-     * @param source file path of the image
-     * @param origin where the image comes from
-     *
-     * @throws RuntimeException if image type can't be identified
+     * @param string      $source file path of the image
+     * @param ImageOrigin $origin where the image comes from
      */
     private function findOrCreateFromSource(string $source, ImageOrigin $origin): ?Image
     {
@@ -75,6 +74,8 @@ class ImageRepository extends ServiceEntityRepository
             if (file_exists($source)) {
                 unlink($source);
             }
+
+            $this->logger->debug('found image by Sha256, imageId: {id}', ['id' => $image->getId()]);
 
             return $image;
         }
@@ -94,32 +95,53 @@ class ImageRepository extends ServiceEntityRepository
 
         try {
             $this->imageManager->store($source, $filePath);
-        } catch (\Exception $e) {
-            $this->logger->warning(
-                'findOrCreateFromSource: failed to store image file: '.$e->getMessage(),
-                ['origin' => $origin],
-            );
 
-            return null;
+            return $image;
+        } catch (ImageDownloadTooLargeException $e) {
+            if (ImageOrigin::External === $origin) {
+                $this->logger->warning(
+                    'findOrCreateFromSource: failed to store image file, because it is too big. Storing only a reference',
+                    ['origin' => $origin, 'type' => \gettype($e)],
+                );
+                $image->filePath = null;
+
+                return $image;
+            } else {
+                $this->logger->error(
+                    'findOrCreateFromSource: failed to store image file, because it is too big',
+                    ['origin' => $origin, 'type' => \gettype($e)],
+                );
+            }
+        } catch (\Exception $e) {
+            $this->logger->error(
+                'findOrCreateFromSource: failed to store image file: '.$e->getMessage(),
+                ['origin' => $origin, 'type' => \gettype($e)],
+            );
         } finally {
             if (file_exists($source)) {
                 unlink($source);
             }
         }
 
-        return $image;
+        return null;
     }
 
     public function blurhash(string $filePath): ?string
     {
+        $maxWidth = 20;
+
+        $componentsX = 4;
+        $componentsY = 3;
+
         try {
             $image = imagecreatefromstring(file_get_contents($filePath));
             $width = imagesx($image);
             $height = imagesy($image);
 
-            $max_width = 20;
-            if ($width > $max_width) {
-                $image = imagescale($image, $max_width);
+            if ($width > $maxWidth) {
+                // resizing image with ratio exceeds max width would yield image with height < 1 and fail
+                $ratio = $width / $height;
+                $image = imagescale($image, $maxWidth, $componentsY * $ratio < $maxWidth ? -1 : $componentsY);
                 if (!$image) {
                     throw new \Exception('Could not scale image');
                 }
@@ -140,10 +162,7 @@ class ImageRepository extends ServiceEntityRepository
                 $pixels[] = $row;
             }
 
-            $components_x = 4;
-            $components_y = 3;
-
-            return Blurhash::encode($pixels, $components_x, $components_y);
+            return Blurhash::encode($pixels, $componentsX, $componentsY);
         } catch (\Exception $e) {
             $this->logger->info('Failed to calculate blurhash: '.$e->getMessage());
 

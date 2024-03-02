@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Factory\ActivityPub;
 
-use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Magazine;
+use App\Service\ActivityPub\ContextsProvider;
 use App\Service\ImageManager;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -13,6 +13,7 @@ class GroupFactory
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly ContextsProvider $contextProvider,
         private readonly ImageManager $imageManager
     ) {
     }
@@ -21,7 +22,7 @@ class GroupFactory
     {
         $group = [
             'type' => 'Group',
-            '@context' => [ActivityPubActivityInterface::CONTEXT_URL, ActivityPubActivityInterface::SECURITY_URL],
+            '@context' => $this->contextProvider->referencedContexts(),
             'id' => $this->getActivityPubId($magazine),
             'name' => $magazine->title, // lemmy
             'preferredUsername' => $magazine->name,
