@@ -259,7 +259,7 @@ class UrlExtensionRuntime implements RuntimeExtensionInterface
         $params = $this->requestStack->getCurrentRequest()->attributes->get('_route_params', []);
 
         $queryParams = $this->requestStack->getCurrentRequest()->query->all();
-        if (is_array($queryParams)) {
+        if (\is_array($queryParams)) {
             $params = array_merge($params, $queryParams);
         }
 
