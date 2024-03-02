@@ -23,6 +23,7 @@
                        "vote meta"
                        "vote footer"
                        "moderate moderate"
+                       "preview preview"
                        "body body";
     grid-template-columns: min-content 1fr;
   }
@@ -62,6 +63,7 @@
                            "meta meta"
                            "footer footer"
                            "moderate moderate"
+                           "preview preview"
                            "body body";
       grid-template-columns: min-content 1fr;
     }
@@ -92,6 +94,7 @@
                        "meta meta"
                        "footer footer"
                        "moderate moderate"
+                       "preview preview"
                        "body body";
       grid-template-columns: 1fr min-content;
     }
@@ -331,6 +334,7 @@
   &__domain {
     color: var(--kbin-meta-text-color);
     font-size: .7rem;
+    white-space: nowrap;
 
     a {
       color: var(--kbin-meta-text-color);

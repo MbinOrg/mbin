@@ -36,6 +36,15 @@
                             {% else %}
                                 {{ entry.title }}
                             {% endif %}
+
+                            {% if entry.url %}
+                                <span class="entry__domain">
+                                    ( <a rel="{{ get_rel(entry.url) }}" href="{{ entry.url }}" target="_blank">
+                                        <span>{{ get_url_domain(entry.url) }}</span> <i class="fa-solid fa-external-link" aria-hidden="true"></i>
+                                    </a> )
+                                </span>
+                            {% endif %}
+
                             {% if entry.lang is not same as app.request.locale and entry.lang is not same as kbin_default_lang() %}
                                 <small class="badge-lang">{{ entry.lang|language_name }}</small>
                             {% endif %}
@@ -47,8 +56,11 @@
                             <a href="{{ entry_url(entry) }}">{{ entry.title }}</a>
 
                             {% if entry.url %}
-                                <span class="entry__domain">(<a rel="{{ get_rel(entry.url) }}"
-                                                                href="{{ entry.url }}">{{ get_url_domain(entry.url) }}</a>)</span>
+                                <span class="entry__domain">
+                                    ( <a rel="{{ get_rel(entry.url) }}" href="{{ entry.url }}" target="_blank">
+                                        <span>{{ get_url_domain(entry.url) }}</span> <i class="fa-solid fa-external-link" aria-hidden="true"></i>
+                                    </a> )
+                                </span>
                             {% endif %}
 
                             {% if entry.lang is not same as app.request.locale and entry.lang is not same as kbin_default_lang() %}
