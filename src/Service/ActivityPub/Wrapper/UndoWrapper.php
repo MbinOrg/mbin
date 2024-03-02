@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\ActivityPub\Wrapper;
 
+use App\Entity\Contracts\ActivityPubActivityInterface;
 use JetBrains\PhpStorm\ArrayShape;
 
 class UndoWrapper
@@ -21,7 +22,7 @@ class UndoWrapper
         unset($object['@context']);
 
         return [
-            '@context' => 'https://www.w3.org/ns/activitystreams',
+            '@context' => ActivityPubActivityInterface::CONTEXT_URL,
             'id' => $object['id'].'#unfollow',
             'type' => 'Undo',
             'actor' => $object['actor'],

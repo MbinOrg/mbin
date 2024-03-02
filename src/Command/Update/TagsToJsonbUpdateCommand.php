@@ -17,7 +17,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
-    name: 'kbin:tags:update',
+    name: 'mbin:tags:update',
     description: 'This command allows update tags columns.',
 )]
 class TagsToJsonbUpdateCommand extends Command

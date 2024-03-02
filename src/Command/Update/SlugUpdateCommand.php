@@ -14,7 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
-    name: 'kbin:slug:update',
+    name: 'mbin:slug:update',
     description: 'This command allows refresh entries slugs.'
 )]
 class SlugUpdateCommand extends Command

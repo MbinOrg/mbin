@@ -15,7 +15,7 @@
                                 <figure>
                                     <img width="32" height="32"
                                          class="image-inline {{ magazine.isAdult ? 'image-adult' : '' }}"
-                                         src="{{ asset(magazine.icon.filePath) | imagine_filter('avatar_thumb') }}"
+                                         src="{{ magazine.icon.filePath ? (asset(magazine.icon.filePath)|imagine_filter('avatar_thumb')) : magazine.icon.sourceUrl }}"
                                          {% if magazine.isAdult %}data-controller="thumb" data-action="mouseover->thumb#adult_image_hover mouseout->thumb#adult_image_hover_out"{% endif %}
                                          alt="{{ magazine.name ~' '~ 'icon'|trans|lower }}">
                                 </figure>
@@ -39,22 +39,22 @@
                         {% for column in ['threads', 'comments', 'posts'] %}
                             <th>
                                 {% if sortBy is same as column %}
-                                    {{ column|trans }}
-                                    <i class="fa-solid fa-sort-amount-desc" aria-sort="descending"></i>
+                                    <span aria-sort="descending">{{ column|trans }}</span>
+                                    <i class="fa-solid fa-sort-amount-desc" aria-hidden="true"></i>
                                 {% else %}
                                     <a href="{{ options_url('sortBy', column) }}">
-                                        {{ column|trans }}
+                                        <span>{{ column|trans }}</span>
                                     </a>
                                 {% endif %}
                             </th>
                         {% endfor %}
                         <th style="text-align: center">
                             {% if sortBy is same as 'hot' %}
-                                {{ 'subscriptions'|trans }}
-                                <i class="fa-solid fa-sort-amount-desc" aria-sort="descending"></i>
+                                <span aria-sort="descending">{{ 'subscriptions'|trans }}</span>
+                                <i class="fa-solid fa-sort-amount-desc" aria-hidden="true"></i>
                             {% else %}
                                 <a href="{{ options_url('sortBy', 'hot') }}">
-                                    {{ 'subscriptions'|trans }}
+                                    <span>{{ 'subscriptions'|trans }}</span>
                                 </a>
                             {% endif %}
                         </th>
@@ -86,7 +86,7 @@
                                 {% endif %}
 
                                 {% if sortBy is same as column %}
-                                    <i class="fa-solid fa-sort-amount-desc" aria-sort="descending"></i>
+                                    <i class="fa-solid fa-sort-amount-desc" aria-hidden="true"></i>
                                 {% endif %}
                             </a>
 

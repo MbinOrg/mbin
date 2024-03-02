@@ -233,7 +233,7 @@
     text-decoration: none;
     height: 100%;
 
-    div {
+    #nav-toggle {
       display: none;
       font-size: .9rem;
       cursor: pointer;
@@ -252,7 +252,7 @@
     }
 
     @include media-breakpoint-down(sm) {
-      div {
+      #nav-toggle {
         min-width: 2.5rem;
       }
     }
@@ -272,7 +272,7 @@
         height: 1.5rem;
       }
 
-      div {
+      #nav-toggle {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -288,8 +288,7 @@
     height: 100%;
 
     span {
-      font-weight: lighter;
-      font-size: .75rem;
+      opacity: 0.5;
     }
 
     a {

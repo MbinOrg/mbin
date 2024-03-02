@@ -22,6 +22,7 @@ use App\PageView\EntryPageView;
 use App\PageView\PostPageView;
 use App\Pagination\AdapterFactory;
 use App\Repository\Contract\TagRepositoryInterface;
+use App\Service\SettingsManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Types\Types;
@@ -52,6 +53,7 @@ class PostRepository extends ServiceEntityRepository implements TagRepositoryInt
         private readonly Security $security,
         private readonly CacheInterface $cache,
         private readonly AdapterFactory $adapterFactory,
+        private readonly SettingsManager $settingsManager,
     ) {
         parent::__construct($registry, Post::class);
     }
@@ -335,11 +337,14 @@ class PostRepository extends ServiceEntityRepository implements TagRepositoryInt
     {
         $qb = $this->createQueryBuilder('p');
 
-        return $qb
-            ->where('p.isAdult = false')
+        $qb = $qb->where('p.isAdult = false')
             ->andWhere('p.visibility = :visibility')
-            ->andWhere('m.isAdult = false')
-            ->join('p.magazine', 'm')
+            ->andWhere('m.isAdult = false');
+        if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
+            $qb = $qb->andWhere('m.apId IS NULL');
+        }
+
+        return $qb->join('p.magazine', 'm')
             ->orderBy('p.createdAt', 'DESC')
             ->setParameters(['visibility' => VisibilityInterface::VISIBILITY_VISIBLE])
             ->setMaxResults($limit)

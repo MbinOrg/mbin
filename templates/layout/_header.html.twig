@@ -8,11 +8,10 @@
             <a href="#content">{{ 'go_to_content'|trans }}</a>
             <a href="#options">{{ 'go_to_filters'|trans }}</a>
             <a href="{{ path('search') }}">{{ 'go_to_search'|trans }}</a>
-            <a href="#footer">{{ 'go_to_footer'|trans }}</a>
         </div>
         <nav class="head-nav">
             <div class="brand">
-                <div data-action="click->kbin#handleNavToggleClick"><i class="nav-toggle fa-solid fa-bars"></i></div>
+                <div id="nav-toggle" data-action="click->kbin#handleNavToggleClick" aria-label="{{ 'menu'|trans }}"><i class="fa-solid fa-bars" aria-hidden="true"></i></div>
                 <a href="/">
                     {% if kbin_header_logo() %}
                         <img id="logo" src="{{ asset('mbin_logo.svg') }}" alt="{{ 'homepage'|trans }}" title="{{ 'homepage'|trans}}">
@@ -34,7 +33,7 @@
                    class="icon"
                    aria-label="{{ 'search'|trans }}"
                    title="{{ 'search'|trans }}">
-                    <i class="fa-solid fa-magnifying-glass"></i> {{ 'search'|trans }}
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
                 </a>
             </li>
             <li class="dropdown">
@@ -42,7 +41,7 @@
                    class="icon"
                    aria-label="{{ 'add'|trans }}"
                    title="{{ 'add'|trans }}">
-                    <i class="fa-solid fa-plus"></i> {{ 'add'|trans }}
+                    <i class="fa-solid fa-plus" aria-hidden="true"></i>
                 </a>
                 <ul class="dropdown__menu">
                     {% if magazine is defined and magazine %}
@@ -104,7 +103,7 @@
                    class="icon"
                    aria-label="{{ 'select_channel'|trans }}"
                    title="{{ 'select_channel'|trans }}">
-                    <i class="fa-solid fa-list"></i> {{ 'select_channel'|trans }}
+                    <i class="fa-solid fa-list" aria-hidden="true"></i>
                 </a>
                 <ul class="dropdown__menu">
                     <li>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Twig\Runtime;
 
+use App\Entity\Image;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class MediaExtensionRuntime implements RuntimeExtensionInterface
@@ -13,8 +14,12 @@ class MediaExtensionRuntime implements RuntimeExtensionInterface
     ) {
     }
 
-    public function getPublicPath(string $path): string
+    public function getPublicPath(Image $image): ?string
     {
-        return $this->storageUrl.'/'.$path;
+        if ($image->filePath) {
+            return $this->storageUrl.'/'.$image->filePath;
+        }
+
+        return $image->sourceUrl;
     }
 }

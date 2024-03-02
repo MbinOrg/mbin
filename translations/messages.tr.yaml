@@ -320,7 +320,6 @@ add_new_article: Yeni başlık ekle
 domain: Alan
 joined: Katılanlar
 people_federated: Birleştirilmiş
-go_to_footer: Alt bilgiye git
 edit_article: Başlığı düzenle
 notify_on_new_entry_reply: Başlıklarımdaki bütün yorumlar
 notify_on_new_entry_comment_reply: Herhangi bir başlıkta yorumlarıma gelen yanıtlar

@@ -20,7 +20,20 @@
                 data-action="notifications:Notification@window->subject#notification">
             <header>
                 {% if post.isAdult %}<span class="badge danger">18+</span>{% endif %}
-                {{ component('user_inline', {user: post.user, showAvatar: false}) }},
+                {{ component('user_inline', {user: post.user, showAvatar: false}) }}
+
+                {% if (post.user.type) == "Service" %}
+                    <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
+                {% endif %}
+
+                {% if post.user.admin() %}
+                    <span class="user-badge">{{ 'user_badge_admin'|trans }}</span>
+                {% elseif post.user.moderator() %}
+                    <span class="user-badge">{{ 'user_badge_global_moderator'|trans }}</span>
+                {% elseif post.magazine.userIsModerator(post.user) %}
+                    <span class="user-badge">{{ 'user_badge_moderator'|trans }}</span>
+                {% endif %}
+                <span>, </span>
                 {% if dateAsUrl %}
                     <a href="{{ post_url(post) }}"
                        class="link-muted">{{ component('date', {date: post.createdAt}) }}</a>
@@ -56,20 +69,20 @@
             {% endif %}
             <footer>
                 {% if post.image %}
-                    <figure>
-                        <a class="thumb" href="{{ uploaded_asset(post.image.filePath) }}">
-                            <img class="thumb-subject {{ post.isAdult ? 'image-adult' : '' }}"
-                                 src="{{ asset(post.image.filePath) |imagine_filter('post_thumb') }}"
-                                 {% if post.isAdult %}data-controller="thumb" data-action="mouseover->thumb#adult_image_hover mouseout->thumb#adult_image_hover_out"{% endif %}
-                                 alt="{{ post.image.altText }}">
-                        </a>
-                    </figure>
+                    {{ include('components/_figure_image.html.twig', {
+                        image: post.image,
+                        parent_id: post.id,
+                        is_adult: post.isAdult,
+                        thumb_filter: 'post_thumb'
+                    }) }}
                 {% endif %}
                 {% if post.visibility in ['visible', 'private'] %}
                     <menu>
                         {% if post.sticky %}
                             <li>
-                                <i class="fa-solid fa-thumbtack" aria-label="{{ 'pinned'|trans }}"></i>
+                                <span aria-label="{{ 'pinned'|trans }}">
+                                    <i class="fa-solid fa-thumbtack" aria-hidden="true"></i>
+                                </span>
                             </li>
                         {% endif %}
                         <li>

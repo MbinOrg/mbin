@@ -11,8 +11,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CollectionItemsWrapper
 {
-    public function __construct(private readonly UrlGeneratorInterface $urlGenerator)
-    {
+    public function __construct(
+        private readonly UrlGeneratorInterface $urlGenerator,
+    ) {
     }
 
     #[ArrayShape([
@@ -30,14 +31,15 @@ class CollectionItemsWrapper
         PagerfantaInterface $pagerfanta,
         array $items,
         int $page,
-        array $context = null
     ): array {
         $result = [
-            '@context' => $context
-                ? array_merge([ActivityPubActivityInterface::CONTEXT_URL], [$context])
-                : ActivityPubActivityInterface::CONTEXT_URL,
+            '@context' => ActivityPubActivityInterface::CONTEXT_URL,
             'type' => 'OrderedCollectionPage',
-            'partOf' => $this->urlGenerator->generate($routeName, $routeParams, UrlGeneratorInterface::ABSOLUTE_URL),
+            'partOf' => $this->urlGenerator->generate(
+                $routeName,
+                $routeParams,
+                UrlGeneratorInterface::ABSOLUTE_URL
+            ),
             'id' => $this->urlGenerator->generate(
                 $routeName,
                 $routeParams + ['page' => $page],

@@ -20,12 +20,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\HttpClient\HttpClient;
 
-#[AsCommand(name: 'kbin:awesome-bot:entries:create')]
+#[AsCommand(name: 'mbin:awesome-bot:entries:create')]
 class AwesomeBotEntries extends Command
 {
-    // bin/console kbin:user:create awesome-vue-bot awesome-vue-bot@karab.in awesome-vue-bot
-    // bin/console kbin:awesome-bot:magazine:create ernest vue Vue https://github.com/vuejs/awesome-vue h3
-    // bin/console kbin:awesome-bot:entries:create awesome-vue-bot vue https://github.com/vuejs/awesome-vue h3
+    // bin/console mbin:user:create awesome-vue-bot awesome-vue-bot@karab.in awesome-vue-bot
+    // bin/console mbin:awesome-bot:magazine:create ernest vue Vue https://github.com/vuejs/awesome-vue h3
+    // bin/console mbin:awesome-bot:entries:create awesome-vue-bot vue https://github.com/vuejs/awesome-vue h3
 
     public function __construct(
         private readonly EntryManager $entryManager,

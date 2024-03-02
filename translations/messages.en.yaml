@@ -25,6 +25,8 @@ change_view: Change view
 filter_by_time: Filter by time
 filter_by_type: Filter by type
 comments_count: '{0}Comments|{1}Comment|]1,Inf[ Comments'
+subscribers_count: '{0}Subscribers|{1}Subscriber|]1,Inf[ Subscribers'
+followers_count: '{0}Followers|{1}Follower|]1,Inf[ Followers'
 favourites: Favorites
 favourite: Favorite
 more: More
@@ -46,6 +48,7 @@ mod_log: Moderation log
 add_comment: Add comment
 add_post: Add post
 add_media: Add media
+remove_media: Remove media
 markdown_howto: How does the editor work?
 enter_your_comment: Enter your comment
 enter_your_post: Enter your post
@@ -142,7 +145,6 @@ related_tags: Related tags
 go_to_content: Go to content
 go_to_filters: Go to filters
 go_to_search: Go to search
-go_to_footer: Go to footer
 subscribed: Subscribed
 all: All
 logout: Log out
@@ -178,6 +180,7 @@ edit_photo: Edit photo
 delete: Delete
 edit_post: Edit post
 edit_comment: Save changes
+menu: Menu
 settings: Settings
 general: General
 profile: Profile
@@ -402,8 +405,8 @@ filter.adult.only: Only NSFW
 local_and_federated: Local and federated
 filter.fields.only_names: Only names
 filter.fields.names_and_descriptions: Names and descriptions
-kbin_bot: Mbin Bot
-bot_body_content: "Welcome to the Mbin Bot! This bot plays a crucial role in enabling
+kbin_bot: Mbin Agent
+bot_body_content: "Welcome to the Mbin Agent! This agent plays a crucial role in enabling
   ActivityPub functionality within Mbin. It ensures that Mbin can communicate and
   federate with other instances in the fediverse.\n\nActivityPub is an open standard
   protocol that allows decentralized social networking platforms to communicate and
@@ -432,14 +435,18 @@ federation_page_enabled: Federation page enabled
 federation_page_allowed_description: Known instances we federate with
 federation_page_disallowed_description: Instances we do not federate with
 federated_search_only_loggedin: Federated search limited if not logged in
+sidebar_sections_local_only: Restrict "Random X" and "Active People" sections to local
+  only
 request_account_deletion_title: Account deletion
 request_account_deletion_description: The administrator will be notified that you
   want your account deleted.
 request_account_deletion_button: Request account deletion
 more_from_domain: More from domain
 errors.server500.title: 500 Internal Server Error
-errors.server500.description: Sorry, something went wrong on our end. If you continue to see this error, try contacting the instance owner.
-  If this instance is not working at all, check out %link_start%other Mbin instances%link_end% in the meanwhile until the problem is resolved.
+errors.server500.description: Sorry, something went wrong on our end. If you continue
+  to see this error, try contacting the instance owner. If this instance is not working
+  at all, check out %link_start%other Mbin instances%link_end% in the meanwhile until
+  the problem is resolved.
 errors.server429.title: 429 Too Many Requests
 errors.server404.title: 404 Not found
 errors.server403.title: 403 Forbidden
@@ -687,7 +694,7 @@ two_factor_backup: Two-factor authentication backup codes
   for your account
 2fa.qr_code_link.title: Visiting this link may allow your platform to register this
   two-factor authentication
-2fa.user_active_tfa.title: User has active 2fa
+2fa.user_active_tfa.title: User has active 2FA
 2fa.available_apps: Use a two-factor authentication app such as %google_authenticator%,
   %aegis% (Android) or %raivo% (iOS) to scan the QR-code.
 2fa.backup_codes.help: You can use these codes when you don't have your two-factor
@@ -696,7 +703,7 @@ two_factor_backup: Two-factor authentication backup codes
 2fa.backup_codes.recommendation: It is recommended that you keep a copy of them in
   a safe place.
 cancel: Cancel
-password_and_2fa: Password & 2fa
+password_and_2fa: Password & 2FA
 flash_account_settings_changed: Your account settings have been successfully changed.
   You will need to login again.
 show_subscriptions: Show subscriptions
@@ -780,3 +787,12 @@ announcement: Announcement
 keywords: Keywords
 deleted_by_moderator: Thread, post or comment was deleted by the moderator
 deleted_by_author: Thread, post or comment was deleted by the author
+sensitive_warning: Sensitive content
+sensitive_toggle: Toggle visibility of sensitive content
+sensitive_show: Click to show
+sensitive_hide: Click to hide
+details: Details
+spoiler: Spoiler
+all_time: All time
+show: Show
+hide: Hide

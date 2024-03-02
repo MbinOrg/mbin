@@ -50,6 +50,7 @@ For developers:
 
 - [Official repository on GitHub](https://github.com/MbinOrg/mbin)
 - [Matrix Space for discussions](https://matrix.to/#/#mbin:melroy.org)
+- [Unofficial magazine for discussions within the fediverse](https://kbin.run/m/Mdev)
 - [Translations](https://hosted.weblate.org/engage/mbin/)
 - [Contribution guidelines](CONTRIBUTING.md) - please read first, including before opening an issue!
 
@@ -178,7 +179,7 @@ This will give you a minimal working frontend with PostgreSQL setup. Keep in min
 
 _Optionally:_ you could also setup RabbitMQ, but the Doctrine messenger configuration will be sufficient for local development.
 
-More info: [Admin guide](docs/admin_guide.md) and [Symfony Local Web Server](https://symfony.com/doc/current/setup/symfony_server.html)
+More info: [Contributing guide](CONTRIBUTING.md), [Admin guide](docs/admin_guide.md) and [Symfony Local Web Server](https://symfony.com/doc/current/setup/symfony_server.html)
 
 ### Linting
 
@@ -213,24 +214,27 @@ tools/vendor/bin/php-cs-fixer fix
 
 Following languages are currently supported/translated:
 
+- Bulgarian
+- Chinese
+- Dutch
 - English
+- Esperanto
+- French
 - German
 - Greek
-- Esperanto
-- Spanish
-- French
 - Italian
 - Japanese
-- Dutch
 - Polish
-- Ukrainian
+- Portuguese
+- Russian
+- Spanish
 - Turkish
-- Chinese
+- Ukrainian
 
 ## Credits
 
 - [grumpyDev](https://karab.in/u/grumpyDev): icons, kbin-theme
-- [Emma](https://gitlab.com/postmill/Postmill): Postmill
+- [Emma](https://codeberg.org/LItiGiousemMA/Postmill): Postmill
 - [Ernest](https://github.com/ernestwisniewski): Kbin
 
 ## License

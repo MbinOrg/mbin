@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\ActivityPub\Server;
 use App\DTO\ActivityPub\ImageDto;
 use App\DTO\ActivityPub\VideoDto;
 use App\DTO\ModeratorDto;
@@ -36,7 +35,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class ActivityPubManager
 {
     public function __construct(
-        private readonly Server $server,
         private readonly UserRepository $userRepository,
         private readonly UserManager $userManager,
         private readonly UserFactory $userFactory,
@@ -59,11 +57,10 @@ class ActivityPubManager
 
     public function getActorProfileId(ActivityPubActorInterface $actor): string
     {
-        /**
-         * @var $actor User
-         */
-        if (!$actor->apId) {
-            return $this->personFactory->getActivityPubId($actor);
+        if ($actor instanceof User) {
+            if (!$actor->apId) {
+                return $this->personFactory->getActivityPubId($actor);
+            }
         }
 
         // @todo blid webfinger
@@ -108,8 +105,12 @@ class ActivityPubManager
      *
      * @return User|Magazine|null or Magazine or null on error
      */
-    public function findActorOrCreate(string $actorUrlOrHandle): null|User|Magazine
+    public function findActorOrCreate(?string $actorUrlOrHandle): null|User|Magazine
     {
+        if (\is_null($actorUrlOrHandle)) {
+            return null;
+        }
+
         $this->logger->debug('searching for actor at "{handle}"', ['handle' => $actorUrlOrHandle]);
         if (str_contains($actorUrlOrHandle, $this->settingsManager->get('KBIN_DOMAIN').'/m/')) {
             $magazine = str_replace('https://'.$this->settingsManager->get('KBIN_DOMAIN').'/m/', '', $actorUrlOrHandle);
@@ -201,7 +202,6 @@ class ActivityPubManager
     public function webfinger(string $id): WebFinger
     {
         $this->logger->debug('fetching webfinger "{id}"', ['id' => $id]);
-        $this->webFingerFactory::setServer($this->server->create());
 
         if (false === filter_var($id, FILTER_VALIDATE_URL)) {
             $id = ltrim($id, '@');
@@ -261,7 +261,7 @@ class ActivityPubManager
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         // Check if actor isn't empty (not set/null/empty array/etc.)
-        if (!empty($actor)) {
+        if (isset($actor['endpoints']['sharedInbox']) || isset($actor['inbox'])) {
             // Update the following user columns
             $user->type = $actor['type'] ?? 'Person';
             $user->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
@@ -286,7 +286,7 @@ class ActivityPubManager
             if (isset($actor['icon'])) {
                 $newImage = $this->handleImages([$actor['icon']]);
                 if ($user->avatar && $newImage !== $user->avatar) {
-                    $this->bus->dispatch(new DeleteImageMessage($user->avatar->filePath));
+                    $this->bus->dispatch(new DeleteImageMessage($user->avatar->getId()));
                 }
                 $user->avatar = $newImage;
             }
@@ -295,7 +295,7 @@ class ActivityPubManager
             if (isset($actor['image'])) {
                 $newImage = $this->handleImages([$actor['image']]);
                 if ($user->cover && $newImage !== $user->cover) {
-                    $this->bus->dispatch(new DeleteImageMessage($user->cover->filePath));
+                    $this->bus->dispatch(new DeleteImageMessage($user->cover->getId()));
                 }
                 $user->cover = $newImage;
             }
@@ -331,9 +331,12 @@ class ActivityPubManager
             try {
                 if ($tempFile = $this->imageManager->download($images[0]['url'])) {
                     $image = $this->imageRepository->findOrCreateFromPath($tempFile);
+                    $image->sourceUrl = $images[0]['url'];
                     if ($image && isset($images[0]['name'])) {
                         $image->altText = $images[0]['name'];
                     }
+                    $this->entityManager->persist($image);
+                    $this->entityManager->flush();
                 }
             } catch (\Exception $e) {
                 return null;
@@ -376,7 +379,7 @@ class ActivityPubManager
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         // Check if actor isn't empty (not set/null/empty array/etc.)
-        if (!empty($actor)) {
+        if (isset($actor['endpoints']['sharedInbox']) || isset($actor['inbox'])) {
             if (isset($actor['summary'])) {
                 $converter = new HtmlConverter(['strip_tags' => true]);
                 $magazine->description = stripslashes($converter->convert($actor['summary']));
@@ -385,12 +388,14 @@ class ActivityPubManager
             if (isset($actor['icon'])) {
                 $newImage = $this->handleImages([$actor['icon']]);
                 if ($magazine->icon && $newImage !== $magazine->icon) {
-                    $this->bus->dispatch(new DeleteImageMessage($magazine->icon->filePath));
+                    $this->bus->dispatch(new DeleteImageMessage($magazine->icon->getId()));
                 }
                 $magazine->icon = $newImage;
             }
 
-            if ($actor['preferredUsername']) {
+            if ($actor['name']) {
+                $magazine->title = $actor['name'];
+            } elseif ($actor['preferredUsername']) {
                 $magazine->title = $actor['preferredUsername'];
             }
 
@@ -433,7 +438,8 @@ class ActivityPubManager
 
                     if (null !== $items) {
                         $moderatorsToRemove = [];
-                        foreach ($magazine->moderators as /* @var $mod Moderator */ $mod) {
+                        /** @var Moderator $mod */
+                        foreach ($magazine->moderators as $mod) {
                             if (!$mod->isOwner) {
                                 $moderatorsToRemove[] = $mod->user;
                             }
@@ -586,7 +592,7 @@ class ActivityPubManager
         $actor = $this->apHttpClient->getActorObject($actorUrl);
 
         // User (We don't make a distinction between bots with type Service as Lemmy does)
-        if (\in_array($actor['type'], User::USER_TYPES)) {
+        if (isset($actor['type']) && \in_array($actor['type'], User::USER_TYPES)) {
             return $this->updateUser($actorUrl);
         }
 

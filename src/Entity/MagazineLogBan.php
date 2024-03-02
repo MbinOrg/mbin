@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 class MagazineLogBan extends MagazineLog
 {
     #[ManyToOne(targetEntity: MagazineBan::class)]
-    #[JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?MagazineBan $ban = null;
 
     #[Column(type: 'string')]

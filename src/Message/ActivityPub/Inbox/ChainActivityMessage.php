@@ -12,7 +12,8 @@ class ChainActivityMessage implements AsyncApMessageInterface
         public array $chain,
         public ?array $parent = null,
         public ?array $announce = null,
-        public ?array $like = null
+        public ?array $like = null,
+        public ?array $dislike = null,
     ) {
     }
 }

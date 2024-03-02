@@ -54,7 +54,7 @@
                                     <button type="submit"
                                             class="btn btn__secondary"
                                             title="{{ 'reject'|trans }}">
-                                        <i class="fa-solid fa-ban"></i> <span>{{ 'reject'|trans }}</span>
+                                        <i class="fa-solid fa-ban" aria-hidden="true"></i> <span>{{ 'reject'|trans }}</span>
                                     </button>
                                     <input type="hidden" name="token"
                                            value="{{ csrf_token('magazine_panel_moderator_request_reject') }}">
