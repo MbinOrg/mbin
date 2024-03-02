@@ -1,4 +1,4 @@
-{% set filter_option = criteria is defined and criteria.getOption('subscription') in ['sub', 'fav', 'mod'] ? criteria.getOption('filter') : null %}
+{% set filter_option = criteria is defined ? criteria.getOption('subscription') : null %}
 
 {% if magazine is defined and magazine %}
     <div class="head-title">
@@ -12,15 +12,15 @@
     <div class="head-title">
         <span>#</span><a href="{{ path('tag_overview', {name: tag}) }}">{{ tag }}</a>
     </div>
-{% elseif filter_option == 'sub' or is_route_name_end_with('_subscribed') %}
+{% elseif filter_option == 'subscribed' or is_route_name_end_with('_subscribed') %}
     <div class="head-title">
         <span>/</span><a href="{{ '/sub/' }}">sub</a>
     </div>
-{% elseif filter_option == 'fav' or is_route_name_end_with('_favourite') %}
+{% elseif filter_option == 'favourites' or is_route_name_end_with('_favourite') %}
     <div class="head-title">
         <span>/</span><a href="{{ '/fav/' }}">fav</a>
     </div>
-{% elseif filter_option == 'mod' or is_route_name_end_with('_moderated') %}
+{% elseif filter_option == 'moderated' or is_route_name_end_with('_moderated') %}
     <div class="head-title">
         <span>/</span><a href="{{ '/mod/' }}">mod</a>
     </div>
