@@ -39,9 +39,9 @@
 
                             {% if entry.url %}
                                 <span class="entry__domain">
-                                    (<a rel="{{ get_rel(entry.url) }}" href="{{ entry.url }}">
-                                        {{ get_url_domain(entry.url) }}
-                                    </a>)
+                                    ( <a rel="{{ get_rel(entry.url) }}" href="{{ entry.url }}" target="_blank">
+                                        <span>{{ get_url_domain(entry.url) }}</span> <i class="fa-solid fa-external-link" aria-hidden="true"></i>
+                                    </a> )
                                 </span>
                             {% endif %}
 
@@ -57,9 +57,9 @@
 
                             {% if entry.url %}
                                 <span class="entry__domain">
-                                    (<a rel="{{ get_rel(entry.url) }}" href="{{ entry.url }}">
-                                        {{ get_url_domain(entry.url) }}
-                                    </a>)
+                                    ( <a rel="{{ get_rel(entry.url) }}" href="{{ entry.url }}" target="_blank">
+                                        <span>{{ get_url_domain(entry.url) }}</span> <i class="fa-solid fa-external-link" aria-hidden="true"></i>
+                                    </a> )
                                 </span>
                             {% endif %}
 

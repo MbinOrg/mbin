@@ -331,6 +331,7 @@
   &__domain {
     color: var(--kbin-meta-text-color);
     font-size: .7rem;
+    white-space: nowrap;
 
     a {
       color: var(--kbin-meta-text-color);
