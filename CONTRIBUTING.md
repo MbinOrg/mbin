@@ -2,8 +2,22 @@
 
 We always welcome new supporters and contributors. A quick list below of possible ways to contribute to Mbin.
 
-> _Note_:
-> We are all volunteers. Please be nice! ❤
+### Way of Working
+
+Comply with **our version** of [Collective Code Construction Contract (C4)](C4.md) specification. Read this document to understand how we work together and how the development process works at Mbin.
+
+Below some general non-technical agreements and guidelines:
+
+- **Respect for Others**: Treat everyone involved in the project with respect, regardless of their role or level of expertise. Value their opinions and contributions.
+- **Effective Communication**: Encourage clear, concise, and respectful communication among team members. Listen actively and considerately to others' perspectives.
+- **Constructive Feedback**: Provide feedback in a constructive manner, focusing on the improvement of the work rather than criticizing individuals.
+- **Professional Language**: Refrain from using offensive language, including swearing, derogatory remarks, or discriminatory language.
+- **Positive Environment**: Foster a positive and inclusive work environment where everyone feels comfortable expressing their ideas and concerns.
+- **Conflict Resolution**: Address conflicts or disagreements promptly and professionally. Encourage open dialogue and find mutually beneficial solutions.
+- **Team Collaboration**: Encourage collaboration and teamwork, recognizing that everyone brings unique skills and perspectives to the project.
+- **Accountability**: Take responsibility for your actions and commitments. Honor agreements, and communicate openly if there are any challenges or issues.
+- **Appreciation and Recognition**: Acknowledge and appreciate the efforts and achievements of team members. Recognize their contributions publicly and privately.
+- **Embrace Fun and Camaraderie**: Encourage team members to engage in light-hearted conversations, share jokes, and enjoy each other's company. Take breaks to socialize and build relationships beyond the scope of the project.
 
 ## Code
 
@@ -12,32 +26,7 @@ The code is mainly written in PHP using the Symfony framework with Twig templati
 With an account on [GitHub](https://github.com) you will be able to [fork this repository](https://github.com/MbinOrg/mbin) and `git clone` the repository locally if you wish.
 
 > _Note_:
-> If you are a contributor with GitHub org rights, you do not need to fork the project, instead you are allowed to use branches.
-
-### Way of Working
-
-See below our agreements / guidelines for how we work together in the project (in random order):
-
-- Respect each other naturally.
-- [Discuss](https://matrix.to/#/#mbin:melroy.org) (big) issues/changes in the community first and have some consensus (WIP: we are still looking into some voting tool that might help here).
-- Always [create a new Pull Request](https://github.com/MbinOrg/mbin/pulls) in GitHub. Thus feature/topic branches are allowed (despite what C4 spec says). Eg. Do _NOT_ merge directly to the `main` branch without a PR!
-- If a Pull Request isn't ready yet, mark it as a "Draft Pull Request" within GitHub. When creating a Pull Request you have a drop-down arrow on the "Create pull request" button to make a draft during the creation of a PR, see:
-![Draft PR](https://github.com/MbinOrg/mbin/assets/628926/0800231e-6f0a-47e6-83df-d4bc8d9abb0d)
-
-- All tests should be passing (**all green**) in the PR. This is to avoid regression. More info about the coding style as well as testing see below.
-![Tests passing](https://github.com/MbinOrg/mbin/assets/628926/c8cb8778-a60c-49bf-99a2-0770e7148e25)
-
-- Pull Requests require at least one (1) other maintainer approval before the PR gets merged (built-in peer review process).
-- If a contributor has merge rights, do _not_ merge a PR on their behalf (unless the contributor agrees you can merge it).
-  Let the contributor decide when to merge the PR. This is partly to avoid regression or merging of unfinished work by accident.
-  - In case of an _external_ contributor who does not have merge rights, anybody in the community with merge rights can merge the PR.
-- Existing GitHub Organization owners are allowed to add other GitHub users to the repository or to the GitHub organization. That being said, _be careful_ who to add and discuss on [Matrix](https://matrix.to/#/#mbin:melroy.org) first.
-- Do _NOT_ remove GitHub Organization owners based on "inactive for an extended period of time" (despite what C4 spec says), as we have not yet defined the extended period of time.
-- Comply with the [Collective Code Construction Contract (C4) - revision 3](C4.md) rules.
-
-The model loosely is based on Collective Code Construction Contract ('C4' for short). For [the complete C4 rules read this spec (rev 3)](C4.md). However, we follow the model but might _deviate_ or _extend_ on this specification (now or in the future). In those cases we deviate or extend; see the bullet list defined above.
-
-External source: [C4 spec hosted on zeromq.org](https://rfc.zeromq.org/spec/44/)
+> If you are a Maintainer with GitHub org admin rights, you do NOT need to fork the project, instead you are allowed to use git branches. See also [C4](C4.md).
 
 ### Coding Style Guide
 
