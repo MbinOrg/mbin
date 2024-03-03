@@ -821,3 +821,7 @@ followers_count: '{0}Volgers|{1}Volger|]1,Inf[ Volgers'
 remove_media: Media verwijderen
 all_time: Alle tijden
 spoiler: Spoiler
+show: Tonen
+hide: Verbergen
+sidebar_sections_local_only: Beperk de secties 'Random X' en 'Actieve mensen' tot
+  alleen lokaal

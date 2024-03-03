@@ -17,7 +17,6 @@ use App\Service\EntryManager;
 use App\Service\PostCommentManager;
 use App\Service\PostManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -38,7 +37,7 @@ class DeleteHandler
     {
         try {
             $actor = $this->activityPubManager->findRemoteActor($message->payload['actor']);
-        } catch (Exception) {
+        } catch (\Exception) {
             return;
         }
 

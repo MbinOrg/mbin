@@ -178,11 +178,15 @@ KBIN_STORAGE_URL=https://domain.tld/media
 POSTGRES_VERSION=14
 
 # Configure email, eg. using SMTP
-MAILER_DSN=smtp://127.0.0.1:25?encryption=ssl&auth_mode=login&username=&password=
+MAILER_DSN=smtp://127.0.0.1 # When you have a local SMTP server listening
 # But if already have Postfix configured, just use sendmail:
 MAILER_DSN=sendmail://default
 # Or Gmail (%40 = @-sign) use:
-MAILER_DSN=gmail+smtp://user%40domain.com:pass@default
+MAILER_DSN=gmail+smtp://user%40domain.com:pass@smtp.gmail.com
+# Or remote SMTP with TLS on port 587:
+MAILER_DSN=smtp://username:password@smtpserver.tld:587?encryption=tls&auth_mode=log
+# Or remote SMTP with SSL on port 465:
+MAILER_DSN=smtp://username:password@smtpserver.tld:465?encryption=ssl&auth_mode=log
 ```
 
 OAuth2 keys for API credential grants:
@@ -421,6 +425,39 @@ npm run build # Builds frontend
 
 Make sure you have substituted all the passwords and configured the basic services.
 
+#### Let's Encrypt (TLS)
+
+> **Note**
+> The Certbot authors recommend installing through snap as some distros' versions from APT tend to fall out-of-date; see https://eff-certbot.readthedocs.io/en/latest/install.html#snap-recommended for more.
+
+Install Snapd:
+
+```bash
+sudo apt-get install snapd
+```
+
+Install Certbot:
+
+```bash
+sudo snap install core; sudo snap refresh core
+sudo snap install --classic certbot
+```
+
+Add symlink:
+
+```bash
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+```
+
+Follow the prompts to create TLS certificates for your domain(s). If you don't already have NGINX up, you can use standalone mode.
+
+```bash
+sudo certbot certonly
+
+# Or if you wish not to use the standalone mode but the Nginx plugin:
+sudo certbot --nginx -d domain.tld
+```
+
 ### NGINX
 
 We will use NGINX as reverse proxy between the public site and various backend services (static files, PHP and Mercure).
@@ -443,7 +480,6 @@ Edit the main NGINX config file: `sudo nano /etc/nginx/nginx.conf` with the foll
 
 ```nginx
 ssl_protocols TLSv1.2 TLSv1.3; # Requires nginx >= 1.13.0 else only use TLSv1.2
-ssl_prefer_server_ciphers on;
 ssl_dhparam /etc/nginx/dhparam.pem;
 ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305;
 ssl_prefer_server_ciphers off;
@@ -659,39 +695,6 @@ Restart (or reload) NGINX:
 sudo systemctl restart nginx
 ```
 
-#### Let's Encrypt (TLS)
-
-> **Note**
-> This is installed via snap to reduce system dependencies ran, and the preferred way. Run in standalone mode to not mess with the default config and minimize errors all around. If you prefer no snaps you can install other ways though, however is the preferred way to install from let's encrypt.
-
-Install Snapd:
-
-```bash
-sudo apt-get install snapd
-```
-
-Install Certbot:
-
-```bash
-sudo snap install core; sudo snap refresh core
-sudo snap install --classic certbot
-```
-
-Add symlink:
-
-```bash
-sudo ln -s /snap/bin/certbot /usr/bin/certbot
-```
-
-Generate a TLS certificate for your domain(s):
-
-```bash
-sudo certbot certonly --standalone -d domain.tld -d www.domain.tld
-
-# Or if you wish not to use the standalone mode but the Nginx plugin:
-sudo certbot --nginx -d domain.tld -d www.domain.tld
-```
-
 ### Additional Mbin configuration files
 
 These are additional configuration YAML file changes in the `config` directory.
@@ -711,6 +714,15 @@ And now change: `redirect_response_code: 302` to: `redirect_response_code: 301`.
 _Hint:_ There are also other configuration files, eg. `config/packages/monolog.yaml` where you can change logging settings if you wish, but this is not required (these defaults are fine for production).
 
 ### Symfony Messenger (Queues)
+
+The symphony messengers are background workers for a lot of different task, the biggest one being handling all the ActivityPub traffic.  
+We have 4 different queues:
+1. `async` (with jobs coming from your local instance, i.e. posting something to a magazine and delivering that to all followers)
+2. `async_ap` (with jobs coming from remote instances, i.e. someone posted something to a remote magazine you're subscribed to)
+3. `failed` jobs from the first two queues that have been retried, but failed. They get retried a few times again, before they end up in
+4. `dead` dead jobs that will not be retried
+
+We need the `dead` queue so that messages that throw a `UnrecoverableMessageHandlingException`, which is used to indicate that a message should not be retried and go straight to the supplied failure queue
 
 #### Install RabbitMQ (Recommended, but optional)
 
@@ -878,6 +890,9 @@ mercure fmt metal/caddy/Caddyfile --overwrite
 Mercure will be configured further in the next section (Supervisor).
 
 ### Setup Supervisor
+We use Supervisor to run our background workers, aka. "Messengers".
+
+Install Supervisor:
 
 ```bash
 sudo apt-get install supervisor
@@ -892,20 +907,10 @@ sudo nano /etc/supervisor/conf.d/messenger-worker.conf
 With the following content:
 
 ```ini
-[program:messenger-mbin]
-command=php /var/www/mbin/bin/console messenger:consume async --time-limit=1800
+[program:messenger]
+command=php /var/www/mbin/bin/console messenger:consume async async_ap failed --time-limit=3600
 user=www-data
-numprocs=2
-startsecs=0
-autostart=true
-autorestart=true
-startretries=10
-process_name=%(program_name)s_%(process_num)02d
-
-[program:messenger-ap]
-command=php /var/www/mbin/bin/console messenger:consume async_ap --time-limit=1800
-user=www-data
-numprocs=2
+numprocs=4
 startsecs=0
 autostart=true
 autorestart=true
@@ -914,6 +919,8 @@ process_name=%(program_name)s_%(process_num)02d
 ```
 
 Save and close the file.
+
+Note: you can increase the number of running messenger jobs if your queue is building up (i.e. more messages are coming in than your messengers can handle)
 
 We also use supervisor for running Mercure job:
 

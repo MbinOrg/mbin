@@ -33,10 +33,10 @@ abstract class Favourite
     }
 
     #[ManyToOne(targetEntity: Magazine::class)]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public Magazine $magazine;
     #[ManyToOne(targetEntity: User::class, inversedBy: 'favourites')]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $user;
     #[Id]
     #[GeneratedValue]

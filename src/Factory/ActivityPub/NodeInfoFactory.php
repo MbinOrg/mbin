@@ -64,7 +64,10 @@ class NodeInfoFactory
                 'localComments' => $this->repository->countLocalComments(),
             ],
             'openRegistrations' => $this->settingsManager->get('KBIN_REGISTRATIONS_ENABLED'),
-            'metadata' => (object) [],
+            'metadata' => [
+                'nodeName' => $this->settingsManager->get('KBIN_META_TITLE'),
+                'nodeDescription' => $this->settingsManager->get('KBIN_META_DESCRIPTION'),
+            ],
         ];
     }
 }

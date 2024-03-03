@@ -1,10 +1,14 @@
 twig:
     globals:
-        mercure_public_url: "%env(MERCURE_PUBLIC_URL)%"
+        mercure_public_url: '%env(MERCURE_PUBLIC_URL)%'
 
-    default_path: "%kernel.project_dir%/templates"
+    file_name_pattern: '*.twig'
     form_themes:
         [
-            "form_div_layout.html.twig",
-            "@MeteoConceptHCaptcha/hcaptcha_form.html.twig",
+            'form_div_layout.html.twig',
+            '@MeteoConceptHCaptcha/hcaptcha_form.html.twig',
         ]
+
+when@test:
+    twig:
+        strict_variables: true

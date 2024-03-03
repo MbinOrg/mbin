@@ -18,7 +18,8 @@
                       <img class="image-inline"
                            width="30"
                            height="30"
-                           src="{{ asset(moderator.user.avatar.filePath) | imagine_filter('avatar_thumb') }}"
+                           loading="lazy"
+                           src="{{ moderator.user.avatar.filePath ? (asset(moderator.user.avatar.filePath)|imagine_filter('avatar_thumb')) : moderator.user.avatar.sourceUrl }}"
                            alt="{{ moderator.user.username ~ ' ' ~ 'avatar'|trans|lower }}">
                     {% endif %}
                     <a href="{{ path('user_overview', {username: moderator.user.username}) }}"

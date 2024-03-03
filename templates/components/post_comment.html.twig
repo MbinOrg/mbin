@@ -16,13 +16,14 @@
         </div>
     {% else %}
         <blockquote{{ attributes.defaults({
-            class: html_classes('section comment post-comment subject ' ~ 'comment-level--' ~ this.getLevel(),{
+            class: html_classes('section comment post-comment subject', 'comment-level--' ~ this.getLevel(), {
                 'own': app.user and comment.isAuthor(app.user),
                 'author': comment.isAuthor(comment.post.user),
-                'show-preview': SHOW_PREVIEW is same as V_TRUE and not comment.isAdult
+                'show-preview': SHOW_PREVIEW is same as V_TRUE and not comment.isAdult,
             })}).without('id') }}
                 id="post-comment-{{ comment.id }}"
-                data-controller="comment subject mentions"
+                data-controller="comment subject mentions comment-collapse"
+                data-comment-collapse-depth-value="{{ level }}"
                 data-subject-parent-value="{{ comment.parent ? comment.parent.id : '' }}"
                 data-action="notifications:Notification@window->subject#notification">
             <header>
@@ -33,14 +34,16 @@
                     <span class="user-badge">{{ 'user_badge_op'|trans }}</span>
                 {% endif %}
 
+                {% if (comment.user.type) == "Service" %}
+                    <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
+                {% endif %}
+
                 {% if comment.user.admin() %}
                     <span class="user-badge">{{ 'user_badge_admin'|trans }}</span>
                 {% elseif comment.user.moderator() %}
                     <span class="user-badge">{{ 'user_badge_global_moderator'|trans }}</span>
                 {% elseif comment.magazine.userIsModerator(comment.user) %}
                     <span class="user-badge">{{ 'user_badge_moderator'|trans }}</span>
-                {% elseif (comment.user.type) == "Service" %}
-                    <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
                 {% endif %}
                 <span>, </span>
 
@@ -70,12 +73,15 @@
                     <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
                 {% endif %}
             </div>
-            {% if comment.visibility in ['visible', 'private'] %}
-                {{ component('vote', {
-                    subject: comment,
-                    showDownvote: false
+            <div class="aside">
+                {% if comment.visibility in ['visible', 'private'] %}
+                    {{ component('vote', { subject: comment, showDownvote: false }) }}
+                {% endif %}
+                {{ include('components/_comment_collapse_button.html.twig', {
+                    comment: comment,
+                    showNested: showNested,
                 }) }}
-            {% endif %}
+            </div>
             <footer>
                 {% if (comment.visibility in ['visible', 'private'] or comment.visibility is same as 'trashed' and this.canSeeTrashed) and comment.image %}
                     {{ include('components/_figure_image.html.twig', {

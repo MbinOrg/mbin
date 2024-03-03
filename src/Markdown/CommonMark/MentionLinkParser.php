@@ -61,24 +61,10 @@ class MentionLinkParser implements InlineParserInterface
             return true;
         }
 
-        if ($data instanceof Magazine && $data->apPublicUrl) {
-            $ctx->getContainer()->appendChild(
-                new ActivityPubMentionLink(
-                    $data->apPublicUrl,
-                    '@'.$username,
-                    '@'.$data->apId,
-                    $data->apId,
-                    MentionType::RemoteMagazine,
-                )
-            );
-
-            return true;
-        }
-
         [$routeDetails, $slug, $label, $title, $kbinUsername] = match ($type) {
-            MentionType::RemoteUser => [$this->resolveRouteDetails($type), '@'.$fullUsername, '@'.$username, '@'.$fullUsername, '@'.$fullUsername],
+            MentionType::RemoteUser => [$this->resolveRouteDetails($type), '@'.$fullUsername, '@'.$username, '@'.$username, '@'.$fullUsername],
             MentionType::RemoteMagazine => [$this->resolveRouteDetails($type), $fullUsername, '@'.$username, '@'.$fullUsername, $fullUsername],
-            MentionType::Magazine => [$this->resolveRouteDetails($type), $username, '@'.$username, '@'.$fullUsername, $username],
+            MentionType::Magazine => [$this->resolveRouteDetails($type), $username, '@'.$username, '@'.$username, $username],
             MentionType::Search => [$this->resolveRouteDetails($type), $fullUsername, '@'.$username, '@'.$fullUsername, $fullUsername],
             MentionType::Unresolvable => [['route' => '', 'param' => ''], '', '@'.$username, '', ''],
             MentionType::User => [$this->resolveRouteDetails($type), $username, '@'.$username, '@'.$fullUsername, $username],

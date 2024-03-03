@@ -15,7 +15,8 @@
                                 <figure>
                                     <img class="image-inline"
                                          width="32" height="32"
-                                         src="{{ asset(user.avatar.filePath) | imagine_filter('avatar_thumb') }}"
+                                         loading="lazy"
+                                         src="{{ user.avatar.filePath ? (asset(user.avatar.filePath)|imagine_filter('avatar_thumb')) : user.avatar.sourceUrl }}"
                                          alt="{{ user.username ~' '~ 'avatar'|trans|lower }}">
                                 </figure>
                             {% endif %}

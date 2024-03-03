@@ -38,10 +38,10 @@ abstract class MagazineLog
     }
 
     #[ManyToOne(targetEntity: Magazine::class, inversedBy: 'logs')]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public Magazine $magazine;
     #[ManyToOne(targetEntity: User::class)]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'SET NULL')]
     public User $user;
     #[Id]
     #[GeneratedValue]

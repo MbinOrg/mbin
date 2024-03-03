@@ -59,9 +59,10 @@
                         <a class="stretched-link" href="{{ path('front_magazine', {name: magazine.name}) }}">
 
                             {% if magazine.icon %}
-                                <img src="{{ asset(magazine.icon.filePath) | imagine_filter('avatar_thumb') }}"
-                                     alt="{{ magazine.name }}'s icon"
-                                     class="{{ html_classes('image-inline', 'magazine-subscription-avatar', { 'onlyMobile': app.request.cookies.get(KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON) is same as V_FALSE }) }}" />
+                                <img loading="lazy"
+                                    src="{{ magazine.icon.filePath ? (asset(magazine.icon.filePath)|imagine_filter('avatar_thumb')) : magazine.icon.sourceUrl }}"
+                                    alt="{{ magazine.name }}'s icon"
+                                    class="{{ html_classes('image-inline', 'magazine-subscription-avatar', { 'onlyMobile': app.request.cookies.get(KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON) is same as V_FALSE }) }}" />
                             {% else %}
                                 <span class="{{ html_classes('magazine-subscription-avatar-placeholder', { 'onlyMobile': app.request.cookies.get(KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON) is same as V_FALSE }) }}"></span>
                             {% endif %}

@@ -37,6 +37,7 @@ when@dev:
             #    type: stream
             #    channels: [deprecation]
             #    path: php://stderr
+            #    formatter: monolog.formatter.json
 
 when@test:
     monolog:
@@ -68,12 +69,12 @@ when@prod:
                 type: rotating_file
                 max_files: 7
                 path: '%kernel.logs_dir%/%kernel.environment%.log'
-                level: debug
+                level: warning
                 formatter: monolog.formatter.json
             nested_stderr:
                 type: stream
                 path: 'php://stderr'
-                level: debug
+                level: warning
                 formatter: monolog.formatter.json
             console:
                 type: console

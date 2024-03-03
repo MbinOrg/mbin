@@ -1,7 +1,7 @@
 import {Controller} from '@hotwired/stimulus';
 import router from "../utils/routing";
 import {fetch, ok} from "../utils/http";
-import {getLevel, getTypeFromNotification} from "../utils/kbin";
+import {getLevel, getDepth, getTypeFromNotification} from "../utils/kbin";
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -36,8 +36,11 @@ export default class extends Controller {
                 div.innerHTML = response.html;
 
                 let level = getLevel(parent);
+                let depth = getDepth(parent);
 
+                div.firstElementChild.classList.remove('comment-level--1');
                 div.firstElementChild.classList.add('comment-level--' + (level >= 10 ? 10 : level + 1));
+                div.firstElementChild.dataset.commentCollapseDepthValue = depth + 1;
 
                 let current = parent;
                 while (current) {

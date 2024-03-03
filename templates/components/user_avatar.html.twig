@@ -5,9 +5,10 @@
         {% endif %}
         {% if user.avatar %}
             <img class="image-inline"
+                 loading="lazy"
                  width="{{ width }}" height="{{ height }}"
                  style="max-width: {{ width }}px; max-height: {{ height }}px;"
-                 src="{{ asset(user.avatar.filePath) | imagine_filter('avatar_thumb') }}"
+                 src="{{ user.avatar.filePath ? (asset(user.avatar.filePath)|imagine_filter('avatar_thumb')) : user.avatar.sourceUrl }}"
                  alt="{{ user.username ~' '~ 'avatar'|trans|lower }}">
         {% else %}
             <div class="no-avatar"></div>
