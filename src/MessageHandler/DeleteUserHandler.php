@@ -40,7 +40,8 @@ class DeleteUserHandler
             throw new UnrecoverableMessageHandlingException('User not found');
         }
 
-        $userDto = UserDto::create($this->user->username, createdAt: $this->user->createdAt);
+        // note: email cannot be null. For remote accounts email is set to their 'handle@domain.tld' who knows why...
+        $userDto = UserDto::create($this->user->username, email: $this->user->username, createdAt: $this->user->createdAt);
         $userDto->plainPassword = ''.time();
 
         $this->sendDeleteMessages();

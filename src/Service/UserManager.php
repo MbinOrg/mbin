@@ -311,13 +311,17 @@ readonly class UserManager
         $this->bus->dispatch(new DeleteImageMessage($image));
     }
 
-    public function deleteRequest(User $user): void
+    public function deleteRequest(User $user, bool $immediately): void
     {
-        $user->markedForDeletionAt = date_add(new \DateTime(), new \DateInterval('P30D'));
-        $user->isDeleted = true;
+        if (!$immediately) {
+            $user->markedForDeletionAt = date_add(new \DateTime(), new \DateInterval('P30D'));
+            $user->isDeleted = true;
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+        } else {
+            $this->bus->dispatch(new DeleteUserMessage($user->getId()));
+        }
     }
 
     /**
@@ -372,11 +376,10 @@ readonly class UserManager
         $dateTime ??= new \DateTime();
 
         return $this->userRepository->createQueryBuilder('u')
-            ->from('App:User', 'u')
             ->where('u.markedForDeletionAt <= :datetime')
             ->setParameter(':datetime', $dateTime)
             ->getQuery()
-            ->getArrayResult();
+            ->getResult();
     }
 
     public function getAllInboxesOfInteractions(User $user): array
