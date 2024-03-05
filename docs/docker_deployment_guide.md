@@ -53,11 +53,11 @@ cd mbin
 cd docker
 ```
 
-2. By default the latest [`compose.yml`](../docker/compose.yml) file use the pre-build images from [ghcr.io](https://github.com/MbinOrg/mbin/pkgs/container/mbin). Nothing needs to be done (go to step 3!), unless you want to build our own Docker image instead.
+2. By default the latest [`compose.yml`](../docker/compose.yml) file use the pre-built images from [ghcr.io](https://github.com/MbinOrg/mbin/pkgs/container/mbin). Nothing needs to be done (go to step 3!), unless you want to build our own Docker image instead.
 
 #### (Optional) Build our own Docker image
 
-**Optional!** We encourage you to use pre-build images, as shown above. Because that is much easier. Go to step 3.
+**Optional!** We encourage you to use pre-built images, as shown above. Because that is much easier. Go to step 3.
 
 However, if you really want to build our own Docker image, that is possible. Just run:
 
