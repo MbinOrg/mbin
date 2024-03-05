@@ -2,8 +2,22 @@
 
 We always welcome new supporters and contributors. A quick list below of possible ways to contribute to Mbin.
 
-> _Note_:
-> We are all volunteers. Please be nice! ❤
+### Way of Working
+
+Comply with **our version** of [Collective Code Construction Contract (C4)](C4.md) specification. Read this document to understand how we work together and how the development process works at Mbin.
+
+Below some general non-technical agreements and guidelines:
+
+- **Respect for Others**: Treat everyone involved in the project with respect, regardless of their role or level of expertise. Value their opinions and contributions.
+- **Effective Communication**: Encourage clear, concise, and respectful communication among team members. Listen actively and considerately to others' perspectives.
+- **Constructive Feedback**: Provide feedback in a constructive manner, focusing on the improvement of the work rather than criticizing individuals.
+- **Professional Language**: Refrain from using offensive language, including swearing, derogatory remarks, or discriminatory language.
+- **Positive Environment**: Foster a positive and inclusive work environment where everyone feels comfortable expressing their ideas and concerns.
+- **Conflict Resolution**: Address conflicts or disagreements promptly and professionally. Encourage open dialogue and find mutually beneficial solutions.
+- **Team Collaboration**: Encourage collaboration and teamwork, recognizing that everyone brings unique skills and perspectives to the project.
+- **Accountability**: Take responsibility for your actions and commitments. Honor agreements, and communicate openly if there are any challenges or issues.
+- **Appreciation and Recognition**: Acknowledge and appreciate the efforts and achievements of team members. Recognize their contributions publicly and privately.
+- **Embrace Fun and Camaraderie**: Encourage team members to engage in light-hearted conversations, share jokes, and enjoy each other's company. Take breaks to socialize and build relationships beyond the scope of the project.
 
 ## Code
 
@@ -12,9 +26,7 @@ The code is mainly written in PHP using the Symfony framework with Twig templati
 With an account on [GitHub](https://github.com) you will be able to [fork this repository](https://github.com/MbinOrg/mbin) and `git clone` the repository locally if you wish.
 
 > _Note_:
-> If you are a contributor with GitHub org rights, you do not need to fork the project, instead you are allowed to use branches.
-
-Always [create a new Pull Request](https://github.com/MbinOrg/mbin/pulls) in GitHub. Be sure to avoid regression, see below for more info about the coding style as well as testing. All tests in the Pull Request should be green!
+> If you are a Maintainer with GitHub org admin rights, you do NOT need to fork the project, instead you are allowed to use git branches. See also [C4](C4.md).
 
 ### Coding Style Guide
 
