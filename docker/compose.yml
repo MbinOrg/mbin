@@ -2,14 +2,13 @@ version: "3.9"
 
 services:
   www:
-    # Builds the Docker image from scratch
-    build:
-      context: ../
-      dockerfile: docker/Dockerfile
-    image: mbin
-    # Or remove the build, context, dockerfile and image lines above and
-    # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
-    #image: "ghcr.io/mbinorg/mbin:latest"
+    # Use Docker image from ghcr.io (you can also a tag eg: "v1.4.1" instead of "latest"):
+    image: "ghcr.io/mbinorg/mbin:latest"
+    # Or if you want to build your own image:
+    #build:
+    #  context: ../
+    #  dockerfile: docker/Dockerfile
+    #image: mbin
     container_name: mbin-www
     restart: unless-stopped
     networks:
@@ -32,14 +31,13 @@ services:
       - php
 
   php:
-    # Builds the Docker image from scratch
-    build:
-      context: ../
-      dockerfile: docker/Dockerfile
-    image: mbin
-    # Or remove the build, context, dockerfile and image lines above and
-    # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
-    #image: "ghcr.io/mbinorg/mbin:latest"
+    # Use Docker image from ghcr.io (you can also a tag eg: "v1.4.1" instead of "latest"):
+    image: "ghcr.io/mbinorg/mbin:latest"
+    # Or if you want to build your own image:
+    #build:
+    #  context: ../
+    #  dockerfile: docker/Dockerfile
+    #image: mbin
     container_name: mbin-php
     restart: unless-stopped
     networks:
@@ -64,14 +62,13 @@ services:
       - rabbitmq
 
   messenger:
-    # Builds the Docker image from scratch
-    build:
-      context: ../
-      dockerfile: docker/Dockerfile
-    image: mbin
-    # Or remove the build, context, dockerfile and image lines above and
-    # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
-    #image: "ghcr.io/mbinorg/mbin:latest"
+    # Use Docker image from ghcr.io (you can also a tag eg: "v1.4.1" instead of "latest"):
+    image: "ghcr.io/mbinorg/mbin:latest"
+    # Or if you want to build your own image:
+    #build:
+    #  context: ../
+    #  dockerfile: docker/Dockerfile
+    #image: mbin
     container_name: mbin-messenger
     restart: unless-stopped
     networks:
@@ -127,6 +124,19 @@ services:
       - ./storage/rabbitmq:/var/lib/rabbitmq
     ports:
       - 15672:15672
+
+  # Enable AMQP Proxy within Docker
+  # Be sure to update your .env file with using the AMQP Proxy port (5673 instead of 5672):
+  #     MESSENGER_TRANSPORT_DSN=amqp://kbin:${RABBITMQ_PASSWORD}@rabbitmq:5673/%2f/messages
+  #amqproxy:
+  #  image: cloudamqp/amqproxy
+  #  expose:
+  #    - "5672"
+  #  ports:
+  #    - "5673:5673"
+  #  networks:
+  #    - mbin_external_network
+  #  command: amqp://rabbitmq:5672
 
   # Add your favorite reverse proxy (e.g nginx) which accept incoming HTTPS
   # traffic and forward to http://www:80
