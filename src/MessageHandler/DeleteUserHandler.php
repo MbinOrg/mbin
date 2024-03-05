@@ -38,7 +38,11 @@ class DeleteUserHandler
 
         if (!$this->user) {
             throw new UnrecoverableMessageHandlingException('User not found');
+        } elseif ($this->user->isDeleted && null === $this->user->markedForDeletionAt) {
+            throw new UnrecoverableMessageHandlingException('User already deleted');
         }
+
+        $isLocal = null === $this->user->apId;
 
         // note: email cannot be null. For remote accounts email is set to their 'handle@domain.tld' who knows why...
         $userDto = UserDto::create($this->user->username, email: $this->user->username, createdAt: $this->user->createdAt);
@@ -56,13 +60,15 @@ class DeleteUserHandler
         $this->entityManager->remove($this->user);
         $this->entityManager->flush();
 
-        // recreate a user with the same name, so this handle is blocked
-        $user = $this->userManager->create($userDto, verifyUserEmail: false, rateLimit: false);
-        $user->isDeleted = true;
-        $user->markedForDeletionAt = null;
-        $user->isVerified = false;
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        if ($isLocal) {
+            // recreate a user with the same name, so this handle is blocked
+            $user = $this->userManager->create($userDto, verifyUserEmail: false, rateLimit: false);
+            $user->isDeleted = true;
+            $user->markedForDeletionAt = null;
+            $user->isVerified = false;
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+        }
     }
 
     private function sendDeleteMessages(): void

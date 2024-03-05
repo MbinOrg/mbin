@@ -19,6 +19,7 @@ use App\Factory\MagazineFactory;
 use App\Factory\UserFactory;
 use App\Message\ActivityPub\UpdateActorMessage;
 use App\Message\DeleteImageMessage;
+use App\Message\DeleteUserMessage;
 use App\Repository\ImageRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
@@ -266,6 +267,13 @@ class ActivityPubManager
         $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
+
+        if (isset($actor['type']) && 'Tombstone' === $actor['type'] && $user instanceof User) {
+            $this->bus->dispatch(new DeleteUserMessage($user->getId()));
+
+            return null;
+        }
+
         // Check if actor isn't empty (not set/null/empty array/etc.)
         if (isset($actor['endpoints']['sharedInbox']) || isset($actor['inbox'])) {
             // Update the following user columns
