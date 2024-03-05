@@ -31,7 +31,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 readonly class ActivityHandler
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
+        private EntityManagerInterface $entityManager,
         private SignatureValidator $signatureValidator,
         private SettingsManager $settingsManager,
         private MessageBusInterface $bus,

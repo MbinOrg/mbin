@@ -46,9 +46,9 @@ class DeleteUserHandler
         $this->sendDeleteMessages();
         $this->userManager->detachAvatar($this->user);
         $this->userManager->detachCover($this->user);
-        $images = $this->userManager->getAllImageFilePathsOfUser($this->user);
-        foreach ($images as $image) {
-            $this->imageManager->remove($image);
+        $filePathsOfUser = $this->userManager->getAllImageFilePathsOfUser($this->user);
+        foreach ($filePathsOfUser as $path) {
+            $this->imageManager->remove($path);
         }
 
         // delete the original user, so all the content is cascade deleted
@@ -58,6 +58,7 @@ class DeleteUserHandler
         // recreate a user with the same name, so this handle is blocked
         $user = $this->userManager->create($userDto, verifyUserEmail: false, rateLimit: false);
         $user->isDeleted = true;
+        $user->markedForDeletionAt = null;
         $user->isVerified = false;
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -65,10 +66,13 @@ class DeleteUserHandler
 
     private function sendDeleteMessages(): void
     {
-        $targetInboxes = array_unique(array_filter($this->userManager->getAllInboxesOfInteractions($this->user)));
+        if (null !== $this->user->apId) {
+            return;
+        }
 
         $message = $this->deleteWrapper->buildForUser($this->user);
 
+        $targetInboxes = array_unique(array_filter($this->userManager->getAllInboxesOfInteractions($this->user)));
         foreach ($targetInboxes as $inbox) {
             $this->bus->dispatch(new DeliverMessage($inbox, $message));
         }

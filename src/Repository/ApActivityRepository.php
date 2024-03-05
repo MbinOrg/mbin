@@ -12,6 +12,7 @@ use App\Entity\PostComment;
 use App\Service\SettingsManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * @method ApActivity|null find($id, $lockMode = null, $lockVersion = null)
@@ -27,6 +28,10 @@ class ApActivityRepository extends ServiceEntityRepository
         parent::__construct($registry, ApActivity::class);
     }
 
+    #[ArrayShape([
+        'id' => 'int',
+        'type' => 'string',
+    ])]
     public function findByObjectId(string $apId): ?array
     {
         $parsed = parse_url($apId);

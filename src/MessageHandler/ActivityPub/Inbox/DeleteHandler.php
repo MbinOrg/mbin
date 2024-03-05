@@ -10,7 +10,9 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
 use App\Message\ActivityPub\Inbox\DeleteMessage;
+use App\Message\DeleteUserMessage;
 use App\Repository\ApActivityRepository;
+use App\Repository\UserRepository;
 use App\Service\ActivityPubManager;
 use App\Service\EntryCommentManager;
 use App\Service\EntryManager;
@@ -18,14 +20,17 @@ use App\Service\PostCommentManager;
 use App\Service\PostManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 class DeleteHandler
 {
     public function __construct(
+        private readonly MessageBusInterface $bus,
         private readonly ActivityPubManager $activityPubManager,
         private readonly ApActivityRepository $apActivityRepository,
         private readonly EntityManagerInterface $entityManager,
+        private readonly UserRepository $userRepository,
         private readonly EntryManager $entryManager,
         private readonly EntryCommentManager $entryCommentManager,
         private readonly PostManager $postManager,
@@ -41,10 +46,19 @@ class DeleteHandler
             return;
         }
 
-        if (\is_array($message->payload['object'])) {
-            $object = $this->apActivityRepository->findByObjectId($message->payload['object']['id']);
-        } else {
-            $object = $this->apActivityRepository->findByObjectId($message->payload['object']);
+        $id = \is_array($message->payload['object']) ? $message->payload['object']['id'] : $message->payload['object'];
+        $object = $this->apActivityRepository->findByObjectId($id);
+
+        if (!$object) {
+            $user = $this->userRepository->findOneBy(['apId' => $id]);
+            if ($actor->apDomain === $user->apDomain) {
+                // only users of the same server can delete each other.
+                // Since the server of both is in charge as to which user can delete each other.
+                $object = [
+                    'type' => User::class,
+                    'id' => $user->getId(),
+                ];
+            }
         }
 
         if (!$object) {
@@ -53,23 +67,17 @@ class DeleteHandler
 
         $object = $this->entityManager->getRepository($object['type'])->find((int) $object['id']);
 
-        if (Entry::class === \get_class($object)) {
-            $fn = 'deleteEntry';
+        if ($object instanceof Entry) {
+            $this->deleteEntry($object, $actor);
+        } elseif ($object instanceof EntryComment) {
+            $this->deleteEntryComment($object, $actor);
+        } elseif ($object instanceof Post) {
+            $this->deletePost($object, $actor);
+        } elseif ($object instanceof PostComment) {
+            $this->deletePostComment($object, $actor);
+        } elseif ($object instanceof User) {
+            $this->bus->dispatch(new DeleteUserMessage($object->getId()));
         }
-
-        if (EntryComment::class === \get_class($object)) {
-            $fn = 'deleteEntryComment';
-        }
-
-        if (Post::class === \get_class($object)) {
-            $fn = 'deletePost';
-        }
-
-        if (PostComment::class === \get_class($object)) {
-            $fn = 'deletePostComment';
-        }
-
-        $this->$fn($object, $actor);
     }
 
     private function deleteEntry(Entry $entry, User $user): void

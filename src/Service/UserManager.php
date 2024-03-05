@@ -20,6 +20,7 @@ use App\Repository\ImageRepository;
 use App\Repository\ReputationRepository;
 use App\Repository\UserFollowRepository;
 use App\Repository\UserFollowRequestRepository;
+use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
 use App\Service\ActivityPub\KeysGenerator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -50,6 +51,7 @@ readonly class UserManager
         private RateLimiterFactory $userRegisterLimiter,
         private UserFollowRequestRepository $requestRepository,
         private UserFollowRepository $userFollowRepository,
+        private UserRepository $userRepository,
         private ImageRepository $imageRepository,
         private Security $security,
         private CacheInterface $cache,
@@ -311,28 +313,18 @@ readonly class UserManager
 
     public function deleteRequest(User $user): void
     {
-        $user->markedForDeletionAt = new \DateTime();
-        $user->visibility = VisibilityInterface::VISIBILITY_SOFT_DELETED;
-
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-    }
-
-    public function revokeDeleteRequest(User $user): void
-    {
-        $user->markedForDeletionAt = null;
-        $user->visibility = VisibilityInterface::VISIBILITY_VISIBLE;
+        $user->markedForDeletionAt = date_add(new \DateTime(), new \DateInterval('P30D'));
+        $user->isDeleted = true;
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
     }
 
     /**
-     * Suspend user, will eventually be deleted (TODO).
+     * Suspend user.
      */
     public function suspend(User $user): void
     {
-        $user->markedForDeletionAt = null; // Not yet implemented
         $user->visibility = VisibilityInterface::VISIBILITY_TRASHED;
 
         $this->entityManager->persist($user);
@@ -344,7 +336,10 @@ readonly class UserManager
      */
     public function unsuspend(User $user): void
     {
-        $this->revokeDeleteRequest($user);
+        $user->visibility = VisibilityInterface::VISIBILITY_VISIBLE;
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
     }
 
     public function removeFollowing(User $user): void
@@ -367,6 +362,21 @@ readonly class UserManager
                 return $this->reputationRepository->getUserReputationTotal($user);
             }
         );
+    }
+
+    /**
+     * @return User[]
+     */
+    public function getUsersMarkedForDeletionBefore(\DateTime $dateTime = null): array
+    {
+        $dateTime ??= new \DateTime();
+
+        return $this->userRepository->createQueryBuilder('u')
+            ->from('App:User', 'u')
+            ->where('u.markedForDeletionAt <= :datetime')
+            ->setParameter(':datetime', $dateTime)
+            ->getQuery()
+            ->getArrayResult();
     }
 
     public function getAllInboxesOfInteractions(User $user): array
@@ -492,18 +502,41 @@ readonly class UserManager
     }
 
     /**
+     * This method will return all image paths that the user **owns**,
+     * meaning that that image belongs only to posts from the user and not to anybody else's.
+     *
      * @return string[]
      */
     public function getAllImageFilePathsOfUser(User $user): array
     {
         $sql = '
-            SELECT i1.file_path FROM entry e INNER JOIN image i1 ON e.image_id = i1.id WHERE user_id = :userId AND i1.file_path IS NOT NULL
+            SELECT i1.file_path FROM entry e INNER JOIN image i1 ON e.image_id = i1.id 
+                WHERE e.user_id = :userId AND i1.file_path IS NOT NULL
+                    AND NOT EXISTS (SELECT id FROM entry e2 WHERE e2.user_id <> :userId AND e2.image_id = i1.id)
+                    AND NOT EXISTS (SELECT id FROM post p2 WHERE p2.user_id <> :userId AND p2.image_id = i1.id)
+                    AND NOT EXISTS (SELECT id FROM entry_comment ec2 WHERE ec2.user_id <> :userId AND ec2.image_id = i1.id)
+                    AND NOT EXISTS (SELECT id FROM post_comment pc2 WHERE pc2.user_id <> :userId AND pc2.image_id = i1.id)
             UNION DISTINCT 
-            SELECT i2.file_path FROM post p INNER JOIN image i2 ON p.image_id = i2.id WHERE user_id = :userId AND i2.file_path IS NOT NULL
+            SELECT i2.file_path FROM post p INNER JOIN image i2 ON p.image_id = i2.id 
+                WHERE p.user_id = :userId AND i2.file_path IS NOT NULL
+                    AND NOT EXISTS (SELECT id FROM entry e2 WHERE e2.user_id <> :userId AND e2.image_id = i2.id)
+                    AND NOT EXISTS (SELECT id FROM post p2 WHERE p2.user_id <> :userId AND p2.image_id = i2.id)
+                    AND NOT EXISTS (SELECT id FROM entry_comment ec2 WHERE ec2.user_id <> :userId AND ec2.image_id = i2.id)
+                    AND NOT EXISTS (SELECT id FROM post_comment pc2 WHERE pc2.user_id <> :userId AND pc2.image_id = i2.id)
             UNION DISTINCT 
-            SELECT i3.file_path FROM entry_comment ec INNER JOIN image i3 ON ec.image_id = i3.id WHERE user_id = :userId AND i3.file_path IS NOT NULL
+            SELECT i3.file_path FROM entry_comment ec INNER JOIN image i3 ON ec.image_id = i3.id 
+                WHERE ec.user_id = :userId AND i3.file_path IS NOT NULL
+                    AND NOT EXISTS (SELECT id FROM entry e2 WHERE e2.user_id <> :userId AND e2.image_id = i3.id)
+                    AND NOT EXISTS (SELECT id FROM post p2 WHERE p2.user_id <> :userId AND p2.image_id = i3.id)
+                    AND NOT EXISTS (SELECT id FROM entry_comment ec2 WHERE ec2.user_id <> :userId AND ec2.image_id = i3.id)
+                    AND NOT EXISTS (SELECT id FROM post_comment pc2 WHERE pc2.user_id <> :userId AND pc2.image_id = i3.id)
             UNION DISTINCT 
-            SELECT i4.file_path FROM post_comment pc INNER JOIN image i4 ON pc.image_id = i4.id WHERE user_id = :userId AND i4.file_path IS NOT NULL
+            SELECT i4.file_path FROM post_comment pc INNER JOIN image i4 ON pc.image_id = i4.id 
+                WHERE pc.user_id = :userId AND i4.file_path IS NOT NULL
+                    AND NOT EXISTS (SELECT id FROM entry e2 WHERE e2.user_id <> :userId AND e2.image_id = i4.id)
+                    AND NOT EXISTS (SELECT id FROM post p2 WHERE p2.user_id <> :userId AND p2.image_id = i4.id)
+                    AND NOT EXISTS (SELECT id FROM entry_comment ec2 WHERE ec2.user_id <> :userId AND ec2.image_id = i4.id)
+                    AND NOT EXISTS (SELECT id FROM post_comment pc2 WHERE pc2.user_id <> :userId AND pc2.image_id = i4.id)
         ';
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('file_path', 0);
