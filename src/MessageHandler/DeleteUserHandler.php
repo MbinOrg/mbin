@@ -44,11 +44,15 @@ class DeleteUserHandler
 
         $isLocal = null === $this->user->apId;
 
+        $privateKey = $this->user->getPrivateKey();
+        $publicKey = $this->user->getPublicKey();
+
+        $inboxes = $this->getInboxes();
+
         // note: email cannot be null. For remote accounts email is set to their 'handle@domain.tld' who knows why...
         $userDto = UserDto::create($this->user->username, email: $this->user->username, createdAt: $this->user->createdAt);
         $userDto->plainPassword = ''.time();
 
-        $this->sendDeleteMessages();
         $this->userManager->detachAvatar($this->user);
         $this->userManager->detachCover($this->user);
         $filePathsOfUser = $this->userManager->getAllImageFilePathsOfUser($this->user);
@@ -66,20 +70,28 @@ class DeleteUserHandler
             $user->isDeleted = true;
             $user->markedForDeletionAt = null;
             $user->isVerified = false;
+            $user->privateKey = $privateKey;
+            $user->publicKey = $publicKey;
             $this->entityManager->persist($user);
             $this->entityManager->flush();
+
+            $this->sendDeleteMessages($inboxes, $user);
         }
     }
 
-    private function sendDeleteMessages(): void
+    private function getInboxes(): array
     {
-        if (null !== $this->user->apId) {
+        return array_unique(array_filter($this->userManager->getAllInboxesOfInteractions($this->user)));
+    }
+
+    private function sendDeleteMessages(array $targetInboxes, User $deletedUser): void
+    {
+        if (null !== $deletedUser->apId) {
             return;
         }
 
-        $message = $this->deleteWrapper->buildForUser($this->user);
+        $message = $this->deleteWrapper->buildForUser($deletedUser);
 
-        $targetInboxes = array_unique(array_filter($this->userManager->getAllInboxesOfInteractions($this->user)));
         foreach ($targetInboxes as $inbox) {
             $this->bus->dispatch(new DeliverMessage($inbox, $message));
         }

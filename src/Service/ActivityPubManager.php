@@ -606,15 +606,13 @@ class ActivityPubManager
      */
     public function updateActor(string $actorUrl): null|Magazine|User
     {
-        $this->logger->info('updating actor at {url}', ['url' => $actorUrl]);
-        $actor = $this->apHttpClient->getActorObject($actorUrl);
-
-        // User (We don't make a distinction between bots with type Service as Lemmy does)
-        if (isset($actor['type']) && \in_array($actor['type'], User::USER_TYPES)) {
+        if ($this->userRepository->findOneBy(['apId' => $actorUrl])) {
             return $this->updateUser($actorUrl);
+        } else if ($this->magazineRepository->findOneBy(['apId' => $actorUrl])) {
+            return $this->updateMagazine($actorUrl);
         }
 
-        return $this->updateMagazine($actorUrl);
+        return null;
     }
 
     public function findOrCreateMagazineByToAndCC(array $object): Magazine|null

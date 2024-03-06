@@ -36,7 +36,7 @@ class UserDeleteRequestController extends AbstractController
             throw new TooManyRequestsHttpException();
         }
 
-        $this->userManager->deleteRequest($this->getUserOrThrow(), false);
+        $this->userManager->deleteRequest($this->getUserOrThrow(), true);
         $this->security->logout(false);
 
         $this->addFlash('success', 'delete_account_request_send');
