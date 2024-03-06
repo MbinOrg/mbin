@@ -60,7 +60,7 @@ class DeleteWrapper
                 'type' => 'Tombstone',
             ],
             'to' => [ActivityPubActivityInterface::PUBLIC_URL],
-            'cc' => [$this->urlGenerator->generate('ap_user_followers', ['username' => $user->username])],
+            'cc' => [$this->urlGenerator->generate('ap_user_followers', ['username' => $user->username, UrlGeneratorInterface::ABSOLUTE_URL])],
         ];
     }
 }

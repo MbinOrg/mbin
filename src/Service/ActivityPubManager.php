@@ -608,7 +608,7 @@ class ActivityPubManager
     {
         if ($this->userRepository->findOneBy(['apId' => $actorUrl])) {
             return $this->updateUser($actorUrl);
-        } else if ($this->magazineRepository->findOneBy(['apId' => $actorUrl])) {
+        } elseif ($this->magazineRepository->findOneBy(['apId' => $actorUrl])) {
             return $this->updateMagazine($actorUrl);
         }
 
