@@ -1,6 +1,7 @@
 {% with {
     sensitive_id: 'sensitive-check-%s-%s'|format(parent_id, image.id),
     lightbox_alt_id: 'thumb-alt-%s-%s'|format(parent_id, image.id),
+    image_path: (image.filePath ? asset(image.filePath)|imagine_filter(thumb_filter) : image.sourceUrl)
 } %}
     <figure>
         {% if image.altText %}
@@ -15,15 +16,18 @@
                     class="thumb"
                     data-description="{{ image.altText ? '.'~lightbox_alt_id : ''}}">
                     <img loading="lazy"
-                         src="{{ image.filePath ? asset(image.filePath)|imagine_filter(thumb_filter) : image.sourceUrl }}"
+                         src="{{ image_path }}"
                          alt="{{ image.altText }}">
                 </a>
             </div>
-            {% if image.altText %}
-                <div class="figure-badge alt">
+            <div class="figure-badge">
+                {% if image_path|lower ends with '.gif' %}
+                    <div class="figure-badge-label">GIF</div>
+                {% endif %}
+                {% if image.altText %}
                     <div class="figure-badge-label">ALT</div>
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
             {% if is_adult %}
                 <input id="{{ sensitive_id }}"
                        type="checkbox"

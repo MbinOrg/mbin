@@ -48,16 +48,22 @@ input.sensitive-state {
 .figure-badge {
   position: absolute;
   pointer-events: none;
+  bottom: .5rem;
+  right: .5rem;
+
+  display: flex;
+  gap: .5rem;
 
   &-label {
+    padding: .2rem .4rem;
+
     background: var(--kbin-button-secondary-bg);
-    padding: .5rem;
-
-    font-weight: normal;
-    font-size: .8rem;
-    text-align: center;
-
     opacity: .5;
+
+    font-weight: 500;
+    font-size: .75rem;
+    line-height: 1rem;
+    text-align: center;
 
     i {
       font-size: 1rem;
@@ -65,21 +71,6 @@ input.sensitive-state {
 
     .rounded-edges & {
       border-radius: var(--kbin-rounded-edges-radius);
-    }
-
-    &:hover,
-    &:active {
-      opacity: .7;
-    }
-  }
-
-  &.alt {
-    bottom: .5rem;
-    right: .5rem;
-
-    .figure-badge-label {
-      font-weight: 500;
-      line-height: .8rem;
     }
   }
 }
