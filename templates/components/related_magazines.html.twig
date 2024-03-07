@@ -5,7 +5,7 @@
             <ul class="meta">
                 {% for magazine in magazines %}
                     <li>
-                        {{ component('magazine_inline', {magazine: magazine, showAvatar: true, fullName:true, stretchedLink:true}) }}
+                        {{ component('magazine_inline', {magazine: magazine, showAvatar: true, fullName:false, stretchedLink:true}) }}
                     </li>
                 {% endfor %}
             </ul>
