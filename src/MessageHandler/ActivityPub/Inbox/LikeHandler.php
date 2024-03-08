@@ -63,10 +63,11 @@ class LikeHandler
         } elseif ('Undo' === $message->payload['type']) {
             if ('Like' === $message->payload['object']['type']) {
                 $activity = $this->repository->findByObjectId($message->payload['object']['object']);
-                $entity = $this->entityManager->getRepository($activity['type'])->find((int) $activity['id']);
                 $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
-                // Check if actor and entity aren't empty
-                if (!empty($actor) && !empty($entity)) {
+                // Check if actor and activity aren't empty
+                // the entity can be resolved from activity if it has values
+                if (!empty($actor) && !empty($activity)) {
+                    $entity = $this->entityManager->getRepository($activity['type'])->find((int) $activity['id']);
                     $this->manager->toggle($actor, $entity, FavouriteManager::TYPE_UNLIKE);
                     $this->voteManager->removeVote($entity, $actor);
                 }

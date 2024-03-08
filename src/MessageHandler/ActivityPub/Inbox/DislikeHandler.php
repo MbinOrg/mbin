@@ -5,10 +5,6 @@ declare(strict_types=1);
 namespace App\MessageHandler\ActivityPub\Inbox;
 
 use App\Entity\Contracts\VotableInterface;
-use App\Entity\Entry;
-use App\Entity\EntryComment;
-use App\Entity\Post;
-use App\Entity\PostComment;
 use App\Entity\User;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\DislikeMessage;
@@ -59,18 +55,21 @@ class DislikeHandler
             $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
             // Check if actor and entity aren't empty
             if (!empty($actor) && !empty($entity)) {
-                if ($actor instanceof User && ($entity instanceof Entry || $entity instanceof EntryComment || $entity instanceof Post || $entity instanceof PostComment)) {
+                if ($actor instanceof User && $entity instanceof VotableInterface) {
                     $this->voteManager->vote(VotableInterface::VOTE_DOWN, $entity, $actor);
                 }
             }
         } elseif ('Undo' === $message->payload['type']) {
             if ('Dislike' === $message->payload['object']['type']) {
                 $activity = $this->repository->findByObjectId($message->payload['object']['object']);
-                $entity = $this->entityManager->getRepository($activity['type'])->find((int) $activity['id']);
                 $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
-                // Check if actor and entity aren't empty
-                if ($actor instanceof User && ($entity instanceof Entry || $entity instanceof EntryComment || $entity instanceof Post || $entity instanceof PostComment)) {
-                    $this->voteManager->removeVote($entity, $actor);
+                // Check if actor and activity aren't empty
+                // the entity can be resolved from activity if it has values
+                if ($actor instanceof User && $activity) {
+                    $entity = $this->entityManager->getRepository($activity['type'])->find((int) $activity['id']);
+                    if ($entity instanceof VotableInterface) {
+                        $this->voteManager->removeVote($entity, $actor);
+                    }
                 }
             }
         }
