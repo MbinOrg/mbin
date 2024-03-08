@@ -67,16 +67,27 @@ class AttachEntryEmbedHandler
     private function fetchCover(Entry $entry, Embed $embed): ?Image
     {
         if (!$entry->image) {
-            $tempFile = null;
-            if ($embed->image) {
-                $tempFile = $this->fetchImage($embed->image);
-            } elseif ($embed->isImageUrl()) {
-                $tempFile = $this->fetchImage($entry->url);
-            }
+            if ($imageUrl = $this->getCoverUrl($entry, $embed)) {
+                if ($tempFile = $this->fetchImage($imageUrl)) {
+                    $image = $this->imageRepository->findOrCreateFromPath($tempFile);
+                    if ($image && !$image->filePath) {
+                        $image->sourceUrl = $imageUrl;
+                    }
 
-            if ($tempFile) {
-                return $this->imageRepository->findOrCreateFromPath($tempFile);
+                    return $image;
+                }
             }
+        }
+
+        return null;
+    }
+
+    private function getCoverUrl(Entry $entry, Embed $embed): ?string
+    {
+        if ($embed->image) {
+            return $embed->image;
+        } elseif ($embed->isImageUrl()) {
+            return $entry->url;
         }
 
         return null;
