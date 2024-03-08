@@ -252,7 +252,7 @@ user_settings_toggle_theme:
 
 user_settings_stats:
     controller: App\Controller\User\Profile\UserStatsController
-    defaults: { statsType: content, statsPeriod: -1, withFederated: false }
+    defaults: { statsType: content, statsPeriod: 31, withFederated: false }
     path: /settings/stats/{statsType}/{statsPeriod}/{withFederated}
     methods: [GET]
 
