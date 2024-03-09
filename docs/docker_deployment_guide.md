@@ -91,14 +91,14 @@ sudo chown $USER:$USER storage/media storage/caddy_config storage/caddy_data sto
 ### Configure `.env` and `compose.override.yml`
 
 1. Choose your Redis password, PostgreSQL password, RabbitMQ password, and Mercure password.
-2. Place the passwords in the corresponding variables in both `.env` and `compose.override.yml`.
+2. Place those passwords in the corresponding variables in both `.env` and `compose.override.yml`.
 3. Update the `SERVER_NAME`, `KBIN_DOMAIN` and `KBIN_STORAGE_URL` in `.env`.
 4. Change the `MESSENGER_TRANSPORT_DSN` line and change port `5672` to port `5673` if you are using the AMQP Proxy service (recommended).
 5. Update `APP_SECRET` in `.env`, generate a new one via: `node -e  "console.log(require('crypto').randomBytes(16).toString('hex'))"`
 6. _Optionally_: Use a newer PostgreSQL version (current fallback is v13). Update/set the `POSTGRES_VERSION` variable in your `.env` and `compose.override.yml` under `db`.
 
 > **Note**
-> Ensure the `HTTPS` environmental variable is set to `TRUE` in `compose.override.yml` for the `php`, `messenger`, and `messenger_ap` containers **if your environment is using a valid certificate behind a reverse proxy**. This is likely true for most production environments and is required for proper federation, that is, this will ensure the webfinger responses include `https:` in the URLs generated.
+> Ensure the `HTTPS` environmental variable is set to `TRUE` in `compose.override.yml` for the `php` and `messenger` containers **if your environment is using a valid certificate behind a reverse proxy**. This is likely true for most production environments and is required for proper federation, that is, this will ensure the webfinger responses include `https:` in the URLs generated.
 
 ### Configure OAuth2 keys
 
