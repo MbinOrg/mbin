@@ -17,7 +17,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:2019/metrics || exit 1"]
     ports:
-      - 8008:80
+      - "8008:80"
     volumes:
       - ./storage/caddy_config:/config
       - ./storage/caddy_data:/data
@@ -101,7 +101,7 @@ services:
       test: ["CMD", "redis-cli", "ping"]
 
   db:
-    image: postgres:${POSTGRES_VERSION:-13}-alpine
+    image: postgres:${POSTGRES_VERSION:-16}-alpine
     container_name: mbin-db
     restart: unless-stopped
     networks:
@@ -109,8 +109,10 @@ services:
     volumes:
       - ./storage/postgres:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=kbin
-      - POSTGRES_USER=kbin
+      - POSTGRES_DB=mbin
+      - POSTGRES_USER=mbin
+    expose:
+      - "5432"
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -119,15 +121,15 @@ services:
     networks:
       - mbin_external_network
     environment:
-      - RABBITMQ_DEFAULT_USER=kbin
+      - RABBITMQ_DEFAULT_USER=mbin
     volumes:
       - ./storage/rabbitmq:/var/lib/rabbitmq
     ports:
-      - 15672:15672
+      - "15672:15672"
 
   # Enable AMQP Proxy within Docker
   # Be sure to update your .env file with using the AMQP Proxy port (5673 instead of 5672):
-  #     MESSENGER_TRANSPORT_DSN=amqp://kbin:${RABBITMQ_PASSWORD}@rabbitmq:5673/%2f/messages
+  #     MESSENGER_TRANSPORT_DSN=amqp://mbin:${RABBITMQ_PASSWORD}@rabbitmq:5673/%2f/messages
   #amqproxy:
   #  image: cloudamqp/amqproxy
   #  expose:
