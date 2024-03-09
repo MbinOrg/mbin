@@ -11,13 +11,14 @@ services:
     #image: mbin
     container_name: mbin-www
     restart: unless-stopped
+    ports:
+      - "8008:80"
     networks:
       - mbin_external_network
+      - mbin_internal_network
     command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:2019/metrics || exit 1"]
-    ports:
-      - "8008:80"
     volumes:
       - ./storage/caddy_config:/config
       - ./storage/caddy_data:/data
@@ -27,6 +28,8 @@ services:
       - PHP_FASTCGI_HOST=php:9000 # caddy forward traffic to this host via fastcgi
       - MERCURE_PUBLISHER_JWT_KEY=$MERCURE_JWT_SECRET
       - MERCURE_SUBSCRIBER_JWT_KEY=$MERCURE_JWT_SECRET
+    env_file:
+      - .env
     depends_on:
       - php
 
@@ -41,7 +44,7 @@ services:
     container_name: mbin-php
     restart: unless-stopped
     networks:
-      - mbin_external_network
+      - mbin_internal_network
     command: php-fpm
     healthcheck:
       test:
@@ -52,8 +55,7 @@ services:
     volumes:
       - ./storage/media:/var/www/mbin/public/media
       - ./storage/logs:/var/www/mbin/var/log
-    # If you want to change configs locally, without rebuilding the image use:
-    #  - ../config:/var/www/mbin/config
+      - ../config:/var/www/mbin/config
     env_file:
       - .env
     depends_on:
@@ -72,15 +74,14 @@ services:
     container_name: mbin-messenger
     restart: unless-stopped
     networks:
-      - mbin_external_network
+      - mbin_internal_network
     command: bin/console messenger:consume async async_ap failed --time-limit=3600
     healthcheck:
       test: ["CMD-SHELL", "ps aux | grep 'messenger[:]consume' || exit 1"]
     volumes:
       - ./storage/media:/var/www/mbin/public/media
       - ./storage/logs:/var/www/mbin/var/log
-    # If you want to change configs locally, without rebuilding the image use:
-    #  - ../config:/var/www/mbin/config
+      - ../config:/var/www/mbin/config
     env_file:
       - .env
     depends_on:
@@ -93,7 +94,7 @@ services:
     container_name: mbin-redis
     restart: unless-stopped
     networks:
-      - mbin_external_network
+      - mbin_internal_network
     command: /bin/sh -c "redis-server --requirepass $${REDIS_PASSWORD}"
     volumes:
       - ./storage/redis:/data
@@ -104,28 +105,31 @@ services:
     image: postgres:${POSTGRES_VERSION:-16}-alpine
     container_name: mbin-db
     restart: unless-stopped
+    expose:
+      - "5432"
     networks:
-      - mbin_external_network
+      - mbin_internal_network
     volumes:
       - ./storage/postgres:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=mbin
       - POSTGRES_USER=mbin
-    expose:
-      - "5432"
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: mbin-rabbitmq
     restart: unless-stopped
+    expose:
+      - "5672"
+    ports:
+      - "15672:15672"
     networks:
       - mbin_external_network
+      - mbin_internal_network
     environment:
       - RABBITMQ_DEFAULT_USER=mbin
     volumes:
       - ./storage/rabbitmq:/var/lib/rabbitmq
-    ports:
-      - "15672:15672"
 
   # Enable AMQP Proxy within Docker
   # Be sure to update your .env file with using the AMQP Proxy port (5673 instead of 5672):
@@ -133,11 +137,9 @@ services:
   #amqproxy:
   #  image: cloudamqp/amqproxy
   #  expose:
-  #    - "5672"
-  #  ports:
-  #    - "5673:5673"
+  #    - "5673"
   #  networks:
-  #    - mbin_external_network
+  #    - mbin_internal_network
   #  command: amqp://rabbitmq:5672
 
   # Add your favorite reverse proxy (e.g nginx) which accept incoming HTTPS
@@ -145,10 +147,11 @@ services:
   #nginx:
   #  image: nginx
   #  container_name: mbin-nginx
-  #  networks:
-  #    - mbin_external_network
   #  ports:
   #    - 443:443
+  #  networks:
+  #    - mbin_external_network
+  #    - mbin_internal_network
   #  volumes:
   #    - ./nginx.conf:/etc/nginx/nginx.conf
 
@@ -158,6 +161,7 @@ services:
   #  image: ixdotai/smtp:latest
   #  networks:
   #    - mbin_external_network
+  #    - mbin_internal_network
   #  environment:
   #    - SMARTHOST_ADDRESS=mail.mysmtp.com
   #    - SMARTHOST_PORT=587
@@ -167,3 +171,5 @@ services:
 
 networks:
   mbin_external_network:
+  mbin_internal_network:
+    internal: true

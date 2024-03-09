@@ -1,5 +1,8 @@
 FROM php:8.2-fpm-alpine as base
 
+ENV APP_ENV=prod
+ENV APP_DEBUG=0
+
 # Install php extensions, by docker-php-extension-installer
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 RUN install-php-extensions amqp pgsql pdo_pgsql gd curl simplexml dom xml redis intl opcache apcu pcntl exif
@@ -48,20 +51,21 @@ RUN xcaddy build \
 
 FROM base as builder-composer
 
-# Composer: install package
-COPY composer.* $MBIN_HOME
-COPY symfony.lock $MBIN_HOME
+ENV APP_ENV=prod
+ENV APP_DEBUG=0
 ENV COMPOSER_ALLOW_SUPERUSER=1
-RUN composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
 
 # Copy repository
 COPY --link ./ $MBIN_HOME
-RUN cp .env.example_docker .env
+# Dummy .env file for composer post-install scripts (console commands)
+COPY .env.example_docker $MBIN_HOME/.env
+RUN chmod +x bin/console && sync
 
-# Dump-autoload and run post-install script
-RUN composer dump-autoload --classmap-authoritative --no-dev
-RUN composer run-script --no-dev post-install-cmd && \
-    chmod +x bin/console && sync
+# Composer: install packages
+RUN composer install --no-dev --optimize-autoloader
+
+# Clear cache
+RUN php bin/console cache:clear
 
 ####################
 
@@ -93,8 +97,6 @@ RUN npm run build
 FROM base as runner
 
 COPY --chown=$USER:$GROUP --link ./ $MBIN_HOME
-RUN cp .env.example_docker .env
-
 COPY --from=builder-caddy --link /usr/bin/caddy /usr/sbin/caddy
 COPY --from=builder-composer --chown=$USER:$GROUP $MBIN_HOME/vendor $MBIN_HOME/vendor
 COPY --from=builder-composer --chown=$USER:$GROUP $MBIN_HOME/public/bundles $MBIN_HOME/public/bundles
@@ -104,7 +106,7 @@ COPY --link docker/caddy/Caddyfile /etc/caddy/Caddyfile
 COPY --chmod=755 --link docker/docker-entrypoint ./
 
 RUN mkdir -p public/media var/log /data /config && \
-    chown -R $USER:$GROUP public/media var /data /config .env && \
+    chown -R $USER:$GROUP public/media var /data /config && \
     chmod 777 public/media var
 
 # Switch user

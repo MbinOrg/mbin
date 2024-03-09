@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "16d06971ec4447dcb2a7fe2028ee1a8d",
+    "content-hash": "58a1389aa491bc426ca8e32998e1d806",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -2227,16 +2227,16 @@
         },
         {
             "name": "embed/embed",
-            "version": "dev-master",
+            "version": "v4.4.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/oscarotero/Embed.git",
-                "reference": "8632aaa00b35de05de89988632bee7e7392b032e"
+                "reference": "8ac21505d048e8796c6cb9172ec5e81e5d0e0408"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/oscarotero/Embed/zipball/8632aaa00b35de05de89988632bee7e7392b032e",
-                "reference": "8632aaa00b35de05de89988632bee7e7392b032e",
+                "url": "https://api.github.com/repos/oscarotero/Embed/zipball/8ac21505d048e8796c6cb9172ec5e81e5d0e0408",
+                "reference": "8ac21505d048e8796c6cb9172ec5e81e5d0e0408",
                 "shasum": ""
             },
             "require": {
@@ -2263,7 +2263,6 @@
             "suggest": {
                 "symfony/css-selector": "If you want to get elements using css selectors"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "files": [
@@ -2297,7 +2296,7 @@
             "support": {
                 "email": "oom@oscarotero.com",
                 "issues": "https://github.com/oscarotero/Embed/issues",
-                "source": "https://github.com/oscarotero/Embed/tree/master"
+                "source": "https://github.com/oscarotero/Embed/tree/v4.4.10"
             },
             "funding": [
                 {
@@ -2313,7 +2312,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-01-05T11:57:16+00:00"
+            "time": "2023-12-10T12:30:47+00:00"
         },
         {
             "name": "endroid/qr-code",
@@ -17443,7 +17442,7 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
