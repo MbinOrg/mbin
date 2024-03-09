@@ -26,7 +26,7 @@
     {{ component('entry_comment', {
             comment: comment,
             showNested: showNested,
-            dateAsUrl: dateAsUrl is defined ? dateAsUrl : false,
+            dateAsUrl: dateAsUrl is defined ? dateAsUrl : true,
             showMagazineName: magazine is not defined or not magazine,
             showEntryTitle: entry is not defined or not entry
         }) }}
