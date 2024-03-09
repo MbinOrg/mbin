@@ -31,6 +31,8 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 ```
 
+See also: [Linux post-install](https://docs.docker.com/engine/install/linux-postinstall/).
+
 ## Mbin Installation
 
 ### Preparation
@@ -188,6 +190,7 @@ The filesystem ACL is disabled by default, in the `mbin` image. You can set the 
 
 ## Run Production
 
+Assuming you followed the all the steps above, you should now already have a `compose.override.yml` file. Running production should be the same command:
 If you created the file `compose.override.yml` with your configs (`cp compose.prod.yml compose.override.yml`), running production would be the same command:
 
 ```bash
