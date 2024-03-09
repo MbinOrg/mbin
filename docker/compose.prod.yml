@@ -34,6 +34,3 @@ services:
     environment:
       - HTTPS=TRUE
 
-  messenger_ap:
-    environment:
-      - HTTPS=TRUE
