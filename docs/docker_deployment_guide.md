@@ -132,6 +132,8 @@ OAUTH_ENCRYPTION_KEY=<Hex string generated in previous step>
 
 ### Running the containers
 
+Move again back to the `docker` directory: `cd docker`.
+
 By default `docker compose` will execute the `compose.yml` and `compose.override.yml` files.
 
 Run the container in the background (`-d` means detach, but this can also be omitted for testing or debugging purposes):
