@@ -86,7 +86,7 @@ And instead use the following line on all places (`www`, `php`, `messenger` and 
 image: "ghcr.io/mbinorg/mbin:latest"
 ```
 
-**Important:** Do _NOT_ forget to change **ALL LINES** in that matches `image: mbin` to: `image: "ghcr.io/mbinorg/mbin:latest"` in the `compose.yml` file (should be 4 matches in total).
+**Important:** Do _NOT_ forget to change **ALL LINES** in that matches `image: mbin` to: `image: "ghcr.io/mbinorg/mbin:latest"` in the `compose.yml` file (should be 3 matches in total).
 
 3. Create config files and storage directories:
 
@@ -100,7 +100,7 @@ sudo chown $USER:$USER storage/media storage/caddy_config storage/caddy_data sto
 ### Configure `.env` and `compose.override.yml`
 
 1. Choose your Redis password, PostgreSQL password, RabbitMQ password, and Mercure password.
-2. Place the passwords in the corresponding variables in both `.env` and `compose.override.yml`.
+2. Place those passwords in the corresponding variables in both `.env` and `compose.override.yml`.
 3. Update the `SERVER_NAME`, `KBIN_DOMAIN` and `KBIN_STORAGE_URL` in `.env`.
 4. Update `APP_SECRET` in `.env`, generate a new one via: `node -e  "console.log(require('crypto').randomBytes(16).toString('hex'))"`
 5. _Optionally_: Use a newer PostgreSQL version (current fallback is v13). Update/set the `POSTGRES_VERSION` variable in your `.env` and `compose.override.yml` under `db`.
