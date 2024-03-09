@@ -101,7 +101,7 @@ class ActivityPubManager
     /**
      * Find an existing actor or create a new one if the actor doesn't yet exists.
      *
-     * @param string $actorUrlOrHandle actor URL or actor handle
+     * @param actorUrlOrHandle actor URL or actor handle (could even be null)
      *
      * @return User|Magazine|null or Magazine or null on error
      */
@@ -111,7 +111,7 @@ class ActivityPubManager
             return null;
         }
 
-        $this->logger->debug('searching for actor at "{handle}"', ['handle' => $actorUrlOrHandle]);
+        $this->logger->debug('ActivityPubManager:findActorOrCreate: searching for actor at "{handle}"', ['handle' => $actorUrlOrHandle]);
         if (str_contains($actorUrlOrHandle, $this->settingsManager->get('KBIN_DOMAIN').'/m/')) {
             $magazine = str_replace('https://'.$this->settingsManager->get('KBIN_DOMAIN').'/m/', '', $actorUrlOrHandle);
             $this->logger->debug('found magazine "{magName}"', ['magName' => $magazine]);
@@ -179,21 +179,27 @@ class ActivityPubManager
 
                 return $magazine;
             }
+        } else {
+            $this->logger->debug("ActivityPubManager:findActorOrCreate:actorUrl: $actorUrl. Actor not found.");
         }
 
         return null;
     }
 
     /**
+     * Try to find an existing actor or create a new one if the actor doesn't yet exists.
+     *
+     * @param actorUrlOrHandle actor URL or handle (could even be null)
+     *
      * @throws \LogicException when the returned actor is not a user or is null
      */
-    public function findUserActorOrCreateOrThrow(string $actorUrlOrHandle): User
+    public function findUserActorOrCreateOrThrow(?string $actorUrlOrHandle): User|Magazine
     {
         $object = $this->findActorOrCreate($actorUrlOrHandle);
         if (!$object) {
-            throw new \LogicException("could not find actor for 'object' property at: '$actorUrlOrHandle'");
+            throw new \LogicException("Could not find actor for 'object' property at: '$actorUrlOrHandle'");
         } elseif (!$object instanceof User) {
-            throw new \LogicException("could not find user actor for 'object' property at: '$actorUrlOrHandle'");
+            throw new \LogicException("Could not find user actor for 'object' property at: '$actorUrlOrHandle'");
         }
 
         return $object;
@@ -316,8 +322,10 @@ class ActivityPubManager
 
             return $user;
         } else {
-            return null;
+            $this->logger->debug("ActivityPubManager:updateUser:actorUrl: $actorUrl. Actor not found.");
         }
+
+        return null;
     }
 
     public function handleImages(array $attachment): ?Image
@@ -492,8 +500,10 @@ class ActivityPubManager
 
             return $magazine;
         } else {
-            return null;
+            $this->logger->debug("ActivityPubManager:updateMagazine:actorUrl: $actorUrl. Actor not found.");
         }
+
+        return null;
     }
 
     public function createInboxesFromCC(array $activity, User $user): array

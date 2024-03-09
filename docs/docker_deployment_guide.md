@@ -75,6 +75,12 @@ image: mbin
 ```
 
 Again, you do _not_ need to do the steps above. Only if you wish to build your own docker image.
+=======
+And instead use the following line on all places (`www`, `php`, and `messenger` services):
+
+```yml
+image: "ghcr.io/mbinorg/mbin:latest"
+```
 
 3. Create config files and storage directories:
 

@@ -73,15 +73,17 @@ class StatsContentRepository extends StatsRepository
         $conn = $this->getEntityManager()
             ->getConnection();
 
+        $onlyLocalWhere = $this->onlyLocal ? ' AND e.ap_id IS NULL' : '';
         if ($this->user) {
-            $sql = "SELECT to_char(e.created_at,'Mon') as month, extract(year from e.created_at) as year, COUNT(e.id) as count 
-                    FROM ".$table.' e WHERE e.user_id = :userId GROUP BY 1,2';
+            $sql = "SELECT to_char(e.created_at,'Mon') as month, extract(year from e.created_at) as year, COUNT(e.id) as count
+                    FROM ".$table.' e WHERE e.user_id = :userId '.$onlyLocalWhere.' GROUP BY 1,2';
         } elseif ($this->magazine) {
-            $sql = "SELECT to_char(e.created_at,'Mon') as month, extract(year from e.created_at) as year, COUNT(e.id) as count 
-                    FROM ".$table.' e WHERE e.magazine_id = :magazineId GROUP BY 1,2';
+            $sql = "SELECT to_char(e.created_at,'Mon') as month, extract(year from e.created_at) as year, COUNT(e.id) as count
+                    FROM ".$table.' e WHERE e.magazine_id = :magazineId '.$onlyLocalWhere.' GROUP BY 1,2';
         } else {
-            $sql = "SELECT to_char(e.created_at,'Mon') as month, extract(year from e.created_at) as year, COUNT(e.id) as count 
-                    FROM ".$table.' e GROUP BY 1,2';
+            $onlyLocalWhere = $this->onlyLocal ? ' WHERE e.ap_id IS NULL' : '';
+            $sql = "SELECT to_char(e.created_at,'Mon') as month, extract(year from e.created_at) as year, COUNT(e.id) as count
+                    FROM ".$table.' e '.$onlyLocalWhere.' GROUP BY 1,2';
         }
 
         $stmt = $conn->prepare($sql);
@@ -200,7 +202,7 @@ class StatsContentRepository extends StatsRepository
 
         $conn = $this->getEntityManager()->getConnection();
 
-        $sql = 'SELECT date_trunc(?, e.created_at) as datetime, count(e.id) as count FROM '.$table.' e 
+        $sql = 'SELECT date_trunc(?, e.created_at) as datetime, count(e.id) as count FROM '.$table.' e
                     WHERE e.created_at BETWEEN ? AND ?';
         if ($magazine) {
             $sql .= ' AND e.magazine_id = ?';
