@@ -107,8 +107,9 @@ sudo chown $USER:$USER storage/media storage/caddy_config storage/caddy_data sto
 1. Create an RSA key pair using OpenSSL:
 
 ```bash
-# Replace <mbin_dir> with Mbin's root directory
-mkdir <mbin_dir>/config/oauth2/
+# Move to the Git root directory (If you are still in the docker folder, just go one directory up again: cd ..)
+# Create a new "oauth2" sub-directory in the existing "config" directory:
+mkdir config/oauth2
 # If you protect the key with a passphrase, make sure to remember it!
 # You will need it later
 openssl genrsa -des3 -out ./config/oauth2/private.pem 4096
