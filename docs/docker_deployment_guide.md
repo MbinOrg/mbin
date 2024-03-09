@@ -144,6 +144,8 @@ cd docker
 docker compose up -d
 ```
 
+_Note:_ If run into any issues (for example you needed to adapt the `.env` file to fix a typo), be sure to execute `docker compose down` followed by `docker compose up -d` again, so the latest changes will be applied in the Docker containers.
+
 See your running containers via: `docker ps`.
 
 Then, you should be able to access the new instance via [http://localhost:8008](http://localhost:8008).  
