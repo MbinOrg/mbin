@@ -52,7 +52,7 @@ class ApHttpClient
     public function getActivityObject(string $url, bool $decoded = true): array|string|null
     {
         $resp = $this->cache->get('ap_'.hash('sha256', $url), function (ItemInterface $item) use ($url) {
-            $this->logger->debug("ApHttpClient:getActivityObject:url: {$url}");
+            $this->logger->debug("ApHttpClient:getActivityObject:url: $url");
 
             $client = new CurlHttpClient();
             $r = $client->request('GET', $url, [
@@ -64,7 +64,7 @@ class ApHttpClient
             $statusCode = $r->getStatusCode();
             // Accepted status code are 2xx or 410 (used Tombstone types)
             if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
-                throw new InvalidApPostException("Invalid status code while getting: {$url} : $statusCode, ".substr($r->getContent(false), 0, 1000));
+                throw new InvalidApPostException("Invalid status code while getting: $url : $statusCode, ".substr($r->getContent(false), 0, 1000));
             }
 
             $item->expiresAt(new \DateTime('+1 hour'));
@@ -80,19 +80,38 @@ class ApHttpClient
         return $decoded ? json_decode($resp, true) : $resp;
     }
 
+    /**
+     * Retrieve AP actor object (could be a user or magazine).
+     *
+     * @return inbox return the inbox URL of the actor
+     *
+     * @throws LogicException if the AP actor object cannot be found
+     */
     public function getInboxUrl(string $apProfileId): string
     {
         $actor = $this->getActorObject($apProfileId);
-
-        return $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
+        if (!empty($actor)) {
+            return $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
+        } else {
+            throw new \LogicException("Unable to find AP actor (user or magazine) with URL: $apProfileId");
+        }
     }
 
+    /**
+     * Execute a webfinger request according to RFC 7033 (https://tools.ietf.org/html/rfc7033).
+     *
+     * @param url the URL of the user/magazine to get the webfinger object for
+     *
+     * @return array|null the webfinger object
+     *
+     * @throws InvalidWebfingerException
+     */
     public function getWebfingerObject(string $url): ?array
     {
         $resp = $this->cache->get(
             'wf_'.hash('sha256', $url),
             function (ItemInterface $item) use ($url) {
-                $this->logger->debug("ApHttpClient:getWebfingerObject:url: {$url}");
+                $this->logger->debug("ApHttpClient:getWebfingerObject:url: $url");
                 $r = null;
                 try {
                     $client = new CurlHttpClient();
@@ -102,7 +121,7 @@ class ApHttpClient
                         'headers' => $this->getInstanceHeaders($url, null, 'get', ApRequestType::WebFinger),
                     ]);
                 } catch (\Exception $e) {
-                    $msg = "WebFinger Get fail: {$url}, ex: ".\get_class($e).": {$e->getMessage()}";
+                    $msg = "WebFinger Get fail: $url, ex: ".\get_class($e).": {$e->getMessage()}";
                     if (null !== $r) {
                         $msg .= ', '.$r->getContent(false);
                     }
@@ -122,13 +141,15 @@ class ApHttpClient
      * Retrieve AP actor object (could be a user or magazine).
      *
      * @return array key/value array of actor response body
+     *
+     * @throws InvalidApPostException
      */
     public function getActorObject(string $apProfileId): ?array
     {
         $resp = $this->cache->get(
             'ap_'.hash('sha256', $apProfileId),
             function (ItemInterface $item) use ($apProfileId) {
-                $this->logger->debug("ApHttpClient:getActorObject:url: {$apProfileId}");
+                $this->logger->debug("ApHttpClient:getActorObject:url: $apProfileId");
                 $response = null;
                 try {
                     // Set-up request
@@ -160,7 +181,7 @@ class ApHttpClient
                         $this->magazineRepository->save($magazine, true);
                     }
 
-                    $msg = "AP Get fail: {$apProfileId}, ex: ".\get_class($e).": {$e->getMessage()}";
+                    $msg = "AP Get fail: $apProfileId, ex: ".\get_class($e).": {$e->getMessage()}";
                     if (null !== $response) {
                         $msg .= ', '.$response->getContent(false);
                     }
@@ -169,7 +190,8 @@ class ApHttpClient
 
                 $item->expiresAt(new \DateTime('+1 hour'));
 
-                // When everything goes OK, return the data. Pass false so it doesn't throw on 410 errors
+                // Return the content.
+                // Pass the 'false' option to getContent so it doesn't throw errors on "non-OK" respones (eg. 410 status codes).
                 return $response->getContent(false);
             }
         );
@@ -182,7 +204,7 @@ class ApHttpClient
         $resp = $this->cache->get(
             'ap_collection'.hash('sha256', $apAddress),
             function (ItemInterface $item) use ($apAddress) {
-                $this->logger->debug("ApHttpClient:getCollectionObject:url: {$apAddress}");
+                $this->logger->debug("ApHttpClient:getCollectionObject:url: $apAddress");
                 $response = null;
                 try {
                     // Set-up request
@@ -196,10 +218,10 @@ class ApHttpClient
                     $statusCode = $response->getStatusCode();
                     // Accepted status code are 2xx or 410 (used Tombstone types)
                     if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
-                        throw new InvalidApPostException("Invalid status code while getting: {$apAddress} : $statusCode, ".substr($response->getContent(false), 0, 1000));
+                        throw new InvalidApPostException("Invalid status code while getting: $apAddress : $statusCode, ".substr($response->getContent(false), 0, 1000));
                     }
                 } catch (\Exception $e) {
-                    $msg = "AP Get fail: {$apAddress}, ex: ".\get_class($e).": {$e->getMessage()}";
+                    $msg = "AP Get fail: $apAddress, ex: ".\get_class($e).": {$e->getMessage()}";
                     if (null !== $response) {
                         $msg .= ', '.$response->getContent(false);
                     }
@@ -216,6 +238,15 @@ class ApHttpClient
         return $resp ? json_decode($resp, true) : null;
     }
 
+    /**
+     * Sends a POST request to the specified URL with optional request body and caching mechanism.
+     *
+     * @param url the URL to which the POST request will be sent
+     * @param actor The actor initiating the request, either a User or Magazine object
+     * @param body (Optional) The body of the POST request. Defaults to null.
+     *
+     * @throws InvalidApPostException if the POST request fails with a non-2xx response status code
+     */
     public function post(string $url, User|Magazine $actor, array $body = null): void
     {
         $cacheKey = 'ap_'.hash('sha256', $url.':'.$body['id']);
@@ -224,7 +255,7 @@ class ApHttpClient
             return;
         }
 
-        $this->logger->debug("ApHttpClient:post:url: {$url}");
+        $this->logger->debug("ApHttpClient:post:url: $url");
         $this->logger->debug('ApHttpClient:post:body '.json_encode($body ?? []));
 
         // Set-up request
@@ -237,7 +268,7 @@ class ApHttpClient
         ]);
 
         if (!str_starts_with((string) $response->getStatusCode(), '2')) {
-            throw new InvalidApPostException("Post fail: {$url}, ".substr($response->getContent(false), 0, 1000).' '.json_encode($body));
+            throw new InvalidApPostException("Post fail: $url, ".substr($response->getContent(false), 0, 1000).' '.json_encode($body));
         }
 
         // build cache

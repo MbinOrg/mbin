@@ -89,11 +89,6 @@ class Image
         }
     }
 
-    public function getPath(): string
-    {
-        return $this->filePath;
-    }
-
     public function getId(): int
     {
         return $this->id;

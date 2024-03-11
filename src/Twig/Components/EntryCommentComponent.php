@@ -26,7 +26,7 @@ final class EntryCommentComponent
     public bool $showNested = false;
     public int $level = 1;
     public bool $canSeeTrash = false;
-    public bool $dateAsUrl = false;
+    public bool $dateAsUrl = true;
 
     public function postMount(array $attr): array
     {

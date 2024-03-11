@@ -17,6 +17,10 @@
     font-family: var(--kbin-body-font-family);
     font-size: 0.9rem;
     color: var(--kbin-text-color);
+    max-height: 12rem;
+    overflow-wrap: break-word;
+    overflow-x: hidden;
+    overflow-y: scroll;
   }
 
   .gslide-image img {
@@ -39,6 +43,8 @@
     font-family: var(--kbin-body-font-family);
     font-size: 0.9rem;
     color: var(--kbin-text-color);
+    overflow: unset;
+    max-height: unset;
   }
 
   .gslide-image img {

@@ -4,18 +4,18 @@
             comment: reply,
             showNested: false,
             level: 3,
-            showEntryTitle:false,
-            showMagazineName:false
+            showEntryTitle: false,
+            showMagazineName: false
         }) }}
     {% endfor %}
 {% else %}
     {% for reply in comment.children %}
         {{ component('entry_comment', {
             comment: reply,
-            showNested:true,
+            showNested: true,
             level: level + 1,
-            showEntryTitle:false,
-            showMagazineName:false
+            showEntryTitle: false,
+            showMagazineName: false
         }) }}
     {% endfor %}
 {% endif %}

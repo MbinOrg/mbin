@@ -13,6 +13,6 @@
     {% if fullName %}
         {{ magazine.name }} {% if magazine.isAdult %}<small class="badge danger">18+</small>{% endif %}
     {% else %}
-        {{ ('@'~magazine.name)|username(false) -}}
+        {{ magazine.title }}
     {% endif %}
 </a>
