@@ -185,10 +185,10 @@ class ActivityPubManager
                 // deleted actor
                 if (null !== ($magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl])) && null !== $magazine->apId) {
                     $this->magazineManager->purge($magazine);
-                    $this->logger->warning("got a tombstone for magazine {name} at {url}, deleting it", ["name" => $magazine->name, "url" => $actorUrl]);
+                    $this->logger->warning('got a tombstone for magazine {name} at {url}, deleting it', ['name' => $magazine->name, 'url' => $actorUrl]);
                 } elseif (null !== ($user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl])) && null !== $user->apId) {
                     $this->bus->dispatch(new DeleteUserMessage($user->getId()));
-                    $this->logger->warning("got a tombstone for user {name} at {url}, deleting it", ["name" => $user->username, "url" => $actorUrl]);
+                    $this->logger->warning('got a tombstone for user {name} at {url}, deleting it', ['name' => $user->username, 'url' => $actorUrl]);
                 }
             }
         } else {
@@ -410,6 +410,7 @@ class ActivityPubManager
         if ($actor && 'Tombstone' === $actor['type'] && $magazine instanceof Magazine && null !== $magazine->apId) {
             // tombstone for remote magazine -> delete it
             $this->magazineManager->purge($magazine);
+
             return null;
         }
 
