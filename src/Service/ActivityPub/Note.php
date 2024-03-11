@@ -23,10 +23,12 @@ use App\Service\PostCommentManager;
 use App\Service\PostManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 
 class Note
 {
     public function __construct(
+        private readonly LoggerInterface $logger,
         private readonly ApActivityRepository $repository,
         private readonly PostManager $postManager,
         private readonly EntryCommentManager $entryCommentManager,
@@ -188,11 +190,9 @@ class Note
                 throw new \Exception('User is banned.');
             }
 
-            if (
-                isset($object['attachment'])
-                && $image = $this->activityPubManager->handleImages($object['attachment'])
-            ) {
+            if (isset($object['attachment']) && $image = $this->activityPubManager->handleImages($object['attachment'])) {
                 $dto->image = $this->imageFactory->createDto($image);
+                $this->logger->debug("adding image to post '{title}', {image}", ['title' => $dto->slug, 'image' => $image->getId()]);
             }
 
             $dto->body = $this->objectExtractor->getMarkdownBody($object);

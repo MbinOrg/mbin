@@ -295,7 +295,7 @@ class MagazineManager
             return;
         }
 
-        $image = $magazine->icon->filePath;
+        $image = $magazine->icon->getId();
 
         $magazine->icon = null;
 

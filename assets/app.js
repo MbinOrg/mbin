@@ -1,5 +1,5 @@
-import {Application} from '@hotwired/stimulus'
 import './bootstrap.js';
+import {Application} from '@hotwired/stimulus'
 import './styles/app.scss';
 import './utils/popover';
 import '@github/markdown-toolbar-element'

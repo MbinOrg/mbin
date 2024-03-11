@@ -15,6 +15,7 @@ use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPubManager;
 use App\Service\FavouriteManager;
+use App\Service\VoteManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -24,6 +25,7 @@ class LikeHandler
 {
     public function __construct(
         private readonly ActivityPubManager $activityPubManager,
+        private readonly VoteManager $voteManager,
         private readonly ApActivityRepository $repository,
         private readonly EntityManagerInterface $entityManager,
         private readonly MessageBusInterface $bus,
@@ -66,6 +68,7 @@ class LikeHandler
                 // Check if actor and entity aren't empty
                 if (!empty($actor) && !empty($entity)) {
                     $this->manager->toggle($actor, $entity, FavouriteManager::TYPE_UNLIKE);
+                    $this->voteManager->removeVote($entity, $actor);
                 }
             }
         }

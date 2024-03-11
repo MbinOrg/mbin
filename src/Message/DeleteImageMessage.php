@@ -8,7 +8,7 @@ use App\Message\Contracts\AsyncMessageInterface;
 
 class DeleteImageMessage implements AsyncMessageInterface
 {
-    public function __construct(public string $path, public bool $force = false)
+    public function __construct(public int $id, public bool $force = false)
     {
     }
 }

@@ -72,7 +72,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     public const MAX_BODY_LENGTH = 35000;
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'entries')]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $user;
     #[ManyToOne(targetEntity: Magazine::class, inversedBy: 'entries')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -119,27 +119,21 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     public ?array $tags = null;
     #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
     public ?array $mentions = null;
-    #[OneToMany(mappedBy: 'entry', targetEntity: EntryComment::class, fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'entry', targetEntity: EntryComment::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $comments;
-    #[OneToMany(mappedBy: 'entry', targetEntity: EntryVote::class, cascade: [
-        'persist',
-        'remove',
-    ], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'entry', targetEntity: EntryVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $votes;
-    #[OneToMany(mappedBy: 'entry', targetEntity: EntryReport::class, cascade: ['remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'entry', targetEntity: EntryReport::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $reports;
-    #[OneToMany(mappedBy: 'entry', targetEntity: EntryFavourite::class, cascade: ['remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'entry', targetEntity: EntryFavourite::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $favourites;
-    #[OneToMany(mappedBy: 'entry', targetEntity: EntryCreatedNotification::class, cascade: ['remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'entry', targetEntity: EntryCreatedNotification::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $notifications;
-    #[OneToMany(mappedBy: 'entry', targetEntity: ViewCounter::class, cascade: ['remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'entry', targetEntity: ViewCounter::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $viewCounters;
-    #[OneToMany(mappedBy: 'entry', targetEntity: EntryBadge::class, cascade: [
-        'remove',
-        'persist',
-    ], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'entry', targetEntity: EntryBadge::class, cascade: ['remove', 'persist'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $badges;
     public array $children = [];
     #[Id]

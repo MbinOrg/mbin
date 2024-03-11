@@ -54,7 +54,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     }
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'posts')]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $user;
     #[ManyToOne(targetEntity: Magazine::class, inversedBy: 'posts')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -86,15 +86,15 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     public ?array $tags = null;
     #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
     public ?array $mentions = null;
-    #[OneToMany(mappedBy: 'post', targetEntity: PostComment::class, orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'post', targetEntity: PostComment::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $comments;
     #[OneToMany(mappedBy: 'post', targetEntity: PostVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $votes;
-    #[OneToMany(mappedBy: 'post', targetEntity: PostReport::class, cascade: ['remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'post', targetEntity: PostReport::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $reports;
-    #[OneToMany(mappedBy: 'post', targetEntity: PostFavourite::class, cascade: ['remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'post', targetEntity: PostFavourite::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $favourites;
-    #[OneToMany(mappedBy: 'post', targetEntity: PostCreatedNotification::class, cascade: ['remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'post', targetEntity: PostCreatedNotification::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $notifications;
     public array $children = [];
     #[Id]

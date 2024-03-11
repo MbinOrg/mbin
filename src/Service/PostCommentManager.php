@@ -70,6 +70,9 @@ class PostCommentManager implements ContentManagerInterface
         $comment->visibility = $dto->visibility;
         $comment->apId = $dto->apId;
         $comment->magazine->lastActive = new \DateTime();
+        if (null !== $comment->user->apDomain && $comment->magazine->apDomain === $comment->user->apDomain) {
+            $comment->magazine->lastOriginUpdate = new \DateTime();
+        }
         $comment->user->lastActive = new \DateTime();
         $comment->lastActive = $dto->lastActive ?? $comment->lastActive;
         $comment->createdAt = $dto->createdAt ?? $comment->createdAt;
@@ -111,7 +114,7 @@ class PostCommentManager implements ContentManagerInterface
         $this->entityManager->flush();
 
         if ($oldImage && $comment->image !== $oldImage) {
-            $this->bus->dispatch(new DeleteImageMessage($oldImage->filePath));
+            $this->bus->dispatch(new DeleteImageMessage($oldImage->getId()));
         }
 
         $this->dispatcher->dispatch(new PostCommentEditedEvent($comment));
@@ -156,7 +159,7 @@ class PostCommentManager implements ContentManagerInterface
         $this->dispatcher->dispatch(new PostCommentBeforePurgeEvent($comment, $user));
 
         $magazine = $comment->post->magazine;
-        $image = $comment->image?->filePath;
+        $image = $comment->image?->getId();
         $comment->post->removeComment($comment);
         $this->entityManager->remove($comment);
         $this->entityManager->flush();
@@ -194,7 +197,7 @@ class PostCommentManager implements ContentManagerInterface
 
     public function detachImage(PostComment $comment): void
     {
-        $image = $comment->image->filePath;
+        $image = $comment->image->getId();
 
         $comment->image = null;
 

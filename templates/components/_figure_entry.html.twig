@@ -1,11 +1,12 @@
 {# this fragment is only meant to be used in entry component #}
 {% with {is_single: is_route_name('entry_single'), image: entry.image} %}
-
     {% set sensitive_id = 'sensitive-check-%s-%s'|format(entry.id, image.id) %}
     {% set lightbox_alt_id = 'thumb-alt-%s-%s'|format(entry.id, image.id) %}
+    {% set image_path = image.filePath ? asset(image.filePath)|imagine_filter('entry_thumb') : image.sourceUrl %}
+
 
     {% if type is same as 'image' %}
-        {% set route = is_single ? uploaded_asset(image.filePath) : entry_url(entry) %}
+        {% set route = is_single ? uploaded_asset(image) : entry_url(entry) %}
     {% elseif type is same as 'link' %}
         {% set route = is_single ? entry.url : entry_url(entry) %}
     {% endif %}
@@ -35,9 +36,17 @@
            data-description="{{ is_single_image and image.altText ? '.'~lightbox_alt_id : '' }}">
             <img class="thumb-subject"
                  loading="lazy"
-                 src="{{ asset(image.filePath)|imagine_filter('entry_thumb') }}"
+                 src="{{ image_path }}"
                  alt="{{ image.altText }}">
         </a>
+        <div class="figure-badge sensitive-checked--show">
+            {% if image_path|lower ends with '.gif' %}
+                <div class="figure-badge-label">GIF</div>
+            {% endif %}
+            {% if image.altText %}
+                <div class="figure-badge-label">ALT</div>
+            {% endif %}
+        </div>
         {% if entry.isAdult %}
             <label for="{{ sensitive_id }}"
                    class="sensitive-button sensitive-button-show sensitive-checked--hide"

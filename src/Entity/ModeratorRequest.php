@@ -24,7 +24,7 @@ class ModeratorRequest
     }
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'moderatorRequests')]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $user;
     #[ManyToOne(targetEntity: Magazine::class, inversedBy: 'moderatorRequests')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]

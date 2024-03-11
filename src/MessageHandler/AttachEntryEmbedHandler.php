@@ -57,7 +57,9 @@ class AttachEntryEmbedHandler
 
         $entry->type = $type;
         $entry->hasEmbed = $html || $isImage;
-        $entry->image = $cover;
+        if ($cover) {
+            $entry->image = $cover;
+        }
 
         $this->entityManager->flush();
     }

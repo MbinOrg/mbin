@@ -36,6 +36,15 @@
                             {% else %}
                                 {{ entry.title }}
                             {% endif %}
+
+                            {% if entry.url %}
+                                <span class="entry__domain">
+                                    ( <a rel="{{ get_rel(entry.url) }}" href="{{ entry.url }}" target="_blank">
+                                        <span>{{ get_url_domain(entry.url) }}</span> <i class="fa-solid fa-external-link" aria-hidden="true"></i>
+                                    </a> )
+                                </span>
+                            {% endif %}
+
                             {% if entry.lang is not same as app.request.locale and entry.lang is not same as kbin_default_lang() %}
                                 <small class="badge-lang">{{ entry.lang|language_name }}</small>
                             {% endif %}
@@ -47,8 +56,11 @@
                             <a href="{{ entry_url(entry) }}">{{ entry.title }}</a>
 
                             {% if entry.url %}
-                                <span class="entry__domain">(<a rel="{{ get_rel(entry.url) }}"
-                                                                href="{{ entry.url }}">{{ get_url_domain(entry.url) }}</a>)</span>
+                                <span class="entry__domain">
+                                    ( <a rel="{{ get_rel(entry.url) }}" href="{{ entry.url }}" target="_blank">
+                                        <span>{{ get_url_domain(entry.url) }}</span> <i class="fa-solid fa-external-link" aria-hidden="true"></i>
+                                    </a> )
+                                </span>
                             {% endif %}
 
                             {% if entry.lang is not same as app.request.locale and entry.lang is not same as kbin_default_lang() %}
@@ -137,12 +149,12 @@
                             </li>
                         {% endif %}
                         {% if entry.hasEmbed %}
-                            {% set image = entry.image ? uploaded_asset(entry.image.filePath) : '' %}
+                            {% set preview_url = entry.type is same as 'image' and entry.image ? uploaded_asset(entry.image) : entry.url %}
                             <li>
                                 <button class="show-preview"
                                         data-action="preview#show"
                                         aria-label="{{ 'preview'|trans }}"
-                                        data-preview-url-param="{{ entry.url ?? image }}"
+                                        data-preview-url-param="{{ preview_url }}"
                                         data-preview-ratio-param="{{ entry.domain and entry.domain.shouldRatio ? true : false }}">
                                     <i class="fa-solid fa-photo-film" aria-hidden="true"></i>
                                 </button>
