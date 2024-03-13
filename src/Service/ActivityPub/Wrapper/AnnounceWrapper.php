@@ -15,10 +15,11 @@ class AnnounceWrapper
     }
 
     /**
-     * @param string $user the actor doing the announce
-     * @param array $object the thing the actor is announcing
-     * @param bool $idAsObject use only the id of $object as the 'object' in the payload.
-     * This should only be true for user boosts
+     * @param string $user       the actor doing the announce
+     * @param array  $object     the thing the actor is announcing
+     * @param bool   $idAsObject use only the id of $object as the 'object' in the payload.
+     *                           This should only be true for user boosts
+     *
      * @return array an announce activity
      */
     public function build(string $user, array $object, bool $idAsObject = false): array
