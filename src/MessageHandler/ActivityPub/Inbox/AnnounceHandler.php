@@ -13,6 +13,7 @@ use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPubManager;
 use App\Service\VoteManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -20,6 +21,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 class AnnounceHandler
 {
     public function __construct(
+        private readonly LoggerInterface $logger,
         private readonly ActivityPubManager $activityPubManager,
         private readonly ApActivityRepository $repository,
         private readonly EntityManagerInterface $entityManager,
@@ -32,7 +34,7 @@ class AnnounceHandler
 
     public function __invoke(AnnounceMessage $message): void
     {
-        if ('Announce' === $message->payload['type']) {
+        if ('Announce' === $message->payload['type'] || 'Undo' === $message->payload['type']) {
             $activity = $this->repository->findByObjectId($message->payload['object']);
 
             if ($activity) {
@@ -50,16 +52,18 @@ class AnnounceHandler
             $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
 
             if ($actor instanceof User) {
-                $this->manager->upvote($entity, $actor);
+                if ('Announce' === $message->payload['type']) {
+                    $this->manager->upvote($entity, $actor);
+                } elseif ('Undo' === $message->payload['type']) {
+                    $this->manager->removeVote($entity, $actor);
+                }
                 $this->voteHandleSubscriber->clearCache($entity);
             } else {
                 $entity->lastActive = new \DateTime();
                 $this->entityManager->flush();
             }
-        }
-
-        if ('Undo' === $message->payload['type']) {
-            return;
+        } else {
+            $this->logger->warning('Inbox/AnnounceHandler got a type that it cannot handler: {type} in message: {message}', ['type' => $message->payload['type'], 'message' => $message->payload]);
         }
     }
 }
