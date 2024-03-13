@@ -101,6 +101,16 @@ readonly class ActivityHandler
             }
             if (\is_array($payload['object'])) {
                 $payload = $payload['object'];
+                $actor = $payload['actor'] ?? $payload['attributedTo'] ?? null;
+                if ($actor) {
+                    $user = $this->manager->findActorOrCreate($actor);
+                    if ($user instanceof User && null === $user->apId) {
+                        // don't do anything if we get an announce activity for something a local user did
+                        $this->logger->warning('ignoring this message because it announces an activity from a local user');
+
+                        return;
+                    }
+                }
             }
         }
 
