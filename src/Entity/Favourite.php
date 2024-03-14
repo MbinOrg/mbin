@@ -16,6 +16,7 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\InheritanceType;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\UniqueConstraint;
 
 #[Entity(repositoryClass: FavouriteRepository::class)]
 #[InheritanceType('SINGLE_TABLE')]
@@ -26,6 +27,10 @@ use Doctrine\ORM\Mapping\ManyToOne;
     'post' => 'PostFavourite',
     'post_comment' => 'PostCommentFavourite',
 ])]
+#[UniqueConstraint(name: 'favourite_user_entry_unique_idx', columns: ['entry_id', 'user_id'])]
+#[UniqueConstraint(name: 'favourite_user_entry_comment_unique_idx', columns: ['entry_comment_id', 'user_id'])]
+#[UniqueConstraint(name: 'favourite_user_post_unique_idx', columns: ['post_id', 'user_id'])]
+#[UniqueConstraint(name: 'favourite_user_post_comment_unique_idx', columns: ['post_comment_id', 'user_id'])]
 abstract class Favourite
 {
     use CreatedAtTrait {
