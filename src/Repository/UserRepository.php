@@ -399,6 +399,24 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $pagerfanta;
     }
 
+    private function findWithAboutQueryBuilder(string $group): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->andWhere('u.about != :emptyString');
+
+        switch ($group) {
+            case self::USERS_LOCAL:
+                $qb->andWhere('u.apId IS NULL');
+                break;
+            case self::USERS_REMOTE:
+                $qb->andWhere('u.apId IS NOT NULL')
+                    ->andWhere('u.apDiscoverable = true');
+                break;
+        }
+
+        return $qb->orderBy('u.lastActive', 'DESC');
+    }
+
     public function findUsersForGroup(string $group = self::USERS_ALL, ?bool $recentlyActive = true): array
     {
         return $this->findUsersQueryBuilder($group, $recentlyActive)->setMaxResults(28)->getQuery()->getResult();
