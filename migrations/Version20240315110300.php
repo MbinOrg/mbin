@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DoctrineMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
@@ -18,7 +20,6 @@ class Version20240315110300 extends AbstractMigration
         $this->addSql('CREATE INDEX IF NOT EXISTS user_ap_profile_id_idx ON "user" (ap_profile_id)');
         $this->addSql('CREATE INDEX IF NOT EXISTS user_email_idx ON "user" (email)');
         $this->addSql('CREATE INDEX IF NOT EXISTS user_username_idx ON "user" (username)');
-
     }
 
     public function down(Schema $schema): void
