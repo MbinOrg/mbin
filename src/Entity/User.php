@@ -36,11 +36,12 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[Entity(repositoryClass: UserRepository::class)]
-#[Table(name: '`user`', uniqueConstraints: [
-    new UniqueConstraint(name: 'user_email_idx', columns: ['email']),
-    new UniqueConstraint(name: 'user_username_idx', columns: ['username']),
-])]
+#[Table(name: '`user`')]
 #[Index(columns: ['visibility'], name: 'user_visibility_idx')]
+#[UniqueConstraint(name: 'user_email_idx', columns: ['email'])]
+#[UniqueConstraint(name: 'user_username_idx', columns: ['username'])]
+#[UniqueConstraint(name: 'user_ap_id_idx', columns: ['ap_id'])]
+#[UniqueConstraint(name: 'user_ap_profile_id_idx', columns: ['ap_profile_id'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, VisibilityInterface, TwoFactorInterface, BackupCodeInterface, EquatableInterface, ActivityPubActorInterface, ApiResourceInterface
 {
     use ActivityPubActorTrait;
