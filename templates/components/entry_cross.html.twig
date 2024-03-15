@@ -7,7 +7,7 @@
         data-action="notifications:Notification@window->subject#notification">
     <aside class="meta entry__meta">
         {% if entry.visibility in ['visible', 'private'] or (entry.visibility is same as 'trashed' and this.canSeeTrashed) %}
-            <a href="{{ entry_url(entry) }}">{{ 'crossposted'|trans }}</a> {{ 'by'|trans }}
+            {{ 'Related'|trans }}: {% if entry.isAdult %}<small class="danger">18+</small>{% endif %} <a href="{{ entry_url(entry) }}">{{ entry.title }}</a> {{ 'by'|trans }}
         {% elseif(entry.visibility is same as 'trashed') %}
             <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
         {% elseif(entry.visibility is same as 'soft_deleted') %}
