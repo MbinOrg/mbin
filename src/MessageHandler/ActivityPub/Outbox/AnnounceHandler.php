@@ -60,9 +60,10 @@ class AnnounceHandler
         $activity = $this->announceWrapper->build(
             $this->activityPubManager->getActorProfileId($actor),
             $this->activityFactory->create($object),
+            true
         );
 
-        if ($object instanceof Entry or $object instanceof Post or $object instanceof EntryComment or $object instanceof PostComment) {
+        if ($actor instanceof Magazine && ($object instanceof Entry || $object instanceof Post || $object instanceof EntryComment || $object instanceof PostComment)) {
             $wrapperObject = $this->createWrapper->build($object);
             unset($wrapperObject['@context']);
             $activity['object'] = $wrapperObject;
