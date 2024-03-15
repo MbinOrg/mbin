@@ -492,18 +492,19 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->getResult();
     }
 
-    public function findPeople(Magazine $magazine, ?bool $federated = false, $limit = 200): array
+    public function findPeople(Magazine $magazine, ?bool $federated = false, $limit = 200, bool $limitTime = false): array
     {
         $conn = $this->_em->getConnection();
-        $sql = '
-        (SELECT count(id), user_id FROM entry WHERE magazine_id = :magazineId GROUP BY user_id ORDER BY count DESC LIMIT 50)
+        $timeWhere = $limitTime ? "AND created_at > now() - '30 days'::interval" : '';
+        $sql = "
+        (SELECT count(id), user_id FROM entry WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT 50)
         UNION
-        (SELECT count(id), user_id FROM entry_comment WHERE magazine_id = :magazineId GROUP BY user_id ORDER BY count DESC LIMIT 50)
+        (SELECT count(id), user_id FROM entry_comment WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT 50)
         UNION
-        (SELECT count(id), user_id FROM post WHERE magazine_id = :magazineId GROUP BY user_id ORDER BY count DESC LIMIT 50)
+        (SELECT count(id), user_id FROM post WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT 50)
         UNION
-        (SELECT count(id), user_id FROM post_comment WHERE magazine_id = :magazineId GROUP BY user_id ORDER BY count DESC LIMIT 50)
-        ORDER BY count DESC';
+        (SELECT count(id), user_id FROM post_comment WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT 50)
+        ORDER BY count DESC";
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('magazineId', $magazine->getId());
@@ -563,7 +564,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     public function findActiveUsers(Magazine $magazine = null)
     {
         if ($magazine) {
-            $results = $this->findPeople($magazine, null, 35);
+            $results = $this->findPeople($magazine, null, 35, true);
         } else {
             $results = $this->createQueryBuilder('u')
                 ->andWhere('u.lastActive >= :lastActive')
