@@ -13,6 +13,7 @@ class Version20240315124130 extends AbstractMigration
     {
         return 'This migration adds a unique index for the ap_profile_id and renames the other cryptically named indexes to understandable ones';
     }
+
     public function up(Schema $schema): void
     {
         $this->addSql('CREATE UNIQUE INDEX IF NOT EXISTS user_ap_profile_id_idx ON "user" (ap_profile_id)');
@@ -28,5 +29,4 @@ class Version20240315124130 extends AbstractMigration
         $this->addSql('ALTER INDEX IF EXISTS user_email_idx RENAME TO uniq_8d93d649e7927c74');
         $this->addSql('ALTER INDEX IF EXISTS user_ap_id_idx RENAME TO uniq_8d93d649904f155e');
     }
-
 }
