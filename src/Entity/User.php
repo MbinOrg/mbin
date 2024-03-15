@@ -24,6 +24,7 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OrderBy;
+use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 use Scheb\TwoFactorBundle\Model\BackupCodeInterface;
 use Scheb\TwoFactorBundle\Model\Totp\TotpConfiguration;
@@ -35,6 +36,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[Entity(repositoryClass: UserRepository::class)]
+#[Table(name: '`user`')]
 #[Index(columns: ['visibility'], name: 'user_visibility_idx')]
 #[UniqueConstraint(name: 'user_email_idx', columns: ['email'])]
 #[UniqueConstraint(name: 'user_username_idx', columns: ['username'])]
