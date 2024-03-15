@@ -503,7 +503,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         UNION
         (SELECT count(id), user_id FROM post WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT 50)
         UNION
-        (SELECT count(id), user_id FROM post_comment WHERE magazine_id = :magazineId AND $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT 50)
+        (SELECT count(id), user_id FROM post_comment WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT 50)
         ORDER BY count DESC";
 
         $stmt = $conn->prepare($sql);
