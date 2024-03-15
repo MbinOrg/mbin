@@ -496,13 +496,13 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     {
         $conn = $this->_em->getConnection();
         $sql = '
-        (SELECT count(id), user_id FROM entry WHERE magazine_id = :magazineId GROUP BY user_id ORDER BY count DESC LIMIT 50)
+        (SELECT count(id), user_id FROM entry WHERE magazine_id = :magazineId AND created_at > now() - \'30 days\'::interval GROUP BY user_id ORDER BY count DESC LIMIT 50)
         UNION
-        (SELECT count(id), user_id FROM entry_comment WHERE magazine_id = :magazineId GROUP BY user_id ORDER BY count DESC LIMIT 50)
+        (SELECT count(id), user_id FROM entry_comment WHERE magazine_id = :magazineId AND created_at > now() - \'30 days\'::interval GROUP BY user_id ORDER BY count DESC LIMIT 50)
         UNION
-        (SELECT count(id), user_id FROM post WHERE magazine_id = :magazineId GROUP BY user_id ORDER BY count DESC LIMIT 50)
+        (SELECT count(id), user_id FROM post WHERE magazine_id = :magazineId AND created_at > now() - \'30 days\'::interval GROUP BY user_id ORDER BY count DESC LIMIT 50)
         UNION
-        (SELECT count(id), user_id FROM post_comment WHERE magazine_id = :magazineId GROUP BY user_id ORDER BY count DESC LIMIT 50)
+        (SELECT count(id), user_id FROM post_comment WHERE magazine_id = :magazineId AND created_at > now() - \'30 days\'::interval GROUP BY user_id ORDER BY count DESC LIMIT 50)
         ORDER BY count DESC';
 
         $stmt = $conn->prepare($sql);
