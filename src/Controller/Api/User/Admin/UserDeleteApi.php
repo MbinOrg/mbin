@@ -65,8 +65,7 @@ class UserDeleteApi extends UserBaseApi
     #[Security(name: 'oauth2', scopes: ['admin:user:delete'])]
     #[IsGranted('ROLE_OAUTH2_ADMIN:USER:DELETE')]
     /**
-     * Deletes the user from the instance while leaving a record of the username that was deleted.
-     * This action is irreversable.
+     * Marks the user for deletion in 30 days.
      */
     public function __invoke(
         #[MapEntity(id: 'user_id')]
@@ -77,7 +76,7 @@ class UserDeleteApi extends UserBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        $manager->delete($user);
+        $manager->deleteRequest($user, false);
 
         return new JsonResponse(
             $this->serializeUser($factory->createDto($user)),

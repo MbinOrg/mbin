@@ -25,7 +25,7 @@ class UserController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        if (!$user->isDeleted) {
+        if (!$user->isDeleted || null !== $user->markedForDeletionAt) {
             $response = new JsonResponse($this->personFactory->create($user, true));
         } else {
             $response = new JsonResponse($this->tombstoneFactory->createForUser($user));

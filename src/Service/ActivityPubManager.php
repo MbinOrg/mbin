@@ -123,7 +123,12 @@ class ActivityPubManager
         $actorUrl = $actorUrlOrHandle;
         if (false === filter_var($actorUrl, FILTER_VALIDATE_URL)) {
             if (!substr_count(ltrim($actorUrl, '@'), '@')) {
-                return $this->userRepository->findOneBy(['username' => ltrim($actorUrl, '@')]);
+                $user = $this->userRepository->findOneBy(['username' => ltrim($actorUrl, '@')]);
+                if ($user->apFetchedAt->modify('+1 hour') < (new \DateTime())) {
+                    $this->bus->dispatch(new UpdateActorMessage($user->apProfileId));
+                }
+
+                return $user;
             }
 
             $actorUrl = $this->webfinger($actorUrl)->getProfileId();
