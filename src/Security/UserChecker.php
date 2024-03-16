@@ -26,6 +26,10 @@ class UserChecker implements UserCheckerInterface
             return;
         }
 
+        if ($user->isDeleted) {
+            throw new BadCredentialsException();
+        }
+
         if (!$user->isVerified) {
             $resendEmailActivationUrl = $this->urlGenerator->generate('app_resend_email_activation');
             throw new CustomUserMessageAccountStatusException($this->translator->trans('your_account_is_not_active', ['%link_target%' => $resendEmailActivationUrl]));
@@ -33,10 +37,6 @@ class UserChecker implements UserCheckerInterface
 
         if ($user->isBanned) {
             throw new CustomUserMessageAccountStatusException($this->translator->trans('your_account_has_been_banned'));
-        }
-
-        if ($user->isDeleted) {
-            throw new BadCredentialsException();
         }
     }
 

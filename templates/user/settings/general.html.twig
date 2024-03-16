@@ -47,18 +47,5 @@
             {{ form_end(form) }}
         </div>
     </div>
-    <div class="section">
-        <div class="container">
-            <h2>{{ 'request_account_deletion_title'|trans }}</h2>
-            <p>{{ 'request_account_deletion_description'|trans }}</p>
-            <form action="{{ path('user_delete_request', {username: app.user.username}) }}" method="POST"
-                  data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}"
-                  class="mb-2">
-                <input type="hidden" name="token" value="{{ csrf_token('user_delete') }}">
-                <button type="submit" class="btn btn__danger">
-                    <i class="fa-solid fa-dumpster-fire" aria-hidden="true"></i> {{ 'request_account_deletion_button'|trans }}
-                </button>
-            </form>
-        </div>
-    </div>
+
 {% endblock %}

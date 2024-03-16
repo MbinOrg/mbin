@@ -20,6 +20,7 @@ class DeleteWrapper
     }
 
     #[ArrayShape([
+        '@context' => 'string',
         'id' => 'string',
         'type' => 'string',
         'object' => 'mixed',
@@ -55,12 +56,8 @@ class DeleteWrapper
             'id' => $this->urlGenerator->generate('ap_object', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL),
             'type' => 'Delete',
             'actor' => $userId,
-            'object' => [
-                'id' => $userId,
-                'type' => 'Tombstone',
-            ],
+            'object' => $userId,
             'to' => [ActivityPubActivityInterface::PUBLIC_URL],
-            'cc' => [$this->urlGenerator->generate('ap_user_followers', ['username' => $user->username, UrlGeneratorInterface::ABSOLUTE_URL])],
         ];
     }
 }

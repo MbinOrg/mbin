@@ -373,7 +373,9 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
                 break;
         }
 
-        return $qb->orderBy('u.lastActive', 'DESC');
+        return $qb
+            ->andWhere('u.isDeleted = false')
+            ->orderBy('u.lastActive', 'DESC');
     }
 
     public function findWithAboutPaginated(

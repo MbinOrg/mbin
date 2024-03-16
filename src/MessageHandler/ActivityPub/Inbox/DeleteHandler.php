@@ -40,11 +40,7 @@ class DeleteHandler
 
     public function __invoke(DeleteMessage $message): void
     {
-        try {
-            $actor = $this->activityPubManager->findRemoteActor($message->payload['actor']);
-        } catch (\Exception) {
-            return;
-        }
+        $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
 
         $id = \is_array($message->payload['object']) ? $message->payload['object']['id'] : $message->payload['object'];
         $object = $this->apActivityRepository->findByObjectId($id);

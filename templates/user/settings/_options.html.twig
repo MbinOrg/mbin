@@ -26,6 +26,12 @@
             </a>
         </li>
         <li>
+            <a href="{{ path('user_settings_account_deletion') }}"
+               class="{{ html_classes({'active': is_route_name('user_settings_account_deletion')}) }}">
+                {{ 'account_deletion_title'|trans }}
+            </a>
+        </li>
+        <li>
             <a href="{{ path('user_settings_magazine_blocks') }}"
                class="{{ html_classes({'active': is_route_name_contains('_blocks')}) }}">
                 {{ 'blocked'|trans }}

@@ -367,7 +367,6 @@ delete_account: Delete account
 purge_account: Purge account
 ban_account: Ban account
 unban_account: Unban account
-delete_account_request_send: Your request to delete the account has been submitted.
 related_magazines: Related magazines
 random_magazines: Random magazines
 magazine_panel_tags_info: Provide only if you want content from the fediverse to be
@@ -437,10 +436,11 @@ federation_page_disallowed_description: Instances we do not federate with
 federated_search_only_loggedin: Federated search limited if not logged in
 sidebar_sections_local_only: Restrict "Random X" and "Active People" sections to local
   only
-request_account_deletion_title: Account deletion
-request_account_deletion_description: The administrator will be notified that you
-  want your account deleted.
-request_account_deletion_button: Request account deletion
+account_deletion_title: Account deletion
+account_deletion_description: Your account will be deleted in 30 days unless you choose to delete the account immediately.
+  The account cannot be restored once deleted.
+account_deletion_button: Delete Account
+account_deletion_immediate: Delete immediately
 more_from_domain: More from domain
 errors.server500.title: 500 Internal Server Error
 errors.server500.description: Sorry, something went wrong on our end. If you continue
@@ -757,10 +757,8 @@ purge_magazine: Purge magazine
 magazine_is_deleted: Magazine is deleted. You can <a href="%link_target%">restore</a>
   it within 30 days.
 suspend_account: Suspend account
-request_account_deletion_revoke_button: Revoke the account deletion request.
 unsuspend_account: Unsuspend account
 account_suspended: The account has been suspended.
-delete_account_request_revoke: Your request to delete the account has been revoked.
 account_unsuspended: The account has been unsuspended.
 deletion: Deletion
 user_suspend_desc: Suspending your account hides your content on the instance, but

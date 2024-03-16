@@ -74,21 +74,6 @@ user_unblock:
     path: /u/{username}/unblock
     methods: [POST]
 
-user_purge_content:
-    controller: App\Controller\User\UserDeleteController::purgeContent
-    path: /u/{username}/purge_content
-    methods: [POST]
-
-user_delete_content:
-    controller: App\Controller\User\UserDeleteController::deleteContent
-    path: /u/{username}/delete_content
-    methods: [POST]
-
-user_purge_account:
-    controller: App\Controller\User\UserDeleteController::purgeAccount
-    path: /u/{username}/purge_account
-    methods: [POST]
-
 user_delete_account:
     controller: App\Controller\User\UserDeleteController::deleteAccount
     path: /u/{username}/delete_account
@@ -234,6 +219,11 @@ user_settings_2fa_backup:
     controller: App\Controller\User\Profile\User2FAController::backup
     path: /settings/2fa/backup
     methods: [POST]
+
+user_settings_account_deletion:
+    controller: App\Controller\User\AccountDeletionController
+    path: /settings/account_deletion
+    methods: [GET, POST]
 
 user_settings_avatar_delete:
     controller: App\Controller\User\UserAvatarDeleteController
