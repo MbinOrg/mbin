@@ -12,6 +12,7 @@ use App\Service\ActivityPub\Wrapper\DeleteWrapper;
 use App\Service\ImageManager;
 use App\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -22,6 +23,7 @@ class DeleteUserHandler
     private ?User $user;
 
     public function __construct(
+        private readonly LoggerInterface $logger,
         private readonly ImageManager $imageManager,
         private readonly UserManager $userManager,
         private readonly DeleteWrapper $deleteWrapper,
@@ -53,12 +55,26 @@ class DeleteUserHandler
         $userDto = UserDto::create($this->user->username, email: $this->user->username, createdAt: $this->user->createdAt);
         $userDto->plainPassword = ''.time();
 
-        $this->userManager->detachAvatar($this->user);
-        $this->userManager->detachCover($this->user);
+        try {
+            $this->userManager->detachAvatar($this->user);
+        } catch (\Exception|\Error $e) {
+            $this->logger->error("couldn't delete the avatar of {user} at '{path}': {message}", ['user' => $this->user->username, 'path' => $this->user->avatar?->filePath, 'message' => \get_class($e).': '.$e->getMessage()]);
+        }
+        try {
+            $this->userManager->detachCover($this->user);
+        } catch (\Exception|\Error $e) {
+            $this->logger->error("couldn't delete the cover of {user} at '{path}': {message}", ['user' => $this->user->username, 'path' => $this->user->cover?->filePath, 'message' => \get_class($e).': '.$e->getMessage()]);
+        }
         $filePathsOfUser = $this->userManager->getAllImageFilePathsOfUser($this->user);
         foreach ($filePathsOfUser as $path) {
-            $this->imageManager->remove($path);
+            try {
+                $this->imageManager->remove($path);
+            } catch (\Exception|\Error $e) {
+                $this->logger->error("couldn't delete image of {user} at '{path}': {message}", ['user' => $this->user->username, 'path' => $path, 'message' => \get_class($e).': '.$e->getMessage()]);
+            }
         }
+
+        $this->entityManager->beginTransaction();
 
         // delete the original user, so all the content is cascade deleted
         $this->entityManager->remove($this->user);
@@ -77,6 +93,7 @@ class DeleteUserHandler
 
             $this->sendDeleteMessages($inboxes, $user);
         }
+        $this->entityManager->commit();
     }
 
     private function getInboxes(): array
