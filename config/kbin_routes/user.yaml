@@ -79,14 +79,14 @@ user_delete_account:
     path: /u/{username}/delete_account
     methods: [POST]
 
-user_delete_request:
-    controller: App\Controller\User\UserDeleteRequestController::request
-    path: /u/{username}/delete_request
+schedule_user_delete_account:
+    controller: App\Controller\User\UserDeleteController::scheduleDeleteAccount
+    path: /u/{username}/schedule_delete_account
     methods: [POST]
 
-user_delete_request_revoke:
-    controller: App\Controller\User\UserDeleteRequestController::revoke
-    path: /u/{username}/delete_request_revoke
+remove_schedule_user_delete_account:
+    controller: App\Controller\User\UserDeleteController::removeScheduleDeleteAccount
+    path: /u/{username}/remove_schedule_delete_account
     methods: [POST]
 
 user_suspend:

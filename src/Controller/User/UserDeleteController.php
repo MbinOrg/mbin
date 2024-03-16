@@ -22,4 +22,24 @@ class UserDeleteController extends AbstractController
 
         return $this->redirectToRoute('front');
     }
+
+    #[IsGranted('ROLE_ADMIN')]
+    public function scheduleDeleteAccount(User $user, UserManager $manager, Request $request): Response
+    {
+        $this->validateCsrf('schedule_user_delete_account', $request->request->get('token'));
+
+        $manager->deleteRequest($user, false);
+
+        return $this->redirectToRoute('user_overview', ['username' => $user->username]);
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    public function removeScheduleDeleteAccount(User $user, UserManager $manager, Request $request): Response
+    {
+        $this->validateCsrf('remove_schedule_user_delete_account', $request->request->get('token'));
+
+        $manager->removeDeleteRequest($user);
+
+        return $this->redirectToRoute('user_overview', ['username' => $user->username]);
+    }
 }

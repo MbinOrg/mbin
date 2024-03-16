@@ -320,7 +320,18 @@ readonly class UserManager
             $this->entityManager->persist($user);
             $this->entityManager->flush();
         } else {
-            $this->bus->dispatch(new DeleteUserMessage($user->getId()));
+            $this->delete($user);
+        }
+    }
+
+    public function removeDeleteRequest(User $user): void
+    {
+        if (null !== $user->markedForDeletionAt) {
+            $user->markedForDeletionAt = null;
+            $user->isDeleted = false;
+
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
         }
     }
 

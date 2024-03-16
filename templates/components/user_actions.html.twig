@@ -41,4 +41,16 @@
             <button class="btn btn__secondary">{{ 'edit_my_profile'|trans }}</button>
         </a>
     {% endif %}
+
+    {% if user.markedForDeletionAt and is_granted("ROLE_ADMIN") %}
+        <div class="action"
+             title="{{ 'marked_for_deletion_at'|trans({ '%date%': user.markedForDeletionAt|date }) }}"
+             aria-label="{{ 'marked_for_deletion_at'|trans({ '%date%': user.markedForDeletionAt|date }) }}">
+            <i class="fa-solid fa-trash" aria-hidden="true"></i>
+            <span>
+                {{ 'marked_for_deletion'|trans }}
+                <time datetime="{{ user.markedForDeletionAt|date('Y-m-d h:i:s') }}" class="timeago">{{ user.markedForDeletionAt|date }}</time>
+            </span>
+        </div>
+    {% endif %}
 </aside>
