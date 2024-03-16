@@ -43,10 +43,7 @@ class AccountDeletionController extends AbstractController
             // Could throw an error
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->has('currentPassword')) {
-                if (!$this->userPasswordHasher->isPasswordValid(
-                    $this->getUser(),
-                    $form->get('currentPassword')->getData()
-                )) {
+                if (!$this->userPasswordHasher->isPasswordValid($user, $form->get('currentPassword')->getData())) {
                     $form->get('currentPassword')->addError(new FormError($this->translator->trans('Password is invalid')));
                 }
             }
@@ -56,7 +53,7 @@ class AccountDeletionController extends AbstractController
                 if (false === $limiter->consume()->isAccepted()) {
                     throw new TooManyRequestsHttpException();
                 }
-                $this->userManager->deleteRequest($this->getUserOrThrow(), true === $form->get('instantDelete')->getData());
+                $this->userManager->deleteRequest($user, true === $form->get('instantDelete')->getData());
                 $this->security->logout(false);
 
                 return $this->redirect('/');
