@@ -483,6 +483,16 @@
 
   .meta {
     align-self: center;
+
+    a.entry-cross-link {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      display: inline-block;
+      margin-bottom: 0.1rem;
+      vertical-align: middle;
+    }
   }
 
   footer {

@@ -1,3 +1,8 @@
+{%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
+
+{%- set SHOW_USER_AVATARS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_USERS_AVATARS'), V_TRUE) -%}
+{%- set SHOW_MAGAZINE_ICONS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_MAGAZINES_ICONS'), V_TRUE) -%}
+
 <article{{ attributes.defaults({
     class: html_classes('entry entry-cross section section--small subject', {
         'own': app.user and entry.isAuthor(app.user),
@@ -7,17 +12,18 @@
         data-action="notifications:Notification@window->subject#notification">
     <aside class="meta entry__meta">
         {% if entry.visibility in ['visible', 'private'] or (entry.visibility is same as 'trashed' and this.canSeeTrashed) %}
-            {{ 'Related'|trans }}: {% if entry.isAdult %}<small class="danger">18+</small>{% endif %} <a href="{{ entry_url(entry) }}">{{ entry.title }}</a> {{ 'by'|trans }}
+            {% if entry.isAdult %}<small class="danger">18+</small>{% endif %}
+            {{ 'related_entry'|trans }}: <a href="{{ entry_url(entry) }}" title="{{ entry.title }}" class="entry-cross-link">{{ entry.title }}</a> {{ 'related_entry_by'|trans }}
         {% elseif(entry.visibility is same as 'trashed') %}
             <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
         {% elseif(entry.visibility is same as 'soft_deleted') %}
             <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
         {% endif %}
-        {{ component('user_inline', {user: entry.user, showAvatar: app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_USERS_AVATARS')) is same as 'true'}) -}}
+        {{ component('user_inline', {user: entry.user, showAvatar: SHOW_USER_AVATARS is same as V_TRUE}) -}}
         ,
         {{ component('date', {date: entry.createdAt}) }}
         {{ component('date_edited', {createdAt: entry.createdAt, editedAt: entry.editedAt}) }}
-        {{ 'to'|trans }} {{ component('magazine_inline', {magazine: entry.magazine, showAvatar: app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_MAGAZINES_ICONS')) is same as 'true'}) }}
+        {{ 'to'|trans }} {{ component('magazine_inline', {magazine: entry.magazine, showAvatar: SHOW_MAGAZINE_ICONS is same as V_TRUE}) }}
         <footer>
             {% if entry.visibility in ['visible', 'private'] %}
                 <menu>
@@ -95,8 +101,6 @@
         </footer>
     </aside>
     <aside class="meta entry__preview hidden" data-preview-target="container"></aside>
-    {% if not app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_THUMBNAILS')) or app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_THUMBNAILS')) is same as 'true' %}
-    {% endif %}
     {% if entry.visibility in ['visible', 'private'] %}
         {{ component('vote', {
             subject: entry,
