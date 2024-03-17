@@ -1,5 +1,11 @@
-<div class="entries-cross entries-cross-{{ entries|length % 2 }}">
-{% for entry in entries %}
-    {{ component('entry_cross', {entry: entry}) }}
-{% endfor %}
-</div>
+{% if entries|length %}
+    <div class="{{ html_classes('entries-cross', {
+        'entries-cross-single': entries|length == 1,
+        'entries-cross-even': entries|length % 2 == 0,
+        'entries-cross-odd': entries|length > 1 and entries|length % 2 == 1,
+    }) }}">
+    {% for entry in entries %}
+        {{ component('entry_cross', {entry: entry}) }}
+    {% endfor %}
+    </div>
+{% endif %}

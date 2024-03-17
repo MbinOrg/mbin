@@ -456,11 +456,15 @@
   }
 }
 
-.entries-cross-0 {
+.entries-cross-single {
+  display: block;
+}
+
+.entries-cross-even {
   grid-template-columns: repeat(2, 1fr);
 }
 
-.entries-cross-1 {
+.entries-cross-odd {
   grid-template-columns: repeat(3, 1fr);
 }
 
@@ -502,7 +506,14 @@
   .meta {
     align-self: center;
 
-    div {
+    .entries-cross-even & div {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 370px;
+    }
+
+    .entries-cross-odd & div {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;

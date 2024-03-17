@@ -16,11 +16,13 @@
         {% elseif(entry.visibility is same as 'soft_deleted') %}
             <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
         {% endif %}
-        {{ component('user_inline', {user: entry.user, showAvatar: false}) -}}
-        ,
-        {{ component('date', {date: entry.createdAt}) }}
-        {{ component('date_edited', {createdAt: entry.createdAt, editedAt: entry.editedAt}) }}
-        {{ 'to'|trans }} {{ component('magazine_inline', {magazine: entry.magazine, showAvatar: false}) }}
+        <div>
+            {{ component('user_inline', {user: entry.user, showAvatar: false}) -}}
+            ,
+            {{ component('date', {date: entry.createdAt}) }}
+            {{ component('date_edited', {createdAt: entry.createdAt, editedAt: entry.editedAt}) }}
+            {{ 'to'|trans }} {{ component('magazine_inline', {magazine: entry.magazine, showAvatar: false}) }}
+        </div>
         <footer>
             {% if entry.visibility in ['visible', 'private'] %}
                 <menu>
