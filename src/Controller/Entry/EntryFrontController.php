@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Controller\Entry;
 
 use App\Controller\AbstractController;
+use App\DTO\PostDto;
 use App\Entity\Magazine;
 use App\Entity\User;
+use App\Form\PostType;
 use App\PageView\EntryPageView;
 use App\PageView\PostPageView;
 use App\Pagination\Pagerfanta as MbinPagerfanta;
@@ -68,40 +70,56 @@ class EntryFrontController extends AbstractController
         }
 
         if ('threads' === $content) {
-            $posts = $this->entryRepository->findByCriteria($criteria);
-            $posts = $this->handleCrossposts($posts);
+            $entries = $this->entryRepository->findByCriteria($criteria);
+            $entries = $this->handleCrossposts($entries);
 
-            $content_tmpl = 'entry/';
-            $content_key = 'entries';
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(
+                    [
+                        'html' => $this->renderView(
+                            'entry/_list.html.twig',
+                            [
+                                'entries' => $entries,
+                            ]
+                        ),
+                    ]
+                );
+            }
+
+            return $this->render(
+                'entry/front.html.twig',
+                [
+                    'entries' => $entries,
+                    'criteria' => $criteria,
+                ]
+            );
         } elseif ('microblog' === $content) {
             $posts = $this->postRepository->findByCriteria($criteria);
 
-            $content_tmpl = 'post/';
-            $content_key = 'posts';
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(
+                    [
+                        'html' => $this->renderView(
+                            'post/_list.html.twig',
+                            [
+                                'posts' => $posts,
+                            ]
+                        ),
+                    ]
+                );
+            }
+
+            return $this->render(
+                'post/front.html.twig',
+                [
+                    'posts' => $posts,
+                    'criteria' => $criteria,
+                    'form' => $this->createForm(PostType::class)->setData(new PostDto())->createView(),
+                ]
+            );
         } else {
             throw new \LogicException('Invalid content filter '.$content);
         }
-
-        if ($request->isXmlHttpRequest()) {
-            return new JsonResponse(
-                [
-                    'html' => $this->renderView(
-                        $content_tmpl.'_list.html.twig',
-                        [
-                            $content_key => $posts,
-                        ]
-                    ),
-                ]
-            );
-        }
-
-        return $this->render(
-            $content_tmpl.'front.html.twig',
-            [
-                $content_key => $posts,
-                'criteria' => $criteria,
-            ]
-        );
     }
 
     // $name is magazine name, for compatibility
@@ -191,40 +209,56 @@ class EntryFrontController extends AbstractController
         if ('threads' === $content) {
             $listing = $this->entryRepository->findByCriteria($criteria);
 
-            $content_tmpl = 'entry/';
-            $content_key = 'entries';
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(
+                    [
+                        'html' => $this->renderView(
+                            'entry/_list.html.twig',
+                            [
+                                'magazine' => $magazine,
+                                'entries' => $listing,
+                            ]
+                        ),
+                    ]
+                );
+            }
+
+            return $this->render(
+                'entry/front.html.twig',
+                [
+                    'magazine' => $magazine,
+                    'entries' => $listing,
+                    'criteria' => $criteria,
+                ]
+            );
         } elseif ('microblog' === $content) {
             $listing = $this->postRepository->findByCriteria($criteria);
 
-            $content_tmpl = 'post/';
-            $content_key = 'posts';
-        } else {
-            throw new \LogicException('Invalid content '.$content);
-        }
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(
+                    [
+                        'html' => $this->renderView(
+                            'post/_list.html.twig',
+                            [
+                                'posts' => $posts,
+                            ]
+                        ),
+                    ]
+                );
+            }
 
-        if ($request->isXmlHttpRequest()) {
-            return new JsonResponse(
+            return $this->render(
+                'post/front.html.twig',
                 [
-                    'html' => $this->renderView(
-                        $content_tmpl.'_list.html.twig',
-                        [
-                            'magazine' => $magazine,
-                            $content_key => $listing,
-                        ]
-                    ),
+                    'magazine' => $magazine,
+                    'posts' => $listing,
+                    'criteria' => $criteria,
+                    'form' => $this->createForm(PostType::class)->setData(new PostDto())->createView(),
                 ]
             );
+        } else {
+            throw new \LogicException('Invalid content filter '.$content);
         }
-
-        return $this->render(
-            $content_tmpl.'front.html.twig',
-            [
-                'magazine' => $magazine,
-                $content_key => $listing,
-                'criteria' => $criteria,
-            ],
-            $response
-        );
     }
 
     private function subscriptionFor(?User $user): string
