@@ -446,6 +446,22 @@
   }
 }
 
+.entries-cross {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 0;
+  padding: 0;
+
+  @include media-breakpoint-down(lg) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include media-breakpoint-down(sm) {
+    display: block;
+    grid-template-columns: none;
+  }
+}
+
 .entry-cross {
   grid-template-areas: "vote meta"
                        "preview preview"
@@ -484,14 +500,11 @@
   .meta {
     align-self: center;
 
-    a.entry-cross-link {
+    div {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 200px;
-      display: inline-block;
-      margin-bottom: 0.1rem;
-      vertical-align: middle;
+      max-width: 270px;
     }
   }
 
