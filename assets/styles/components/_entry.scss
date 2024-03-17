@@ -448,18 +448,20 @@
 
 .entries-cross {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
   margin: 0;
   padding: 0;
 
   @include media-breakpoint-down(lg) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @include media-breakpoint-down(sm) {
     display: block;
-    grid-template-columns: none;
   }
+}
+
+.entries-cross-0 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.entries-cross-1 {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .entry-cross {

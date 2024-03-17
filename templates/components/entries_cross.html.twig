@@ -1,4 +1,4 @@
-<div class="entries-cross">
+<div class="entries-cross entries-cross-{{ entries|length % 2 }}">
 {% for entry in entries %}
     {{ component('entry_cross', {entry: entry}) }}
 {% endfor %}
