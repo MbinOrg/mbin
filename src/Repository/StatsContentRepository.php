@@ -168,6 +168,10 @@ class StatsContentRepository extends StatsRepository
         }
         $res = $query->getScalarResult();
 
+        if (0 === \sizeof($res) || 0 === \sizeof($res[0])) {
+            return 0;
+        }
+
         return $res[0][0];
     }
 

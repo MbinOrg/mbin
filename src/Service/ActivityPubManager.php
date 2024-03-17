@@ -283,6 +283,9 @@ class ActivityPubManager
         $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
+        if (!$actor || !\is_array($actor)) {
+            return null;
+        }
 
         if (isset($actor['type']) && 'Tombstone' === $actor['type'] && $user instanceof User) {
             $this->bus->dispatch(new DeleteUserMessage($user->getId()));

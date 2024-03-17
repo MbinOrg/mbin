@@ -45,7 +45,7 @@ class DeleteHandler
         $id = \is_array($message->payload['object']) ? $message->payload['object']['id'] : $message->payload['object'];
         $object = $this->apActivityRepository->findByObjectId($id);
 
-        if (!$object) {
+        if (!$object && $actor) {
             $user = $this->userRepository->findOneBy(['apProfileId' => $id]);
             if ($actor instanceof User && $user instanceof User && $actor->apDomain === $user->apDomain) {
                 // only users of the same server can delete each other.

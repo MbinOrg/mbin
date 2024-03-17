@@ -21,6 +21,7 @@ use App\Repository\ReputationRepository;
 use App\Repository\UserFollowRepository;
 use App\Repository\UserFollowRequestRepository;
 use App\Repository\UserRepository;
+use App\Scheduler\Messages\ClearDeletedUserMessage;
 use App\Security\EmailVerifier;
 use App\Service\ActivityPub\KeysGenerator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -311,6 +312,15 @@ readonly class UserManager
         $this->bus->dispatch(new DeleteImageMessage($image));
     }
 
+    /**
+     * @param User $user        the user that should be deleted
+     * @param bool $immediately if true we will immediately dispatch a DeleteMessage,
+     *                          if false the account will be marked for deletion in 30 days.
+     *                          Our scheduler will then take care of deleting the account via ClearDeletedUserMessage and ClearDeletedUserHandler
+     *
+     * @see ClearDeletedUserMessage
+     * @see ClearDeletedUserHandler
+     */
     public function deleteRequest(User $user, bool $immediately): void
     {
         if (!$immediately) {
@@ -324,6 +334,11 @@ readonly class UserManager
         }
     }
 
+    /**
+     * If the user is marked for deletion this will remove that mark and restore the user.
+     *
+     * @param User $user the user to be checked
+     */
     public function removeDeleteRequest(User $user): void
     {
         if (null !== $user->markedForDeletionAt) {

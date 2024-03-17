@@ -117,7 +117,7 @@ abstract class StatsRepository extends ServiceEntityRepository
             )
         );
 
-        if (empty($startDate)) {
+        if (empty($startDate) || !\array_key_exists('year', $startDate[0]) || !\array_key_exists('month', $startDate[0])) {
             return [
                 'entries' => [],
                 'comments' => [],

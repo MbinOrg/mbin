@@ -28,11 +28,17 @@ class RemoveAccountsMarkedForDeletion extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $users = $this->userManager->getUsersMarkedForDeletionBefore();
+        $deletedUsers = 0;
         foreach ($users as $user) {
             $output->writeln("deleting $user->username");
-            $this->bus->dispatch(new DeleteUserMessage($user->getId()));
+            try {
+                $this->bus->dispatch(new DeleteUserMessage($user->getId()));
+                ++$deletedUsers;
+            } catch (\Exception|\Error $e) {
+                $output->writeln('an error occurred during the deletion of '.$user->username.': '.\get_class($e).' - '.$e->getMessage());
+            }
         }
-        $output->writeln('deleted '.\sizeof($users).' user');
+        $output->writeln("deleted $deletedUsers user");
 
         return 0;
     }
