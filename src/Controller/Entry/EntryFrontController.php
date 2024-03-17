@@ -53,9 +53,11 @@ class EntryFrontController extends AbstractController
             $criteria->subscribed = true;
         } elseif ('mod' === $subscription) {
             $this->denyAccessUnlessGranted('ROLE_USER');
+            $user = $this->getUserOrThrow();
             $criteria->moderated = true;
         } elseif ('fav' === $subscription) {
             $this->denyAccessUnlessGranted('ROLE_USER');
+            $user = $this->getUserOrThrow();
             $criteria->favourite = true;
         } elseif ($subscription && 'all' !== $subscription) {
             throw new \LogicException('Invalid subscription filter '.$subscription);
@@ -169,9 +171,11 @@ class EntryFrontController extends AbstractController
             $criteria->subscribed = true;
         } elseif ('mod' === $subscription) {
             $this->denyAccessUnlessGranted('ROLE_USER');
+            $user = $this->getUserOrThrow();
             $criteria->moderated = true;
         } elseif ('fav' === $subscription) {
             $this->denyAccessUnlessGranted('ROLE_USER');
+            $user = $this->getUserOrThrow();
             $criteria->favourite = true;
         } elseif ($subscription && 'all' !== $subscription) {
             throw new \LogicException('Invalid subscription filter '.$subscription);
@@ -194,6 +198,8 @@ class EntryFrontController extends AbstractController
 
             $content_tmpl = 'post/';
             $content_key = 'posts';
+        } else {
+            throw new \LogicException('Invalid content '.$content);
         }
 
         if ($request->isXmlHttpRequest()) {
