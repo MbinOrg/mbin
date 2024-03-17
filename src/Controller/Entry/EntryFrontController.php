@@ -30,96 +30,28 @@ class EntryFrontController extends AbstractController
     {
         $user = $this->getUser();
 
-        if ('def' === $subscription) {
-            $subscription = $this->subscriptionFor($user);
-        }
-
-        if ('threads' === $content) {
-            $criteria = new EntryPageView($this->getPageNb($request));
-            $criteria->setContent('threads');
-        } elseif ('microblog' === $content) {
-            $criteria = new PostPageView($this->getPageNb($request));
-            $criteria->setContent('microblog');
-        } else {
-            throw new \LogicException('Invalid content '.$content);
-        }
-
+        $criteria = $this->createCriteria($content, $request);
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setFederation($federation)
             ->setTime($criteria->resolveTime($time))
             ->setType($criteria->resolveType($type));
 
-        if ('sub' === $subscription) {
-            $this->denyAccessUnlessGranted('ROLE_USER');
-            $user = $this->getUserOrThrow();
-            $criteria->subscribed = true;
-        } elseif ('mod' === $subscription) {
-            $this->denyAccessUnlessGranted('ROLE_USER');
-            $user = $this->getUserOrThrow();
-            $criteria->moderated = true;
-        } elseif ('fav' === $subscription) {
-            $this->denyAccessUnlessGranted('ROLE_USER');
-            $user = $this->getUserOrThrow();
-            $criteria->favourite = true;
-        } elseif ($subscription && 'all' !== $subscription) {
-            throw new \LogicException('Invalid subscription filter '.$subscription);
+        if ('def' === $subscription) {
+            $subscription = $this->subscriptionFor($user);
         }
+        $this->handleSubscription($subscription, $user, $criteria);
 
-        if (null !== $user && 0 < \count($user->preferredLanguages)) {
-            $criteria->languages = $user->preferredLanguages;
-        }
+        $this->setUserPreferences($user, $criteria);
 
+        $entities = ('threads' === $content) ? $this->entryRepository->findByCriteria($criteria) : $this->postRepository->findByCriteria($criteria);
         if ('threads' === $content) {
-            $entries = $this->entryRepository->findByCriteria($criteria);
-            $entries = $this->handleCrossposts($entries);
-
-            if ($request->isXmlHttpRequest()) {
-                return new JsonResponse(
-                    [
-                        'html' => $this->renderView(
-                            'entry/_list.html.twig',
-                            [
-                                'entries' => $entries,
-                            ]
-                        ),
-                    ]
-                );
-            }
-
-            return $this->render(
-                'entry/front.html.twig',
-                [
-                    'entries' => $entries,
-                    'criteria' => $criteria,
-                ]
-            );
-        } elseif ('microblog' === $content) {
-            $posts = $this->postRepository->findByCriteria($criteria);
-
-            if ($request->isXmlHttpRequest()) {
-                return new JsonResponse(
-                    [
-                        'html' => $this->renderView(
-                            'post/_list.html.twig',
-                            [
-                                'posts' => $posts,
-                            ]
-                        ),
-                    ]
-                );
-            }
-
-            return $this->render(
-                'post/front.html.twig',
-                [
-                    'posts' => $posts,
-                    'criteria' => $criteria,
-                    'form' => $this->createForm(PostType::class)->setData(new PostDto())->createView(),
-                ]
-            );
-        } else {
-            throw new \LogicException('Invalid content filter '.$content);
+            $entities = $this->handleCrossposts($entities);
         }
+
+        $templatePath = ('threads' === $content) ? 'entry/' : 'post/';
+        $dataKey = ('threads' === $content) ? 'entries' : 'posts';
+
+        return $this->renderResponse($request, $content, $criteria, [$dataKey => $entities], $templatePath);
     }
 
     // $name is magazine name, for compatibility
@@ -166,99 +98,84 @@ class EntryFrontController extends AbstractController
             $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
         }
 
-        if ('threads' === $content) {
-            $criteria = new EntryPageView($this->getPageNb($request));
-            $criteria->setContent('threads');
-        } elseif ('microblog' === $content) {
-            $criteria = new PostPageView($this->getPageNb($request));
-            $criteria->setContent('microblog');
-        } else {
-            throw new \LogicException('Invalid content '.$content);
-        }
-
+        $criteria = $this->createCriteria($content, $request);
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setFederation($federation)
             ->setTime($criteria->resolveTime($time))
             ->setType($criteria->resolveType($type));
+        $criteria->magazine = $magazine;
+        $criteria->stickiesFirst = true;
 
         $subscription = $request->query->get('subscription');
+        if (!$subscription) {
+            $subscription = 'all';
+        }
+        $this->handleSubscription($subscription, $user, $criteria);
 
+        $this->setUserPreferences($user, $criteria);
+
+        $entities = ('threads' === $content) ? $this->entryRepository->findByCriteria($criteria) : $this->postRepository->findByCriteria($criteria);
+        // Note no crosspost handling
+
+        $templatePath = ('threads' === $content) ? 'entry/' : 'post/';
+        $dataKey = ('threads' === $content) ? 'entries' : 'posts';
+
+        return $this->renderResponse($request, $content, $criteria, [$dataKey => $entities, 'magazine' => $magazine], $templatePath);
+    }
+
+    private function createCriteria(string $content, Request $request)
+    {
+        if ('threads' === $content) {
+            $criteria = new EntryPageView($this->getPageNb($request));
+        } elseif ('microblog' === $content) {
+            $criteria = new PostPageView($this->getPageNb($request));
+        } else {
+            throw new \LogicException('Invalid content '.$content);
+        }
+
+        return $criteria->setContent($content);
+    }
+
+    private function handleSubscription(string $subscription, $user, &$criteria)
+    {
         if ('sub' === $subscription) {
             $this->denyAccessUnlessGranted('ROLE_USER');
-            $user = $this->getUserOrThrow();
+            $this->getUserOrThrow();
             $criteria->subscribed = true;
         } elseif ('mod' === $subscription) {
             $this->denyAccessUnlessGranted('ROLE_USER');
-            $user = $this->getUserOrThrow();
+            $this->getUserOrThrow();
             $criteria->moderated = true;
         } elseif ('fav' === $subscription) {
             $this->denyAccessUnlessGranted('ROLE_USER');
-            $user = $this->getUserOrThrow();
+            $this->getUserOrThrow();
             $criteria->favourite = true;
         } elseif ($subscription && 'all' !== $subscription) {
             throw new \LogicException('Invalid subscription filter '.$subscription);
         }
+    }
 
-        $criteria->magazine = $magazine;
-        $criteria->stickiesFirst = true;
-
+    private function setUserPreferences(?User $user, &$criteria)
+    {
         if (null !== $user && 0 < \count($user->preferredLanguages)) {
             $criteria->languages = $user->preferredLanguages;
         }
+    }
 
-        if ('threads' === $content) {
-            $listing = $this->entryRepository->findByCriteria($criteria);
-
-            if ($request->isXmlHttpRequest()) {
-                return new JsonResponse(
-                    [
-                        'html' => $this->renderView(
-                            'entry/_list.html.twig',
-                            [
-                                'magazine' => $magazine,
-                                'entries' => $listing,
-                            ]
-                        ),
-                    ]
-                );
-            }
-
-            return $this->render(
-                'entry/front.html.twig',
-                [
-                    'magazine' => $magazine,
-                    'entries' => $listing,
-                    'criteria' => $criteria,
-                ]
-            );
-        } elseif ('microblog' === $content) {
-            $listing = $this->postRepository->findByCriteria($criteria);
-
-            if ($request->isXmlHttpRequest()) {
-                return new JsonResponse(
-                    [
-                        'html' => $this->renderView(
-                            'post/_list.html.twig',
-                            [
-                                'posts' => $posts,
-                            ]
-                        ),
-                    ]
-                );
-            }
-
-            return $this->render(
-                'post/front.html.twig',
-                [
-                    'magazine' => $magazine,
-                    'posts' => $listing,
-                    'criteria' => $criteria,
-                    'form' => $this->createForm(PostType::class)->setData(new PostDto())->createView(),
-                ]
-            );
-        } else {
-            throw new \LogicException('Invalid content filter '.$content);
+    private function renderResponse(Request $request, $content, $criteria, $data, $templatePath)
+    {
+        $baseData = ['criteria' => $criteria] + $data;
+        if ('microblog' === $content) {
+            $baseData['form'] = $this->createForm(PostType::class)->setData(new PostDto())->createView();
         }
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse([
+                'html' => $this->renderView($templatePath.'_list.html.twig', $data),
+            ]);
+        }
+
+        return $this->render($templatePath.'front.html.twig', $baseData);
     }
 
     private function subscriptionFor(?User $user): string
