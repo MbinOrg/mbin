@@ -2,7 +2,7 @@ import {Controller} from '@hotwired/stimulus';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
-   
+
     previewButton;
 
     previewIcon;
@@ -24,7 +24,7 @@ export default class extends Controller {
         previewButton.classList.add('password-preview-button','btn','btn__secondary')
         this.previewButton = previewButton;
 
-        let previewIcon = document.createElement("span");
+        let previewIcon = document.createElement("i");
         previewIcon.classList.add('fas', 'fa-eye-slash');
         this.previewIcon = previewIcon;
 
@@ -41,7 +41,7 @@ export default class extends Controller {
      * On press, switch out the input 'type' to show or hide the password
      */
     onPreviewButtonClick(){
-        
+
         let inputType = this.input.getAttribute('type');
         if(inputType === 'password'){
             this.input.setAttribute('type', 'text');
@@ -54,5 +54,5 @@ export default class extends Controller {
             this.previewIcon.classList.add('fa-eye-slash');
         }
     }
-   
+
 }
