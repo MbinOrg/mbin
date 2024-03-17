@@ -6,7 +6,7 @@ namespace App\Message\ActivityPub\Inbox;
 
 use App\Message\Contracts\ActivityPubResolveInterface;
 
-class ChainActivityMessage  implements ActivityPubResolveInterface
+class ChainActivityMessage implements ActivityPubResolveInterface
 {
     public function __construct(
         public array $chain,

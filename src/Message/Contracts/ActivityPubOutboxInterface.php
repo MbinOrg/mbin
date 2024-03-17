@@ -6,5 +6,4 @@ namespace App\Message\Contracts;
 
 interface ActivityPubOutboxInterface
 {
-
 }
