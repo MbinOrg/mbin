@@ -15,6 +15,7 @@ class MagazineExtension extends AbstractExtension
         return [
             new TwigFunction('is_magazine_subscribed', [MagazineExtensionRuntime::class, 'isSubscribed']),
             new TwigFunction('is_magazine_blocked', [MagazineExtensionRuntime::class, 'isBlocked']),
+            new TwigFunction('magazine_has_local_subscribers', [MagazineExtensionRuntime::class, 'hasLocalSubscribers']),
         ];
     }
 }
