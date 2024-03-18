@@ -23,7 +23,12 @@
                     {% endif %}
                 </p>
             {% else %}
-                <p>{{ 'always_disconnected_magazine_info'|trans }}</p>
+                <p>
+                    {{ 'always_disconnected_magazine_info'|trans }}
+                    {% if app.user %}
+                        {{ 'subscribe_for_updates'|trans }}
+                    {% endif %}
+                </p>
             {% endif %}
         </div>
     {% endif %}
