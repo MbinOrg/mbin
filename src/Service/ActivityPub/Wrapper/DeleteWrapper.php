@@ -58,6 +58,9 @@ class DeleteWrapper
             'actor' => $userId,
             'object' => $userId,
             'to' => [ActivityPubActivityInterface::PUBLIC_URL],
+            'cc' => [$this->urlGenerator->generate('ap_user_followers', ['username' => $user->username], UrlGeneratorInterface::ABSOLUTE_URL)],
+            // this is a lemmy specific tag, that should cause the deletion of the data of a user (see this issue https://github.com/LemmyNet/lemmy/issues/4544)
+            'removeData' => true,
         ];
     }
 }

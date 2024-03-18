@@ -145,12 +145,12 @@ class StatsContentRepository extends StatsRepository
             default => throw new \InvalidArgumentException("$tableName is not a valid countable")
         };
 
-        $federatedCond = $federated ? '' : ' AND e.ap_id IS NULL ';
+        $federatedCond = $federated === false ? ' AND e.ap_id IS NULL ' : '';
         $magazineCond = $magazine ? 'AND e.magazine_id = :magId' : '';
-        $SinceDateCond = $sinceDate ? 'AND e.created_at > :date' : '';
+        $sinceDateCond = $sinceDate ? 'AND e.created_at > :date' : '';
         $tilDateCond = $tilDate ? 'AND e.created_at < :untilDate' : '';
 
-        $sql = "SELECT COUNT(e.id) as count FROM $tableName e INNER JOIN public.user u ON e.user_id = u.id WHERE u.is_deleted = false $SinceDateCond $tilDateCond $federatedCond $magazineCond";
+        $sql = "SELECT COUNT(e.id) as count FROM $tableName e INNER JOIN public.user u ON e.user_id = u.id WHERE u.is_deleted = false $sinceDateCond $tilDateCond $federatedCond $magazineCond";
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('count', 0);
         $query = $this->entityManager->createNativeQuery($sql, $rsm);
