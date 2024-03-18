@@ -55,7 +55,11 @@ class FlagHandler
             }
             if (null !== $subject) {
                 try {
-                    $this->reportManager->report(ReportDto::create($subject, $message->payload['summary']), $actor);
+                    $reason = null;
+                    if (\array_key_exists('summary', $message->payload) && \is_string($message->payload['summary'])) {
+                        $reason = $message->payload['summary'];
+                    }
+                    $this->reportManager->report(ReportDto::create($subject, $reason), $actor);
                 } catch (SubjectHasBeenReportedException) {
                 }
             } else {
@@ -86,16 +90,16 @@ class FlagHandler
     private function findLocalSubject(string $apUrl): ?ReportInterface
     {
         $matches = null;
-        if (preg_match_all("/\/m\/([a-zA-Z0-9\-_:]+)\/t\/([1-9][0-9]*)\/-\/comment\/([1-9][0-9]*)/", $apUrl, $matches)) {
+        if (preg_match_all("/\/m\/([a-zA-Z0-9\-_:@.]+)\/t\/([1-9][0-9]*)\/-\/comment\/([1-9][0-9]*)/", $apUrl, $matches)) {
             return $this->entryCommentRepository->findOneBy(['id' => $matches[3][0]]);
         }
-        if (preg_match_all("/\/m\/([a-zA-Z0-9\-_:]+)\/t\/([1-9][0-9]*)/", $apUrl, $matches)) {
+        if (preg_match_all("/\/m\/([a-zA-Z0-9\-_:@.]+)\/t\/([1-9][0-9]*)/", $apUrl, $matches)) {
             return $this->entryRepository->findOneBy(['id' => $matches[2][0]]);
         }
-        if (preg_match_all("/\/m\/([a-zA-Z0-9\-_:]+)\/p\/([1-9][0-9]*)\/-\/reply\/([1-9][0-9]*)/", $apUrl, $matches)) {
+        if (preg_match_all("/\/m\/([a-zA-Z0-9\-_:@.]+)\/p\/([1-9][0-9]*)\/-\/reply\/([1-9][0-9]*)/", $apUrl, $matches)) {
             return $this->postCommentRepository->findOneBy(['id' => $matches[3][0]]);
         }
-        if (preg_match_all("/\/m\/([a-zA-Z0-9\-_:]+)\/p\/([1-9][0-9]*)/", $apUrl, $matches)) {
+        if (preg_match_all("/\/m\/([a-zA-Z0-9\-_:@.]+)\/p\/([1-9][0-9]*)/", $apUrl, $matches)) {
             return $this->postRepository->findOneBy(['id' => $matches[2][0]]);
         }
 
