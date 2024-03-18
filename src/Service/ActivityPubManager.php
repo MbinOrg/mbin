@@ -282,6 +282,10 @@ class ActivityPubManager
         $this->logger->info('updating user {name}', ['name' => $actorUrl]);
         $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
 
+        if ($user instanceof User && $user->apFetchedAt > (new \DateTime())->modify('-1 hour')) {
+            return $user;
+        }
+
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         if (!$actor || !\is_array($actor)) {
             return null;
@@ -412,6 +416,11 @@ class ActivityPubManager
     {
         $this->logger->info('updating magazine "{magName}"', ['magName' => $actorUrl]);
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
+
+        if ($magazine instanceof Magazine && $magazine->apFetchedAt > (new \DateTime())->modify('-1 hour')) {
+            return $magazine;
+        }
+
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         // Check if actor isn't empty (not set/null/empty array/etc.)
 
