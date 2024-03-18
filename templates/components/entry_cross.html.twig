@@ -7,46 +7,25 @@
         data-action="notifications:Notification@window->subject#notification">
     <aside class="meta entry__meta">
         {% if entry.visibility in ['visible', 'private'] or (entry.visibility is same as 'trashed' and this.canSeeTrashed) %}
-            <a href="{{ entry_url(entry) }}">{{ 'crossposted'|trans }}</a> {{ 'by'|trans }}
+            <div>
+                {{- 'related_entry'|trans }}: {% if entry.isAdult %}<small class="danger">18+</small>{% endif %}
+                <a href="{{ entry_url(entry) }}" title="{{ entry.title }}">{{ entry.title }}</a>
+            </div>
         {% elseif(entry.visibility is same as 'trashed') %}
             <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
         {% elseif(entry.visibility is same as 'soft_deleted') %}
             <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
         {% endif %}
-        {{ component('user_inline', {user: entry.user, showAvatar: app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_USERS_AVATARS')) is same as 'true'}) -}}
-        ,
-        {{ component('date', {date: entry.createdAt}) }}
-        {{ component('date_edited', {createdAt: entry.createdAt, editedAt: entry.editedAt}) }}
-        {{ 'to'|trans }} {{ component('magazine_inline', {magazine: entry.magazine, showAvatar: app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_MAGAZINES_ICONS')) is same as 'true'}) }}
+        <div>
+            {{ component('user_inline', {user: entry.user, showAvatar: false}) -}}
+            ,
+            {{ component('date', {date: entry.createdAt}) }}
+            {{ component('date_edited', {createdAt: entry.createdAt, editedAt: entry.editedAt}) }}
+            {{ 'to'|trans }} {{ component('magazine_inline', {magazine: entry.magazine, showAvatar: false}) }}
+        </div>
         <footer>
             {% if entry.visibility in ['visible', 'private'] %}
                 <menu>
-                    {% if entry.sticky %}
-                        <li>
-                            <span aria-label="{{ 'pinned'|trans }}">
-                                <i class="fa-solid fa-thumbtack" aria-hidden="true"></i>
-                            </span>
-                        </li>
-                    {% endif %}
-                    {% if entry.type is same as 'article' %}
-                        <li class="meta-link">
-                            <span aria-label="{{ 'article'|trans }}">
-                                <i class="fa-regular fa-newspaper" aria-hidden="true"></i>
-                            </span>
-                        </li>
-                    {% endif %}
-                    {% if entry.hasEmbed %}
-                        {% set preview_url = entry.type is same as 'image' and entry.image ? uploaded_asset(entry.image) : entry.url %}
-                        <li>
-                            <button class="show-preview"
-                                    data-action="preview#show"
-                                    aria-label="{{ 'preview'|trans }}"
-                                    data-preview-url-param="{{ preview_url }}"
-                                    data-preview-ratio-param="{{ entry.domain and entry.domain.shouldRatio ? true : false }}">
-                                <i class="fa-solid fa-photo-film" aria-hidden="true"></i>
-                            </button>
-                        </li>
-                    {% endif %}
                     <li>
                         <a class="stretched-link"
                            href="{{ entry_url(entry) ~ '#comments' }}">
@@ -95,8 +74,6 @@
         </footer>
     </aside>
     <aside class="meta entry__preview hidden" data-preview-target="container"></aside>
-    {% if not app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_THUMBNAILS')) or app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_THUMBNAILS')) is same as 'true' %}
-    {% endif %}
     {% if entry.visibility in ['visible', 'private'] %}
         {{ component('vote', {
             subject: entry,

@@ -29,13 +29,17 @@ final class EntriesCrossComponent
 
     public function getHtml(): string
     {
+        $entryId = $this->entry->getId();
+        $userId = $this->security->getUser()?->getId();
+        $locale = $this->requestStack->getCurrentRequest()?->getLocale();
+
         return $this->cache->get(
-            "entries_cross_{$this->entry->getId()}_{$this->security->getUser()?->getId()}_{$this->requestStack->getCurrentRequest()?->getLocale()}",
-            function (ItemInterface $item) {
+            "entries_cross_{$entryId}_{$userId}_{$locale}",
+            function (ItemInterface $item) use ($entryId) {
                 $item->expiresAfter(60);
                 $entries = $this->repository->findCross($this->entry);
 
-                $item->tag(['entry_'.$this->entry->getId()]);
+                $item->tag(['entry_'.$entryId]);
                 foreach ($entries as $entry) {
                     $item->tag(['entry_'.$entry->getId()]);
                 }
