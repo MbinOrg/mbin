@@ -8,6 +8,7 @@ use App\DTO\UserDto;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\IpResolver;
+use App\Service\SettingsManager;
 use App\Service\UserManager;
 use App\Utils\Slugger;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,6 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
@@ -35,6 +37,7 @@ class KeycloakAuthenticator extends OAuth2Authenticator
         private readonly IpResolver $ipResolver,
         private readonly Slugger $slugger,
         private readonly UserRepository $userRepository,
+        private readonly SettingsManager $settingsManager
     ) {
     }
 
@@ -78,6 +81,10 @@ class KeycloakAuthenticator extends OAuth2Authenticator
                     $this->entityManager->flush();
 
                     return $user;
+                }
+
+                if !$this->settingsManager->get('MBIN_SSO_REGISTRATIONS_ENABLED') {
+                    throw new AccessDeniedException();
                 }
 
                 $username = $slugger->slug($keycloakUser->toArray()['preferred_username']);

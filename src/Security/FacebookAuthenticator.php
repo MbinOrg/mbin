@@ -11,6 +11,7 @@ use App\Factory\ImageFactory;
 use App\Repository\ImageRepository;
 use App\Service\ImageManager;
 use App\Service\IpResolver;
+use App\Service\SettingsManager;
 use App\Service\UserManager;
 use App\Utils\Slugger;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,6 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
@@ -39,7 +41,8 @@ class FacebookAuthenticator extends OAuth2Authenticator
         private readonly ImageFactory $imageFactory,
         private readonly ImageRepository $imageRepository,
         private readonly IpResolver $ipResolver,
-        private readonly Slugger $slugger
+        private readonly Slugger $slugger,
+        private readonly SettingsManager $settingsManager
     ) {
     }
 
@@ -83,26 +86,35 @@ class FacebookAuthenticator extends OAuth2Authenticator
 
                 if ($user) {
                     $user->oauthFacebookId = $facebookUser->getId();
-                } else {
-                    $dto = (new UserDto())->create(
-                        $slugger->slug($facebookUser->getName()).rand(1, 999),
-                        $facebookUser->getEmail()
-                    );
 
-                    $avatar = $this->getAvatar($facebookUser->getPictureUrl());
+                    $this->entityManager->persist($user);
+                    $this->entityManager->flush();
 
-                    if ($avatar) {
-                        $dto->avatar = $this->imageFactory->createDto($avatar);
-                    }
-
-                    $dto->plainPassword = bin2hex(random_bytes(20));
-                    $dto->ip = $this->ipResolver->resolve();
-
-                    $user = $this->userManager->create($dto, false);
-                    $user->oauthFacebookId = $facebookUser->getId();
-                    $user->avatar = $this->getAvatar($facebookUser->getPictureUrl());
-                    $user->isVerified = true;
+                    return $user;
                 }
+
+                if !$this->settingsManager->get('MBIN_SSO_REGISTRATIONS_ENABLED') {
+                    throw new AccessDeniedException();
+                }
+
+                $dto = (new UserDto())->create(
+                    $slugger->slug($facebookUser->getName()).rand(1, 999),
+                    $facebookUser->getEmail()
+                );
+
+                $avatar = $this->getAvatar($facebookUser->getPictureUrl());
+
+                if ($avatar) {
+                    $dto->avatar = $this->imageFactory->createDto($avatar);
+                }
+
+                $dto->plainPassword = bin2hex(random_bytes(20));
+                $dto->ip = $this->ipResolver->resolve();
+
+                $user = $this->userManager->create($dto, false);
+                $user->oauthFacebookId = $facebookUser->getId();
+                $user->avatar = $this->getAvatar($facebookUser->getPictureUrl());
+                $user->isVerified = true;
 
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
