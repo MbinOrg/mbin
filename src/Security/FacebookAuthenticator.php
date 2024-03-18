@@ -93,7 +93,7 @@ class FacebookAuthenticator extends OAuth2Authenticator
                     return $user;
                 }
 
-                if !$this->settingsManager->get('MBIN_SSO_REGISTRATIONS_ENABLED') {
+                if (false === $this->settingsManager->get('MBIN_SSO_REGISTRATIONS_ENABLED')) {
                     throw new AccessDeniedException();
                 }
 

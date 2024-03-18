@@ -78,12 +78,13 @@ class KeycloakAuthenticator extends OAuth2Authenticator
                 if ($user) {
                     $user->oauthKeycloakId = $keycloakUser->getId();
 
+                    $this->entityManager->persist($user);
                     $this->entityManager->flush();
 
                     return $user;
                 }
 
-                if !$this->settingsManager->get('MBIN_SSO_REGISTRATIONS_ENABLED') {
+                if (false === $this->settingsManager->get('MBIN_SSO_REGISTRATIONS_ENABLED')) {
                     throw new AccessDeniedException();
                 }
 

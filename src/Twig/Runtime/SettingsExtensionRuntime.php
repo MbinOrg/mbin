@@ -53,7 +53,7 @@ class SettingsExtensionRuntime implements RuntimeExtensionInterface
     }
 
     #[Pure]
-    public function mbinSsoRegistrationsEnabled(): string
+    public function mbinSsoRegistrationsEnabled(): bool
     {
         return $this->settings->get('MBIN_SSO_REGISTRATIONS_ENABLED');
     }
