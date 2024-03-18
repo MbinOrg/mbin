@@ -81,9 +81,6 @@ class PostManager implements ContentManagerInterface
         $post->visibility = $dto->visibility;
         $post->apId = $dto->apId;
         $post->magazine->lastActive = new \DateTime();
-        if (null !== $post->user->apDomain && $post->magazine->apDomain === $post->user->apDomain) {
-            $post->magazine->lastOriginUpdate = new \DateTime();
-        }
         $post->user->lastActive = new \DateTime();
         $post->lastActive = $dto->lastActive ?? $post->lastActive;
         $post->createdAt = $dto->createdAt ?? $post->createdAt;

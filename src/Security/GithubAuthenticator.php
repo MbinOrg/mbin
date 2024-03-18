@@ -50,7 +50,7 @@ class GithubAuthenticator extends OAuth2Authenticator
                 $githubUser = $client->fetchUserFromToken($accessToken);
 
                 $existingUser = $this->entityManager->getRepository(User::class)->findOneBy(
-                    ['oauthGithubId' => $githubUser->getId()]
+                    ['oauthGithubId' => \strval($githubUser->getId())]
                 );
 
                 if ($existingUser) {
@@ -62,7 +62,7 @@ class GithubAuthenticator extends OAuth2Authenticator
                 );
 
                 if ($user) {
-                    $user->oauthGithubId = $githubUser->getId();
+                    $user->oauthGithubId = \strval($githubUser->getId());
                 } else {
                     $dto = (new UserDto())->create(
                         $slugger->slug($githubUser->getNickname()).rand(1, 999),
@@ -73,7 +73,7 @@ class GithubAuthenticator extends OAuth2Authenticator
                     $dto->plainPassword = bin2hex(random_bytes(20));
 
                     $user = $this->userManager->create($dto, false);
-                    $user->oauthGithubId = $githubUser->getId();
+                    $user->oauthGithubId = \strval($githubUser->getId());
                     $user->isVerified = true;
                 }
 

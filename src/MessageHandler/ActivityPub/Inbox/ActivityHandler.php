@@ -99,8 +99,19 @@ readonly class ActivityHandler
                 $this->entityManager->persist($actor);
                 $this->entityManager->flush();
             }
+            // we check for an array here, because boosts are announces with an url (string) as the object
             if (\is_array($payload['object'])) {
                 $payload = $payload['object'];
+                $actor = $payload['actor'] ?? $payload['attributedTo'] ?? null;
+                if ($actor) {
+                    $user = $this->manager->findActorOrCreate($actor);
+                    if ($user instanceof User && null === $user->apId) {
+                        // don't do anything if we get an announce activity for something a local user did (unless it's a boost, see comment above)
+                        $this->logger->warning('ignoring this message because it announces an activity from a local user');
+
+                        return;
+                    }
+                }
             }
         }
 
