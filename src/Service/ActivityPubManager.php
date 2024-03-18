@@ -390,7 +390,6 @@ class ActivityPubManager
         $this->logger->info('updating magazine "{magName}"', ['magName' => $actorUrl]);
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
 
-
         if ($magazine instanceof Magazine && $magazine->apFetchedAt > (new \DateTime())->modify('-1 hour')) {
             return $magazine;
         }
