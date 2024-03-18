@@ -524,6 +524,7 @@ class MagazineRepository extends ServiceEntityRepository
             ->andWhere('m.apDomain IS NULL')
             ->andWhere('m.apDeletedAt IS NULL')
             ->andWhere('m.apTimeoutAt IS NULL')
+            ->addOrderBy('m.apFetchedAt', 'ASC')
             ->setMaxResults(1000)
             ->getQuery()
             ->getResult();

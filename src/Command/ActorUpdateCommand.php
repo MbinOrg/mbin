@@ -18,7 +18,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(
     name: 'mbin:actor:update',
-    description: 'This command will allow you to update remote user info.',
+    description: 'This command will allow you to update remote actor (user/magazine) info.',
 )]
 class ActorUpdateCommand extends Command
 {
@@ -32,28 +32,30 @@ class ActorUpdateCommand extends Command
 
     protected function configure(): void
     {
-        $this->addArgument('user', InputArgument::OPTIONAL, 'Argument description')
-            ->addOption('users', null, InputOption::VALUE_NONE)
-            ->addOption('magazines', null, InputOption::VALUE_NONE);
+        $this->addArgument('user', InputArgument::OPTIONAL, 'AP url of the actor to update')
+            ->addOption('users', null, InputOption::VALUE_NONE, 'update *all* known users that needs updating')
+            ->addOption('magazines', null, InputOption::VALUE_NONE, 'update *all* known magazines that needs updating')
+            ->addOption('force', null, InputOption::VALUE_NONE, 'force actor update even if they are recently updated');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $userArg = $input->getArgument('user');
+        $force = (bool) $input->getOption('force');
 
-        if ($input->getOption('users')) {
+        if ($userArg) {
+            $this->bus->dispatch(new UpdateActorMessage($userArg, $force));
+        } elseif ($input->getOption('users')) {
             foreach ($this->repository->findRemoteForUpdate() as $u) {
-                $this->bus->dispatch(new UpdateActorMessage($u->apProfileId));
+                $this->bus->dispatch(new UpdateActorMessage($u->apProfileId, $force));
                 $io->info($u->username);
             }
         } elseif ($input->getOption('magazines')) {
             foreach ($this->magazineRepository->findRemoteForUpdate() as $u) {
-                $this->bus->dispatch(new UpdateActorMessage($u->apProfileId));
+                $this->bus->dispatch(new UpdateActorMessage($u->apProfileId, $force));
                 $io->info($u->name);
             }
-        } elseif ($userArg) {
-            $this->bus->dispatch(new UpdateActorMessage($userArg));
         }
 
         $io->success('Done.');

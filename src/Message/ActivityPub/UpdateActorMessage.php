@@ -8,7 +8,7 @@ use App\Message\Contracts\ActivityPubResolveInterface;
 
 class UpdateActorMessage implements ActivityPubResolveInterface
 {
-    public function __construct(public string $actorUrl)
+    public function __construct(public string $actorUrl, public bool $force = false)
     {
     }
 }
