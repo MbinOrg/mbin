@@ -111,9 +111,10 @@ class GithubAuthenticator extends OAuth2Authenticator
     {
         $message = strtr($exception->getMessageKey(), $exception->getMessageData());
 
-        if ($message === 'MBIN_SSO_REGISTRATIONS_ENABLED') {
+        if ('MBIN_SSO_REGISTRATIONS_ENABLED' === $message) {
             $session = $request->getSession();
             $session->getFlashBag()->add('error', 'sso_registrations_enabled.error');
+
             return new RedirectResponse($this->router->generate('app_login'));
         }
 

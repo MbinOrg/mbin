@@ -801,4 +801,4 @@ show: Show
 hide: Hide
 edited: edited
 sso_registrations_enabled: SSO registrations enabled
-sso_registrations_enabled.error: New account registrations with third-party systems are currently disabled.
+sso_registrations_enabled.error: New account registrations with third-party identity managers are currently disabled.
