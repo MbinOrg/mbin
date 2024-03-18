@@ -761,6 +761,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         return $this;
     }
 
+    public function isSsoControlled(): bool
+    {
+        return ($this->oauthGithubId || $this->oauthGoogleId || $this->oauthFacebookId || $this->oauthKeycloakId);
+    }
+
     public function getCustomCss(): ?string
     {
         return $this->customCss;

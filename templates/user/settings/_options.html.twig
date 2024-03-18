@@ -19,12 +19,14 @@
                 {{ 'email'|trans }}
             </a>
         </li>
+        {% if user is not defined or not user.SsoControlled() %}
         <li>
             <a href="{{ path('user_settings_password') }}"
                class="{{ html_classes({'active': is_route_name('user_settings_password') or is_route_name_starts_with('user_settings_2fa')}) }}">
                 {{ 'password_and_2fa'|trans }}
             </a>
         </li>
+        {% endif %}
         <li>
             <a href="{{ path('user_settings_magazine_blocks') }}"
                class="{{ html_classes({'active': is_route_name_contains('_blocks')}) }}">
