@@ -13,6 +13,7 @@ use App\Repository\ImageRepository;
 use App\Repository\UserRepository;
 use App\Service\ImageManager;
 use App\Service\IpResolver;
+use App\Service\SettingsManager;
 use App\Service\UserManager;
 use App\Utils\Slugger;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,6 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
@@ -82,9 +84,14 @@ class ZitadelAuthenticator extends OAuth2Authenticator
                 if ($user) {
                     $user->oauthZitadelId = $zitadelUser->getId();
 
+                    $this->entityManager->persist($user);
                     $this->entityManager->flush();
 
                     return $user;
+                }
+
+                if (false === $this->settingsManager->get('MBIN_SSO_REGISTRATIONS_ENABLED')) {
+                    throw new CustomUserMessageAuthenticationException('MBIN_SSO_REGISTRATIONS_ENABLED');
                 }
 
                 $email = $zitadelUser->toArray()['preferred_username'];
@@ -157,6 +164,13 @@ class ZitadelAuthenticator extends OAuth2Authenticator
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $message = strtr($exception->getMessageKey(), $exception->getMessageData());
+
+        if ('MBIN_SSO_REGISTRATIONS_ENABLED' === $message) {
+            $session = $request->getSession();
+            $session->getFlashBag()->add('error', 'sso_registrations_enabled.error');
+
+            return new RedirectResponse($this->router->generate('app_login'));
+        }
 
         return new Response($message, Response::HTTP_FORBIDDEN);
     }
