@@ -11,6 +11,7 @@ use App\Factory\ImageFactory;
 use App\Repository\ImageRepository;
 use App\Service\ImageManager;
 use App\Service\IpResolver;
+use App\Service\SettingsManager;
 use App\Service\UserManager;
 use App\Utils\Slugger;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,6 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
@@ -41,7 +43,8 @@ class GoogleAuthenticator extends OAuth2Authenticator
         private readonly ImageRepository $imageRepository,
         private readonly RequestStack $requestStack,
         private readonly IpResolver $ipResolver,
-        private readonly Slugger $slugger
+        private readonly Slugger $slugger,
+        private readonly SettingsManager $settingsManager
     ) {
     }
 
@@ -87,25 +90,34 @@ class GoogleAuthenticator extends OAuth2Authenticator
 
                 if ($user) {
                     $user->oauthGoogleId = $googleUser->getId();
-                } else {
-                    $dto = (new UserDto())->create(
-                        $slugger->slug($googleUser->getName()).rand(1, 999),
-                        $googleUser->getEmail()
-                    );
 
-                    $avatar = $this->getAvatar($googleUser->getAvatar());
+                    $this->entityManager->persist($user);
+                    $this->entityManager->flush();
 
-                    if ($avatar) {
-                        $dto->avatar = $this->imageFactory->createDto($avatar);
-                    }
-
-                    $dto->plainPassword = bin2hex(random_bytes(20));
-                    $dto->ip = $this->ipResolver->resolve();
-
-                    $user = $this->userManager->create($dto, false);
-                    $user->oauthGoogleId = $googleUser->getId();
-                    $user->isVerified = true;
+                    return $user;
                 }
+
+                if (false === $this->settingsManager->get('MBIN_SSO_REGISTRATIONS_ENABLED')) {
+                    throw new CustomUserMessageAuthenticationException('MBIN_SSO_REGISTRATIONS_ENABLED');
+                }
+
+                $dto = (new UserDto())->create(
+                    $slugger->slug($googleUser->getName()).rand(1, 999),
+                    $googleUser->getEmail()
+                );
+
+                $avatar = $this->getAvatar($googleUser->getAvatar());
+
+                if ($avatar) {
+                    $dto->avatar = $this->imageFactory->createDto($avatar);
+                }
+
+                $dto->plainPassword = bin2hex(random_bytes(20));
+                $dto->ip = $this->ipResolver->resolve();
+
+                $user = $this->userManager->create($dto, false);
+                $user->oauthGoogleId = $googleUser->getId();
+                $user->isVerified = true;
 
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
@@ -154,6 +166,13 @@ class GoogleAuthenticator extends OAuth2Authenticator
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $message = strtr($exception->getMessageKey(), $exception->getMessageData());
+
+        if ('MBIN_SSO_REGISTRATIONS_ENABLED' === $message) {
+            $session = $request->getSession();
+            $session->getFlashBag()->add('error', 'sso_registrations_enabled.error');
+
+            return new RedirectResponse($this->router->generate('app_login'));
+        }
 
         return new Response($message, Response::HTTP_FORBIDDEN);
     }

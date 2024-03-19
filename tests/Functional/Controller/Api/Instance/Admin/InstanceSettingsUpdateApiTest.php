@@ -29,6 +29,7 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
         'KBIN_ADMIN_ONLY_OAUTH_CLIENTS',
         'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN',
         'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY',
+        'MBIN_SSO_REGISTRATIONS_ENABLED',
     ];
 
     public function testApiCannotUpdateInstanceSettingsAnonymous(): void
@@ -104,6 +105,7 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'KBIN_ADMIN_ONLY_OAUTH_CLIENTS' => true,
             'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN' => false,
             'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY' => false,
+            'MBIN_SSO_REGISTRATIONS_ENABLED' => true,
         ];
 
         $client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);
@@ -137,6 +139,7 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'KBIN_ADMIN_ONLY_OAUTH_CLIENTS' => false,
             'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN' => true,
             'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY' => true,
+            'MBIN_SSO_REGISTRATIONS_ENABLED' => false,
         ];
 
         $client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);
