@@ -37,6 +37,7 @@ security:
                 - App\Security\GoogleAuthenticator
                 - App\Security\GithubAuthenticator
                 - App\Security\KeycloakAuthenticator
+                - App\Security\ZitadelAuthenticator
             logout:
                 enable_csrf: true
                 path: app_logout
