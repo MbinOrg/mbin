@@ -21,6 +21,7 @@ final class SettingsExtension extends AbstractExtension
             new TwigFunction('kbin_default_lang', [SettingsExtensionRuntime::class, 'kbinDefaultLang']),
             new TwigFunction('mbin_default_theme', [SettingsExtensionRuntime::class, 'mbinDefaultTheme']),
             new TwigFunction('kbin_registrations_enabled', [SettingsExtensionRuntime::class, 'kbinRegistrationsEnabled']),
+            new TwigFunction('mbin_sso_registrations_enabled', [SettingsExtensionRuntime::class, 'mbinSsoRegistrationsEnabled']),
             new TwigFunction('kbin_header_logo', [SettingsExtensionRuntime::class, 'kbinHeaderLogo']),
             new TwigFunction('kbin_captcha_enabled', [SettingsExtensionRuntime::class, 'kbinCaptchaEnabled']),
             new TwigFunction('kbin_mercure_enabled', [SettingsExtensionRuntime::class, 'kbinMercureEnabled']),

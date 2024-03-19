@@ -56,9 +56,5 @@
     </div>
     {% if(users.haveToPaginate is defined and users.haveToPaginate) %}
         {{ pagerfanta(users, null, {'pageParameter':'[p]'}) }}
-    {% else %}
-        <aside class="section section--muted">
-            <p>{{ 'empty'|trans }}</p>
-        </aside>
     {% endif %}
 {% endblock %}
