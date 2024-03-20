@@ -7,13 +7,13 @@ when@dev:
         handlers:
             main:
                 type: rotating_file
-                path: '/var/log/mbin/%kernel.environment%.log'
+                path: '%kernel.logs_dir%/%kernel.environment%.log'
                 # Or use: "debug" instead of "info" for more verbose log (debug) messages
-                level: debug
+                level: info
                 # Enable full stacktrace, set this to false to disable stacktraces
                 include_stacktraces: true
                 max_files: 10
-                channels: ['!event', '!deprecation', '!doctrine', '!security']
+                channels: ['!event']
             stderr:
                 type: stream
                 path: 'php://stderr'
@@ -28,10 +28,9 @@ when@dev:
             #    type: chromephp
             #    level: info
             console:
-                level: debug
                 type: console
                 process_psr_3_messages: false
-                channels: ['!event', '!deprecation', '!doctrine', '!console']
+                channels: ['!event', '!doctrine', '!console']
             # uncomment if you wish to see depreciation messages to console
             # by default it's already logged to the log file
             #deprecation:
