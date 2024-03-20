@@ -162,7 +162,9 @@ class MagazineManager
 
     public function block(Magazine $magazine, User $user): void
     {
-        $this->unsubscribe($magazine, $user);
+        if ($magazine->isSubscribed($user)) {
+            $this->unsubscribe($magazine, $user);
+        }
 
         $user->blockMagazine($magazine);
 

@@ -117,7 +117,9 @@ readonly class UserManager
 
     public function block(User $blocker, User $blocked): void
     {
-        $this->unfollow($blocker, $blocked);
+        if ($blocker->isFollowing($blocked)) {
+            $this->unfollow($blocker, $blocked);
+        }
 
         $blocker->block($blocked);
 
