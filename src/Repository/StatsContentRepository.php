@@ -145,7 +145,7 @@ class StatsContentRepository extends StatsRepository
             default => throw new \InvalidArgumentException("$tableName is not a valid countable")
         };
 
-        $federatedCond = $federated ? ' AND e.ap_id IS NULL ' : '';
+        $federatedCond = $federated ? '' : ' AND e.ap_id IS NULL ';
         $magazineCond = $magazine ? 'AND e.magazine_id = :magId' : '';
         $SinceDateCond = $sinceDate ? 'AND e.created_at > :date' : '';
         $tilDateCond = $tilDate ? 'AND e.created_at < :untilDate' : '';
