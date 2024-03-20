@@ -5,8 +5,13 @@ declare(strict_types=1);
 namespace App\Security;
 
 use App\DTO\UserDto;
+use App\Entity\Image;
 use App\Entity\User;
+use App\Factory\ImageFactory;
+use App\Provider\ZitadelResourceOwner;
+use App\Repository\ImageRepository;
 use App\Repository\UserRepository;
+use App\Service\ImageManager;
 use App\Service\IpResolver;
 use App\Service\SettingsManager;
 use App\Service\UserManager;
@@ -14,7 +19,6 @@ use App\Utils\Slugger;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
-use Stevenmaguire\OAuth2\Client\Provider\KeycloakResourceOwner;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,13 +31,16 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
-class KeycloakAuthenticator extends OAuth2Authenticator
+class ZitadelAuthenticator extends OAuth2Authenticator
 {
     public function __construct(
         private readonly ClientRegistry $clientRegistry,
         private readonly RouterInterface $router,
         private readonly EntityManagerInterface $entityManager,
         private readonly UserManager $userManager,
+        private readonly ImageManager $imageManager,
+        private readonly ImageFactory $imageFactory,
+        private readonly ImageRepository $imageRepository,
         private readonly IpResolver $ipResolver,
         private readonly Slugger $slugger,
         private readonly UserRepository $userRepository,
@@ -43,12 +50,12 @@ class KeycloakAuthenticator extends OAuth2Authenticator
 
     public function supports(Request $request): ?bool
     {
-        return 'oauth_keycloak_verify' === $request->attributes->get('_route');
+        return 'oauth_zitadel_verify' === $request->attributes->get('_route');
     }
 
     public function authenticate(Request $request): Passport
     {
-        $client = $this->clientRegistry->getClient('keycloak');
+        $client = $this->clientRegistry->getClient('zitadel');
         $slugger = $this->slugger;
 
         $provider = $client->getOAuth2Provider();
@@ -62,21 +69,21 @@ class KeycloakAuthenticator extends OAuth2Authenticator
 
         return new SelfValidatingPassport(
             new UserBadge($accessToken->getToken(), function () use ($accessToken, $client, $slugger) {
-                /** @var KeycloakResourceOwner $keycloakUser */
-                $keycloakUser = $client->fetchUserFromToken($accessToken);
+                /** @var ZitadelResourceOwner $zitadelUser */
+                $zitadelUser = $client->fetchUserFromToken($accessToken);
 
                 $existingUser = $this->entityManager->getRepository(User::class)->findOneBy(
-                    ['oauthKeycloakId' => $keycloakUser->getId()]
+                    ['oauthZitadelId' => $zitadelUser->getId()]
                 );
 
                 if ($existingUser) {
                     return $existingUser;
                 }
 
-                $user = $this->userRepository->findOneBy(['email' => $keycloakUser->getEmail()]);
+                $user = $this->userRepository->findOneBy(['email' => $zitadelUser->getEmail()]);
 
                 if ($user) {
-                    $user->oauthKeycloakId = $keycloakUser->getId();
+                    $user->oauthZitadelId = $zitadelUser->getId();
 
                     $this->entityManager->persist($user);
                     $this->entityManager->flush();
@@ -88,7 +95,8 @@ class KeycloakAuthenticator extends OAuth2Authenticator
                     throw new CustomUserMessageAuthenticationException('MBIN_SSO_REGISTRATIONS_ENABLED');
                 }
 
-                $username = $slugger->slug($keycloakUser->toArray()['preferred_username']);
+                $email = $zitadelUser->toArray()['preferred_username'];
+                $username = $slugger->slug(substr($email, 0, strrpos($email, '@')));
 
                 if ($this->userRepository->count(['username' => $username]) > 0) {
                     $username .= rand(1, 999);
@@ -96,14 +104,21 @@ class KeycloakAuthenticator extends OAuth2Authenticator
 
                 $dto = (new UserDto())->create(
                     $username,
-                    $keycloakUser->getEmail()
+                    $zitadelUser->getEmail()
                 );
+
+                $avatar = $this->getAvatar($zitadelUser->getPictureUrl());
+
+                if ($avatar) {
+                    $dto->avatar = $this->imageFactory->createDto($avatar);
+                }
 
                 $dto->plainPassword = bin2hex(random_bytes(20));
                 $dto->ip = $this->ipResolver->resolve();
 
                 $user = $this->userManager->create($dto, false);
-                $user->oauthKeycloakId = $keycloakUser->getId();
+                $user->oauthZitadelId = $zitadelUser->getId();
+                $user->avatar = $this->getAvatar($zitadelUser->getPictureUrl());
                 $user->isVerified = true;
 
                 $this->entityManager->persist($user);
@@ -115,6 +130,29 @@ class KeycloakAuthenticator extends OAuth2Authenticator
                 $rememberBadge,
             ]
         );
+    }
+
+    private function getAvatar(?string $pictureUrl): ?Image
+    {
+        if (!$pictureUrl) {
+            return null;
+        }
+
+        try {
+            $tempFile = $this->imageManager->download($pictureUrl);
+        } catch (\Exception $e) {
+            $tempFile = null;
+        }
+
+        if ($tempFile) {
+            $image = $this->imageRepository->findOrCreateFromPath($tempFile);
+            if ($image) {
+                $this->entityManager->persist($image);
+                $this->entityManager->flush();
+            }
+        }
+
+        return $image ?? null;
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response

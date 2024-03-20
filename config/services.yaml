@@ -49,6 +49,11 @@ parameters:
     oauth_keycloak_realm: "%env(OAUTH_KEYCLOAK_REALM)%"
     oauth_keycloak_version: "%env(OAUTH_KEYCLOAK_VERSION)%"
 
+    oauth_zitadel_id: "%env(default::OAUTH_ZITADEL_ID)%"
+    oauth_zitadel_secret: "%env(OAUTH_ZITADEL_SECRET)%"
+    oauth_zitadel_base_url: "%env(OAUTH_ZITADEL_BASE_URL)%"
+
+
     router.request_context.host: "%env(KBIN_DOMAIN)%"
     router.request_context.scheme: https
 
@@ -209,3 +214,4 @@ services:
     debril.rss_atom.provider:
         class: App\Feed\Provider
         arguments: ['@App\Service\FeedManager']
+
