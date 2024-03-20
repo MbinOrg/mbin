@@ -55,7 +55,8 @@ related_posts: Entradas relacionadas
 random_posts: Publicaciones al azar
 federated_magazine_info: Esta revista es de un servidor federado y podría estar incompleta.
 federated_user_info: Este perfil es de un servidor federado y podría estar incompleto.
-go_to_original_instance: Explorar más contenido en la instancia original.
+go_to_original_instance: Para obtener una lista completa de publicaciones, visite
+  la instancia original.
 empty: Vacío
 subscribe: Suscribirse
 unsubscribe: Cancelar suscripción
@@ -398,15 +399,15 @@ toolbar.ordered_list: Lista ordenada
 toolbar.mention: Mención
 reload_to_apply: Recargar la página para aplicar los cambios
 local_and_federated: Locales y federados
-bot_body_content: "¡Bienvenido al bot Mbin! Este bot juega un papel crucial al habilitar
-  la funcionalidad de ActivityPub dentro de Mbin. Asegura que Mbin pueda comunicarse
-  y federarse con otras instancias en el fediverso.\n\nActivityPub es un protocolo
-  estándar abierto que permite a las plataformas de las redes sociales descentralizadas
-  comunicarse e interactuar entre sí. Permite a los usuarios de diferentes instancias
-  (servidores) seguir, interactuar y compartir contenidos a través de la red social
-  federada conocida como fediverso. Proporciona a los usuarios una forma estandarizada
-  para publicar contenidos, seguir a otros usuarios y participar en las interacciones
-  sociales como dar me gusta, compartir y comentar en hilos o mensajes."
+bot_body_content: "¡Bienvenido al Agente Mbin! Este agente juega un papel crucial
+  al habilitar la funcionalidad ActivityPub dentro de Mbin. Garantiza que Mbin pueda
+  comunicarse y federarse con otras instancias del fediverso.\n\nActivityPub es un
+  protocolo estándar abierto que permite que las plataformas de redes sociales descentralizadas
+  se comuniquen e interactúen entre sí. Permite a los usuarios en diferentes instancias
+  (servidores) seguir, interactuar y compartir contenido a través de la red social
+  federada conocida como fediverse. Proporciona una forma estandarizada para que los
+  usuarios publiquen contenido, sigan a otros usuarios y participen en interacciones
+  sociales como dar me gusta, compartir y comentar en hilos o publicaciones."
 your_account_is_not_active: Su cuenta no ha sido activada. Consulte su correo electrónico
   para obtener instrucciones sobre la activación de la cuenta o <a href="%link_target%">solicite
   un nuevo correo electrónico de activación de la cuenta.</a>
@@ -425,7 +426,7 @@ filter.adult.show: Mostrar NSFW
 filter.adult.only: Sólo NSFW
 filter.fields.only_names: Sólo nombres
 filter.fields.names_and_descriptions: Nombres y descripciones
-kbin_bot: Bot Mbin
+kbin_bot: Agente Mbin
 password_confirm_header: Confirme su solicitud de cambio de contraseña.
 federation_page_enabled: Página de la Federación activada
 federation_page_allowed_description: Instancias conocidas con las que nos federamos
@@ -439,9 +440,11 @@ email_confirm_button_text: Confirme su solicitud de cambio de la contraseña
 errors.server429.title: Error 429 Demasiadas solicitudes
 errors.server404.title: Error 404 No encontrado
 errors.server403.title: Error 403 Prohibido
-errors.server500.title: Error 500 del servidor
-errors.server500.description: Lo sentimos, algo ha ido mal. Estamos trabajando para
-  resolver este problema, por favor vuelva pronto.
+errors.server500.title: Error interno de servidor 500
+errors.server500.description: ¡Lo siento! Algo salió mal de nuestra parte. Si continúa
+  viendo este error, intente comunicarse con el propietario de la instancia. Si esta
+  instancia no funciona en absoluto, consulte %link_start%otras instancias de Mbin%link_end%
+  mientras tanto hasta que se resuelva el problema.
 email_confirm_link_help: También puede copiar y pegar lo siguiente en su navegador
 resend_account_activation_email_error: Se ha producido un problema al enviar esta
   solicitud. Es posible que no haya ninguna cuenta asociada a ese correo electrónico
@@ -480,3 +483,55 @@ oauth2.grant.moderate.magazine.ban.delete: Desbanea a los usuarios en las revist
   bajo su moderación.
 oauth.client_identifier.invalid: ¡ID para el cliente de OAuth no válido!
 oauth.consent.app_has_permissions: ya puede realizar las siguientes acciones
+mark_as_adult: Marcar como NSFW
+subscribers_count: '{0}Suscriptores|{1}Suscriptor|]1,Inf[ Suscriptores'
+followers_count: '{0}Seguidores|{1}Seguidor|]1,Inf[ Seguidores'
+remove_media: Eliminar medio
+menu: Menú
+flash_mark_as_adult_success: La publicación se ha marcado correctamente como NSFW.
+unmark_as_adult: Desmarcar como NSFW
+flash_unmark_as_adult_success: La publicación se ha desmarcado correctamente como
+  NSFW.
+default_theme: Tema por defecto
+oauth2.grant.moderate.magazine_admin.delete: Elimina todas tus propias revistas.
+oauth2.grant.moderate.magazine_admin.all: Crea, edita o elimina tus propias revistas.
+oauth2.grant.moderate.magazine_admin.create: Crea nuevas revistas.
+oauth2.grant.moderate.magazine_admin.update: Edite las reglas, la descripción, el
+  estado NSFW o el ícono de cualquiera de sus revistas.
+oauth2.grant.admin.all: Realice acciones administrativas en su instancia.
+oauth2.grant.moderate.magazine_admin.badges: Crea o elimina insignias de tus revistas.
+oauth2.grant.moderate.magazine_admin.tags: Crea o elimina etiquetas en tus revistas.
+oauth2.grant.moderate.magazine_admin.stats: Muestra el contenido, las votaciones y
+  el estado de visualización de tus revistas.
+oauth2.grant.domain.all: Suscríbase o bloquee dominios y vea los dominios a los que
+  se suscribe o bloquea.
+oauth2.grant.block.general: Bloquee o desbloquee cualquier revista, dominio o usuario,
+  y vea las revistas, dominios y usuarios que ha bloqueado.
+oauth2.grant.domain.subscribe: Suscríbase o cancele la suscripción a dominios y vea
+  los dominios a los que está suscrito.
+oauth2.grant.domain.block: Bloquee o desbloquee dominios y vea los dominios que ha
+  bloqueado.
+oauth2.grant.subscribe.general: Suscríbase o siga cualquier revista, dominio o usuario,
+  y vea las revistas, dominios y usuarios a los que se suscribe.
+disconnected_magazine_info: Esta revista no recibe actualizaciones (última actividad
+  hace %days% día(s)).
+always_disconnected_magazine_info: Esta revista no recibe actualizaciones.
+subscribe_for_updates: Suscríbete para comenzar a recibir actualizaciones.
+default_theme_auto: Claro/Oscuro (detección automática)
+solarized_auto: Solarizado (Detección automática)
+sidebar_sections_local_only: Restringir las secciones "X aleatorio" y "Personas activas"
+  solo a nivel local
+oauth2.grant.moderate.magazine.trash.read: Mostrar el contenido basura en sus revistas
+  moderadas.
+oauth2.grant.moderate.magazine_admin.edit_theme: Edita el CSS personalizado de tus
+  revistas.
+oauth2.grant.moderate.magazine_admin.moderators: Añade o elimina moderadores a tus
+  revistas.
+oauth2.grant.admin.entry.purge: Elimina completamente cualquier hilo de tu instancia.
+oauth2.grant.read.general: Lee todo el contenido al que tienes acceso.
+oauth2.grant.write.general: Cree o edite cualquiera de sus hilos, publicaciones o
+  comentarios.
+oauth2.grant.delete.general: Elimina cualquiera de tus hilos, publicaciones o comentarios.
+oauth2.grant.report.general: Reportar hilos, publicaciones o comentarios.
+oauth2.grant.vote.general: Votar a favor, en contra o impulsar hilos, publicaciones
+  o comentarios.
