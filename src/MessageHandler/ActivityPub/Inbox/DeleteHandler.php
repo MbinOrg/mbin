@@ -61,17 +61,17 @@ class DeleteHandler
             return;
         }
 
-        $object = $this->entityManager->getRepository($object['type'])->find((int) $object['id']);
+        $entity = $this->entityManager->getRepository($object['type'])->find((int) $object['id']);
 
-        if ($object instanceof Entry) {
+        if ($entity instanceof Entry) {
             $this->deleteEntry($object, $actor);
-        } elseif ($object instanceof EntryComment) {
+        } elseif ($entity instanceof EntryComment) {
             $this->deleteEntryComment($object, $actor);
-        } elseif ($object instanceof Post) {
+        } elseif ($entity instanceof Post) {
             $this->deletePost($object, $actor);
-        } elseif ($object instanceof PostComment) {
+        } elseif ($entity instanceof PostComment) {
             $this->deletePostComment($object, $actor);
-        } elseif ($object instanceof User) {
+        } elseif ($entity instanceof User) {
             $this->bus->dispatch(new DeleteUserMessage($object->getId()));
         }
     }
