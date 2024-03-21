@@ -55,7 +55,8 @@ cover: Omslag
 related_posts: Verwante berichten
 random_posts: Willekeurige berichten
 federated_user_info: Dit profiel is van een gefedereerde server en is mogelijk onvolledig.
-go_to_original_instance: Bekijk meer op de oorspronkelijke instantie.
+go_to_original_instance: Voor een volledige lijst met berichten, bezoek de oorspronkelijke
+  instantie.
 empty: Leeg
 subscribe: Abonneren
 down_votes: Omlaagstemmen
@@ -825,3 +826,11 @@ show: Tonen
 hide: Verbergen
 sidebar_sections_local_only: Beperk de secties 'Random X' en 'Actieve mensen' tot
   alleen lokaal
+edited: bewerkt
+disconnected_magazine_info: Dit tijdschrift heeft geen updates ontvangen (laatste
+  activiteit %days% dag(en) geleden).
+subscribe_for_updates: Abonneer om updates te ontvangen.
+sso_registrations_enabled: SSO -registraties ingeschakeld
+sso_registrations_enabled.error: Nieuwe accountregistraties met identiteitsbeheerders
+  van derden zijn momenteel uitgeschakeld.
+always_disconnected_magazine_info: Dit tijdschrift heeft geen updates ontvangen.
