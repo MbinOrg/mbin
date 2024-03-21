@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\MessageHandler\ActivityPub\Inbox;
 
+use App\Entity\Entry;
+use App\Entity\EntryComment;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use App\Message\ActivityPub\Inbox\AnnounceMessage;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\DislikeMessage;
@@ -45,9 +49,8 @@ class ChainActivityHandler
             return;
         }
 
-        $this->retrieveObject($object['id']);
+        $entity = $this->retrieveObject($object['id']);
 
-        $entity = $this->activityPubManager->getEntityObject($object, $object, fn ($ignored) => $ignored);
         if (!$entity) {
             $this->logger->error('could not retrieve all the dependencies of {o}', ['o' => $object]);
 
@@ -67,19 +70,19 @@ class ChainActivityHandler
         }
     }
 
-    private function retrieveObject(string $apUrl): void
+    private function retrieveObject(string $apUrl): Entry|EntryComment|Post|PostComment|null
     {
         try {
             $object = $this->client->getActivityObject($apUrl);
             if (!$object) {
                 $this->logger->warning('Got an empty object for {url}', ['url' => $apUrl]);
 
-                return;
+                return null;
             }
             if (!\is_array($object)) {
                 $this->logger->warning("Didn't get an array for {url}. Got '{val}' instead, exiting", ['url' => $apUrl, 'val' => $object]);
 
-                return;
+                return null;
             }
 
             if (\array_key_exists('inReplyTo', $object) && null !== $object['inReplyTo']) {
@@ -92,24 +95,24 @@ class ChainActivityHandler
                 if (!$meta) {
                     $this->logger->warning('fetching the parent object ({parent}) did not work for {url}, aborting', ['parent' => $parentUrl, 'url' => $apUrl]);
 
-                    return;
+                    return null;
                 }
             }
 
             switch ($object['type']) {
                 case 'Question':
                 case 'Note':
-                    $this->note->create($object);
-                    break;
+                    return $this->note->create($object);
                 case 'Page':
                 case 'Article':
-                    $this->page->create($object);
-                    break;
+                    return $this->page->create($object);
                 default:
                     $this->logger->warning('Could not create an object from type {t} on {url}: {o}', ['t' => $object['type'], 'url' => $apUrl, 'o' => $object]);
             }
         } catch (\Exception $e) {
             $this->logger->error('There was an exception while getting {url}: {ex} - {m}', ['url' => $apUrl, 'ex' => \get_class($e), 'm' => $e->getMessage()]);
         }
+
+        return null;
     }
 }
