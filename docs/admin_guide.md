@@ -381,8 +381,8 @@ For example you can also configure Unix socket files if you wish.
 
 If you want to set a password with Dragonfly, edit the `sudo nano /etc/dragonfly/dragonfly.conf` file and append the following option at the bottom of the file:
 
-```conf
-# Replace {!SECRET!!KEY!-32_1-!} wit hthe password generated earlier
+```ini
+# Replace {!SECRET!!KEY!-32_1-!} with the password generated earlier
 --requirepass={!SECRET!!KEY!-32_1-!}
 ```
 
