@@ -343,9 +343,7 @@ REDIS_DNS=redis://${REDIS_PASSWORD}@$127.0.0.1:6379
 
 #### Dragonfly
 
-_Important:_ Dragonfly is a drop-in replacement for Redis. Do **NOT** run both Redis & Dragonfly, just pick one. After all they run on the same port by default (6379).
-
-[Dragonfly](https://www.dragonflydb.io/) is a drop-in replacement for Redis. If you wish to use Dragonfly instead, that is possible.
+[Dragonfly](https://www.dragonflydb.io/) is a drop-in replacement for Redis. If you wish to use Dragonfly instead, that is possible. Do **NOT** run both Redis & Dragonfly, just pick one. After all they run on the same port by default (6379).
 
 Be sure you disabled redis:
 
