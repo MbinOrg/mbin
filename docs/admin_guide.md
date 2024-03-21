@@ -379,6 +379,13 @@ sudo systemctl enable dragonfly
 Configuration file is located at: `/etc/dragonfly/dragonfly.conf`. See also: [Server config documentation](https://www.dragonflydb.io/docs/managing-dragonfly/flags).  
 For example you can also configure Unix socket files if you wish.
 
+If you want to set a password with Dragonfly, edit the `sudo nano /etc/dragonfly/dragonfly.conf` file and append the following option at the bottom of the file:
+
+```conf
+# Replace {!SECRET!!KEY!-32_1-!} wit hthe password generated earlier
+--requirepass={!SECRET!!KEY!-32_1-!}
+```
+
 Dragonfly use the same port as Redis and is fully compatible with Redis APIs, so _no_ client-side changes are needed. Unless you use a different port or another socket location.
 
 ### PostgreSQL (Database)
