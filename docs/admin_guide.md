@@ -972,7 +972,7 @@ With the following content:
 [program:messenger]
 command=php /var/www/mbin/bin/console messenger:consume scheduler_default old async outbox deliver inbox resolve receive failed --time-limit=3600
 user=www-data
-numprocs=4
+numprocs=6
 startsecs=0
 autostart=true
 autorestart=true
