@@ -22,7 +22,10 @@
                     </a>
                 </li>
                 {% if user.apProfileId %}
-                    <li><a href="{{ user.apProfileId }}">{{ 'go_to_original_instance'|trans|trim('.', 'right') }}</a>
+                    <li>
+                        <a href="{{ user.apProfileId }}" rel="noopener noreferrer nofollow" target="_blank">
+                            <span>{{ 'go_to_original_instance'|trans|trim('.', 'right') }}</span> <i class="fa-solid fa-external-link" aria-hidden="true"></i>
+                        </a>
                     </li>
                 {% endif %}
             </ul>
