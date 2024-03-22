@@ -305,7 +305,11 @@ APP_ENV=dev APP_DEBUG=1 php bin/console cache:clear
 composer clear-cache
 ```
 
-### Redis
+### Caching
+
+You can choose between either Redis or Dragonfly.
+
+#### Redis
 
 Edit `redis.conf` file:
 
@@ -336,6 +340,53 @@ REDIS_DNS=redis://${REDIS_PASSWORD}@$127.0.0.1:6379
 # Or if you want to use socket file:
 #REDIS_DNS=redis://${REDIS_PASSWORD}/var/run/redis/redis-server.sock
 ```
+
+#### Dragonfly
+
+[Dragonfly](https://www.dragonflydb.io/) is a drop-in replacement for Redis. If you wish to use Dragonfly instead, that is possible. Do **NOT** run both Redis & Dragonfly, just pick one. After all they run on the same port by default (6379).
+
+Be sure you disabled redis:
+
+```sh
+sudo systemctl stop redis
+sudo systemctl disable redis
+```
+
+Or even removed Redis: `sudo apt purge redis-server`
+
+Dragonfly Debian file can be downloaded via ([Dragonfly also provide a standalone binary](https://www.dragonflydb.io/docs/getting-started/binary#step-1-download-preferred-release)):
+
+```sh
+wget https://dragonflydb.gateway.scarf.sh/latest/dragonfly_amd64.deb
+```
+
+Install the deb package via:
+
+```sh
+sudo apt install ./dragonfly_amd64.deb
+```
+
+Because Dragonfly is fully Redis compatible you can optionally still install the `redis-tools` package
+(`apt install redis-tools`), if you want to use the `redis-cli` with Dragonfly for example.
+
+Start & enable the service if it isn't already:
+
+```sh
+sudo systemctl start dragonfly
+sudo systemctl enable dragonfly
+```
+
+Configuration file is located at: `/etc/dragonfly/dragonfly.conf`. See also: [Server config documentation](https://www.dragonflydb.io/docs/managing-dragonfly/flags).  
+For example you can also configure Unix socket files if you wish.
+
+If you want to set a password with Dragonfly, edit the `sudo nano /etc/dragonfly/dragonfly.conf` file and append the following option at the bottom of the file:
+
+```ini
+# Replace {!SECRET!!KEY!-32_1-!} with the password generated earlier
+--requirepass={!SECRET!!KEY!-32_1-!}
+```
+
+Dragonfly use the same port as Redis and is fully compatible with Redis APIs, so _no_ client-side changes are needed. Unless you use a different port or another socket location.
 
 ### PostgreSQL (Database)
 
@@ -717,6 +768,7 @@ _Hint:_ There are also other configuration files, eg. `config/packages/monolog.y
 
 The symphony messengers are background workers for a lot of different task, the biggest one being handling all the ActivityPub traffic.  
 We have 4 different queues:
+
 1. `async` (with jobs coming from your local instance, i.e. posting something to a magazine and delivering that to all followers)
 2. `async_ap` (with jobs coming from remote instances, i.e. someone posted something to a remote magazine you're subscribed to)
 3. `failed` jobs from the first two queues that have been retried, but failed. They get retried a few times again, before they end up in
@@ -790,7 +842,7 @@ nano .env
 RABBITMQ_PASSWORD=!ChangeThisRabbitPass!
 MESSENGER_TRANSPORT_DSN=amqp://kbin:${RABBITMQ_PASSWORD}@127.0.0.1:5672/%2f/messages
 
-# or Redis:
+# or Redis/Dragonfly:
 #MESSENGER_TRANSPORT_DSN=redis://${REDIS_PASSWORD}@127.0.0.1:6379/messages
 # or PostgreSQL Database (Doctrine):
 #MESSENGER_TRANSPORT_DSN=doctrine://default
@@ -890,6 +942,7 @@ mercure fmt metal/caddy/Caddyfile --overwrite
 Mercure will be configured further in the next section (Supervisor).
 
 ### Setup Supervisor
+
 We use Supervisor to run our background workers, aka. "Messengers".
 
 Install Supervisor:
@@ -981,7 +1034,7 @@ If you perform a Mbin upgrade (eg. `git pull`), be aware to _always_ execute the
 ./bin/post-upgrade
 ```
 
-And when needed also execute: `sudo redis-cli FLUSHDB` to get rid of Redis cache issues. And reload the PHP FPM service if you have OPCache enabled.
+And when needed also execute: `sudo redis-cli FLUSHDB` to get rid of Redis/Dragonfly cache issues. And reload the PHP FPM service if you have OPCache enabled.
 
 ### Manual user activation
 
@@ -1035,7 +1088,7 @@ Web-server (Nginx):
 
 **Please, check the logs above first.** If you are really stuck, visit to our [Matrix space](https://matrix.to/#/%23mbin:melroy.org), there is a 'General' room and dedicated room for 'Issues/Support'.
 
-Test PostgreSQL connections if using a remote server, same with Redis. Ensure no firewall rules blocking are any incoming or out-coming traffic (eg. port on 80 and 443).
+Test PostgreSQL connections if using a remote server, same with Redis (or Dragonfly is you are using Dragonfly instead). Ensure no firewall rules blocking are any incoming or out-coming traffic (eg. port on 80 and 443).
 
 ### S3 Images storage (optional)
 

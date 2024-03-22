@@ -1,3 +1,4 @@
+{%- set STATUS_PENDING = constant('App\\Entity\\Report::STATUS_PENDING') -%}
 <aside class="{{ html_classes('options options--top') }}" id="options">
     <div></div>
     <menu class="options__main">
@@ -44,7 +45,7 @@
             </a>
         </li>
         <li>
-            <a href="{{ path('user_settings_reports') }}"
+            <a href="{{ path('user_settings_reports', {status: STATUS_PENDING}) }}"
                class="{{ html_classes({'active': is_route_name('user_settings_reports')}) }}">
                 {{ 'reports'|trans }}
             </a>
