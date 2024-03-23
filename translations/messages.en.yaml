@@ -748,6 +748,8 @@ page_width_max: Max
 page_width_auto: Auto
 page_width_fixed: Fixed
 open_url_to_fediverse: Open original URL
+open_original_magazine: Open original magazine
+open_original_profile: Open original profile
 change_my_avatar: Change my avatar
 change_my_cover: Change my cover
 edit_my_profile: Edit my profile
