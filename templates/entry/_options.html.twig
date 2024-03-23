@@ -47,7 +47,7 @@
                     title="{{ 'filter_by_time'|trans }}">
                 <i aria-hidden="true" class="fa-solid fa-clock"></i>
                 {% if showFilterLabels == 'on' or (showFilterLabels == 'auto' and criteria.getOption('time') != 'all') %}
-                    <span>{{ criteria.getOption('time')|trans }}</span>
+                    <span class="hide-on-mobile">{{ criteria.getOption('time')|trans }}</span>
                 {% endif %}
             </button>
             <ul class="dropdown__menu">
