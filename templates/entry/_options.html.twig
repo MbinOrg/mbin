@@ -226,11 +226,13 @@
                         <i class="fa-solid fa-house-chimney" aria-hidden="true"></i> &nbsp; {{ 'local'|trans }}
                     </a>
                 </li>
+                {#
                 <li>
                     <a href="{{ options_url('federation', 'federated', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('federation') == 'federated' }) }}">
                         <i class="fa-solid fa-network-wired" aria-hidden="true"></i> &nbsp; {{ 'federated'|trans }}
                     </a>
                 </li>
+                #}
             </ul>
         </li>
     </menu>

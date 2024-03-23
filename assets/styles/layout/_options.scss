@@ -77,10 +77,20 @@
   }
 
   &__filter {
-    button {
-      border-bottom-left-radius: 0px!important;
-      border-bottom-right-radius: 0px!important;
+    li:first-of-type {
+      button {
+          border-bottom-right-radius: 0px!important;
+      }
+    }
 
+    li:not(:first-of-type) {
+      button {
+        border-bottom-right-radius: 0px!important;
+        border-bottom-left-radius: 0px!important;
+      }
+    }
+
+    button {
       font-size: 0;
 
       i {
