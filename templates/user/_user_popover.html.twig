@@ -12,7 +12,7 @@
             <h3>
                 <a class="link-muted" href="{{ path('user_overview', {username: user.username}) }}">{{ user.username|username }}</a>
             </h3>
-            <p>
+            <p class="user__name">
                 <span>{{ user.username|username(true) }}</span>
                 {% if user.apProfileId %}
                     <a href="{{ user.apProfileId }}" rel="noopener noreferrer nofollow" target="_blank" title="{{ 'go_to_original_instance'|trans }}" aria-label="{{ 'go_to_original_instance'|trans }}">

@@ -11,7 +11,7 @@
             </figure>
         {% endif %}
         <h4><a href="{{ path('user_overview', {username:entry.user.username}) }}">{{ entry.user.username|username(false) }}</a></h4>
-        <p>
+        <p class="user__name">
             <span>{{ entry.user.username|username(true) }}</span>
             {% if entry.user.apProfileId %}
                 <a href="{{ entry.user.apProfileId }}" rel="noopener noreferrer nofollow" target="_blank" title="{{ 'go_to_original_instance'|trans }}" aria-label="{{ 'go_to_original_instance'|trans }}">
