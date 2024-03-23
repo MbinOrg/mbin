@@ -15,8 +15,8 @@
             <p>
                 <span>{{ user.username|username(true) }}</span>
                 {% if user.apProfileId %}
-                    <a href="{{ user.apProfileId }}" rel="noopener noreferrer nofollow" target="_blank" title="{{ 'open_original_profile'|trans }}" aria-label="{{ 'open_original_profile'|trans }}">
-                    <i class="fa-solid fa-circle-nodes" aria-hidden="true"></i></a>
+                    <a href="{{ user.apProfileId }}" rel="noopener noreferrer nofollow" target="_blank" title="{{ 'go_to_original_instance'|trans }}" aria-label="{{ 'go_to_original_instance'|trans }}">
+                    <i class="fa-solid fa-external-link" aria-hidden="true"></i></a>
                 {% endif %}
             </p>
             <ul>

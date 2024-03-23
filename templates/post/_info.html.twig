@@ -10,9 +10,14 @@
                      alt="{{ post.user.username ~' '~ 'avatar'|trans|lower }}">
             </figure>
         {% endif %}
-        <h4><a href="{{ path('user_overview', {username:post.user.username}) }}"
-               class="stretched-link">{{ post.user.username|username(false) }}</a></h4>
-        <p class="user__name">{{ post.user.username|username(true) }}</p>
+        <h4><a href="{{ path('user_overview', {username:post.user.username}) }}">{{ post.user.username|username(false) }}</a></h4>
+        <p>
+            <span>{{ post.user.username|username(true) }}</span>
+            {% if post.user.apProfileId %}
+                <a href="{{ post.user.apProfileId }}" rel="noopener noreferrer nofollow" target="_blank" title="{{ 'go_to_original_instance'|trans }}" aria-label="{{ 'go_to_original_instance'|trans }}">
+                <i class="fa-solid fa-external-link" aria-hidden="true"></i></a>
+            {% endif %}
+        </p>
     </div>
     {{ component('user_actions', {user: post.user}) }}
     <ul class="info">

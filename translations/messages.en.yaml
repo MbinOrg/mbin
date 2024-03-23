@@ -61,7 +61,7 @@ disconnected_magazine_info: This magazine is not receiving updates (last activit
 always_disconnected_magazine_info: This magazine is not receiving updates.
 subscribe_for_updates: Subscribe to start receiving updates.
 federated_user_info: This profile is from a federated server and may be incomplete.
-go_to_original_instance: For a complete list of posts, visit the original instance.
+go_to_original_instance: View on remote instance
 empty: Empty
 subscribe: Subscribe
 unsubscribe: Unsubscribe
@@ -748,8 +748,6 @@ page_width_max: Max
 page_width_auto: Auto
 page_width_fixed: Fixed
 open_url_to_fediverse: Open original URL
-open_original_magazine: Open original magazine
-open_original_profile: Open original profile
 change_my_avatar: Change my avatar
 change_my_cover: Change my cover
 edit_my_profile: Edit my profile
