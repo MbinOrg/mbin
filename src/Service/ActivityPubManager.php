@@ -9,9 +9,13 @@ use App\DTO\ActivityPub\VideoDto;
 use App\DTO\ModeratorDto;
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Contracts\ActivityPubActorInterface;
+use App\Entity\Entry;
+use App\Entity\EntryComment;
 use App\Entity\Image;
 use App\Entity\Magazine;
 use App\Entity\Moderator;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use App\Entity\User;
 use App\Exception\InvalidApPostException;
 use App\Factory\ActivityPub\PersonFactory;
@@ -20,6 +24,7 @@ use App\Factory\UserFactory;
 use App\Message\ActivityPub\UpdateActorMessage;
 use App\Message\DeleteImageMessage;
 use App\Message\DeleteUserMessage;
+use App\Repository\ApActivityRepository;
 use App\Repository\ImageRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
@@ -36,6 +41,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class ActivityPubManager
 {
     public function __construct(
+        private readonly ApActivityRepository $activityRepository,
         private readonly UserRepository $userRepository,
         private readonly UserManager $userManager,
         private readonly UserFactory $userFactory,
@@ -722,5 +728,48 @@ class ActivityPubManager
         // - image url looks like a link to image
         return (!empty($object['mediaType']) && ImageManager::isImageType($object['mediaType']))
             || ImageManager::isImageUrl($object['url']);
+    }
+
+    /**
+     * @param string|array $apObject      the object that should be like, so a post of any kind in its AP array representation or a URL
+     * @param array        $fullPayload   the full message payload, only used to log it
+     * @param callable     $chainDispatch if we do not have the object in our db this is called to dispatch a new ChainActivityMessage.
+     *                                    Since the explicit object has to be set in the message this has to be done as a callback method
+     *
+     * @see ChainActivityMessage
+     */
+    public function getEntityObject(string|array $apObject, array $fullPayload, callable $chainDispatch): null|Entry|EntryComment|Post|PostComment
+    {
+        $object = null;
+        if (\is_string($apObject)) {
+            if (false === filter_var($apObject, FILTER_VALIDATE_URL)) {
+                $this->logger->error('The like activity references an object by string, but that is not a URL, discarding the message', $fullPayload);
+
+                return null;
+            }
+            $activity = $this->activityRepository->findByObjectId($apObject);
+            if (!$activity) {
+                $object = $this->apHttpClient->getActivityObject($apObject);
+            }
+        } else {
+            $activity = $this->activityRepository->findByObjectId($apObject['id']);
+            if (!$activity) {
+                $object = $apObject;
+            }
+        }
+
+        if (!$activity && !$object) {
+            $this->logger->error("The activity is still null and we couldn't get the object from the url, discarding", $fullPayload);
+
+            return null;
+        }
+
+        if ($object) {
+            $chainDispatch($object);
+
+            return null;
+        }
+
+        return $this->entityManager->getRepository($activity['type'])->find((int) $activity['id']);
     }
 }
