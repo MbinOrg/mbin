@@ -11,6 +11,7 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Service\SettingsManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 
@@ -34,10 +35,49 @@ class ApActivityRepository extends ServiceEntityRepository
     ])]
     public function findByObjectId(string $apId): ?array
     {
+        $local = $this->findLocalByApId($apId);
+        if ($local) {
+            return $local;
+        }
+
+        $conn = $this->_em->getConnection();
+        $tables = [
+            ['table' => 'entry', 'class' => Entry::class],
+            ['table' => 'entry_comment', 'class' => EntryComment::class],
+            ['table' => 'post', 'class' => Post::class],
+            ['table' => 'post_comment', 'class' => PostComment::class],
+        ];
+        foreach ($tables as $table) {
+            $t = $table['table'];
+            $sql = "SELECT id FROM $t WHERE ap_id = :apId";
+            try {
+                $stmt = $conn->prepare($sql);
+                $stmt->bindValue('apId', $apId);
+                $results = $stmt->executeQuery()->fetchAllAssociative();
+
+                if (1 === \sizeof($results) && \array_key_exists('id', $results[0])) {
+                    return [
+                        'id' => $results[0]['id'],
+                        'type' => $table['class'],
+                    ];
+                }
+            } catch (Exception) {
+            }
+        }
+
+        return null;
+    }
+
+    #[ArrayShape([
+        'id' => 'int',
+        'type' => 'string',
+    ])]
+    private function findLocalByApId(string $apId): ?array
+    {
         $parsed = parse_url($apId);
         if ($parsed['host'] === $this->settingsManager->get('KBIN_DOMAIN')) {
             $exploded = array_filter(explode('/', $parsed['path']));
-            $id = end($exploded);
+            $id = \intval(end($exploded));
             if ('p' === $exploded[3]) {
                 if (4 === \count($exploded)) {
                     return [
@@ -67,32 +107,6 @@ class ApActivityRepository extends ServiceEntityRepository
             }
         }
 
-        $entryClass = Entry::class;
-        $entryCommentClass = EntryComment::class;
-        $postClass = Post::class;
-        $postCommentClass = PostComment::class;
-
-        $conn = $this->_em->getConnection();
-        $sql = '
-            (SELECT id, :entryClass AS type FROM entry
-            WHERE ap_id = :apId)
-            UNION
-            (SELECT id, :entryCommentClass AS type FROM entry_comment
-            WHERE ap_id = :apId)
-            UNION
-            (SELECT id, :postClass AS type FROM post
-            WHERE ap_id = :apId)
-            UNION
-            (SELECT id, :postCommentClass AS type FROM post_comment
-            WHERE ap_id = :apId)';
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue('entryClass', $entryClass);
-        $stmt->bindValue('entryCommentClass', $entryCommentClass);
-        $stmt->bindValue('postClass', $postClass);
-        $stmt->bindValue('postCommentClass', $postCommentClass);
-        $stmt->bindValue('apId', $apId);
-        $results = $stmt->executeQuery()->fetchAllAssociative();
-
-        return \count($results) ? $results[0] : null;
+        return null;
     }
 }
