@@ -55,8 +55,7 @@ cover: Omslag
 related_posts: Verwante berichten
 random_posts: Willekeurige berichten
 federated_user_info: Dit profiel is van een gefedereerde server en is mogelijk onvolledig.
-go_to_original_instance: Voor een volledige lijst met berichten, bezoek de oorspronkelijke
-  instantie.
+go_to_original_instance: Bekijk op externe instantie
 empty: Leeg
 subscribe: Abonneren
 down_votes: Omlaagstemmen
@@ -824,3 +823,11 @@ sso_registrations_enabled: SSO -registraties ingeschakeld
 sso_registrations_enabled.error: Nieuwe accountregistraties met identiteitsbeheerders
   van derden zijn momenteel uitgeschakeld.
 always_disconnected_magazine_info: Dit tijdschrift heeft geen updates ontvangen.
+marked_for_deletion_at: Gemarkeerd voor verwijdering op %date%
+account_deletion_title: Accountverwijdering
+account_deletion_button: Account verwijderen
+account_deletion_immediate: Onmiddellijk verwijderen
+marked_for_deletion: Gemarkeerd voor verwijdering
+account_deletion_description: Uw account wordt binnen 30 dagen verwijderd, tenzij
+  u ervoor kiest om het account onmiddellijk te verwijderen. Het account kan na verwijdering
+  niet meer worden hersteld.
