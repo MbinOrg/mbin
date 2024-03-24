@@ -778,10 +778,12 @@ We have a few different queues:
     After the object is built and the inbox addresses of all the remote instances who are interested in the message are gathered,
     we will create a `DeliverMessage` for every one of them, which will be sent to the `deliver` queue
 4. `deliver` [rabbitMQ]: Actually sending out the ActivityPub objects to other instances
-5. `async` [rabbitMQ]: messages in async are local actions that are relevant to this instance, e.g. creating notifications, fetching embeded images, etc.
-6. `old` [rabbitMQ]: the standard messages queue that existed before. This exists solely for compatibility purposes and might be removed later on
-7. `failed` [postgres]: jobs from the other queues that have been retried, but failed. They get retried a few times again, before they end up in
-8. `dead` [postgres]: dead jobs that will not be retried
+5. `resolve` [rabbitMQ]: Resolving dependencies or ActivityPub actors. 
+    For example if your instance gets a like message for a post that is not on your instance a message resolving that dependency will be dispatched to this queue
+6. `async` [rabbitMQ]: messages in async are local actions that are relevant to this instance, e.g. creating notifications, fetching embeded images, etc.
+7. `old` [rabbitMQ]: the standard messages queue that existed before. This exists solely for compatibility purposes and might be removed later on
+8. `failed` [postgres]: jobs from the other queues that have been retried, but failed. They get retried a few times again, before they end up in
+9. `dead` [postgres]: dead jobs that will not be retried
 
 We need the `dead` queue so that messages that throw a `UnrecoverableMessageHandlingException`, which is used to indicate that a message should not be retried and go straight to the supplied failure queue
 
