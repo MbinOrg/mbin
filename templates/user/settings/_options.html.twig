@@ -26,6 +26,14 @@
                 {{ 'password_and_2fa'|trans }}
             </a>
         </li>
+        {% if app.user.admin is not same as true %}
+            <li>
+                <a href="{{ path('user_settings_account_deletion') }}"
+                   class="{{ html_classes({'active': is_route_name('user_settings_account_deletion')}) }}">
+                    {{ 'account_deletion_title'|trans }}
+                </a>
+            </li>
+        {% endif %}
         <li>
             <a href="{{ path('user_settings_magazine_blocks') }}"
                class="{{ html_classes({'active': is_route_name_contains('_blocks')}) }}">

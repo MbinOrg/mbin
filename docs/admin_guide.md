@@ -961,7 +961,7 @@ With the following content:
 
 ```ini
 [program:messenger]
-command=php /var/www/mbin/bin/console messenger:consume async async_ap failed --time-limit=3600
+command=php /var/www/mbin/bin/console messenger:consume scheduler_default async async_ap failed --time-limit=3600
 user=www-data
 numprocs=4
 startsecs=0

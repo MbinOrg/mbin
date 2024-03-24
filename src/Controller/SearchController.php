@@ -69,7 +69,8 @@ class SearchController extends AbstractController
             }
         }
 
-        $res = $this->manager->findPaginated($query, $this->getPageNb($request));
+        $user = $this->getUser();
+        $res = $this->manager->findPaginated($user, $query, $this->getPageNb($request));
 
         return $this->render(
             'search/front.html.twig',

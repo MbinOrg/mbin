@@ -19,6 +19,7 @@ use App\Factory\MagazineFactory;
 use App\Factory\UserFactory;
 use App\Message\ActivityPub\UpdateActorMessage;
 use App\Message\DeleteImageMessage;
+use App\Message\DeleteUserMessage;
 use App\Repository\ImageRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
@@ -101,7 +102,7 @@ class ActivityPubManager
     /**
      * Find an existing actor or create a new one if the actor doesn't yet exists.
      *
-     * @param actorUrlOrHandle actor URL or actor handle (could even be null)
+     * @param ?string $actorUrlOrHandle actorUrlOrHandle actor URL or actor handle (could even be null)
      *
      * @return User|Magazine|null or Magazine or null on error
      */
@@ -122,7 +123,12 @@ class ActivityPubManager
         $actorUrl = $actorUrlOrHandle;
         if (false === filter_var($actorUrl, FILTER_VALIDATE_URL)) {
             if (!substr_count(ltrim($actorUrl, '@'), '@')) {
-                return $this->userRepository->findOneBy(['username' => ltrim($actorUrl, '@')]);
+                $user = $this->userRepository->findOneBy(['username' => ltrim($actorUrl, '@')]);
+                if ($user->apFetchedAt->modify('+1 hour') < (new \DateTime())) {
+                    $this->bus->dispatch(new UpdateActorMessage($user->apProfileId));
+                }
+
+                return $user;
             }
 
             $actorUrl = $this->webfinger($actorUrl)->getProfileId();
@@ -179,6 +185,17 @@ class ActivityPubManager
 
                 return $magazine;
             }
+
+            if ('Tombstone' === $actor['type']) {
+                // deleted actor
+                if (null !== ($magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl])) && null !== $magazine->apId) {
+                    $this->magazineManager->purge($magazine);
+                    $this->logger->warning('got a tombstone for magazine {name} at {url}, deleting it', ['name' => $magazine->name, 'url' => $actorUrl]);
+                } elseif (null !== ($user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl])) && null !== $user->apId) {
+                    $this->bus->dispatch(new DeleteUserMessage($user->getId()));
+                    $this->logger->warning('got a tombstone for user {name} at {url}, deleting it', ['name' => $user->username, 'url' => $actorUrl]);
+                }
+            }
         } else {
             $this->logger->debug("ActivityPubManager:findActorOrCreate:actorUrl: $actorUrl. Actor not found.");
         }
@@ -189,7 +206,7 @@ class ActivityPubManager
     /**
      * Try to find an existing actor or create a new one if the actor doesn't yet exists.
      *
-     * @param actorUrlOrHandle actor URL or handle (could even be null)
+     * @param ?string $actorUrlOrHandle actor URL or handle (could even be null)
      *
      * @throws \LogicException when the returned actor is not a user or is null
      */
@@ -270,6 +287,16 @@ class ActivityPubManager
         }
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
+        if (!$actor || !\is_array($actor)) {
+            return null;
+        }
+
+        if (isset($actor['type']) && 'Tombstone' === $actor['type'] && $user instanceof User) {
+            $this->bus->dispatch(new DeleteUserMessage($user->getId()));
+
+            return null;
+        }
+
         // Check if actor isn't empty (not set/null/empty array/etc.)
         if (isset($actor['endpoints']['sharedInbox']) || isset($actor['inbox'])) {
             // Update the following user columns
@@ -396,6 +423,14 @@ class ActivityPubManager
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         // Check if actor isn't empty (not set/null/empty array/etc.)
+
+        if ($actor && 'Tombstone' === $actor['type'] && $magazine instanceof Magazine && null !== $magazine->apId) {
+            // tombstone for remote magazine -> delete it
+            $this->magazineManager->purge($magazine);
+
+            return null;
+        }
+
         if (isset($actor['endpoints']['sharedInbox']) || isset($actor['inbox'])) {
             if (isset($actor['summary'])) {
                 $converter = new HtmlConverter(['strip_tags' => true]);
@@ -607,15 +642,13 @@ class ActivityPubManager
      */
     public function updateActor(string $actorUrl): null|Magazine|User
     {
-        $this->logger->info('updating actor at {url}', ['url' => $actorUrl]);
-        $actor = $this->apHttpClient->getActorObject($actorUrl);
-
-        // User (We don't make a distinction between bots with type Service as Lemmy does)
-        if (isset($actor['type']) && \in_array($actor['type'], User::USER_TYPES)) {
+        if ($this->userRepository->findOneBy(['apProfileId' => $actorUrl])) {
             return $this->updateUser($actorUrl);
+        } elseif ($this->magazineRepository->findOneBy(['apProfileId' => $actorUrl])) {
+            return $this->updateMagazine($actorUrl);
         }
 
-        return $this->updateMagazine($actorUrl);
+        return null;
     }
 
     public function findOrCreateMagazineByToAndCC(array $object): Magazine|null
