@@ -55,8 +55,7 @@ related_posts: Entradas relacionadas
 random_posts: Publicaciones al azar
 federated_magazine_info: Esta revista es de un servidor federado y podría estar incompleta.
 federated_user_info: Este perfil es de un servidor federado y podría estar incompleto.
-go_to_original_instance: Para obtener una lista completa de publicaciones, visite
-  la instancia original.
+go_to_original_instance: Ver en una instancia remota
 empty: Vacío
 subscribe: Suscribirse
 unsubscribe: Cancelar suscripción
