@@ -39,6 +39,11 @@ class AccountDeletionController extends AbstractController
 
         $form = $this->createForm(UserAccountDeletionType::class);
         $user = $this->getUserOrThrow();
+
+        if ($user->isAdmin()) {
+            return $this->redirectToRoute('user_settings_general');
+        }
+
         try {
             // Could throw an error
             $form->handleRequest($request);
