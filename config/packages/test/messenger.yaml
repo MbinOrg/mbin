@@ -1,5 +1,13 @@
 framework:
-  messenger:
-    routing:
-      App\Message\Contracts\AsyncMessageInterface: sync
-      App\Message\Contracts\AsyncApMessageInterface: sync
+    messenger:
+        routing:
+            # Route your messages to the transports
+            App\Message\Contracts\AsyncMessageInterface: sync
+            App\Message\Contracts\ActivityPubInboxInterface: sync
+            App\Message\Contracts\ActivityPubInboxReceiveInterface: sync
+            App\Message\Contracts\ActivityPubOutboxDeliverInterface: sync
+            App\Message\Contracts\ActivityPubOutboxInterface: sync
+            App\Message\Contracts\ActivityPubResolveInterface: sync
+            # Consider adding SendEmail from Mailer via async messenger as well:
+            Symfony\Component\Mailer\Messenger\SendEmailMessage: sync
+            App\Message\Contracts\SendConfirmationEmailInterface: sync
