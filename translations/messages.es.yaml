@@ -55,8 +55,7 @@ related_posts: Entradas relacionadas
 random_posts: Publicaciones al azar
 federated_magazine_info: Esta revista es de un servidor federado y podría estar incompleta.
 federated_user_info: Este perfil es de un servidor federado y podría estar incompleto.
-go_to_original_instance: Para obtener una lista completa de publicaciones, visite
-  la instancia original.
+go_to_original_instance: Ver en una instancia remota
 empty: Vacío
 subscribe: Suscribirse
 unsubscribe: Cancelar suscripción
@@ -361,7 +360,6 @@ delete_account: Eliminar la cuenta
 purge_account: Borrar la cuenta
 ban_account: Suspender la cuenta
 unban_account: Desbloquear la cuenta
-delete_account_request_send: Tu solicitud para eliminar de la cuenta ha sido enviada.
 related_magazines: Magazines relacionados
 random_magazines: Magazines al azar
 magazine_panel_tags_info: Indícalo sólo si deseas que el contenido del Fediverso se
@@ -432,10 +430,6 @@ federation_page_enabled: Página de la Federación activada
 federation_page_allowed_description: Instancias conocidas con las que nos federamos
 federation_page_disallowed_description: Instancias con las que no nos federamos
 federated_search_only_loggedin: Búsqueda federada limitada si no se ha iniciado sesión
-request_account_deletion_title: Eliminación de la cuenta
-request_account_deletion_description: Se notificará al administrador que desea eliminar
-  su cuenta.
-request_account_deletion_button: Solicitar la eliminación de la cuenta
 email_confirm_button_text: Confirme su solicitud de cambio de la contraseña
 errors.server429.title: Error 429 Demasiadas solicitudes
 errors.server404.title: Error 404 No encontrado

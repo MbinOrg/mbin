@@ -208,7 +208,6 @@ boost: Подсилване
 empty: Празно
 change_language: Промяна на езика
 federated_user_info: Този профил е от федериран сървър и може да е непълен.
-request_account_deletion_title: Изтриване на акаунта
 pages: Страници
 magazines: Общности
 useful: Полезно
@@ -342,7 +341,6 @@ toolbar.unordered_list: Неподреден списък
 rounded_edges: Заоблени ръбове
 edited_thread: Редактира нишка
 preferred_languages: Филтриране по език на нишките и публикациите
-request_account_deletion_button: Поискване на изтриване на акаунта
 2fa.enable: Настройване на двуфакторно удостоверяване
 auto_preview: Автоматичен преглед на мултимедията
 wrote_message: Написа съобщение
@@ -352,8 +350,6 @@ edit_article: Редактиране на нишката
 email_confirm_title: Потвърди своя адрес на ел. поща.
 added_new_thread: Добави нова нишка
 two_factor_backup: Резервни кодове за двуфакторно удостоверяване
-request_account_deletion_description: Администраторът ще бъде уведомен, че искаш акаунтът
-  ти да бъде изтрит.
 edit_comment: Запазване на промените
 edited_comment: Редактира коментар
 mod_remove_your_post: Модератор премахна твоя публикация
