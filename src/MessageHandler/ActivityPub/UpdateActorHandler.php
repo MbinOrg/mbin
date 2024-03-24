@@ -27,9 +27,14 @@ class UpdateActorHandler
     public function __invoke(UpdateActorMessage $message): void
     {
         $actorUrl = $message->actorUrl;
-        $lock = $this->lockFactory->createLock('update_actor_'.hash('sha256', $actorUrl), 60);
+        if ($key = $message->retrieveKey()) {
+            $lock = $this->lockFactory->createLockFromKey($key, 60, false);
+        } else {
+            $lock = $this->lockFactory->createLock('update_actor_'.hash('sha256', $actorUrl), 60);
+            $lock->acquire();
+        }
 
-        if (!$lock->acquire()) {
+        if (!$lock->isAcquired()) {
             $this->logger->debug(
                 'not updating actor at {url}: ongoing actor update is already in progress',
                 ['url' => $actorUrl]
