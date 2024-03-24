@@ -690,8 +690,8 @@ oauth2.grant.moderate.post.pin: Pin berichten bovenaan uw gemodereerde tijdschri
   veilige plaats bewaart.
 2fa.qr_code_img.alt: Een QR-code waarmee tweefactorauthenticatie voor uw account ingesteld
   kan worden
-delete_account_desc: Verwijder het account terwijl u de reacties van andere gebruikers
-  in de gemaakte discussies, berichten en opmerkingen laat staan.
+delete_account_desc: Verwijder het account, inclusief de reacties van andere gebruikers
+  in gemaakte discussies, berichten en opmerkingen.
 2fa.enable: Stel tweefactorauthenticatie in
 2fa.user_active_tfa.title: Gebruiker heeft actieve 2FA
 2fa.code_invalid: De authenticatiecode is niet geldig
@@ -831,3 +831,9 @@ marked_for_deletion: Gemarkeerd voor verwijdering
 account_deletion_description: Uw account wordt binnen 30 dagen verwijderd, tenzij
   u ervoor kiest om het account onmiddellijk te verwijderen. Het account kan na verwijdering
   niet meer worden hersteld.
+remove_schedule_delete_account_desc: Verwijder de geplande verwijdering. Alle inhoud
+  is weer beschikbaar en de gebruiker kan inloggen.
+schedule_delete_account: Plan Verwijdering
+schedule_delete_account_desc: Plan de verwijdering van dit account over 30 dagen.
+  Hierdoor worden de gebruiker en zijn inhoud verborgen en kan de gebruiker niet inloggen.
+remove_schedule_delete_account: Geplande verwijdering verwijderen
