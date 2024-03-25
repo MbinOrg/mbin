@@ -49,7 +49,8 @@ class ChainActivityHandler
             return;
         }
 
-        $entity = $this->retrieveObject($object['id']);
+        $this->retrieveObject($object['id']);
+        $entity = $this->repository->findByObjectId($object['id']);
 
         if (!$entity) {
             $this->logger->error('could not retrieve all the dependencies of {o}', ['o' => $object]);
