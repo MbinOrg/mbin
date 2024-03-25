@@ -26,7 +26,13 @@ trait RankingTrait
 
         $advantage = max(min($scoreAdvantage + $commentAdvantage, self::MAX_ADVANTAGE), -self::MAX_PENALTY);
 
-        $this->ranking = $this->getCreatedAt()->getTimestamp() + $advantage;
+        // cap max date advantage at the time of calculation to cope with posts
+        // that have funny dates (e.g. 4200-06-09)
+        // which can cause int overflow (int32?) on ranking score
+        $dateAdvantage = min($this->getCreatedAt()->getTimestamp(), (new \DateTimeImmutable())->getTimestamp());
+
+        // also cap the final score to not exceed int32 size for the time being
+        $this->ranking = min($dateAdvantage + $advantage, 2 ** 31 - 1);
     }
 
     public function getRanking(): int
