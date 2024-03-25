@@ -64,15 +64,15 @@ class DeleteHandler
         $entity = $this->entityManager->getRepository($object['type'])->find((int) $object['id']);
 
         if ($entity instanceof Entry) {
-            $this->deleteEntry($object, $actor);
+            $this->deleteEntry($entity, $actor);
         } elseif ($entity instanceof EntryComment) {
-            $this->deleteEntryComment($object, $actor);
+            $this->deleteEntryComment($entity, $actor);
         } elseif ($entity instanceof Post) {
-            $this->deletePost($object, $actor);
+            $this->deletePost($entity, $actor);
         } elseif ($entity instanceof PostComment) {
-            $this->deletePostComment($object, $actor);
+            $this->deletePostComment($entity, $actor);
         } elseif ($entity instanceof User) {
-            $this->bus->dispatch(new DeleteUserMessage($object->getId()));
+            $this->bus->dispatch(new DeleteUserMessage($entity->getId()));
         }
     }
 
