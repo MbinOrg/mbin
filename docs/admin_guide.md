@@ -377,9 +377,15 @@ sudo systemctl enable dragonfly
 ```
 
 Configuration file is located at: `/etc/dragonfly/dragonfly.conf`. See also: [Server config documentation](https://www.dragonflydb.io/docs/managing-dragonfly/flags).  
-For example you can also configure Unix socket files if you wish.
+For example you can also configure Unix socket files if you wish. At least the following option (`--default_lua_flags`) should be added to the config file, in order to avoid "Failed to invalidate key" errors.
 
-If you want to set a password with Dragonfly, edit the `sudo nano /etc/dragonfly/dragonfly.conf` file and append the following option at the bottom of the file:
+Edit the `sudo nano /etc/dragonfly/dragonfly.conf` file and append the following option to the bottom of the file:
+
+```ini
+--default_lua_flags=allow-undeclared-keys,disable-atomicity
+```
+
+Optionally, if you want to set a password with Dragonfly, _also add_ the following option to the bottom of the file:
 
 ```ini
 # Replace {!SECRET!!KEY!-32_1-!} with the password generated earlier
@@ -769,17 +775,17 @@ _Hint:_ There are also other configuration files, eg. `config/packages/monolog.y
 The symphony messengers are background workers for a lot of different task, the biggest one being handling all the ActivityPub traffic.  
 We have a few different queues:
 
-1. `receive` [RabbitMQ]: everything any remote instance sends to us will first end up in this queue. 
-    When processing it will be determined what kind of message it is (creation of a thread, a new comment, etc.)
+1. `receive` [RabbitMQ]: everything any remote instance sends to us will first end up in this queue.
+   When processing it will be determined what kind of message it is (creation of a thread, a new comment, etc.)
 2. `inbox` [RabbitMQ]: messages from `receive` with the determined kind of incoming message will end up here and the necessary actions will be executed.
-    This is the place where the thread or comment will actually be created
-3. `outbox` [RabbitMQ]: when a user creates a thread or a comment, a message will be created and send to the outbox queue 
-    to build the ActivityPub object that will be sent to remote instances. 
-    After the object is built and the inbox addresses of all the remote instances who are interested in the message are gathered,
-    we will create a `DeliverMessage` for every one of them, which will be sent to the `deliver` queue
+   This is the place where the thread or comment will actually be created
+3. `outbox` [RabbitMQ]: when a user creates a thread or a comment, a message will be created and send to the outbox queue
+   to build the ActivityPub object that will be sent to remote instances.
+   After the object is built and the inbox addresses of all the remote instances who are interested in the message are gathered,
+   we will create a `DeliverMessage` for every one of them, which will be sent to the `deliver` queue
 4. `deliver` [RabbitMQ]: Actually sending out the ActivityPub objects to other instances
-5. `resolve` [RabbitMQ]: Resolving dependencies or ActivityPub actors. 
-    For example if your instance gets a like message for a post that is not on your instance a message resolving that dependency will be dispatched to this queue
+5. `resolve` [RabbitMQ]: Resolving dependencies or ActivityPub actors.
+   For example if your instance gets a like message for a post that is not on your instance a message resolving that dependency will be dispatched to this queue
 6. `async` [RabbitMQ]: messages in async are local actions that are relevant to this instance, e.g. creating notifications, fetching embeded images, etc.
 7. `old` [RabbitMQ]: the standard messages queue that existed before. This exists solely for compatibility purposes and might be removed later on
 8. `failed` [PostgreSQL]: jobs from the other queues that have been retried, but failed. They get retried a few times again, before they end up in
