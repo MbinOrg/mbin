@@ -42,7 +42,7 @@ class Note
     ) {
     }
 
-    public function create(array $object, array $root = null): ActivityPubActivityInterface
+    public function create(array $object, array $root = null): EntryComment|PostComment|Post
     {
         $current = $this->repository->findByObjectId($object['id']);
         if ($current) {
@@ -59,43 +59,39 @@ class Note
 
         if (isset($object['inReplyTo']) && $replyTo = $object['inReplyTo']) {
             // Create post or entry comment
-            $parent = $this->repository->findByObjectId($replyTo);
-            $parent = $this->entityManager->getRepository($parent['type'])->find((int) $parent['id']);
-
-            $root = null;
-            $fn = null;
+            $parentObjectId = $this->repository->findByObjectId($replyTo);
+            $parent = $this->entityManager->getRepository($parentObjectId['type'])->find((int) $parentObjectId['id']);
 
             if (Entry::class === \get_class($parent)) {
                 $root = $parent;
-                $fn = 'createEntryComment';
+
+                return $this->createEntryComment($object, $parent, $root);
             }
 
             if (EntryComment::class === \get_class($parent)) {
                 $root = $parent->entry;
-                $fn = 'createEntryComment';
+
+                return $this->createEntryComment($object, $parent, $root);
             }
 
             if (Post::class === \get_class($parent)) {
                 $root = $parent;
-                $fn = 'createPostComment';
+
+                return $this->createPostComment($object, $parent, $root);
             }
 
             if (PostComment::class === \get_class($parent)) {
                 $root = $parent->post;
-                $fn = 'createPostComment';
-            }
 
-            return $this->$fn($object, $parent, $root);
+                return $this->createPostComment($object, $parent, $root);
+            }
         }
 
         return $this->createPost($object);
     }
 
-    private function createEntryComment(
-        array $object,
-        ActivityPubActivityInterface $parent,
-        ActivityPubActivityInterface $root = null
-    ): ActivityPubActivityInterface {
+    private function createEntryComment(array $object, ActivityPubActivityInterface $parent, ActivityPubActivityInterface $root = null): EntryComment
+    {
         $dto = new EntryCommentDto();
         if ($parent instanceof EntryComment) {
             $dto->parent = $parent;
@@ -177,9 +173,8 @@ class Note
         }
     }
 
-    private function createPost(
-        array $object,
-    ): ActivityPubActivityInterface {
+    private function createPost(array $object): Post
+    {
         $dto = new PostDto();
         $dto->magazine = $this->activityPubManager->findOrCreateMagazineByToAndCC($object);
         $dto->apId = $object['id'];
@@ -224,11 +219,8 @@ class Note
         }
     }
 
-    private function createPostComment(
-        array $object,
-        ActivityPubActivityInterface $parent,
-        ActivityPubActivityInterface $root = null
-    ): ActivityPubActivityInterface {
+    private function createPostComment(array $object, ActivityPubActivityInterface $parent, ActivityPubActivityInterface $root = null): PostComment
+    {
         $dto = new PostCommentDto();
         if ($parent instanceof PostComment) {
             $dto->parent = $parent;

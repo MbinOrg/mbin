@@ -767,12 +767,23 @@ _Hint:_ There are also other configuration files, eg. `config/packages/monolog.y
 ### Symfony Messenger (Queues)
 
 The symphony messengers are background workers for a lot of different task, the biggest one being handling all the ActivityPub traffic.  
-We have 4 different queues:
+We have a few different queues:
 
-1. `async` (with jobs coming from your local instance, i.e. posting something to a magazine and delivering that to all followers)
-2. `async_ap` (with jobs coming from remote instances, i.e. someone posted something to a remote magazine you're subscribed to)
-3. `failed` jobs from the first two queues that have been retried, but failed. They get retried a few times again, before they end up in
-4. `dead` dead jobs that will not be retried
+1. `receive` [rabbitMQ]: everything any remote instance sends to us will first end up in this queue. 
+    When processing it will be determined what kind of message it is (creation of a thread, a new comment, etc.)
+2. `inbox` [rabbitMQ]: messages from `receive` with the determined kind of incoming message will end up here and the necessary actions will be executed.
+    This is the place where the thread or comment will actually be created
+3. `outbox` [rabbitMQ]: when a user creates a thread or a comment, a message will be created and send to the outbox queue 
+    to build the ActivityPub object that will be sent to remote instances. 
+    After the object is built and the inbox addresses of all the remote instances who are interested in the message are gathered,
+    we will create a `DeliverMessage` for every one of them, which will be sent to the `deliver` queue
+4. `deliver` [rabbitMQ]: Actually sending out the ActivityPub objects to other instances
+5. `resolve` [rabbitMQ]: Resolving dependencies or ActivityPub actors. 
+    For example if your instance gets a like message for a post that is not on your instance a message resolving that dependency will be dispatched to this queue
+6. `async` [rabbitMQ]: messages in async are local actions that are relevant to this instance, e.g. creating notifications, fetching embeded images, etc.
+7. `old` [rabbitMQ]: the standard messages queue that existed before. This exists solely for compatibility purposes and might be removed later on
+8. `failed` [postgres]: jobs from the other queues that have been retried, but failed. They get retried a few times again, before they end up in
+9. `dead` [postgres]: dead jobs that will not be retried
 
 We need the `dead` queue so that messages that throw a `UnrecoverableMessageHandlingException`, which is used to indicate that a message should not be retried and go straight to the supplied failure queue
 
@@ -961,9 +972,9 @@ With the following content:
 
 ```ini
 [program:messenger]
-command=php /var/www/mbin/bin/console messenger:consume async async_ap failed --time-limit=3600
+command=php /var/www/mbin/bin/console messenger:consume scheduler_default old async outbox deliver inbox resolve receive failed --time-limit=3600
 user=www-data
-numprocs=4
+numprocs=6
 startsecs=0
 autostart=true
 autorestart=true

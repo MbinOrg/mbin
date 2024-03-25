@@ -39,6 +39,12 @@
 
     opacity: .75;
   }
+
+  &__name {
+    i {
+      font-size: 0.7rem;
+    }
+  }
 }
 
 .user-inline {

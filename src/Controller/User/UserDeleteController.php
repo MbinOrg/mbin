@@ -14,36 +14,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UserDeleteController extends AbstractController
 {
     #[IsGranted('ROLE_ADMIN')]
-    public function purgeContent(User $user, UserManager $manager, Request $request): Response
-    {
-        $this->validateCsrf('user_purge_content', $request->request->get('token'));
-
-        $manager->delete($user, true, true);
-
-        return $this->redirectToRefererOrHome($request);
-    }
-
-    #[IsGranted('ROLE_ADMIN')]
-    public function deleteContent(User $user, UserManager $manager, Request $request): Response
-    {
-        $this->validateCsrf('user_delete_content', $request->request->get('token'));
-
-        $manager->delete($user, false, true);
-
-        return $this->redirectToRefererOrHome($request);
-    }
-
-    #[IsGranted('ROLE_ADMIN')]
-    public function purgeAccount(User $user, UserManager $manager, Request $request): Response
-    {
-        $this->validateCsrf('user_purge_account', $request->request->get('token'));
-
-        $manager->delete($user, true);
-
-        return $this->redirectToRoute('front');
-    }
-
-    #[IsGranted('ROLE_ADMIN')]
     public function deleteAccount(User $user, UserManager $manager, Request $request): Response
     {
         $this->validateCsrf('user_delete_account', $request->request->get('token'));
@@ -51,5 +21,25 @@ class UserDeleteController extends AbstractController
         $manager->delete($user);
 
         return $this->redirectToRoute('front');
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    public function scheduleDeleteAccount(User $user, UserManager $manager, Request $request): Response
+    {
+        $this->validateCsrf('schedule_user_delete_account', $request->request->get('token'));
+
+        $manager->deleteRequest($user, false);
+
+        return $this->redirectToRoute('user_overview', ['username' => $user->username]);
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    public function removeScheduleDeleteAccount(User $user, UserManager $manager, Request $request): Response
+    {
+        $this->validateCsrf('remove_schedule_user_delete_account', $request->request->get('token'));
+
+        $manager->removeDeleteRequest($user);
+
+        return $this->redirectToRoute('user_overview', ['username' => $user->username]);
     }
 }
