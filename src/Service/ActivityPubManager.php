@@ -130,11 +130,13 @@ class ActivityPubManager
         if (false === filter_var($actorUrl, FILTER_VALIDATE_URL)) {
             if (!substr_count(ltrim($actorUrl, '@'), '@')) {
                 $user = $this->userRepository->findOneBy(['username' => ltrim($actorUrl, '@')]);
-                if ($user->apFetchedAt->modify('+1 hour') < (new \DateTime())) {
-                    $this->bus->dispatch(new UpdateActorMessage($user->apProfileId));
-                }
+                if ($user instanceof User) {
+                    if ($user->apFetchedAt->modify('+1 hour') < (new \DateTime())) {
+                        $this->bus->dispatch(new UpdateActorMessage($user->apProfileId));
+                    }
 
-                return $user;
+                    return $user;
+                }
             }
 
             $actorUrl = $this->webfinger($actorUrl)->getProfileId();
