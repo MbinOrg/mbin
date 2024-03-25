@@ -218,7 +218,7 @@ export default class extends Controller {
     async showModPanel(event) {
         event.preventDefault();
 
-        let container = this.element.querySelector('.moderate-inline')
+        let container = this.element.querySelector('.moderate-inline');
         if (null !== container) {
             // moderate panel was already added to this post, toggle
             // hidden on it to show/hide it and exit

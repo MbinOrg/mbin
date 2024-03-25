@@ -10,11 +10,13 @@ use App\Exception\InvalidApPostException;
 use App\Exception\InvalidWebfingerException;
 use App\Factory\ActivityPub\GroupFactory;
 use App\Factory\ActivityPub\PersonFactory;
+use App\Factory\ActivityPub\TombstoneFactory;
 use App\Repository\MagazineRepository;
 use App\Repository\SiteRepository;
 use App\Repository\UserRepository;
 use App\Service\ProjectInfoService;
 use JetBrains\PhpStorm\ArrayShape;
+use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\CurlHttpClient;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -38,6 +40,7 @@ class ApHttpClient
 
     public function __construct(
         private readonly string $kbinDomain,
+        private readonly TombstoneFactory $tombstoneFactory,
         private readonly PersonFactory $personFactory,
         private readonly GroupFactory $groupFactory,
         private readonly LoggerInterface $logger,
@@ -83,9 +86,9 @@ class ApHttpClient
     /**
      * Retrieve AP actor object (could be a user or magazine).
      *
-     * @return inbox return the inbox URL of the actor
+     * @return string return the inbox URL of the actor
      *
-     * @throws LogicException if the AP actor object cannot be found
+     * @throws \LogicException|InvalidApPostException if the AP actor object cannot be found
      */
     public function getInboxUrl(string $apProfileId): string
     {
@@ -100,11 +103,11 @@ class ApHttpClient
     /**
      * Execute a webfinger request according to RFC 7033 (https://tools.ietf.org/html/rfc7033).
      *
-     * @param url the URL of the user/magazine to get the webfinger object for
+     * @param string $url the URL of the user/magazine to get the webfinger object for
      *
      * @return array|null the webfinger object
      *
-     * @throws InvalidWebfingerException
+     * @throws InvalidWebfingerException|\Psr\Cache\InvalidArgumentException
      */
     public function getWebfingerObject(string $url): ?array
     {
@@ -140,9 +143,9 @@ class ApHttpClient
     /**
      * Retrieve AP actor object (could be a user or magazine).
      *
-     * @return array key/value array of actor response body
+     * @return array|null key/value array of actor response body
      *
-     * @throws InvalidApPostException
+     * @throws InvalidApPostException|\Psr\Cache\InvalidArgumentException
      */
     public function getActorObject(string $apProfileId): ?array
     {
@@ -190,6 +193,11 @@ class ApHttpClient
 
                 $item->expiresAt(new \DateTime('+1 hour'));
 
+                if (404 === $response->getStatusCode()) {
+                    // treat a 404 error the same as a tombstone, since we think there was an actor, but it isn't there anymore
+                    return $this->tombstoneFactory->create($apProfileId);
+                }
+
                 // Return the content.
                 // Pass the 'false' option to getContent so it doesn't throw errors on "non-OK" respones (eg. 410 status codes).
                 return $response->getContent(false);
@@ -199,6 +207,9 @@ class ApHttpClient
         return $resp ? json_decode($resp, true) : null;
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function getCollectionObject(string $apAddress)
     {
         $resp = $this->cache->get(
@@ -241,9 +252,9 @@ class ApHttpClient
     /**
      * Sends a POST request to the specified URL with optional request body and caching mechanism.
      *
-     * @param url the URL to which the POST request will be sent
-     * @param actor The actor initiating the request, either a User or Magazine object
-     * @param body (Optional) The body of the POST request. Defaults to null.
+     * @param string        $url   the URL to which the POST request will be sent
+     * @param User|Magazine $actor The actor initiating the request, either a User or Magazine object
+     * @param array|null    $body  (Optional) The body of the POST request. Defaults to null.
      *
      * @throws InvalidApPostException if the POST request fails with a non-2xx response status code
      */

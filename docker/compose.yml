@@ -1,3 +1,4 @@
+
 version: "3.9"
 
 services:
@@ -75,7 +76,7 @@ services:
     restart: unless-stopped
     networks:
       - mbin_internal_network
-    command: bin/console messenger:consume async async_ap failed --time-limit=3600
+    command: bin/console messenger:consume scheduler_default old async outbox deliver inbox resolve receive failed --time-limit=3600
     healthcheck:
       test: ["CMD-SHELL", "ps aux | grep 'messenger[:]consume' || exit 1"]
     volumes:
@@ -84,6 +85,9 @@ services:
       - ../config:/var/www/mbin/config
     env_file:
       - .env
+    deploy:
+      mode: replicated
+      replicas: 6
     depends_on:
       - redis
       - db
@@ -95,7 +99,7 @@ services:
     restart: unless-stopped
     networks:
       - mbin_internal_network
-    command: /bin/sh -c "redis-server --requirepass $${REDIS_PASSWORD}"
+    command: /bin/sh -c "redis-server --requirepass $${REDIS_PASSWORD}"incease
     volumes:
       - ./storage/redis:/data
     healthcheck:
@@ -116,7 +120,7 @@ services:
       - POSTGRES_USER=mbin
 
   rabbitmq:
-    image: rabbitmq:3-management-alpine
+    image: rabbitmq:3.13.0-management-alpine
     container_name: mbin-rabbitmq
     restart: unless-stopped
     expose:
