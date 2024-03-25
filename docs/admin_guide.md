@@ -786,7 +786,7 @@ We have a few different queues:
 4. `deliver` [RabbitMQ]: Actually sending out the ActivityPub objects to other instances
 5. `resolve` [RabbitMQ]: Resolving dependencies or ActivityPub actors.
    For example if your instance gets a like message for a post that is not on your instance a message resolving that dependency will be dispatched to this queue
-6. `async` [RabbitMQ]: messages in async are local actions that are relevant to this instance, e.g. creating notifications, fetching embeded images, etc.
+6. `async` [RabbitMQ]: messages in async are local actions that are relevant to this instance, e.g. creating notifications, fetching embedded images, etc.
 7. `old` [RabbitMQ]: the standard messages queue that existed before. This exists solely for compatibility purposes and might be removed later on
 8. `failed` [PostgreSQL]: jobs from the other queues that have been retried, but failed. They get retried a few times again, before they end up in
 9. `dead` [PostgreSQL]: dead jobs that will not be retried
