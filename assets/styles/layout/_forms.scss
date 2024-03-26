@@ -503,7 +503,7 @@ div.input-box {
   width: 100%;
   line-height: normal;
 
-  &[disabled] {
+  &.disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
