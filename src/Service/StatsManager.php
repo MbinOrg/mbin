@@ -129,6 +129,7 @@ class StatsManager
         foreach ($stats['entries'] as $index => $entry) {
             $entry['up'] = array_sum(array_map(fn ($type) => $type[$index]['up'], $stats));
             $entry['down'] = array_sum(array_map(fn ($type) => $type[$index]['down'], $stats));
+            $entry['boost'] = array_sum(array_map(fn ($type) => $type[$index]['boost'], $stats));
 
             $results[] = $entry;
         }
@@ -136,6 +137,11 @@ class StatsManager
         $dataset = [
             [
                 'label' => $this->translator->trans('up_votes'),
+                'borderColor' => '#92924c',
+                'data' => array_map(fn ($val) => $val['boost'], $results),
+            ],
+            [
+                'label' => $this->translator->trans('favourites'),
                 'borderColor' => '#3c5211',
                 'data' => array_map(fn ($val) => $val['up'], $results),
             ],

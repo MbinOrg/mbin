@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Message\ActivityPub\Inbox;
 
-use App\Message\Contracts\AsyncApMessageInterface;
+use App\Message\Contracts\ActivityPubInboxReceiveInterface;
 
 /**
  * @phpstan-type RequestData array{host: string, method: string, uri: string, client: string}
  */
-class ActivityMessage implements AsyncApMessageInterface
+class ActivityMessage implements ActivityPubInboxReceiveInterface
 {
     /**
      * @phpstan-param RequestData|null $request

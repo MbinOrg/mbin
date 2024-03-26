@@ -86,4 +86,29 @@ class DomainRepository extends ServiceEntityRepository
 
         return $pagerfanta;
     }
+
+    public function search(string $domain, int $page, int $perPage = self::PER_PAGE): Pagerfanta
+    {
+        $qb = $this->createQueryBuilder('d')
+            ->where(
+                'LOWER(d.name) LIKE LOWER(:q)'
+            )
+            ->orderBy('d.entryCount', 'DESC')
+            ->setParameters(['q' => '%'.$domain.'%']);
+
+        $pagerfanta = new Pagerfanta(
+            new QueryAdapter(
+                $qb
+            )
+        );
+
+        try {
+            $pagerfanta->setMaxPerPage($perPage);
+            $pagerfanta->setCurrentPage($page);
+        } catch (NotValidCurrentPageException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return $pagerfanta;
+    }
 }

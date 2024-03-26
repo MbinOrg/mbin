@@ -344,7 +344,6 @@ related_entries: 関連のスレッド
 delete_account: アカウントを削除する
 purge_account: アカウントを除去する
 ban_account: アカウントをバンする
-delete_account_request_send: アカウント削除依頼を管理者に送信しました。
 related_magazines: 関連するマガジン
 random_magazines: ランダムなマガジン
 sidebar: サイドバー
@@ -413,7 +412,6 @@ toolbar.quote: 引き合いに出す
 toolbar.unordered_list: 順序不同リスト
 errors.server404.title: ４０４見つからない
 resend_account_activation_email: もう一度アカウントアクティブ化メールを飛ばす
-request_account_deletion_button: アカウント削除を要望する
 errors.server500.title: ５００サーバエラー
 toolbar.mention: メンション
 oauth2.grant.write.general: スレッドとポストとコメントを作ってか、 エディットする。
@@ -421,7 +419,6 @@ single_settings: 単一
 resend_account_activation_email_question: 非活動アカウント？
 your_account_has_been_banned: アカウントは禁しました
 oauth2.grant.delete.general: スレッドとポストとコメントを消す。
-request_account_deletion_title: アカウント削除
 oauth2.grant.user.notification.delete: 通知を晴れる。
 email.delete.title: ユーザーのアカウント削除を要望する
 comment_reply_position: コメントのレスの位置

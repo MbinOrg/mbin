@@ -1,3 +1,4 @@
+{%- set STATUS_PENDING = constant('App\\Entity\\Report::STATUS_PENDING') -%}
 <aside class="{{ html_classes('options options--top') }}" id="options">
     <div></div>
     <menu class="options__main">
@@ -27,6 +28,14 @@
             </a>
         </li>
         {% endif %}
+        {% if app.user.admin is not same as true %}
+            <li>
+                <a href="{{ path('user_settings_account_deletion') }}"
+                   class="{{ html_classes({'active': is_route_name('user_settings_account_deletion')}) }}">
+                    {{ 'account_deletion_title'|trans }}
+                </a>
+            </li>
+        {% endif %}
         <li>
             <a href="{{ path('user_settings_magazine_blocks') }}"
                class="{{ html_classes({'active': is_route_name_contains('_blocks')}) }}">
@@ -40,7 +49,7 @@
             </a>
         </li>
         <li>
-            <a href="{{ path('user_settings_reports') }}"
+            <a href="{{ path('user_settings_reports', {status: STATUS_PENDING}) }}"
                class="{{ html_classes({'active': is_route_name('user_settings_reports')}) }}">
                 {{ 'reports'|trans }}
             </a>
