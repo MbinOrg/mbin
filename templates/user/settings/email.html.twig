@@ -20,15 +20,21 @@
     <div id="content" class="section">
         <div class="container">
             <h1 hidden>{{ 'profile'|trans }}</h1>
-            <h2>{{ 'change_email'|trans }}</h2>
-            {{ form_start(form) }}
-            {{ form_row(form.email, {label: 'old_email', value: app.user.email, attr: {disabled: 'disabled'}}) }}
-            {{ form_row(form.newEmail, {label: 'new_email'}) }}
-            {{ form_row(form.currentPassword, {label: 'password'}) }}
-            <div class="row actions">
-                {{ form_row(form.submit, {label: 'save', attr: {class: 'btn btn__primary'}}) }}
-            </div>
-            {{ form_end(form) }}
+            {% if not app.user.SsoControlled() %}
+                <h2>{{ 'change_email'|trans }}</h2>
+                {{ form_start(form) }}
+                {{ form_row(form.email, {label: 'old_email', value: app.user.email, attr: {disabled: 'disabled'}}) }}
+                {{ form_row(form.newEmail, {label: 'new_email'}) }}
+                {{ form_row(form.currentPassword, {label: 'password'}) }}
+                <div class="row actions">
+                    {{ form_row(form.submit, {label: 'save', attr: {class: 'btn btn__primary'}}) }}
+                </div>
+                {{ form_end(form) }}
+            {% else %}
+                <h2>{{ 'email'|trans }}</h2>
+                <div>{{ 'old_email'|trans }}</div>
+                <div class="input-box" disabled="disabled">{{ app.user.email }}</div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
