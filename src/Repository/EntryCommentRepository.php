@@ -313,12 +313,17 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
 
     public function findToDelete(User $user, int $limit): array
     {
-        return $this->createQueryBuilder('c')
+        $query = $this->createQueryBuilder('c')
             ->where('c.visibility != :visibility')
             ->andWhere('c.user = :user')
             ->setParameters(['visibility' => VisibilityInterface::VISIBILITY_SOFT_DELETED, 'user' => $user])
-            ->orderBy('c.id', 'DESC')
-            ->setMaxResults($limit)
+            ->orderBy('c.id', 'DESC');
+
+        if ($limit) {
+            $query->setMaxResults($limit);
+        }
+
+        return $query
             ->getQuery()
             ->getResult();
     }

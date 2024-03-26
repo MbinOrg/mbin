@@ -253,7 +253,6 @@ dynamic_lists: Dinamik listeler
 auto_preview: Otomatik medya önizleme
 random_magazines: Rasgele dergiler
 related_magazines: İlgili dergiler
-delete_account_request_send: Hesabı silme talebiniz gönderildi.
 ban_account: Hesabı yasakla
 unban_account: Hesap yasağını kaldır
 purge_account: Hesabı tamamen sil

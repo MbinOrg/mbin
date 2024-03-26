@@ -325,7 +325,6 @@ random_magazines: Zufällige Magazine
 random_entries: Zufällige Themen
 related_entries: Verwandte Themen
 delete_account: Konto löschen
-delete_account_request_send: Deine Anfrage um dein Konto zu löschen wurde abgeschickt.
 auto_preview: Automatische Medienvorschau
 inactive: Inaktiv
 mod_remove_your_thread: Ein Moderator hat dein Thema entfernt
@@ -431,10 +430,6 @@ federation_page_enabled: Föderationsseite aktiviert
 federation_page_disallowed_description: Instanzen mit denen wir nicht föderieren
 federation_page_allowed_description: Bekannte Instanzen mit denen wir föderieren
 federated_search_only_loggedin: Föderierte Suche ist eingeschränkt wenn nicht angemeldet
-request_account_deletion_title: Kontolöschung
-request_account_deletion_description: Der Administrator wird davon benachrichtigt,
-  dass du dein Konto löschen möchtest.
-request_account_deletion_button: Kontolöschung anfordern
 more_from_domain: Mehr von der Domäne
 resend_account_activation_email_error: Es gab ein Problem bei der Bearbeitung der
   Anfrage. Eventuell gibt es keinen Account der mit diese E-Mail assoziiert wird oder
@@ -508,8 +503,6 @@ delete_content_desc: Lösche den Inhalt des Users, aber behalte die Antworten an
   Nutzer in den erstellten Themen, Beiträgen und Kommentaren.
 magazine_theme_appearance_custom_css: Eigenes CSS das angewendet wird wenn Inhalte
   innerhalb deines Magazins angeschaut werden.
-purge_account_desc: Lösche den Account endgültig, inklusive aller Antworten von anderen
-  Nutzern in den erstellten Themen, Beiträgen und Kommentaren.
 2fa.backup_codes.help: Du kannst diese Code nutzen wenn du keinen Zugriff auf dein
   Zwei-Faktor-Authentifizierung Gerät oder deine App hast. Die Codes werden dir <strong>nicht
   noch einmal gezeigt werden</strong> und du kannst jeden Code <strong>nur ein einziges
@@ -789,7 +782,6 @@ flash_comment_new_success: Kommentar wurde erfolgreich erstellt.
 flash_user_settings_general_error: Nutzer Einstellungen konnten nicht gespeichert
   werden.
 account_is_suspended: Dieses Nutzerkonto ist suspendiert.
-delete_account_request_revoke: Deine Anfrage auf Kontolöschung wurde zurückgezogen.
 user_suspend_desc: Dein Konto suspendieren versteckt deine Inhalte auf der Instanz,
   löscht diese aber nicht permanent, du kannst die Inhalte jederzeit wiederherstellen.
 ownership_requests: Eigentümer Anfragen
@@ -812,7 +804,6 @@ change_my_avatar: Meinen Avatar ändern
 flash_user_edit_profile_success: Nutzer Profil Einstellungen erfolgreich gespeichert.
 flash_user_settings_general_success: Nutzer Einstellungen erfolgreich gespeichert.
 remove_subscriptions: Abonnements entfernen
-request_account_deletion_revoke_button: Anforderung zur Kontolöschung zurückziehen.
 delete_magazine: Magazin löschen
 sensitive_hide: Klicke zum verstecken
 request_magazine_ownership: Magazin Eigentümerschaft beantragen

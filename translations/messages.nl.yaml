@@ -55,8 +55,7 @@ cover: Omslag
 related_posts: Verwante berichten
 random_posts: Willekeurige berichten
 federated_user_info: Dit profiel is van een gefedereerde server en is mogelijk onvolledig.
-go_to_original_instance: Voor een volledige lijst met berichten, bezoek de oorspronkelijke
-  instantie.
+go_to_original_instance: Bekijk op externe instantie
 empty: Leeg
 subscribe: Abonneren
 down_votes: Omlaagstemmen
@@ -265,7 +264,6 @@ admin_panel: Beheerderspaneel
 type_search_term: Voer een zoekopdracht in
 add_mentions_entries: Vermeldingslabels toekennen aan gesprekken
 related_entries: Verwante gesprekken
-delete_account_request_send: Je verwijderverzoek is verstuurd.
 flash_magazine_new_success: Het tijdschrift is succesvol aangemaakt. Je kunt inhoud
   toevoegen of het tijdschrift bekijken in het beheerpaneel.
 flash_magazine_edit_success: Het tijdschrift is succesvol bewerkt.
@@ -432,13 +430,9 @@ toolbar.mention: Vermelding
 federation_page_disallowed_description: Instanties waarmee we niet mee gefedereerd
   zijn
 federated_search_only_loggedin: Federatieve zoekopdracht is beperkt indien niet ingelogd
-request_account_deletion_title: Accountverwijdering
 oauth2.grant.user.notification.read: Lees uw meldingen, inclusief berichtmeldingen.
-request_account_deletion_description: De beheerder krijgt een melding dat u uw account
-  wilt verwijderen.
 oauth2.grant.user.oauth_clients.edit: Bewerk de machtigingen die u aan andere OAuth2-applicaties
   hebt verleend.
-request_account_deletion_button: Verzoek om Accountverwijdering
 oauth2.grant.user.follow: Volg of ontvolg gebruikers en lees een lijst met gebruikers
   die u volgt.
 more_from_domain: Meer van domein
@@ -684,8 +678,6 @@ moderation.report.reject_report_confirmation: Weet u zeker dat u dit rapport wil
 2fa.remove: Verwijder 2FA
 delete_content_desc: Verwijder de inhoud van de gebruiker maar laat de reacties van
   andere gebruikers achter in de gemaakte discussies, berichten en opmerkingen.
-purge_account_desc: Het account volledig opschonen, inclusief het verwijderen van
-  de reacties van andere gebruikers in gemaakte discussies, berichten en opmerkingen.
 2fa.backup_codes.help: U kunt deze codes gebruiken als u niet over een apparaat of
   app voor tweefactorauthenticatie beschikt. Je krijgt ze <strong>niet meer te zien</strong>
   en je kunt ze enkel <strong>slechts één keer</strong> gebruiken.
@@ -698,8 +690,8 @@ oauth2.grant.moderate.post.pin: Pin berichten bovenaan uw gemodereerde tijdschri
   veilige plaats bewaart.
 2fa.qr_code_img.alt: Een QR-code waarmee tweefactorauthenticatie voor uw account ingesteld
   kan worden
-delete_account_desc: Verwijder het account terwijl u de reacties van andere gebruikers
-  in de gemaakte discussies, berichten en opmerkingen laat staan.
+delete_account_desc: Verwijder het account, inclusief de reacties van andere gebruikers
+  in gemaakte discussies, berichten en opmerkingen.
 2fa.enable: Stel tweefactorauthenticatie in
 2fa.user_active_tfa.title: Gebruiker heeft actieve 2FA
 2fa.code_invalid: De authenticatiecode is niet geldig
@@ -768,15 +760,12 @@ deletion: Verwijdering
 account_unbanned: Het account is gedeblokkeerd.
 magazine_is_deleted: Tijdschrift is verwijderd. U kunt het binnen 30 dagen <a href="%link_target%">herstellen</a>.
 account_is_suspended: Gebruikersaccount is opschorting is opgeheven.
-delete_account_request_revoke: Uw verzoek om het account te verwijderen is ingetrokken.
 user_suspend_desc: Als u uw account opschort, wordt uw inhoud op de instantie verborgen,
   maar niet permanent verwijderd. U kunt deze op elk gewenst moment herstellen.
 account_unsuspended: De account is niet langer opgeschort.
 subscription_panel_large: Groot paneel
 unsuspend_account: Account opschorting opheffen
 account_banned: Het account is geblokkeerd.
-request_account_deletion_revoke_button: Trek het verzoek voor accountverwijdering
-  in.
 delete_magazine: Tijdschrift verwijderen
 subscription_sidebar_pop_out_right: Ga naar de aparte zijbalk aan de rechterkant
 subscription_sidebar_pop_out_left: Ga naar de aparte zijbalk aan de linkerkant
@@ -834,3 +823,17 @@ sso_registrations_enabled: SSO -registraties ingeschakeld
 sso_registrations_enabled.error: Nieuwe accountregistraties met identiteitsbeheerders
   van derden zijn momenteel uitgeschakeld.
 always_disconnected_magazine_info: Dit tijdschrift heeft geen updates ontvangen.
+marked_for_deletion_at: Gemarkeerd voor verwijdering op %date%
+account_deletion_title: Accountverwijdering
+account_deletion_button: Account verwijderen
+account_deletion_immediate: Onmiddellijk verwijderen
+marked_for_deletion: Gemarkeerd voor verwijdering
+account_deletion_description: Uw account wordt binnen 30 dagen verwijderd, tenzij
+  u ervoor kiest om het account onmiddellijk te verwijderen. Het account kan na verwijdering
+  niet meer worden hersteld.
+remove_schedule_delete_account_desc: Verwijder de geplande verwijdering. Alle inhoud
+  is weer beschikbaar en de gebruiker kan inloggen.
+schedule_delete_account: Plan Verwijdering
+schedule_delete_account_desc: Plan de verwijdering van dit account over 30 dagen.
+  Hierdoor worden de gebruiker en zijn inhoud verborgen en kan de gebruiker niet inloggen.
+remove_schedule_delete_account: Geplande verwijdering verwijderen

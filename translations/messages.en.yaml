@@ -27,6 +27,8 @@ filter_by_type: Filter by type
 comments_count: '{0}Comments|{1}Comment|]1,Inf[ Comments'
 subscribers_count: '{0}Subscribers|{1}Subscriber|]1,Inf[ Subscribers'
 followers_count: '{0}Followers|{1}Follower|]1,Inf[ Followers'
+marked_for_deletion: Marked for deletion
+marked_for_deletion_at: Marked for deletion at %date%
 favourites: Favorites
 favourite: Favorite
 more: More
@@ -61,7 +63,7 @@ disconnected_magazine_info: This magazine is not receiving updates (last activit
 always_disconnected_magazine_info: This magazine is not receiving updates.
 subscribe_for_updates: Subscribe to start receiving updates.
 federated_user_info: This profile is from a federated server and may be incomplete.
-go_to_original_instance: For a complete list of posts, visit the original instance.
+go_to_original_instance: View on remote instance
 empty: Empty
 subscribe: Subscribe
 unsubscribe: Unsubscribe
@@ -370,7 +372,6 @@ delete_account: Delete account
 purge_account: Purge account
 ban_account: Ban account
 unban_account: Unban account
-delete_account_request_send: Your request to delete the account has been submitted.
 related_magazines: Related magazines
 random_magazines: Random magazines
 magazine_panel_tags_info: Provide only if you want content from the fediverse to be
@@ -440,10 +441,11 @@ federation_page_disallowed_description: Instances we do not federate with
 federated_search_only_loggedin: Federated search limited if not logged in
 sidebar_sections_local_only: Restrict "Random X" and "Active People" sections to local
   only
-request_account_deletion_title: Account deletion
-request_account_deletion_description: The administrator will be notified that you
-  want your account deleted.
-request_account_deletion_button: Request account deletion
+account_deletion_title: Account deletion
+account_deletion_description: Your account will be deleted in 30 days unless you choose to delete the account immediately.
+  The account cannot be restored once deleted.
+account_deletion_button: Delete Account
+account_deletion_immediate: Delete immediately
 more_from_domain: More from domain
 errors.server500.title: 500 Internal Server Error
 errors.server500.description: Sorry, something went wrong on our end. If you continue
@@ -674,10 +676,14 @@ delete_content_desc: Delete the user's content while leaving the responses of ot
   users in the created threads, posts and comments.
 purge_content_desc: Completely purge the user's content, including deleting the responses
   of other users in created threads, posts and comments.
-delete_account_desc: Delete the account while leaving the responses of other users
-  in the created threads, posts and comments.
-purge_account_desc: Completely purge the account, including deleting the responses
+delete_account_desc: Delete the account, including the responses
   of other users in created threads, posts and comments.
+schedule_delete_account: Schedule Deletion
+schedule_delete_account_desc: Schedule the deletion of this account in 30 days. 
+  This will hide the user and their content as well as prevent the user from logging in.
+remove_schedule_delete_account: Remove Scheduled Deletion
+remove_schedule_delete_account_desc: Remove the scheduled deletion. 
+  All the content will be available again and the user will be able to login.
 two_factor_authentication: Two-factor authentication
 two_factor_backup: Two-factor authentication backup codes
 2fa.authentication_code.label: Authentication Code
@@ -760,10 +766,8 @@ purge_magazine: Purge magazine
 magazine_is_deleted: Magazine is deleted. You can <a href="%link_target%">restore</a>
   it within 30 days.
 suspend_account: Suspend account
-request_account_deletion_revoke_button: Revoke the account deletion request.
 unsuspend_account: Unsuspend account
 account_suspended: The account has been suspended.
-delete_account_request_revoke: Your request to delete the account has been revoked.
 account_unsuspended: The account has been unsuspended.
 deletion: Deletion
 user_suspend_desc: Suspending your account hides your content on the instance, but

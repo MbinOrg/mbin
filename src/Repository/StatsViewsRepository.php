@@ -27,22 +27,12 @@ class StatsViewsRepository extends StatsRepository
         $conn = $this->getEntityManager()
             ->getConnection();
 
-        $onlyLocalWhere = $this->onlyLocal ? ' AND e.ap_id IS NULL' : '';
-        if ($this->user) {
-            $sql = 'SELECT to_char(e.created_at,\'Mon\') as month, extract(year from e.created_at) as year, SUM(e.views) as count FROM entry e
-                    WHERE e.user_id = :userId '.$onlyLocalWhere.' GROUP BY 1,2';
-        } elseif ($this->magazine) {
-            $sql = 'SELECT to_char(e.created_at,\'Mon\') as month, extract(year from e.created_at) as year, SUM(e.views) as count FROM entry e
-                    WHERE e.magazine_id = :magazineId '.$onlyLocalWhere.' GROUP BY 1,2';
-        } else {
-            if (!$this->onlyLocal) {
-                $sql = 'SELECT to_char(e.created_at,\'Mon\') as month, extract(year from e.created_at) as year, SUM(e.views) as count
-                    FROM entry e GROUP BY 1,2';
-            } else {
-                $sql = 'SELECT to_char(e.created_at,\'Mon\') as month, extract(year from e.created_at) as year, SUM(e.views) as count
-                    FROM entry e WHERE e.ap_id IS NULL GROUP BY 1,2';
-            }
-        }
+        $onlyLocalWhere = $this->onlyLocal ? ' AND e.ap_id IS NULL ' : '';
+        $magazineWhere = $this->magazine ? ' AND e.magazine_id = :magazineId ' : '';
+        $userWhere = $this->user ? ' AND e.user_id = :userId ' : '';
+        $sql = "SELECT to_char(e.created_at, 'Mon') as month, extract(year from e.created_at) as year, SUM(e.views) as count 
+                FROM entry e INNER JOIN public.user u ON e.user_id = u.id 
+                WHERE u.is_deleted = false $onlyLocalWhere $magazineWhere $userWhere GROUP BY 1,2";
 
         $stmt = $conn->prepare($sql);
         if ($this->user) {
@@ -69,13 +59,8 @@ class StatsViewsRepository extends StatsRepository
         return $this->prepareContentDaily($this->getDailyStats());
     }
 
-    public function getStats(
-        ?Magazine $magazine,
-        string $intervalStr,
-        ?\DateTime $start,
-        ?\DateTime $end,
-        ?bool $onlyLocal
-    ): array {
+    public function getStats(?Magazine $magazine, string $intervalStr, ?\DateTime $start, ?\DateTime $end, ?bool $onlyLocal): array
+    {
         $this->onlyLocal = $onlyLocal;
         $interval = $intervalStr ?? 'month';
         switch ($interval) {
@@ -107,15 +92,12 @@ class StatsViewsRepository extends StatsRepository
 
         $conn = $this->getEntityManager()->getConnection();
 
-        $sql = 'SELECT date_trunc(?, e.created_at) as datetime, SUM(e.views) as count FROM entry e 
-                    WHERE e.created_at BETWEEN ? AND ?';
-        if ($magazine) {
-            $sql .= ' AND e.magazine_id = ?';
-        }
-        if ($this->onlyLocal) {
-            $sql .= ' AND e.ap_id IS NULL';
-        }
-        $sql = $sql.' GROUP BY 1 ORDER BY 1';
+        $magazineWhere = $magazine ? ' AND e.magazine_id = ? ' : '';
+        $onlyLocalWhere = $this->onlyLocal ? ' AND e.ap_id IS NULL ' : '';
+
+        $sql = "SELECT date_trunc(?, e.created_at) as datetime, SUM(e.views) as count FROM entry e 
+                    INNER JOIN public.user u on u.id = e.user_id
+                    WHERE u.is_deleted = false AND e.created_at BETWEEN ? AND ? $magazineWhere $onlyLocalWhere GROUP BY 1 ORDER BY 1";
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(1, $interval);
@@ -132,13 +114,10 @@ class StatsViewsRepository extends StatsRepository
     {
         $conn = $this->getEntityManager()->getConnection();
 
-        $sql = 'SELECT SUM(e.views) as count FROM entry e';
-        if ($magazine) {
-            $sql .= ' WHERE e.magazine_id = :magazineId';
-        }
-        if ($this->onlyLocal) {
-            $sql = $sql.' AND e.ap_id IS NULL';
-        }
+        $magazineWhere = $magazine ? ' AND e.magazine_id = ? ' : '';
+        $onlyLocalWhere = $this->onlyLocal ? ' AND e.ap_id IS NULL ' : '';
+
+        $sql = "SELECT SUM(e.views) as count FROM entry e INNER JOIN public.user u on e.user_id = u.id WHERE u.is_deleted = false $magazineWhere $onlyLocalWhere";
 
         $stmt = $conn->prepare($sql);
         if ($magazine) {
@@ -153,27 +132,26 @@ class StatsViewsRepository extends StatsRepository
         $conn = $this->getEntityManager()
             ->getConnection();
 
-        $onlyLocalWhere = $this->onlyLocal ? 'AND e.ap_id IS NULL' : '';
-        if ($this->user) {
-            $sql = "SELECT  date_trunc('day', e.created_at) as day, SUM(e.views) as count FROM entry e 
-                    WHERE e.created_at >= '".$this->start->format('Y-m-d H:i:s')."' 
-                    AND e.user_id = ".$this->user->getId().'
-                    '.$onlyLocalWhere.'
-                    GROUP BY 1';
-        } elseif ($this->magazine) {
-            $sql = "SELECT  date_trunc('day', e.created_at) as day, SUM(e.views) as count FROM entry e 
-                    WHERE e.created_at >= '".$this->start->format('Y-m-d H:i:s')."' 
-                    AND e.magazine_id = ".$this->magazine->getId().' 
-                    '.$onlyLocalWhere.'
-                    GROUP BY 1';
-        } else {
-            $sql = "SELECT  date_trunc('day', e.created_at) as day, SUM(e.views) as count FROM entry e 
-                    WHERE e.created_at >= '".$this->start->format('Y-m-d H:i:s')."' 
-                    ".$onlyLocalWhere.'
-                    GROUP BY 1';
-        }
+        $onlyLocalWhere = $this->onlyLocal ? ' AND e.ap_id IS NULL ' : '';
+        $userWhere = $this->user ? ' AND e.user_id = :userId ' : '';
+        $magazineWhere = $this->magazine ? ' AND e.magazine_id = :magId ' : '';
+
+        $sql = "SELECT date_trunc('day', e.created_at) as day, SUM(e.views) as count 
+            FROM entry e INNER JOIN public.user u on e.user_id = u.id 
+            WHERE u.is_deleted = false AND e.created_at >= :date $userWhere $magazineWhere $onlyLocalWhere
+            GROUP BY 1";
 
         $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':date', $this->start, 'datetime');
+
+        if ($this->user) {
+            $stmt->bindValue(':userId', $this->user->getId());
+        }
+
+        if ($this->magazine) {
+            $stmt->bindValue(':magId', $this->magazine->getId());
+        }
+
         $stmt = $stmt->executeQuery();
 
         $results = $stmt->fetchAllAssociative();
