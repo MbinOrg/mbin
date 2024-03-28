@@ -31,6 +31,8 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 ```
 
+See also: [Linux post-install](https://docs.docker.com/engine/install/linux-postinstall/).
+
 ## Mbin Installation
 
 ### Preparation
@@ -53,25 +55,19 @@ cd mbin
 cd docker
 ```
 
-2. Use the existing Docker image _OR_ build the docker image. Select one of the two options.
+2. By default the latest [`compose.yml`](../docker/compose.yml) file use the pre-built images from [ghcr.io](https://github.com/MbinOrg/mbin/pkgs/container/mbin). Nothing needs to be done (go to step 3!), unless you want to build our own Docker image instead.
 
-#### Build our own Docker image
+#### (Optional) Build our own Docker image
 
-If you want to build our own image, run (_no_ need to update the `compose.yml` file):
+**Optional!** We encourage you to use pre-built images, as shown above. Because that is much easier. Go to step 3.
 
-```bash
-docker build --no-cache -t mbin -f Dockerfile  ..
-```
-
-#### Use Mbin pre-build image
-
-_OR_ use our pre-build images from [ghcr.io](https://ghcr.io). In this case you need to update the `compose.yml` file:
+However, if you really want to build our own Docker image, that is possible. Just run:
 
 ```bash
-nano compose.yml
+docker build --no-cache -t mbin -f Dockerfile ..
 ```
 
-Find and replace or comment-out the following 4 lines:
+Be sure to comment-out the current `image: "ghcr.io/mbinorg/mbin:latest"` line and use:
 
 ```yml
 build:
@@ -80,13 +76,7 @@ build:
 image: mbin
 ```
 
-And instead use the following line on all places (`www`, `php`, and `messenger` services):
-
-```yml
-image: "ghcr.io/mbinorg/mbin:latest"
-```
-
-**Important:** Do _NOT_ forget to change **ALL LINES** in that matches `image: mbin` to: `image: "ghcr.io/mbinorg/mbin:latest"` in the `compose.yml` file (should be 4 matches in total).
+Again, you do _not_ need to do the steps above. Only if you wish to build your own docker image.
 
 3. Create config files and storage directories:
 
@@ -97,24 +87,29 @@ mkdir -p storage/media storage/caddy_config storage/caddy_data storage/logs
 sudo chown $USER:$USER storage/media storage/caddy_config storage/caddy_data storage/logs
 ```
 
+4. If you are planning to use AMQP Proxy. AMQP Proxy is recommended for production. Then update the `compose.yml` file and uncomment the whole "amqproxy" section in the `compose.yml` file to enable this service.
+   Do **NOT** forget to change the port number in your `.env` file for `MESSENGER_TRANSPORT_DSN`, see also the next chapter.
+
 ### Configure `.env` and `compose.override.yml`
 
 1. Choose your Redis password, PostgreSQL password, RabbitMQ password, and Mercure password.
-2. Place the passwords in the corresponding variables in both `.env` and `compose.override.yml`.
+2. Place those passwords in the corresponding variables in both `.env` and `compose.override.yml`.
 3. Update the `SERVER_NAME`, `KBIN_DOMAIN` and `KBIN_STORAGE_URL` in `.env`.
-4. Update `APP_SECRET` in `.env`, generate a new one via: `node -e  "console.log(require('crypto').randomBytes(16).toString('hex'))"`
-5. _Optionally_: Use a newer PostgreSQL version (current fallback is v13). Update/set the `POSTGRES_VERSION` variable in your `.env` and `compose.override.yml` under `db`.
+4. Change the `MESSENGER_TRANSPORT_DSN` line and change port `5672` to port `5673` if you are using the AMQP Proxy service (recommended).
+5. Update `APP_SECRET` in `.env`, generate a new one via: `node -e  "console.log(require('crypto').randomBytes(16).toString('hex'))"`
+6. _Optionally_: Use a newer PostgreSQL version (current fallback is v13). Update/set the `POSTGRES_VERSION` variable in your `.env` and `compose.override.yml` under `db`.
 
 > **Note**
-> Ensure the `HTTPS` environmental variable is set to `TRUE` in `compose.override.yml` for the `php`, `messenger`, and `messenger_ap` containers **if your environment is using a valid certificate behind a reverse proxy**. This is likely true for most production environments and is required for proper federation, that is, this will ensure the webfinger responses include `https:` in the URLs generated.
+> Ensure the `HTTPS` environmental variable is set to `TRUE` in `compose.override.yml` for the `php` and `messenger` containers **if your environment is using a valid certificate behind a reverse proxy**. This is likely true for most production environments and is required for proper federation, that is, this will ensure the webfinger responses include `https:` in the URLs generated.
 
 ### Configure OAuth2 keys
 
 1. Create an RSA key pair using OpenSSL:
 
 ```bash
-# Replace <mbin_dir> with Mbin's root directory
-mkdir <mbin_dir>/config/oauth2/
+# Move to the Git root directory (If you are still in the docker folder, just go one directory up again: cd ..)
+# Create a new "oauth2" sub-directory in the existing "config" directory:
+mkdir config/oauth2
 # If you protect the key with a passphrase, make sure to remember it!
 # You will need it later
 openssl genrsa -des3 -out ./config/oauth2/private.pem 4096
@@ -143,12 +138,14 @@ By default `docker compose` will execute the `compose.yml` and `compose.override
 Run the container in the background (`-d` means detach, but this can also be omitted for testing or debugging purposes):
 
 ```bash
-# Go to the docker directory within the git repo
+# Be sure you are in the docker directory within the git repo
 cd docker
 
 # Starts the containers
 docker compose up -d
 ```
+
+_Note:_ If run into any issues (for example you needed to adapt the `.env` file to fix a typo), be sure to execute `docker compose down` followed by `docker compose up -d` again, so the latest changes will be applied in the Docker containers.
 
 See your running containers via: `docker ps`.
 
@@ -196,6 +193,7 @@ The filesystem ACL is disabled by default, in the `mbin` image. You can set the 
 
 ## Run Production
 
+Assuming you followed the all the steps above, you should now already have a `compose.override.yml` file. Running production should be the same command:
 If you created the file `compose.override.yml` with your configs (`cp compose.prod.yml compose.override.yml`), running production would be the same command:
 
 ```bash

@@ -773,6 +773,7 @@ _Hint:_ There are also other configuration files, eg. `config/packages/monolog.y
 ### Symfony Messenger (Queues)
 
 The symphony messengers are background workers for a lot of different task, the biggest one being handling all the ActivityPub traffic.  
+
 We have a few different queues:
 
 1. `receive` [RabbitMQ]: everything any remote instance sends to us will first end up in this queue.
@@ -864,6 +865,60 @@ MESSENGER_TRANSPORT_DSN=amqp://kbin:${RABBITMQ_PASSWORD}@127.0.0.1:5672/%2f/mess
 # or PostgreSQL Database (Doctrine):
 #MESSENGER_TRANSPORT_DSN=doctrine://default
 ```
+
+### Setup AMQP Proxy
+
+Setting up AMQP proxy is _optional_ but very much recommended ([also recommended by Symfony](https://symfony.com/doc/current/messenger.html) the underlying framework Mbin is using).
+
+> AMQP proxy with AMQP connection and channel pooling/reusing. Allows e.g. PHP clients to keep long lived connections to upstream servers,
+> increasing publishing speed with a magnitude or more.
+
+Install AMQ proxy:
+
+```sh
+curl -fsSL https://packagecloud.io/cloudamqp/amqproxy/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/amqproxy.gpg > /dev/null
+. /etc/os-release
+echo "deb [signed-by=/usr/share/keyrings/amqproxy.gpg] https://packagecloud.io/cloudamqp/amqproxy/$ID $VERSION_CODENAME main" | sudo tee /etc/apt/sources.list.d/amqproxy.list
+sudo apt update
+sudo apt install amqproxy
+```
+
+Configure AMQP Proxy by editing the `/etc/amqproxy.ini` config file:
+
+```ini
+[main]
+log_level = info
+idle_connection_timeout = 5
+upstream = amqp://localhost:5672
+
+[listen]
+address = 127.0.0.1
+port = 5673
+```
+
+Enable and start amqproxy:
+
+```sh
+sudo systemctl enable amqproxy
+sudo systemctl start amqproxy
+```
+
+Change Mbin configuration to actually use AMQ Proxy now. This is done by simply changing the port from `5672` to the new **`5673`** port in the `.env` configuration file.  
+For example:
+
+```sh
+MESSENGER_TRANSPORT_DSN=amqp://kbin:${RABBITMQ_PASSWORD}@127.0.0.1:5673/%2f/messages
+```
+
+Do not forget to dump the new environment variables using:
+
+```sh
+composer dump-env prod
+```
+
+And be sure you cleared any caches (eg. run: `./bin/post-upgrade` and reload PHP-FPM service), so we are sure the new configuration is loaded.
+
+Now Mbin will start using the AMQ Proxy. Well done!
 
 ### Mercure
 
