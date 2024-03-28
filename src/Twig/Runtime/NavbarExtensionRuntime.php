@@ -40,18 +40,6 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
             );
         }
 
-        if ($this->isRouteNameEndWith('_subscribed')) {
-            return $this->urlGenerator->generate('front_subscribed', $this->getActiveOptions());
-        }
-
-        if ($this->isRouteNameEndWith('_favourite')) {
-            return $this->urlGenerator->generate('front_favourite', $this->getActiveOptions());
-        }
-
-        if ($this->isRouteNameEndWith('_moderated')) {
-            return $this->urlGenerator->generate('front_moderated', $this->getActiveOptions());
-        }
-
         return $this->urlGenerator->generate('front', $this->getActiveOptions());
     }
 
@@ -124,6 +112,7 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
 
         $sortOption = $this->getActiveSortOption();
         $timeOption = $this->getActiveTimeOption();
+        $subscriptionOption = $this->getActiveSubscriptionOption();
 
         // don't add the current options if they are the defaults.
         // this isn't bad, but keeps urls shorter for instance
@@ -135,8 +124,16 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
         if ('∞' !== $timeOption) {
             $options['time'] = $timeOption;
         }
+        if (null !== $subscriptionOption) {
+            $options['subscription'] = $subscriptionOption;
+        }
 
         return $options;
+    }
+
+    private function getActiveSubscriptionOption(): ?string
+    {
+        return $this->requestStack->getCurrentRequest()->get('subscription');
     }
 
     private function getActiveSortOption(): string

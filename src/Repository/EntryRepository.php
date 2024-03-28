@@ -150,7 +150,7 @@ class EntryRepository extends ServiceEntityRepository implements TagRepositoryIn
                 ->setParameter('user', $criteria->user);
         }
 
-        if ($criteria->type) {
+        if ($criteria->type and 'all' !== $criteria->type) {
             $qb->andWhere('e.type = :type')
                 ->setParameter('type', $criteria->type);
         }

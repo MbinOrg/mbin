@@ -127,3 +127,10 @@
         }
     }
 }
+
+// Last ditch function; just "don't show on small screens" class
+.hide-on-mobile {
+    @include media-breakpoint-down(lg) {
+      display: none;
+    }
+  }

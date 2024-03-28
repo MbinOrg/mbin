@@ -11,13 +11,6 @@ use App\Entity\User;
 
 abstract class Criteria
 {
-    public const ENTRY_TYPE_ARTICLE = 'article';
-    public const ENTRY_TYPE_LINK = 'link';
-
-    public const FRONT_FEATURED = 'featured';
-    public const FRONT_SUBSCRIBED = 'subscribed';
-    public const FRONT_ALL = 'all';
-    public const FRONT_MODERATED = 'moderated';
     public const SORT_ACTIVE = 'active';
     public const SORT_HOT = 'hot';
     public const SORT_NEW = 'newest';
@@ -40,12 +33,8 @@ abstract class Criteria
     public const AP_LOCAL = 'local';
     public const AP_FEDERATED = 'federated';
 
-    public const FRONT_PAGE_OPTIONS = [
-        self::FRONT_FEATURED,
-        self::FRONT_SUBSCRIBED,
-        self::FRONT_ALL,
-        self::FRONT_MODERATED,
-    ];
+    public const CONTENT_THREADS = 'threads';
+    public const CONTENT_MICROBLOG = 'microblog';
 
     public const SORT_OPTIONS = [
         self::SORT_ACTIVE,
@@ -88,14 +77,15 @@ abstract class Criteria
     public ?Magazine $magazine = null;
     public ?User $user = null;
     public ?int $perPage = null;
-    public bool $moderated = false;
-    public bool $favourite = false;
-    public ?string $type = null;
+    public string $type = 'all';
     public string $sortOption = EntryRepository::SORT_DEFAULT;
     public string $time = EntryRepository::TIME_DEFAULT;
     public string $visibility = VisibilityInterface::VISIBILITY_VISIBLE;
     public string $federation = self::AP_ALL;
+    public string $content = self::CONTENT_THREADS;
     public bool $subscribed = false;
+    public bool $moderated = false;
+    public bool $favourite = false;
     public ?string $tag = null;
     public ?string $domain = null;
     public ?array $languages = null;
@@ -139,6 +129,13 @@ abstract class Criteria
         if ($type) {
             $this->type = $type;
         }
+
+        return $this;
+    }
+
+    public function setContent(string $content): self
+    {
+        $this->content = $content;
 
         return $this;
     }
@@ -196,7 +193,15 @@ abstract class Criteria
         return $routes[$value] ?? $routes['hot'];
     }
 
-    public function resolveTime(?string $value): ?string
+    // resolveTime() converts our internal values into ones for human presenation
+    // $reverse = true indicates converting back, from human values to internal ones
+
+    // This whole approach is a mess; this translation layer is temporary until
+    // we have time to take a pass through the whole codebase and convert so there's
+    // no such thing as multiple alternate value strings and translation layers
+    // between them. This is just a temporary measure to produce desired output
+    // until the whole layer goes away.
+    public function resolveTime(?string $value, bool $reverse = false): ?string
     {
         // @todo
         $routes = [
@@ -211,13 +216,23 @@ abstract class Criteria
             'all' => Criteria::TIME_ALL,
         ];
 
-        return $routes[$value] ?? null;
+        if ($reverse) {
+            if ('all' === $value || '∞' === $value || null === $value) {
+                return '∞';
+            }
+            $reversedRoutes = array_flip($routes);
+
+            return $reversedRoutes[$value] ?? '∞';
+        } else {
+            return $routes[$value] ?? null;
+        }
     }
 
     public function resolveType(?string $value): ?string
     {
         // @todo
         $routes = [
+            'all' => 'all',
             'article' => Entry::ENTRY_TYPE_ARTICLE,
             'articles' => Entry::ENTRY_TYPE_ARTICLE,
             'link' => Entry::ENTRY_TYPE_LINK,
@@ -230,7 +245,31 @@ abstract class Criteria
             'images' => Entry::ENTRY_TYPE_IMAGE,
         ];
 
-        return $routes[$value] ?? null;
+        return $routes[$value] ?? 'all';
+    }
+
+    public function translateType(): string
+    {
+        return match ($this->resolveType($this->type)) {
+            Entry::ENTRY_TYPE_ARTICLE => 'threads',
+            Entry::ENTRY_TYPE_LINK => 'links',
+            Entry::ENTRY_TYPE_VIDEO => 'videos',
+            Entry::ENTRY_TYPE_IMAGE => 'photos',
+            default => 'all',
+        };
+    }
+
+    public function resolveSubscriptionFilter(): ?string
+    {
+        if ($this->subscribed) {
+            return 'subscribed';
+        } elseif ($this->moderated) {
+            return 'moderated';
+        } elseif ($this->favourite) {
+            return 'favourites';
+        } else {
+            return 'all';
+        }
     }
 
     public function setVisibility(string $visibility): self
@@ -264,6 +303,22 @@ abstract class Criteria
             Criteria::TIME_6_HOURS => $since->modify('-6 hours'),
             Criteria::TIME_3_HOURS => $since->modify('-3 hours'),
             default => throw new \LogicException(),
+        };
+    }
+
+    public function getOption(string $key): string
+    {
+        return match ($key) {
+            'sort' => $this->resolveSort($this->sortOption),
+            'time' => '∞' === $this->resolveTime($this->time, true) ? 'all' : $this->resolveTime($this->time, true),
+            'type' => $this->translateType(),
+            'visibility' => $this->visibility,
+            'federation' => $this->federation,
+            'content' => $this->content,
+            'tag' => $this->tag,
+            'domain' => $this->domain,
+            'subscription' => $this->resolveSubscriptionFilter(),
+            default => throw new \LogicException('Unknown option: '.$key),
         };
     }
 }
