@@ -349,6 +349,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere('u.apDomain IS NULL')
             ->andWhere('u.apDeletedAt IS NULL')
             ->andWhere('u.apTimeoutAt IS NULL')
+            ->addOrderBy('u.apFetchedAt', 'ASC')
             ->setMaxResults(1000)
             ->getQuery()
             ->getResult();
