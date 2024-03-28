@@ -20,11 +20,11 @@
                 {{ form_start(form) }}
                 {% for flash_error in app.flashes('verify_email_error') %}
                     <div class="alert alert__danger">{{ flash_error }}</div>
-                    {% endfor %}
-                    {% if mbin_sso_registrations_enabled() %}
-                        <h4 class="text-muted" style="text-align: center; margin:0 !important;">{{ 'Register using' }}</h4>
-                        {{ component('login_socials') }}
-                    {% endif %}
+                {% endfor %}
+                {% if mbin_sso_registrations_enabled() %}
+                    <h4 class="text-muted" style="text-align: center; margin:0 !important;">{{ 'Register using' }}</h4>
+                    {{ component('login_socials') }}
+                {% endif %}
                 {{ form_row(form.username, {
                     label: 'username',
                 }) }}
