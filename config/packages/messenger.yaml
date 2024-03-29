@@ -135,8 +135,8 @@ framework:
             App\Message\Contracts\ActivityPubOutboxInterface: outbox
             App\Message\Contracts\ActivityPubResolveInterface: resolve
             # Consider adding SendEmail from Mailer via async messenger as well:
-            Symfony\Component\Mailer\Messenger\SendEmailMessage: async
-            App\Message\Contracts\SendConfirmationEmailInterface: async
+            #Symfony\Component\Mailer\Messenger\SendEmailMessage: async
+            #App\Message\Contracts\SendConfirmationEmailInterface: async
 # when@test:
 #    framework:
 #        messenger:
