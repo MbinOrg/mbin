@@ -22,7 +22,7 @@ class ApObjectExtractor
         $source = $object['source'] ?? null;
 
         // object has no content nor source to extract body from
-        if (empty($content) && empty($source)) {
+        if (null === $content && null === $source) {
             return null;
         }
 
@@ -33,11 +33,13 @@ class ApObjectExtractor
             // markdown source isn't found but object's content is specified
             // to be markdown, also return them
             return $content;
-        } else {
+        } elseif ($content && \is_string($content)) {
             // assuming default content mediaType of text/html,
             // returning html -> markdown conversion of content
             return $this->markdownConverter->convert($content);
         }
+
+        return '';
     }
 
     public function getExternalMediaBody(array $object): ?string

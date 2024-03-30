@@ -87,6 +87,15 @@
     margin: 0;
     padding: 0;
 
+    .options__nolink {
+      background: none;
+      border: 0;
+      border-bottom: 3px solid transparent;
+      display: block;
+      padding: .5rem 1rem;
+      text-decoration: none;
+    }
+
     a, button {
       background: none;
       border: 0;

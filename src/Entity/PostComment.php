@@ -47,7 +47,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
     }
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'postComments')]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $user;
     #[ManyToOne(targetEntity: Post::class, inversedBy: 'comments')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]

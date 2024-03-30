@@ -12,7 +12,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\Autocomplete\Form\AsEntityAutocompleteField;
-use Symfony\UX\Autocomplete\Form\ParentEntityAutocompleteType;
+use Symfony\UX\Autocomplete\Form\BaseEntityAutocompleteType;
 
 #[AsEntityAutocompleteField]
 class MagazineAutocompleteType extends AbstractType
@@ -44,7 +44,6 @@ class MagazineAutocompleteType extends AbstractType
                 }
 
                 $qb->andWhere('entity.name LIKE :filter OR entity.title LIKE :filter')
-                    ->andWhere('entity.apId IS NULL')
                     ->andWhere('entity.visibility = :visibility')
                     ->setParameter('filter', '%'.$query.'%')
                     ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
@@ -55,6 +54,6 @@ class MagazineAutocompleteType extends AbstractType
 
     public function getParent(): string
     {
-        return ParentEntityAutocompleteType::class;
+        return BaseEntityAutocompleteType::class;
     }
 }

@@ -32,6 +32,12 @@ class TagManagerTest extends TestCase
             ['Teraz #zażółć #gęślą #jaźń', ['zazolc', 'gesla', 'jazn']],
             ['#Göbeklitepe #çarpıcı #eğlence #şarkı #ören', ['gobeklitepe', 'carpici', 'eglence', 'sarki', 'oren']],
             ['#Viva #España #senõr', ['viva', 'espana', 'senor']],
+            ['#イラスト # #一次創作', ['イラスト', '一次創作']],
+            ['#ทำตัวไม่ถูกเลยเรา', ['ทำตัวไม่ถูกเลยเรา']],
+            ['#ไกด์ช้างม่วง #ทวิตล่ม', ['ไกด์ช้างม่วง', 'ทวิตล่ม']],
+            ['#Ｓｙｎｔｈｗａｖｅ', ['synthwave']],
+            ['#ｼｰｻｲﾄﾞﾗｲﾅｰ', ['シーサイドライナー']],
+            ['#ぼっち・ざ・ろっく', ['ぼっち・ざ・ろっく']],
         ];
     }
 }

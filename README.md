@@ -2,7 +2,7 @@
 
 Mbin is a fork of [/kbin](https://codeberg.org/Kbin/kbin-core), community-focused. Feel free to discuss on [Matrix](https://matrix.to/#/#mbin:melroy.org) and to create Pull Requests.
 
-**Important:** Mbin is focused on what the community wants, pull requests can be merged by any repo owner (with merge rights in GitHub). Discussions take place on [Matrix](https://matrix.to/#/#mbin:melroy.org) then _consensus_ has to be reached by the community. If approved by the community, only one approval on the PR is required by one of the Mbin maintainers. It's built entirely on trust.
+**Important:** Mbin is focused on what the community wants, pull requests can be merged by any repo maintainer (with merge rights in GitHub). Discussions take place on [Matrix](https://matrix.to/#/#mbin:melroy.org) then _consensus_ has to be reached by the community. If approved by the community, only one approval on the PR is required by one of the Mbin maintainers. It's built entirely on trust.
 
 Mbin is a decentralized content aggregator, voting, discussion and microblogging platform running on the fediverse network. It can
 communicate with many other ActivityPub services, including Kbin, Mastodon, Lemmy, Pleroma, Peertube. The initiative aims to
@@ -11,6 +11,7 @@ promote a free and open internet.
 [![Mbin Workflow](https://github.com/MbinOrg/mbin/actions/workflows/action.yaml/badge.svg?branch=main)](https://github.com/MbinOrg/mbin/actions/workflows/action.yaml?query=branch%3Amain)
 [![Psalm Security Scan](https://github.com/MbinOrg/mbin/actions/workflows/psalm.yml/badge.svg?branch=main)](https://github.com/MbinOrg/mbin/actions/workflows/psalm.yml?query=branch%3Amain)
 [![Translation status](https://hosted.weblate.org/widgets/mbin/-/svg-badge.svg)](https://hosted.weblate.org/engage/mbin/)
+[![Matrix](https://img.shields.io/badge/chat-on%20matrix-brightgreen)](https://matrix.to/#/#mbin:melroy.org)
 
 Unique Features of Mbin for server owners & users alike:
 
@@ -179,7 +180,7 @@ This will give you a minimal working frontend with PostgreSQL setup. Keep in min
 
 _Optionally:_ you could also setup RabbitMQ, but the Doctrine messenger configuration will be sufficient for local development.
 
-More info: [Admin guide](docs/admin_guide.md) and [Symfony Local Web Server](https://symfony.com/doc/current/setup/symfony_server.html)
+More info: [Contributing guide](CONTRIBUTING.md), [Admin guide](docs/admin_guide.md) and [Symfony Local Web Server](https://symfony.com/doc/current/setup/symfony_server.html)
 
 ### Linting
 
@@ -234,7 +235,7 @@ Following languages are currently supported/translated:
 ## Credits
 
 - [grumpyDev](https://karab.in/u/grumpyDev): icons, kbin-theme
-- [Emma](https://gitlab.com/postmill/Postmill): Postmill
+- [Emma](https://codeberg.org/LItiGiousemMA/Postmill): Postmill
 - [Ernest](https://github.com/ernestwisniewski): Kbin
 
 ## License

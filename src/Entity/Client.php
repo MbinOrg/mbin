@@ -35,7 +35,7 @@ class Client extends AbstractClient implements ClientEntityInterface
     private ?string $description = null;
 
     #[OneToOne(targetEntity: User::class)]
-    #[JoinColumn(nullable: true)]
+    #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?User $user = null;
 
     #[OneToOne(targetEntity: Image::class, cascade: ['persist'])]
@@ -45,10 +45,10 @@ class Client extends AbstractClient implements ClientEntityInterface
     #[Column(type: 'string', nullable: false)]
     private ?string $contactEmail = null;
 
-    #[OneToMany(mappedBy: 'client', targetEntity: OAuth2UserConsent::class, orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'client', targetEntity: OAuth2UserConsent::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private ?Collection $oAuth2UserConsents = null;
 
-    #[OneToMany(mappedBy: 'client', targetEntity: OAuth2ClientAccess::class, orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'client', targetEntity: OAuth2ClientAccess::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $oAuth2ClientAccesses;
 
     public function __construct(string $name, string $identifier, ?string $secret)

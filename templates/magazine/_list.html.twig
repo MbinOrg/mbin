@@ -15,7 +15,7 @@
                                 <figure>
                                     <img width="32" height="32"
                                          class="image-inline {{ magazine.isAdult ? 'image-adult' : '' }}"
-                                         src="{{ asset(magazine.icon.filePath) | imagine_filter('avatar_thumb') }}"
+                                         src="{{ magazine.icon.filePath ? (asset(magazine.icon.filePath)|imagine_filter('avatar_thumb')) : magazine.icon.sourceUrl }}"
                                          {% if magazine.isAdult %}data-controller="thumb" data-action="mouseover->thumb#adult_image_hover mouseout->thumb#adult_image_hover_out"{% endif %}
                                          alt="{{ magazine.name ~' '~ 'icon'|trans|lower }}">
                                 </figure>

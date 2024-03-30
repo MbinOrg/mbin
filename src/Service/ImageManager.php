@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Exception\CorruptedFileException;
 use App\Exception\ImageDownloadTooLargeException;
 use League\Flysystem\FilesystemOperator;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Mime\MimeTypesInterface;
 use Symfony\Component\Validator\Constraints\Image;
@@ -29,6 +30,7 @@ class ImageManager
         private readonly HttpClientInterface $httpClient,
         private readonly MimeTypesInterface $mimeTypeGuesser,
         private readonly ValidatorInterface $validator,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -46,13 +48,16 @@ class ImageManager
         return \in_array($mediaType, self::IMAGE_MIMETYPES);
     }
 
+    /**
+     * @throws \Exception if the file could not be found
+     */
     public function store(string $source, string $filePath): bool
     {
         $fh = fopen($source, 'rb');
 
         try {
             if (filesize($source) > self::MAX_IMAGE_BYTES) {
-                throw new ImageDownloadTooLargeException();
+                throw new ImageDownloadTooLargeException('the image is too large, max size is '.self::MAX_IMAGE_BYTES);
             }
 
             $this->validate($source);
@@ -64,8 +69,6 @@ class ImageManager
             }
 
             return true;
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
         } finally {
             \is_resource($fh) and fclose($fh);
         }
@@ -103,18 +106,9 @@ class ImageManager
                 $url,
                 [
                     'timeout' => 5,
-                    'max_duration' => 5,
                     'headers' => [
                         'Accept' => implode(', ', array_diff(self::IMAGE_MIMETYPES, ['image/webp', 'image/avif'])),
                     ],
-                    'on_progress' => function (int $downloaded, int $downloadSize) {
-                        if (
-                            $downloaded > self::MAX_IMAGE_BYTES
-                            || $downloadSize > self::MAX_IMAGE_BYTES
-                        ) {
-                            throw new ImageDownloadTooLargeException();
-                        }
-                    },
                 ]
             );
 
@@ -125,11 +119,13 @@ class ImageManager
             fclose($fh);
 
             $this->validate($tempFile);
+            $this->logger->debug('downloaded file from {url}', ['url' => $url]);
         } catch (\Exception $e) {
             if ($fh && \is_resource($fh)) {
                 fclose($fh);
             }
             unlink($tempFile);
+            $this->logger->warning("couldn't download file from {url}", ['url' => $url]);
 
             return null;
         }
@@ -181,7 +177,11 @@ class ImageManager
             return null;
         }
 
-        return $this->storageUrl.'/'.$image->filePath;
+        if ($image->filePath) {
+            return $this->storageUrl.'/'.$image->filePath;
+        }
+
+        return $image->sourceUrl;
     }
 
     public function getMimetype(\App\Entity\Image $image): string

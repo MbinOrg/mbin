@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 class PostCreatedNotification extends Notification
 {
     #[ManyToOne(targetEntity: Post::class, inversedBy: 'notifications')]
-    #[JoinColumn(nullable: true)]
+    #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?Post $post = null;
 
     public function __construct(User $receiver, Post $post)

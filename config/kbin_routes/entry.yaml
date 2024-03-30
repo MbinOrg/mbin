@@ -55,7 +55,7 @@ entry_comment_image_delete:
 entry_comment_voters:
   controller: App\Controller\Entry\Comment\EntryCommentVotersController
   defaults: { slug: -, }
-  requirements: { type: 'up|down' }
+  requirements: { type: 'up' }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/comment/{comment_id}/votes/{type}
   methods: [ GET ]
 
@@ -206,7 +206,7 @@ entry_pin:
 entry_voters:
   controller: App\Controller\Entry\EntryVotersController
   defaults: { slug: -, sortBy: hot }
-  requirements: { type: 'up|down' }
+  requirements: { type: 'up' }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/votes/{type}
   methods: [ GET ]
 

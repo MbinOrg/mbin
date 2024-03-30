@@ -9,7 +9,8 @@ namespace App\Service;
  */
 class ProjectInfoService
 {
-    private const VERSION = '1.2.1'; // TODO: Retrieve the version from git tags or getenv()?
+    // If updating version, please also update http client UA in [/config/packages/framework.yaml]
+    private const VERSION = '1.5.1'; // TODO: Retrieve the version from git tags or getenv()?
     private const NAME = 'mbin';
     private const USER_AGENT = 'Mbin';
     private const REPOSITORY_URL = 'https://github.com/MbinOrg/mbin';

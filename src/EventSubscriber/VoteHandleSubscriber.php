@@ -56,6 +56,7 @@ class VoteHandleSubscriber implements EventSubscriberInterface
             $this->bus->dispatch(
                 new AnnounceMessage(
                     $event->vote->user->getId(),
+                    null,
                     $event->votable->getId(),
                     \get_class($event->votable),
                 ),

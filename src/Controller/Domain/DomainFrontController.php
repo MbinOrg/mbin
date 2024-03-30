@@ -10,6 +10,7 @@ use App\Repository\Criteria;
 use App\Repository\DomainRepository;
 use App\Repository\EntryRepository;
 use Pagerfanta\PagerfantaInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -34,6 +35,19 @@ class DomainFrontController extends AbstractController
             ->setDomain($name);
         $method = $criteria->resolveSort($sortBy);
         $listing = $this->$method($criteria);
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse(
+                [
+                    'html' => $this->renderView(
+                        'entry/_list.html.twig',
+                        [
+                            'entries' => $listing,
+                        ]
+                    ),
+                ]
+            );
+        }
 
         return $this->render(
             'domain/front.html.twig',

@@ -30,7 +30,7 @@
         {% if hasImage %}
             <img width="40"
                  height="40"
-                 src="{{ asset(comment.image.filePath) |imagine_filter('post_thumb') }}"
+                 src="{{ comment.image.filePath ? (asset(comment.image.filePath)|imagine_filter('post_thumb')) : comment.image.sourceUrl }}"
                  alt="{{ comment.image.altText }}">
             <button formaction="{{ path('post_comment_image_delete', {magazine_name: comment.magazine.name, post_id: comment.post.id, comment_id: comment.id}) }}"
                     class="btn-link"

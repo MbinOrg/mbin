@@ -80,7 +80,7 @@ build:
 image: mbin
 ```
 
-And instead use the following line on all places (`www`, `php`, `messenger` and `messenger_ap` services):
+And instead use the following line on all places (`www`, `php`, and `messenger` services):
 
 ```yml
 image: "ghcr.io/mbinorg/mbin:latest"

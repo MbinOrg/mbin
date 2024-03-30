@@ -25,10 +25,10 @@ class MagazineSubscription
     }
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'subscriptions')]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public ?User $user;
     #[ManyToOne(targetEntity: Magazine::class, inversedBy: 'subscriptions')]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public ?Magazine $magazine;
     #[Id]
     #[GeneratedValue]

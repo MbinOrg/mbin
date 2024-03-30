@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\ActivityPub\Server;
 use App\DTO\ActivityPub\ImageDto;
 use App\DTO\ActivityPub\VideoDto;
 use App\DTO\ModeratorDto;
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Contracts\ActivityPubActorInterface;
+use App\Entity\Entry;
+use App\Entity\EntryComment;
 use App\Entity\Image;
 use App\Entity\Magazine;
 use App\Entity\Moderator;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use App\Entity\User;
 use App\Exception\InvalidApPostException;
 use App\Factory\ActivityPub\PersonFactory;
@@ -20,6 +23,8 @@ use App\Factory\MagazineFactory;
 use App\Factory\UserFactory;
 use App\Message\ActivityPub\UpdateActorMessage;
 use App\Message\DeleteImageMessage;
+use App\Message\DeleteUserMessage;
+use App\Repository\ApActivityRepository;
 use App\Repository\ImageRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
@@ -36,7 +41,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class ActivityPubManager
 {
     public function __construct(
-        private readonly Server $server,
+        private readonly ApActivityRepository $activityRepository,
         private readonly UserRepository $userRepository,
         private readonly UserManager $userManager,
         private readonly UserFactory $userFactory,
@@ -59,11 +64,10 @@ class ActivityPubManager
 
     public function getActorProfileId(ActivityPubActorInterface $actor): string
     {
-        /**
-         * @var $actor User
-         */
-        if (!$actor->apId) {
-            return $this->personFactory->getActivityPubId($actor);
+        if ($actor instanceof User) {
+            if (!$actor->apId) {
+                return $this->personFactory->getActivityPubId($actor);
+            }
         }
 
         // @todo blid webfinger
@@ -104,7 +108,7 @@ class ActivityPubManager
     /**
      * Find an existing actor or create a new one if the actor doesn't yet exists.
      *
-     * @param string $actorUrlOrHandle actor URL or actor handle
+     * @param ?string $actorUrlOrHandle actorUrlOrHandle actor URL or actor handle (could even be null)
      *
      * @return User|Magazine|null or Magazine or null on error
      */
@@ -114,7 +118,7 @@ class ActivityPubManager
             return null;
         }
 
-        $this->logger->debug('searching for actor at "{handle}"', ['handle' => $actorUrlOrHandle]);
+        $this->logger->debug('ActivityPubManager:findActorOrCreate: searching for actor at "{handle}"', ['handle' => $actorUrlOrHandle]);
         if (str_contains($actorUrlOrHandle, $this->settingsManager->get('KBIN_DOMAIN').'/m/')) {
             $magazine = str_replace('https://'.$this->settingsManager->get('KBIN_DOMAIN').'/m/', '', $actorUrlOrHandle);
             $this->logger->debug('found magazine "{magName}"', ['magName' => $magazine]);
@@ -125,7 +129,14 @@ class ActivityPubManager
         $actorUrl = $actorUrlOrHandle;
         if (false === filter_var($actorUrl, FILTER_VALIDATE_URL)) {
             if (!substr_count(ltrim($actorUrl, '@'), '@')) {
-                return $this->userRepository->findOneBy(['username' => ltrim($actorUrl, '@')]);
+                $user = $this->userRepository->findOneBy(['username' => ltrim($actorUrl, '@')]);
+                if ($user instanceof User) {
+                    if ($user->apFetchedAt->modify('+1 hour') < (new \DateTime())) {
+                        $this->bus->dispatch(new UpdateActorMessage($user->apProfileId));
+                    }
+
+                    return $user;
+                }
             }
 
             $actorUrl = $this->webfinger($actorUrl)->getProfileId();
@@ -182,21 +193,38 @@ class ActivityPubManager
 
                 return $magazine;
             }
+
+            if ('Tombstone' === $actor['type']) {
+                // deleted actor
+                if (null !== ($magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl])) && null !== $magazine->apId) {
+                    $this->magazineManager->purge($magazine);
+                    $this->logger->warning('got a tombstone for magazine {name} at {url}, deleting it', ['name' => $magazine->name, 'url' => $actorUrl]);
+                } elseif (null !== ($user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl])) && null !== $user->apId) {
+                    $this->bus->dispatch(new DeleteUserMessage($user->getId()));
+                    $this->logger->warning('got a tombstone for user {name} at {url}, deleting it', ['name' => $user->username, 'url' => $actorUrl]);
+                }
+            }
+        } else {
+            $this->logger->debug("ActivityPubManager:findActorOrCreate:actorUrl: $actorUrl. Actor not found.");
         }
 
         return null;
     }
 
     /**
+     * Try to find an existing actor or create a new one if the actor doesn't yet exists.
+     *
+     * @param ?string $actorUrlOrHandle actor URL or handle (could even be null)
+     *
      * @throws \LogicException when the returned actor is not a user or is null
      */
-    public function findUserActorOrCreateOrThrow(string $actorUrlOrHandle): User
+    public function findUserActorOrCreateOrThrow(?string $actorUrlOrHandle): User|Magazine
     {
         $object = $this->findActorOrCreate($actorUrlOrHandle);
         if (!$object) {
-            throw new \LogicException("could not find actor for 'object' property at: '$actorUrlOrHandle'");
+            throw new \LogicException("Could not find actor for 'object' property at: '$actorUrlOrHandle'");
         } elseif (!$object instanceof User) {
-            throw new \LogicException("could not find user actor for 'object' property at: '$actorUrlOrHandle'");
+            throw new \LogicException("Could not find user actor for 'object' property at: '$actorUrlOrHandle'");
         }
 
         return $object;
@@ -205,7 +233,6 @@ class ActivityPubManager
     public function webfinger(string $id): WebFinger
     {
         $this->logger->debug('fetching webfinger "{id}"', ['id' => $id]);
-        $this->webFingerFactory::setServer($this->server->create());
 
         if (false === filter_var($id, FILTER_VALIDATE_URL)) {
             $id = ltrim($id, '@');
@@ -263,7 +290,21 @@ class ActivityPubManager
         $this->logger->info('updating user {name}', ['name' => $actorUrl]);
         $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
 
+        if ($user instanceof User && $user->apFetchedAt > (new \DateTime())->modify('-1 hour')) {
+            return $user;
+        }
+
         $actor = $this->apHttpClient->getActorObject($actorUrl);
+        if (!$actor || !\is_array($actor)) {
+            return null;
+        }
+
+        if (isset($actor['type']) && 'Tombstone' === $actor['type'] && $user instanceof User) {
+            $this->bus->dispatch(new DeleteUserMessage($user->getId()));
+
+            return null;
+        }
+
         // Check if actor isn't empty (not set/null/empty array/etc.)
         if (isset($actor['endpoints']['sharedInbox']) || isset($actor['inbox'])) {
             // Update the following user columns
@@ -290,7 +331,7 @@ class ActivityPubManager
             if (isset($actor['icon'])) {
                 $newImage = $this->handleImages([$actor['icon']]);
                 if ($user->avatar && $newImage !== $user->avatar) {
-                    $this->bus->dispatch(new DeleteImageMessage($user->avatar->filePath));
+                    $this->bus->dispatch(new DeleteImageMessage($user->avatar->getId()));
                 }
                 $user->avatar = $newImage;
             }
@@ -299,7 +340,7 @@ class ActivityPubManager
             if (isset($actor['image'])) {
                 $newImage = $this->handleImages([$actor['image']]);
                 if ($user->cover && $newImage !== $user->cover) {
-                    $this->bus->dispatch(new DeleteImageMessage($user->cover->filePath));
+                    $this->bus->dispatch(new DeleteImageMessage($user->cover->getId()));
                 }
                 $user->cover = $newImage;
             }
@@ -320,8 +361,10 @@ class ActivityPubManager
 
             return $user;
         } else {
-            return null;
+            $this->logger->debug("ActivityPubManager:updateUser:actorUrl: $actorUrl. Actor not found.");
         }
+
+        return null;
     }
 
     public function handleImages(array $attachment): ?Image
@@ -335,9 +378,12 @@ class ActivityPubManager
             try {
                 if ($tempFile = $this->imageManager->download($images[0]['url'])) {
                     $image = $this->imageRepository->findOrCreateFromPath($tempFile);
+                    $image->sourceUrl = $images[0]['url'];
                     if ($image && isset($images[0]['name'])) {
                         $image->altText = $images[0]['name'];
                     }
+                    $this->entityManager->persist($image);
+                    $this->entityManager->flush();
                 }
             } catch (\Exception $e) {
                 return null;
@@ -378,8 +424,21 @@ class ActivityPubManager
     {
         $this->logger->info('updating magazine "{magName}"', ['magName' => $actorUrl]);
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
+
+        if ($magazine instanceof Magazine && $magazine->apFetchedAt > (new \DateTime())->modify('-1 hour')) {
+            return $magazine;
+        }
+
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         // Check if actor isn't empty (not set/null/empty array/etc.)
+
+        if ($actor && 'Tombstone' === $actor['type'] && $magazine instanceof Magazine && null !== $magazine->apId) {
+            // tombstone for remote magazine -> delete it
+            $this->magazineManager->purge($magazine);
+
+            return null;
+        }
+
         if (isset($actor['endpoints']['sharedInbox']) || isset($actor['inbox'])) {
             if (isset($actor['summary'])) {
                 $converter = new HtmlConverter(['strip_tags' => true]);
@@ -389,7 +448,7 @@ class ActivityPubManager
             if (isset($actor['icon'])) {
                 $newImage = $this->handleImages([$actor['icon']]);
                 if ($magazine->icon && $newImage !== $magazine->icon) {
-                    $this->bus->dispatch(new DeleteImageMessage($magazine->icon->filePath));
+                    $this->bus->dispatch(new DeleteImageMessage($magazine->icon->getId()));
                 }
                 $magazine->icon = $newImage;
             }
@@ -439,7 +498,8 @@ class ActivityPubManager
 
                     if (null !== $items) {
                         $moderatorsToRemove = [];
-                        foreach ($magazine->moderators as /* @var $mod Moderator */ $mod) {
+                        /** @var Moderator $mod */
+                        foreach ($magazine->moderators as $mod) {
                             if (!$mod->isOwner) {
                                 $moderatorsToRemove[] = $mod->user;
                             }
@@ -492,8 +552,10 @@ class ActivityPubManager
 
             return $magazine;
         } else {
-            return null;
+            $this->logger->debug("ActivityPubManager:updateMagazine:actorUrl: $actorUrl. Actor not found.");
         }
+
+        return null;
     }
 
     public function createInboxesFromCC(array $activity, User $user): array
@@ -588,15 +650,13 @@ class ActivityPubManager
      */
     public function updateActor(string $actorUrl): null|Magazine|User
     {
-        $this->logger->info('updating actor at {url}', ['url' => $actorUrl]);
-        $actor = $this->apHttpClient->getActorObject($actorUrl);
-
-        // User (We don't make a distinction between bots with type Service as Lemmy does)
-        if (isset($actor['type']) && \in_array($actor['type'], User::USER_TYPES)) {
+        if ($this->userRepository->findOneBy(['apProfileId' => $actorUrl])) {
             return $this->updateUser($actorUrl);
+        } elseif ($this->magazineRepository->findOneBy(['apProfileId' => $actorUrl])) {
+            return $this->updateMagazine($actorUrl);
         }
 
-        return $this->updateMagazine($actorUrl);
+        return null;
     }
 
     public function findOrCreateMagazineByToAndCC(array $object): Magazine|null
@@ -670,5 +730,48 @@ class ActivityPubManager
         // - image url looks like a link to image
         return (!empty($object['mediaType']) && ImageManager::isImageType($object['mediaType']))
             || ImageManager::isImageUrl($object['url']);
+    }
+
+    /**
+     * @param string|array $apObject      the object that should be like, so a post of any kind in its AP array representation or a URL
+     * @param array        $fullPayload   the full message payload, only used to log it
+     * @param callable     $chainDispatch if we do not have the object in our db this is called to dispatch a new ChainActivityMessage.
+     *                                    Since the explicit object has to be set in the message this has to be done as a callback method
+     *
+     * @see ChainActivityMessage
+     */
+    public function getEntityObject(string|array $apObject, array $fullPayload, callable $chainDispatch): null|Entry|EntryComment|Post|PostComment
+    {
+        $object = null;
+        if (\is_string($apObject)) {
+            if (false === filter_var($apObject, FILTER_VALIDATE_URL)) {
+                $this->logger->error('The like activity references an object by string, but that is not a URL, discarding the message', $fullPayload);
+
+                return null;
+            }
+            $activity = $this->activityRepository->findByObjectId($apObject);
+            if (!$activity) {
+                $object = $this->apHttpClient->getActivityObject($apObject);
+            }
+        } else {
+            $activity = $this->activityRepository->findByObjectId($apObject['id']);
+            if (!$activity) {
+                $object = $apObject;
+            }
+        }
+
+        if (!$activity && !$object) {
+            $this->logger->error("The activity is still null and we couldn't get the object from the url, discarding", $fullPayload);
+
+            return null;
+        }
+
+        if ($object) {
+            $chainDispatch($object);
+
+            return null;
+        }
+
+        return $this->entityManager->getRepository($activity['type'])->find((int) $activity['id']);
     }
 }

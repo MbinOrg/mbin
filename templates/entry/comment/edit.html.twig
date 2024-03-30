@@ -15,8 +15,9 @@
 {% block body %}
     {{ component('entry_comment', {
         comment: comment,
+        dateAsUrl: false,
         showEntryTitle: false,
-        showMagazineName: false
+        showMagazineName: false,
     }) }}
     {% include 'layout/_flash.html.twig' %}
     <div class="alert alert__info">

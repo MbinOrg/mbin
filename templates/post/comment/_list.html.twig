@@ -31,7 +31,7 @@
         {{ component('post_comment', {
             comment: comment,
             showNested: showNested,
-            dateAsUrl: not is_route_name('post_single'),
+            dateAsUrl: dateAsUrl is defined ? dateAsUrl : true,
             level: level
         }) }}
     {% endfor %}

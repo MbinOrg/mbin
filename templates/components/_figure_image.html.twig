@@ -1,37 +1,59 @@
-<figure>
-    <div class="figure-container">
-        <div class="figure-thumb">
-            <a href="{{ uploaded_asset(image.filePath) }}" class="thumb">
-                <img src="{{ asset(image.filePath)|imagine_filter(thumb_filter) }}"
-                     alt="{{ image.altText }}">
-            </a>
-        </div>
-        {% if is_adult %}
-            {% with {sensitive_id: 'sensitive-check-%s-%s'|format(parent_id, image.id) } %}
-            <input id="{{ sensitive_id }}"
-                   type="checkbox"
-                   class="sensitive-state"
-                   aria-label="{{ 'sensitive_toggle'|trans }}">
-            <label for="{{ sensitive_id }}"
-                   class="sensitive-button sensitive-button-show sensitive-checked--hide"
-                   title="{{ 'sensitive_show'|trans }}">
-                <div class="figure-blur" aria-hidden="true">
-                    {{ component('blurhash_image', {blurhash: image.blurhash, width: 32, height: 32}) }}
-                </div>
-                <div class="sensitive-button-label">
-                    {{ 'sensitive_warning'|trans }} <br>
-                    {{ 'sensitive_show'|trans }}
-                </div>
-            </label>
-            <label for="{{ sensitive_id }}"
-                   class="sensitive-button sensitive-button-hide sensitive-checked--show"
-                   title="{{ 'sensitive_hide'|trans }}"
-                   aria-label="{{ 'sensitive_hide'|trans }}">
-                <div class="sensitive-button-label" >
-                    <i class="fa-solid fa-eye-slash" aria-hidden="true"></i>
-                </div>
-            </label>
-            {% endwith %}
+{% with {
+    sensitive_id: 'sensitive-check-%s-%s'|format(parent_id, image.id),
+    lightbox_alt_id: 'thumb-alt-%s-%s'|format(parent_id, image.id),
+    image_path: (image.filePath ? asset(image.filePath)|imagine_filter(thumb_filter) : image.sourceUrl)
+} %}
+    <figure>
+        {% if image.altText %}
+            <figcaption class="{{ html_classes('hidden', 'glightbox-desc', lightbox_alt_id) }}">
+                {{ image.altText|nl2br }}
+            </figcaption>
         {% endif %}
-    </div>
-</figure>
+        <div class="figure-container">
+            <div class="figure-thumb">
+                <a
+                    href="{{ uploaded_asset(image) }}"
+                    class="thumb"
+                    data-description="{{ image.altText ? '.'~lightbox_alt_id : ''}}">
+                    <img loading="lazy"
+                         src="{{ image_path }}"
+                         title="{{ image.altText }}"
+                         alt="{{ image.altText }}">
+                </a>
+            </div>
+            <div class="figure-badge">
+                {% if image_path|lower ends with '.gif' %}
+                    <div class="figure-badge-label">GIF</div>
+                {% endif %}
+                {% if image.altText %}
+                    <div class="figure-badge-label">ALT</div>
+                {% endif %}
+            </div>
+            {% if is_adult %}
+                <input id="{{ sensitive_id }}"
+                       type="checkbox"
+                       class="sensitive-state"
+                       aria-label="{{ 'sensitive_toggle'|trans }}">
+                <label for="{{ sensitive_id }}"
+                       class="sensitive-button sensitive-button-show sensitive-checked--hide"
+                       title="{{ 'sensitive_show'|trans }}">
+                    <div class="figure-blur" aria-hidden="true">
+                        {{ component('blurhash_image', {blurhash: image.blurhash, width: 32, height: 32}) }}
+                    </div>
+                    <div class="sensitive-button-label">
+                        {{ 'sensitive_warning'|trans }} <br>
+                        {{ 'sensitive_show'|trans }}
+                    </div>
+                </label>
+                <label for="{{ sensitive_id }}"
+                       class="sensitive-button sensitive-button-hide sensitive-checked--show"
+                       title="{{ 'sensitive_hide'|trans }}"
+                       aria-label="{{ 'sensitive_hide'|trans }}">
+                    <div class="sensitive-button-label" >
+                        <i class="fa-solid fa-eye-slash" aria-hidden="true"></i>
+                    </div>
+                </label>
+            {% endif %}
+        </div>
+    </figure>
+{% endwith %}

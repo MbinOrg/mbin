@@ -8,11 +8,11 @@ use App\Entity\Magazine;
 use App\Entity\User;
 use App\Message\ActivityPub\Inbox\FollowMessage;
 use App\Service\ActivityPub\ApHttpClient;
-use App\Service\ActivityPub\Wrapper\AcceptWrapper;
+use App\Service\ActivityPub\Wrapper\FollowResponseWrapper;
 use App\Service\ActivityPubManager;
 use App\Service\MagazineManager;
 use App\Service\UserManager;
-use JetBrains\PhpStorm\ArrayShape;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -23,12 +23,14 @@ class FollowHandler
         private readonly UserManager $userManager,
         private readonly MagazineManager $magazineManager,
         private readonly ApHttpClient $client,
-        private readonly AcceptWrapper $acceptWrapper
+        private readonly LoggerInterface $logger,
+        private readonly FollowResponseWrapper $followResponseWrapper
     ) {
     }
 
-    public function __invoke(FollowMessage $message)
+    public function __invoke(FollowMessage $message): void
     {
+        $this->logger->debug('got a FollowMessage: {message}', [$message]);
         $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
         // Check if actor is not empty
         if (!empty($actor)) {
@@ -36,10 +38,14 @@ class FollowHandler
                 $object = $this->activityPubManager->findActorOrCreate($message->payload['object']);
                 // Check if object is not empty
                 if (!empty($object)) {
-                    $this->handleFollow($object, $actor);
+                    if ($object instanceof Magazine and null === $object->apId and 'random' === $object->name) {
+                        $this->handleFollowRequest($message->payload, $object, isReject: true);
+                    } else {
+                        $this->handleFollow($object, $actor);
 
-                    // @todo manually Accept
-                    $this->accept($message->payload, $object);
+                        // @todo manually Accept
+                        $this->handleFollowRequest($message->payload, $object);
+                    }
                 }
 
                 return;
@@ -83,24 +89,16 @@ class FollowHandler
         };
     }
 
-    #[ArrayShape([
-        '@context' => 'string',
-        'id' => 'string',
-        'type' => 'string',
-        'actor' => 'mixed',
-        'object' => 'mixed',
-    ])]
-    private function accept(
-        array $payload,
-        User|Magazine $object
-    ): void {
-        $accept = $this->acceptWrapper->build(
+    private function handleFollowRequest(array $payload, User|Magazine $object, bool $isReject = false): void
+    {
+        $response = $this->followResponseWrapper->build(
             $payload['object'],
             $payload['actor'],
             $payload['id'],
+            $isReject
         );
 
-        $this->client->post($this->client->getInboxUrl($payload['actor']), $object, $accept);
+        $this->client->post($this->client->getInboxUrl($payload['actor']), $object, $response);
     }
 
     private function handleUnfollow(User $actor, null|User|Magazine $object): void

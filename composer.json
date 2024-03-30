@@ -1,8 +1,10 @@
 {
     "name": "mbinorg/mbin",
     "description": "Mbin is a decentralized content aggregator and microblogging platform running on the Fediverse network",
-    "license": "AGPL-3.0-or-later",
     "type": "project",
+    "license": "AGPL-3.0-or-later",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
     "require": {
         "php": ">=8.2",
         "ext-amqp": "*",
@@ -22,7 +24,7 @@
         "doctrine/doctrine-bundle": "^2.2",
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/orm": "^2.8",
-        "embed/embed": "master",
+        "embed/embed": "^4.4",
         "endroid/qr-code": "^4.8",
         "friendsofsymfony/jsrouting-bundle": "^3.2",
         "furqansiddiqui/bip39-mnemonic-php": "^0.1.4",
@@ -86,6 +88,7 @@
         "symfony/rate-limiter": "6.4.*",
         "symfony/redis-messenger": "6.4.*",
         "symfony/runtime": "6.4.*",
+        "symfony/scheduler": "6.4.*",
         "symfony/security-bundle": "6.4.*",
         "symfony/serializer": "6.4.*",
         "symfony/string": "6.4.*",
@@ -131,8 +134,6 @@
     "conflict": {
         "symfony/symfony": "*"
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "App\\": "src/"
@@ -163,15 +164,16 @@
         }
     },
     "scripts": {
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        },
         "post-install-cmd": [
             "@auto-scripts"
         ],
         "post-update-cmd": [
             "@auto-scripts"
         ],
-        "auto-scripts": {
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
-        },
         "codestyle:fix": [
             "tools/vendor/bin/php-cs-fixer fix"
         ]

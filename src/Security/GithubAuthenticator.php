@@ -6,6 +6,7 @@ namespace App\Security;
 
 use App\DTO\UserDto;
 use App\Entity\User;
+use App\Service\SettingsManager;
 use App\Service\UserManager;
 use App\Utils\Slugger;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,6 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
@@ -29,7 +31,8 @@ class GithubAuthenticator extends OAuth2Authenticator
         private readonly RouterInterface $router,
         private readonly EntityManagerInterface $entityManager,
         private readonly UserManager $userManager,
-        private readonly Slugger $slugger
+        private readonly Slugger $slugger,
+        private readonly SettingsManager $settingsManager
     ) {
     }
 
@@ -50,7 +53,7 @@ class GithubAuthenticator extends OAuth2Authenticator
                 $githubUser = $client->fetchUserFromToken($accessToken);
 
                 $existingUser = $this->entityManager->getRepository(User::class)->findOneBy(
-                    ['oauthGithubId' => $githubUser->getId()]
+                    ['oauthGithubId' => \strval($githubUser->getId())]
                 );
 
                 if ($existingUser) {
@@ -62,20 +65,29 @@ class GithubAuthenticator extends OAuth2Authenticator
                 );
 
                 if ($user) {
-                    $user->oauthGithubId = $githubUser->getId();
-                } else {
-                    $dto = (new UserDto())->create(
-                        $slugger->slug($githubUser->getNickname()).rand(1, 999),
-                        $githubUser->getEmail(),
-                        null
-                    );
+                    $user->oauthGithubId = \strval($githubUser->getId());
 
-                    $dto->plainPassword = bin2hex(random_bytes(20));
+                    $this->entityManager->persist($user);
+                    $this->entityManager->flush();
 
-                    $user = $this->userManager->create($dto, false);
-                    $user->oauthGithubId = $githubUser->getId();
-                    $user->isVerified = true;
+                    return $user;
                 }
+
+                if (false === $this->settingsManager->get('MBIN_SSO_REGISTRATIONS_ENABLED')) {
+                    throw new CustomUserMessageAuthenticationException('MBIN_SSO_REGISTRATIONS_ENABLED');
+                }
+
+                $dto = (new UserDto())->create(
+                    $slugger->slug($githubUser->getNickname()).rand(1, 999),
+                    $githubUser->getEmail(),
+                    null
+                );
+
+                $dto->plainPassword = bin2hex(random_bytes(20));
+
+                $user = $this->userManager->create($dto, false);
+                $user->oauthGithubId = \strval($githubUser->getId());
+                $user->isVerified = true;
 
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
@@ -98,6 +110,13 @@ class GithubAuthenticator extends OAuth2Authenticator
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $message = strtr($exception->getMessageKey(), $exception->getMessageData());
+
+        if ('MBIN_SSO_REGISTRATIONS_ENABLED' === $message) {
+            $session = $request->getSession();
+            $session->getFlashBag()->add('error', 'sso_registrations_enabled.error');
+
+            return new RedirectResponse($this->router->generate('app_login'));
+        }
 
         return new Response($message, Response::HTTP_FORBIDDEN);
     }

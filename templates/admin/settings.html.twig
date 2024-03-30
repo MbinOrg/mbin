@@ -23,7 +23,7 @@
             {{ form_row(form.KBIN_CONTACT_EMAIL, {label: 'contact_email'}) }}
             <div class="select-flex">
                 {{ form_label(form.MBIN_DEFAULT_THEME, 'default_theme') }}
-                {{ form_widget(form.MBIN_DEFAULT_THEME, {attr: {'aria-label': 'filter.origin.label'|trans}}) }}
+                {{ form_widget(form.MBIN_DEFAULT_THEME, {attr: {'aria-label': 'change_theme'|trans}}) }}
             </div>
             <h2>{{ 'meta'|trans }}</h2>
             {{ form_row(form.KBIN_META_TITLE, {label: 'title'}) }}
@@ -38,6 +38,10 @@
             <div class="checkbox">
                 {{ form_label(form.KBIN_REGISTRATIONS_ENABLED, 'registrations_enabled') }}
                 {{ form_widget(form.KBIN_REGISTRATIONS_ENABLED) }}
+            </div>
+            <div class="checkbox">
+                {{ form_label(form.MBIN_SSO_REGISTRATIONS_ENABLED, 'sso_registrations_enabled') }}
+                {{ form_widget(form.MBIN_SSO_REGISTRATIONS_ENABLED) }}
             </div>
             <div class="checkbox">
                 {{ form_label(form.KBIN_CAPTCHA_ENABLED, 'captcha_enabled') }}
@@ -62,6 +66,10 @@
             <div class="checkbox">
                 {{ form_label(form.KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN, 'federated_search_only_loggedin') }}
                 {{ form_widget(form.KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN) }}
+            </div>
+            <div class="checkbox">
+                {{ form_label(form.MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY, 'sidebar_sections_local_only') }}
+                {{ form_widget(form.MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY) }}
             </div>
             <div class="row actions">
                 {{ form_row(form.submit, {label: 'save', attr: {class: 'btn btn__primary'}}) }}

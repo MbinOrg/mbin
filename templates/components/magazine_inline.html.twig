@@ -4,14 +4,15 @@
     {% if magazine.icon and showAvatar and (app.user or magazine.isAdult is same as false) %}
         <img class="image-inline {{ magazine.isAdult ? 'image-adult' : '' }}"
              width="30" height="30"
+             loading="lazy"
              style="max-width: 30px; max-height: 30px;"
              {% if magazine.isAdult %}data-controller="thumb" data-action="mouseover->thumb#adult_image_hover mouseout->thumb#adult_image_hover_out"{% endif %}
-             src="{{ asset(magazine.icon.filePath) | imagine_filter('avatar_thumb') }}"
+             src="{{ magazine.icon.filePath ? (asset(magazine.icon.filePath)|imagine_filter('avatar_thumb')) : magazine.icon.sourceUrl }}"
              alt="{{ magazine.name ~ ' ' ~ 'icon'|trans|lower }}">
     {% endif %}
     {% if fullName %}
         {{ magazine.name }} {% if magazine.isAdult %}<small class="badge danger">18+</small>{% endif %}
     {% else %}
-        {{ ('@'~magazine.name)|username(false) -}}
+        {{ magazine.title }}
     {% endif %}
 </a>

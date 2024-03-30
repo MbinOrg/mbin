@@ -25,7 +25,7 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
     private int $id;
 
     #[ManyToOne(targetEntity: User::class)]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private object $user;
 
     public function __construct(object $user, \DateTimeInterface $expiresAt, string $selector, string $hashedToken)

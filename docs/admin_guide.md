@@ -178,11 +178,15 @@ KBIN_STORAGE_URL=https://domain.tld/media
 POSTGRES_VERSION=14
 
 # Configure email, eg. using SMTP
-MAILER_DSN=smtp://127.0.0.1:25?encryption=ssl&auth_mode=login&username=&password=
+MAILER_DSN=smtp://127.0.0.1 # When you have a local SMTP server listening
 # But if already have Postfix configured, just use sendmail:
 MAILER_DSN=sendmail://default
 # Or Gmail (%40 = @-sign) use:
-MAILER_DSN=gmail+smtp://user%40domain.com:pass@default
+MAILER_DSN=gmail+smtp://user%40domain.com:pass@smtp.gmail.com
+# Or remote SMTP with TLS on port 587:
+MAILER_DSN=smtp://username:password@smtpserver.tld:587?encryption=tls&auth_mode=log
+# Or remote SMTP with SSL on port 465:
+MAILER_DSN=smtp://username:password@smtpserver.tld:465?encryption=ssl&auth_mode=log
 ```
 
 OAuth2 keys for API credential grants:
@@ -301,7 +305,11 @@ APP_ENV=dev APP_DEBUG=1 php bin/console cache:clear
 composer clear-cache
 ```
 
-### Redis
+### Caching
+
+You can choose between either Redis or Dragonfly.
+
+#### Redis
 
 Edit `redis.conf` file:
 
@@ -332,6 +340,59 @@ REDIS_DNS=redis://${REDIS_PASSWORD}@$127.0.0.1:6379
 # Or if you want to use socket file:
 #REDIS_DNS=redis://${REDIS_PASSWORD}/var/run/redis/redis-server.sock
 ```
+
+#### Dragonfly
+
+[Dragonfly](https://www.dragonflydb.io/) is a drop-in replacement for Redis. If you wish to use Dragonfly instead, that is possible. Do **NOT** run both Redis & Dragonfly, just pick one. After all they run on the same port by default (6379).
+
+Be sure you disabled redis:
+
+```sh
+sudo systemctl stop redis
+sudo systemctl disable redis
+```
+
+Or even removed Redis: `sudo apt purge redis-server`
+
+Dragonfly Debian file can be downloaded via ([Dragonfly also provide a standalone binary](https://www.dragonflydb.io/docs/getting-started/binary#step-1-download-preferred-release)):
+
+```sh
+wget https://dragonflydb.gateway.scarf.sh/latest/dragonfly_amd64.deb
+```
+
+Install the deb package via:
+
+```sh
+sudo apt install ./dragonfly_amd64.deb
+```
+
+Because Dragonfly is fully Redis compatible you can optionally still install the `redis-tools` package
+(`apt install redis-tools`), if you want to use the `redis-cli` with Dragonfly for example.
+
+Start & enable the service if it isn't already:
+
+```sh
+sudo systemctl start dragonfly
+sudo systemctl enable dragonfly
+```
+
+Configuration file is located at: `/etc/dragonfly/dragonfly.conf`. See also: [Server config documentation](https://www.dragonflydb.io/docs/managing-dragonfly/flags).  
+For example you can also configure Unix socket files if you wish. At least the following option (`--default_lua_flags`) should be added to the config file, in order to avoid "Failed to invalidate key" errors.
+
+Edit the `sudo nano /etc/dragonfly/dragonfly.conf` file and append the following option to the bottom of the file:
+
+```ini
+--default_lua_flags=allow-undeclared-keys,disable-atomicity
+```
+
+Optionally, if you want to set a password with Dragonfly, _also add_ the following option to the bottom of the file:
+
+```ini
+# Replace {!SECRET!!KEY!-32_1-!} with the password generated earlier
+--requirepass={!SECRET!!KEY!-32_1-!}
+```
+
+Dragonfly use the same port as Redis and is fully compatible with Redis APIs, so _no_ client-side changes are needed. Unless you use a different port or another socket location.
 
 ### PostgreSQL (Database)
 
@@ -421,6 +482,39 @@ npm run build # Builds frontend
 
 Make sure you have substituted all the passwords and configured the basic services.
 
+#### Let's Encrypt (TLS)
+
+> **Note**
+> The Certbot authors recommend installing through snap as some distros' versions from APT tend to fall out-of-date; see https://eff-certbot.readthedocs.io/en/latest/install.html#snap-recommended for more.
+
+Install Snapd:
+
+```bash
+sudo apt-get install snapd
+```
+
+Install Certbot:
+
+```bash
+sudo snap install core; sudo snap refresh core
+sudo snap install --classic certbot
+```
+
+Add symlink:
+
+```bash
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+```
+
+Follow the prompts to create TLS certificates for your domain(s). If you don't already have NGINX up, you can use standalone mode.
+
+```bash
+sudo certbot certonly
+
+# Or if you wish not to use the standalone mode but the Nginx plugin:
+sudo certbot --nginx -d domain.tld
+```
+
 ### NGINX
 
 We will use NGINX as reverse proxy between the public site and various backend services (static files, PHP and Mercure).
@@ -443,7 +537,6 @@ Edit the main NGINX config file: `sudo nano /etc/nginx/nginx.conf` with the foll
 
 ```nginx
 ssl_protocols TLSv1.2 TLSv1.3; # Requires nginx >= 1.13.0 else only use TLSv1.2
-ssl_prefer_server_ciphers on;
 ssl_dhparam /etc/nginx/dhparam.pem;
 ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305;
 ssl_prefer_server_ciphers off;
@@ -659,39 +752,6 @@ Restart (or reload) NGINX:
 sudo systemctl restart nginx
 ```
 
-#### Let's Encrypt (TLS)
-
-> **Note**
-> This is installed via snap to reduce system dependencies ran, and the preferred way. Run in standalone mode to not mess with the default config and minimize errors all around. If you prefer no snaps you can install other ways though, however is the preferred way to install from let's encrypt.
-
-Install Snapd:
-
-```bash
-sudo apt-get install snapd
-```
-
-Install Certbot:
-
-```bash
-sudo snap install core; sudo snap refresh core
-sudo snap install --classic certbot
-```
-
-Add symlink:
-
-```bash
-sudo ln -s /snap/bin/certbot /usr/bin/certbot
-```
-
-Generate a TLS certificate for your domain(s):
-
-```bash
-sudo certbot certonly --standalone -d domain.tld -d www.domain.tld
-
-# Or if you wish not to use the standalone mode but the Nginx plugin:
-sudo certbot --nginx -d domain.tld -d www.domain.tld
-```
-
 ### Additional Mbin configuration files
 
 These are additional configuration YAML file changes in the `config` directory.
@@ -711,6 +771,27 @@ And now change: `redirect_response_code: 302` to: `redirect_response_code: 301`.
 _Hint:_ There are also other configuration files, eg. `config/packages/monolog.yaml` where you can change logging settings if you wish, but this is not required (these defaults are fine for production).
 
 ### Symfony Messenger (Queues)
+
+The symphony messengers are background workers for a lot of different task, the biggest one being handling all the ActivityPub traffic.  
+We have a few different queues:
+
+1. `receive` [RabbitMQ]: everything any remote instance sends to us will first end up in this queue.
+   When processing it will be determined what kind of message it is (creation of a thread, a new comment, etc.)
+2. `inbox` [RabbitMQ]: messages from `receive` with the determined kind of incoming message will end up here and the necessary actions will be executed.
+   This is the place where the thread or comment will actually be created
+3. `outbox` [RabbitMQ]: when a user creates a thread or a comment, a message will be created and send to the outbox queue
+   to build the ActivityPub object that will be sent to remote instances.
+   After the object is built and the inbox addresses of all the remote instances who are interested in the message are gathered,
+   we will create a `DeliverMessage` for every one of them, which will be sent to the `deliver` queue
+4. `deliver` [RabbitMQ]: Actually sending out the ActivityPub objects to other instances
+5. `resolve` [RabbitMQ]: Resolving dependencies or ActivityPub actors.
+   For example if your instance gets a like message for a post that is not on your instance a message resolving that dependency will be dispatched to this queue
+6. `async` [RabbitMQ]: messages in async are local actions that are relevant to this instance, e.g. creating notifications, fetching embedded images, etc.
+7. `old` [RabbitMQ]: the standard messages queue that existed before. This exists solely for compatibility purposes and might be removed later on
+8. `failed` [PostgreSQL]: jobs from the other queues that have been retried, but failed. They get retried a few times again, before they end up in
+9. `dead` [PostgreSQL]: dead jobs that will not be retried
+
+We need the `dead` queue so that messages that throw a `UnrecoverableMessageHandlingException`, which is used to indicate that a message should not be retried and go straight to the supplied failure queue
 
 #### Install RabbitMQ (Recommended, but optional)
 
@@ -778,7 +859,7 @@ nano .env
 RABBITMQ_PASSWORD=!ChangeThisRabbitPass!
 MESSENGER_TRANSPORT_DSN=amqp://kbin:${RABBITMQ_PASSWORD}@127.0.0.1:5672/%2f/messages
 
-# or Redis:
+# or Redis/Dragonfly:
 #MESSENGER_TRANSPORT_DSN=redis://${REDIS_PASSWORD}@127.0.0.1:6379/messages
 # or PostgreSQL Database (Doctrine):
 #MESSENGER_TRANSPORT_DSN=doctrine://default
@@ -879,6 +960,10 @@ Mercure will be configured further in the next section (Supervisor).
 
 ### Setup Supervisor
 
+We use Supervisor to run our background workers, aka. "Messengers".
+
+Install Supervisor:
+
 ```bash
 sudo apt-get install supervisor
 ```
@@ -892,20 +977,10 @@ sudo nano /etc/supervisor/conf.d/messenger-worker.conf
 With the following content:
 
 ```ini
-[program:messenger-mbin]
-command=php /var/www/mbin/bin/console messenger:consume async --time-limit=1800
+[program:messenger]
+command=php /var/www/mbin/bin/console messenger:consume scheduler_default old async outbox deliver inbox resolve receive failed --time-limit=3600
 user=www-data
-numprocs=2
-startsecs=0
-autostart=true
-autorestart=true
-startretries=10
-process_name=%(program_name)s_%(process_num)02d
-
-[program:messenger-ap]
-command=php /var/www/mbin/bin/console messenger:consume async_ap --time-limit=1800
-user=www-data
-numprocs=2
+numprocs=6
 startsecs=0
 autostart=true
 autorestart=true
@@ -914,6 +989,8 @@ process_name=%(program_name)s_%(process_num)02d
 ```
 
 Save and close the file.
+
+Note: you can increase the number of running messenger jobs if your queue is building up (i.e. more messages are coming in than your messengers can handle)
 
 We also use supervisor for running Mercure job:
 
@@ -974,7 +1051,7 @@ If you perform a Mbin upgrade (eg. `git pull`), be aware to _always_ execute the
 ./bin/post-upgrade
 ```
 
-And when needed also execute: `sudo redis-cli FLUSHDB` to get rid of Redis cache issues. And reload the PHP FPM service if you have OPCache enabled.
+And when needed also execute: `sudo redis-cli FLUSHDB` to get rid of Redis/Dragonfly cache issues. And reload the PHP FPM service if you have OPCache enabled.
 
 ### Manual user activation
 
@@ -1028,7 +1105,7 @@ Web-server (Nginx):
 
 **Please, check the logs above first.** If you are really stuck, visit to our [Matrix space](https://matrix.to/#/%23mbin:melroy.org), there is a 'General' room and dedicated room for 'Issues/Support'.
 
-Test PostgreSQL connections if using a remote server, same with Redis. Ensure no firewall rules blocking are any incoming or out-coming traffic (eg. port on 80 and 443).
+Test PostgreSQL connections if using a remote server, same with Redis (or Dragonfly is you are using Dragonfly instead). Ensure no firewall rules blocking are any incoming or out-coming traffic (eg. port on 80 and 443).
 
 ### S3 Images storage (optional)
 

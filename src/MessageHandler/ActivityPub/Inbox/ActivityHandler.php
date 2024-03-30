@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\MessageHandler\ActivityPub\Inbox;
 
+use App\Entity\Magazine;
 use App\Entity\User;
 use App\Exception\InboxForwardingException;
 use App\Message\ActivityPub\Inbox\ActivityMessage;
@@ -11,6 +12,7 @@ use App\Message\ActivityPub\Inbox\AddMessage;
 use App\Message\ActivityPub\Inbox\AnnounceMessage;
 use App\Message\ActivityPub\Inbox\CreateMessage;
 use App\Message\ActivityPub\Inbox\DeleteMessage;
+use App\Message\ActivityPub\Inbox\DislikeMessage;
 use App\Message\ActivityPub\Inbox\FlagMessage;
 use App\Message\ActivityPub\Inbox\FollowMessage;
 use App\Message\ActivityPub\Inbox\LikeMessage;
@@ -20,6 +22,7 @@ use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\SignatureValidator;
 use App\Service\ActivityPubManager;
 use App\Service\SettingsManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -28,6 +31,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 readonly class ActivityHandler
 {
     public function __construct(
+        private EntityManagerInterface $entityManager,
         private SignatureValidator $signatureValidator,
         private SettingsManager $settingsManager,
         private MessageBusInterface $bus,
@@ -89,12 +93,29 @@ readonly class ActivityHandler
         }
 
         if ('Announce' === $payload['type']) {
+            $actor = $this->manager->findActorOrCreate($payload['actor']);
+            if ($actor instanceof Magazine) {
+                $actor->lastOriginUpdate = new \DateTime();
+                $this->entityManager->persist($actor);
+                $this->entityManager->flush();
+            }
+            // we check for an array here, because boosts are announces with an url (string) as the object
             if (\is_array($payload['object'])) {
                 $payload = $payload['object'];
+                $actor = $payload['actor'] ?? $payload['attributedTo'] ?? null;
+                if ($actor) {
+                    $user = $this->manager->findActorOrCreate($actor);
+                    if ($user instanceof User && null === $user->apId) {
+                        // don't do anything if we get an announce activity for something a local user did (unless it's a boost, see comment above)
+                        $this->logger->warning('ignoring this message because it announces an activity from a local user');
+
+                        return;
+                    }
+                }
             }
         }
 
-        $this->logger->debug("Got activity message of type '{$payload['type']}'");
+        $this->logger->debug('Got activity message of type {type}: {message}', ['type' => $payload['type'], 'message' => json_encode($payload)]);
 
         switch ($payload['type']) {
             case 'Create':
@@ -111,6 +132,9 @@ readonly class ActivityHandler
                 break;
             case 'Like':
                 $this->bus->dispatch(new LikeMessage($payload));
+                break;
+            case 'Dislike':
+                $this->bus->dispatch(new DislikeMessage($payload));
                 break;
             case 'Follow':
                 $this->bus->dispatch(new FollowMessage($payload));
@@ -148,22 +172,19 @@ readonly class ActivityHandler
             $type = $payload['type'];
         }
 
-        if ('Follow' === $type) {
-            $this->bus->dispatch(new FollowMessage($payload));
-
-            return;
-        }
-
-        if ('Announce' === $type) {
-            $this->bus->dispatch(new AnnounceMessage($payload));
-
-            return;
-        }
-
-        if ('Like' === $type) {
-            $this->bus->dispatch(new LikeMessage($payload));
-
-            return;
+        switch ($type) {
+            case 'Follow':
+                $this->bus->dispatch(new FollowMessage($payload));
+                break;
+            case 'Announce':
+                $this->bus->dispatch(new AnnounceMessage($payload));
+                break;
+            case 'Like':
+                $this->bus->dispatch(new LikeMessage($payload));
+                break;
+            case 'Dislike':
+                $this->bus->dispatch(new DislikeMessage($payload));
+                break;
         }
     }
 

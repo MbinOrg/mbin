@@ -37,6 +37,7 @@ security:
                 - App\Security\GoogleAuthenticator
                 - App\Security\GithubAuthenticator
                 - App\Security\KeycloakAuthenticator
+                - App\Security\ZitadelAuthenticator
             logout:
                 enable_csrf: true
                 path: app_logout
@@ -58,6 +59,9 @@ security:
         # This makes the logout route accessible during two-factor authentication. Allows the user to
         # cancel two-factor authentication, if they need to.
         - { path: ^/logout, role: PUBLIC_ACCESS }
+        # allow custom style route access during two-factor authentication
+        # to avoid redirecting (wrongly) to this route after two-factor authentication is completed
+        - { path: ^/custom-style, role: PUBLIC_ACCESS }
         # This ensures that the form can only be accessed when two-factor authentication is in progress.
         - { path: ^/2fa, role: IS_AUTHENTICATED_2FA_IN_PROGRESS }
 

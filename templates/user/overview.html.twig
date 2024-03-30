@@ -17,7 +17,7 @@
             <div class="panel">
                 {% if user.isTotpAuthenticationEnabled and is_granted('ROLE_ADMIN') %}
                     <form action="{{ path('user_2fa_remove', {username: user.username}) }}"
-                          method="POST"
+                          method="POST" {{ stimulus_controller('confirmation') }}
                           data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                         <input type="hidden" name="token" value="{{ csrf_token('user_2fa_remove') }}">
                         <button type="submit" class="btn btn__secondary">
@@ -27,7 +27,7 @@
                     <hr>
                 {% endif %}
                 <form action="{{ path(user.isBanned ? 'user_unban' : 'user_ban', {username: user.username}) }}"
-                    method="POST"
+                    method="POST" {{ stimulus_controller('confirmation') }}
                     data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                     <input type="hidden" name="token" value="{{ csrf_token('user_ban') }}">
                     <button type="submit" class="btn btn__secondary">
@@ -36,7 +36,7 @@
                 </form>
                 <hr>
                 <form action="{{ path(user.visibility is same as 'trashed' ? 'user_unsuspend' : 'user_suspend', {username: user.username}) }}"
-                    method="POST"
+                    method="POST" {{ stimulus_controller('confirmation') }}
                     data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                     <input type="hidden" name="token" value="{{ csrf_token('user_suspend') }}">
                     <button type="submit" class="btn btn__secondary" title="{{ 'user_suspend_desc'|trans }}">
@@ -46,7 +46,7 @@
 
                 {% if is_granted('ROLE_ADMIN') %}
                     <form action="{{ path('user_remove_following', {username: user.username}) }}"
-                          method="POST"
+                          method="POST" {{ stimulus_controller('confirmation') }}
                           data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                         <input type="hidden" name="token" value="{{ csrf_token('user_remove_following') }}">
                         <button type="submit" class="btn btn__secondary">
@@ -54,35 +54,35 @@
                         </button>
                     </form>
                     <hr>
-                    <form action="{{ path('user_delete_content', {username: user.username}) }}" method="POST"
-                          data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
-                        <input type="hidden" name="token" value="{{ csrf_token('user_delete_content') }}">
-                        <button type="submit" class="btn btn__secondary" title="{{ 'delete_content_desc'|trans }}">
-                            <i class="fa fa-dumpster" aria-hidden="true"></i> <span>{{ 'delete_content'|trans }}</span>
-                        </button>
-                    </form>
-                    <form action="{{ path('user_purge_content', {username: user.username}) }}" method="POST"
-                          data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
-                        <input type="hidden" name="token" value="{{ csrf_token('user_purge_content') }}">
-                        <button type="submit" class="btn btn__danger" title="{{ 'purge_content_desc'|trans }}">
-                            <i class="fa-solid fa-dumpster-fire" aria-hidden="true"></i> <span>{{ 'purge_content'|trans }}</span>
-                        </button>
-                    </form>
-                    <hr>
-                    <form action="{{ path('user_delete_account', {username: user.username}) }}" method="POST"
-                          data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
-                        <input type="hidden" name="token" value="{{ csrf_token('user_delete_account') }}">
-                        <button type="submit" class="btn btn__secondary" title="{{ 'delete_account_desc'|trans }}">
-                            <i class="fa fa-dumpster" aria-hidden="true"></i> <span>{{ 'delete_account'|trans }}</span>
-                        </button>
-                    </form>
-                    <form action="{{ path('user_purge_account', {username: user.username}) }}" method="POST"
-                          data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
-                        <input type="hidden" name="token" value="{{ csrf_token('user_purge_account') }}">
-                        <button type="submit" class="btn btn__danger" title="{{ 'purge_account_desc'|trans }}">
-                            <i class="fa-solid fa-dumpster-fire" aria-hidden="true"></i> <span>{{ 'purge_account'|trans }}</span>
-                        </button>
-                    </form>
+                    {% if user.id is not same as app.user.id and not user.admin %}
+                        {% if user.markedForDeletionAt is same as null and user.apId is same as null %}
+                            <form action="{{ path('schedule_user_delete_account', {username: user.username}) }}"
+                                  method="POST" {{ stimulus_controller('confirmation') }}
+                                  data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
+                                <input type="hidden" name="token" value="{{ csrf_token('schedule_user_delete_account') }}">
+                                <button type="submit" class="btn btn__secondary" title="{{ 'schedule_delete_account_desc'|trans }}">
+                                    <i class="fa fa-dumpster" aria-hidden="true"></i> <span>{{ 'schedule_delete_account'|trans }}</span>
+                                </button>
+                            </form>
+                        {% elseif user.markedForDeletionAt is not same as null and user.apId is same as null %}
+                            <form action="{{ path('remove_schedule_user_delete_account', {username: user.username}) }}"
+                                  method="POST" {{ stimulus_controller('confirmation') }}
+                                  data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
+                                <input type="hidden" name="token" value="{{ csrf_token('remove_schedule_user_delete_account') }}">
+                                <button type="submit" class="btn btn__secondary" title="{{ 'remove_schedule_delete_account_desc'|trans }}">
+                                    <i class="fa fa-dumpster" aria-hidden="true"></i> <span>{{ 'remove_schedule_delete_account'|trans }}</span>
+                                </button>
+                            </form>
+                        {% endif %}
+                        <form action="{{ path('user_delete_account', {username: user.username}) }}"
+                              method="POST"  {{ stimulus_controller('confirmation') }}
+                              data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
+                            <input type="hidden" name="token" value="{{ csrf_token('user_delete_account') }}">
+                            <button type="submit" class="btn btn__danger" title="{{ 'delete_account_desc'|trans }}">
+                                <i class="fa fa-dumpster" aria-hidden="true"></i> <span>{{ 'delete_account'|trans }}</span>
+                            </button>
+                        </form>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -106,7 +106,7 @@
             'show-comment-avatar': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR')) is same as 'true' or not app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR')),
             'show-post-avatar': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_USERS_AVATARS')) is same as 'true' or not app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_USERS_AVATARS'))
         }) }}">
-            {% include 'layout/_subject_list.html.twig' with {attributes: {dateAsUrl: true}, entryCommentAttributes: {showMagazineName: false}} %}
+            {% include 'layout/_subject_list.html.twig' with {entryCommentAttributes: {showMagazineName: false}} %}
         </div>
     {% endif %}
 {% endblock %}

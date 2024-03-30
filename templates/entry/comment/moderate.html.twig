@@ -16,6 +16,7 @@
     <div id="content">
         {{ component('entry_comment', {
             comment: comment,
+            dateAsUrl: false,
         }) }}
         {% include 'layout/_flash.html.twig' %}
         <div class="section section--small">

@@ -45,6 +45,11 @@ class PostCommentNoteFactory
             $tags[] = $comment->magazine->name;
         }
 
+        $cc = [$this->groupFactory->getActivityPubId($comment->magazine)];
+        if ($followersUrl = $comment->user->getFollowerUrl($this->client, $this->urlGenerator, null !== $comment->apId)) {
+            $cc[] = $followersUrl;
+        }
+
         $note = array_merge($note ?? [], [
             'id' => $this->getActivityPubId($comment),
             'type' => 'Note',
@@ -53,16 +58,7 @@ class PostCommentNoteFactory
             'to' => [
                 ActivityPubActivityInterface::PUBLIC_URL,
             ],
-            'cc' => [
-                $this->groupFactory->getActivityPubId($comment->magazine),
-                $comment->apId
-                    ? ($this->client->getActorObject($comment->user->apProfileId)['followers']) ?? []
-                    : $this->urlGenerator->generate(
-                        'ap_user_followers',
-                        ['username' => $comment->user->username],
-                        UrlGeneratorInterface::ABSOLUTE_URL
-                    ),
-            ],
+            'cc' => $cc,
             'sensitive' => $comment->post->isAdult(),
             'content' => $this->markdownConverter->convertToHtml(
                 $comment->body,
@@ -131,13 +127,7 @@ class PostCommentNoteFactory
 
     private function getReplyTo(PostComment $comment): string
     {
-        if ($comment->apId) {
-            return $comment->apId;
-        }
-
-        return $comment->parent ? $this->getActivityPubId($comment->parent) : $this->postNoteFactory->getActivityPubId(
-            $comment->post
-        );
+        return $comment->parent ? $this->getActivityPubId($comment->parent) : $this->postNoteFactory->getActivityPubId($comment->post);
     }
 
     private function getReplyToAuthor(PostComment $comment): string

@@ -11,6 +11,7 @@ use App\Entity\Traits\ActivityPubActorTrait;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\VisibilityTrait;
 use App\Repository\UserRepository;
+use App\Service\ActivityPub\ApHttpClient;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -29,16 +30,18 @@ use Scheb\TwoFactorBundle\Model\BackupCodeInterface;
 use Scheb\TwoFactorBundle\Model\Totp\TotpConfiguration;
 use Scheb\TwoFactorBundle\Model\Totp\TotpConfigurationInterface;
 use Scheb\TwoFactorBundle\Model\Totp\TwoFactorInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[Entity(repositoryClass: UserRepository::class)]
-#[Table(name: '`user`', uniqueConstraints: [
-    new UniqueConstraint(name: 'user_email_idx', columns: ['email']),
-    new UniqueConstraint(name: 'user_username_idx', columns: ['username']),
-])]
+#[Table(name: '`user`')]
 #[Index(columns: ['visibility'], name: 'user_visibility_idx')]
+#[UniqueConstraint(name: 'user_email_idx', columns: ['email'])]
+#[UniqueConstraint(name: 'user_username_idx', columns: ['username'])]
+#[UniqueConstraint(name: 'user_ap_id_idx', columns: ['ap_id'])]
+#[UniqueConstraint(name: 'user_ap_profile_id_idx', columns: ['ap_profile_id'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, VisibilityInterface, TwoFactorInterface, BackupCodeInterface, EquatableInterface, ActivityPubActorInterface, ApiResourceInterface
 {
     use ActivityPubActorTrait;
@@ -113,6 +116,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public ?string $oauthFacebookId = null;
     #[Column(type: 'string', nullable: true)]
     public ?string $oauthKeycloakId = null;
+    #[Column(type: 'string', nullable: true)]
+    public ?string $oauthZitadelId = null;
     #[Column(type: 'boolean', nullable: false, options: ['default' => true])]
     public bool $hideAdult = true;
     #[Column(type: 'json', nullable: false, options: ['jsonb' => true, 'default' => '[]'])]
@@ -149,84 +154,60 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public ?string $customCss = null;
     #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
     public bool $ignoreMagazinesCustomCss = false;
-    #[OneToMany(mappedBy: 'user', targetEntity: Moderator::class)]
+    #[OneToMany(mappedBy: 'user', targetEntity: Moderator::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $moderatorTokens;
-    #[OneToMany(mappedBy: 'user', targetEntity: MagazineOwnershipRequest::class)]
+    #[OneToMany(mappedBy: 'user', targetEntity: MagazineOwnershipRequest::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $magazineOwnershipRequests;
-    #[OneToMany(mappedBy: 'user', targetEntity: ModeratorRequest::class)]
+    #[OneToMany(mappedBy: 'user', targetEntity: ModeratorRequest::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $moderatorRequests;
-    #[OneToMany(mappedBy: 'user', targetEntity: Entry::class)]
+    #[OneToMany(mappedBy: 'user', targetEntity: Entry::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $entries;
-    #[OneToMany(mappedBy: 'user', targetEntity: EntryVote::class, fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'user', targetEntity: EntryVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $entryVotes;
-    #[OneToMany(mappedBy: 'user', targetEntity: EntryComment::class, fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'user', targetEntity: EntryComment::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $entryComments; // @todo
-    #[OneToMany(mappedBy: 'user', targetEntity: EntryCommentVote::class, fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'user', targetEntity: EntryCommentVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $entryCommentVotes;
-    #[OneToMany(mappedBy: 'user', targetEntity: Post::class, fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'user', targetEntity: Post::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $posts;
-    #[OneToMany(mappedBy: 'user', targetEntity: PostVote::class, fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'user', targetEntity: PostVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $postVotes;
-    #[OneToMany(mappedBy: 'user', targetEntity: PostComment::class, fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'user', targetEntity: PostComment::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $postComments;
-    #[OneToMany(mappedBy: 'user', targetEntity: PostCommentVote::class, fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'user', targetEntity: PostCommentVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $postCommentVotes;
-    #[OneToMany(mappedBy: 'user', targetEntity: MagazineSubscription::class, cascade: [
-        'persist',
-        'remove',
-    ], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'user', targetEntity: MagazineSubscription::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $subscriptions;
-    #[OneToMany(mappedBy: 'user', targetEntity: DomainSubscription::class, cascade: [
-        'persist',
-        'remove',
-    ], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'user', targetEntity: DomainSubscription::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $subscribedDomains;
-    #[OneToMany(mappedBy: 'follower', targetEntity: UserFollow::class, cascade: [
-        'persist',
-        'remove',
-    ], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'follower', targetEntity: UserFollow::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $follows;
-    #[OneToMany(mappedBy: 'following', targetEntity: UserFollow::class, cascade: [
-        'persist',
-        'remove',
-    ], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'following', targetEntity: UserFollow::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $followers;
-    #[OneToMany(mappedBy: 'blocker', targetEntity: UserBlock::class, cascade: [
-        'persist',
-        'remove',
-    ], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'blocker', targetEntity: UserBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $blocks;
-    #[OneToMany(mappedBy: 'blocked', targetEntity: UserBlock::class, cascade: [
-        'persist',
-        'remove',
-    ], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'blocked', targetEntity: UserBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public ?Collection $blockers;
-    #[OneToMany(mappedBy: 'user', targetEntity: MagazineBlock::class, cascade: [
-        'persist',
-        'remove',
-    ], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'user', targetEntity: MagazineBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $blockedMagazines;
-    #[OneToMany(mappedBy: 'user', targetEntity: DomainBlock::class, cascade: [
-        'persist',
-        'remove',
-    ], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'user', targetEntity: DomainBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $blockedDomains;
     #[OneToMany(mappedBy: 'reporting', targetEntity: Report::class, cascade: ['persist'], fetch: 'EXTRA_LAZY')]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $reports;
-    #[OneToMany(mappedBy: 'user', targetEntity: Favourite::class, cascade: ['persist'], fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'user', targetEntity: Favourite::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $favourites;
-    #[OneToMany(mappedBy: 'reported', targetEntity: Report::class, cascade: ['persist'], fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'reported', targetEntity: Report::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $violations;
-    #[OneToMany(mappedBy: 'user', targetEntity: Notification::class, cascade: ['persist'], fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'user', targetEntity: Notification::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $notifications;
     #[Id]
@@ -782,6 +763,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         return $this;
     }
 
+    public function isSsoControlled(): bool
+    {
+        return $this->oauthGithubId || $this->oauthGoogleId || $this->oauthFacebookId || $this->oauthKeycloakId || $this->oauthZitadelId;
+    }
+
     public function getCustomCss(): ?string
     {
         return $this->customCss;
@@ -865,5 +851,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
             ->where(Criteria::expr()->eq('magazine', $magazine));
 
         return $this->magazineOwnershipRequests->matching($criteria)->count() > 0;
+    }
+
+    public function getFollowerUrl(ApHttpClient $client, UrlGeneratorInterface $urlGenerator, bool $isRemote): ?string
+    {
+        if ($isRemote) {
+            $actorObject = $client->getActorObject($this->apProfileId);
+            if ($actorObject and isset($actorObject['followers']) and \is_string($actorObject['followers'])) {
+                return $actorObject['followers'];
+            }
+
+            return null;
+        } else {
+            return $urlGenerator->generate(
+                'ap_user_followers',
+                ['username' => $this->username],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
+        }
     }
 }

@@ -6,7 +6,7 @@ namespace App\Repository;
 
 use Doctrine\ORM\EntityManagerInterface;
 
-class VoteRepository
+readonly class VoteRepository
 {
     public function __construct(private EntityManagerInterface $entityManager)
     {
@@ -14,35 +14,28 @@ class VoteRepository
 
     public function count(\DateTimeImmutable $date = null, bool $withFederated = null): int
     {
-        $conn = $this->entityManager->getConnection();
-        $sql = "
-        (SELECT id, 'entry' AS type FROM entry_vote {$this->where($date, $withFederated)}) 
-        UNION 
-        (SELECT id, 'entry_comment' AS type FROM entry_comment_vote {$this->where($date, $withFederated)})
-        UNION 
-        (SELECT id, 'post' AS type FROM post_vote {$this->where($date, $withFederated)})
-        UNION 
-        (SELECT id, 'post_comment' AS type FROM post_comment_vote {$this->where($date, $withFederated)})
-        ";
+        $count = 0;
+        foreach (['entry_vote', 'entry_comment_vote', 'post_vote', 'post_comment_vote', 'favourite'] as $table) {
+            $conn = $this->entityManager->getConnection();
+            $sql = "SELECT COUNT(e.id) as cnt FROM $table e INNER JOIN public.user u ON user_id=u.id {$this->where($date, $withFederated)}";
 
-        $stmt = $conn->prepare($sql);
-        $stmt = $stmt->executeQuery();
+            $stmt = $conn->prepare($sql);
+            if (null !== $date) {
+                $stmt->bindValue(':date', $date, 'datetime');
+            }
+            $stmt = $stmt->executeQuery();
+            $count += $stmt->fetchAllAssociative()[0]['cnt'];
+        }
 
-        return $stmt->rowCount();
+        return $count;
     }
 
     private function where(\DateTimeImmutable $date = null, bool $withFederated = null): string
     {
-        $dateWhere = $date ? "created_at > '{$date->format('Y-m-d H:i:s')}'" : '';
-        $withoutFederationWhere = 'EXISTS (SELECT * FROM public.user WHERE public.user.ap_id IS NULL and public.user.id=user_id)';
-        if ($date and !$withFederated) {
-            return "WHERE $dateWhere AND $withoutFederationWhere";
-        } elseif ($date and true === $withFederated) {
-            return "WHERE $dateWhere";
-        } elseif (!$date and !$withFederated) {
-            return "WHERE $withoutFederationWhere";
-        } else {
-            return '';
-        }
+        $where = 'WHERE u.is_deleted = false';
+        $dateWhere = $date ? ' AND e.created_at > :date' : '';
+        $federationWhere = $withFederated ? '' : ' AND u.ap_id IS NULL';
+
+        return $where.$dateWhere.$federationWhere;
     }
 }

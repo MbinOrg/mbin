@@ -8,8 +8,7 @@
 
 {% if not app.user or (app.user and not app.user.isBlocked(comment.user)) %}
     {% if comment.visibility is same as 'private' and (not app.user or not app.user.isFollower(comment.user)) %}
-        <div class="section section--small {{ 'comment-level--' ~ this.getLevel() }}"
-             style="z-index:3; position:relative;margin-bottom:0;">
+        <div class="section section--small {{ 'comment-level--' ~ this.getLevel() }}">
             Private
         </div>
     {% else %}
@@ -32,14 +31,16 @@
                     <span class="user-badge">{{ 'user_badge_op'|trans }}</span>
                 {% endif %}
 
+                {% if (comment.user.type) == "Service" %}
+                    <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
+                {% endif %}
+
                 {% if comment.user.admin() %}
                     <span class="user-badge">{{ 'user_badge_admin'|trans }}</span>
                 {% elseif comment.user.moderator() %}
                     <span class="user-badge">{{ 'user_badge_global_moderator'|trans }}</span>
                 {% elseif comment.magazine.userIsModerator(comment.user) %}
                     <span class="user-badge">{{ 'user_badge_moderator'|trans }}</span>
-                {% elseif (comment.user.type) == "Service" %}
-                    <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
                 {% endif %}
                 <span>, </span>
 

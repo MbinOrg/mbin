@@ -10,16 +10,13 @@
             </a>
         </li>
         <li>
-            <a href="{{ entry_comment_voters_url(comment, 'down') }}"
-               class="{{ html_classes({'active': is_route_name('entry_comment_voters') and route_has_param('type', 'down')}) }}">
-                {{ 'down_votes'|trans }} ({{ comment.countDownVotes }})
-            </a>
-        </li>
-        <li>
             <a href="{{ entry_comment_favourites_url(comment) }}"
                class="{{ html_classes({'active': is_route_name('entry_comment_favourites')}) }}">
                 {{ 'favourites'|trans }} ({{ comment.favouriteCount }})
             </a>
+        </li>
+        <li>
+            <span class="options__nolink">{{ 'down_votes'|trans }} ({{ comment.countDownVotes }})</span>
         </li>
     </menu>
 </aside>

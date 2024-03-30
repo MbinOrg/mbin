@@ -18,7 +18,7 @@ class UserStatsController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    public function __invoke(?string $statsType, ?int $statsPeriod, Request $request): Response
+    public function __invoke(?string $statsType, ?int $statsPeriod, ?bool $withFederated, Request $request): Response
     {
         $user = $this->getUserOrThrow();
 
@@ -39,16 +39,20 @@ class UserStatsController extends AbstractController
             $start = (new \DateTime())->modify("-$statsPeriod days");
         }
 
+        if (null === $withFederated) {
+            $withFederated = false;
+        }
+
         $results = match ($statsType) {
             StatsRepository::TYPE_VIEWS => $statsPeriod
-                ? $this->manager->drawDailyViewsStatsByTime($start, $user)
-                : $this->manager->drawMonthlyViewsChart($user),
+                ? $this->manager->drawDailyViewsStatsByTime($start, $user, null, !$withFederated)
+                : $this->manager->drawMonthlyViewsChart($user, null, !$withFederated),
             StatsRepository::TYPE_VOTES => $statsPeriod
-                ? $this->manager->drawDailyVotesStatsByTime($start, $user)
-                : $this->manager->drawMonthlyVotesChart($user),
+                ? $this->manager->drawDailyVotesStatsByTime($start, $user, null, !$withFederated)
+                : $this->manager->drawMonthlyVotesChart($user, null, !$withFederated),
             default => $statsPeriod
-                ? $this->manager->drawDailyContentStatsByTime($start, $user)
-                : $this->manager->drawMonthlyContentChart($user)
+                ? $this->manager->drawDailyContentStatsByTime($start, $user, null, !$withFederated)
+                : $this->manager->drawMonthlyContentChart($user, null, !$withFederated)
         };
 
         return $this->render(
@@ -56,7 +60,7 @@ class UserStatsController extends AbstractController
                 'user' => $user,
                 'period' => $statsPeriod,
                 'chart' => $results,
-                'withFederated' => false,
+                'withFederated' => $withFederated,
             ]
         );
     }

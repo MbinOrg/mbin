@@ -26,64 +26,70 @@ class StatsVotesRepository extends StatsRepository
         $posts = $this->getMonthlyStats('post_vote', 'post_id');
         $replies = $this->getMonthlyStats('post_comment_vote', 'comment_id');
 
-        $startDate = $this->sort(
-            array_merge(
-                $this->getStartDate($entries),
-                $this->getStartDate($comments),
-                $this->getStartDate($posts),
-                $this->getStartDate($replies)
-            )
-        );
-
-        if (empty($startDate)) {
-            return [
-                'entries' => [],
-                'comments' => [],
-                'posts' => [],
-                'replies' => [],
-            ];
-        }
-
-        return [
-            'entries' => $this->prepareContentOverall(
-                $this->sort($entries),
-                $startDate[0]['year'],
-                $startDate[0]['month']
-            ),
-            'comments' => $this->prepareContentOverall(
-                $this->sort($comments),
-                $startDate[0]['year'],
-                $startDate[0]['month']
-            ),
-            'posts' => $this->prepareContentOverall($this->sort($posts), $startDate[0]['year'], $startDate[0]['month']),
-            'replies' => $this->prepareContentOverall(
-                $this->sort($replies),
-                $startDate[0]['year'],
-                $startDate[0]['month']
-            ),
-        ];
+        return $this->prepareContentReturn($entries, $comments, $posts, $replies);
     }
 
+    #[ArrayShape([[
+        'month' => 'string',
+        'year' => 'string',
+        'up' => 'int',
+        'down' => 'int',
+        'boost' => 'int',
+    ]])]
     private function getMonthlyStats(string $table, string $relation = null): array
     {
-        $conn = $this->getEntityManager()
-            ->getConnection();
-
-        $onlyLocalWhere = $this->onlyLocal ? ' WHERE EXISTS (SELECT * FROM public.user WHERE public.user.id=e.user_id AND public.user.ap_id IS NULL)' : '';
-        if ($this->user) {
-            $sql = "SELECT to_char(e.created_at,'Mon') as month, extract(year from e.created_at) as year,
-                    COUNT(case e.choice when 1 then 1 else null end) as up, COUNT(case e.choice when -1 then 1 else null end) as down FROM ".$table.'
-                    e WHERE e.user_id = :userId '.$onlyLocalWhere.' GROUP BY 1,2';
-        } elseif ($this->magazine) {
-            $sql = "SELECT to_char(e.created_at,'Mon') as month, extract(year from e.created_at) as year, 
-                    COUNT(case e.choice when 1 then 1 else null end) as up, COUNT(case e.choice when -1 then 1 else null end) as down FROM ".$table.'
-                    e INNER JOIN '.str_replace('_vote', '', $table).' AS parent ON '.$relation.' = parent.id AND
-                    parent.magazine_id = :magazineId '.$onlyLocalWhere.' GROUP BY 1,2';
-        } else {
-            $sql = "SELECT to_char(e.created_at,'Mon') as month, extract(year from e.created_at) as year, 
-                    COUNT(case e.choice when 1 then 1 else null end) as up, COUNT(case e.choice when -1 then 1 else null end) as down FROM ".$table.'
-                    e '.$onlyLocalWhere.' GROUP BY 1,2';
+        $votes = $this->getMonthlyVoteStats($table, $relation);
+        $favourites = $this->getMonthlyFavouriteStats($table);
+        $dateMap = [];
+        for ($i = 0; $i < \count($votes); ++$i) {
+            $key = $votes[$i]['year'].'-'.$votes[$i]['month'];
+            $dateMap[$key] = $i;
+            $votes[$i]['up'] = 0;
         }
+
+        foreach ($favourites as $favourite) {
+            $key = $favourite['year'].'-'.$favourite['month'];
+            if (\array_key_exists($key, $dateMap)) {
+                $i = $dateMap[$key];
+                $votes[$i]['up'] = $favourite['up'];
+            } else {
+                $votes[] = [
+                    'year' => $favourite['year'],
+                    'month' => $favourite['month'],
+                    'up' => $favourite['up'],
+                    'boost' => 0,
+                    'down' => 0,
+                ];
+            }
+        }
+
+        return array_map(fn ($val) => [
+            'month' => date_parse($val['month'])['month'],
+            'year' => (int) $val['year'],
+            'up' => (int) $val['up'],
+            'down' => (int) $val['down'],
+            'boost' => (int) $val['boost'],
+        ], $votes);
+    }
+
+    #[ArrayShape([[
+        'month' => 'string',
+        'year' => 'string',
+        'boost' => 'int',
+        'down' => 'int',
+    ]])]
+    private function getMonthlyVoteStats(string $table, string $relation): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $onlyLocalWhere = $this->onlyLocal ? 'AND u.ap_id IS NULL' : '';
+        $userWhere = $this->user ? ' AND e.user_id = :userId ' : '';
+        $magazineJoin = $this->magazine ? 'INNER JOIN '.str_replace('_vote', '', $table).' AS parent ON '.$relation.' = parent.id AND parent.magazine_id = :magazineId' : '';
+        $sql = "SELECT to_char(e.created_at,'Mon') as month, extract(year from e.created_at) as year,
+            COUNT(case e.choice when 1 then 1 else null end) as boost, COUNT(case e.choice when -1 then 1 else null end) as down FROM $table e
+            INNER JOIN public.user u ON u.id = e.user_id
+            $magazineJoin
+            WHERE u.is_deleted = false $onlyLocalWhere $userWhere GROUP BY 1,2";
 
         $stmt = $conn->prepare($sql);
         if ($this->user) {
@@ -91,14 +97,35 @@ class StatsVotesRepository extends StatsRepository
         } elseif ($this->magazine) {
             $stmt->bindValue('magazineId', $this->magazine->getId());
         }
-        $stmt = $stmt->executeQuery();
 
-        return array_map(fn ($val) => [
-            'month' => date_parse($val['month'])['month'],
-            'year' => (int) $val['year'],
-            'up' => (int) $val['up'],
-            'down' => (int) $val['down'],
-        ], $stmt->fetchAllAssociative());
+        return $stmt->executeQuery()->fetchAllAssociative();
+    }
+
+    #[ArrayShape([[
+        'month' => 'string',
+        'year' => 'string',
+        'up' => 'int',
+    ]])]
+    private function getMonthlyFavouriteStats(string $table): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $onlyLocalWhere = $this->onlyLocal ? 'AND u.ap_id IS NULL' : '';
+        $userWhere = $this->user ? ' AND f.user_id = :userId ' : '';
+        $magazineWhere = $this->magazine ? 'AND f.magazine_id = :magazineId ' : '';
+        $idCol = str_replace('_vote', '', $table).'_id';
+        $sql = "SELECT to_char(f.created_at,'Mon') as month, extract(year from f.created_at) as year, COUNT(f.id) as up FROM favourite f
+            INNER JOIN public.user u ON u.id = f.user_id
+            WHERE u.is_deleted = false AND f.$idCol IS NOT NULL $magazineWhere $onlyLocalWhere $userWhere GROUP BY 1,2";
+
+        $stmt = $conn->prepare($sql);
+        if ($this->user) {
+            $stmt->bindValue('userId', $this->user->getId());
+        } elseif ($this->magazine) {
+            $stmt->bindValue('magazineId', $this->magazine->getId());
+        }
+
+        return $stmt->executeQuery()->fetchAllAssociative();
     }
 
     protected function prepareContentOverall(array $entries, int $startYear, int $startMonth): array
@@ -129,6 +156,7 @@ class StatsVotesRepository extends StatsRepository
                     'year' => $y,
                     'up' => 0,
                     'down' => 0,
+                    'boost' => 0,
                 ];
             }
         }
@@ -152,6 +180,12 @@ class StatsVotesRepository extends StatsRepository
         ];
     }
 
+    #[ArrayShape([[
+        'day' => 'string',
+        'up' => 'int',
+        'down' => 'int',
+        'boost' => 'int',
+    ]])]
     protected function prepareContentDaily(array $entries): array
     {
         $to = new \DateTime();
@@ -177,63 +211,109 @@ class StatsVotesRepository extends StatsRepository
                 'day' => $d,
                 'up' => 0,
                 'down' => 0,
+                'boost' => 0,
             ];
         }
 
         return $results;
     }
 
-    private function getDailyStats(string $table, string $relation = null): array
+    #[ArrayShape([[
+        'day' => 'string',
+        'up' => 'int',
+        'down' => 'int',
+        'boost' => 'int',
+    ]])]
+    private function getDailyStats(string $table, string $relation): array
     {
-        $conn = $this->getEntityManager()
-            ->getConnection();
-
-        $onlyLocalWhere = $this->onlyLocal ? 'AND EXISTS (SELECT * FROM public.user WHERE public.user.id=e.user_id AND public.user.ap_id IS NULL) ' : '';
-        if ($this->user) {
-            $sql = "SELECT  date_trunc('day', e.created_at) as day, COUNT(case e.choice when 1 then 1 else null end) as up, 
-                    COUNT(case e.choice when -1 then 1 else null end) as down FROM ".$table.' e
-                    WHERE e.created_at >= :startDate AND e.user_id = :userId
-                    '.$onlyLocalWhere.'
-                    GROUP BY 1';
-        } elseif ($this->magazine) {
-            $sql = "SELECT  date_trunc('day', e.created_at) as day, COUNT(case e.choice when 1 then 1 else null end) as up, 
-                    COUNT(case e.choice when -1 then 1 else null end) as down FROM ".$table.' e
-                    INNER JOIN '.str_replace('_vote', '', $table).' AS parent
-                    ON '.$relation.' = parent.id AND parent.magazine_id = :magazineId
-                    WHERE e.created_at >= :startDate
-                    '.$onlyLocalWhere.'
-                    GROUP BY 1';
-        } else {
-            $sql = "SELECT  date_trunc('day', e.created_at) as day, COUNT(case e.choice when 1 then 1 else null end) as up,
-                    COUNT(case e.choice when -1 then 1 else null end) as down FROM ".$table.' e
-                    WHERE e.created_at >= :startDate
-                    '.$onlyLocalWhere.'
-                    GROUP BY 1';
+        $results = $this->getDailyVoteStats($table, $relation);
+        $dateMap = [];
+        for ($i = 0; $i < \count($results); ++$i) {
+            $dateMap[$results[$i]['day']] = $i;
+            $results[$i]['up'] = 0;
         }
+        $favourites = $this->getDailyFavouriteStats($table);
 
-        $stmt = $conn->prepare($sql);
-        if ($this->user) {
-            $stmt->bindValue('userId', $this->user->getId());
-        } elseif ($this->magazine) {
-            $stmt->bindValue('magazineId', $this->magazine->getId());
+        foreach ($favourites as $favourite) {
+            if (\array_key_exists($favourite['day'], $dateMap)) {
+                $results[$dateMap[$favourite['day']]]['up'] = $favourite['up'];
+            } else {
+                $results[] = [
+                    'day' => $favourite['day'],
+                    'boost' => 0,
+                    'down' => 0,
+                    'up' => $favourite['up'],
+                ];
+            }
         }
-        $stmt->bindValue('startDate', $this->start->format('Y-m-d H:i:s'));
-        $stmt = $stmt->executeQuery();
-
-        $results = $stmt->fetchAllAssociative();
 
         usort($results, fn ($a, $b): int => $a['day'] <=> $b['day']);
 
         return $results;
     }
 
-    public function getStats(
-        ?Magazine $magazine,
-        string $intervalStr,
-        ?\DateTime $start,
-        ?\DateTime $end,
-        ?bool $onlyLocal
-    ): array {
+    #[ArrayShape([[
+        'day' => 'string',
+        'down' => 'int',
+        'boost' => 'int',
+    ]])]
+    private function getDailyVoteStats(string $table, string $relation): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $onlyLocalWhere = $this->onlyLocal ? ' AND u.ap_id IS NULL ' : '';
+        $userWhere = $this->user ? ' AND e.user_id = :userId ' : '';
+        $magazineJoin = $this->magazine ? 'INNER JOIN '.str_replace('_vote', '', $table).' AS parent ON '.$relation.' = parent.id AND parent.magazine_id = :magazineId' : '';
+        $sql = "SELECT date_trunc('day', e.created_at) as day, COUNT(case e.choice when 1 then 1 else null end) as boost, 
+            COUNT(case e.choice when -1 then 1 else null end) as down FROM $table e
+            INNER JOIN public.user u ON u.id = e.user_id
+            $magazineJoin
+            WHERE u.is_deleted = false AND e.created_at >= :startDate $userWhere $onlyLocalWhere
+            GROUP BY 1";
+
+        $stmt = $conn->prepare($sql);
+        if ($this->user) {
+            $stmt->bindValue('userId', $this->user->getId());
+        }
+        if ($this->magazine) {
+            $stmt->bindValue('magazineId', $this->magazine->getId());
+        }
+        $stmt->bindValue('startDate', $this->start, 'datetime');
+        $stmt = $stmt->executeQuery();
+
+        return $stmt->fetchAllAssociative();
+    }
+
+    #[ArrayShape([[
+        'day' => 'string',
+        'up' => 'int',
+    ]])]
+    private function getDailyFavouriteStats(string $table): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $idCol = str_replace('_vote', '', $table).'_id';
+        $magazineWhere = $this->magazine ? ' AND f.magazine_id = :magazineId' : '';
+        $userWhere = $this->user ? ' AND f.user_id = :userId ' : '';
+        $onlyLocalWhere = $this->onlyLocal ? ' AND u.ap_id IS NULL ' : '';
+        $favSql = "SELECT date_trunc('day', f.created_at) as day, COUNT(f.id) as up FROM favourite f
+            INNER JOIN public.user u ON f.user_id = u.id
+            WHERE u.is_deleted = false AND f.created_at >= :startDate AND f.$idCol IS NOT NULL $onlyLocalWhere $magazineWhere $userWhere
+            GROUP BY 1";
+        $stmt = $conn->prepare($favSql);
+        if ($this->user) {
+            $stmt->bindValue('userId', $this->user->getId());
+        }
+        if ($this->magazine) {
+            $stmt->bindValue('magazineId', $this->magazine->getId());
+        }
+        $stmt->bindValue('startDate', $this->start, 'datetime');
+        $stmt = $stmt->executeQuery();
+
+        return $stmt->fetchAllAssociative();
+    }
+
+    public function getStats(?Magazine $magazine, string $intervalStr, ?\DateTime $start, ?\DateTime $end, ?bool $onlyLocal): array
+    {
         $this->onlyLocal = $onlyLocal;
         $interval = $intervalStr ?? 'month';
         switch ($interval) {
@@ -263,59 +343,17 @@ class StatsVotesRepository extends StatsRepository
             throw new \LogicException('End date must be after start date!');
         }
 
-        $conn = $this->getEntityManager()->getConnection();
-
         $results = [];
 
         foreach (['entry', 'entry_comment', 'post', 'post_comment'] as $table) {
-            $relation = false === strstr($table, '_comment') ? $table.'_id' : 'comment_id';
-            $sql = 'SELECT date_trunc(?, e.created_at) as datetime, COUNT(case e.choice when 1 then 1 else null end) as boost, COUNT(case e.choice when -1 then 1 else null end) as down FROM '.$table.'_vote e 
-                        INNER JOIN '.$table.' AS parent ON '.$relation.' = parent.id';
-            if ($magazine) {
-                $sql .= ' AND parent.magazine_id = ?';
-            }
-            $sql .= ' WHERE e.created_at BETWEEN ? AND ?';
-            if ($this->onlyLocal) {
-                $sql = $sql.' AND EXISTS (SELECT * FROM public.user WHERE public.user.id=e.user_id AND public.user.ap_id IS NULL)';
-            }
-            $sql = $sql.' GROUP BY 1 ORDER BY 1';
-
-            $stmt = $conn->prepare($sql);
-            $index = 1;
-            $stmt->bindValue($index++, $interval);
-            if ($magazine) {
-                $stmt->bindValue($index++, $magazine->getId(), ParameterType::INTEGER);
-            }
-            $stmt->bindValue($index++, $this->start, 'datetime');
-            $stmt->bindValue($index++, $end, 'datetime');
-
-            $results[$table] = $stmt->executeQuery()->fetchAllAssociative();
+            $results[$table] = $this->aggregateVoteStats($table, $magazine, $interval, $end);
             $datemap = [];
             for ($i = 0; $i < \count($results[$table]); ++$i) {
                 $datemap[$results[$table][$i]['datetime']] = $i;
                 $results[$table][$i]['up'] = 0;
             }
 
-            $sql = 'SELECT date_trunc(?, e.created_at) as datetime, COUNT(e.id) as up FROM favourite e 
-                        WHERE e.created_at BETWEEN ? AND ?';
-            if ($magazine) {
-                $sql .= ' AND e.magazine_id = ?';
-            }
-            $sql .= ' AND e.'.$table.'_id IS NOT NULL';
-            if ($this->onlyLocal) {
-                $sql = $sql.' AND EXISTS (SELECT * FROM public.user WHERE public.user.id=e.user_id AND public.user.ap_id IS NULL)';
-            }
-            $sql = $sql.' GROUP BY 1 ORDER BY 1';
-
-            $stmt = $conn->prepare($sql);
-            $stmt->bindValue(1, $interval);
-            $stmt->bindValue(2, $this->start, 'datetime');
-            $stmt->bindValue(3, $end, 'datetime');
-            if ($magazine) {
-                $stmt->bindValue(4, $magazine->getId(), ParameterType::INTEGER);
-            }
-
-            $favourites = $stmt->executeQuery()->fetchAllAssociative();
+            $favourites = $this->aggregateFavouriteStats($table, $magazine, $interval, $end);
             foreach ($favourites as $favourite) {
                 if (\array_key_exists($favourite['datetime'], $datemap)) {
                     $results[$table][$datemap[$favourite['datetime']]]['up'] = $favourite['up'];
@@ -335,6 +373,51 @@ class StatsVotesRepository extends StatsRepository
         return $results;
     }
 
+    private function aggregateVoteStats(string $table, ?Magazine $magazine, string $interval, \DateTime $end): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $relation = false === strstr($table, '_comment') ? $table.'_id' : 'comment_id';
+        $voteTable = $table.'_vote';
+        $magazineJoinCond = $magazine ? ' AND parent.magazine_id = ? ' : '';
+        $onlyLocalWhere = $this->onlyLocal ? 'u.ap_id IS NULL ' : '';
+        $sql = "SELECT date_trunc(?, e.created_at) as datetime, COUNT(case e.choice when 1 then 1 else null end) as boost, COUNT(case e.choice when -1 then 1 else null end) as down FROM $voteTable e 
+                        INNER JOIN $table AS parent ON $relation = parent.id
+                        INNER JOIN public.user u ON e.user_id = u.id $magazineJoinCond
+                        WHERE u.is_deleted = false AND e.created_at BETWEEN ? AND ? $onlyLocalWhere GROUP BY 1 ORDER BY 1";
+
+        $stmt = $conn->prepare($sql);
+        $index = 1;
+        $stmt->bindValue($index++, $interval);
+        if ($magazine) {
+            $stmt->bindValue($index++, $magazine->getId(), ParameterType::INTEGER);
+        }
+        $stmt->bindValue($index++, $this->start, 'datetime');
+        $stmt->bindValue($index++, $end, 'datetime');
+
+        return $stmt->executeQuery()->fetchAllAssociative();
+    }
+
+    private function aggregateFavouriteStats(string $table, ?Magazine $magazine, string $interval, \DateTime $end): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $magazineWhere = $magazine ? ' AND e.magazine_id = ? ' : '';
+        $onlyLocalWhere = $this->onlyLocal ? 'u.ap_id IS NULL ' : '';
+        $idCol = $table.'_id';
+        $sql = "SELECT date_trunc(?, e.created_at) as datetime, COUNT(e.id) as up FROM favourite e 
+                INNER JOIN public.user u on e.user_id = u.id
+                WHERE u.is_deleted = false AND e.created_at BETWEEN ? AND ? AND e.$idCol IS NOT NULL $magazineWhere $onlyLocalWhere GROUP BY 1 ORDER BY 1";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(1, $interval);
+        $stmt->bindValue(2, $this->start, 'datetime');
+        $stmt->bindValue(3, $end, 'datetime');
+        if ($magazine) {
+            $stmt->bindValue(4, $magazine->getId(), ParameterType::INTEGER);
+        }
+
+        return $stmt->executeQuery()->fetchAllAssociative();
+    }
+
     private function aggregateTotalStats(?Magazine $magazine): array
     {
         $conn = $this->getEntityManager()->getConnection();
@@ -343,14 +426,13 @@ class StatsVotesRepository extends StatsRepository
 
         foreach (['entry', 'entry_comment', 'post', 'post_comment'] as $table) {
             $relation = false === strstr($table, '_comment') ? $table.'_id' : 'comment_id';
-            $sql = 'SELECT COUNT(case e.choice when 1 then 1 else null end) as boost, COUNT(case e.choice when -1 then 1 else null end) as down FROM '.$table.'_vote e 
-            INNER JOIN '.$table.' AS parent ON '.$relation.' = parent.id';
-            if ($magazine) {
-                $sql .= ' AND parent.magazine_id = ?';
-            }
-            if ($this->onlyLocal) {
-                $sql .= ' AND EXISTS (SELECT * FROM public.user WHERE public.user.id=e.user_id AND public.user.ap_id IS NULL)';
-            }
+            $voteTable = $table.'_vote';
+            $magazineJoinCond = $magazine ? ' AND parent.magazine_id = ?' : '';
+            $onlyLocalWhere = $this->onlyLocal ? ' u.ap_id IS NULL ' : '';
+            $sql = "SELECT COUNT(case e.choice when 1 then 1 else null end) as boost, COUNT(case e.choice when -1 then 1 else null end) as down FROM $voteTable e
+                INNER JOIN public.user u ON e.user_id = u.id
+                INNER JOIN $table AS parent ON $relation = parent.id $magazineJoinCond
+                WHERE u.is_deleted = false $onlyLocalWhere";
 
             $stmt = $conn->prepare($sql);
             if ($magazine) {
@@ -359,14 +441,11 @@ class StatsVotesRepository extends StatsRepository
 
             $results[$table] = $stmt->executeQuery()->fetchAllAssociative();
 
-            $sql = 'SELECT COUNT(e.id) as up FROM favourite e 
-                        WHERE e.'.$table.'_id IS NOT NULL';
-            if ($magazine) {
-                $sql .= ' AND e.magazine_id = ?';
-            }
-            if ($this->onlyLocal) {
-                $sql = $sql.' AND EXISTS (SELECT * FROM public.user WHERE public.user.id=e.user_id AND public.user.ap_id IS NULL)';
-            }
+            $magazineWhere = $magazine ? ' AND e.magazine_id = ?' : '';
+            $idCol = $table.'_id';
+            $sql = "SELECT COUNT(e.id) as up FROM favourite e 
+                INNER JOIN public.user u on u.id = e.user_id
+                WHERE u.is_deleted = false $magazineWhere $onlyLocalWhere AND e.$idCol IS NOT NULL";
 
             $stmt = $conn->prepare($sql);
             if ($magazine) {

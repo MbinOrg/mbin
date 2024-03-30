@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Image;
 use App\Event\ImagePostProcessEvent;
+use App\Exception\ImageDownloadTooLargeException;
 use App\Service\ImageManager;
 use App\Utils\ImageOrigin;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -60,10 +61,8 @@ class ImageRepository extends ServiceEntityRepository
     /**
      * Process and store an image from source file given path.
      *
-     * @param source file path of the image
-     * @param origin where the image comes from
-     *
-     * @throws RuntimeException if image type can't be identified
+     * @param string      $source file path of the image
+     * @param ImageOrigin $origin where the image comes from
      */
     private function findOrCreateFromSource(string $source, ImageOrigin $origin): ?Image
     {
@@ -75,6 +74,8 @@ class ImageRepository extends ServiceEntityRepository
             if (file_exists($source)) {
                 unlink($source);
             }
+
+            $this->logger->debug('found image by Sha256, imageId: {id}', ['id' => $image->getId()]);
 
             return $image;
         }
@@ -94,20 +95,35 @@ class ImageRepository extends ServiceEntityRepository
 
         try {
             $this->imageManager->store($source, $filePath);
+
+            return $image;
+        } catch (ImageDownloadTooLargeException $e) {
+            if (ImageOrigin::External === $origin) {
+                $this->logger->warning(
+                    'findOrCreateFromSource: failed to store image file, because it is too big. Storing only a reference',
+                    ['origin' => $origin, 'type' => \gettype($e)],
+                );
+                $image->filePath = null;
+
+                return $image;
+            } else {
+                $this->logger->error(
+                    'findOrCreateFromSource: failed to store image file, because it is too big',
+                    ['origin' => $origin, 'type' => \gettype($e)],
+                );
+            }
         } catch (\Exception $e) {
             $this->logger->error(
                 'findOrCreateFromSource: failed to store image file: '.$e->getMessage(),
-                ['origin' => $origin],
+                ['origin' => $origin, 'type' => \gettype($e)],
             );
-
-            return null;
         } finally {
             if (file_exists($source)) {
                 unlink($source);
             }
         }
 
-        return $image;
+        return null;
     }
 
     public function blurhash(string $filePath): ?string

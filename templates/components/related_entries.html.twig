@@ -6,8 +6,9 @@
                 <figure>
                     <div class="row">
                         {% if entry.image %}
-                            <img src="{{ asset(entry.image.filePath) | imagine_filter('entry_thumb') }}"
-                                 alt="{{ entry.image.alt|default('') }}">
+                            <img loading="lazy"
+                                src="{{ entry.image.filePath ? (asset(entry.image.filePath)|imagine_filter('entry_thumb')) : entry.image.sourceUrl }}"
+                                alt="{{ entry.image.alt|default('') }}">
                         {% endif %}
                         <blockquote class="content">
                             <p>{{ entry.title }}</p>

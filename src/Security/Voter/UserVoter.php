@@ -88,7 +88,14 @@ class UserVoter extends Voter
             && !$user->posts->count()
             && !$user->postComments->count()
             && !$user->subscriptions->count()
+            && !$user->follows->count()
             && !$user->followers->count()
-            && !$user->follows->count();
+            && !$user->entryVotes->count()
+            && !$user->entryVotes->count()
+            && !$user->entryCommentVotes->count()
+            && !$user->postVotes->count()
+            && !$user->postCommentVotes->count()
+            && !$user->blocks->count()
+            && !$user->favourites->count();
     }
 }

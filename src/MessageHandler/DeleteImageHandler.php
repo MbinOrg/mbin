@@ -24,7 +24,7 @@ class DeleteImageHandler
 
     public function __invoke(DeleteImageMessage $message)
     {
-        $image = $this->imageRepository->findOneBy(['filePath' => $message->path]);
+        $image = $this->imageRepository->find($message->id);
 
         if ($image) {
             $this->entityManager->beginTransaction();
@@ -42,6 +42,8 @@ class DeleteImageHandler
             }
         }
 
-        $this->imageManager->remove($message->path);
+        if ($image?->filePath) {
+            $this->imageManager->remove($image->filePath);
+        }
     }
 }

@@ -22,7 +22,8 @@
     <div id="content">
         {{ component('post', {
             post: post,
-            isSingle: true
+            isSingle: true,
+            dateAsUrl: false,
         }) }}
         {% include 'layout/_flash.html.twig' %}
         <div class="alert alert__info">

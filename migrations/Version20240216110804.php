@@ -1,0 +1,217 @@
+<?php
+
+declare(strict_types=1);
+
+namespace DoctrineMigrations;
+
+use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
+
+/**
+ * Auto-generated Migration: Please modify to your needs!
+ */
+final class Version20240216110804 extends AbstractMigration
+{
+    public function getDescription(): string
+    {
+        return '';
+    }
+
+    public function up(Schema $schema): void
+    {
+        // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql('ALTER TABLE entry DROP CONSTRAINT FK_2B219D70A76ED395');
+        $this->addSql('ALTER TABLE entry ADD CONSTRAINT FK_2B219D70A76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE entry_comment DROP CONSTRAINT FK_B892FDFBA76ED395');
+        $this->addSql('ALTER TABLE entry_comment DROP CONSTRAINT FK_B892FDFB79066886');
+        $this->addSql('ALTER TABLE entry_comment ADD CONSTRAINT FK_B892FDFBA76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE entry_comment ADD CONSTRAINT FK_B892FDFB79066886 FOREIGN KEY (root_id) REFERENCES entry_comment (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE entry_comment_vote DROP CONSTRAINT FK_9E561267A76ED395');
+        $this->addSql('ALTER TABLE entry_comment_vote DROP CONSTRAINT FK_9E561267F675F31B');
+        $this->addSql('ALTER TABLE entry_comment_vote ADD CONSTRAINT FK_9E561267A76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE entry_comment_vote ADD CONSTRAINT FK_9E561267F675F31B FOREIGN KEY (author_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE entry_vote DROP CONSTRAINT FK_FE32FD77A76ED395');
+        $this->addSql('ALTER TABLE entry_vote DROP CONSTRAINT FK_FE32FD77F675F31B');
+        $this->addSql('ALTER TABLE entry_vote ADD CONSTRAINT FK_FE32FD77A76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE entry_vote ADD CONSTRAINT FK_FE32FD77F675F31B FOREIGN KEY (author_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE favourite DROP CONSTRAINT FK_62A2CA193EB84A1D');
+        $this->addSql('ALTER TABLE favourite DROP CONSTRAINT FK_62A2CA19A76ED395');
+        $this->addSql('ALTER TABLE favourite DROP CONSTRAINT FK_62A2CA19BA364942');
+        $this->addSql('ALTER TABLE favourite DROP CONSTRAINT FK_62A2CA1960C33421');
+        $this->addSql('ALTER TABLE favourite DROP CONSTRAINT FK_62A2CA194B89032C');
+        $this->addSql('ALTER TABLE favourite DROP CONSTRAINT FK_62A2CA19DB1174D2');
+        $this->addSql('ALTER TABLE favourite ADD CONSTRAINT FK_62A2CA193EB84A1D FOREIGN KEY (magazine_id) REFERENCES magazine (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE favourite ADD CONSTRAINT FK_62A2CA19A76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE favourite ADD CONSTRAINT FK_62A2CA19BA364942 FOREIGN KEY (entry_id) REFERENCES entry (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE favourite ADD CONSTRAINT FK_62A2CA1960C33421 FOREIGN KEY (entry_comment_id) REFERENCES entry_comment (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE favourite ADD CONSTRAINT FK_62A2CA194B89032C FOREIGN KEY (post_id) REFERENCES post (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE favourite ADD CONSTRAINT FK_62A2CA19DB1174D2 FOREIGN KEY (post_comment_id) REFERENCES post_comment (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE magazine_ban DROP CONSTRAINT FK_6A126CE53EB84A1D');
+        $this->addSql('ALTER TABLE magazine_ban DROP CONSTRAINT FK_6A126CE5A76ED395');
+        $this->addSql('ALTER TABLE magazine_ban DROP CONSTRAINT FK_6A126CE5386B8E7');
+        $this->addSql('ALTER TABLE magazine_ban ADD CONSTRAINT FK_6A126CE53EB84A1D FOREIGN KEY (magazine_id) REFERENCES magazine (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE magazine_ban ADD CONSTRAINT FK_6A126CE5A76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE magazine_ban ADD CONSTRAINT FK_6A126CE5386B8E7 FOREIGN KEY (banned_by_id) REFERENCES "user" (id) ON DELETE SET NULL NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE magazine_log DROP CONSTRAINT FK_87D3D4C53EB84A1D');
+        $this->addSql('ALTER TABLE magazine_log DROP CONSTRAINT FK_87D3D4C5A76ED395');
+        $this->addSql('ALTER TABLE magazine_log DROP CONSTRAINT FK_87D3D4C51255CD1D');
+        $this->addSql('ALTER TABLE magazine_log ADD CONSTRAINT FK_87D3D4C53EB84A1D FOREIGN KEY (magazine_id) REFERENCES magazine (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE magazine_log ADD CONSTRAINT FK_87D3D4C5A76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE SET NULL NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE magazine_log ADD CONSTRAINT FK_87D3D4C51255CD1D FOREIGN KEY (ban_id) REFERENCES magazine_ban (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE magazine_ownership_request DROP CONSTRAINT FK_A7160C65A76ED395');
+        $this->addSql('ALTER TABLE magazine_ownership_request ADD CONSTRAINT FK_A7160C65A76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE magazine_subscription DROP CONSTRAINT FK_ACCE935A76ED395');
+        $this->addSql('ALTER TABLE magazine_subscription DROP CONSTRAINT FK_ACCE9353EB84A1D');
+        $this->addSql('ALTER TABLE magazine_subscription ADD CONSTRAINT FK_ACCE935A76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE magazine_subscription ADD CONSTRAINT FK_ACCE9353EB84A1D FOREIGN KEY (magazine_id) REFERENCES magazine (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE message DROP CONSTRAINT FK_B6BD307FF624B39D');
+        $this->addSql('ALTER TABLE message ADD CONSTRAINT FK_B6BD307FF624B39D FOREIGN KEY (sender_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE moderator DROP CONSTRAINT FK_6A30B268A76ED395');
+        $this->addSql('ALTER TABLE moderator DROP CONSTRAINT FK_6A30B268CA792C6B');
+        $this->addSql('ALTER TABLE moderator ADD CONSTRAINT FK_6A30B268A76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE moderator ADD CONSTRAINT FK_6A30B268CA792C6B FOREIGN KEY (added_by_user_id) REFERENCES "user" (id) ON DELETE SET NULL NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE moderator_request DROP CONSTRAINT FK_2CC3E324A76ED395');
+        $this->addSql('ALTER TABLE moderator_request ADD CONSTRAINT FK_2CC3E324A76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE notification DROP CONSTRAINT FK_BF5476CA4B89032C');
+        $this->addSql('ALTER TABLE notification DROP CONSTRAINT FK_BF5476CA537A1329');
+        $this->addSql('ALTER TABLE notification DROP CONSTRAINT FK_BF5476CA1255CD1D');
+        $this->addSql('ALTER TABLE notification DROP CONSTRAINT FK_BF5476CADB1174D2');
+        $this->addSql('ALTER TABLE notification ADD CONSTRAINT FK_BF5476CA4B89032C FOREIGN KEY (post_id) REFERENCES post (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE notification ADD CONSTRAINT FK_BF5476CA537A1329 FOREIGN KEY (message_id) REFERENCES message (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE notification ADD CONSTRAINT FK_BF5476CA1255CD1D FOREIGN KEY (ban_id) REFERENCES magazine_ban (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE notification ADD CONSTRAINT FK_BF5476CADB1174D2 FOREIGN KEY (post_comment_id) REFERENCES post_comment (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE oauth2_client DROP CONSTRAINT FK_669FF9C9A76ED395');
+        $this->addSql('ALTER TABLE oauth2_client ADD CONSTRAINT FK_669FF9C9A76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE oauth2_user_consent DROP CONSTRAINT FK_C8F05D01A76ED395');
+        $this->addSql('ALTER TABLE oauth2_user_consent ADD CONSTRAINT FK_C8F05D01A76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE post DROP CONSTRAINT FK_5A8A6C8DA76ED395');
+        $this->addSql('ALTER TABLE post ADD CONSTRAINT FK_5A8A6C8DA76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE post_comment DROP CONSTRAINT FK_A99CE55FA76ED395');
+        $this->addSql('ALTER TABLE post_comment ADD CONSTRAINT FK_A99CE55FA76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE post_comment_vote DROP CONSTRAINT FK_D71B5A5BA76ED395');
+        $this->addSql('ALTER TABLE post_comment_vote DROP CONSTRAINT FK_D71B5A5BF675F31B');
+        $this->addSql('ALTER TABLE post_comment_vote ADD CONSTRAINT FK_D71B5A5BA76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE post_comment_vote ADD CONSTRAINT FK_D71B5A5BF675F31B FOREIGN KEY (author_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE post_vote DROP CONSTRAINT FK_9345E26FA76ED395');
+        $this->addSql('ALTER TABLE post_vote DROP CONSTRAINT FK_9345E26FF675F31B');
+        $this->addSql('ALTER TABLE post_vote ADD CONSTRAINT FK_9345E26FA76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE post_vote ADD CONSTRAINT FK_9345E26FF675F31B FOREIGN KEY (author_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE report DROP CONSTRAINT FK_C42F77843EB84A1D');
+        $this->addSql('ALTER TABLE report DROP CONSTRAINT FK_C42F778427EE0E60');
+        $this->addSql('ALTER TABLE report DROP CONSTRAINT FK_C42F778494BDEEB6');
+        $this->addSql('ALTER TABLE report DROP CONSTRAINT FK_C42F7784BA364942');
+        $this->addSql('ALTER TABLE report DROP CONSTRAINT FK_C42F778460C33421');
+        $this->addSql('ALTER TABLE report DROP CONSTRAINT FK_C42F77844B89032C');
+        $this->addSql('ALTER TABLE report DROP CONSTRAINT FK_C42F7784DB1174D2');
+        $this->addSql('ALTER TABLE report ADD CONSTRAINT FK_C42F77843EB84A1D FOREIGN KEY (magazine_id) REFERENCES magazine (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE report ADD CONSTRAINT FK_C42F778427EE0E60 FOREIGN KEY (reporting_id) REFERENCES "user" (id) ON DELETE SET NULL NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE report ADD CONSTRAINT FK_C42F778494BDEEB6 FOREIGN KEY (reported_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE report ADD CONSTRAINT FK_C42F7784BA364942 FOREIGN KEY (entry_id) REFERENCES entry (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE report ADD CONSTRAINT FK_C42F778460C33421 FOREIGN KEY (entry_comment_id) REFERENCES entry_comment (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE report ADD CONSTRAINT FK_C42F77844B89032C FOREIGN KEY (post_id) REFERENCES post (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE report ADD CONSTRAINT FK_C42F7784DB1174D2 FOREIGN KEY (post_comment_id) REFERENCES post_comment (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE reset_password_request DROP CONSTRAINT FK_7CE748AA76ED395');
+        $this->addSql('ALTER TABLE reset_password_request ADD CONSTRAINT FK_7CE748AA76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE view_counter DROP CONSTRAINT FK_E87F8182BA364942');
+        $this->addSql('ALTER TABLE view_counter ADD CONSTRAINT FK_E87F8182BA364942 FOREIGN KEY (entry_id) REFERENCES entry (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+    }
+
+    public function down(Schema $schema): void
+    {
+        // this down() migration is auto-generated, please modify it to your needs
+        $this->addSql('ALTER TABLE moderator DROP CONSTRAINT fk_6a30b268a76ed395');
+        $this->addSql('ALTER TABLE moderator DROP CONSTRAINT fk_6a30b268ca792c6b');
+        $this->addSql('ALTER TABLE moderator ADD CONSTRAINT fk_6a30b268a76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE moderator ADD CONSTRAINT fk_6a30b268ca792c6b FOREIGN KEY (added_by_user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE post_comment_vote DROP CONSTRAINT fk_d71b5a5ba76ed395');
+        $this->addSql('ALTER TABLE post_comment_vote DROP CONSTRAINT fk_d71b5a5bf675f31b');
+        $this->addSql('ALTER TABLE post_comment_vote ADD CONSTRAINT fk_d71b5a5ba76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE post_comment_vote ADD CONSTRAINT fk_d71b5a5bf675f31b FOREIGN KEY (author_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE view_counter DROP CONSTRAINT fk_e87f8182ba364942');
+        $this->addSql('ALTER TABLE view_counter ADD CONSTRAINT fk_e87f8182ba364942 FOREIGN KEY (entry_id) REFERENCES entry (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE post_vote DROP CONSTRAINT fk_9345e26fa76ed395');
+        $this->addSql('ALTER TABLE post_vote DROP CONSTRAINT fk_9345e26ff675f31b');
+        $this->addSql('ALTER TABLE post_vote ADD CONSTRAINT fk_9345e26fa76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE post_vote ADD CONSTRAINT fk_9345e26ff675f31b FOREIGN KEY (author_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE post_comment DROP CONSTRAINT fk_a99ce55fa76ed395');
+        $this->addSql('ALTER TABLE post_comment ADD CONSTRAINT fk_a99ce55fa76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE entry_comment DROP CONSTRAINT fk_b892fdfba76ed395');
+        $this->addSql('ALTER TABLE entry_comment DROP CONSTRAINT fk_b892fdfb79066886');
+        $this->addSql('ALTER TABLE entry_comment ADD CONSTRAINT fk_b892fdfba76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE entry_comment ADD CONSTRAINT fk_b892fdfb79066886 FOREIGN KEY (root_id) REFERENCES entry_comment (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE post DROP CONSTRAINT fk_5a8a6c8da76ed395');
+        $this->addSql('ALTER TABLE post ADD CONSTRAINT fk_5a8a6c8da76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE report DROP CONSTRAINT fk_c42f77843eb84a1d');
+        $this->addSql('ALTER TABLE report DROP CONSTRAINT fk_c42f778427ee0e60');
+        $this->addSql('ALTER TABLE report DROP CONSTRAINT fk_c42f778494bdeeb6');
+        $this->addSql('ALTER TABLE report DROP CONSTRAINT fk_c42f7784ba364942');
+        $this->addSql('ALTER TABLE report DROP CONSTRAINT fk_c42f778460c33421');
+        $this->addSql('ALTER TABLE report DROP CONSTRAINT fk_c42f77844b89032c');
+        $this->addSql('ALTER TABLE report DROP CONSTRAINT fk_c42f7784db1174d2');
+        $this->addSql('ALTER TABLE report ADD CONSTRAINT fk_c42f77843eb84a1d FOREIGN KEY (magazine_id) REFERENCES magazine (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE report ADD CONSTRAINT fk_c42f778427ee0e60 FOREIGN KEY (reporting_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE report ADD CONSTRAINT fk_c42f778494bdeeb6 FOREIGN KEY (reported_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE report ADD CONSTRAINT fk_c42f7784ba364942 FOREIGN KEY (entry_id) REFERENCES entry (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE report ADD CONSTRAINT fk_c42f778460c33421 FOREIGN KEY (entry_comment_id) REFERENCES entry_comment (id) ON DELETE SET NULL NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE report ADD CONSTRAINT fk_c42f77844b89032c FOREIGN KEY (post_id) REFERENCES post (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE report ADD CONSTRAINT fk_c42f7784db1174d2 FOREIGN KEY (post_comment_id) REFERENCES post_comment (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE magazine_ownership_request DROP CONSTRAINT fk_a7160c65a76ed395');
+        $this->addSql('ALTER TABLE magazine_ownership_request ADD CONSTRAINT fk_a7160c65a76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE reset_password_request DROP CONSTRAINT fk_7ce748aa76ed395');
+        $this->addSql('ALTER TABLE reset_password_request ADD CONSTRAINT fk_7ce748aa76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE entry_comment_vote DROP CONSTRAINT fk_9e561267a76ed395');
+        $this->addSql('ALTER TABLE entry_comment_vote DROP CONSTRAINT fk_9e561267f675f31b');
+        $this->addSql('ALTER TABLE entry_comment_vote ADD CONSTRAINT fk_9e561267a76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE entry_comment_vote ADD CONSTRAINT fk_9e561267f675f31b FOREIGN KEY (author_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE favourite DROP CONSTRAINT fk_62a2ca193eb84a1d');
+        $this->addSql('ALTER TABLE favourite DROP CONSTRAINT fk_62a2ca19a76ed395');
+        $this->addSql('ALTER TABLE favourite DROP CONSTRAINT fk_62a2ca19ba364942');
+        $this->addSql('ALTER TABLE favourite DROP CONSTRAINT fk_62a2ca1960c33421');
+        $this->addSql('ALTER TABLE favourite DROP CONSTRAINT fk_62a2ca194b89032c');
+        $this->addSql('ALTER TABLE favourite DROP CONSTRAINT fk_62a2ca19db1174d2');
+        $this->addSql('ALTER TABLE favourite ADD CONSTRAINT fk_62a2ca193eb84a1d FOREIGN KEY (magazine_id) REFERENCES magazine (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE favourite ADD CONSTRAINT fk_62a2ca19a76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE favourite ADD CONSTRAINT fk_62a2ca19ba364942 FOREIGN KEY (entry_id) REFERENCES entry (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE favourite ADD CONSTRAINT fk_62a2ca1960c33421 FOREIGN KEY (entry_comment_id) REFERENCES entry_comment (id) ON DELETE SET NULL NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE favourite ADD CONSTRAINT fk_62a2ca194b89032c FOREIGN KEY (post_id) REFERENCES post (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE favourite ADD CONSTRAINT fk_62a2ca19db1174d2 FOREIGN KEY (post_comment_id) REFERENCES post_comment (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE entry_vote DROP CONSTRAINT fk_fe32fd77a76ed395');
+        $this->addSql('ALTER TABLE entry_vote DROP CONSTRAINT fk_fe32fd77f675f31b');
+        $this->addSql('ALTER TABLE entry_vote ADD CONSTRAINT fk_fe32fd77a76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE entry_vote ADD CONSTRAINT fk_fe32fd77f675f31b FOREIGN KEY (author_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE magazine_ban DROP CONSTRAINT fk_6a126ce53eb84a1d');
+        $this->addSql('ALTER TABLE magazine_ban DROP CONSTRAINT fk_6a126ce5a76ed395');
+        $this->addSql('ALTER TABLE magazine_ban DROP CONSTRAINT fk_6a126ce5386b8e7');
+        $this->addSql('ALTER TABLE magazine_ban ADD CONSTRAINT fk_6a126ce53eb84a1d FOREIGN KEY (magazine_id) REFERENCES magazine (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE magazine_ban ADD CONSTRAINT fk_6a126ce5a76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE magazine_ban ADD CONSTRAINT fk_6a126ce5386b8e7 FOREIGN KEY (banned_by_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE oauth2_user_consent DROP CONSTRAINT fk_c8f05d01a76ed395');
+        $this->addSql('ALTER TABLE oauth2_user_consent ADD CONSTRAINT fk_c8f05d01a76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE magazine_log DROP CONSTRAINT fk_87d3d4c53eb84a1d');
+        $this->addSql('ALTER TABLE magazine_log DROP CONSTRAINT fk_87d3d4c5a76ed395');
+        $this->addSql('ALTER TABLE magazine_log DROP CONSTRAINT fk_87d3d4c51255cd1d');
+        $this->addSql('ALTER TABLE magazine_log ADD CONSTRAINT fk_87d3d4c53eb84a1d FOREIGN KEY (magazine_id) REFERENCES magazine (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE magazine_log ADD CONSTRAINT fk_87d3d4c5a76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE magazine_log ADD CONSTRAINT fk_87d3d4c51255cd1d FOREIGN KEY (ban_id) REFERENCES magazine_ban (id) ON DELETE SET NULL NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE moderator_request DROP CONSTRAINT fk_2cc3e324a76ed395');
+        $this->addSql('ALTER TABLE moderator_request ADD CONSTRAINT fk_2cc3e324a76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE "oauth2_client" DROP CONSTRAINT fk_669ff9c9a76ed395');
+        $this->addSql('ALTER TABLE "oauth2_client" ADD CONSTRAINT fk_669ff9c9a76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE magazine_subscription DROP CONSTRAINT fk_acce935a76ed395');
+        $this->addSql('ALTER TABLE magazine_subscription DROP CONSTRAINT fk_acce9353eb84a1d');
+        $this->addSql('ALTER TABLE magazine_subscription ADD CONSTRAINT fk_acce935a76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE magazine_subscription ADD CONSTRAINT fk_acce9353eb84a1d FOREIGN KEY (magazine_id) REFERENCES magazine (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE message DROP CONSTRAINT fk_b6bd307ff624b39d');
+        $this->addSql('ALTER TABLE message ADD CONSTRAINT fk_b6bd307ff624b39d FOREIGN KEY (sender_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE notification DROP CONSTRAINT fk_bf5476ca4b89032c');
+        $this->addSql('ALTER TABLE notification DROP CONSTRAINT fk_bf5476cadb1174d2');
+        $this->addSql('ALTER TABLE notification DROP CONSTRAINT fk_bf5476ca537a1329');
+        $this->addSql('ALTER TABLE notification DROP CONSTRAINT fk_bf5476ca1255cd1d');
+        $this->addSql('ALTER TABLE notification ADD CONSTRAINT fk_bf5476ca4b89032c FOREIGN KEY (post_id) REFERENCES post (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE notification ADD CONSTRAINT fk_bf5476cadb1174d2 FOREIGN KEY (post_comment_id) REFERENCES post_comment (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE notification ADD CONSTRAINT fk_bf5476ca537a1329 FOREIGN KEY (message_id) REFERENCES message (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE notification ADD CONSTRAINT fk_bf5476ca1255cd1d FOREIGN KEY (ban_id) REFERENCES magazine_ban (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE entry DROP CONSTRAINT fk_2b219d70a76ed395');
+        $this->addSql('ALTER TABLE entry ADD CONSTRAINT fk_2b219d70a76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+    }
+}

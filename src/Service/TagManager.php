@@ -33,7 +33,7 @@ class TagManager
         preg_match_all(RegPatterns::LOCAL_TAG, $val, $matches);
 
         $result = $matches[1];
-        $result = array_map(fn ($tag) => strtolower(trim($tag)), $result);
+        $result = array_map(fn ($tag) => mb_strtolower(trim($tag)), $result);
 
         $result = array_values($result);
 
@@ -46,11 +46,32 @@ class TagManager
         return \count($result) ? array_unique(array_values($result)) : null;
     }
 
+    /**
+     * transliterate and normalize a hashtag identifier.
+     *
+     * mostly recreates Mastodon's hashtag normalization rules, using ICU rules
+     * - try to transliterate modified latin characters to ASCII regions
+     * - normalize widths for fullwidth/halfwidth letters
+     * - strip characters that shouldn't be part of a hashtag
+     *   (borrowed the character set from Mastodon)
+     *
+     * @param string $tag input hashtag identifier to normalize
+     *
+     * @return normalized hashtag identifier
+     *
+     * @see https://github.com/mastodon/mastodon/blob/main/app/lib/hashtag_normalizer.rb
+     * @see https://github.com/mastodon/mastodon/blob/main/app/models/tag.rb
+     */
     public function transliterate(string $tag): string
     {
-        $transliterator = \Transliterator::create('Latin-ASCII');
-        $removerRule = \Transliterator::createFromRules(':: [:Nonspacing Mark:] Remove;');
+        $rules = <<<'ENDRULE'
+        :: Latin-ASCII;
+        :: [\uFF00-\uFFEF] NFKC;
+        :: [^[:alnum:][\u0E47-\u0E4E][_\u00B7\u30FB\u200c]] Remove;
+        ENDRULE;
 
-        return iconv('UTF-8', 'ASCII//TRANSLIT', $removerRule->transliterate($transliterator->transliterate($tag)));
+        $normalizer = \Transliterator::createFromRules($rules);
+
+        return iconv('UTF-8', 'UTF-8//TRANSLIT', $normalizer->transliterate($tag));
     }
 }

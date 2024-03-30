@@ -30,12 +30,14 @@ class SettingsType extends AbstractType
             ])
             ->add('KBIN_HEADER_LOGO', CheckboxType::class, ['required' => false])
             ->add('KBIN_REGISTRATIONS_ENABLED', CheckboxType::class, ['required' => false])
+            ->add('MBIN_SSO_REGISTRATIONS_ENABLED', CheckboxType::class, ['required' => false])
             ->add('KBIN_CAPTCHA_ENABLED', CheckboxType::class, ['required' => false])
             ->add('KBIN_FEDERATION_ENABLED', CheckboxType::class, ['required' => false])
             ->add('KBIN_MERCURE_ENABLED', CheckboxType::class, ['required' => false])
             ->add('KBIN_FEDERATION_PAGE_ENABLED', CheckboxType::class, ['required' => false])
             ->add('KBIN_ADMIN_ONLY_OAUTH_CLIENTS', CheckboxType::class, ['required' => false])
             ->add('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', CheckboxType::class, ['required' => false])
+            ->add('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY', CheckboxType::class, ['required' => false])
             ->add('submit', SubmitType::class);
     }
 

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the ActivityPhp package.
+ * This file is part of the ActivityPhp package, with modifications.
  *
  * Copyright (c) landrok at github.com/landrok
  *
@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace App\Service\ActivityPub\Webfinger;
 
-use ActivityPhp\Server;
+use App\ActivityPub\ActorHandle;
 use App\Service\ActivityPub\ApHttpClient;
 
 /**
@@ -22,53 +22,34 @@ use App\Service\ActivityPub\ApHttpClient;
 class WebFingerFactory
 {
     public const WEBFINGER_URL = '%s://%s%s/.well-known/webfinger?resource=acct:%s';
-    protected static $server;
-    protected array $webfingers = [];
 
     public function __construct(private readonly ApHttpClient $client)
     {
     }
 
-    /**
-     * Inject a server instance.
-     */
-    public static function setServer(Server $server)
-    {
-        self::$server = $server;
-    }
-
     public function get(string $handle, string $scheme = 'https')
     {
-        if (!preg_match(
-            '/^@?(?P<user>[\w\-\.]+)@(?P<host>[\w\.\-]+)(?P<port>:[\d]+)?$/',
-            $handle,
-            $matches
-        )
-        ) {
+        $actorHandle = ActorHandle::parse($handle);
+
+        if (!$actorHandle) {
             throw new \Exception("WebFinger handle is malformed '{$handle}'");
         }
-
-        // Unformat Mastodon handle @user@host => user@host
-        $handle = 0 === strpos($handle, '@')
-            ? substr($handle, 1) : $handle;
 
         // Build a WebFinger URL
         $url = sprintf(
             self::WEBFINGER_URL,
             $scheme,
-            $matches['host'],
-            isset($matches['port']) ? $matches['port'] : '',
-            $handle
+            $actorHandle->host,
+            $actorHandle->getPortString(),
+            $actorHandle->plainHandle(),
         );
 
         $content = $this->client->getWebfingerObject($url);
 
         if (!\is_array($content) || !\count($content)) {
-            throw new \Exception('WebFinger fetching has failed');
+            throw new \Exception('WebFinger fetching has failed, no contents returned');
         }
 
-        $this->webfingers[$handle] = new WebFinger($content);
-
-        return $this->webfingers[$handle];
+        return new WebFinger($content);
     }
 }

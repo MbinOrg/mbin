@@ -5,8 +5,7 @@
 
 {% if not app.user or (app.user and not app.user.isBlocked(post.user)) %}
     {% if post.visibility is same as 'private' and (not app.user or not app.user.isFollower(post.user)) %}
-        <div class="section section--small"
-             style="z-index:3; position:relative;margin-bottom:0;">
+        <div class="section section--small">
             Private
         </div>
     {% else %}
@@ -20,7 +19,20 @@
                 data-action="notifications:Notification@window->subject#notification">
             <header>
                 {% if post.isAdult %}<span class="badge danger">18+</span>{% endif %}
-                {{ component('user_inline', {user: post.user, showAvatar: false}) }},
+                {{ component('user_inline', {user: post.user, showAvatar: false}) }}
+
+                {% if (post.user.type) == "Service" %}
+                    <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
+                {% endif %}
+
+                {% if post.user.admin() %}
+                    <span class="user-badge">{{ 'user_badge_admin'|trans }}</span>
+                {% elseif post.user.moderator() %}
+                    <span class="user-badge">{{ 'user_badge_global_moderator'|trans }}</span>
+                {% elseif post.magazine.userIsModerator(post.user) %}
+                    <span class="user-badge">{{ 'user_badge_moderator'|trans }}</span>
+                {% endif %}
+                <span>, </span>
                 {% if dateAsUrl %}
                     <a href="{{ post_url(post) }}"
                        class="link-muted">{{ component('date', {date: post.createdAt}) }}</a>

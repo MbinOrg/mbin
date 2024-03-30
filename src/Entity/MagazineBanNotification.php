@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 class MagazineBanNotification extends Notification
 {
     #[ManyToOne(targetEntity: MagazineBan::class)]
-    #[JoinColumn(nullable: true)]
+    #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?MagazineBan $ban = null;
 
     public function __construct(User $receiver, MagazineBan $ban)

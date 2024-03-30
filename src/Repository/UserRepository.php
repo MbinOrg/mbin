@@ -12,6 +12,7 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
 use App\Entity\UserFollow;
+use App\Service\SettingsManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Result;
 use Doctrine\ORM\QueryBuilder;
@@ -46,7 +47,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         self::USERS_REMOTE,
     ];
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly SettingsManager $settingsManager)
     {
         parent::__construct($registry, User::class);
     }
@@ -82,23 +83,23 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
     private function getPublicActivityQuery(User $user, bool $hideAdult): Result
     {
+        $falseCond = $user->isDeleted ? ' AND FALSE ' : '';
         $conn = $this->_em->getConnection();
-        $sql = "
-        (SELECT id, created_at, 'entry' AS type FROM entry
-        WHERE user_id = :userId AND visibility = :visibility
-        AND is_adult = CASE WHEN :hideAdult THEN false ELSE is_adult END)
+        $sql = "SELECT id, created_at, 'entry' AS type FROM entry
+            WHERE user_id = :userId AND visibility = :visibility $falseCond
+            AND is_adult = CASE WHEN :hideAdult THEN false ELSE is_adult END
         UNION
-        (SELECT id, created_at, 'entry_comment' AS type FROM entry_comment
-        WHERE user_id = :userId AND visibility = :visibility
-        AND is_adult = CASE WHEN :hideAdult THEN false ELSE is_adult END)
+        SELECT id, created_at, 'entry_comment' AS type FROM entry_comment
+            WHERE user_id = :userId AND visibility = :visibility $falseCond
+            AND is_adult = CASE WHEN :hideAdult THEN false ELSE is_adult END
         UNION
-        (SELECT id, created_at, 'post' AS type FROM post
-        WHERE user_id = :userId AND visibility = :visibility
-        AND is_adult = CASE WHEN :hideAdult THEN false ELSE is_adult END)
+        SELECT id, created_at, 'post' AS type FROM post
+            WHERE user_id = :userId AND visibility = :visibility $falseCond
+            AND is_adult = CASE WHEN :hideAdult THEN false ELSE is_adult END
         UNION
-        (SELECT id, created_at, 'post_comment' AS type FROM post_comment
-        WHERE user_id = :userId AND visibility = :visibility
-        AND is_adult = CASE WHEN :hideAdult THEN false ELSE is_adult END)
+        SELECT id, created_at, 'post_comment' AS type FROM post_comment
+            WHERE user_id = :userId AND visibility = :visibility $falseCond
+            AND is_adult = CASE WHEN :hideAdult THEN false ELSE is_adult END
         ORDER BY created_at DESC";
 
         $stmt = $conn->prepare($sql);
@@ -372,7 +373,9 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
                 break;
         }
 
-        return $qb->orderBy('u.lastActive', 'DESC');
+        return $qb
+            ->andWhere('u.isDeleted = false')
+            ->orderBy('u.lastActive', 'DESC');
     }
 
     public function findWithAboutPaginated(
@@ -396,6 +399,24 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         }
 
         return $pagerfanta;
+    }
+
+    private function findWithAboutQueryBuilder(string $group): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->andWhere('u.about != :emptyString');
+
+        switch ($group) {
+            case self::USERS_LOCAL:
+                $qb->andWhere('u.apId IS NULL');
+                break;
+            case self::USERS_REMOTE:
+                $qb->andWhere('u.apId IS NOT NULL')
+                    ->andWhere('u.apDiscoverable = true');
+                break;
+        }
+
+        return $qb->orderBy('u.lastActive', 'DESC');
     }
 
     public function findUsersForGroup(string $group = self::USERS_ALL, ?bool $recentlyActive = true): array
@@ -473,18 +494,19 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->getResult();
     }
 
-    public function findPeople(Magazine $magazine, ?bool $federated = false, $limit = 200): array
+    public function findPeople(Magazine $magazine, ?bool $federated = false, $limit = 200, bool $limitTime = false): array
     {
         $conn = $this->_em->getConnection();
-        $sql = '
-        (SELECT count(id), user_id FROM entry WHERE magazine_id = :magazineId GROUP BY user_id ORDER BY count DESC LIMIT 50)
+        $timeWhere = $limitTime ? "AND created_at > now() - '30 days'::interval" : '';
+        $sql = "
+        (SELECT count(id), user_id FROM entry WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT 50)
         UNION
-        (SELECT count(id), user_id FROM entry_comment WHERE magazine_id = :magazineId GROUP BY user_id ORDER BY count DESC LIMIT 50)
+        (SELECT count(id), user_id FROM entry_comment WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT 50)
         UNION
-        (SELECT count(id), user_id FROM post WHERE magazine_id = :magazineId GROUP BY user_id ORDER BY count DESC LIMIT 50)
+        (SELECT count(id), user_id FROM post WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT 50)
         UNION
-        (SELECT count(id), user_id FROM post_comment WHERE magazine_id = :magazineId GROUP BY user_id ORDER BY count DESC LIMIT 50)
-        ORDER BY count DESC';
+        (SELECT count(id), user_id FROM post_comment WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT 50)
+        ORDER BY count DESC";
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('magazineId', $magazine->getId());
@@ -544,15 +566,19 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     public function findActiveUsers(Magazine $magazine = null)
     {
         if ($magazine) {
-            $results = $this->findPeople($magazine, null, 35);
+            $results = $this->findPeople($magazine, null, 35, true);
         } else {
             $results = $this->createQueryBuilder('u')
                 ->andWhere('u.lastActive >= :lastActive')
                 ->andWhere('u.isBanned = false')
                 ->andWhere('u.apDeletedAt IS NULL')
                 ->andWhere('u.apTimeoutAt IS NULL')
-                ->andWhere('u.avatar IS NOT NULL')
-                ->join('u.avatar', 'a')
+                ->andWhere('u.avatar IS NOT NULL');
+            if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
+                $results = $results->andWhere('u.apId IS NULL');
+            }
+
+            $results = $results->join('u.avatar', 'a')
                 ->orderBy('u.lastActive', 'DESC')
                 ->setParameters(['lastActive' => (new \DateTime())->modify('-7 days')])
                 ->setMaxResults(35)

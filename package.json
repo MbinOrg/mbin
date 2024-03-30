@@ -25,7 +25,8 @@
         "webpack-cli": "^5.1.4",
         "webpack-notifier": "^1.15.0"
     },
-    "license": "UNLICENSED",
+    "name": "mbin",
+    "license": "AGPL-3.0",
     "private": true,
     "scripts": {
         "dev-server": "encore dev-server",

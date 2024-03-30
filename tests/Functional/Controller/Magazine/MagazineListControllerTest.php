@@ -28,7 +28,7 @@ class MagazineListControllerTest extends WebTestCase
         );
     }
 
-    public function magazines(): iterable
+    public static function magazines(): iterable
     {
         return [
             [['query' => 'test'], []],

@@ -100,16 +100,61 @@ sudo rabbitmqctl set_user_tags <user> administrator
 sudo rabbitmqctl set_permissions -p / <user> ".*" ".*" ".*"
 ```
 
-Now you can open the RabbitMQ management page: (insecure connection!) `http://<server-ip>:15672` with the username and the password provided earlier. [More info can be found here](https://www.rabbitmq.com/management.html#getting-started). See screenshot below of a typical small instance of Mbin running RabbitMQ management interface:
+Now you can open the RabbitMQ management page: (insecure connection!) `http://<server-ip>:15672` with the username and the password provided earlier. [More info can be found here](https://www.rabbitmq.com/management.html#getting-started). See screenshot below of a typical small instance of Mbin running RabbitMQ management interface ("Queued message" of 4k or even 10k is normal after recent Mbin changes, see down below for more info):
 
-![image](https://github.com/MbinOrg/mbin/assets/628926/ce47213e-13c5-4b57-9fd3-c5b4a64138ef)
+![Typical load on very small instances](docs/images/rabbit_small_load_typical.png)
+
+## Messenger Queue is building up even though my messengers are idling
+
+We recently changed the messenger config to retry failed messages 3 times, instead of sending them straight to the `failed` queue.
+RabbitMQ will now have new queues being added for the different delays (so a message does not get retried 5 times per second):
+
+![Queue overview](docs/images/rabbit_queue_tab_cut.png)
+
+The global overview from rabbitmq shows the ready messages for all queues combined. Messages in the retry queues count as ready messages the whole time they are in there,
+so for a correct ready count you have to go to the queue specific overview.
+
+| Overview                                                  | Queue Tab                                           | "Message" Queue Overview                                            |
+| --------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------- |
+| ![Queued messages](docs/images/rabbit_queue_overview.png) | ![Queue overview](docs/images/rabbit_queue_tab.png) | ![Message Queue Overview](docs/images/rabbit_messages_overview.png) |
+
+## RabbitMQ Prometheus exporter
+
+See [RabbitMQ Docs](https://rabbitmq.com/prometheus.html)
+
+If you are running the prometheus exporter plugin you do not have queue specific metrics by default.
+There is another endpoint with the default config that you can scrape, that will return queue metrics for our default virtual host `/`: `/metrics/detailed?vhost=%2F&family=queue_metrics`
+
+Example scrape config:
+
+```yaml
+scrape_configs:
+  - job_name: "mbin-rabbit_queues"
+    static_configs:
+      - targets: ["example.org"]
+    metrics_path: "/metrics/detailed"
+    params:
+      vhost: ["/"]
+      family:
+        [
+          "queue_coarse_metrics",
+          "queue_consumer_count",
+          "channel_queue_metrics",
+        ]
+```
 
 ## How to clean-up all failed messages?
 
-If you wish to **delete all failed messages** at once, execute the following PostgreSQL query (assuming you're connected to the correct PostgreSQL database):
+If you wish to **delete all messages** (`dead` and `failed`) at once, execute the following PostgreSQL query (assuming you're connected to the correct PostgreSQL database):
 
 ```sql
 DELETE FROM messenger_messages;
+```
+
+If you want to delete only the messages that are no longer being worked (`dead`) on you can execute this query:
+
+```sql
+DELETE FROM messenger_messages WHERE queue_name = 'dead';
 ```
 
 ## Where can I find my logging?
@@ -140,8 +185,8 @@ Followed by restarting the services that are depending on the (new) configuratio
 # Clear PHP Opcache by restarting the PHP FPM service
 sudo systemctl restart php8.2-fpm.service
 
-# Restarting the PHP messenger jobs and Mercure service
-sudo supervisorctl restart all
+# Restarting the PHP messenger jobs and Mercure service (also reread the latest configuration)
+sudo supervisorctl reread && sudo supervisorctl update && sudo supervisorctl restart all
 ```
 
 ## How to retrieve missing/update remote user data?
@@ -153,3 +198,14 @@ If you want to update all the remote users on your instance, you can execute the
 ```
 
 _Important:_ This might have quite a performance impact (temporally), if you are running a very large instance. Due to the huge amount of remote users.
+
+## Running `php bin/console mbin:ap:keys:update` does not appear to set keys
+
+If you're seeing this error in logs:
+
+```
+getInstancePrivateKey(): Return value must be of type string, null returned
+```
+
+At time of writing, `getInstancePrivateKey()` [calls out to the Redis cache](https://github.com/MbinOrg/mbin/blob/main/src/Service/ActivityPub/ApHttpClient.php#L348)
+first, so any updates to the keys requires a `DEL instance_private_key instance_public_key` (or `FLUSHDB` to be certain, as documented here: [bare metal](https://github.com/MbinOrg/mbin/blob/main/docs/admin_guide.md#upgrades) and [docker](https://github.com/MbinOrg/mbin/blob/main/docs/docker_deployment_guide.md#clear-caches))

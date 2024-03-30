@@ -36,6 +36,15 @@
                             {% else %}
                                 {{ entry.title }}
                             {% endif %}
+
+                            {% if entry.url %}
+                                <span class="entry__domain">
+                                    ( <a rel="{{ get_rel(entry.url) }}" href="{{ entry.url }}" target="_blank">
+                                        <span>{{ get_url_domain(entry.url) }}</span> <i class="fa-solid fa-external-link" aria-hidden="true"></i>
+                                    </a> )
+                                </span>
+                            {% endif %}
+
                             {% if entry.lang is not same as app.request.locale and entry.lang is not same as kbin_default_lang() %}
                                 <small class="badge-lang">{{ entry.lang|language_name }}</small>
                             {% endif %}
@@ -47,8 +56,11 @@
                             <a href="{{ entry_url(entry) }}">{{ entry.title }}</a>
 
                             {% if entry.url %}
-                                <span class="entry__domain">(<a rel="{{ get_rel(entry.url) }}"
-                                                                href="{{ entry.url }}">{{ get_url_domain(entry.url) }}</a>)</span>
+                                <span class="entry__domain">
+                                    ( <a rel="{{ get_rel(entry.url) }}" href="{{ entry.url }}" target="_blank">
+                                        <span>{{ get_url_domain(entry.url) }}</span> <i class="fa-solid fa-external-link" aria-hidden="true"></i>
+                                    </a> )
+                                </span>
                             {% endif %}
 
                             {% if entry.lang is not same as app.request.locale and entry.lang is not same as kbin_default_lang() %}
@@ -78,7 +90,19 @@
             {% endif %}
             <aside class="meta entry__meta">
                 <span>{{ component('user_inline', {user: entry.user, showAvatar: SHOW_USER_AVATARS is same as V_TRUE}) -}}</span>
-                <span>,</span>
+
+                {% if (entry.user.type) == "Service" %}
+                    <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
+                {% endif %}
+
+                {% if entry.user.admin() %}
+                    <span class="user-badge">{{ 'user_badge_admin'|trans }}</span>
+                {% elseif entry.user.moderator() %}
+                    <span class="user-badge">{{ 'user_badge_global_moderator'|trans }}</span>
+                {% elseif entry.magazine.userIsModerator(entry.user) %}
+                    <span class="user-badge">{{ 'user_badge_moderator'|trans }}</span>
+                {% endif %}
+                <span>, </span>
                 <span>{{ component('date', {date: entry.createdAt}) }}</span>
                 <span>{{ component('date_edited', {createdAt: entry.createdAt, editedAt: entry.editedAt}) }}</span>
                 {% if showMagazineName %}
@@ -125,12 +149,12 @@
                             </li>
                         {% endif %}
                         {% if entry.hasEmbed %}
-                            {% set image = entry.image ? uploaded_asset(entry.image.filePath) : '' %}
+                            {% set preview_url = entry.type is same as 'image' and entry.image ? uploaded_asset(entry.image) : entry.url %}
                             <li>
                                 <button class="show-preview"
                                         data-action="preview#show"
                                         aria-label="{{ 'preview'|trans }}"
-                                        data-preview-url-param="{{ entry.url ?? image }}"
+                                        data-preview-url-param="{{ preview_url }}"
                                         data-preview-ratio-param="{{ entry.domain and entry.domain.shouldRatio ? true : false }}">
                                     <i class="fa-solid fa-photo-film" aria-hidden="true"></i>
                                 </button>

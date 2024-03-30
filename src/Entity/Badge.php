@@ -23,7 +23,7 @@ class Badge
     public Magazine $magazine;
     #[Column(type: 'string', nullable: false)]
     public ?string $name;
-    #[OneToMany(mappedBy: 'badge', targetEntity: EntryBadge::class, cascade: ['remove'], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'badge', targetEntity: EntryBadge::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $badges;
     #[Id]
     #[GeneratedValue]

@@ -1,0 +1,4 @@
+custom_style:
+    controller: App\Controller\CustomStyleController
+    path: /custom-style
+    methods: [ GET ]

@@ -54,13 +54,13 @@ abstract class Report
     ];
 
     #[ManyToOne(targetEntity: Magazine::class, inversedBy: 'reports')]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public Magazine $magazine;
     #[ManyToOne(targetEntity: User::class, inversedBy: 'reports')]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $reporting;
     #[ManyToOne(targetEntity: User::class, inversedBy: 'violations')]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $reported;
     #[ManyToOne(targetEntity: User::class)]
     #[JoinColumn(nullable: true)]

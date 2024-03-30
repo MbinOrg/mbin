@@ -1,0 +1,18 @@
+{#
+    using |raw here should be somewhat safe
+    since the next thing you fight should be the browser's css parser
+#}
+/* site dynamic styles */
+{{ include('components/_details_label.css.twig') }}
+
+{% if not app.user or not app.user.ignoreMagazinesCustomCss %}
+    {% if magazine is defined and magazine and magazine.customCss %}
+        /* magazine styles */
+        {{ magazine.customCss|raw }}
+    {% endif %}
+{% endif %}
+
+{% if app.user is defined and app.user and app.user.customCss %}
+    /* user styles */
+    {{ app.user.customCss|raw }}
+{% endif %}

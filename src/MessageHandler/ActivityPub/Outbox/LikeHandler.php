@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace App\MessageHandler\ActivityPub\Outbox;
 
+use App\Entity\Entry;
+use App\Entity\EntryComment;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use App\Factory\ActivityPub\ActivityFactory;
-use App\Message\ActivityPub\Outbox\DeliverMessage;
 use App\Message\ActivityPub\Outbox\LikeMessage;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\Wrapper\LikeWrapper;
 use App\Service\ActivityPub\Wrapper\UndoWrapper;
 use App\Service\ActivityPubManager;
+use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
-use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 class LikeHandler
@@ -29,25 +31,19 @@ class LikeHandler
         private readonly UndoWrapper $undoWrapper,
         private readonly ActivityPubManager $activityPubManager,
         private readonly ActivityFactory $activityFactory,
-        private readonly MessageBusInterface $bus,
         private readonly SettingsManager $settingsManager,
+        private readonly DeliverManager $deliverManager,
     ) {
     }
 
-    #[ArrayShape([
-        '@context' => 'string',
-        'id' => 'string',
-        'actor' => 'string',
-        'object' => 'string',
-    ])]
-    public function __invoke(
-        LikeMessage $message
-    ): void {
+    public function __invoke(LikeMessage $message): void
+    {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;
         }
 
         $user = $this->userRepository->find($message->userId);
+        /** @var Entry|EntryComment|Post|PostComment $object */
         $object = $this->entityManager->getRepository($message->objectType)->find($message->objectId);
 
         $activity = $this->likeWrapper->build(
@@ -59,25 +55,11 @@ class LikeHandler
             $activity = $this->undoWrapper->build($activity);
         }
 
-        $this->deliver($this->userRepository->findAudience($user), $activity);
-        $this->deliver($this->magazineRepository->findAudience($object->magazine), $activity);
-        $this->deliver([$object->user->apInboxUrl], $activity);
-    }
-
-    private function deliver(array $followers, array $activity): void
-    {
-        foreach ($followers as $follower) {
-            if (!$follower) {
-                continue;
-            }
-
-            $inboxUrl = \is_string($follower) ? $follower : $follower->apInboxUrl;
-
-            if ($this->settingsManager->isBannedInstance($inboxUrl)) {
-                continue;
-            }
-
-            $this->bus->dispatch(new DeliverMessage($inboxUrl, $activity));
-        }
+        $inboxes = array_filter(array_unique(array_merge(
+            $this->userRepository->findAudience($user),
+            $this->magazineRepository->findAudience($object->magazine),
+            [$object->user->apInboxUrl, $object->magazine->apId ? $object->magazine->apInboxUrl : null]
+        )));
+        $this->deliverManager->deliver($inboxes, $activity);
     }
 }

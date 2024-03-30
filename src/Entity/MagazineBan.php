@@ -21,13 +21,13 @@ class MagazineBan
     }
 
     #[ManyToOne(targetEntity: Magazine::class, inversedBy: 'bans')]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public ?Magazine $magazine;
     #[ManyToOne(targetEntity: User::class)]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public ?User $user;
     #[ManyToOne(targetEntity: User::class)]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'SET NULL')]
     public ?User $bannedBy;
     #[Column(type: 'text', length: 2048, nullable: true)]
     public ?string $reason = null;

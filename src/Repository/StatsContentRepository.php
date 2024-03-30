@@ -4,17 +4,22 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\Entry;
-use App\Entity\EntryComment;
 use App\Entity\Magazine;
-use App\Entity\Post;
-use App\Entity\PostComment;
 use App\Entity\User;
-use Doctrine\DBAL\ParameterType;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\ResultSetMapping;
+use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 
 class StatsContentRepository extends StatsRepository
 {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly EntityManagerInterface $entityManager,
+    ) {
+        parent::__construct($registry);
+    }
+
     #[ArrayShape(['entries' => 'array', 'comments' => 'array', 'posts' => 'array', 'replies' => 'array'])]
     public function getOverallStats(
         User $user = null,
@@ -30,42 +35,7 @@ class StatsContentRepository extends StatsRepository
         $posts = $this->getMonthlyStats('post');
         $replies = $this->getMonthlyStats('post_comment');
 
-        $startDate = $this->sort(
-            array_merge(
-                $this->getStartDate($entries),
-                $this->getStartDate($comments),
-                $this->getStartDate($posts),
-                $this->getStartDate($replies)
-            )
-        );
-
-        if (empty($startDate)) {
-            return [
-                'entries' => [],
-                'comments' => [],
-                'posts' => [],
-                'replies' => [],
-            ];
-        }
-
-        return [
-            'entries' => $this->prepareContentOverall(
-                $this->sort($entries),
-                $startDate[0]['year'],
-                $startDate[0]['month']
-            ),
-            'comments' => $this->prepareContentOverall(
-                $this->sort($comments),
-                $startDate[0]['year'],
-                $startDate[0]['month']
-            ),
-            'posts' => $this->prepareContentOverall($this->sort($posts), $startDate[0]['year'], $startDate[0]['month']),
-            'replies' => $this->prepareContentOverall(
-                $this->sort($replies),
-                $startDate[0]['year'],
-                $startDate[0]['month']
-            ),
-        ];
+        return $this->prepareContentReturn($entries, $comments, $posts, $replies);
     }
 
     private function getMonthlyStats(string $table): array
@@ -73,16 +43,12 @@ class StatsContentRepository extends StatsRepository
         $conn = $this->getEntityManager()
             ->getConnection();
 
-        if ($this->user) {
-            $sql = "SELECT to_char(e.created_at,'Mon') as month, extract(year from e.created_at) as year, COUNT(e.id) as count 
-                    FROM ".$table.' e WHERE e.user_id = :userId GROUP BY 1,2';
-        } elseif ($this->magazine) {
-            $sql = "SELECT to_char(e.created_at,'Mon') as month, extract(year from e.created_at) as year, COUNT(e.id) as count 
-                    FROM ".$table.' e WHERE e.magazine_id = :magazineId GROUP BY 1,2';
-        } else {
-            $sql = "SELECT to_char(e.created_at,'Mon') as month, extract(year from e.created_at) as year, COUNT(e.id) as count 
-                    FROM ".$table.' e GROUP BY 1,2';
-        }
+        $onlyLocalWhere = $this->onlyLocal ? ' AND e.ap_id IS NULL' : '';
+        $userWhere = $this->user ? ' AND e.user_id = :userId ' : '';
+        $magazineWhere = $this->magazine ? ' AND e.magazine_id = :magazineId ' : '';
+        $sql = "SELECT to_char(e.created_at,'Mon') as month, extract(year from e.created_at) as year, COUNT(e.id) as count FROM $table e 
+            INNER JOIN public.user u ON u.id = user_id 
+            WHERE u.is_deleted = false $onlyLocalWhere $userWhere $magazineWhere GROUP BY 1,2";
 
         $stmt = $conn->prepare($sql);
         if ($this->user) {
@@ -121,16 +87,11 @@ class StatsContentRepository extends StatsRepository
             ->getConnection();
 
         $onlyLocalWhere = $this->onlyLocal ? ' AND e.ap_id IS NULL' : '';
-        if ($this->user) {
-            $sql = "SELECT date_trunc('day', e.created_at) as day, COUNT(e.id) as count FROM ".$table.' e
-                    WHERE e.created_at >= :startDate AND e.user_id = :userId '.$onlyLocalWhere.' GROUP BY 1';
-        } elseif ($this->magazine) {
-            $sql = "SELECT date_trunc('day', e.created_at) as day, COUNT(e.id) as count FROM ".$table.' e
-                    WHERE e.created_at >= :startDate AND e.magazine_id = :magazineId '.$onlyLocalWhere.' GROUP BY 1';
-        } else {
-            $sql = "SELECT date_trunc('day', e.created_at) as day, COUNT(e.id) as count FROM ".$table.' e
-                    WHERE e.created_at >= :startDate '.$onlyLocalWhere.' GROUP BY 1';
-        }
+        $userWhere = $this->user ? ' AND e.user_id = :userId ' : '';
+        $magazineWhere = $this->magazine ? ' AND e.magazine_id = :magazineId ' : '';
+        $sql = "SELECT date_trunc('day', e.created_at) as day, COUNT(e.id) as count FROM $table e 
+            INNER JOIN public.user u ON e.user_id = u.id
+            WHERE u.is_deleted = false AND e.created_at >= :startDate $userWhere $magazineWhere $onlyLocalWhere GROUP BY 1";
 
         $stmt = $conn->prepare($sql);
         if ($this->user) {
@@ -148,25 +109,10 @@ class StatsContentRepository extends StatsRepository
         return $results;
     }
 
-    public function getStats(
-        ?Magazine $magazine,
-        string $intervalStr,
-        ?\DateTime $start,
-        ?\DateTime $end,
-        ?bool $onlyLocal
-    ): array {
-        $this->onlyLocal = $onlyLocal;
-        $interval = $intervalStr ?? 'month';
+    public function getStats(?Magazine $magazine, string $interval, ?\DateTime $start, ?\DateTime $end, ?bool $onlyLocal): array
+    {
         switch ($interval) {
             case 'all':
-                $toReturn = [
-                    'entry' => $this->aggregateTotalStats('entry', $magazine),
-                    'entry_comment' => $this->aggregateTotalStats('entry_comment', $magazine),
-                    'post' => $this->aggregateTotalStats('post', $magazine),
-                    'post_comment' => $this->aggregateTotalStats('post_comment', $magazine),
-                ];
-
-                return $toReturn;
             case 'year':
             case 'month':
             case 'day':
@@ -175,106 +121,72 @@ class StatsContentRepository extends StatsRepository
             default:
                 throw new \LogicException('Invalid interval provided');
         }
+        if (null !== $start && null === $end) {
+            $end = $start->modify('-1 '.$interval);
+        } elseif (null === $start && null !== $end) {
+            $start = $end->modify('+1 '.$interval);
+        }
 
-        $this->start = $start ?? new \DateTime('-1 '.$interval);
-
-        $toReturn = [
-            'entry' => $this->aggregateStats('entry', $magazine, $interval, $end),
-            'entry_comment' => $this->aggregateStats('entry_comment', $magazine, $interval, $end),
-            'post' => $this->aggregateStats('post', $magazine, $interval, $end),
-            'post_comment' => $this->aggregateStats('post_comment', $magazine, $interval, $end),
+        return [
+            'entry' => $this->aggregateStats('entry', $start, $end, true !== $onlyLocal, $magazine),
+            'entry_comment' => $this->aggregateStats('entry_comment', $start, $end, true !== $onlyLocal, $magazine),
+            'post' => $this->aggregateStats('post', $start, $end, true !== $onlyLocal, $magazine),
+            'post_comment' => $this->aggregateStats('post_comment', $start, $end, true !== $onlyLocal, $magazine),
         ];
-
-        return $toReturn;
     }
 
-    private function aggregateStats(string $table, ?Magazine $magazine, string $interval, ?\DateTime $end): array
+    public function aggregateStats(string $tableName, ?\DateTimeImmutable $sinceDate, ?\DateTimeImmutable $tilDate, bool $federated, ?Magazine $magazine): int
     {
-        if (null === $end) {
-            $end = new \DateTime();
+        $tableName = match ($tableName) {
+            'entry' => 'entry',
+            'entry_comment' => 'entry_comment',
+            'post' => 'post',
+            'post_comment' => 'post_comment',
+            default => throw new \InvalidArgumentException("$tableName is not a valid countable")
+        };
+
+        $federatedCond = false === $federated ? ' AND e.ap_id IS NULL ' : '';
+        $magazineCond = $magazine ? 'AND e.magazine_id = :magId' : '';
+        $sinceDateCond = $sinceDate ? 'AND e.created_at > :date' : '';
+        $tilDateCond = $tilDate ? 'AND e.created_at < :untilDate' : '';
+
+        $sql = "SELECT COUNT(e.id) as count FROM $tableName e INNER JOIN public.user u ON e.user_id = u.id WHERE u.is_deleted = false $sinceDateCond $tilDateCond $federatedCond $magazineCond";
+        $rsm = new ResultSetMapping();
+        $rsm->addScalarResult('count', 0);
+        $query = $this->entityManager->createNativeQuery($sql, $rsm);
+
+        if (null !== $sinceDate) {
+            $query->setParameter(':date', $sinceDate);
         }
 
-        if ($end < $this->start) {
-            throw new \LogicException('End date must be after start date!');
+        if (null !== $tilDate) {
+            $query->setParameter(':untilDate', $tilDate);
         }
 
-        $conn = $this->getEntityManager()->getConnection();
-
-        $sql = 'SELECT date_trunc(?, e.created_at) as datetime, count(e.id) as count FROM '.$table.' e 
-                    WHERE e.created_at BETWEEN ? AND ?';
-        if ($magazine) {
-            $sql .= ' AND e.magazine_id = ?';
+        if (null !== $magazine) {
+            $query->setParameter(':magId', $magazine->getId());
         }
-        if ($this->onlyLocal) {
-            $sql = $sql.' AND e.ap_id IS NULL';
-        }
-        $sql = $sql.' GROUP BY 1 ORDER BY 1';
+        $res = $query->getScalarResult();
 
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, $interval);
-        $stmt->bindValue(2, $this->start, 'datetime');
-        $stmt->bindValue(3, $end, 'datetime');
-        if ($magazine) {
-            $stmt->bindValue(4, $magazine->getId(), ParameterType::INTEGER);
+        if (0 === \sizeof($res) || 0 === \sizeof($res[0])) {
+            return 0;
         }
 
-        return $stmt->executeQuery()->fetchAllAssociative();
-    }
-
-    private function aggregateTotalStats(string $table, ?Magazine $magazine): array
-    {
-        $conn = $this->getEntityManager()->getConnection();
-
-        $sql = 'SELECT COUNT(e.id) as count FROM '.$table.' e';
-        if ($magazine) {
-            $sql .= ' WHERE e.magazine_id = ?';
-        }
-        if ($this->onlyLocal) {
-            $sql = $sql.' AND e.ap_id IS NULL';
-        }
-
-        $stmt = $conn->prepare($sql);
-        if ($magazine) {
-            $stmt->bindValue(1, $magazine->getId());
-        }
-
-        return $stmt->executeQuery()->fetchAllAssociative();
+        return $res[0][0];
     }
 
     public function countLocalPosts(): int
     {
-        $entries = $this->_em->createQueryBuilder()
-            ->select('COUNT(e.id)')
-            ->from(Entry::class, 'e')
-            ->where('e.apId IS NULL')
-            ->getQuery()
-            ->getSingleScalarResult();
-
-        $posts = $this->_em->createQueryBuilder()
-            ->select('COUNT(p.id)')
-            ->from(Post::class, 'p')
-            ->where('p.apId IS NULL')
-            ->getQuery()
-            ->getSingleScalarResult();
+        $entries = $this->aggregateStats('entry', null, null, false, null);
+        $posts = $this->aggregateStats('post', null, null, false, null);
 
         return $entries + $posts;
     }
 
     public function countLocalComments(): int
     {
-        $entryComments = $this->_em->createQueryBuilder()
-            ->select('COUNT(ec.id)')
-            ->from(EntryComment::class, 'ec')
-            ->where('ec.apId IS NULL')
-            ->getQuery()
-            ->getSingleScalarResult();
-
-        $postComments = $this->_em->createQueryBuilder()
-            ->select('COUNT(pc.id)')
-            ->from(PostComment::class, 'pc')
-            ->where('pc.apId IS NULL')
-            ->getQuery()
-            ->getSingleScalarResult();
+        $entryComments = $this->aggregateStats('entry_comment', null, null, false, null);
+        $postComments = $this->aggregateStats('post_comment', null, null, false, null);
 
         return $entryComments + $postComments;
     }
@@ -284,7 +196,9 @@ class StatsContentRepository extends StatsRepository
         $users = $this->_em->createQueryBuilder()
             ->select('COUNT(u.id)')
             ->from(User::class, 'u')
-            ->where('u.apId IS NULL');
+            ->where('u.apId IS NULL')
+            ->andWhere('u.isDeleted = false')
+        ;
 
         if ($startDate) {
             $users->andWhere('u.lastActive >= :startDate')

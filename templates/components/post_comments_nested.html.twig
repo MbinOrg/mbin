@@ -2,7 +2,7 @@
     {% for reply in comment.nested %}
         {{ component('post_comment', {
             comment: reply,
-            showNested:false,
+            showNested: false,
             level: 3
         }) }}
     {% endfor %}
@@ -10,7 +10,7 @@
     {% for reply in comment.children %}
         {{ component('post_comment', {
             comment: reply,
-            showNested:true,
+            showNested: true,
             level: level + 1
         }) }}
     {% endfor %}

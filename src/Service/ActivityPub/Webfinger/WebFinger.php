@@ -63,16 +63,35 @@ class WebFinger
     public function getProfileId()
     {
         foreach ($this->links as $link) {
-            if (isset($link['rel'], $link['type'], $link['href'])) {
-                if ('self' === $link['rel']
-                    && 'application/activity+json' === $link['type']
-                ) {
-                    return $link['href'];
-                }
+            if ($this->isLinkProfileId($link)) {
+                return $link['href'];
             }
         }
 
-        throw new InvalidWebfingerException();
+        throw new InvalidWebfingerException('WebFinger data contains no AP profile identifier');
+    }
+
+    public function getProfileIds(): array
+    {
+        $urls = [];
+        foreach ($this->links as $link) {
+            if ($this->isLinkProfileId($link)) {
+                $urls[] = $link['href'];
+            }
+        }
+
+        return $urls;
+    }
+
+    private function isLinkProfileId(array $link): bool
+    {
+        if (isset($link['rel'], $link['type'], $link['href'])) {
+            if ('self' === $link['rel'] && 'application/activity+json' === $link['type']) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -182,21 +201,5 @@ class WebFinger
     public function getHandle()
     {
         return substr($this->subject, 5);
-    }
-
-    public function getProfileIds(): array
-    {
-        $urls = [];
-        foreach ($this->links as $link) {
-            if (isset($link['rel'], $link['type'], $link['href'])) {
-                if ('self' === $link['rel']
-                    && 'application/activity+json' === $link['type']
-                ) {
-                    $urls[] = $link['href'];
-                }
-            }
-        }
-
-        return $urls;
     }
 }

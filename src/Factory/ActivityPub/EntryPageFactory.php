@@ -44,6 +44,11 @@ class EntryPageFactory
             $tags[] = $entry->magazine->name;
         }
 
+        $cc = [];
+        if ($followersUrl = $entry->user->getFollowerUrl($this->client, $this->urlGenerator, null !== $entry->apId)) {
+            $cc[] = $followersUrl;
+        }
+
         $page = array_merge($page ?? [], [
             'id' => $this->getActivityPubId($entry),
             'type' => 'Page',
@@ -53,21 +58,13 @@ class EntryPageFactory
                 $this->groupFactory->getActivityPubId($entry->magazine),
                 ActivityPubActivityInterface::PUBLIC_URL,
             ],
-            'cc' => [
-                $entry->apId
-                    ? ($this->client->getActorObject($entry->user->apProfileId)['followers']) ?? []
-                    : $this->urlGenerator->generate(
-                        'ap_user_followers',
-                        ['username' => $entry->user->username],
-                        UrlGeneratorInterface::ABSOLUTE_URL
-                    ),
-            ],
+            'cc' => $cc,
             'name' => $entry->title,
             'content' => $entry->body ? $this->markdownConverter->convertToHtml(
                 $entry->body,
                 [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub]
             ) : null,
-            'summary' => $entry->getShortDesc().' '.implode(
+            'summary' => $entry->getShortTitle().' '.implode(
                 ' ',
                 array_map(fn ($val) => '#'.$val, $tags)
             ),

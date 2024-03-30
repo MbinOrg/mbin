@@ -11,7 +11,8 @@
         {% if computed.magazine.icon and showCover and (app.user or magazine.isAdult is same as false) %}
             <figure>
                 <img class="image-inline {{ magazine.isAdult ? 'image-adult' : '' }}"
-                     src="{{ asset(computed.magazine.icon.filePath) | imagine_filter('post_thumb') }}"
+                     loading="lazy"
+                     src="{{ computed.magazine.icon.filePath ? (asset(computed.magazine.icon.filePath)|imagine_filter('post_thumb')) : computed.magazine.icon.sourceUrl }}"
                      {% if magazine.isAdult %}data-controller="thumb" data-action="mouseover->thumb#adult_image_hover mouseout->thumb#adult_image_hover_out"{% endif %}
                      alt="{{ computed.magazine.name ~ ' ' ~ 'icon'|trans|lower }}" width="260">
             </figure>
@@ -20,8 +21,11 @@
             <h4><a href="{{ path('front_magazine', {name: magazine.name}) }}"
                    class="{{ html_classes({'stretched-link': false}) }}">{{ computed.magazine.title }}</a></h4>
             <p class="magazine__name">
-                {{ ('@'~magazine.name)|username(true) }}
-                {% if magazine.isAdult %}<small class="badge danger">18+</small>{% endif %}
+                <span>{{ ('@'~magazine.name)|username(true) }} {% if magazine.isAdult %}<small class="badge danger">18+</small>{% endif %}</span>
+                {% if magazine.apId %}
+                    <a href="{{ magazine.apProfileId }}" rel="noopener noreferrer nofollow" target="_blank" title="{{ 'go_to_original_instance'|trans }}" aria-label="{{ 'go_to_original_instance'|trans }}">
+                    <i class="fa-solid fa-external-link" aria-hidden="true"></i></a>
+                {% endif %}
             </p>
         </header>
     </div>

@@ -150,7 +150,7 @@
                     <ul class="dropdown__menu">
                         <li>
                             <a href="{{ path('user_overview', {username: app.user.username}) }}"
-                               class="{{ html_classes({'active': is_route_name_contains('user_overview')}) }}">
+                               class="{{ html_classes({'active': is_route_name_contains('user_overview') and user is same as app.user}) }}">
                                 {{ 'profile'|trans }}
                             </a>
                         </li>

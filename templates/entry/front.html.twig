@@ -26,7 +26,7 @@
 
 {% block image %}
     {%- if magazine is defined and magazine and magazine.icon -%}
-        {{- uploaded_asset(magazine.icon.filePath) -}}
+        {{- uploaded_asset(magazine.icon) -}}
     {%- else -%}
         {{- parent() -}}
     {%- endif -%}

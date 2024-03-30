@@ -69,40 +69,37 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public ?string $customCss = null;
     #[Column(type: 'datetimetz', nullable: true)]
     public ?\DateTime $lastActive = null;
+    /**
+     * @var \DateTime|null this is set if this is a remote magazine.
+     *                     This is the last time we had an update from the origin of the magazine
+     */
+    #[Column(type: 'datetimetz', nullable: true)]
+    public ?\DateTime $lastOriginUpdate = null;
     #[Column(type: 'datetimetz', nullable: true)]
     public ?\DateTime $markedForDeletionAt = null;
     #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
     public ?array $tags = null;
-    #[OneToMany(mappedBy: 'magazine', targetEntity: Moderator::class, cascade: ['persist'])]
+    #[OneToMany(mappedBy: 'magazine', targetEntity: Moderator::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $moderators;
-    #[OneToMany(mappedBy: 'magazine', targetEntity: MagazineOwnershipRequest::class, cascade: ['persist'])]
+    #[OneToMany(mappedBy: 'magazine', targetEntity: MagazineOwnershipRequest::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $ownershipRequests;
-    #[OneToMany(mappedBy: 'magazine', targetEntity: ModeratorRequest::class, cascade: ['persist'])]
+    #[OneToMany(mappedBy: 'magazine', targetEntity: ModeratorRequest::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $moderatorRequests;
-    #[OneToMany(mappedBy: 'magazine', targetEntity: Entry::class)]
+    #[OneToMany(mappedBy: 'magazine', targetEntity: Entry::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $entries;
-    #[OneToMany(mappedBy: 'magazine', targetEntity: Post::class)]
+    #[OneToMany(mappedBy: 'magazine', targetEntity: Post::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $posts;
-    #[OneToMany(mappedBy: 'magazine', targetEntity: MagazineSubscription::class, cascade: [
-        'persist',
-        'remove',
-    ], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'magazine', targetEntity: MagazineSubscription::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $subscriptions;
-    #[OneToMany(mappedBy: 'magazine', targetEntity: MagazineBan::class, cascade: [
-        'persist',
-        'remove',
-    ], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'magazine', targetEntity: MagazineBan::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $bans;
-    #[OneToMany(mappedBy: 'magazine', targetEntity: Report::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'magazine', targetEntity: Report::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $reports;
-    #[OneToMany(mappedBy: 'magazine', targetEntity: Badge::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'magazine', targetEntity: Badge::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[OrderBy(['id' => 'DESC'])]
     public Collection $badges;
-    #[OneToMany(mappedBy: 'magazine', targetEntity: MagazineLog::class, cascade: [
-        'persist',
-        'remove',
-    ], fetch: 'EXTRA_LAZY')]
+    #[OneToMany(mappedBy: 'magazine', targetEntity: MagazineLog::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $logs;
     #[Id]
@@ -205,23 +202,33 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
 
     public function isAbandoned(): bool
     {
-        return !$this->apId and $this->getOwner()->lastActive < new \DateTime('-1 month');
+        return !$this->apId and (null === $this->getOwner() || $this->getOwner()->lastActive < new \DateTime('-1 month'));
     }
 
-    public function getOwnerModerator(): Moderator
+    public function getOwnerModerator(): ?Moderator
     {
         $criteria = Criteria::create()
             ->where(Criteria::expr()->eq('isOwner', true));
 
-        return $this->moderators->matching($criteria)->first();
+        $res = $this->moderators->matching($criteria)->first();
+        if (false !== $res) {
+            return $res;
+        }
+
+        return null;
     }
 
-    public function getOwner(): User
+    public function getOwner(): ?User
     {
         $criteria = Criteria::create()
             ->where(Criteria::expr()->eq('isOwner', true));
 
-        return $this->moderators->matching($criteria)->first()->user;
+        $res = $this->moderators->matching($criteria)->first();
+        if (false !== $res) {
+            return $res->user;
+        }
+
+        return null;
     }
 
     public function getModeratorCount(): int

@@ -23,6 +23,7 @@ use App\Entity\UserFollow;
 use App\PageView\EntryPageView;
 use App\Pagination\AdapterFactory;
 use App\Repository\Contract\TagRepositoryInterface;
+use App\Service\SettingsManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Types\Types;
@@ -54,6 +55,7 @@ class EntryRepository extends ServiceEntityRepository implements TagRepositoryIn
         private readonly Security $security,
         private readonly CacheInterface $cache,
         private readonly AdapterFactory $adapterFactory,
+        private readonly SettingsManager $settingsManager,
     ) {
         parent::__construct($registry, Entry::class);
     }
@@ -84,6 +86,7 @@ class EntryRepository extends ServiceEntityRepository implements TagRepositoryIn
             ->where('e.visibility = :visibility')
             ->andWhere('m.visibility = :visible')
             ->andWhere('u.visibility = :visible')
+            ->andWhere('u.isDeleted = false')
             ->join('e.magazine', 'm')
             ->join('e.user', 'u')
             ->leftJoin('e.domain', 'd');
@@ -325,6 +328,7 @@ class EntryRepository extends ServiceEntityRepository implements TagRepositoryIn
             ->andWhere('e.visibility = :visibility')
             ->andWhere('m.visibility = :visibility')
             ->andWhere('u.visibility = :visibility')
+            ->andWhere('u.isDeleted = false')
             ->andWhere('m.isAdult = false')
             ->andWhere('e.isAdult = false')
             ->join('e.magazine', 'm')
@@ -344,6 +348,7 @@ class EntryRepository extends ServiceEntityRepository implements TagRepositoryIn
             ->andWhere('e.visibility = :visibility')
             ->andWhere('m.visibility = :visibility')
             ->andWhere('u.visibility = :visibility')
+            ->andWhere('u.isDeleted = false')
             ->andWhere('m.isAdult = false')
             ->andWhere('e.isAdult = false')
             ->join('e.magazine', 'm')
@@ -361,13 +366,17 @@ class EntryRepository extends ServiceEntityRepository implements TagRepositoryIn
     {
         $qb = $this->createQueryBuilder('e');
 
-        return $qb
-            ->where('e.isAdult = false')
+        $qb = $qb->where('e.isAdult = false')
             ->andWhere('e.visibility = :visibility')
             ->andWhere('m.visibility = :visibility')
             ->andWhere('u.visibility = :visibility')
-            ->andWhere('m.isAdult = false')
-            ->join('e.magazine', 'm')
+            ->andWhere('u.isDeleted = false')
+            ->andWhere('m.isAdult = false');
+        if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
+            $qb = $qb->andWhere('m.apId IS NULL');
+        }
+
+        return $qb->join('e.magazine', 'm')
             ->join('e.user', 'u')
             ->orderBy('e.createdAt', 'DESC')
             ->setParameters(['visibility' => VisibilityInterface::VISIBILITY_VISIBLE])
@@ -431,6 +440,8 @@ class EntryRepository extends ServiceEntityRepository implements TagRepositoryIn
         $qb->andWhere('e.id != :id')
             ->andWhere('m.visibility = :visibility')
             ->andWhere('e.visibility = :visibility')
+            ->andWhere('u.isDeleted = false')
+            ->innerJoin('e.user', 'u')
             ->join('e.magazine', 'm')
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->setParameter('id', $entry->getId())

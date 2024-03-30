@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\ActivityPub\ActorHandle;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Message\ActivityPub\Inbox\ActivityMessage;
@@ -12,7 +13,6 @@ use App\Service\ActivityPubManager;
 use App\Service\SearchManager;
 use App\Service\SettingsManager;
 use App\Service\SubjectOverviewManager;
-use App\Utils\RegPatterns;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,43 +47,20 @@ class SearchController extends AbstractController
         }
 
         $this->logger->debug('searching for {query}', ['query' => $query]);
-        $objects = [];
-        if (str_contains($query, '@') && (!$this->settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN') || $this->getUser())) {
-            $name = str_starts_with($query, '@') ? $query : '@'.$query;
-            preg_match(RegPatterns::AP_USER, $name, $matches);
-            if (\count(array_filter($matches)) >= 4) {
-                $this->logger->debug('searching for a matched webfinger {query}', ['query' => $query]);
-                try {
-                    $webfinger = $this->activityPubManager->webfinger($name);
-                    foreach ($webfinger->getProfileIds() as $profileId) {
-                        $this->logger->debug('Found "{pId}" at "{name}"', ['pId' => $profileId, 'name' => $name]);
-                        $object = $this->activityPubManager->findActorOrCreate($profileId);
-                        // Check if object is not empty
-                        if (!empty($object)) {
-                            if ($object instanceof Magazine) {
-                                $type = 'magazine';
-                            } elseif ($object instanceof User) {
-                                $type = 'user';
-                            }
 
-                            $objects[] = [
-                                'type' => $type,
-                                'object' => $object,
-                            ];
-                        }
-                    }
-                } catch (\Exception $e) {
-                    $this->logger->warning('an error occurred during lookup of "{query}": {exClass}: {exMsg}', [
-                        'query' => $query,
-                        'exClass' => \get_class($e),
-                        'exMsg' => $e->getMessage(),
-                    ]);
-                }
+        $objects = [];
+
+        // looking up handles (users and mags)
+        if (str_contains($query, '@') && $this->federatedSearchAllowed()) {
+            if ($handle = ActorHandle::parse($query)) {
+                $this->logger->debug('searching for a matched webfinger {query}', ['query' => $query]);
+                $objects = array_merge($objects, $this->lookupHandle($handle));
             } else {
-                $this->logger->debug("query doesn't match the pattern...", [$matches]);
+                $this->logger->debug("query doesn't look like a valid handle...", ['query' => $query]);
             }
         }
 
+        // looking up object by AP id (i.e. urls)
         if (false !== filter_var($query, FILTER_VALIDATE_URL)) {
             $objects = $this->manager->findByApId($query);
             if (!$objects) {
@@ -92,7 +69,8 @@ class SearchController extends AbstractController
             }
         }
 
-        $res = $this->manager->findPaginated($query, $this->getPageNb($request));
+        $user = $this->getUser();
+        $res = $this->manager->findPaginated($user, $query, $this->getPageNb($request));
 
         return $this->render(
             'search/front.html.twig',
@@ -103,5 +81,50 @@ class SearchController extends AbstractController
                 'q' => $request->query->get('q'),
             ]
         );
+    }
+
+    private function federatedSearchAllowed(): bool
+    {
+        return !$this->settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN')
+            || $this->getUser();
+    }
+
+    private function lookupHandle(ActorHandle $handle): array
+    {
+        $objects = [];
+        $name = $handle->plainHandle();
+
+        try {
+            $webfinger = $this->activityPubManager->webfinger($name);
+            foreach ($webfinger->getProfileIds() as $profileId) {
+                $this->logger->debug('Found "{profileId}" at "{name}"', ['profileId' => $profileId, 'name' => $name]);
+
+                // if actor object exists or successfully created
+                $object = $this->activityPubManager->findActorOrCreate($profileId);
+                if (!empty($object)) {
+                    if ($object instanceof Magazine) {
+                        $type = 'magazine';
+                    } elseif ($object instanceof User && '!' !== $handle->prefix) {
+                        $type = 'user';
+                    }
+
+                    $objects[] = [
+                        'type' => $type,
+                        'object' => $object,
+                    ];
+                }
+            }
+        } catch (\Exception $e) {
+            $this->logger->warning(
+                'an error occurred during webfinger lookup of "{handle}": {exceptionClass}: {message}',
+                [
+                    'handle' => $name,
+                    'exceptionClass' => \get_class($e),
+                    'message' => $e->getMessage(),
+                ]
+            );
+        }
+
+        return $objects;
     }
 }
