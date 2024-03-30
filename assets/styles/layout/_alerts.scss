@@ -8,8 +8,13 @@
     margin: 0;
   }
 
-  a{
+  a {
     font-weight: bold;
+  }
+
+  i {
+    font-size: 0.8rem;
+    vertical-align: middle;
   }
 
   &__info {
@@ -18,7 +23,7 @@
     color: var(--kbin-alert-info-text-color);
 
     a {
-      color: var(--kbin-alert-info-link-color);    
+      color: var(--kbin-alert-info-link-color);
     }
   }
 

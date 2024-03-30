@@ -162,7 +162,9 @@ class MagazineManager
 
     public function block(Magazine $magazine, User $user): void
     {
-        $this->unsubscribe($magazine, $user);
+        if ($magazine->isSubscribed($user)) {
+            $this->unsubscribe($magazine, $user);
+        }
 
         $user->blockMagazine($magazine);
 
@@ -334,7 +336,10 @@ class MagazineManager
 
     public function acceptOwnershipRequest(Magazine $magazine, User $user, ?User $addedBy): void
     {
-        $this->removeModerator($magazine->getOwnerModerator(), $addedBy);
+        $owner = $magazine->getOwnerModerator();
+        if ($owner) {
+            $this->removeModerator($owner, $addedBy);
+        }
 
         $this->addModerator(new ModeratorDto($magazine, $user, $addedBy), true);
 

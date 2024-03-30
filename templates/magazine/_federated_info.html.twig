@@ -1,6 +1,35 @@
-{% if magazine.apId %}
-    <div class="alert alert__info">
-        <p>{{ 'federated_magazine_info'|trans }} <a
-                    href="{{ magazine.apProfileId }}">{{ 'go_to_original_instance'|trans }}</a></p>
-    </div>
+{% if magazine.apId %}   {# I.e. if we're federated #}
+    {% if entries is defined and entries and not entries.hasNextPage %}
+        {# Then show a link to original if we're at the end of content #}
+        <div class="alert alert__info">
+            <p>
+                {{ 'federated_magazine_info'|trans }} <a href="{{ magazine.apProfileId }}" rel="noopener noreferrer nofollow" target="_blank"><span>{{ 'go_to_original_instance'|trans }}</span> <i class="fa-solid fa-external-link" aria-hidden="true"></i></a>
+            </p>
+        </div>
+    {% endif %}
+
+    {% if not magazine_has_local_subscribers(magazine) %}
+        {# Also show a warning if we're not actively receiving updates #}
+        {% set lastOriginUpdate = magazine.lastOriginUpdate %}
+        <div class="alert alert__info">
+            {% if lastOriginUpdate is not null %}
+                {% set currentTime = "now"|date('U') %}
+                {% set secondsDifference = currentTime - (lastOriginUpdate|date('U')) %}
+                {% set daysDifference = (secondsDifference / 86400)|round(0, 'floor') %}
+                <p>
+                    {{ 'disconnected_magazine_info'|trans({'%days%': daysDifference}) }}
+                    {% if app.user %}
+                      {{ 'subscribe_for_updates'|trans }}
+                    {% endif %}
+                </p>
+            {% else %}
+                <p>
+                    {{ 'always_disconnected_magazine_info'|trans }}
+                    {% if app.user %}
+                        {{ 'subscribe_for_updates'|trans }}
+                    {% endif %}
+                </p>
+            {% endif %}
+        </div>
+    {% endif %}
 {% endif %}

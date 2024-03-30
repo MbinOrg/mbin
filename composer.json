@@ -88,6 +88,7 @@
         "symfony/rate-limiter": "6.4.*",
         "symfony/redis-messenger": "6.4.*",
         "symfony/runtime": "6.4.*",
+        "symfony/scheduler": "6.4.*",
         "symfony/security-bundle": "6.4.*",
         "symfony/serializer": "6.4.*",
         "symfony/string": "6.4.*",

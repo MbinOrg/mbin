@@ -12,12 +12,8 @@ use App\Entity\PostComment;
 use App\Entity\User;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\DislikeMessage;
-use App\Repository\ApActivityRepository;
-use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPubManager;
-use App\Service\FavouriteManager;
 use App\Service\VoteManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -26,33 +22,22 @@ class DislikeHandler
 {
     public function __construct(
         private readonly ActivityPubManager $activityPubManager,
-        private readonly ApActivityRepository $repository,
-        private readonly EntityManagerInterface $entityManager,
         private readonly MessageBusInterface $bus,
-        private readonly FavouriteManager $manager,
-        private readonly ApHttpClient $apHttpClient,
         private readonly VoteManager $voteManager,
     ) {
     }
 
-    public function __invoke(DislikeMessage $message)
+    public function __invoke(DislikeMessage $message): void
     {
         if (!isset($message->payload['type'])) {
             return;
         }
 
+        $chainDispatchCallback = fn ($object) => $this->bus->dispatch(new ChainActivityMessage([$object], dislike: $message->payload));
+
         if ('Dislike' === $message->payload['type']) {
-            $activity = $this->repository->findByObjectId($message->payload['object']);
-
-            if ($activity) {
-                $entity = $this->entityManager->getRepository($activity['type'])->find((int) $activity['id']);
-            } else {
-                $object = $this->apHttpClient->getActivityObject($message->payload['object']);
-
-                if (!empty($object)) {
-                    $this->bus->dispatch(new ChainActivityMessage([$object], null, null, null, $message->payload));
-                }
-
+            $entity = $this->activityPubManager->getEntityObject($message->payload['object'], $message->payload, $chainDispatchCallback);
+            if (!$entity) {
                 return;
             }
 
@@ -65,8 +50,11 @@ class DislikeHandler
             }
         } elseif ('Undo' === $message->payload['type']) {
             if ('Dislike' === $message->payload['object']['type']) {
-                $activity = $this->repository->findByObjectId($message->payload['object']['object']);
-                $entity = $this->entityManager->getRepository($activity['type'])->find((int) $activity['id']);
+                $entity = $this->activityPubManager->getEntityObject($message->payload['object']['object'], $message->payload, $chainDispatchCallback);
+                if (!$entity) {
+                    return;
+                }
+
                 $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
                 // Check if actor and entity aren't empty
                 if ($actor instanceof User && ($entity instanceof Entry || $entity instanceof EntryComment || $entity instanceof Post || $entity instanceof PostComment)) {

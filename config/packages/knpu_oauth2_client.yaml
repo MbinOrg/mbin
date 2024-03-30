@@ -28,3 +28,12 @@ knpu_oauth2_client:
       version: '%oauth_keycloak_version%'
       redirect_route: oauth_keycloak_verify
       redirect_params: { }
+    zitadel:
+      type: generic
+      client_id: '%oauth_zitadel_id%'
+      client_secret: '%oauth_zitadel_secret%'
+      provider_options:
+          base_url: '%oauth_zitadel_base_url%'
+      redirect_route: oauth_zitadel_verify
+      redirect_params: { }
+      provider_class: 'App\Provider\Zitadel'

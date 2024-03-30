@@ -25,6 +25,11 @@ class UserReputationController extends AbstractController
 
     public function __invoke(User $user, ?string $reputationType, Request $request): Response
     {
+        $requestedByUser = $this->getUser();
+        if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
+            throw $this->createNotFoundException();
+        }
+
         $page = (int) $request->get('p', 1);
 
         $results = match ($this->manager->resolveType($reputationType)) {

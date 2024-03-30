@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Message\ActivityPub\Inbox;
 
-use App\Message\Contracts\AsyncApMessageInterface;
+use App\Message\Contracts\ActivityPubInboxInterface;
 use JetBrains\PhpStorm\ArrayShape;
 
-class FlagMessage implements AsyncApMessageInterface
+class FlagMessage implements ActivityPubInboxInterface
 {
     #[ArrayShape([
         '@context' => 'mixed',
