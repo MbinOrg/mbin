@@ -19,7 +19,7 @@ class MagazineCreateController extends AbstractController
     public function __construct(
         private readonly MagazineManager $manager,
         private readonly IpResolver $ipResolver,
-        private readonly SettingsManager $settingsManager
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 

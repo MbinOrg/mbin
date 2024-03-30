@@ -73,7 +73,7 @@
             {% include 'layout/_header_nav.html.twig' with {header_nav: header_nav} %}
         </menu>
     </div>
-    {% if not app.user and (is_route_name_contains('front') or is_route_name('root')  or is_route_name('magazine_list_all')) %}
+    {% if not app.user and (is_route_name_contains('front') or is_route_name('root') or is_route_name('magazine_list_all')) %}
         <div class="section intro">
             <div class="container">
                 <h3>{{ 'kbin_intro_title'|trans }}</h3>
@@ -83,8 +83,10 @@
             <div>
                 <a href="{{ path('entry_create') }}" class="btn btn-link btn__primary"
                    type="submit">{{ 'add_new_link'|trans }}</a>
+                {% if mbin_restrict_magazine_creation() is same as false %}
                 <a href="{{ path('magazine_create') }}" class="btn btn-link btn__secondary"
                    type="submit">{{ 'create_new_magazine'|trans }}</a>
+                {% endif %}
             </div>
         </div>
     {% endif %}
