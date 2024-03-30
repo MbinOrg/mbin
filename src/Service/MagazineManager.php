@@ -56,7 +56,7 @@ class MagazineManager
 
     public function create(MagazineDto $dto, User $user, bool $rateLimit = true): Magazine
     {
-        if (true === $this->settingsManager->get('MBIN_RESTRICT_MAGAZINE_CREATION') && !$user->isAdmin() && !$user->isModerator()) {
+        if (!$dto->apId && true === $this->settingsManager->get('MBIN_RESTRICT_MAGAZINE_CREATION') && !$user->isAdmin() && !$user->isModerator()) {
             throw new AccessDeniedException();
         }
 
