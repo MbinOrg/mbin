@@ -31,8 +31,7 @@ final class EntryCommentsNestedComponent
 
     public function getHtml(ComponentAttributes $attributes): string
     {
-        // $commentId = $this->comment->root?->getId() ?? $this->comment->getId();
-        $commentId = $this->comment->getId();
+        $commentId = $this->comment->root?->getId() ?? $this->comment->getId();
         $userId = $this->security->getUser()?->getId();
 
         return $this->cache->get(

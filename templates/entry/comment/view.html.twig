@@ -1,3 +1,10 @@
+{%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
+{%- set V_CHAT = constant('App\\Controller\\User\\ThemeSettingsController::CHAT') -%}
+
+{%- set DYNAMIC_LISTS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_DYNAMIC_LISTS'), V_FALSE) -%}
+{%- set SHOW_COMMENT_USER_AVATARS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR'), V_TRUE) -%}
+{%- set VIEW_STYLE = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::ENTRY_COMMENTS_VIEW'), V_TREE) -%}
+
 {% extends 'base.html.twig' %}
 
 {%- block title -%}
@@ -11,7 +18,7 @@
 {% endblock %}
 
 {% if showNested is not defined %}
-	{% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::ENTRY_COMMENTS_VIEW')) is same as constant('App\\Controller\\User\\ThemeSettingsController::CHAT') %}
+	{% if if VIEW_STYLE is same as V_CHAT %}
 		{% set showNested = false %}
 	{% else %}
 		{% set showNested = true %}
@@ -30,13 +37,19 @@
         <p><a href="{{ entry_url(entry) }}"><i class="fa-solid fa-arrow-left"></i> {{ 'return'|trans }}</a></p>
     </div>
     {% if parent is defined and parent %}
-    <section class="{{ html_classes('comments entry-comments comments-tree', { 'show-comment-avatar' : app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR')) is same as 'true' or not app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR'))}) }}" data-controller="subject-list" data-action="{{- app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_DYNAMIC_LISTS')) is same as 'true' ? 'notifications:EntryCommentCreatedNotification@window->subject-list#addComment' : 'notifications:EntryCommentCreatedNotification@window->subject-list#increaseCounter' -}}">
+    {% set autoAction = 'notifications:EntryCommentCreatedNotification@window->subject-list#addComment' %}
+    {% set manualAction = 'notifications:EntryCommentCreatedNotification@window->subject-list#increaseCounter' %}
+    <div class="{{ html_classes('comments entry-comments comments-tree', {
+        'show-comment-avatar' : SHOW_COMMENT_USER_AVATARS is same as V_TRUE
+        }) }}"
+        data-controller="subject-list"
+        data-action="{{- DYNAMIC_LISTS is same as V_TRUE ? autoAction : manualAction -}}">
         {{ component('entry_comment', {
             comment: parent,
             showEntryTitle: false,
             showMagazineName: false,
-            showNested: showNested and parent.children
+            showNested: false,
         }) }}
-    </section>
+    </div>
     {% endif %}
 {% endblock %}
