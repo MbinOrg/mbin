@@ -1,11 +1,9 @@
 {%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
 {%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
-{%- set V_CHAT = constant('App\\Controller\\User\\ThemeSettingsController::CHAT') -%}
 {%- set V_TREE = constant('App\\Controller\\User\\ThemeSettingsController::TREE') -%}
 
 {%- set DYNAMIC_LISTS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_DYNAMIC_LISTS'), V_FALSE) -%}
 {%- set SHOW_COMMENT_USER_AVATARS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR'), V_TRUE) -%}
-{%- set VIEW_STYLE = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::ENTRY_COMMENTS_VIEW'), V_TREE) -%}
 
 {% extends 'base.html.twig' %}
 
@@ -18,14 +16,6 @@
 
 {% block sidebar_top %}
 {% endblock %}
-
-{% if showNested is not defined %}
-	{% if VIEW_STYLE is same as V_CHAT %}
-		{% set showNested = false %}
-	{% else %}
-		{% set showNested = true %}
-	{% endif %}
-{% endif %}
 
 {% block body %}
     {{ component('entry', {
