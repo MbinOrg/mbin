@@ -45,38 +45,41 @@ class AttachEntryEmbedHandler
             return;
         }
 
-        $html = $embed->html;
-        $type = $embed->getType();
+        $hasHtml = (bool) $embed->html;
         $isImage = $embed->isImageUrl();
 
-        $cover = $this->fetchCover($entry, $embed);
-
-        if (!$html && !$cover && !$isImage) {
+        if (!$hasHtml && !$isImage) {
             return;
         }
 
-        $entry->type = $type;
-        $entry->hasEmbed = $html || $isImage;
-        if ($cover) {
-            $entry->image = $cover;
+        $entry->type = $embed->getType();
+        $entry->hasEmbed = $hasHtml || $isImage;
+
+        if (!$entry->image) {
+            if ($coverUrl = $this->getCoverUrl($entry, $embed)) {
+                if ($cover = $this->fetchCover($coverUrl)) {
+                    $entry->image = $cover;
+                }
+            }
         }
 
         $this->entityManager->flush();
     }
 
-    private function fetchCover(Entry $entry, Embed $embed): ?Image
+    private function getCoverUrl(Entry $entry, Embed $embed)
     {
-        if (!$entry->image) {
-            $tempFile = null;
-            if ($embed->image) {
-                $tempFile = $this->fetchImage($embed->image);
-            } elseif ($embed->isImageUrl()) {
-                $tempFile = $this->fetchImage($entry->url);
+        return $embed->image ?: ($embed->isImageUrl() ? $entry->url : null);
+    }
+
+    private function fetchCover(string $imageUrl): ?Image
+    {
+        if ($tempFile = $this->fetchImage($imageUrl)) {
+            $cover = $this->imageRepository->findOrCreateFromPath($tempFile);
+            if ($cover && !$cover->filePath) {
+                $cover->sourceUrl = $imageUrl;
             }
 
-            if ($tempFile) {
-                return $this->imageRepository->findOrCreateFromPath($tempFile);
-            }
+            return $cover;
         }
 
         return null;
