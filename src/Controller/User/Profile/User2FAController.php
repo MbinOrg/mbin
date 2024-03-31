@@ -25,6 +25,7 @@ use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException as CoreAccessDeniedException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -46,9 +47,13 @@ class User2FAController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function enable(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('edit_profile', $this->getUserOrThrow());
-
         $user = $this->getUserOrThrow();
+        $this->denyAccessUnlessGranted('edit_profile', $user);
+
+        if ($user->isSsoControlled()) {
+            throw new CoreAccessDeniedException();
+        }
+
         if ($user->isTotpAuthenticationEnabled()) {
             throw new SuspiciousOperationException('User accessed 2fa enable path with existing 2fa in place');
         }
@@ -111,18 +116,19 @@ class User2FAController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function qrCode(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('edit_profile', $this->getUserOrThrow());
+        $user = $this->getUserOrThrow();
+        $this->denyAccessUnlessGranted('edit_profile', $user);
 
         $totpSecret = $request->getSession()->get(self::TOTP_SESSION_KEY, null);
         if (null === $totpSecret) {
             throw new AccessDeniedException('/settings/2fa/qrcode');
         }
-        $this->getUserOrThrow()->setTotpSecret($totpSecret);
+        $user->setTotpSecret($totpSecret);
 
         $result = Builder::create()
             ->writer(new PngWriter())
             ->writerOptions([])
-            ->data($this->totpAuthenticator->getQRContent($this->getUserOrThrow()))
+            ->data($this->totpAuthenticator->getQRContent($user))
             ->encoding(new Encoding('UTF-8'))
             ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
             ->size(250)
@@ -154,9 +160,9 @@ class User2FAController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function backup(): Response
     {
-        $this->denyAccessUnlessGranted('edit_profile', $this->getUserOrThrow());
-
         $user = $this->getUserOrThrow();
+        $this->denyAccessUnlessGranted('edit_profile', $user);
+
         if (!$user->isTotpAuthenticationEnabled()) {
             throw new SuspiciousOperationException('User accessed 2fa backup path without existing 2fa');
         }
