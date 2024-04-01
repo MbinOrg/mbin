@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service;
 
 use App\Service\TagExtractor;
-use App\Service\TagManager;
 use PHPUnit\Framework\TestCase;
 
 class TagExtractorTest extends TestCase
