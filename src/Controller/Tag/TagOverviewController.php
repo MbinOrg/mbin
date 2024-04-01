@@ -33,6 +33,7 @@ class TagOverviewController extends AbstractController
                 'tag' => $name,
                 'results' => $this->overviewManager->buildList($activity),
                 'pagination' => $activity,
+                'counts' => $this->tagRepository->getCounts($name),
             ]
         );
     }

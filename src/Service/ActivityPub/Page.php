@@ -12,19 +12,21 @@ use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\User;
+use App\Exception\TagBannedException;
+use App\Exception\UserBannedException;
 use App\Factory\ImageFactory;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPubManager;
 use App\Service\EntryManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Psr\Log\LoggerInterface;
 
 class Page
 {
     public function __construct(
         private readonly ApActivityRepository $repository,
-        private readonly MarkdownConverter $markdownConverter,
         private readonly EntryManager $entryManager,
         private readonly ActivityPubManager $activityPubManager,
         private readonly EntityManagerInterface $entityManager,
@@ -35,12 +37,17 @@ class Page
     ) {
     }
 
+    /**
+     * @throws TagBannedException
+     * @throws UserBannedException
+     * @throws Exception          if the user could not be found or a sub exception occurred
+     */
     public function create(array $object): Entry
     {
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
         if (!empty($actor)) {
             if ($actor->isBanned) {
-                throw new \Exception('User is banned.');
+                throw new UserBannedException();
             }
 
             $current = $this->repository->findByObjectId($object['id']);
@@ -97,10 +104,13 @@ class Page
                 false
             );
         } else {
-            throw new \Exception('Actor could not be found for entry.');
+            throw new Exception('Actor could not be found for entry.');
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function getVisibility(array $object, User $actor): string
     {
         if (!\in_array(
@@ -113,7 +123,7 @@ class Page
                     array_merge($object['to'] ?? [], $object['cc'] ?? [])
                 )
             ) {
-                throw new \Exception('PM: not implemented.');
+                throw new Exception('PM: not implemented.');
             }
 
             return VisibilityInterface::VISIBILITY_PRIVATE;
@@ -139,7 +149,7 @@ class Page
                     $dto->url = $link['href'];
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         if (!$dto->url && isset($object['url'])) {
@@ -147,6 +157,9 @@ class Page
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function handleDate(EntryDto $dto, string $date): void
     {
         $dto->createdAt = new \DateTimeImmutable($date);

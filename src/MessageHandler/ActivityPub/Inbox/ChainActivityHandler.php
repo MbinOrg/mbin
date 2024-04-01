@@ -8,6 +8,8 @@ use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Exception\TagBannedException;
+use App\Exception\UserBannedException;
 use App\Message\ActivityPub\Inbox\AnnounceMessage;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\DislikeMessage;
@@ -26,7 +28,6 @@ class ChainActivityHandler
 {
     public function __construct(
         private readonly LoggerInterface $logger,
-        private readonly ActivityPubManager $activityPubManager,
         private readonly ApHttpClient $client,
         private readonly MessageBusInterface $bus,
         private readonly ApActivityRepository $repository,
@@ -109,6 +110,10 @@ class ChainActivityHandler
                 default:
                     $this->logger->warning('Could not create an object from type {t} on {url}: {o}', ['t' => $object['type'], 'url' => $apUrl, 'o' => $object]);
             }
+        } catch (UserBannedException) {
+            $this->logger->error('the user is banned, url: {url}', ['url' => $apUrl]);
+        } catch (TagBannedException) {
+            $this->logger->error('one of the used tags is banned, url: {url}', ['url' => $apUrl]);
         } catch (\Exception $e) {
             $this->logger->error('There was an exception while getting {url}: {ex} - {m}', ['url' => $apUrl, 'ex' => \get_class($e), 'm' => $e->getMessage()]);
         }

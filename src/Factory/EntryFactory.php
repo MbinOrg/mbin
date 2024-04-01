@@ -38,7 +38,7 @@ class EntryFactory
         );
     }
 
-    public function createResponseDto(EntryDto|Entry $entry): EntryResponseDto
+    public function createResponseDto(EntryDto|Entry $entry, array $tags): EntryResponseDto
     {
         $dto = $entry instanceof Entry ? $this->createDto($entry) : $entry;
         $badges = $dto->badges ? array_map(fn (Badge $badge) => $this->badgeFactory->createDto($badge), $dto->badges->toArray()) : null;
@@ -53,7 +53,7 @@ class EntryFactory
             $dto->image,
             $dto->body,
             $dto->lang,
-            $dto->tags,
+            $tags,
             $badges,
             $dto->comments,
             $dto->uv,
@@ -97,7 +97,6 @@ class EntryFactory
         $dto->score = $entry->score;
         $dto->visibility = $entry->visibility;
         $dto->ip = $entry->ip;
-        $dto->tags = $entry->tags;
         $dto->createdAt = $entry->createdAt;
         $dto->editedAt = $entry->editedAt;
         $dto->lastActive = $entry->lastActive;

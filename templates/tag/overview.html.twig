@@ -11,6 +11,24 @@
 {% endblock %}
 
 {% block sidebar_top %}
+    {% if app.user and app.user.admin %}
+        <div class="section magazine">
+            <h3>{{ 'admin_panel'|trans }}</h3>
+            <div class="panel">
+                <form action="{{ path('tag_' ~ (is_tag_banned(tag) ? 'unban' : 'ban'), {name: tag}) }}" name="tag_ban" method="post"
+                        {{ stimulus_controller('confirmation') }} data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
+                    <button type="submit"
+                            class="{{ html_classes('btn action', {'btn__secondary': is_tag_banned(tag)}, {'btn__danger': is_tag_banned(tag) is not same as true}) }}"
+                            data-action="subs#send"
+                            title="{{ is_tag_banned(tag) ? 'unban_hashtag_description'|trans : 'ban_hashtag_description'|trans }}"
+                    >
+                        <i class="fa-solid fa-ban" aria-hidden="true"></i><span>{{ is_tag_banned(tag) ? 'unban_hashtag_btn'|trans : 'ban_hashtag_btn'|trans }}</span>
+                    </button>
+                    <input type="hidden" name="token" value="{{ csrf_token('ban') }}">
+                </form>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block body %}

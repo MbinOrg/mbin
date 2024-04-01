@@ -83,8 +83,6 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     #[Column(type: 'string', nullable: true)]
     public ?string $ip = null;
     #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
-    public ?array $tags = null;
-    #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
     public ?array $mentions = null;
     #[OneToMany(mappedBy: 'post', targetEntity: PostComment::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $comments;
@@ -96,6 +94,8 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     public Collection $favourites;
     #[OneToMany(mappedBy: 'post', targetEntity: PostCreatedNotification::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $notifications;
+    #[OneToMany(mappedBy: 'post', targetEntity: HashtagLink::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    public Collection $hashtags;
     public array $children = [];
     #[Id]
     #[GeneratedValue]

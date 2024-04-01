@@ -76,8 +76,6 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
     public ?\DateTime $lastActive = null;
     #[Column(type: 'string', nullable: true)]
     public ?string $ip = null;
-    #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
-    public ?array $tags = null;
     #[Column(type: 'json', nullable: true)]
     public ?array $mentions = null;
     #[OneToMany(mappedBy: 'parent', targetEntity: EntryComment::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
@@ -94,6 +92,8 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
     public Collection $favourites;
     #[OneToMany(mappedBy: 'entryComment', targetEntity: EntryCommentCreatedNotification::class, cascade: ['remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $notifications;
+    #[OneToMany(mappedBy: 'entryComment', targetEntity: HashtagLink::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    public Collection $hashtags;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]

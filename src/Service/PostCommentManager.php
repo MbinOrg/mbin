@@ -15,6 +15,7 @@ use App\Event\PostComment\PostCommentDeletedEvent;
 use App\Event\PostComment\PostCommentEditedEvent;
 use App\Event\PostComment\PostCommentPurgedEvent;
 use App\Event\PostComment\PostCommentRestoredEvent;
+use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Factory\PostCommentFactory;
 use App\Message\DeleteImageMessage;
@@ -41,6 +42,12 @@ class PostCommentManager implements ContentManagerInterface
     ) {
     }
 
+    /**
+     * @throws TagBannedException
+     * @throws UserBannedException
+     * @throws TooManyRequestsHttpException
+     * @throws \Exception
+     */
     public function create(PostCommentDto $dto, User $user, $rateLimit = true): PostComment
     {
         if ($rateLimit) {
@@ -54,6 +61,10 @@ class PostCommentManager implements ContentManagerInterface
             throw new UserBannedException();
         }
 
+        if ($this->tagManager->isAnyTagBanned($this->tagManager->extract($dto->body))) {
+            throw new TagBannedException();
+        }
+
         $comment = $this->factory->createFromDto($dto, $user);
 
         $comment->magazine = $dto->post->magazine;
@@ -63,7 +74,6 @@ class PostCommentManager implements ContentManagerInterface
         if ($comment->image && !$comment->image->altText) {
             $comment->image->altText = $dto->imageAlt;
         }
-        $comment->tags = $dto->body ? $this->tagManager->extract($dto->body, $comment->magazine->name) : null;
         $comment->mentions = $dto->body
             ? array_merge($dto->mentions ?? [], $this->mentionManager->handleChain($comment))
             : $dto->mentions;
@@ -82,11 +92,16 @@ class PostCommentManager implements ContentManagerInterface
         $this->entityManager->persist($comment);
         $this->entityManager->flush();
 
+        $this->tagManager->updatePostCommentTags($comment, $comment->body);
+
         $this->dispatcher->dispatch(new PostCommentCreatedEvent($comment));
 
         return $comment;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function edit(PostComment $comment, PostCommentDto $dto): PostComment
     {
         Assert::same($comment->post->getId(), $dto->post->getId());
@@ -98,7 +113,7 @@ class PostCommentManager implements ContentManagerInterface
         if ($dto->image) {
             $comment->image = $this->imageRepository->find($dto->image->id);
         }
-        $comment->tags = $dto->body ? $this->tagManager->extract($dto->body, $comment->magazine->name) : null;
+        $this->tagManager->updatePostCommentTags($comment, $dto->body);
         $comment->mentions = $dto->body
             ? array_merge($dto->mentions ?? [], $this->mentionManager->handleChain($comment))
             : $dto->mentions;
@@ -173,6 +188,9 @@ class PostCommentManager implements ContentManagerInterface
         return !$comment->isAuthor($user);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function restore(User $user, PostComment $comment): void
     {
         if (VisibilityInterface::VISIBILITY_TRASHED !== $comment->visibility) {

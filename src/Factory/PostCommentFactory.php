@@ -33,7 +33,7 @@ class PostCommentFactory
         );
     }
 
-    public function createResponseDto(PostCommentDto|PostComment $comment, int $childCount = 0): PostCommentResponseDto
+    public function createResponseDto(PostCommentDto|PostComment $comment, array $tags, int $childCount = 0): PostCommentResponseDto
     {
         $dto = $comment instanceof PostComment ? $this->createDto($comment) : $comment;
 
@@ -54,7 +54,7 @@ class PostCommentFactory
             $dto->visibility,
             $dto->apId,
             $dto->mentions,
-            $dto->tags,
+            $tags,
             $dto->createdAt,
             $dto->editedAt,
             $dto->lastActive
@@ -101,7 +101,6 @@ class PostCommentFactory
         $dto->setId($comment->getId());
         $dto->parent = $comment->parent;
         $dto->mentions = $comment->mentions;
-        $dto->tags = $comment->tags;
 
         $currentUser = $this->security->getUser();
         // Only return the user's vote if permission to control voting has been given

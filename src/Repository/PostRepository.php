@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
+use App\Entity\HashtagLink;
 use App\Entity\Magazine;
 use App\Entity\MagazineBlock;
 use App\Entity\MagazineSubscription;
@@ -21,7 +22,6 @@ use App\Entity\UserFollow;
 use App\PageView\EntryPageView;
 use App\PageView\PostPageView;
 use App\Pagination\AdapterFactory;
-use App\Repository\Contract\TagRepositoryInterface;
 use App\Service\SettingsManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
@@ -43,7 +43,7 @@ use Symfony\Contracts\Cache\ItemInterface;
  * @method Post[]    findAll()
  * @method Post[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PostRepository extends ServiceEntityRepository implements TagRepositoryInterface
+class PostRepository extends ServiceEntityRepository
 {
     public const PER_PAGE = 15;
     public const SORT_DEFAULT = 'hot';
@@ -103,6 +103,7 @@ class PostRepository extends ServiceEntityRepository implements TagRepositoryInt
         $this->addTimeClause($qb, $criteria);
         $this->addStickyClause($qb, $criteria);
         $this->filter($qb, $criteria);
+        $this->addBannedHashtagClause($qb);
 
         return $qb;
     }
@@ -128,6 +129,18 @@ class PostRepository extends ServiceEntityRepository implements TagRepositoryInt
         }
     }
 
+    private function addBannedHashtagClause(QueryBuilder $qb): void
+    {
+        $dql = $this->getEntityManager()->createQueryBuilder()
+            ->select('hl2')
+            ->from(HashtagLink::class, 'hl2')
+            ->join('hl2.hashtag', 'h2')
+            ->where('h2.banned = true')
+            ->andWhere('hl2.post = p')
+            ->getDQL();
+        $qb->andWhere($qb->expr()->not($qb->expr()->exists($dql)));
+    }
+
     private function filter(QueryBuilder $qb, Criteria $criteria): QueryBuilder
     {
         $user = $this->security->getUser();
@@ -147,7 +160,10 @@ class PostRepository extends ServiceEntityRepository implements TagRepositoryInt
         }
 
         if ($criteria->tag) {
-            $qb->andWhere("JSONB_CONTAINS(p.tags, '\"".$criteria->tag."\"') = true");
+            $qb->andWhere('t.tag = :tag')
+                ->join('p.hashtags', 'h')
+                ->join('h.hashtag', 't')
+                ->setParameter('tag', $criteria->tag);
         }
 
         if ($criteria->subscribed) {
@@ -296,17 +312,22 @@ class PostRepository extends ServiceEntityRepository implements TagRepositoryInt
         $qb = $this->createQueryBuilder('p');
 
         return $qb
-            ->andWhere("JSONB_CONTAINS(p.tags, '\"".$tag."\"') = true")
             ->andWhere('p.visibility = :visibility')
             ->andWhere('m.visibility = :visibility')
             ->andWhere('u.visibility = :visibility')
             ->andWhere('m.name != :name')
             ->andWhere('p.isAdult = false')
             ->andWhere('m.isAdult = false')
+            ->andWhere('h.tag = :name')
             ->join('p.magazine', 'm')
             ->join('p.user', 'u')
+            ->join('p.hashtags', 'hl')
+            ->join('hl.hashtag', 'h')
             ->orderBy('p.createdAt', 'DESC')
-            ->setParameters(['visibility' => VisibilityInterface::VISIBILITY_VISIBLE, 'name' => $tag])
+            ->setParameters([
+                'visibility' => VisibilityInterface::VISIBILITY_VISIBLE,
+                'name' => $tag,
+            ])
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
@@ -402,14 +423,6 @@ class PostRepository extends ServiceEntityRepository implements TagRepositoryInt
                 ['magazine' => $magazine, 'emptyString' => '', 'visibility' => VisibilityInterface::VISIBILITY_VISIBLE]
             )
             ->setMaxResults(100)
-            ->getQuery()
-            ->getResult();
-    }
-
-    public function findWithTags(): array
-    {
-        return $this->createQueryBuilder('p')
-            ->where('p.tags IS NOT NULL')
             ->getQuery()
             ->getResult();
     }

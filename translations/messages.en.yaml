@@ -123,6 +123,7 @@ url: URL
 title: Title
 body: Body
 tags: Tags
+tag: Tag
 badges: Badges
 is_adult: 18+ / NSFW
 eng: ENG
@@ -309,6 +310,13 @@ magazine_panel: Magazine panel
 reject: Reject
 approve: Approve
 ban: Ban
+unban: Unban
+ban_hashtag_btn: Ban Hashtag
+ban_hashtag_description: Banning a hashtag will stop posts with this hashtag from being created, 
+  as well as hiding existing posts with this hashtag.
+unban_hashtag_btn: Unban Hashtag
+unban_hashtag_description: Unbanning a hashtag will allow creating posts with this hashtag again. 
+  Existing posts with this hashtag are no longer hidden.
 filters: Filters
 approved: Approved
 rejected: Rejected

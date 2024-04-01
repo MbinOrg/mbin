@@ -36,7 +36,7 @@ class EntriesBaseApi extends BaseApi
      */
     protected function serializeEntry(EntryDto|Entry $dto)
     {
-        $response = $this->entryFactory->createResponseDto($dto);
+        $response = $this->entryFactory->createResponseDto($dto, $this->tagLinkRepository->getTagsOfEntry($this->entryRepository->find($dto->getId())));
 
         if ($this->isGranted('ROLE_OAUTH2_ENTRY:VOTE')) {
             $response->isFavourited = $dto instanceof EntryDto ? $dto->isFavourited : $dto->isFavored($this->getUserOrThrow());
@@ -96,7 +96,7 @@ class EntriesBaseApi extends BaseApi
      */
     protected function serializeComment(EntryCommentDto $comment): EntryCommentResponseDto
     {
-        $response = $this->entryCommentFactory->createResponseDto($comment);
+        $response = $this->entryCommentFactory->createResponseDto($comment, $this->tagLinkRepository->getTagsOfEntryComment($this->entryCommentRepository->find($comment->getId())));
 
         if ($this->isGranted('ROLE_OAUTH2_ENTRY_COMMENT:VOTE')) {
             $response->isFavourited = $comment->isFavourited;

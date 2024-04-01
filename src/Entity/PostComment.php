@@ -75,8 +75,6 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
     #[Column(type: 'string', nullable: true)]
     public ?string $ip = null;
     #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
-    public ?array $tags = null;
-    #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
     public ?array $mentions = null;
     #[Column(type: 'boolean', nullable: false)]
     public bool $isAdult = false;
@@ -96,6 +94,8 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
     public Collection $favourites;
     #[OneToMany(mappedBy: 'postComment', targetEntity: PostCommentCreatedNotification::class, cascade: ['remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $notifications;
+    #[OneToMany(mappedBy: 'postComment', targetEntity: HashtagLink::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    public Collection $hashtags;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]

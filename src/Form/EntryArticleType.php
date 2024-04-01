@@ -6,7 +6,6 @@ namespace App\Form;
 
 use App\DTO\EntryDto;
 use App\Form\Constraint\ImageConstraint;
-use App\Form\DataTransformer\TagTransformer;
 use App\Form\EventListener\DefaultLanguage;
 use App\Form\EventListener\DisableFieldsOnEntryEdit;
 use App\Form\EventListener\ImageListener;
@@ -38,15 +37,6 @@ class EntryArticleType extends AbstractType
             ->add('title', TextareaType::class)
             ->add('body', TextareaType::class)
             ->add('magazine', MagazineAutocompleteType::class)
-            ->add('tags', TextType::class, [
-                'required' => false,
-                'autocomplete' => true,
-                'tom_select_options' => [
-                    'create' => true,
-                    'createOnBlur' => true,
-                    'delimiter' => ' ',
-                ],
-            ])
             ->add(
                 'badges',
                 BadgesType::class,
@@ -77,10 +67,6 @@ class EntryArticleType extends AbstractType
                 'required' => false,
             ])
             ->add('submit', SubmitType::class);
-
-        $builder->get('tags')->addModelTransformer(
-            new TagTransformer()
-        );
 
         $builder->addEventSubscriber($this->defaultLanguage);
         $builder->addEventSubscriber($this->disableFieldsOnEntryEdit);

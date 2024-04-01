@@ -65,7 +65,6 @@ class EntryRequestDto extends ContentRequestDto
     {
         $dto->title = $this->title ?? $dto->title;
         $dto->body = $this->body ?? $dto->body;
-        $dto->tags = $this->tags ?? $dto->tags;
         // TODO: Support for badges when they're implemented
         // $dto->badges = $this->badges ?? $dto->badges;
         $dto->isAdult = $this->isAdult ?? $dto->isAdult;

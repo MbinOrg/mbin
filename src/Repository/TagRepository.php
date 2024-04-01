@@ -5,86 +5,78 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
-use App\Entity\Entry;
-use App\Entity\EntryComment;
-use App\Entity\Post;
-use App\Entity\PostComment;
+use App\Entity\Hashtag;
+use App\Pagination\NativeQueryAdapter;
+use App\Pagination\Transformation\ContentPopulationTransformer;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Pagerfanta\Adapter\ArrayAdapter;
+use Doctrine\Persistence\ManagerRegistry;
+use JetBrains\PhpStorm\ArrayShape;
 use Pagerfanta\Exception\NotValidCurrentPageException;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\PagerfantaInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class TagRepository
+/**
+ * @method Hashtag|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Hashtag|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Hashtag[]    findAll()
+ * @method Hashtag[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
+class TagRepository extends ServiceEntityRepository
 {
     public const PER_PAGE = 25;
 
-    public function __construct(private EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly TagLinkRepository $tagLinkRepository,
+        private readonly ContentPopulationTransformer $populationTransformer
+    ) {
+        parent::__construct($registry, Hashtag::class);
     }
 
     public function findOverall(int $page, string $tag): PagerfantaInterface
     {
-        // @todo union adapter
+        $hashtag = $this->findBy(['tag' => $tag]);
+        $countAll = $this->tagLinkRepository->createQueryBuilder('link')
+            ->select('count(link.id)')
+            ->where('link.hashtag = :tag')
+            ->setParameter(':tag', $hashtag)
+            ->getQuery()
+            ->getSingleScalarResult();
+
         $conn = $this->entityManager->getConnection();
-        $sql = "
-        (SELECT id, created_at, 'entry' AS type FROM entry WHERE tags @> :tag = true AND visibility = :visibility)
-        UNION
-        (SELECT id, created_at, 'entry_comment' AS type FROM entry_comment WHERE tags @> :tag = true AND visibility = :visibility)
-        UNION
-        (SELECT id, created_at, 'post' AS type FROM post WHERE tags @> :tag = true AND visibility = :visibility)
-        UNION
-        (SELECT id, created_at, 'post_comment' AS type FROM post_comment WHERE tags @> :tag = true AND visibility = :visibility)
+        $sql = "SELECT e.id, e.created_at, 'entry' AS type FROM entry e 
+                INNER JOIN hashtag_link l ON e.id = l.entry_id 
+                INNER JOIN hashtag h ON l.hashtag_id = h.id AND h.tag = :tag
+            WHERE visibility = :visibility
+        UNION ALL
+        SELECT ec.id, ec.created_at, 'entry_comment' AS type FROM entry_comment ec
+                INNER JOIN hashtag_link l ON ec.id = l.entry_comment_id 
+                INNER JOIN hashtag h ON l.hashtag_id = h.id AND h.tag = :tag
+            WHERE visibility = :visibility
+        UNION ALL
+        SELECT p.id, p.created_at, 'post' AS type FROM post p
+                INNER JOIN hashtag_link l ON p.id = l.post_id 
+                INNER JOIN hashtag h ON l.hashtag_id = h.id AND h.tag = :tag
+            WHERE visibility = :visibility
+        UNION ALL
+        SELECT pc.id, created_at, 'post_comment' AS type FROM post_comment pc
+                INNER JOIN hashtag_link l ON pc.id = l.post_comment_id 
+                INNER JOIN hashtag h ON l.hashtag_id = h.id AND h.tag = :tag WHERE visibility = :visibility
         ORDER BY created_at DESC";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue('tag', "\"$tag\"");
-        $stmt->bindValue('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
-        $stmt = $stmt->executeQuery();
 
-        $pagerfanta = new Pagerfanta(
-            new ArrayAdapter(
-                $stmt->fetchAllAssociative()
-            )
-        );
+        $adapter = new NativeQueryAdapter($conn, $sql, [
+            'tag' => $tag,
+            'visibility' => VisibilityInterface::VISIBILITY_VISIBLE,
+        ], $countAll, $this->populationTransformer);
 
-        $countAll = $pagerfanta->count();
-
-        try {
-            $pagerfanta->setMaxPerPage(20000);
-            $pagerfanta->setCurrentPage(1);
-        } catch (NotValidCurrentPageException $e) {
-            throw new NotFoundHttpException();
-        }
-
-        $result = $pagerfanta->getCurrentPageResults();
-
-        $entries = $this->entityManager->getRepository(Entry::class)->findBy(
-            ['id' => $this->getOverviewIds((array) $result, 'entry')]
-        );
-        $entryComments = $this->entityManager->getRepository(EntryComment::class)->findBy(
-            ['id' => $this->getOverviewIds((array) $result, 'entry_comment')]
-        );
-        $post = $this->entityManager->getRepository(Post::class)->findBy(
-            ['id' => $this->getOverviewIds((array) $result, 'post')]
-        );
-        $postComment = $this->entityManager->getRepository(PostComment::class)->findBy(
-            ['id' => $this->getOverviewIds((array) $result, 'post_comment')]
-        );
-
-        $result = array_merge($entries, $entryComments, $post, $postComment);
-        uasort($result, fn ($a, $b) => $a->getCreatedAt() > $b->getCreatedAt() ? -1 : 1);
-
-        $pagerfanta = new Pagerfanta(
-            new ArrayAdapter(
-                $result
-            )
-        );
+        $pagerfanta = new Pagerfanta($adapter);
 
         try {
             $pagerfanta->setMaxPerPage(self::PER_PAGE);
             $pagerfanta->setCurrentPage($page);
-            $pagerfanta->setMaxNbPages($countAll > 0 ? ((int) ceil($countAll / self::PER_PAGE)) : 1);
         } catch (NotValidCurrentPageException $e) {
             throw new NotFoundHttpException();
         }
@@ -92,10 +84,33 @@ class TagRepository
         return $pagerfanta;
     }
 
-    private function getOverviewIds(array $result, string $type): array
+    public function create(string $tag): Hashtag
     {
-        $result = array_filter($result, fn ($subject) => $subject['type'] === $type);
+        $entity = new Hashtag();
+        $entity->tag = $tag;
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
 
-        return array_map(fn ($subject) => $subject['id'], $result);
+        return $entity;
+    }
+
+    #[ArrayShape([
+        'entry' => 'int',
+        'entry_comment' => 'int',
+        'post' => 'int',
+        'post_comment' => 'int',
+    ])]
+    public function getCounts(string $tag): ?array
+    {
+        $conn = $this->entityManager->getConnection();
+        $stmt = $conn->prepare('SELECT COUNT(entry_id) as entry, COUNT(entry_comment_id) as entry_comment, COUNT(post_id) as post, COUNT(post_comment_id) as post_comment 
+            FROM hashtag_link INNER JOIN public.hashtag h ON h.id = hashtag_link.hashtag_id AND h.tag = :tag GROUP BY h.tag');
+        $stmt->bindValue('tag', $tag);
+        $result = $stmt->executeQuery()->fetchAllAssociative();
+        if (1 === \sizeof($result)) {
+            return $result[0];
+        }
+
+        return null;
     }
 }

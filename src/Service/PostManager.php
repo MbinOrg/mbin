@@ -15,6 +15,7 @@ use App\Event\Post\PostCreatedEvent;
 use App\Event\Post\PostDeletedEvent;
 use App\Event\Post\PostEditedEvent;
 use App\Event\Post\PostRestoredEvent;
+use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Factory\PostFactory;
 use App\Message\DeleteImageMessage;
@@ -53,6 +54,12 @@ class PostManager implements ContentManagerInterface
     ) {
     }
 
+    /**
+     * @throws TagBannedException
+     * @throws UserBannedException
+     * @throws TooManyRequestsHttpException
+     * @throws \Exception
+     */
     public function create(PostDto $dto, User $user, $rateLimit = true): Post
     {
         if ($rateLimit) {
@@ -66,6 +73,10 @@ class PostManager implements ContentManagerInterface
             throw new UserBannedException();
         }
 
+        if ($this->tagManager->isAnyTagBanned($this->tagManager->extract($dto->body))) {
+            throw new TagBannedException();
+        }
+
         $post = $this->factory->createFromDto($dto, $user);
 
         $post->lang = $dto->lang;
@@ -76,7 +87,6 @@ class PostManager implements ContentManagerInterface
         if ($post->image && !$post->image->altText) {
             $post->image->altText = $dto->imageAlt;
         }
-        $post->tags = $dto->body ? $this->tagManager->extract($dto->body, $post->magazine->name) : null;
         $post->mentions = $dto->body ? $this->mentionManager->extract($dto->body) : null;
         $post->visibility = $dto->visibility;
         $post->apId = $dto->apId;
@@ -90,6 +100,8 @@ class PostManager implements ContentManagerInterface
 
         $this->entityManager->persist($post);
         $this->entityManager->flush();
+
+        $this->tagManager->updatePostTags($post, $post->body);
 
         $this->dispatcher->dispatch(new PostCreatedEvent($post));
 
@@ -108,7 +120,7 @@ class PostManager implements ContentManagerInterface
         if ($dto->image) {
             $post->image = $this->imageRepository->find($dto->image->id);
         }
-        $post->tags = $dto->body ? $this->tagManager->extract($dto->body, $post->magazine->name) : null;
+        $this->tagManager->updatePostTags($post, $dto->body);
         $post->mentions = $dto->body ? $this->mentionManager->extract($dto->body) : null;
         $post->visibility = $dto->visibility;
         $post->editedAt = new \DateTimeImmutable('@'.time());

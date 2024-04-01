@@ -9,6 +9,7 @@ use App\Form\PostType;
 use App\Repository\Criteria;
 use App\Service\IpResolver;
 use App\Service\PostManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -17,6 +18,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class PostCreateController extends AbstractController
 {
     public function __construct(
+        private readonly LoggerInterface $logger,
         private readonly PostManager $manager,
         private readonly IpResolver $ipResolver
     ) {
@@ -26,7 +28,7 @@ class PostCreateController extends AbstractController
     public function __invoke(Request $request): Response
     {
         $form = $this->createForm(PostType::class);
-
+        $user = $this->getUserOrThrow();
         try {
             // Could thrown an error on event handlers (eg. onPostSubmit if a user upload an incorrect image)
             $form->handleRequest($request);
@@ -39,7 +41,7 @@ class PostCreateController extends AbstractController
                     throw new AccessDeniedHttpException();
                 }
 
-                $this->manager->create($dto, $this->getUserOrThrow());
+                $this->manager->create($dto, $user);
 
                 $this->addFlash('success', 'flash_post_new_success');
 
@@ -52,6 +54,7 @@ class PostCreateController extends AbstractController
                 );
             }
         } catch (\Exception $e) {
+            $this->logger->error('{user} tried to create a post, but an exception occurred: {ex} - {message}', ['user' => $user->username, 'ex' => \get_class($e), 'message' => $e->getMessage(), 'stacktrace' => $e->getTrace()]);
             // Show an error to the user
             $this->addFlash('error', 'flash_post_new_error');
         }

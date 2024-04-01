@@ -15,6 +15,7 @@ use App\Event\EntryComment\EntryCommentDeletedEvent;
 use App\Event\EntryComment\EntryCommentEditedEvent;
 use App\Event\EntryComment\EntryCommentPurgedEvent;
 use App\Event\EntryComment\EntryCommentRestoredEvent;
+use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Factory\EntryCommentFactory;
 use App\Message\DeleteImageMessage;
@@ -54,6 +55,10 @@ class EntryCommentManager implements ContentManagerInterface
             throw new UserBannedException();
         }
 
+        if ($this->tagManager->isAnyTagBanned($this->tagManager->extract($dto->body))) {
+            throw new TagBannedException();
+        }
+
         $comment = $this->factory->createFromDto($dto, $user);
 
         $comment->magazine = $dto->entry->magazine;
@@ -63,7 +68,6 @@ class EntryCommentManager implements ContentManagerInterface
         if ($comment->image && !$comment->image->altText) {
             $comment->image->altText = $dto->imageAlt;
         }
-        $comment->tags = $dto->body ? $this->tagManager->extract($dto->body, $comment->magazine->name) : null;
         $comment->mentions = $dto->body
             ? array_merge($dto->mentions ?? [], $this->mentionManager->handleChain($comment))
             : $dto->mentions;
@@ -82,6 +86,8 @@ class EntryCommentManager implements ContentManagerInterface
         $this->entityManager->persist($comment);
         $this->entityManager->flush();
 
+        $this->tagManager->updateEntryCommentTags($comment, $comment->body);
+
         $this->dispatcher->dispatch(new EntryCommentCreatedEvent($comment));
 
         return $comment;
@@ -98,7 +104,7 @@ class EntryCommentManager implements ContentManagerInterface
         if ($dto->image) {
             $comment->image = $this->imageRepository->find($dto->image->id);
         }
-        $comment->tags = $dto->body ? $this->tagManager->extract($dto->body, $comment->magazine->name) : null;
+        $this->tagManager->updateEntryCommentTags($comment, $dto->body);
         $comment->mentions = $dto->body
             ? array_merge($dto->mentions ?? [], $this->mentionManager->handleChain($comment))
             : $dto->mentions;
