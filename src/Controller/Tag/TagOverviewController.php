@@ -7,14 +7,14 @@ namespace App\Controller\Tag;
 use App\Controller\AbstractController;
 use App\Repository\TagRepository;
 use App\Service\SubjectOverviewManager;
-use App\Service\TagManager;
+use App\Service\TagExtractor;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class TagOverviewController extends AbstractController
 {
     public function __construct(
-        private readonly TagManager $tagManager,
+        private readonly TagExtractor $tagManager,
         private readonly TagRepository $tagRepository,
         private readonly SubjectOverviewManager $overviewManager
     ) {

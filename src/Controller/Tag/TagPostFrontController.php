@@ -8,14 +8,14 @@ use App\Controller\AbstractController;
 use App\PageView\PostPageView;
 use App\Repository\PostRepository;
 use App\Repository\TagRepository;
-use App\Service\TagManager;
+use App\Service\TagExtractor;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class TagPostFrontController extends AbstractController
 {
     public function __construct(
-        private readonly TagManager $tagManager,
+        private readonly TagExtractor $tagManager,
         private readonly TagRepository $tagRepository,
     ) {
     }

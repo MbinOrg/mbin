@@ -8,7 +8,7 @@ use App\Controller\AbstractController;
 use App\PageView\EntryCommentPageView;
 use App\Repository\EntryCommentRepository;
 use App\Repository\TagRepository;
-use App\Service\TagManager;
+use App\Service\TagExtractor;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,7 +17,7 @@ class TagCommentFrontController extends AbstractController
     public function __construct(
         private readonly EntryCommentRepository $repository,
         private readonly TagRepository $tagRepository,
-        private readonly TagManager $tagManager
+        private readonly TagExtractor $tagManager
     ) {
     }
 

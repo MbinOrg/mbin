@@ -15,7 +15,7 @@ use App\Service\ActivityPub\Wrapper\MentionsWrapper;
 use App\Service\ActivityPub\Wrapper\TagsWrapper;
 use App\Service\ActivityPubManager;
 use App\Service\MentionManager;
-use App\Service\TagManager;
+use App\Service\TagExtractor;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class PostNoteFactory
@@ -30,7 +30,7 @@ class PostNoteFactory
         private readonly ApHttpClient $client,
         private readonly ActivityPubManager $activityPubManager,
         private readonly MentionManager $mentionManager,
-        private readonly TagManager $tagManager,
+        private readonly TagExtractor $tagExtractor,
         private readonly MarkdownConverter $markdownConverter
     ) {
     }
@@ -46,7 +46,7 @@ class PostNoteFactory
             $tags[] = $post->magazine->name;
         }
 
-        $body = $this->tagManager->joinTagsToBody(
+        $body = $this->tagExtractor->joinTagsToBody(
             $post->body,
             $tags
         );
