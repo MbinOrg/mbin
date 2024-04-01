@@ -307,7 +307,7 @@ composer clear-cache
 
 ### Caching
 
-You can choose between either Redis or Dragonfly.
+You can choose between either Redis or KeyDB.
 
 #### Redis
 
@@ -339,13 +339,15 @@ REDIS_DNS=redis://${REDIS_PASSWORD}@$127.0.0.1:6379
 
 # Or if you want to use socket file:
 #REDIS_DNS=redis://${REDIS_PASSWORD}/var/run/redis/redis-server.sock
+# Or KeyDB socket file:
+#REDIS_DNS=redis://${REDIS_PASSWORD}/var/run/keydb/keydb.sock
 ```
 
-#### Dragonfly
+#### KeyDB
 
-[Dragonfly](https://www.dragonflydb.io/) is a drop-in replacement for Redis. If you wish to use Dragonfly instead, that is possible. Do **NOT** run both Redis & Dragonfly, just pick one. After all they run on the same port by default (6379).
+[KeyDB](https://github.com/Snapchat/KeyDB) is a fork of Redis. If you wish to use KeyDB instead, that is possible. Do **NOT** run both Redis & KeyDB, just pick one. After KeyDB run on the same default port 6379 (IANA #815344).
 
-Be sure you disabled redis:
+Be sure you disabled redis first:
 
 ```sh
 sudo systemctl stop redis
@@ -354,43 +356,42 @@ sudo systemctl disable redis
 
 Or even removed Redis: `sudo apt purge redis-server`
 
-Dragonfly Debian file can be downloaded via ([Dragonfly also provide a standalone binary](https://www.dragonflydb.io/docs/getting-started/binary#step-1-download-preferred-release)):
+For Debian/Ubuntu you can install KeyDB package repository via:
 
 ```sh
-wget https://dragonflydb.gateway.scarf.sh/latest/dragonfly_amd64.deb
+echo "deb https://download.keydb.dev/open-source-dist $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/keydb.list
+sudo wget -O /etc/apt/trusted.gpg.d/keydb.gpg https://download.keydb.dev/open-source-dist/keyring.gpg
+sudo apt update
+sudo apt install keydb
 ```
 
-Install the deb package via:
-
-```sh
-sudo apt install ./dragonfly_amd64.deb
-```
-
-Because Dragonfly is fully Redis compatible you can optionally still install the `redis-tools` package
-(`apt install redis-tools`), if you want to use the `redis-cli` with Dragonfly for example.
+During the install you can choose between different installation methods, I advice to pick: "keydb", which comes with systemd files as well as the CLI tools (eg. `keydb-cli`).
 
 Start & enable the service if it isn't already:
 
 ```sh
-sudo systemctl start dragonfly
-sudo systemctl enable dragonfly
+sudo systemctl start keydb-server
+sudo systemctl enable keydb-server
 ```
 
-Configuration file is located at: `/etc/dragonfly/dragonfly.conf`. See also: [Server config documentation](https://www.dragonflydb.io/docs/managing-dragonfly/flags).  
-For example you can also configure Unix socket files if you wish.
+Configuration file is located at: `/etc/keydb/keydb.conf`. See also: [config documentation](https://docs.keydb.dev/docs/config-file).  
+For example, you can also configure Unix socket files if you wish:
 
-If you want to set a password with Dragonfly, edit the `sudo nano /etc/dragonfly/dragonfly.conf` file and append the following option at the bottom of the file:
+```ini
+unixsocket /var/run/keydb/keydb.sock
+unixsocketperm 777
+```
+
+Optionally, if you want to set a password with KeyDB, _also add_ the following option to the bottom of the file:
 
 ```ini
 # Replace {!SECRET!!KEY!-32_1-!} with the password generated earlier
---requirepass={!SECRET!!KEY!-32_1-!}
+requirepass "{!SECRET!!KEY!-32_1-!}"
 ```
-
-Dragonfly use the same port as Redis and is fully compatible with Redis APIs, so _no_ client-side changes are needed. Unless you use a different port or another socket location.
 
 ### PostgreSQL (Database)
 
-Create new `kbin` database user, using the password, `{!SECRET!!KEY!-32_2-!}`, you generated earlier:
+Create new `kbin` database user (or `mbin` user if you know what you are doing), using the password, `{!SECRET!!KEY!-32_2-!}`, you generated earlier:
 
 ```bash
 sudo -u postgres createuser --createdb --createrole --pwprompt kbin
@@ -770,18 +771,18 @@ The symphony messengers are background workers for a lot of different task, the 
 
 We have a few different queues:
 
-1. `receive` [RabbitMQ]: everything any remote instance sends to us will first end up in this queue. 
-    When processing it will be determined what kind of message it is (creation of a thread, a new comment, etc.)
+1. `receive` [RabbitMQ]: everything any remote instance sends to us will first end up in this queue.
+   When processing it will be determined what kind of message it is (creation of a thread, a new comment, etc.)
 2. `inbox` [RabbitMQ]: messages from `receive` with the determined kind of incoming message will end up here and the necessary actions will be executed.
-    This is the place where the thread or comment will actually be created
-3. `outbox` [RabbitMQ]: when a user creates a thread or a comment, a message will be created and send to the outbox queue 
-    to build the ActivityPub object that will be sent to remote instances. 
-    After the object is built and the inbox addresses of all the remote instances who are interested in the message are gathered,
-    we will create a `DeliverMessage` for every one of them, which will be sent to the `deliver` queue
+   This is the place where the thread or comment will actually be created
+3. `outbox` [RabbitMQ]: when a user creates a thread or a comment, a message will be created and send to the outbox queue
+   to build the ActivityPub object that will be sent to remote instances.
+   After the object is built and the inbox addresses of all the remote instances who are interested in the message are gathered,
+   we will create a `DeliverMessage` for every one of them, which will be sent to the `deliver` queue
 4. `deliver` [RabbitMQ]: Actually sending out the ActivityPub objects to other instances
-5. `resolve` [RabbitMQ]: Resolving dependencies or ActivityPub actors. 
-    For example if your instance gets a like message for a post that is not on your instance a message resolving that dependency will be dispatched to this queue
-6. `async` [RabbitMQ]: messages in async are local actions that are relevant to this instance, e.g. creating notifications, fetching embeded images, etc.
+5. `resolve` [RabbitMQ]: Resolving dependencies or ActivityPub actors.
+   For example if your instance gets a like message for a post that is not on your instance a message resolving that dependency will be dispatched to this queue
+6. `async` [RabbitMQ]: messages in async are local actions that are relevant to this instance, e.g. creating notifications, fetching embedded images, etc.
 7. `old` [RabbitMQ]: the standard messages queue that existed before. This exists solely for compatibility purposes and might be removed later on
 8. `failed` [PostgreSQL]: jobs from the other queues that have been retried, but failed. They get retried a few times again, before they end up in
 9. `dead` [PostgreSQL]: dead jobs that will not be retried
@@ -854,7 +855,7 @@ nano .env
 RABBITMQ_PASSWORD=!ChangeThisRabbitPass!
 MESSENGER_TRANSPORT_DSN=amqp://kbin:${RABBITMQ_PASSWORD}@127.0.0.1:5672/%2f/messages
 
-# or Redis/Dragonfly:
+# or Redis/KeyDB:
 #MESSENGER_TRANSPORT_DSN=redis://${REDIS_PASSWORD}@127.0.0.1:6379/messages
 # or PostgreSQL Database (Doctrine):
 #MESSENGER_TRANSPORT_DSN=doctrine://default
@@ -1100,7 +1101,7 @@ If you perform a Mbin upgrade (eg. `git pull`), be aware to _always_ execute the
 ./bin/post-upgrade
 ```
 
-And when needed also execute: `sudo redis-cli FLUSHDB` to get rid of Redis/Dragonfly cache issues. And reload the PHP FPM service if you have OPCache enabled.
+And when needed also execute: `sudo redis-cli FLUSHDB` to get rid of Redis/KeyDB cache issues. And reload the PHP FPM service if you have OPCache enabled.
 
 ### Manual user activation
 
@@ -1154,7 +1155,7 @@ Web-server (Nginx):
 
 **Please, check the logs above first.** If you are really stuck, visit to our [Matrix space](https://matrix.to/#/%23mbin:melroy.org), there is a 'General' room and dedicated room for 'Issues/Support'.
 
-Test PostgreSQL connections if using a remote server, same with Redis (or Dragonfly is you are using Dragonfly instead). Ensure no firewall rules blocking are any incoming or out-coming traffic (eg. port on 80 and 443).
+Test PostgreSQL connections if using a remote server, same with Redis (or KeyDB is you are using that instead). Ensure no firewall rules blocking are any incoming or out-coming traffic (eg. port on 80 and 443).
 
 ### S3 Images storage (optional)
 
