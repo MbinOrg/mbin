@@ -40,7 +40,7 @@ class Page
     /**
      * @throws TagBannedException
      * @throws UserBannedException
-     * @throws Exception          if the user could not be found or a sub exception occurred
+     * @throws \Exception          if the user could not be found or a sub exception occurred
      */
     public function create(array $object): Entry
     {
@@ -104,12 +104,12 @@ class Page
                 false
             );
         } else {
-            throw new Exception('Actor could not be found for entry.');
+            throw new \Exception('Actor could not be found for entry.');
         }
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     private function getVisibility(array $object, User $actor): string
     {
@@ -123,7 +123,7 @@ class Page
                     array_merge($object['to'] ?? [], $object['cc'] ?? [])
                 )
             ) {
-                throw new Exception('PM: not implemented.');
+                throw new \Exception('PM: not implemented.');
             }
 
             return VisibilityInterface::VISIBILITY_PRIVATE;
@@ -149,7 +149,7 @@ class Page
                     $dto->url = $link['href'];
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
 
         if (!$dto->url && isset($object['url'])) {
@@ -158,7 +158,7 @@ class Page
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     private function handleDate(EntryDto $dto, string $date): void
     {

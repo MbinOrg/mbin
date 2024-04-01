@@ -18,7 +18,6 @@ use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
-use App\Service\ActivityPubManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;

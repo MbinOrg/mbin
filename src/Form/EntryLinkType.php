@@ -6,7 +6,6 @@ namespace App\Form;
 
 use App\DTO\EntryDto;
 use App\Form\Constraint\ImageConstraint;
-use App\Form\DataTransformer\TagTransformer;
 use App\Form\EventListener\DefaultLanguage;
 use App\Form\EventListener\DisableFieldsOnEntryEdit;
 use App\Form\EventListener\ImageListener;
@@ -38,15 +37,6 @@ class EntryLinkType extends AbstractType
             ->add('url', UrlType::class)
             ->add('title', TextareaType::class, [
                 'required' => true,
-            ])
-            ->add('tags', TextType::class, [
-                'autocomplete' => true,
-                'required' => false,
-                'tom_select_options' => [
-                    'create' => true,
-                    'createOnBlur' => true,
-                    'delimiter' => ' ',
-                ],
             ])
             ->add('body', TextareaType::class, [
                 'required' => false,
@@ -82,10 +72,6 @@ class EntryLinkType extends AbstractType
                 'required' => false,
             ])
             ->add('submit', SubmitType::class);
-
-        $builder->get('tags')->addModelTransformer(
-            new TagTransformer()
-        );
 
         $builder->addEventSubscriber($this->defaultLanguage);
         $builder->addEventSubscriber($this->disableFieldsOnEntryEdit);
