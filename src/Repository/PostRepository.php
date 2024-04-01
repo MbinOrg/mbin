@@ -89,7 +89,7 @@ class PostRepository extends ServiceEntityRepository
 
         if ($user && VisibilityInterface::VISIBILITY_VISIBLE === $criteria->visibility) {
             $qb->orWhere(
-                'p.user IN (SELECT IDENTITY(puf.following) FROM '.UserFollow::class.' puf WHERE puf.follower = :puf_user AND p.visibility = :puf_visibility)'
+                'EXISTS (SELECT IDENTITY(puf.following) FROM '.UserFollow::class.' puf WHERE puf.follower = :puf_user AND p.visibility = :puf_visibility AND puf.following = p.user)'
             )
                 ->setParameter('puf_user', $user)
                 ->setParameter('puf_visibility', VisibilityInterface::VISIBILITY_PRIVATE);
@@ -168,9 +168,9 @@ class PostRepository extends ServiceEntityRepository
 
         if ($criteria->subscribed) {
             $qb->andWhere(
-                'p.magazine IN (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :user) 
+                'EXISTS (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :user AND ms.magazine = p.magazine) 
                 OR 
-                p.user IN (SELECT IDENTITY(uf.following) FROM '.UserFollow::class.' uf WHERE uf.follower = :user)
+                EXISTS (SELECT IDENTITY(uf.following) FROM '.UserFollow::class.' uf WHERE uf.follower = :user AND uf.following = p.user)
                 OR
                 p.user = :user'
             );
@@ -179,14 +179,14 @@ class PostRepository extends ServiceEntityRepository
 
         if ($criteria->moderated) {
             $qb->andWhere(
-                'p.magazine IN (SELECT IDENTITY(mm.magazine) FROM '.Moderator::class.' mm WHERE mm.user = :user)'
+                'EXISTS (SELECT IDENTITY(mm.magazine) FROM '.Moderator::class.' mm WHERE mm.user = :user AND mm.magazine = p.magazine)'
             );
             $qb->setParameter('user', $this->security->getUser());
         }
 
         if ($criteria->favourite) {
             $qb->andWhere(
-                'p.id IN (SELECT IDENTITY(pf.post) FROM '.PostFavourite::class.' pf WHERE pf.user = :user)'
+                'EXISTS (SELECT IDENTITY(pf.post) FROM '.PostFavourite::class.' pf WHERE pf.user = :user AND pf.post = p)'
             );
             $qb->setParameter('user', $this->security->getUser());
         }
@@ -198,12 +198,12 @@ class PostRepository extends ServiceEntityRepository
 
         if ($user && (!$criteria->magazine || !$criteria->magazine->userIsModerator($user)) && !$criteria->moderated) {
             $qb->andWhere(
-                'p.user NOT IN (SELECT IDENTITY(ub.blocked) FROM '.UserBlock::class.' ub WHERE ub.blocker = :blocker)'
+                'NOT EXISTS (SELECT IDENTITY(ub.blocked) FROM '.UserBlock::class.' ub WHERE ub.blocker = :blocker AND ub.blocked = p.user)'
             );
             $qb->setParameter('blocker', $user);
 
             $qb->andWhere(
-                'p.magazine NOT IN (SELECT IDENTITY(mb.magazine) FROM '.MagazineBlock::class.' mb WHERE mb.user = :magazineBlocker)'
+                'NOT EXISTS (SELECT IDENTITY(mb.magazine) FROM '.MagazineBlock::class.' mb WHERE mb.user = :magazineBlocker AND mb.magazine = p.magazine)'
             );
             $qb->setParameter('magazineBlocker', $user);
         }
