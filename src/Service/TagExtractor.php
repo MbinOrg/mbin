@@ -28,8 +28,12 @@ class TagExtractor
         return $body;
     }
 
-    public function extract(string $val, string $magazineName = null): ?array
+    public function extract(?string $val, string $magazineName = null): ?array
     {
+        if (null === $val) {
+            return null;
+        }
+
         preg_match_all(RegPatterns::LOCAL_TAG, $val, $matches);
 
         $result = $matches[1];
