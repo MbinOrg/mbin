@@ -17,7 +17,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EntryCommentViewController extends AbstractController
 {
-
     public function __construct(
         private readonly RequestStack $requestStack
     ) {
@@ -33,7 +32,6 @@ class EntryCommentViewController extends AbstractController
         EventDispatcherInterface $dispatcher,
         Request $request,
     ): Response {
-
         // @TODO there is no entry comment has been seen event, maybe
         // it should be added so one comment view does not mark all as read in the same entry
         $dispatcher->dispatch(new EntryHasBeenSeenEvent($entry));
