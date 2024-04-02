@@ -1,1 +1,40 @@
-{}
+type.link: Link
+type.article: Tråd
+type.photo: Foto
+type.video: Video
+type.smart_contract: intelligent kontrakt
+type.magazine: Magasin
+thread: Tråd
+people: Folk
+events: Begivenheder
+magazine: Magasin
+magazines: Magasiner
+search: Søg
+select_channel: Vælge en kanal
+login: Log ind
+hot: Heftig
+active: Aktiv
+newest: Nyeste
+oldest: Ældste
+commented: Kommenterede
+filter_by_time: Filtrer efter tid
+filter_by_type: Filtrer efter type
+comments_count: '{0}Kommentarer|{1}Kommentar|]1,Inf[ Kommentarer'
+subscribers_count: '{0}Abonnenter|{1}Abonnent|]1,Inf[Abonnenter'
+followers_count: '{0}Følgere|{1}Følger|]1,Inf[ Følgere'
+marked_for_deletion: Markeret til sletning
+marked_for_deletion_at: markeret til sletning d. %date%
+favourites: Favoritter
+favourite: Favorit
+more: Mere
+added: Tilføjet
+up_votes: Booster
+threads: Tråde
+microblog: Mikroblog
+add: Tilføj
+top: Top
+change_view: Ændre visning
+no_comments: Ingen kommentarer
+created_at: Oprettet
+avatar: Avatar
+views: Visninger
