@@ -11,6 +11,16 @@
     {{- 'comments'|trans }} - {{ entry.title }} - {{ parent() -}}
 {%- endblock -%}
 
+{% block stylesheets %}
+    {{ parent() }}
+
+    <style>
+        #entry-comment-{{parent.id}} {
+            background: linear-gradient(to right, var(--kbin-section-bg), var(--kbin-boosted-color) 900%);
+        }
+    </style>
+{% endblock %}
+
 {% block header_nav %}
 {% endblock %}
 
@@ -37,10 +47,10 @@
         data-controller="subject-list"
         data-action="{{- DYNAMIC_LISTS is same as V_TRUE ? autoAction : manualAction -}}">
         {{ component('entry_comment', {
-            comment: parent,
+            comment: parent.root ?? parent,
             showEntryTitle: false,
             showMagazineName: false,
-            showNested: false,
+            showNested: true,
         }) }}
     </div>
     {% endif %}
