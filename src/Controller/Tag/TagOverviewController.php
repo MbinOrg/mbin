@@ -8,6 +8,7 @@ use App\Controller\AbstractController;
 use App\Repository\TagRepository;
 use App\Service\SubjectOverviewManager;
 use App\Service\TagExtractor;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -27,14 +28,17 @@ class TagOverviewController extends AbstractController
             $this->tagManager->transliterate(strtolower($name))
         );
 
-        return $this->render(
-            'tag/overview.html.twig',
-            [
-                'tag' => $name,
-                'results' => $this->overviewManager->buildList($activity),
-                'pagination' => $activity,
-                'counts' => $this->tagRepository->getCounts($name),
-            ]
-        );
+        $params = [
+            'tag' => $name,
+            'results' => $this->overviewManager->buildList($activity),
+            'pagination' => $activity,
+            'counts' => $this->tagRepository->getCounts($name),
+        ];
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse(['html' => $this->renderView('tag/_list.html.twig', $params)]);
+        }
+
+        return $this->render('tag/overview.html.twig', $params);
     }
 }
