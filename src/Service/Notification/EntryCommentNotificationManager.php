@@ -161,8 +161,8 @@ class EntryCommentNotificationManager implements ContentNotificationManagerInter
                         'magazine_name' => $comment->magazine->name,
                         'entry_id' => $comment->entry->getId(),
                         'slug' => $comment->entry->slug,
-                        'parent_comment_id' => $comment->getId(),
-                    ]),
+                        'comment_id' => $comment->getId(),
+                    ]).'#entry-comment-'.$comment->getId(),
 //                'toast' => $this->twig->render('_layout/_toast.html.twig', ['notification' => $notification]),
             ]
         );

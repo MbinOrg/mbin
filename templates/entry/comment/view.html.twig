@@ -1,6 +1,5 @@
 {%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
 {%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
-{%- set V_TREE = constant('App\\Controller\\User\\ThemeSettingsController::TREE') -%}
 
 {%- set DYNAMIC_LISTS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_DYNAMIC_LISTS'), V_FALSE) -%}
 {%- set SHOW_COMMENT_USER_AVATARS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR'), V_TRUE) -%}
@@ -15,7 +14,7 @@
     {{ parent() }}
 
     <style>
-        #entry-comment-{{parent.id}} {
+        #entry-comment-{{comment.id}} {
             background: linear-gradient(to right, var(--kbin-section-bg), var(--kbin-boosted-color) 900%);
         }
     </style>
@@ -38,7 +37,6 @@
         <p>{{ 'browsing_one_thread'|trans }}</p>
         <p><a href="{{ entry_url(entry) }}"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> {{ 'return'|trans }}</a></p>
     </div>
-    {% if parent is defined and parent %}
     {% set autoAction = 'notifications:EntryCommentCreatedNotification@window->subject-list#addComment' %}
     {% set manualAction = 'notifications:EntryCommentCreatedNotification@window->subject-list#increaseCounter' %}
     <div class="{{ html_classes('comments entry-comments comments-tree', {
@@ -47,11 +45,10 @@
         data-controller="subject-list"
         data-action="{{- DYNAMIC_LISTS is same as V_TRUE ? autoAction : manualAction -}}">
         {{ component('entry_comment', {
-            comment: parent.root ?? parent,
+            comment: comment.root ?? comment,
             showEntryTitle: false,
             showMagazineName: false,
             showNested: true,
         }) }}
     </div>
-    {% endif %}
 {% endblock %}

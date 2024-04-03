@@ -92,7 +92,7 @@ class UrlExtensionRuntime implements RuntimeExtensionInterface
             'magazine_name' => $comment->magazine->name,
             'entry_id' => $comment->entry->getId(),
             'slug' => empty($comment->entry->slug) ? '-' : $comment->entry->slug,
-            'parent_comment_id' => $comment->getId(),
+            'comment_id' => $comment->getId(),
         ]);
     }
 

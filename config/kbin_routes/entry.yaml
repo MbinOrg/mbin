@@ -6,8 +6,8 @@ entry_comment_create:
 
 entry_comment_view:
     controller: App\Controller\Entry\Comment\EntryCommentViewController
-    defaults: { slug: -, parent_comment_id: null }
-    path: /m/{magazine_name}/t/{entry_id}/{slug}/comment/{parent_comment_id}
+    defaults: { slug: -, comment_id: null }
+    path: /m/{magazine_name}/t/{entry_id}/{slug}/comment/{comment_id}
     methods: [ GET ]
 
 entry_comment_edit:

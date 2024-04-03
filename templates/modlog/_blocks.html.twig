@@ -10,12 +10,12 @@
 
 {% block log_entry_comment_deleted %}
     {{ component('user_inline', {user: log.user, showAvatar: false}) }} {{ 'removed_comment_by'|trans|lower }} {{ component('user_inline', {user: log.comment.user, showAvatar: false}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.comment.magazine, showIcon: false }) }}{% endif %} -
-    <a href="{{ entry_comment_view_url(log.comment) }}">{{ log.comment.shortTitle(300) }}</a>
+    <a href="{{ entry_comment_view_url(log.comment) }}#{{ get_url_fragment(log.comment) }}">{{ log.comment.shortTitle(300) }}</a>
 {% endblock %}
 
 {% block log_entry_comment_restored %}
     {{ component('user_inline', {user: log.user, showAvatar: false}) }} {{ 'restored_comment_by'|trans|lower }} {{ component('user_inline', {user: log.comment.user, showAvatar: false}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.comment.magazine, showIcon: false }) }}{% endif %} -
-    <a href="{{ entry_comment_view_url(log.comment) }}">{{ log.comment.shortTitle(300) }}</a>
+    <a href="{{ entry_comment_view_url(log.comment) }}#{{ get_url_fragment(log.comment) }}">{{ log.comment.shortTitle(300) }}</a>
 {% endblock %}
 
 {% block log_post_deleted %}

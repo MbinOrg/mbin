@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Entry\Comment;
 
 use App\Controller\AbstractController;
+use App\Controller\Traits\PrivateContentTrait;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Magazine;
@@ -17,6 +18,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EntryCommentViewController extends AbstractController
 {
+    use PrivateContentTrait;
+
     public function __construct(
         private readonly RequestStack $requestStack,
         private readonly EventDispatcherInterface $dispatcher,
@@ -28,12 +31,11 @@ class EntryCommentViewController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'entry_id')]
         Entry $entry,
-        #[MapEntity(id: 'parent_comment_id')]
-        ?EntryComment $parent,
+        #[MapEntity(id: 'comment_id')]
+        ?EntryComment $comment,
         Request $request,
     ): Response {
-        // @TODO
-        // $this->handlePrivateContent($entry);
+        $this->handlePrivateContent($entry);
 
         // @TODO there is no entry comment has been seen event, maybe
         // it should be added so one comment view does not mark all as read in the same entry
@@ -44,7 +46,7 @@ class EntryCommentViewController extends AbstractController
             [
                 'magazine' => $magazine,
                 'entry' => $entry,
-                'parent' => $parent,
+                'comment' => $comment,
             ]
         );
     }
