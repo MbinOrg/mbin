@@ -109,7 +109,7 @@ oldest: Най-стари
 cards_view: Картиен изглед
 change_password: Промяна на паролата
 email_verify: Потвърди адреса на ел. поща
-copy_url_to_fediverse: Копиране на оригиналния URL адрес
+copy_url_to_fediverse: Копиране на оригиналния адрес
 favourites: Фаворизирания
 blocked: Блокирани
 delete_account: Изтрий акаунта
@@ -158,7 +158,7 @@ send: Изпращане
 active_users: Активни хора
 add_new_post: Добавяне на нова публикация
 contact: За контакт
-open_url_to_fediverse: Отваряне на оригиналния URL адрес
+open_url_to_fediverse: Отваряне на оригиналния адрес
 notifications: Известия
 change_theme: Промяна на темата
 instance: Инстанция
@@ -280,7 +280,7 @@ dashboard: Табло
 close: Затваряне
 show_thumbnails: Показване на миниатюри
 flash_post_new_success: Публикацията е създадена успешно.
-copy_url: Копиране на Mbin URL адрес
+copy_url: Копиране на Mbin адреса
 flash_comment_edit_error: Неуспешно редактиране на коментара. Нещо се обърка.
 flash_comment_new_error: Неуспешно създаване на коментар. Нещо се обърка.
 subscribed: Абонаменти
@@ -357,7 +357,7 @@ password_and_2fa: Парола & 2FA
 infinite_scroll: Безкрайно превъртане
 email_confirm_expire: Моля, имай предвид, че връзката ще изтече след час.
 2fa.backup: Твоите резервни кодове за двуфакторно удостоверяване
-all_time: През цялото време
+all_time: Цялото време
 Password is invalid: Паролата е невалидна.
 edited_post: Редактира публикация
 added_new_post: Добави нова публикация
