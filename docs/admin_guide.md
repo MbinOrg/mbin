@@ -1200,7 +1200,7 @@ Finally, go to the admin panel, settings tab and check "Captcha enabled" and pre
 
 ## See also
 
-- [Frequently Asked Questions](../FAQ.md)
+- [Frequently Asked Questions](./FAQ.md)
 
 ## Performance hints
 
