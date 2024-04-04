@@ -70,7 +70,7 @@ class AttachEntryEmbedHandler
             if ($imageUrl = $this->getCoverUrl($entry, $embed)) {
                 if ($tempFile = $this->fetchImage($imageUrl)) {
                     $image = $this->imageRepository->findOrCreateFromPath($tempFile);
-                    if ($image && !$image->filePath) {
+                    if ($image && !$image->sourceUrl) {
                         $image->sourceUrl = $imageUrl;
                     }
 
