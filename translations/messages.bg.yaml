@@ -197,7 +197,7 @@ edit_post: Редактиране на публикацията
 joined: Присъединяване
 removed: Премахнато от модератор
 domain: Домейн
-go_to_original_instance: Разгледай на отдалечена инстанция.
+go_to_original_instance: Разгледай на отдалечена инстанция
 edit_link: Редактиране на връзката
 change_my_avatar: Промяна на моя лик
 domains: Домейни
@@ -422,3 +422,5 @@ notify_on_new_entry_comment_reply: Отговори на мои коментар
 notify_on_new_entry: Нови нишки (връзки или статии) във всяка общност, за която съм
   абониран
 unblock: Отблокиране
+marked_for_deletion: Отбелязано за изтриване
+marked_for_deletion_at: Отбелязано за изтриване на %date%
