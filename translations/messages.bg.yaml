@@ -197,7 +197,7 @@ edit_post: Редактиране на публикацията
 joined: Присъединяване
 removed: Премахнато от модератор
 domain: Домейн
-go_to_original_instance: Разгледай на отдалечена инстанция
+go_to_original_instance: Разгледай на отдалечената инстанция
 edit_link: Редактиране на връзката
 change_my_avatar: Промяна на моя лик
 domains: Домейни
@@ -427,3 +427,5 @@ marked_for_deletion_at: Отбелязано за изтриване на %date%
 single_settings: Отделни
 account_deletion_title: Изтриване на акаунта
 edited: редактирано
+kbin_promo_title: Създай своя собствена инстанция
+kbin_promo_desc: '%link_start%Клонирай хранилището%link_end% и разработвай федивселената'
