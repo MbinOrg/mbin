@@ -333,4 +333,4 @@ docker compose exec -T db psql -U kbin kbin < dump.sql
 
 ## See also
 
-- [Frequently Asked Questions](../FAQ.md)
+- [Frequently Asked Questions](/FAQ.md)
