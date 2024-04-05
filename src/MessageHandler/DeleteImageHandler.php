@@ -34,16 +34,16 @@ class DeleteImageHandler
                 $this->entityManager->flush();
 
                 $this->entityManager->commit();
-
-                if ($image->filePath) {
-                    $this->imageManager->remove($image->filePath);
-                }
             } catch (\Exception $e) {
                 $this->entityManager->rollback();
                 $this->managerRegistry->resetManager();
 
                 return;
             }
+        }
+
+        if ($image?->filePath) {
+            $this->imageManager->remove($image->filePath);
         }
     }
 }

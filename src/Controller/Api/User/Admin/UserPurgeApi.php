@@ -74,7 +74,7 @@ class UserPurgeApi extends UserBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        $manager->delete($user, purge: true);
+        $manager->delete($user);
 
         return new JsonResponse(
             status: 204,
