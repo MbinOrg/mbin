@@ -203,12 +203,6 @@ api_moderate_magazine_delete_icon:
   path: /api/moderate/magazine/{magazine_id}/icon
   methods: [ DELETE ]
   format: json
-
-api_moderate_magazine_retrieve_views:
-  controller: App\Controller\Api\Magazine\Admin\MagazineRetrieveStatsApi::views
-  path: /api/stats/magazine/{magazine_id}/views
-  methods: [ GET ]
-  format: json
   
 api_moderate_magazine_retrieve_votes:
   controller: App\Controller\Api\Magazine\Admin\MagazineRetrieveStatsApi::votes

@@ -41,9 +41,6 @@ class StatsController extends AbstractController
             StatsRepository::TYPE_CONTENT => $statsPeriod
                 ? $this->manager->drawDailyContentStatsByTime($start, onlyLocal: !$withFederated)
                 : $this->manager->drawMonthlyContentChart(onlyLocal: !$withFederated),
-            StatsRepository::TYPE_VIEWS => $statsPeriod
-                ? $this->manager->drawDailyViewsStatsByTime($start, onlyLocal: !$withFederated)
-                : $this->manager->drawMonthlyViewsChart(onlyLocal: !$withFederated),
             StatsRepository::TYPE_VOTES => $statsPeriod
                 ? $this->manager->drawDailyVotesStatsByTime($start, onlyLocal: !$withFederated)
                 : $this->manager->drawMonthlyVotesChart(onlyLocal: !$withFederated),

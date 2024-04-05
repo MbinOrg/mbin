@@ -42,9 +42,6 @@ class MagazineStatsController extends AbstractController
             $withFederated = false;
         }
         $results = match ($statsType) {
-            StatsRepository::TYPE_VIEWS => $statsPeriod
-                ? $this->manager->drawDailyViewsStatsByTime($start, null, $magazine, !$withFederated)
-                : $this->manager->drawMonthlyViewsChart(null, $magazine, !$withFederated),
             StatsRepository::TYPE_VOTES => $statsPeriod
                 ? $this->manager->drawDailyVotesStatsByTime($start, null, $magazine, !$withFederated)
                 : $this->manager->drawMonthlyVotesChart(null, $magazine, !$withFederated),
