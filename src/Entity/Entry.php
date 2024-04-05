@@ -104,8 +104,6 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     public int $favouriteCount = 0;
     #[Column(type: 'integer', nullable: false)]
     public int $score = 0;
-    #[Column(type: 'integer', nullable: true)]
-    public ?int $views = 0;
     #[Column(type: 'boolean', nullable: false)]
     public bool $isAdult = false;
     #[Column(type: 'boolean', nullable: false)]
@@ -372,18 +370,6 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     public function getUser(): ?User
     {
         return $this->user;
-    }
-
-    public function getViews(): int
-    {
-        return $this->views;
-    }
-
-    public function setViews($views): self
-    {
-        $this->views = $views;
-
-        return $this;
     }
 
     public function isAdult(): bool
