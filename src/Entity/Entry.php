@@ -166,7 +166,6 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
         $this->reports = new ArrayCollection();
         $this->favourites = new ArrayCollection();
         $this->notifications = new ArrayCollection();
-        $this->viewCounters = new ArrayCollection();
         $this->badges = new ArrayCollection();
 
         $user->addEntry($this);
