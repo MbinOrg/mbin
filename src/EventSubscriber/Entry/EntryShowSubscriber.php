@@ -12,12 +12,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Tchoulom\ViewCounterBundle\Counter\ViewCounter as Counter;
 
 class EntryShowSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly Counter $viewCounter,
         private readonly Security $security,
         private readonly NotificationRepository $repository,
         private readonly EntityManagerInterface $entityManager
@@ -34,16 +32,7 @@ class EntryShowSubscriber implements EventSubscriberInterface
 
     public function onShowEntry(EntryHasBeenSeenEvent $event): void
     {
-        $this->saveView($event->entry);
         $this->readMessage($event->entry);
-    }
-
-    private function saveView(Entry $entry): void
-    {
-        try {
-            $this->viewCounter->saveView($entry);
-        } catch (\Exception $e) {
-        }
     }
 
     private function readMessage(Entry $entry): void

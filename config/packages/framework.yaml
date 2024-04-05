@@ -1,7 +1,7 @@
 framework:
     secret: '%env(APP_SECRET)%'
     #csrf_protection: true
-    annotations: true
+    annotations: false #no longer supported
     http_method_override: false
     handle_all_throwables: true
 
