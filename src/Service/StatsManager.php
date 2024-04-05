@@ -8,7 +8,6 @@ use App\Entity\Magazine;
 use App\Entity\User;
 use App\Repository\StatsContentRepository;
 use App\Repository\StatsRepository;
-use App\Repository\StatsViewsRepository;
 use App\Repository\StatsVotesRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
@@ -17,7 +16,6 @@ use Symfony\UX\Chartjs\Model\Chart;
 class StatsManager
 {
     public function __construct(
-        private readonly StatsViewsRepository $viewsRepository,
         private readonly StatsVotesRepository $votesRepository,
         private readonly StatsContentRepository $contentRepository,
         private readonly ChartBuilderInterface $chartBuilder,
@@ -75,42 +73,6 @@ class StatsManager
         $labels = array_map(fn ($val) => $val['day']->format('Y-m-d'), $stats['entries']);
 
         return $this->createGeneralDataset($stats, $labels);
-    }
-
-    public function drawMonthlyViewsChart(User $user = null, Magazine $magazine = null, bool $onlyLocal = null): Chart
-    {
-        $stats = $this->viewsRepository->getOverallStats($user, $magazine, $onlyLocal);
-
-        $labels = array_map(fn ($val) => ($val['month'] < 10 ? '0' : '').$val['month'].'/'.$val['year'], $stats);
-
-        return $this->createViewsDataset($stats, $labels);
-    }
-
-    private function createViewsDataset(array $stats, array $labels): Chart
-    {
-        $dataset = [
-            [
-                'label' => $this->translator->trans('views'),
-                'borderColor' => '#4382AD',
-                'data' => array_map(fn ($val) => $val['count'], $stats),
-            ],
-        ];
-
-        $chart = $this->chartBuilder->createChart(Chart::TYPE_LINE);
-
-        return $chart->setData([
-            'labels' => $labels,
-            'datasets' => $dataset,
-        ]);
-    }
-
-    public function drawDailyViewsStatsByTime(\DateTime $start, User $user = null, Magazine $magazine = null, bool $onlyLocal = null): Chart
-    {
-        $stats = $this->viewsRepository->getStatsByTime($start, $user, $magazine, $onlyLocal);
-
-        $labels = array_map(fn ($val) => $val['day']->format('Y-m-d'), $stats);
-
-        return $this->createViewsDataset($stats, $labels);
     }
 
     public function drawMonthlyVotesChart(User $user = null, Magazine $magazine = null, bool $onlyLocal = null): Chart
@@ -174,7 +136,6 @@ class StatsManager
         $routes = [
             'general' => StatsRepository::TYPE_GENERAL,
             'content' => StatsRepository::TYPE_CONTENT,
-            'views' => StatsRepository::TYPE_VIEWS,
             'votes' => StatsRepository::TYPE_VOTES,
         ];
 
