@@ -1,19 +1,19 @@
 # Admin Bare Metal/VM Guide
 
-Below is a step-by-step guide of the process for creating your own Mbin instance from the moment a new VPS/VM is created or directly on bare-metal.  
+Below is a step-by-step guide of the process for creating your own Mbin instance from the moment a new VPS/VM is created or directly on bare-metal.
 This is a preliminary outline that will help you launch an instance for your own needs.
 
 For Docker see: [Admin Docker Deployment Guide](./docker_deployment_guide.md).
 
-> **Note**
+> [!Note]
 > Mbin is still in development.
 
 This guide is aimed for Debian / Ubuntu distribution servers, but it could run on any modern Linux distro. This guide will however uses the `apt` commands.
 
 ## Minimum hardware requirements
 
-**CPU:** 2 cores (>2.5 GHz)  
-**RAM:** 4GB (more is recommended for large instances)  
+**CPU:** 2 cores (>2.5 GHz)
+**RAM:** 4GB (more is recommended for large instances)
 **Storage:** 20GB (more is recommended, especially if you have a lot of remote/local magazines and/or have a lot of (local) users)
 
 ## System Prerequisites
@@ -64,7 +64,8 @@ If you have a firewall installed (or you're behind a NAT), be sure to open port 
 
 1. Prepare & download keyring:
 
-_Note:_ we assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
+> [!Note]
+> This assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
 
 ```bash
 sudo mkdir -p /etc/apt/keyrings
@@ -103,7 +104,7 @@ sudo chown mbin:www-data /var/www/mbin
 
 ## Generate Secrets
 
-> **Note**
+> [!Note]
 > This will generate several valid tokens for the Mbin setup, you will need quite a few.
 
 ```bash
@@ -157,7 +158,7 @@ nano .env
 
 Make sure you have substituted all the passwords and configured the basic services in `.env` file.
 
-> **Note**
+> [!Note]
 > The snippet below are to variables inside the .env file. Using the keys generated in the section above "Generating Secrets" fill in the values. You should fully review this file to ensure everything is configured correctly.
 
 ```ini
@@ -293,7 +294,7 @@ composer clear-cache
 
 If you run production already then _skip the steps below_.
 
-> **Warning**
+> [!Warning]
 > When running in development mode your instance will make _sensitive information_ available,
 > such as database credentials, via the debug toolbar and/or stack traces.
 > **DOT NOT** expose your development instance to the Internet or you will have a bad time.
@@ -374,7 +375,7 @@ sudo systemctl start keydb-server
 sudo systemctl enable keydb-server
 ```
 
-Configuration file is located at: `/etc/keydb/keydb.conf`. See also: [config documentation](https://docs.keydb.dev/docs/config-file).  
+Configuration file is located at: `/etc/keydb/keydb.conf`. See also: [config documentation](https://docs.keydb.dev/docs/config-file).
 For example, you can also configure Unix socket files if you wish:
 
 ```ini
@@ -465,7 +466,8 @@ random_page_cost = 1.1
 effective_cache_size = 25GB
 ```
 
-**Note:** We try to set `huge_pages` to: `on` in PostgreSQL, in order to make this works you need to [enable huge pages under Linux (click here)](https://www.enterprisedb.com/blog/tuning-debian-ubuntu-postgresql) as well! Please follow that guide. and play around with your kernel configurations.
+> [!Note]
+> We try to set `huge_pages` to: `on` in PostgreSQL, in order to make this works you need to [enable huge pages under Linux (click here)](https://www.enterprisedb.com/blog/tuning-debian-ubuntu-postgresql) as well! Please follow that guide. and play around with your kernel configurations.
 
 ### NPM
 
@@ -479,7 +481,7 @@ Make sure you have substituted all the passwords and configured the basic servic
 
 #### Let's Encrypt (TLS)
 
-> **Note**
+> [!Note]
 > The Certbot authors recommend installing through snap as some distros' versions from APT tend to fall out-of-date; see https://eff-certbot.readthedocs.io/en/latest/install.html#snap-recommended for more.
 
 Install Snapd:
@@ -707,7 +709,8 @@ server {
 }
 ```
 
-**Important:** If also want to also configure your `www.domain.tld` subdomain; our advise is to use a HTTP 301 redirect from the `www` subdomain towards the root domain. Do _NOT_ try to setup a double instance (you want to _avoid_ that ActivityPub will see `www` as a separate instance). See Nginx example below:
+> [!Important]
+> If also want to also configure your `www.domain.tld` subdomain; our advise is to use a HTTP 301 redirect from the `www` subdomain towards the root domain. Do _NOT_ try to setup a double instance (you want to _avoid_ that ActivityPub will see `www` as a separate instance). See Nginx example below:
 
 ```nginx
 # Example of a 301 redirect response for the www subdomain
@@ -767,7 +770,7 @@ _Hint:_ There are also other configuration files, eg. `config/packages/monolog.y
 
 ### Symfony Messenger (Queues)
 
-The symphony messengers are background workers for a lot of different task, the biggest one being handling all the ActivityPub traffic.  
+The symphony messengers are background workers for a lot of different task, the biggest one being handling all the ActivityPub traffic.
 We have a few different queues:
 
 1. `receive` [RabbitMQ]: everything any remote instance sends to us will first end up in this queue.
@@ -792,7 +795,8 @@ We need the `dead` queue so that messages that throw a `UnrecoverableMessageHand
 
 [RabbitMQ Install](https://www.rabbitmq.com/install-debian.html#apt-quick-start-cloudsmith)
 
-_Note:_ we assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
+> [!Note]
+> This assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
 
 ```bash
 ## Team RabbitMQ's main signing key
@@ -883,7 +887,7 @@ sudo chown -R mbin:www-data metal/caddy
 
 [Caddyfile Global Options](https://caddyserver.com/docs/caddyfile/options)
 
-> **Note**
+> [!Note]
 > Caddyfiles: The one provided should work for most people, edit as needed via the previous link. Combination of mercure.conf and Caddyfile
 
 Add new `Caddyfile` file:
@@ -985,7 +989,8 @@ process_name=%(program_name)s_%(process_num)02d
 
 Save and close the file.
 
-Note: you can increase the number of running messenger jobs if your queue is building up (i.e. more messages are coming in than your messengers can handle)
+> [!Note]
+> You can increase the number of running messenger jobs if your queue is building up (i.e. more messages are coming in than your messengers can handle)
 
 We also use supervisor for running Mercure job:
 

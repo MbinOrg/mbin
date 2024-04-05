@@ -2,7 +2,7 @@
 
 For bare metal see: [Admin Bare Metal Guide](./admin_guide.md).
 
-> **Note**
+> [!Note]
 > Mbin is still in development.
 
 ## System Requirements
@@ -44,7 +44,7 @@ cd mbin
 
 ### Docker image preparation
 
-> **Note**
+> [!Note]
 > If you're using a version of Docker Engine earlier than 23.0, run `export DOCKER_BUILDKIT=1`, prior to building the image. This does not apply to users running Docker Desktop. More info can be found [here](https://docs.docker.com/build/buildkit/#getting-started)
 
 1. First go to the _docker directory_:
@@ -86,7 +86,8 @@ And instead use the following line on all places (`www`, `php`, and `messenger` 
 image: "ghcr.io/mbinorg/mbin:latest"
 ```
 
-**Important:** Do _NOT_ forget to change **ALL LINES** in that matches `image: mbin` to: `image: "ghcr.io/mbinorg/mbin:latest"` in the `compose.yml` file (should be 4 matches in total).
+> [!Important]
+> Do _NOT_ forget to change **ALL LINES** in that matches `image: mbin` to: `image: "ghcr.io/mbinorg/mbin:latest"` in the `compose.yml` file (should be 4 matches in total).
 
 3. Create config files and storage directories:
 
@@ -105,7 +106,7 @@ sudo chown $USER:$USER storage/media storage/caddy_config storage/caddy_data sto
 4. Update `APP_SECRET` in `.env`, generate a new one via: `node -e  "console.log(require('crypto').randomBytes(16).toString('hex'))"`
 5. _Optionally_: Use a newer PostgreSQL version (current fallback is v13). Update/set the `POSTGRES_VERSION` variable in your `.env` and `compose.override.yml` under `db`.
 
-> **Note**
+> [!Note]
 > Ensure the `HTTPS` environmental variable is set to `TRUE` in `compose.override.yml` for the `php`, `messenger`, and `messenger_ap` containers **if your environment is using a valid certificate behind a reverse proxy**. This is likely true for most production environments and is required for proper federation, that is, this will ensure the webfinger responses include `https:` in the URLs generated.
 
 ### Configure OAuth2 keys
@@ -152,7 +153,7 @@ docker compose up -d
 
 See your running containers via: `docker ps`.
 
-Then, you should be able to access the new instance via [http://localhost:8008](http://localhost:8008).  
+Then, you should be able to access the new instance via [http://localhost:8008](http://localhost:8008).
 You can also access RabbitMQ management UI via [http://localhost:15672](http://localhost:15672).
 
 ### Mbin first setup
@@ -202,7 +203,8 @@ If you created the file `compose.override.yml` with your configs (`cp compose.pr
 docker compose up -d
 ```
 
-**Important:** The docker instance is can be reached at [http://127.0.0.1:8008](http://127.0.0.1:8008), we strongly advise you to put a reverse proxy (like Nginx) in front of the docker instance. Nginx can could listen on ports 80 and 443 and Nginx should handle SSL/TLS offloading. See also Nginx example below.
+> [!Important]
+> The docker instance is can be reached at [http://127.0.0.1:8008](http://127.0.0.1:8008), we strongly advise you to put a reverse proxy (like Nginx) in front of the docker instance. Nginx can could listen on ports 80 and 443 and Nginx should handle SSL/TLS offloading. See also Nginx example below.
 
 If you want to deploy your app on a cluster of machines, you can
 use [Docker Swarm](https://docs.docker.com/engine/swarm/stack-deploy/), which is compatible with the provided Compose
