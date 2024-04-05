@@ -34,6 +34,10 @@ parameters:
     hcaptcha_site_key: "%env(resolve:HCAPTCHA_SITE_KEY)%"
     hcaptcha_secret: "%env(resolve:HCAPTCHA_SECRET)%"
 
+    oauth_azure_id: "%env(default::OAUTH_AZURE_ID)%"
+    oauth_azure_secret: "%env(OAUTH_AZURE_SECRET)%"
+    oauth_azure_tenant: "%env(OAUTH_AZURE_TENANT)%"
+
     oauth_facebook_id: "%env(default::OAUTH_FACEBOOK_ID)%"
     oauth_facebook_secret: "%env(OAUTH_FACEBOOK_SECRET)%"
 

@@ -21,6 +21,8 @@ final class LoginSocialsComponent
         private readonly ?string $oauthKeycloakId,
         #[Autowire('%oauth_zitadel_id%')]
         private readonly ?string $oauthZitadelId,
+        #[Autowire('%oauth_azure_id%')]
+        private readonly ?string $oauthAzureId,
     ) {
     }
 
@@ -47,5 +49,10 @@ final class LoginSocialsComponent
     public function zitadelEnabled(): bool
     {
         return !empty($this->oauthZitadelId);
+    }
+
+    public function azureEnabled(): bool
+    {
+        return !empty($this->oauthAzureId);
     }
 }
