@@ -214,7 +214,7 @@ files.
 
 NGINX reverse proxy example for the Mbin Docker instance:
 
-```conf
+```nginx
 # Redirect HTTP to HTTPS
 server {
     server_name domain.tld;
