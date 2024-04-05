@@ -297,7 +297,7 @@ If you run production already then _skip the steps below_.
 > [!Warning]
 > When running in development mode your instance will make _sensitive information_ available,
 > such as database credentials, via the debug toolbar and/or stack traces.
-> **DOT NOT** expose your development instance to the Internet or you will have a bad time.
+> **DO NOT** expose your development instance to the Internet or you will have a bad time.
 
 ```bash
 composer install
