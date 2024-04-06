@@ -682,10 +682,10 @@ purge_content_desc: Completely purge the user's content, including deleting the 
 delete_account_desc: Delete the account, including the responses
   of other users in created threads, posts and comments.
 schedule_delete_account: Schedule Deletion
-schedule_delete_account_desc: Schedule the deletion of this account in 30 days. 
+schedule_delete_account_desc: Schedule the deletion of this account in 30 days.
   This will hide the user and their content as well as prevent the user from logging in.
 remove_schedule_delete_account: Remove Scheduled Deletion
-remove_schedule_delete_account_desc: Remove the scheduled deletion. 
+remove_schedule_delete_account_desc: Remove the scheduled deletion.
   All the content will be available again and the user will be able to login.
 two_factor_authentication: Two-factor authentication
 two_factor_backup: Two-factor authentication backup codes
@@ -811,3 +811,4 @@ hide: Hide
 edited: edited
 sso_registrations_enabled: SSO registrations enabled
 sso_registrations_enabled.error: New account registrations with third-party identity managers are currently disabled.
+restrict_magazine_creation: Restrict local magazine creation to admins and global mods
