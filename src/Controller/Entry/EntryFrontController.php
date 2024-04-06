@@ -166,7 +166,11 @@ class EntryFrontController extends AbstractController
     {
         $baseData = ['criteria' => $criteria] + $data;
         if ('microblog' === $content) {
-            $baseData['form'] = $this->createForm(PostType::class)->setData(new PostDto())->createView();
+            $dto = new PostDto();
+            if (isset($data['magazine'])) {
+                $dto->magazine = $data['magazine'];
+            }
+            $baseData['form'] = $this->createForm(PostType::class)->setData($dto)->createView();
         }
 
         if ($request->isXmlHttpRequest()) {
