@@ -87,8 +87,6 @@ browsing_one_thread: Stai visualizzando solo uno dei thread nella discussione! N
   pagina del post specifico potrai trovare tutti commenti.
 kbin_intro_desc: è una piattaforma decentralizzata per l'aggregazione di contenuti
   e microblogging che opera all'interno della rete del Fediverso.
-delete_account_request_send: La tua richiesta di eliminazione dell'account è stata
-  inviata.
 kbin_promo_desc: '%link_start%Clona il repository%link_end% e sviluppa il fediverso'
 type.link: Link
 login: Accedi

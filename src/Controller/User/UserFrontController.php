@@ -40,6 +40,10 @@ class UserFrontController extends AbstractController
         $requestedByUser = $this->getUser();
         $hideAdult = (!$requestedByUser || $requestedByUser->hideAdult);
 
+        if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
+            throw $this->createNotFoundException();
+        }
+
         $activity = $repository->findPublicActivity($this->getPageNb($request), $user, $hideAdult);
 
         return $this->render(
@@ -58,6 +62,10 @@ class UserFrontController extends AbstractController
         $response = new Response();
         if ($user->apId) {
             $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
+        }
+        $requestedByUser = $this->getUser();
+        if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
+            throw $this->createNotFoundException();
         }
 
         $criteria = new EntryPageView($this->getPageNb($request));
@@ -79,6 +87,11 @@ class UserFrontController extends AbstractController
         $response = new Response();
         if ($user->apId) {
             $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
+        }
+
+        $requestedByUser = $this->getUser();
+        if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
+            throw $this->createNotFoundException();
         }
 
         $criteria = new EntryCommentPageView($this->getPageNb($request));
@@ -105,6 +118,10 @@ class UserFrontController extends AbstractController
             $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
         }
 
+        $requestedByUser = $this->getUser();
+        if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
+            throw $this->createNotFoundException();
+        }
         $criteria = new PostPageView($this->getPageNb($request));
         $criteria->sortOption = Criteria::SORT_NEW;
         $criteria->user = $user;
@@ -126,6 +143,11 @@ class UserFrontController extends AbstractController
         $response = new Response();
         if ($user->apId) {
             $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
+        }
+
+        $requestedByUser = $this->getUser();
+        if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
+            throw $this->createNotFoundException();
         }
 
         $criteria = new PostCommentPageView($this->getPageNb($request));
@@ -176,6 +198,10 @@ class UserFrontController extends AbstractController
 
     public function moderated(User $user, MagazineRepository $repository, Request $request): Response
     {
+        $requestedByUser = $this->getUser();
+        if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
+            throw $this->createNotFoundException();
+        }
         $criteria = new MagazinePageView(
             $this->getPageNb($request),
             Criteria::SORT_ACTIVE,
@@ -202,6 +228,11 @@ class UserFrontController extends AbstractController
 
     public function subscriptions(User $user, MagazineRepository $repository, Request $request): Response
     {
+        $requestedByUser = $this->getUser();
+        if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
+            throw $this->createNotFoundException();
+        }
+
         $response = new Response();
         if ($user->apId) {
             $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
@@ -225,6 +256,11 @@ class UserFrontController extends AbstractController
 
     public function followers(User $user, UserRepository $repository, Request $request): Response
     {
+        $requestedByUser = $this->getUser();
+        if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
+            throw $this->createNotFoundException();
+        }
+
         $response = new Response();
         if ($user->apId) {
             $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
@@ -242,6 +278,11 @@ class UserFrontController extends AbstractController
 
     public function following(User $user, UserRepository $manager, Request $request): Response
     {
+        $requestedByUser = $this->getUser();
+        if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
+            throw $this->createNotFoundException();
+        }
+
         $response = new Response();
         if ($user->apId) {
             $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
@@ -265,6 +306,11 @@ class UserFrontController extends AbstractController
 
     public function boosts(User $user, Request $request, SearchRepository $repository)
     {
+        $requestedByUser = $this->getUser();
+        if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
+            throw $this->createNotFoundException();
+        }
+
         $response = new Response();
         if ($user->apId) {
             $response->headers->set('X-Robots-Tag', 'noindex, nofollow');

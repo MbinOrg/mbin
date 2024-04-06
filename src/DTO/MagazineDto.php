@@ -63,7 +63,7 @@ class MagazineDto
         return $this->owner;
     }
 
-    public function setOwner(User|UserDto $owner): void
+    public function setOwner(User|UserDto|null $owner): void
     {
         $this->owner = $owner;
     }

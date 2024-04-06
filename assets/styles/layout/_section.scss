@@ -61,6 +61,12 @@
   &--no-border {
     border: 0;
   }
+
+  &__danger {
+    border: var(--kbin-alert-danger-border);
+    background-color: var(--kbin-alert-danger-bg);
+    color: var(--kbin-alert-danger-text-color);
+  }
 }
 
 .page-search {

@@ -10,6 +10,7 @@ use App\DTO\PostCommentDto;
 use App\DTO\PostDto;
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Contracts\VisibilityInterface;
+use App\Entity\Entry;
 use App\Entity\User;
 use App\Factory\ImageFactory;
 use App\Repository\ApActivityRepository;
@@ -34,7 +35,7 @@ class Page
     ) {
     }
 
-    public function create(array $object): ActivityPubActivityInterface
+    public function create(array $object): Entry
     {
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
         if (!empty($actor)) {

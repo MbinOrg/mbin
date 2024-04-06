@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Repository\EntryCommentRepository;
-use App\Repository\EntryRepository;
 use App\Repository\MagazineRepository;
-use App\Repository\PostCommentRepository;
-use App\Repository\PostRepository;
+use App\Repository\StatsContentRepository;
 use App\Repository\UserRepository;
 use App\Repository\VoteRepository;
 use Doctrine\Common\Collections\Criteria;
@@ -20,10 +17,7 @@ class InstanceStatsManager
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly MagazineRepository $magazineRepository,
-        private readonly EntryRepository $entryRepository,
-        private readonly EntryCommentRepository $entryCommentRepository,
-        private readonly PostRepository $postRepository,
-        private readonly PostCommentRepository $postCommentRepository,
+        private readonly StatsContentRepository $statsContentRepository,
         private readonly VoteRepository $voteRepository,
         private readonly CacheInterface $cache
     ) {
@@ -57,14 +51,16 @@ class InstanceStatsManager
                 }
             }
 
+            $userCriteria = clone $criteria;
+            $userCriteria->andWhere(Criteria::expr()->eq('isDeleted', false));
+
             return [
-                'users' => $this->userRepository->matching($criteria)->count(),
+                'users' => $this->userRepository->matching($userCriteria)->count(),
                 'magazines' => $this->magazineRepository->matching($criteria)->count(),
-                'entries' => $this->entryRepository->matching($criteria)->count(),
-                'comments' => $this->entryCommentRepository->matching($criteria)->count(),
-                'posts' => $this->postRepository->matching($criteria)->count() + $this->postCommentRepository->matching(
-                    $criteria
-                )->count(),
+                'entries' => $this->statsContentRepository->aggregateStats('entry', $periodDate, null, $withFederated, null),
+                'comments' => $this->statsContentRepository->aggregateStats('entry_comment', $periodDate, null, $withFederated, null),
+                'posts' => $this->statsContentRepository->aggregateStats('post', $periodDate, null, $withFederated, null) +
+                    $this->statsContentRepository->aggregateStats('post_comment', $periodDate, null, $withFederated, null),
                 'votes' => $this->voteRepository->count($periodDate, $withFederated),
             ];
         });

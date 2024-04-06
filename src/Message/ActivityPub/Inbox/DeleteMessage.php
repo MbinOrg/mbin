@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Message\ActivityPub\Inbox;
 
-class DeleteMessage
+use App\Message\Contracts\ActivityPubInboxInterface;
+
+class DeleteMessage implements ActivityPubInboxInterface
 {
     public function __construct(public array $payload)
     {

@@ -6,6 +6,7 @@ namespace App\Security;
 
 use App\Entity\User as AppUser;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAccountStatusException;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -23,6 +24,10 @@ class UserChecker implements UserCheckerInterface
     {
         if (!$user instanceof AppUser) {
             return;
+        }
+
+        if ($user->isDeleted) {
+            throw new BadCredentialsException();
         }
 
         if (!$user->isVerified) {

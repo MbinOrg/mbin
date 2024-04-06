@@ -229,7 +229,7 @@ report: Melden
 share: Teilen
 copy_url: Mbin URL kopieren
 share_on_fediverse: Im Fediverse teilen
-go_to_original_instance: Auf der Original-Instanz weiterstöbern.
+go_to_original_instance: Auf der Original-Instanz anzeigen
 up_vote: Boost
 down_vote: Reduzieren
 tags: Stichworte
@@ -325,12 +325,11 @@ random_magazines: Zufällige Magazine
 random_entries: Zufällige Themen
 related_entries: Verwandte Themen
 delete_account: Konto löschen
-delete_account_request_send: Deine Anfrage um dein Konto zu löschen wurde abgeschickt.
 auto_preview: Automatische Medienvorschau
 inactive: Inaktiv
 mod_remove_your_thread: Ein Moderator hat dein Thema entfernt
 mod_log_alert: WARNUNG - Der Modlog kann unangenehme oder verstörende Inhalte enthalten,
-  welche von Moderatoren entfernt wurden. Bitte bedenke, was du tust.
+  welche von Moderatoren entfernt wurden. Bitte bedenke was du tust.
 removed_thread_by: hat ein Thema entfernt, erstellt von
 restored_thread_by: hat ein Thema wiederhergestellt, erstellt von
 removed_comment_by: hat einen Kommentar entfernt, erstellt von
@@ -431,10 +430,6 @@ federation_page_enabled: Föderationsseite aktiviert
 federation_page_disallowed_description: Instanzen mit denen wir nicht föderieren
 federation_page_allowed_description: Bekannte Instanzen mit denen wir föderieren
 federated_search_only_loggedin: Föderierte Suche ist eingeschränkt wenn nicht angemeldet
-request_account_deletion_title: Kontolöschung
-request_account_deletion_description: Der Administrator wird davon benachrichtigt,
-  dass du dein Konto löschen möchtest.
-request_account_deletion_button: Kontolöschung anfordern
 more_from_domain: Mehr von der Domäne
 resend_account_activation_email_error: Es gab ein Problem bei der Bearbeitung der
   Anfrage. Eventuell gibt es keinen Account der mit diese E-Mail assoziiert wird oder
@@ -508,8 +503,6 @@ delete_content_desc: Lösche den Inhalt des Users, aber behalte die Antworten an
   Nutzer in den erstellten Themen, Beiträgen und Kommentaren.
 magazine_theme_appearance_custom_css: Eigenes CSS das angewendet wird wenn Inhalte
   innerhalb deines Magazins angeschaut werden.
-purge_account_desc: Lösche den Account endgültig, inklusive aller Antworten von anderen
-  Nutzern in den erstellten Themen, Beiträgen und Kommentaren.
 2fa.backup_codes.help: Du kannst diese Code nutzen wenn du keinen Zugriff auf dein
   Zwei-Faktor-Authentifizierung Gerät oder deine App hast. Die Codes werden dir <strong>nicht
   noch einmal gezeigt werden</strong> und du kannst jeden Code <strong>nur ein einziges
@@ -621,7 +614,7 @@ oauth2.grant.moderate.entry.all: Moderiere Themen in deinen moderierten Magazine
 oauth2.grant.entry_comment.all: Erstelle, Bearbeite oder Lösche deine Kommentare in
   Themen und favorisiere, booste oder melde jeden Kommentar in einem Thema.
 oauth2.grant.entry_comment.delete: Lösche deine existierenden Kommentare in Themen.
-delete_account_desc: Lösche den Account, aber behalte Antworten andere Nutzer in den
+delete_account_desc: Lösche den Account, inklusive Antworten anderer Nutzer in den
   erstellten Themen, Beiträgen und Kommentaren.
 subject_reported_exists: Dieser Inhalt wurde bereits gemeldet.
 oauth2.grant.moderate.entry_comment.set_adult: Kennzeichne Kommentare in Themen in
@@ -789,7 +782,6 @@ flash_comment_new_success: Kommentar wurde erfolgreich erstellt.
 flash_user_settings_general_error: Nutzer Einstellungen konnten nicht gespeichert
   werden.
 account_is_suspended: Dieses Nutzerkonto ist suspendiert.
-delete_account_request_revoke: Deine Anfrage auf Kontolöschung wurde zurückgezogen.
 user_suspend_desc: Dein Konto suspendieren versteckt deine Inhalte auf der Instanz,
   löscht diese aber nicht permanent, du kannst die Inhalte jederzeit wiederherstellen.
 ownership_requests: Eigentümer Anfragen
@@ -812,7 +804,6 @@ change_my_avatar: Meinen Avatar ändern
 flash_user_edit_profile_success: Nutzer Profil Einstellungen erfolgreich gespeichert.
 flash_user_settings_general_success: Nutzer Einstellungen erfolgreich gespeichert.
 remove_subscriptions: Abonnements entfernen
-request_account_deletion_revoke_button: Anforderung zur Kontolöschung zurückziehen.
 delete_magazine: Magazin löschen
 sensitive_hide: Klicke zum verstecken
 request_magazine_ownership: Magazin Eigentümerschaft beantragen
@@ -831,3 +822,29 @@ menu: Menü
 all_time: Gesamt
 details: Details
 spoiler: Spoiler
+sso_registrations_enabled: SSO Registrierung aktiviert
+marked_for_deletion: für Löschung markiert
+marked_for_deletion_at: für Löschung am %date% markiert
+subscribe_for_updates: Abonniere um Updates zu erhalten.
+sidebar_sections_local_only: Beschränke "Zufällige X" und "Aktive Nutzer" Abschnitte
+  auf lokale Inhalte
+account_deletion_title: Kontolöschung
+account_deletion_description: Dein Konto wird in 30 Tagen gelöscht außer du entscheidest
+  dich dein Konto sofort zu löschen. Das Konto kann nicht wiederhergestellt werden
+  sobald es gelöscht ist.
+account_deletion_button: Lösche Konto
+account_deletion_immediate: Sofort Löschen
+remove_schedule_delete_account: Entferne geplante Löschung
+remove_schedule_delete_account_desc: Entfernt die geplante Löschung. Aller Inhalt
+  wird wieder verfügbar sein und der Nutzer wird sich wieder anmelden können.
+disconnected_magazine_info: Dieses Magazin erhält keine Updates (letzte Aktivität
+  vor %days% Tage(n)).
+always_disconnected_magazine_info: Dieses Magazin erhält keine Updates.
+schedule_delete_account: Plane Löschung
+schedule_delete_account_desc: Plane die Löschung des Kontos in 30 Tagen. Dies wird
+  den Nutzer und deren Inhalt verstecken und die Anmeldung verhindern.
+sso_registrations_enabled.error: Neue Konto Registrierung mit Identitätsmanager von
+  Drittanbietern sind momentan deaktiviert.
+show: Zeige
+hide: Verstecke
+edited: Bearbeitet

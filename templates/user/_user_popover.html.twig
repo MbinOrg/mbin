@@ -9,10 +9,16 @@
             }) }}
         {% endif %}
         <div>
-            <a class="link-muted" href="{{ path('user_overview', {username: user.username}) }}">
-                <h3>{{ user.username|username }}</h3>
-                <p>{{ user.username|username(true) }}</p>
-            </a>
+            <h3>
+                <a class="link-muted" href="{{ path('user_overview', {username: user.username}) }}">{{ user.username|username }}</a>
+            </h3>
+            <p class="user__name">
+                <span>{{ user.username|username(true) }}</span>
+                {% if user.apProfileId %}
+                    <a href="{{ user.apProfileId }}" rel="noopener noreferrer nofollow" target="_blank" title="{{ 'go_to_original_instance'|trans }}" aria-label="{{ 'go_to_original_instance'|trans }}">
+                    <i class="fa-solid fa-external-link" aria-hidden="true"></i></a>
+                {% endif %}
+            </p>
             <ul>
                 <li>{{ 'joined'|trans }}: {{ component('date', {date: user.createdAt}) }}</li>
                 <li>
@@ -21,10 +27,6 @@
                         {{ 'reputation_points'|trans }}: {{ get_reputation_total(user) }}
                     </a>
                 </li>
-                {% if user.apProfileId %}
-                    <li><a href="{{ user.apProfileId }}">{{ 'go_to_original_instance'|trans|trim('.', 'right') }}</a>
-                    </li>
-                {% endif %}
             </ul>
             {{ component('user_actions', {user: user}) }}
         </div>

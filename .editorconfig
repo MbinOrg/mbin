@@ -1,3 +1,26 @@
+root = true
+
+[*]
+end_of_line = LF
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.php]
+indent_style = space
+indent_size = 4
+
+[*.twig]
+indent_style = space
+indent_size = 4
+
+[*.js]
+indent_style = space
+indent_size = 4
+
+[*.{css,scss}]
+indent_style = space
+indent_size = 2
+
 [*.json]
 indent_style = space
 indent_size = 4
@@ -11,7 +34,6 @@ quote_type = single
 indent_style = space
 indent_size = 2
 quote_type = single
-
 
 [.github/workflows/*.yaml]
 indent_style = space

@@ -99,22 +99,42 @@ class SearchRepository
         return $this->buildResult($result, $page, $countAll);
     }
 
-    public function search($query, int $page = 1): PagerfantaInterface
+    public function search(?User $searchingUser, string $query, int $page = 1): PagerfantaInterface
     {
         // @todo union adapter
         $conn = $this->entityManager->getConnection();
-        $sql = "
-        (SELECT id, created_at, visibility, 'entry' AS type FROM entry WHERE body_ts @@ plainto_tsquery( :query ) = true OR title_ts @@ plainto_tsquery( :query ) = true AND visibility = :visibility)
-        UNION
-        (SELECT id, created_at, visibility, 'entry_comment' AS type FROM entry_comment WHERE body_ts @@ plainto_tsquery( :query ) = true AND visibility = :visibility)
-        UNION
-        (SELECT id, created_at, visibility, 'post' AS type FROM post WHERE body_ts @@ plainto_tsquery( :query ) = true AND visibility = :visibility)
-        UNION
-        (SELECT id, created_at, visibility, 'post_comment' AS type FROM post_comment WHERE body_ts @@ plainto_tsquery( :query ) = true AND visibility = :visibility)
+        $sql = "SELECT e.id, e.created_at, e.visibility, 'entry' AS type FROM entry e
+            INNER JOIN public.user u ON u.id = user_id 
+            INNER JOIN magazine m ON e.magazine_id = m.id
+            WHERE body_ts @@ plainto_tsquery( :query ) = true OR title_ts @@ plainto_tsquery( :query ) = true AND e.visibility = :visibility AND u.is_deleted = false 
+                AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
+                AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)                                    
+        UNION ALL
+        SELECT e.id, e.created_at, e.visibility, 'entry_comment' AS type FROM entry_comment e
+            INNER JOIN public.user u ON u.id = user_id 
+            INNER JOIN magazine m ON e.magazine_id = m.id
+            WHERE body_ts @@ plainto_tsquery( :query ) = true AND e.visibility = :visibility AND u.is_deleted = false 
+                AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
+                AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)        
+        UNION ALL
+        SELECT e.id, e.created_at, e.visibility, 'post' AS type FROM post e
+            INNER JOIN public.user u ON u.id = user_id 
+            INNER JOIN magazine m ON e.magazine_id = m.id
+            WHERE body_ts @@ plainto_tsquery( :query ) = true AND e.visibility = :visibility AND u.is_deleted = false 
+                AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
+                AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)        
+        UNION ALL
+        SELECT e.id, e.created_at, e.visibility, 'post_comment' AS type FROM post_comment e
+            INNER JOIN public.user u ON u.id = user_id 
+            INNER JOIN magazine m ON e.magazine_id = m.id
+            WHERE body_ts @@ plainto_tsquery( :query ) = true AND e.visibility = :visibility AND u.is_deleted = false 
+                AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
+                AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)        
         ORDER BY created_at DESC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('query', $query);
         $stmt->bindValue('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
+        $stmt->bindValue('queryingUser', $searchingUser?->getId() ?? -1);
         $stmt = $stmt->executeQuery();
 
         $pagerfanta = new Pagerfanta(

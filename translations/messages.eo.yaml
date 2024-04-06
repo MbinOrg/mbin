@@ -356,7 +356,6 @@ restore: Restarigi
 add_mentions_posts: Aldoni mencioetikedojn en afiŝoj
 firstname: Persona nomo
 active_users: Aktivaj homoj
-delete_account_request_send: Via peto forigi la konton estas sendita.
 sidebar: Flanka kolumno
 auto_preview: Aŭtomata aŭdvidaĵa antaŭvido
 dynamic_lists: Dinamikaj listoj
@@ -444,7 +443,6 @@ oauth.consent.deny: Nei
 oauth.consent.title: OAuth2 konsentformularo
 federation_page_allowed_description: Konataj nodoj kun kiuj ni federacias
 resend_account_activation_email: Resendi retpoŝton pri aktivigo de konto
-request_account_deletion_button: Peti Forigon de Konto
 errors.server500.title: 500 Servila eraro
 toolbar.link: Ligilo
 toolbar.mention: Mencio
@@ -459,11 +457,8 @@ oauth.client_not_granted_message_read_permission: Ĉi tiu programo ne ricevis pe
   legi viajn mesaĝojn.
 restrict_oauth_clients: Limigi kreadon de Kliento OAuth2 al Administrantoj
 federation_page_disallowed_description: Nodoj kun kiuj ni ne federacias
-request_account_deletion_description: La administranto estos sciigita, ke vi volas,
-  ke via konto estus forigita.
 unblock: Malbloki
 oauth.consent.grant_permissions: Doni Permesojn
-request_account_deletion_title: Forigo de Konto
 oauth2.grant.moderate.magazine.ban.delete: Malforbari uzantojn en la revuoj, kiujn
   vi moderigas.
 oauth.client_identifier.invalid: Nevalida OAuth Kliento-ID!

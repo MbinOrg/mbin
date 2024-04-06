@@ -3,7 +3,7 @@
         {# Then show a link to original if we're at the end of content #}
         <div class="alert alert__info">
             <p>
-                {{ 'federated_magazine_info'|trans }} <a href="{{ magazine.apProfileId }}">{{ 'go_to_original_instance'|trans }}</a>
+                {{ 'federated_magazine_info'|trans }} <a href="{{ magazine.apProfileId }}" rel="noopener noreferrer nofollow" target="_blank"><span>{{ 'go_to_original_instance'|trans }}</span> <i class="fa-solid fa-external-link" aria-hidden="true"></i></a>
             </p>
         </div>
     {% endif %}

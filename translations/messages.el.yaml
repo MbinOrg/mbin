@@ -280,7 +280,6 @@ random_entries: Τυχαία νήματα
 delete_account: Διαγραφή λογαριασμού
 purge_account: Εκκαθάριση λογαριασμού
 ban_account: Αποκλεισμός λογαριασμού
-delete_account_request_send: Το αίτημά σας για διαγραφή του λογαριασμού έχει υποβληθεί.
 related_magazines: Σχετικά περιοδικά
 sidebar: Πλαϊνή μπάρα
 auto_preview: Αυτόματη προεπισκόπηση πολυμέσων

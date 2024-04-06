@@ -86,6 +86,7 @@ class EntryRepository extends ServiceEntityRepository implements TagRepositoryIn
             ->where('e.visibility = :visibility')
             ->andWhere('m.visibility = :visible')
             ->andWhere('u.visibility = :visible')
+            ->andWhere('u.isDeleted = false')
             ->join('e.magazine', 'm')
             ->join('e.user', 'u')
             ->leftJoin('e.domain', 'd');
@@ -327,6 +328,7 @@ class EntryRepository extends ServiceEntityRepository implements TagRepositoryIn
             ->andWhere('e.visibility = :visibility')
             ->andWhere('m.visibility = :visibility')
             ->andWhere('u.visibility = :visibility')
+            ->andWhere('u.isDeleted = false')
             ->andWhere('m.isAdult = false')
             ->andWhere('e.isAdult = false')
             ->join('e.magazine', 'm')
@@ -346,6 +348,7 @@ class EntryRepository extends ServiceEntityRepository implements TagRepositoryIn
             ->andWhere('e.visibility = :visibility')
             ->andWhere('m.visibility = :visibility')
             ->andWhere('u.visibility = :visibility')
+            ->andWhere('u.isDeleted = false')
             ->andWhere('m.isAdult = false')
             ->andWhere('e.isAdult = false')
             ->join('e.magazine', 'm')
@@ -367,6 +370,7 @@ class EntryRepository extends ServiceEntityRepository implements TagRepositoryIn
             ->andWhere('e.visibility = :visibility')
             ->andWhere('m.visibility = :visibility')
             ->andWhere('u.visibility = :visibility')
+            ->andWhere('u.isDeleted = false')
             ->andWhere('m.isAdult = false');
         if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
             $qb = $qb->andWhere('m.apId IS NULL');
@@ -436,6 +440,8 @@ class EntryRepository extends ServiceEntityRepository implements TagRepositoryIn
         $qb->andWhere('e.id != :id')
             ->andWhere('m.visibility = :visibility')
             ->andWhere('e.visibility = :visibility')
+            ->andWhere('u.isDeleted = false')
+            ->innerJoin('e.user', 'u')
             ->join('e.magazine', 'm')
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->setParameter('id', $entry->getId())

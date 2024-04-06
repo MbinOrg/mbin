@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{%- block title -%}
+    {{- 'account_deletion_title'|trans }} - {{ app.user.username|username(false) }} - {{ parent() -}}
+{%- endblock -%}
+
+
+{% block mainClass %}page-settings page-settings-account-deletion{% endblock %}
+
+{% block header_nav %}
+{% endblock %}
+
+{% block sidebar_top %}
+{% endblock %}
+
+{% block body %}
+    {% include('user/settings/_options.html.twig') %}
+    {% include('user/_visibility_info.html.twig') %}
+    {% include 'layout/_flash.html.twig' %}
+    <div class="section section__danger">
+        <div class="container">
+            <h2>{{ 'account_deletion_title'|trans }}</h2>
+            <p>{{ 'account_deletion_description'|trans }}</p>
+            {{  form_start(form) }}
+            {{ form_row(form.currentPassword, {label: 'current_password'}) }}
+            {{ form_row(form.instantDelete, {label: 'account_deletion_immediate', row_attr: {class: 'checkbox'}}) }}
+            <div class="row actions">
+                {{ form_row(form.submit, { label: 'account_deletion_button', attr: { class: 'btn btn__danger' } }) }}
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

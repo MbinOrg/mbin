@@ -202,23 +202,33 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
 
     public function isAbandoned(): bool
     {
-        return !$this->apId and $this->getOwner()->lastActive < new \DateTime('-1 month');
+        return !$this->apId and (null === $this->getOwner() || $this->getOwner()->lastActive < new \DateTime('-1 month'));
     }
 
-    public function getOwnerModerator(): Moderator
+    public function getOwnerModerator(): ?Moderator
     {
         $criteria = Criteria::create()
             ->where(Criteria::expr()->eq('isOwner', true));
 
-        return $this->moderators->matching($criteria)->first();
+        $res = $this->moderators->matching($criteria)->first();
+        if (false !== $res) {
+            return $res;
+        }
+
+        return null;
     }
 
-    public function getOwner(): User
+    public function getOwner(): ?User
     {
         $criteria = Criteria::create()
             ->where(Criteria::expr()->eq('isOwner', true));
 
-        return $this->moderators->matching($criteria)->first()->user;
+        $res = $this->moderators->matching($criteria)->first();
+        if (false !== $res) {
+            return $res->user;
+        }
+
+        return null;
     }
 
     public function getModeratorCount(): int

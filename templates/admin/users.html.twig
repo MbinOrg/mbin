@@ -35,19 +35,21 @@
             </thead>
             <tbody>
             {% for user in users %}
-                <tr>
-                    <td>{{ component('user_inline', {user: user}) }}</td>
-                    <td>{{ user.apId ? '-' : user.email }}</td>
-                    <td>{{ component('date', {date: user.createdAt}) }}</td>
-                    <td>{{ component('date', {date: user.lastActive}) }}</td>
-                    <td>
-                        <button class="btn btn__secondary">{{ (user.isVerified or user.apId) and not user.isBanned ? 'active'|trans : 'inactive'|trans }}</button>
-                        <button class="btn btn__secondary">{{ user.apId ? 'federated'|trans : 'local'|trans }}</button>
-                        {% if user.isTotpAuthenticationEnabled %}
-                            <button class="btn btn__secondary" title="{{ '2fa.user_active_tfa.title'|trans }}" aria-label="{{ '2fa.user_active_tfa.title'|trans }}"><i class="fa fa-mobile" aria-hidden="true"></i></button>
-                        {% endif %}
-                    </td>
-                </tr>
+                {% if not user.isDeleted %}
+                    <tr>
+                        <td>{{ component('user_inline', {user: user}) }}</td>
+                        <td>{{ user.apId ? '-' : user.email }}</td>
+                        <td>{{ component('date', {date: user.createdAt}) }}</td>
+                        <td>{{ component('date', {date: user.lastActive}) }}</td>
+                        <td>
+                            <button class="btn btn__secondary">{{ (user.isVerified or user.apId) and not user.isBanned ? 'active'|trans : 'inactive'|trans }}</button>
+                            <button class="btn btn__secondary">{{ user.apId ? 'federated'|trans : 'local'|trans }}</button>
+                            {% if user.isTotpAuthenticationEnabled %}
+                                <button class="btn btn__secondary" title="{{ '2fa.user_active_tfa.title'|trans }}" aria-label="{{ '2fa.user_active_tfa.title'|trans }}"><i class="fa fa-mobile" aria-hidden="true"></i></button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endif %}
             {% endfor %}
             </tbody>
         </table>

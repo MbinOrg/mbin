@@ -8,19 +8,110 @@ framework:
             sync: "sync://"
             async:
                 dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                options:
+                    queues:
+                        async:
+                            arguments:
+                                x-queue-version: 2
+                                x-queue-type: 'classic'
+                    exchange:
+                        name: async
                 retry_strategy:
-                    max_retries: 5
-                    delay: 600000
-                    multiplier: 10
-                    max_delay: 604800000
+                    max_retries: 7
+                    delay: 300000
+                    multiplier: 4
+                    max_delay: 86400000
                 serializer: messenger.transport.symfony_serializer
-            async_ap:
+            inbox:
                 dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                options:
+                    queues:
+                        inbox:
+                            arguments:
+                                x-queue-version: 2
+                                x-queue-type: 'classic'
+                    exchange:
+                        name: inbox
                 retry_strategy:
-                    max_retries: 5
-                    delay: 600000
-                    multiplier: 10
-                    max_delay: 604800000
+                    max_retries: 7
+                    delay: 300000
+                    multiplier: 4
+                    max_delay: 86400000
+                serializer: messenger.transport.symfony_serializer
+            receive:
+                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                options:
+                    queues:
+                        receive:
+                            arguments:
+                                x-queue-version: 2
+                                x-queue-type: 'classic'
+                    exchange:
+                        name: receive
+                retry_strategy:
+                    max_retries: 7
+                    delay: 300000
+                    multiplier: 4
+                    max_delay: 86400000
+                serializer: messenger.transport.symfony_serializer
+            deliver:
+                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                options:
+                    queues:
+                        deliver:
+                            arguments:
+                                x-queue-version: 2
+                                x-queue-type: 'classic'
+                    exchange:
+                        name: deliver
+                retry_strategy:
+                    max_retries: 7
+                    delay: 300000
+                    multiplier: 4
+                    max_delay: 86400000
+                serializer: messenger.transport.symfony_serializer
+            outbox:
+                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                options:
+                    queues:
+                        outbox:
+                            arguments:
+                                x-queue-version: 2
+                                x-queue-type: 'classic'
+                    exchange:
+                        name: outbox
+                retry_strategy:
+                    max_retries: 7
+                    delay: 300000
+                    multiplier: 4
+                    max_delay: 86400000
+                serializer: messenger.transport.symfony_serializer
+            resolve:
+                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                options:
+                    queues:
+                        resolve:
+                            arguments:
+                                x-queue-version: 2
+                                x-queue-type: 'classic'
+                    exchange:
+                        name: resolve
+                retry_strategy:
+                    max_retries: 7
+                    delay: 300000
+                    multiplier: 4
+                    max_delay: 86400000
+                serializer: messenger.transport.symfony_serializer
+            old:
+                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                options:
+                    queues:
+                        messages: ~
+                retry_strategy:
+                    max_retries: 7
+                    delay: 300000
+                    multiplier: 4
+                    max_delay: 86400000
                 serializer: messenger.transport.symfony_serializer
             failed:
                 failure_transport: dead
@@ -38,9 +129,14 @@ framework:
         routing:
             # Route your messages to the transports
             App\Message\Contracts\AsyncMessageInterface: async
-            App\Message\Contracts\AsyncApMessageInterface: async_ap
+            App\Message\Contracts\ActivityPubInboxInterface: inbox
+            App\Message\Contracts\ActivityPubInboxReceiveInterface: receive
+            App\Message\Contracts\ActivityPubOutboxDeliverInterface: deliver
+            App\Message\Contracts\ActivityPubOutboxInterface: outbox
+            App\Message\Contracts\ActivityPubResolveInterface: resolve
             # Consider adding SendEmail from Mailer via async messenger as well:
             #Symfony\Component\Mailer\Messenger\SendEmailMessage: async
+            #App\Message\Contracts\SendConfirmationEmailInterface: async
 # when@test:
 #    framework:
 #        messenger:

@@ -11,12 +11,9 @@ use App\Entity\PostComment;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\LikeMessage;
 use App\Message\ActivityPub\Outbox\AnnounceLikeMessage;
-use App\Repository\ApActivityRepository;
-use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPubManager;
 use App\Service\FavouriteManager;
 use App\Service\VoteManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -26,11 +23,8 @@ class LikeHandler
     public function __construct(
         private readonly ActivityPubManager $activityPubManager,
         private readonly VoteManager $voteManager,
-        private readonly ApActivityRepository $repository,
-        private readonly EntityManagerInterface $entityManager,
         private readonly MessageBusInterface $bus,
         private readonly FavouriteManager $manager,
-        private readonly ApHttpClient $apHttpClient,
     ) {
     }
 
@@ -40,18 +34,11 @@ class LikeHandler
             return;
         }
 
+        $chainDispatchCallback = fn ($object) => $this->bus->dispatch(new ChainActivityMessage([$object], like: $message->payload));
+
         if ('Like' === $message->payload['type']) {
-            $activity = $this->repository->findByObjectId($message->payload['object']);
-
-            if ($activity) {
-                $entity = $this->entityManager->getRepository($activity['type'])->find((int) $activity['id']);
-            } else {
-                $object = $this->apHttpClient->getActivityObject($message->payload['object']);
-
-                if (!empty($object)) {
-                    $this->bus->dispatch(new ChainActivityMessage([$object], null, null, $message->payload));
-                }
-
+            $entity = $this->activityPubManager->getEntityObject($message->payload['object'], $message->payload, $chainDispatchCallback);
+            if (!$entity) {
                 return;
             }
 
@@ -62,8 +49,11 @@ class LikeHandler
             }
         } elseif ('Undo' === $message->payload['type']) {
             if ('Like' === $message->payload['object']['type']) {
-                $activity = $this->repository->findByObjectId($message->payload['object']['object']);
-                $entity = $this->entityManager->getRepository($activity['type'])->find((int) $activity['id']);
+                $entity = $this->activityPubManager->getEntityObject($message->payload['object']['object'], $message->payload, $chainDispatchCallback);
+                if (!$entity) {
+                    return;
+                }
+
                 $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
                 // Check if actor and entity aren't empty
                 if (!empty($actor) && !empty($entity)) {

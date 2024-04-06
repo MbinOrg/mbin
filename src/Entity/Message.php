@@ -28,8 +28,8 @@ class Message
         self::STATUS_READ,
     ];
 
-    #[ManyToOne(targetEntity: MessageThread::class, cascade: ['persist'], inversedBy: 'messages')]
-    #[JoinColumn(nullable: false)]
+    #[ManyToOne(targetEntity: MessageThread::class, inversedBy: 'messages')]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public MessageThread $thread;
     #[ManyToOne(targetEntity: User::class)]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]

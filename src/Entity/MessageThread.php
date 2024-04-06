@@ -28,13 +28,13 @@ class MessageThread
     #[JoinTable(
         name: 'message_thread_participants',
         joinColumns: [
-            new JoinColumn(name: 'message_thread_id', referencedColumnName: 'id'),
+            new JoinColumn(name: 'message_thread_id', referencedColumnName: 'id', onDelete: 'CASCADE'),
         ],
         inverseJoinColumns: [
-            new JoinColumn(name: 'user_id', referencedColumnName: 'id'),
+            new JoinColumn(name: 'user_id', referencedColumnName: 'id', onDelete: 'CASCADE'),
         ]
     )]
-    #[ManyToMany(targetEntity: User::class)]
+    #[ManyToMany(targetEntity: User::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $participants;
     #[OneToMany(mappedBy: 'thread', targetEntity: Message::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]

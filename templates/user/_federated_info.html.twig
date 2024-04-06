@@ -1,6 +1,6 @@
 {% if user.apId %}
     <div class="alert alert__info">
         <p>{{ 'federated_user_info'|trans }} <a
-                    href="{{ user.apProfileId }}">{{ 'go_to_original_instance'|trans }}</a></p>
+                    href="{{ user.apProfileId }}" rel="noopener noreferrer nofollow" target="_blank"><span>{{ 'go_to_original_instance'|trans }}</span> <i class="fa-solid fa-external-link" aria-hidden="true"></i></a></p>
     </div>
 {% endif %}

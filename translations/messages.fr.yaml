@@ -245,7 +245,6 @@ auto_preview: Aperçu automatique des médias
 sidebar: Barre latérale
 random_magazines: Magazines aléatoires
 related_magazines: Magazines reliés
-delete_account_request_send: Votre demande de supprimer le compte a été soumise.
 unban_account: Débloquer le compte
 delete_account: Supprimer le compte
 related_entries: Fils reliés
@@ -560,7 +559,6 @@ oauth2.grant.moderate.entry_comment.trash: Supprimer ou restaurer des commentair
   dans les fils de discussion de vos magazines modérés.
 oauth2.grant.moderate.post.all: Modérer les publications dans vos magazines modérés.
 preferred_languages: Filtrer les langues des fils de discussion et des publications
-request_account_deletion_button: Demander la suppression d'un compte
 errors.server500.title: 500 Erreur du serveur
 oauth2.grant.entry_comment.edit: Modifier vos commentaires existants dans les fils
   de discussion.
@@ -628,8 +626,6 @@ oauth2.grant.admin.instance.settings.all: Afficher ou mettre à jour les paramè
   de votre instance.
 oauth2.grant.entry.all: Créer, modifier ou supprimer vos fils de discussion, et voter,
   booster ou signaler n'importe quel fil de discussion.
-request_account_deletion_description: L'administrateur sera informé que vous souhaitez
-  supprimer votre compte.
 magazine_theme_appearance_background_image: Image d'arrière-plan personnalisée qui
   sera appliquée lors de l'affichage du contenu de votre magazine.
 unblock: Débloquer
@@ -642,7 +638,6 @@ oauth.consent.grant_permissions: Accorder les autorisations
 oauth2.grant.user.message.create: Envoyer des messages à d'autres utilisateurs.
 oauth2.grant.admin.oauth_clients.all: Afficher ou révoquer les clients OAuth2 qui
   existent sur votre instance.
-request_account_deletion_title: Suppression de compte
 oauth2.grant.moderate.magazine.ban.delete: Annuler le bannissement d'utilisateurs
   dans vos magazines modérés.
 oauth.client_identifier.invalid: ID client OAuth non valide !
