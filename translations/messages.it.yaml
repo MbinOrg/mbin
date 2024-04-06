@@ -128,7 +128,6 @@ mod_remove_your_post: Un moderatore ha rimosso il tuo post
 add_mentions_entries: Aggiungi tag di menzione degli utenti nei contenuti
 email_confirm_title: Conferma il tuo indirizzo email.
 copy_url_to_fediverse: Copia l'url univoco nel fediverso
-views: Visualizzazioni
 no_comments: Non ci sono commenti
 subscribers: Iscritti
 filter_by_type: Filtra per tipo
