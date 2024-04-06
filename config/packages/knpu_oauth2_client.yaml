@@ -1,5 +1,12 @@
 knpu_oauth2_client:
   clients:
+    azure:
+      type: azure
+      client_id: '%oauth_azure_id%'
+      client_secret: '%oauth_azure_secret%'
+      tenant: '%oauth_azure_tenant%'
+      redirect_route: oauth_azure_verify
+      redirect_params: { }
     facebook:
       type: facebook
       client_id: '%oauth_facebook_id%'
