@@ -1,10 +1,10 @@
 front:
   controller: App\Controller\Entry\EntryFrontController::front
-  defaults: { subscription: def, sortBy: hot, time: '∞', type: all, federation: all, content: threads }
+  defaults: { subscription: home, sortBy: hot, time: '∞', type: all, federation: all, content: threads }
   path: /{subscription}/{sortBy}/{time}/{type}/{federation}/{content}
   methods: [GET]
   requirements:
-    subscription: 'sub|fav|mod|all|def'
+    subscription: 'sub|fav|mod|all|home'
     sortBy: "%front_sort_options%"
 
 front_redirect:

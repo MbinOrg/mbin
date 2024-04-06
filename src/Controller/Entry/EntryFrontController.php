@@ -36,7 +36,7 @@ class EntryFrontController extends AbstractController
             ->setTime($criteria->resolveTime($time))
             ->setType($criteria->resolveType($type));
 
-        if ('def' === $subscription) {
+        if ('home' === $subscription) {
             $subscription = $this->subscriptionFor($user);
         }
         $this->handleSubscription($subscription, $user, $criteria);
