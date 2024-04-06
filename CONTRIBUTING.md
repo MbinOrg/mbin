@@ -25,12 +25,12 @@ The code is mainly written in PHP using the Symfony framework with Twig templati
 
 With an account on [GitHub](https://github.com) you will be able to [fork this repository](https://github.com/MbinOrg/mbin) and `git clone` the repository locally if you wish.
 
-> _Note_:
+> [!Note]
 > If you are a Maintainer with GitHub org admin rights, you do NOT need to fork the project, instead you are allowed to use git branches. See also [C4](C4.md).
 
 ### Coding Style Guide
 
-We use [php-cs-fixer](https://cs.symfony.com/) to automatically fix code style issues according to [Symfony coding standard](https://symfony.com/doc/current/contributing/code/standards.html).  
+We use [php-cs-fixer](https://cs.symfony.com/) to automatically fix code style issues according to [Symfony coding standard](https://symfony.com/doc/current/contributing/code/standards.html).
 It is based on the [PHP-FIG coding standards](https://www.php-fig.org/psr/).
 
 Install PHP-CS-Fixer first: `composer -d tools install`
@@ -75,7 +75,7 @@ SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Unit
 
 ### Fixtures
 
-You might want to load random data to database instead of manually adding magazines, users, posts, comments etc.  
+You might want to load random data to database instead of manually adding magazines, users, posts, comments etc.
 To do so, execute: `bin/console doctrine:fixtures:load --append --no-debug`
 
 If you want to do the same but with the Docker setup, execute: `docker compose exec php bin/console doctrine:fixtures:load --append --no-debug` (from the `docker` directory)

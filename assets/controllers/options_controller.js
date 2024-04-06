@@ -2,7 +2,7 @@ import {Controller, ActionEvent} from '@hotwired/stimulus';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
-    static targets = ['federation', 'settings', 'actions'];
+    static targets = ['settings', 'actions'];
     static values = {
         activeTab: String
     }
@@ -14,7 +14,7 @@ export default class extends Controller {
           return;
         }
 
-        if (activeTabFragment !== '#federation' && activeTabFragment !== '#settings') {
+        if (activeTabFragment !== '#settings') {
           return;
         }
 
@@ -39,7 +39,6 @@ export default class extends Controller {
 
     activeTabValueChanged(selectedTab) {
         if (selectedTab === 'none') {
-            this.federationTarget.style.display = 'none';
             this.settingsTarget.style.display = 'none';
 
             return;
@@ -47,9 +46,11 @@ export default class extends Controller {
 
         this[`${selectedTab}Target`].style.display = 'block';
 
-        const otherTab = selectedTab === 'settings' ? 'federation' : 'settings';
-
-        this[`${otherTab}Target`].style.display = 'none';
+        // If you were to need to hide another tab:
+        
+        //const otherTab = selectedTab === 'settings' ? 'federation' : 'settings';
+        //
+        //this[`${otherTab}Target`].style.display = 'none';
     }
 
     closeMobileSidebar() {
