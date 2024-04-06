@@ -33,7 +33,6 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OrderBy;
-use Tchoulom\ViewCounterBundle\Model\ViewCountable;
 use Webmozart\Assert\Assert;
 
 #[Entity(repositoryClass: EntryRepository::class)]
@@ -47,7 +46,7 @@ use Webmozart\Assert\Assert;
 #[Index(columns: ['last_active'], name: 'entry_last_active_at_idx')]
 #[Index(columns: ['body_ts'], name: 'entry_body_ts_idx')]
 #[Index(columns: ['title_ts'], name: 'entry_title_ts_idx')]
-class Entry implements VotableInterface, CommentInterface, DomainInterface, VisibilityInterface, RankingInterface, ReportInterface, FavouriteInterface, ViewCountable, TagInterface, ActivityPubActivityInterface, ContentVisibilityInterface
+class Entry implements VotableInterface, CommentInterface, DomainInterface, VisibilityInterface, RankingInterface, ReportInterface, FavouriteInterface, TagInterface, ActivityPubActivityInterface, ContentVisibilityInterface
 {
     use VotableTrait;
     use RankingTrait;
@@ -105,8 +104,6 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     public int $favouriteCount = 0;
     #[Column(type: 'integer', nullable: false)]
     public int $score = 0;
-    #[Column(type: 'integer', nullable: true)]
-    public ?int $views = 0;
     #[Column(type: 'boolean', nullable: false)]
     public bool $isAdult = false;
     #[Column(type: 'boolean', nullable: false)]
@@ -131,8 +128,6 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     public Collection $notifications;
     #[OneToMany(mappedBy: 'entry', targetEntity: HashtagLink::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $hashtags;
-    #[OneToMany(mappedBy: 'entry', targetEntity: ViewCounter::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
-    public Collection $viewCounters;
     #[OneToMany(mappedBy: 'entry', targetEntity: EntryBadge::class, cascade: ['remove', 'persist'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $badges;
     public array $children = [];
@@ -171,7 +166,6 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
         $this->reports = new ArrayCollection();
         $this->favourites = new ArrayCollection();
         $this->notifications = new ArrayCollection();
-        $this->viewCounters = new ArrayCollection();
         $this->badges = new ArrayCollection();
 
         $user->addEntry($this);
@@ -311,18 +305,6 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
         return $this;
     }
 
-    public function addViewCounter(ViewCounter $viewCounter): self
-    {
-        $this->viewCounters[] = $viewCounter;
-
-        return $this;
-    }
-
-    public function removeViewCounter(ViewCounter $viewCounter): void
-    {
-        $this->viewCounters->removeElement($viewCounter);
-    }
-
     public function isAuthor(User $user): bool
     {
         return $user === $this->user;
@@ -388,18 +370,6 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     public function getUser(): ?User
     {
         return $this->user;
-    }
-
-    public function getViews(): int
-    {
-        return $this->views;
-    }
-
-    public function setViews($views): self
-    {
-        $this->views = $views;
-
-        return $this;
     }
 
     public function isAdult(): bool

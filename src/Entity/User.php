@@ -654,18 +654,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
             ->count();
     }
 
-    public function getEntriesViewsCount(): int
-    {
-        $views = 0;
-
-        // todo query
-        foreach ($this->entries as $entry) {
-            $views += $entry->views;
-        }
-
-        return $views;
-    }
-
     public function isAdmin(): bool
     {
         return \in_array('ROLE_ADMIN', $this->getRoles());

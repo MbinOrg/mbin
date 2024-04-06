@@ -10,12 +10,6 @@ api_instance_modlog_retrieve:
   methods: [ GET ]
   format: json
 
-api_instance_retrieve_views:
-  controller: App\Controller\Api\Instance\InstanceRetrieveStatsApi::views
-  path: /api/stats/views
-  methods: [ GET ]
-  format: json
-
 api_instance_retrieve_votes:
   controller: App\Controller\Api\Instance\InstanceRetrieveStatsApi::votes
   path: /api/stats/votes

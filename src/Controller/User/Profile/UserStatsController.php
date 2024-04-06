@@ -44,9 +44,6 @@ class UserStatsController extends AbstractController
         }
 
         $results = match ($statsType) {
-            StatsRepository::TYPE_VIEWS => $statsPeriod
-                ? $this->manager->drawDailyViewsStatsByTime($start, $user, null, !$withFederated)
-                : $this->manager->drawMonthlyViewsChart($user, null, !$withFederated),
             StatsRepository::TYPE_VOTES => $statsPeriod
                 ? $this->manager->drawDailyVotesStatsByTime($start, $user, null, !$withFederated)
                 : $this->manager->drawMonthlyVotesChart($user, null, !$withFederated),
