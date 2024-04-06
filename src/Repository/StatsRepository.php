@@ -14,7 +14,6 @@ abstract class StatsRepository extends ServiceEntityRepository
 {
     public const TYPE_GENERAL = 'general';
     public const TYPE_CONTENT = 'content';
-    public const TYPE_VIEWS = 'views';
     public const TYPE_VOTES = 'votes';
 
     protected ?\DateTime $start;
