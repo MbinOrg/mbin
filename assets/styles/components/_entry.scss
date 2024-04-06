@@ -446,6 +446,24 @@
   }
 }
 
+.entries-cross-2, .entries-cross-3 {
+  display: grid;
+  margin: 0;
+  padding: 0;
+
+  @include media-breakpoint-down(lg) {
+    display: block;
+  }
+}
+
+.entries-cross-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.entries-cross-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
 .entry-cross {
   grid-template-areas: "vote meta"
                        "preview preview"
@@ -483,6 +501,31 @@
 
   .meta {
     align-self: center;
+
+    @include media-breakpoint-down(lg) {
+      & div {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 270px;
+      }
+    }
+
+    @include media-breakpoint-up(lg) {
+      .entries-cross-2 & div, .entries-cross-3 & div {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .entries-cross-2 & div {
+        max-width: 370px;
+      }
+
+      .entries-cross-3 & div {
+        max-width: 270px;
+      }
+    }
   }
 
   footer {

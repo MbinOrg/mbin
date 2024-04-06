@@ -35,7 +35,6 @@ favourite: Favoriet
 more: Meer
 avatar: Profielfoto
 added: Toegevoegd
-views: Weergaven
 no_comments: Geen reacties
 created_at: Aangemaakt
 owner: Eigenaar
@@ -837,3 +836,9 @@ schedule_delete_account: Plan Verwijdering
 schedule_delete_account_desc: Plan de verwijdering van dit account over 30 dagen.
   Hierdoor worden de gebruiker en zijn inhoud verborgen en kan de gebruiker niet inloggen.
 remove_schedule_delete_account: Geplande verwijdering verwijderen
+filter_by_subscription: ''
+auto: ''
+restrict_magazine_creation: ''
+sort_by: ''
+filter_by_federation: ''
+filter_labels: ''

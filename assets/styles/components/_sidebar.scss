@@ -507,11 +507,11 @@
     }
   }
 
-  #settings, #federation {
+  #settings, #sidebarcontent {
     display: none;
   }
 
-  #settings:target, #federation:target {
+  #settings:target, #sidebarcontent:target {
     display: block;
   }
 

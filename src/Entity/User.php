@@ -109,6 +109,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
     public ?array $fields = null;
     #[Column(type: 'string', nullable: true)]
+    public ?string $oauthAzureId = null;
+    #[Column(type: 'string', nullable: true)]
     public ?string $oauthGithubId = null;
     #[Column(type: 'string', nullable: true)]
     public ?string $oauthGoogleId = null;
@@ -753,7 +755,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
 
     public function isSsoControlled(): bool
     {
-        return $this->oauthGithubId || $this->oauthGoogleId || $this->oauthFacebookId || $this->oauthKeycloakId || $this->oauthZitadelId;
+        return $this->oauthAzureId || $this->oauthGithubId || $this->oauthGoogleId || $this->oauthFacebookId || $this->oauthKeycloakId || $this->oauthZitadelId;
     }
 
     public function getCustomCss(): ?string

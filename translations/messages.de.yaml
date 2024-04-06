@@ -44,7 +44,6 @@ profile: Profil
 article: Thema
 type.link: Link
 thread: Thema
-views: Aufrufe
 no_comments: Keine Kommentare
 owner: Eigentümer
 threads: Themen
@@ -848,3 +847,9 @@ sso_registrations_enabled.error: Neue Konto Registrierung mit Identitätsmanager
 show: Zeige
 hide: Verstecke
 edited: Bearbeitet
+filter_by_federation: ''
+auto: ''
+filter_labels: ''
+restrict_magazine_creation: ''
+sort_by: ''
+filter_by_subscription: ''

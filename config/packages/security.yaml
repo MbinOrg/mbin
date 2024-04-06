@@ -33,6 +33,7 @@ security:
             provider: app_user_provider
             custom_authenticators:
                 - App\Security\KbinAuthenticator
+                - App\Security\AzureAuthenticator
                 - App\Security\FacebookAuthenticator
                 - App\Security\GoogleAuthenticator
                 - App\Security\GithubAuthenticator

@@ -30,7 +30,6 @@ favourite: Нравиться
 more: Больше
 avatar: Аватар
 added: Добавлено
-views: Просмотрено
 up_votes: Голос За
 down_votes: Голос против
 no_comments: Нет комментариев
@@ -796,3 +795,28 @@ followers_count: '{0}Подписчиков|{1}Подписчик|]1,Inf[ Под
 remove_media: Удалить медиа
 details: Детали
 spoiler: Спойлер
+always_disconnected_magazine_info: ''
+marked_for_deletion_at: ''
+account_deletion_title: ''
+account_deletion_description: ''
+remove_schedule_delete_account_desc: ''
+remove_schedule_delete_account: ''
+schedule_delete_account_desc: ''
+show: ''
+hide: ''
+disconnected_magazine_info: ''
+sidebar_sections_local_only: ''
+schedule_delete_account: ''
+restrict_magazine_creation: ''
+auto: ''
+account_deletion_button: ''
+account_deletion_immediate: ''
+sso_registrations_enabled: ''
+marked_for_deletion: ''
+sso_registrations_enabled.error: ''
+subscribe_for_updates: ''
+filter_by_federation: ''
+sort_by: ''
+filter_labels: ''
+filter_by_subscription: ''
+edited: ''

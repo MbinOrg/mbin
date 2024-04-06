@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Security;
 
-use App\Entity\User;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -51,12 +51,9 @@ class KbinAuthenticator extends AbstractLoginFormAuthenticator
     {
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
+        } else {
+            return new RedirectResponse($this->urlGenerator->generate('front'));
         }
-
-        /** @var User $user */
-        $user = $token->getUser();
-
-        return new RedirectResponse($this->urlGenerator->generate($user->homepage));
     }
 
     protected function getLoginUrl(Request $request): string

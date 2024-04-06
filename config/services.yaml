@@ -34,6 +34,10 @@ parameters:
     hcaptcha_site_key: "%env(resolve:HCAPTCHA_SITE_KEY)%"
     hcaptcha_secret: "%env(resolve:HCAPTCHA_SECRET)%"
 
+    oauth_azure_id: "%env(default::OAUTH_AZURE_ID)%"
+    oauth_azure_secret: "%env(OAUTH_AZURE_SECRET)%"
+    oauth_azure_tenant: "%env(OAUTH_AZURE_TENANT)%"
+
     oauth_facebook_id: "%env(default::OAUTH_FACEBOOK_ID)%"
     oauth_facebook_secret: "%env(OAUTH_FACEBOOK_SECRET)%"
 
@@ -59,8 +63,16 @@ parameters:
 
     html5_validation: true
 
-    front_sort_options: top|hot|active|newest|oldest|commented
-    front_time_options: 6h|12h|1d|1w|1m|1y|all|∞
+    front_sort_options: top|hot|active|newest|oldest|commented # TODO remove fallback after tag rework
+    default_sort_options: top|hot|active|newest|oldest|commented
+    default_time_options: 3h|6h|12h|1d|1w|1m|1y|all|∞
+    default_type_options: article|articles|link|links|video|videos|photo|photos|image|images|all
+    default_subscription_options: sub|fav|mod|all|home
+    default_federation_options: local|all
+    default_content_options: threads|microblog
+
+    comment_sort_options: top|hot|active|newest|oldest
+
     stats_type: general|content|votes
 
     number_regex: "[1-9][0-9]{0,17}"
@@ -170,15 +182,6 @@ services:
               }
         arguments: ["%kbin_default_lang%"]
 
-    # User
-    App\EventListener\UserHomepageListener:
-        tags:
-            - {
-                  name: kernel.event_listener,
-                  event: kernel.request,
-                  priority: 7,
-              }
-
     # Federation
     App\EventListener\FederationStatusListener:
         tags:
@@ -214,4 +217,3 @@ services:
     debril.rss_atom.provider:
         class: App\Feed\Provider
         arguments: ['@App\Service\FeedManager']
-
