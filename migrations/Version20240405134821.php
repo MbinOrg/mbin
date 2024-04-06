@@ -24,7 +24,6 @@ final class Version20240405134821 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('ALTER TABLE "user" DROP oauth_azure_id');
     }
 }
