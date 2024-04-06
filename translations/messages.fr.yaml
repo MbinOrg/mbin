@@ -24,7 +24,6 @@ filter_by_time: Filtrer par période
 filter_by_type: Filtrer par type
 comments_count: '{0}Commentaire|{1}Commentaire|]1,Inf[ Commentaires'
 added: Ajouté
-views: Vues
 no_comments: Aucun commentaire
 created_at: Créé
 owner: Propriétaire
