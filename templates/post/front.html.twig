@@ -47,15 +47,15 @@
     {% else %}
         <h1 hidden>{{ get_active_sort_option()|trans }}</h1>
     {% endif %}
-    
-    {% if user is defined and user and user.visibility is same as 'visible' %}
+
+    {% if app.user is defined and app.user and app.user.visibility is same as 'visible' %}
     <section class="section section--top">
         {% include 'post/_form_post.html.twig' %}
     </section>
     {% endif %}
     {% include 'post/_options.html.twig' %}
     {% include 'layout/_flash.html.twig' %}
-    {% if user is defined and user %}
+    {% if app.user is defined and app.user %}
         {% include('user/_visibility_info.html.twig') %}
     {% endif %}
     {% if magazine is defined and magazine %}

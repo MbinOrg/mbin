@@ -170,6 +170,8 @@ post_single:
   defaults: { slug: -, sortBy: hot }
   path: /m/{magazine_name}/p/{post_id}/{slug}/{sortBy}
   methods: [ GET ]
+  requirements:
+    sortBy: "%comment_sort_options%"
 
 post_vote:
   controller: App\Controller\VoteController
