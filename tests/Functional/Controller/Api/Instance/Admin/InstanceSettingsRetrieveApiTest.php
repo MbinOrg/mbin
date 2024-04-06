@@ -30,6 +30,7 @@ class InstanceSettingsRetrieveApiTest extends WebTestCase
         'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN',
         'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY',
         'MBIN_SSO_REGISTRATIONS_ENABLED',
+        'MBIN_RESTRICT_MAGAZINE_CREATION',
     ];
 
     public function testApiCannotRetrieveInstanceSettingsAnonymous(): void
