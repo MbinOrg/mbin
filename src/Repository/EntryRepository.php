@@ -167,7 +167,7 @@ class EntryRepository extends ServiceEntityRepository
                 ->setParameter('user', $criteria->user);
         }
 
-        if ($criteria->type) {
+        if ($criteria->type and 'all' !== $criteria->type) {
             $qb->andWhere('e.type = :type')
                 ->setParameter('type', $criteria->type);
         }

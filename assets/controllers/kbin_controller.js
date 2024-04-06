@@ -27,6 +27,11 @@ export default class extends ApplicationController {
         if (container) {
             const containerWidth = container.clientWidth;
             const area = container.querySelector('.options__main');
+
+            if (null === area) {
+                return;
+            }
+
             const areaWidth = area.scrollWidth;
 
             if (areaWidth > containerWidth && !area.nextElementSibling) {

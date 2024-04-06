@@ -54,6 +54,7 @@ class DomainFrontController extends AbstractController
             [
                 'domain' => $domain,
                 'entries' => $listing,
+                'criteria' => $criteria,
             ]
         );
     }
