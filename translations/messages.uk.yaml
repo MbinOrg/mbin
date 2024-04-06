@@ -449,7 +449,6 @@ oauth2.grant.user.oauth_clients.all: Читати і редагувати доз
 2fa.code_invalid: Код автентифікації недійсний
 left: Ліворуч
 mod_log: Журнал модерації
-views: Перегляди
 events: Події
 oauth2.grant.user.profile.read: Читати ваш профіль.
 toolbar.link: Посилання
