@@ -1,3 +1,13 @@
-{% for entry in entries %}
-    {{ component('entry_cross', {entry: entry}) }}
-{% endfor %}
+{% if entries|length %}
+    {% set batch_size = entries|length % 2 == 0 ? 2 : 3 %}
+    {% for entry_batch in entries|batch(batch_size) %}
+        <div class="{{ html_classes('entries-cross', {
+            'entries-cross-2': entry_batch|length == 2,
+            'entries-cross-3': entry_batch|length == 3,
+        }) }}">
+        {% for entry in entry_batch %}
+            {{ component('entry_cross', {entry: entry}) }}
+        {% endfor %}
+        </div>
+    {% endfor %}
+{% endif %}
