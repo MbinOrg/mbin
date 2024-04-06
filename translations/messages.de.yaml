@@ -848,3 +848,9 @@ sso_registrations_enabled.error: Neue Konto Registrierung mit Identitätsmanager
 show: Zeige
 hide: Verstecke
 edited: Bearbeitet
+filter_by_federation: ''
+auto: ''
+filter_labels: ''
+restrict_magazine_creation: ''
+sort_by: ''
+filter_by_subscription: ''

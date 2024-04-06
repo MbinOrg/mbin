@@ -109,7 +109,7 @@ oldest: Най-стари
 cards_view: Картиен изглед
 change_password: Промяна на паролата
 email_verify: Потвърди адреса на ел. поща
-copy_url_to_fediverse: Копиране на оригиналния URL адрес
+copy_url_to_fediverse: Копиране на оригиналния адрес
 favourites: Фаворизирания
 blocked: Блокирани
 delete_account: Изтрий акаунта
@@ -158,7 +158,7 @@ send: Изпращане
 active_users: Активни хора
 add_new_post: Добавяне на нова публикация
 contact: За контакт
-open_url_to_fediverse: Отваряне на оригиналния URL адрес
+open_url_to_fediverse: Отваряне на оригиналния адрес
 notifications: Известия
 change_theme: Промяна на темата
 instance: Инстанция
@@ -197,7 +197,7 @@ edit_post: Редактиране на публикацията
 joined: Присъединяване
 removed: Премахнато от модератор
 domain: Домейн
-go_to_original_instance: Разгледай повече в оригиналната инстанция.
+go_to_original_instance: Разгледай на отдалечената инстанция
 edit_link: Редактиране на връзката
 change_my_avatar: Промяна на моя лик
 domains: Домейни
@@ -280,10 +280,10 @@ dashboard: Табло
 close: Затваряне
 show_thumbnails: Показване на миниатюри
 flash_post_new_success: Публикацията е създадена успешно.
-copy_url: Копиране на Mbin URL адрес
+copy_url: Копиране на Mbin адреса
 flash_comment_edit_error: Неуспешно редактиране на коментара. Нещо се обърка.
 flash_comment_new_error: Неуспешно създаване на коментар. Нещо се обърка.
-subscribed: Абониран
+subscribed: Абонаменти
 flash_post_new_error: Публикацията не можа да бъде създадена. Нещо се обърка.
 page_width_fixed: Фикс
 removed_thread_by: премахна нишка от
@@ -317,7 +317,7 @@ contact_email: Ел. поща за контакт
 removed_post_by: премахна публикация от
 show_magazines_icons: Показване на иконките на общностите
 flash_user_edit_profile_error: Неуспешно запазване на настройките на профила.
-kbin_bot: Mbin Бот
+kbin_bot: Mbin Агент
 added_new_reply: Добави нов отговор
 featured_magazines: Представени общности
 mod_remove_your_thread: Модератор премахна твоя нишка
@@ -353,11 +353,11 @@ two_factor_backup: Резервни кодове за двуфакторно у�
 edit_comment: Запазване на промените
 edited_comment: Редактира коментар
 mod_remove_your_post: Модератор премахна твоя публикация
-password_and_2fa: Парола & 2фу
+password_and_2fa: Парола & 2FA
 infinite_scroll: Безкрайно превъртане
 email_confirm_expire: Моля, имай предвид, че връзката ще изтече след час.
 2fa.backup: Твоите резервни кодове за двуфакторно удостоверяване
-all_time: Всичко
+all_time: Цялото време
 Password is invalid: Паролата е невалидна.
 edited_post: Редактира публикация
 added_new_post: Добави нова публикация
@@ -422,3 +422,294 @@ notify_on_new_entry_comment_reply: Отговори на мои коментар
 notify_on_new_entry: Нови нишки (връзки или статии) във всяка общност, за която съм
   абониран
 unblock: Отблокиране
+marked_for_deletion: Отбелязано за изтриване
+marked_for_deletion_at: Отбелязано за изтриване на %date%
+single_settings: Отделни
+account_deletion_title: Изтриване на акаунта
+edited: редактирано
+kbin_promo_title: Създай своя собствена инстанция
+kbin_promo_desc: '%link_start%Клонирай хранилището%link_end% и разработвай федивселената'
+default_theme_auto: ''
+flash_thread_new_success: ''
+bans: ''
+return: ''
+auto_preview_help: ''
+your_account_is_not_active: ''
+oauth2.grant.entry.create: ''
+oauth2.grant.post_comment.all: ''
+oauth2.grant.user.block: ''
+oauth2.grant.admin.entry_comment.purge: ''
+oauth2.grant.admin.user.all: ''
+comment_reply_position_help: ''
+moderation.report.reject_report_confirmation: ''
+delete_content_desc: ''
+account_suspended: ''
+moderate: ''
+mark_as_adult: ''
+pinned: ''
+header_logo: ''
+password_confirm_header: ''
+oauth2.grant.moderate.magazine.reports.read: ''
+oauth2.grant.entry.delete: ''
+oauth2.grant.post.report: ''
+read_all: ''
+he_unbanned: ''
+flash_mark_as_adult_success: ''
+flash_magazine_new_success: ''
+flash_thread_unpin_success: ''
+unmark_as_adult: ''
+perm: ''
+banned_instances: ''
+unban_account: ''
+ban_account: ''
+your_account_has_been_banned: ''
+oauth.consent.grant_permissions: ''
+oauth.consent.title: ''
+oauth2.grant.moderate.magazine.reports.all: ''
+oauth2.grant.moderate.magazine.reports.action: ''
+oauth2.grant.moderate.magazine.ban.delete: ''
+oauth2.grant.post.edit: ''
+oauth2.grant.user.profile.read: ''
+oauth2.grant.user.profile.all: ''
+oauth2.grant.moderate.post_comment.set_adult: ''
+moderation.report.ban_user_title: ''
+oauth2.grant.admin.instance.stats: ''
+delete_content: ''
+2fa.backup_codes.help: ''
+2fa.backup_codes.recommendation: ''
+2fa.available_apps: ''
+subscription_sidebar_pop_out_left: ''
+purge_magazine: ''
+account_unbanned: ''
+account_banned: ''
+user_suspend_desc: ''
+moderator_requests: ''
+ownership_requests: ''
+magazine_panel_tags_info: ''
+captcha_enabled: ''
+reset_check_email_desc2: ''
+oauth2.grant.user.follow: ''
+oauth2.grant.moderate.entry.change_language: ''
+flash_thread_new_error: ''
+oauth2.grant.moderate.magazine.ban.all: ''
+oauth2.grant.moderate.post.pin: ''
+purge_content_desc: ''
+schedule_delete_account: ''
+subject_reported_exists: ''
+flash_comment_edit_success: ''
+account_settings_changed: ''
+filter_by_federation: ''
+sort_by: ''
+filter_by_subscription: ''
+remove_media: ''
+reset_check_email_desc: ''
+too_many_requests: ''
+flash_unmark_as_adult_success: ''
+set_magazines_bar_desc: ''
+he_banned: ''
+ban_expired: ''
+banned: ''
+sticky_navbar: ''
+expired_at: ''
+tokyo_night: ''
+infinite_scroll_help: ''
+filter.adult.label: ''
+filter.fields.label: ''
+filter.origin.label: ''
+oauth2.grant.moderate.magazine_admin.moderators: ''
+oauth2.grant.entry.edit: ''
+oauth2.grant.entry_comment.delete: ''
+oauth2.grant.entry_comment.report: ''
+oauth2.grant.user.message.read: ''
+oauth.client_identifier.invalid: ''
+oauth2.grant.moderate.magazine.list: ''
+oauth2.grant.moderate.magazine_admin.delete: ''
+oauth2.grant.moderate.magazine_admin.badges: ''
+oauth2.grant.moderate.magazine_admin.stats: ''
+oauth2.grant.admin.entry.purge: ''
+oauth2.grant.read.general: ''
+oauth2.grant.write.general: ''
+oauth2.grant.delete.general: ''
+oauth2.grant.report.general: ''
+oauth2.grant.vote.general: ''
+oauth2.grant.domain.subscribe: ''
+oauth2.grant.entry.all: ''
+oauth2.grant.domain.block: ''
+oauth2.grant.entry.vote: ''
+oauth2.grant.entry.report: ''
+sidebar_sections_local_only: ''
+oauth.client_not_granted_message_read_permission: ''
+oauth2.grant.moderate.entry_comment.change_language: ''
+oauth2.grant.admin.instance.settings.edit: ''
+flash_thread_pin_success: ''
+oauth2.grant.moderate.post_comment.trash: ''
+account_unsuspended: ''
+oauth2.grant.post_comment.delete: ''
+solarized_auto: ''
+mentioned_you: ''
+set_magazines_bar_empty_desc: ''
+oauth2.grant.moderate.post.trash: ''
+email.delete.title: ''
+show_top_bar: ''
+oauth2.grant.post.all: ''
+oauth2.grant.post_comment.create: ''
+oauth2.grant.post.create: ''
+2fa.add: ''
+oauth2.grant.moderate.entry.set_adult: ''
+eng: ''
+flash_email_failed_to_sent: ''
+suspend_account: ''
+oauth2.grant.admin.magazine.move_entry: ''
+oauth2.grant.moderate.all: ''
+moderation.report.approve_report_title: ''
+email_confirm_button_text: ''
+oauth2.grant.user.oauth_clients.edit: ''
+oauth2.grant.admin.oauth_clients.read: ''
+flash_magazine_theme_changed_error: ''
+2fa.qr_code_img.alt: ''
+oauth2.grant.moderate.magazine.trash.read: ''
+oauth2.grant.post.delete: ''
+oauth2.grant.subscribe.general: ''
+oauth2.grant.moderate.magazine.ban.create: ''
+sensitive_toggle: ''
+account_deletion_immediate: ''
+oauth2.grant.admin.federation.update: ''
+flash_account_settings_changed: ''
+oauth2.grant.post_comment.vote: ''
+remove_following: ''
+subscription_sidebar_pop_in: ''
+2fa.qr_code_link.title: ''
+oauth2.grant.user.message.create: ''
+sidebars_same_side: ''
+oauth2.grant.moderate.post.all: ''
+federation_page_enabled: ''
+remove_schedule_delete_account: ''
+oauth2.grant.moderate.magazine_admin.all: ''
+2fa.setup_error: ''
+oauth2.grant.admin.instance.settings.all: ''
+oauth2.grant.admin.oauth_clients.revoke: ''
+magazine_theme_appearance_custom_css: ''
+magazine_is_deleted: ''
+inactive: ''
+oauth2.grant.admin.instance.settings.read: ''
+oauth2.grant.user.oauth_clients.read: ''
+oauth2.grant.post.vote: ''
+show_avatars_on_comments_help: ''
+deleted_by_author: ''
+oauth2.grant.admin.user.verify: ''
+oauth2.grant.admin.user.delete: ''
+oauth2.grant.block.general: ''
+oauth2.grant.moderate.magazine_admin.tags: ''
+oauth2.grant.magazine.subscribe: ''
+oauth2.grant.post_comment.edit: ''
+account_deletion_description: ''
+schedule_delete_account_desc: ''
+oauth2.grant.moderate.magazine_admin.edit_theme: ''
+moderation.report.reject_report_title: ''
+magazine_panel: ''
+oauth2.grant.moderate.magazine.all: ''
+delete_account_desc: ''
+oauth2.grant.moderate.entry.all: ''
+browsing_one_thread: ''
+mod_log_alert: ''
+disconnected_magazine_info: ''
+oauth2.grant.moderate.entry_comment.trash: ''
+moderation.report.ban_user_description: ''
+magazine_theme_appearance_icon: ''
+solarized_dark: ''
+oauth2.grant.magazine.all: ''
+oauth2.grant.user.all: ''
+oauth2.grant.user.notification.read: ''
+federation_enabled: ''
+show_all: ''
+oauth2.grant.magazine.block: ''
+purge_account: ''
+oauth2.grant.admin.instance.all: ''
+purge_content: ''
+created: ''
+2fa.remove: ''
+email_confirm_link_help: ''
+unsuspend_account: ''
+federation_page_disallowed_description: ''
+flash_email_was_sent: ''
+add_ban: ''
+oauth2.grant.moderate.post_comment.change_language: ''
+oauth2.grant.admin.federation.read: ''
+resend_account_activation_email: ''
+request_magazine_ownership: ''
+oauth2.grant.admin.all: ''
+oauth2.grant.entry_comment.vote: ''
+sso_registrations_enabled: ''
+oauth2.grant.user.message.all: ''
+oauth2.grant.admin.user.ban: ''
+resend_account_activation_email_error: ''
+reload_to_apply: ''
+remove_subscriptions: ''
+solarized_light: ''
+account_is_suspended: ''
+oauth2.grant.moderate.magazine.ban.read: ''
+account_deletion_button: ''
+sso_registrations_enabled.error: ''
+flash_post_pin_success: ''
+oauth2.grant.admin.post_comment.purge: ''
+oauth2.grant.admin.instance.information.edit: ''
+set_magazines_bar: ''
+federation_page_allowed_description: ''
+always_disconnected_magazine_info: ''
+oauth2.grant.admin.magazine.all: ''
+oauth2.grant.moderate.entry_comment.set_adult: ''
+oauth2.grant.moderate.post.set_adult: ''
+oauth2.grant.post_comment.report: ''
+auto: ''
+oauth2.grant.moderate.magazine_admin.create: ''
+flash_post_unpin_success: ''
+oauth2.grant.entry_comment.create: ''
+oauth2.grant.admin.magazine.purge: ''
+bot_body_content: ''
+oauth2.grant.moderate.magazine_admin.update: ''
+sticky_navbar_help: ''
+deleted_by_moderator: ''
+oauth2.grant.moderate.entry.trash: ''
+oauth2.grant.domain.all: ''
+oauth2.grant.entry_comment.all: ''
+subscription_sidebar_pop_out_right: ''
+oauth2.grant.admin.user.purge: ''
+mercure_enabled: ''
+magazine_theme_appearance_background_image: ''
+ban: ''
+registration_disabled: ''
+filter_labels: ''
+resend_account_activation_email_success: ''
+oauth2.grant.moderate.entry.pin: ''
+flash_magazine_theme_changed_success: ''
+email.delete.description: ''
+registrations_enabled: ''
+cancel_request: ''
+oauth2.grant.admin.federation.all: ''
+federated_search_only_loggedin: ''
+oauth2.grant.moderate.post_comment.all: ''
+oauth.consent.app_requesting_permissions: ''
+moderation.report.approve_report_confirmation: ''
+add_badge: ''
+oauth2.grant.admin.oauth_clients.all: ''
+2fa.backup-create.label: ''
+oauth2.grant.entry_comment.edit: ''
+oauth2.grant.admin.post.purge: ''
+oauth.consent.to_allow_access: ''
+oauth2.grant.moderate.entry_comment.all: ''
+oauth2.grant.user.notification.all: ''
+restrict_magazine_creation: ''
+oauth.consent.app_has_permissions: ''
+kbin_intro_desc: ''
+2fa.backup-create.help: ''
+flash_register_success: ''
+errors.server500.description: ''
+resend_account_activation_email_description: ''
+admin_panel: ''
+subscribe_for_updates: ''
+oauth2.grant.user.oauth_clients.all: ''
+restrict_oauth_clients: ''
+Your account has been banned: ''
+oauth2.grant.moderate.post.change_language: ''
+remove_schedule_delete_account_desc: ''
+2fa.user_active_tfa.title: ''

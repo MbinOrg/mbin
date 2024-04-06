@@ -93,35 +93,10 @@
                             </a>
                         </li>
                     {% endif %}
-                    {#<li><a href="#">{{ 'add_new_video'|trans }}</a></li>#}
+                    {% if mbin_restrict_magazine_creation() is same as false or (app.user and (app.user.admin() or app.user.moderator())) %}
                     <li><a class="{{ html_classes({'active': is_route_name('magazine_create')}) }}"
                            href="{{ path('magazine_create') }}">{{ 'create_new_magazine'|trans }}</a></li>
-                </ul>
-            </li>
-            <li class="dropdown">
-                <a href="{{ path('front_subscribed') }}"
-                   class="icon"
-                   aria-label="{{ 'select_channel'|trans }}"
-                   title="{{ 'select_channel'|trans }}">
-                    <i class="fa-solid fa-list" aria-hidden="true"></i>
-                </a>
-                <ul class="dropdown__menu">
-                    <li>
-                        <a href="{{ path('front_subscribed') }}"
-                           class="{{ html_classes({'active': is_route_name_contains('_subscribed')}) }}">{{ 'subscribed'|trans }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('front_moderated') }}"
-                           class="{{ html_classes({'active': is_route_name_contains('_moderated')}) }}">{{ 'moderated'|trans }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('front_favourite') }}"
-                           class="{{ html_classes({'active': is_route_name_contains('_favourite')}) }}">{{ 'favourites'|trans }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('front') }}"
-                           class="{{ html_classes({'active': is_route_name('front') or is_route_name('posts_front') or is_route_name('people_front')}) }}">{{ 'all'|trans }}</a>
-                    </li>
+                    {% endif %}
                 </ul>
             </li>
             {% if app.user %}

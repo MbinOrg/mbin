@@ -8,7 +8,7 @@ Mbin is an _open-source federated link aggregration, content rating and discussi
 
 ## What is ActivityPub (AP)?
 
-ActivityPub is a open standard protocol that empowers the creation of decentralized social networks, allowing different servers to interact and share content while giving users control over their data.  
+ActivityPub is a open standard protocol that empowers the creation of decentralized social networks, allowing different servers to interact and share content while giving users control over their data.
 It fosters a more user-centric and distributed approach to social networking, promoting interoperability across platforms and safeguarding user privacy and choice.
 
 This protocol is vital for building a more open, inclusive, and user-empowered digital social landscape.
@@ -177,7 +177,8 @@ Running the `post-upgrade` script will also execute `composer dump-env` for you:
 ./bin/post-upgrade
 ```
 
-**Important:** If you want to switch between `prod` to `dev` (or vice versa), you need explicitly execute: `composer dump-env dev` or `composer dump-env prod` respectively.
+> [!Important]
+> If you want to switch between `prod` to `dev` (or vice versa), you need explicitly execute: `composer dump-env dev` or `composer dump-env prod` respectively.
 
 Followed by restarting the services that are depending on the (new) configuration:
 
@@ -197,7 +198,8 @@ If you want to update all the remote users on your instance, you can execute the
 ./bin/console mbin:ap:actor:update
 ```
 
-_Important:_ This might have quite a performance impact (temporally), if you are running a very large instance. Due to the huge amount of remote users.
+> [!Important]
+> This might have quite a performance impact (temporally), if you are running a very large instance. Due to the huge amount of remote users.
 
 ## Running `php bin/console mbin:ap:keys:update` does not appear to set keys
 
