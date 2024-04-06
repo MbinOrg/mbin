@@ -811,4 +811,5 @@ hide: Hide
 edited: edited
 sso_registrations_enabled: SSO registrations enabled
 sso_registrations_enabled.error: New account registrations with third-party identity managers are currently disabled.
+related_entry: Related
 restrict_magazine_creation: Restrict local magazine creation to admins and global mods
