@@ -20,4 +20,8 @@
         <a href="{{ path('oauth_zitadel_connect') }}" class="btn btn__secondary"><i class="fa-solid fa-lock" aria-hidden="true"></i>
             Zitadel</a>
     {% endif %}
+    {% if this.azureEnabled %}
+        <a href="{{ path('oauth_azure_connect') }}" class="btn btn__secondary"><i class="fa-brands fa-microsoft" aria-hidden="true"></i>
+            Microsoft</a>
+    {% endif %}
 </div>

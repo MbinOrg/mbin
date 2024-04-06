@@ -104,6 +104,7 @@
         "symfonycasts/reset-password-bundle": "^1.13",
         "symfonycasts/verify-email-bundle": "^1.2",
         "tchoulom/view-counter-bundle": "^6.0",
+        "thenetworg/oauth2-azure": "^2.2",
         "twig/cssinliner-extra": "^3.7",
         "twig/extra-bundle": "^3.7",
         "twig/html-extra": "^3.5",
