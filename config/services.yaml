@@ -60,7 +60,11 @@ parameters:
     html5_validation: true
 
     front_sort_options: top|hot|active|newest|oldest|commented
-    front_time_options: 6h|12h|1d|1w|1m|1y|all|∞
+    front_time_options: 3h|6h|12h|1d|1w|1m|1y|all|∞
+    front_type_options: article|articles|link|links|video|videos|photo|photos|image|images|all
+    front_subscription_options: sub|fav|mod|all|home
+    front_federation_options: local|all
+    front_content_options: threads|microblog
     stats_type: general|content|views|votes
 
     number_regex: "[1-9][0-9]{0,17}"
@@ -205,4 +209,3 @@ services:
     debril.rss_atom.provider:
         class: App\Feed\Provider
         arguments: ['@App\Service\FeedManager']
-

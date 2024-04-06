@@ -70,35 +70,45 @@ entry_comments_front:
   defaults: { sortBy: hot, time: ~ }
   path: /comments/{sortBy}/{time}
   methods: [ GET ]
-  requirements: { sortBy: "%front_sort_options%" }
+  requirements:
+    sortBy: "%front_sort_options%"
+    time: "%front_time_options%"
 
 entry_comments_subscribed:
   controller: App\Controller\Entry\Comment\EntryCommentFrontController::subscribed
   defaults: { sortBy: hot, time: ~ }
   path: /sub/comments/{sortBy}/{time}
   methods: [ GET ]
-  requirements: { sortBy: "%front_sort_options%" }
+  requirements:
+    sortBy: "%front_sort_options%"
+    time: "%front_time_options%"
 
 entry_comments_moderated:
   controller: App\Controller\Entry\Comment\EntryCommentFrontController::moderated
   defaults: { sortBy: hot, time: ~ }
   path: /mod/comments/{sortBy}/{time}
   methods: [ GET ]
-  requirements: { sortBy: "%front_sort_options%" }
+  requirements:
+    sortBy: "%front_sort_options%"
+    time: "%front_time_options%"
 
 entry_comments_favourite:
   controller: App\Controller\Entry\Comment\EntryCommentFrontController::favourite
   defaults: { sortBy: hot, time: ~ }
   path: /fav/comments/{sortBy}/{time}
   methods: [ GET ]
-  requirements: { sortBy: "%front_sort_options%" }
+  requirements:
+    sortBy: "%front_sort_options%"
+    time: "%front_time_options%"
 
 magazine_entry_comments:
   controller: App\Controller\Entry\Comment\EntryCommentFrontController::front
   defaults: { sortBy: hot, time: ~ }
   path: /m/{name}/comments/{sortBy}/{time}
   methods: [ GET ]
-  requirements: { sortBy: "%front_sort_options%" }
+  requirements:
+    sortBy: "%front_sort_options%"
+    time: "%front_time_options%"
 
 entry_comment_vote:
   controller: App\Controller\VoteController
@@ -174,8 +184,7 @@ entry_image_delete:
 
 entry_change_magazine:
   controller: App\Controller\Entry\EntryChangeMagazineController
-  defaults: { slug:
-                - }
+  defaults: { slug: - }
   path: /m/{magazine_name}/e/{entry_id}/{slug}/change_magazine
   methods: [ POST ]
 
@@ -221,12 +230,16 @@ entry_single:
   defaults: { slug: -, sortBy: hot }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/{sortBy}
   methods: [ GET ]
+  requirements:
+    sortBy: "%front_sort_options%"
 
 entry_single_comments:
   controller: App\Controller\Entry\EntrySingleController
   defaults: { slug: -, sortBy: hot }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/comments/{sortBy}
   methods: [ GET ]
+  requirements:
+    sortBy: "%front_sort_options%"
 
 entry_vote:
   controller: App\Controller\VoteController
