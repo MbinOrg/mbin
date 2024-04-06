@@ -4,12 +4,12 @@ front:
   path: /{subscription}/{sortBy}/{time}/{type}/{federation}/{content}
   methods: [GET]
   requirements:
-    subscription: "%front_subscription_options%"
-    sortBy: "%front_sort_options%"
-    time: "%front_time_options%"
-    type: "%front_type_options%"
-    federation: "%front_federation_options%"
-    content: "%front_content_options%"
+    subscription: "%default_subscription_options%"
+    sortBy: "%default_sort_options%"
+    time: "%default_time_options%"
+    type: "%default_type_options%"
+    federation: "%default_federation_options%"
+    content: "%default_content_options%"
 
 front_redirect:
   controller: App\Controller\Entry\EntryFrontController::front_redirect
@@ -17,11 +17,11 @@ front_redirect:
   path: /{sortBy}/{time}/{type}/{federation}/{content}
   methods: [GET]
   requirements:
-    sortBy: "%front_sort_options%"
-    time: "%front_time_options%"
-    type: "%front_type_options%"
-    federation: "%front_federation_options%"
-    content: "%front_content_options%"
+    sortBy: "%default_sort_options%"
+    time: "%default_time_options%"
+    type: "%default_type_options%"
+    federation: "%default_federation_options%"
+    content: "%default_content_options%"
 
 front_magazine:
   controller: App\Controller\Entry\EntryFrontController::magazine
@@ -29,11 +29,11 @@ front_magazine:
   path: /m/{name}/{sortBy}/{time}/{type}/{federation}/{content}
   methods: [GET]
   requirements:
-    sortBy: "%front_sort_options%"
-    time: "%front_time_options%"
-    type: "%front_type_options%"
-    federation: "%front_federation_options%"
-    content: "%front_content_options%"
+    sortBy: "%default_sort_options%"
+    time: "%default_time_options%"
+    type: "%default_type_options%"
+    federation: "%default_federation_options%"
+    content: "%default_content_options%"
 
 # Microblog compatibility stuff, redirects from the old routes' URLs
 
@@ -43,8 +43,8 @@ posts_front:
   path: /microblog/{sortBy}/{time}
   methods: [ GET ]
   requirements:
-    sortBy: "%front_sort_options%"
-    time: "%front_time_options%"
+    sortBy: "%default_sort_options%"
+    time: "%default_time_options%"
 
 posts_subscribed:
   controller: App\Controller\Entry\EntryFrontController::front_redirect
@@ -52,8 +52,8 @@ posts_subscribed:
   path: /sub/microblog/{sortBy}/{time}
   methods: [ GET ]
   requirements:
-    sortBy: "%front_sort_options%"
-    time: "%front_time_options%"
+    sortBy: "%default_sort_options%"
+    time: "%default_time_options%"
 
 posts_moderated:
   controller: App\Controller\Entry\EntryFrontController::front_redirect
@@ -61,8 +61,8 @@ posts_moderated:
   path: /mod/microblog/{sortBy}/{time}
   methods: [ GET ]
   requirements:
-    sortBy: "%front_sort_options%"
-    time: "%front_time_options%"
+    sortBy: "%default_sort_options%"
+    time: "%default_time_options%"
 
 posts_favourite:
   controller: App\Controller\Entry\EntryFrontController::front_redirect
@@ -70,8 +70,8 @@ posts_favourite:
   path: /fav/microblog/{sortBy}/{time}
   methods: [ GET ]
   requirements:
-    sortBy: "%front_sort_options%"
-    time: "%front_time_options%"
+    sortBy: "%default_sort_options%"
+    time: "%default_time_options%"
 
 magazine_posts:
   controller: App\Controller\Entry\EntryFrontController::front_redirect
@@ -79,7 +79,7 @@ magazine_posts:
   path: /m/{name}/microblog/{sortBy}/{time}/{type}/{federation}
   methods: [ GET ]
   requirements:
-    sortBy: "%front_sort_options%"
-    time: "%front_time_options%"
-    type: "%front_type_options%"
-    federation: "%front_federation_options%"
+    sortBy: "%default_sort_options%"
+    time: "%default_time_options%"
+    type: "%default_type_options%"
+    federation: "%default_federation_options%"

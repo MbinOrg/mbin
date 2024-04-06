@@ -171,7 +171,7 @@ post_single:
   path: /m/{magazine_name}/p/{post_id}/{slug}/{sortBy}
   methods: [ GET ]
   requirements:
-    sortBy: "%front_sort_options%"
+    sortBy: "%comment_sort_options%"
 
 post_vote:
   controller: App\Controller\VoteController

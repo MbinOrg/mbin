@@ -4,9 +4,9 @@ domain_entries:
   path: /d/{name}/{sortBy}/{time}/{type}
   methods: [ GET ]
   requirements:
-    sortBy: "%front_sort_options%"
-    time: "%front_time_options%"
-    type: "%front_type_options%"
+    sortBy: "%default_sort_options%"
+    time: "%default_time_options%"
+    type: "%default_type_options%"
 
 domain_comments:
   controller: App\Controller\Domain\DomainCommentFrontController
@@ -14,8 +14,8 @@ domain_comments:
   path: /d/{name}/comments/{sortBy}/{time}
   methods: [GET]
   requirements:
-    sortBy: "%front_sort_options%"
-    time: "%front_time_options%"
+    sortBy: "%comment_sort_options%"
+    time: "%default_time_options%"
 
 domain_subscribe:
   controller: App\Controller\Domain\DomainSubController::subscribe

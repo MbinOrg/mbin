@@ -71,8 +71,8 @@ entry_comments_front:
   path: /comments/{sortBy}/{time}
   methods: [ GET ]
   requirements:
-    sortBy: "%front_sort_options%"
-    time: "%front_time_options%"
+    sortBy: "%comment_sort_options%"
+    time: "%default_time_options%"
 
 entry_comments_subscribed:
   controller: App\Controller\Entry\Comment\EntryCommentFrontController::subscribed
@@ -80,8 +80,8 @@ entry_comments_subscribed:
   path: /sub/comments/{sortBy}/{time}
   methods: [ GET ]
   requirements:
-    sortBy: "%front_sort_options%"
-    time: "%front_time_options%"
+    sortBy: "%comment_sort_options%"
+    time: "%default_time_options%"
 
 entry_comments_moderated:
   controller: App\Controller\Entry\Comment\EntryCommentFrontController::moderated
@@ -89,8 +89,8 @@ entry_comments_moderated:
   path: /mod/comments/{sortBy}/{time}
   methods: [ GET ]
   requirements:
-    sortBy: "%front_sort_options%"
-    time: "%front_time_options%"
+    sortBy: "%comment_sort_options%"
+    time: "%default_time_options%"
 
 entry_comments_favourite:
   controller: App\Controller\Entry\Comment\EntryCommentFrontController::favourite
@@ -98,8 +98,8 @@ entry_comments_favourite:
   path: /fav/comments/{sortBy}/{time}
   methods: [ GET ]
   requirements:
-    sortBy: "%front_sort_options%"
-    time: "%front_time_options%"
+    sortBy: "%comment_sort_options%"
+    time: "%default_time_options%"
 
 magazine_entry_comments:
   controller: App\Controller\Entry\Comment\EntryCommentFrontController::front
@@ -107,8 +107,8 @@ magazine_entry_comments:
   path: /m/{name}/comments/{sortBy}/{time}
   methods: [ GET ]
   requirements:
-    sortBy: "%front_sort_options%"
-    time: "%front_time_options%"
+    sortBy: "%comment_sort_options%"
+    time: "%default_time_options%"
 
 entry_comment_vote:
   controller: App\Controller\VoteController
@@ -231,7 +231,7 @@ entry_single:
   path: /m/{magazine_name}/t/{entry_id}/{slug}/{sortBy}
   methods: [ GET ]
   requirements:
-    sortBy: "%front_sort_options%"
+    sortBy: "%comment_sort_options%"
 
 entry_single_comments:
   controller: App\Controller\Entry\EntrySingleController
@@ -239,7 +239,7 @@ entry_single_comments:
   path: /m/{magazine_name}/t/{entry_id}/{slug}/comments/{sortBy}
   methods: [ GET ]
   requirements:
-    sortBy: "%front_sort_options%"
+    sortBy: "%comment_sort_options%"
 
 entry_vote:
   controller: App\Controller\VoteController
