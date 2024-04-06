@@ -252,11 +252,29 @@ class UrlExtensionRuntime implements RuntimeExtensionInterface
         ]);
     }
 
-    public function optionsUrl(string $name, string $value, string $routeName = null): string
+    // $additionalParams indicates extra parameters to set in addition to [$name] = $value
+    // Set $value to null to indicate deleting a parameter
+    // TODO: It'd be better to have just a single $params which is an associative array
+    public function optionsUrl(string $name, string $value, string $routeName = null, array $additionalParams = []): string
     {
         $route = $routeName ?? $this->requestStack->getCurrentRequest()->attributes->get('_route');
-        $params = $this->requestStack->getCurrentRequest()->attributes->all()['_route_params'];
-        $params = [...$params, ...$this->requestStack->getCurrentRequest()->query->all()];
+        $params = $this->requestStack->getCurrentRequest()->attributes->get('_route_params', []);
+
+        $queryParams = $this->requestStack->getCurrentRequest()->query->all();
+        if (\is_array($queryParams)) {
+            $params = array_merge($params, $queryParams);
+        }
+
+        // Apply logic for additionalParams: set if value is not null, unset if value is null
+        foreach ($additionalParams as $key => $val) {
+            if (null !== $val) {
+                // Set or update the parameter
+                $params[$key] = $val;
+            } else {
+                // Unset the parameter if value is null
+                unset($params[$key]);
+            }
+        }
 
         $params[$name] = $value;
 
