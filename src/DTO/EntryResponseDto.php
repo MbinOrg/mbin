@@ -126,7 +126,7 @@ class EntryResponseDto implements \JsonSerializable
             'entryId' => $this->entryId,
             'magazine' => $this->magazine->jsonSerialize(),
             'user' => $this->user->jsonSerialize(),
-            'domain' => $this->domain->jsonSerialize(),
+            'domain' => $this->domain?->jsonSerialize(),
             'title' => $this->title,
             'url' => $this->url,
             'image' => $this->image?->jsonSerialize(),

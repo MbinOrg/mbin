@@ -123,7 +123,7 @@ class SearchRetrieveApi extends BaseApi
         $page = $this->getPageNb($request);
         $perPage = self::constrainPerPage($request->get('perPage', SearchRepository::PER_PAGE));
 
-        $items = $manager->findPaginated($q, $page, $perPage);
+        $items = $manager->findPaginated($this->getUser(), $q, $page, $perPage);
         $dtos = [];
         foreach ($items->getCurrentPageResults() as $value) {
             \assert($value instanceof ContentInterface);
