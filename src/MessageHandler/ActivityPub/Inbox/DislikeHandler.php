@@ -14,6 +14,7 @@ use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\DislikeMessage;
 use App\Service\ActivityPubManager;
 use App\Service\VoteManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -24,6 +25,7 @@ class DislikeHandler
         private readonly ActivityPubManager $activityPubManager,
         private readonly MessageBusInterface $bus,
         private readonly VoteManager $voteManager,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -33,7 +35,13 @@ class DislikeHandler
             return;
         }
 
-        $chainDispatchCallback = fn ($object) => $this->bus->dispatch(new ChainActivityMessage([$object], dislike: $message->payload));
+        $chainDispatchCallback = function (array $object, ?string $adjustedUrl) use ($message) {
+            if ($adjustedUrl) {
+                $this->logger->info('got an adjusted url: {url}, using that instead of {old}', ['url' => $adjustedUrl, 'old' => $message->payload['object']['id'] ?? $message->payload['object']]);
+                $message->payload['object'] = $adjustedUrl;
+            }
+            $this->bus->dispatch(new ChainActivityMessage([$object], dislike: $message->payload));
+        };
 
         if ('Dislike' === $message->payload['type']) {
             $entity = $this->activityPubManager->getEntityObject($message->payload['object'], $message->payload, $chainDispatchCallback);
