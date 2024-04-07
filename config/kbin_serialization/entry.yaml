@@ -28,8 +28,6 @@ App\DTO\EntryDto:
       groups: [ 'entry:collection:get', 'entry:item:get' ]
     dv:
       groups: [ 'entry:collection:get', 'entry:item:get' ]
-    views:
-      groups: [ 'entry:collection:get', 'entry:item:get' ]
     score:
       groups: [ 'entry:collection:get', 'entry:item:get' ]
     visibility:

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "79728942b1ebb3d6aca06be6369abe6e",
+    "content-hash": "004bad1f205977d5d2016aa22ec37f2f",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -371,79 +371,6 @@
                 }
             ],
             "time": "2024-03-14T13:20:33+00:00"
-        },
-        {
-            "name": "composer/package-versions-deprecated",
-            "version": "1.11.99.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/composer/package-versions-deprecated.git",
-                "reference": "b4f54f74ef3453349c24a845d22392cd31e65f1d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/composer/package-versions-deprecated/zipball/b4f54f74ef3453349c24a845d22392cd31e65f1d",
-                "reference": "b4f54f74ef3453349c24a845d22392cd31e65f1d",
-                "shasum": ""
-            },
-            "require": {
-                "composer-plugin-api": "^1.1.0 || ^2.0",
-                "php": "^7 || ^8"
-            },
-            "replace": {
-                "ocramius/package-versions": "1.11.99"
-            },
-            "require-dev": {
-                "composer/composer": "^1.9.3 || ^2.0@dev",
-                "ext-zip": "^1.13",
-                "phpunit/phpunit": "^6.5 || ^7"
-            },
-            "type": "composer-plugin",
-            "extra": {
-                "class": "PackageVersions\\Installer",
-                "branch-alias": {
-                    "dev-master": "1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "PackageVersions\\": "src/PackageVersions"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Marco Pivetta",
-                    "email": "ocramius@gmail.com"
-                },
-                {
-                    "name": "Jordi Boggiano",
-                    "email": "j.boggiano@seld.be"
-                }
-            ],
-            "description": "Composer plugin that provides efficient querying for installed package versions (no runtime IO)",
-            "support": {
-                "issues": "https://github.com/composer/package-versions-deprecated/issues",
-                "source": "https://github.com/composer/package-versions-deprecated/tree/1.11.99.5"
-            },
-            "funding": [
-                {
-                    "url": "https://packagist.com",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/composer",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2022-01-17T14:14:24+00:00"
         },
         {
             "name": "dasprid/enum",
@@ -14302,34 +14229,34 @@
             "time": "2024-02-20T10:50:54+00:00"
         },
         {
-            "name": "tchoulom/view-counter-bundle",
-            "version": "6.1.0",
+            "name": "thenetworg/oauth2-azure",
+            "version": "v2.2.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/tchoulom/ViewCounterBundle.git",
-                "reference": "21408fcdb9677f7887670d085601c792219c8f72"
+                "url": "https://github.com/TheNetworg/oauth2-azure.git",
+                "reference": "be204a5135f016470a9c33e82ab48785bbc11af2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tchoulom/ViewCounterBundle/zipball/21408fcdb9677f7887670d085601c792219c8f72",
-                "reference": "21408fcdb9677f7887670d085601c792219c8f72",
+                "url": "https://api.github.com/repos/TheNetworg/oauth2-azure/zipball/be204a5135f016470a9c33e82ab48785bbc11af2",
+                "reference": "be204a5135f016470a9c33e82ab48785bbc11af2",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0.2",
-                "symfony/framework-bundle": "^6.0"
+                "ext-json": "*",
+                "ext-openssl": "*",
+                "firebase/php-jwt": "~3.0||~4.0||~5.0||~6.0",
+                "league/oauth2-client": "~2.0",
+                "php": "^7.1|^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": ">5.7"
+                "phpunit/phpunit": "^9.6"
             },
-            "type": "symfony-bundle",
+            "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Tchoulom\\ViewCounterBundle\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
+                    "TheNetworg\\OAuth2\\Client\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -14337,35 +14264,29 @@
             ],
             "authors": [
                 {
-                    "name": "Ernest TCHOULOM",
-                    "email": "tchoulomernest@yahoo.fr",
-                    "homepage": "https://www.linkedin.com/in/ernest-tchoulom-69422025/"
+                    "name": "Jan Hajek",
+                    "email": "jan.hajek@thenetw.org",
+                    "homepage": "https://thenetw.org"
                 }
             ],
-            "description": "The \"View Counter\" bundle",
+            "description": "Azure Active Directory OAuth 2.0 Client Provider for The PHP League OAuth2-Client",
             "keywords": [
-                "Count the number of views of a page",
-                "Google Charts",
-                "page view count",
-                "page views",
-                "pages views counter",
-                "statistics",
-                "statistics bundle",
-                "statistics of web pages",
-                "statistics symfony",
-                "view count",
-                "view counter",
-                "view counter bundle",
-                "view counter interface",
-                "view counter symfony",
-                "viewership",
-                "viewership measurement"
+                "SSO",
+                "aad",
+                "authorization",
+                "azure",
+                "azure active directory",
+                "client",
+                "microsoft",
+                "oauth",
+                "oauth2",
+                "windows azure"
             ],
             "support": {
-                "issues": "https://github.com/tchoulom/ViewCounterBundle/issues",
-                "source": "https://github.com/tchoulom/ViewCounterBundle/tree/6.1.0"
+                "issues": "https://github.com/TheNetworg/oauth2-azure/issues",
+                "source": "https://github.com/TheNetworg/oauth2-azure/tree/v2.2.2"
             },
-            "time": "2022-12-13T21:53:08+00:00"
+            "time": "2023-12-19T12:10:48+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",

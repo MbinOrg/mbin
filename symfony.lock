@@ -2,9 +2,6 @@
     "babdev/pagerfanta-bundle": {
         "version": "v2.10.1"
     },
-    "composer/package-versions-deprecated": {
-        "version": "1.11.99.1"
-    },
     "dama/doctrine-test-bundle": {
         "version": "7.2",
         "recipe": {
@@ -416,12 +413,12 @@
         "version": "v5.3.3"
     },
     "symfony/console": {
-        "version": "5.3",
+        "version": "6.4",
         "recipe": {
             "repo": "github.com/symfony/recipes",
-            "branch": "master",
+            "branch": "main",
             "version": "5.3",
-            "ref": "da0c8be8157600ad34f10ff0c9cc91232522e047"
+            "ref": "1781ff40d8a17d87cf53f8d4cf0c8346ed2bb461"
         },
         "files": [
             "bin/console"
@@ -879,9 +876,6 @@
     },
     "symfonycasts/verify-email-bundle": {
         "version": "v1.5.0"
-    },
-    "tchoulom/view-counter-bundle": {
-        "version": "5.5.3"
     },
     "twig/extra-bundle": {
         "version": "v3.3.1"

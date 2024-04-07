@@ -44,7 +44,6 @@ profile: Profil
 article: Thema
 type.link: Link
 thread: Thema
-views: Aufrufe
 no_comments: Keine Kommentare
 owner: Eigentümer
 threads: Themen
@@ -234,7 +233,6 @@ up_vote: Boost
 down_vote: Reduzieren
 tags: Stichworte
 followers: Follower
-ratio: Verhältnis
 copy_url_to_fediverse: Original-URL kopieren
 blocked: Geblockt
 reports: Meldungen
@@ -848,3 +846,9 @@ sso_registrations_enabled.error: Neue Konto Registrierung mit Identitätsmanager
 show: Zeige
 hide: Verstecke
 edited: Bearbeitet
+filter_by_federation: ''
+auto: ''
+filter_labels: ''
+restrict_magazine_creation: ''
+sort_by: ''
+filter_by_subscription: ''

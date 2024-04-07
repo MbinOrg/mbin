@@ -85,7 +85,7 @@ class MagazineResponseDto implements \JsonSerializable
     {
         return [
             'magazineId' => $this->magazineId,
-            'owner' => $this->owner->jsonSerialize(),
+            'owner' => $this->owner?->jsonSerialize(),
             'icon' => $this->icon ? $this->icon->jsonSerialize() : null,
             'name' => $this->name,
             'title' => $this->title,

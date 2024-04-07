@@ -29,10 +29,12 @@ use App\Repository\MagazineSubscriptionRequestRepository;
 use App\Service\ActivityPub\KeysGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Cache\CacheInterface;
 use Webmozart\Assert\Assert;
 
@@ -49,11 +51,17 @@ class MagazineManager
         private readonly MagazineSubscriptionRepository $subscriptionRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly ImageRepository $imageRepository,
+        private readonly SettingsManager $settingsManager,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
     public function create(MagazineDto $dto, User $user, bool $rateLimit = true): Magazine
     {
+        if (!$dto->apId && true === $this->settingsManager->get('MBIN_RESTRICT_MAGAZINE_CREATION') && !$user->isAdmin() && !$user->isModerator()) {
+            throw new AccessDeniedException();
+        }
+
         if ($rateLimit) {
             $limiter = $this->magazineLimiter->create($dto->ip);
             if (false === $limiter->consume()->isAccepted()) {
@@ -76,6 +84,8 @@ class MagazineManager
 
         $this->entityManager->persist($magazine);
         $this->entityManager->flush();
+
+        $this->logger->debug('created magazine with name {n}, apId {id} and public url {url}', ['n' => $magazine->name, 'id' => $magazine->apId, 'url' => $magazine->apProfileId]);
 
         if (!$dto->apId) {
             $this->subscribe($magazine, $user);

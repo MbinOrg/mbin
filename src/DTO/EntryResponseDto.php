@@ -37,7 +37,6 @@ class EntryResponseDto implements \JsonSerializable
     public bool $isOc = false;
     public bool $isAdult = false;
     public bool $isPinned = false;
-    public int $views = 0;
     public ?\DateTimeImmutable $createdAt = null;
     public ?\DateTimeImmutable $editedAt = null;
     public ?\DateTime $lastActive = null;
@@ -66,7 +65,6 @@ class EntryResponseDto implements \JsonSerializable
         int $favouriteCount = null,
         bool $isOc = null,
         bool $isAdult = null,
-        int $views = null,
         \DateTimeImmutable $createdAt = null,
         \DateTimeImmutable $editedAt = null,
         \DateTime $lastActive = null,
@@ -94,7 +92,6 @@ class EntryResponseDto implements \JsonSerializable
         $dto->favourites = $favouriteCount;
         $dto->isOc = $isOc;
         $dto->isAdult = $isAdult;
-        $dto->views = $views;
         $dto->createdAt = $createdAt;
         $dto->editedAt = $editedAt;
         $dto->lastActive = $lastActive;
@@ -129,7 +126,7 @@ class EntryResponseDto implements \JsonSerializable
             'entryId' => $this->entryId,
             'magazine' => $this->magazine->jsonSerialize(),
             'user' => $this->user->jsonSerialize(),
-            'domain' => $this->domain->jsonSerialize(),
+            'domain' => $this->domain?->jsonSerialize(),
             'title' => $this->title,
             'url' => $this->url,
             'image' => $this->image?->jsonSerialize(),
@@ -146,7 +143,6 @@ class EntryResponseDto implements \JsonSerializable
             'isOc' => $this->isOc,
             'isAdult' => $this->isAdult,
             'isPinned' => $this->isPinned,
-            'views' => $this->views,
             'createdAt' => $this->createdAt->format(\DateTimeInterface::ATOM),
             'editedAt' => $this->editedAt?->format(\DateTimeInterface::ATOM),
             'lastActive' => $this->lastActive?->format(\DateTimeInterface::ATOM),

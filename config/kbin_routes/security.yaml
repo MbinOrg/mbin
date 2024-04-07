@@ -43,6 +43,16 @@ app_logout:
   path: /logout
   methods: [ GET ]
 
+oauth_azure_connect:
+  controller: App\Controller\Security\AzureController::connect
+  path: /oauth/azure/connect
+  methods: [ GET ]
+
+oauth_azure_verify:
+  controller: App\Controller\Security\AzureController::verify
+  path: /oauth/azure/verify
+  methods: [ GET ]
+
 oauth_facebook_connect:
   controller: App\Controller\Security\FacebookController::connect
   path: /oauth/facebook/connect

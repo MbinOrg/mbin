@@ -8,6 +8,7 @@ use App\Controller\AbstractController;
 use App\Entity\User;
 use App\Form\MagazinePageViewType;
 use App\PageView\MagazinePageView;
+use App\Repository\Criteria;
 use App\Repository\MagazineRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +30,7 @@ class MagazineListController extends AbstractController
         $criteria = new MagazinePageView(
             $this->getPageNb($request),
             $sortBy,
-            $this->getValueOfFederationCriteria($request),
+            Criteria::AP_ALL,
             $user?->hideAdult ? MagazinePageView::ADULT_HIDE : MagazinePageView::ADULT_SHOW,
         );
 
