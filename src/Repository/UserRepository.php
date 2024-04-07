@@ -404,7 +404,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     private function findWithAboutQueryBuilder(string $group): QueryBuilder
     {
         $qb = $this->createQueryBuilder('u')
-            ->andWhere('u.about != :emptyString');
+            ->andWhere('u.about != \'\'')
+            ->andWhere('u.about IS NOT NULL');
 
         switch ($group) {
             case self::USERS_LOCAL:
