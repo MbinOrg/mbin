@@ -14,6 +14,7 @@ use App\Message\ActivityPub\Outbox\AnnounceLikeMessage;
 use App\Service\ActivityPubManager;
 use App\Service\FavouriteManager;
 use App\Service\VoteManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -25,6 +26,7 @@ class LikeHandler
         private readonly VoteManager $voteManager,
         private readonly MessageBusInterface $bus,
         private readonly FavouriteManager $manager,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -34,7 +36,13 @@ class LikeHandler
             return;
         }
 
-        $chainDispatchCallback = fn ($object) => $this->bus->dispatch(new ChainActivityMessage([$object], like: $message->payload));
+        $chainDispatchCallback = function (array $object, ?string $adjustedUrl) use ($message) {
+            if ($adjustedUrl) {
+                $this->logger->info('got an adjusted url: {url}, using that instead of {old}', ['url' => $adjustedUrl, 'old' => $message->payload['object']['id'] ?? $message->payload['object']]);
+                $message->payload['object'] = $adjustedUrl;
+            }
+            $this->bus->dispatch(new ChainActivityMessage([$object], like: $message->payload));
+        };
 
         if ('Like' === $message->payload['type']) {
             $entity = $this->activityPubManager->getEntityObject($message->payload['object'], $message->payload, $chainDispatchCallback);
