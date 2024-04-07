@@ -9,6 +9,7 @@ use App\DTO\PostCommentResponseDto;
 use App\Entity\PostComment;
 use App\Entity\User;
 use App\Repository\PostRepository;
+use App\Repository\TagLinkRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class PostCommentFactory
@@ -19,6 +20,7 @@ class PostCommentFactory
         private readonly MagazineFactory $magazineFactory,
         private readonly ImageFactory $imageFactory,
         private readonly PostRepository $postRepository,
+        private readonly TagLinkRepository $tagLinkRepository,
     ) {
     }
 
@@ -64,7 +66,7 @@ class PostCommentFactory
     public function createResponseTree(PostComment $comment, int $depth): PostCommentResponseDto
     {
         $commentDto = $this->createDto($comment);
-        $toReturn = $this->createResponseDto($commentDto, array_reduce($comment->children->toArray(), PostCommentResponseDto::class.'::recursiveChildCount', 0));
+        $toReturn = $this->createResponseDto($commentDto, $this->tagLinkRepository->getTagsOfPostComment($comment), array_reduce($comment->children->toArray(), PostCommentResponseDto::class.'::recursiveChildCount', 0));
         $toReturn->isFavourited = $commentDto->isFavourited;
         $toReturn->userVote = $commentDto->userVote;
 

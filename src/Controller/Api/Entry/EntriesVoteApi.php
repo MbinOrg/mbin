@@ -90,7 +90,7 @@ class EntriesVoteApi extends EntriesBaseApi
         $manager->vote($choice, $entry, $this->getUserOrThrow(), rateLimit: false);
 
         return new JsonResponse(
-            $this->serializeEntry($factory->createDto($entry)),
+            $this->serializeEntry($factory->createDto($entry), $this->tagLinkRepository->getTagsOfEntry($entry)),
             headers: $headers
         );
     }
