@@ -29,6 +29,7 @@ use App\Repository\MagazineSubscriptionRequestRepository;
 use App\Service\ActivityPub\KeysGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
@@ -51,6 +52,7 @@ class MagazineManager
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly ImageRepository $imageRepository,
         private readonly SettingsManager $settingsManager,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -70,6 +72,9 @@ class MagazineManager
         $magazine = $this->factory->createFromDto($dto, $user);
         $magazine->apId = $dto->apId;
         $magazine->apProfileId = $dto->apProfileId;
+        if ($magazine->apId) {
+            $magazine->apPublicUrl = $dto->apProfileId;
+        }
 
         if (!$dto->apId) {
             $magazine = KeysGenerator::generate($magazine);
@@ -82,6 +87,8 @@ class MagazineManager
 
         $this->entityManager->persist($magazine);
         $this->entityManager->flush();
+
+        $this->logger->debug('created magazine with name {n}, apId {id} and public url {url}', ['n' => $magazine->name, 'id' => $magazine->apId, 'url' => $magazine->apPublicUrl]);
 
         if (!$dto->apId) {
             $this->subscribe($magazine, $user);

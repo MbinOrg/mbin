@@ -469,7 +469,7 @@ class ActivityPubManager
             $magazine->apDeletedAt = null;
             $magazine->apTimeoutAt = null;
             $magazine->apFetchedAt = new \DateTime();
-            $magazine->isAdult = (bool) $actor['sensitive'];
+            $magazine->isAdult = $actor['sensitive'] ?? false;
 
             if (null !== $magazine->apFollowersUrl) {
                 try {
@@ -663,7 +663,7 @@ class ActivityPubManager
     {
         $potentialGroups = self::getReceivers($object);
         $magazine = $this->magazineRepository->findByApGroupProfileId($potentialGroups);
-        if ($magazine and $magazine->apId and $magazine->apFetchedAt->modify('+1 Day') < (new \DateTime())) {
+        if ($magazine and $magazine->apId && (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 Day') < (new \DateTime()))) {
             $this->bus->dispatch(new UpdateActorMessage($magazine->apPublicUrl));
         }
 
