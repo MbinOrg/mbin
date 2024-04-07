@@ -482,7 +482,6 @@ oauth2.grant.admin.user.verify: Перевіряти користувачів н
 dark: Темна
 federation_enabled: Федерацію ввімкнено
 flash_thread_new_success: Гілку успішно створено і тепер її бачать інші користувачі.
-ratio: Рейтинг
 go_to_search: Перейти до пошуку
 restored_comment_by: відновлює коментар, створений
 cancel: Скасувати
