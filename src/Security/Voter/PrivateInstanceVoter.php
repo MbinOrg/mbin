@@ -22,7 +22,7 @@ class PrivateInstanceVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
-        if ($this->settingsManager->get('KBIN_PRIVATE_INSTANCE')) {
+        if ($this->settingsManager->get('MBIN_PRIVATE_INSTANCE')) {
             $user = $token->getUser();
 
             if (!$user instanceof User) {
