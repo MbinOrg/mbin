@@ -68,6 +68,45 @@ security:
         - { path: ^/resend-email-activation, role: PUBLIC_ACCESS }
         - { path: ^/consent, role: PUBLIC_ACCESS }
         - { path: ^/oauth, role: PUBLIC_ACCESS }
+        # Allow ActivityPub routes to work publicly
+        - { attributes: { '_route': 'ap_webfinger' }, role: PUBLIC_ACCESS }
+        - { attributes: { '_route': 'ap_hostmeta' }, role: PUBLIC_ACCESS }
+        - { attributes: { '_route': 'ap_node_info' }, role: PUBLIC_ACCESS }
+        - { attributes: { '_route': 'ap_node_info_v2' }, role: PUBLIC_ACCESS }
+        - { attributes: { '_route': 'ap_instance' }, role: PUBLIC_ACCESS }
+        - { attributes: { '_route': 'ap_instance_front' }, role: PUBLIC_ACCESS }
+        - { attributes: { '_route': 'ap_instance_inbox' }, role: PUBLIC_ACCESS }
+        - {
+              attributes: { '_route': 'ap_instance_outbox' },
+              role: PUBLIC_ACCESS,
+          }
+        - { attributes: { '_route': 'ap_shared_inbox' }, role: PUBLIC_ACCESS }
+        - { attributes: { '_route': 'ap_object' }, role: PUBLIC_ACCESS }
+        - { attributes: { '_route': 'ap_user' }, role: PUBLIC_ACCESS }
+        - { attributes: { '_route': 'ap_user_inbox' }, role: PUBLIC_ACCESS }
+        - { attributes: { '_route': 'ap_user_outbox' }, role: PUBLIC_ACCESS }
+        - { attributes: { '_route': 'ap_user_followers' }, role: PUBLIC_ACCESS }
+        - { attributes: { '_route': 'ap_user_following' }, role: PUBLIC_ACCESS }
+        - { attributes: { '_route': 'ap_magazine' }, role: PUBLIC_ACCESS }
+        - { attributes: { '_route': 'ap_magazine_inbox' }, role: PUBLIC_ACCESS }
+        - {
+              attributes: { '_route': 'ap_magazine_outbox' },
+              role: PUBLIC_ACCESS,
+          }
+        - {
+              attributes: { '_route': 'ap_magazine_followers' },
+              role: PUBLIC_ACCESS,
+          }
+        - {
+              attributes: { '_route': 'ap_magazine_moderators' },
+              role: PUBLIC_ACCESS,
+          }
+        - { attributes: { '_route': 'ap_entry' }, role: PUBLIC_ACCESS }
+        - { attributes: { '_route': 'ap_entry_comment' }, role: PUBLIC_ACCESS }
+        - { attributes: { '_route': 'ap_post' }, role: PUBLIC_ACCESS }
+        - { attributes: { '_route': 'ap_post_comment' }, role: PUBLIC_ACCESS }
+        - { attributes: { '_route': 'ap_report' }, role: PUBLIC_ACCESS }
+        - { attributes: { '_route': 'ap_contexts' }, role: PUBLIC_ACCESS }
         # allow custom style route access during two-factor authentication
         # to avoid redirecting (wrongly) to this route after two-factor authentication is completed
         - { path: ^/custom-style, role: PUBLIC_ACCESS }
