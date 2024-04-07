@@ -1,3 +1,5 @@
+# Admin
+
 Welcome to the admin section of the Mbin documentation.
 
 You can install Mbin via
