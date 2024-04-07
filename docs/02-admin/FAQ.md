@@ -2,8 +2,6 @@
 
 See below our Frequently Asked Questions (FAQ). The questions (and corresponding answers) below are in random order.
 
-
-
 ## Where can I find more info about AP?
 
 There exists an official [ActivityPub specification](https://www.w3.org/TR/activitypub/), as well as [several AP extensions](https://codeberg.org/fediverse/fep/) on this specification.
@@ -199,6 +197,22 @@ If you're seeing this error in logs:
 At time of writing, `getInstancePrivateKey()` [calls out to the Redis cache](https://github.com/MbinOrg/mbin/blob/main/src/Service/ActivityPub/ApHttpClient.php#L348)
 first, so any updates to the keys requires a `DEL instance_private_key instance_public_key` (or `FLUSHDB` to be certain, as documented here: [bare metal](04-running-mbin/upgrades.md#clear-cache) and [docker](04-running-mbin/upgrades.md#clear-cache-1))
 
+## RabbitMQ shows a really high publishing rate
+
+First thing you should do to debug the issue is looking at the "Queues and Streams" tab to find out what queues have the high publishing rate.
+If the queue/s in question are `inbox` and `resolve` it is most likely a circulating `ChainActivityMessage`. 
+To verify that assumption:
+1. stop all messengers
+    - if you're on bare metal, as root: `supervisorctl stop messenger:*`
+    - if you're on docker, inside the `docker` folder : `docker compose down messenger*`
+2. look again at the publishing rate. If it has gone down, then it definitely is a circulating message
+
+To fix the problem:
+1. start the messengers if they are not already started
+2. go to the `resolve` queue
+3. open the "Get Message" panel
+4. change the `Ack Mode` to `Automatic Ack`
+5. As long as your publishing rate is still high, press the `Get Message` button. It might take a few tries before you got all of them and you might get a "Queue is empty" message a few times
 
 ## Performance hints
 

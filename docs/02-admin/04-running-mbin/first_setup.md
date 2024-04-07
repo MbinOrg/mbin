@@ -1,4 +1,4 @@
-### Mbin first setup
+# Mbin first setup
 
 :::hint
 
