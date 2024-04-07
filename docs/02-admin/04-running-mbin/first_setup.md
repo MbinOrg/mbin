@@ -1,6 +1,6 @@
 # Mbin first setup
 
-:::hint
+:::tip
 
 If you are running docker, then you have to be in the `docker` folder and prefix the following commands with 
 `docker compose exec php`.

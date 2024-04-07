@@ -72,7 +72,11 @@ If you have a firewall installed (or you're behind a NAT), be sure to open port 
 
 1. Prepare & download keyring:
 
-_Note:_ we assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
+:::note
+
+we assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
+
+:::
 
 ```bash
 sudo mkdir -p /etc/apt/keyrings
@@ -416,7 +420,7 @@ php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
 ```
 
-:::hint
+:::tip
 
 Check out [PostgreSQL tuning](../99-tuning/postgresql.md), you should not run the default PostgreSQL configuration in production.
 
@@ -563,7 +567,7 @@ Save and close the file. Restart supervisor jobs:
 ```bash
 sudo supervisorctl reread && sudo supervisorctl update && sudo supervisorctl start all
 ```
-:::hint
+:::tip
 
 If you wish to restart your supervisor jobs in the future, use:
 
