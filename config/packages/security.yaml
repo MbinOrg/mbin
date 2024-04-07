@@ -61,7 +61,12 @@ security:
         # cancel two-factor authentication, if they need to.
         - { path: ^/logout, role: PUBLIC_ACCESS }
         # This makes the login form and oauth routes accessible even when private instance is enabled
+        - { path: ^/register, role: PUBLIC_ACCESS }
+        - { path: ^/verify/email, role: PUBLIC_ACCESS }
+        - { path: ^/reset-password, role: PUBLIC_ACCESS }
         - { path: ^/login, role: PUBLIC_ACCESS }
+        - { path: ^/resend-email-activation, role: PUBLIC_ACCESS }
+        - { path: ^/consent, role: PUBLIC_ACCESS }
         - { path: ^/oauth, role: PUBLIC_ACCESS }
         # allow custom style route access during two-factor authentication
         # to avoid redirecting (wrongly) to this route after two-factor authentication is completed
