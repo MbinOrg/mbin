@@ -102,9 +102,13 @@ class ChainActivityHandler
             switch ($object['type']) {
                 case 'Question':
                 case 'Note':
+                    $this->logger->debug('creating note {o}', ['o' => $object]);
+
                     return $this->note->create($object);
                 case 'Page':
                 case 'Article':
+                    $this->logger->debug('creating page {o}', ['o' => $object]);
+
                     return $this->page->create($object);
                 default:
                     $this->logger->warning('Could not create an object from type {t} on {url}: {o}', ['t' => $object['type'], 'url' => $apUrl, 'o' => $object]);
@@ -114,7 +118,7 @@ class ChainActivityHandler
         } catch (TagBannedException) {
             $this->logger->error('one of the used tags is banned, url: {url}', ['url' => $apUrl]);
         } catch (\Exception $e) {
-            $this->logger->error('There was an exception while getting {url}: {ex} - {m}', ['url' => $apUrl, 'ex' => \get_class($e), 'm' => $e->getMessage()]);
+            $this->logger->error('There was an exception while getting {url}: {ex} - {m}. {o}', ['url' => $apUrl, 'ex' => \get_class($e), 'm' => $e->getMessage(), 'o' => $e]);
         }
 
         return null;
