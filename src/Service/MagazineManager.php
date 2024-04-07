@@ -85,7 +85,7 @@ class MagazineManager
         $this->entityManager->persist($magazine);
         $this->entityManager->flush();
 
-        $this->logger->debug('created magazine with name {n}, apId {id} and public url {url}', ['n' => $magazine->name, 'id' => $magazine->apId, 'url' => $magazine->apPublicUrl]);
+        $this->logger->debug('created magazine with name {n}, apId {id} and public url {url}', ['n' => $magazine->name, 'id' => $magazine->apId, 'url' => $magazine->apProfileId]);
 
         if (!$dto->apId) {
             $this->subscribe($magazine, $user);
