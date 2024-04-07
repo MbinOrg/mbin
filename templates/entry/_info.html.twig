@@ -22,9 +22,6 @@
     {{ component('user_actions', {user: entry.user}) }}
     <ul class="info">
         <li>{{ 'added'|trans }}: {{ component('date', {date: entry.createdAt}) }}</li>
-        <li>{{ 'ratio'|trans }}:
-            <span>{{ entry.countUpvotes }} {% if entry.countUpvotes %}({{ (entry.countUpvotes / entry.countVotes)|format_percent_number }}){% endif %}</span>
-        </li>
     </ul>
     {% if entry.hashtags %}
         <h3 class="mt-3">{{ 'tags'|trans }}</h3>

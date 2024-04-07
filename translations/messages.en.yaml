@@ -145,7 +145,6 @@ columns: Columns
 user: User
 joined: Joined
 moderated: Moderated
-ratio: Ratio
 people_local: Local
 people_federated: Federated
 reputation_points: Reputation points
