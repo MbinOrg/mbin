@@ -6,13 +6,6 @@ Mbin is still in development.
 
 :::
 
-:::note
-
-In this document a few services that are specific to the bare metal installation are configured.
-You do need to follow the configuration guide as well. It describes the configuration of services shared between bare metal and docker.
-
-:::
-
 ## System Requirements
 
 - Docker Engine
@@ -160,7 +153,7 @@ docker compose up -d
 
 See your running containers via: `docker ps`.
 
-Then, you should be able to access the new instance via [http://localhost:8008](http://localhost:8008).  
+Then, you should be able to access the new instance via [http://localhost:8008](http://localhost:8008).
 You can also access RabbitMQ management UI via [http://localhost:15672](http://localhost:15672).
 
 ### Add auxiliary containers to `compose.yml`
