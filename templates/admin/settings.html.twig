@@ -64,6 +64,10 @@
                 {{ form_widget(form.KBIN_ADMIN_ONLY_OAUTH_CLIENTS) }}
             </div>
             <div class="checkbox">
+                {{ form_label(form.KBIN_PRIVATE_INSTANCE, 'private_instance') }}
+                {{ form_widget(form.KBIN_PRIVATE_INSTANCE) }}
+            </div>
+            <div class="checkbox">
                 {{ form_label(form.KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN, 'federated_search_only_loggedin') }}
                 {{ form_widget(form.KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN) }}
             </div>

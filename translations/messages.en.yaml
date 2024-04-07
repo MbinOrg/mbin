@@ -484,6 +484,7 @@ oauth.client_identifier.invalid: Invalid OAuth Client ID!
 oauth.client_not_granted_message_read_permission: This app has not received permission
   to read your messages.
 restrict_oauth_clients: Restrict OAuth2 Client creation to Admins
+private_instance: Restrict access to content to authenticated users
 block: Block
 unblock: Unblock
 oauth2.grant.moderate.magazine.ban.delete: Unban users in your moderated magazines.
