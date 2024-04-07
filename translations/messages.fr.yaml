@@ -599,7 +599,6 @@ errors.server500.description: Désolé, quelque chose s'est mal passé de notre 
 oauth.client_not_granted_message_read_permission: Cette application n'a pas reçu l'autorisation
   de lire vos messages.
 restrict_oauth_clients: Restreindre la création de clients OAuth2 aux administrateurs
-private_instance: Forcer les utilisateurs à se connecter avant de pouvoir accéder à du contenu
 flash_post_unpin_success: La publication a été désépinglée avec succès.
 oauth2.grant.post_comment.delete: Supprimer vos commentaires existants sur les publications.
 bot_body_content: "Bienvenue dans le robot Mbin ! Ce robot joue un rôle crucial dans

@@ -466,7 +466,6 @@ errors.server500.description: Es tut uns leid, etwas ist schiefgelaufen. Sollte 
 oauth.client_not_granted_message_read_permission: Diese App hat keine Berechtigung
   erhalten deine Nachrichten zu lesen.
 restrict_oauth_clients: Beschränke OAuth2 Client Erstellung auf Admins
-private_instance: Benutzer müssen sich anmelden, bevor sie auf Inhalte zugreifen können
 subscription_sort: Sortierung
 unblock: Entblockieren
 oauth.consent.grant_permissions: Gebe Berechtigungen
