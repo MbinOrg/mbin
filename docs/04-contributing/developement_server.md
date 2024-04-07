@@ -79,4 +79,4 @@ This will give you a minimal working frontend with PostgreSQL setup. Keep in min
 
 _Optionally:_ you could also setup RabbitMQ, but the Doctrine messenger configuration will be sufficient for local development.
 
-More info: [Contributing guide](../contributing), [Admin guide](../admin) and [Symfony Local Web Server](https://symfony.com/doc/current/setup/symfony_server.html)
+More info: [Contributing guide](../04-contributing/README.md), [Admin guide](../02-admin/README.md) and [Symfony Local Web Server](https://symfony.com/doc/current/setup/symfony_server.html)
