@@ -60,6 +60,9 @@ security:
         # This makes the logout route accessible during two-factor authentication. Allows the user to
         # cancel two-factor authentication, if they need to.
         - { path: ^/logout, role: PUBLIC_ACCESS }
+        # This makes the login form and oauth routes accessible even when private instance is enabled
+        - { path: ^/login, role: PUBLIC_ACCESS }
+        - { path: ^/oauth, role: PUBLIC_ACCESS }
         # allow custom style route access during two-factor authentication
         # to avoid redirecting (wrongly) to this route after two-factor authentication is completed
         - { path: ^/custom-style, role: PUBLIC_ACCESS }
@@ -71,6 +74,7 @@ security:
         - { path: ^/token, roles: PUBLIC_ACCESS }
         - { path: ^/api/doc, roles: PUBLIC_ACCESS }
         - { path: ^/api/client, roles: PUBLIC_ACCESS }
+        - { path: ^/, roles: PUBLIC_ACCESS_UNLESS_PRIVATE_INSTANCE }
 
     role_hierarchy:
         ROLE_OAUTH2_WRITE:
