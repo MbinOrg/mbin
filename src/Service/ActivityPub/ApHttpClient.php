@@ -73,7 +73,10 @@ class ApHttpClient
             $item->expiresAt(new \DateTime('+1 hour'));
 
             // Read also non-OK responses (like 410) by passing 'false'
-            return $r->getContent(false);
+            $content = $r->getContent(false);
+            $this->logger->debug('ApHttpClient:getActivityObject:url: {url} - content: {content}', ['url' => $url, 'content' => $content]);
+
+            return $content;
         });
 
         if (!$resp) {
