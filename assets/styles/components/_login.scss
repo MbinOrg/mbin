@@ -3,7 +3,7 @@
 .page-reset-password,
 .page-reset-password-email-sent,
 .page-resend-activation-email {
-  .container {
+  #content .container {
     margin: 0 auto;
     max-width: 30rem;
 
@@ -36,7 +36,7 @@
 }
 
 .page-2fa {
-  .container {
+  #content .container {
     margin: 0 auto;
     max-width: 30rem;
 
