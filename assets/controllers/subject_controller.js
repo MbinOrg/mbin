@@ -350,20 +350,6 @@ export default class extends Controller {
         }
     }
 
-    appear() {
-        if (this.previewInit) {
-            return;
-        }
-
-        const prev = this.element.querySelectorAll('.show-preview');
-
-        prev.forEach((el) => {
-            el.click();
-        });
-
-        this.previewInit = true;
-    }
-
     checkHeight() {
         this.isExpandedValue = false;
         const elem = this.element.querySelector('.content');

@@ -53,11 +53,11 @@
                         <h2>
                             {% if entry.isAdult %}<small class="badge danger">18+</small>{% endif %}
                             {% if entry.isOc %}<small class="badge kbin-bg">OC</small>{% endif %}
-                            <a href="{{ entry_url(entry) }}">{{ entry.title }}</a>
+                            <a href="{{ entry_url(entry) }}" id="entry-{{ entry.id }}-link">{{ entry.title }}</a>
 
                             {% if entry.url %}
                                 <span class="entry__domain">
-                                    ( <a rel="{{ get_rel(entry.url) }}" href="{{ entry.url }}" target="_blank">
+                                    ( <a rel="{{ get_rel(entry.url) }}" href="{{ entry.url }}" id="entry-{{ entry.id }}-target-link" target="_blank">
                                         <span>{{ get_url_domain(entry.url) }}</span> <i class="fa-solid fa-external-link" aria-hidden="true"></i>
                                     </a> )
                                 </span>
@@ -119,6 +119,7 @@
                 {% else %}
                     <div class="no-image-placeholder">
                         <a href="{{ is_route_name('entry_single') ? entry.url : entry_url(entry) }}"
+                           id="entry-{{ entry.id }}-placeholder-link"
                                 {%- if entry.type is same as 'link' or entry.type is same as 'video' %} rel="{{ get_rel(is_route_name('entry_single') ? entry.url : entry_url(entry)) }}" {% endif -%}>
                             <i class="fa-solid {% if entry.type is same as 'link' %}fa-link{% else %}fa-message{% endif %}"></i>
                         </a>
@@ -130,7 +131,15 @@
                     subject: entry,
                 }) }}
             {% endif %}
-            <aside class="entry__preview hidden" data-preview-target="container"></aside>
+
+            {% if entry.hasEmbed and SHOW_PREVIEW is same as V_TRUE %}
+                <aside class="entry__preview" data-preview-target="container">
+                    {% set preview_url = entry.type is same as 'image' and entry.image ? uploaded_asset(entry.image) : entry.url %}
+                    {{ component('embed', { url: preview_url }) }}
+                </aside>
+            {% else %}
+                <aside class="entry__preview hidden" data-preview-target="container"></aside>
+            {% endif %}
             <footer>
                 {% if entry.visibility in ['visible', 'private'] %}
                     <menu>

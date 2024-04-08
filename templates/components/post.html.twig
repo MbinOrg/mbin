@@ -34,7 +34,7 @@
                 {% endif %}
                 <span>, </span>
                 {% if dateAsUrl %}
-                    <a href="{{ post_url(post) }}"
+                    <a href="{{ post_url(post) }}" id="post-{{ post.id }}-date-link"
                        class="link-muted">{{ component('date', {date: post.createdAt}) }}</a>
                 {% else %}
                     {{ component('date', {date: post.createdAt}) }}

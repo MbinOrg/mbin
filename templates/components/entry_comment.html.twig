@@ -46,6 +46,7 @@
 
                 {% if dateAsUrl %}
                     <a href="{{ entry_url(comment.entry) }}#{{ get_url_fragment(comment) }}"
+                       id="entry-comment-{{ comment.id }}-date-link"
                        class="link-muted">{{ component('date', {date: comment.createdAt}) }}</a>
                 {% else %}
                     {{ component('date', {date: comment.createdAt}) }}
