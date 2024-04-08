@@ -100,24 +100,12 @@ RabbitMQ will now have new queues being added for the different delays (so a mes
 
 ![Queue overview](../images/rabbit_queue_tab_cut.png)
 
-The global overview from rabbitmq shows the ready messages for all queues combined. Messages in the retry queues count as ready messages the whole time they are in there,
+The global overview from RabbitMQ shows the ready messages for all queues combined. Messages in the retry queues count as ready messages the whole time they are in there,
 so for a correct ready count you have to go to the queue specific overview.
 
 | Overview                                                  | Queue Tab                                           | "Message" Queue Overview                                            |
 | --------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------- |
 | ![Queued messages](../images/rabbit_queue_overview.png) | ![Queue overview](../images/rabbit_queue_tab.png) | ![Message Queue Overview](../images/rabbit_messages_overview.png) |
-
-## Discarding queued messages
-
-If you believe you have a queued message that is infinitely looping / stuck, you can discard it by setting the `Get messages` `Ack mode` in RabbitMQ to `Reject requeue false` with a `Messages` setting of `1` and clicking `Get message(s)`.
-
-:::warning
-
-This will permanently discard the payload
-
-:::
-
-![image](https://github.com/MbinOrg/mbin/assets/146029455/8865f0fe-f763-4980-bfc4-34b8f6b3b491)
 
 ## RabbitMQ Prometheus exporter
 
@@ -225,6 +213,18 @@ To fix the problem:
 3. open the "Get Message" panel
 4. change the `Ack Mode` to `Automatic Ack`
 5. As long as your publishing rate is still high, press the `Get Message` button. It might take a few tries before you got all of them and you might get a "Queue is empty" message a few times
+
+### Discarding queued messages
+
+If you believe you have a queued message that is infinitely looping / stuck, you can discard it by setting the `Get messages` `Ack mode` in RabbitMQ to `Reject requeue false` with a `Messages` setting of `1` and clicking `Get message(s)`.
+
+:::warning
+
+This will permanently discard the payload
+
+:::
+
+![image](../images/rabbit_reject_requeue_false.png)
 
 ## Performance hints
 

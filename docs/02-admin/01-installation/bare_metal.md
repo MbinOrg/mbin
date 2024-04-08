@@ -74,7 +74,7 @@ If you have a firewall installed (or you're behind a NAT), be sure to open port 
 
 :::note
 
-we assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
+This assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
 
 :::
 
@@ -309,7 +309,7 @@ If you run production already then _skip the steps below_.
 
 When running in development mode your instance will make _sensitive information_ available,
 such as database credentials, via the debug toolbar and/or stack traces.
-**DOT NOT** expose your development instance to the Internet or you will have a bad time.
+**DO NOT** expose your development instance to the Internet or you will have a bad time.
 
 :::
 
@@ -433,7 +433,7 @@ Check out [PostgreSQL tuning](../99-tuning/postgresql.md), you should not run th
 
 :::note
 
-we assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
+This assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
 
 :::
 
