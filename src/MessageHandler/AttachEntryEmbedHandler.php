@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\MessageHandler;
 
+use App\Entity\Embed as EmbedEntity;
 use App\Entity\Entry;
 use App\Entity\Image;
 use App\Message\EntryEmbedMessage;
+use App\Repository\EmbedRepository;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
 use App\Service\ImageManager;
@@ -21,6 +23,7 @@ class AttachEntryEmbedHandler
     public function __construct(
         private readonly EntryRepository $entryRepository,
         private readonly Embed $embed,
+        private readonly EmbedRepository $embedRepository,
         private readonly ImageManager $manager,
         private readonly ImageRepository $imageRepository,
         private readonly EntityManagerInterface $entityManager
@@ -41,6 +44,12 @@ class AttachEntryEmbedHandler
 
         try {
             $embed = $this->embed->fetch($entry->url);
+            $entity = new EmbedEntity($entry->url, true);
+            $entity->html = $embed->html;
+            $entity->title = $embed->title;
+            $entity->description = $embed->description;
+            $entity->image = $embed->image;
+            $this->embedRepository->add($entity);
         } catch (\Exception $e) {
             return;
         }

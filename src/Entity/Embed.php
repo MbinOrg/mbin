@@ -26,6 +26,14 @@ class Embed
     public string $url;
     #[Column(type: 'boolean', nullable: false)]
     public bool $hasEmbed = false;
+    #[Column(type: 'text', nullable: true)]
+    public ?string $html;
+    #[Column(type: 'text', nullable: true)]
+    public ?string $title;
+    #[Column(type: 'text', nullable: true)]
+    public ?string $description;
+    #[Column(type: 'text', nullable: true)]
+    public ?string $image;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]

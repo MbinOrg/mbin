@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Utils;
 
+use App\Entity\Embed as EmbedEntity;
 use App\Entity\Entry;
+use App\Repository\EmbedRepository;
 use App\Service\ImageManager;
 use App\Service\SettingsManager;
 use Embed\Embed as BaseEmbed;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 
 class Embed
 {
@@ -21,9 +22,9 @@ class Embed
     public ?string $html = null;
 
     public function __construct(
-        private CacheInterface $cache,
         private SettingsManager $settings,
         private LoggerInterface $logger,
+        private readonly EmbedRepository $embedRepository,
     ) {
     }
 
@@ -52,48 +53,58 @@ class Embed
             'html' => $this->html,
         ]);
 
-        return $this->cache->get(
-            'embed_'.md5($url),
-            function (ItemInterface $item) use ($url) {
-                $item->expiresAfter(3600);
+        if ($embedEntity = $this->embedRepository->findOneByUrl($url)) {
+            $c = clone $this;
+            $c->title = $embedEntity->title;
+            $c->description = $embedEntity->description;
+            $c->image = $embedEntity->image;
+            $c->html = $embedEntity->html;
 
-                try {
-                    $embed = (new BaseEmbed())->get($url);
-                    $oembed = $embed->getOEmbed();
-                } catch (\Exception $e) {
-                    $this->logger->info('Embed:fetch: fetch failed: '.$e->getMessage());
-                    $c = clone $this;
+            return $c;
+        }
 
-                    return $c;
-                }
+        try {
+            $embed = (new BaseEmbed())->get($url);
+            $oembed = $embed->getOEmbed();
+        } catch (\Exception $e) {
+            $this->logger->info('Embed:fetch: fetch failed: '.$e->getMessage());
+            $c = clone $this;
 
-                $c = clone $this;
+            return $c;
+        }
 
-                $c->url = $url;
-                $c->title = $embed->title;
-                $c->description = $embed->description;
-                $c->image = (string) $embed->image;
-                $c->html = $this->cleanIframe($oembed->html('html'));
+        $c = clone $this;
 
-                try {
-                    if (!$c->html && $embed->code) {
-                        $c->html = $this->cleanIframe($embed->code->html);
-                    }
-                } catch (\TypeError $e) {
-                    $this->logger->info('Embed:fetch: html prepare failed: '.$e->getMessage());
-                }
+        $c->url = $url;
+        $c->title = $embed->title;
+        $c->description = $embed->description;
+        $c->image = (string) $embed->image;
+        $c->html = $this->cleanIframe($oembed->html('html'));
 
-                $this->logger->debug('Embed:fetch: fetch success, returning', [
-                    'url' => $c->url,
-                    'title' => $c->title,
-                    'description' => $c->description,
-                    'image' => $c->image,
-                    'html' => $c->html,
-                ]);
-
-                return $c;
+        try {
+            if (!$c->html && $embed->code) {
+                $c->html = $this->cleanIframe($embed->code->html);
             }
-        );
+        } catch (\TypeError $e) {
+            $this->logger->info('Embed:fetch: html prepare failed: '.$e->getMessage());
+        }
+
+        $this->logger->debug('Embed:fetch: fetch success, returning', [
+            'url' => $c->url,
+            'title' => $c->title,
+            'description' => $c->description,
+            'image' => $c->image,
+            'html' => $c->html,
+        ]);
+
+        $entity = new EmbedEntity($url, true);
+        $entity->title = $c->title;
+        $entity->description = $c->description;
+        $entity->image = $c->image;
+        $entity->html = $c->html;
+        $this->embedRepository->add($entity);
+
+        return $c;
     }
 
     private function cleanIframe(?string $html): ?string
