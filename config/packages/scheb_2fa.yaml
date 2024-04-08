@@ -8,7 +8,7 @@ scheb_two_factor:
         enabled: true
         issuer: '%kbin_title%'
         template: user/2fa.html.twig
-        window: 15 # allow codes window seconds away from the current time window (i.e. codes from before and after)
+        leeway: 15 # allow codes window seconds away from the current time window (i.e. codes from before and after)
         parameters:
             image: 'https://%kbin_domain%/assets/icons/icon-144x144.png'
 

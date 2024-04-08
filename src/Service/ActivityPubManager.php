@@ -469,7 +469,7 @@ class ActivityPubManager
             $magazine->apDeletedAt = null;
             $magazine->apTimeoutAt = null;
             $magazine->apFetchedAt = new \DateTime();
-            $magazine->isAdult = (bool) $actor['sensitive'];
+            $magazine->isAdult = $actor['sensitive'] ?? false;
 
             if (null !== $magazine->apFollowersUrl) {
                 try {
@@ -663,8 +663,8 @@ class ActivityPubManager
     {
         $potentialGroups = self::getReceivers($object);
         $magazine = $this->magazineRepository->findByApGroupProfileId($potentialGroups);
-        if ($magazine and $magazine->apId and $magazine->apFetchedAt->modify('+1 Day') < (new \DateTime())) {
-            $this->bus->dispatch(new UpdateActorMessage($magazine->apPublicUrl));
+        if ($magazine and $magazine->apId && (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 Day') < (new \DateTime()))) {
+            $this->bus->dispatch(new UpdateActorMessage($magazine->apProfileId));
         }
 
         if (null === $magazine) {
@@ -733,16 +733,19 @@ class ActivityPubManager
     }
 
     /**
-     * @param string|array $apObject      the object that should be like, so a post of any kind in its AP array representation or a URL
-     * @param array        $fullPayload   the full message payload, only used to log it
-     * @param callable     $chainDispatch if we do not have the object in our db this is called to dispatch a new ChainActivityMessage.
-     *                                    Since the explicit object has to be set in the message this has to be done as a callback method
+     * @param string|array                                       $apObject      the object that should be like, so a post of any kind in its AP array representation or a URL
+     * @param array                                              $fullPayload   the full message payload, only used to log it
+     * @param callable(array $object, ?string $adjustedUrl):void $chainDispatch if we do not have the object in our db this is called to dispatch a new ChainActivityMessage.
+     *                                                                          Since the explicit object has to be set in the message this has to be done as a callback method.
+     *                                                                          The object parameter is an associative array representing the first dependency of the activity.
+     *                                                                          The $adjustedUrl parameter is only set if the object was fetched from a different url than the id of the object might suggest
      *
      * @see ChainActivityMessage
      */
     public function getEntityObject(string|array $apObject, array $fullPayload, callable $chainDispatch): null|Entry|EntryComment|Post|PostComment
     {
         $object = null;
+        $calledUrl = null;
         if (\is_string($apObject)) {
             if (false === filter_var($apObject, FILTER_VALIDATE_URL)) {
                 $this->logger->error('The like activity references an object by string, but that is not a URL, discarding the message', $fullPayload);
@@ -750,12 +753,16 @@ class ActivityPubManager
                 return null;
             }
             $activity = $this->activityRepository->findByObjectId($apObject);
+            $calledUrl = $apObject;
             if (!$activity) {
+                $this->logger->debug('object is fetched from {url} because it is a string and could not be found in our repo', ['url' => $apObject]);
                 $object = $this->apHttpClient->getActivityObject($apObject);
             }
         } else {
             $activity = $this->activityRepository->findByObjectId($apObject['id']);
+            $calledUrl = $apObject['id'];
             if (!$activity) {
+                $this->logger->debug('object is fetched from {url} because it is not a string and could not be found in our repo', ['url' => $apObject['id']]);
                 $object = $apObject;
             }
         }
@@ -767,7 +774,15 @@ class ActivityPubManager
         }
 
         if ($object) {
-            $chainDispatch($object);
+            $adjustedUrl = null;
+            if ($object['id'] !== $calledUrl) {
+                $this->logger->warning('the url {url} returned a different object id: {id}', ['url' => $calledUrl, 'id' => $object['id']]);
+                $adjustedUrl = $object['id'];
+            }
+
+            $this->logger->debug('dispatching a ChainActivityMessage, because the object could not be found: {o}', ['o' => $apObject]);
+            $this->logger->debug('the object for ChainActivityMessage with object {o}', ['o' => $object]);
+            $chainDispatch($object, $adjustedUrl);
 
             return null;
         }
