@@ -26,7 +26,7 @@ readonly class AdminExtensionRuntime implements RuntimeExtensionInterface
 
         $hashtag = $this->tagRepository->findOneBy(['tag' => $tag]);
         if (null === $hashtag) {
-            throw new NotFoundHttpException();
+            return false;
         }
 
         return $hashtag->banned;

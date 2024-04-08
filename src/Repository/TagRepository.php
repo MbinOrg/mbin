@@ -47,23 +47,23 @@ class TagRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
 
         $conn = $this->entityManager->getConnection();
-        $sql = "SELECT e.id, e.created_at, 'entry' AS type FROM entry e 
-                INNER JOIN hashtag_link l ON e.id = l.entry_id 
+        $sql = "SELECT e.id, e.created_at, 'entry' AS type FROM entry e
+                INNER JOIN hashtag_link l ON e.id = l.entry_id
                 INNER JOIN hashtag h ON l.hashtag_id = h.id AND h.tag = :tag
             WHERE visibility = :visibility
         UNION ALL
         SELECT ec.id, ec.created_at, 'entry_comment' AS type FROM entry_comment ec
-                INNER JOIN hashtag_link l ON ec.id = l.entry_comment_id 
+                INNER JOIN hashtag_link l ON ec.id = l.entry_comment_id
                 INNER JOIN hashtag h ON l.hashtag_id = h.id AND h.tag = :tag
             WHERE visibility = :visibility
         UNION ALL
         SELECT p.id, p.created_at, 'post' AS type FROM post p
-                INNER JOIN hashtag_link l ON p.id = l.post_id 
+                INNER JOIN hashtag_link l ON p.id = l.post_id
                 INNER JOIN hashtag h ON l.hashtag_id = h.id AND h.tag = :tag
             WHERE visibility = :visibility
         UNION ALL
         SELECT pc.id, created_at, 'post_comment' AS type FROM post_comment pc
-                INNER JOIN hashtag_link l ON pc.id = l.post_comment_id 
+                INNER JOIN hashtag_link l ON pc.id = l.post_comment_id
                 INNER JOIN hashtag h ON l.hashtag_id = h.id AND h.tag = :tag WHERE visibility = :visibility
         ORDER BY created_at DESC";
 
@@ -103,7 +103,7 @@ class TagRepository extends ServiceEntityRepository
     public function getCounts(string $tag): ?array
     {
         $conn = $this->entityManager->getConnection();
-        $stmt = $conn->prepare('SELECT COUNT(entry_id) as entry, COUNT(entry_comment_id) as entry_comment, COUNT(post_id) as post, COUNT(post_comment_id) as post_comment 
+        $stmt = $conn->prepare('SELECT COUNT(entry_id) as entry, COUNT(entry_comment_id) as entry_comment, COUNT(post_id) as post, COUNT(post_comment_id) as post_comment
             FROM hashtag_link INNER JOIN public.hashtag h ON h.id = hashtag_link.hashtag_id AND h.tag = :tag GROUP BY h.tag');
         $stmt->bindValue('tag', $tag);
         $result = $stmt->executeQuery()->fetchAllAssociative();
@@ -111,6 +111,11 @@ class TagRepository extends ServiceEntityRepository
             return $result[0];
         }
 
-        return null;
+        return [
+            'entry' => 0,
+            'entry_comment' => 0,
+            'post' => 0,
+            'post_comment' => 0,
+        ];
     }
 }
