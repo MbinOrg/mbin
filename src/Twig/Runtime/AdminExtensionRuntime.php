@@ -6,7 +6,6 @@ namespace App\Twig\Runtime;
 
 use App\Repository\TagRepository;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Twig\Extension\RuntimeExtensionInterface;
 
