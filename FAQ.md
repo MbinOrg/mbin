@@ -118,6 +118,13 @@ so for a correct ready count you have to go to the queue specific overview.
 | --------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------- |
 | ![Queued messages](docs/images/rabbit_queue_overview.png) | ![Queue overview](docs/images/rabbit_queue_tab.png) | ![Message Queue Overview](docs/images/rabbit_messages_overview.png) |
 
+## Discarding queued messages
+
+If you believe you have a queued message that is infinitely looping / stuck, you can discard it by setting the `Get messages` `Ack mode` in RabbitMQ to `Reject requeue false`. And clicking `Get message(s)`.
+
+> [!CAUTION]
+> This will permanently discard the payload
+
 ## RabbitMQ Prometheus exporter
 
 See [RabbitMQ Docs](https://rabbitmq.com/prometheus.html)
@@ -199,7 +206,7 @@ If you want to update all the remote users on your instance, you can execute the
 ```
 
 > [!Important]
-> This might have quite a performance impact (temporally), if you are running a very large instance. Due to the huge amount of remote users.
+> This might have quite a performance impact (temporarily), if you are running a very large instance. Due to the huge amount of remote users.
 
 ## Running `php bin/console mbin:ap:keys:update` does not appear to set keys
 
