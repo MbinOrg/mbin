@@ -47,8 +47,7 @@ class ContactController extends AbstractController
             // Show an error to the user
             $this->addFlash('error', 'flash_email_failed_to_sent');
 
-            $this->logger->error("there was an exception sending an email: {e} - {m}", ["e" => get_class($e), "m" => $e->getMessage(), "exception" => $e]);
-
+            $this->logger->error('there was an exception sending an email: {e} - {m}', ['e' => \get_class($e), 'm' => $e->getMessage(), 'exception' => $e]);
         }
 
         return $this->render(
