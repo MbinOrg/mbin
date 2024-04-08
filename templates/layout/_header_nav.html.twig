@@ -10,6 +10,10 @@
     {% elseif criteria.getOption('content') == 'microblog' %}
         {% set activeLink = 'microblog' %}
     {% endif %}
+{% elseif entry is defined and entry %}
+    {% set activeLink = 'threads' %}
+{% elseif post is defined and post %}
+    {% set activeLink = 'microblog' %}
 {% endif %}
 
 {% if header_nav is empty %}
