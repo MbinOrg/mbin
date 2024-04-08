@@ -791,7 +791,7 @@ We have a few different queues:
 
 We need the `dead` queue so that messages that throw a `UnrecoverableMessageHandlingException`, which is used to indicate that a message should not be retried and go straight to the supplied failure queue
 
-#### Install RabbitMQ (Recommended)
+#### Install RabbitMQ
 
 [RabbitMQ Install](https://www.rabbitmq.com/install-debian.html#apt-quick-start-cloudsmith)
 
