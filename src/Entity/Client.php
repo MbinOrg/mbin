@@ -29,7 +29,7 @@ class Client extends AbstractClient implements ClientEntityInterface
     #[Id]
     #[GeneratedValue(strategy: 'NONE')]
     #[Column(type: 'string', length: 32, unique: true)]
-    protected $identifier;
+    protected string $identifier;
 
     #[Column(type: 'text', nullable: true)]
     private ?string $description = null;
