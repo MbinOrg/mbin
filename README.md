@@ -29,7 +29,7 @@ See also: [all merged PRs](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3A
 
 For developers:
 
-- Improved [bare metal/VM guide](docs/admin/01-installation/bare_metal.md) and [Docker guide](docs/admin/01-installation/docker.md)
+- Improved [bare metal/VM guide](docs/admin/01-installation/bare_metal.md) and [Docker guide](docs/02-admin/01-installation/docker.md)
 - [Improved Docker setup](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Amerged+label%3Adocker)
 - _Developer_ server explained (see "Developers" section down below)
 - GitHub Security advisories, vulnerability reporting, [Dependabot](https://github.com/features/security) and [Advanced code scanning](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning) enabled. And we run [`local-php-security-checker`](https://github.com/fabpot/local-php-security-checker).
