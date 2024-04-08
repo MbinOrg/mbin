@@ -35,6 +35,7 @@
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress",
-        "lint": "eslint ."
+        "lint": "eslint .",
+        "lint-fix": "eslint --fix ."
     }
 }
