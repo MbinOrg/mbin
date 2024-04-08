@@ -25,13 +25,12 @@ class TagBanController extends AbstractController
         $this->validateCsrf('ban', $request->request->get('token'));
 
         $hashtag = $this->tagRepository->findOneBy(['tag' => $name]);
-        if ($hashtag) {
-            $this->tagManager->ban($hashtag);
-
-            return $this->redirectToRoute('tag_overview', ['name' => $hashtag->tag]);
-        } else {
-            throw $this->createNotFoundException();
+        if (null === $hashtag) {
+            $hashtag = $this->tagRepository->create($name);
         }
+        $this->tagManager->ban($hashtag);
+
+        return $this->redirectToRoute('tag_overview', ['name' => $hashtag->tag]);
     }
 
     #[IsGranted('ROLE_ADMIN')]
