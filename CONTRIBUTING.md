@@ -91,7 +91,7 @@ Translations are done in [Weblate](https://hosted.weblate.org/projects/mbin/).
 
 ## Documentation
 
-Documentation is stored at in the [`docs` folder](docs) within git. Create a [new pull request](https://github.com/MbinOrg/mbin/pulls) with changes to the documentation files.
+Documentation is stored at in the [`docs` folder](https://github.com/MbinOrg/mbin/tree/main/docs) within git. Create a [new pull request](https://github.com/MbinOrg/mbin/pulls) with changes to the documentation files.
 
 ## Community
 

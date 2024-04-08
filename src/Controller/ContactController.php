@@ -9,11 +9,17 @@ use App\Form\ContactType;
 use App\Repository\SiteRepository;
 use App\Service\ContactManager;
 use App\Service\IpResolver;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ContactController extends AbstractController
 {
+    public function __construct(
+        private readonly LoggerInterface $logger,
+    ) {
+    }
+
     public function __invoke(SiteRepository $repository, ContactManager $manager, IpResolver $ipResolver, Request $request): Response
     {
         $site = $repository->findAll();
@@ -40,6 +46,8 @@ class ContactController extends AbstractController
         } catch (\Exception $e) {
             // Show an error to the user
             $this->addFlash('error', 'flash_email_failed_to_sent');
+
+            $this->logger->error('there was an exception sending an email: {e} - {m}', ['e' => \get_class($e), 'm' => $e->getMessage(), 'exception' => $e]);
         }
 
         return $this->render(
