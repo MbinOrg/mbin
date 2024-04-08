@@ -120,10 +120,12 @@ so for a correct ready count you have to go to the queue specific overview.
 
 ## Discarding queued messages
 
-If you believe you have a queued message that is infinitely looping / stuck, you can discard it by setting the `Get messages` `Ack mode` in RabbitMQ to `Reject requeue false`. And clicking `Get message(s)`.
+If you believe you have a queued message that is infinitely looping / stuck, you can discard it by setting the `Get messages` `Ack mode` in RabbitMQ to `Reject requeue false` with a `Messages` setting of `1` and clicking `Get message(s)`.
 
 > [!CAUTION]
 > This will permanently discard the payload
+
+![image](https://github.com/MbinOrg/mbin/assets/146029455/8865f0fe-f763-4980-bfc4-34b8f6b3b491)
 
 ## RabbitMQ Prometheus exporter
 
