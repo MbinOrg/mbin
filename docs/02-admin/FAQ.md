@@ -224,7 +224,7 @@ This will permanently discard the payload
 
 :::
 
-![image](../images/rabbit_reject_requeue_false.png)
+![Rabbit discard payload](../images/rabbit_reject_requeue_false.png)
 
 ## Performance hints
 
