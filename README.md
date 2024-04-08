@@ -85,9 +85,9 @@ Done!
 - GD or Imagemagick PHP extension
 - NGINX / Apache / Caddy
 - PostgreSQL
+- RabbitMQ
 - Redis (optional)
 - Mercure (optional)
-- RabbitMQ (optional)
 
 ## Documentation
 
@@ -178,8 +178,6 @@ Starting the server:
 8. Go to: [http://127.0.0.1:8000](http://127.0.0.1:8000/)
 
 This will give you a minimal working frontend with PostgreSQL setup. Keep in mind: this will _not_ start federating, for that you also need to setup Mercure to test the full Mbin setup.
-
-_Optionally:_ you could also setup RabbitMQ, but the Doctrine messenger configuration will be sufficient for local development.
 
 More info: [Contributing guide](CONTRIBUTING.md), [Admin guide](docs/admin_guide.md) and [Symfony Local Web Server](https://symfony.com/doc/current/setup/symfony_server.html)
 
