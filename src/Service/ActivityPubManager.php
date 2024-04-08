@@ -29,6 +29,7 @@ use App\Repository\ImageRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApObjectExtractor;
 use App\Service\ActivityPub\Webfinger\WebFinger;
 use App\Service\ActivityPub\Webfinger\WebFingerFactory;
 use Doctrine\Common\Collections\Criteria;
@@ -441,8 +442,12 @@ class ActivityPubManager
 
         if (isset($actor['endpoints']['sharedInbox']) || isset($actor['inbox'])) {
             if (isset($actor['summary'])) {
-                $converter = new HtmlConverter(['strip_tags' => true]);
-                $magazine->description = stripslashes($converter->convert($actor['summary']));
+                $description = $this->extractMarkdownSummary($actor);
+                $rules = $this->extractRules($description);
+                $magazine->description = $description;
+                if (!empty($rules)) {
+                    $magazine->rules = $rules;
+                }
             }
 
             if (isset($actor['icon'])) {
@@ -788,5 +793,45 @@ class ActivityPubManager
         }
 
         return $this->entityManager->getRepository($activity['type'])->find((int) $activity['id']);
+    }
+
+    public function extractMarkdownSummary(array $apObject): ?string
+    {
+        if (isset($apObject['source']) && isset($apObject['source']['mediaType']) && isset($apObject['source']['content']) && ApObjectExtractor::MARKDOWN_TYPE === $apObject['source']['mediaType']) {
+            return $apObject['source']['content'];
+        } else {
+            $converter = new HtmlConverter(['strip_tags' => true]);
+
+            return stripslashes($converter->convert($apObject['summary']));
+        }
+    }
+
+    public function extractRules(string &$description): ?string
+    {
+        $lines = explode("\n", $description);
+        $headers = [];
+        $i = 0;
+        foreach ($lines as $line) {
+            if (preg_match("/^#+ ([^\n\r]*)/", $line, $matches)) {
+                if (2 === \sizeof($matches)) {
+                    $headers[] = ['line' => $i, 'header' => $matches[1]];
+                }
+            }
+            ++$i;
+        }
+
+        $rules = null;
+
+        if (!empty($headers)) {
+            $lastHeader = $headers[\sizeof($headers) - 1];
+            if (str_contains(strtolower($lastHeader['header']), 'rules')) {
+                $descLines = \array_slice($lines, 0, $lastHeader['line']);
+                $ruleLines = \array_slice($lines, $lastHeader['line'] + 1, \sizeof($lines) - $lastHeader['line']);
+                $description = join("\n", $descLines);
+                $rules = join("\n", $ruleLines);
+            }
+        }
+
+        return $rules;
     }
 }
