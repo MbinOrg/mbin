@@ -20,7 +20,9 @@
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     <link rel="apple-touch-icon" href="{{ asset('assets/icons/apple-touch-icon.png') }}">
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+    {% if kbin_header_logo() %}
     <link rel="preload" href="{{ asset('mbin_logo.svg') }}" as="image">
+    {% endif %}
 
     <link rel="manifest" href="{{ asset('manifest.json') }}"/>
 
