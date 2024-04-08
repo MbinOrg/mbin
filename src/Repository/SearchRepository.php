@@ -83,41 +83,41 @@ class SearchRepository
     {
         $conn = $this->entityManager->getConnection();
         $sql = "SELECT e.id, e.created_at, e.visibility, 'entry' AS type FROM entry e
-            INNER JOIN public.user u ON u.id = user_id 
+            INNER JOIN public.user u ON u.id = user_id
             INNER JOIN magazine m ON e.magazine_id = m.id
-            WHERE (body_ts @@ plainto_tsquery( :query ) = true OR title_ts @@ plainto_tsquery( :query ) = true) 
-                AND e.visibility = :visibility 
-                AND u.is_deleted = false 
+            WHERE (body_ts @@ plainto_tsquery( :query ) = true OR title_ts @@ plainto_tsquery( :query ) = true)
+                AND e.visibility = :visibility
+                AND u.is_deleted = false
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
-                AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.entry_id = e.id) 
+                AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.entry_id = e.id)
         UNION ALL
         SELECT e.id, e.created_at, e.visibility, 'entry_comment' AS type FROM entry_comment e
-            INNER JOIN public.user u ON u.id = user_id 
+            INNER JOIN public.user u ON u.id = user_id
             INNER JOIN magazine m ON e.magazine_id = m.id
-            WHERE body_ts @@ plainto_tsquery( :query ) = true 
-                AND e.visibility = :visibility 
-                AND u.is_deleted = false 
+            WHERE body_ts @@ plainto_tsquery( :query ) = true
+                AND e.visibility = :visibility
+                AND u.is_deleted = false
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
-                AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)       
+                AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.entry_comment_id = e.id)
         UNION ALL
         SELECT e.id, e.created_at, e.visibility, 'post' AS type FROM post e
-            INNER JOIN public.user u ON u.id = user_id 
+            INNER JOIN public.user u ON u.id = user_id
             INNER JOIN magazine m ON e.magazine_id = m.id
             WHERE body_ts @@ plainto_tsquery( :query ) = true
-                AND e.visibility = :visibility 
-                AND u.is_deleted = false 
+                AND e.visibility = :visibility
+                AND u.is_deleted = false
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.post_id = e.id)
         UNION ALL
         SELECT e.id, e.created_at, e.visibility, 'post_comment' AS type FROM post_comment e
-            INNER JOIN public.user u ON u.id = user_id 
+            INNER JOIN public.user u ON u.id = user_id
             INNER JOIN magazine m ON e.magazine_id = m.id
             WHERE body_ts @@ plainto_tsquery( :query ) = true
-                AND e.visibility = :visibility 
-                AND u.is_deleted = false 
+                AND e.visibility = :visibility
+                AND u.is_deleted = false
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.post_comment_id = e.id)
@@ -150,7 +150,7 @@ class SearchRepository
 
         $pagerfanta = new Pagerfanta(new NativeQueryAdapter($conn, $sql, [
             'url' => "%$url%",
-        ]));
+        ], transformer: $this->transformer));
 
         return $pagerfanta->getCurrentPageResults();
     }
