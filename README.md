@@ -22,7 +22,6 @@ Unique Features of Mbin for server owners & users alike:
 - Support of **all** ActivityPub Actor Types (including also "Service" account support; thus support for robot accounts)
 - **Up-to-date** PHP packages and **security/vulnerability** issues fixed
 - Support for `application/json` Accept request header on all ActivityPub end-points
-- Easy migration path from Kbin to Mbin (see "Migrating?" below)
 - Introducing a hosted documentation: [docs.joinmbin.org](https://docs.joinmbin.org)
 
 See also: [all merged PRs](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Amerged) or [our releases](https://github.com/MbinOrg/mbin/releases).
@@ -57,25 +56,6 @@ For developers:
 - [Contribution guidelines](CONTRIBUTING.md) - please read first, including before opening an issue!
 
 ## Getting Started
-
-### Migrating?
-
-If you want to migrate from Kbin to Mbin (on bare metal), just follow the easy steps below (default branch is `main`):
-
-```bash
-# How to your current setup folder
-cd /var/www/your-instance
-# Override the git remote
-git remote set-url origin https://github.com/MbinOrg/mbin.git
-# Fetch the latest changes and move to the main branch
-git fetch
-git checkout main
-
-# Execute post upgrade script after migration/update
-./bin/post-upgrade
-```
-
-Done!
 
 ### Requirements
 
