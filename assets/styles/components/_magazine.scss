@@ -240,8 +240,8 @@ td {
     display: block;
   }
 
-  td {
-    max-width: 200px;
+  td:first-of-type {
+    max-width: 220px;
   }
 }
 
