@@ -2,17 +2,6 @@
 
 See below our Frequently Asked Questions (FAQ). The questions (and corresponding answers) below are in random order.
 
-## What is Mbin?
-
-Mbin is an _open-source federated link aggregration, content rating and discussion_ software that is built on top of _ActivityPub_.
-
-## What is ActivityPub (AP)?
-
-ActivityPub is a open standard protocol that empowers the creation of decentralized social networks, allowing different servers to interact and share content while giving users control over their data.
-It fosters a more user-centric and distributed approach to social networking, promoting interoperability across platforms and safeguarding user privacy and choice.
-
-This protocol is vital for building a more open, inclusive, and user-empowered digital social landscape.
-
 ## Where can I find more info about AP?
 
 There exists an official [ActivityPub specification](https://www.w3.org/TR/activitypub/), as well as [several AP extensions](https://codeberg.org/fediverse/fep/) on this specification.
@@ -21,20 +10,20 @@ There is also a **very good** [forum post on activitypub.rocks](https://socialhu
 
 ## How to setup my own Mbin instance?
 
-Visit the [documentation directory](docs) for more information. A bare metal/VM setup is **recommended** at this time, however we do provide a Docker setup as well.
+Have a look at our guides. A bare metal/VM setup is **recommended** at this time, however we do provide a Docker setup as well.
 
 ## I have an issue!
 
 You can [join our Matrix community](https://matrix.to/#/#mbin:melroy.org) and ask for help, and/or make an [issue ticket](https://github.com/MbinOrg/mbin/issues) in GitHub if that adds value (always check for duplicates).
 
-See also our [contributing page](CONTRIBUTING.md).
+See also our [contributing page](https://github.com/MbinOrg/mbin/blob/main/CONTRIBUTING.md).
 
 ## How can I contribute?
 
 New contributors are always _warmly welcomed_ to join us. The most valuable contributions come from helping with bug fixes and features through Pull Requests.
 As well as helping out with [translations](https://hosted.weblate.org/engage/mbin/) and documentation.
 
-Read more on our [contributing page](CONTRIBUTING.md).
+Read more on our [contributing page](https://github.com/MbinOrg/mbin/blob/main/CONTRIBUTING.md).
 
 Do _not_ forget to [join our Matrix community](https://matrix.to/#/#mbin:melroy.org).
 
@@ -102,21 +91,21 @@ sudo rabbitmqctl set_permissions -p / <user> ".*" ".*" ".*"
 
 Now you can open the RabbitMQ management page: (insecure connection!) `http://<server-ip>:15672` with the username and the password provided earlier. [More info can be found here](https://www.rabbitmq.com/management.html#getting-started). See screenshot below of a typical small instance of Mbin running RabbitMQ management interface ("Queued message" of 4k or even 10k is normal after recent Mbin changes, see down below for more info):
 
-![Typical load on very small instances](docs/images/rabbit_small_load_typical.png)
+![Typical load on very small instances](../images/rabbit_small_load_typical.png)
 
 ## Messenger Queue is building up even though my messengers are idling
 
 We recently changed the messenger config to retry failed messages 3 times, instead of sending them straight to the `failed` queue.
 RabbitMQ will now have new queues being added for the different delays (so a message does not get retried 5 times per second):
 
-![Queue overview](docs/images/rabbit_queue_tab_cut.png)
+![Queue overview](../images/rabbit_queue_tab_cut.png)
 
-The global overview from rabbitmq shows the ready messages for all queues combined. Messages in the retry queues count as ready messages the whole time they are in there,
+The global overview from RabbitMQ shows the ready messages for all queues combined. Messages in the retry queues count as ready messages the whole time they are in there,
 so for a correct ready count you have to go to the queue specific overview.
 
 | Overview                                                  | Queue Tab                                           | "Message" Queue Overview                                            |
 | --------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------- |
-| ![Queued messages](docs/images/rabbit_queue_overview.png) | ![Queue overview](docs/images/rabbit_queue_tab.png) | ![Message Queue Overview](docs/images/rabbit_messages_overview.png) |
+| ![Queued messages](../images/rabbit_queue_overview.png) | ![Queue overview](../images/rabbit_queue_tab.png) | ![Message Queue Overview](../images/rabbit_messages_overview.png) |
 
 ## RabbitMQ Prometheus exporter
 
@@ -177,8 +166,7 @@ Running the `post-upgrade` script will also execute `composer dump-env` for you:
 ./bin/post-upgrade
 ```
 
-> [!Important]
-> If you want to switch between `prod` to `dev` (or vice versa), you need explicitly execute: `composer dump-env dev` or `composer dump-env prod` respectively.
+**Important:** If you want to switch between `prod` to `dev` (or vice versa), you need explicitly execute: `composer dump-env dev` or `composer dump-env prod` respectively.
 
 Followed by restarting the services that are depending on the (new) configuration:
 
@@ -198,16 +186,54 @@ If you want to update all the remote users on your instance, you can execute the
 ./bin/console mbin:ap:actor:update
 ```
 
-> [!Important]
-> This might have quite a performance impact (temporally), if you are running a very large instance. Due to the huge amount of remote users.
+_Important:_ This might have quite a performance impact (temporarily), if you are running a very large instance. Due to the huge amount of remote users.
 
 ## Running `php bin/console mbin:ap:keys:update` does not appear to set keys
 
 If you're seeing this error in logs:
 
-```
-getInstancePrivateKey(): Return value must be of type string, null returned
-```
+> getInstancePrivateKey(): Return value must be of type string, null returned
 
 At time of writing, `getInstancePrivateKey()` [calls out to the Redis cache](https://github.com/MbinOrg/mbin/blob/main/src/Service/ActivityPub/ApHttpClient.php#L348)
-first, so any updates to the keys requires a `DEL instance_private_key instance_public_key` (or `FLUSHDB` to be certain, as documented here: [bare metal](https://github.com/MbinOrg/mbin/blob/main/docs/admin_guide.md#upgrades) and [docker](https://github.com/MbinOrg/mbin/blob/main/docs/docker_deployment_guide.md#clear-caches))
+first, so any updates to the keys requires a `DEL instance_private_key instance_public_key` (or `FLUSHDB` to be certain, as documented here: [bare metal](04-running-mbin/upgrades.md#clear-cache) and [docker](04-running-mbin/upgrades.md#clear-cache-1))
+
+## RabbitMQ shows a really high publishing rate
+
+First thing you should do to debug the issue is looking at the "Queues and Streams" tab to find out what queues have the high publishing rate.
+If the queue/s in question are `inbox` and `resolve` it is most likely a circulating `ChainActivityMessage`.
+To verify that assumption:
+1. stop all messengers
+    - if you're on bare metal, as root: `supervisorctl stop messenger:*`
+    - if you're on docker, inside the `docker` folder : `docker compose down messenger*`
+2. look again at the publishing rate. If it has gone down, then it definitely is a circulating message
+
+To fix the problem:
+1. start the messengers if they are not already started
+2. go to the `resolve` queue
+3. open the "Get Message" panel
+4. change the `Ack Mode` to `Automatic Ack`
+5. As long as your publishing rate is still high, press the `Get Message` button. It might take a few tries before you got all of them and you might get a "Queue is empty" message a few times
+
+### Discarding queued messages
+
+If you believe you have a queued message that is infinitely looping / stuck, you can discard it by setting the `Get messages` `Ack mode` in RabbitMQ to `Reject requeue false` with a `Messages` setting of `1` and clicking `Get message(s)`.
+
+:::warning
+
+This will permanently discard the payload
+
+:::
+
+![Rabbit discard payload](../images/rabbit_reject_requeue_false.png)
+
+## Performance hints
+
+- [Resolve cache images in background](https://symfony.com/bundles/LiipImagineBundle/current/optimizations/resolve-cache-images-in-background.html#symfony-messenger)
+
+## References
+
+- [https://symfony.com/doc/current/setup.html](https://symfony.com/doc/current/setup.html)
+- [https://symfony.com/doc/current/deployment.html](https://symfony.com/doc/current/deployment.html)
+- [https://symfony.com/doc/current/setup/web_server_configuration.html](https://symfony.com/doc/current/setup/web_server_configuration.html)
+- [https://symfony.com/doc/current/messenger.html#deploying-to-production](https://symfony.com/doc/current/messenger.html#deploying-to-production)
+- [https://codingstories.net/how-to/how-to-install-and-use-mercure/](https://codingstories.net/how-to/how-to-install-and-use-mercure/)

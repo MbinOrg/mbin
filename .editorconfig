@@ -30,6 +30,9 @@ indent_style = space
 indent_size = 4
 quote_type = single
 
+[*.md]
+trim_trailing_whitespace = false
+
 [translations/*.yaml]
 indent_style = space
 indent_size = 2
