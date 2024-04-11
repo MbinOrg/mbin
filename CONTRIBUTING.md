@@ -37,7 +37,7 @@ Install PHP-CS-Fixer first: `composer -d tools install`
 
 Then run the following command trying to auto-fix the issues: `./tools/vendor/bin/php-cs-fixer fix`
 
-For JavaScript code inside `assets/` directory, we provided ESLint setup and configuration for linting.
+For JavaScript code inside the `assets/` directory, we use ESLint for linting and potentially fix the code style issues.
 
 Install eslint and its required plugins by: `npm install`.
 

@@ -20,11 +20,13 @@
         "@stylistic/indent": ["error", 4],
         "@stylistic/linebreak-style": ["error", "unix"],
         "@stylistic/eol-last": ["error", "always"],
+        "@stylistic/arrow-parens": ["error", "always"],
         "@stylistic/brace-style": ["error", "1tbs"],
         "@stylistic/comma-dangle": ["error", "always-multiline"],
         "@stylistic/no-multiple-empty-lines": ["error", {"max": 2, "maxEOF": 0, "maxBOF": 0}],
         "@stylistic/no-trailing-spaces": ["error"],
         "@stylistic/no-multi-spaces": ["error"],
+        "@stylistic/object-curly-spacing": ["error", "always"],
         "@stylistic/quotes": ["error", "single", {"avoidEscape": true}],
         "@stylistic/semi": ["error", "always"],
         "@stylistic/space-before-blocks": ["error"],
@@ -34,10 +36,12 @@
         "no-console": ["off"],
         "no-duplicate-imports": ["error"],
         "no-empty": ["error", {"allowEmptyCatch": true}],
+        "no-empty-function": ["error", {"allow": ["arrowFunctions", "constructor"]}],
         "no-eval": ["error"],
         "no-implicit-coercion": ["error"],
         "no-implied-eval": ["error"],
+        "prefer-const": ["error"],
         "sort-imports": ["error"],
-        "yoda": ["error", "never", {"onlyEquality": true}]
+        "yoda": ["error", "always"]
     }
 }
