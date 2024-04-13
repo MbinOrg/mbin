@@ -1,7 +1,7 @@
 <div id="topbar">
     <menu>
         <li class="{{ html_classes({'active': (is_route_name('front') and not criteria.subscribed and not criteria.moderated and not criteria.favourite) or (is_route_name('root') and not criteria.subscribed and not criteria.moderated and not criteria.favourite) or is_route_name('posts_front') or is_route_name('people_front')}) }}">
-            <a class="stretched-link" href="/">{{ 'all'|trans }}</a>
+            <a class="stretched-link" href="/all">{{ 'all'|trans }}</a>
         </li>
         <li class="{{ html_classes({'active': (is_route_name('front') and criteria.subscribed) or (is_route_name('root') and criteria.subscribed) }) }}">
             <a class="stretched-link" href="/sub/">{{ 'subscribed'|trans }}</a>
