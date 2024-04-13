@@ -1,27 +1,28 @@
 {# @var this App\Twig\Components\LoginSocialsComponent #}
+<div class="separator"></div>
 <div class="social">
     {% if this.googleEnabled %}
         <a href="{{ path('oauth_google_connect') }}" class="btn btn__secondary"><i class="fa-brands fa-google" aria-hidden="true"></i>
-            Google</a>
+            <span>Google</span></a>
     {% endif %}
     {% if this.facebookEnabled %}
         <a href="{{ path('oauth_facebook_connect') }}" class="btn btn__secondary"><i class="fa-brands fa-facebook" aria-hidden="true"></i>
-            Facebook</a>
+            <span>Facebook</span></a>
     {% endif %}
     {% if this.githubEnabled %}
         <a href="{{ path('oauth_github_connect') }}" class="btn btn__secondary"><i class="fa-brands fa-github" aria-hidden="true"></i>
-            GitHub</a>
+            <span>GitHub</span></a>
     {% endif %}
     {% if this.keycloakEnabled %}
         <a href="{{ path('oauth_keycloak_connect') }}" class="btn btn__secondary"><i class="fa-solid fa-lock" aria-hidden="true"></i>
-            Keycloak</a>
+            <span>Keycloak</span></a>
     {% endif %}
     {% if this.zitadelEnabled %}
         <a href="{{ path('oauth_zitadel_connect') }}" class="btn btn__secondary"><i class="fa-solid fa-lock" aria-hidden="true"></i>
-            Zitadel</a>
+            <span>Zitadel</span></a>
     {% endif %}
     {% if this.azureEnabled %}
         <a href="{{ path('oauth_azure_connect') }}" class="btn btn__secondary"><i class="fa-brands fa-microsoft" aria-hidden="true"></i>
-            Microsoft</a>
+            <span>Microsoft</span></a>
     {% endif %}
 </div>

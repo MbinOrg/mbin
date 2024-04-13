@@ -24,12 +24,11 @@
                 label: 'email'
             }) }}
 
-            <div class="float-end">
+            <div class="button-flex">
                 <button class="btn btn__primary" type="submit">{{ 'reset_password'|trans }}</button>
             </div>
             {{ form_end(form) }}
             {{ component('user_form_actions', {showLogin: true, showRegister: true, showResendEmail: true}) }}
-            {{ component('login_socials') }}
         </div>
     </div>
 {% endblock %}

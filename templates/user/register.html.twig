@@ -54,17 +54,17 @@
                         class: 'btn btn__primary'
                     },
                     row_attr: {
-                        class: 'float-end'
+                        class: 'button-flex'
                     }
                 }) }}
                 {{ form_end(form) }}
             {% else %}
                 <h3 class="text-muted">{{ 'registration_disabled'|trans }}</h3>
             {% endif %}
-            {{ component('user_form_actions', {showLogin: true, showPasswordReset: true, showResendEmail: true}) }}
             {% if mbin_sso_registrations_enabled() %}
                 {{ component('login_socials') }}
             {% endif %}
+            {{ component('user_form_actions', {showLogin: true, showPasswordReset: true, showResendEmail: true}) }}
         </div>
     </div>
 {% endblock %}

@@ -434,6 +434,12 @@ select {
   }
 }
 
+.button-flex {
+  button {
+    width: 100%;
+  }
+}
+
 .actions {
   @include media-breakpoint-down(sm) {
     text-align: right;

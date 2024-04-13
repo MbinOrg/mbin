@@ -1,18 +1,19 @@
 <div class="actions">
+    <div class="separator"></div>
     {% if showLogin %}
-        <p>{{ 'already_have_account'|trans }} 
+        <p>{{ 'already_have_account'|trans }}
             <a class="font-weight-bold" href="{{ path('app_login') }}">{{ 'login'|trans }}</a>
         </p>
     {% endif %}
     {% if kbin_registrations_enabled() %}
         {% if showRegister %}
-            <p>{{ 'dont_have_account'|trans }} 
+            <p>{{ 'dont_have_account'|trans }}
                 <a class="font-weight-bold" href="{{ path('app_register') }}">{{ 'register'|trans }}</a>
             </p>
-        {% endif %}  
+        {% endif %}
     {% endif %}
     {% if showPasswordReset %}
-        <p>{{ 'you_cant_login'|trans }} 
+        <p>{{ 'you_cant_login'|trans }}
             <a class="font-weight-bold" href="{{ path('app_forgot_password_request') }}">{{ 'reset_password'|trans }}</a>
         </p>
     {% endif %}
