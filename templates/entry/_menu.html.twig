@@ -23,6 +23,7 @@
     <li class="dropdown__separator"></li>
     <li>
       <a target="_blank"
+        rel="{{ get_rel(entry.apId ?? path('ap_entry', {magazine_name: entry.magazine.name, entry_id: entry.id})) }}"
         href="{{ entry.apId ?? path('ap_entry', {magazine_name: entry.magazine.name, entry_id: entry.id}) }}">
         {{ 'open_url_to_fediverse'|trans }}
       </a>
