@@ -15,7 +15,7 @@
       font-weight: bold;
     }
 
-    .separator:has(+ div a), .separator:has(+ div p) {
+    form ~ .separator:has(+ div a), .separator:has(+ div p) {
       border: var(--kbin-section-border);
       height: 0;
       margin: 15px 30px;
