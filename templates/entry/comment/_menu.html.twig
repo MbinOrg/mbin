@@ -17,6 +17,7 @@
         <li class="dropdown__separator"></li>
         <li>
             <a target="_blank"
+                rel="{{ get_rel(comment.apId ?? path('ap_entry_comment', {magazine_name: comment.magazine.name, entry_id: comment.entry.id, comment_id: comment.id})) }}"
                 href="{{ comment.apId ?? path('ap_entry_comment', {magazine_name: comment.magazine.name, entry_id: comment.entry.id, comment_id: comment.id}) }}">
                 {{ 'open_url_to_fediverse'|trans }}
             </a>
