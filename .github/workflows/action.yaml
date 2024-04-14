@@ -132,6 +132,15 @@ jobs:
       - name: php-cs-fixer dry-run
         run: tools/vendor/bin/php-cs-fixer fix --dry-run -v --show-progress=none #--format=checkstyle #would be nice if codeberg did something with this like github does.
 
+  contrib-readme:
+    runs-on: ubuntu-latest
+    name: Update contrib in README
+    steps:
+      - name: Contribute List
+        uses: akhilmhdh/contributors-readme-action@v2.3.6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   build-and-publish-docker-image:
     runs-on: ubuntu-latest
     # Let's only run this on branches and tagged releases only
