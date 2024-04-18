@@ -22,14 +22,13 @@ Unique Features of Mbin for server owners & users alike:
 - Support of **all** ActivityPub Actor Types (including also "Service" account support; thus support for robot accounts)
 - **Up-to-date** PHP packages and **security/vulnerability** issues fixed
 - Support for `application/json` Accept request header on all ActivityPub end-points
-- Easy migration path from Kbin to Mbin (see "Migrating?" below)
 - Introducing a hosted documentation: [docs.joinmbin.org](https://docs.joinmbin.org)
 
 See also: [all merged PRs](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Amerged) or [our releases](https://github.com/MbinOrg/mbin/releases).
 
 For developers:
 
-- Improved [bare metal/VM guide](docs/02-admin/01-installation/bare_metal.md) and [Docker guide](docs/02-admin/01-installation/docker.md)
+- Improved [bare metal/VM guide](https://docs.joinmbin.org/admin/installation/bare_metal) and [Docker guide](https://docs.joinmbin.org/admin/installation/docker/)
 - [Improved Docker setup](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Amerged+label%3Adocker)
 - _Developer_ server explained (see "Developers" section down below)
 - GitHub Security advisories, vulnerability reporting, [Dependabot](https://github.com/features/security) and [Advanced code scanning](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning) enabled. And we run [`local-php-security-checker`](https://github.com/fabpot/local-php-security-checker).
@@ -58,25 +57,6 @@ For developers:
 
 ## Getting Started
 
-### Migrating?
-
-If you want to migrate from Kbin to Mbin (on bare metal), just follow the easy steps below (default branch is `main`):
-
-```bash
-# How to your current setup folder
-cd /var/www/your-instance
-# Override the git remote
-git remote set-url origin https://github.com/MbinOrg/mbin.git
-# Fetch the latest changes and move to the main branch
-git fetch
-git checkout main
-
-# Execute post upgrade script after migration/update
-./bin/post-upgrade
-```
-
-Done!
-
 ### Requirements
 
 [See also Symfony requirements](https://symfony.com/doc/current/setup.html#technical-requirements)
@@ -85,9 +65,9 @@ Done!
 - GD or Imagemagick PHP extension
 - NGINX / Apache / Caddy
 - PostgreSQL
+- RabbitMQ
 - Redis / KeyDB
 - Mercure (optional)
-- RabbitMQ
 
 ## Documentation
 

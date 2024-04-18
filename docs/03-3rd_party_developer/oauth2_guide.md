@@ -24,7 +24,7 @@ For all the API endpoints go to the swagger documentation page, which is: `https
 ## Obtaining OAuth2 credentials from a new server
 
 > [!Note]
-> Some of these structures contain comments that need to be removed before making the API calls. Copy/paste with care._
+> Some of these structures contain comments that need to be removed before making the API calls. Copy/paste with care.
 
 1. Create a private OAuth2 client (for use in secure environments that you control)
 

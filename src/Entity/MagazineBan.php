@@ -27,7 +27,7 @@ class MagazineBan
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public ?User $user;
     #[ManyToOne(targetEntity: User::class)]
-    #[JoinColumn(nullable: false, onDelete: 'SET NULL')]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public ?User $bannedBy;
     #[Column(type: 'text', length: 2048, nullable: true)]
     public ?string $reason = null;

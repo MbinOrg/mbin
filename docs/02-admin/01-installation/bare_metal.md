@@ -13,7 +13,7 @@ This guide is aimed for Debian / Ubuntu distribution servers, but it could run o
 
 :::note
 
-In this document a few services that are specific to the bare metal installation are configured. 
+In this document a few services that are specific to the bare metal installation are configured.
 You do need to follow the configuration guide as well. It describes the configuration of services shared between bare metal and docker.
 
 :::
@@ -54,7 +54,7 @@ Install PHP 8.2 with some important PHP extensions:
 
 ```bash
 sudo apt-get update
-sudo apt-get install php8.2 php8.2-common php8.2-fpm php8.2-cli php8.2-amqp php8.2-pgsql php8.2-gd php8.2-curl php8.2-xml php8.2-redis php8.2-mbstring php8.2-zip php8.2-bz2 php8.2-intl -y
+sudo apt-get install php8.2 php8.2-common php8.2-fpm php8.2-cli php8.2-amqp php8.2-pgsql php8.2-gd php8.2-curl php8.2-xml php8.2-redis php8.2-mbstring php8.2-zip php8.2-bz2 php8.2-intl php8.2-bcmath -y
 ```
 
 Install Composer:
@@ -74,7 +74,7 @@ If you have a firewall installed (or you're behind a NAT), be sure to open port 
 
 :::note
 
-we assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
+This assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
 
 :::
 
@@ -309,7 +309,7 @@ If you run production already then _skip the steps below_.
 
 When running in development mode your instance will make _sensitive information_ available,
 such as database credentials, via the debug toolbar and/or stack traces.
-**DOT NOT** expose your development instance to the Internet or you will have a bad time.
+**DO NOT** expose your development instance to the Internet or you will have a bad time.
 
 :::
 
@@ -433,7 +433,7 @@ Check out [PostgreSQL tuning](../99-tuning/postgresql.md), you should not run th
 
 :::note
 
-we assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
+This assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
 
 :::
 
