@@ -12,6 +12,7 @@ use App\Factory\EntryCommentFactory;
 use App\Factory\EntryFactory;
 use App\Factory\PostCommentFactory;
 use App\Factory\PostFactory;
+use App\Repository\TagLinkRepository;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Serializer\Annotation\Ignore;
@@ -75,27 +76,28 @@ class MagazineLogResponseDto implements \JsonSerializable
         EntryCommentFactory $entryCommentFactory,
         PostFactory $postFactory,
         PostCommentFactory $postCommentFactory,
+        TagLinkRepository $tagLinkRepository,
     ): void {
         switch ($this->type) {
             case 'log_entry_deleted':
             case 'log_entry_restored':
                 \assert($subject instanceof Entry);
-                $this->subject = $entryFactory->createResponseDto($subject);
+                $this->subject = $entryFactory->createResponseDto($subject, tags: $tagLinkRepository->getTagsOfEntry($subject));
                 break;
             case 'log_entry_comment_deleted':
             case 'log_entry_comment_restored':
                 \assert($subject instanceof EntryComment);
-                $this->subject = $entryCommentFactory->createResponseDto($subject);
+                $this->subject = $entryCommentFactory->createResponseDto($subject, tags: $tagLinkRepository->getTagsOfEntryComment($subject));
                 break;
             case 'log_post_deleted':
             case 'log_post_restored':
                 \assert($subject instanceof Post);
-                $this->subject = $postFactory->createResponseDto($subject);
+                $this->subject = $postFactory->createResponseDto($subject, tags: $tagLinkRepository->getTagsOfPost($subject));
                 break;
             case 'log_post_comment_deleted':
             case 'log_post_comment_restored':
                 \assert($subject instanceof PostComment);
-                $this->subject = $postCommentFactory->createResponseDto($subject);
+                $this->subject = $postCommentFactory->createResponseDto($subject, tags: $tagLinkRepository->getTagsOfPostComment($subject));
                 break;
             default:
                 break;

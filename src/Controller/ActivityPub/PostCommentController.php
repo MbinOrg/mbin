@@ -10,6 +10,7 @@ use App\Entity\Magazine;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Factory\ActivityPub\PostCommentNoteFactory;
+use App\Repository\TagLinkRepository;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,8 +20,10 @@ class PostCommentController extends AbstractController
 {
     use PrivateContentTrait;
 
-    public function __construct(private readonly PostCommentNoteFactory $commentNoteFactory)
-    {
+    public function __construct(
+        private readonly PostCommentNoteFactory $commentNoteFactory,
+        private readonly TagLinkRepository $tagLinkRepository,
+    ) {
     }
 
     public function __invoke(
@@ -38,7 +41,7 @@ class PostCommentController extends AbstractController
 
         $this->handlePrivateContent($post);
 
-        $response = new JsonResponse($this->commentNoteFactory->create($comment, true));
+        $response = new JsonResponse($this->commentNoteFactory->create($comment, $this->tagLinkRepository->getTagsOfPostComment($comment), true));
 
         $response->headers->set('Content-Type', 'application/activity+json');
 

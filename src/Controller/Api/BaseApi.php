@@ -230,6 +230,7 @@ class BaseApi extends AbstractController
             $this->entryCommentFactory,
             $this->postFactory,
             $this->postCommentFactory,
+            $this->tagLinkRepository,
         );
 
         if ($response->subject) {

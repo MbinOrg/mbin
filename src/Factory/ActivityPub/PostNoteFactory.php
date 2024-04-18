@@ -35,13 +35,12 @@ class PostNoteFactory
     ) {
     }
 
-    public function create(Post $post, bool $context = false): array
+    public function create(Post $post, array $tags, bool $context = false): array
     {
         if ($context) {
             $note['@context'] = $this->contextProvider->referencedContexts();
         }
 
-        $tags = $post->tags ?? [];
         if ('random' !== $post->magazine->name && !$post->magazine->apId) { // @todo
             $tags[] = $post->magazine->name;
         }

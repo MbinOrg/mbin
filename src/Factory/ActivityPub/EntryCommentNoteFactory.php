@@ -34,13 +34,12 @@ class EntryCommentNoteFactory
     ) {
     }
 
-    public function create(EntryComment $comment, bool $context = false): array
+    public function create(EntryComment $comment, array $tags, bool $context = false): array
     {
         if ($context) {
             $note['@context'] = $this->contextProvider->referencedContexts();
         }
 
-        $tags = $comment->tags ?? [];
         if ('random' !== $comment->magazine->name && !$comment->magazine->apId) { // @todo
             $tags[] = $comment->magazine->name;
         }

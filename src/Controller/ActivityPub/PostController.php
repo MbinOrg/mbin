@@ -8,6 +8,7 @@ use App\Controller\AbstractController;
 use App\Entity\Magazine;
 use App\Entity\Post;
 use App\Factory\ActivityPub\PostNoteFactory;
+use App\Repository\TagLinkRepository;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,8 +16,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PostController extends AbstractController
 {
-    public function __construct(private readonly PostNoteFactory $postNoteFactory)
-    {
+    public function __construct(
+        private readonly PostNoteFactory $postNoteFactory,
+        private readonly TagLinkRepository $tagLinkRepository,
+    ) {
     }
 
     public function __invoke(
@@ -30,7 +33,7 @@ class PostController extends AbstractController
             return $this->redirect($post->apId);
         }
 
-        $response = new JsonResponse($this->postNoteFactory->create($post, true));
+        $response = new JsonResponse($this->postNoteFactory->create($post, $this->tagLinkRepository->getTagsOfPost($post), true));
 
         $response->headers->set('Content-Type', 'application/activity+json');
 
