@@ -442,9 +442,7 @@ class ActivityPubManager
 
         if (isset($actor['endpoints']['sharedInbox']) || isset($actor['inbox'])) {
             if (isset($actor['summary'])) {
-                $description = $this->extractMarkdownSummary($actor);
-                $rules = $this->extractRules($description);
-                $magazine->description = $description;
+                $magazine->description = $this->extractMarkdownSummary($actor);
                 if (!empty($rules)) {
                     $magazine->rules = $rules;
                 }
@@ -804,34 +802,5 @@ class ActivityPubManager
 
             return stripslashes($converter->convert($apObject['summary']));
         }
-    }
-
-    public function extractRules(string &$description): ?string
-    {
-        $lines = explode("\n", $description);
-        $headers = [];
-        $i = 0;
-        foreach ($lines as $line) {
-            if (preg_match("/^#+ ([^\n\r]*)/", $line, $matches)) {
-                if (2 === \sizeof($matches)) {
-                    $headers[] = ['line' => $i, 'header' => $matches[1]];
-                }
-            }
-            ++$i;
-        }
-
-        $rules = null;
-
-        if (!empty($headers)) {
-            $lastHeader = $headers[\sizeof($headers) - 1];
-            if (str_contains(strtolower($lastHeader['header']), 'rules')) {
-                $descLines = \array_slice($lines, 0, $lastHeader['line']);
-                $ruleLines = \array_slice($lines, $lastHeader['line'] + 1, \sizeof($lines) - $lastHeader['line']);
-                $description = join("\n", $descLines);
-                $rules = join("\n", $ruleLines);
-            }
-        }
-
-        return $rules;
     }
 }
