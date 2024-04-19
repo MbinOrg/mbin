@@ -218,11 +218,8 @@ To fix the problem:
 
 If you believe you have a queued message that is infinitely looping / stuck, you can discard it by setting the `Get messages` `Ack mode` in RabbitMQ to `Reject requeue false` with a `Messages` setting of `1` and clicking `Get message(s)`.
 
-:::warning
-
-This will permanently discard the payload
-
-:::
+> [!WARNING]
+> This will permanently discard the payload
 
 ![Rabbit discard payload](../images/rabbit_reject_requeue_false.png)
 
