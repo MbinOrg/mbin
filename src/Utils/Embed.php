@@ -8,6 +8,7 @@ use App\Entity\Entry;
 use App\Service\ImageManager;
 use App\Service\SettingsManager;
 use Embed\Embed as BaseEmbed;
+use Embed\Extractor;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -58,7 +59,7 @@ class Embed
                 $item->expiresAfter(3600);
 
                 try {
-                    $embed = (new BaseEmbed())->get($url);
+                    $embed = $this->fetchEmbed($url);
                     $oembed = $embed->getOEmbed();
                 } catch (\Exception $e) {
                     $this->logger->info('Embed:fetch: fetch failed: '.$e->getMessage());
@@ -94,6 +95,42 @@ class Embed
                 return $c;
             }
         );
+    }
+
+    private function fetchEmbed(string $url): Extractor
+    {
+        $fetcher = new BaseEmbed();
+        $embed = $fetcher->get($url);
+
+        if ($this->detectFaultyRedirectEmbed($embed)) {
+            $this->logger->debug('Embed:fetch: suspecting faulty redirect, refetching', [
+                'requestUrl' => $url,
+                'responseUrl' => $embed->getUri(),
+            ]);
+
+            $embed = $fetcher->get((string) $embed->getUri());
+        }
+
+        return $embed;
+    }
+
+    private function detectFaultyRedirectEmbed(Extractor $embed): bool
+    {
+        $request = $embed->getRequest();
+        $response = $embed->getResponse();
+
+        $isRedirected = $embed->getUri() !== $request->getUri()
+            && !\in_array($response->getStatusCode(), [301, 302])
+            && $response->getHeaderLine('location');
+
+        $isEmptyEmbed = !(
+            $embed->title
+            || $embed->description
+            || $embed->image
+            || $embed->code?->html
+        );
+
+        return $isRedirected && $isEmptyEmbed;
     }
 
     private function cleanIframe(?string $html): ?string
