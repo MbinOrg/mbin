@@ -14,8 +14,5 @@ And now change: `redirect_response_code: 302` to: `redirect_response_code: 301`.
 
 ---
 
-:::tip
-
-There are also other configuration files, eg. `config/packages/monolog.yaml` where you can change logging settings if you wish, but this is not required (these defaults are fine for production).
-
-:::
+> [!TIP]
+> There are also other configuration files, eg. `config/packages/monolog.yaml` where you can change logging settings if you wish, but this is not required (these defaults are fine for production).
