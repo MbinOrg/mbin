@@ -1,10 +1,7 @@
 # Docker Installation
 
-:::note
-
-Mbin is still in development.
-
-:::
+> [!NOTE]
+> Mbin is still in development.
 
 ## System Requirements
 
@@ -45,7 +42,7 @@ cd mbin
 
 ### Docker image preparation
 
-> **Note**
+> [!NOTE]
 > If you're using a version of Docker Engine earlier than 23.0, run `export DOCKER_BUILDKIT=1`, prior to building the image. This does not apply to users running Docker Desktop. More info can be found [here](https://docs.docker.com/build/buildkit/#getting-started)
 
 1. First go to the _docker directory_:
@@ -106,7 +103,7 @@ sudo chown $USER:$USER storage/media storage/caddy_config storage/caddy_data sto
 4. Update `APP_SECRET` in `.env`, generate a new one via: `node -e  "console.log(require('crypto').randomBytes(16).toString('hex'))"`
 5. _Optionally_: Use a newer PostgreSQL version (current fallback is v13). Update/set the `POSTGRES_VERSION` variable in your `.env` and `compose.override.yml` under `db`.
 
-> **Note**
+> [!NOTE]
 > Ensure the `HTTPS` environmental variable is set to `TRUE` in `compose.override.yml` for the `php`, `messenger`, and `messenger_ap` containers **if your environment is using a valid certificate behind a reverse proxy**. This is likely true for most production environments and is required for proper federation, that is, this will ensure the webfinger responses include `https:` in the URLs generated.
 
 ### Configure OAuth2 keys
@@ -160,11 +157,8 @@ You can also access RabbitMQ management UI via [http://localhost:15672](http://l
 
 Add any auxiliary container as you want. For example, add a Nginx container as reverse proxy to provide HTTPS encryption.
 
-:::note
-
-If you are building the docker images yourself, you might get merge conflicts when changing the `compose.yml`
-
-:::
+> [!NOTE]
+> If you are building the docker images yourself, you might get merge conflicts when changing the `compose.yml`
 
 ### Uploaded media files
 

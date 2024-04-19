@@ -60,9 +60,5 @@ effective_cache_size = 25GB
 
 For a reference you can check out [PGTune](https://pgtune.leopard.in.ua/)
 
-:::note
-
-We try to set `huge_pages` to: `on` in PostgreSQL, in order to make this works you need to [enable huge pages under Linux (click here)](https://www.enterprisedb.com/blog/tuning-debian-ubuntu-postgresql) as well! Please follow that guide. and play around with your kernel configurations.
-
-:::
-
+> [!NOTE]
+> We try to set `huge_pages` to: `on` in PostgreSQL, in order to make this works you need to [enable huge pages under Linux (click here)](https://www.enterprisedb.com/blog/tuning-debian-ubuntu-postgresql) as well! Please follow that guide. and play around with your kernel configurations.
