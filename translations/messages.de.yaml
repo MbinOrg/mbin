@@ -231,7 +231,7 @@ share_on_fediverse: Im Fediverse teilen
 go_to_original_instance: Auf der Original-Instanz anzeigen
 up_vote: Boost
 down_vote: Reduzieren
-tags: Stichworte
+tags: Tags
 followers: Follower
 copy_url_to_fediverse: Original-URL kopieren
 blocked: Geblockt
@@ -367,7 +367,7 @@ kbin_promo_desc: '%link_start%Klone das Repo%link_end% und erweitere das Fediver
 browsing_one_thread: Du siehst nur Inhalte aus einem Thema in dieser Diskussion. Alle
   Kommentare sind auf der Beitragsseite verfügbar.
 boost: Boost
-icon: Icon
+icon: Symbol
 magazine_panel: Magazin Ansicht
 ban: Sperre
 bans: Sperren
@@ -728,7 +728,7 @@ oauth2.grant.moderate.magazine_admin.badges: Erstelle oder Entferne Abzeichen in
   eigenen Magazinen.
 edit_my_profile: Mein Profil bearbeiten
 user_badge_moderator: Mod
-flash_account_settings_changed: Die Kontoeinstellungen wurden erfolgreich geändert.
+flash_account_settings_changed: Deine Konto Einstellungen wurden erfolgreich geändert.
   Du musst dich erneut anmelden.
 close: Schließen
 restore_magazine: Magazin wiederherstellen
@@ -846,9 +846,11 @@ sso_registrations_enabled.error: Neue Konto Registrierung mit Identitätsmanager
 show: Zeige
 hide: Verstecke
 edited: Bearbeitet
-filter_by_federation: ''
-auto: ''
-filter_labels: ''
-restrict_magazine_creation: ''
-sort_by: ''
-filter_by_subscription: ''
+filter_by_federation: 'Nach Föderierungsstatus filtern'
+auto: 'Automatisch'
+filter_labels: 'Filter Beschreibung'
+restrict_magazine_creation: 'Erstellung lokaler Magazine auf Admins und globale Mods
+  beschränken'
+sort_by: 'Sortieren nach'
+filter_by_subscription: 'Nach Abonnements filtern'
+related_entry: Zugehörig
