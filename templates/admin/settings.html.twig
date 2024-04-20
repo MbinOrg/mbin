@@ -75,6 +75,10 @@
                 {{ form_label(form.MBIN_RESTRICT_MAGAZINE_CREATION, 'restrict_magazine_creation') }}
                 {{ form_widget(form.MBIN_RESTRICT_MAGAZINE_CREATION) }}
             </div>
+            <div class="checkbox">
+                {{ form_label(form.MBIN_SHOW_SOCIALS_FIRST, 'show_socials_first') }}
+                {{ form_widget(form.MBIN_SHOW_SOCIALS_FIRST) }}
+            </div>
             <div class="row actions">
                 {{ form_row(form.submit, {label: 'save', attr: {class: 'btn btn__primary'}}) }}
             </div>

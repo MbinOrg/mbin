@@ -3,26 +3,27 @@
 <div class="social">
     {% if this.googleEnabled %}
         <a href="{{ path('oauth_google_connect') }}" class="btn btn__secondary"><i class="fa-brands fa-google" aria-hidden="true"></i>
-            <span>Google</span></a>
+            <span>{{ 'continue_with'|trans }} Google</span></a>
     {% endif %}
     {% if this.facebookEnabled %}
         <a href="{{ path('oauth_facebook_connect') }}" class="btn btn__secondary"><i class="fa-brands fa-facebook" aria-hidden="true"></i>
-            <span>Facebook</span></a>
+            <span>{{ 'continue_with'|trans }} Facebook</span></a>
     {% endif %}
     {% if this.githubEnabled %}
         <a href="{{ path('oauth_github_connect') }}" class="btn btn__secondary"><i class="fa-brands fa-github" aria-hidden="true"></i>
-            <span>GitHub</span></a>
+            <span>{{ 'continue_with'|trans }} GitHub</span></a>
     {% endif %}
     {% if this.keycloakEnabled %}
         <a href="{{ path('oauth_keycloak_connect') }}" class="btn btn__secondary"><i class="fa-solid fa-lock" aria-hidden="true"></i>
-            <span>Keycloak</span></a>
+            <span>{{ 'continue_with'|trans }} Keycloak</span></a>
     {% endif %}
     {% if this.zitadelEnabled %}
         <a href="{{ path('oauth_zitadel_connect') }}" class="btn btn__secondary"><i class="fa-solid fa-lock" aria-hidden="true"></i>
-            <span>Zitadel</span></a>
+            <span>{{ 'continue_with'|trans }} Zitadel</span></a>
     {% endif %}
     {% if this.azureEnabled %}
         <a href="{{ path('oauth_azure_connect') }}" class="btn btn__secondary"><i class="fa-brands fa-microsoft" aria-hidden="true"></i>
-            <span>Microsoft</span></a>
+            <span>{{ 'continue_with'|trans }} Microsoft</span></a>
     {% endif %}
 </div>
+<div class="separator"></div>

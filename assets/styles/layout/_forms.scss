@@ -435,8 +435,13 @@ select {
 }
 
 .button-flex {
+  text-align: center;
   button {
-    width: 100%;
+    width: 50%;
+
+    @include media-breakpoint-down(lg) {
+      width: 100%;
+    }
   }
 }
 

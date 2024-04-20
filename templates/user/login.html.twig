@@ -17,6 +17,9 @@
     {% include 'layout/_flash.html.twig' %}
     <div id="content" class="section">
         <div class="container">
+            {% if mbin_show_socials_first() %}
+                {{ component('login_socials') }}
+            {% endif %}
             {% if not_sso_only_mode %}
             <form method="post">
                 {% if error %}
@@ -47,7 +50,9 @@
                 </div>
             </form>
             {% endif %}
-            {{ component('login_socials') }}
+            {% if not mbin_show_socials_first() %}
+                {{ component('login_socials') }}
+            {% endif %}
             {% if not_sso_only_mode %}
             {{ component('user_form_actions', {showRegister: true, showPasswordReset: true, showResendEmail: true}) }}
             {% endif %}
