@@ -44,6 +44,10 @@
                 {{ form_widget(form.MBIN_SSO_REGISTRATIONS_ENABLED) }}
             </div>
             <div class="checkbox">
+                {{ form_label(form.MBIN_SSO_ONLY_MODE, 'sso_only_mode') }}
+                {{ form_widget(form.MBIN_SSO_ONLY_MODE) }}
+            </div>
+            <div class="checkbox">
                 {{ form_label(form.KBIN_CAPTCHA_ENABLED, 'captcha_enabled') }}
                 {{ form_widget(form.KBIN_CAPTCHA_ENABLED) }}
             </div>
