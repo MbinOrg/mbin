@@ -17,12 +17,14 @@
         <li class="dropdown__separator"></li>
         <li>
             <a target="_blank"
+                rel="{{ get_rel(post.apId ?? path('ap_post', {magazine_name: post.magazine.name, post_id: post.id})) }}"
                 href="{{ post.apId ?? path('ap_post', {magazine_name: post.magazine.name, post_id: post.id}) }}">
                 {{ 'open_url_to_fediverse'|trans }}
             </a>
         </li>
         <li>
             <a data-action="clipboard#copy"
+                rel="{{ get_rel(post.apId ?? path('ap_post', {magazine_name: post.magazine.name, post_id: post.id})) }}"
                 href="{{ post.apId ?? path('ap_post', {magazine_name: post.magazine.name, post_id: post.id}) }}">
                 {{ 'copy_url_to_fediverse'|trans }}
             </a>

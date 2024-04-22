@@ -100,7 +100,7 @@ RabbitMQ will now have new queues being added for the different delays (so a mes
 
 ![Queue overview](../images/rabbit_queue_tab_cut.png)
 
-The global overview from rabbitmq shows the ready messages for all queues combined. Messages in the retry queues count as ready messages the whole time they are in there,
+The global overview from RabbitMQ shows the ready messages for all queues combined. Messages in the retry queues count as ready messages the whole time they are in there,
 so for a correct ready count you have to go to the queue specific overview.
 
 | Overview                                                  | Queue Tab                                           | "Message" Queue Overview                                            |
@@ -186,7 +186,7 @@ If you want to update all the remote users on your instance, you can execute the
 ./bin/console mbin:ap:actor:update
 ```
 
-_Important:_ This might have quite a performance impact (temporally), if you are running a very large instance. Due to the huge amount of remote users.
+_Important:_ This might have quite a performance impact (temporarily), if you are running a very large instance. Due to the huge amount of remote users.
 
 ## Running `php bin/console mbin:ap:keys:update` does not appear to set keys
 
@@ -200,7 +200,7 @@ first, so any updates to the keys requires a `DEL instance_private_key instance_
 ## RabbitMQ shows a really high publishing rate
 
 First thing you should do to debug the issue is looking at the "Queues and Streams" tab to find out what queues have the high publishing rate.
-If the queue/s in question are `inbox` and `resolve` it is most likely a circulating `ChainActivityMessage`. 
+If the queue/s in question are `inbox` and `resolve` it is most likely a circulating `ChainActivityMessage`.
 To verify that assumption:
 1. stop all messengers
     - if you're on bare metal, as root: `supervisorctl stop messenger:*`
@@ -213,6 +213,15 @@ To fix the problem:
 3. open the "Get Message" panel
 4. change the `Ack Mode` to `Automatic Ack`
 5. As long as your publishing rate is still high, press the `Get Message` button. It might take a few tries before you got all of them and you might get a "Queue is empty" message a few times
+
+### Discarding queued messages
+
+If you believe you have a queued message that is infinitely looping / stuck, you can discard it by setting the `Get messages` `Ack mode` in RabbitMQ to `Reject requeue false` with a `Messages` setting of `1` and clicking `Get message(s)`.
+
+> [!WARNING]
+> This will permanently discard the payload
+
+![Rabbit discard payload](../images/rabbit_reject_requeue_false.png)
 
 ## Performance hints
 

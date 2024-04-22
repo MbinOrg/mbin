@@ -3,20 +3,14 @@
 Below is a step-by-step guide of the process for creating your own Mbin instance from the moment a new VPS/VM is created or directly on bare-metal.  
 This is a preliminary outline that will help you launch an instance for your own needs.
 
-:::note
-
-Mbin is still in development.
-
-:::
+> [!NOTE]
+> Mbin is still in development.
 
 This guide is aimed for Debian / Ubuntu distribution servers, but it could run on any modern Linux distro. This guide will however uses the `apt` commands.
 
-:::note
-
-In this document a few services that are specific to the bare metal installation are configured. 
-You do need to follow the configuration guide as well. It describes the configuration of services shared between bare metal and docker.
-
-:::
+> [!NOTE]
+> In this document a few services that are specific to the bare metal installation are configured.
+> You do need to follow the configuration guide as well. It describes the configuration of services shared between bare metal and docker.
 
 ## Minimum hardware requirements
 
@@ -54,7 +48,7 @@ Install PHP 8.2 with some important PHP extensions:
 
 ```bash
 sudo apt-get update
-sudo apt-get install php8.2 php8.2-common php8.2-fpm php8.2-cli php8.2-amqp php8.2-pgsql php8.2-gd php8.2-curl php8.2-xml php8.2-redis php8.2-mbstring php8.2-zip php8.2-bz2 php8.2-intl -y
+sudo apt-get install php8.2 php8.2-common php8.2-fpm php8.2-cli php8.2-amqp php8.2-pgsql php8.2-gd php8.2-curl php8.2-xml php8.2-redis php8.2-mbstring php8.2-zip php8.2-bz2 php8.2-intl php8.2-bcmath -y
 ```
 
 Install Composer:
@@ -72,11 +66,8 @@ If you have a firewall installed (or you're behind a NAT), be sure to open port 
 
 1. Prepare & download keyring:
 
-:::note
-
-we assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
-
-:::
+> [!NOTE]
+> This assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
 
 ```bash
 sudo mkdir -p /etc/apt/keyrings
@@ -115,7 +106,7 @@ sudo chown mbin:www-data /var/www/mbin
 
 ## Generate Secrets
 
-> **Note**
+> [!NOTE]
 > This will generate several valid tokens for the Mbin setup, you will need quite a few.
 
 ```bash
@@ -169,7 +160,7 @@ nano .env
 
 Make sure you have substituted all the passwords and configured the basic services in `.env` file.
 
-> **Note**
+> [!NOTE]
 > The snippet below are to variables inside the .env file. Using the keys generated in the section above "Generating Secrets" fill in the values. You should fully review this file to ensure everything is configured correctly.
 
 ```ini
@@ -305,13 +296,10 @@ composer clear-cache
 
 If you run production already then _skip the steps below_.
 
-:::danger
-
-When running in development mode your instance will make _sensitive information_ available,
-such as database credentials, via the debug toolbar and/or stack traces.
-**DOT NOT** expose your development instance to the Internet or you will have a bad time.
-
-:::
+> [!CAUTION]
+> When running in development mode your instance will make _sensitive information_ available,
+> such as database credentials, via the debug toolbar and/or stack traces.
+> **DO NOT** expose your development instance to the Internet or you will have a bad time.
 
 ```bash
 composer install
@@ -420,22 +408,15 @@ php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
 ```
 
-:::tip
-
-Check out [PostgreSQL tuning](../99-tuning/postgresql.md), you should not run the default PostgreSQL configuration in production.
-
-:::
-
+> [!TIP]
+> Check out [PostgreSQL tuning](../99-tuning/postgresql.md), you should not run the default PostgreSQL configuration in production.
 
 ## Install RabbitMQ
 
 [RabbitMQ Install](https://www.rabbitmq.com/install-debian.html#apt-quick-start-cloudsmith)
 
-:::note
-
-we assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
-
-:::
+> [!NOTE]
+> This assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
 
 ```bash
 ## Team RabbitMQ's main signing key
@@ -567,12 +548,10 @@ Save and close the file. Restart supervisor jobs:
 ```bash
 sudo supervisorctl reread && sudo supervisorctl update && sudo supervisorctl start all
 ```
-:::tip
 
-If you wish to restart your supervisor jobs in the future, use:
-
-:::
-
-```bash
-sudo supervisorctl restart all
-```
+> [!TIP]
+> If you wish to restart your supervisor jobs in the future, use:
+>
+> ```bash
+> sudo supervisorctl restart all
+> ```

@@ -2,7 +2,7 @@
 
 ## What is Mbin?
 
-Mbin is an _open-source federated link aggregration, content rating and discussion_ software that is built on top of _ActivityPub_.
+Mbin is an _open-source federated link aggregation, content rating and discussion_ software that is built on top of _ActivityPub_.
 
 ## What is ActivityPub (AP)?
 
