@@ -15,7 +15,10 @@ php bin/console mbin:user:admin <username>
 php bin/console mbin:ap:keys:update
 ```
 
-Next, log in and create a magazine named "random" to which unclassified content from the fediverse will flow.
+Next, log in and create a magazine named `random` to which unclassified content from the fediverse will flow.
+
+> [!IMPORTANT]
+> Creating a `random` magazine is a requirement to getting microblog posts that don't fall under an existing magazine.
 
 ### Manual user activation
 

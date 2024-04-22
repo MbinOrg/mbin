@@ -24,6 +24,7 @@
         </li>
         <li>
             <a data-action="clipboard#copy"
+                rel="{{ get_rel(comment.apId ?? path('ap_entry_comment', {magazine_name: comment.magazine.name, entry_id: comment.entry.id, comment_id: comment.id})) }}"
                 href="{{ comment.apId ?? path('ap_entry_comment', {magazine_name: comment.magazine.name, entry_id: comment.entry.id, comment_id: comment.id}) }}">
                 {{ 'copy_url_to_fediverse'|trans }}
             </a>
