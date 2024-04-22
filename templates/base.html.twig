@@ -67,11 +67,13 @@
               class="{{ html_classes({'view-compact': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_COMPACT')) is same as 'true'}) }}">
             {% block body %}{% endblock %}
         </main>
-        <aside id="sidebar">
-            {% block sidebar %}
-                {% include 'layout/_sidebar.html.twig' with {sidebar_top: block('sidebar_top'), header_nav: block('header_nav')} %}
-            {% endblock %}
-        </aside>
+        {% if not mbin_private_instance() or (mbin_private_instance() and app.user is defined and app.user is not same as null) %}
+            <aside id="sidebar">
+                {% block sidebar %}
+                    {% include 'layout/_sidebar.html.twig' with {sidebar_top: block('sidebar_top'), header_nav: block('header_nav')} %}
+                {% endblock %}
+            </aside>
+        {% endif %}
         {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SHOW')) is not same as constant('App\\Controller\\User\\ThemeSettingsController::FALSE') and
             app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR')) is same as constant('App\\Controller\\User\\ThemeSettingsController::TRUE') and
             app.user is defined and app.user is not same as null %}
