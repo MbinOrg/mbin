@@ -68,6 +68,8 @@ security:
         - { path: ^/resend-email-activation, role: PUBLIC_ACCESS }
         - { path: ^/consent, role: PUBLIC_ACCESS }
         - { path: ^/oauth, role: PUBLIC_ACCESS }
+        - { path: ^/terms, role: PUBLIC_ACCESS }
+        - { path: ^/privacy-policy, role: PUBLIC_ACCESS }
         # Allow ActivityPub routes to work publicly
         - { attributes: { '_route': 'ap_webfinger' }, role: PUBLIC_ACCESS }
         - { attributes: { '_route': 'ap_hostmeta' }, role: PUBLIC_ACCESS }
