@@ -21,11 +21,8 @@ sudo chown -R mbin:www-data metal/caddy
 
 [Caddyfile Global Options](https://caddyserver.com/docs/caddyfile/options)
 
-:::note
-
-Caddyfiles: The one provided should work for most people, edit as needed via the previous link. Combination of mercure.conf and Caddyfile
-
-:::
+> [!NOTE]
+> Caddyfiles: The one provided should work for most people, edit as needed via the previous link. Combination of mercure.conf and Caddyfile
 
 Add new `Caddyfile` file:
 

@@ -37,6 +37,15 @@ Install PHP-CS-Fixer first: `composer -d tools install`
 
 Then run the following command trying to auto-fix the issues: `./tools/vendor/bin/php-cs-fixer fix`
 
+For JavaScript code inside the `assets/` directory, we use ESLint for linting and potentially fix the code style issues.
+
+Install eslint and its required plugins by: `npm install`.
+
+Run the following command to perform linting: `npm run lint`, or you could use eslint directly by `npx eslint` if needed.
+
+Run the following command to attempt auto-fix linting issues: `npm run lint-fix`, or `npx eslint --fix .`.  
+Note that unlike PHP-CS-Fixer, *not all linting problems could be automatically fixed*, some of these would requires manually fixing them as appropiate, be sure to do those.
+
 ### Tests
 
 When fixing a bug or implementing a new feature or improvement, we expect that test code will also be included with every delivery of production code.

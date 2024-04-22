@@ -1,10 +1,7 @@
 # Let's Encrypt (TLS)
 
-:::note
-
-The Certbot authors recommend installing through snap as some distros' versions from APT tend to fall out-of-date; see https://eff-certbot.readthedocs.io/en/latest/install.html#snap-recommended for more.
-
-:::
+> [!TIP]
+> The Certbot authors recommend installing through snap as some distros' versions from APT tend to fall out-of-date; see https://eff-certbot.readthedocs.io/en/latest/install.html#snap-recommended for more.
 
 Install Snapd:
 
