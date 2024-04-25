@@ -24,7 +24,9 @@ class ContactController extends AbstractController
     {
         $site = $repository->findAll();
 
-        $form = $this->createForm(ContactType::class);
+        $form = $this->createForm(ContactType::class, options: [
+            'antispam_profile' => 'default',
+        ]);
         try {
             $form->handleRequest($request);
 
