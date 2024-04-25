@@ -51,15 +51,19 @@ class EntryCommentNoteFactory
         }
 
         $note = array_merge($note ?? [], [
-            'type' => 'Note',
             'id' => $this->getActivityPubId($comment),
+            'type' => 'Note',
             'attributedTo' => $this->activityPubManager->getActorProfileId($comment->user),
             'inReplyTo' => $this->getReplyTo($comment),
             'to' => [
                 ActivityPubActivityInterface::PUBLIC_URL,
             ],
             'cc' => $cc,
-            'content' => $this->markdownConverter->convertToHtml($comment->body, [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub]),
+            'sensitive' => $comment->entry->isAdult(),
+            'content' => $this->markdownConverter->convertToHtml(
+                $comment->body,
+                [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub]
+            ),
             'mediaType' => 'text/html',
             'source' => $comment->body ? [
                 'content' => $comment->body,
