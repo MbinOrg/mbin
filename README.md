@@ -55,11 +55,6 @@ For developers:
 - [Translations](https://hosted.weblate.org/engage/mbin/)
 - [Contribution guidelines](CONTRIBUTING.md) - please read first, including before opening an issue!
 
-## Collaborators
-
-<!-- readme: collaborators -start -->
-<!-- readme: collaborators -end -->
-
 ## Contributors
 
 <!-- readme: contributors -start -->
