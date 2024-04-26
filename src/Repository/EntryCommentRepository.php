@@ -20,6 +20,8 @@ use App\Entity\Moderator;
 use App\Entity\User;
 use App\Entity\UserBlock;
 use App\Entity\UserFollow;
+use App\Repository\Contract\TagRepositoryInterface;
+use App\Service\SettingsManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Types\Types;
@@ -44,13 +46,13 @@ class EntryCommentRepository extends ServiceEntityRepository
     public const SORT_DEFAULT = 'active';
     public const PER_PAGE = 15;
 
-    private Security $security;
-
-    public function __construct(ManagerRegistry $registry, Security $security)
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly Security $security,
+        private readonly SettingsManager $settingsManager,
+    )
     {
         parent::__construct($registry, EntryComment::class);
-
-        $this->security = $security;
     }
 
     public function findByCriteria(Criteria $criteria): PagerfantaInterface
@@ -180,8 +182,8 @@ class EntryCommentRepository extends ServiceEntityRepository
 
         if ($criteria->subscribed) {
             $qb->andWhere(
-                'c.magazine IN (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :follower) 
-                OR 
+                'c.magazine IN (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :follower)
+                OR
                 c.user IN (SELECT IDENTITY(uf.following) FROM '.UserFollow::class.' uf WHERE uf.follower = :follower)
                 OR
                 c.user = :follower
@@ -243,7 +245,11 @@ class EntryCommentRepository extends ServiceEntityRepository
                 $qb->orderBy('c.upVotes', 'DESC');
                 break;
             case Criteria::SORT_TOP:
-                $qb->orderBy('c.upVotes + c.favouriteCount - c.downVotes', 'DESC');
+                if ('disabled' === $this->settingsManager->get('MBIN_DOWNVOTES_MODE')) {
+                    $qb->orderBy('c.upVotes + c.favouriteCount', 'DESC');
+                } else {
+                    $qb->orderBy('c.upVotes + c.favouriteCount - c.downVotes', 'DESC');
+                }
                 break;
             case Criteria::SORT_ACTIVE:
                 $qb->orderBy('c.lastActive', 'DESC');

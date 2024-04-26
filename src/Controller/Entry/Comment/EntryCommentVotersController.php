@@ -9,6 +9,7 @@ use App\Entity\Contracts\VotableInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Magazine;
+use App\Service\SettingsManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +17,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EntryCommentVotersController extends AbstractController
 {
+    public function __construct(
+        private readonly SettingsManager $settingsManager,
+    ) {
+    }
+
     public function __invoke(
         #[MapEntity(mapping: ['magazine_name' => 'name'])]
         Magazine $magazine,
@@ -26,9 +32,13 @@ class EntryCommentVotersController extends AbstractController
         Request $request,
         string $type
     ): Response {
-        $votes = $comment->votes->filter(
-            fn ($e) => $e->choice === ('up' === $type ? VotableInterface::VOTE_UP : VotableInterface::VOTE_DOWN)
-        );
+        if ('down' === $type && $this->settingsManager->get('MBIN_DOWNVOTES_MODE') !== 'enabled') {
+            $votes = [];
+        } else {
+            $votes = $comment->votes->filter(
+                fn ($e) => $e->choice === ('up' === $type ? VotableInterface::VOTE_UP : VotableInterface::VOTE_DOWN)
+            );
+        }
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([

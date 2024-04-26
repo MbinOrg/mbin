@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Site;
 use App\Entity\User;
+use App\Service\SettingsManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Adapter\ArrayAdapter;
@@ -23,8 +24,10 @@ class ReputationRepository extends ServiceEntityRepository
 
     public const PER_PAGE = 48;
 
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly SettingsManager $settingsManager,
+    ) {
         parent::__construct($registry, Site::class);
     }
 
@@ -63,11 +66,19 @@ class ReputationRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()
             ->getConnection();
 
-        $sql = 'SELECT
-            COALESCE((SELECT SUM((up_votes * 2) - down_votes + favourite_count) FROM entry WHERE user_id = :user), 0) +
-            COALESCE((SELECT SUM((up_votes * 2) - down_votes + favourite_count) FROM entry_comment WHERE user_id = :user), 0) +
-            COALESCE((SELECT SUM((up_votes * 2) - down_votes + favourite_count) FROM post WHERE user_id = :user), 0) +
-            COALESCE((SELECT SUM((up_votes * 2) - down_votes + favourite_count) FROM post_comment WHERE user_id = :user), 0) as total';
+        if ('disabled' === $this->settingsManager->get('MBIN_DOWNVOTES_MODE')) {
+            $sql = 'SELECT
+                COALESCE((SELECT SUM((up_votes * 2) + favourite_count) FROM entry WHERE user_id = :user), 0) +
+                COALESCE((SELECT SUM((up_votes * 2) + favourite_count) FROM entry_comment WHERE user_id = :user), 0) +
+                COALESCE((SELECT SUM((up_votes * 2) + favourite_count) FROM post WHERE user_id = :user), 0) +
+                COALESCE((SELECT SUM((up_votes * 2) + favourite_count) FROM post_comment WHERE user_id = :user), 0) as total';
+        } else {
+            $sql = 'SELECT
+                COALESCE((SELECT SUM((up_votes * 2) - down_votes + favourite_count) FROM entry WHERE user_id = :user), 0) +
+                COALESCE((SELECT SUM((up_votes * 2) - down_votes + favourite_count) FROM entry_comment WHERE user_id = :user), 0) +
+                COALESCE((SELECT SUM((up_votes * 2) - down_votes + favourite_count) FROM post WHERE user_id = :user), 0) +
+                COALESCE((SELECT SUM((up_votes * 2) - down_votes + favourite_count) FROM post_comment WHERE user_id = :user), 0) as total';
+        }
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('user', $user->getId());

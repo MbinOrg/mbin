@@ -6,11 +6,17 @@ namespace App\Repository;
 
 use App\Entity\Magazine;
 use App\Entity\User;
+use App\Service\SettingsManager;
 use Doctrine\DBAL\ParameterType;
 use JetBrains\PhpStorm\ArrayShape;
 
 class StatsVotesRepository extends StatsRepository
 {
+    public function __construct(
+        private readonly SettingsManager $settingsManager,
+    ) {
+    }
+
     #[ArrayShape(['entries' => 'array', 'comments' => 'array', 'posts' => 'array', 'replies' => 'array'])]
     public function getOverallStats(
         ?User $user = null,
@@ -98,7 +104,13 @@ class StatsVotesRepository extends StatsRepository
             $stmt->bindValue('magazineId', $this->magazine->getId());
         }
 
-        return $stmt->executeQuery()->fetchAllAssociative();
+        $results = $stmt->executeQuery()->fetchAllAssociative();
+        if ('disabled' === $this->settingsManager->get('MBIN_DOWNVOTES_MODE')) {
+            for ($i = 0; $i < \count($results); ++$i) {
+                $results[$i]['down'] = 0;
+            }
+        }
+        return $results;
     }
 
     #[ArrayShape([[
@@ -125,7 +137,13 @@ class StatsVotesRepository extends StatsRepository
             $stmt->bindValue('magazineId', $this->magazine->getId());
         }
 
-        return $stmt->executeQuery()->fetchAllAssociative();
+        $results = $stmt->executeQuery()->fetchAllAssociative();
+        if ('disabled' === $this->settingsManager->get('MBIN_DOWNVOTES_MODE')) {
+            for ($i = 0; $i < \count($results); ++$i) {
+                $results[$i]['down'] = 0;
+            }
+        }
+        return $results;
     }
 
     protected function prepareContentOverall(array $entries, int $startYear, int $startMonth): array
@@ -148,6 +166,9 @@ class StatsVotesRepository extends StatsRepository
 
                 if (!empty($existed)) {
                     $results[] = current($existed);
+                    if ('disabled' === $this->settingsManager->get('MBIN_DOWNVOTES_MODE')) {
+                        $results[0]['down'] = 0;
+                    }
                     continue;
                 }
 
@@ -202,6 +223,9 @@ class StatsVotesRepository extends StatsRepository
             if (!empty($existed)) {
                 $existed = current($existed);
                 $existed['day'] = new \DateTime($existed['day']);
+                if ('disabled' === $this->settingsManager->get('MBIN_DOWNVOTES_MODE')) {
+                    $existed['down'] = 0;
+                }
 
                 $results[] = $existed;
                 continue;
@@ -351,6 +375,9 @@ class StatsVotesRepository extends StatsRepository
             for ($i = 0; $i < \count($results[$table]); ++$i) {
                 $datemap[$results[$table][$i]['datetime']] = $i;
                 $results[$table][$i]['up'] = 0;
+                if ('disabled' === $this->settingsManager->get('MBIN_DOWNVOTES_MODE')) {
+                    $results[$table][$i]['down'] = 0;
+                }
             }
 
             $favourites = $this->aggregateFavouriteStats($table, $magazine, $interval, $end);
@@ -468,6 +495,9 @@ class StatsVotesRepository extends StatsRepository
                     'down' => 0,
                     'up' => 0,
                 ];
+            }
+            if ('disabled' === $this->settingsManager->get('MBIN_DOWNVOTES_MODE')) {
+                $results[$table][0]['down'] = 0;
             }
 
             usort($results[$table], fn ($a, $b): int => $a['datetime'] <=> $b['datetime']);
