@@ -13,6 +13,7 @@ use App\Message\ActivityPub\Outbox\AnnounceMessage;
 use App\Message\Notification\VoteNotificationMessage;
 use App\Service\CacheService;
 use App\Service\FavouriteManager;
+use App\Service\SettingsManager;
 use Doctrine\Common\Util\ClassUtils;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -26,6 +27,7 @@ class VoteHandleSubscriber implements EventSubscriberInterface
         private readonly CacheService $cacheService,
         private readonly CacheInterface $cache,
         private readonly FavouriteManager $favouriteManager,
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 
@@ -40,7 +42,7 @@ class VoteHandleSubscriber implements EventSubscriberInterface
     public function onVote(VoteEvent $event): void
     {
         if (VotableInterface::VOTE_DOWN === $event->vote->choice) {
-            $this->favouriteManager->toggle($event->vote->user, $event->votable, FavouriteManager::TYPE_UNLIKE);
+            $this->favouriteManager->toggle($event->vote->user, $event->votable, $this->settingsManager->get('MBIN_DOWNVOTES_MODE') !== 'disabled' ? FavouriteManager::TYPE_UNLIKE : null);
         }
 
         $this->clearCache($event->votable);
