@@ -146,6 +146,13 @@ If you want to delete only the messages that are no longer being worked (`dead`)
 DELETE FROM messenger_messages WHERE queue_name = 'dead';
 ```
 
+To free up the disk space used by the now deleted messages, execute the following queries:
+
+```
+VACUUM messenger_messages;
+```
+
+
 ## Where can I find my logging?
 
 You can find the Mbin logging in the `var/log/` directory from the root folder of the Mbin installation. When running production the file is called `prod-{YYYY-MM-DD}.log`, when running development the log file is called `dev-{YYYY-MM-DD}.log`.
