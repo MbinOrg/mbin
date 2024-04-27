@@ -86,6 +86,16 @@ class UrlExtensionRuntime implements RuntimeExtensionInterface
         ]);
     }
 
+    public function entryCommentViewUrl(EntryComment $comment): string
+    {
+        return $this->urlGenerator->generate('entry_comment_view', [
+            'magazine_name' => $comment->magazine->name,
+            'entry_id' => $comment->entry->getId(),
+            'slug' => empty($comment->entry->slug) ? '-' : $comment->entry->slug,
+            'comment_id' => $comment->getId(),
+        ]);
+    }
+
     public function entryCommentEditUrl(EntryComment $comment): string
     {
         return $this->urlGenerator->generate('entry_comment_edit', [
