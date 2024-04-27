@@ -146,9 +146,9 @@ If you want to delete only the messages that are no longer being worked (`dead`)
 DELETE FROM messenger_messages WHERE queue_name = 'dead';
 ```
 
-To free up the disk space used by the now deleted messages, execute the following queries:
+To free up the disk space used by the now deleted messages, execute the following query:
 
-```
+```sql
 VACUUM messenger_messages;
 ```
 
