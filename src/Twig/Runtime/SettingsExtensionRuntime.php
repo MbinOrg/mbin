@@ -103,4 +103,9 @@ class SettingsExtensionRuntime implements RuntimeExtensionInterface
     {
         return $this->settings->get('MBIN_RESTRICT_MAGAZINE_CREATION');
     }
+
+    public function mbinPrivateInstance(): bool
+    {
+        return $this->settings->get('MBIN_PRIVATE_INSTANCE');
+    }
 }
