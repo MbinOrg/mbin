@@ -1,0 +1,15 @@
+name: Contributor Workflow
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  contrib-readme:
+    runs-on: ubuntu-latest
+    name: Update contrib in README
+    steps:
+      - name: Contribute List
+        uses: akhilmhdh/contributors-readme-action@v2.3.8
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

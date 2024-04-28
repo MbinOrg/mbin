@@ -191,7 +191,6 @@ services:
                   event: kernel.controller,
                   priority: -5,
               }
-        arguments: ["%kbin_federation_enabled%"]
 
     App\EventListener\UserActivityListener:
         tags:

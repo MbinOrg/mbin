@@ -20,17 +20,17 @@
 
 {% block entry_comment_created_notification %}
     {{ component('user_inline', {user: notification.comment.user}) }} {{ 'added_new_comment'|trans|lower }} - <a
-        href="{{ entry_url(notification.comment.entry) }}#{{ get_url_fragment(notification.comment) }}">{{ notification.comment.shortTitle }}</a>
+        href="{{ entry_comment_view_url(notification.comment) }}#{{ get_url_fragment(notification.comment) }}">{{ notification.comment.shortTitle }}</a>
 {% endblock entry_comment_created_notification %}
 
 {% block entry_comment_edited_notification %}
     {{ component('user_inline', {user: notification.comment.user}) }} {{ 'edited_comment'|trans|lower }} - <a
-        href="{{ entry_url(notification.comment.entry) }}#{{ get_url_fragment(notification.comment) }}">{{ notification.comment.shortTitle }}</a>
+        href="{{ entry_comment_view_url(notification.comment) }}#{{ get_url_fragment(notification.comment) }}">{{ notification.comment.shortTitle }}</a>
 {% endblock entry_comment_edited_notification %}
 
 {% block entry_comment_reply_notification %}
     {{ component('user_inline', {user: notification.comment.user}) }} {{ 'replied_to_your_comment'|trans|lower }} - <a
-        href="{{ entry_url(notification.comment.entry) }}#{{ get_url_fragment(notification.comment) }}">{{ notification.comment.shortTitle }}</a>
+        href="{{ entry_comment_view_url(notification.comment) }}#{{ get_url_fragment(notification.comment) }}">{{ notification.comment.shortTitle }}</a>
 {% endblock entry_comment_reply_notification %}
 
 {% block entry_comment_deleted_notification %}
@@ -41,7 +41,7 @@
 
 {% block entry_comment_mentioned_notification %}
     {{ component('user_inline', {user: notification.comment.user}) }} {{ 'mentioned_you'|trans|lower }} - <a
-        href="{{ entry_url(notification.comment.entry) }}#{{ get_url_fragment(notification.comment) }}">{{ notification.comment.shortTitle }}</a>
+        href="{{ entry_comment_view_url(notification.comment) }}#{{ get_url_fragment(notification.comment) }}">{{ notification.comment.shortTitle }}</a>
 {% endblock entry_comment_mentioned_notification %}
 
 {% block post_created_notification %}

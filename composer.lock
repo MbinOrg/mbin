@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4b967ac8161ea412676fcf037c5fc241",
+    "content-hash": "090cc34e9abb8db84dae3d7b1bbd21ad",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -5445,94 +5445,6 @@
             "time": "2024-01-17T16:50:36+00:00"
         },
         {
-            "name": "nucleos/antispam-bundle",
-            "version": "3.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/nucleos/NucleosAntiSpamBundle.git",
-                "reference": "188f9cd63d17e25ec7bf7e96e2c3c7601d3925a2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/nucleos/NucleosAntiSpamBundle/zipball/188f9cd63d17e25ec7bf7e96e2c3c7601d3925a2",
-                "reference": "188f9cd63d17e25ec7bf7e96e2c3c7601d3925a2",
-                "shasum": ""
-            },
-            "require": {
-                "ext-pcre": "*",
-                "php": "^8.1",
-                "symfony/config": "^6.4 || ^7.0",
-                "symfony/dependency-injection": "^6.4 || ^7.0",
-                "symfony/event-dispatcher": "^6.4 || ^7.0",
-                "symfony/expression-language": "^6.4 || ^7.0",
-                "symfony/form": "^6.4 || ^7.0",
-                "symfony/framework-bundle": "^6.4 || ^7.0",
-                "symfony/http-foundation": "^6.4 || ^7.0",
-                "symfony/http-kernel": "^6.4 || ^7.0",
-                "symfony/options-resolver": "^6.4 || ^7.0",
-                "symfony/translation-contracts": "^1.1 || ^2.0 || ^3.0",
-                "twig/twig": "^2.4 || ^3.0"
-            },
-            "require-dev": {
-                "ergebnis/composer-normalize": "^2.0.1",
-                "symfony/browser-kit": "^6.4 || ^7.0",
-                "symfony/console": "^6.4 || ^7.0",
-                "symfony/translation": "^6.4 || ^7.0",
-                "symfony/twig-bundle": "^6.4 || ^7.0",
-                "symfony/yaml": "^6.4 || ^7.0"
-            },
-            "type": "symfony-bundle",
-            "autoload": {
-                "psr-4": {
-                    "Nucleos\\AntiSpamBundle\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Christian Gripp",
-                    "email": "mail@core23.de"
-                }
-            ],
-            "description": "This bundle provides some basic features to reduce spam in symfony forms.",
-            "homepage": "https://nucleos.rocks",
-            "keywords": [
-                "antispam",
-                "bundle",
-                "form",
-                "protection",
-                "spam",
-                "symfony",
-                "twig"
-            ],
-            "support": {
-                "issues": "https://github.com/nucleos/NucleosAntiSpamBundle/issues",
-                "source": "https://github.com/nucleos/NucleosAntiSpamBundle/tree/3.1.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/sponsors/core23",
-                    "type": "github"
-                },
-                {
-                    "url": "https://ko-fi.com/core23",
-                    "type": "ko-fi"
-                },
-                {
-                    "url": "https://opencollective.com/core23",
-                    "type": "opencollective"
-                },
-                {
-                    "url": "https://donate.core23.de",
-                    "type": "other"
-                }
-            ],
-            "time": "2023-12-05T20:02:51+00:00"
-        },
-        {
             "name": "nyholm/psr7",
             "version": "1.8.1",
             "source": {
@@ -5609,6 +5521,97 @@
                 }
             ],
             "time": "2023-11-13T09:31:12+00:00"
+        },
+        {
+            "name": "omines/antispam-bundle",
+            "version": "0.1.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/omines/antispam-bundle.git",
+                "reference": "628493dc2d03dc59fab27fa5c5a61395174ed0f0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/omines/antispam-bundle/zipball/628493dc2d03dc59fab27fa5c5a61395174ed0f0",
+                "reference": "628493dc2d03dc59fab27fa5c5a61395174ed0f0",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=8.1",
+                "psr/log": "^3.0",
+                "symfony/clock": "^6.3|^7.0",
+                "symfony/form": "^6.3|^7.0",
+                "symfony/framework-bundle": "^6.3|^7.0",
+                "symfony/translation": "^6.3|^7.0",
+                "symfony/twig-bridge": "^6.3|^7.0",
+                "symfony/validator": "^6.3|^7.0",
+                "symfony/yaml": "^6.3|^7.0"
+            },
+            "conflict": {
+                "monolog/monolog": "<3"
+            },
+            "require-dev": {
+                "ekino/phpstan-banned-code": "^1.0",
+                "friendsofphp/php-cs-fixer": "^3.38.2",
+                "infection/infection": "^0.27.8",
+                "phpstan/extension-installer": "^1.3.1",
+                "phpstan/phpstan": "^1.10.41",
+                "phpstan/phpstan-phpunit": "^1.3.15",
+                "phpstan/phpstan-symfony": "^1.3.5",
+                "phpunit/phpunit": "^10.4.2",
+                "symfony/browser-kit": "^6.3|^7.0",
+                "symfony/css-selector": "^6.3|^7.0",
+                "symfony/debug-bundle": "^6.3|^7.0",
+                "symfony/dotenv": "^6.3|^7.0",
+                "symfony/monolog-bundle": "^3.8",
+                "symfony/routing": "^6.3|^7.0",
+                "symfony/runtime": "^6.3|^7.0",
+                "symfony/twig-bundle": "^6.3|^7.0",
+                "symfony/web-profiler-bundle": "^6.3|^7.0"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Omines\\AntiSpamBundle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Niels Keurentjes",
+                    "email": "niels.keurentjes@omines.com",
+                    "homepage": "https://www.omines.nl/"
+                }
+            ],
+            "description": "The Swiss Army Knife for protecting your Symfony forms from all kinds of spam",
+            "keywords": [
+                "Honeypot",
+                "antispam",
+                "cyrillic",
+                "spam",
+                "spam timer",
+                "symfony"
+            ],
+            "support": {
+                "issues": "https://github.com/omines/antispam-bundle/issues",
+                "source": "https://github.com/omines/antispam-bundle/tree/0.1.6"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/curry684",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-11-27T09:36:34+00:00"
         },
         {
             "name": "oneup/flysystem-bundle",

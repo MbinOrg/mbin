@@ -45,7 +45,7 @@
                 <span>, </span>
 
                 {% if dateAsUrl %}
-                    <a href="{{ entry_url(comment.entry) }}#{{ get_url_fragment(comment) }}"
+                    <a href="{{ entry_comment_view_url(comment) }}#{{ get_url_fragment(comment) }}"
                        class="link-muted">{{ component('date', {date: comment.createdAt}) }}</a>
                 {% else %}
                     {{ component('date', {date: comment.createdAt}) }}

@@ -29,6 +29,7 @@ final class SettingsExtension extends AbstractExtension
             new TwigFunction('kbin_federation_page_enabled', [SettingsExtensionRuntime::class, 'kbinFederationPageEnabled']),
             new TwigFunction('mbin_current_version', [SettingsExtensionRuntime::class, 'mbinCurrentVersion']),
             new TwigFunction('mbin_restrict_magazine_creation', [SettingsExtensionRuntime::class, 'mbinRestrictMagazineCreation']),
+            new TwigFunction('mbin_private_instance', [SettingsExtensionRuntime::class, 'mbinPrivateInstance']),
         ];
     }
 }

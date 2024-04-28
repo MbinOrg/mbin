@@ -20,6 +20,7 @@ final class UrlExtension extends AbstractExtension
             new TwigFunction('entry_moderate_url', [UrlExtensionRuntime::class, 'entryModerateUrl']),
             new TwigFunction('entry_delete_url', [UrlExtensionRuntime::class, 'entryDeleteUrl']),
             new TwigFunction('entry_comment_create_url', [UrlExtensionRuntime::class, 'entryCommentCreateUrl']),
+            new TwigFunction('entry_comment_view_url', [UrlExtensionRuntime::class, 'entryCommentViewUrl']),
             new TwigFunction('entry_comment_edit_url', [UrlExtensionRuntime::class, 'entryCommentEditUrl']),
             new TwigFunction('entry_comment_delete_url', [UrlExtensionRuntime::class, 'entryCommentDeleteUrl']),
             new TwigFunction('entry_comment_voters_url', [UrlExtensionRuntime::class, 'entryCommentVotersUrl']),

@@ -316,7 +316,7 @@ class ApHttpClient
         unset($headers['(request-target)']);
         $headers['Signature'] = $signatureHeader;
         $headers['User-Agent'] = $this->projectInfo->getUserAgent().'/'.$this->projectInfo->getVersion().' (+https://'.$this->kbinDomain.'/agent)';
-        $headers['Accept'] = 'application/activity+json, application/ld+json';
+        $headers['Accept'] = 'application/activity+json';
         $headers['Content-Type'] = 'application/activity+json';
 
         return $headers;
@@ -340,7 +340,7 @@ class ApHttpClient
             $headers['Accept'] = 'application/jrd+json';
             $headers['Content-Type'] = 'application/jrd+json';
         } else {
-            $headers['Accept'] = 'application/activity+json, application/ld+json';
+            $headers['Accept'] = 'application/activity+json';
             $headers['Content-Type'] = 'application/activity+json';
         }
 
