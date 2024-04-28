@@ -29,6 +29,7 @@ use App\Repository\ImageRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApObjectExtractor;
 use App\Service\ActivityPub\Webfinger\WebFinger;
 use App\Service\ActivityPub\Webfinger\WebFingerFactory;
 use Doctrine\Common\Collections\Criteria;
@@ -441,8 +442,7 @@ class ActivityPubManager
 
         if (isset($actor['endpoints']['sharedInbox']) || isset($actor['inbox'])) {
             if (isset($actor['summary'])) {
-                $converter = new HtmlConverter(['strip_tags' => true]);
-                $magazine->description = stripslashes($converter->convert($actor['summary']));
+                $magazine->description = $this->extractMarkdownSummary($actor);
             }
 
             if (isset($actor['icon'])) {
@@ -788,5 +788,16 @@ class ActivityPubManager
         }
 
         return $this->entityManager->getRepository($activity['type'])->find((int) $activity['id']);
+    }
+
+    public function extractMarkdownSummary(array $apObject): ?string
+    {
+        if (isset($apObject['source']) && isset($apObject['source']['mediaType']) && isset($apObject['source']['content']) && ApObjectExtractor::MARKDOWN_TYPE === $apObject['source']['mediaType']) {
+            return $apObject['source']['content'];
+        } else {
+            $converter = new HtmlConverter(['strip_tags' => true]);
+
+            return stripslashes($converter->convert($apObject['summary']));
+        }
     }
 }
