@@ -10,14 +10,12 @@ use App\Repository\UserRepository;
 use App\Service\ActivityPub\Webfinger\WebFingerParameters;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserWebFingerSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly RequestStack $requestStack,
         private readonly WebFingerParameters $webfingerParameters,
         private readonly UserRepository $userRepository,
         private readonly UrlGeneratorInterface $urlGenerator
@@ -34,8 +32,8 @@ class UserWebFingerSubscriber implements EventSubscriberInterface
 
     public function buildResponse(WebfingerResponseEvent $event): void
     {
-        $request = $this->requestStack->getCurrentRequest();
-        $params = $this->webfingerParameters->getParams();
+        $request = $event->request;
+        $params = $this->webfingerParameters->getParams($request);
         $jsonRd = $event->jsonRd;
 
         $subject = $request->query->get('resource') ?: '';
@@ -43,9 +41,10 @@ class UserWebFingerSubscriber implements EventSubscriberInterface
             $jsonRd->setSubject($subject);
         }
 
-        if (isset($params[WebFingerParameters::ACCOUNT_KEY_NAME]) && $actor = $this->getActor(
-            $params[WebFingerParameters::ACCOUNT_KEY_NAME]
-        )) {
+        if (
+            isset($params[WebFingerParameters::ACCOUNT_KEY_NAME])
+            && $actor = $this->getActor($params[WebFingerParameters::ACCOUNT_KEY_NAME])
+        ) {
             $accountHref = $this->urlGenerator->generate(
                 'ap_user',
                 ['username' => $actor->getUserIdentifier()],

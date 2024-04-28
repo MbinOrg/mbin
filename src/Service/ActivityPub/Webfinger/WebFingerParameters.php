@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\ActivityPub\Webfinger;
 
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Request;
 
 class WebFingerParameters
 {
@@ -12,15 +12,16 @@ class WebFingerParameters
     public const HOST_KEY_NAME = 'host';
     public const ACCOUNT_KEY_NAME = 'account';
 
-    public function __construct(private readonly RequestStack $requestStack)
+    public function __construct()
     {
     }
 
-    public function getParams(): array
+    /**
+     * @return array{acccount?: string, host?: string, rel?: array}
+     */
+    public function getParams(Request $request): array
     {
         $params = [];
-
-        $request = $this->requestStack->getCurrentRequest();
 
         if ($resource = $request->query->get('resource')) {
             $host = $request->server->get('HTTP_HOST'); // @todo
