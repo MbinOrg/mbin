@@ -26,7 +26,9 @@ class RegisterController extends AbstractController
             return $this->redirectToRoute('front');
         }
 
-        $form = $this->createForm(UserRegisterType::class);
+        $form = $this->createForm(UserRegisterType::class, options: [
+            'antispam_profile' => 'default',
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

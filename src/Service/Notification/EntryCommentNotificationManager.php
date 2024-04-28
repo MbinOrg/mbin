@@ -157,10 +157,11 @@ class EntryCommentNotificationManager implements ContentNotificationManagerInter
                 'body' => $comment->body,
                 'icon' => $this->imageManager->getUrl($comment->image),
 //                'image' => $this->imageManager->getUrl($comment->image),
-                'url' => $this->urlGenerator->generate('entry_single', [
+                'url' => $this->urlGenerator->generate('entry_comment_view', [
                         'magazine_name' => $comment->magazine->name,
                         'entry_id' => $comment->entry->getId(),
                         'slug' => $comment->entry->slug,
+                        'comment_id' => $comment->getId(),
                     ]).'#entry-comment-'.$comment->getId(),
 //                'toast' => $this->twig->render('_layout/_toast.html.twig', ['notification' => $notification]),
             ]

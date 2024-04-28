@@ -277,9 +277,6 @@
     "nikic/php-parser": {
         "version": "v4.11.0"
     },
-    "nucleos/antispam-bundle": {
-        "version": "2.2.0"
-    },
     "nyholm/psr7": {
         "version": "1.8",
         "recipe": {
@@ -290,6 +287,18 @@
         },
         "files": [
             "config/packages/nyholm_psr7.yaml"
+        ]
+    },
+    "omines/antispam-bundle": {
+        "version": "0.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "0.1",
+            "ref": "d9a98e83faed625423372bcc607ea371584264db"
+        },
+        "files": [
+            "config/packages/antispam.yaml"
         ]
     },
     "oneup/flysystem-bundle": {
