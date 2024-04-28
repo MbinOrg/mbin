@@ -443,9 +443,6 @@ class ActivityPubManager
         if (isset($actor['endpoints']['sharedInbox']) || isset($actor['inbox'])) {
             if (isset($actor['summary'])) {
                 $magazine->description = $this->extractMarkdownSummary($actor);
-                if (!empty($rules)) {
-                    $magazine->rules = $rules;
-                }
             }
 
             if (isset($actor['icon'])) {
