@@ -29,11 +29,8 @@ class SettingsDto implements \JsonSerializable
         public bool $KBIN_MERCURE_ENABLED,
         public bool $KBIN_FEDERATION_PAGE_ENABLED,
         public bool $KBIN_ADMIN_ONLY_OAUTH_CLIENTS,
-<<<<<<< HEAD
         public bool $MBIN_SSO_ONLY_MODE,
-=======
         public bool $MBIN_PRIVATE_INSTANCE,
->>>>>>> origin
         public bool $KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN,
         public bool $MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY,
         public bool $MBIN_SSO_REGISTRATIONS_ENABLED,
