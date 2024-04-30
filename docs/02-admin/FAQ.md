@@ -152,7 +152,6 @@ To free up the disk space used by the now deleted messages, execute the followin
 VACUUM messenger_messages;
 ```
 
-
 ## Where can I find my logging?
 
 You can find the Mbin logging in the `var/log/` directory from the root folder of the Mbin installation. When running production the file is called `prod-{YYYY-MM-DD}.log`, when running development the log file is called `dev-{YYYY-MM-DD}.log`.
