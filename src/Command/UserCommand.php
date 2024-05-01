@@ -72,7 +72,7 @@ class UserCommand extends Command
         $dto = (new UserDto())->create($input->getArgument('username'), $input->getArgument('email'));
         $dto->plainPassword = $input->getArgument('password');
 
-        $user = $this->manager->create($dto, false);
+        $user = $this->manager->create($dto, false, false);
 
         if ($input->getOption('admin')) {
             $user->setOrRemoveAdminRole();
