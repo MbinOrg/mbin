@@ -6,7 +6,7 @@ printf 'Do you want to proceed with the upgrade? (y/N)? '
 read -r answer
 if [ "$answer" != "${answer#[Yy]}" ]; then
     # Retrieve prod or dev from .env.local.php file
-    ENV=$(grep -oP "'APP_ENV' => '\K[^']+" "$BIN_DIR/../.env.local.php")
+    ENV=$(php -r "\$env = require '$BIN_DIR/../.env.local.php'; echo \$env['APP_ENV'];")
     if [[ "$ENV" == "dev" ]]; then
         # Development
         echo -e "INFO: Environment detected: Development\n"
