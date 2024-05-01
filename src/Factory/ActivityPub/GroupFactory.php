@@ -23,16 +23,16 @@ class GroupFactory
 
     public function create(Magazine $magazine): array
     {
-        $markdownSummary = $magazine->description;
+        $markdownSummary = $magazine->description ?? '';
 
         if (!empty($magazine->rules)) {
-            $markdownSummary .= "\r\n\r\n### Rules\r\n\r\n".$magazine->rules;
+            $markdownSummary .= (!empty($markdownSummary) ? "\r\n\r\n" : '')."### Rules\r\n\r\n".$magazine->rules;
         }
 
-        $summary = $this->markdownConverter->convertToHtml(
+        $summary = !empty($markdownSummary) ? $this->markdownConverter->convertToHtml(
             $markdownSummary,
             [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub],
-        );
+        ) : '';
 
         $group = [
             'type' => 'Group',
@@ -62,10 +62,10 @@ class GroupFactory
                 'publicKeyPem' => $magazine->publicKey,
             ],
             'summary' => $summary,
-            'source' => $markdownSummary ? [
+            'source' => [
                 'content' => $markdownSummary,
                 'mediaType' => 'text/markdown',
-            ] : null,
+            ],
             'sensitive' => $magazine->isAdult,
             'attributedTo' => $this->urlGenerator->generate(
                 'ap_magazine_moderators',
