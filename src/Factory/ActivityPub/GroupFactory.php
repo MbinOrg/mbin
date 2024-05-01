@@ -62,10 +62,10 @@ class GroupFactory
                 'publicKeyPem' => $magazine->publicKey,
             ],
             'summary' => $summary,
-            'source' => $markdownSummary ? [
+            'source' => [
                 'content' => $markdownSummary,
                 'mediaType' => 'text/markdown',
-            ] : null,
+            ],
             'sensitive' => $magazine->isAdult,
             'attributedTo' => $this->urlGenerator->generate(
                 'ap_magazine_moderators',
