@@ -55,6 +55,11 @@ class TagLinkRepository extends ServiceEntityRepository
         $this->entityManager->flush();
     }
 
+    public function entryHasTag(Entry $entry, Hashtag $tag): bool
+    {
+        return null !== $this->findOneBy(['entry' => $entry, 'hashtag' => $tag]);
+    }
+
     /**
      * @return string[]
      */

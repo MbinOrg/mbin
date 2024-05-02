@@ -32,6 +32,7 @@ class EntryCommentManager implements ContentManagerInterface
 {
     public function __construct(
         private readonly TagManager $tagManager,
+        private readonly TagExtractor $tagExtractor,
         private readonly MentionManager $mentionManager,
         private readonly EntryCommentFactory $factory,
         private readonly RateLimiterFactory $entryCommentLimiter,
@@ -86,7 +87,7 @@ class EntryCommentManager implements ContentManagerInterface
         $this->entityManager->persist($comment);
         $this->entityManager->flush();
 
-        $this->tagManager->updateEntryCommentTags($comment, $comment->body);
+        $this->tagManager->updateEntryCommentTags($comment, $this->tagExtractor->extract($comment->body) ?? []);
 
         $this->dispatcher->dispatch(new EntryCommentCreatedEvent($comment));
 
@@ -104,7 +105,7 @@ class EntryCommentManager implements ContentManagerInterface
         if ($dto->image) {
             $comment->image = $this->imageRepository->find($dto->image->id);
         }
-        $this->tagManager->updateEntryCommentTags($comment, $dto->body);
+        $this->tagManager->updateEntryCommentTags($comment, $this->tagManager->getTagsFromEntryCommentDto($dto));
         $comment->mentions = $dto->body
             ? array_merge($dto->mentions ?? [], $this->mentionManager->handleChain($comment))
             : $dto->mentions;

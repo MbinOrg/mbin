@@ -32,6 +32,7 @@ class PostCommentManager implements ContentManagerInterface
 {
     public function __construct(
         private readonly TagManager $tagManager,
+        private readonly TagExtractor $tagExtractor,
         private readonly MentionManager $mentionManager,
         private readonly PostCommentFactory $factory,
         private readonly ImageRepository $imageRepository,
@@ -92,7 +93,7 @@ class PostCommentManager implements ContentManagerInterface
         $this->entityManager->persist($comment);
         $this->entityManager->flush();
 
-        $this->tagManager->updatePostCommentTags($comment, $comment->body);
+        $this->tagManager->updatePostCommentTags($comment, $this->tagExtractor->extract($comment->body) ?? []);
 
         $this->dispatcher->dispatch(new PostCommentCreatedEvent($comment));
 
@@ -113,7 +114,7 @@ class PostCommentManager implements ContentManagerInterface
         if ($dto->image) {
             $comment->image = $this->imageRepository->find($dto->image->id);
         }
-        $this->tagManager->updatePostCommentTags($comment, $dto->body);
+        $this->tagManager->updatePostCommentTags($comment, $this->tagExtractor->extract($dto->body) ?? []);
         $comment->mentions = $dto->body
             ? array_merge($dto->mentions ?? [], $this->mentionManager->handleChain($comment))
             : $dto->mentions;

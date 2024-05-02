@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\DTO\EntryCommentDto;
+use App\DTO\EntryDto;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Hashtag;
@@ -29,36 +31,72 @@ class TagManager
         return $this->tagExtractor->extract($val, $magazineName);
     }
 
-    public function updateEntryTags(Entry $entry, ?string $body): void
+    /**
+     * @param string[] $newTags
+     */
+    public function updateEntryTags(Entry $entry, array $newTags): void
     {
-        $this->updateTags($body, $entry->magazine?->name,
+        $this->updateTags($newTags,
             fn () => $this->tagLinkRepository->getTagsOfEntry($entry),
             fn (Hashtag $hashtag) => $this->tagLinkRepository->removeTagOfEntry($entry, $hashtag),
             fn (Hashtag $hashtag) => $this->tagLinkRepository->addTagToEntry($entry, $hashtag)
         );
     }
 
-    public function updateEntryCommentTags(EntryComment $entryComment, ?string $body): void
+    public function getTagsFromEntryDto(EntryDto $dto): array
     {
-        $this->updateTags($body, $entryComment->magazine?->name,
+        return array_unique(
+            array_filter(
+                array_merge(
+                    $dto->tags ?? [],
+                    $this->tagExtractor->extract($dto->body ?? '') ?? []
+                )
+            )
+        );
+    }
+
+    /**
+     * @param string[] $newTags
+     */
+    public function updateEntryCommentTags(EntryComment $entryComment, array $newTags): void
+    {
+        $this->updateTags($newTags,
             fn () => $this->tagLinkRepository->getTagsOfEntryComment($entryComment),
             fn (Hashtag $hashtag) => $this->tagLinkRepository->removeTagOfEntryComment($entryComment, $hashtag),
             fn (Hashtag $hashtag) => $this->tagLinkRepository->addTagToEntryComment($entryComment, $hashtag)
         );
     }
 
-    public function updatePostTags(Post $post, ?string $body): void
+    public function getTagsFromEntryCommentDto(EntryCommentDto $dto): array
     {
-        $this->updateTags($body, $post->magazine?->name,
+        return array_unique(
+            array_filter(
+                array_merge(
+                    $dto->tags ?? [],
+                    $this->tagExtractor->extract($dto->body ?? '') ?? []
+                )
+            )
+        );
+    }
+
+    /**
+     * @param string[] $newTags
+     */
+    public function updatePostTags(Post $post, array $newTags): void
+    {
+        $this->updateTags($newTags,
             fn () => $this->tagLinkRepository->getTagsOfPost($post),
             fn (Hashtag $hashtag) => $this->tagLinkRepository->removeTagOfPost($post, $hashtag),
             fn (Hashtag $hashtag) => $this->tagLinkRepository->addTagToPost($post, $hashtag)
         );
     }
 
-    public function updatePostCommentTags(PostComment $postComment, ?string $body): void
+    /**
+     * @param string[] $newTags
+     */
+    public function updatePostCommentTags(PostComment $postComment, array $newTags): void
     {
-        $this->updateTags($body, $postComment->magazine?->name,
+        $this->updateTags($newTags,
             fn () => $this->tagLinkRepository->getTagsOfPostComment($postComment),
             fn (Hashtag $hashtag) => $this->tagLinkRepository->removeTagOfPostComment($postComment, $hashtag),
             fn (Hashtag $hashtag) => $this->tagLinkRepository->addTagToPostComment($postComment, $hashtag)
@@ -66,13 +104,13 @@ class TagManager
     }
 
     /**
+     * @param string[]                $newTags
      * @param callable(): string[]    $getTags   a callable that should return all the tags of the entity as a string array
      * @param callable(Hashtag): void $removeTag a callable that gets a string as parameter and should remove the tag
      * @param callable(Hashtag): void $addTag
      */
-    private function updateTags(?string $body, ?string $magazineName, callable $getTags, callable $removeTag, callable $addTag): void
+    private function updateTags(array $newTags, callable $getTags, callable $removeTag, callable $addTag): void
     {
-        $newTags = null !== $body ? $this->tagExtractor->extract($body, $magazineName) ?? [] : [];
         $oldTags = $getTags();
         $actions = $this->intersectOldAndNewTags($oldTags, $newTags);
         foreach ($actions['tagsToRemove'] as $tag) {

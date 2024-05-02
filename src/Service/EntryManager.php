@@ -40,6 +40,7 @@ class EntryManager implements ContentManagerInterface
 {
     public function __construct(
         private readonly LoggerInterface $logger,
+        private readonly TagExtractor $tagExtractor,
         private readonly TagManager $tagManager,
         private readonly MentionManager $mentionManager,
         private readonly EntryCommentManager $entryCommentManager,
@@ -112,7 +113,7 @@ class EntryManager implements ContentManagerInterface
         $this->entityManager->persist($entry);
         $this->entityManager->flush();
 
-        $this->tagManager->updateEntryTags($entry, $entry->body);
+        $this->tagManager->updateEntryTags($entry, $this->tagExtractor->extract($entry->body) ?? []);
 
         $this->dispatcher->dispatch(new EntryCreatedEvent($entry));
 
@@ -163,7 +164,7 @@ class EntryManager implements ContentManagerInterface
         if ($dto->image) {
             $entry->image = $this->imageRepository->find($dto->image->id);
         }
-        $this->tagManager->updateEntryTags($entry, $dto->body);
+        $this->tagManager->updateEntryTags($entry, $this->tagManager->getTagsFromEntryDto($dto));
 
         $entry->mentions = $dto->body ? $this->mentionManager->extract($dto->body) : null;
         $entry->isOc = $dto->isOc;

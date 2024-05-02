@@ -9,6 +9,7 @@ use App\DTO\EntryResponseDto;
 use App\Entity\Badge;
 use App\Entity\Entry;
 use App\Entity\User;
+use App\Repository\TagLinkRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class EntryFactory
@@ -20,6 +21,7 @@ class EntryFactory
         private readonly MagazineFactory $magazineFactory,
         private readonly UserFactory $userFactory,
         private readonly BadgeFactory $badgeFactory,
+        private readonly TagLinkRepository $tagLinkRepository,
     ) {
     }
 
@@ -102,6 +104,7 @@ class EntryFactory
         $dto->isPinned = $entry->sticky;
         $dto->type = $entry->type;
         $dto->apId = $entry->apId;
+        $dto->tags = $this->tagLinkRepository->getTagsOfEntry($entry);
 
         $currentUser = $this->security->getUser();
         // Only return the user's vote if permission to control voting has been given

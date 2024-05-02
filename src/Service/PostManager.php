@@ -42,6 +42,7 @@ class PostManager implements ContentManagerInterface
         private readonly MentionManager $mentionManager,
         private readonly PostCommentManager $postCommentManager,
         private readonly TagManager $tagManager,
+        private readonly TagExtractor $tagExtractor,
         private readonly PostFactory $factory,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly RateLimiterFactory $postLimiter,
@@ -101,7 +102,7 @@ class PostManager implements ContentManagerInterface
         $this->entityManager->persist($post);
         $this->entityManager->flush();
 
-        $this->tagManager->updatePostTags($post, $post->body);
+        $this->tagManager->updatePostTags($post, $this->tagExtractor->extract($post->body) ?? []);
 
         $this->dispatcher->dispatch(new PostCreatedEvent($post));
 
@@ -120,7 +121,7 @@ class PostManager implements ContentManagerInterface
         if ($dto->image) {
             $post->image = $this->imageRepository->find($dto->image->id);
         }
-        $this->tagManager->updatePostTags($post, $dto->body);
+        $this->tagManager->updatePostTags($post, $this->tagExtractor->extract($dto->body) ?? []);
         $post->mentions = $dto->body ? $this->mentionManager->extract($dto->body) : null;
         $post->visibility = $dto->visibility;
         $post->editedAt = new \DateTimeImmutable('@'.time());
