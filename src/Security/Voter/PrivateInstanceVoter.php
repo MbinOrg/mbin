@@ -6,6 +6,7 @@ namespace App\Security\Voter;
 
 use App\Entity\User;
 use App\Service\SettingsManager;
+use Scheb\TwoFactorBundle\Security\Authentication\Token\TwoFactorTokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -22,6 +23,10 @@ class PrivateInstanceVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
+        if ($token instanceof TwoFactorTokenInterface) {
+            return false;
+        }
+
         if ($this->settingsManager->get('MBIN_PRIVATE_INSTANCE')) {
             $user = $token->getUser();
 
