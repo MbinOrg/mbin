@@ -16,6 +16,10 @@
         <a href="{{ path('oauth_keycloak_connect') }}" class="btn btn__secondary"><i class="fa-solid fa-lock" aria-hidden="true"></i>
             Keycloak</a>
     {% endif %}
+    {% if this.simpleloginEnabled %}
+        <a href="{{ path('oauth_simplelogin_connect') }}" class="btn btn__secondary"><i class="fa-solid fa-lock" aria-hidden="true"></i>
+            SimpleLogin</a>
+    {% endif %}
     {% if this.zitadelEnabled %}
         <a href="{{ path('oauth_zitadel_connect') }}" class="btn btn__secondary"><i class="fa-solid fa-lock" aria-hidden="true"></i>
             Zitadel</a>

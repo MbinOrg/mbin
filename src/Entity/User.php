@@ -119,6 +119,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     #[Column(type: 'string', nullable: true)]
     public ?string $oauthKeycloakId = null;
     #[Column(type: 'string', nullable: true)]
+    public ?string $oauthSimpleLoginId = null;
+    #[Column(type: 'string', nullable: true)]
     public ?string $oauthZitadelId = null;
     #[Column(type: 'boolean', nullable: false, options: ['default' => true])]
     public bool $hideAdult = true;

@@ -35,6 +35,13 @@ knpu_oauth2_client:
       version: '%oauth_keycloak_version%'
       redirect_route: oauth_keycloak_verify
       redirect_params: { }
+    simplelogin:
+      type: generic
+      client_id: '%oauth_simplelogin_id%'
+      client_secret: '%oauth_simplelogin_secret%'
+      redirect_route: oauth_simplelogin_verify
+      redirect_params: { }
+      provider_class: 'App\Provider\SimpleLogin'
     zitadel:
       type: generic
       client_id: '%oauth_zitadel_id%'
