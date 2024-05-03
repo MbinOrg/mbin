@@ -95,7 +95,7 @@ class SimpleLoginAuthenticator extends OAuth2Authenticator
                     throw new CustomUserMessageAuthenticationException('MBIN_SSO_REGISTRATIONS_ENABLED');
                 }
 
-                $email = $simpleloginUser->toArray()['preferred_username'];
+                $email = $simpleloginUser->toArray()['email'];
                 $username = $slugger->slug(substr($email, 0, strrpos($email, '@')));
 
                 if ($this->userRepository->count(['username' => $username]) > 0) {
