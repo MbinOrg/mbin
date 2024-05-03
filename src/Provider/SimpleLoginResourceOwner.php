@@ -25,24 +25,9 @@ class SimpleLoginResourceOwner implements ResourceOwnerInterface
         return $this->getResponseValue('email');
     }
 
-    public function getFamilyName()
-    {
-        return $this->getResponseValue('family_name');
-    }
-
-    public function getGivenName()
-    {
-        return $this->getResponseValue('given_name');
-    }
-
-    public function getPreferredUsername()
-    {
-        return $this->getResponseValue('preferred_username');
-    }
-
     public function getPictureUrl()
     {
-        return $this->getResponseValue('picture');
+        return $this->getResponseValue('avatar_url');
     }
 
     public function toArray()

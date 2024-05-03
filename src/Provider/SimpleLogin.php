@@ -33,17 +33,17 @@ class SimpleLogin extends AbstractProvider
 
     public function getBaseAuthorizationUrl()
     {
-        return $this->getBaseUrl().'oauth/v2/authorize';
+        return $this->getBaseUrl().'oauth2/authorize';
     }
 
     public function getBaseAccessTokenUrl(array $params)
     {
-        return $this->getBaseUrl().'oauth/v2/token';
+        return $this->getBaseUrl().'oauth2/token';
     }
 
     public function getResourceOwnerDetailsUrl(AccessToken $token)
     {
-        return $this->getBaseUrl().'oidc/v1/userinfo';
+        return $this->getBaseUrl().'oauth2/userinfo';
     }
 
     protected function getDefaultScopes()
