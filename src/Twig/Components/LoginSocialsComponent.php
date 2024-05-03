@@ -48,6 +48,11 @@ final class LoginSocialsComponent
         return !empty($this->oauthKeycloakId);
     }
 
+    public function simpleloginEnabled(): bool
+    {
+        return !empty($this->oauthSimpleLoginId);
+    }
+
     public function zitadelEnabled(): bool
     {
         return !empty($this->oauthZitadelId);
