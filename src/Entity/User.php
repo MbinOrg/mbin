@@ -757,7 +757,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
 
     public function isSsoControlled(): bool
     {
-        return $this->oauthAzureId || $this->oauthGithubId || $this->oauthGoogleId || $this->oauthFacebookId || $this->oauthKeycloakId || $this->oauthZitadelId;
+        return $this->oauthAzureId || $this->oauthGithubId || $this->oauthGoogleId || $this->oauthFacebookId || $this->oauthKeycloakId || $this->oauthSimpleLoginId || $this->oauthZitadelId;
     }
 
     public function getCustomCss(): ?string
