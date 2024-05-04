@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Factory\ActivityPub;
 
 use App\Entity\Magazine;
+use App\Markdown\MarkdownConverter;
+use App\Markdown\RenderTarget;
 use App\Service\ActivityPub\ContextsProvider;
 use App\Service\ImageManager;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -13,6 +15,7 @@ class GroupFactory
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly MarkdownConverter $markdownConverter,
         private readonly ContextsProvider $contextProvider,
         private readonly ImageManager $imageManager
     ) {
@@ -20,6 +23,17 @@ class GroupFactory
 
     public function create(Magazine $magazine): array
     {
+        $markdownSummary = $magazine->description ?? '';
+
+        if (!empty($magazine->rules)) {
+            $markdownSummary .= (!empty($markdownSummary) ? "\r\n\r\n" : '')."### Rules\r\n\r\n".$magazine->rules;
+        }
+
+        $summary = !empty($markdownSummary) ? $this->markdownConverter->convertToHtml(
+            $markdownSummary,
+            [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub],
+        ) : '';
+
         $group = [
             'type' => 'Group',
             '@context' => $this->contextProvider->referencedContexts(),
@@ -47,7 +61,11 @@ class GroupFactory
                 'id' => $this->getActivityPubId($magazine).'#main-key',
                 'publicKeyPem' => $magazine->publicKey,
             ],
-            'summary' => $magazine->description,
+            'summary' => $summary,
+            'source' => [
+                'content' => $markdownSummary,
+                'mediaType' => 'text/markdown',
+            ],
             'sensitive' => $magazine->isAdult,
             'attributedTo' => $this->urlGenerator->generate(
                 'ap_magazine_moderators',

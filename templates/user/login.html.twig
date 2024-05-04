@@ -20,7 +20,7 @@
             {% if mbin_show_socials_first() %}
                 {{ component('login_socials') }}
             {% endif %}
-            {% if not_sso_only_mode %}
+            {% if not mbin_sso_only_mode() %}
             <form method="post">
                 {% if error %}
                     <div class="alert alert__danger">{{ error.messageKey|trans(error.messageData, 'security')|raw }}</div>

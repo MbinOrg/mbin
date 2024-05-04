@@ -14,6 +14,9 @@
 
 {% block body %}
     {% include 'admin/_options.html.twig' %}
+    {% if(users.haveToPaginate is defined and users.haveToPaginate) %}
+        {{ pagerfanta(users, null, {'pageParameter':'[p]'}) }}
+    {% endif %}
     <div class="section" id="content">
         <div class="flex" data-controller="selection">
             <label class="select">

@@ -22,12 +22,14 @@ final class SettingsExtension extends AbstractExtension
             new TwigFunction('mbin_default_theme', [SettingsExtensionRuntime::class, 'mbinDefaultTheme']),
             new TwigFunction('kbin_registrations_enabled', [SettingsExtensionRuntime::class, 'kbinRegistrationsEnabled']),
             new TwigFunction('mbin_sso_registrations_enabled', [SettingsExtensionRuntime::class, 'mbinSsoRegistrationsEnabled']),
+            new TwigFunction('mbin_sso_only_mode', [SettingsExtensionRuntime::class, 'mbinSsoOnlyMode']),
             new TwigFunction('kbin_header_logo', [SettingsExtensionRuntime::class, 'kbinHeaderLogo']),
             new TwigFunction('kbin_captcha_enabled', [SettingsExtensionRuntime::class, 'kbinCaptchaEnabled']),
             new TwigFunction('kbin_mercure_enabled', [SettingsExtensionRuntime::class, 'kbinMercureEnabled']),
             new TwigFunction('kbin_federation_page_enabled', [SettingsExtensionRuntime::class, 'kbinFederationPageEnabled']),
             new TwigFunction('mbin_current_version', [SettingsExtensionRuntime::class, 'mbinCurrentVersion']),
             new TwigFunction('mbin_restrict_magazine_creation', [SettingsExtensionRuntime::class, 'mbinRestrictMagazineCreation']),
+            new TwigFunction('mbin_private_instance', [SettingsExtensionRuntime::class, 'mbinPrivateInstance']),
             new TwigFunction('mbin_show_socials_first', [SettingsExtensionRuntime::class, 'mbinShowSocialsFirst']),
         ];
     }

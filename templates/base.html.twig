@@ -80,11 +80,13 @@
               class="{{ html_classes({'view-compact': COMPACT is same as V_TRUE}) }}">
             {% block body %}{% endblock %}
         </main>
-        <aside id="sidebar">
-            {% block sidebar %}
-                {% include 'layout/_sidebar.html.twig' with {sidebar_top: block('sidebar_top'), header_nav: block('header_nav')} %}
-            {% endblock %}
-        </aside>
+        {% if not mbin_private_instance() or (mbin_private_instance() and app.user is defined and app.user is not same as null) %}
+            <aside id="sidebar">
+                {% block sidebar %}
+                    {% include 'layout/_sidebar.html.twig' with {sidebar_top: block('sidebar_top'), header_nav: block('header_nav')} %}
+                {% endblock %}
+            </aside>
+        {% endif %}
         {% if app.user is defined and app.user is not same as null and
             SUBSCRIPTIONS_SHOW is not same as V_FALSE and
             SUBSCRIPTIONS_SEPARATE is same as V_TRUE

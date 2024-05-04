@@ -58,6 +58,11 @@ class SettingsExtensionRuntime implements RuntimeExtensionInterface
         return $this->settings->get('MBIN_SSO_REGISTRATIONS_ENABLED');
     }
 
+    public function mbinSsoOnlyMode(): bool
+    {
+        return $this->settings->get('MBIN_SSO_ONLY_MODE');
+    }
+
     public function kbinDefaultLang(): string
     {
         return $this->settings->get('KBIN_DEFAULT_LANG');
@@ -102,6 +107,11 @@ class SettingsExtensionRuntime implements RuntimeExtensionInterface
     public function mbinRestrictMagazineCreation(): bool
     {
         return $this->settings->get('MBIN_RESTRICT_MAGAZINE_CREATION');
+    }
+
+    public function mbinPrivateInstance(): bool
+    {
+        return $this->settings->get('MBIN_PRIVATE_INSTANCE');
     }
 
     public function mbinShowSocialsFirst(): bool

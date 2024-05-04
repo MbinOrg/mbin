@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\EventListener;
 
+use App\Service\SettingsManager;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class FederationStatusListener
 {
-    public function __construct(private readonly bool $kbinFederationEnabled)
+    public function __construct(private readonly SettingsManager $settingsManager)
     {
     }
 
     public function onKernelController(ControllerEvent $event)
     {
-        if (!$event->isMainRequest() || $this->kbinFederationEnabled) {
+        if (!$event->isMainRequest() || $this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;
         }
 
