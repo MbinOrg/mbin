@@ -19,11 +19,11 @@
       display: none;
       height: 0;
     }
-    .separator:has(+ div a), .separator:has(+ div p) {
+    .separator:has(+ div p), .separator.separator-show {
       display: block;
       border: var(--kbin-section-border);
       height: 0;
-      margin: 15px 30px;
+      margin: 20px 30px;
     }
 
     .actions {
