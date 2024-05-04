@@ -53,7 +53,7 @@
             {% if not mbin_show_socials_first() %}
                 {{ component('login_socials') }}
             {% endif %}
-            {% if not_sso_only_mode %}
+            {% if not mbin_sso_only_mode() %}
             {{ component('user_form_actions', {showRegister: true, showPasswordReset: true, showResendEmail: true}) }}
             {% endif %}
         </div>

@@ -1,5 +1,7 @@
 {# @var this App\Twig\Components\LoginSocialsComponent #}
+{% if not mbin_sso_only_mode() and not mbin_show_socials_first() %}
 <div class="separator"></div>
+{% endif %}
 <div class="social">
     {% if this.googleEnabled %}
         <a href="{{ path('oauth_google_connect') }}" class="btn btn__secondary"><i class="fa-brands fa-google" aria-hidden="true"></i>
@@ -26,4 +28,6 @@
             <span>{{ 'continue_with'|trans }} Microsoft</span></a>
     {% endif %}
 </div>
+{% if not mbin_sso_only_mode() and mbin_show_socials_first() %}
 <div class="separator"></div>
+{% endif %}
