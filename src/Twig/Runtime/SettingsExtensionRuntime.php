@@ -58,6 +58,11 @@ class SettingsExtensionRuntime implements RuntimeExtensionInterface
         return $this->settings->get('MBIN_SSO_REGISTRATIONS_ENABLED');
     }
 
+    public function mbinSsoOnlyMode(): bool
+    {
+        return $this->settings->get('MBIN_SSO_ONLY_MODE');
+    }
+
     public function kbinDefaultLang(): string
     {
         return $this->settings->get('KBIN_DEFAULT_LANG');

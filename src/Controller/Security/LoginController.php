@@ -24,7 +24,7 @@ class LoginController extends AbstractController
         $error = $utils->getLastAuthenticationError();
         $lastUsername = $utils->getLastUsername();
 
-        return $this->render('user/login.html.twig', ['last_username' => $lastUsername, 'error' => $error, 'not_sso_only_mode' => !$this->getParameter('sso_only_mode')]);
+        return $this->render('user/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
     }
 
     public function consent(Request $request, EntityManagerInterface $entityManager): Response
