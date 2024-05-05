@@ -55,7 +55,7 @@
     {% endif %}
     {% include 'post/_options.html.twig' %}
     {% include 'layout/_flash.html.twig' %}
-    {% if app.user is defined and app.user %}
+    {% if user is defined and user %}
         {% include('user/_visibility_info.html.twig') %}
     {% endif %}
     {% if magazine is defined and magazine %}
