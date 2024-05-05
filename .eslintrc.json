@@ -36,7 +36,7 @@
         "no-console": ["off"],
         "no-duplicate-imports": ["error"],
         "no-empty": ["error", {"allowEmptyCatch": true}],
-        "no-empty-function": ["error", {"allow": ["arrowFunctions", "constructor"]}],
+        "no-empty-function": ["error", {"allow": ["arrowFunctions", "constructors"]}],
         "no-eval": ["error"],
         "no-implicit-coercion": ["error"],
         "no-implied-eval": ["error"],
