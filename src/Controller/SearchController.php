@@ -14,6 +14,7 @@ use App\Service\SearchManager;
 use App\Service\SettingsManager;
 use App\Service\SubjectOverviewManager;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -72,14 +73,27 @@ class SearchController extends AbstractController
         $user = $this->getUser();
         $res = $this->manager->findPaginated($user, $query, $this->getPageNb($request));
 
+        $params = [
+            'objects' => $objects,
+            'results' => $this->overviewManager->buildList($res),
+            'pagination' => $res,
+            'q' => $request->query->get('q'),
+        ];
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse(
+                [
+                    'html' => $this->renderView(
+                        'search/_list.html.twig',
+                        $params,
+                    ),
+                ]
+            );
+        }
+
         return $this->render(
             'search/front.html.twig',
-            [
-                'objects' => $objects,
-                'results' => $this->overviewManager->buildList($res),
-                'pagination' => $res,
-                'q' => $request->query->get('q'),
-            ]
+            $params,
         );
     }
 
