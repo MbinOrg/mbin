@@ -27,7 +27,11 @@
             {% endfor %}
 
             {{ form_row(form.email) }}
-            {{ form_row(form.submit) }}
+            {{ form_row(form.submit, {
+                row_attr: {
+                    class: 'button-flex-hf'
+                }
+            }) }}
             {{ form_end(form) }}
 
             {{ component('user_form_actions', {showRegister: true, showPasswordReset: true, showResendEmail: true}) }}
