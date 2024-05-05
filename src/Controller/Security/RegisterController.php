@@ -38,9 +38,9 @@ class RegisterController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $dto = $form->getData();
-            $dto->ip = $ipResolver->resolve();
+            $dto->ip = $this->ipResolver->resolve();
 
-            $manager->create($dto);
+            $this->manager->create($dto);
 
             $this->addFlash(
                 'success',
