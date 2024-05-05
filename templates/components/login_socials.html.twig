@@ -1,7 +1,7 @@
 {# @var this App\Twig\Components\LoginSocialsComponent #}
 {%- set HAS_ANY_SOCIAL = this.googleEnabled or this.facebookEnabled or this.githubEnabled or this.keycloakEnabled or this.zitadelEnabled or this.azureEnabled -%}
 {% if HAS_ANY_SOCIAL %}
-    {% if not mbin_sso_only_mode() and not mbin_show_socials_first() %}
+    {% if not mbin_sso_only_mode() and not mbin_sso_show_first() %}
     <div class="separator separator-show"></div>
     {% endif %}
     <div class="social">
@@ -30,7 +30,7 @@
                 <span>{{ 'continue_with'|trans }} Microsoft</span></a>
         {% endif %}
     </div>
-    {% if not mbin_sso_only_mode() and mbin_show_socials_first() %}
+    {% if not mbin_sso_only_mode() and mbin_sso_show_first() %}
     <div class="separator separator-show"></div>
     {% endif %}
 {% endif %}

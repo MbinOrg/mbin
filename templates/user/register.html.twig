@@ -16,7 +16,7 @@
     <h1>{{ 'register'|trans }}</h1>
     <div id="content" class="section">
         <div class="container">
-            {% if mbin_sso_registrations_enabled() and mbin_show_socials_first() %}
+            {% if mbin_sso_registrations_enabled() and mbin_sso_show_first() %}
                 {{ component('login_socials') }}
             {% endif %}
             {% if kbin_registrations_enabled() %}
@@ -64,7 +64,7 @@
             {% else %}
                 <h3 class="text-muted">{{ 'registration_disabled'|trans }}</h3>
             {% endif %}
-            {% if mbin_sso_registrations_enabled() and not mbin_show_socials_first() %}
+            {% if mbin_sso_registrations_enabled() and not mbin_sso_show_first() %}
                 {{ component('login_socials') }}
             {% endif %}
             {{ component('user_form_actions', {showLogin: true, showPasswordReset: true, showResendEmail: true}) }}

@@ -17,7 +17,7 @@
     {% include 'layout/_flash.html.twig' %}
     <div id="content" class="section">
         <div class="container">
-            {% if mbin_show_socials_first() %}
+            {% if mbin_sso_show_first() %}
                 {{ component('login_socials') }}
             {% endif %}
             {% if not mbin_sso_only_mode() %}
@@ -50,7 +50,7 @@
                 </div>
             </form>
             {% endif %}
-            {% if not mbin_show_socials_first() %}
+            {% if not mbin_sso_show_first() %}
                 {{ component('login_socials') }}
             {% endif %}
             {% if not mbin_sso_only_mode() %}

@@ -116,6 +116,6 @@ class SettingsExtensionRuntime implements RuntimeExtensionInterface
 
     public function mbinShowSocialsFirst(): bool
     {
-        return $this->settings->get('MBIN_SHOW_SOCIALS_FIRST');
+        return $this->settings->get('MBIN_SSO_SHOW_FIRST');
     }
 }

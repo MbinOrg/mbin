@@ -35,7 +35,7 @@ class SettingsDto implements \JsonSerializable
         public bool $MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY,
         public bool $MBIN_SSO_REGISTRATIONS_ENABLED,
         public bool $MBIN_RESTRICT_MAGAZINE_CREATION,
-        public bool $MBIN_SHOW_SOCIALS_FIRST
+        public bool $MBIN_SSO_SHOW_FIRST
     ) {
     }
 
@@ -65,7 +65,7 @@ class SettingsDto implements \JsonSerializable
         $dto->MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY = $this->MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY ?? $dto->MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY;
         $dto->MBIN_SSO_REGISTRATIONS_ENABLED = $this->MBIN_SSO_REGISTRATIONS_ENABLED ?? $dto->MBIN_SSO_REGISTRATIONS_ENABLED;
         $dto->MBIN_RESTRICT_MAGAZINE_CREATION = $this->MBIN_RESTRICT_MAGAZINE_CREATION ?? $dto->MBIN_RESTRICT_MAGAZINE_CREATION;
-        $dto->MBIN_SHOW_SOCIALS_FIRST = $this->MBIN_SHOW_SOCIALS_FIRST ?? $dto->MBIN_SHOW_SOCIALS_FIRST;
+        $dto->MBIN_SSO_SHOW_FIRST = $this->MBIN_SSO_SHOW_FIRST ?? $dto->MBIN_SSO_SHOW_FIRST;
 
         return $dto;
     }
@@ -97,7 +97,7 @@ class SettingsDto implements \JsonSerializable
             'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY' => $this->MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY,
             'MBIN_SSO_REGISTRATIONS_ENABLED' => $this->MBIN_SSO_REGISTRATIONS_ENABLED,
             'MBIN_RESTRICT_MAGAZINE_CREATION' => $this->MBIN_RESTRICT_MAGAZINE_CREATION,
-            'MBIN_SHOW_SOCIALS_FIRST' => $this->MBIN_SHOW_SOCIALS_FIRST,
+            'MBIN_SSO_SHOW_FIRST' => $this->MBIN_SSO_SHOW_FIRST,
         ];
     }
 }
