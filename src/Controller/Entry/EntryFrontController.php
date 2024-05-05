@@ -51,7 +51,7 @@ class EntryFrontController extends AbstractController
         $templatePath = ('threads' === $content) ? 'entry/' : 'post/';
         $dataKey = ('threads' === $content) ? 'entries' : 'posts';
 
-        return $this->renderResponse($request, $content, $criteria, [$dataKey => $entities], $templatePath);
+        return $this->renderResponse($request, $content, $criteria, [$dataKey => $entities], $templatePath, $user);
     }
 
     // $name is magazine name, for compatibility
@@ -120,7 +120,7 @@ class EntryFrontController extends AbstractController
         $templatePath = ('threads' === $content) ? 'entry/' : 'post/';
         $dataKey = ('threads' === $content) ? 'entries' : 'posts';
 
-        return $this->renderResponse($request, $content, $criteria, [$dataKey => $entities, 'magazine' => $magazine], $templatePath);
+        return $this->renderResponse($request, $content, $criteria, [$dataKey => $entities, 'magazine' => $magazine], $templatePath, $user);
     }
 
     private function createCriteria(string $content, Request $request)
@@ -162,7 +162,7 @@ class EntryFrontController extends AbstractController
         }
     }
 
-    private function renderResponse(Request $request, $content, $criteria, $data, $templatePath)
+    private function renderResponse(Request $request, $content, $criteria, $data, $templatePath, ?User $user)
     {
         $baseData = ['criteria' => $criteria] + $data;
         if ('microblog' === $content) {
@@ -171,6 +171,7 @@ class EntryFrontController extends AbstractController
                 $dto->magazine = $data['magazine'];
             }
             $baseData['form'] = $this->createForm(PostType::class)->setData($dto)->createView();
+            $baseData['user'] = $user;
         }
 
         if ($request->isXmlHttpRequest()) {
