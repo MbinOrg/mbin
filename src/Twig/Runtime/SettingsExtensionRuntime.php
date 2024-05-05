@@ -114,7 +114,7 @@ class SettingsExtensionRuntime implements RuntimeExtensionInterface
         return $this->settings->get('MBIN_PRIVATE_INSTANCE');
     }
 
-    public function mbinShowSocialsFirst(): bool
+    public function mbinSsoShowFirst(): bool
     {
         return $this->settings->get('MBIN_SSO_SHOW_FIRST');
     }
