@@ -32,6 +32,7 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
         'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY',
         'MBIN_SSO_REGISTRATIONS_ENABLED',
         'MBIN_RESTRICT_MAGAZINE_CREATION',
+        'MBIN_DOWNVOTES_MODE',
     ];
 
     public function testApiCannotUpdateInstanceSettingsAnonymous(): void
@@ -110,6 +111,7 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY' => false,
             'MBIN_SSO_REGISTRATIONS_ENABLED' => true,
             'MBIN_RESTRICT_MAGAZINE_CREATION' => false,
+            'MBIN_DOWNVOTES_MODE' => 'enabled',
         ];
 
         $client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);
@@ -146,6 +148,7 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY' => true,
             'MBIN_SSO_REGISTRATIONS_ENABLED' => false,
             'MBIN_RESTRICT_MAGAZINE_CREATION' => true,
+            'MBIN_DOWNVOTES_MODE' => 'hidden',
         ];
 
         $client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);

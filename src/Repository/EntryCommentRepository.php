@@ -20,6 +20,7 @@ use App\Entity\User;
 use App\Entity\UserBlock;
 use App\Entity\UserFollow;
 use App\Repository\Contract\TagRepositoryInterface;
+use App\Service\SettingsManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Types\Types;
@@ -44,9 +45,11 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
     public const SORT_DEFAULT = 'active';
     public const PER_PAGE = 15;
 
-    private Security $security;
-
-    public function __construct(ManagerRegistry $registry, Security $security)
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly Security $security,
+        private readonly SettingsManager $settingsManager,
+    )
     {
         parent::__construct($registry, EntryComment::class);
 
@@ -227,7 +230,11 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
                 $qb->orderBy('c.upVotes', 'DESC');
                 break;
             case Criteria::SORT_TOP:
-                $qb->orderBy('c.upVotes + c.favouriteCount - c.downVotes', 'DESC');
+                if ('disabled' === $this->settingsManager->get('MBIN_DOWNVOTES_MODE')) {
+                    $qb->orderBy('c.upVotes + c.favouriteCount', 'DESC');
+                } else {
+                    $qb->orderBy('c.upVotes + c.favouriteCount - c.downVotes', 'DESC');
+                }
                 break;
             case Criteria::SORT_ACTIVE:
                 $qb->orderBy('c.lastActive', 'DESC');

@@ -104,6 +104,11 @@ contact: Contact
 faq: FAQ
 rss: RSS
 change_theme: Change theme
+downvotes_mode: Downvotes mode
+change_downvotes_mode: Change downvotes mode
+disabled: Disabled
+hidden: Hidden
+enabled: Enabled
 useful: Useful
 help: Help
 check_email: Check your email
