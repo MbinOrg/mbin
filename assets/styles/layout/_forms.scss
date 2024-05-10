@@ -434,6 +434,17 @@ select {
   }
 }
 
+.button-flex-hf {
+  text-align: center;
+  button {
+    width: 50%;
+
+    @include media-breakpoint-down(lg) {
+      width: 100%;
+    }
+  }
+}
+
 .actions {
   @include media-breakpoint-down(sm) {
     text-align: right;
