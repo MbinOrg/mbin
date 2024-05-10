@@ -1,8 +1,8 @@
 import './bootstrap.js';
-import {Application} from '@hotwired/stimulus'
 import './styles/app.scss';
 import './utils/popover';
-import '@github/markdown-toolbar-element'
+import '@github/markdown-toolbar-element';
+import { Application } from '@hotwired/stimulus';
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
@@ -11,4 +11,4 @@ if ('serviceWorker' in navigator) {
 }
 
 // start the Stimulus application
-Application.start()
+Application.start();

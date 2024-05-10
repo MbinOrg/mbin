@@ -1,4 +1,4 @@
-import {Controller} from '@hotwired/stimulus';
+import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
     /**
@@ -8,7 +8,7 @@ export default class extends Controller {
      * @param falsePath {string} - The path to the action to be called when the toggle is unchecked
      * @param reloadRequired {boolean} - Whether the page needs to be reloaded after the action is called
      */
-    toggle({target, params: {truePath, falsePath, reloadRequired}}) {
+    toggle({ target, params: { truePath, falsePath, reloadRequired } }) {
         const path = target.checked ? truePath : falsePath;
         return fetch(path).then(() => {
             if (reloadRequired) {

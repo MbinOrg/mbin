@@ -1,12 +1,12 @@
+import { fetch, ok } from '../utils/http';
 import { Controller } from '@hotwired/stimulus';
-import router from "../utils/routing";
-import { fetch, ok } from "../utils/http";
+import router from '../utils/routing';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
-    
+
     /**
-     * Instance of setTimeout to be used for the display of the popup. This is cleared if the user 
+     * Instance of setTimeout to be used for the display of the popup. This is cleared if the user
      * exits the target before the delay is reached
      */
     userPopupTimeout;
@@ -18,8 +18,8 @@ export default class extends Controller {
 
     /**
      * Called on mouseover
-     * @param {*} event 
-     * @returns 
+     * @param {*} event
+     * @returns
      */
     async user_popup(event) {
 
@@ -33,7 +33,7 @@ export default class extends Controller {
 
     /**
      * Called on mouseout, cancel the UI popup as the user has moved off the element
-     * @param {*} event 
+     * @param {*} event
      */
     async user_popup_out(event) {
         clearTimeout(this.userPopupTimeout);
@@ -47,7 +47,7 @@ export default class extends Controller {
         try {
             let param = event.params.username;
 
-            if (param.charAt(0) === "@") {
+            if ('@' === param.charAt(0)) {
                 param = param.substring(1);
             }
             const username = param.includes('@') ? `@${param}` : param;

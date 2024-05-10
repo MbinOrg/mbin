@@ -1,4 +1,4 @@
-import {Controller} from '@hotwired/stimulus';
+import { Controller } from '@hotwired/stimulus';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -7,17 +7,17 @@ export default class extends Controller {
         const input = container.querySelector('.image-input');
         const preview = container.querySelector('.image-preview');
         const clearButton = container.querySelector('.image-preview-clear');
-        
+
         input.addEventListener('change', function(e) {
             const file = e.target.files[0];
             const reader = new FileReader();
-            
+
             reader.onload = function(e) {
                 preview.src = e.target.result;
                 preview.style.display = 'block';
                 clearButton.setAttribute('style', 'display: inline-block !important');
             };
-            
+
             reader.readAsDataURL(file);
         });
     }

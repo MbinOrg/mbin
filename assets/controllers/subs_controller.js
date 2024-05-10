@@ -1,10 +1,10 @@
-import {Controller} from '@hotwired/stimulus';
-import {fetch, ok} from "../utils/http";
+import { fetch, ok } from '../utils/http';
+import { Controller } from '@hotwired/stimulus';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
     static values = {
-        loading: Boolean
+        loading: Boolean,
     };
 
     async send(event) {
@@ -17,7 +17,7 @@ export default class extends Controller {
 
             let response = await fetch(form.action, {
                 method: 'POST',
-                body: new FormData(form)
+                body: new FormData(form),
             });
 
             response = await ok(response);
