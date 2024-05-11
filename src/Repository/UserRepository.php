@@ -529,6 +529,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         $qb = $this->createQueryBuilder('u', 'u.id');
         $qb->andWhere($qb->expr()->in('u.id', $user))
             ->andWhere('u.isBanned = false')
+            ->andWhere('u.visibility = :visibility')
             ->andWhere('u.apDeletedAt IS NULL')
             ->andWhere('u.apTimeoutAt IS NULL')
             ->andWhere('u.about IS NOT NULL')
@@ -543,7 +544,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             }
         }
 
-        $qb->setMaxResults($limit);
+        $qb->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+            ->setMaxResults($limit);
 
         try {
             $users = $qb->getQuery()->getResult(); // @todo
