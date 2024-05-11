@@ -41,6 +41,7 @@ class SettingsType extends AbstractType
             ->add('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', CheckboxType::class, ['required' => false])
             ->add('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY', CheckboxType::class, ['required' => false])
             ->add('MBIN_RESTRICT_MAGAZINE_CREATION', CheckboxType::class, ['required' => false])
+            ->add('MBIN_SSO_SHOW_FIRST', CheckboxType::class, ['required' => false])
             ->add('submit', SubmitType::class);
     }
 

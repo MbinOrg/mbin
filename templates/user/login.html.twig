@@ -17,6 +17,9 @@
     {% include 'layout/_flash.html.twig' %}
     <div id="content" class="section">
         <div class="container">
+            {% if mbin_sso_show_first() %}
+                {{ component('login_socials') }}
+            {% endif %}
             {% if not mbin_sso_only_mode() %}
             <form method="post">
                 {% if error %}
@@ -42,13 +45,17 @@
                     <input type="checkbox" name="_remember_me" id="remember" checked>
                 </div>
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-                <div class="float-end">
+                <div class="button-flex-hf">
                     <button class="btn btn__primary" type="submit">{{ 'login'|trans }}</button>
                 </div>
             </form>
+            {% endif %}
+            {% if not mbin_sso_show_first() %}
+                {{ component('login_socials') }}
+            {% endif %}
+            {% if not mbin_sso_only_mode() %}
             {{ component('user_form_actions', {showRegister: true, showPasswordReset: true, showResendEmail: true}) }}
             {% endif %}
-            {{ component('login_socials') }}
         </div>
     </div>
 {% endblock %}
