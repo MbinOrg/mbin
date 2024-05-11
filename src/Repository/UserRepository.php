@@ -572,7 +572,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             $results = $this->createQueryBuilder('u')
                 ->andWhere('u.lastActive >= :lastActive')
                 ->andWhere('u.isBanned = false')
-                ->andWhere('u.visibility = :visible')
+                ->andWhere('u.visibility = :visibility')
                 ->andWhere('u.apDeletedAt IS NULL')
                 ->andWhere('u.apTimeoutAt IS NULL')
                 ->andWhere('u.avatar IS NOT NULL');
@@ -582,8 +582,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
             $results = $results->join('u.avatar', 'a')
                 ->orderBy('u.lastActive', 'DESC')
-                ->setParameters(['lastActive' => (new \DateTime())->modify('-7 days')])
-                ->setParameter('visible', VisibilityInterface::VISIBILITY_VISIBLE)
+                ->setParameters(['lastActive' => (new \DateTime())->modify('-7 days'), 'visibility' => VisibilityInterface::VISIBILITY_VISIBLE])
                 ->setMaxResults(35)
                 ->getQuery()
                 ->getResult();
