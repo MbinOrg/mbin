@@ -358,9 +358,12 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     {
         $qb = $this->createQueryBuilder('u');
 
+        $qb->where('u.visibility = :visibility')
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
+
         if ($recentlyActive) {
-            $qb->where('u.lastActive >= :lastActive')
-                ->setParameters(['lastActive' => (new \DateTime())->modify('-7 days')]);
+            $qb->andWhere('u.lastActive >= :lastActive')
+                ->setParameter('lastActive', (new \DateTime())->modify('-7 days'));
         }
 
         switch ($group) {
@@ -495,7 +498,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->getResult();
     }
 
-    public function findPeople(Magazine $magazine, ?bool $federated = false, $limit = 200, bool $limitTime = false): array
+    public function findPeople(Magazine $magazine, ?bool $federated = false, $limit = 200, bool $limitTime = false, bool $requireAvatar = false): array
     {
         $conn = $this->_em->getConnection();
         $timeWhere = $limitTime ? "AND created_at > now() - '30 days'::interval" : '';
@@ -531,9 +534,11 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere('u.isBanned = false')
             ->andWhere('u.visibility = :visibility')
             ->andWhere('u.apDeletedAt IS NULL')
-            ->andWhere('u.apTimeoutAt IS NULL')
-            ->andWhere('u.about IS NOT NULL')
-            ->andWhere('u.avatar IS NOT NULL');
+            ->andWhere('u.apTimeoutAt IS NULL');
+
+        if (true === $requireAvatar) {
+            $qb->andWhere('u.avatar IS NOT NULL');
+        }
 
         if (null !== $federated) {
             if ($federated) {
@@ -569,7 +574,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     public function findActiveUsers(Magazine $magazine = null)
     {
         if ($magazine) {
-            $results = $this->findPeople($magazine, null, 35, true);
+            $results = $this->findPeople($magazine, null, 35, true, true);
         } else {
             $results = $this->createQueryBuilder('u')
                 ->andWhere('u.lastActive >= :lastActive')
