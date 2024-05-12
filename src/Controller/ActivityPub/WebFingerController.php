@@ -18,7 +18,7 @@ class WebFingerController
 
     public function __invoke(Request $request): JsonResponse
     {
-        $event = new WebfingerResponseEvent(new JsonRd());
+        $event = new WebfingerResponseEvent(new JsonRd(), $request);
         $this->eventDispatcher->dispatch($event);
 
         if (!empty($event->jsonRd->getLinks())) {

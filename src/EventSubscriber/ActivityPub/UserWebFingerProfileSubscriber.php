@@ -13,14 +13,12 @@ use App\Service\SettingsManager;
 use JetBrains\PhpStorm\ArrayShape;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserWebFingerProfileSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly RequestStack $requestStack,
         private readonly WebFingerParameters $webfingerParameters,
         private readonly UserRepository $userRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -40,8 +38,7 @@ class UserWebFingerProfileSubscriber implements EventSubscriberInterface
 
     public function buildResponse(WebfingerResponseEvent $event): void
     {
-        $request = $this->requestStack->getCurrentRequest();
-        $params = $this->webfingerParameters->getParams();
+        $params = $this->webfingerParameters->getParams($event->request);
         $jsonRd = $event->jsonRd;
 
         if (isset($params[WebFingerParameters::ACCOUNT_KEY_NAME])) {

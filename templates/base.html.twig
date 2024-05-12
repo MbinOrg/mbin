@@ -51,10 +51,6 @@
 
     {% block javascripts %}
         {{ encore_entry_script_tags('app') }}
-        {% if kbin_mercure_enabled() %}
-        {#        <script type="application/json" id="mercure-url">{{ mercure()|raw }}</script> #}
-        <script type="application/json" id="mercure-url">{{- 'https://' ~ kbin_domain() ~ '/.well-known/mercure' }}</script>
-        {% endif %}
     {% endblock %}
 </head>
 <body class="{{ html_classes('theme--'~THEME, {
@@ -66,6 +62,7 @@
         'sidebars-same-side': app.user is defined and app.user is not same as null and SUBSCRIPTIONS_SEPARATE is same as V_TRUE and SUBSCRIPTIONS_SAME_SIDE is same as V_TRUE,
     }) }}"
         data-controller="kbin notifications"
+        data-notifications-endpoint-value="{{ kbin_mercure_enabled() ? 'https://'~kbin_domain()~'/.well-known/mercure' : null }}"
         data-notifications-user-value="{{ app.user ? app.user.id : null }}"
         data-notifications-magazine-value="{{ magazine is defined and magazine ? magazine.id : null }}"
         data-notifications-entry-id-value="{{ entry is defined and entry ? entry.id : null }}"
