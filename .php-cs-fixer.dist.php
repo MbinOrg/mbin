@@ -8,6 +8,7 @@ $finder = (new PhpCsFixer\Finder())
         'var',
         'node_modules',
         'vendor',
+        'docker',
     ])
 ;
 
