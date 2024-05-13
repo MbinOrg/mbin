@@ -211,7 +211,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         $dql =
             'SELECT COUNT(u.id), u.apInboxUrl FROM '.User::class.' u WHERE u IN ('.
             'SELECT IDENTITY(us.follower) FROM '.UserFollow::class.' us WHERE us.following = :user)'.
-            'AND u.apId IS NOT NULL AND u.isBanned = false AND u.apTimeoutAt IS NULL '.
+            'AND u.apId IS NOT NULL AND u.isBanned = false AND u.isDeleted = false AND u.apTimeoutAt IS NULL '.
             'GROUP BY u.apInboxUrl';
 
         $res = $this->getEntityManager()->createQuery($dql)
@@ -489,13 +489,14 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere($qb->expr()->like('u.username', ':query'))
             ->orWhere($qb->expr()->like('u.email', ':query'))
             ->andWhere('u.isBanned = false')
+            ->andWhere('u.isDeleted = false')
             ->setParameters(['query' => "{$query}%"])
             ->setMaxResults(5)
             ->getQuery()
             ->getResult();
     }
 
-    public function findPeople(Magazine $magazine, ?bool $federated = false, $limit = 200, bool $limitTime = false): array
+    public function findUsersForMagazine(Magazine $magazine, ?bool $federated = false, $limit = 200, bool $limitTime = false): array
     {
         $conn = $this->_em->getConnection();
         $timeWhere = $limitTime ? "AND created_at > now() - '30 days'::interval" : '';
@@ -529,10 +530,9 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         $qb = $this->createQueryBuilder('u', 'u.id');
         $qb->andWhere($qb->expr()->in('u.id', $user))
             ->andWhere('u.isBanned = false')
+            ->andWhere('u.isDeleted = false')
             ->andWhere('u.apDeletedAt IS NULL')
-            ->andWhere('u.apTimeoutAt IS NULL')
-            ->andWhere('u.about IS NOT NULL')
-            ->andWhere('u.avatar IS NOT NULL');
+            ->andWhere('u.apTimeoutAt IS NULL');
 
         if (null !== $federated) {
             if ($federated) {
@@ -567,14 +567,14 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     public function findActiveUsers(Magazine $magazine = null)
     {
         if ($magazine) {
-            $results = $this->findPeople($magazine, null, 35, true);
+            $results = $this->findUsersForMagazine($magazine, null, 35, true);
         } else {
             $results = $this->createQueryBuilder('u')
                 ->andWhere('u.lastActive >= :lastActive')
                 ->andWhere('u.isBanned = false')
+                ->andWhere('u.isDeleted = false')
                 ->andWhere('u.apDeletedAt IS NULL')
-                ->andWhere('u.apTimeoutAt IS NULL')
-                ->andWhere('u.avatar IS NOT NULL');
+                ->andWhere('u.apTimeoutAt IS NULL');
             if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
                 $results = $results->andWhere('u.apId IS NULL');
             }
