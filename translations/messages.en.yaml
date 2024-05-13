@@ -313,10 +313,10 @@ approve: Approve
 ban: Ban
 unban: Unban
 ban_hashtag_btn: Ban Hashtag
-ban_hashtag_description: Banning a hashtag will stop posts with this hashtag from being created, 
+ban_hashtag_description: Banning a hashtag will stop posts with this hashtag from being created,
   as well as hiding existing posts with this hashtag.
 unban_hashtag_btn: Unban Hashtag
-unban_hashtag_description: Unbanning a hashtag will allow creating posts with this hashtag again. 
+unban_hashtag_description: Unbanning a hashtag will allow creating posts with this hashtag again.
   Existing posts with this hashtag are no longer hidden.
 filters: Filters
 approved: Approved
@@ -740,6 +740,7 @@ position_bottom: Bottom
 position_top: Top
 pending: Pending
 flash_thread_new_error: Thread could not be created. Something went wrong.
+flash_thread_tag_banned_error: Thread could not be created. The content is not allowed.
 flash_email_was_sent: Email has been successfully sent.
 flash_email_failed_to_sent: Email could not be sent.
 flash_post_new_success: Post has been successfully created.
