@@ -208,7 +208,7 @@ class EntryFrontController extends AbstractController
         foreach ($posts as $post) {
             $groupingField = !empty($post->url) ? $post->url : $post->title;
 
-            if (!\in_array($groupingField, $firstIndexes)) {
+            if (!\in_array($groupingField, $firstIndexes) || (empty($post->url) && \strlen($post->title) <= 10)) {
                 $tmp[] = $post;
                 $firstIndexes[] = $groupingField;
             } else {
