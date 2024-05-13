@@ -87,7 +87,7 @@ class EntryCreateController extends AbstractController
                 ],
                 new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200)
             );
-        } catch(TagBannedException $e) {
+        } catch (TagBannedException $e) {
             // Show an error to the user
             $this->addFlash('error', 'flash_thread_tag_banned_error');
             $this->logger->error($e);
