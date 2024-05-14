@@ -9,10 +9,12 @@ use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Repository\TagLinkRepository;
 
 class ActivityFactory
 {
     public function __construct(
+        private readonly TagLinkRepository $tagLinkRepository,
         private readonly EntryPageFactory $pageFactory,
         private readonly EntryCommentNoteFactory $entryNoteFactory,
         private readonly PostNoteFactory $postNoteFactory,
@@ -23,10 +25,10 @@ class ActivityFactory
     public function create(ActivityPubActivityInterface $activity, bool $context = false): array
     {
         return match (true) {
-            $activity instanceof Entry => $this->pageFactory->create($activity, $context),
-            $activity instanceof EntryComment => $this->entryNoteFactory->create($activity, $context),
-            $activity instanceof Post => $this->postNoteFactory->create($activity, $context),
-            $activity instanceof PostComment => $this->postCommentNoteFactory->create($activity, $context),
+            $activity instanceof Entry => $this->pageFactory->create($activity, $this->tagLinkRepository->getTagsOfEntry($activity), $context),
+            $activity instanceof EntryComment => $this->entryNoteFactory->create($activity, $this->tagLinkRepository->getTagsOfEntryComment($activity), $context),
+            $activity instanceof Post => $this->postNoteFactory->create($activity, $this->tagLinkRepository->getTagsOfPost($activity), $context),
+            $activity instanceof PostComment => $this->postCommentNoteFactory->create($activity, $this->tagLinkRepository->getTagsOfPostComment($activity), $context),
             default => throw new \LogicException(),
         };
     }

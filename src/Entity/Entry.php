@@ -11,7 +11,6 @@ use App\Entity\Contracts\DomainInterface;
 use App\Entity\Contracts\FavouriteInterface;
 use App\Entity\Contracts\RankingInterface;
 use App\Entity\Contracts\ReportInterface;
-use App\Entity\Contracts\TagInterface;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Contracts\VotableInterface;
 use App\Entity\Traits\ActivityPubActivityTrait;
@@ -46,7 +45,7 @@ use Webmozart\Assert\Assert;
 #[Index(columns: ['last_active'], name: 'entry_last_active_at_idx')]
 #[Index(columns: ['body_ts'], name: 'entry_body_ts_idx')]
 #[Index(columns: ['title_ts'], name: 'entry_title_ts_idx')]
-class Entry implements VotableInterface, CommentInterface, DomainInterface, VisibilityInterface, RankingInterface, ReportInterface, FavouriteInterface, TagInterface, ActivityPubActivityInterface, ContentVisibilityInterface
+class Entry implements VotableInterface, CommentInterface, DomainInterface, VisibilityInterface, RankingInterface, ReportInterface, FavouriteInterface, ActivityPubActivityInterface, ContentVisibilityInterface
 {
     use VotableTrait;
     use RankingTrait;
@@ -113,8 +112,6 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     #[Column(type: 'string', nullable: true)]
     public ?string $ip = null;
     #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
-    public ?array $tags = null;
-    #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
     public ?array $mentions = null;
     #[OneToMany(mappedBy: 'entry', targetEntity: EntryComment::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $comments;
@@ -128,6 +125,8 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     public Collection $favourites;
     #[OneToMany(mappedBy: 'entry', targetEntity: EntryCreatedNotification::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $notifications;
+    #[OneToMany(mappedBy: 'entry', targetEntity: HashtagLink::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    public Collection $hashtags;
     #[OneToMany(mappedBy: 'entry', targetEntity: EntryBadge::class, cascade: ['remove', 'persist'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $badges;
     public array $children = [];
@@ -393,11 +392,6 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     public function getDescription(): string
     {
         return ''; // @todo get first author comment
-    }
-
-    public function getTags(): array
-    {
-        return array_values($this->tags ?? []);
     }
 
     public function __sleep()

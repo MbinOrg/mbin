@@ -7,7 +7,7 @@ namespace App\Command\Update;
 use App\Entity\EntryComment;
 use App\Entity\Post;
 use App\Entity\PostComment;
-use App\Service\TagManager;
+use App\Service\TagExtractor;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class TagsUpdateCommand extends Command
 {
     public function __construct(
-        private readonly TagManager $tagManager,
+        private readonly TagExtractor $tagExtractor,
         private readonly EntityManagerInterface $entityManager
     ) {
         parent::__construct();
@@ -31,19 +31,19 @@ class TagsUpdateCommand extends Command
     {
         $comments = $this->entityManager->getRepository(EntryComment::class)->findAll();
         foreach ($comments as $comment) {
-            $comment->tags = $this->tagManager->extract($comment->body, $comment->magazine->name);
+            $comment->tags = $this->tagExtractor->extract($comment->body, $comment->magazine->name);
             $this->entityManager->persist($comment);
         }
 
         $posts = $this->entityManager->getRepository(Post::class)->findAll();
         foreach ($posts as $post) {
-            $post->tags = $this->tagManager->extract($post->body, $post->magazine->name);
+            $post->tags = $this->tagExtractor->extract($post->body, $post->magazine->name);
             $this->entityManager->persist($post);
         }
 
         $comments = $this->entityManager->getRepository(PostComment::class)->findAll();
         foreach ($comments as $comment) {
-            $comment->tags = $this->tagManager->extract($comment->body, $comment->magazine->name);
+            $comment->tags = $this->tagExtractor->extract($comment->body, $comment->magazine->name);
             $this->entityManager->persist($comment);
         }
 

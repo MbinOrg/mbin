@@ -14,6 +14,7 @@ final class AdminExtension extends AbstractExtension
     {
         return [
             new TwigFunction('is_admin_panel_page', [AdminExtensionRuntime::class, 'isAdminPanelPage']),
+            new TwigFunction('is_tag_banned', [AdminExtensionRuntime::class, 'isTagBanned']),
         ];
     }
 }

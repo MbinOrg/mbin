@@ -8,7 +8,6 @@ use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Contracts\ContentInterface;
 use App\Entity\Contracts\FavouriteInterface;
 use App\Entity\Contracts\ReportInterface;
-use App\Entity\Contracts\TagInterface;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Contracts\VotableInterface;
 use App\Entity\Traits\ActivityPubActivityTrait;
@@ -36,7 +35,7 @@ use Webmozart\Assert\Assert;
 #[Index(columns: ['last_active'], name: 'post_comment_last_active_at_idx')]
 #[Index(columns: ['created_at'], name: 'post_comment_created_at_idx')]
 #[Index(columns: ['body_ts'], name: 'post_comment_body_ts_idx')]
-class PostComment implements VotableInterface, VisibilityInterface, ReportInterface, FavouriteInterface, TagInterface, ActivityPubActivityInterface
+class PostComment implements VotableInterface, VisibilityInterface, ReportInterface, FavouriteInterface, ActivityPubActivityInterface
 {
     use VotableTrait;
     use VisibilityTrait;
@@ -75,8 +74,6 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
     #[Column(type: 'string', nullable: true)]
     public ?string $ip = null;
     #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
-    public ?array $tags = null;
-    #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
     public ?array $mentions = null;
     #[Column(type: 'boolean', nullable: false)]
     public bool $isAdult = false;
@@ -96,6 +93,8 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
     public Collection $favourites;
     #[OneToMany(mappedBy: 'postComment', targetEntity: PostCommentCreatedNotification::class, cascade: ['remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $notifications;
+    #[OneToMany(mappedBy: 'postComment', targetEntity: HashtagLink::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    public Collection $hashtags;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]

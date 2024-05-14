@@ -105,7 +105,7 @@ class PostsCreateApi extends PostsBaseApi
         $post = $manager->create($dto, $this->getUserOrThrow(), rateLimit: false);
 
         return new JsonResponse(
-            $this->serializePost($manager->createDto($post)),
+            $this->serializePost($manager->createDto($post), $this->tagLinkRepository->getTagsOfPost($post)),
             status: 201,
             headers: $headers
         );
@@ -201,7 +201,7 @@ class PostsCreateApi extends PostsBaseApi
         $post = $manager->create($dto, $this->getUserOrThrow(), rateLimit: false);
 
         return new JsonResponse(
-            $this->serializePost($manager->createDto($post)),
+            $this->serializePost($manager->createDto($post), $this->tagLinkRepository->getTagsOfPost($post)),
             status: 201,
             headers: $headers
         );

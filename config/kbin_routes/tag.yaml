@@ -30,3 +30,13 @@ tag_people:
   path: tag/{name}/people
   methods: [GET]
   requirements: { sortBy: "%front_sort_options%" }
+
+tag_ban:
+  path: /tag/{name}/ban
+  methods: [POST]
+  controller: App\Controller\Tag\TagBanController::ban
+
+tag_unban:
+  path: /tag/{name}/unban
+  methods: [POST]
+  controller: App\Controller\Tag\TagBanController::unban

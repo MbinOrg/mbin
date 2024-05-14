@@ -54,11 +54,13 @@ class MoveEntriesByTagCommand extends Command
             return Command::FAILURE;
         }
 
-        $qb = $this->entryRepository->createQueryBuilder('e');
-
-        $qb->andWhere("JSONB_CONTAINS(e.tags, '\"".$tag."\"') = true");
-
-        $entries = $qb->getQuery()->getResult();
+        $entries = $this->entryRepository->createQueryBuilder('e')
+            ->where('t.tag = :tag')
+            ->join('e.hashtags', 'h')
+            ->join('h.hashtag', 't')
+            ->setParameter('tag', $tag)
+            ->getQuery()
+            ->getResult();
 
         foreach ($entries as $entry) {
             /*
