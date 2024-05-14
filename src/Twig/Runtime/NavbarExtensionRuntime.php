@@ -13,12 +13,21 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         private readonly RequestStack $requestStack,
-        private readonly UrlGeneratorInterface $urlGenerator
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly FrontExtensionRuntime $frontExtension,
     ) {
     }
 
     public function navbarThreadsUrl(?Magazine $magazine): string
     {
+        if ($this->isRouteNameStartsWith('front')) {
+            return $this->frontExtension->frontOptionsUrl(
+                'content', 'threads',
+                $magazine instanceof Magazine ? 'front_magazine' : 'front',
+                ['name' => $magazine?->name, 'p' => null],
+            );
+        }
+
         if ($magazine instanceof Magazine) {
             return $this->urlGenerator->generate('front_magazine', [
                 'name' => $magazine->name,
@@ -45,6 +54,14 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
 
     public function navbarPostsUrl(?Magazine $magazine): string
     {
+        if ($this->isRouteNameStartsWith('front')) {
+            return $this->frontExtension->frontOptionsUrl(
+                'content', 'microblog',
+                $magazine instanceof Magazine ? 'front_magazine' : 'front',
+                ['name' => $magazine?->name, 'p' => null, 'type' => null],
+            );
+        }
+
         if ($magazine instanceof Magazine) {
             return $this->urlGenerator->generate('magazine_posts', [
                 'name' => $magazine->name,
@@ -124,7 +141,7 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
         if ('∞' !== $timeOption) {
             $options['time'] = $timeOption;
         }
-        if (null !== $subscriptionOption) {
+        if (!\in_array($subscriptionOption, [null, 'home'])) {
             $options['subscription'] = $subscriptionOption;
         }
 
