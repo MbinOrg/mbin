@@ -1,5 +1,5 @@
 {# @var this App\Twig\Components\LoginSocialsComponent #}
-{%- set HAS_ANY_SOCIAL = this.googleEnabled or this.facebookEnabled or this.githubEnabled or this.keycloakEnabled or this.zitadelEnabled or this.azureEnabled -%}
+{%- set HAS_ANY_SOCIAL = this.googleEnabled or this.facebookEnabled or this.githubEnabled or this.keycloakEnabled or this.simpleloginEnabled or this.zitadelEnabled or this.azureEnabled -%}
 {% if HAS_ANY_SOCIAL %}
     {% if not mbin_sso_only_mode() and not mbin_sso_show_first() %}
     <div class="separator separator-show"></div>
@@ -20,6 +20,10 @@
         {% if this.keycloakEnabled %}
             <a href="{{ path('oauth_keycloak_connect') }}" class="btn btn__secondary"><i class="fa-solid fa-lock" aria-hidden="true"></i>
                 <span>{{ 'continue_with'|trans }} Keycloak</span></a>
+        {% endif %}
+        {% if this.simpleloginEnabled %}
+            <a href="{{ path('oauth_simplelogin_connect') }}" class="btn btn__secondary"><i class="fa-solid fa-lock" aria-hidden="true"></i>
+                <span>{{ 'continue_with'|trans }} SimpleLogin</span></a>
         {% endif %}
         {% if this.zitadelEnabled %}
             <a href="{{ path('oauth_zitadel_connect') }}" class="btn btn__secondary"><i class="fa-solid fa-lock" aria-hidden="true"></i>

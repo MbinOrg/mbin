@@ -119,6 +119,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     #[Column(type: 'string', nullable: true)]
     public ?string $oauthKeycloakId = null;
     #[Column(type: 'string', nullable: true)]
+    public ?string $oauthSimpleLoginId = null;
+    #[Column(type: 'string', nullable: true)]
     public ?string $oauthZitadelId = null;
     #[Column(type: 'boolean', nullable: false, options: ['default' => true])]
     public bool $hideAdult = true;
@@ -755,7 +757,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
 
     public function isSsoControlled(): bool
     {
-        return $this->oauthAzureId || $this->oauthGithubId || $this->oauthGoogleId || $this->oauthFacebookId || $this->oauthKeycloakId || $this->oauthZitadelId;
+        return $this->oauthAzureId || $this->oauthGithubId || $this->oauthGoogleId || $this->oauthFacebookId || $this->oauthKeycloakId || $this->oauthSimpleLoginId || $this->oauthZitadelId;
     }
 
     public function getCustomCss(): ?string

@@ -38,6 +38,7 @@ security:
                 - App\Security\GoogleAuthenticator
                 - App\Security\GithubAuthenticator
                 - App\Security\KeycloakAuthenticator
+                - App\Security\SimpleLoginAuthenticator
                 - App\Security\ZitadelAuthenticator
             logout:
                 enable_csrf: true
