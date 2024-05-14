@@ -15,6 +15,8 @@ use App\Entity\EntryComment;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\Exception\TagBannedException;
+use App\Exception\UserBannedException;
 use App\Factory\ImageFactory;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPubManager;
@@ -35,13 +37,17 @@ class Note
         private readonly PostCommentManager $postCommentManager,
         private readonly ActivityPubManager $activityPubManager,
         private readonly EntityManagerInterface $entityManager,
-        private readonly MarkdownConverter $markdownConverter,
         private readonly SettingsManager $settingsManager,
         private readonly ImageFactory $imageFactory,
         private readonly ApObjectExtractor $objectExtractor,
     ) {
     }
 
+    /**
+     * @throws TagBannedException
+     * @throws UserBannedException
+     * @throws \Exception
+     */
     public function create(array $object, array $root = null): EntryComment|PostComment|Post
     {
         $current = $this->repository->findByObjectId($object['id']);
@@ -90,6 +96,11 @@ class Note
         return $this->createPost($object);
     }
 
+    /**
+     * @throws TagBannedException
+     * @throws UserBannedException
+     * @throws \Exception
+     */
     private function createEntryComment(array $object, ActivityPubActivityInterface $parent, ActivityPubActivityInterface $root = null): EntryComment
     {
         $dto = new EntryCommentDto();

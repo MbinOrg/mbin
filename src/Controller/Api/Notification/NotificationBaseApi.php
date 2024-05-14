@@ -51,7 +51,7 @@ class NotificationBaseApi extends BaseApi
                  * @var \App\Entity\EntryMentionedNotification $dto
                  */
                 $entry = $dto->getSubject();
-                $toReturn['subject'] = $this->entryFactory->createResponseDto($entry);
+                $toReturn['subject'] = $this->entryFactory->createResponseDto($entry, $this->tagLinkRepository->getTagsOfEntry($entry));
                 break;
             case 'entry_comment_created_notification':
             case 'entry_comment_edited_notification':
@@ -62,7 +62,7 @@ class NotificationBaseApi extends BaseApi
                  * @var \App\Entity\EntryCommentMentionedNotification $dto
                  */
                 $comment = $dto->getSubject();
-                $toReturn['subject'] = $this->entryCommentFactory->createResponseDto($comment);
+                $toReturn['subject'] = $this->entryCommentFactory->createResponseDto($comment, $this->tagLinkRepository->getTagsOfEntryComment($comment));
                 break;
             case 'post_created_notification':
             case 'post_edited_notification':
@@ -72,7 +72,7 @@ class NotificationBaseApi extends BaseApi
                  * @var \App\Entity\PostMentionedNotification $dto
                  */
                 $post = $dto->getSubject();
-                $toReturn['subject'] = $this->postFactory->createResponseDto($post);
+                $toReturn['subject'] = $this->postFactory->createResponseDto($post, $this->tagLinkRepository->getTagsOfPost($post));
                 break;
             case 'post_comment_created_notification':
             case 'post_comment_edited_notification':
@@ -83,7 +83,7 @@ class NotificationBaseApi extends BaseApi
                  * @var \App\Entity\PostCommentMentionedNotification $dto
                  */
                 $comment = $dto->getSubject();
-                $toReturn['subject'] = $this->postCommentFactory->createResponseDto($comment);
+                $toReturn['subject'] = $this->postCommentFactory->createResponseDto($comment, $this->tagLinkRepository->getTagsOfPostComment($comment));
                 break;
             case 'message_notification':
                 if (!$this->isGranted('ROLE_OAUTH2_USER:MESSAGE:READ')) {

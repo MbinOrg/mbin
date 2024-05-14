@@ -39,7 +39,6 @@ class PostCommentDto implements ContentVisibilityInterface
     public ?string $ip = null;
     public ?string $apId = null;
     public ?array $mentions = null;
-    public ?array $tags = null;
     public ?\DateTimeImmutable $createdAt = null;
     public ?\DateTimeImmutable $editedAt = null;
     public ?\DateTime $lastActive = null;

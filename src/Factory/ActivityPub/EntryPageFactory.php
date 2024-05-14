@@ -33,13 +33,12 @@ class EntryPageFactory
     ) {
     }
 
-    public function create(Entry $entry, bool $context = false): array
+    public function create(Entry $entry, array $tags, bool $context = false): array
     {
         if ($context) {
             $page['@context'] = $this->contextProvider->referencedContexts();
         }
 
-        $tags = $entry->tags ?? [];
         if ('random' !== $entry->magazine->name && !$entry->magazine->apId) { // @todo
             $tags[] = $entry->magazine->name;
         }

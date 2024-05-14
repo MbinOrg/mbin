@@ -16,6 +16,7 @@ use App\Event\Entry\EntryDeletedEvent;
 use App\Event\Entry\EntryEditedEvent;
 use App\Event\Entry\EntryPinEvent;
 use App\Event\Entry\EntryRestoredEvent;
+use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Factory\EntryFactory;
 use App\Message\DeleteImageMessage;
@@ -39,6 +40,7 @@ class EntryManager implements ContentManagerInterface
 {
     public function __construct(
         private readonly LoggerInterface $logger,
+        private readonly TagExtractor $tagExtractor,
         private readonly TagManager $tagManager,
         private readonly MentionManager $mentionManager,
         private readonly EntryCommentManager $entryCommentManager,
@@ -57,6 +59,12 @@ class EntryManager implements ContentManagerInterface
     ) {
     }
 
+    /**
+     * @throws TagBannedException
+     * @throws UserBannedException
+     * @throws TooManyRequestsHttpException
+     * @throws \Exception                   if title, body and image are empty
+     */
     public function create(EntryDto $dto, User $user, bool $rateLimit = true): Entry
     {
         if ($rateLimit) {
@@ -70,6 +78,10 @@ class EntryManager implements ContentManagerInterface
             throw new UserBannedException();
         }
 
+        if ($this->tagManager->isAnyTagBanned($this->tagManager->extract($dto->body))) {
+            throw new TagBannedException();
+        }
+
         $this->logger->debug('creating entry from dto');
         $entry = $this->factory->createFromDto($dto, $user);
 
@@ -81,10 +93,6 @@ class EntryManager implements ContentManagerInterface
         if ($entry->image && !$entry->image->altText) {
             $entry->image->altText = $dto->imageAlt;
         }
-        $entry->tags = $dto->tags ? $this->tagManager->extract(
-            implode(' ', array_map(fn ($tag) => str_starts_with($tag, '#') ? $tag : '#'.$tag, $dto->tags)),
-            $entry->magazine->name
-        ) : null;
         $entry->mentions = $dto->body ? $this->mentionManager->extract($dto->body) : null;
         $entry->visibility = $dto->visibility;
         $entry->apId = $dto->apId;
@@ -104,6 +112,8 @@ class EntryManager implements ContentManagerInterface
 
         $this->entityManager->persist($entry);
         $this->entityManager->flush();
+
+        $this->tagManager->updateEntryTags($entry, $this->tagExtractor->extract($entry->body) ?? []);
 
         $this->dispatcher->dispatch(new EntryCreatedEvent($entry));
 
@@ -154,10 +164,8 @@ class EntryManager implements ContentManagerInterface
         if ($dto->image) {
             $entry->image = $this->imageRepository->find($dto->image->id);
         }
-        $entry->tags = $dto->tags ? $this->tagManager->extract(
-            implode(' ', array_map(fn ($tag) => str_starts_with($tag, '#') ? $tag : '#'.$tag, $dto->tags)),
-            $entry->magazine->name
-        ) : null;
+        $this->tagManager->updateEntryTags($entry, $this->tagManager->getTagsFromEntryDto($dto));
+
         $entry->mentions = $dto->body ? $this->mentionManager->extract($dto->body) : null;
         $entry->isOc = $dto->isOc;
         $entry->lang = $dto->lang;
