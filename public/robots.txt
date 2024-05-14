@@ -1,8 +1,38 @@
-# Ban ChatGPT from indexing Mbin instances at all, in order to prevent training their [the OpenAI] models on users' data.
+# Ban several AI bots from indexing Mbin instances at all, in order to prevent training their models on users' data.
+
+# OpenAI, ChatGPT
 User-agent: GPTBot
 Disallow: /
 
 User-agent: ChatGPT-User
+Disallow: /
+
+# Google AI (Gemini, etc)
+User-agent: Google-Extended
+Disallow: /
+
+# Block common crawl
+User-agent: CCBot
+Disallow: /
+
+# Facebook
+User-agent: FacebookBot
+Disallow: /
+
+# Cohere.ai
+User-agent: cohere-ai
+Disallow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Disallow: /
+
+# Anthropic
+User-agent: anthropic-ai
+Disallow: /
+
+# ...also anthropic
+User-agent: ClaudeBot
 Disallow: /
 
 # Rest of indexing robots
