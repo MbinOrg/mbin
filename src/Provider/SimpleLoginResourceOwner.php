@@ -20,6 +20,11 @@ class SimpleLoginResourceOwner implements ResourceOwnerInterface
         return $this->getResponseValue('sub');
     }
 
+    public function getName()
+    {
+        return $this->getResponseValue('name');
+    }
+
     public function getEmail()
     {
         return $this->getResponseValue('email');
