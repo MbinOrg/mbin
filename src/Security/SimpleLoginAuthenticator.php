@@ -96,7 +96,10 @@ class SimpleLoginAuthenticator extends OAuth2Authenticator
                 }
 
                 $name = $simpleloginUser->getName();
-                $username = $slugger->slug(substr($name, 0, strrpos($name, '@')));
+                $name = preg_replace('/\s+/', '', $name); // remove all whitespace
+                $name = preg_replace("#[[:punct:]]#", "", $name); //remove all punctuation
+
+                $username = $slugger->slug($name);
 
                 $dto = (new UserDto())->create(
                     $username,
