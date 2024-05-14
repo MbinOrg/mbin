@@ -40,13 +40,13 @@
         <a href="
             {% if magazine is defined and magazine %}
                 {% if is_route_name_starts_with('front') %}
-                    {{ options_url('content', 'microblog', 'front_magazine', {'name': magazine.name,'p': null}) }}
+                    {{ options_url('content', 'microblog', 'front_magazine', {'name': magazine.name,'p': null,'type':null}) }}
                 {% else %}
                     {{ navbar_posts_url(magazine) }}
                 {% endif %}
             {% else %}
                 {% if is_route_name_starts_with('front') %}
-                    {{ options_url('content', 'microblog', 'front', {'p': null}) }}
+                    {{ options_url('content', 'microblog', 'front', {'p': null,'type':null}) }}
                 {% else %}
                     {{ navbar_posts_url(null) }}
                 {% endif %}
