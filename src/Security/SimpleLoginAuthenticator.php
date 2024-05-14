@@ -101,6 +101,14 @@ class SimpleLoginAuthenticator extends OAuth2Authenticator
 
                 $username = $slugger->slug($name);
 
+                $usernameTaken = $this->entityManager->getRepository(User::class)->findOneBy(
+                    ['username' => $username]
+                );
+
+                if ($usernameTaken) {
+                    $username = $username.rand(1,999);
+                }
+
                 $dto = (new UserDto())->create(
                     $username,
                     $simpleloginUser->getEmail()
