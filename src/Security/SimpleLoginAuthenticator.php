@@ -106,7 +106,7 @@ class SimpleLoginAuthenticator extends OAuth2Authenticator
                 );
 
                 if ($usernameTaken) {
-                    $username = $username.rand(1,999);
+                    $username = $username.rand(1, 999);
                 }
 
                 $dto = (new UserDto())->create(
