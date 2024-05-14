@@ -97,7 +97,7 @@ class SimpleLoginAuthenticator extends OAuth2Authenticator
 
                 $name = $simpleloginUser->getName();
                 $name = preg_replace('/\s+/', '', $name); // remove all whitespace
-                $name = preg_replace("#[[:punct:]]#", "", $name); //remove all punctuation
+                $name = preg_replace('#[[:punct:]]#', '', $name); // remove all punctuation
 
                 $username = $slugger->slug($name);
 
