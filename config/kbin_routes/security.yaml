@@ -93,6 +93,16 @@ oauth_keycloak_verify:
   path: /oauth/keycloak/verify
   methods: [ GET ]
 
+oauth_simplelogin_connect:
+  controller: App\Controller\Security\SimpleLoginController::connect
+  path: /oauth/simplelogin/connect
+  methods: [ GET ]
+
+oauth_simplelogin_verify:
+  controller: App\Controller\Security\SimpleLoginController::verify
+  path: /oauth/simplelogin/verify
+  methods: [ GET ]
+
 oauth_zitadel_connect:
   controller: App\Controller\Security\ZitadelController::connect
   path: /oauth/zitadel/connect

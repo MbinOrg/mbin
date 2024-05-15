@@ -8,7 +8,8 @@ use App\Controller\AbstractController;
 use App\PageView\EntryPageView;
 use App\Repository\Criteria;
 use App\Repository\EntryRepository;
-use App\Service\TagManager;
+use App\Repository\TagRepository;
+use App\Service\TagExtractor;
 use Pagerfanta\PagerfantaInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +18,8 @@ class TagEntryFrontController extends AbstractController
 {
     public function __construct(
         private readonly EntryRepository $entryRepository,
-        private readonly TagManager $tagManager
+        private readonly TagRepository $tagRepository,
+        private readonly TagExtractor $tagManager
     ) {
     }
 
@@ -36,6 +38,7 @@ class TagEntryFrontController extends AbstractController
             [
                 'tag' => $name,
                 'entries' => $listing,
+                'counts' => $this->tagRepository->getCounts($name),
             ]
         );
     }

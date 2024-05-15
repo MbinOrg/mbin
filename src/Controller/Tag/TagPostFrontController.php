@@ -7,14 +7,17 @@ namespace App\Controller\Tag;
 use App\Controller\AbstractController;
 use App\PageView\PostPageView;
 use App\Repository\PostRepository;
-use App\Service\TagManager;
+use App\Repository\TagRepository;
+use App\Service\TagExtractor;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class TagPostFrontController extends AbstractController
 {
-    public function __construct(private readonly TagManager $tagManager)
-    {
+    public function __construct(
+        private readonly TagExtractor $tagManager,
+        private readonly TagRepository $tagRepository,
+    ) {
     }
 
     public function __invoke(
@@ -36,6 +39,7 @@ class TagPostFrontController extends AbstractController
             [
                 'tag' => $name,
                 'posts' => $posts,
+                'counts' => $this->tagRepository->getCounts($name),
             ]
         );
     }

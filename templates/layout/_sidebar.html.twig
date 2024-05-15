@@ -88,6 +88,9 @@
     }) }}
     {% include 'magazine/_moderators_sidebar.html.twig' %}
 {% endif %}
+{% if tag is defined and tag %}
+    {% include 'tag/_panel.html.twig' %}
+{% endif %}
 {{ component('related_magazines', {magazine: magazine is defined and magazine ? magazine.name : null, tag: tag is defined and tag ? tag : null}) }}
 {% if not is_route_name_contains('people') %}
     {{ component('active_users', {magazine: magazine is defined and magazine ? magazine : null}) }}

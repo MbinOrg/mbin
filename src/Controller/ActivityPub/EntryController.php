@@ -8,6 +8,7 @@ use App\Controller\AbstractController;
 use App\Entity\Entry;
 use App\Entity\Magazine;
 use App\Factory\ActivityPub\EntryPageFactory;
+use App\Repository\TagLinkRepository;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,8 +16,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EntryController extends AbstractController
 {
-    public function __construct(private readonly EntryPageFactory $pageFactory)
-    {
+    public function __construct(
+        private readonly EntryPageFactory $pageFactory,
+        private readonly TagLinkRepository $tagLinkRepository,
+    ) {
     }
 
     public function __invoke(
@@ -30,7 +33,7 @@ class EntryController extends AbstractController
             return $this->redirect($entry->apId);
         }
 
-        $response = new JsonResponse($this->pageFactory->create($entry, true));
+        $response = new JsonResponse($this->pageFactory->create($entry, $this->tagLinkRepository->getTagsOfEntry($entry), true));
 
         $response->headers->set('Content-Type', 'application/activity+json');
 

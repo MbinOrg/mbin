@@ -9,12 +9,12 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
+use App\Entity\HashtagLink;
 use App\Entity\PostComment;
 use App\Entity\User;
 use App\Entity\UserBlock;
 use App\Entity\UserFollow;
 use App\PageView\PostCommentPageView;
-use App\Repository\Contract\TagRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Types\Types;
@@ -33,7 +33,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * @method PostComment[]    findAll()
  * @method PostComment[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PostCommentRepository extends ServiceEntityRepository implements TagRepositoryInterface
+class PostCommentRepository extends ServiceEntityRepository
 {
     public const PER_PAGE = 15;
 
@@ -100,6 +100,7 @@ class PostCommentRepository extends ServiceEntityRepository implements TagReposi
 
         $this->addTimeClause($qb, $criteria);
         $this->filter($qb, $criteria);
+        $this->addBannedHashtagClause($qb);
 
         return $qb;
     }
@@ -112,6 +113,18 @@ class PostCommentRepository extends ServiceEntityRepository implements TagReposi
             $qb->andWhere('c.createdAt > :time')
                 ->setParameter('time', $since, Types::DATETIMETZ_IMMUTABLE);
         }
+    }
+
+    private function addBannedHashtagClause(QueryBuilder $qb): void
+    {
+        $dql = $this->getEntityManager()->createQueryBuilder()
+            ->select('hl2')
+            ->from(HashtagLink::class, 'hl2')
+            ->join('hl2.hashtag', 'h2')
+            ->where('h2.banned = true')
+            ->andWhere('hl2.postComment = c')
+            ->getDQL();
+        $qb->andWhere($qb->expr()->not($qb->expr()->exists($dql)));
     }
 
     private function filter(QueryBuilder $qb, Criteria $criteria)
@@ -134,6 +147,13 @@ class PostCommentRepository extends ServiceEntityRepository implements TagReposi
         if ($criteria->user) {
             $qb->andWhere('c.user = :user')
                 ->setParameter('user', $criteria->user);
+        }
+
+        if ($criteria->tag) {
+            $qb->andWhere('t.tag = :tag')
+                ->join('p.hashtags', 'h')
+                ->join('h.hashtag', 't')
+                ->setParameter('tag', $criteria->tag);
         }
 
         $user = $this->security->getUser();
@@ -221,14 +241,6 @@ class PostCommentRepository extends ServiceEntityRepository implements TagReposi
             ->andWhere('c.visibility = :visibility')
             ->orderBy('c.createdAt', 'DESC')
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
-            ->getQuery()
-            ->getResult();
-    }
-
-    public function findWithTags(): array
-    {
-        return $this->createQueryBuilder('c')
-            ->where('c.tags IS NOT NULL')
             ->getQuery()
             ->getResult();
     }

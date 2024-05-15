@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Service\TagManager;
+use App\Service\TagExtractor;
 use PHPUnit\Framework\TestCase;
 
-class TagManagerTest extends TestCase
+class TagExtractorTest extends TestCase
 {
     /**
      * @dataProvider provider
      */
     public function testExtract(string $input, ?array $output): void
     {
-        $this->assertEquals($output, (new TagManager())->extract($input, 'kbin'));
+        $this->assertEquals($output, (new TagExtractor())->extract($input, 'kbin'));
     }
 
     public static function provider(): array

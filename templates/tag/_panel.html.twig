@@ -1,0 +1,36 @@
+<section class="tag section">
+    <h3>{{ 'tag'|trans }}</h3>
+
+    <div class="row">
+        <header>
+            <h4>
+                <a href="{{ path('tag_overview', {name: tag}) }}" class="{{ html_classes({'stretched-link': false}) }}">
+                    #{{ tag }}
+                </a>
+            </h4>
+        </header>
+    </div>
+
+    {{ component('tag_actions', {tag: tag}) }}
+
+    {% if false %}
+        {{ component('magazine_sub', {magazine: magazine}) }}
+
+        {% if showInfo %}
+            <ul class="info">
+                <li>{{ 'subscribers'|trans }}: <span>{{ computed.magazine.subscriptionsCount }}</span></li>
+            </ul>
+        {% endif %}
+    {% endif %}
+
+    <ul class="meta">
+        {{ _self.meta_item('threads'|trans, counts["entry"]) }}
+        {{ _self.meta_item('comments'|trans, counts["entry_comment"]) }}
+        {{ _self.meta_item('posts'|trans, counts["post"]) }}
+        {{ _self.meta_item('replies'|trans, counts["post_comment"]) }}
+    </ul>
+
+    {% macro meta_item(name, count) %}
+        <li>{{ name }}<span>{{ count }}</span></li>
+    {% endmacro %}
+</section>

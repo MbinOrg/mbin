@@ -41,7 +41,7 @@ readonly class QueryAdapter implements AdapterInterface
      */
     public function getNbResults(): int
     {
-        return \count($this->paginator);
+        return $this->paginator->count();
     }
 
     /**

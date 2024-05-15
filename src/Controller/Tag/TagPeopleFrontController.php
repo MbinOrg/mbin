@@ -7,6 +7,7 @@ namespace App\Controller\Tag;
 use App\Controller\AbstractController;
 use App\Repository\MagazineRepository;
 use App\Repository\PostRepository;
+use App\Repository\TagRepository;
 use App\Service\PeopleManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,6 +16,7 @@ class TagPeopleFrontController extends AbstractController
 {
     public function __construct(
         private readonly PeopleManager $manager,
+        private readonly TagRepository $tagRepository,
         private readonly MagazineRepository $magazineRepository
     ) {
     }
@@ -35,6 +37,7 @@ class TagPeopleFrontController extends AbstractController
                 ),
                 'local' => $this->manager->general(),
                 'federated' => $this->manager->general(true),
+                'counts' => $this->tagRepository->getCounts($name),
             ]
         );
     }

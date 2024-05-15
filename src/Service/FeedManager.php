@@ -10,6 +10,7 @@ use App\PageView\EntryPageView;
 use App\Repository\Criteria;
 use App\Repository\EntryRepository;
 use App\Repository\MagazineRepository;
+use App\Repository\TagLinkRepository;
 use App\Repository\UserRepository;
 use App\Utils\IriGenerator;
 use FeedIo\Feed;
@@ -27,6 +28,7 @@ class FeedManager
         private readonly EntryRepository $entryRepository,
         private readonly MagazineRepository $magazineRepository,
         private readonly UserRepository $userRepository,
+        private readonly TagLinkRepository $tagLinkRepository,
         private readonly RouterInterface $router,
         private readonly EntryFactory $entryFactory,
     ) {
@@ -111,7 +113,7 @@ class FeedManager
             $item->setPublicId(IriGenerator::getIriFromResource($entry));
             $item->setAuthor((new Item\Author())->setName($entry->user->username));
 
-            foreach ($entry->getTags() as $tag) {
+            foreach ($this->tagLinkRepository->getTagsOfEntry($entry) as $tag) {
                 $category = new Category();
                 $category->setLabel($tag);
 

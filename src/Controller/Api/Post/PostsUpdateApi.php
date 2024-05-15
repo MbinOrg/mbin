@@ -99,7 +99,7 @@ class PostsUpdateApi extends PostsBaseApi
         $post = $manager->edit($post, $dto);
 
         return new JsonResponse(
-            $this->serializePost($factory->createDto($post)),
+            $this->serializePost($factory->createDto($post), $this->tagLinkRepository->getTagsOfPost($post)),
             headers: $headers
         );
     }

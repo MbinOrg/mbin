@@ -15,6 +15,7 @@ use App\Entity\PostComment;
 use App\Entity\PostCommentReport;
 use App\Entity\PostReport;
 use App\Entity\Report;
+use App\Repository\TagLinkRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ReportFactory
@@ -27,6 +28,7 @@ class ReportFactory
         private readonly PostFactory $postFactory,
         private readonly EntryCommentFactory $entryCommentFactory,
         private readonly PostCommentFactory $postCommentFactory,
+        private readonly TagLinkRepository $tagLinkRepository,
     ) {
     }
 
@@ -56,19 +58,19 @@ class ReportFactory
         switch (\get_class($report)) {
             case EntryReport::class:
                 \assert($subject instanceof Entry);
-                $toReturn->subject = $this->entryFactory->createResponseDto($subject);
+                $toReturn->subject = $this->entryFactory->createResponseDto($subject, tags: $this->tagLinkRepository->getTagsOfEntry($subject));
                 break;
             case EntryCommentReport::class:
                 \assert($subject instanceof EntryComment);
-                $toReturn->subject = $this->entryCommentFactory->createResponseDto($subject);
+                $toReturn->subject = $this->entryCommentFactory->createResponseDto($subject, tags: $this->tagLinkRepository->getTagsOfEntryComment($subject));
                 break;
             case PostReport::class:
                 \assert($subject instanceof Post);
-                $toReturn->subject = $this->postFactory->createResponseDto($subject);
+                $toReturn->subject = $this->postFactory->createResponseDto($subject, tags: $this->tagLinkRepository->getTagsOfPost($subject));
                 break;
             case PostCommentReport::class:
                 \assert($subject instanceof PostComment);
-                $toReturn->subject = $this->postCommentFactory->createResponseDto($subject);
+                $toReturn->subject = $this->postCommentFactory->createResponseDto($subject, tags: $this->tagLinkRepository->getTagsOfPostComment($subject));
                 break;
             default:
                 throw new \LogicException();
