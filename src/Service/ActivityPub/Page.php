@@ -44,7 +44,8 @@ class Page
      */
     public function create(array $object): Entry
     {
-        $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
+        $actorUrl = $this->activityPubManager->getActorFromAttributedTo($object['attributedTo']);
+        $actor = $this->activityPubManager->findActorOrCreate($actorUrl);
         if (!empty($actor)) {
             if ($actor->isBanned) {
                 throw new UserBannedException();
@@ -153,7 +154,7 @@ class Page
         }
 
         if (!$dto->url && isset($object['url'])) {
-            $dto->url = $object['url'];
+            $dto->url = $this->activityPubManager->extractUrl($object['url']);
         }
     }
 
