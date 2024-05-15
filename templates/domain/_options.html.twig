@@ -124,7 +124,7 @@
             </button>
             <ul class="dropdown__menu">
                 <li>
-                    <a href="{{ options_url('type', 'all', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('type') == 'all' }) }}">
+                    <a href="{{ options_url('type', null, null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('type') == 'all' }) }}">
                         <i class="fa-solid fa-file" aria-hidden="true"></i> &nbsp; {{ 'all'|trans }}
                     </a>
                 </li>
