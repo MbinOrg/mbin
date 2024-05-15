@@ -481,6 +481,18 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $result[0];
     }
 
+    /**
+     * @return User[]
+     */
+    public function findAllAdmins(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere("JSONB_CONTAINS(u.roles, '\"".'ROLE_ADMIN'."\"') = true")
+            ->andWhere('u.isDeleted = false')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findUsersSuggestions(string $query): array
     {
         $qb = $this->createQueryBuilder('u');
@@ -622,5 +634,19 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         }
 
         return $pagerfanta;
+    }
+
+    /**
+     * @return User[]
+     */
+    public function findAllModerators(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->where("JSONB_CONTAINS(u.roles, '\"".'ROLE_MODERATOR'."\"') = true")
+            ->andWhere('u.visibility = :visibility')
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 }

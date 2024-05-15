@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\Magazine;
 use App\Entity\Notification;
 use App\Entity\Post;
 use App\Entity\PostComment;
@@ -154,6 +155,45 @@ class NotificationRepository extends ServiceEntityRepository
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('commentId', $comment->getId());
 
+        $stmt->executeQuery();
+    }
+
+    public function markReportNotificationsAsRead(User $user): void
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'UPDATE notification n SET status = :s
+                      WHERE n.user_id = :uId
+                        AND n.report_id IS NOT NULL';
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('s', Notification::STATUS_READ);
+        $stmt->bindValue('uId', $user->getId());
+        $stmt->executeQuery();
+    }
+
+    public function markReportNotificationsInMagazineAsRead(User $user, Magazine $magazine): void
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'UPDATE notification n SET status = :s
+                      WHERE n.user_id = :uId
+                        AND n.report_id IS NOT NULL
+                        AND EXISTS (SELECT id FROM report r WHERE r.id = n.report_id AND r.magazine_id = :mId)';
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('s', Notification::STATUS_READ);
+        $stmt->bindValue('uId', $user->getId());
+        $stmt->bindValue('mId', $magazine->getId());
+        $stmt->executeQuery();
+    }
+
+    public function markOwnReportNotificationsAsRead(User $user): void
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'UPDATE notification n SET status = :s
+                      WHERE n.user_id = :uId
+                        AND n.report_id IS NOT NULL
+                        AND EXISTS (SELECT id FROM report r WHERE r.id = n.report_id AND r.reporting_id = :uId)';
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('s', Notification::STATUS_READ);
+        $stmt->bindValue('uId', $user->getId());
         $stmt->executeQuery();
     }
 }
