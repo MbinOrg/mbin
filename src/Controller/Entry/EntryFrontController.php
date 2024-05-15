@@ -19,15 +19,26 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 
 class EntryFrontController extends AbstractController
 {
-    public function __construct(private readonly EntryRepository $entryRepository, private readonly PostRepository $postRepository)
-    {
+    public function __construct(
+        private readonly EntryRepository $entryRepository,
+        private readonly PostRepository $postRepository
+    ) {
     }
 
-    public function front(?string $sortBy, ?string $time, ?string $type, string $subscription, string $federation, string $content, Request $request): Response
-    {
+    public function front(
+        string $subscription,
+        string $content,
+        ?string $sortBy,
+        ?string $time,
+        string $federation,
+        #[MapQueryParameter]
+        ?string $type,
+        Request $request
+    ): Response {
         $user = $this->getUser();
 
         $criteria = $this->createCriteria($content, $request);
@@ -39,57 +50,64 @@ class EntryFrontController extends AbstractController
         if ('home' === $subscription) {
             $subscription = $this->subscriptionFor($user);
         }
-        $this->handleSubscription($subscription, $user, $criteria);
+        $this->handleSubscription($subscription, $criteria);
 
         $this->setUserPreferences($user, $criteria);
 
-        $entities = ('threads' === $content) ? $this->entryRepository->findByCriteria($criteria) : $this->postRepository->findByCriteria($criteria);
         if ('threads' === $content) {
+            $entities = $this->entryRepository->findByCriteria($criteria);
             $entities = $this->handleCrossposts($entities);
+            $templatePath = 'entry/';
+            $dataKey = 'entries';
+        } elseif ('microblog' === $content) {
+            $entities = $this->postRepository->findByCriteria($criteria);
+            $templatePath = 'post/';
+            $dataKey = 'posts';
+        } else {
+            throw new \LogicException("Invalid content filter '{$content}'");
         }
 
-        $templatePath = ('threads' === $content) ? 'entry/' : 'post/';
-        $dataKey = ('threads' === $content) ? 'entries' : 'posts';
-
-        return $this->renderResponse($request, $content, $criteria, [$dataKey => $entities], $templatePath, $user);
+        return $this->renderResponse(
+            $request,
+            $content,
+            $criteria,
+            [$dataKey => $entities],
+            $templatePath,
+            $user
+        );
     }
 
-    // $name is magazine name, for compatibility
-    public function front_redirect(?string $sortBy, ?string $time, ?string $type, string $federation, string $content, ?string $name, Request $request): Response
-    {
-        $user = $this->getUser(); // Fetch the user
-        $subscription = $this->subscriptionFor($user); // Determine the subscription filter based on the user
+    public function frontRedirect(
+        string $content,
+        ?string $sortBy,
+        ?string $time,
+        string $federation,
+        #[MapQueryParameter]
+        ?string $type,
+        Request $request
+    ): Response {
+        $user = $this->getUser();
+        $subscription = $this->subscriptionFor($user);
 
-        if ($name) {
-            return $this->redirectToRoute('front_magazine', [
-                'name' => $name,
-                'subscription' => $subscription,
-                'sortBy' => $sortBy,
-                'time' => $time,
-                'type' => $type,
-                'federation' => $federation,
-                'content' => $content,
-            ]);
-        } else {
-            return $this->redirectToRoute('front', [
-                'subscription' => $subscription,
-                'sortBy' => $sortBy,
-                'time' => $time,
-                'type' => $type,
-                'federation' => $federation,
-                'content' => $content,
-            ]);
-        }
+        return $this->redirectToRoute('front', [
+            'subscription' => $subscription,
+            'sortBy' => $sortBy,
+            'time' => $time,
+            'type' => $type,
+            'federation' => $federation,
+            'content' => $content,
+        ]);
     }
 
     public function magazine(
         #[MapEntity(expr: 'repository.findOneByName(name)')]
         Magazine $magazine,
+        string $content,
         ?string $sortBy,
         ?string $time,
-        ?string $type,
         string $federation,
-        string $content,
+        #[MapQueryParameter]
+        ?string $type,
         Request $request
     ): Response {
         $user = $this->getUser();
@@ -106,21 +124,59 @@ class EntryFrontController extends AbstractController
         $criteria->magazine = $magazine;
         $criteria->stickiesFirst = true;
 
-        $subscription = $request->query->get('subscription');
-        if (!$subscription) {
-            $subscription = 'all';
-        }
-        $this->handleSubscription($subscription, $user, $criteria);
+        $subscription = $request->query->get('subscription') ?: 'all';
+        $this->handleSubscription($subscription, $criteria);
 
         $this->setUserPreferences($user, $criteria);
 
-        $entities = ('threads' === $content) ? $this->entryRepository->findByCriteria($criteria) : $this->postRepository->findByCriteria($criteria);
-        // Note no crosspost handling
+        if ('threads' === $content) {
+            $entities = $this->entryRepository->findByCriteria($criteria);
+            // Note no crosspost handling
+            $templatePath = 'entry/';
+            $dataKey = 'entries';
+        } elseif ('microblog' === $content) {
+            $entities = $this->postRepository->findByCriteria($criteria);
+            $templatePath = 'post/';
+            $dataKey = 'posts';
+        } else {
+            throw new \LogicException("Invalid content filter '{$content}'");
+        }
 
-        $templatePath = ('threads' === $content) ? 'entry/' : 'post/';
-        $dataKey = ('threads' === $content) ? 'entries' : 'posts';
+        return $this->renderResponse(
+            $request,
+            $content,
+            $criteria,
+            [$dataKey => $entities, 'magazine' => $magazine],
+            $templatePath,
+            $user
+        );
+    }
 
-        return $this->renderResponse($request, $content, $criteria, [$dataKey => $entities, 'magazine' => $magazine], $templatePath, $user);
+    /**
+     * @param string $name magazine name
+     */
+    public function magazineRedirect(
+        string $name,
+        string $content,
+        ?string $sortBy,
+        ?string $time,
+        string $federation,
+        #[MapQueryParameter]
+        ?string $type,
+        Request $request
+    ): Response {
+        $user = $this->getUser(); // Fetch the user
+        $subscription = $this->subscriptionFor($user); // Determine the subscription filter based on the user
+
+        return $this->redirectToRoute('front_magazine', [
+            'name' => $name,
+            'subscription' => $subscription,
+            'sortBy' => $sortBy,
+            'time' => $time,
+            'type' => $type,
+            'federation' => $federation,
+            'content' => $content,
+        ]);
     }
 
     private function createCriteria(string $content, Request $request)
@@ -136,19 +192,18 @@ class EntryFrontController extends AbstractController
         return $criteria->setContent($content);
     }
 
-    private function handleSubscription(string $subscription, $user, &$criteria)
+    private function handleSubscription(string $subscription, &$criteria)
     {
-        if ('sub' === $subscription) {
+        if (\in_array($subscription, ['sub', 'mod', 'fav'])) {
             $this->denyAccessUnlessGranted('ROLE_USER');
             $this->getUserOrThrow();
+        }
+
+        if ('sub' === $subscription) {
             $criteria->subscribed = true;
         } elseif ('mod' === $subscription) {
-            $this->denyAccessUnlessGranted('ROLE_USER');
-            $this->getUserOrThrow();
             $criteria->moderated = true;
         } elseif ('fav' === $subscription) {
-            $this->denyAccessUnlessGranted('ROLE_USER');
-            $this->getUserOrThrow();
             $criteria->favourite = true;
         } elseif ($subscription && 'all' !== $subscription) {
             throw new \LogicException('Invalid subscription filter '.$subscription);
@@ -164,7 +219,8 @@ class EntryFrontController extends AbstractController
 
     private function renderResponse(Request $request, $content, $criteria, $data, $templatePath, ?User $user)
     {
-        $baseData = ['criteria' => $criteria] + $data;
+        $baseData = array_merge(['criteria' => $criteria], $data);
+
         if ('microblog' === $content) {
             $dto = new PostDto();
             if (isset($data['magazine'])) {

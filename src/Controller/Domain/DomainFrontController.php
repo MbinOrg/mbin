@@ -13,6 +13,7 @@ use Pagerfanta\PagerfantaInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 
 class DomainFrontController extends AbstractController
 {
@@ -22,8 +23,14 @@ class DomainFrontController extends AbstractController
     ) {
     }
 
-    public function __invoke(?string $name, ?string $sortBy, ?string $time, ?string $type, Request $request): Response
-    {
+    public function __invoke(
+        ?string $name,
+        ?string $sortBy,
+        ?string $time,
+        #[MapQueryParameter]
+        ?string $type,
+        Request $request
+    ): Response {
         if (!$domain = $this->domainRepository->findOneBy(['name' => $name])) {
             throw $this->createNotFoundException();
         }
