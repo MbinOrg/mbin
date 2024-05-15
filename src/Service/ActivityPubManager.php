@@ -694,33 +694,33 @@ class ActivityPubManager
         }
 
         if (isset($object['cc']) and \is_array($object['cc'])) {
-            $res = array_merge($res, $object['cc']);
+            $res = \array_merge($res, $object['cc']);
         } elseif (isset($object['cc']) and \is_string($object['cc'])) {
             $res[] = $object['cc'];
         }
 
         if (isset($object['object']) and \is_array($object['object'])) {
             if (isset($object['object']['to']) and \is_array($object['object']['to'])) {
-                $res = array_merge($res, $object['object']['to']);
+                $res = \array_merge($res, $object['object']['to']);
             } elseif (isset($object['object']['to']) and \is_string($object['object']['to'])) {
                 $res[] = $object['object']['to'];
             }
 
             if (isset($object['object']['cc']) and \is_array($object['object']['cc'])) {
-                $res = array_merge($res, $object['object']['cc']);
+                $res = \array_merge($res, $object['object']['cc']);
             } elseif (isset($object['object']['cc']) and \is_string($object['object']['cc'])) {
                 $res[] = $object['object']['cc'];
             }
         } else if (isset($object['attributedTo']) && \is_array($object['attributedTo'])) {
             // if there is no "object" inside of this it will probably be a create activity which has an attributedTo field
             // this was implemented for peertube support, because they list the channel (Group) and the user in an array in that field
-            $groups = array_filter($object['attributedTo'], fn ($item) => \is_array($item) && !empty($item['type']) && 'Group' === $item['type']);
-            $res = array_merge($res, array_map(fn ($item) => $item['id'], $groups));
+            $groups = \array_filter($object['attributedTo'], fn ($item) => \is_array($item) && !empty($item['type']) && 'Group' === $item['type']);
+            $res = \array_merge($res, array_map(fn ($item) => $item['id'], $groups));
         }
 
-        $res = array_filter($res, fn ($i) => null !== $i and ActivityPubActivityInterface::PUBLIC_URL !== $i);
+        $res = \array_filter($res, fn ($i) => null !== $i and ActivityPubActivityInterface::PUBLIC_URL !== $i);
 
-        return array_unique($res);
+        return \array_unique($res);
     }
 
     private function isImageAttachment(array $object): bool
@@ -828,8 +828,8 @@ class ActivityPubManager
     {
         if (\is_string($url)) {
             return $url;
-        } else if (\is_array($url)) {
-            $urls = \array_filter($url, fn ($item) => \is_string($item) || (\is_array($item) && !empty($item['type']) && 'Link' === $item['type'] && (empty($item['mediaType']) || "text/html" === $item['mediaType'])));
+        } elseif (\is_array($url)) {
+            $urls = \array_filter($url, fn ($item) => \is_string($item) || (\is_array($item) && !empty($item['type']) && 'Link' === $item['type'] && (empty($item['mediaType']) || 'text/html' === $item['mediaType'])));
             if (\sizeof($urls) >= 1) {
                 if (\is_string($urls[0])) {
                     return $urls[0];

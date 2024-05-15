@@ -45,11 +45,11 @@ class CreateHandler
         $postTypes = ['Question', 'Note'];
 
         try {
-            if (in_array($this->object['type'], $postTypes)) {
+            if (\in_array($this->object['type'], $postTypes)) {
                 $this->handleChain();
             }
 
-            if (in_array($this->object['type'], $entryTypes)) {
+            if (\in_array($this->object['type'], $entryTypes)) {
                 $this->handlePage();
             }
         } catch (UserBannedException) {
