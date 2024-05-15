@@ -711,11 +711,11 @@ class ActivityPubManager
             } elseif (isset($object['object']['cc']) and \is_string($object['object']['cc'])) {
                 $res[] = $object['object']['cc'];
             }
-        } else if (isset($object['attributedTo']) && \is_array($object['attributedTo'])) {
+        } elseif (isset($object['attributedTo']) && \is_array($object['attributedTo'])) {
             // if there is no "object" inside of this it will probably be a create activity which has an attributedTo field
             // this was implemented for peertube support, because they list the channel (Group) and the user in an array in that field
             $groups = \array_filter($object['attributedTo'], fn ($item) => \is_array($item) && !empty($item['type']) && 'Group' === $item['type']);
-            $res = \array_merge($res, array_map(fn ($item) => $item['id'], $groups));
+            $res = \array_merge($res, \array_map(fn ($item) => $item['id'], $groups));
         }
 
         $res = \array_filter($res, fn ($i) => null !== $i and ActivityPubActivityInterface::PUBLIC_URL !== $i);
