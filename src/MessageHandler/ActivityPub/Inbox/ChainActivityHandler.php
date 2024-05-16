@@ -107,6 +107,7 @@ class ChainActivityHandler
                     return $this->note->create($object);
                 case 'Page':
                 case 'Article':
+                case 'Video':
                     $this->logger->debug('creating page {o}', ['o' => $object]);
 
                     return $this->page->create($object);
