@@ -41,7 +41,7 @@ class ChainActivityHandler
         if (!$message->chain || 0 === \sizeof($message->chain)) {
             return;
         }
-        $validObjectTypes = ['Page', 'Note', 'Article', 'Question'];
+        $validObjectTypes = ['Page', 'Note', 'Article', 'Question', 'Video'];
         $object = $message->chain[0];
         if (!\in_array($object['type'], $validObjectTypes)) {
             $this->logger->error('cannot get the dependencies of the object, its type {t} is not one we can handle. {m]', ['t' => $object['type'], 'm' => $message]);
