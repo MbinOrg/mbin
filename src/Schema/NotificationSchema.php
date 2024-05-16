@@ -38,6 +38,9 @@ class NotificationSchema
             'post_comment_mentioned_notification',
             'message_notification',
             'ban_notification',
+            'report_created_notification',
+            'report_rejected_notification',
+            'report_approved_notification',
         ]
     )]
     public string $type = 'entry_created_notification';
@@ -52,4 +55,7 @@ class NotificationSchema
         new OA\Schema(ref: new Model(type: MagazineBanResponseDto::class)),
     ])]
     public mixed $subject = null;
+
+    #[OA\Property(description: 'The id of the associated report of this notification')]
+    public ?int $reportId = null;
 }
