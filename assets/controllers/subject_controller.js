@@ -1,22 +1,22 @@
-import {Controller} from '@hotwired/stimulus';
-import {fetch, ok} from "../utils/http";
-import {useIntersection} from 'stimulus-use'
-import router from "../utils/routing";
-import getIntIdFromElement, {getLevel, getDepth, getTypeFromNotification} from "../utils/kbin";
+import { fetch, ok } from '../utils/http';
+import getIntIdFromElement, { getDepth, getLevel, getTypeFromNotification } from '../utils/kbin';
+import { Controller } from '@hotwired/stimulus';
 import GLightbox from 'glightbox';
+import router from '../utils/routing';
+import { useIntersection } from 'stimulus-use';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
     static previewInit = false;
-    static targets = ['loader', 'more', 'container', 'commentsCounter', 'favCounter', 'upvoteCounter', 'downvoteCounter']
+    static targets = ['loader', 'more', 'container', 'commentsCounter', 'favCounter', 'upvoteCounter', 'downvoteCounter'];
     static values = {
         loading: Boolean,
-        isExpandedValue: Boolean
+        isExpandedValue: Boolean,
     };
     static sendBtnLabel = null;
 
     connect() {
-        const params = {selector: '.thumb', openEffect: 'none', closeEffect: 'none', slideEffect: 'none'};
+        const params = { selector: '.thumb', openEffect: 'none', closeEffect: 'none', slideEffect: 'none' };
         GLightbox(params);
 
         const self = this;
@@ -32,7 +32,7 @@ export default class extends Controller {
         }
 
         if (this.element.classList.contains('show-preview')) {
-            useIntersection(this)
+            useIntersection(this);
         }
 
         this.checkHeight();
@@ -50,7 +50,7 @@ export default class extends Controller {
         try {
             this.loadingValue = true;
 
-            let response = await fetch(event.target.href, {method: 'GET'});
+            let response = await fetch(event.target.href, { method: 'GET' });
 
             response = await ok(response);
             response = await response.json();
@@ -60,15 +60,15 @@ export default class extends Controller {
 
             const textarea = this.containerTarget.querySelector('textarea');
             if (textarea) {
-                if (textarea.value !== "") {
-                    let firstLineEnd = textarea.value.indexOf("\n");
+                if ('' !== textarea.value) {
+                    let firstLineEnd = textarea.value.indexOf('\n');
                     if (-1 === firstLineEnd) {
                         firstLineEnd = textarea.value.length;
-                        textarea.value = textarea.value.slice(0, firstLineEnd) + " " + textarea.value.slice(firstLineEnd);
+                        textarea.value = textarea.value.slice(0, firstLineEnd) + ' ' + textarea.value.slice(firstLineEnd);
                         textarea.selectionStart = firstLineEnd + 1;
                         textarea.selectionEnd = firstLineEnd + 1;
                     } else {
-                        textarea.value = textarea.value.slice(0, firstLineEnd) + " " + textarea.value.slice(firstLineEnd);
+                        textarea.value = textarea.value.slice(0, firstLineEnd) + ' ' + textarea.value.slice(firstLineEnd);
                         textarea.selectionStart = firstLineEnd + 1;
                         textarea.selectionEnd = firstLineEnd + 1;
                     }
@@ -98,7 +98,7 @@ export default class extends Controller {
 
             let response = await fetch(url, {
                 method: 'POST',
-                body: new FormData(form)
+                body: new FormData(form),
             });
 
             response = await ok(response);
@@ -117,11 +117,11 @@ export default class extends Controller {
                 const div = document.createElement('div');
                 div.innerHTML = response.html;
 
-                let level = getLevel(this.element);
-                let depth = getDepth(this.element);
+                const level = getLevel(this.element);
+                const depth = getDepth(this.element);
 
                 div.firstElementChild.classList.remove('comment-level--1');
-                div.firstElementChild.classList.add('comment-level--' + (level >= 10 ? 10 : level + 1));
+                div.firstElementChild.classList.add('comment-level--' + (10 <= level ? 10 : level + 1));
                 div.firstElementChild.dataset.commentCollapseDepthValue = depth + 1;
 
                 if (this.element.nextElementSibling && this.element.nextElementSibling.classList.contains('comments')) {
@@ -161,7 +161,7 @@ export default class extends Controller {
 
             let response = await fetch(form.action, {
                 method: 'POST',
-                body: new FormData(form)
+                body: new FormData(form),
             });
 
             response = await ok(response);
@@ -185,7 +185,7 @@ export default class extends Controller {
 
             let response = await fetch(form.action, {
                 method: 'POST',
-                body: new FormData(form)
+                body: new FormData(form),
             });
 
             response = await ok(response);
@@ -282,7 +282,7 @@ export default class extends Controller {
         try {
             this.loadingValue = true;
 
-            const url = router().generate(`ajax_fetch_${getTypeFromNotification(data)}`, {id: getIntIdFromElement(this.element)});
+            const url = router().generate(`ajax_fetch_${getTypeFromNotification(data)}`, { id: getIntIdFromElement(this.element) });
 
             let response = await fetch(url);
 
@@ -303,7 +303,7 @@ export default class extends Controller {
     updateVotes(data) {
         this.upvoteCounterTarget.innerText = `(${data.detail.up})`;
 
-        if(data.detail.up > 0) {
+        if (0 < data.detail.up) {
             this.upvoteCounterTarget.classList.remove('hidden');
         } else {
             this.upvoteCounterTarget.classList.add('hidden');
@@ -336,7 +336,7 @@ export default class extends Controller {
         try {
             this.loadingValue = true;
 
-            let response = await fetch(event.target.parentNode.formAction, {method: 'POST'});
+            let response = await fetch(event.target.parentNode.formAction, { method: 'POST' });
 
             response = await ok(response);
             response = await response.json();
@@ -368,7 +368,7 @@ export default class extends Controller {
         this.isExpandedValue = false;
         const elem = this.element.querySelector('.content');
         if (elem) {
-            elem.style.maxHeight = '25rem'
+            elem.style.maxHeight = '25rem';
 
             if (elem.scrollHeight - 30 > elem.clientHeight
                 || elem.scrollWidth > elem.clientWidth) {
@@ -382,7 +382,7 @@ export default class extends Controller {
     }
 
     createMoreBtn(elem) {
-        let moreBtn = document.createElement('div')
+        const moreBtn = document.createElement('div');
         moreBtn.innerHTML = '<i class="fa-solid fa-angles-down"></i>';
         moreBtn.classList.add('more');
 
@@ -392,7 +392,7 @@ export default class extends Controller {
     }
 
     more() {
-        this.moreBtn.addEventListener('click', e => {
+        this.moreBtn.addEventListener('click', (e) => {
             if (e.target.previousSibling.style.maxHeight) {
                 e.target.previousSibling.setAttribute('style', 'margin-bottom: 2rem !important');
                 e.target.previousSibling.style.maxHeight = null;
@@ -405,7 +405,7 @@ export default class extends Controller {
                 e.target.previousSibling.scrollIntoView();
                 this.isExpandedValue = false;
             }
-        })
+        });
     }
 
     expand() {

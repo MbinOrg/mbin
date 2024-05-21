@@ -1,5 +1,4 @@
-import {Controller} from '@hotwired/stimulus';
-import {fetch, ok} from "../utils/http";
+import { Controller } from '@hotwired/stimulus';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -9,7 +8,6 @@ export default class extends Controller {
      * @returns
      */
     async adult_image_hover(event) {
-
         if (false === event.target.matches(':hover')) {
             return;
         }
@@ -22,8 +20,6 @@ export default class extends Controller {
      * @param {*} event
      */
     async adult_image_hover_out(event) {
-
         event.target.style.filter = 'blur(8px)';
-
     }
 }

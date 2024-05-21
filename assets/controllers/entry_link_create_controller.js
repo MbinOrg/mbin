@@ -1,22 +1,22 @@
-import {ApplicationController,useThrottle} from 'stimulus-use'
-import {fetch,ok} from "../utils/http";
-import router from "../utils/routing";
+import { ApplicationController, useThrottle } from 'stimulus-use';
+import { fetch, ok } from '../utils/http';
+import router from '../utils/routing';
 
 /* stimulusFetch: 'lazy' */
 export default class extends ApplicationController {
-    static throttles = ['fetchLink']
+    static throttles = ['fetchLink'];
     static targets = ['title', 'description', 'url', 'loader'];
     static values = {
-        loading: Boolean
+        loading: Boolean,
     };
 
     connect() {
         useThrottle(this, {
-            wait: 1000
-        })
+            wait: 1000,
+        });
 
-        let params = new URLSearchParams(window.location.search);
-        let url = params.get('url');
+        const params = new URLSearchParams(window.location.search);
+        const url = params.get('url');
         if (url) {
             this.urlTarget.value = url;
             this.urlTarget.dispatchEvent(new Event('input'));
@@ -24,9 +24,8 @@ export default class extends ApplicationController {
     }
 
     async fetchLink(event) {
-
         if (!event.target.value) {
-            return
+            return;
         }
 
         try {
@@ -37,7 +36,7 @@ export default class extends ApplicationController {
             this.loadingValue = false;
         } catch (e) {
             this.loadingValue = false;
-        } finally {}
+        }
     }
 
     loadingValueChanged(val) {
@@ -52,7 +51,7 @@ export default class extends ApplicationController {
     }
 
     async fetchTitleAndDescription(event) {
-        if (this.titleTarget.value && confirm('Are you sure you want to fetch the title and description? This will overwrite the current values.') === false) {
+        if (this.titleTarget.value && false === confirm('Are you sure you want to fetch the title and description? This will overwrite the current values.')) {
             return;
         }
 
@@ -60,8 +59,8 @@ export default class extends ApplicationController {
         let response = await fetch(url, {
             method: 'POST',
             body: JSON.stringify({
-                'url': event.target.value
-            })
+                'url': event.target.value,
+            }),
         });
 
         response = await ok(response);
