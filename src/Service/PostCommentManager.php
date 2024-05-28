@@ -23,6 +23,7 @@ use App\Repository\ImageRepository;
 use App\Service\Contracts\ContentManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
@@ -31,6 +32,7 @@ use Webmozart\Assert\Assert;
 class PostCommentManager implements ContentManagerInterface
 {
     public function __construct(
+        private readonly LoggerInterface $logger,
         private readonly TagManager $tagManager,
         private readonly TagExtractor $tagExtractor,
         private readonly MentionManager $mentionManager,
@@ -137,7 +139,9 @@ class PostCommentManager implements ContentManagerInterface
 
     public function delete(User $user, PostComment $comment): void
     {
-        if ($user->apDomain && $user->apDomain !== parse_url($comment->apId, PHP_URL_HOST)) {
+        if ($user->apDomain && $user->apDomain !== parse_url($comment->apId ?? '', PHP_URL_HOST) && !$comment->magazine->userIsModerator($user)) {
+            $this->logger->info('Got a delete activity from user {u}, but they are not from the same instance as the deleted post and they are not a moderator on {m]', ['u' => $user->apId, 'm' => $comment->magazine->apId ?? $comment->magazine->name]);
+
             return;
         }
 

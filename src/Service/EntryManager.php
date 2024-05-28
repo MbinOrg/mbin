@@ -190,7 +190,7 @@ class EntryManager implements ContentManagerInterface
 
     public function delete(User $user, Entry $entry): void
     {
-        if ($user->apDomain && $user->apDomain !== parse_url($entry->apId, PHP_URL_HOST) && !$entry->magazine->userIsModerator($user)) {
+        if ($user->apDomain && $user->apDomain !== parse_url($entry->apId ?? '', PHP_URL_HOST) && !$entry->magazine->userIsModerator($user)) {
             $this->logger->info('Got a delete activity from user {u}, but they are not from the same instance as the deleted post and they are not a moderator on {m]', ['u' => $user->apId, 'm' => $entry->magazine->apId ?? $entry->magazine->name]);
 
             return;
