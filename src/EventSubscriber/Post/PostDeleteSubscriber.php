@@ -55,7 +55,7 @@ class PostDeleteSubscriber implements EventSubscriberInterface
     {
         $this->bus->dispatch(new PostDeletedNotificationMessage($post->getId()));
 
-        if (!$post->apId || !$post->magazine->apId) {
+        if (!$post->apId || !$post->magazine->apId || (null !== $user && $post->magazine->userIsModerator($user))) {
             $payload = $this->deleteWrapper->adjustDeletePayload($user, $post, Uuid::v4()->toRfc4122());
             $this->bus->dispatch(new DeleteMessage($payload, $post->user->getId(), $post->magazine->getId()));
         }

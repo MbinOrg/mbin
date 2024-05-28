@@ -415,7 +415,7 @@ class ActivityPubManager
     {
         $this->magazineManager->create(
             $this->magazineFactory->createDtoFromAp($actorUrl, $this->buildHandle($actorUrl)),
-            $this->userRepository->findAdmin(),
+            null,
             false
         );
 
@@ -504,9 +504,7 @@ class ActivityPubManager
                         $moderatorsToRemove = [];
                         /** @var Moderator $mod */
                         foreach ($magazine->moderators as $mod) {
-                            if (!$mod->isOwner) {
-                                $moderatorsToRemove[] = $mod->user;
-                            }
+                            $moderatorsToRemove[] = $mod->user;
                         }
                         $indexesNotToRemove = [];
 

@@ -57,7 +57,7 @@ class EntryDeleteSubscriber implements EventSubscriberInterface
     {
         $this->bus->dispatch(new EntryDeletedNotificationMessage($entry->getId()));
 
-        if (!$entry->apId || !$entry->magazine->apId) {
+        if (!$entry->apId || !$entry->magazine->apId || (null !== $user && $entry->magazine->userIsModerator($user))) {
             $payload = $this->deleteWrapper->adjustDeletePayload($user, $entry, Uuid::v4()->toRfc4122());
             $this->bus->dispatch(new DeleteMessage($payload, $entry->user->getId(), $entry->magazine->getId()));
         }
