@@ -1,7 +1,7 @@
-import {Controller} from '@hotwired/stimulus';
-import router from "../utils/routing";
-import {fetch, ok} from "../utils/http";
-import {getLevel, getDepth, getTypeFromNotification} from "../utils/kbin";
+import { fetch, ok } from '../utils/http';
+import { getDepth, getLevel, getTypeFromNotification } from '../utils/kbin';
+import { Controller } from '@hotwired/stimulus';
+import router from '../utils/routing';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -15,7 +15,7 @@ export default class extends Controller {
 
     async addMainSubject(data) {
         try {
-            const url = router().generate(`ajax_fetch_${getTypeFromNotification(data)}`, {id: data.detail.id});
+            const url = router().generate(`ajax_fetch_${getTypeFromNotification(data)}`, { id: data.detail.id });
 
             let response = await fetch(url);
 
@@ -35,11 +35,11 @@ export default class extends Controller {
                 const div = document.createElement('div');
                 div.innerHTML = response.html;
 
-                let level = getLevel(parent);
-                let depth = getDepth(parent);
+                const level = getLevel(parent);
+                const depth = getDepth(parent);
 
                 div.firstElementChild.classList.remove('comment-level--1');
-                div.firstElementChild.classList.add('comment-level--' + (level >= 10 ? 10 : level + 1));
+                div.firstElementChild.classList.add('comment-level--' + (10 <= level ? 10 : level + 1));
                 div.firstElementChild.dataset.commentCollapseDepthValue = depth + 1;
 
                 let current = parent;
@@ -47,12 +47,12 @@ export default class extends Controller {
                     if (!current.nextElementSibling) {
                         break;
                     }
-                    if (current.nextElementSibling.dataset.subjectParentValue === 'undefined') {
+                    if ('undefined' === current.nextElementSibling.dataset.subjectParentValue) {
                         break;
                     }
                     if (current.nextElementSibling.dataset.subjectParentValue !== div.firstElementChild.dataset.subjectParentValue
                         && getLevel(current.nextElementSibling) <= level) {
-                        break
+                        break;
                     }
 
                     current = current.nextElementSibling;
@@ -77,7 +77,7 @@ export default class extends Controller {
                 return;
             }
 
-            const url = router().generate(`ajax_fetch_${getTypeFromNotification(data)}`, {id: data.detail.id});
+            const url = router().generate(`ajax_fetch_${getTypeFromNotification(data)}`, { id: data.detail.id });
 
             let response = await fetch(url);
 

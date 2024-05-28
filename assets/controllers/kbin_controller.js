@@ -1,15 +1,15 @@
-import {ApplicationController, useDebounce} from 'stimulus-use'
+import { ApplicationController, useDebounce } from 'stimulus-use';
 
 /* stimulusFetch: 'lazy' */
 export default class extends ApplicationController {
     static values = {
         loading: Boolean,
-    }
+    };
 
-    static debounces = ['mention']
+    static debounces = ['mention'];
 
     connect() {
-        useDebounce(this, {wait: 800})
+        useDebounce(this, { wait: 800 });
         this.handleDropdowns();
         this.handleOptionsBarScroll();
     }
@@ -53,9 +53,8 @@ export default class extends ApplicationController {
 
     /**
      * Handles interaction with the mobile nav button, opening the sidebar
-     * @param {*} e
      */
-    handleNavToggleClick(e) {
+    handleNavToggleClick() {
         const sidebar = document.getElementById('sidebar');
         sidebar.classList.toggle('open');
     }
