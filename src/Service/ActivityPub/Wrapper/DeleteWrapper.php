@@ -40,6 +40,7 @@ class DeleteWrapper
         $userUrl = $item['attributedTo'];
 
         if (null !== $deletingUser) {
+            // overwrite the actor in the json with the supplied deleting user
             if (null !== $deletingUser->apId) {
                 $userUrl = $deletingUser->apPublicUrl;
             } else {

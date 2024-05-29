@@ -12,20 +12,18 @@
     </h3>
     <ul>
         {% for moderator in magazine.moderators|slice(0, 5) %}
-            {% if magazine.apId is same as null or not moderator.isOwner %}
-                <li>
-                    {% if moderator.user.avatar %}
-                      <img class="image-inline"
-                           width="30"
-                           height="30"
-                           loading="lazy"
-                           src="{{ moderator.user.avatar.filePath ? (asset(moderator.user.avatar.filePath)|imagine_filter('avatar_thumb')) : moderator.user.avatar.sourceUrl }}"
-                           alt="{{ moderator.user.username ~ ' ' ~ 'avatar'|trans|lower }}">
-                    {% endif %}
-                    <a href="{{ path('user_overview', {username: moderator.user.username}) }}"
-                       class="stretched-link">{{ moderator.user.username|username }}</a>
-                </li>
-            {% endif %}
+            <li>
+                {% if moderator.user.avatar %}
+                  <img class="image-inline"
+                       width="30"
+                       height="30"
+                       loading="lazy"
+                       src="{{ moderator.user.avatar.filePath ? (asset(moderator.user.avatar.filePath)|imagine_filter('avatar_thumb')) : moderator.user.avatar.sourceUrl }}"
+                       alt="{{ moderator.user.username ~ ' ' ~ 'avatar'|trans|lower }}">
+                {% endif %}
+                <a href="{{ path('user_overview', {username: moderator.user.username}) }}"
+                   class="stretched-link">{{ moderator.user.username|username }}</a>
+            </li>
         {% endfor %}
     </ul>
     {% if magazine.moderators|length > 5 %}
