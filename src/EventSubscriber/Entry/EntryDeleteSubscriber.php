@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\EventSubscriber\Entry;
 
+use App\Entity\Entry;
+use App\Entity\User;
+use App\Event\Entry\EntryBeforeDeletedEvent;
 use App\Event\Entry\EntryBeforePurgeEvent;
 use App\Event\Entry\EntryDeletedEvent;
 use App\Message\ActivityPub\Outbox\DeleteMessage;
@@ -28,6 +31,7 @@ class EntryDeleteSubscriber implements EventSubscriberInterface
         return [
             EntryDeletedEvent::class => 'onEntryDeleted',
             EntryBeforePurgeEvent::class => 'onEntryBeforePurge',
+            EntryBeforeDeletedEvent::class => 'onEntryBeforeDelete',
         ];
     }
 
@@ -41,17 +45,21 @@ class EntryDeleteSubscriber implements EventSubscriberInterface
         $event->entry->magazine->entryCount = $this->entryRepository->countEntriesByMagazine(
             $event->entry->magazine
         ) - 1;
+        $this->onEntryBeforeDeleteImpl($event->user, $event->entry);
+    }
 
-        $this->bus->dispatch(new EntryDeletedNotificationMessage($event->entry->getId()));
+    public function onEntryBeforeDelete(EntryBeforeDeletedEvent $event): void
+    {
+        $this->onEntryBeforeDeleteImpl($event->user, $event->entry);
+    }
 
-        if (!$event->entry->apId) {
-            $this->bus->dispatch(
-                new DeleteMessage(
-                    $this->deleteWrapper->build($event->entry, Uuid::v4()->toRfc4122()),
-                    $event->entry->user->getId(),
-                    $event->entry->magazine->getId()
-                )
-            );
+    public function onEntryBeforeDeleteImpl(?User $user, Entry $entry): void
+    {
+        $this->bus->dispatch(new EntryDeletedNotificationMessage($entry->getId()));
+
+        if (!$entry->apId || !$entry->magazine->apId || (null !== $user && $entry->magazine->userIsModerator($user))) {
+            $payload = $this->deleteWrapper->adjustDeletePayload($user, $entry, Uuid::v4()->toRfc4122());
+            $this->bus->dispatch(new DeleteMessage($payload, $entry->user->getId(), $entry->magazine->getId()));
         }
     }
 }
