@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\EventSubscriber\PostComment;
 
+use App\Entity\PostComment;
+use App\Entity\User;
+use App\Event\PostComment\PostCommentBeforeDeletedEvent;
 use App\Event\PostComment\PostCommentBeforePurgeEvent;
 use App\Event\PostComment\PostCommentDeletedEvent;
 use App\Message\ActivityPub\Outbox\DeleteMessage;
@@ -28,6 +31,7 @@ class PostCommentDeleteSubscriber implements EventSubscriberInterface
         return [
             PostCommentDeletedEvent::class => 'onPostCommentDeleted',
             PostCommentBeforePurgeEvent::class => 'onPostCommentBeforePurge',
+            PostCommentBeforeDeletedEvent::class => 'onPostBeforeDelete',
         ];
     }
 
@@ -41,23 +45,28 @@ class PostCommentDeleteSubscriber implements EventSubscriberInterface
         $this->bus->dispatch(new PostCommentDeletedNotificationMessage($event->comment->getId()));
     }
 
+    public function onPostBeforeDelete(PostCommentBeforeDeletedEvent $event): void
+    {
+        $this->onPostCommentBeforeDeleteImpl($event->user, $event->comment);
+    }
+
     public function onPostCommentBeforePurge(PostCommentBeforePurgeEvent $event): void
     {
+        $this->onPostCommentBeforeDeleteImpl($event->user, $event->comment);
+    }
+
+    public function onPostCommentBeforeDeleteImpl(?User $user, PostComment $comment): void
+    {
         $this->cache->invalidateTags([
-            'post_'.$event->comment->post->getId(),
-            'post_comment_'.$event->comment->root?->getId() ?? $event->comment->getId(),
+            'post_'.$comment->post->getId(),
+            'post_comment_'.$comment->root?->getId() ?? $comment->getId(),
         ]);
 
-        $this->bus->dispatch(new PostCommentDeletedNotificationMessage($event->comment->getId()));
+        $this->bus->dispatch(new PostCommentDeletedNotificationMessage($comment->getId()));
 
-        if (!$event->comment->apId) {
-            $this->bus->dispatch(
-                new DeleteMessage(
-                    $this->deleteWrapper->build($event->comment, Uuid::v4()->toRfc4122()),
-                    $event->comment->user->getId(),
-                    $event->comment->magazine->getId()
-                )
-            );
+        if (!$comment->apId || !$comment->magazine->apId || (null !== $user && $comment->magazine->userIsModerator($user))) {
+            $payload = $this->deleteWrapper->adjustDeletePayload($user, $comment, Uuid::v4()->toRfc4122());
+            $this->bus->dispatch(new DeleteMessage($payload, $comment->user->getId(), $comment->magazine->getId()));
         }
     }
 }

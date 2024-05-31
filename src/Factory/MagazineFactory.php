@@ -32,7 +32,7 @@ class MagazineFactory
     ) {
     }
 
-    public function createFromDto(MagazineDto $dto, User $user): Magazine
+    public function createFromDto(MagazineDto $dto, ?User $user): Magazine
     {
         return new Magazine(
             $dto->name,

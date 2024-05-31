@@ -142,7 +142,9 @@ class PostManager implements ContentManagerInterface
 
     public function delete(User $user, Post $post): void
     {
-        if ($user->apDomain && $user->apDomain !== parse_url($post->apId, PHP_URL_HOST)) {
+        if ($user->apDomain && $user->apDomain !== parse_url($post->apId ?? '', PHP_URL_HOST) && !$post->magazine->userIsModerator($user)) {
+            $this->logger->info('Got a delete activity from user {u}, but they are not from the same instance as the deleted post and they are not a moderator on {m]', ['u' => $user->apId, 'm' => $post->magazine->apId ?? $post->magazine->name]);
+
             return;
         }
 
