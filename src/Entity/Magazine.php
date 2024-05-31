@@ -110,7 +110,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public function __construct(
         string $name,
         string $title,
-        User $user,
+        ?User $user,
         ?string $description,
         ?string $rules,
         bool $isAdult,
@@ -131,7 +131,9 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         $this->badges = new ArrayCollection();
         $this->logs = new ArrayCollection();
 
-        $this->addModerator(new Moderator($this, $user, null, true, true));
+        if (null !== $user) {
+            $this->addModerator(new Moderator($this, $user, null, true, true));
+        }
 
         $this->createdAtTraitConstruct();
     }
@@ -233,10 +235,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
 
     public function getModeratorCount(): int
     {
-        $criteria = Criteria::create()
-            ->where(Criteria::expr()->eq('isOwner', false));
-
-        return $this->moderators->matching($criteria)->count();
+        return $this->moderators->count();
     }
 
     public function addEntry(Entry $entry): self
