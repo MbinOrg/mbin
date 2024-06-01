@@ -26,3 +26,23 @@ top: Topo
 hot: Popular
 active: Ativo
 newest: Mais novo
+filter_by_federation: Filtrar por status de federação
+marked_for_deletion: Marcado para exclusão
+marked_for_deletion_at: Marcado para exclusão em %date%
+favourites: Favoritos
+favourite: Favorito
+more: Mais
+avatar: Avatar
+added: Adicionou
+no_comments: Sem comentários
+created_at: Criado
+owner: Dono
+subscribers: Inscritos
+online: Online
+comments: Comentários
+posts: Postagens
+replies: Respostas
+moderators: Moderadores
+mod_log: Registro de moderação
+add_comment: Adicionar comentário
+add_post: Adicionar postagem
