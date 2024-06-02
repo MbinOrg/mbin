@@ -295,6 +295,7 @@ Following languages are currently supported/translated:
 
 - Bulgarian
 - Chinese
+- Danish
 - Dutch
 - English
 - Esperanto
@@ -305,6 +306,7 @@ Following languages are currently supported/translated:
 - Japanese
 - Polish
 - Portuguese
+- Portuguese (Brazil)
 - Russian
 - Spanish
 - Turkish
