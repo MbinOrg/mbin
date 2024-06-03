@@ -6,7 +6,7 @@ namespace App\Provider;
 
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 
-class ZitadelResourceOwner implements ResourceOwnerInterface
+class AuthentikResourceOwner implements ResourceOwnerInterface
 {
     protected $response;
 
