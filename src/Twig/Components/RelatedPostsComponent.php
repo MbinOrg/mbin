@@ -7,7 +7,6 @@ namespace App\Twig\Components;
 use App\Entity\Post;
 use App\Repository\PostRepository;
 use App\Service\MentionManager;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -33,8 +32,7 @@ final class RelatedPostsComponent
         private readonly PostRepository $repository,
         private readonly CacheInterface $cache,
         private readonly Environment $twig,
-        private readonly RequestStack $requestStack,
-        private readonly MentionManager $mentionManager
+        private readonly MentionManager $mentionManager,
     ) {
     }
 
@@ -59,9 +57,9 @@ final class RelatedPostsComponent
         $postId = $this->post?->getId();
         $magazine = str_replace('@', '', $this->magazine ?? '');
 
-        return $this->cache->get(
-            "related_posts_{$magazine}_{$this->tag}_{$postId}_{$this->type}_{$this->requestStack->getCurrentRequest()?->getLocale()}",
-            function (ItemInterface $item) use ($attributes) {
+        $posts = $this->cache->get(
+            "related_posts_{$magazine}_{$this->tag}_{$postId}_{$this->type}",
+            function (ItemInterface $item) {
                 $item->expiresAfter(60);
 
                 $posts = match ($this->type) {
@@ -80,15 +78,16 @@ final class RelatedPostsComponent
                     $posts = \array_slice($posts, 0, $this->limit);
                 }
 
-                return $this->twig->render(
-                    'components/related_posts.html.twig',
-                    [
-                        'attributes' => $attributes,
-                        'posts' => $posts,
-                        'title' => $this->title,
-                    ]
-                );
+                return $posts;
             }
+        );
+
+        return $this->twig->render('components/related_posts.html.twig',
+            [
+                'attributes' => $attributes,
+                'posts' => $posts,
+                'title' => $this->title,
+            ]
         );
     }
 }

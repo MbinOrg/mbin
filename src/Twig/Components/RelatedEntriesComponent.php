@@ -7,7 +7,6 @@ namespace App\Twig\Components;
 use App\Entity\Entry;
 use App\Repository\EntryRepository;
 use App\Service\MentionManager;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -33,7 +32,6 @@ final class RelatedEntriesComponent
         private readonly EntryRepository $repository,
         private readonly CacheInterface $cache,
         private readonly Environment $twig,
-        private readonly RequestStack $requestStack,
         private readonly MentionManager $mentionManager
     ) {
     }
@@ -59,9 +57,9 @@ final class RelatedEntriesComponent
         $entryId = $this->entry?->getId();
         $magazine = str_replace('@', '', $this->magazine ?? '');
 
-        return $this->cache->get(
-            "related_entries_{$magazine}_{$this->tag}_{$entryId}_{$this->type}_{$this->requestStack->getCurrentRequest()?->getLocale()}",
-            function (ItemInterface $item) use ($attributes) {
+        $entries = $this->cache->get(
+            "related_entries_{$magazine}_{$this->tag}_{$entryId}_{$this->type}",
+            function (ItemInterface $item) {
                 $item->expiresAfter(60);
 
                 $entries = match ($this->type) {
@@ -80,15 +78,16 @@ final class RelatedEntriesComponent
                     $entries = \array_slice($entries, 0, $this->limit);
                 }
 
-                return $this->twig->render(
-                    'components/related_entries.html.twig',
-                    [
-                        'attributes' => $attributes,
-                        'entries' => $entries,
-                        'title' => $this->title,
-                    ]
-                );
+                return $entries;
             }
+        );
+
+        return $this->twig->render('components/related_entries.html.twig',
+            [
+                'attributes' => $attributes,
+                'entries' => $entries,
+                'title' => $this->title,
+            ]
         );
     }
 }

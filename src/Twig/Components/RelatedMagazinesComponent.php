@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Twig\Components;
 
 use App\Repository\MagazineRepository;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -30,7 +29,6 @@ final class RelatedMagazinesComponent
         private readonly MagazineRepository $repository,
         private readonly CacheInterface $cache,
         private readonly Environment $twig,
-        private readonly RequestStack $requestStack
     ) {
     }
 
@@ -54,9 +52,9 @@ final class RelatedMagazinesComponent
     {
         $magazine = str_replace('@', '', $this->magazine ?? '');
 
-        return $this->cache->get(
-            "related_magazines_{$magazine}_{$this->tag}_{$this->type}_{$this->requestStack->getCurrentRequest()?->getLocale()}",
-            function (ItemInterface $item) use ($attributes, $magazine) {
+        $magazines = $this->cache->get(
+            "related_magazines_{$magazine}_{$this->tag}_{$this->type}",
+            function (ItemInterface $item) use ($magazine) {
                 $item->expiresAfter(60);
 
                 $magazines = match ($this->type) {
@@ -65,17 +63,16 @@ final class RelatedMagazinesComponent
                     default => $this->repository->findRandom(),
                 };
 
-                $magazines = array_filter($magazines, fn ($m) => $m->name !== $this->magazine);
-
-                return $this->twig->render(
-                    'components/related_magazines.html.twig',
-                    [
-                        'attributes' => $attributes,
-                        'magazines' => $magazines,
-                        'title' => $this->title,
-                    ]
-                );
+                return array_filter($magazines, fn ($m) => $m->name !== $this->magazine);
             }
+        );
+
+        return $this->twig->render('components/related_magazines.html.twig',
+            [
+                'attributes' => $attributes,
+                'magazines' => $magazines,
+                'title' => $this->title,
+            ]
         );
     }
 }
