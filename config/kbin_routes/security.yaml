@@ -115,12 +115,12 @@ oauth_zitadel_verify:
 
 oauth_authentik_connect:
   controller: App\Controller\Security\AuthentikController::connect
-  path: /oauth/zitadel/connect
+  path: /oauth/authentik/connect
   methods: [ GET ]
 
 oauth_authentik_verify:
   controller: App\Controller\Security\AuthentikController::verify
-  path: /oauth/zitadel/verify
+  path: /oauth/authentik/verify
   methods: [ GET ]
 
 oauth_create_client:
