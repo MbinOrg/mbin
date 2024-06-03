@@ -7,6 +7,7 @@ namespace App\Factory\ActivityPub;
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\Message;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Repository\TagLinkRepository;
@@ -18,7 +19,8 @@ class ActivityFactory
         private readonly EntryPageFactory $pageFactory,
         private readonly EntryCommentNoteFactory $entryNoteFactory,
         private readonly PostNoteFactory $postNoteFactory,
-        private readonly PostCommentNoteFactory $postCommentNoteFactory
+        private readonly PostCommentNoteFactory $postCommentNoteFactory,
+        private readonly MessageFactory $messageFactory,
     ) {
     }
 
@@ -29,6 +31,7 @@ class ActivityFactory
             $activity instanceof EntryComment => $this->entryNoteFactory->create($activity, $this->tagLinkRepository->getTagsOfEntryComment($activity), $context),
             $activity instanceof Post => $this->postNoteFactory->create($activity, $this->tagLinkRepository->getTagsOfPost($activity), $context),
             $activity instanceof PostComment => $this->postCommentNoteFactory->create($activity, $this->tagLinkRepository->getTagsOfPostComment($activity), $context),
+            $activity instanceof Message => $this->messageFactory->build($activity, $context),
             default => throw new \LogicException(),
         };
     }

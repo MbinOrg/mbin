@@ -824,4 +824,48 @@ class ActivityPubManager
             return stripslashes($converter->convert($apObject['summary']));
         }
     }
+
+    public function extractMarkdownContent(array $apObject)
+    {
+        if (isset($apObject['source']) && isset($apObject['source']['mediaType']) && isset($apObject['source']['content']) && ApObjectExtractor::MARKDOWN_TYPE === $apObject['source']['mediaType']) {
+            return $apObject['source']['content'];
+        } else {
+            $converter = new HtmlConverter(['strip_tags' => true]);
+
+            return stripslashes($converter->convert($apObject['content']));
+        }
+    }
+
+    public function isActivityPublic(array $payload): bool
+    {
+        $to = [];
+        if (!empty($payload['to']) && \is_array($payload['to'])) {
+            $to[] = $payload['to'];
+        }
+
+        if (!empty($payload['cc']) && \is_array($payload['cc'])) {
+            $to[] = $payload['cc'];
+        }
+
+        foreach ($to as $receiver) {
+            $id = null;
+            if (\is_string($receiver)) {
+                if (ActivityPubActivityInterface::PUBLIC_URL === $receiver) {
+                    return true;
+                }
+                $id = $receiver;
+            } elseif (\is_array($receiver) && !empty($receiver['id'])) {
+                $id = $receiver['id'];
+            }
+
+            if (null !== $id) {
+                $actor = $this->findActorOrCreate($id);
+                if ($actor instanceof Magazine) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

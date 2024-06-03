@@ -6,8 +6,6 @@ namespace App\MessageHandler\ActivityPub\Inbox;
 
 use App\Entity\Entry;
 use App\Entity\EntryComment;
-use App\Entity\Post;
-use App\Entity\PostComment;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
@@ -16,6 +14,8 @@ use App\Message\ActivityPub\Outbox\AnnounceMessage;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
+use App\Service\ActivityPubManager;
+use App\Service\MessageManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -30,6 +30,8 @@ class CreateHandler
         private readonly Page $page,
         private readonly MessageBusInterface $bus,
         private readonly LoggerInterface $logger,
+        private readonly MessageManager $messageManager,
+        private readonly ActivityPubManager $activityPubManager,
         private readonly ApActivityRepository $repository
     ) {
     }
@@ -41,21 +43,16 @@ class CreateHandler
     {
         $this->object = $message->payload;
         $this->logger->debug('Got a CreateMessage of type {t}', [$message->payload['type'], $message->payload]);
-
         try {
-            if ('Note' === $this->object['type']) {
+            if ($this->activityPubManager->isActivityPublic($message->payload)) {
+                $this->handlePrivateMessage();
+            } elseif ('Note' === $this->object['type']) {
                 $this->handleChain();
-            }
-
-            if ('Page' === $this->object['type']) {
+            } elseif ('Page' === $this->object['type']) {
                 $this->handlePage();
-            }
-
-            if ('Article' === $this->object['type']) {
+            } elseif ('Article' === $this->object['type']) {
                 $this->handlePage();
-            }
-
-            if ('Question' === $this->object['type']) {
+            } elseif ('Question' === $this->object['type']) {
                 $this->handleChain();
             }
         } catch (UserBannedException) {
@@ -100,5 +97,10 @@ class CreateHandler
                 $this->bus->dispatch(new AnnounceMessage(null, $page->magazine->getId(), $page->getId(), \get_class($page)));
             }
         }
+    }
+
+    private function handlePrivateMessage(): void
+    {
+        $this->messageManager->createMessage($this->object);
     }
 }

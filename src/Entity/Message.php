@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Contracts\ActivityPubActivityInterface;
+use App\Entity\Traits\ActivityPubActivityTrait;
 use App\Entity\Traits\CreatedAtTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,10 +16,12 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
+use Symfony\Component\Uid\Uuid;
 
 #[Entity]
-class Message
+class Message implements ActivityPubActivityInterface
 {
+    use ActivityPubActivityTrait;
     use CreatedAtTrait {
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
@@ -38,6 +42,8 @@ class Message
     public string $body;
     #[Column(type: 'string', nullable: false)]
     public string $status = self::STATUS_NEW;
+    #[Column(type: 'uuid', unique: true, nullable: false)]
+    public string $uuid;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
@@ -51,6 +57,7 @@ class Message
         $this->sender = $sender;
         $this->body = $body;
         $this->notifications = new ArrayCollection();
+        $this->uuid = Uuid::v4()->toRfc4122();
 
         $thread->addMessage($this);
 

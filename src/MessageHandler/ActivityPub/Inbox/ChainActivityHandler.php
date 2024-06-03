@@ -18,6 +18,8 @@ use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
+use App\Service\ActivityPubManager;
+use App\Service\MessageManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -30,6 +32,8 @@ class ChainActivityHandler
         private readonly ApHttpClient $client,
         private readonly MessageBusInterface $bus,
         private readonly ApActivityRepository $repository,
+        private readonly ActivityPubManager $activityPubManager,
+        private readonly MessageManager $messageManager,
         private readonly Note $note,
         private readonly Page $page
     ) {
@@ -99,19 +103,23 @@ class ChainActivityHandler
                 }
             }
 
-            switch ($object['type']) {
-                case 'Question':
-                case 'Note':
-                    $this->logger->debug('creating note {o}', ['o' => $object]);
+            if ($this->activityPubManager->isActivityPublic($object)) {
+                switch ($object['type']) {
+                    case 'Question':
+                    case 'Note':
+                        $this->logger->debug('creating note {o}', ['o' => $object]);
 
-                    return $this->note->create($object);
-                case 'Page':
-                case 'Article':
-                    $this->logger->debug('creating page {o}', ['o' => $object]);
+                        return $this->note->create($object);
+                    case 'Page':
+                    case 'Article':
+                        $this->logger->debug('creating page {o}', ['o' => $object]);
 
-                    return $this->page->create($object);
-                default:
-                    $this->logger->warning('Could not create an object from type {t} on {url}: {o}', ['t' => $object['type'], 'url' => $apUrl, 'o' => $object]);
+                        return $this->page->create($object);
+                    default:
+                        $this->logger->warning('Could not create an object from type {t} on {url}: {o}', ['t' => $object['type'], 'url' => $apUrl, 'o' => $object]);
+                }
+            } else {
+                $this->messageManager->createMessage($object);
             }
         } catch (UserBannedException) {
             $this->logger->error('the user is banned, url: {url}', ['url' => $apUrl]);
