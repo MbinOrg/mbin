@@ -160,6 +160,6 @@ class SettingsManager
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        return $this->request->cookies->get('kbin_lang') ?? $request->getLocale() ?? $this->get('KBIN_DEFAULT_LANG');
+        return $request->cookies->get('kbin_lang') ?? $request->getLocale() ?? $this->get('KBIN_DEFAULT_LANG');
     }
 }
