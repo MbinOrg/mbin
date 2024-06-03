@@ -7,7 +7,7 @@ namespace App\Twig\Components;
 use App\Entity\Entry;
 use App\Repository\EntryRepository;
 use App\Service\MentionManager;
-use Symfony\Component\HttpFoundation\RequestStack;
+use App\Service\SettingsManager;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -33,7 +33,7 @@ final class RelatedEntriesComponent
         private readonly EntryRepository $repository,
         private readonly CacheInterface $cache,
         private readonly Environment $twig,
-        private readonly RequestStack $requestStack,
+        private readonly SettingsManager $settingsManager,
         private readonly MentionManager $mentionManager
     ) {
     }
@@ -60,7 +60,7 @@ final class RelatedEntriesComponent
         $magazine = str_replace('@', '', $this->magazine ?? '');
 
         return $this->cache->get(
-            "related_entries_{$magazine}_{$this->tag}_{$entryId}_{$this->type}_{$this->requestStack->getCurrentRequest()?->getLocale()}",
+            "related_entries_{$magazine}_{$this->tag}_{$entryId}_{$this->type}_{$this->settingsManager->getLocale()}",
             function (ItemInterface $item) use ($attributes) {
                 $item->expiresAfter(60);
 

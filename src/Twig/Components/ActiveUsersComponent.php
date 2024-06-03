@@ -6,7 +6,7 @@ namespace App\Twig\Components;
 
 use App\Entity\Magazine;
 use App\Repository\UserRepository;
-use Symfony\Component\HttpFoundation\RequestStack;
+use App\Service\SettingsManager;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -22,14 +22,14 @@ final class ActiveUsersComponent
         private readonly UserRepository $userRepository,
         private readonly CacheInterface $cache,
         private readonly Environment $twig,
-        private readonly RequestStack $requestStack
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 
     public function getHtml(ComponentAttributes $attributes): string
     {
         return $this->cache->get(
-            "active_users_{$this->magazine?->getId()}_{$this->requestStack->getCurrentRequest()?->getLocale()}",
+            "active_users_{$this->magazine?->getId()}_{$this->settingsManager->getLocale()}",
             function (ItemInterface $item) {
                 $item->expiresAfter(60);
 

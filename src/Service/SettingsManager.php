@@ -9,6 +9,7 @@ use App\Entity\Settings;
 use App\Repository\SettingsRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\Pure;
+use Symfony\Component\HttpFoundation\Request;
 
 class SettingsManager
 {
@@ -17,6 +18,7 @@ class SettingsManager
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly SettingsRepository $repository,
+        private readonly Request $request,
         private readonly string $kbinDomain,
         private readonly string $kbinTitle,
         private readonly string $kbinMetaTitle,
@@ -152,5 +154,10 @@ class SettingsManager
     public static function getValue(string $name): string
     {
         return self::$dto->{$name};
+    }
+
+    public function getLocale(): string
+    {
+        return $this->request->cookies->get('kbin_lang') ?? $this->request->getLocale() ?? $this->get('KBIN_DEFAULT_LANG');
     }
 }
