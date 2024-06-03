@@ -1,8 +1,8 @@
-import {Controller} from '@hotwired/stimulus';
+import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
     connect() {
-        let self = this;
+        const self = this;
         window.onscroll = function () {
             self.scroll();
         };
@@ -10,12 +10,12 @@ export default class extends Controller {
 
     scroll() {
         if (
-            document.body.scrollTop > 20 ||
-            document.documentElement.scrollTop > 20
+            20 < document.body.scrollTop ||
+            20 < document.documentElement.scrollTop
         ) {
-            this.element.style.display = "block";
+            this.element.style.display = 'block';
         } else {
-            this.element.style.display = "none";
+            this.element.style.display = 'none';
         }
     }
 

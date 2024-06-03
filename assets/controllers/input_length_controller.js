@@ -1,21 +1,21 @@
-import {Controller} from '@hotwired/stimulus';
+import { Controller } from '@hotwired/stimulus';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
     static values = {
-        max: Number
-    }
+        max: Number,
+    };
 
     /** DOM element that will hold the current/max text */
-    lengthIndicator
+    lengthIndicator;
 
-    connect(){
-        if(!this.hasMaxValue){
+    connect() {
+        if (!this.hasMaxValue) {
             return;
         }
 
         //create a html element to display the current/max text
-        let indicator = document.createElement('div');
+        const indicator = document.createElement('div');
 
         indicator.classList.add('length-indicator');
 
@@ -26,13 +26,13 @@ export default class extends Controller {
         this.updateDisplay();
     }
 
-    updateDisplay(){
+    updateDisplay() {
         if (!this.lengthIndicator) {
             return;
         }
 
         //trim to max length if needed
-        if(this.element.value.length >= this.maxValue){
+        if (this.element.value.length >= this.maxValue) {
             this.element.value = this.element.value.substring(0, this.maxValue);
         }
 

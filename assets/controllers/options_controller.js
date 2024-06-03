@@ -1,32 +1,31 @@
-import {Controller, ActionEvent} from '@hotwired/stimulus';
+import { Controller } from '@hotwired/stimulus';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
     static targets = ['settings', 'actions'];
     static values = {
-        activeTab: String
-    }
+        activeTab: String,
+    };
 
     connect() {
         const activeTabFragment = window.location.hash;
 
         if (!activeTabFragment) {
-          return;
+            return;
         }
 
-        if (activeTabFragment !== '#settings') {
-          return;
+        if ('#settings' !== activeTabFragment) {
+            return;
         }
 
         this.actionsTarget.querySelector(`a[href="${activeTabFragment}"]`).classList.add('active');
         this.activeTabValue = activeTabFragment.substring(1);
     }
 
-    /** @param {ActionEvent} e */
     toggleTab(e) {
         const selectedTab = e.params.tab;
 
-        this.actionsTarget.querySelectorAll('.active').forEach(el => el.classList.remove('active'));
+        this.actionsTarget.querySelectorAll('.active').forEach((el) => el.classList.remove('active'));
 
         if (selectedTab === this.activeTabValue) {
             this.activeTabValue = 'none';
@@ -38,7 +37,7 @@ export default class extends Controller {
     }
 
     activeTabValueChanged(selectedTab) {
-        if (selectedTab === 'none') {
+        if ('none' === selectedTab) {
             this.settingsTarget.style.display = 'none';
 
             return;
@@ -47,7 +46,7 @@ export default class extends Controller {
         this[`${selectedTab}Target`].style.display = 'block';
 
         // If you were to need to hide another tab:
-        
+
         //const otherTab = selectedTab === 'settings' ? 'federation' : 'settings';
         //
         //this[`${otherTab}Target`].style.display = 'none';
