@@ -51,3 +51,12 @@ knpu_oauth2_client:
       redirect_route: oauth_zitadel_verify
       redirect_params: { }
       provider_class: 'App\Provider\Zitadel'
+    authentik:
+      type: generic
+      client_id: '%oauth_authentik_id%'
+      client_secret: '%oauth_authentik_secret%'
+      provider_options:
+          base_url: '%oauth_authentik_base_url%'
+      redirect_route: oauth_authentik_verify
+      redirect_params: { }
+      provider_class: 'App\Provider\Authentik'
