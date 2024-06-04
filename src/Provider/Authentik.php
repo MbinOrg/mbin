@@ -72,4 +72,3 @@ class Authentik extends AbstractProvider
         return ' ';
     }
 }
-
