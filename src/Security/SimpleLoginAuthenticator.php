@@ -164,7 +164,7 @@ class SimpleLoginAuthenticator extends OAuth2Authenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        $targetUrl = $this->router->generate('user_settings_profile');
+        $targetUrl = $this->router->generate('front');
 
         return new RedirectResponse($targetUrl);
     }
