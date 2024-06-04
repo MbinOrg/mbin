@@ -1,5 +1,5 @@
 {# @var this App\Twig\Components\LoginSocialsComponent #}
-{%- set HAS_ANY_SOCIAL = this.googleEnabled or this.facebookEnabled or this.githubEnabled or this.keycloakEnabled or this.simpleloginEnabled or this.zitadelEnabled or this.azureEnabled -%}
+{%- set HAS_ANY_SOCIAL = this.googleEnabled or this.facebookEnabled or this.githubEnabled or this.keycloakEnabled or this.simpleloginEnabled or this.zitadelEnabled or this.authentikEnabled or this.azureEnabled -%}
 {% if HAS_ANY_SOCIAL %}
     {% if not mbin_sso_only_mode() and not mbin_sso_show_first() %}
     <div class="separator separator-show"></div>
@@ -28,6 +28,10 @@
         {% if this.zitadelEnabled %}
             <a href="{{ path('oauth_zitadel_connect') }}" class="btn btn__secondary"><i class="fa-solid fa-lock" aria-hidden="true"></i>
                 <span>{{ 'continue_with'|trans }} Zitadel</span></a>
+        {% endif %}
+        {% if this.authentikEnabled %}
+            <a href="{{ path('oauth_authentik_connect') }}" class="btn btn__secondary"><i class="si si-authentik" aria-hidden="true"></i>
+                <span>{{ 'continue_with'|trans }} Authentik</span></a>
         {% endif %}
         {% if this.azureEnabled %}
             <a href="{{ path('oauth_azure_connect') }}" class="btn btn__secondary"><i class="fa-brands fa-microsoft" aria-hidden="true"></i>
