@@ -70,7 +70,7 @@ class AuthentikAuthenticator extends OAuth2Authenticator
         return new SelfValidatingPassport(
             new UserBadge($accessToken->getToken(), function () use ($accessToken, $client, $slugger) {
                 /** @var AuthentikResourceOwner $authentikUser */
-                $authentikdelUser = $client->fetchUserFromToken($accessToken);
+                $authentikUser = $client->fetchUserFromToken($accessToken);
 
                 $existingUser = $this->entityManager->getRepository(User::class)->findOneBy(
                     ['oauthAuthentikId' => $authentikUser->getId()]
