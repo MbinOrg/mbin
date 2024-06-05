@@ -23,6 +23,8 @@ final class LoginSocialsComponent
         private readonly ?string $oauthSimpleLoginId,
         #[Autowire('%oauth_zitadel_id%')]
         private readonly ?string $oauthZitadelId,
+        #[Autowire('%oauth_authentik_id%')]
+        private readonly ?string $oauthAuthentikId,
         #[Autowire('%oauth_azure_id%')]
         private readonly ?string $oauthAzureId,
     ) {
@@ -56,6 +58,11 @@ final class LoginSocialsComponent
     public function zitadelEnabled(): bool
     {
         return !empty($this->oauthZitadelId);
+    }
+
+    public function authentikEnabled(): bool
+    {
+        return !empty($this->oauthAuthentikId);
     }
 
     public function azureEnabled(): bool
