@@ -190,6 +190,13 @@ For developers:
     </td></tr>
 <tr>
     <td align="center">
+        <a href="https://github.com/CocoPoops">
+            <img src="https://avatars.githubusercontent.com/u/7891055?v=4" width="100;" alt="CocoPoops"/>
+            <br />
+            <sub><b>CocoPoops</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/garrettw">
             <img src="https://avatars.githubusercontent.com/u/84885?v=4" width="100;" alt="garrettw"/>
             <br />
@@ -208,13 +215,6 @@ For developers:
             <img src="https://avatars.githubusercontent.com/u/4168401?v=4" width="100;" alt="lilfade"/>
             <br />
             <sub><b>Bryson</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/CocoPoops">
-            <img src="https://avatars.githubusercontent.com/u/7891055?v=4" width="100;" alt="CocoPoops"/>
-            <br />
-            <sub><b>CocoPoops</b></sub>
         </a>
     </td>
     <td align="center">
