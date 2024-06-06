@@ -833,3 +833,5 @@ own_report_accepted: Your report was accepted
 own_content_reported_accepted: A report of your content was accepted.
 report_accepted: A report was accepted
 open_report: open report
+magazine_log_mod_added: has added a moderator
+magazine_log_mod_removed: has removed a moderator

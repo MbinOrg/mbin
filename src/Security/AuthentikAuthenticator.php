@@ -8,7 +8,9 @@ use App\DTO\UserDto;
 use App\Entity\Image;
 use App\Entity\User;
 use App\Factory\ImageFactory;
+use App\Provider\AuthentikResourceOwner;
 use App\Repository\ImageRepository;
+use App\Repository\UserRepository;
 use App\Service\ImageManager;
 use App\Service\IpResolver;
 use App\Service\SettingsManager;
@@ -17,7 +19,6 @@ use App\Utils\Slugger;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
-use League\OAuth2\Client\Provider\FacebookUser;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,7 +31,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
-class FacebookAuthenticator extends OAuth2Authenticator
+class AuthentikAuthenticator extends OAuth2Authenticator
 {
     public function __construct(
         private readonly ClientRegistry $clientRegistry,
@@ -42,50 +43,47 @@ class FacebookAuthenticator extends OAuth2Authenticator
         private readonly ImageRepository $imageRepository,
         private readonly IpResolver $ipResolver,
         private readonly Slugger $slugger,
+        private readonly UserRepository $userRepository,
         private readonly SettingsManager $settingsManager
     ) {
     }
 
     public function supports(Request $request): ?bool
     {
-        return 'oauth_facebook_verify' === $request->attributes->get('_route');
+        return 'oauth_authentik_verify' === $request->attributes->get('_route');
     }
 
     public function authenticate(Request $request): Passport
     {
-        $client = $this->clientRegistry->getClient('facebook');
+        $client = $this->clientRegistry->getClient('authentik');
         $slugger = $this->slugger;
 
-        $accessToken = $this->fetchAccessToken($client);
+        $provider = $client->getOAuth2Provider();
 
-        try {
-            $provider = $client->getOAuth2Provider();
-            $accessToken = $provider->getLongLivedAccessToken($accessToken->getToken());
-        } catch (\Exception $e) {
-        }
+        $accessToken = $provider->getAccessToken('authorization_code', [
+            'code' => $request->query->get('code'),
+        ]);
 
         $rememberBadge = new RememberMeBadge();
         $rememberBadge = $rememberBadge->enable();
 
         return new SelfValidatingPassport(
             new UserBadge($accessToken->getToken(), function () use ($accessToken, $client, $slugger) {
-                /** @var FacebookUser $facebookUser */
-                $facebookUser = $client->fetchUserFromToken($accessToken);
+                /** @var AuthentikResourceOwner $authentikUser */
+                $authentikUser = $client->fetchUserFromToken($accessToken);
 
                 $existingUser = $this->entityManager->getRepository(User::class)->findOneBy(
-                    ['oauthFacebookId' => $facebookUser->getId()]
+                    ['oauthAuthentikId' => $authentikUser->getId()]
                 );
 
                 if ($existingUser) {
                     return $existingUser;
                 }
 
-                $user = $this->entityManager->getRepository(User::class)->findOneBy(
-                    ['email' => $facebookUser->getEmail()]
-                );
+                $user = $this->userRepository->findOneBy(['email' => $authentikUser->getEmail()]);
 
                 if ($user) {
-                    $user->oauthFacebookId = $facebookUser->getId();
+                    $user->oauthAuthentikId = $authentikUser->getId();
 
                     $this->entityManager->persist($user);
                     $this->entityManager->flush();
@@ -97,12 +95,19 @@ class FacebookAuthenticator extends OAuth2Authenticator
                     throw new CustomUserMessageAuthenticationException('MBIN_SSO_REGISTRATIONS_ENABLED');
                 }
 
+                $email = $authentikUser->toArray()['preferred_username'];
+                $username = $slugger->slug(substr($email, 0, strrpos($email, '@')));
+
+                if ($this->userRepository->count(['username' => $username]) > 0) {
+                    $username .= rand(1, 999);
+                }
+
                 $dto = (new UserDto())->create(
-                    $slugger->slug($facebookUser->getName()).rand(1, 999),
-                    $facebookUser->getEmail()
+                    $username,
+                    $authentikUser->getEmail()
                 );
 
-                $avatar = $this->getAvatar($facebookUser->getPictureUrl());
+                $avatar = $this->getAvatar($authentikUser->getPictureUrl());
 
                 if ($avatar) {
                     $dto->avatar = $this->imageFactory->createDto($avatar);
@@ -112,8 +117,8 @@ class FacebookAuthenticator extends OAuth2Authenticator
                 $dto->ip = $this->ipResolver->resolve();
 
                 $user = $this->userManager->create($dto, false);
-                $user->oauthFacebookId = $facebookUser->getId();
-                $user->avatar = $this->getAvatar($facebookUser->getPictureUrl());
+                $user->oauthAuthentikId = $authentikUser->getId();
+                $user->avatar = $this->getAvatar($authentikUser->getPictureUrl());
                 $user->isVerified = true;
 
                 $this->entityManager->persist($user);
