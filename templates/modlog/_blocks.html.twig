@@ -42,3 +42,11 @@
     {{ component('user_inline', {user: log.user, showAvatar: false}) }} {% if log.meta is same as 'ban' %}{{ 'he_banned'|trans|lower }}{% else %}{{ 'he_unbanned'|trans|lower }}{% endif %} {{ component('user_inline', {user: log.ban.user, showAvatar: false}) }}
     {% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.ban.magazine, showIcon: false }) }}{% endif %}{% if log.ban.reason %} - {{ log.ban.reason }}{% endif %}
 {% endblock %}
+
+{% block log_moderator_add %}
+    {{ component('user_inline', {user: log.actingUser}) }} {{ 'magazine_log_mod_added'|trans }}: {{ component('user_inline', {user: log.user}) }}
+{% endblock %}
+
+{% block log_moderator_remove %}
+    {{ component('user_inline', {user: log.actingUser}) }} {{ 'magazine_log_mod_removed'|trans }}: {{ component('user_inline', {user: log.user}) }}
+{% endblock %}
