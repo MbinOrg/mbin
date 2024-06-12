@@ -47,6 +47,9 @@ parameters:
     oauth_github_id: "%env(default::OAUTH_GITHUB_ID)%"
     oauth_github_secret: "%env(OAUTH_GITHUB_SECRET)%"
 
+    oauth_privacyportal_id: "%env(default::OAUTH_PRIVACYPORTAL_ID)%"
+    oauth_privacyportal_secret: "%env(OAUTH_PRIVACYPORTAL_SECRET)%"
+
     oauth_keycloak_id: "%env(default::OAUTH_KEYCLOAK_ID)%"
     oauth_keycloak_secret: "%env(OAUTH_KEYCLOAK_SECRET)%"
     oauth_keycloak_uri: "%env(OAUTH_KEYCLOAK_URI)%"

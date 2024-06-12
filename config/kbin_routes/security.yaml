@@ -83,6 +83,16 @@ oauth_github_verify:
   path: /oauth/github/verify
   methods: [ GET ]
 
+oauth_privacyportal_connect:
+  controller: App\Controller\Security\PrivacyPortalController::connect
+  path: /oauth/privacyportal/connect
+  methods: [ GET ]
+
+oauth_privacyportal_verify:
+  controller: App\Controller\Security\PrivacyPortalController::verify
+  path: /oauth/privacyportal/verify
+  methods: [ GET ]
+
 oauth_keycloak_connect:
   controller: App\Controller\Security\KeycloakController::connect
   path: /oauth/keycloak/connect

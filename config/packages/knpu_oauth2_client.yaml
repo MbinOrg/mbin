@@ -26,6 +26,13 @@ knpu_oauth2_client:
       client_secret: '%oauth_github_secret%'
       redirect_route: oauth_github_verify
       redirect_params: { }
+    privacyportal:
+      type: generic
+      provider_class: League\OAuth2\Client\Provider\PrivacyPortal
+      client_id: '%oauth_privacyportal_id%'
+      client_secret: '%oauth_privacyportal_secret%'
+      redirect_route: oauth_privacyportal_verify
+      redirect_params: { }
     keycloak:
       type: keycloak
       client_id: '%oauth_keycloak_id%'

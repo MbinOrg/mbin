@@ -360,6 +360,9 @@
             "tests/bootstrap.php"
         ]
     },
+    "privacyportal/oauth2-privacyportal": {
+        "version": "0.1.1"
+    },
     "psr/cache": {
         "version": "1.0.1"
     },
