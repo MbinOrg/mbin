@@ -168,17 +168,10 @@ For developers:
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/thepaperpilot">
-            <img src="https://avatars.githubusercontent.com/u/3683148?v=4" width="100;" alt="thepaperpilot"/>
+        <a href="https://github.com/CocoPoops">
+            <img src="https://avatars.githubusercontent.com/u/7891055?v=4" width="100;" alt="CocoPoops"/>
             <br />
-            <sub><b>Anthony Lawn</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/chall8908">
-            <img src="https://avatars.githubusercontent.com/u/315948?v=4" width="100;" alt="chall8908"/>
-            <br />
-            <sub><b>Chris Hall</b></sub>
+            <sub><b>CocoPoops</b></sub>
         </a>
     </td>
     <td align="center">
@@ -187,13 +180,20 @@ For developers:
             <br />
             <sub><b>andrewmoise</b></sub>
         </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/chall8908">
+            <img src="https://avatars.githubusercontent.com/u/315948?v=4" width="100;" alt="chall8908"/>
+            <br />
+            <sub><b>Chris Hall</b></sub>
+        </a>
     </td></tr>
 <tr>
     <td align="center">
-        <a href="https://github.com/CocoPoops">
-            <img src="https://avatars.githubusercontent.com/u/7891055?v=4" width="100;" alt="CocoPoops"/>
+        <a href="https://github.com/thepaperpilot">
+            <img src="https://avatars.githubusercontent.com/u/3683148?v=4" width="100;" alt="thepaperpilot"/>
             <br />
-            <sub><b>CocoPoops</b></sub>
+            <sub><b>Anthony Lawn</b></sub>
         </a>
     </td>
     <td align="center">
@@ -265,6 +265,13 @@ For developers:
             <img src="https://avatars.githubusercontent.com/u/31551856?v=4" width="100;" alt="CSDUMMI"/>
             <br />
             <sub><b>CSDUMMI</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/privacyguard">
+            <img src="https://avatars.githubusercontent.com/u/92675882?v=4" width="100;" alt="privacyguard"/>
+            <br />
+            <sub><b>privacyguard</b></sub>
         </a>
     </td></tr>
 </table>
