@@ -17,6 +17,8 @@ final class LoginSocialsComponent
         private readonly ?string $oauthFacebookId,
         #[Autowire('%oauth_github_id%')]
         private readonly ?string $oauthGithubId,
+        #[Autowire('%oauth_privacyportal_id%')]
+        private readonly ?string $oauthPrivacyPortalId,
         #[Autowire('%oauth_keycloak_id%')]
         private readonly ?string $oauthKeycloakId,
         #[Autowire('%oauth_simplelogin_id%')]
@@ -43,6 +45,11 @@ final class LoginSocialsComponent
     public function githubEnabled(): bool
     {
         return !empty($this->oauthGithubId);
+    }
+
+    public function privacyPortalEnabled(): bool
+    {
+        return !empty($this->oauthPrivacyPortalId);
     }
 
     public function keycloakEnabled(): bool

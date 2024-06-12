@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "090cc34e9abb8db84dae3d7b1bbd21ad",
+    "content-hash": "d14113edc433c71c25f0a5a19d5e7a54",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.308.3",
+            "version": "3.313.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "7fa0625056fa1fcf6732f89ba37b3f630d78de59"
+                "reference": "2f5f173300888d6f630ce24751a6ee0f1e6d72e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/7fa0625056fa1fcf6732f89ba37b3f630d78de59",
-                "reference": "7fa0625056fa1fcf6732f89ba37b3f630d78de59",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/2f5f173300888d6f630ce24751a6ee0f1e6d72e8",
+                "reference": "2f5f173300888d6f630ce24751a6ee0f1e6d72e8",
                 "shasum": ""
             },
             "require": {
@@ -151,9 +151,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.308.3"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.313.0"
             },
-            "time": "2024-05-24T18:29:40+00:00"
+            "time": "2024-06-11T18:20:58+00:00"
         },
         {
             "name": "babdev/pagerfanta-bundle",
@@ -2159,16 +2159,16 @@
         },
         {
             "name": "embed/embed",
-            "version": "v4.4.10",
+            "version": "v4.4.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/oscarotero/Embed.git",
-                "reference": "8ac21505d048e8796c6cb9172ec5e81e5d0e0408"
+                "reference": "09a60be4f14fc60d063a8dba22594f7b43765958"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/oscarotero/Embed/zipball/8ac21505d048e8796c6cb9172ec5e81e5d0e0408",
-                "reference": "8ac21505d048e8796c6cb9172ec5e81e5d0e0408",
+                "url": "https://api.github.com/repos/oscarotero/Embed/zipball/09a60be4f14fc60d063a8dba22594f7b43765958",
+                "reference": "09a60be4f14fc60d063a8dba22594f7b43765958",
                 "shasum": ""
             },
             "require": {
@@ -2228,7 +2228,7 @@
             "support": {
                 "email": "oom@oscarotero.com",
                 "issues": "https://github.com/oscarotero/Embed/issues",
-                "source": "https://github.com/oscarotero/Embed/tree/v4.4.10"
+                "source": "https://github.com/oscarotero/Embed/tree/v4.4.11"
             },
             "funding": [
                 {
@@ -2244,7 +2244,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-12-10T12:30:47+00:00"
+            "time": "2024-06-10T16:01:33+00:00"
         },
         {
             "name": "endroid/qr-code",
@@ -3005,16 +3005,16 @@
         },
         {
             "name": "knplabs/knp-time-bundle",
-            "version": "v2.2.0",
+            "version": "v2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/KnpTimeBundle.git",
-                "reference": "69cb36a9f22ac8432e8532c9ae84e92d46820d96"
+                "reference": "93e9528415b28a19872d74b28e816045c0fd217b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/KnpTimeBundle/zipball/69cb36a9f22ac8432e8532c9ae84e92d46820d96",
-                "reference": "69cb36a9f22ac8432e8532c9ae84e92d46820d96",
+                "url": "https://api.github.com/repos/KnpLabs/KnpTimeBundle/zipball/93e9528415b28a19872d74b28e816045c0fd217b",
+                "reference": "93e9528415b28a19872d74b28e816045c0fd217b",
                 "shasum": ""
             },
             "require": {
@@ -3074,9 +3074,9 @@
             ],
             "support": {
                 "issues": "https://github.com/KnpLabs/KnpTimeBundle/issues",
-                "source": "https://github.com/KnpLabs/KnpTimeBundle/tree/v2.2.0"
+                "source": "https://github.com/KnpLabs/KnpTimeBundle/tree/v2.4.0"
             },
-            "time": "2023-11-13T19:38:34+00:00"
+            "time": "2024-06-11T09:38:28+00:00"
         },
         {
             "name": "knpuniversity/oauth2-client-bundle",
@@ -5593,16 +5593,16 @@
         },
         {
             "name": "oneup/flysystem-bundle",
-            "version": "4.12.1",
+            "version": "4.12.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/1up-lab/OneupFlysystemBundle.git",
-                "reference": "625175dcb65f4cdedd52d0a644683a2ebdc688d2"
+                "reference": "888cceb2ee641b0d59d5feb31a2447318c311a48"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/1up-lab/OneupFlysystemBundle/zipball/625175dcb65f4cdedd52d0a644683a2ebdc688d2",
-                "reference": "625175dcb65f4cdedd52d0a644683a2ebdc688d2",
+                "url": "https://api.github.com/repos/1up-lab/OneupFlysystemBundle/zipball/888cceb2ee641b0d59d5feb31a2447318c311a48",
+                "reference": "888cceb2ee641b0d59d5feb31a2447318c311a48",
                 "shasum": ""
             },
             "require": {
@@ -5676,9 +5676,9 @@
             ],
             "support": {
                 "issues": "https://github.com/1up-lab/OneupFlysystemBundle/issues",
-                "source": "https://github.com/1up-lab/OneupFlysystemBundle/tree/4.12.1"
+                "source": "https://github.com/1up-lab/OneupFlysystemBundle/tree/4.12.2"
             },
-            "time": "2024-04-08T13:50:27+00:00"
+            "time": "2024-06-10T12:55:36+00:00"
         },
         {
             "name": "oscarotero/html-parser",
@@ -5780,7 +5780,7 @@
         },
         {
             "name": "pagerfanta/doctrine-collections-adapter",
-            "version": "v4.5.0",
+            "version": "v4.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Pagerfanta/doctrine-collections-adapter.git",
@@ -5820,28 +5820,29 @@
                 "pagerfanta"
             ],
             "support": {
-                "source": "https://github.com/Pagerfanta/doctrine-collections-adapter/tree/v4.5.0"
+                "source": "https://github.com/Pagerfanta/doctrine-collections-adapter/tree/v4.6.0"
             },
             "time": "2024-03-06T23:51:47+00:00"
         },
         {
             "name": "pagerfanta/doctrine-dbal-adapter",
-            "version": "v4.5.0",
+            "version": "v4.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Pagerfanta/doctrine-dbal-adapter.git",
-                "reference": "4db40ab3ebcd8dbe150fc94c3b738ebaa2b09aca"
+                "reference": "4987681d2824a08f9f749c42014f61c972f596d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Pagerfanta/doctrine-dbal-adapter/zipball/4db40ab3ebcd8dbe150fc94c3b738ebaa2b09aca",
-                "reference": "4db40ab3ebcd8dbe150fc94c3b738ebaa2b09aca",
+                "url": "https://api.github.com/repos/Pagerfanta/doctrine-dbal-adapter/zipball/4987681d2824a08f9f749c42014f61c972f596d9",
+                "reference": "4987681d2824a08f9f749c42014f61c972f596d9",
                 "shasum": ""
             },
             "require": {
                 "doctrine/dbal": "^3.5 || ^4.0",
                 "pagerfanta/core": "^3.7 || ^4.0",
-                "php": "^8.1"
+                "php": "^8.1",
+                "symfony/deprecation-contracts": "^2.1 || ^3.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^10.5"
@@ -5866,13 +5867,13 @@
                 "pagerfanta"
             ],
             "support": {
-                "source": "https://github.com/Pagerfanta/doctrine-dbal-adapter/tree/v4.5.0"
+                "source": "https://github.com/Pagerfanta/doctrine-dbal-adapter/tree/v4.6.0"
             },
-            "time": "2024-03-06T23:51:47+00:00"
+            "time": "2024-05-29T22:02:46+00:00"
         },
         {
             "name": "pagerfanta/doctrine-orm-adapter",
-            "version": "v4.5.0",
+            "version": "v4.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Pagerfanta/doctrine-orm-adapter.git",
@@ -5913,22 +5914,22 @@
                 "pagerfanta"
             ],
             "support": {
-                "source": "https://github.com/Pagerfanta/doctrine-orm-adapter/tree/v4.5.0"
+                "source": "https://github.com/Pagerfanta/doctrine-orm-adapter/tree/v4.6.0"
             },
             "time": "2024-03-06T23:51:47+00:00"
         },
         {
             "name": "pagerfanta/twig",
-            "version": "v4.5.0",
+            "version": "v4.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Pagerfanta/twig.git",
-                "reference": "74d43875490442a59ddca66e6e3fc66a9b583dd4"
+                "reference": "b00b600c4c81bc2e8c001c230b13473584dad16e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Pagerfanta/twig/zipball/74d43875490442a59ddca66e6e3fc66a9b583dd4",
-                "reference": "74d43875490442a59ddca66e6e3fc66a9b583dd4",
+                "url": "https://api.github.com/repos/Pagerfanta/twig/zipball/b00b600c4c81bc2e8c001c230b13473584dad16e",
+                "reference": "b00b600c4c81bc2e8c001c230b13473584dad16e",
                 "shasum": ""
             },
             "require": {
@@ -5957,9 +5958,9 @@
                 "pagerfanta"
             ],
             "support": {
-                "source": "https://github.com/Pagerfanta/twig/tree/v4.5.0"
+                "source": "https://github.com/Pagerfanta/twig/tree/v4.6.0"
             },
-            "time": "2024-03-06T23:51:47+00:00"
+            "time": "2024-05-08T00:35:50+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
@@ -6463,6 +6464,71 @@
                 }
             ],
             "time": "2023-09-13T16:42:03+00:00"
+        },
+        {
+            "name": "privacyportal/oauth2-privacyportal",
+            "version": "v0.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/privacyportal/oauth2-privacyportal.git",
+                "reference": "0522c089262c71dd3fa05ec5e3f49377c6ebaf3b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/privacyportal/oauth2-privacyportal/zipball/0522c089262c71dd3fa05ec5e3f49377c6ebaf3b",
+                "reference": "0522c089262c71dd3fa05ec5e3f49377c6ebaf3b",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "league/oauth2-client": "^2.0",
+                "php": "^7.3 || ^8.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.4",
+                "phpunit/phpunit": "^9.5",
+                "squizlabs/php_codesniffer": "^3.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "League\\OAuth2\\Client\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Privacy Portal",
+                    "homepage": "https://github.com/privacyportal"
+                },
+                {
+                    "name": "Steven Maguire",
+                    "email": "stevenmaguire@gmail.com",
+                    "homepage": "https://github.com/stevenmaguire"
+                },
+                {
+                    "name": "Woody Gilk",
+                    "email": "woody.gilk@gmail.com",
+                    "homepage": "https://github.com/shadowhand"
+                }
+            ],
+            "description": "PrivacyPortal OAuth 2.0 Client Provider for The PHP League OAuth2-Client",
+            "keywords": [
+                "authorisation",
+                "authorization",
+                "client",
+                "oauth",
+                "oauth2",
+                "privacyportal"
+            ],
+            "support": {
+                "issues": "https://github.com/privacyportal/oauth2-privacyportal/issues",
+                "source": "https://github.com/privacyportal/oauth2-privacyportal/tree/v0.1.1"
+            },
+            "time": "2023-12-08T01:55:07+00:00"
         },
         {
             "name": "psr/cache",
@@ -6976,7 +7042,7 @@
         },
         {
             "name": "scheb/2fa-backup-code",
-            "version": "v7.3.0",
+            "version": "v7.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-backup-code.git",
@@ -7019,22 +7085,22 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-backup-code/tree/v7.3.0"
+                "source": "https://github.com/scheb/2fa-backup-code/tree/v7.3.1"
             },
             "time": "2023-12-03T16:24:13+00:00"
         },
         {
             "name": "scheb/2fa-bundle",
-            "version": "v7.3.0",
+            "version": "v7.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-bundle.git",
-                "reference": "9d5a7b680ce2e6eb15bdfb779c09313b88f365cd"
+                "reference": "4c8b421b32dffa5b911bbe7d22a7f1f8158773a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/9d5a7b680ce2e6eb15bdfb779c09313b88f365cd",
-                "reference": "9d5a7b680ce2e6eb15bdfb779c09313b88f365cd",
+                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/4c8b421b32dffa5b911bbe7d22a7f1f8158773a8",
+                "reference": "4c8b421b32dffa5b911bbe7d22a7f1f8158773a8",
                 "shasum": ""
             },
             "require": {
@@ -7086,13 +7152,13 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-bundle/tree/v7.3.0"
+                "source": "https://github.com/scheb/2fa-bundle/tree/v7.3.1"
             },
-            "time": "2024-04-20T14:21:34+00:00"
+            "time": "2024-06-10T20:47:03+00:00"
         },
         {
             "name": "scheb/2fa-totp",
-            "version": "v7.3.0",
+            "version": "v7.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-totp.git",
@@ -7136,7 +7202,7 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-totp/tree/v7.3.0"
+                "source": "https://github.com/scheb/2fa-totp/tree/v7.3.1"
             },
             "time": "2024-01-18T20:20:03+00:00"
         },
@@ -13813,16 +13879,16 @@
         },
         {
             "name": "symfonycasts/reset-password-bundle",
-            "version": "v1.21.0",
+            "version": "v1.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SymfonyCasts/reset-password-bundle.git",
-                "reference": "598fc74acf0652abf495ac8db1c16234f5d59ded"
+                "reference": "d9cf4395c0a19a3093bc51b10f508b38f98117f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SymfonyCasts/reset-password-bundle/zipball/598fc74acf0652abf495ac8db1c16234f5d59ded",
-                "reference": "598fc74acf0652abf495ac8db1c16234f5d59ded",
+                "url": "https://api.github.com/repos/SymfonyCasts/reset-password-bundle/zipball/d9cf4395c0a19a3093bc51b10f508b38f98117f5",
+                "reference": "d9cf4395c0a19a3093bc51b10f508b38f98117f5",
                 "shasum": ""
             },
             "require": {
@@ -13837,6 +13903,7 @@
                 "doctrine/annotations": "^1.0",
                 "doctrine/doctrine-bundle": "^2.8",
                 "doctrine/orm": "^2.13",
+                "phpstan/phpstan": "^1.11.x-dev",
                 "symfony/framework-bundle": "^5.4 | ^6.0 | ^7.0",
                 "symfony/phpunit-bridge": "^5.4 | ^6.0 | ^7.0"
             },
@@ -13853,9 +13920,9 @@
             "description": "Symfony bundle that adds password reset functionality.",
             "support": {
                 "issues": "https://github.com/SymfonyCasts/reset-password-bundle/issues",
-                "source": "https://github.com/SymfonyCasts/reset-password-bundle/tree/v1.21.0"
+                "source": "https://github.com/SymfonyCasts/reset-password-bundle/tree/v1.22.0"
             },
-            "time": "2024-03-05T20:31:46+00:00"
+            "time": "2024-06-06T11:59:57+00:00"
         },
         {
             "name": "symfonycasts/verify-email-bundle",
@@ -14473,16 +14540,16 @@
         },
         {
             "name": "zircote/swagger-php",
-            "version": "4.9.2",
+            "version": "4.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zircote/swagger-php.git",
-                "reference": "256d42cb07ba1c2206d66bc7516ee3d3e3e9f0b2"
+                "reference": "2d983ce67b9eb7e18403ae7bc5e765f8ce7b8d56"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zircote/swagger-php/zipball/256d42cb07ba1c2206d66bc7516ee3d3e3e9f0b2",
-                "reference": "256d42cb07ba1c2206d66bc7516ee3d3e3e9f0b2",
+                "url": "https://api.github.com/repos/zircote/swagger-php/zipball/2d983ce67b9eb7e18403ae7bc5e765f8ce7b8d56",
+                "reference": "2d983ce67b9eb7e18403ae7bc5e765f8ce7b8d56",
                 "shasum": ""
             },
             "require": {
@@ -14548,29 +14615,29 @@
             ],
             "support": {
                 "issues": "https://github.com/zircote/swagger-php/issues",
-                "source": "https://github.com/zircote/swagger-php/tree/4.9.2"
+                "source": "https://github.com/zircote/swagger-php/tree/4.10.0"
             },
-            "time": "2024-05-02T21:36:00+00:00"
+            "time": "2024-06-06T22:42:02+00:00"
         }
     ],
     "packages-dev": [
         {
             "name": "dama/doctrine-test-bundle",
-            "version": "v8.1.0",
+            "version": "v8.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dmaicher/doctrine-test-bundle.git",
-                "reference": "21b4dd73546991c7df34ba92ecbf305a1ae5a0ee"
+                "reference": "1f81a280ea63f049d24e9c8ce00e557b18e0ff2f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dmaicher/doctrine-test-bundle/zipball/21b4dd73546991c7df34ba92ecbf305a1ae5a0ee",
-                "reference": "21b4dd73546991c7df34ba92ecbf305a1ae5a0ee",
+                "url": "https://api.github.com/repos/dmaicher/doctrine-test-bundle/zipball/1f81a280ea63f049d24e9c8ce00e557b18e0ff2f",
+                "reference": "1f81a280ea63f049d24e9c8ce00e557b18e0ff2f",
                 "shasum": ""
             },
             "require": {
                 "doctrine/dbal": "^3.3 || ^4.0",
-                "doctrine/doctrine-bundle": "^2.2.2",
+                "doctrine/doctrine-bundle": "^2.11.0",
                 "php": "^7.4 || ^8.0",
                 "psr/cache": "^1.0 || ^2.0 || ^3.0",
                 "symfony/cache": "^5.4 || ^6.3 || ^7.0",
@@ -14617,9 +14684,9 @@
             ],
             "support": {
                 "issues": "https://github.com/dmaicher/doctrine-test-bundle/issues",
-                "source": "https://github.com/dmaicher/doctrine-test-bundle/tree/v8.1.0"
+                "source": "https://github.com/dmaicher/doctrine-test-bundle/tree/v8.2.0"
             },
-            "time": "2024-05-21T18:06:21+00:00"
+            "time": "2024-05-28T15:41:06+00:00"
         },
         {
             "name": "doctrine/data-fixtures",
@@ -15229,16 +15296,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.11.2",
+            "version": "1.11.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "0d5d4294a70deb7547db655c47685d680e39cfec"
+                "reference": "9100a76ce8015b9aa7125b9171ae3a76887b6c82"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/0d5d4294a70deb7547db655c47685d680e39cfec",
-                "reference": "0d5d4294a70deb7547db655c47685d680e39cfec",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/9100a76ce8015b9aa7125b9171ae3a76887b6c82",
+                "reference": "9100a76ce8015b9aa7125b9171ae3a76887b6c82",
                 "shasum": ""
             },
             "require": {
@@ -15283,7 +15350,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-05-24T13:23:04+00:00"
+            "time": "2024-06-06T12:19:22+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
