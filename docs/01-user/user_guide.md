@@ -43,7 +43,7 @@ much you can change the appearance of the platform to suit your preferences.
 The process of registering for a user account on a platform usually involves providing a username (which will also serve
 as your identifier in the fediverse), password, and email address to receive an activation link.
 
-Another option is to create an account through social media platforms such as Google, Facebook, or Github. In this case,
+Another option is to create an account through social media platforms such as Google, Facebook, Github, or PrivacyPortal. In this case,
 you can use your social media login credentials to sign up, but you will need to visit your user panel and set up your
 username before you can take any actions on the platform. However, **you will have only up to an hour after registration
 ** to set up your default username before this option expires go to (Settings > Profile).

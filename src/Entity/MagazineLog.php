@@ -30,6 +30,8 @@ use Doctrine\ORM\Mapping\ManyToOne;
     'post_comment_deleted' => MagazineLogPostCommentDeleted::class,
     'post_comment_restored' => MagazineLogPostCommentRestored::class,
     'ban' => MagazineLogBan::class,
+    'moderator_add' => MagazineLogModeratorAdd::class,
+    'moderator_remove' => MagazineLogModeratorRemove::class,
 ])]
 abstract class MagazineLog
 {

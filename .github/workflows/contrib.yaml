@@ -8,8 +8,11 @@ jobs:
   contrib-readme:
     runs-on: ubuntu-latest
     name: Update contrib in README
+    permissions:
+          contents: write
+          pull-requests: write
     steps:
       - name: Contribute List
-        uses: akhilmhdh/contributors-readme-action@v2.3.9
+        uses: akhilmhdh/contributors-readme-action@v2.3.10
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
