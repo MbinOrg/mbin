@@ -19,6 +19,7 @@
     {% endif %}
     <ul class="info">
         <li>{{ 'joined'|trans }}: {{ component('date', {date: user.createdAt}) }}</li>
+        <li>{{ 'cake_day'|trans }}: <span><i class="fa-solid fa-cake" style="margin-right: .5em"></i>{{ user.createdAt|format_date('short', '', null, 'gregorian', mbin_lang()) }}</span></li>
         {% if app.user is defined and app.user is not null and app.user.admin() and user.apId is not null %}
             <li>
                 {{ 'last_updated'|trans }}: {{ component('date', {date: user.apFetchedAt}) }}
@@ -30,9 +31,12 @@
                class="stretched-link">{{ 'moderated'|trans }}:</a> {{ count_user_moderated(user) }}
         </li>
         {% if app.user is not same as user %}
-            <li><a href="{{ path('messages_create', {username: user.username}) }}"
-                   class="stretched-link">{{ 'send_message'|trans }}</a> <i
-                        class="fa-solid fa-envelope" aria-hidden="true"></i></li>
+            <li>
+                <a href="{{ path('messages_create', {username: user.username}) }}" class="stretched-link">
+                    {{ 'send_message'|trans }}
+                </a>
+                <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+            </li>
         {% endif %}
     </ul>
 </section>

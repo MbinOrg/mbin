@@ -330,6 +330,17 @@ class ActivityPubManager
             $user->apTimeoutAt = null;
             $user->apFetchedAt = new \DateTime();
 
+            if (isset($actor['published'])) {
+                try {
+                    $createdAt = new \DateTimeImmutable($actor['published']);
+                    $now = new \DateTimeImmutable();
+                    if ($createdAt < $now) {
+                        $user->createdAt = $createdAt;
+                    }
+                } catch (\Exception) {
+                }
+            }
+
             // Only update about when summary is set
             if (isset($actor['summary'])) {
                 $converter = new HtmlConverter(['strip_tags' => true]);
@@ -461,6 +472,17 @@ class ActivityPubManager
                 $magazine->title = $actor['name'];
             } elseif ($actor['preferredUsername']) {
                 $magazine->title = $actor['preferredUsername'];
+            }
+
+            if (isset($actor['published'])) {
+                try {
+                    $createdAt = new \DateTimeImmutable($actor['published']);
+                    $now = new \DateTimeImmutable();
+                    if ($createdAt < $now) {
+                        $magazine->createdAt = $createdAt;
+                    }
+                } catch (\Exception) {
+                }
             }
 
             $magazine->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];

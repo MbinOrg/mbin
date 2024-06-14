@@ -118,4 +118,9 @@ class SettingsExtensionRuntime implements RuntimeExtensionInterface
     {
         return $this->settings->get('MBIN_SSO_SHOW_FIRST');
     }
+
+    public function mbinLang(): string
+    {
+        return $this->settings->getLocale();
+    }
 }

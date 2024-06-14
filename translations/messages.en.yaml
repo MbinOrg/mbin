@@ -825,6 +825,7 @@ related_entry: Related
 restrict_magazine_creation: Restrict local magazine creation to admins and global mods
 sso_show_first: Show SSO first on login and registration pages
 continue_with: Continue with
+cake_day: Cake day
 someone: Someone
 magazine_log_mod_added: has added a moderator
 magazine_log_mod_removed: has removed a moderator
