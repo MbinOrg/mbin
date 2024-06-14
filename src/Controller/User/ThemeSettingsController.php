@@ -41,6 +41,8 @@ class ThemeSettingsController extends AbstractController
     public const KBIN_SUBSCRIPTIONS_SIDEBARS_SAME_SIDE = 'kbin_subscriptions_sidebars_same_side';
     public const KBIN_SUBSCRIPTIONS_LARGE_PANEL = 'kbin_subscriptions_large_panel';
     public const KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON = 'kbin_subscriptions_show_magazine_icon';
+    public const MBIN_MODERATION_LOG_SHOW_USER_AVATARS = 'mbin_moderation_log_show_user_avatars';
+    public const MBIN_MODERATION_LOG_SHOW_MAGAZINE_ICONS = 'mbin_moderation_log_show_magazine_icons';
 
     public const CLASSIC = 'classic';
     public const CHAT = 'chat';
@@ -96,6 +98,8 @@ class ThemeSettingsController extends AbstractController
         self::KBIN_SUBSCRIPTIONS_SIDEBARS_SAME_SIDE,
         self::KBIN_SUBSCRIPTIONS_LARGE_PANEL,
         self::KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON,
+        self::MBIN_MODERATION_LOG_SHOW_USER_AVATARS,
+        self::MBIN_MODERATION_LOG_SHOW_MAGAZINE_ICONS,
     ];
 
     public const VALUES = [

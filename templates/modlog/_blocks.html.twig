@@ -1,46 +1,46 @@
 {% block log_entry_deleted %}
-    {{ component('user_inline', {user: log.user}) }} {{ 'removed_thread_by'|trans|lower }} {{ component('user_inline', {user: log.entry.user}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.entry.magazine, showAvatar: true }) }}{% endif %} -
+    {{ component('user_inline', {user: log.user, showAvatar: showAvatars}) }} {{ 'removed_thread_by'|trans|lower }} {{ component('user_inline', {user: log.entry.user}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.entry.magazine, showAvatar: showIcons }) }}{% endif %} -
     <a href="{{ entry_url(log.entry) }}">{{ log.entry.shortTitle(300) }}</a>
 {% endblock %}
 
 {% block log_entry_restored %}
-    {{ component('user_inline', {user: log.user}) }} {{ 'restored_thread_by'|trans|lower }} {{ component('user_inline', {user: log.entry.user}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.entry.magazine, showAvatar: true }) }}{% endif %} -
+    {{ component('user_inline', {user: log.user, showAvatar: showAvatars}) }} {{ 'restored_thread_by'|trans|lower }} {{ component('user_inline', {user: log.entry.user}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.entry.magazine, showAvatar: showIcons }) }}{% endif %} -
     <a href="{{ entry_url(log.entry) }}">{{ log.entry.shortTitle(300) }}</a>
 {% endblock %}
 
 {% block log_entry_comment_deleted %}
-    {{ component('user_inline', {user: log.user}) }} {{ 'removed_comment_by'|trans|lower }} {{ component('user_inline', {user: log.comment.user}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.comment.magazine, showAvatar: true }) }}{% endif %} -
+    {{ component('user_inline', {user: log.user, showAvatar: showAvatars}) }} {{ 'removed_comment_by'|trans|lower }} {{ component('user_inline', {user: log.comment.user}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.comment.magazine, showAvatar: showIcons }) }}{% endif %} -
     <a href="{{ entry_comment_view_url(log.comment) }}#{{ get_url_fragment(log.comment) }}">{{ log.comment.shortTitle(300) }}</a>
 {% endblock %}
 
 {% block log_entry_comment_restored %}
-    {{ component('user_inline', {user: log.user}) }} {{ 'restored_comment_by'|trans|lower }} {{ component('user_inline', {user: log.comment.user}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.comment.magazine, showAvatar: true }) }}{% endif %} -
+    {{ component('user_inline', {user: log.user, showAvatar: showAvatars}) }} {{ 'restored_comment_by'|trans|lower }} {{ component('user_inline', {user: log.comment.user}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.comment.magazine, showAvatar: showIcons }) }}{% endif %} -
     <a href="{{ entry_comment_view_url(log.comment) }}#{{ get_url_fragment(log.comment) }}">{{ log.comment.shortTitle(300) }}</a>
 {% endblock %}
 
 {% block log_post_deleted %}
-    {{ component('user_inline', {user: log.user}) }} {{ 'removed_post_by'|trans|lower }} {{ component('user_inline', {user: log.post.user}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.post.magazine, showAvatar: true }) }}{% endif %} -
+    {{ component('user_inline', {user: log.user, showAvatar: showAvatars}) }} {{ 'removed_post_by'|trans|lower }} {{ component('user_inline', {user: log.post.user}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.post.magazine, showAvatar: showIcons }) }}{% endif %} -
     <a href="{{ post_url(log.post) }}">{{ log.post.shortTitle(300) }}</a>
 {% endblock %}
 
 {% block log_post_restored %}
-    {{ component('user_inline', {user: log.user}) }} {{ 'restored_post_by'|trans|lower }} {{ component('user_inline', {user: log.post.user}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.post.magazine, showAvatar: true }) }}{% endif %} -
+    {{ component('user_inline', {user: log.user, showAvatar: showAvatars}) }} {{ 'restored_post_by'|trans|lower }} {{ component('user_inline', {user: log.post.user}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.post.magazine, showAvatar: showIcons }) }}{% endif %} -
     <a href="{{ post_url(log.post) }}">{{ log.post.shortTitle(300) }}</a>
 {% endblock %}
 
 {% block log_post_comment_deleted %}
-    {{ component('user_inline', {user: log.user}) }} {{ 'removed_comment_by'|trans|lower }} {{ component('user_inline', {user: log.comment.user}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.comment.magazine, showAvatar: true }) }}{% endif %} -
+    {{ component('user_inline', {user: log.user, showAvatar: showAvatars}) }} {{ 'removed_comment_by'|trans|lower }} {{ component('user_inline', {user: log.comment.user}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.comment.magazine, showAvatar: showIcons }) }}{% endif %} -
     <a href="{{ post_url(log.comment.post) }}#{{ get_url_fragment(log.comment) }}">{{ log.comment.shortTitle(300) }}</a>
 {% endblock %}
 
 {% block log_post_comment_restored %}
-    {{ component('user_inline', {user: log.user}) }} {{ 'restored_comment_by'|trans|lower }} {{ component('user_inline', {user: log.comment.user}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.comment.magazine, showAvatar: true }) }}{% endif %} -
+    {{ component('user_inline', {user: log.user, showAvatar: showAvatars}) }} {{ 'restored_comment_by'|trans|lower }} {{ component('user_inline', {user: log.comment.user}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.comment.magazine, showAvatar: showIcons }) }}{% endif %} -
     <a href="{{ post_url(log.comment.post) }}#{{ get_url_fragment(log.comment) }}">{{ log.comment.shortTitle(300) }}</a>
 {% endblock %}
 
 {% block log_ban %}
-    {{ component('user_inline', {user: log.user}) }} {% if log.meta is same as 'ban' %}{{ 'he_banned'|trans|lower }}{% else %}{{ 'he_unbanned'|trans|lower }}{% endif %} {{ component('user_inline', {user: log.ban.user}) }}
-    {% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.ban.magazine, showAvatar: true }) }}{% endif %}{% if log.ban.reason %} - {{ log.ban.reason }}{% endif %}
+    {{ component('user_inline', {user: log.user, showAvatar: showAvatars}) }} {% if log.meta is same as 'ban' %}{{ 'he_banned'|trans|lower }}{% else %}{{ 'he_unbanned'|trans|lower }}{% endif %} {{ component('user_inline', {user: log.ban.user}) }}
+    {% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.ban.magazine, showAvatar: showIcons }) }}{% endif %}{% if log.ban.reason %} - {{ log.ban.reason }}{% endif %}
 {% endblock %}
 
 {% block log_moderator_add %}
@@ -49,9 +49,8 @@
     {% else %}
         {{ 'someone'|trans }}
     {% endif %}
-    {{ 'magazine_log_mod_added'|trans }}
-    {% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.magazine, showAvatar: true }) }}{% endif %}
-    : {{ component('user_inline', {user: log.user}) }}
+    {{ 'magazine_log_mod_added'|trans -}}
+    {% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.magazine, showAvatar: showIcons }) -}}{%- endif -%}: {{ component('user_inline', {user: log.user, showAvatar: showAvatars}) }}
 {% endblock %}
 
 {% block log_moderator_remove %}
@@ -60,7 +59,6 @@
     {% else %}
         {{ 'someone'|trans }}
     {% endif %}
-    {{ 'magazine_log_mod_removed'|trans }}
-    {% if showMagazine %} {{ 'from'|trans|lower }} {{ component('magazine_inline', {magazine: log.magazine, showAvatar: true }) }}{% endif %}
-    : {{ component('user_inline', {user: log.user}) }}
+    {{ 'magazine_log_mod_removed'|trans -}}
+    {% if showMagazine %} {{ 'from'|trans|lower }} {{ component('magazine_inline', {magazine: log.magazine, showAvatar: showIcons }) -}}{%- endif -%}: {{ component('user_inline', {user: log.user, showAvatar: showAvatars}) }}
 {% endblock %}
