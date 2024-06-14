@@ -96,6 +96,9 @@ class EntryManager implements ContentManagerInterface
         $entry->mentions = $dto->body ? $this->mentionManager->extract($dto->body) : null;
         $entry->visibility = $dto->visibility;
         $entry->apId = $dto->apId;
+        $entry->apLikeCount = $dto->apLikeCount;
+        $entry->apDislikeCount = $dto->apDislikeCount;
+        $entry->apShareCount = $dto->apShareCount;
         $entry->magazine->lastActive = new \DateTime();
         $entry->user->lastActive = new \DateTime();
         $entry->lastActive = $dto->lastActive ?? $entry->lastActive;
@@ -176,6 +179,10 @@ class EntryManager implements ContentManagerInterface
         if (empty($entry->body) && empty($entry->title) && null === $entry->image && null === $entry->url) {
             throw new \Exception('Entry body, name, url and image cannot all be empty');
         }
+
+        $entry->apLikeCount = $dto->apLikeCount;
+        $entry->apDislikeCount = $dto->apDislikeCount;
+        $entry->apShareCount = $dto->apShareCount;
 
         $this->entityManager->flush();
 

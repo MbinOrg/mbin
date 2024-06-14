@@ -10,4 +10,13 @@ trait ActivityPubActivityTrait
 {
     #[Column(type: 'string', unique: true, nullable: true)]
     public ?string $apId = null;
+
+    #[Column(type: 'integer', nullable: true)]
+    public ?int $apLikeCount = null;
+
+    #[Column(type: 'integer', nullable: true)]
+    public ?int $apDislikeCount = null;
+
+    #[Column(type: 'integer', nullable: true)]
+    public ?int $apShareCount = null;
 }

@@ -865,4 +865,46 @@ class ActivityPubManager
 
         return null;
     }
+
+    public function extractRemoteLikeCount(array $apObject): ?int
+    {
+        if (!empty($apObject['likes'])) {
+            if (false !== filter_var($apObject['likes'], FILTER_VALIDATE_URL)) {
+                $collection = $this->apHttpClient->getCollectionObject($apObject['likes']);
+                if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
+                    return $collection['totalItems'];
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function extractRemoteDislikeCount(array $apObject): ?int
+    {
+        if (!empty($apObject['dislikes'])) {
+            if (false !== filter_var($apObject['dislikes'], FILTER_VALIDATE_URL)) {
+                $collection = $this->apHttpClient->getCollectionObject($apObject['dislikes']);
+                if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
+                    return $collection['totalItems'];
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function extractRemoteShareCount(array $apObject): ?int
+    {
+        if (!empty($apObject['shares'])) {
+            if (false !== filter_var($apObject['shares'], FILTER_VALIDATE_URL)) {
+                $collection = $this->apHttpClient->getCollectionObject($apObject['shares']);
+                if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
+                    return $collection['totalItems'];
+                }
+            }
+        }
+
+        return null;
+    }
 }

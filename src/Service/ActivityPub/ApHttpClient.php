@@ -213,7 +213,7 @@ class ApHttpClient
     /**
      * @throws InvalidArgumentException
      */
-    public function getCollectionObject(string $apAddress)
+    public function getCollectionObject(string $apAddress): ?array
     {
         $resp = $this->cache->get(
             'ap_collection'.hash('sha256', $apAddress),

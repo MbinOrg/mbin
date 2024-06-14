@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Contracts\FavouriteInterface;
+use App\Entity\Entry;
+use App\Entity\EntryComment;
 use App\Entity\Favourite;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use App\Entity\User;
 use App\Event\FavouriteEvent;
 use App\Factory\FavouriteFactory;
@@ -30,6 +34,12 @@ class FavouriteManager
     {
         if (!($favourite = $this->repository->findBySubject($user, $subject))) {
             if (self::TYPE_UNLIKE === $type) {
+                if ($subject instanceof Entry || $subject instanceof EntryComment || $subject instanceof Post || $subject instanceof PostComment) {
+                    if (null !== $subject->apLikeCount) {
+                        --$subject->apLikeCount;
+                    }
+                }
+
                 return null;
             }
 
@@ -40,8 +50,20 @@ class FavouriteManager
             $subject->updateCounts();
             $subject->updateScore();
             $subject->updateRanking();
+
+            if ($subject instanceof Entry || $subject instanceof EntryComment || $subject instanceof Post || $subject instanceof PostComment) {
+                if (null !== $subject->apLikeCount) {
+                    ++$subject->apLikeCount;
+                }
+            }
         } else {
             if (self::TYPE_LIKE === $type) {
+                if ($subject instanceof Entry || $subject instanceof EntryComment || $subject instanceof Post || $subject instanceof PostComment) {
+                    if (null !== $subject->apLikeCount) {
+                        ++$subject->apLikeCount;
+                    }
+                }
+
                 return $favourite;
             }
 
@@ -50,6 +72,11 @@ class FavouriteManager
             $subject->updateScore();
             $subject->updateRanking();
             $favourite = null;
+            if ($subject instanceof Entry || $subject instanceof EntryComment || $subject instanceof Post || $subject instanceof PostComment) {
+                if (null !== $subject->apLikeCount) {
+                    --$subject->apLikeCount;
+                }
+            }
         }
 
         $this->entityManager->flush();
