@@ -31,6 +31,7 @@ final class SettingsExtension extends AbstractExtension
             new TwigFunction('mbin_restrict_magazine_creation', [SettingsExtensionRuntime::class, 'mbinRestrictMagazineCreation']),
             new TwigFunction('mbin_private_instance', [SettingsExtensionRuntime::class, 'mbinPrivateInstance']),
             new TwigFunction('mbin_sso_show_first', [SettingsExtensionRuntime::class, 'mbinSsoShowFirst']),
+            new TwigFunction('mbin_lang', [SettingsExtensionRuntime::class, 'mbinLang']),
         ];
     }
 }
