@@ -473,6 +473,16 @@ class ActivityPubManager
                 $magazine->title = $actor['preferredUsername'];
             }
 
+            if (isset($actor['published'])) {
+                try {
+                    $createdAt = new \DateTimeImmutable($actor['published']);
+                    $now = new \DateTimeImmutable();
+                    if ($createdAt < $now) {
+                        $magazine->createdAt = $createdAt;
+                    }
+                } catch (\Exception) {}
+            }
+
             $magazine->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
             $magazine->apDomain = parse_url($actor['id'], PHP_URL_HOST);
             $magazine->apFollowersUrl = $actor['followers'] ?? null;
