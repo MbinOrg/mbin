@@ -422,8 +422,7 @@ toolbar.ordered_list: Geordnete Liste
 your_account_is_not_active: Dein Profil wurde noch nicht aktiviert. Bitte prüfe deine
   E-Mails und klicke den Aktivierungslink um fortzufahren. Falls du keine Mail erhalten
   hast frage <a href="%link_target%">eine neue Aktivierungsmail</a> an.
-your_account_has_been_banned: E-Mails für Anweisungen zur Kontoaktivierung oder <a
-  href="%link_target%">fordere eine neue E-Mail zur Aktivierung an</a>
+your_account_has_been_banned: Dein Konto wurde gesperrt
 federation_page_enabled: Föderationsseite aktiviert
 federation_page_disallowed_description: Instanzen mit denen wir nicht föderieren
 federation_page_allowed_description: Bekannte Instanzen mit denen wir föderieren
@@ -469,7 +468,7 @@ subscription_sort: Sortierung
 unblock: Entblockieren
 oauth.consent.grant_permissions: Gebe Berechtigungen
 oauth2.grant.moderate.magazine.ban.delete: Nutzer in deinen moderierten Magazinen
-  entbannen.
+  entsperren.
 subscriptions_in_own_sidebar: In eigener Seitenleiste
 subscription_sidebar_pop_out_left: Nach links in eigene Seitenleiste verschieben
 subscription_sidebar_pop_out_right: Nach rechts in eigene Seitenleiste verschieben
@@ -854,3 +853,21 @@ restrict_magazine_creation: 'Erstellung lokaler Magazine auf Admins und globale 
 sort_by: 'Sortieren nach'
 filter_by_subscription: 'Nach Abonnements filtern'
 related_entry: Zugehörig
+tag: Hashtag
+unban: Sperre aufheben
+ban_hashtag_btn: Hashtag Sperren
+unban_hashtag_btn: Hashtag Sperre Aufheben
+private_instance: Nutzer zur Anmeldung zwingen um auf Inhalte zugreifen zu können
+flash_thread_tag_banned_error: Thema konnte nicht erstellt werden. Der Inhalt ist
+  nicht erlaubt.
+sso_only_mode: Anmeldung und Registrierung auf SSO Methoden beschränken
+magazine_log_mod_added: hat einen Moderator hinzugefügt
+magazine_log_mod_removed: hat einen Moderator entfernt
+ban_hashtag_description: Durch das Sperren eines Hashtags wird verhindert, dass Beiträge
+  mit diesem Hashtag erstellt werden. Außerdem werden vorhandene Beiträge mit diesem
+  Hashtag ausgeblendet.
+unban_hashtag_description: Wenn Sie eine Hashtag Sperre aufheben, können wieder Beiträge
+  mit diesem Hashtag erstellt werden. Vorhandene Beiträge mit diesem Hashtag werden
+  nicht mehr ausgeblendet.
+sso_show_first: SSO als erstes auf der Anmeldungs- und Registrierungsseite anzeigen
+continue_with: Weiter mit
