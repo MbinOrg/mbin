@@ -11,11 +11,8 @@ use App\Service\SettingsManager;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
-use Symfony\UX\TwigComponent\Attribute\PostMount;
-use Symfony\UX\TwigComponent\ComponentAttributes;
-use Twig\Environment;
 
-#[AsTwigComponent('related_posts', template: 'components/_cached.html.twig')]
+#[AsTwigComponent('related_posts')]
 final class RelatedPostsComponent
 {
     public const TYPE_TAG = 'tag';
@@ -23,51 +20,44 @@ final class RelatedPostsComponent
     public const TYPE_RANDOM = 'random';
 
     public int $limit = 4;
-    public ?string $tag = null;
-    public ?string $magazine = null;
     public ?string $type = self::TYPE_RANDOM;
     public ?Post $post = null;
     public string $title = 'random_posts';
+    /** @var Post[] */
+    public array $posts = [];
 
     public function __construct(
         private readonly PostRepository $repository,
         private readonly CacheInterface $cache,
-        private readonly Environment $twig,
         private readonly SettingsManager $settingsManager,
         private readonly MentionManager $mentionManager
     ) {
     }
 
-    #[PostMount]
-    public function postMount(array $attr): array
+    public function mount(?string $magazine, ?string $tag): void
     {
-        if ($this->tag) {
+        if ($tag) {
             $this->title = 'related_posts';
             $this->type = self::TYPE_TAG;
         }
 
-        if ($this->magazine) {
+        if ($magazine) {
             $this->title = 'related_posts';
             $this->type = self::TYPE_MAGAZINE;
         }
 
-        return $attr;
-    }
-
-    public function getHtml(ComponentAttributes $attributes): string
-    {
         $postId = $this->post?->getId();
-        $magazine = str_replace('@', '', $this->magazine ?? '');
+        $magazine = str_replace('@', '', $magazine ?? '');
 
-        return $this->cache->get(
-            "related_posts_{$magazine}_{$this->tag}_{$postId}_{$this->type}_{$this->settingsManager->getLocale()}",
-            function (ItemInterface $item) use ($attributes) {
-                $item->expiresAfter(60);
+        $postIds = $this->cache->get(
+            "related_posts_{$magazine}_{$tag}_{$postId}_{$this->type}_{$this->settingsManager->getLocale()}",
+            function (ItemInterface $item) use ($magazine, $tag) {
+                $item->expiresAfter(60 * 5); // 5 minutes
 
                 $posts = match ($this->type) {
-                    self::TYPE_TAG => $this->repository->findRelatedByMagazine($this->tag, $this->limit + 20),
+                    self::TYPE_TAG => $this->repository->findRelatedByMagazine($tag, $this->limit + 20),
                     self::TYPE_MAGAZINE => $this->repository->findRelatedByTag(
-                        $this->mentionManager->getUsername($this->magazine),
+                        $this->mentionManager->getUsername($magazine),
                         $this->limit + 20
                     ),
                     default => $this->repository->findLast($this->limit + 150),
@@ -80,15 +70,10 @@ final class RelatedPostsComponent
                     $posts = \array_slice($posts, 0, $this->limit);
                 }
 
-                return $this->twig->render(
-                    'components/related_posts.html.twig',
-                    [
-                        'attributes' => $attributes,
-                        'posts' => $posts,
-                        'title' => $this->title,
-                    ]
-                );
+                return array_map(fn (Post $post) => $post->getId(), $posts);
             }
         );
+
+        $this->posts = $this->repository->findBy(['id' => $postIds]);
     }
 }
