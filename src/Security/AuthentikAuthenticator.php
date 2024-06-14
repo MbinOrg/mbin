@@ -95,8 +95,7 @@ class AuthentikAuthenticator extends OAuth2Authenticator
                     throw new CustomUserMessageAuthenticationException('MBIN_SSO_REGISTRATIONS_ENABLED');
                 }
 
-                $email = $authentikUser->toArray()['preferred_username'];
-                $username = $slugger->slug(substr($email, 0, strrpos($email, '@')));
+                $username = $slugger->slug($authentikUser->toArray()['preferred_username']);
 
                 if ($this->userRepository->count(['username' => $username]) > 0) {
                     $username .= rand(1, 999);
