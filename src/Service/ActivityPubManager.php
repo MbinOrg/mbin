@@ -337,7 +337,8 @@ class ActivityPubManager
                     if ($createdAt < $now) {
                         $user->createdAt = $createdAt;
                     }
-                } catch (\Exception) {}
+                } catch (\Exception) {
+                }
             }
 
             // Only update about when summary is set
@@ -480,7 +481,8 @@ class ActivityPubManager
                     if ($createdAt < $now) {
                         $magazine->createdAt = $createdAt;
                     }
-                } catch (\Exception) {}
+                } catch (\Exception) {
+                }
             }
 
             $magazine->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
