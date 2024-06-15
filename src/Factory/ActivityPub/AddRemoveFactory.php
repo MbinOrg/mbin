@@ -51,7 +51,7 @@ class AddRemoveFactory
             'ap_magazine_pinned', ['name' => $added->magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
         );
         $entryUrl = $added->apId ?? $this->urlGenerator->generate(
-            'ap_entry', ['entry_id' => $added->getId()], UrlGeneratorInterface::ABSOLUTE_URL
+            'ap_entry', ['entry_id' => $added->getId(), 'magazine_name' => $added->magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
         );
 
         return $this->build($actor, $entryUrl, $added->magazine, 'Add', $url);
@@ -63,7 +63,7 @@ class AddRemoveFactory
             'ap_magazine_pinned', ['name' => $removed->magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
         );
         $entryUrl = $removed->apId ?? $this->urlGenerator->generate(
-            'ap_entry', ['entry_id' => $removed->getId()], UrlGeneratorInterface::ABSOLUTE_URL
+            'ap_entry', ['entry_id' => $removed->getId(), 'magazine_name' => $removed->magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
         );
 
         return $this->build($actor, $entryUrl, $removed->magazine, 'Remove', $url);
