@@ -72,7 +72,7 @@ class ApActivityRepository extends ServiceEntityRepository
         'id' => 'int',
         'type' => 'string',
     ])]
-    private function findLocalByApId(string $apId): ?array
+    public function findLocalByApId(string $apId): ?array
     {
         $parsed = parse_url($apId);
         if ($parsed['host'] === $this->settingsManager->get('KBIN_DOMAIN')) {

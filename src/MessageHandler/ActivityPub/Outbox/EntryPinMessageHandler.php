@@ -5,44 +5,47 @@ declare(strict_types=1);
 namespace App\MessageHandler\ActivityPub\Outbox;
 
 use App\Factory\ActivityPub\AddRemoveFactory;
-use App\Message\ActivityPub\Outbox\AddMessage;
 use App\Message\ActivityPub\Outbox\DeliverMessage;
+use App\Message\ActivityPub\Outbox\EntryPinMessage;
+use App\Repository\EntryRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\SettingsManager;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-class AddHandler
+class EntryPinMessageHandler
 {
     public function __construct(
-        private readonly UserRepository $userRepository,
-        private readonly MagazineRepository $magazineRepository,
-        private readonly LoggerInterface $logger,
         private readonly SettingsManager $settingsManager,
+        private readonly EntryRepository $entryRepository,
+        private readonly UserRepository $userRepository,
+        private readonly AddRemoveFactory $addRemoveFactory,
+        private readonly MagazineRepository $magazineRepository,
         private readonly MessageBusInterface $bus,
-        private readonly AddRemoveFactory $factory,
     ) {
     }
 
-    public function __invoke(AddMessage $message): void
+    public function __invoke(EntryPinMessage $message): void
     {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;
         }
-
-        $actor = $this->userRepository->find($message->userActorId);
-        $added = $this->userRepository->find($message->addedUserId);
-        $magazine = $this->magazineRepository->find($message->magazineId);
-        if ($magazine->apId) {
-            $audience = [$magazine->apInboxUrl];
+        $entry = $this->entryRepository->findOneBy(['id' => $message->entryId]);
+        $user = $this->userRepository->findOneBy(['id' => $message->actorId]);
+        if ($message->sticky) {
+            $activity = $this->addRemoveFactory->buildAddPinnedPost($user, $entry);
         } else {
-            $audience = $this->magazineRepository->findAudience($magazine);
+            $activity = $this->addRemoveFactory->buildRemovePinnedPost($user, $entry);
         }
 
-        $activity = $this->factory->buildAddModerator($actor, $added, $magazine);
+        if ($entry->magazine->apId) {
+            $audience = [$entry->magazine->apInboxUrl];
+        } else {
+            $audience = $this->magazineRepository->findAudience($entry->magazine);
+        }
+
         foreach ($audience as $inboxUrl) {
             if (!$this->settingsManager->isBannedInstance($inboxUrl)) {
                 $this->bus->dispatch(new DeliverMessage($inboxUrl, $activity));

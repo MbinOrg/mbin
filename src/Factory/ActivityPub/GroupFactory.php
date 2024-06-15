@@ -55,6 +55,11 @@ class GroupFactory
                 ['name' => $magazine->name],
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
+            'featured' => $this->urlGenerator->generate(
+                'ap_magazine_pinned',
+                ['name' => $magazine->name],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            ),
             'url' => $this->getActivityPubId($magazine),
             'publicKey' => [
                 'owner' => $this->getActivityPubId($magazine),

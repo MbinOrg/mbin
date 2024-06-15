@@ -42,7 +42,7 @@ class RemoveHandler
             $audience = $this->magazineRepository->findAudience($magazine);
         }
 
-        $activity = $this->factory->buildRemove($actor, $removed, $magazine);
+        $activity = $this->factory->buildRemoveModerator($actor, $removed, $magazine);
         foreach ($audience as $inboxUrl) {
             if (!$this->settingsManager->isBannedInstance($inboxUrl)) {
                 $this->bus->dispatch(new DeliverMessage($inboxUrl, $activity));

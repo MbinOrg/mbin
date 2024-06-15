@@ -255,13 +255,16 @@ class EntryManager implements ContentManagerInterface
         $this->dispatcher->dispatch(new EntryRestoredEvent($entry, $user));
     }
 
-    public function pin(Entry $entry): Entry
+    /**
+     * @param User|null $actor this should only be null if it is a system call
+     */
+    public function pin(Entry $entry, ?User $actor): Entry
     {
         $entry->sticky = !$entry->sticky;
 
         $this->entityManager->flush();
 
-        $this->dispatcher->dispatch(new EntryPinEvent($entry));
+        $this->dispatcher->dispatch(new EntryPinEvent($entry, $actor));
 
         return $entry;
     }
