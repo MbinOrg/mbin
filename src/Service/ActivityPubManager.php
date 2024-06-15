@@ -840,19 +840,16 @@ class ActivityPubManager
     {
         $to = [];
         if (!empty($payload['to']) && \is_array($payload['to'])) {
-            $to[] = $payload['to'];
+            $to = array_merge($to, $payload['to']);
         }
 
         if (!empty($payload['cc']) && \is_array($payload['cc'])) {
-            $to[] = $payload['cc'];
+            $to = array_merge($to, $payload['cc']);
         }
 
         foreach ($to as $receiver) {
             $id = null;
             if (\is_string($receiver)) {
-                if (ActivityPubActivityInterface::PUBLIC_URL === $receiver) {
-                    return true;
-                }
                 $id = $receiver;
             } elseif (\is_array($receiver) && !empty($receiver['id'])) {
                 $id = $receiver['id'];

@@ -8,22 +8,21 @@ use App\DTO\MessageDto;
 use App\Entity\Message;
 use App\Entity\MessageThread;
 use App\Entity\User;
-use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Outbox\CreateMessage;
-use App\Repository\ApActivityRepository;
-use App\Repository\MessageRepository;
+use App\Repository\MessageThreadRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class MessageManager
 {
     public function __construct(
-        private readonly MessageRepository $messageRepository,
-        private readonly ApActivityRepository $apActivityRepository,
+        private readonly MessageThreadRepository $messageThreadRepository,
         private readonly MessageBusInterface $bus,
         private readonly ActivityPubManager $activityPubManager,
         private readonly NotificationManager $notificationManager,
         private readonly EntityManagerInterface $entityManager,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -87,30 +86,21 @@ class MessageManager
         }
     }
 
-    public function createMessage(array $object): null|Message|MessageThread
+    public function createMessage(array $object): Message|MessageThread
     {
-        $participants = array_map(fn ($participant) => $this->activityPubManager->findActorOrCreate(\is_string($participant) ? $participant : $participant['id']), array_merge($this->object['to'] ?? [], $this->object['cc'] ?? []));
+        $this->logger->debug('creating message from {o}', ['o' => $object]);
+        $participantIds = array_merge($object['to'] ?? [], $object['cc'] ?? []);
+        $participants = array_map(fn ($participant) => $this->activityPubManager->findActorOrCreate(\is_string($participant) ? $participant : $participant['id']), $participantIds);
         $author = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
+        $participants[] = $author;
         $message = new MessageDto();
         $message->body = $this->activityPubManager->extractMarkdownContent($object);
-        if (!empty($this->object['inReplyTo'])) {
-            return $this->toThread($message, $author, ...$participants);
+        $threads = $this->messageThreadRepository->findByParticipants($participants);
+        if (\sizeof($threads) > 0) {
+            return $this->toMessage($message, $threads[0], $author);
         } else {
-            $inReplyTo = $this->apActivityRepository->findByObjectId($object['inReplyTo']);
-            if (null !== $inReplyTo) {
-                if (Message::class === $inReplyTo['type']) {
-                    $inReplyToMessage = $this->messageRepository->find($inReplyTo['id']);
-
-                    return $this->toMessage($message, $inReplyToMessage->thread, $author);
-                } else {
-                    return $this->toThread($message, $author, ...$participants);
-                }
-            } else {
-                $this->bus->dispatch(new ChainActivityMessage([$object]));
-            }
+            return $this->toThread($message, $author, ...$participants);
         }
-
-        return null;
     }
 
     /** @return string[] */

@@ -7,7 +7,6 @@ namespace App\Factory\ActivityPub;
 use App\Entity\Message;
 use App\Entity\User;
 use App\Markdown\MarkdownConverter;
-use App\Repository\MessageRepository;
 use App\Service\ActivityPub\ContextsProvider;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -16,7 +15,6 @@ class MessageFactory
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly MarkdownConverter $markdownConverter,
-        private readonly MessageRepository $messageRepository,
         private readonly ContextsProvider $contextsProvider,
     ) {
     }
@@ -26,8 +24,6 @@ class MessageFactory
         $actorUrl = null === $message->sender->apId ? $this->urlGenerator->generate('ap_user', ['username' => $message->sender->username], UrlGeneratorInterface::ABSOLUTE_URL) : $message->sender->apPublicUrl;
         $toUsers = array_values(array_filter($message->thread->participants->toArray(), fn (User $item) => $item->getId() !== $message->sender->getId()));
         $to = array_map(fn (User $user) => !$user->apId ? $this->urlGenerator->generate('ap_user', ['username' => $user->username], UrlGeneratorInterface::ABSOLUTE_URL) : $user->apPublicUrl, $toUsers);
-        $inReplyToMessage = $this->messageRepository->findLastMessageBefore($message);
-        $inReplyToUrl = $inReplyToMessage ? $inReplyToMessage->apId ? $inReplyToMessage->apId : $this->urlGenerator->generate('ap_message', ['uuid' => $inReplyToMessage->uuid], UrlGeneratorInterface::ABSOLUTE_URL) : null;
 
         $result = [
             '@context' => $this->contextsProvider->referencedContexts(),
@@ -43,15 +39,10 @@ class MessageFactory
                 'mediaType' => 'text/markdown',
                 'content' => $message->body,
             ],
-            'inReplyTo' => $inReplyToUrl,
         ];
 
         if (!$includeContext) {
             unset($result['@context']);
-        }
-
-        if (null === $inReplyToMessage) {
-            unset($result['inReplyTo']);
         }
 
         return $result;
