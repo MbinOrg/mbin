@@ -58,7 +58,7 @@ class MessageThreadRepository extends ServiceEntityRepository
      */
     public function findByParticipants(array $participants): array
     {
-        $this->logger->debug('looking for thread with participants: {p}', ['p' => $participants]);
+        $this->logger->debug('looking for thread with participants: {p}', ['p' => array_map(fn (User $u) => $u->username, $participants)]);
         $whereString = '';
         $parameters = [':ctn' => \sizeof($participants)];
         $i = 0;
@@ -68,10 +68,7 @@ class MessageThreadRepository extends ServiceEntityRepository
             ++$i;
         }
         $sql = "SELECT mt.id FROM message_thread mt
-                INNER JOIN message_thread_participants mtp ON mtp.message_thread_id = mt.id
-                WHERE true $whereString
-                GROUP BY mt.id, mt.updated_at
-                HAVING COUNT(mtp.user_id) = :ctn
+                WHERE (SELECT COUNT(*) FROM message_thread_participants mtp WHERE mtp.message_thread_id = mt.id) = :ctn $whereString
                 ORDER BY mt.updated_at DESC";
         $em = $this->getEntityManager();
         $results = $em->getConnection()
@@ -86,7 +83,7 @@ class MessageThreadRepository extends ServiceEntityRepository
                 $ids[] = $result['id'];
             }
 
-            return $this->findBy(['id' => $ids]);
+            return $this->findBy(['id' => $ids], ['updatedAt' => 'DESC']);
         }
 
         return [];
