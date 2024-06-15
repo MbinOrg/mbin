@@ -1,6 +1,9 @@
-{{ form_start(form) }}
-{{ form_row(form.body, {attr: {'data-controller': 'rich-textarea autogrow'}}) }}
-<div class="row actions">
+{{ form_start(form, {attr: {class: 'message-form'}}) }}
+<div class="col">
+    <label for="message-input-box" style="display: none;">{{ field_name(form.body) }}</label>
+    <textarea id="message-input-box" class="form-control message-input" name="{{ field_name(form.body) }}" data-controller="rich-textarea">{{ field_value(form.body) }}</textarea>
+</div>
+<div class="col-auto">
     {{ form_row(form.submit, {attr: {class: 'btn btn__primary'}}) }}
 </div>
 {{ form_end(form) }}

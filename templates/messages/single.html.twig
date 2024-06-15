@@ -9,23 +9,50 @@
 {% block header_nav %}
 {% endblock %}
 
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+    <script>
+        window.addEventListener("load", () => {
+            let view = document.getElementsByClassName('message-view')[0];
+            view.scrollTo({top: view.scrollHeight});
+        })
+    </script>
+{% endblock %}
+
 {% block sidebar_top %}
 {% endblock %}
 
 {% block body %}
-    <div class="section section--top">
+
+    <div class="message-view-container">
+        <div class="section section--top">
+            <button class="btn btn-link">
+                <a href="{{ path('messages_front') }}">
+                    <i class="fa-solid fa-arrow-left-long" title="{{ 'back'|trans }}"></i>
+                </a>
+            </button>
+            {% for user in thread.participants %}
+                {% if user is not same as app.user %}
+                    {{ component('user_inline', {user: user}) }}
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="message-view">
+            {% for message in thread.messages %}
+                <div class="{{ html_classes('message section content section--small', message.sender is same as app.user ? 'message-self' : 'message-other') }}">
+                    <div class="meta">{{ component('user_inline', {user: message.sender}) }}</div>
+                    {{ message.body|markdown|raw }}
+                    <div class="text-right">
+                        <small>
+                            {{ component('date', {date: message.createdAt}) }}
+                        </small>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
         {% include 'messages/_form_create.html.twig' %}
     </div>
-    {% for message in thread.messages %}
-        <div class="{{ html_classes('message section content section--small') }}">
-            <div class="meta">{{ component('user_inline', {user: message.sender}) }}</div>
-            {{ message.body|markdown|raw }}
-            <div class="text-right">
-                <small>
-                    {{ component('date', {date: message.createdAt}) }}
-                </small>
-            </div>
-
-        </div>
-    {% endfor %}
 {% endblock %}

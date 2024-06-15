@@ -42,9 +42,9 @@ class CreateHandler
     public function __invoke(CreateMessage $message): void
     {
         $this->object = $message->payload;
-        $this->logger->debug('Got a CreateMessage of type {t}', [$message->payload['type'], $message->payload]);
+        $this->logger->debug('Got a CreateMessage of type {t}, {m}', ['t' => $message->payload['type'], 'm' => $message->payload]);
         try {
-            if ($this->activityPubManager->isActivityPublic($message->payload)) {
+            if (!$this->activityPubManager->isActivityPublic($message->payload)) {
                 $this->handlePrivateMessage();
             } elseif ('Note' === $this->object['type']) {
                 $this->handleChain();
@@ -54,6 +54,8 @@ class CreateHandler
                 $this->handlePage();
             } elseif ('Question' === $this->object['type']) {
                 $this->handleChain();
+            } else {
+                $this->logger->error('Could not handle CreateMessage {t}', ['t' => $message->payload]);
             }
         } catch (UserBannedException) {
             $this->logger->info('Did not create the post, because the user is banned');
