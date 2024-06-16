@@ -1,5 +1,5 @@
 {# @var this App\Twig\Components\LoginSocialsComponent #}
-{%- set HAS_ANY_SOCIAL = this.googleEnabled or this.facebookEnabled or this.githubEnabled or this.keycloakEnabled or this.simpleloginEnabled or this.zitadelEnabled or this.authentikEnabled or this.azureEnabled -%}
+{%- set HAS_ANY_SOCIAL = this.googleEnabled or this.facebookEnabled or this.githubEnabled or this.keycloakEnabled or this.simpleloginEnabled or this.zitadelEnabled or this.authentikEnabled or this.azureEnabled or this.privacyPortalEnabled -%}
 {% if HAS_ANY_SOCIAL %}
     {% if not mbin_sso_only_mode() and not mbin_sso_show_first() %}
     <div class="separator separator-show"></div>
@@ -36,6 +36,10 @@
         {% if this.azureEnabled %}
             <a href="{{ path('oauth_azure_connect') }}" class="btn btn__secondary"><i class="fa-brands fa-microsoft" aria-hidden="true"></i>
                 <span>{{ 'continue_with'|trans }} Microsoft</span></a>
+        {% endif %}
+        {% if this.privacyPortalEnabled %}
+            <a href="{{ path('oauth_privacyportal_connect') }}" class="btn btn__secondary"><i class="fa-brands fa-privacyportal" aria-hidden="true"></i>
+                <span>{{ 'continue_with'|trans }} Privacy Portal</span></a>
         {% endif %}
     </div>
     {% if not mbin_sso_only_mode() and mbin_sso_show_first() %}
