@@ -597,4 +597,20 @@ class MagazineRepository extends ServiceEntityRepository
 
         return null;
     }
+
+    public function getMagazineFromPinnedUrl($target): ?Magazine
+    {
+        if ($this->settingsManager->isLocalUrl($target)) {
+            $matches = [];
+            if (preg_match_all("/\/m\/([a-zA-Z0-9\-_:]+)\/pinned/", $target, $matches)) {
+                $magName = $matches[1][0];
+
+                return $this->findOneByName($magName);
+            }
+        } else {
+            return $this->findOneBy(['apFeaturedUrl' => $target]);
+        }
+
+        return null;
+    }
 }

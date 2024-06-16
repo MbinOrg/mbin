@@ -9,7 +9,6 @@ use App\Entity\Magazine;
 use App\Factory\ActivityPub\EntryPageFactory;
 use App\Repository\EntryRepository;
 use App\Repository\TagLinkRepository;
-use App\Service\ActivityPubManager;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
