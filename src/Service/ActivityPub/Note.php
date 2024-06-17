@@ -187,7 +187,7 @@ class Note
     private function createPost(array $object): Post
     {
         $dto = new PostDto();
-        $dto->magazine = $this->activityPubManager->findOrCreateMagazineByToAndCC($object);
+        $dto->magazine = $this->activityPubManager->findOrCreateMagazineByToCCAndAudience($object);
         $dto->apId = $object['id'];
 
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
