@@ -264,6 +264,7 @@ form {
       color: var(--kbin-input-text-color);
       width: auto;
       min-width: 8rem;
+      border-radius: 0 !important;
     }
 
     & > * {
