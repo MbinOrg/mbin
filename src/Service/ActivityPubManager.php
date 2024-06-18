@@ -788,7 +788,7 @@ class ActivityPubManager
         return null;
     }
 
-    public function findOrCreateMagazineByToAndCC(array $object): Magazine|null
+    public function findOrCreateMagazineByToCCAndAudience(array $object): Magazine|null
     {
         $potentialGroups = self::getReceivers($object);
         $magazine = $this->magazineRepository->findByApGroupProfileId($potentialGroups);
@@ -816,8 +816,14 @@ class ActivityPubManager
     public static function getReceivers(array $object): array
     {
         $res = [];
+        if (isset($object['audience']) and \is_array($object['audience'])) {
+            $res = array_merge($res, $object['audience']);
+        } elseif (isset($object['audience']) and \is_string($object['audience'])) {
+            $res[] = $object['audience'];
+        }
+
         if (isset($object['to']) and \is_array($object['to'])) {
-            $res = $object['to'];
+            $res = array_merge($res, $object['to']);
         } elseif (isset($object['to']) and \is_string($object['to'])) {
             $res[] = $object['to'];
         }
@@ -829,6 +835,12 @@ class ActivityPubManager
         }
 
         if (isset($object['object']) and \is_array($object['object'])) {
+            if (isset($object['object']['audience']) and \is_array($object['object']['audience'])) {
+                $res = array_merge($res, $object['object']['audience']);
+            } elseif (isset($object['object']['audience']) and \is_string($object['object']['audience'])) {
+                $res[] = $object['object']['audience'];
+            }
+
             if (isset($object['object']['to']) and \is_array($object['object']['to'])) {
                 $res = array_merge($res, $object['object']['to']);
             } elseif (isset($object['object']['to']) and \is_string($object['object']['to'])) {
