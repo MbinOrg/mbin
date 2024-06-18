@@ -66,7 +66,7 @@ class Page
                 $object['cc'] = [$object['cc']];
             }
 
-            $magazine = $this->activityPubManager->findOrCreateMagazineByToAndCC($object);
+            $magazine = $this->activityPubManager->findOrCreateMagazineByToCCAndAudience($object);
             $dto = new EntryDto();
             $dto->magazine = $magazine;
             $dto->title = $object['name'];
