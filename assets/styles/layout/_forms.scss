@@ -151,6 +151,7 @@ input[type=select-one] {
   display: block;
   padding: 1rem .5rem;
   width: 100%;
+  text-indent: .1rem !important;
 }
 
 .password-preview {
@@ -263,6 +264,7 @@ form {
       color: var(--kbin-input-text-color);
       width: auto;
       min-width: 8rem;
+      border-radius: 0 !important;
     }
 
     & > * {
