@@ -22,8 +22,10 @@
             <ul>
                 <li>{{ 'joined'|trans }}: {{ component('date', {date: user.createdAt}) }}</li>
                 <li>
-                    <i class="fa-solid fa-cake" style="margin-right: .5em;"></i>
-                    <span>{{ user.createdAt|format_date('short', '', null, 'gregorian', mbin_lang()) }}</span>
+                    <div title="{{ 'cake_day'|trans }}" aria-label="{{ 'cake_day'|trans }}">
+                        <i class="fa-solid fa-cake" aria-hidden="true"></i>
+                        <span>{{ user.createdAt|format_date('short', '', null, 'gregorian', mbin_lang()) }}</span>
+                    </div>
                 </li>
                 <li>
                     {%- set TYPE_ENTRY = constant('App\\Repository\\ReputationRepository::TYPE_ENTRY') -%}
