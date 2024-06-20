@@ -332,6 +332,17 @@ class ActivityPubManager
             $user->apTimeoutAt = null;
             $user->apFetchedAt = new \DateTime();
 
+            if (isset($actor['published'])) {
+                try {
+                    $createdAt = new \DateTimeImmutable($actor['published']);
+                    $now = new \DateTimeImmutable();
+                    if ($createdAt < $now) {
+                        $user->createdAt = $createdAt;
+                    }
+                } catch (\Exception) {
+                }
+            }
+
             // Only update about when summary is set
             if (isset($actor['summary'])) {
                 $converter = new HtmlConverter(['strip_tags' => true]);
@@ -463,6 +474,17 @@ class ActivityPubManager
                 $magazine->title = $actor['name'];
             } elseif ($actor['preferredUsername']) {
                 $magazine->title = $actor['preferredUsername'];
+            }
+
+            if (isset($actor['published'])) {
+                try {
+                    $createdAt = new \DateTimeImmutable($actor['published']);
+                    $now = new \DateTimeImmutable();
+                    if ($createdAt < $now) {
+                        $magazine->createdAt = $createdAt;
+                    }
+                } catch (\Exception) {
+                }
             }
 
             $magazine->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
@@ -663,7 +685,7 @@ class ActivityPubManager
         return null;
     }
 
-    public function findOrCreateMagazineByToAndCC(array $object): Magazine|null
+    public function findOrCreateMagazineByToCCAndAudience(array $object): Magazine|null
     {
         $potentialGroups = self::getReceivers($object);
         $magazine = $this->magazineRepository->findByApGroupProfileId($potentialGroups);
@@ -691,8 +713,14 @@ class ActivityPubManager
     public static function getReceivers(array $object): array
     {
         $res = [];
+        if (isset($object['audience']) and \is_array($object['audience'])) {
+            $res = array_merge($res, $object['audience']);
+        } elseif (isset($object['audience']) and \is_string($object['audience'])) {
+            $res[] = $object['audience'];
+        }
+
         if (isset($object['to']) and \is_array($object['to'])) {
-            $res = $object['to'];
+            $res = array_merge($res, $object['to']);
         } elseif (isset($object['to']) and \is_string($object['to'])) {
             $res[] = $object['to'];
         }
@@ -704,6 +732,12 @@ class ActivityPubManager
         }
 
         if (isset($object['object']) and \is_array($object['object'])) {
+            if (isset($object['object']['audience']) and \is_array($object['object']['audience'])) {
+                $res = array_merge($res, $object['object']['audience']);
+            } elseif (isset($object['object']['audience']) and \is_string($object['object']['audience'])) {
+                $res[] = $object['object']['audience'];
+            }
+
             if (isset($object['object']['to']) and \is_array($object['object']['to'])) {
                 $res = array_merge($res, $object['object']['to']);
             } elseif (isset($object['object']['to']) and \is_string($object['object']['to'])) {

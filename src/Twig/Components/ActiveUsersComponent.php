@@ -5,41 +5,36 @@ declare(strict_types=1);
 namespace App\Twig\Components;
 
 use App\Entity\Magazine;
+use App\Entity\User;
 use App\Repository\UserRepository;
-use Symfony\Component\HttpFoundation\RequestStack;
+use App\Service\SettingsManager;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
-use Symfony\UX\TwigComponent\ComponentAttributes;
-use Twig\Environment;
 
-#[AsTwigComponent('active_users', template: 'components/_cached.html.twig')]
+#[AsTwigComponent('active_users')]
 final class ActiveUsersComponent
 {
-    public ?Magazine $magazine = null;
+    /** @var User[] */
+    public array $users = [];
 
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly CacheInterface $cache,
-        private readonly Environment $twig,
-        private readonly RequestStack $requestStack
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 
-    public function getHtml(ComponentAttributes $attributes): string
+    public function mount(?Magazine $magazine): void
     {
-        return $this->cache->get(
-            "active_users_{$this->magazine?->getId()}_{$this->requestStack->getCurrentRequest()?->getLocale()}",
-            function (ItemInterface $item) {
-                $item->expiresAfter(60);
+        $activeUserIds = $this->cache->get("active_users_{$magazine?->getId()}_{$this->settingsManager->getLocale()}",
+            function (ItemInterface $item) use ($magazine) {
+                $item->expiresAfter(60 * 5); // 5 minutes
 
-                return $this->twig->render(
-                    'components/active_users.html.twig',
-                    [
-                        'users' => $this->userRepository->findActiveUsers($this->magazine),
-                    ]
-                );
+                return array_map(fn (User $user) => $user->getId(), $this->userRepository->findActiveUsers($magazine));
             }
         );
+
+        $this->users = $this->userRepository->findBy(['id' => $activeUserIds]);
     }
 }
