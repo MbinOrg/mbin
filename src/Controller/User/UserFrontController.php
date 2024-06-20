@@ -20,6 +20,7 @@ use App\Repository\PostRepository;
 use App\Repository\SearchRepository;
 use App\Repository\UserRepository;
 use App\Service\SubjectOverviewManager;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -45,6 +46,21 @@ class UserFrontController extends AbstractController
         }
 
         $activity = $repository->findPublicActivity($this->getPageNb($request), $user, $hideAdult);
+
+        if ($request->isXmlHttpRequest()) {
+           return new JsonResponse(
+               [
+                   'html' => $this->renderView(
+                       'user/_post_list.html.twig',
+                       [
+                           'user' => $user,
+                           'results' => $this->overviewManager->buildList($activity),
+                           'pagination' => $activity,
+                       ],
+                   ),
+               ]
+           );
+        }
 
         return $this->render(
             'user/overview.html.twig',
