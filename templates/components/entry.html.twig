@@ -148,8 +148,8 @@
                                 </span>
                             </li>
                         {% endif %}
-                        {% if entry.hasEmbed or entry.image %}
-                            {% set preview_url = (entry.type is same as 'image' or entry.url is same as null) and entry.image ? uploaded_asset(entry.image) : entry.url %}
+                        {% if entry.hasEmbed %}
+                            {% set preview_url = entry.type is same as 'image' and entry.image ? uploaded_asset(entry.image) : entry.url %}
                             <li>
                                 <button class="show-preview"
                                         data-action="preview#show"
