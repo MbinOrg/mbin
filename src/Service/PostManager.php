@@ -15,6 +15,7 @@ use App\Event\Post\PostCreatedEvent;
 use App\Event\Post\PostDeletedEvent;
 use App\Event\Post\PostEditedEvent;
 use App\Event\Post\PostRestoredEvent;
+use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Factory\PostFactory;
 use App\Message\DeleteImageMessage;
@@ -41,6 +42,7 @@ class PostManager implements ContentManagerInterface
         private readonly MentionManager $mentionManager,
         private readonly PostCommentManager $postCommentManager,
         private readonly TagManager $tagManager,
+        private readonly TagExtractor $tagExtractor,
         private readonly PostFactory $factory,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly RateLimiterFactory $postLimiter,
@@ -53,6 +55,12 @@ class PostManager implements ContentManagerInterface
     ) {
     }
 
+    /**
+     * @throws TagBannedException
+     * @throws UserBannedException
+     * @throws TooManyRequestsHttpException
+     * @throws \Exception
+     */
     public function create(PostDto $dto, User $user, $rateLimit = true): Post
     {
         if ($rateLimit) {
@@ -66,6 +74,10 @@ class PostManager implements ContentManagerInterface
             throw new UserBannedException();
         }
 
+        if ($this->tagManager->isAnyTagBanned($this->tagManager->extract($dto->body))) {
+            throw new TagBannedException();
+        }
+
         $post = $this->factory->createFromDto($dto, $user);
 
         $post->lang = $dto->lang;
@@ -76,7 +88,6 @@ class PostManager implements ContentManagerInterface
         if ($post->image && !$post->image->altText) {
             $post->image->altText = $dto->imageAlt;
         }
-        $post->tags = $dto->body ? $this->tagManager->extract($dto->body, $post->magazine->name) : null;
         $post->mentions = $dto->body ? $this->mentionManager->extract($dto->body) : null;
         $post->visibility = $dto->visibility;
         $post->apId = $dto->apId;
@@ -90,6 +101,8 @@ class PostManager implements ContentManagerInterface
 
         $this->entityManager->persist($post);
         $this->entityManager->flush();
+
+        $this->tagManager->updatePostTags($post, $this->tagExtractor->extract($post->body) ?? []);
 
         $this->dispatcher->dispatch(new PostCreatedEvent($post));
 
@@ -108,7 +121,7 @@ class PostManager implements ContentManagerInterface
         if ($dto->image) {
             $post->image = $this->imageRepository->find($dto->image->id);
         }
-        $post->tags = $dto->body ? $this->tagManager->extract($dto->body, $post->magazine->name) : null;
+        $this->tagManager->updatePostTags($post, $this->tagExtractor->extract($dto->body) ?? []);
         $post->mentions = $dto->body ? $this->mentionManager->extract($dto->body) : null;
         $post->visibility = $dto->visibility;
         $post->editedAt = new \DateTimeImmutable('@'.time());
@@ -129,7 +142,9 @@ class PostManager implements ContentManagerInterface
 
     public function delete(User $user, Post $post): void
     {
-        if ($user->apDomain && $user->apDomain !== parse_url($post->apId, PHP_URL_HOST)) {
+        if ($user->apDomain && $user->apDomain !== parse_url($post->apId ?? '', PHP_URL_HOST) && !$post->magazine->userIsModerator($user)) {
+            $this->logger->info('Got a delete activity from user {u}, but they are not from the same instance as the deleted post and they are not a moderator on {m]', ['u' => $user->apId, 'm' => $post->magazine->apId ?? $post->magazine->name]);
+
             return;
         }
 

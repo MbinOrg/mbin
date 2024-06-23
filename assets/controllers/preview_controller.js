@@ -1,7 +1,7 @@
+import { fetch, ok } from '../utils/http';
 import { Controller } from '@hotwired/stimulus';
-import { useThrottle } from 'stimulus-use'
-import { fetch, ok } from "../utils/http";
-import router from "../utils/routing";
+import router from '../utils/routing';
+import { useThrottle } from 'stimulus-use';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -13,21 +13,21 @@ export default class extends Controller {
     static throttles = ['show'];
 
     connect() {
-        useThrottle(this, {wait: 1000});
+        useThrottle(this, { wait: 1000 });
 
         // workaround: give itself a container if it couldn't find one
         // I am not happy with this
         if (!this.hasContainerTarget && this.element.matches('span.preview')) {
-            let container = this.createContainerTarget('preview-target');
+            const container = this.createContainerTarget('preview-target');
             this.element.insertAdjacentElement('beforeend', container);
             console.warn('unable to find container target, creating one for itself at', this.element.lastChild);
         }
     }
 
     createContainerTarget(extraClasses) {
-        let classes = [].concat(extraClasses ?? []);
+        const classes = [].concat(extraClasses ?? []);
 
-        let div = document.createElement('div');
+        const div = document.createElement('div');
         div.classList.add(...classes, 'hidden');
         div.dataset.previewTarget = 'container';
 
@@ -47,14 +47,15 @@ export default class extends Controller {
         event.preventDefault();
 
         if (this.containerTarget.hasChildNodes()) {
-            this.containerTarget.classList.toggle('hidden');
+            this.containerTarget.replaceChildren();
+            this.containerTarget.classList.add('hidden');
             return;
         }
 
         try {
             this.loadingValue = true;
 
-            let response = await fetch(router().generate('ajax_fetch_embed', {url: event.params.url}), {method: 'GET'});
+            let response = await fetch(router().generate('ajax_fetch_embed', { url: event.params.url }), { method: 'GET' });
 
             response = await ok(response);
             response = await response.json();
@@ -69,7 +70,7 @@ export default class extends Controller {
             this.loadScripts(response.html);
         } catch (e) {
             console.error('preview failed: ', e);
-            let failedHtml =
+            const failedHtml =
                 `<div class="preview">
                     <a class="retry-failed" href="#"
                         data-action="preview#retry"
@@ -77,7 +78,7 @@ export default class extends Controller {
                         data-preview-ratio-param="${event.params.ratio}">
                             Failed to load. Click here to retry.
                     </a>
-                </div>`
+                </div>`;
             this.containerTarget.innerHTML = failedHtml;
             this.containerTarget.classList.remove('hidden');
         } finally {
@@ -86,14 +87,14 @@ export default class extends Controller {
     }
 
     loadScripts(response) {
-        let tmp = document.createElement("div");
+        const tmp = document.createElement('div');
         tmp.innerHTML = response;
-        let el = tmp.getElementsByTagName('script');
+        const el = tmp.getElementsByTagName('script');
 
         if (el.length) {
-            let script = document.createElement("script");
-            script.setAttribute("src", el[0].getAttribute('src'));
-            script.setAttribute("async", "false");
+            const script = document.createElement('script');
+            script.setAttribute('src', el[0].getAttribute('src'));
+            script.setAttribute('async', 'false');
 
             // let exists = [...document.head.querySelectorAll('script')]
             //     .filter(value => value.getAttribute('src') >= script.getAttribute('src'));
@@ -102,7 +103,7 @@ export default class extends Controller {
             //     return;
             // }
 
-            let head = document.head;
+            const head = document.head;
             head.insertBefore(script, head.firstElementChild);
         }
     }

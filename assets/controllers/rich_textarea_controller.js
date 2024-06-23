@@ -1,4 +1,4 @@
-import {Controller} from '@hotwired/stimulus';
+import { Controller } from '@hotwired/stimulus';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -13,30 +13,26 @@ export default class extends Controller {
     };
 
     handleInput (event) {
-        let hasSelection = this.element.selectionStart != this.element.selectionEnd;
-        let key = event.key;
+        const hasSelection = this.element.selectionStart !== this.element.selectionEnd;
+        const key = event.key;
 
-        // ctrl + enter to submit form
-        if (event.ctrlKey && key === "Enter") {
+        if (event.ctrlKey && 'Enter' === key) {
+            // ctrl + enter to submit form
+
             this.element.form.submit();
-        }
+        } else if (event.ctrlKey && 'b' === key) {
+            // ctrl + b to toggle bold
 
-        // ctrl + b to toggle bold
-        else if (event.ctrlKey && key === "b") {
             this.toggleFormattingEnclosure('**');
-        }
+        } else if (event.ctrlKey && 'i' === key) {
+            // ctrl + i to toggle italic
 
-        // ctrl + i to toggle italic
-        else if (event.ctrlKey && key === "i") {
             this.toggleFormattingEnclosure('_');
-        }
+        } else if (hasSelection && key in this.enclosureKeys) {
+            // toggle/cycle wrapping on selection texts
 
-        // toggle/cycle wrapping on selection texts
-        else if (hasSelection && key in this.enclosureKeys) {
             this.toggleFormattingEnclosure(key, this.enclosureKeys[key] ?? 1);
-        }
-
-        else {
+        } else {
             return;
         }
 
@@ -67,10 +63,9 @@ export default class extends Controller {
 
             this.element.selectionStart = start - finalEnclosure.length;
             this.element.selectionEnd = end - finalEnclosure.length;
-        }
+        } else {
+            // add a new enclosure
 
-        // add a new enclosure
-        else {
             document.execCommand('insertText', false, encl + inner + encl);
 
             this.element.selectionStart = start + encl.length;

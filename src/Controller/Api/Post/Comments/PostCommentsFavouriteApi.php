@@ -78,7 +78,7 @@ class PostCommentsFavouriteApi extends PostsBaseApi
         $manager->toggle($this->getUserOrThrow(), $comment);
 
         return new JsonResponse(
-            $this->serializePostComment($factory->createDto($comment)),
+            $this->serializePostComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfPostComment($comment)),
             headers: $headers
         );
     }

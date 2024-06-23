@@ -37,6 +37,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\HTMLToMarkdown\HtmlConverter;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ActivityPubManager
@@ -60,6 +61,7 @@ class ActivityPubManager
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly MessageBusInterface $bus,
         private readonly LoggerInterface $logger,
+        private readonly RateLimiterFactory $apUpdateActorLimiter,
     ) {
     }
 
@@ -133,7 +135,7 @@ class ActivityPubManager
                 $user = $this->userRepository->findOneBy(['username' => ltrim($actorUrl, '@')]);
                 if ($user instanceof User) {
                     if ($user->apId && (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
-                        $this->bus->dispatch(new UpdateActorMessage($user->apProfileId));
+                        $this->dispatchUpdateActor($user->apProfileId);
                     }
 
                     return $user;
@@ -166,10 +168,7 @@ class ActivityPubManager
                     $user = $this->createUser($actorUrl);
                 } else {
                     if (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime())) {
-                        try {
-                            $this->bus->dispatch(new UpdateActorMessage($user->apProfileId));
-                        } catch (\Exception $e) {
-                        }
+                        $this->dispatchUpdateActor($user->apProfileId);
                     }
                 }
 
@@ -185,10 +184,7 @@ class ActivityPubManager
                     $magazine = $this->createMagazine($actorUrl);
                 } else {
                     if (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 hour') < (new \DateTime())) {
-                        try {
-                            $this->bus->dispatch(new UpdateActorMessage($magazine->apProfileId));
-                        } catch (\Exception $e) {
-                        }
+                        $this->dispatchUpdateActor($magazine->apProfileId);
                     }
                 }
 
@@ -210,6 +206,22 @@ class ActivityPubManager
         }
 
         return null;
+    }
+
+    public function dispatchUpdateActor(string $actorUrl)
+    {
+        $limiter = $this->apUpdateActorLimiter
+            ->create($actorUrl)
+            ->consume(1);
+
+        if ($limiter->isAccepted()) {
+            $this->bus->dispatch(new UpdateActorMessage($actorUrl));
+        } else {
+            $this->logger->debug(
+                'not dispatching updating actor for {actor}: one has been dispatched recently',
+                ['actor' => $actorUrl, 'retry' => $limiter->getRetryAfter()]
+            );
+        }
     }
 
     /**
@@ -291,10 +303,6 @@ class ActivityPubManager
         $this->logger->info('updating user {name}', ['name' => $actorUrl]);
         $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
 
-        if ($user instanceof User && $user->apFetchedAt > (new \DateTime())->modify('-1 hour')) {
-            return $user;
-        }
-
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         if (!$actor || !\is_array($actor)) {
             return null;
@@ -321,6 +329,17 @@ class ActivityPubManager
             $user->apDeletedAt = null;
             $user->apTimeoutAt = null;
             $user->apFetchedAt = new \DateTime();
+
+            if (isset($actor['published'])) {
+                try {
+                    $createdAt = new \DateTimeImmutable($actor['published']);
+                    $now = new \DateTimeImmutable();
+                    if ($createdAt < $now) {
+                        $user->createdAt = $createdAt;
+                    }
+                } catch (\Exception) {
+                }
+            }
 
             // Only update about when summary is set
             if (isset($actor['summary'])) {
@@ -407,7 +426,7 @@ class ActivityPubManager
     {
         $this->magazineManager->create(
             $this->magazineFactory->createDtoFromAp($actorUrl, $this->buildHandle($actorUrl)),
-            $this->userRepository->findAdmin(),
+            null,
             false
         );
 
@@ -425,10 +444,6 @@ class ActivityPubManager
     {
         $this->logger->info('updating magazine "{magName}"', ['magName' => $actorUrl]);
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
-
-        if ($magazine instanceof Magazine && $magazine->apFetchedAt > (new \DateTime())->modify('-1 hour')) {
-            return $magazine;
-        }
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         // Check if actor isn't empty (not set/null/empty array/etc.)
@@ -457,6 +472,17 @@ class ActivityPubManager
                 $magazine->title = $actor['name'];
             } elseif ($actor['preferredUsername']) {
                 $magazine->title = $actor['preferredUsername'];
+            }
+
+            if (isset($actor['published'])) {
+                try {
+                    $createdAt = new \DateTimeImmutable($actor['published']);
+                    $now = new \DateTimeImmutable();
+                    if ($createdAt < $now) {
+                        $magazine->createdAt = $createdAt;
+                    }
+                } catch (\Exception) {
+                }
             }
 
             $magazine->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
@@ -500,9 +526,7 @@ class ActivityPubManager
                         $moderatorsToRemove = [];
                         /** @var Moderator $mod */
                         foreach ($magazine->moderators as $mod) {
-                            if (!$mod->isOwner) {
-                                $moderatorsToRemove[] = $mod->user;
-                            }
+                            $moderatorsToRemove[] = $mod->user;
                         }
                         $indexesNotToRemove = [];
 
@@ -659,12 +683,12 @@ class ActivityPubManager
         return null;
     }
 
-    public function findOrCreateMagazineByToAndCC(array $object): Magazine|null
+    public function findOrCreateMagazineByToCCAndAudience(array $object): Magazine|null
     {
         $potentialGroups = self::getReceivers($object);
         $magazine = $this->magazineRepository->findByApGroupProfileId($potentialGroups);
         if ($magazine and $magazine->apId && (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 Day') < (new \DateTime()))) {
-            $this->bus->dispatch(new UpdateActorMessage($magazine->apProfileId));
+            $this->dispatchUpdateActor($magazine->apPublicUrl);
         }
 
         if (null === $magazine) {
@@ -687,8 +711,14 @@ class ActivityPubManager
     public static function getReceivers(array $object): array
     {
         $res = [];
+        if (isset($object['audience']) and \is_array($object['audience'])) {
+            $res = array_merge($res, $object['audience']);
+        } elseif (isset($object['audience']) and \is_string($object['audience'])) {
+            $res[] = $object['audience'];
+        }
+
         if (isset($object['to']) and \is_array($object['to'])) {
-            $res = $object['to'];
+            $res = array_merge($res, $object['to']);
         } elseif (isset($object['to']) and \is_string($object['to'])) {
             $res[] = $object['to'];
         }
@@ -700,6 +730,12 @@ class ActivityPubManager
         }
 
         if (isset($object['object']) and \is_array($object['object'])) {
+            if (isset($object['object']['audience']) and \is_array($object['object']['audience'])) {
+                $res = array_merge($res, $object['object']['audience']);
+            } elseif (isset($object['object']['audience']) and \is_string($object['object']['audience'])) {
+                $res[] = $object['object']['audience'];
+            }
+
             if (isset($object['object']['to']) and \is_array($object['object']['to'])) {
                 $res = array_merge($res, $object['object']['to']);
             } elseif (isset($object['object']['to']) and \is_string($object['object']['to'])) {

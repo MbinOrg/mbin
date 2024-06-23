@@ -36,7 +36,7 @@ RUN chown -R $USER:$GROUP /usr/local/etc/php-fpm.d
 
 ####################
 
-FROM caddy:2.7-builder-alpine AS builder-caddy
+FROM caddy:2.8.4-builder-alpine AS builder-caddy
 
 # Build Caddy with the Mercure and Vulcain and brotil cache modules
 RUN xcaddy build \

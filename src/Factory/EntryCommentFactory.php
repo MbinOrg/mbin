@@ -8,6 +8,7 @@ use App\DTO\EntryCommentDto;
 use App\DTO\EntryCommentResponseDto;
 use App\Entity\EntryComment;
 use App\Entity\User;
+use App\Repository\TagLinkRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class EntryCommentFactory
@@ -17,6 +18,7 @@ class EntryCommentFactory
         private readonly ImageFactory $imageFactory,
         private readonly UserFactory $userFactory,
         private readonly MagazineFactory $magazineFactory,
+        private readonly TagLinkRepository $tagLinkRepository,
     ) {
     }
 
@@ -31,7 +33,7 @@ class EntryCommentFactory
         );
     }
 
-    public function createResponseDto(EntryCommentDto|EntryComment $comment, int $childCount = 0): EntryCommentResponseDto
+    public function createResponseDto(EntryCommentDto|EntryComment $comment, array $tags, int $childCount = 0): EntryCommentResponseDto
     {
         $dto = $comment instanceof EntryComment ? $this->createDto($comment) : $comment;
 
@@ -52,7 +54,7 @@ class EntryCommentFactory
             $dto->visibility,
             $dto->apId,
             $dto->mentions,
-            $dto->tags,
+            $tags,
             $dto->createdAt,
             $dto->editedAt,
             $dto->lastActive,
@@ -63,7 +65,7 @@ class EntryCommentFactory
     public function createResponseTree(EntryComment $comment, int $depth = -1): EntryCommentResponseDto
     {
         $commentDto = $this->createDto($comment);
-        $toReturn = $this->createResponseDto($commentDto, array_reduce($comment->children->toArray(), EntryCommentResponseDto::class.'::recursiveChildCount', 0));
+        $toReturn = $this->createResponseDto($commentDto, $this->tagLinkRepository->getTagsOfEntryComment($comment), array_reduce($comment->children->toArray(), EntryCommentResponseDto::class.'::recursiveChildCount', 0));
         $toReturn->isFavourited = $commentDto->isFavourited;
         $toReturn->userVote = $commentDto->userVote;
 
@@ -96,7 +98,6 @@ class EntryCommentFactory
         $dto->dv = $comment->countDownVotes();
         $dto->favouriteCount = $comment->favouriteCount;
         $dto->mentions = $comment->mentions;
-        $dto->tags = $comment->tags;
         $dto->createdAt = $comment->createdAt;
         $dto->editedAt = $comment->editedAt;
         $dto->lastActive = $comment->lastActive;

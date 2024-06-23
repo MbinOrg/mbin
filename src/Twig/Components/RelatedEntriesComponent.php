@@ -7,15 +7,12 @@ namespace App\Twig\Components;
 use App\Entity\Entry;
 use App\Repository\EntryRepository;
 use App\Service\MentionManager;
-use Symfony\Component\HttpFoundation\RequestStack;
+use App\Service\SettingsManager;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
-use Symfony\UX\TwigComponent\Attribute\PostMount;
-use Symfony\UX\TwigComponent\ComponentAttributes;
-use Twig\Environment;
 
-#[AsTwigComponent('related_entries', template: 'components/_cached.html.twig')]
+#[AsTwigComponent('related_entries')]
 final class RelatedEntriesComponent
 {
     public const TYPE_TAG = 'tag';
@@ -23,51 +20,45 @@ final class RelatedEntriesComponent
     public const TYPE_RANDOM = 'random';
 
     public int $limit = 4;
-    public ?string $tag = null;
-    public ?string $magazine = null;
     public ?string $type = self::TYPE_RANDOM;
     public ?Entry $entry = null;
     public string $title = 'random_entries';
 
+    /** @var Entry[] */
+    public array $entries = [];
+
     public function __construct(
         private readonly EntryRepository $repository,
         private readonly CacheInterface $cache,
-        private readonly Environment $twig,
-        private readonly RequestStack $requestStack,
+        private readonly SettingsManager $settingsManager,
         private readonly MentionManager $mentionManager
     ) {
     }
 
-    #[PostMount]
-    public function postMount(array $attr): array
+    public function mount(?string $magazine, ?string $tag): void
     {
-        if ($this->tag) {
+        if ($tag) {
             $this->title = 'related_entries';
             $this->type = self::TYPE_TAG;
         }
 
-        if ($this->magazine) {
+        if ($magazine) {
             $this->title = 'related_entries';
             $this->type = self::TYPE_MAGAZINE;
         }
 
-        return $attr;
-    }
-
-    public function getHtml(ComponentAttributes $attributes): string
-    {
         $entryId = $this->entry?->getId();
-        $magazine = str_replace('@', '', $this->magazine ?? '');
+        $magazine = str_replace('@', '', $magazine ?? '');
 
-        return $this->cache->get(
-            "related_entries_{$magazine}_{$this->tag}_{$entryId}_{$this->type}_{$this->requestStack->getCurrentRequest()?->getLocale()}",
-            function (ItemInterface $item) use ($attributes) {
-                $item->expiresAfter(60);
+        $entryIds = $this->cache->get(
+            "related_entries_{$magazine}_{$tag}_{$entryId}_{$this->type}_{$this->settingsManager->getLocale()}",
+            function (ItemInterface $item) use ($magazine, $tag) {
+                $item->expiresAfter(60 * 5); // 5 minutes
 
                 $entries = match ($this->type) {
-                    self::TYPE_TAG => $this->repository->findRelatedByMagazine($this->tag, $this->limit + 20),
+                    self::TYPE_TAG => $this->repository->findRelatedByMagazine($tag, $this->limit + 20),
                     self::TYPE_MAGAZINE => $this->repository->findRelatedByTag(
-                        $this->mentionManager->getUsername($this->magazine),
+                        $this->mentionManager->getUsername($magazine),
                         $this->limit + 20
                     ),
                     default => $this->repository->findLast($this->limit + 150),
@@ -80,15 +71,10 @@ final class RelatedEntriesComponent
                     $entries = \array_slice($entries, 0, $this->limit);
                 }
 
-                return $this->twig->render(
-                    'components/related_entries.html.twig',
-                    [
-                        'attributes' => $attributes,
-                        'entries' => $entries,
-                        'title' => $this->title,
-                    ]
-                );
+                return array_map(fn (Entry $entry) => $entry->getId(), $entries);
             }
         );
+
+        $this->entries = $this->repository->findBy(['id' => $entryIds]);
     }
 }

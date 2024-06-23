@@ -33,7 +33,7 @@ class MagazineModeratorsController
     }
 
     #[ArrayShape([
-        '@context' => 'string',
+        '@context' => 'array',
         'type' => 'string',
         'id' => 'string',
         'totalItems' => 'int',
@@ -50,7 +50,7 @@ class MagazineModeratorsController
         }
 
         return [
-            '@context' => ActivityPubActivityInterface::CONTEXT_URL,
+            '@context' => [ActivityPubActivityInterface::CONTEXT_URL],
             'type' => 'OrderedCollection',
             'id' => $this->urlGenerator->generate('ap_magazine_moderators', ['name' => $magazine->name], UrlGeneratorInterface::ABSOLUTE_URL),
             'totalItems' => \sizeof($items),

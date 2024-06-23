@@ -83,6 +83,16 @@ oauth_github_verify:
   path: /oauth/github/verify
   methods: [ GET ]
 
+oauth_privacyportal_connect:
+  controller: App\Controller\Security\PrivacyPortalController::connect
+  path: /oauth/privacyportal/connect
+  methods: [ GET ]
+
+oauth_privacyportal_verify:
+  controller: App\Controller\Security\PrivacyPortalController::verify
+  path: /oauth/privacyportal/verify
+  methods: [ GET ]
+
 oauth_keycloak_connect:
   controller: App\Controller\Security\KeycloakController::connect
   path: /oauth/keycloak/connect
@@ -93,6 +103,16 @@ oauth_keycloak_verify:
   path: /oauth/keycloak/verify
   methods: [ GET ]
 
+oauth_simplelogin_connect:
+  controller: App\Controller\Security\SimpleLoginController::connect
+  path: /oauth/simplelogin/connect
+  methods: [ GET ]
+
+oauth_simplelogin_verify:
+  controller: App\Controller\Security\SimpleLoginController::verify
+  path: /oauth/simplelogin/verify
+  methods: [ GET ]
+
 oauth_zitadel_connect:
   controller: App\Controller\Security\ZitadelController::connect
   path: /oauth/zitadel/connect
@@ -101,6 +121,16 @@ oauth_zitadel_connect:
 oauth_zitadel_verify:
   controller: App\Controller\Security\ZitadelController::verify
   path: /oauth/zitadel/verify
+  methods: [ GET ]
+
+oauth_authentik_connect:
+  controller: App\Controller\Security\AuthentikController::connect
+  path: /oauth/authentik/connect
+  methods: [ GET ]
+
+oauth_authentik_verify:
+  controller: App\Controller\Security\AuthentikController::verify
+  path: /oauth/authentik/verify
   methods: [ GET ]
 
 oauth_create_client:

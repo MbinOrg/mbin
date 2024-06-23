@@ -16,7 +16,6 @@ class MentionManager
     public const ALL = 1;
     public const LOCAL = 2;
     public const REMOTE = 3;
-    private string $val;
 
     public function __construct(
         private readonly UserRepository $userRepository,
@@ -81,16 +80,14 @@ class MentionManager
 
     public function extract(?string $val, $type = self::ALL): ?array
     {
-        if (null === $val) {
+        if (!$val) {
             return null;
         }
 
-        $this->val = $val;
-
         $result = match ($type) {
-            self::ALL => array_merge($this->byApPrefix(), $this->byPrefix()),
-            self::LOCAL => $this->byPrefix(),
-            self::REMOTE => $this->byApPrefix()
+            self::ALL => array_merge($this->byApPrefix($val), $this->byPrefix($val)),
+            self::LOCAL => $this->byPrefix($val),
+            self::REMOTE => $this->byApPrefix($val)
         };
 
         $result = array_map(fn ($val) => trim($val), $result);
@@ -98,20 +95,20 @@ class MentionManager
         return \count($result) ? array_unique($result) : null;
     }
 
-    private function byApPrefix(): array
+    private function byApPrefix(string $value): array
     {
         preg_match_all(
-            '/(?<!\/)\B@(\w{1,30})(@)(([\pL\pN\pS\pM\-\_]++\.)+[\pL\pN\pM]++|[a-z0-9\-\_]++)/',
-            $this->val,
+            '/(?<!\/)\B@(\w{1,30})(@)(([\pL\pN\pS\pM\-\_]++\.)+[\pL\pN\pM]++|[a-z0-9\-\_]++)/u',
+            $value,
             $matches
         );
 
         return \count($matches[0]) ? array_unique(array_values($matches[0])) : [];
     }
 
-    private function byPrefix(): array
+    private function byPrefix(string $value): array
     {
-        preg_match_all('/(?<!\/)\B@([a-zA-Z0-9_-]{1,30}@?)/', $this->val, $matches);
+        preg_match_all('/(?<!\/)\B@([a-zA-Z0-9_-]{1,30}@?)/u', $value, $matches);
         $results = array_filter($matches[0], fn ($val) => !str_ends_with($val, '@'));
 
         return \count($results) ? array_unique(array_values($results)) : [];

@@ -18,12 +18,12 @@ class PostsBaseApi extends BaseApi
     /**
      * Serialize a single post to JSON.
      */
-    protected function serializePost(PostDto $dto): PostResponseDto
+    protected function serializePost(PostDto $dto, array $tags): PostResponseDto
     {
         if (null === $dto) {
             return [];
         }
-        $response = $this->postFactory->createResponseDto($dto);
+        $response = $this->postFactory->createResponseDto($dto, $tags);
 
         if ($this->isGranted('ROLE_OAUTH2_POST:VOTE')) {
             $response->isFavourited = $dto instanceof PostDto ? $dto->isFavourited : $dto->isFavored($this->getUserOrThrow());
@@ -74,9 +74,9 @@ class PostsBaseApi extends BaseApi
     /**
      * Serialize a single comment to JSON.
      */
-    protected function serializePostComment(PostCommentDto $comment): PostCommentResponseDto
+    protected function serializePostComment(PostCommentDto $comment, array $tags): PostCommentResponseDto
     {
-        $response = $this->postCommentFactory->createResponseDto($comment);
+        $response = $this->postCommentFactory->createResponseDto($comment, $tags);
 
         if ($this->isGranted('ROLE_OAUTH2_POST_COMMENT:VOTE')) {
             $response->isFavourited = $comment instanceof PostCommentDto ? $comment->isFavourited : $comment->isFavored($this->getUserOrThrow());

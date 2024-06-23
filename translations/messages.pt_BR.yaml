@@ -1,0 +1,48 @@
+type.link: Link
+type.article: Fio
+type.photo: Foto
+type.video: Vídeo
+type.smart_contract: Contrato inteligente
+type.magazine: Magazine
+thread: Fio
+threads: Fios
+microblog: Microblog
+people: Pessoas
+events: Eventos
+magazine: Magazine
+search: Buscar
+add: Adicionar
+commented: Comentado
+change_view: Alterar visualização
+filter_by_time: Filtrar por tempo
+filter_by_type: Filtrar por tipo
+filter_by_subscription: Filtrar por inscrição
+magazines: Magazines
+select_channel: Selecionar um canal
+sort_by: Ordenar por
+login: Fazer login
+oldest: Mais velho
+top: Topo
+hot: Popular
+active: Ativo
+newest: Mais novo
+filter_by_federation: Filtrar por status de federação
+marked_for_deletion: Marcado para exclusão
+marked_for_deletion_at: Marcado para exclusão em %date%
+favourites: Favoritos
+favourite: Favorito
+more: Mais
+avatar: Avatar
+added: Adicionou
+no_comments: Sem comentários
+created_at: Criado
+owner: Dono
+subscribers: Inscritos
+online: Online
+comments: Comentários
+posts: Postagens
+replies: Respostas
+moderators: Moderadores
+mod_log: Registro de moderação
+add_comment: Adicionar comentário
+add_post: Adicionar postagem

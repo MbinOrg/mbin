@@ -26,6 +26,13 @@ knpu_oauth2_client:
       client_secret: '%oauth_github_secret%'
       redirect_route: oauth_github_verify
       redirect_params: { }
+    privacyportal:
+      type: generic
+      provider_class: League\OAuth2\Client\Provider\PrivacyPortal
+      client_id: '%oauth_privacyportal_id%'
+      client_secret: '%oauth_privacyportal_secret%'
+      redirect_route: oauth_privacyportal_verify
+      redirect_params: { }
     keycloak:
       type: keycloak
       client_id: '%oauth_keycloak_id%'
@@ -35,6 +42,13 @@ knpu_oauth2_client:
       version: '%oauth_keycloak_version%'
       redirect_route: oauth_keycloak_verify
       redirect_params: { }
+    simplelogin:
+      type: generic
+      client_id: '%oauth_simplelogin_id%'
+      client_secret: '%oauth_simplelogin_secret%'
+      redirect_route: oauth_simplelogin_verify
+      redirect_params: { }
+      provider_class: 'App\Provider\SimpleLogin'
     zitadel:
       type: generic
       client_id: '%oauth_zitadel_id%'
@@ -44,3 +58,12 @@ knpu_oauth2_client:
       redirect_route: oauth_zitadel_verify
       redirect_params: { }
       provider_class: 'App\Provider\Zitadel'
+    authentik:
+      type: generic
+      client_id: '%oauth_authentik_id%'
+      client_secret: '%oauth_authentik_secret%'
+      provider_options:
+          base_url: '%oauth_authentik_base_url%'
+      redirect_route: oauth_authentik_verify
+      redirect_params: { }
+      provider_class: 'App\Provider\Authentik'

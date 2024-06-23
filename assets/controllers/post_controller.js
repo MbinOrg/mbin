@@ -1,19 +1,19 @@
-import {Controller} from '@hotwired/stimulus';
-import {fetch, ok} from "../utils/http";
-import router from "../utils/routing";
-import getIntIdFromElement from "../utils/kbin";
+import { fetch, ok } from '../utils/http';
+import { Controller } from '@hotwired/stimulus';
+import getIntIdFromElement from '../utils/kbin';
+import router from '../utils/routing';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
     static targets = ['loader', 'expand', 'collapse'];
     static values = {
-        loading: Boolean
+        loading: Boolean,
     };
 
     async expandComments(event) {
         event.preventDefault();
 
-        if (this.loadingValue === true) {
+        if (true === this.loadingValue) {
             return;
         }
 
@@ -24,9 +24,9 @@ export default class extends Controller {
         try {
             this.loadingValue = true;
 
-            const url = router().generate('ajax_fetch_post_comments', {'id': getIntIdFromElement(this.element)});
+            const url = router().generate('ajax_fetch_post_comments', { 'id': getIntIdFromElement(this.element) });
 
-            let response = await fetch(url, {method: 'GET'});
+            let response = await fetch(url, { method: 'GET' });
 
             response = await ok(response);
             response = await response.json();
@@ -96,7 +96,7 @@ export default class extends Controller {
         try {
             this.loadingValue = true;
 
-            let response = await fetch(event.target.href, {method: 'GET'});
+            let response = await fetch(event.target.href, { method: 'GET' });
 
             response = await ok(response);
             response = await response.json();
@@ -114,5 +114,4 @@ export default class extends Controller {
             subjectController.loadingValue = val;
         }
     }
-
 }

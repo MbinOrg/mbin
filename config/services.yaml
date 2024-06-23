@@ -47,15 +47,25 @@ parameters:
     oauth_github_id: "%env(default::OAUTH_GITHUB_ID)%"
     oauth_github_secret: "%env(OAUTH_GITHUB_SECRET)%"
 
+    oauth_privacyportal_id: "%env(default::OAUTH_PRIVACYPORTAL_ID)%"
+    oauth_privacyportal_secret: "%env(OAUTH_PRIVACYPORTAL_SECRET)%"
+
     oauth_keycloak_id: "%env(default::OAUTH_KEYCLOAK_ID)%"
     oauth_keycloak_secret: "%env(OAUTH_KEYCLOAK_SECRET)%"
     oauth_keycloak_uri: "%env(OAUTH_KEYCLOAK_URI)%"
     oauth_keycloak_realm: "%env(OAUTH_KEYCLOAK_REALM)%"
     oauth_keycloak_version: "%env(OAUTH_KEYCLOAK_VERSION)%"
 
+    oauth_simplelogin_id: "%env(default::OAUTH_SIMPLELOGIN_ID)%"
+    oauth_simplelogin_secret: "%env(OAUTH_SIMPLELOGIN_SECRET)%"
+
     oauth_zitadel_id: "%env(default::OAUTH_ZITADEL_ID)%"
     oauth_zitadel_secret: "%env(OAUTH_ZITADEL_SECRET)%"
     oauth_zitadel_base_url: "%env(OAUTH_ZITADEL_BASE_URL)%"
+
+    oauth_authentik_id: "%env(default::OAUTH_AUTHENTIK_ID)%"
+    oauth_authentik_secret: "%env(OAUTH_AUTHENTIK_SECRET)%"
+    oauth_authentik_base_url: "%env(OAUTH_AUTHENTIK_BASE_URL)%"
 
 
     router.request_context.host: "%env(KBIN_DOMAIN)%"
@@ -217,3 +227,6 @@ services:
     debril.rss_atom.provider:
         class: App\Feed\Provider
         arguments: ['@App\Service\FeedManager']
+
+    messenger.failure.add_error_details_stamp_listener:
+        class: App\Utils\AddErrorDetailsStampListener

@@ -17,10 +17,16 @@ final class LoginSocialsComponent
         private readonly ?string $oauthFacebookId,
         #[Autowire('%oauth_github_id%')]
         private readonly ?string $oauthGithubId,
+        #[Autowire('%oauth_privacyportal_id%')]
+        private readonly ?string $oauthPrivacyPortalId,
         #[Autowire('%oauth_keycloak_id%')]
         private readonly ?string $oauthKeycloakId,
+        #[Autowire('%oauth_simplelogin_id%')]
+        private readonly ?string $oauthSimpleLoginId,
         #[Autowire('%oauth_zitadel_id%')]
         private readonly ?string $oauthZitadelId,
+        #[Autowire('%oauth_authentik_id%')]
+        private readonly ?string $oauthAuthentikId,
         #[Autowire('%oauth_azure_id%')]
         private readonly ?string $oauthAzureId,
     ) {
@@ -41,14 +47,29 @@ final class LoginSocialsComponent
         return !empty($this->oauthGithubId);
     }
 
+    public function privacyPortalEnabled(): bool
+    {
+        return !empty($this->oauthPrivacyPortalId);
+    }
+
     public function keycloakEnabled(): bool
     {
         return !empty($this->oauthKeycloakId);
     }
 
+    public function simpleloginEnabled(): bool
+    {
+        return !empty($this->oauthSimpleLoginId);
+    }
+
     public function zitadelEnabled(): bool
     {
         return !empty($this->oauthZitadelId);
+    }
+
+    public function authentikEnabled(): bool
+    {
+        return !empty($this->oauthAuthentikId);
     }
 
     public function azureEnabled(): bool

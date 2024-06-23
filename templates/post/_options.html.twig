@@ -11,31 +11,31 @@
             </button>
             <ul class="dropdown__menu">
                 <li>
-                    <a href="{{ options_url('sortBy', 'top', null, {'p': null}) }}"
+                    <a href="{{ front_options_url('sortBy', 'top', null, {'p': null}) }}"
                     class="{{ html_classes({'active': criteria.getOption('sort') == 'top'}) }}">
                         {{ 'top'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('sortBy', 'hot', null, {'p': null}) }}"
+                    <a href="{{ front_options_url('sortBy', 'hot', null, {'p': null}) }}"
                     class="{{ html_classes({'active': criteria.getOption('sort') == 'hot'}) }}">
                         {{ 'hot'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('sortBy', 'newest', null, {'p': null}) }}"
+                    <a href="{{ front_options_url('sortBy', 'newest', null, {'p': null}) }}"
                     class="{{ html_classes({'active': criteria.getOption('sort') == 'newest'}) }}">
                         {{ 'newest'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('sortBy', 'active', null, {'p': null}) }}"
+                    <a href="{{ front_options_url('sortBy', 'active', null, {'p': null}) }}"
                     class="{{ html_classes({'active': criteria.getOption('sort') == 'active'}) }}">
                         {{ 'active'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('sortBy', 'commented', null, {'p': null}) }}"
+                    <a href="{{ front_options_url('sortBy', 'commented', null, {'p': null}) }}"
                     class="{{ html_classes({'active': criteria.getOption('sort') == 'commented'}) }}">
                         {{ 'commented'|trans }}
                     </a>
@@ -52,48 +52,48 @@
             </button>
             <ul class="dropdown__menu">
                 <li>
-                    <a href="{{ options_url('time', '∞', null, {'p': null}) }}"
+                    <a href="{{ front_options_url('time', '∞', null, {'p': null}) }}"
                        class="{{ html_classes({'active': criteria.getOption('time') == 'all'}) }}">
                         {{ 'all_time'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('time', '3h', null, {'p': null}) }}"
+                    <a href="{{ front_options_url('time', '3h', null, {'p': null}) }}"
                        class="{{ html_classes({'active': criteria.getOption('time') == '3h' }) }}">
                         {{ '3h'|trans }}
                     </a></li>
                 <li>
-                    <a href="{{ options_url('time', '6h', null, {'p': null}) }}"
+                    <a href="{{ front_options_url('time', '6h', null, {'p': null}) }}"
                        class="{{ html_classes({'active': criteria.getOption('time') == '6h' }) }}">
                         {{ '6h'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('time', '12h', null, {'p': null}) }}"
+                    <a href="{{ front_options_url('time', '12h', null, {'p': null}) }}"
                        class="{{ html_classes({'active': criteria.getOption('time') == '12h' }) }}">
                         {{ '12h'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('time', '1d', null, {'p': null}) }}"
+                    <a href="{{ front_options_url('time', '1d', null, {'p': null}) }}"
                        class="{{ html_classes({'active': criteria.getOption('time') == '1d' }) }}">
                         {{ '1d'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('time', '1w', null, {'p': null}) }}"
+                    <a href="{{ front_options_url('time', '1w', null, {'p': null}) }}"
                        class="{{ html_classes({'active': criteria.getOption('time') == '1w' }) }}">
                         {{ '1w'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('time', '1m', null, {'p': null}) }}"
+                    <a href="{{ front_options_url('time', '1m', null, {'p': null}) }}"
                        class="{{ html_classes({'active': criteria.getOption('time') == '1m' }) }}">
                         {{ '1m'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('time', '1y', null, {'p': null}) }}"
+                    <a href="{{ front_options_url('time', '1y', null, {'p': null}) }}"
                        class="{{ html_classes({'active': criteria.getOption('time') == '1y' }) }}">
                         {{ '1y'|trans }}
                     </a>
@@ -126,27 +126,27 @@
                 </button>
                 <ul class="dropdown__menu">
                     <li>
-                        <a href="{{ options_url('type', 'all', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('type') == 'all' }) }}">
+                        <a href="{{ front_options_url('type', null, null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('type') == 'all' }) }}">
                             <i class="fa-solid fa-file" aria-hidden="true"></i> &nbsp; {{ 'all'|trans }}
                         </a>
                     </li>
                     <li>
-                        <a href="{{ options_url('type', 'links', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('type') == 'links' }) }}">
+                        <a href="{{ front_options_url('type', 'links', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('type') == 'links' }) }}">
                             <i class="fa-regular fa-file-code" aria-hidden="true"></i> &nbsp; {{ 'links'|trans }}
                         </a>
                     </li>
                     <li>
-                        <a href="{{ options_url('type', 'articles', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('type') == 'threads' }) }}">
+                        <a href="{{ front_options_url('type', 'articles', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('type') == 'threads' }) }}">
                             <i class="fa-regular fa-file-lines" aria-hidden="true"></i> &nbsp; {{ 'threads'|trans }}
                         </a>
                     </li>
                     <li>
-                        <a href="{{ options_url('type', 'photos', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('type') == 'photos' }) }}">
+                        <a href="{{ front_options_url('type', 'photos', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('type') == 'photos' }) }}">
                             <i class="fa-regular fa-file-image" aria-hidden="true"></i> &nbsp; {{ 'photos'|trans }}
                         </a>
                     </li>
                     <li>
-                        <a href="{{ options_url('type', 'videos', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('type') == 'videos'}) }}">
+                        <a href="{{ front_options_url('type', 'videos', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('type') == 'videos'}) }}">
                             <i class="fa-regular fa-file-video" aria-hidden="true"></i> &nbsp; {{ 'videos'|trans }}
                         </a>
                     </li>
@@ -176,24 +176,24 @@
                 </button>
                 <ul class="dropdown__menu">
                     <li>
-                        <a href="{{ options_url('subscription', 'all', null, {'p': null}) }}" class="{{ html_classes({'active': not criteria.favourite and not criteria.moderated and not criteria.subscribed}) }}">
+                        <a href="{{ front_options_url('subscription', 'all', null, {'p': null}) }}" class="{{ html_classes({'active': not criteria.favourite and not criteria.moderated and not criteria.subscribed}) }}">
                             <i class="fa-solid fa-earth-americas" aria-hidden="true"></i> &nbsp; {{ 'all'|trans }}
                         </a>
                     </li>
                     {% if not is_route_name_contains('_magazine') %}
                         <li>
-                            <a href="{{ options_url('subscription', 'sub', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.subscribed }) }}">
+                            <a href="{{ front_options_url('subscription', 'sub', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.subscribed }) }}">
                                 <i class="fa-solid fa-folder-plus" aria-hidden="true"></i> &nbsp; {{ 'subscribed'|trans }}
                             </a>
                         </li>
                         <li>
-                            <a href="{{ options_url('subscription', 'mod', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.moderated }) }}">
+                            <a href="{{ front_options_url('subscription', 'mod', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.moderated }) }}">
                                 <i class="fa-solid fa-shield-halved" aria-hidden="true"></i> &nbsp;{{ 'moderated'|trans }}
                             </a>
                         </li>
                     {% endif %}
                     <li>
-                        <a href="{{ options_url('subscription', 'fav', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.favourite }) }}">
+                        <a href="{{ front_options_url('subscription', 'fav', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.favourite }) }}">
                             <i class="fa-solid fa-heart" aria-hidden="true"></i> &nbsp; {{ 'favourites'|trans }}
                         </a>
                     </li>
@@ -221,18 +221,18 @@
             </button>
             <ul class="dropdown__menu">
                 <li>
-                    <a href="{{ options_url('federation', 'all', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('federation') == 'all' }) }}">
+                    <a href="{{ front_options_url('federation', 'all', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('federation') == 'all' }) }}">
                         <i class="fa-solid fa-circle-nodes" aria-hidden="true"></i> &nbsp; {{ 'all'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('federation', 'local', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('federation') == 'local' }) }}">
+                    <a href="{{ front_options_url('federation', 'local', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('federation') == 'local' }) }}">
                         <i class="fa-solid fa-house-chimney" aria-hidden="true"></i> &nbsp; {{ 'local'|trans }}
                     </a>
                 </li>
                 {#
                 <li>
-                    <a href="{{ options_url('federation', 'federated', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('federation') == 'federated' }) }}">
+                    <a href="{{ front_options_url('federation', 'federated', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('federation') == 'federated' }) }}">
                         <i class="fa-solid fa-network-wired" aria-hidden="true"></i> &nbsp; {{ 'federated'|trans }}
                     </a>
                 </li>

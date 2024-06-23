@@ -82,7 +82,7 @@ class PostsRetrieveApi extends PostsBaseApi
         $dto = $factory->createDto($post);
 
         return new JsonResponse(
-            $this->serializePost($dto),
+            $this->serializePost($dto, $this->tagLinkRepository->getTagsOfPost($post)),
             headers: $headers
         );
     }
@@ -192,7 +192,7 @@ class PostsRetrieveApi extends PostsBaseApi
             try {
                 \assert($value instanceof Post);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializePost($factory->createDto($value)));
+                array_push($dtos, $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfPost($value)));
             } catch (\Exception $e) {
                 continue;
             }
@@ -312,7 +312,7 @@ class PostsRetrieveApi extends PostsBaseApi
             try {
                 \assert($value instanceof Post);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializePost($factory->createDto($value)));
+                array_push($dtos, $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfPost($value)));
             } catch (\Exception $e) {
                 continue;
             }
@@ -418,7 +418,7 @@ class PostsRetrieveApi extends PostsBaseApi
             try {
                 \assert($value instanceof Post);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializePost($factory->createDto($value)));
+                array_push($dtos, $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfPost($value)));
             } catch (\Exception $e) {
                 continue;
             }
@@ -521,7 +521,7 @@ class PostsRetrieveApi extends PostsBaseApi
             try {
                 \assert($value instanceof Post);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializePost($factory->createDto($value)));
+                array_push($dtos, $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfPost($value)));
             } catch (\Exception $e) {
                 continue;
             }
@@ -654,7 +654,7 @@ class PostsRetrieveApi extends PostsBaseApi
             try {
                 \assert($value instanceof Post);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializePost($factory->createDto($value)));
+                array_push($dtos, $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfPost($value)));
             } catch (\Exception $e) {
                 continue;
             }

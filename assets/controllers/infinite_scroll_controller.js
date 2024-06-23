@@ -1,21 +1,21 @@
-import {Controller} from '@hotwired/stimulus';
-import {fetch, ok} from "../utils/http";
-import {useIntersection} from 'stimulus-use'
+import { fetch, ok } from '../utils/http';
+import { Controller } from '@hotwired/stimulus';
+import { useIntersection } from 'stimulus-use';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
     static targets = ['loader', 'pagination'];
     static values = {
-        loading: Boolean
+        loading: Boolean,
     };
 
     connect() {
         window.infiniteScrollUrls = [];
-        useIntersection(this)
+        useIntersection(this);
     }
 
-    async appear(event) {
-        if (this.loadingValue === true) {
+    async appear() {
+        if (true === this.loadingValue) {
             return;
         }
 
@@ -37,12 +37,11 @@ export default class extends Controller {
         } catch (e) {
             this.loadingValue = false;
             this.showPagination();
-        } finally {
         }
     }
 
     async handleEntries(url) {
-        let response = await fetch(url, {method: 'GET'});
+        let response = await fetch(url, { method: 'GET' });
 
         response = await ok(response);
 
@@ -56,7 +55,7 @@ export default class extends Controller {
         const div = document.createElement('div');
         div.innerHTML = response.html;
 
-        const elements = div.querySelectorAll(`[data-controller='subject-list'] > *`);
+        const elements = div.querySelectorAll('[data-controller="subject-list"] > *');
         for (let i = 0; i < elements.length; i++) {
             const element = elements[i];
             if (element.id && null === document.getElementById(element.id)) {
@@ -68,9 +67,9 @@ export default class extends Controller {
             }
         }
 
-        const scroll = div.querySelector(`[data-controller='infinite-scroll']`);
+        const scroll = div.querySelector('[data-controller="infinite-scroll"]');
         if (scroll) {
-            this.element.after(div.querySelector(`[data-controller='infinite-scroll']`));
+            this.element.after(div.querySelector('[data-controller="infinite-scroll"]'));
         }
 
         this.element.remove();
@@ -84,7 +83,7 @@ export default class extends Controller {
     }
 
     loadingValueChanged(val) {
-        this.loaderTarget.style.display = val === true ? 'block' : 'none';
+        this.loaderTarget.style.display = true === val ? 'block' : 'none';
     }
 
     showPagination() {
