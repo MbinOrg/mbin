@@ -313,6 +313,7 @@ Following languages are currently supported/translated:
 - Dutch
 - English
 - Esperanto
+- Filipino
 - French
 - German
 - Greek
