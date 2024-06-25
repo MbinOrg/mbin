@@ -10,6 +10,7 @@ use App\Entity\Vote;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Column;
 
 trait VotableTrait
 {
@@ -19,19 +20,28 @@ trait VotableTrait
     #[ORM\Column(type: 'integer')]
     private int $downVotes = 0;
 
+    #[Column(type: 'integer', nullable: true)]
+    public ?int $apLikeCount = null;
+
+    #[Column(type: 'integer', nullable: true)]
+    public ?int $apDislikeCount = null;
+
+    #[Column(type: 'integer', nullable: true)]
+    public ?int $apShareCount = null;
+
     public function countUpVotes(): int
     {
-        return $this->upVotes;
+        return $this->apShareCount ?? $this->upVotes;
     }
 
     public function countDownVotes(): int
     {
-        return $this->downVotes;
+        return $this->apDislikeCount ?? $this->downVotes;
     }
 
     public function countVotes(): int
     {
-        return $this->downVotes + $this->upVotes;
+        return $this->countDownVotes() + $this->countUpVotes();
     }
 
     public function getUserChoice(User $user): int

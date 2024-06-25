@@ -34,12 +34,6 @@ class FavouriteManager
     {
         if (!($favourite = $this->repository->findBySubject($user, $subject))) {
             if (self::TYPE_UNLIKE === $type) {
-                if ($subject instanceof Entry || $subject instanceof EntryComment || $subject instanceof Post || $subject instanceof PostComment) {
-                    if (null !== $subject->apLikeCount) {
-                        --$subject->apLikeCount;
-                    }
-                }
-
                 return null;
             }
 

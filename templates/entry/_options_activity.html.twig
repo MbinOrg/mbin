@@ -12,7 +12,7 @@
         <li>
             <a href="{{ entry_favourites_url(entry) }}"
                class="{{ html_classes({'active': is_route_name('entry_fav')}) }}">
-                {{ 'favourites'|trans }} ({{ entry.favouriteCount }})
+                {{ 'favourites'|trans }} ({{ entry.apLikeCount ?? entry.favouriteCount }})
             </a>
         </li>
         <li>
