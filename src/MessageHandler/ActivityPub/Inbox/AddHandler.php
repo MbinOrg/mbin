@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\MessageHandler\ActivityPub\Inbox;
 
-use _PHPStan_5473b6701\Symfony\Component\Console\Exception\LogicException;
 use App\DTO\ModeratorDto;
 use App\Entity\Entry;
 use App\Entity\Magazine;
@@ -90,7 +89,7 @@ class AddHandler
 
     private function handlePinnedAdd(Magazine $targetMag, User $actor, mixed $object): void
     {
-        if (!$targetMag->userIsModerator($actor) and !$targetMag->hasSameHostAsUser($actor)) {
+        if (!$targetMag->userIsModerator($actor) && !$targetMag->hasSameHostAsUser($actor)) {
             throw new \LogicException("the user '$actor->username' ({$actor->getId()}) is not a moderator of $targetMag->name ({$targetMag->getId()}) and is not from the same instance. They can therefore not add pinned entries");
         }
 
@@ -100,7 +99,7 @@ class AddHandler
         } elseif (\is_array($object)) {
             $apId = $object['id'];
         } else {
-            throw new LogicException('the added object is neither a string or an array');
+            throw new \LogicException('the added object is neither a string or an array');
         }
 
         if ($this->settingsManager->isLocalUrl($apId)) {
