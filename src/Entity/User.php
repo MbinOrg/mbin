@@ -42,6 +42,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[UniqueConstraint(name: 'user_username_idx', columns: ['username'])]
 #[UniqueConstraint(name: 'user_ap_id_idx', columns: ['ap_id'])]
 #[UniqueConstraint(name: 'user_ap_profile_id_idx', columns: ['ap_profile_id'])]
+#[UniqueConstraint(name: 'user_ap_public_url_idx', columns: ['ap_public_url'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, VisibilityInterface, TwoFactorInterface, BackupCodeInterface, EquatableInterface, ActivityPubActorInterface, ApiResourceInterface
 {
     use ActivityPubActorTrait;
