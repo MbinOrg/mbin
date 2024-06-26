@@ -50,7 +50,7 @@ class AddRemoveFactory
         $url = null !== $added->magazine->apId ? $added->magazine->apFeaturedUrl : $this->urlGenerator->generate(
             'ap_magazine_pinned', ['name' => $added->magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
         );
-        $entryUrl = null !== $added->apId ?? $this->urlGenerator->generate(
+        $entryUrl = $added->apId ?? $this->urlGenerator->generate(
             'ap_entry', ['entry_id' => $added->getId(), 'magazine_name' => $added->magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
         );
 
@@ -89,19 +89,19 @@ class AddRemoveFactory
             'id' => $this->urlGenerator->generate(
                 'ap_object', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL
             ),
-            'actor' => $actor->apId ?? $this->urlGenerator->generate(
+            'actor' => null !== $actor->apId ? $actor->apPublicUrl : $this->urlGenerator->generate(
                 'ap_user', ['username' => $actor->username], UrlGeneratorInterface::ABSOLUTE_URL
             ),
             'to' => [ActivityPubActivityInterface::PUBLIC_URL],
             'object' => $targetObjectUrl,
             'cc' => [
-                $magazine->apId ?? $this->urlGenerator->generate(
+                null !== $magazine->apId ? $magazine->apPublicUrl : $this->urlGenerator->generate(
                     'ap_magazine', ['name' => $magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
                 ),
             ],
             'type' => $type,
             'target' => $collectionUrl,
-            'audience' => $magazine->apId ?? $this->urlGenerator->generate(
+            'audience' => null !== $magazine->apId ? $magazine->apPublicUrl : $this->urlGenerator->generate(
                 'ap_magazine', ['name' => $magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
             ),
         ];
