@@ -113,6 +113,9 @@ class EntryManager implements ContentManagerInterface
             $this->badgeManager->assign($entry, $dto->badges);
         }
 
+        $entry->updateScore();
+        $entry->updateRanking();
+
         $this->entityManager->persist($entry);
         $this->entityManager->flush();
 
@@ -183,6 +186,8 @@ class EntryManager implements ContentManagerInterface
         $entry->apLikeCount = $dto->apLikeCount;
         $entry->apDislikeCount = $dto->apDislikeCount;
         $entry->apShareCount = $dto->apShareCount;
+        $entry->updateScore();
+        $entry->updateRanking();
 
         $this->entityManager->flush();
 

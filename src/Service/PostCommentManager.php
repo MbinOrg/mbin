@@ -94,6 +94,8 @@ class PostCommentManager implements ContentManagerInterface
         }
 
         $comment->post->addComment($comment);
+        $comment->updateScore();
+        $comment->updateRanking();
 
         $this->entityManager->persist($comment);
         $this->entityManager->flush();
@@ -132,6 +134,8 @@ class PostCommentManager implements ContentManagerInterface
         $comment->apLikeCount = $dto->apLikeCount;
         $comment->apDislikeCount = $dto->apDislikeCount;
         $comment->apShareCount = $dto->apShareCount;
+        $comment->updateScore();
+        $comment->updateRanking();
 
         $this->entityManager->flush();
 

@@ -102,6 +102,9 @@ class PostManager implements ContentManagerInterface
             throw new \Exception('Post body and image cannot be empty');
         }
 
+        $post->updateScore();
+        $post->updateRanking();
+
         $this->entityManager->persist($post);
         $this->entityManager->flush();
 
@@ -135,6 +138,8 @@ class PostManager implements ContentManagerInterface
         $post->apLikeCount = $dto->apLikeCount;
         $post->apDislikeCount = $dto->apDislikeCount;
         $post->apShareCount = $dto->apShareCount;
+        $post->updateScore();
+        $post->updateRanking();
 
         $this->entityManager->flush();
 
