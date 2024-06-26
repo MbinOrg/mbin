@@ -42,3 +42,43 @@ created_at: Ginawa
 comments: Mga Puna
 add_comment: Magdagdag ng puna
 enter_your_comment: Ipasok ang iyong puna
+login: Mag-log in
+active: Aktibo
+no_comments: Walang mga puna
+moderators: Mga tagatimpi
+mod_log: Talaan ng pagtitimpi
+add_post: Magdagdag ng post
+activity: Aktibidad
+cover: Pangtakip
+empty: Walang laman
+follow: Sundan
+unfollow: Huwag sundan
+reply: Tumugon
+register: Mag-rehistro
+to: sa
+up_vote: Palakasin
+down_vote: Pahinain
+copy_url: Kopyahin ang URL sa Mbin
+copy_url_to_fediverse: Kopyahin ang orihinal na URL
+delete: Burahin
+about: Tungkol dito
+off: Nakapatay
+reject: Tanggihan
+done: Tapos na
+change: Baguhin
+preview: Paunang tingin
+content: Nilalaman
+week: Linggo
+weeks: (na) linggo
+month: Buwan
+months: (na) buwan
+year: Taon
+send: Ipadala
+delete_account: Tanggalin ang account
+purge_account: Purgahin ang account
+return: Bumalik
+followers_count: '{0}Mga tagasunod|{1}Tagasunod|]1,Inf[Mga tagasunod'
+marked_for_deletion: Naka-marka para sa pagbura
+marked_for_deletion_at: Naka-marka para sa pagbura sa %date%
+enter_your_post: Ipasok ang iyong post
+comments_count: '{0}Mga puna|{1}Puna|]1,Inf[ Mga puna'
