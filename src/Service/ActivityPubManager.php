@@ -157,38 +157,40 @@ class ActivityPubManager
             return $this->userRepository->findOneBy(['username' => $name]);
         }
 
+        $user = $this->userRepository->findOneBy(['apPublicUrl' => $actorUrl]);
+        if ($user instanceof User) {
+            $this->logger->debug('found remote user for url "{url}" in db', ['url' => $actorUrl]);
+            if ($user->apId && (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
+                $this->dispatchUpdateActor($user->apProfileId);
+            }
+
+            return $user;
+        }
+        $magazine = $this->magazineRepository->findOneBy(['apPublicUrl' => $actorUrl]);
+        if ($magazine instanceof Magazine) {
+            $this->logger->debug('found remote user for url "{url}" in db', ['url' => $actorUrl]);
+            if (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 hour') < (new \DateTime())) {
+                $this->dispatchUpdateActor($magazine->apProfileId);
+            }
+
+            return $magazine;
+        }
+
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         // Check if actor isn't empty (not set/null/empty array/etc.) and check if actor type is set
         if (!empty($actor) && isset($actor['type'])) {
             // User (we don't make a distinction between bots with type Service as Lemmy does)
             if (\in_array($actor['type'], User::USER_TYPES)) {
-                $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
                 $this->logger->debug('found remote user at "{url}"', ['url' => $actorUrl]);
-                if (!$user) {
-                    $user = $this->createUser($actorUrl);
-                } else {
-                    if (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime())) {
-                        $this->dispatchUpdateActor($user->apProfileId);
-                    }
-                }
 
-                return $user;
+                return $this->createUser($actorUrl);
             }
 
             // Magazine (Group)
             if ('Group' === $actor['type']) {
-                // User
-                $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
-                $this->logger->debug('found magazine at "{url}"', ['url' => $actorUrl]);
-                if (!$magazine) {
-                    $magazine = $this->createMagazine($actorUrl);
-                } else {
-                    if (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 hour') < (new \DateTime())) {
-                        $this->dispatchUpdateActor($magazine->apProfileId);
-                    }
-                }
+                $this->logger->debug('found remote magazine at "{url}"', ['url' => $actorUrl]);
 
-                return $magazine;
+                return $this->createMagazine($actorUrl);
             }
 
             if ('Tombstone' === $actor['type']) {
