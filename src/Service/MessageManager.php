@@ -39,7 +39,7 @@ class MessageManager
 
     public function toMessage(MessageDto $dto, MessageThread $thread, User $sender): Message
     {
-        $message = new Message($thread, $sender, $dto->body);
+        $message = new Message($thread, $sender, $dto->body, $dto->apId);
 
         $thread->setUpdatedAt();
 
@@ -86,6 +86,11 @@ class MessageManager
         }
     }
 
+    public function canUserEditMessage(Message $message, User $user): bool
+    {
+        return $message->sender->apId === $user->apId || $message->sender->apDomain === $user->apDomain;
+    }
+
     public function createMessage(array $object): Message|MessageThread
     {
         $this->logger->debug('creating message from {o}', ['o' => $object]);
@@ -95,11 +100,24 @@ class MessageManager
         $participants[] = $author;
         $message = new MessageDto();
         $message->body = $this->activityPubManager->extractMarkdownContent($object);
+        $message->apId = $object['id'] ?? null;
         $threads = $this->messageThreadRepository->findByParticipants($participants);
         if (\sizeof($threads) > 0) {
             return $this->toMessage($message, $threads[0], $author);
         } else {
             return $this->toThread($message, $author, ...$participants);
+        }
+    }
+
+    public function editMessage(Message $message, array $object): void
+    {
+        $this->logger->debug('editing message {m}', ['m' => $message->apId]);
+        $newBody = $this->activityPubManager->extractMarkdownContent($object);
+        if ($message->body !== $newBody) {
+            $message->body = $newBody;
+            $message->editedAt = new \DateTimeImmutable();
+            $this->entityManager->persist($message);
+            $this->entityManager->flush();
         }
     }
 

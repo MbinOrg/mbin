@@ -104,6 +104,11 @@ class MessageThread
         $this->messages->removeElement($message);
     }
 
+    public function getLastMessage(): Message
+    {
+        return $this->messages[$this->messages->count() - 1];
+    }
+
     public function getTitle(): string
     {
         $body = $this->messages[0]->body;

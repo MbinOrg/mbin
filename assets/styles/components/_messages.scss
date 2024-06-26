@@ -6,7 +6,7 @@
   }
 
   .message-view {
-    max-height: calc(100vh - 14em);
+    max-height: calc(100vh - 11em);
     overflow: auto;
     position: relative;
   }
@@ -67,6 +67,6 @@
   .message-view-container {
     position:absolute;
     width:calc(100% - 1em);
-    height: calc(100vh - 3em);
+    height: calc(100vh - 4em);
   }
 }

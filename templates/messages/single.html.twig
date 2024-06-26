@@ -32,21 +32,30 @@
                     <i class="fa-solid fa-arrow-left-long" title="{{ 'back'|trans }}"></i>
                 </a>
             </button>
-            {% for user in thread.participants %}
-                {% if user is not same as app.user %}
-                    {{ component('user_inline', {user: user}) }}
+            {% set i = 0 %}
+            {% set participants = thread.participants|filter(p => p is not same as app.user) %}
+            {% for user in participants %}
+                {% if i > 0 and i is same as (participants|length - 1) %}
+                    {{ 'and'|trans }}
+                {% elseif i > 0 %}
+                    ,
                 {% endif %}
+                {{ component('user_inline', {user: user}) }}
+                {% set i = i + 1 %}
             {% endfor %}
         </div>
 
         <div class="message-view">
             {% for message in thread.messages %}
-                <div class="{{ html_classes('message section content section--small', message.sender is same as app.user ? 'message-self' : 'message-other') }}">
+                <div id="message-{{ message.id }}" class="{{ html_classes('message section content section--small', message.sender is same as app.user ? 'message-self' : 'message-other') }}">
                     <div class="meta">{{ component('user_inline', {user: message.sender}) }}</div>
                     {{ message.body|markdown|raw }}
                     <div class="text-right">
                         <small>
                             {{ component('date', {date: message.createdAt}) }}
+                            {% if message.editedAt %}
+                                ({{ 'edited'|trans }} {{ component('date', {date: message.editedAt}) }})
+                            {% endif %}
                         </small>
                     </div>
                 </div>

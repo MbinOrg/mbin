@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Traits\ActivityPubActivityTrait;
 use App\Entity\Traits\CreatedAtTrait;
+use App\Entity\Traits\EditedAtTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
@@ -25,6 +26,7 @@ class Message implements ActivityPubActivityInterface
     use CreatedAtTrait {
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
+    use EditedAtTrait;
     public const STATUS_NEW = 'new';
     public const STATUS_READ = 'read';
     public const STATUS_OPTIONS = [
@@ -51,13 +53,14 @@ class Message implements ActivityPubActivityInterface
     #[OneToMany(mappedBy: 'message', targetEntity: MessageNotification::class, cascade: ['remove'], orphanRemoval: true)]
     private Collection $notifications;
 
-    public function __construct(MessageThread $thread, User $sender, string $body)
+    public function __construct(MessageThread $thread, User $sender, string $body, ?string $apId)
     {
         $this->thread = $thread;
         $this->sender = $sender;
         $this->body = $body;
         $this->notifications = new ArrayCollection();
         $this->uuid = Uuid::v4()->toRfc4122();
+        $this->apId = $apId;
 
         $thread->addMessage($this);
 
@@ -67,5 +70,16 @@ class Message implements ActivityPubActivityInterface
     public function getId(): int
     {
         return $this->id;
+    }
+
+    public function getTitle(): string
+    {
+        $firstLine = preg_replace('/^# |\R.*/', '', $this->body);
+
+        if (grapheme_strlen($firstLine) <= 80) {
+            return $firstLine;
+        }
+
+        return grapheme_substr($firstLine, 0, 80).'…';
     }
 }

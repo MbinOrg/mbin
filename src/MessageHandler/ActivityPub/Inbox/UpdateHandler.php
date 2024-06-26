@@ -6,6 +6,7 @@ namespace App\MessageHandler\ActivityPub\Inbox;
 
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\Message;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
@@ -16,15 +17,15 @@ use App\Factory\PostFactory;
 use App\Message\ActivityPub\Inbox\UpdateMessage;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\ApObjectExtractor;
-use App\Service\ActivityPub\MarkdownConverter;
 use App\Service\ActivityPubManager;
 use App\Service\EntryCommentManager;
 use App\Service\EntryManager;
+use App\Service\MessageManager;
 use App\Service\PostCommentManager;
 use App\Service\PostManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 class UpdateHandler
@@ -39,13 +40,13 @@ class UpdateHandler
         private readonly EntryCommentManager $entryCommentManager,
         private readonly PostManager $postManager,
         private readonly PostCommentManager $postCommentManager,
-        private readonly MarkdownConverter $markdownConverter,
         private readonly EntryFactory $entryFactory,
         private readonly EntryCommentFactory $entryCommentFactory,
         private readonly PostFactory $postFactory,
         private readonly PostCommentFactory $postCommentFactory,
-        private readonly MessageBusInterface $bus,
         private readonly ApObjectExtractor $objectExtractor,
+        private readonly MessageManager $messageManager,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -68,23 +69,15 @@ class UpdateHandler
         $object = $this->entityManager->getRepository($object['type'])->find((int) $object['id']);
 
         if (Entry::class === \get_class($object)) {
-            $fn = 'editEntry';
-        }
-
-        if (EntryComment::class === \get_class($object)) {
-            $fn = 'editEntryComment';
-        }
-
-        if (Post::class === \get_class($object)) {
-            $fn = 'editPost';
-        }
-
-        if (PostComment::class === \get_class($object)) {
-            $fn = 'editPostComment';
-        }
-
-        if (isset($fn, $object, $actor)) {
-            $this->$fn($object, $actor);
+            $this->editEntry($object, $actor);
+        } elseif (EntryComment::class === \get_class($object)) {
+            $this->editEntryComment($object, $actor);
+        } elseif (Post::class === \get_class($object)) {
+            $this->editPost($object, $actor);
+        } elseif (PostComment::class === \get_class($object)) {
+            $this->editPostComment($object, $actor);
+        } elseif (Message::class === \get_class($object)) {
+            $this->editMessage($object, $actor);
         }
 
         // Dead-code introduced by Ernest "Temp disable handler dispatch", in commit:
@@ -153,5 +146,17 @@ class UpdateHandler
         }
 
         $this->postCommentManager->edit($comment, $dto);
+    }
+
+    private function editMessage(Message $message, User $user): void
+    {
+        if ($this->messageManager->canUserEditMessage($message, $user)) {
+            $this->messageManager->editMessage($message, $this->payload['object']);
+        } else {
+            $this->logger->warning(
+                'Got an update message from a user that is not allowed to edit it. Update actor: {ua}. Original Author: {oa}',
+                ['ua' => $user->apId ?? $user->username, 'oa' => $message->sender->apId ?? $message->sender->username]
+            );
+        }
     }
 }
