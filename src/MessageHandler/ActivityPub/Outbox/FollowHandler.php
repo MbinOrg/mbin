@@ -11,6 +11,7 @@ use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\Wrapper\FollowWrapper;
 use App\Service\ActivityPub\Wrapper\UndoWrapper;
 use App\Service\ActivityPubManager;
+use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -25,7 +26,8 @@ class FollowHandler
         private readonly FollowWrapper $followWrapper,
         private readonly UndoWrapper $undoWrapper,
         private readonly ApHttpClient $apHttpClient,
-        private readonly SettingsManager $settingsManager
+        private readonly SettingsManager $settingsManager,
+        private readonly DeliverManager $deliverManager,
     ) {
     }
 
@@ -60,6 +62,6 @@ class FollowHandler
 
         $inbox = $this->apHttpClient->getInboxUrl($followingProfileId);
 
-        $this->apHttpClient->post($inbox, $follower, $followObject);
+        $this->deliverManager->deliver([$inbox], $followObject);
     }
 }
