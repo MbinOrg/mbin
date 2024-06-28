@@ -198,7 +198,7 @@ class ApHttpClient
 
                 if (404 === $response->getStatusCode()) {
                     // treat a 404 error the same as a tombstone, since we think there was an actor, but it isn't there anymore
-                    return $this->tombstoneFactory->create($apProfileId);
+                    return json_encode($this->tombstoneFactory->create($apProfileId));
                 }
 
                 // Return the content.

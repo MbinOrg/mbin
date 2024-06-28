@@ -83,6 +83,12 @@ readonly class ActivityHandler
             return;
         }
 
+        if (null === $user) {
+            $this->logger->warning('Could not find an actor discarding ActivityMessage {m}', ['m' => $message->payload]);
+
+            return;
+        }
+
         $this->handle($payload);
     }
 
