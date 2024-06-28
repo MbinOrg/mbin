@@ -82,3 +82,51 @@ marked_for_deletion: Naka-marka para sa pagbura
 marked_for_deletion_at: Naka-marka para sa pagbura sa %date%
 enter_your_post: Ipasok ang iyong post
 comments_count: '{0}Mga puna|{1}Puna|]1,Inf[ Mga puna'
+notifications: Mga abiso
+blocked: Hinarangan
+show_profile_followings: Ipakita ang mga sinusundan na tagagamit
+expand: Palakihin
+size: Laki
+left: Kaliwa
+right: Kanan
+on: Pinagana
+ban: Bawalan
+rejected: Tinatanggihan
+bans: Mga pagbawal
+created: Ginawa
+pages: Mga pahina
+Your account is not active: Hindi aktibo ang iyong account.
+ban_account: Bawalan ang account
+Your account has been banned: Binabawalan na ang iyong account.
+mercure_enabled: Pinagana ang Mercure
+filter.adult.show: Ipakita ang NSFW
+filter.adult.only: NSFW lamang
+filter.adult.hide: Itago ang NSFW
+filter.fields.names_and_descriptions: Mga pamagat at paglalarawan
+filter.fields.only_names: Mga pamagat lamang
+your_account_has_been_banned: Binabawalan na ang iyong account
+errors.server403.title: 403 Ipinagbabawal
+errors.server500.title: 500 Pangloob na pagkamali sa Serbiro
+block: Harangan
+oauth.consent.allow: Payagan
+oauth2.grant.moderate.magazine_admin.create: Gumawa ng mga bagong magasin.
+oauth2.grant.moderate.magazine_admin.delete: Burahin ang ilan sa mga magasin na pinag-aari
+  mo.
+oauth2.grant.moderate.magazine_admin.all: Gawin, baguhin, o burahin ang mga magasin
+  na pinag-aari mo.
+moderation.report.reject_report_title: Tanggihan ang Ulat
+moderation.report.ban_user_description: Nais mo bang bawalan ang tagagamit (%username%)
+  na gumagawa ng nilalaman na ito mula sa magasin na ito?
+subject_reported_exists: Inuulat na ang nilalaman na ito.
+purge_content: Purgahin ang nilalaman
+moderation.report.approve_report_confirmation: Sigorado ka bang nais mo na aprubahin
+  ang ulat na ito?
+ban_hashtag_btn: Bawalan ang Hashtag
+errors.server429.title: 429 Masyadong Maraming mga Hiling
+errors.server404.title: 404 Hindi nakita
+oauth.consent.to_allow_access: Upang payagan ang access, pindutin ang pindutang 'Payagan'
+  sa ilalim
+moderation.report.approve_report_title: Aprubahin ang Ulat
+moderation.report.ban_user_title: Bawalan ang Tagagamit
+delete_content: Tanggalin ang nilalaman
+oauth.consent.deny: Tanggihan
