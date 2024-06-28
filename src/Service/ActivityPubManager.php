@@ -157,7 +157,7 @@ class ActivityPubManager
             return $this->userRepository->findOneBy(['username' => $name]);
         }
 
-        $user = $this->userRepository->findOneBy(['apPublicUrl' => $actorUrl]);
+        $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
         if ($user instanceof User) {
             $this->logger->debug('found remote user for url "{url}" in db', ['url' => $actorUrl]);
             if ($user->apId && (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
@@ -166,7 +166,7 @@ class ActivityPubManager
 
             return $user;
         }
-        $magazine = $this->magazineRepository->findOneBy(['apPublicUrl' => $actorUrl]);
+        $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
         if ($magazine instanceof Magazine) {
             $this->logger->debug('found remote user for url "{url}" in db', ['url' => $actorUrl]);
             if (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 hour') < (new \DateTime())) {
