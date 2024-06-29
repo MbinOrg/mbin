@@ -82,6 +82,9 @@ class PostFactory
         $dto->ip = $post->ip;
         $dto->mentions = $post->mentions;
         $dto->apId = $post->apId;
+        $dto->apLikeCount = $post->apLikeCount;
+        $dto->apDislikeCount = $post->apDislikeCount;
+        $dto->apShareCount = $post->apShareCount;
         $dto->setId($post->getId());
 
         $currentUser = $this->security->getUser();

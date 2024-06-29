@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Traits\ActivityPubActorTrait;
 use App\Message\ActivityPub\Outbox\DeliverMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -15,14 +16,17 @@ readonly class DeliverManager
     ) {
     }
 
-    public function deliver(array $followers, array $activity): void
+    /**
+     * @param string[]|ActivityPubActorTrait[] $inboxes
+     */
+    public function deliver(array $inboxes, array $activity): void
     {
-        foreach ($followers as $follower) {
-            if (!$follower) {
+        foreach ($inboxes as $inbox) {
+            if (!$inbox) {
                 continue;
             }
 
-            $inboxUrl = \is_string($follower) ? $follower : $follower->apInboxUrl;
+            $inboxUrl = \is_string($inbox) ? $inbox : $inbox->apInboxUrl;
 
             if ($this->settingsManager->isBannedInstance($inboxUrl)) {
                 continue;

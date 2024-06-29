@@ -6,13 +6,11 @@ namespace App\MessageHandler\ActivityPub\Outbox;
 
 use App\Factory\ActivityPub\AddRemoveFactory;
 use App\Message\ActivityPub\Outbox\AddMessage;
-use App\Message\ActivityPub\Outbox\DeliverMessage;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
+use App\Service\DeliverManager;
 use App\Service\SettingsManager;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 class AddHandler
@@ -20,10 +18,9 @@ class AddHandler
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly MagazineRepository $magazineRepository,
-        private readonly LoggerInterface $logger,
         private readonly SettingsManager $settingsManager,
-        private readonly MessageBusInterface $bus,
         private readonly AddRemoveFactory $factory,
+        private readonly DeliverManager $deliverManager,
     ) {
     }
 
@@ -43,10 +40,6 @@ class AddHandler
         }
 
         $activity = $this->factory->buildAddModerator($actor, $added, $magazine);
-        foreach ($audience as $inboxUrl) {
-            if (!$this->settingsManager->isBannedInstance($inboxUrl)) {
-                $this->bus->dispatch(new DeliverMessage($inboxUrl, $activity));
-            }
-        }
+        $this->deliverManager->deliver($audience, $activity);
     }
 }

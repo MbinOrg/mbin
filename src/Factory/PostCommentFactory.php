@@ -103,6 +103,10 @@ class PostCommentFactory
         $dto->setId($comment->getId());
         $dto->parent = $comment->parent;
         $dto->mentions = $comment->mentions;
+        $dto->apId = $comment->apId;
+        $dto->apLikeCount = $comment->apLikeCount;
+        $dto->apDislikeCount = $comment->apDislikeCount;
+        $dto->apShareCount = $comment->apShareCount;
 
         $currentUser = $this->security->getUser();
         // Only return the user's vote if permission to control voting has been given

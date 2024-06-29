@@ -106,17 +106,17 @@ For developers:
 		</tr>
 		<tr>
             <td align="center">
-                <a href="https://github.com/cooperaj">
-                    <img src="https://avatars.githubusercontent.com/u/400210?v=4" width="100;" alt="cooperaj"/>
-                    <br />
-                    <sub><b>Adam Cooper</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/BentiGorlich">
                     <img src="https://avatars.githubusercontent.com/u/25664458?v=4" width="100;" alt="BentiGorlich"/>
                     <br />
                     <sub><b>BentiGorlich</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/cooperaj">
+                    <img src="https://avatars.githubusercontent.com/u/400210?v=4" width="100;" alt="cooperaj"/>
+                    <br />
+                    <sub><b>Adam Cooper</b></sub>
                 </a>
             </td>
             <td align="center">
@@ -178,10 +178,10 @@ For developers:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/andrewmoise">
-                    <img src="https://avatars.githubusercontent.com/u/8404538?v=4" width="100;" alt="andrewmoise"/>
+                <a href="https://github.com/thepaperpilot">
+                    <img src="https://avatars.githubusercontent.com/u/3683148?v=4" width="100;" alt="thepaperpilot"/>
                     <br />
-                    <sub><b>andrewmoise</b></sub>
+                    <sub><b>Anthony Lawn</b></sub>
                 </a>
             </td>
             <td align="center">
@@ -194,10 +194,10 @@ For developers:
 		</tr>
 		<tr>
             <td align="center">
-                <a href="https://github.com/thepaperpilot">
-                    <img src="https://avatars.githubusercontent.com/u/3683148?v=4" width="100;" alt="thepaperpilot"/>
+                <a href="https://github.com/andrewmoise">
+                    <img src="https://avatars.githubusercontent.com/u/8404538?v=4" width="100;" alt="andrewmoise"/>
                     <br />
-                    <sub><b>Anthony Lawn</b></sub>
+                    <sub><b>andrewmoise</b></sub>
                 </a>
             </td>
             <td align="center">

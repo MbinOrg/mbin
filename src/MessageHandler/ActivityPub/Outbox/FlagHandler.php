@@ -7,23 +7,22 @@ namespace App\MessageHandler\ActivityPub\Outbox;
 use App\Entity\Moderator;
 use App\Entity\Report;
 use App\Factory\ActivityPub\FlagFactory;
-use App\Message\ActivityPub\Outbox\DeliverMessage;
 use App\Message\ActivityPub\Outbox\FlagMessage;
 use App\Repository\ReportRepository;
+use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 class FlagHandler
 {
     public function __construct(
-        private readonly MessageBusInterface $bus,
         private readonly SettingsManager $settingsManager,
         private readonly ReportRepository $reportRepository,
         private readonly FlagFactory $factory,
         private readonly LoggerInterface $logger,
+        private readonly DeliverManager $deliverManager,
     ) {
     }
 
@@ -43,10 +42,7 @@ class FlagHandler
         }
 
         $activity = $this->factory->build($report, $this->factory->getPublicUrl($report->getSubject()));
-        foreach ($inboxes as $inbox) {
-            $this->logger->debug("Sending a flag message to: '$inbox'. Payload: ".json_encode($activity));
-            $this->bus->dispatch(new DeliverMessage($inbox, $activity));
-        }
+        $this->deliverManager->deliver($inboxes, $activity);
     }
 
     /**
