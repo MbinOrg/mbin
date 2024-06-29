@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\MessageHandler\ActivityPub\Inbox;
 
+use App\DTO\EntryCommentDto;
+use App\DTO\EntryDto;
+use App\DTO\PostCommentDto;
+use App\DTO\PostDto;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Message;
@@ -94,58 +98,53 @@ class UpdateHandler
         //        }
     }
 
-    private function editEntry(Entry $entry, User $user)
+    private function editEntry(Entry $entry, User $user): void
     {
         $dto = $this->entryFactory->createDto($entry);
 
         $dto->title = $this->payload['object']['name'];
 
-        if (!empty($this->payload['object']['content'])) {
-            $dto->body = $this->objectExtractor->getMarkdownBody($this->payload['object']);
-        } else {
-            $dto->body = null;
-        }
-
+        $this->extractChanges($dto);
         $this->entryManager->edit($entry, $dto);
     }
 
-    private function editEntryComment(EntryComment $comment, User $user)
+    private function editEntryComment(EntryComment $comment, User $user): void
     {
         $dto = $this->entryCommentFactory->createDto($comment);
 
-        if (!empty($this->payload['object']['content'])) {
-            $dto->body = $this->objectExtractor->getMarkdownBody($this->payload['object']);
-        } else {
-            $dto->body = null;
-        }
+        $this->extractChanges($dto);
 
         $this->entryCommentManager->edit($comment, $dto);
     }
 
-    private function editPost(Post $post, User $user)
+    private function editPost(Post $post, User $user): void
     {
         $dto = $this->postFactory->createDto($post);
 
-        if (!empty($this->payload['object']['content'])) {
-            $dto->body = $this->objectExtractor->getMarkdownBody($this->payload['object']);
-        } else {
-            $dto->body = null;
-        }
+        $this->extractChanges($dto);
 
         $this->postManager->edit($post, $dto);
     }
 
-    private function editPostComment(PostComment $comment, User $user)
+    private function editPostComment(PostComment $comment, User $user): void
     {
         $dto = $this->postCommentFactory->createDto($comment);
 
+        $this->extractChanges($dto);
+
+        $this->postCommentManager->edit($comment, $dto);
+    }
+
+    private function extractChanges(EntryDto|EntryCommentDto|PostDto|PostCommentDto $dto): void
+    {
         if (!empty($this->payload['object']['content'])) {
             $dto->body = $this->objectExtractor->getMarkdownBody($this->payload['object']);
         } else {
             $dto->body = null;
         }
-
-        $this->postCommentManager->edit($comment, $dto);
+        $dto->apLikeCount = $this->activityPubManager->extractRemoteLikeCount($this->payload['object']);
+        $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($this->payload['object']);
+        $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($this->payload['object']);
     }
 
     private function editMessage(Message $message, User $user): void

@@ -43,19 +43,16 @@ class CreateHandler
     {
         $this->object = $message->payload;
         $this->logger->debug('Got a CreateMessage of type {t}, {m}', ['t' => $message->payload['type'], 'm' => $message->payload]);
+        $entryTypes = ['Page', 'Article', 'Video'];
+        $postTypes = ['Question', 'Note'];
+
         try {
             if (!$this->activityPubManager->isActivityPublic($message->payload)) {
                 $this->handlePrivateMessage();
-            } elseif ('Note' === $this->object['type']) {
+            } elseif (\in_array($this->object['type'], $postTypes)) {
                 $this->handleChain();
-            } elseif ('Page' === $this->object['type']) {
+            } elseif (\in_array($this->object['type'], $entryTypes)) {
                 $this->handlePage();
-            } elseif ('Article' === $this->object['type']) {
-                $this->handlePage();
-            } elseif ('Question' === $this->object['type']) {
-                $this->handleChain();
-            } else {
-                $this->logger->error('Could not handle CreateMessage {t}', ['t' => $message->payload]);
             }
         } catch (UserBannedException) {
             $this->logger->info('Did not create the post, because the user is banned');
