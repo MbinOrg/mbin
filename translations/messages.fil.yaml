@@ -130,3 +130,23 @@ moderation.report.approve_report_title: Aprubahin ang Ulat
 moderation.report.ban_user_title: Bawalan ang Tagagamit
 delete_content: Tanggalin ang nilalaman
 oauth.consent.deny: Tanggihan
+type.magazine: Magasin
+magazine: Magasin
+magazines: Mga magasin
+dont_have_account: Wala bang account?
+you_cant_login: Nakalimutan ang password?
+repeat_password: Ulitin ang password
+all_magazines: Lahat ng mga magasin
+create_new_magazine: Gumawa ng bagong magasin
+change_theme: Palitan ang tema
+select_magazine: Pumili ng magasin
+joined: Sumali noong
+logout: Mag log out
+share_on_fediverse: Ibahagi sa Fediverse
+edit: Baguhin
+are_you_sure: Sigurado ka ba?
+share: Ibahagi
+votes: Mga boto
+yes: Oo
+no: Hindi
+subject_reported: Iniulat na ang nilalaman na ito.
