@@ -7,6 +7,7 @@ namespace App\MessageHandler\ActivityPub\Inbox;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Exception\InboxForwardingException;
+use App\Exception\InvalidUserPublicKeyException;
 use App\Message\ActivityPub\Inbox\ActivityMessage;
 use App\Message\ActivityPub\Inbox\AddMessage;
 use App\Message\ActivityPub\Inbox\AnnounceMessage;
@@ -52,6 +53,10 @@ readonly class ActivityHandler
                 $this->logger->info("The message was forwarded by {receivedFrom}. Dispatching a new activity message '{origin}'", ['receivedFrom' => $exception->receivedFrom, 'origin' => $exception->realOrigin]);
                 $body = $this->apHttpClient->getActivityObject($exception->realOrigin, false);
                 $this->bus->dispatch(new ActivityMessage($body));
+
+                return;
+            } catch (InvalidUserPublicKeyException $exception) {
+                $this->logger->warning("Unable to extract public key for '{user}'.", ['user' => $exception->apProfileId]);
 
                 return;
             }
