@@ -18,7 +18,9 @@ final class Version20240603190838 extends AbstractMigration
     {
         $this->addSql('ALTER TABLE message ADD uuid UUID NOT NULL DEFAULT gen_random_uuid()');
         $this->addSql('ALTER TABLE message ADD ap_id VARCHAR(255) DEFAULT NULL');
+        $this->addSql('ALTER TABLE message ADD edited_at TIMESTAMP(0) WITH TIME ZONE DEFAULT NULL');
         $this->addSql('COMMENT ON COLUMN message.uuid IS \'(DC2Type:uuid)\'');
+        $this->addSql('COMMENT ON COLUMN message.edited_at IS \'(DC2Type:datetimetz_immutable)\'');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_B6BD307FD17F50A6 ON message (uuid)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_B6BD307F904F155E ON message (ap_id)');
     }
@@ -29,5 +31,6 @@ final class Version20240603190838 extends AbstractMigration
         $this->addSql('DROP INDEX UNIQ_B6BD307F904F155E');
         $this->addSql('ALTER TABLE message DROP uuid');
         $this->addSql('ALTER TABLE message DROP ap_id');
+        $this->addSql('ALTER TABLE message DROP edited_at');
     }
 }

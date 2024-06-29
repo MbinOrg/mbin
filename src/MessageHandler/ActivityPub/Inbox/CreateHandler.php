@@ -47,7 +47,7 @@ class CreateHandler
         $postTypes = ['Question', 'Note'];
 
         try {
-            if (!$this->activityPubManager->isActivityPublic($message->payload)) {
+            if ('ChatMessage' === $this->object['type']) {
                 $this->handlePrivateMessage();
             } elseif (\in_array($this->object['type'], $postTypes)) {
                 $this->handleChain();
@@ -101,5 +101,10 @@ class CreateHandler
     private function handlePrivateMessage(): void
     {
         $this->messageManager->createMessage($this->object);
+    }
+
+    private function handlePrivateMentions(): void
+    {
+        // TODO implement private mentions
     }
 }
