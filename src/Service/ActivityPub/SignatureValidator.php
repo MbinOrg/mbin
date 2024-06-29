@@ -33,7 +33,7 @@ readonly class SignatureValidator
      * @param string $body    The body of the incoming request
      *
      * @throws InvalidApSignatureException   The HTTP request was not signed appropriately
-     * @throws InvalidUserPublicKeyException The public key of the specific user is invalid or null
+     * @throws InvalidUserPublicKeyException The public key of the specified user is invalid or null
      * @throws InboxForwardingException
      */
     public function validate(array $request, array $headers, string $body): void
