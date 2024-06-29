@@ -24,6 +24,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 class CreateHandler
 {
     private array $object;
+    private bool $stickyIt;
 
     public function __construct(
         private readonly Note $note,
@@ -40,6 +41,7 @@ class CreateHandler
     public function __invoke(CreateMessage $message): void
     {
         $this->object = $message->payload;
+        $this->stickyIt = $message->stickyIt;
         $this->logger->debug('Got a CreateMessage of type {t}', [$message->payload['type'], $message->payload]);
         $entryTypes = ['Page', 'Article', 'Video'];
         $postTypes = ['Question', 'Note'];
@@ -70,7 +72,7 @@ class CreateHandler
             }
         }
 
-        $note = $this->note->create($this->object);
+        $note = $this->note->create($this->object, stickyIt: $this->stickyIt);
         // TODO atm post and post comment are not announced, because of the micro blog spam towards lemmy. If we implement magazine name as hashtag to be optional than this may be reverted
         if ($note instanceof EntryComment /* or $note instanceof Post or $note instanceof PostComment */) {
             if (null !== $note->apId and null === $note->magazine->apId and 'random' !== $note->magazine->name) {
@@ -87,7 +89,7 @@ class CreateHandler
      */
     private function handlePage(): void
     {
-        $page = $this->page->create($this->object);
+        $page = $this->page->create($this->object, stickyIt: $this->stickyIt);
         if ($page instanceof Entry) {
             if (null !== $page->apId and null === $page->magazine->apId and 'random' !== $page->magazine->name) {
                 // local magazine, but remote post. Random magazine is ignored, as it should not be federated at all

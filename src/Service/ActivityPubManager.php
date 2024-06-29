@@ -522,7 +522,7 @@ class ActivityPubManager
             }
 
             if (null !== $magazine->apFeaturedUrl) {
-                $this->handleFeaturedCollection($actorUrl, $magazine);
+                $this->handleMagazineFeaturedCollection($actorUrl, $magazine);
             }
 
             $this->entityManager->flush();
@@ -605,7 +605,7 @@ class ActivityPubManager
     /**
      * @throws InvalidArgumentException
      */
-    private function handleFeaturedCollection(string $actorUrl, Magazine $magazine): void
+    private function handleMagazineFeaturedCollection(string $actorUrl, Magazine $magazine): void
     {
         try {
             $this->logger->debug('fetching featured posts of remote magazine "{magUrl}"', ['magUrl' => $actorUrl]);

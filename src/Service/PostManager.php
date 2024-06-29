@@ -61,7 +61,7 @@ class PostManager implements ContentManagerInterface
      * @throws TooManyRequestsHttpException
      * @throws \Exception
      */
-    public function create(PostDto $dto, User $user, $rateLimit = true): Post
+    public function create(PostDto $dto, User $user, $rateLimit = true, bool $stickyIt = false): Post
     {
         if ($rateLimit) {
             $limiter = $this->postLimiter->create($dto->ip);
@@ -111,6 +111,10 @@ class PostManager implements ContentManagerInterface
         $this->tagManager->updatePostTags($post, $this->tagExtractor->extract($post->body) ?? []);
 
         $this->dispatcher->dispatch(new PostCreatedEvent($post));
+
+        if ($stickyIt) {
+            $this->pin($post);
+        }
 
         return $post;
     }

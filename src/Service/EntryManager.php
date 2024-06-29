@@ -8,6 +8,8 @@ use App\DTO\EntryDto;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\Magazine;
+use App\Entity\MagazineLogEntryPinned;
+use App\Entity\MagazineLogEntryUnpinned;
 use App\Entity\User;
 use App\Event\Entry\EntryBeforeDeletedEvent;
 use App\Event\Entry\EntryBeforePurgeEvent;
@@ -65,7 +67,7 @@ class EntryManager implements ContentManagerInterface
      * @throws TooManyRequestsHttpException
      * @throws \Exception                   if title, body and image are empty
      */
-    public function create(EntryDto $dto, User $user, bool $rateLimit = true): Entry
+    public function create(EntryDto $dto, User $user, bool $rateLimit = true, bool $stickyIt = false): Entry
     {
         if ($rateLimit) {
             $limiter = $this->entryLimiter->create($dto->ip);
@@ -122,6 +124,10 @@ class EntryManager implements ContentManagerInterface
         $this->tagManager->updateEntryTags($entry, $this->tagExtractor->extract($entry->body) ?? []);
 
         $this->dispatcher->dispatch(new EntryCreatedEvent($entry));
+
+        if ($stickyIt) {
+            $this->pin($entry, null);
+        }
 
         return $entry;
     }
@@ -273,6 +279,13 @@ class EntryManager implements ContentManagerInterface
     public function pin(Entry $entry, ?User $actor): Entry
     {
         $entry->sticky = !$entry->sticky;
+
+        if ($entry->sticky) {
+            $log = new MagazineLogEntryPinned($entry->magazine, $actor, $entry);
+        } else {
+            $log = new MagazineLogEntryUnpinned($entry->magazine, $actor, $entry);
+        }
+        $this->entityManager->persist($log);
 
         $this->entityManager->flush();
 
