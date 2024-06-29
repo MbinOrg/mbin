@@ -118,10 +118,6 @@ readonly class SignatureValidator
             } catch (\Exception $e) {
             }
 
-            if (!$userPkey) {
-                throw new InvalidUserPublicKeyException($user->apProfileId);
-            }
-
             $pkey = openssl_pkey_get_public($userPkey);
 
             if (false === $pkey) {
