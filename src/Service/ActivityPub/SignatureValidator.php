@@ -113,7 +113,16 @@ readonly class SignatureValidator
 
         $user = $this->activityPubManager->findActorOrCreate($actorUrl);
         if (!empty($user)) {
-            $pkey = openssl_pkey_get_public($this->client->getActorObject($user->apProfileId)['publicKey']['publicKeyPem']);
+            try {
+                $userPkey = $this->client->getActorObject($user->apProfileId)['publicKey']['publicKeyPem'];
+            } catch (\Exception $e) {
+            }
+
+            if (!$userPkey) {
+                throw new InvalidUserPublicKeyException($user->apProfileId);
+            }
+
+            $pkey = openssl_pkey_get_public($userPkey);
 
             if (false === $pkey) {
                 throw new InvalidUserPublicKeyException($user->apProfileId);
