@@ -116,7 +116,7 @@ readonly class SignatureValidator
             $pkey = openssl_pkey_get_public($this->client->getActorObject($user->apProfileId)['publicKey']['publicKeyPem']);
 
             if (false === $pkey) {
-                throw new InvalidUserPublicKeyException("Unable to extract public key for user: '$user->apProfileId'");
+                throw new InvalidUserPublicKeyException($user->apProfileId);
             }
 
             $this->verifySignature($pkey, $signature, $headers, $request['uri'], $body);
