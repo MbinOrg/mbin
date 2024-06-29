@@ -9,6 +9,7 @@ import el from 'timeago.js/lib/lang/el';
 import en from 'timeago.js/lib/lang/en_US';
 import es from 'timeago.js/lib/lang/es';
 import fr from 'timeago.js/lib/lang/fr';
+import gl from 'timeago.js/lib/lang/gl';
 import it from 'timeago.js/lib/lang/it';
 import ja from 'timeago.js/lib/lang/ja';
 import nl from 'timeago.js/lib/lang/nl';
@@ -29,7 +30,7 @@ export default class extends Controller {
         }
 
         const lang = document.documentElement.lang;
-        const languages = { bg, da, de, el, en, es, fr, it, ja, nl, pl, pt_BR, ru, tr, uk, zh_TW };
+        const languages = { bg, da, de, el, en, es, fr, gl, it, ja, nl, pl, pt_BR, ru, tr, uk, zh_TW };
 
         if (languages[lang]) {
             timeago.register(lang, languages[lang]);
