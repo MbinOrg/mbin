@@ -315,6 +315,7 @@ Following languages are currently supported/translated:
 - Esperanto
 - Filipino
 - French
+- Galician
 - German
 - Greek
 - Italian
