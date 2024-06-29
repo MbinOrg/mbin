@@ -884,7 +884,7 @@ class ActivityPubManager
 
         return false;
     }
-  
+
     public function getActorFromAttributedTo(string|array|null $attributedTo, bool $filterForPerson = true): ?string
     {
         if (\is_string($attributedTo)) {
