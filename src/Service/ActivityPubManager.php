@@ -490,7 +490,7 @@ class ActivityPubManager
             $magazine->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
             $magazine->apDomain = parse_url($actor['id'], PHP_URL_HOST);
             $magazine->apFollowersUrl = $actor['followers'] ?? null;
-            $magazine->apAttributedToUrl = $actor['attributedTo'] ?? null;
+            $magazine->apAttributedToUrl = $this->getActorFromAttributedTo($actor['attributedTo'] ?? null, filterForPerson: false);
             $magazine->apPreferredUsername = $actor['preferredUsername'] ?? null;
             $magazine->apDiscoverable = $actor['discoverable'] ?? true;
             $magazine->apPublicUrl = $actor['url'] ?? $actorUrl;
@@ -749,6 +749,11 @@ class ActivityPubManager
             } elseif (isset($object['object']['cc']) and \is_string($object['object']['cc'])) {
                 $res[] = $object['object']['cc'];
             }
+        } elseif (isset($object['attributedTo']) && \is_array($object['attributedTo'])) {
+            // if there is no "object" inside of this it will probably be a create activity which has an attributedTo field
+            // this was implemented for peertube support, because they list the channel (Group) and the user in an array in that field
+            $groups = array_filter($object['attributedTo'], fn ($item) => \is_array($item) && !empty($item['type']) && 'Group' === $item['type']);
+            $res = array_merge($res, array_map(fn ($item) => $item['id'], $groups));
         }
 
         $res = array_filter($res, fn ($i) => null !== $i and ActivityPubActivityInterface::PUBLIC_URL !== $i);
@@ -837,5 +842,83 @@ class ActivityPubManager
 
             return stripslashes($converter->convert($apObject['summary']));
         }
+    }
+
+    public function getActorFromAttributedTo(string|array|null $attributedTo, bool $filterForPerson = true): ?string
+    {
+        if (\is_string($attributedTo)) {
+            return $attributedTo;
+        } elseif (\is_array($attributedTo)) {
+            $actors = array_filter($attributedTo, fn ($item) => \is_string($item) || (\is_array($item) && !empty($item['type']) && (!$filterForPerson || 'Person' === $item['type'])));
+            if (\sizeof($actors) >= 1) {
+                if (\is_string($actors[0])) {
+                    return $actors[0];
+                } elseif (!empty($actors[0]['id'])) {
+                    return $actors[0]['id'];
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function extractUrl(string|array|null $url): ?string
+    {
+        if (\is_string($url)) {
+            return $url;
+        } elseif (\is_array($url)) {
+            $urls = array_filter($url, fn ($item) => \is_string($item) || (\is_array($item) && !empty($item['type']) && 'Link' === $item['type'] && (empty($item['mediaType']) || 'text/html' === $item['mediaType'])));
+            if (\sizeof($urls) >= 1) {
+                if (\is_string($urls[0])) {
+                    return $urls[0];
+                } elseif (!empty($urls[0]['href'])) {
+                    return $urls[0]['href'];
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function extractRemoteLikeCount(array $apObject): ?int
+    {
+        if (!empty($apObject['likes'])) {
+            if (false !== filter_var($apObject['likes'], FILTER_VALIDATE_URL)) {
+                $collection = $this->apHttpClient->getCollectionObject($apObject['likes']);
+                if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
+                    return $collection['totalItems'];
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function extractRemoteDislikeCount(array $apObject): ?int
+    {
+        if (!empty($apObject['dislikes'])) {
+            if (false !== filter_var($apObject['dislikes'], FILTER_VALIDATE_URL)) {
+                $collection = $this->apHttpClient->getCollectionObject($apObject['dislikes']);
+                if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
+                    return $collection['totalItems'];
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function extractRemoteShareCount(array $apObject): ?int
+    {
+        if (!empty($apObject['shares'])) {
+            if (false !== filter_var($apObject['shares'], FILTER_VALIDATE_URL)) {
+                $collection = $this->apHttpClient->getCollectionObject($apObject['shares']);
+                if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
+                    return $collection['totalItems'];
+                }
+            }
+        }
+
+        return null;
     }
 }

@@ -68,10 +68,10 @@ readonly class ActivityHandler
 
         try {
             if (isset($payload['actor']) || isset($payload['attributedTo'])) {
-                if (!$this->verifyInstanceDomain($payload['actor'] ?? $payload['attributedTo'])) {
+                if (!$this->verifyInstanceDomain($payload['actor'] ?? $this->manager->getActorFromAttributedTo($payload['attributedTo']))) {
                     return;
                 }
-                $user = $this->manager->findActorOrCreate($payload['actor'] ?? $payload['attributedTo']);
+                $user = $this->manager->findActorOrCreate($payload['actor'] ?? $this->manager->getActorFromAttributedTo($payload['attributedTo']));
             } else {
                 if (!$this->verifyInstanceDomain($payload['id'])) {
                     return;
@@ -139,6 +139,7 @@ readonly class ActivityHandler
             case 'Page':
             case 'Article':
             case 'Question':
+            case 'Video':
                 $this->bus->dispatch(new CreateMessage($payload));
                 // no break
             case 'Announce':

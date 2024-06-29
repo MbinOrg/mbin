@@ -101,6 +101,10 @@ class EntryCommentFactory
         $dto->createdAt = $comment->createdAt;
         $dto->editedAt = $comment->editedAt;
         $dto->lastActive = $comment->lastActive;
+        $dto->apId = $comment->apId;
+        $dto->apLikeCount = $comment->apLikeCount;
+        $dto->apDislikeCount = $comment->apDislikeCount;
+        $dto->apShareCount = $comment->apShareCount;
         $dto->setId($comment->getId());
 
         $currentUser = $this->security->getUser();

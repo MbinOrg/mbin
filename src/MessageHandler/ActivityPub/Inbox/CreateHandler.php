@@ -41,22 +41,16 @@ class CreateHandler
     {
         $this->object = $message->payload;
         $this->logger->debug('Got a CreateMessage of type {t}', [$message->payload['type'], $message->payload]);
+        $entryTypes = ['Page', 'Article', 'Video'];
+        $postTypes = ['Question', 'Note'];
 
         try {
-            if ('Note' === $this->object['type']) {
+            if (\in_array($this->object['type'], $postTypes)) {
                 $this->handleChain();
             }
 
-            if ('Page' === $this->object['type']) {
+            if (\in_array($this->object['type'], $entryTypes)) {
                 $this->handlePage();
-            }
-
-            if ('Article' === $this->object['type']) {
-                $this->handlePage();
-            }
-
-            if ('Question' === $this->object['type']) {
-                $this->handleChain();
             }
         } catch (UserBannedException) {
             $this->logger->info('Did not create the post, because the user is banned');
