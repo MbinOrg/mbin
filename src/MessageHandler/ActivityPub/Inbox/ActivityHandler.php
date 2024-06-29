@@ -56,7 +56,7 @@ readonly class ActivityHandler
 
                 return;
             } catch (InvalidUserPublicKeyException $exception) {
-                $this->logger->warning("Unable to extract public key for '{user}'.", ['user' => $exception]);
+                $this->logger->warning("Unable to extract public key for '{user}'.", ['user' => $exception->apProfileId]);
 
                 return;
             }

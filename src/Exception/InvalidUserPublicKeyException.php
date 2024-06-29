@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace App\Exception;
 
-final class InvalidUserPublicKeyException extends \Exception
+class InvalidUserPublicKeyException extends \Exception
 {
+    /**
+     * @param string $apProfileId the url from which the activity was received
+     */
+    public function __construct(public string $apProfileId, int $code = 0, \Throwable $previous = null)
+    {
+        $message = "Unable to extract public key for '$apProfileId'.";
+        parent::__construct($message, $code, $previous);
+    }
 }
