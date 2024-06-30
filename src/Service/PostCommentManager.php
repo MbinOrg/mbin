@@ -82,6 +82,9 @@ class PostCommentManager implements ContentManagerInterface
             : $dto->mentions;
         $comment->visibility = $dto->visibility;
         $comment->apId = $dto->apId;
+        $comment->apLikeCount = $dto->apLikeCount;
+        $comment->apDislikeCount = $dto->apDislikeCount;
+        $comment->apShareCount = $dto->apShareCount;
         $comment->magazine->lastActive = new \DateTime();
         $comment->user->lastActive = new \DateTime();
         $comment->lastActive = $dto->lastActive ?? $comment->lastActive;
@@ -91,6 +94,8 @@ class PostCommentManager implements ContentManagerInterface
         }
 
         $comment->post->addComment($comment);
+        $comment->updateScore();
+        $comment->updateRanking();
 
         $this->entityManager->persist($comment);
         $this->entityManager->flush();
@@ -125,6 +130,12 @@ class PostCommentManager implements ContentManagerInterface
         if (empty($comment->body) && null === $comment->image) {
             throw new \Exception('Comment body and image cannot be empty');
         }
+
+        $comment->apLikeCount = $dto->apLikeCount;
+        $comment->apDislikeCount = $dto->apDislikeCount;
+        $comment->apShareCount = $dto->apShareCount;
+        $comment->updateScore();
+        $comment->updateRanking();
 
         $this->entityManager->flush();
 

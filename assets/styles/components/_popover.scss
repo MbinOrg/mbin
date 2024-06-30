@@ -63,6 +63,14 @@
       font-size: .9rem;
       list-style: none;
       padding: 0;
+
+      li {
+        div {
+          i {
+            padding-right: .5rem;
+          }
+        }
+      }
     }
 
     .user__actions {

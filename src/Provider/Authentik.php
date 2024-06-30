@@ -23,37 +23,37 @@ class Authentik extends AbstractProvider
         parent::__construct($options, $collaborators);
     }
 
-    protected function getBaseUrl()
+    protected function getBaseUrl(): string
     {
         return rtrim($this->baseUrl, '/').'/';
     }
 
-    protected function getAuthorizationHeaders($token = null)
+    protected function getAuthorizationHeaders($token = null): array
     {
         return ['Authorization' => 'Bearer '.$token];
     }
 
-    public function getBaseAuthorizationUrl()
+    public function getBaseAuthorizationUrl(): string
     {
         return $this->getBaseUrl().'application/o/authorize/';
     }
 
-    public function getBaseAccessTokenUrl(array $params)
+    public function getBaseAccessTokenUrl(array $params): string
     {
         return $this->getBaseUrl().'application/o/token/';
     }
 
-    public function getResourceOwnerDetailsUrl(AccessToken $token)
+    public function getResourceOwnerDetailsUrl(AccessToken $token): string
     {
         return $this->getBaseUrl().'application/o/userinfo/';
     }
 
-    protected function getDefaultScopes()
+    protected function getDefaultScopes(): array
     {
         return ['openid', 'profile', 'email'];
     }
 
-    protected function checkResponse(ResponseInterface $response, $data)
+    protected function checkResponse(ResponseInterface $response, $data): void
     {
         if (!empty($data['error'])) {
             $error = htmlentities($data['error'], ENT_QUOTES, 'UTF-8');
@@ -62,12 +62,12 @@ class Authentik extends AbstractProvider
         }
     }
 
-    protected function createResourceOwner(array $response, AccessToken $token)
+    protected function createResourceOwner(array $response, AccessToken $token): AuthentikResourceOwner
     {
         return new AuthentikResourceOwner($response);
     }
 
-    protected function getScopeSeparator()
+    protected function getScopeSeparator(): string
     {
         return ' ';
     }

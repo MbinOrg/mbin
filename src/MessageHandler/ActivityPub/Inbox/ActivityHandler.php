@@ -7,6 +7,7 @@ namespace App\MessageHandler\ActivityPub\Inbox;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Exception\InboxForwardingException;
+use App\Exception\InvalidUserPublicKeyException;
 use App\Message\ActivityPub\Inbox\ActivityMessage;
 use App\Message\ActivityPub\Inbox\AddMessage;
 use App\Message\ActivityPub\Inbox\AnnounceMessage;
@@ -54,6 +55,10 @@ readonly class ActivityHandler
                 $this->bus->dispatch(new ActivityMessage($body));
 
                 return;
+            } catch (InvalidUserPublicKeyException $exception) {
+                $this->logger->warning("Unable to extract public key for '{user}'.", ['user' => $exception->apProfileId]);
+
+                return;
             }
         }
 
@@ -63,10 +68,10 @@ readonly class ActivityHandler
 
         try {
             if (isset($payload['actor']) || isset($payload['attributedTo'])) {
-                if (!$this->verifyInstanceDomain($payload['actor'] ?? $payload['attributedTo'])) {
+                if (!$this->verifyInstanceDomain($payload['actor'] ?? $this->manager->getActorFromAttributedTo($payload['attributedTo']))) {
                     return;
                 }
-                $user = $this->manager->findActorOrCreate($payload['actor'] ?? $payload['attributedTo']);
+                $user = $this->manager->findActorOrCreate($payload['actor'] ?? $this->manager->getActorFromAttributedTo($payload['attributedTo']));
             } else {
                 if (!$this->verifyInstanceDomain($payload['id'])) {
                     return;
@@ -83,6 +88,12 @@ readonly class ActivityHandler
             return;
         }
 
+        if (null === $user) {
+            $this->logger->warning('Could not find an actor discarding ActivityMessage {m}', ['m' => $message->payload]);
+
+            return;
+        }
+
         $this->handle($payload);
     }
 
@@ -93,14 +104,17 @@ readonly class ActivityHandler
         }
 
         if ('Announce' === $payload['type']) {
-            $actor = $this->manager->findActorOrCreate($payload['actor']);
-            if ($actor instanceof Magazine) {
-                $actor->lastOriginUpdate = new \DateTime();
-                $this->entityManager->persist($actor);
-                $this->entityManager->flush();
-            }
             // we check for an array here, because boosts are announces with an url (string) as the object
             if (\is_array($payload['object'])) {
+                $actorObject = $this->manager->findActorOrCreate($payload['actor']);
+                if ($actorObject instanceof Magazine && $actorObject->lastOriginUpdate < (new \DateTime())->modify('-3 hours')) {
+                    if (isset($payload['object']['type']) && 'Create' === $payload['object']['type']) {
+                        $actorObject->lastOriginUpdate = new \DateTime();
+                        $this->entityManager->persist($actorObject);
+                        $this->entityManager->flush();
+                    }
+                }
+
                 $payload = $payload['object'];
                 $actor = $payload['actor'] ?? $payload['attributedTo'] ?? null;
                 if ($actor) {
@@ -125,6 +139,7 @@ readonly class ActivityHandler
             case 'Page':
             case 'Article':
             case 'Question':
+            case 'Video':
                 $this->bus->dispatch(new CreateMessage($payload));
                 // no break
             case 'Announce':

@@ -140,11 +140,11 @@ class Note
                 $dto->lang = $this->settingsManager->get('KBIN_DEFAULT_LANG');
             }
 
-            return $this->entryCommentManager->create(
-                $dto,
-                $actor,
-                false
-            );
+            $dto->apLikeCount = $this->activityPubManager->extractRemoteLikeCount($object);
+            $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($object);
+            $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($object);
+
+            return $this->entryCommentManager->create($dto, $actor, false);
         } else {
             throw new \Exception('Actor could not be found for entry comment.');
         }
@@ -187,7 +187,7 @@ class Note
     private function createPost(array $object): Post
     {
         $dto = new PostDto();
-        $dto->magazine = $this->activityPubManager->findOrCreateMagazineByToAndCC($object);
+        $dto->magazine = $this->activityPubManager->findOrCreateMagazineByToCCAndAudience($object);
         $dto->apId = $object['id'];
 
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
@@ -219,12 +219,11 @@ class Note
             } else {
                 $dto->lang = $this->settingsManager->get('KBIN_DEFAULT_LANG');
             }
+            $dto->apLikeCount = $this->activityPubManager->extractRemoteLikeCount($object);
+            $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($object);
+            $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($object);
 
-            return $this->postManager->create(
-                $dto,
-                $actor,
-                false
-            );
+            return $this->postManager->create($dto, $actor, false);
         } else {
             throw new \Exception('Actor could not be found for post.');
         }
@@ -267,12 +266,11 @@ class Note
             } else {
                 $dto->lang = $this->settingsManager->get('KBIN_DEFAULT_LANG');
             }
+            $dto->apLikeCount = $this->activityPubManager->extractRemoteLikeCount($object);
+            $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($object);
+            $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($object);
 
-            return $this->postCommentManager->create(
-                $dto,
-                $actor,
-                false
-            );
+            return $this->postCommentManager->create($dto, $actor, false);
         } else {
             throw new \Exception('Actor could not be found for post comment.');
         }

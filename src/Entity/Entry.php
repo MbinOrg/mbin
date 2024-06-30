@@ -283,7 +283,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
 
     public function updateScore(): self
     {
-        $this->score = $this->getUpVotes()->count() + $this->favouriteCount - $this->getDownVotes()->count();
+        $this->score = ($this->apShareCount ?? $this->getUpVotes()->count()) + ($this->apLikeCount ?? $this->favouriteCount) - ($this->apDislikeCount ?? $this->getDownVotes()->count());
 
         return $this;
     }

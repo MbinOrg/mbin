@@ -104,6 +104,9 @@ class EntryFactory
         $dto->isPinned = $entry->sticky;
         $dto->type = $entry->type;
         $dto->apId = $entry->apId;
+        $dto->apLikeCount = $entry->apLikeCount;
+        $dto->apDislikeCount = $entry->apDislikeCount;
+        $dto->apShareCount = $entry->apShareCount;
         $dto->tags = $this->tagLinkRepository->getTagsOfEntry($entry);
 
         $currentUser = $this->security->getUser();

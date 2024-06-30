@@ -91,6 +91,9 @@ class PostManager implements ContentManagerInterface
         $post->mentions = $dto->body ? $this->mentionManager->extract($dto->body) : null;
         $post->visibility = $dto->visibility;
         $post->apId = $dto->apId;
+        $post->apLikeCount = $dto->apLikeCount;
+        $post->apDislikeCount = $dto->apDislikeCount;
+        $post->apShareCount = $dto->apShareCount;
         $post->magazine->lastActive = new \DateTime();
         $post->user->lastActive = new \DateTime();
         $post->lastActive = $dto->lastActive ?? $post->lastActive;
@@ -98,6 +101,9 @@ class PostManager implements ContentManagerInterface
         if (empty($post->body) && null === $post->image) {
             throw new \Exception('Post body and image cannot be empty');
         }
+
+        $post->updateScore();
+        $post->updateRanking();
 
         $this->entityManager->persist($post);
         $this->entityManager->flush();
@@ -128,6 +134,12 @@ class PostManager implements ContentManagerInterface
         if (empty($post->body) && null === $post->image) {
             throw new \Exception('Post body and image cannot be empty');
         }
+
+        $post->apLikeCount = $dto->apLikeCount;
+        $post->apDislikeCount = $dto->apDislikeCount;
+        $post->apShareCount = $dto->apShareCount;
+        $post->updateScore();
+        $post->updateRanking();
 
         $this->entityManager->flush();
 

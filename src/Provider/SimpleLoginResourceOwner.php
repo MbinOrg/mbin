@@ -15,32 +15,32 @@ class SimpleLoginResourceOwner implements ResourceOwnerInterface
         $this->response = $response;
     }
 
-    public function getId()
+    public function getId(): mixed
     {
         return $this->getResponseValue('sub');
     }
 
-    public function getName()
+    public function getName(): mixed
     {
         return $this->getResponseValue('name');
     }
 
-    public function getEmail()
+    public function getEmail(): mixed
     {
         return $this->getResponseValue('email');
     }
 
-    public function getPictureUrl()
+    public function getPictureUrl(): mixed
     {
         return $this->getResponseValue('avatar_url');
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return $this->response;
     }
 
-    protected function getResponseValue($key)
+    protected function getResponseValue($key): mixed
     {
         $keys = explode('.', $key);
         $value = $this->response;

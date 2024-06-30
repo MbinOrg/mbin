@@ -157,38 +157,40 @@ class ActivityPubManager
             return $this->userRepository->findOneBy(['username' => $name]);
         }
 
+        $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
+        if ($user instanceof User) {
+            $this->logger->debug('found remote user for url "{url}" in db', ['url' => $actorUrl]);
+            if ($user->apId && (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
+                $this->dispatchUpdateActor($user->apProfileId);
+            }
+
+            return $user;
+        }
+        $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
+        if ($magazine instanceof Magazine) {
+            $this->logger->debug('found remote user for url "{url}" in db', ['url' => $actorUrl]);
+            if (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 hour') < (new \DateTime())) {
+                $this->dispatchUpdateActor($magazine->apProfileId);
+            }
+
+            return $magazine;
+        }
+
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         // Check if actor isn't empty (not set/null/empty array/etc.) and check if actor type is set
         if (!empty($actor) && isset($actor['type'])) {
             // User (we don't make a distinction between bots with type Service as Lemmy does)
             if (\in_array($actor['type'], User::USER_TYPES)) {
-                $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
                 $this->logger->debug('found remote user at "{url}"', ['url' => $actorUrl]);
-                if (!$user) {
-                    $user = $this->createUser($actorUrl);
-                } else {
-                    if (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime())) {
-                        $this->dispatchUpdateActor($user->apProfileId);
-                    }
-                }
 
-                return $user;
+                return $this->createUser($actorUrl);
             }
 
             // Magazine (Group)
             if ('Group' === $actor['type']) {
-                // User
-                $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
-                $this->logger->debug('found magazine at "{url}"', ['url' => $actorUrl]);
-                if (!$magazine) {
-                    $magazine = $this->createMagazine($actorUrl);
-                } else {
-                    if (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 hour') < (new \DateTime())) {
-                        $this->dispatchUpdateActor($magazine->apProfileId);
-                    }
-                }
+                $this->logger->debug('found remote magazine at "{url}"', ['url' => $actorUrl]);
 
-                return $magazine;
+                return $this->createMagazine($actorUrl);
             }
 
             if ('Tombstone' === $actor['type']) {
@@ -488,7 +490,7 @@ class ActivityPubManager
             $magazine->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
             $magazine->apDomain = parse_url($actor['id'], PHP_URL_HOST);
             $magazine->apFollowersUrl = $actor['followers'] ?? null;
-            $magazine->apAttributedToUrl = $actor['attributedTo'] ?? null;
+            $magazine->apAttributedToUrl = $this->getActorFromAttributedTo($actor['attributedTo'] ?? null, filterForPerson: false);
             $magazine->apPreferredUsername = $actor['preferredUsername'] ?? null;
             $magazine->apDiscoverable = $actor['discoverable'] ?? true;
             $magazine->apPublicUrl = $actor['url'] ?? $actorUrl;
@@ -683,7 +685,7 @@ class ActivityPubManager
         return null;
     }
 
-    public function findOrCreateMagazineByToAndCC(array $object): Magazine|null
+    public function findOrCreateMagazineByToCCAndAudience(array $object): Magazine|null
     {
         $potentialGroups = self::getReceivers($object);
         $magazine = $this->magazineRepository->findByApGroupProfileId($potentialGroups);
@@ -711,8 +713,14 @@ class ActivityPubManager
     public static function getReceivers(array $object): array
     {
         $res = [];
+        if (isset($object['audience']) and \is_array($object['audience'])) {
+            $res = array_merge($res, $object['audience']);
+        } elseif (isset($object['audience']) and \is_string($object['audience'])) {
+            $res[] = $object['audience'];
+        }
+
         if (isset($object['to']) and \is_array($object['to'])) {
-            $res = $object['to'];
+            $res = array_merge($res, $object['to']);
         } elseif (isset($object['to']) and \is_string($object['to'])) {
             $res[] = $object['to'];
         }
@@ -724,6 +732,12 @@ class ActivityPubManager
         }
 
         if (isset($object['object']) and \is_array($object['object'])) {
+            if (isset($object['object']['audience']) and \is_array($object['object']['audience'])) {
+                $res = array_merge($res, $object['object']['audience']);
+            } elseif (isset($object['object']['audience']) and \is_string($object['object']['audience'])) {
+                $res[] = $object['object']['audience'];
+            }
+
             if (isset($object['object']['to']) and \is_array($object['object']['to'])) {
                 $res = array_merge($res, $object['object']['to']);
             } elseif (isset($object['object']['to']) and \is_string($object['object']['to'])) {
@@ -735,6 +749,11 @@ class ActivityPubManager
             } elseif (isset($object['object']['cc']) and \is_string($object['object']['cc'])) {
                 $res[] = $object['object']['cc'];
             }
+        } elseif (isset($object['attributedTo']) && \is_array($object['attributedTo'])) {
+            // if there is no "object" inside of this it will probably be a create activity which has an attributedTo field
+            // this was implemented for peertube support, because they list the channel (Group) and the user in an array in that field
+            $groups = array_filter($object['attributedTo'], fn ($item) => \is_array($item) && !empty($item['type']) && 'Group' === $item['type']);
+            $res = array_merge($res, array_map(fn ($item) => $item['id'], $groups));
         }
 
         $res = array_filter($res, fn ($i) => null !== $i and ActivityPubActivityInterface::PUBLIC_URL !== $i);
@@ -823,5 +842,124 @@ class ActivityPubManager
 
             return stripslashes($converter->convert($apObject['summary']));
         }
+    }
+
+    public function extractMarkdownContent(array $apObject)
+    {
+        if (isset($apObject['source']) && isset($apObject['source']['mediaType']) && isset($apObject['source']['content']) && ApObjectExtractor::MARKDOWN_TYPE === $apObject['source']['mediaType']) {
+            return $apObject['source']['content'];
+        } else {
+            $converter = new HtmlConverter(['strip_tags' => true]);
+
+            return stripslashes($converter->convert($apObject['content']));
+        }
+    }
+
+    public function isActivityPublic(array $payload): bool
+    {
+        $to = [];
+        if (!empty($payload['to']) && \is_array($payload['to'])) {
+            $to = array_merge($to, $payload['to']);
+        }
+
+        if (!empty($payload['cc']) && \is_array($payload['cc'])) {
+            $to = array_merge($to, $payload['cc']);
+        }
+
+        foreach ($to as $receiver) {
+            $id = null;
+            if (\is_string($receiver)) {
+                $id = $receiver;
+            } elseif (\is_array($receiver) && !empty($receiver['id'])) {
+                $id = $receiver['id'];
+            }
+
+            if (null !== $id) {
+                $actor = $this->findActorOrCreate($id);
+                if ($actor instanceof Magazine) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function getActorFromAttributedTo(string|array|null $attributedTo, bool $filterForPerson = true): ?string
+    {
+        if (\is_string($attributedTo)) {
+            return $attributedTo;
+        } elseif (\is_array($attributedTo)) {
+            $actors = array_filter($attributedTo, fn ($item) => \is_string($item) || (\is_array($item) && !empty($item['type']) && (!$filterForPerson || 'Person' === $item['type'])));
+            if (\sizeof($actors) >= 1) {
+                if (\is_string($actors[0])) {
+                    return $actors[0];
+                } elseif (!empty($actors[0]['id'])) {
+                    return $actors[0]['id'];
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function extractUrl(string|array|null $url): ?string
+    {
+        if (\is_string($url)) {
+            return $url;
+        } elseif (\is_array($url)) {
+            $urls = array_filter($url, fn ($item) => \is_string($item) || (\is_array($item) && !empty($item['type']) && 'Link' === $item['type'] && (empty($item['mediaType']) || 'text/html' === $item['mediaType'])));
+            if (\sizeof($urls) >= 1) {
+                if (\is_string($urls[0])) {
+                    return $urls[0];
+                } elseif (!empty($urls[0]['href'])) {
+                    return $urls[0]['href'];
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function extractRemoteLikeCount(array $apObject): ?int
+    {
+        if (!empty($apObject['likes'])) {
+            if (false !== filter_var($apObject['likes'], FILTER_VALIDATE_URL)) {
+                $collection = $this->apHttpClient->getCollectionObject($apObject['likes']);
+                if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
+                    return $collection['totalItems'];
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function extractRemoteDislikeCount(array $apObject): ?int
+    {
+        if (!empty($apObject['dislikes'])) {
+            if (false !== filter_var($apObject['dislikes'], FILTER_VALIDATE_URL)) {
+                $collection = $this->apHttpClient->getCollectionObject($apObject['dislikes']);
+                if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
+                    return $collection['totalItems'];
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function extractRemoteShareCount(array $apObject): ?int
+    {
+        if (!empty($apObject['shares'])) {
+            if (false !== filter_var($apObject['shares'], FILTER_VALIDATE_URL)) {
+                $collection = $this->apHttpClient->getCollectionObject($apObject['shares']);
+                if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
+                    return $collection['totalItems'];
+                }
+            }
+        }
+
+        return null;
     }
 }

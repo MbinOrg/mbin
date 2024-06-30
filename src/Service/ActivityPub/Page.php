@@ -44,7 +44,8 @@ class Page
      */
     public function create(array $object): Entry
     {
-        $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
+        $actorUrl = $this->activityPubManager->getActorFromAttributedTo($object['attributedTo']);
+        $actor = $this->activityPubManager->findActorOrCreate($actorUrl);
         if (!empty($actor)) {
             if ($actor->isBanned) {
                 throw new UserBannedException();
@@ -65,7 +66,7 @@ class Page
                 $object['cc'] = [$object['cc']];
             }
 
-            $magazine = $this->activityPubManager->findOrCreateMagazineByToAndCC($object);
+            $magazine = $this->activityPubManager->findOrCreateMagazineByToCCAndAudience($object);
             $dto = new EntryDto();
             $dto->magazine = $magazine;
             $dto->title = $object['name'];
@@ -95,14 +96,13 @@ class Page
             } else {
                 $dto->lang = $this->settingsManager->get('KBIN_DEFAULT_LANG');
             }
+            $dto->apLikeCount = $this->activityPubManager->extractRemoteLikeCount($object);
+            $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($object);
+            $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($object);
 
             $this->logger->debug('creating page');
 
-            return $this->entryManager->create(
-                $dto,
-                $actor,
-                false
-            );
+            return $this->entryManager->create($dto, $actor, false);
         } else {
             throw new \Exception('Actor could not be found for entry.');
         }
@@ -153,7 +153,7 @@ class Page
         }
 
         if (!$dto->url && isset($object['url'])) {
-            $dto->url = $object['url'];
+            $dto->url = $this->activityPubManager->extractUrl($object['url']);
         }
     }
 
