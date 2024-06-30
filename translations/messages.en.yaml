@@ -292,7 +292,7 @@ comment: Comment
 post: Post
 ban_expired: Ban expired
 purge: Purge
-send_message: Send message
+send_message: Send direct message
 message: Message
 infinite_scroll: Infinite scrolling
 show_top_bar: Show top bar
@@ -832,3 +832,4 @@ magazine_log_mod_added: has added a moderator
 magazine_log_mod_removed: has removed a moderator
 last_updated: Last updated
 and: and
+direct_message: Direct message

@@ -36,6 +36,11 @@
             </button>
             <input type="hidden" name="token" value="{{ csrf_token('block') }}">
         </form>
+        <a href="{{ path('messages_create', {username: user.username}) }}" title="{{ 'direct_message'|trans }}" aria-label="{{ 'direct_message'|trans }}">
+            <button class="btn btn__secondary">
+                <i class="fa-solid fa-envelope" aria-hidden="true"></i> <span class="hide-on-mobile">{{ 'direct_message'|trans }}</span>
+            </button>
+        </a>
     {% elseif app.user is same as user and is_route_name_starts_with('user') and not is_route_name_contains('settings') %}
         <a href="{{ path('user_settings_profile') }}" title="{{ 'edit_my_profile'|trans }}" aria-label="{{ 'edit_my_profile'|trans }}">
             <button class="btn btn__secondary">{{ 'edit_my_profile'|trans }}</button>
