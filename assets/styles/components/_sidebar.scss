@@ -685,31 +685,36 @@
   }
 }
 
-#sidebar.open {
+#sidebar {
   @include media-breakpoint-down(lg) {
-    background: var(--kbin-bg);
-    height: 100%;
-    left: 0;
-    overflow: auto;
-    padding-bottom: 100px !important;
-    position: fixed;
-    top: 3.25rem;
-    width: 100%;
-    z-index: 98;
+    &.open {
+      background: var(--kbin-bg);
+      height: 100%;
+      left: 0;
+      overflow: auto;
+      padding-bottom: 100px !important;
+      position: fixed;
+      top: 3.25rem;
+      width: 100%;
+      z-index: 98;
 
-    .topbar & {
-      top: 4.5rem;
-    }
-
-    .mobile-close {
-      display: flex;
-      font-size: 1.5rem;
-      justify-content: space-between;
-      padding: 0.5em;
-
-      button {
-        height: auto;
+      .topbar & {
+        top: 4.5rem;
       }
+
+      .mobile-close {
+        display: flex;
+        font-size: 1.5rem;
+        justify-content: space-between;
+        padding: 0.5em;
+
+        button {
+          height: auto;
+        }
+      }
+    }
+    &:not(.open) {
+      display: none;
     }
   }
 }

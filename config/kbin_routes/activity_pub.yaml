@@ -151,6 +151,12 @@ ap_report:
     methods: [GET]
     condition: '%kbin_ap_route_condition%'
 
+ap_message:
+    controller: App\Controller\ActivityPub\MessageController
+    path: /message/{uuid}
+    methods: [GET]
+    condition: '%kbin_ap_route_condition%'
+
 ap_contexts:
     controller: App\Controller\ActivityPub\ContextsController
     path: /contexts.{_format}

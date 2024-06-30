@@ -7,11 +7,15 @@ namespace App\Service\ActivityPub\Wrapper;
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Factory\ActivityPub\ActivityFactory;
 use JetBrains\PhpStorm\ArrayShape;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Uid\Uuid;
 
 class CreateWrapper
 {
-    public function __construct(private readonly ActivityFactory $factory)
-    {
+    public function __construct(
+        private readonly ActivityFactory $factory,
+        private readonly UrlGeneratorInterface $urlGenerator,
+    ) {
     }
 
     #[ArrayShape([
@@ -27,13 +31,14 @@ class CreateWrapper
     public function build(ActivityPubActivityInterface $item): array
     {
         $item = $this->factory->create($item, true);
+        $id = Uuid::v4()->toRfc4122();
 
         $context = $item['@context'];
         unset($item['@context']);
 
         return [
             '@context' => $context,
-            'id' => $item['id'],
+            'id' => $this->urlGenerator->generate('ap_object', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL),
             'type' => 'Create',
             'actor' => $item['attributedTo'],
             'published' => $item['published'],

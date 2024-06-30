@@ -4,10 +4,69 @@
     gap: .5rem;
     justify-content: space-between;
   }
-}
 
-.page-messages {
-  .meta {
-    margin-bottom: 1.5rem;
+  .message-view {
+    max-height: calc(100vh - 11em);
+    overflow: auto;
+    position: relative;
+  }
+
+  .thread-participants {
+    position: absolute;
+  }
+
+  .section--top {
+    padding: .25em;
+  }
+
+  .message {
+    max-width: 75%;
+    width: fit-content;
+    min-width: 20%;
+    padding: .25em .5em;
+
+    p {
+      margin-bottom: .25em;
+    }
+  }
+
+  .message-self {
+    margin-left: auto;
+  }
+
+  .message-other {
+
+  }
+
+  .col {
+    flex: 1 1 auto;
+    margin-bottom: 0;
+  }
+
+  .col-auto {
+    flex: 0 0 auto;
+    margin-bottom: 0;
+  }
+
+  .message-form {
+    margin: 0;
+    display: flex;
+    position: relative;
+    bottom: 0;
+
+    form div {
+      margin-bottom: 0;
+    }
+
+    .message-input {
+      height: 3em;
+      padding: .75em;
+    }
+  }
+
+  .message-view-container {
+    position:absolute;
+    width:calc(100% - 1em);
+    height: calc(100vh - 4em);
   }
 }

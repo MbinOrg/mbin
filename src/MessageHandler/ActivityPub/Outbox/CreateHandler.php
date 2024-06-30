@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\MessageHandler\ActivityPub\Outbox;
 
+use App\Entity\Message;
 use App\Message\ActivityPub\Outbox\CreateMessage;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\Wrapper\CreateWrapper;
 use App\Service\ActivityPubManager;
 use App\Service\DeliverManager;
+use App\Service\MessageManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -23,8 +26,10 @@ class CreateHandler
         private readonly CreateWrapper $createWrapper,
         private readonly EntityManagerInterface $entityManager,
         private readonly ActivityPubManager $activityPubManager,
+        private readonly SettingsManager $settingsManager,
+        private readonly MessageManager $messageManager,
+        private readonly LoggerInterface $logger,
         private readonly DeliverManager $deliverManager,
-        private readonly SettingsManager $settingsManager
     ) {
     }
 
@@ -38,11 +43,16 @@ class CreateHandler
 
         $activity = $this->createWrapper->build($entity);
 
-        $inboxes = array_filter(array_unique(array_merge(
-            $this->userRepository->findAudience($entity->user),
-            $this->activityPubManager->createInboxesFromCC($activity, $entity->user),
-            $this->magazineRepository->findAudience($entity->magazine)
-        )));
-        $this->deliverManager->deliver($inboxes, $activity);
+        if ($entity instanceof Message) {
+            $receivers = $this->messageManager->findAudience($entity->thread);
+            $this->logger->info('sending message to {p}', ['p' => $receivers]);
+        } else {
+            $receivers = [
+                ...$this->userRepository->findAudience($entity->user),
+                ...$this->activityPubManager->createInboxesFromCC($activity, $entity->user),
+                ...$this->magazineRepository->findAudience($entity->magazine),
+            ];
+        }
+        $this->deliverManager->deliver(array_filter(array_unique($receivers)), $activity);
     }
 }

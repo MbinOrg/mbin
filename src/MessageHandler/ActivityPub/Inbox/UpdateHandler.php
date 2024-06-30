@@ -10,6 +10,7 @@ use App\DTO\PostCommentDto;
 use App\DTO\PostDto;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\Message;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
@@ -23,9 +24,11 @@ use App\Service\ActivityPub\ApObjectExtractor;
 use App\Service\ActivityPubManager;
 use App\Service\EntryCommentManager;
 use App\Service\EntryManager;
+use App\Service\MessageManager;
 use App\Service\PostCommentManager;
 use App\Service\PostManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -46,6 +49,8 @@ class UpdateHandler
         private readonly PostFactory $postFactory,
         private readonly PostCommentFactory $postCommentFactory,
         private readonly ApObjectExtractor $objectExtractor,
+        private readonly MessageManager $messageManager,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -69,18 +74,14 @@ class UpdateHandler
 
         if (Entry::class === \get_class($object)) {
             $this->editEntry($object, $actor);
-        }
-
-        if (EntryComment::class === \get_class($object)) {
+        } elseif (EntryComment::class === \get_class($object)) {
             $this->editEntryComment($object, $actor);
-        }
-
-        if (Post::class === \get_class($object)) {
+        } elseif (Post::class === \get_class($object)) {
             $this->editPost($object, $actor);
-        }
-
-        if (PostComment::class === \get_class($object)) {
+        } elseif (PostComment::class === \get_class($object)) {
             $this->editPostComment($object, $actor);
+        } elseif (Message::class === \get_class($object)) {
+            $this->editMessage($object, $actor);
         }
 
         // Dead-code introduced by Ernest "Temp disable handler dispatch", in commit:
@@ -144,5 +145,17 @@ class UpdateHandler
         $dto->apLikeCount = $this->activityPubManager->extractRemoteLikeCount($this->payload['object']);
         $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($this->payload['object']);
         $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($this->payload['object']);
+    }
+
+    private function editMessage(Message $message, User $user): void
+    {
+        if ($this->messageManager->canUserEditMessage($message, $user)) {
+            $this->messageManager->editMessage($message, $this->payload['object']);
+        } else {
+            $this->logger->warning(
+                'Got an update message from a user that is not allowed to edit it. Update actor: {ua}. Original Author: {oa}',
+                ['ua' => $user->apId ?? $user->username, 'oa' => $message->sender->apId ?? $message->sender->username]
+            );
+        }
     }
 }
