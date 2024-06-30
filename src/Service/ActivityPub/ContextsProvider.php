@@ -16,11 +16,11 @@ class ContextsProvider
 
     public static function embeddedContexts(): array
     {
-        return [
+        return array_values([
             ActivityPubActivityInterface::CONTEXT_URL,
             ActivityPubActivityInterface::SECURITY_URL,
-            ActivityPubActivityInterface::ADDITIONAL_CONTEXTS,
-        ];
+            ...ActivityPubActivityInterface::ADDITIONAL_CONTEXTS,
+        ]);
     }
 
     public function referencedContexts(): array

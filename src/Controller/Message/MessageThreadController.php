@@ -28,10 +28,7 @@ class MessageThreadController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->manager->toMessage($form->getData(), $thread, $this->getUserOrThrow());
 
-            return $this->redirectToRoute(
-                'messages_front',
-                ['id' => $thread->getId()]
-            );
+            return $this->redirectToRoute('messages_single', ['id' => $thread->getId()]);
         }
 
         $this->manager->readMessages($thread, $this->getUserOrThrow());
