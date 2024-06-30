@@ -15,42 +15,42 @@ class AuthentikResourceOwner implements ResourceOwnerInterface
         $this->response = $response;
     }
 
-    public function getId()
+    public function getId(): mixed
     {
         return $this->getResponseValue('sub');
     }
 
-    public function getEmail()
+    public function getEmail(): mixed
     {
         return $this->getResponseValue('email');
     }
 
-    public function getFamilyName()
+    public function getFamilyName(): mixed
     {
         return $this->getResponseValue('family_name');
     }
 
-    public function getGivenName()
+    public function getGivenName(): mixed
     {
         return $this->getResponseValue('given_name');
     }
 
-    public function getPreferredUsername()
+    public function getPreferredUsername(): mixed
     {
         return $this->getResponseValue('preferred_username');
     }
 
-    public function getPictureUrl()
+    public function getPictureUrl(): mixed
     {
         return $this->getResponseValue('picture');
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return $this->response;
     }
 
-    protected function getResponseValue($key)
+    protected function getResponseValue($key): mixed
     {
         $keys = explode('.', $key);
         $value = $this->response;
