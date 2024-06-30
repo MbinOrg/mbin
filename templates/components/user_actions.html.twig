@@ -36,9 +36,9 @@
             </button>
             <input type="hidden" name="token" value="{{ csrf_token('block') }}">
         </form>
-        <a href="{{ path('messages_create', {username: user.username}) }}" title="{{ 'send_message'|trans }}" aria-label="{{ 'send_message'|trans }}">
+        <a href="{{ path('messages_create', {username: user.username}) }}" title="{{ 'private_message'|trans }}" aria-label="{{ 'private_message'|trans }}">
             <button class="btn btn__secondary">
-                <i class="fa-solid fa-envelope" aria-hidden="true"></i> <span>{{ 'send_message'|trans }}</span>
+                <i class="fa-solid fa-envelope" aria-hidden="true"></i> <span>{{ 'private_message'|trans }}</span>
             </button>
         </a>
     {% elseif app.user is same as user and is_route_name_starts_with('user') and not is_route_name_contains('settings') %}
