@@ -6,6 +6,7 @@ namespace App\Controller\Api\Notification;
 
 use App\Controller\Api\BaseApi;
 use App\Entity\Notification;
+use App\Entity\ReportCreatedNotification;
 use App\Factory\MessageFactory;
 use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -109,6 +110,13 @@ class NotificationBaseApi extends BaseApi
                  */
                 $ban = $dto->getSubject();
                 $toReturn['subject'] = $this->magazineFactory->createBanDto($ban);
+                break;
+            case 'report_created_notification':
+            case 'report_rejected_notification':
+            case 'report_approved_notification':
+                /** @var ReportCreatedNotification $n */
+                $n = $dto;
+                $toReturn['reportId'] = $n->report->getId();
                 break;
         }
 

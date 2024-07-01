@@ -825,6 +825,15 @@ related_entry: Related
 restrict_magazine_creation: Restrict local magazine creation to admins and global mods
 sso_show_first: Show SSO first on login and registration pages
 continue_with: Continue with
+reported_user: Reported user
+reporting_user: Reporting user
+reported: reported
+report_subject: Subject
+own_report_rejected: Your report was rejected
+own_report_accepted: Your report was accepted
+own_content_reported_accepted: A report of your content was accepted.
+report_accepted: A report was accepted
+open_report: open report
 cake_day: Cake day
 someone: Someone
 back: Back

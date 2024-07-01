@@ -63,9 +63,9 @@ class ReportController extends AbstractController
 
     private function handleReportRequest(ReportDto $dto, Request $request): Response
     {
+        $reportError = false;
         try {
             $this->manager->report($dto, $this->getUserOrThrow());
-            $reportError = false;
             $responseMessage = $this->translator->trans('subject_reported');
         } catch (SubjectHasBeenReportedException $exception) {
             $reportError = true;

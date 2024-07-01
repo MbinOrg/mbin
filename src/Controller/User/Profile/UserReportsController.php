@@ -6,6 +6,7 @@ namespace App\Controller\User\Profile;
 
 use App\Controller\AbstractController;
 use App\Repository\MagazineRepository;
+use App\Repository\NotificationRepository;
 use App\Repository\ReportRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +18,7 @@ class UserReportsController extends AbstractController
 
     public function __construct(
         private readonly ReportRepository $repository,
+        private readonly NotificationRepository $notificationRepository,
     ) {
     }
 
@@ -25,6 +27,7 @@ class UserReportsController extends AbstractController
     {
         $user = $this->getUserOrThrow();
         $reports = $this->repository->findByUserPaginated($user, $this->getPageNb($request), status: $status);
+        $this->notificationRepository->markOwnReportNotificationsAsRead($this->getUserOrThrow());
 
         return $this->render(
             'user/settings/reports.html.twig',

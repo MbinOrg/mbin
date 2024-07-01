@@ -39,6 +39,9 @@ use Doctrine\ORM\Mapping\ManyToOne;
     'post_comment_mentioned' => 'PostCommentMentionedNotification',
     'message' => 'MessageNotification',
     'ban' => 'MagazineBanNotification',
+    'report_created' => 'ReportCreatedNotification',
+    'report_approved' => 'ReportApprovedNotification',
+    'report_rejected' => 'ReportRejectedNotification',
 ])]
 abstract class Notification
 {
