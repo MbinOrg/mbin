@@ -18,7 +18,7 @@ class Version20240701113000 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $type = Entry::ENTRY_TYPE_IMAGE;
-        $this->addSql("UPDATE entry SET type = '$type' WHERE image_id IS NOT NULL AND url IS NULL");
+        $this->addSql("UPDATE entry SET type = '$type', has_embed = true WHERE image_id IS NOT NULL AND url IS NULL");
     }
 
     public function down(Schema $schema): void
