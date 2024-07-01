@@ -100,6 +100,10 @@ class Page
             $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($object);
             $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($object);
 
+            if (null !== $dto->image && null === $dto->url) {
+                $dto->type = Entry::ENTRY_TYPE_IMAGE;
+            }
+
             $this->logger->debug('creating page');
 
             return $this->entryManager->create($dto, $actor, false);
