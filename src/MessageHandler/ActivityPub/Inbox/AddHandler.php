@@ -114,6 +114,9 @@ class AddHandler
         } else {
             $existingEntry = $this->entryRepository->findOneBy(['apId' => $apId]);
             if ($existingEntry) {
+                if (null !== $existingEntry->magazine->apFeaturedUrl) {
+                    $this->apHttpClient->invalidateCollectionObjectCache($existingEntry->magazine->apFeaturedUrl);
+                }
                 if (!$existingEntry->sticky) {
                     $this->logger->info('pinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
                     $this->entryManager->pin($existingEntry, $actor);

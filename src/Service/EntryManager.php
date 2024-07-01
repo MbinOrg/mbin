@@ -24,6 +24,7 @@ use App\Factory\EntryFactory;
 use App\Message\DeleteImageMessage;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
+use App\Service\ActivityPub\ApHttpClient;
 use App\Service\Contracts\ContentManagerInterface;
 use App\Utils\Slugger;
 use App\Utils\UrlCleaner;
@@ -57,6 +58,7 @@ class EntryManager implements ContentManagerInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly EntryRepository $entryRepository,
         private readonly ImageRepository $imageRepository,
+        private readonly ApHttpClient $apHttpClient,
         private readonly CacheInterface $cache
     ) {
     }
@@ -290,6 +292,10 @@ class EntryManager implements ContentManagerInterface
         $this->entityManager->flush();
 
         $this->dispatcher->dispatch(new EntryPinEvent($entry, $actor));
+
+        if (null !== $entry->magazine->apFeaturedUrl) {
+            $this->apHttpClient->invalidateCollectionObjectCache($entry->magazine->apFeaturedUrl);
+        }
 
         return $entry;
     }

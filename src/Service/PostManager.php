@@ -21,6 +21,7 @@ use App\Factory\PostFactory;
 use App\Message\DeleteImageMessage;
 use App\Repository\ImageRepository;
 use App\Repository\PostRepository;
+use App\Service\ActivityPub\ApHttpClient;
 use App\Service\Contracts\ContentManagerInterface;
 use App\Utils\Slugger;
 use Doctrine\Common\Collections\Criteria;
@@ -51,6 +52,7 @@ class PostManager implements ContentManagerInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly PostRepository $postRepository,
         private readonly ImageRepository $imageRepository,
+        private readonly ApHttpClient $apHttpClient,
         private readonly CacheInterface $cache
     ) {
     }
@@ -233,6 +235,10 @@ class PostManager implements ContentManagerInterface
         $post->sticky = !$post->sticky;
 
         $this->entityManager->flush();
+
+        if (null !== $post->magazine->apFeaturedUrl) {
+            $this->apHttpClient->invalidateCollectionObjectCache($post->magazine->apFeaturedUrl);
+        }
 
         return $post;
     }
