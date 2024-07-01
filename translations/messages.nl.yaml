@@ -288,7 +288,7 @@ mentioned_you: Heeft je vermeld
 comment: Reactie
 post: Bericht
 purge: Vernietigen
-send_message: Bericht versturen
+send_message: Direct bericht versturen
 message: Bericht
 infinite_scroll: Oneindig scrollen
 show_top_bar: Bovenbalk tonen
@@ -835,3 +835,37 @@ schedule_delete_account: Plan Verwijdering
 schedule_delete_account_desc: Plan de verwijdering van dit account over 30 dagen.
   Hierdoor worden de gebruiker en zijn inhoud verborgen en kan de gebruiker niet inloggen.
 remove_schedule_delete_account: Geplande verwijdering verwijderen
+from: van
+ban_hashtag_description: Als je een hashtag verbiedt, dan worden er geen berichten
+  met deze hashtag meer aangemaakt en tevens worden bestaande berichten met deze hashtag
+  verborgen.
+restrict_magazine_creation: Beperk het maken van lokale tijdschriften tot beheerders
+  en algemene moderatoren
+direct_message: Direct bericht
+magazine_log_mod_added: heeft een moderator toegevoegd
+magazine_log_mod_removed: heeft een moderator verwijderd
+tag: Label
+unban: Ban opheffen
+ban_hashtag_btn: Ban Hastag
+unban_hashtag_btn: Opheffen Hashtag Ban
+unban_hashtag_description: Als je een ban van een hashtag ongedaan maakt, dan kun
+  je weer berichten met deze hashtag aanmaken. Bestaande berichten met deze hashtag
+  zijn niet langer verborgen.
+private_instance: Dwing gebruikers om in te loggen voordat ze toegang krijgen tot
+  inhoud
+flash_thread_tag_banned_error: Discussie kon niet worden aangemaakt. Deze inhoud is
+  niet toegestaan.
+filter_labels: Filter labels
+sso_only_mode: Beperk inloggen en registratie alleen tot SSO (Single-Sign-On) methoden
+related_entry: Gerelateerd
+cake_day: Taart dag
+someone: Iemand
+last_updated: Laatst bijgewerkt
+sort_by: Sorteer op
+filter_by_subscription: Filter op abonnement
+filter_by_federation: Filter op federatiestatus
+auto: Automatisch
+back: Terug
+and: en
+sso_show_first: Toon SSO (Single-Sign-On) als eerste op de inlog-en registratiepagina's
+continue_with: Daargaan met
