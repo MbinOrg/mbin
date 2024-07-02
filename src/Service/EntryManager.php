@@ -276,6 +276,8 @@ class EntryManager implements ContentManagerInterface
     }
 
     /**
+     * this toggles the pin state of the entry. If it was not pinned it pins, if it was pinned it unpins it.
+     *
      * @param User|null $actor this should only be null if it is a system call
      */
     public function pin(Entry $entry, ?User $actor): Entry

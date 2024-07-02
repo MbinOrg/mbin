@@ -230,6 +230,9 @@ class PostManager implements ContentManagerInterface
         $this->dispatcher->dispatch(new PostRestoredEvent($post, $user));
     }
 
+    /**
+     * this toggles the pin state of the post. If it was not pinned it pins, if it was pinned it unpins it.
+     */
     public function pin(Post $post): Post
     {
         $post->sticky = !$post->sticky;
