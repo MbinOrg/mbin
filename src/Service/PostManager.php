@@ -21,6 +21,7 @@ use App\Factory\PostFactory;
 use App\Message\DeleteImageMessage;
 use App\Repository\ImageRepository;
 use App\Repository\PostRepository;
+use App\Service\ActivityPub\ApHttpClient;
 use App\Service\Contracts\ContentManagerInterface;
 use App\Utils\Slugger;
 use Doctrine\Common\Collections\Criteria;
@@ -51,6 +52,7 @@ class PostManager implements ContentManagerInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly PostRepository $postRepository,
         private readonly ImageRepository $imageRepository,
+        private readonly ApHttpClient $apHttpClient,
         private readonly CacheInterface $cache
     ) {
     }
@@ -61,7 +63,7 @@ class PostManager implements ContentManagerInterface
      * @throws TooManyRequestsHttpException
      * @throws \Exception
      */
-    public function create(PostDto $dto, User $user, $rateLimit = true): Post
+    public function create(PostDto $dto, User $user, $rateLimit = true, bool $stickyIt = false): Post
     {
         if ($rateLimit) {
             $limiter = $this->postLimiter->create($dto->ip);
@@ -111,6 +113,10 @@ class PostManager implements ContentManagerInterface
         $this->tagManager->updatePostTags($post, $this->tagExtractor->extract($post->body) ?? []);
 
         $this->dispatcher->dispatch(new PostCreatedEvent($post));
+
+        if ($stickyIt) {
+            $this->pin($post);
+        }
 
         return $post;
     }
@@ -224,11 +230,18 @@ class PostManager implements ContentManagerInterface
         $this->dispatcher->dispatch(new PostRestoredEvent($post, $user));
     }
 
+    /**
+     * this toggles the pin state of the post. If it was not pinned it pins, if it was pinned it unpins it.
+     */
     public function pin(Post $post): Post
     {
         $post->sticky = !$post->sticky;
 
         $this->entityManager->flush();
+
+        if (null !== $post->magazine->apFeaturedUrl) {
+            $this->apHttpClient->invalidateCollectionObjectCache($post->magazine->apFeaturedUrl);
+        }
 
         return $post;
     }

@@ -23,6 +23,9 @@ trait ActivityPubActorTrait
     #[Column(type: 'string', nullable: true)]
     public ?string $apAttributedToUrl = null;
 
+    #[Column(type: 'string', nullable: true)]
+    public ?string $apFeaturedUrl = null;
+
     #[Column(type: 'integer', nullable: true)]
     public ?int $apFollowersCount = null;
 

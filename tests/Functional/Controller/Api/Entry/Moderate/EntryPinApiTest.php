@@ -114,7 +114,7 @@ class EntryPinApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', magazine: $magazine);
 
         $entryManager = $this->getService(EntryManager::class);
-        $entryManager->pin($entry);
+        $entryManager->pin($entry, null);
 
         $client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/pin");
         self::assertResponseStatusCodeSame(401);
@@ -128,7 +128,7 @@ class EntryPinApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
         $entryManager = $this->getService(EntryManager::class);
-        $entryManager->pin($entry);
+        $entryManager->pin($entry, null);
 
         self::createOAuth2AuthCodeClient();
         $client->loginUser($user);
@@ -148,7 +148,7 @@ class EntryPinApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
         $entryManager = $this->getService(EntryManager::class);
-        $entryManager->pin($entry);
+        $entryManager->pin($entry, null);
 
         self::createOAuth2AuthCodeClient();
         $client->loginUser($user);
@@ -168,7 +168,7 @@ class EntryPinApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
         $entryManager = $this->getService(EntryManager::class);
-        $entryManager->pin($entry);
+        $entryManager->pin($entry, null);
 
         self::createOAuth2AuthCodeClient();
         $client->loginUser($user);

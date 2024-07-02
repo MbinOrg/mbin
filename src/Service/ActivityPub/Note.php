@@ -48,7 +48,7 @@ class Note
      * @throws UserBannedException
      * @throws \Exception
      */
-    public function create(array $object, array $root = null): EntryComment|PostComment|Post
+    public function create(array $object, array $root = null, bool $stickyIt = false): EntryComment|PostComment|Post
     {
         $current = $this->repository->findByObjectId($object['id']);
         if ($current) {
@@ -93,7 +93,7 @@ class Note
             }
         }
 
-        return $this->createPost($object);
+        return $this->createPost($object, $stickyIt);
     }
 
     /**
@@ -184,7 +184,7 @@ class Note
         }
     }
 
-    private function createPost(array $object): Post
+    private function createPost(array $object, bool $stickyIt = false): Post
     {
         $dto = new PostDto();
         $dto->magazine = $this->activityPubManager->findOrCreateMagazineByToCCAndAudience($object);
@@ -223,7 +223,7 @@ class Note
             $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($object);
             $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($object);
 
-            return $this->postManager->create($dto, $actor, false);
+            return $this->postManager->create($dto, $actor, false, $stickyIt);
         } else {
             throw new \Exception('Actor could not be found for post.');
         }

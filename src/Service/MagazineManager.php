@@ -72,6 +72,7 @@ class MagazineManager
         $magazine = $this->factory->createFromDto($dto, $user);
         $magazine->apId = $dto->apId;
         $magazine->apProfileId = $dto->apProfileId;
+        $magazine->apFeaturedUrl = $dto->apFeaturedUrl;
 
         if (!$dto->apId) {
             $magazine = KeysGenerator::generate($magazine);
