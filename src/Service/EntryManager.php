@@ -142,7 +142,7 @@ class EntryManager implements ContentManagerInterface
             $isImageUrl = ImageManager::isImageUrl($dto->url);
         }
 
-        if (($dto->image && !$dto->body) || $isImageUrl) {
+        if (($dto->image && !$dto->url) || $isImageUrl) {
             $entry->type = Entry::ENTRY_TYPE_IMAGE;
             $entry->hasEmbed = true;
 
