@@ -60,7 +60,12 @@
                             {% endif %}
                         </h1>
                     {% endif %}
-                    <small>{{ user.username|username(true) }}</small>
+                    <small>
+                        {{ user.username|username(true) }}
+                        {% if user.apManuallyApprovesFollowers is same as true %}
+                            <i class="fa-solid fa-lock" aria-description="{{ 'manually_approves_followers'|trans }}" title="{{ 'manually_approves_followers'|trans }}" aria-describedby="{{ 'manually_approves_followers'|trans }}"></i>
+                        {% endif %}
+                    </small>
                 </div>
                 {{ component('user_actions', {user: user}) }}
             </div>
