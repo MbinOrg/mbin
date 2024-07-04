@@ -93,7 +93,7 @@ class MagazineEntryRetrieveApiTest extends WebTestCase
         $voteManager->vote(1, $second, $voter, rateLimit: false);
         $this->createEntryComment('test', $second, $voter);
         $third = $this->getEntryByTitle('a pinned entry', url: 'https://google.com', magazine: $magazine);
-        $entryManager->pin($third);
+        $entryManager->pin($third, null);
 
         self::createOAuth2AuthCodeClient();
         $client->loginUser($this->getUserByUsername('user'));

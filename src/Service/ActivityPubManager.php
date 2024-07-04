@@ -21,10 +21,12 @@ use App\Exception\InvalidApPostException;
 use App\Factory\ActivityPub\PersonFactory;
 use App\Factory\MagazineFactory;
 use App\Factory\UserFactory;
+use App\Message\ActivityPub\Inbox\CreateMessage;
 use App\Message\ActivityPub\UpdateActorMessage;
 use App\Message\DeleteImageMessage;
 use App\Message\DeleteUserMessage;
 use App\Repository\ApActivityRepository;
+use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
@@ -35,6 +37,7 @@ use App\Service\ActivityPub\Webfinger\WebFingerFactory;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use League\HTMLToMarkdown\HtmlConverter;
+use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
@@ -62,6 +65,8 @@ class ActivityPubManager
         private readonly MessageBusInterface $bus,
         private readonly LoggerInterface $logger,
         private readonly RateLimiterFactory $apUpdateActorLimiter,
+        private readonly EntryRepository $entryRepository,
+        private readonly EntryManager $entryManager,
     ) {
     }
 
@@ -491,6 +496,7 @@ class ActivityPubManager
             $magazine->apDomain = parse_url($actor['id'], PHP_URL_HOST);
             $magazine->apFollowersUrl = $actor['followers'] ?? null;
             $magazine->apAttributedToUrl = $this->getActorFromAttributedTo($actor['attributedTo'] ?? null, filterForPerson: false);
+            $magazine->apFeaturedUrl = $actor['featured'] ?? null;
             $magazine->apPreferredUsername = $actor['preferredUsername'] ?? null;
             $magazine->apDiscoverable = $actor['discoverable'] ?? true;
             $magazine->apPublicUrl = $actor['url'] ?? $actorUrl;
@@ -512,66 +518,11 @@ class ActivityPubManager
             }
 
             if (null !== $magazine->apAttributedToUrl) {
-                try {
-                    $this->logger->debug('fetching moderators of remote magazine "{magUrl}"', ['magUrl' => $actorUrl]);
-                    $attributedObj = $this->apHttpClient->getCollectionObject($magazine->apAttributedToUrl);
-                    $items = null;
-                    if (isset($attributedObj['items']) and \is_array($attributedObj['items'])) {
-                        $items = $attributedObj['items'];
-                    } elseif (isset($attributedObj['orderedItems']) and \is_array($attributedObj['orderedItems'])) {
-                        $items = $attributedObj['orderedItems'];
-                    }
+                $this->handleModeratorCollection($actorUrl, $magazine);
+            }
 
-                    $this->logger->debug('got moderator items for magazine "{magName}": {json}', ['magName' => $magazine->name, 'json' => json_encode($attributedObj)]);
-
-                    if (null !== $items) {
-                        $moderatorsToRemove = [];
-                        /** @var Moderator $mod */
-                        foreach ($magazine->moderators as $mod) {
-                            $moderatorsToRemove[] = $mod->user;
-                        }
-                        $indexesNotToRemove = [];
-
-                        foreach ($items as $item) {
-                            if (\is_string($item)) {
-                                try {
-                                    $user = $this->findActorOrCreate($item);
-                                    if ($user instanceof User) {
-                                        foreach ($moderatorsToRemove as $key => $existMod) {
-                                            if ($existMod->username === $user->username) {
-                                                $indexesNotToRemove[] = $key;
-                                                break;
-                                            }
-                                        }
-                                        if (!$magazine->userIsModerator($user)) {
-                                            $this->logger->info('adding "{user}" as moderator in "{magName}" because they are a mod upstream, but not locally', ['user' => $user->username, 'magName' => $magazine->name]);
-                                            $this->magazineManager->addModerator(new ModeratorDto($magazine, $user, null));
-                                        }
-                                    }
-                                } catch (\Exception) {
-                                    $this->logger->warning('Something went wrong while fetching actor "{actor}" as moderator of "{magName}"', ['actor' => $item, 'magName' => $magazine->name]);
-                                }
-                            }
-                        }
-
-                        foreach ($indexesNotToRemove as $i) {
-                            $moderatorsToRemove[$i] = null;
-                        }
-
-                        foreach ($moderatorsToRemove as $modToRemove) {
-                            if (null === $modToRemove) {
-                                continue;
-                            }
-                            $criteria = Criteria::create()->where(Criteria::expr()->eq('magazine', $magazine));
-                            $modObject = $modToRemove->moderatorTokens->matching($criteria)->first();
-                            $this->logger->info('removing "{exMod}" from "{magName}" as mod locally because they are no longer mod upstream', ['exMod' => $modToRemove->username, 'magName' => $magazine->name]);
-                            $this->magazineManager->removeModerator($modObject, null);
-                        }
-                    } else {
-                        $this->logger->warning('could not update the moderators of "{url}", the response doesn\'t have a "items" or "orderedItems" property or it is not an array', ['url' => $actorUrl]);
-                    }
-                } catch (InvalidApPostException $ignored) {
-                }
+            if (null !== $magazine->apFeaturedUrl) {
+                $this->handleMagazineFeaturedCollection($actorUrl, $magazine);
             }
 
             $this->entityManager->flush();
@@ -582,6 +533,160 @@ class ActivityPubManager
         }
 
         return null;
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    private function handleModeratorCollection(string $actorUrl, Magazine $magazine): void
+    {
+        try {
+            $this->logger->debug('fetching moderators of remote magazine "{magUrl}"', ['magUrl' => $actorUrl]);
+            $attributedObj = $this->apHttpClient->getCollectionObject($magazine->apAttributedToUrl);
+            $items = null;
+            if (isset($attributedObj['items']) and \is_array($attributedObj['items'])) {
+                $items = $attributedObj['items'];
+            } elseif (isset($attributedObj['orderedItems']) and \is_array($attributedObj['orderedItems'])) {
+                $items = $attributedObj['orderedItems'];
+            }
+
+            $this->logger->debug('got moderator items for magazine "{magName}": {json}', ['magName' => $magazine->name, 'json' => json_encode($attributedObj)]);
+
+            if (null !== $items) {
+                $moderatorsToRemove = [];
+                /** @var Moderator $mod */
+                foreach ($magazine->moderators as $mod) {
+                    $moderatorsToRemove[] = $mod->user;
+                }
+                $indexesNotToRemove = [];
+
+                foreach ($items as $item) {
+                    if (\is_string($item)) {
+                        try {
+                            $user = $this->findActorOrCreate($item);
+                            if ($user instanceof User) {
+                                foreach ($moderatorsToRemove as $key => $existMod) {
+                                    if ($existMod->username === $user->username) {
+                                        $indexesNotToRemove[] = $key;
+                                        break;
+                                    }
+                                }
+                                if (!$magazine->userIsModerator($user)) {
+                                    $this->logger->info('adding "{user}" as moderator in "{magName}" because they are a mod upstream, but not locally', ['user' => $user->username, 'magName' => $magazine->name]);
+                                    $this->magazineManager->addModerator(new ModeratorDto($magazine, $user, null));
+                                }
+                            }
+                        } catch (\Exception) {
+                            $this->logger->warning('Something went wrong while fetching actor "{actor}" as moderator of "{magName}"', ['actor' => $item, 'magName' => $magazine->name]);
+                        }
+                    }
+                }
+
+                foreach ($indexesNotToRemove as $i) {
+                    $moderatorsToRemove[$i] = null;
+                }
+
+                foreach ($moderatorsToRemove as $modToRemove) {
+                    if (null === $modToRemove) {
+                        continue;
+                    }
+                    $criteria = Criteria::create()->where(Criteria::expr()->eq('magazine', $magazine));
+                    $modObject = $modToRemove->moderatorTokens->matching($criteria)->first();
+                    $this->logger->info('removing "{exMod}" from "{magName}" as mod locally because they are no longer mod upstream', ['exMod' => $modToRemove->username, 'magName' => $magazine->name]);
+                    $this->magazineManager->removeModerator($modObject, null);
+                }
+            } else {
+                $this->logger->warning('could not update the moderators of "{url}", the response doesn\'t have a "items" or "orderedItems" property or it is not an array', ['url' => $actorUrl]);
+            }
+        } catch (InvalidApPostException $ignored) {
+        }
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    private function handleMagazineFeaturedCollection(string $actorUrl, Magazine $magazine): void
+    {
+        try {
+            $this->logger->debug('fetching featured posts of remote magazine "{magUrl}"', ['magUrl' => $actorUrl]);
+            $attributedObj = $this->apHttpClient->getCollectionObject($magazine->apFeaturedUrl);
+            $items = null;
+            if (isset($attributedObj['items']) and \is_array($attributedObj['items'])) {
+                $items = $attributedObj['items'];
+            } elseif (isset($attributedObj['orderedItems']) and \is_array($attributedObj['orderedItems'])) {
+                $items = $attributedObj['orderedItems'];
+            }
+
+            $this->logger->debug('got featured items for magazine "{magName}": {json}', ['magName' => $magazine->name, 'json' => json_encode($attributedObj)]);
+
+            if (null !== $items) {
+                $pinnedToRemove = $this->entryRepository->findPinned($magazine);
+                $indexesNotToRemove = [];
+                $idsToPin = [];
+                foreach ($items as $item) {
+                    $apId = null;
+                    $isString = false;
+                    if (\is_string($item)) {
+                        $apId = $item;
+                        $isString = true;
+                    } elseif (\is_array($item)) {
+                        $apId = $item['id'];
+                    } else {
+                        $this->logger->debug('ignoring {item} because it is not a string and not an array', ['item' => json_encode($item)]);
+                        continue;
+                    }
+
+                    $entry = null;
+
+                    $alreadyPinned = false;
+                    if ($this->settingsManager->isLocalUrl($apId)) {
+                        $pair = $this->activityRepository->findLocalByApId($apId);
+                        if (Entry::class === $pair['type']) {
+                            foreach ($pinnedToRemove as $i => $entry) {
+                                if ($entry->getId() === $pair['id']) {
+                                    $indexesNotToRemove[] = $i;
+                                    $alreadyPinned = true;
+                                }
+                            }
+                        }
+                    } else {
+                        foreach ($pinnedToRemove as $i => $entry) {
+                            if ($entry->apId === $apId) {
+                                $indexesNotToRemove[] = $i;
+                                $alreadyPinned = true;
+                            }
+                        }
+
+                        if (!$alreadyPinned) {
+                            $existingEntry = $this->entryRepository->findOneBy(['apId' => $apId]);
+                            if ($existingEntry) {
+                                $this->logger->debug('pinning existing entry: {title}', ['title' => $existingEntry->title]);
+                                $this->entryManager->pin($existingEntry, null);
+                            } else {
+                                $object = $item;
+                                if ($isString) {
+                                    $this->logger->debug('getting {url} because we dont have it', ['url' => $apId]);
+                                    $object = $this->apHttpClient->getActivityObject($apId);
+                                }
+                                $this->logger->debug('dispatching create message for entry: {e}', ['e' => json_encode($object)]);
+                                $this->bus->dispatch(new CreateMessage($object, true));
+                            }
+                        }
+                    }
+                }
+
+                foreach ($indexesNotToRemove as $i) {
+                    $pinnedToRemove[$i] = null;
+                }
+
+                foreach (array_filter($pinnedToRemove) as $pinnedEntry) {
+                    // the pin method also unpins if the entry is already pinned
+                    $this->logger->debug('unpinning entry: {title}', ['title' => $pinnedEntry->title]);
+                    $this->entryManager->pin($pinnedEntry, null);
+                }
+            }
+        } catch (InvalidApPostException $ignored) {
+        }
     }
 
     public function createInboxesFromCC(array $activity, User $user): array

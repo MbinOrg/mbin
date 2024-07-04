@@ -830,6 +830,8 @@ someone: Someone
 back: Back
 magazine_log_mod_added: has added a moderator
 magazine_log_mod_removed: has removed a moderator
+magazine_log_entry_pinned: pinned entry
+magazine_log_entry_unpinned: removed pinned entry
 last_updated: Last updated
 and: and
 direct_message: Direct message

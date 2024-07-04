@@ -42,7 +42,7 @@ class Page
      * @throws UserBannedException
      * @throws \Exception          if the user could not be found or a sub exception occurred
      */
-    public function create(array $object): Entry
+    public function create(array $object, bool $stickyIt = false): Entry
     {
         $actorUrl = $this->activityPubManager->getActorFromAttributedTo($object['attributedTo']);
         $actor = $this->activityPubManager->findActorOrCreate($actorUrl);
@@ -102,7 +102,7 @@ class Page
 
             $this->logger->debug('creating page');
 
-            return $this->entryManager->create($dto, $actor, false);
+            return $this->entryManager->create($dto, $actor, false, $stickyIt);
         } else {
             throw new \Exception('Actor could not be found for entry.');
         }

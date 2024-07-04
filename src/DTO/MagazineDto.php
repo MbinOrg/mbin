@@ -46,6 +46,7 @@ class MagazineDto
     public ?string $ip = null;
     public ?string $apId = null;
     public ?string $apProfileId = null;
+    public ?string $apFeaturedUrl = null;
     private ?int $id = null;
 
     public function getId(): ?int
