@@ -170,7 +170,7 @@ boosts: Mga pagpalakas
 read_all: Basahin lahat
 flash_magazine_edit_success: Matagumpay na nabago ang magasin na ito.
 banned: Binawalan ka
-send_message: Magpadala ngmensahe
+send_message: Magpadala ng direktang mensahe
 message: Mensahe
 status: Katayuan
 change_language: Baguhin ang wika
@@ -191,3 +191,18 @@ show_all: Ipakita lahat
 deleted: Tinanggal ng may-akda
 mentioned_you: Binabanggit sa iyo
 filter_by_type: Salain ayon sa uri
+alphabetically: Paalpabetiko
+cancel: Kanselahin
+position_top: Itaas
+pending: Nakabinbin
+close: Isara
+direct_message: Direktang mensahe
+top: Itaas
+edited_post: Binago ang post
+edited_comment: Binago ang puna
+last_active: Huling Aktibo
+comment_reply_position: Posisyon ng tugon sa puna
+position_bottom: Ibaba
+edited: binago
+and: at
+back: Bumalik
