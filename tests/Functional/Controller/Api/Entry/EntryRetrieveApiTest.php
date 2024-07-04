@@ -278,7 +278,7 @@ class EntryRetrieveApiTest extends WebTestCase
         $second = $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
         // Check that pinned entries don't get pinned to the top of the instance, just the magazine
         $entryManager = $this->getService(EntryManager::class);
-        $entryManager->pin($second);
+        $entryManager->pin($second, null);
 
         $client->request('GET', '/api/entries');
         self::assertResponseIsSuccessful();
@@ -417,7 +417,7 @@ class EntryRetrieveApiTest extends WebTestCase
         $this->getEntryByTitle('a dutch entry', body: 'some body', magazine: $magazine, lang: 'nl');
         // Check that pinned entries don't get pinned to the top of the instance, just the magazine
         $entryManager = $this->getService(EntryManager::class);
-        $entryManager->pin($second);
+        $entryManager->pin($second, null);
 
         $client->request('GET', '/api/entries?lang[]=en&lang[]=de');
         self::assertResponseIsSuccessful();
@@ -558,7 +558,7 @@ class EntryRetrieveApiTest extends WebTestCase
         $second = $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
         // Check that pinned entries don't get pinned to the top of the instance, just the magazine
         $entryManager = $this->getService(EntryManager::class);
-        $entryManager->pin($second);
+        $entryManager->pin($second, null);
 
         $client->request('GET', '/api/entries?usePreferredLangs=true');
         self::assertResponseStatusCodeSame(403);

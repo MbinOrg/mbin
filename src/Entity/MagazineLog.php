@@ -25,6 +25,8 @@ use Doctrine\ORM\Mapping\ManyToOne;
     'entry_restored' => MagazineLogEntryRestored::class,
     'entry_comment_deleted' => MagazineLogEntryCommentDeleted::class,
     'entry_comment_restored' => MagazineLogEntryCommentRestored::class,
+    'entry_pinned' => MagazineLogEntryPinned::class,
+    'entry_unpinned' => MagazineLogEntryUnpinned::class,
     'post_deleted' => MagazineLogPostDeleted::class,
     'post_restored' => MagazineLogPostRestored::class,
     'post_comment_deleted' => MagazineLogPostCommentDeleted::class,

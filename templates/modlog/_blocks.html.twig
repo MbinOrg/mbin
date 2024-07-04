@@ -62,3 +62,25 @@
     {{ 'magazine_log_mod_removed'|trans -}}
     {% if showMagazine %} {{ 'from'|trans|lower }} {{ component('magazine_inline', {magazine: log.magazine, showAvatar: showIcons }) -}}{%- endif -%}: {{ component('user_inline', {user: log.user, showAvatar: showAvatars}) }}
 {% endblock %}
+
+{% block log_entry_pinned %}
+    {% if log.actingUser is not same as null %}
+        {{ component('user_inline', {user: log.actingUser}) }}
+    {% else %}
+        {{ 'someone'|trans }}
+    {% endif %}
+    {{ 'magazine_log_entry_pinned'|trans }}
+    <a href="{{ entry_url(log.entry) }}">{{ log.entry.shortTitle(300) }}</a>
+    {% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.magazine, showAvatar: showIcons }) -}}{%- endif -%}
+{% endblock %}
+
+{% block log_entry_unpinned %}
+    {% if log.actingUser is not same as null %}
+        {{ component('user_inline', {user: log.actingUser}) }}
+    {% else %}
+        {{ 'someone'|trans }}
+    {% endif %}
+    {{ 'magazine_log_entry_unpinned'|trans }}
+    <a href="{{ entry_url(log.entry) }}">{{ log.entry.shortTitle(300) }}</a>
+    {% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.magazine, showAvatar: showIcons }) -}}{%- endif -%}
+{% endblock %}

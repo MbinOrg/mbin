@@ -191,10 +191,10 @@ class EntryRepository extends ServiceEntityRepository
 
         if ($criteria->subscribed) {
             $qb->andWhere(
-                'e.magazine IN (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :user) 
-                OR 
+                'e.magazine IN (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :user)
+                OR
                 e.user IN (SELECT IDENTITY(uf.following) FROM '.UserFollow::class.' uf WHERE uf.follower = :user)
-                OR 
+                OR
                 e.domain IN (SELECT IDENTITY(ds.domain) FROM '.DomainSubscription::class.' ds WHERE ds.user = :user)
                 OR
                 e.user = :user'
@@ -408,6 +408,20 @@ class EntryRepository extends ServiceEntityRepository
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @return Entry[]
+     */
+    public function findPinned(Magazine $magazine): array
+    {
+        return $this->createQueryBuilder('e')
+            ->where('e.magazine = :m')
+            ->andWhere('e.sticky = true')
+            ->setParameter('m', $magazine)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     private function countAll(EntryPageView|Criteria $criteria): int

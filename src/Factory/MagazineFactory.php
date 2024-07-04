@@ -65,6 +65,7 @@ class MagazineFactory
         $dto->moderators = $magazine->moderators;
         $dto->apId = $magazine->apId;
         $dto->apProfileId = $magazine->apProfileId;
+        $dto->apFeaturedUrl = $magazine->apFeaturedUrl;
         $dto->setId($magazine->getId());
 
         /** @var User $currentUser */

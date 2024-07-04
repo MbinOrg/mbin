@@ -39,7 +39,7 @@ class AddHandler
             $audience = $this->magazineRepository->findAudience($magazine);
         }
 
-        $activity = $this->factory->buildAdd($actor, $added, $magazine);
+        $activity = $this->factory->buildAddModerator($actor, $added, $magazine);
         $this->deliverManager->deliver($audience, $activity);
     }
 }

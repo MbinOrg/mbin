@@ -210,6 +210,11 @@ class ApHttpClient
         return $resp ? json_decode($resp, true) : null;
     }
 
+    public function invalidateCollectionObjectCache(string $apAddress): void
+    {
+        $this->cache->delete('ap_collection'.hash('sha256', $apAddress));
+    }
+
     /**
      * @throws InvalidArgumentException
      */
