@@ -73,6 +73,16 @@ oauth_google_verify:
   path: /oauth/google/verify
   methods: [ GET ]
 
+oauth_discord_connect:
+  controller: App\Controller\Security\DiscordController::connect
+  path: /oauth/discord/connect
+  methods: [ GET ]
+
+oauth_discord_verify:
+  controller: App\Controller\Security\DiscordController::verify
+  path: /oauth/discord/verify
+  methods: [ GET ]
+
 oauth_github_connect:
   controller: App\Controller\Security\GithubController::connect
   path: /oauth/github/connect

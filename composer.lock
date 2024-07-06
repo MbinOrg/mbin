@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d14113edc433c71c25f0a5a19d5e7a54",
+    "content-hash": "444732ee4ad88711c2e8f28c879a4cb8",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -14537,6 +14537,71 @@
                 "source": "https://github.com/willdurand/JsonpCallbackValidator/tree/v2.0.0"
             },
             "time": "2022-01-30T20:33:09+00:00"
+        },
+        {
+            "name": "wohali/oauth2-discord-new",
+            "version": "1.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wohali/oauth2-discord-new.git",
+                "reference": "2df4d2a882e04c749880797704e4bde8f00ea1d9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wohali/oauth2-discord-new/zipball/2df4d2a882e04c749880797704e4bde8f00ea1d9",
+                "reference": "2df4d2a882e04c749880797704e4bde8f00ea1d9",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "league/oauth2-client": "^2.0",
+                "php": "^7.2|^8.0"
+            },
+            "conflict": {
+                "team-reflex/oauth2-discord": ">=1.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "~1.3.0",
+                "php-parallel-lint/php-parallel-lint": "~0.9",
+                "phpunit/phpunit": "~8.0",
+                "squizlabs/php_codesniffer": "^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Wohali\\OAuth2\\Client\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Joan Touzet",
+                    "email": "code@atypical.net",
+                    "homepage": "https://github.com/wohali"
+                }
+            ],
+            "description": "Discord OAuth 2.0 Client Provider for The PHP League OAuth2-Client",
+            "keywords": [
+                "authorisation",
+                "authorization",
+                "client",
+                "discord",
+                "oauth",
+                "oauth2"
+            ],
+            "support": {
+                "issues": "https://github.com/wohali/oauth2-discord-new/issues",
+                "source": "https://github.com/wohali/oauth2-discord-new/tree/1.2.1"
+            },
+            "time": "2022-12-29T18:45:10+00:00"
         },
         {
             "name": "zircote/swagger-php",
