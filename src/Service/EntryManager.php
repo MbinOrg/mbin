@@ -8,6 +8,8 @@ use App\DTO\EntryDto;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\Magazine;
+use App\Entity\MagazineLogEntryPinned;
+use App\Entity\MagazineLogEntryUnpinned;
 use App\Entity\User;
 use App\Event\Entry\EntryBeforeDeletedEvent;
 use App\Event\Entry\EntryBeforePurgeEvent;
@@ -22,6 +24,7 @@ use App\Factory\EntryFactory;
 use App\Message\DeleteImageMessage;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
+use App\Service\ActivityPub\ApHttpClient;
 use App\Service\Contracts\ContentManagerInterface;
 use App\Utils\Slugger;
 use App\Utils\UrlCleaner;
@@ -55,6 +58,7 @@ class EntryManager implements ContentManagerInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly EntryRepository $entryRepository,
         private readonly ImageRepository $imageRepository,
+        private readonly ApHttpClient $apHttpClient,
         private readonly CacheInterface $cache
     ) {
     }
@@ -65,7 +69,7 @@ class EntryManager implements ContentManagerInterface
      * @throws TooManyRequestsHttpException
      * @throws \Exception                   if title, body and image are empty
      */
-    public function create(EntryDto $dto, User $user, bool $rateLimit = true): Entry
+    public function create(EntryDto $dto, User $user, bool $rateLimit = true, bool $stickyIt = false): Entry
     {
         if ($rateLimit) {
             $limiter = $this->entryLimiter->create($dto->ip);
@@ -123,6 +127,10 @@ class EntryManager implements ContentManagerInterface
 
         $this->dispatcher->dispatch(new EntryCreatedEvent($entry));
 
+        if ($stickyIt) {
+            $this->pin($entry, null);
+        }
+
         return $entry;
     }
 
@@ -134,7 +142,7 @@ class EntryManager implements ContentManagerInterface
             $isImageUrl = ImageManager::isImageUrl($dto->url);
         }
 
-        if (($dto->image && !$dto->body) || $isImageUrl) {
+        if (($dto->image && !$dto->url) || $isImageUrl) {
             $entry->type = Entry::ENTRY_TYPE_IMAGE;
             $entry->hasEmbed = true;
 
@@ -267,13 +275,29 @@ class EntryManager implements ContentManagerInterface
         $this->dispatcher->dispatch(new EntryRestoredEvent($entry, $user));
     }
 
-    public function pin(Entry $entry): Entry
+    /**
+     * this toggles the pin state of the entry. If it was not pinned it pins, if it was pinned it unpins it.
+     *
+     * @param User|null $actor this should only be null if it is a system call
+     */
+    public function pin(Entry $entry, ?User $actor): Entry
     {
         $entry->sticky = !$entry->sticky;
 
+        if ($entry->sticky) {
+            $log = new MagazineLogEntryPinned($entry->magazine, $actor, $entry);
+        } else {
+            $log = new MagazineLogEntryUnpinned($entry->magazine, $actor, $entry);
+        }
+        $this->entityManager->persist($log);
+
         $this->entityManager->flush();
 
-        $this->dispatcher->dispatch(new EntryPinEvent($entry));
+        $this->dispatcher->dispatch(new EntryPinEvent($entry, $actor));
+
+        if (null !== $entry->magazine->apFeaturedUrl) {
+            $this->apHttpClient->invalidateCollectionObjectCache($entry->magazine->apFeaturedUrl);
+        }
 
         return $entry;
     }

@@ -39,7 +39,7 @@ class RemoveHandler
             $audience = $this->magazineRepository->findAudience($magazine);
         }
 
-        $activity = $this->factory->buildRemove($actor, $removed, $magazine);
+        $activity = $this->factory->buildRemoveModerator($actor, $removed, $magazine);
         $this->deliverManager->deliver($audience, $activity);
     }
 }
