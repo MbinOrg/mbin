@@ -869,3 +869,5 @@ back: Terug
 and: en
 sso_show_first: Toon SSO (Single-Sign-On) als eerste op de inlog-en registratiepagina's
 continue_with: Daargaan met
+magazine_log_entry_pinned: vastgezette gesprek
+magazine_log_entry_unpinned: verwijderde vastgezette gesprek
