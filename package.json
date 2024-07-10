@@ -13,7 +13,7 @@
         "@symfony/webpack-encore": "^4.5.0",
         "chart.js": "^3.8.0 <3.9",
         "core-js": "^3.34.0",
-        "eslint": "^9.6.0",
+        "eslint": "^8.57.0",
         "file-loader": "^6.2.0",
         "glightbox": "^3.2.0",
         "regenerator-runtime": "^0.14.0",
