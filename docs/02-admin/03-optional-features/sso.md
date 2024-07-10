@@ -21,7 +21,17 @@ in the `.env`|`.env.local` file
 
 ### Google
 
+```dotenv
+OAUTH_GOOGLE_ID=AS2easdioh912 # your client ID
+OAUTH_GOOGLE_SECRET=sdfpsajh329ura39ßseaoßjf30u # your client secret
+```
+
 ### Facebook
+
+```dotenv
+OAUTH_FACEBOOK_ID=AS2easdioh912 # your client ID
+OAUTH_FACEBOOK_SECRET=sdfpsajh329ura39ßseaoßjf30u # your client secret
+```
 
 ### GitHub
 
@@ -44,7 +54,21 @@ OAUTH_GITHUB_SECRET=sdfpsajh329ura39ßseaoßjf30u # your client secret
 
 ### Keycloak
 
+```dotenv
+OAUTH_KEYCLOAK_ID=AS2easdioh912 # your client ID
+OAUTH_KEYCLOAK_SECRET=sdfpsajh329ura39ßseaoßjf30u # your client secret
+OAUTH_KEYCLOAK_URI=
+OAUTH_KEYCLOAK_REALM=
+OAUTH_KEYCLOAK_VERSION=
+```
+
 ### Zitadel
+
+```dotenv
+OAUTH_ZITADEL_ID=AS2easdioh912 # your client ID
+OAUTH_ZITADEL_SECRET=sdfpsajh329ura39ßseaoßjf30u # your client secret
+OAUTH_ZITADEL_BASE_URL=
+```
 
 ### SimpleLogin
 
@@ -81,6 +105,23 @@ OAUTH_DISCORD_SECRET=xJHGApsadOPUIAsdoih # your client secret
 
 ### Authentik
 
+```dotenv
+OAUTH_AUTHENTIK_ID=3245498543 # your client ID
+OAUTH_AUTHENTIK_SECRET=xJHGApsadOPUIAsdoih # your client secret
+OAUTH_AUTHENTIK_BASE_URL=
+```
+
 ### Privacy Portal
 
+```dotenv
+OAUTH_PRIVACYPORTAL_ID=3245498543 # your client ID
+OAUTH_PRIVACYPORTAL_SECRET=xJHGApsadOPUIAsdoih # your client secret
+```
+
 ### Azure
+
+```dotenv
+OAUTH_AZURE_ID=3245498543 # your client ID
+OAUTH_AZURE_SECRET=xJHGApsadOPUIAsdoih # your client secret
+OAUTH_AZURE_TENANT=
+```
