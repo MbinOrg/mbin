@@ -128,7 +128,7 @@ class DiscordAuthenticator extends OAuth2Authenticator
         TokenInterface $token,
         string $firewallName
     ): ?Response {
-        $targetUrl = $this->router->generate('front');
+        $targetUrl = $this->router->generate('user_settings_profile');
 
         return new RedirectResponse($targetUrl);
     }

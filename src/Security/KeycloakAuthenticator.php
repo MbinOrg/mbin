@@ -119,7 +119,7 @@ class KeycloakAuthenticator extends OAuth2Authenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        $targetUrl = $this->router->generate('front');
+        $targetUrl = $this->router->generate('user_settings_profile');
 
         return new RedirectResponse($targetUrl);
     }
