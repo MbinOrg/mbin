@@ -20,14 +20,14 @@ and provide the app/client ID and a secret. These have to be entered in the corr
 in the `.env`|`.env.local` file 
 
 ### Google
-
+<https://developers.google.com/>
 ```dotenv
 OAUTH_GOOGLE_ID=AS2easdioh912 # your client ID
 OAUTH_GOOGLE_SECRET=sdfpsajh329ura39ßseaoßjf30u # your client secret
 ```
 
 ### Facebook
-
+<https://developers.facebook.com>
 ```dotenv
 OAUTH_FACEBOOK_ID=AS2easdioh912 # your client ID
 OAUTH_FACEBOOK_SECRET=sdfpsajh329ura39ßseaoßjf30u # your client secret
@@ -53,7 +53,7 @@ OAUTH_GITHUB_SECRET=sdfpsajh329ura39ßseaoßjf30u # your client secret
 ```
 
 ### Keycloak
-
+Self-hosted, <https://www.keycloak.org/>
 ```dotenv
 OAUTH_KEYCLOAK_ID=AS2easdioh912 # your client ID
 OAUTH_KEYCLOAK_SECRET=sdfpsajh329ura39ßseaoßjf30u # your client secret
@@ -63,7 +63,7 @@ OAUTH_KEYCLOAK_VERSION=
 ```
 
 ### Zitadel
-
+Self-hosted, <https://zitadel.com/>
 ```dotenv
 OAUTH_ZITADEL_ID=AS2easdioh912 # your client ID
 OAUTH_ZITADEL_SECRET=sdfpsajh329ura39ßseaoßjf30u # your client secret
@@ -104,7 +104,7 @@ OAUTH_DISCORD_SECRET=xJHGApsadOPUIAsdoih # your client secret
 8. When you go to the login page you should see a button to "Continue with Discord"
 
 ### Authentik
-
+Self-hosted, <https://goauthentik.io/>
 ```dotenv
 OAUTH_AUTHENTIK_ID=3245498543 # your client ID
 OAUTH_AUTHENTIK_SECRET=xJHGApsadOPUIAsdoih # your client secret
@@ -112,14 +112,14 @@ OAUTH_AUTHENTIK_BASE_URL=
 ```
 
 ### Privacy Portal
-
+<https://privacyportal.org>
 ```dotenv
 OAUTH_PRIVACYPORTAL_ID=3245498543 # your client ID
 OAUTH_PRIVACYPORTAL_SECRET=xJHGApsadOPUIAsdoih # your client secret
 ```
 
 ### Azure
-
+<https://login.microsoftonline.com>
 ```dotenv
 OAUTH_AZURE_ID=3245498543 # your client ID
 OAUTH_AZURE_SECRET=xJHGApsadOPUIAsdoih # your client secret
