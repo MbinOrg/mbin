@@ -17,6 +17,8 @@ final class LoginSocialsComponent
         private readonly ?string $oauthFacebookId,
         #[Autowire('%oauth_github_id%')]
         private readonly ?string $oauthGithubId,
+        #[Autowire('%oauth_discord_id%')]
+        private readonly ?string $oauthDiscordId,
         #[Autowire('%oauth_privacyportal_id%')]
         private readonly ?string $oauthPrivacyPortalId,
         #[Autowire('%oauth_keycloak_id%')]
@@ -35,6 +37,11 @@ final class LoginSocialsComponent
     public function googleEnabled(): bool
     {
         return !empty($this->oauthGoogleId);
+    }
+
+    public function discordEnabled(): bool
+    {
+        return !empty($this->oauthDiscordId);
     }
 
     public function facebookEnabled(): bool

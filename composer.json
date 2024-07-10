@@ -109,7 +109,8 @@
         "twig/html-extra": "^3.5",
         "twig/intl-extra": "^3.2",
         "twig/twig": "^2.12 || ^3.0",
-        "webmozart/assert": "^1.9"
+        "webmozart/assert": "^1.9",
+        "wohali/oauth2-discord-new": "^1.2"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^8.0.2",
