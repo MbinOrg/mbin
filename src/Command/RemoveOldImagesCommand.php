@@ -98,15 +98,14 @@ class RemoveOldImagesCommand extends Command
 
         $posts = $query->getResult();
 
-        $output->writeln(sprintf('Found %d posts to delete', \count($posts)));
-
         foreach ($posts as $post) {
-            $output->writeln(sprintf('Deleting post %d', $post->getId()));
+            $output->writeln(sprintf('Deleting post %d image', $post->getId()));
         }
-        /*
 
         $placeholder = $this->entityManager->getRepository(Image::class)->find(1);
+        $output->writeln(sprintf('Using image path: %s', $placeholder->filePath));
 
+        /*
         foreach ($posts as $post) {
             $this->postManager->detachImage($post);
             $post->image = $placeholder;
