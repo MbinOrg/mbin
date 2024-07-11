@@ -12,7 +12,12 @@
         {% endif %}
         <h4><a href="{{ path('user_overview', {username:entry.user.username}) }}">{{ entry.user.username|username(false) }}</a></h4>
         <p class="user__name">
-            <span>{{ entry.user.username|username(true) }}</span>
+            <span>
+                {{ entry.user.username|username(true) }}
+                {% if entry.user.apManuallyApprovesFollowers is same as true %}
+                    <i class="fa-solid fa-lock" aria-description="{{ 'manually_approves_followers'|trans }}" title="{{ 'manually_approves_followers'|trans }}" aria-describedby="{{ 'manually_approves_followers'|trans }}"></i>
+                {% endif %}
+            </span>
             {% if entry.user.apProfileId %}
                 <a href="{{ entry.user.apProfileId }}" rel="noopener noreferrer nofollow" target="_blank" title="{{ 'go_to_original_instance'|trans }}" aria-label="{{ 'go_to_original_instance'|trans }}">
                 <i class="fa-solid fa-external-link" aria-hidden="true"></i></a>

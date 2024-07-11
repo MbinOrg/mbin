@@ -13,7 +13,12 @@
             {% endif %}
             <h4><a href="{{ path('user_overview', {username:user.username}) }}"
                    class="stretched-link">{{ user.username|username(false) }}</a></h4>
-            <p class="user__name">{{ user.username|username }}{% if not user.apId %}@{{ kbin_domain() }}{% endif %}</p>
+            <p class="user__name">
+                {{ user.username|username }}{% if not user.apId %}@{{ kbin_domain() }}{% endif %}
+                {% if user.apManuallyApprovesFollowers is same as true %}
+                    <i class="fa-solid fa-lock" aria-description="{{ 'manually_approves_followers'|trans }}" title="{{ 'manually_approves_followers'|trans }}" aria-describedby="{{ 'manually_approves_followers'|trans }}"></i>
+                {% endif %}
+            </p>
         </div>
         {{ component('user_actions', {user: user}) }}
     {% endif %}
