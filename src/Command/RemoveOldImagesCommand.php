@@ -24,7 +24,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class RemoveOldImagesCommand extends Command
 {
-    private int $batchSize = 25;
+    private int $batchSize = 45;
     private int $monthsAgo = 3;
     private bool $noActivity = false;
 
@@ -42,7 +42,7 @@ class RemoveOldImagesCommand extends Command
             ->addArgument('type', InputArgument::OPTIONAL, 'Type of images to delete either posts or users', 'posts')
             ->addArgument('monthsAgo', InputArgument::OPTIONAL, 'Delete images older than x months', 3)
             ->addOption('noActivity', null, InputOption::VALUE_OPTIONAL, 'Delete image that doesn\'t have recorded activity (comments, upvotes, boosts)', false)
-            ->addOption('batchSize', null, InputOption::VALUE_OPTIONAL, 'Number of images to delete at a time', 25);
+            ->addOption('batchSize', null, InputOption::VALUE_OPTIONAL, 'Number of images to delete at a time', 45);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
