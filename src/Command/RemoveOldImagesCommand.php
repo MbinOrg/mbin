@@ -84,11 +84,10 @@ class RemoveOldImagesCommand extends Command
                     $queryBuilder->expr()->lt('p.createdAt', ':timeAgo'),
                     $queryBuilder->expr()->neq('i.id', 1),
                     $queryBuilder->expr()->isNotNull('p.apId'),
-                    $this->all ? null : $queryBuilder->expr()->eq('p.upVotes', 0),
-                    $this->all ? null : $queryBuilder->expr()->eq('p.commentCount', 0),
-                    $this->all ? null : $queryBuilder->expr()->isNull('p.tags'),
-                    $this->all ? null : $queryBuilder->expr()->eq('p.favouriteCount', 0),
-                    $this->all ? null : $queryBuilder->expr()->isNotNull('p.image')
+                    $this->noActivity ? $queryBuilder->expr()->eq('p.upVotes', 0) : null,
+                    $this->noActivity ? $queryBuilder->expr()->eq('p.commentCount', 0) : null,
+                    $this->noActivity ? $queryBuilder->expr()->eq('p.favouriteCount', 0) : null,
+                    $this->noActivity ? $queryBuilder->expr()->isNotNull('p.image') : null
                 )
             )
             ->leftJoin('p.image', 'i')
