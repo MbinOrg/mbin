@@ -90,17 +90,17 @@ For developers:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/SzymonKaminski">
-                    <img src="https://avatars.githubusercontent.com/u/8536735?v=4" width="100;" alt="SzymonKaminski"/>
-                    <br />
-                    <sub><b>SzymonKaminski</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/BentiGorlich">
                     <img src="https://avatars.githubusercontent.com/u/25664458?v=4" width="100;" alt="BentiGorlich"/>
                     <br />
                     <sub><b>BentiGorlich</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/SzymonKaminski">
+                    <img src="https://avatars.githubusercontent.com/u/8536735?v=4" width="100;" alt="SzymonKaminski"/>
+                    <br />
+                    <sub><b>SzymonKaminski</b></sub>
                 </a>
             </td>
 		</tr>
