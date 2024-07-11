@@ -20,6 +20,12 @@ knpu_oauth2_client:
       client_secret: '%oauth_google_secret%'
       redirect_route: oauth_google_verify
       redirect_params: { }
+    discord:
+      type: discord
+      client_id: '%oauth_discord_id%'
+      client_secret: '%oauth_discord_secret%'
+      redirect_route: oauth_discord_verify
+      redirect_params: { }
     github:
       type: github
       client_id: '%oauth_github_id%'
