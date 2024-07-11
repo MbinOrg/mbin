@@ -527,3 +527,12 @@ oauth2.grant.delete.general: Elimina cualquiera de tus hilos, publicaciones o co
 oauth2.grant.report.general: Reportar hilos, publicaciones o comentarios.
 oauth2.grant.vote.general: Votar a favor, en contra o impulsar hilos, publicaciones
   o comentarios.
+marked_for_deletion: Marcado para eliminar
+from: de
+tag: Etiqueta
+unban: Desbanear
+ban_hashtag_btn: Prohibir hashtag
+marked_for_deletion_at: Marcado para eliminar el %date%
+sort_by: Ordenar por
+filter_by_subscription: Filtrar por suscripción
+filter_by_federation: Filtrar por estado de la federación
