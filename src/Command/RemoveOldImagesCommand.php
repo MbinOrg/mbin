@@ -36,8 +36,8 @@ class RemoveOldImagesCommand extends Command
     public function configure()
     {
         $this
-            ->addArgument('type', InputArgument::VALUE_OPTIONAL, 'Type of images to delete either posts or users (default posts).', 'posts')
-            ->addArgument('monthsAgo', InputArgument::VALUE_OPTIONAL, 'Delete images older than x months (default 3 months).', 3)
+            ->addArgument('type', InputArgument::OPTIONAL, 'Type of images to delete either posts or users (default posts).', 'posts')
+            ->addArgument('monthsAgo', InputArgument::OPTIONAL, 'Delete images older than x months (default 3 months).', 3)
             ->addOption('noActivity', null, InputOption::VALUE_OPTIONAL, 'Delete image that doesn\'t have recorded activity (comments, upvotes, boosts).', false)
             ->addOption('batchSize', 'n', InputOption::VALUE_OPTIONAL, 'Number of images to delete at a time.', 25);
     }
