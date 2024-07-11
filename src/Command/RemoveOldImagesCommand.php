@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
     name: 'mbin:images:delete',
     description: 'This command allows you to delete images from old federated content.'
 )]
-class ImageProcessingCommand extends Command
+class RemoveOldImagesCommand extends Command
 {
     private int $batchSize = 25;
     private int $monthsAgo = 3;
