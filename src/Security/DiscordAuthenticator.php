@@ -6,7 +6,9 @@ namespace App\Security;
 
 use App\DTO\UserDto;
 use App\Entity\User;
-use App\Repository\UserRepository;
+use App\Factory\ImageFactory;
+use App\Repository\ImageRepository;
+use App\Service\ImageManager;
 use App\Service\IpResolver;
 use App\Service\SettingsManager;
 use App\Service\UserManager;
@@ -14,61 +16,79 @@ use App\Utils\Slugger;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
-use League\OAuth2\Client\Provider\PrivacyPortalResourceOwner;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
+use Wohali\OAuth2\Client\Provider\DiscordResourceOwner;
 
-class PrivacyPortalAuthenticator extends OAuth2Authenticator
+class DiscordAuthenticator extends OAuth2Authenticator
 {
     public function __construct(
         private readonly ClientRegistry $clientRegistry,
         private readonly RouterInterface $router,
         private readonly EntityManagerInterface $entityManager,
         private readonly UserManager $userManager,
-        private readonly SettingsManager $settingsManager,
-        private readonly UserRepository $userRepository,
+        private readonly ImageManager $imageManager,
+        private readonly ImageFactory $imageFactory,
+        private readonly ImageRepository $imageRepository,
+        private readonly RequestStack $requestStack,
         private readonly IpResolver $ipResolver,
-        private readonly Slugger $slugger
+        private readonly Slugger $slugger,
+        private readonly SettingsManager $settingsManager
     ) {
     }
 
     public function supports(Request $request): ?bool
     {
-        return 'oauth_privacyportal_verify' === $request->attributes->get('_route');
+        return 'oauth_discord_verify' === $request->attributes->get('_route');
     }
 
     public function authenticate(Request $request): Passport
     {
-        $client = $this->clientRegistry->getClient('privacyportal');
-        $accessToken = $this->fetchAccessToken($client);
+        $client = $this->clientRegistry->getClient('discord');
         $slugger = $this->slugger;
+        $session = $this->requestStack->getSession();
+
+        $accessToken = $this->fetchAccessToken($client, ['prompt' => 'consent', 'accessType' => 'offline']);
+        $session->set('access_token', $accessToken);
+
+        $accessToken = $session->get('access_token');
+
+        if ($accessToken->hasExpired()) {
+            $accessToken = $client->refreshAccessToken($accessToken->getRefreshToken());
+            $session->set('access_token', $accessToken);
+        }
+
+        $rememberBadge = new RememberMeBadge();
+        $rememberBadge = $rememberBadge->enable();
 
         return new SelfValidatingPassport(
             new UserBadge($accessToken->getToken(), function () use ($accessToken, $client, $slugger) {
-                /** @var PrivacyPortalResourceOwner $privacyPortalUser */
-                $privacyPortalUser = $client->fetchUserFromToken($accessToken);
+                /** @var DiscordResourceOwner $discordUser */
+                $discordUser = $client->fetchUserFromToken($accessToken);
 
                 $existingUser = $this->entityManager->getRepository(User::class)->findOneBy(
-                    ['oauthPrivacyPortalId' => (string) $privacyPortalUser->getId()]
+                    ['oauthDiscordId' => $discordUser->getId()]
                 );
 
                 if ($existingUser) {
                     return $existingUser;
                 }
 
-                $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $privacyPortalUser->getEmail()]
+                $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $discordUser->getEmail()]
                 );
 
                 if ($user) {
-                    $user->oauthPrivacyPortalId = (string) $privacyPortalUser->getId();
+                    $user->oauthDiscordId = $discordUser->getId();
 
                     $this->entityManager->persist($user);
                     $this->entityManager->flush();
@@ -80,29 +100,26 @@ class PrivacyPortalAuthenticator extends OAuth2Authenticator
                     throw new CustomUserMessageAuthenticationException('MBIN_SSO_REGISTRATIONS_ENABLED');
                 }
 
-                $username = $slugger->slug($privacyPortalUser->getName());
-
-                if ($this->userRepository->count(['username' => $username]) > 0) {
-                    $username .= rand(1, 9999);
-                }
-
                 $dto = (new UserDto())->create(
-                    $username,
-                    $privacyPortalUser->getEmail()
+                    $slugger->slug($discordUser->getUsername()).rand(1, 999),
+                    $discordUser->getEmail()
                 );
 
                 $dto->plainPassword = bin2hex(random_bytes(20));
                 $dto->ip = $this->ipResolver->resolve();
 
                 $user = $this->userManager->create($dto, false);
-                $user->oauthPrivacyPortalId = (string) $privacyPortalUser->getId();
+                $user->oauthDiscordId = $discordUser->getId();
                 $user->isVerified = true;
 
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
 
                 return $user;
-            })
+            }),
+            [
+                $rememberBadge,
+            ]
         );
     }
 
@@ -111,7 +128,7 @@ class PrivacyPortalAuthenticator extends OAuth2Authenticator
         TokenInterface $token,
         string $firewallName
     ): ?Response {
-        $targetUrl = $this->router->generate('user_settings_profile');
+        $targetUrl = $this->router->generate('front');
 
         return new RedirectResponse($targetUrl);
     }
@@ -119,6 +136,13 @@ class PrivacyPortalAuthenticator extends OAuth2Authenticator
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $message = strtr($exception->getMessageKey(), $exception->getMessageData());
+
+        if ('MBIN_SSO_REGISTRATIONS_ENABLED' === $message) {
+            $session = $request->getSession();
+            $session->getFlashBag()->add('error', 'sso_registrations_enabled.error');
+
+            return new RedirectResponse($this->router->generate('app_login'));
+        }
 
         return new Response($message, Response::HTTP_FORBIDDEN);
     }

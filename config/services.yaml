@@ -44,6 +44,9 @@ parameters:
     oauth_google_id: "%env(default::OAUTH_GOOGLE_ID)%"
     oauth_google_secret: "%env(OAUTH_GOOGLE_SECRET)%"
 
+    oauth_discord_id: "%env(default::OAUTH_DISCORD_ID)%"
+    oauth_discord_secret: "%env(OAUTH_DISCORD_SECRET)%"
+
     oauth_github_id: "%env(default::OAUTH_GITHUB_ID)%"
     oauth_github_secret: "%env(OAUTH_GITHUB_SECRET)%"
 
