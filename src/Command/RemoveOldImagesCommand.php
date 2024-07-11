@@ -44,6 +44,7 @@ class RemoveOldImagesCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $io = new SymfonyStyle($input, $output);
         $type = $input->getArgument('type');
         $this->monthsAgo = (int) $input->getArgument('monthsAgo');
         if ($input->getOption('noActivity')) {
@@ -53,10 +54,12 @@ class RemoveOldImagesCommand extends Command
 
         if ('posts' === $type) {
             $this->deletePostsImages($output);
-        }
-
-        if ('users' === $type) {
+        } elseif ('users' === $type) {
             $this->deleteUsersImages();
+        } else {
+            $io->error('Invalid type of images to delete.');
+
+            return Command::FAILURE;
         }
 
         $this->entityManager->clear();
