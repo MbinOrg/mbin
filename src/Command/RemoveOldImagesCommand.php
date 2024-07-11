@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Entity\Image;
+use App\Entity\Post;
+use App\Entity\User;
 use App\Service\PostManager;
 use App\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -76,7 +78,7 @@ class RemoveOldImagesCommand extends Command
 
         $query = $queryBuilder
             ->select('p')
-            ->from('App\Entity\Post', 'p')
+            ->from(Post::class, 'p')
             ->where(
                 $queryBuilder->expr()->andX(
                     $queryBuilder->expr()->lt('p.createdAt', ':timeAgo'),
@@ -122,7 +124,7 @@ class RemoveOldImagesCommand extends Command
 
         $query = $queryBuilder
             ->select('u')
-            ->from('App\Entity\User', 'u')
+            ->from(User::class, 'u')
             ->where(
                 $queryBuilder->expr()->andX(
                     $queryBuilder->expr()->orX(
