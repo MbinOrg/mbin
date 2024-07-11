@@ -58,7 +58,7 @@ class RemoveOldImagesCommand extends Command
         } elseif ('users' === $type) {
             $this->deleteUsersImages();
         } else {
-            $io->error('Invalid type of images to delete.');
+            $io->error('Invalid type of images to delete. Try \'posts\' or \'users\'.');
 
             return Command::FAILURE;
         }
