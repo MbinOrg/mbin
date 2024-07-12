@@ -149,7 +149,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
         bool $isAdult,
         ?bool $isOc,
         ?string $lang,
-        string $ip = null
+        ?string $ip = null
     ) {
         $this->title = $title;
         $this->url = $url;

@@ -74,17 +74,17 @@ class UserDto implements UserDtoInterface
 
     public static function create(
         string $username,
-        string $email = null,
-        ImageDto $avatar = null,
-        ImageDto $cover = null,
-        string $about = null,
-        \DateTimeImmutable $createdAt = null,
-        array $fields = null,
-        string $apId = null,
-        string $apProfileId = null,
-        int $id = null,
+        ?string $email = null,
+        ?ImageDto $avatar = null,
+        ?ImageDto $cover = null,
+        ?string $about = null,
+        ?\DateTimeImmutable $createdAt = null,
+        ?array $fields = null,
+        ?string $apId = null,
+        ?string $apProfileId = null,
+        ?int $id = null,
         ?int $followersCount = 0,
-        bool $isBot = null,
+        ?bool $isBot = null,
     ): self {
         $dto = new UserDto();
         $dto->id = $id;

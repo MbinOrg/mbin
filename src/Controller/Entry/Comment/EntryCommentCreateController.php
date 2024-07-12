@@ -90,7 +90,7 @@ class EntryCommentCreateController extends AbstractController
         );
     }
 
-    private function getForm(Entry $entry, EntryComment $parent = null): FormInterface
+    private function getForm(Entry $entry, ?EntryComment $parent = null): FormInterface
     {
         $dto = new EntryCommentDto();
 

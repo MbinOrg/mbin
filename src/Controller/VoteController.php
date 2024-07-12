@@ -33,12 +33,12 @@ class VoteController extends AbstractController
             return new JsonResponse(
                 [
                     'html' => $this->renderView('components/_ajax.html.twig', [
-                            'component' => 'vote',
-                            'attributes' => [
-                                'subject' => $vote->getSubject(),
-                                'showDownvote' => str_contains(\get_class($vote->getSubject()), 'Entry'),
-                            ],
-                        ]
+                        'component' => 'vote',
+                        'attributes' => [
+                            'subject' => $vote->getSubject(),
+                            'showDownvote' => str_contains(\get_class($vote->getSubject()), 'Entry'),
+                        ],
+                    ]
                     ),
                 ]
             );

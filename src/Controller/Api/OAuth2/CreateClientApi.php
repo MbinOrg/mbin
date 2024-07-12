@@ -296,7 +296,7 @@ class CreateClientApi extends BaseApi
         );
     }
 
-    protected function deserializeClientFromForm(OAuth2ClientDto $dto = null): OAuth2ClientDto
+    protected function deserializeClientFromForm(?OAuth2ClientDto $dto = null): OAuth2ClientDto
     {
         $request = $this->request->getCurrentRequest();
         $dto = $dto ? $dto : new OAuth2ClientDto();

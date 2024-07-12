@@ -29,12 +29,12 @@ class FavouriteController extends AbstractController
             return new JsonResponse(
                 [
                     'html' => $this->renderView('components/_ajax.html.twig', [
-                            'component' => 'vote',
-                            'attributes' => [
-                                'subject' => $subject,
-                                'showDownvote' => str_contains(\get_class($subject), 'Entry'),
-                            ],
-                        ]
+                        'component' => 'vote',
+                        'attributes' => [
+                            'subject' => $subject,
+                            'showDownvote' => str_contains(\get_class($subject), 'Entry'),
+                        ],
+                    ]
                     ),
                 ]
             );
