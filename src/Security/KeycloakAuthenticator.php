@@ -92,6 +92,7 @@ class KeycloakAuthenticator extends OAuth2Authenticator
 
                 if ($this->userRepository->count(['username' => $username]) > 0) {
                     $username .= rand(1, 999);
+                    $request->getSession()->set('is_newly_created', true);
                 }
 
                 $dto = (new UserDto())->create(
@@ -108,8 +109,6 @@ class KeycloakAuthenticator extends OAuth2Authenticator
 
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
-
-                $request->getSession()->set('is_newly_created', true);
 
                 return $user;
             }),

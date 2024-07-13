@@ -107,6 +107,7 @@ class SimpleLoginAuthenticator extends OAuth2Authenticator
 
                 if ($usernameTaken) {
                     $username = $username.rand(1, 999);
+                    $request->getSession()->set('is_newly_created', true);
                 }
 
                 $dto = (new UserDto())->create(
@@ -130,8 +131,6 @@ class SimpleLoginAuthenticator extends OAuth2Authenticator
 
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
-
-                $request->getSession()->set('is_newly_created', true);
 
                 return $user;
             }),
