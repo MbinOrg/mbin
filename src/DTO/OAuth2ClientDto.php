@@ -220,7 +220,7 @@ class OAuth2ClientDto extends ImageUploadDto implements \JsonSerializable
         }
     }
 
-    public static function create(string $identifier, ?string $secret, string $name, UserSmallResponseDto $user = null, string $contactEmail = null, string $description = null, array $redirectUris = [], array $grants = [], array $scopes = ['read'], ImageDto $image = null): OAuth2ClientDto
+    public static function create(string $identifier, ?string $secret, string $name, ?UserSmallResponseDto $user = null, ?string $contactEmail = null, ?string $description = null, array $redirectUris = [], array $grants = [], array $scopes = ['read'], ?ImageDto $image = null): OAuth2ClientDto
     {
         $dto = new OAuth2ClientDto();
         $dto->identifier = $identifier;

@@ -30,16 +30,16 @@ class ReportResponseDto implements \JsonSerializable
     public ?int $reportId = null;
 
     public static function create(
-        int $id = null,
-        MagazineSmallResponseDto $magazine = null,
-        UserSmallResponseDto $reported = null,
-        UserSmallResponseDto $reporting = null,
-        string $reason = null,
-        string $status = null,
-        int $weight = null,
-        \DateTimeImmutable $createdAt = null,
-        \DateTimeImmutable $consideredAt = null,
-        UserSmallResponseDto $consideredBy = null,
+        ?int $id = null,
+        ?MagazineSmallResponseDto $magazine = null,
+        ?UserSmallResponseDto $reported = null,
+        ?UserSmallResponseDto $reporting = null,
+        ?string $reason = null,
+        ?string $status = null,
+        ?int $weight = null,
+        ?\DateTimeImmutable $createdAt = null,
+        ?\DateTimeImmutable $consideredAt = null,
+        ?UserSmallResponseDto $consideredBy = null,
     ): self {
         $dto = new ReportResponseDto();
         $dto->reportId = $id;

@@ -6,7 +6,6 @@ namespace App\Entity;
 
 use App\Entity\Traits\CreatedAtTrait;
 use App\Repository\UserNoteRepository;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -31,7 +30,7 @@ class UserNote
     #[ManyToOne(targetEntity: User::class)]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public ?User $target;
-    #[ORM\Column(type: 'text', nullable: false)]
+    #[Column(type: 'text', nullable: false)]
     public string $body;
     #[Id]
     #[GeneratedValue]

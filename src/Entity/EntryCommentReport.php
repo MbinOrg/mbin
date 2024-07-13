@@ -15,7 +15,7 @@ class EntryCommentReport extends Report
     #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?EntryComment $entryComment = null;
 
-    public function __construct(User $reporting, EntryComment $comment, string $reason = null)
+    public function __construct(User $reporting, EntryComment $comment, ?string $reason = null)
     {
         parent::__construct($reporting, $comment->user, $comment->magazine, $reason);
 

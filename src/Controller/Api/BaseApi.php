@@ -100,8 +100,8 @@ class BaseApi extends AbstractController
      * @throws TooManyRequestsHttpException If the limit is hit, rate limit the connection
      */
     protected function rateLimit(
-        RateLimiterFactory $limiterFactory = null,
-        RateLimiterFactory $anonLimiterFactory = null
+        ?RateLimiterFactory $limiterFactory = null,
+        ?RateLimiterFactory $anonLimiterFactory = null
     ): array {
         $this->logAccess();
         if (null === $limiterFactory && null === $anonLimiterFactory) {

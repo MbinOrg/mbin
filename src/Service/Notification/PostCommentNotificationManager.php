@@ -156,13 +156,13 @@ class PostCommentNotificationManager implements ContentNotificationManagerInterf
                 'title' => $comment->post->body,
                 'body' => $comment->body,
                 'icon' => $this->imageManager->getUrl($comment->image),
-//                'image' => $this->imageManager->getUrl($comment->image),
+                //                'image' => $this->imageManager->getUrl($comment->image),
                 'url' => $this->urlGenerator->generate('post_single', [
-                        'magazine_name' => $comment->magazine->name,
-                        'post_id' => $comment->post->getId(),
-                        'slug' => $comment->post->slug,
-                    ]).'#post-comment-'.$comment->getId(),
-//                'toast' => $this->twig->render('_layout/_toast.html.twig', ['notification' => $notification]),
+                    'magazine_name' => $comment->magazine->name,
+                    'post_id' => $comment->post->getId(),
+                    'slug' => $comment->post->slug,
+                ]).'#post-comment-'.$comment->getId(),
+                //                'toast' => $this->twig->render('_layout/_toast.html.twig', ['notification' => $notification]),
             ]
         );
     }

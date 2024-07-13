@@ -241,8 +241,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         string $username,
         string $password,
         string $type,
-        string $apProfileId = null,
-        string $apId = null
+        ?string $apProfileId = null,
+        ?string $apId = null
     ) {
         $this->email = $email;
         $this->password = $password;

@@ -23,7 +23,7 @@ class BadgeDto
     public ?string $name = null;
     private ?int $id = null;
 
-    public static function create(Magazine $magazine, string $name, int $id = null): self
+    public static function create(Magazine $magazine, string $name, ?int $id = null): self
     {
         $dto = new BadgeDto();
         $dto->id = $id;

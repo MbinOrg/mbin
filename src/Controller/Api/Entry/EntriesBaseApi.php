@@ -63,7 +63,7 @@ class EntriesBaseApi extends BaseApi
      *  * imageAlt
      *  * imageUrl
      */
-    protected function deserializeEntry(EntryDto $dto = null, array $context = []): EntryDto
+    protected function deserializeEntry(?EntryDto $dto = null, array $context = []): EntryDto
     {
         $dto = $dto ? $dto : new EntryDto();
         $deserialized = $this->serializer->deserialize($this->request->getCurrentRequest()->getContent(), EntryRequestDto::class, 'json', $context);
@@ -120,7 +120,7 @@ class EntriesBaseApi extends BaseApi
      *  * imageAlt (currently not working to modify the image)
      *  * imageUrl (currently not working to modify the image)
      */
-    protected function deserializeComment(EntryCommentDto $dto = null): EntryCommentDto
+    protected function deserializeComment(?EntryCommentDto $dto = null): EntryCommentDto
     {
         $dto = $dto ? $dto : new EntryCommentDto();
 
@@ -140,7 +140,7 @@ class EntriesBaseApi extends BaseApi
         return $deserialized->mergeIntoDto($dto);
     }
 
-    protected function deserializeCommentFromForm(EntryCommentDto $dto = null): EntryCommentDto
+    protected function deserializeCommentFromForm(?EntryCommentDto $dto = null): EntryCommentDto
     {
         $request = $this->request->getCurrentRequest();
         $dto = $dto ? $dto : new EntryCommentDto();
@@ -162,7 +162,7 @@ class EntriesBaseApi extends BaseApi
      *
      * @return array An associative array representation of the comment's hierarchy, to be used as JSON
      */
-    protected function serializeCommentTree(?EntryComment $comment, int $depth = null): array
+    protected function serializeCommentTree(?EntryComment $comment, ?int $depth = null): array
     {
         if (null === $comment) {
             return [];
@@ -177,7 +177,7 @@ class EntriesBaseApi extends BaseApi
         return $commentTree->jsonSerialize();
     }
 
-    public function createEntry(Magazine $magazine, EntryManager $manager, array $context, ImageDto $image = null): Entry
+    public function createEntry(Magazine $magazine, EntryManager $manager, array $context, ?ImageDto $image = null): Entry
     {
         $dto = new EntryDto();
         $dto->magazine = $magazine;

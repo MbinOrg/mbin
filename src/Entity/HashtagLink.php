@@ -25,17 +25,17 @@ class HashtagLink
 
     #[ManyToOne(targetEntity: Entry::class, inversedBy: 'hashtags')]
     #[JoinColumn(name: 'entry_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
-    public Entry|null $entry;
+    public ?Entry $entry;
 
     #[ManyToOne(targetEntity: EntryComment::class, inversedBy: 'hashtags')]
     #[JoinColumn(name: 'entry_comment_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
-    public EntryComment|null $entryComment;
+    public ?EntryComment $entryComment;
 
     #[ManyToOne(targetEntity: Post::class, inversedBy: 'hashtags')]
     #[JoinColumn(name: 'post_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
-    public Post|null $post;
+    public ?Post $post;
 
     #[ManyToOne(targetEntity: PostComment::class, inversedBy: 'hashtags')]
     #[JoinColumn(name: 'post_comment_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
-    public PostComment|null $postComment;
+    public ?PostComment $postComment;
 }

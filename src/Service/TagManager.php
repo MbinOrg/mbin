@@ -26,7 +26,7 @@ class TagManager
     ) {
     }
 
-    public function extract(?string $val, string $magazineName = null): ?array
+    public function extract(?string $val, ?string $magazineName = null): ?array
     {
         return $this->tagExtractor->extract($val, $magazineName);
     }

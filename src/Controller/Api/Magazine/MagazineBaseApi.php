@@ -48,7 +48,7 @@ class MagazineBaseApi extends BaseApi
      *
      * @return MagazineDto A magazine with only certain fields allowed to be modified by the user
      */
-    protected function deserializeMagazine(MagazineDto $dto = null): MagazineDto
+    protected function deserializeMagazine(?MagazineDto $dto = null): MagazineDto
     {
         $dto = $dto ? $dto : new MagazineDto();
         $deserialized = $this->serializer->deserialize($this->request->getCurrentRequest()->getContent(), MagazineRequestDto::class, 'json');
@@ -70,7 +70,7 @@ class MagazineBaseApi extends BaseApi
         return $dto;
     }
 
-    protected function createMagazine(ImageDto $image = null): Magazine
+    protected function createMagazine(?ImageDto $image = null): Magazine
     {
         $dto = $this->deserializeMagazine();
 

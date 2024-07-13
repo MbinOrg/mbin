@@ -42,7 +42,7 @@ class Question
     ) {
     }
 
-    public function create(array $object, array $root = null): ActivityPubActivityInterface
+    public function create(array $object, ?array $root = null): ActivityPubActivityInterface
     {
         $current = $this->repository->findByObjectId($object['id']);
         if ($current) {
@@ -94,7 +94,7 @@ class Question
     private function createEntryComment(
         array $object,
         ActivityPubActivityInterface $parent,
-        ActivityPubActivityInterface $root = null
+        ?ActivityPubActivityInterface $root = null
     ): ActivityPubActivityInterface {
         $dto = new EntryCommentDto();
         if ($parent instanceof EntryComment) {
@@ -215,7 +215,7 @@ class Question
     private function createPostComment(
         array $object,
         ActivityPubActivityInterface $parent,
-        ActivityPubActivityInterface $root = null
+        ?ActivityPubActivityInterface $root = null
     ): ActivityPubActivityInterface {
         $dto = new PostCommentDto();
         if ($parent instanceof PostComment) {

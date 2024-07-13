@@ -21,7 +21,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
     public function frontOptionsUrl(
         string $name,
         ?string $value,
-        string $routeName = null,
+        ?string $routeName = null,
         array $additionalParams = [],
     ): string {
         $request = $this->requestStack->getCurrentRequest();

@@ -17,7 +17,7 @@ class MagazineThemeResponseDto implements \JsonSerializable
     public ?string $customCss = null;
     public ?ImageDto $icon = null;
 
-    public static function create(MagazineDto $magazine, string $customCss = null, ImageDto $icon = null): self
+    public static function create(MagazineDto $magazine, ?string $customCss = null, ?ImageDto $icon = null): self
     {
         $dto = new MagazineThemeResponseDto();
         $dto->magazine = new MagazineSmallResponseDto($magazine);
