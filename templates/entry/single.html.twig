@@ -36,7 +36,6 @@
         }) }}
         {{ component('entries_cross', {entry: entry}) }}
         {% include 'layout/_flash.html.twig' %}
-        {% include 'entry/comment/_options.html.twig' %}
         {% include('user/_visibility_info.html.twig') %}
 
         {% if user is defined and user and user.visibility is same as 'visible' and (user_settings.comment_reply_position == constant('App\\Controller\\User\\ThemeSettingsController::TOP')) %}
@@ -44,6 +43,8 @@
                 {% include 'entry/comment/_form_comment.html.twig' %}
             </div>
         {% endif %}
+
+        {% include 'entry/comment/_options.html.twig' %}
 
         <div id="comments">
             {% include 'entry/comment/_list.html.twig' %}
