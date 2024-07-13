@@ -30,7 +30,7 @@ readonly class QueryAdapter implements AdapterInterface
     public function __construct(
         private Query|QueryBuilder $query,
         bool $fetchJoinCollection = true,
-        bool $useOutputWalkers = null,
+        ?bool $useOutputWalkers = null,
     ) {
         $this->paginator = new Paginator($query, $fetchJoinCollection);
         $this->paginator->setUseOutputWalkers($useOutputWalkers);

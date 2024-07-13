@@ -16,11 +16,11 @@ class ModeratorResponseDto implements \JsonSerializable
     public ?string $apId = null;
 
     public static function create(
-        int $magazineId = null,
-        int $userId = null,
-        string $username = null,
-        string $apId = null,
-        ImageDto $avatar = null
+        ?int $magazineId = null,
+        ?int $userId = null,
+        ?string $username = null,
+        ?string $apId = null,
+        ?ImageDto $avatar = null
     ): self {
         $dto = new ModeratorResponseDto();
         $dto->magazineId = $magazineId;

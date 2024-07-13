@@ -60,7 +60,7 @@ abstract class MagazineLog
         $this->createdAtTraitConstruct();
     }
 
-    abstract public function getSubject(): ContentInterface|null;
+    abstract public function getSubject(): ?ContentInterface;
 
     abstract public function clearSubject(): MagazineLog;
 

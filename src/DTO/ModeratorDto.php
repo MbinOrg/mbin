@@ -18,7 +18,7 @@ class ModeratorDto
     public ?User $user = null;
     public ?User $addedBy = null;
 
-    public function __construct(?Magazine $magazine, User $user = null, User $addedBy = null)
+    public function __construct(?Magazine $magazine, ?User $user = null, ?User $addedBy = null)
     {
         $this->magazine = $magazine;
         $this->user = $user;
