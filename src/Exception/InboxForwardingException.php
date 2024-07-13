@@ -17,7 +17,7 @@ class InboxForwardingException extends \Exception
      * @param string $receivedFrom the domain from which the activity was received
      * @param string $realOrigin   the original url where the activity can be found
      */
-    public function __construct(public string $receivedFrom, public string $realOrigin, int $code = 0, \Throwable $previous = null)
+    public function __construct(public string $receivedFrom, public string $realOrigin, int $code = 0, ?\Throwable $previous = null)
     {
         $message = "Received a message from '$receivedFrom' which originated from '$realOrigin'. Though a audience on '$receivedFrom' was targeted and the post therefore forwarded.";
         parent::__construct($message, $code, $previous);

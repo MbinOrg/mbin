@@ -108,7 +108,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         Magazine $magazine,
         User $user,
         bool $isAdult,
-        string $ip = null
+        ?string $ip = null
     ) {
         $this->body = $body;
         $this->magazine = $magazine;
@@ -154,7 +154,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         return $this->apId;
     }
 
-    public function getBestComments(User $user = null): Collection
+    public function getBestComments(?User $user = null): Collection
     {
         $criteria = Criteria::create()
             ->orderBy(['upVotes' => 'DESC', 'createdAt' => 'ASC']);
@@ -186,7 +186,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         });
     }
 
-    public function getLastComments(User $user = null): Collection
+    public function getLastComments(?User $user = null): Collection
     {
         $criteria = Criteria::create()
             ->orderBy(['createdAt' => 'ASC']);

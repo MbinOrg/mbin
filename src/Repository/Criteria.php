@@ -101,15 +101,15 @@ abstract class Criteria
     public const THEME_TOKYO_NIGHT = 'tokyo-night';
 
     public const THEME_OPTIONS = [
-      // 'Mbin' => SELF::THEME_MBIN, // TODO uncomment when theme is ready
-      '/kbin' => self::THEME_KBIN,
-      'default_theme_auto' => self::THEME_AUTO,
-      'light' => self::THEME_LIGHT,
-      'dark' => self::THEME_DARK,
-      'solarized_auto' => self::THEME_SOLARIZED_AUTO,
-      'solarized_light' => self::THEME_SOLARIZED_LIGHT,
-      'solarized_dark' => self::THEME_SOLARIZED_DARK,
-      'tokyo_night' => self::THEME_TOKYO_NIGHT,
+        // 'Mbin' => SELF::THEME_MBIN, // TODO uncomment when theme is ready
+        '/kbin' => self::THEME_KBIN,
+        'default_theme_auto' => self::THEME_AUTO,
+        'light' => self::THEME_LIGHT,
+        'dark' => self::THEME_DARK,
+        'solarized_auto' => self::THEME_SOLARIZED_AUTO,
+        'solarized_light' => self::THEME_SOLARIZED_LIGHT,
+        'solarized_dark' => self::THEME_SOLARIZED_DARK,
+        'tokyo_night' => self::THEME_TOKYO_NIGHT,
     ];
 
     public function __construct(int $page)

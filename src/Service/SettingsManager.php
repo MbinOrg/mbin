@@ -78,7 +78,7 @@ class SettingsManager
         }
     }
 
-    private function find(array $results, string $name, int $filter = null)
+    private function find(array $results, string $name, ?int $filter = null)
     {
         $res = array_values(array_filter($results, fn ($s) => $s->name === $name));
 

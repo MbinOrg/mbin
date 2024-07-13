@@ -399,7 +399,7 @@ readonly class UserManager
     /**
      * @return User[]
      */
-    public function getUsersMarkedForDeletionBefore(\DateTime $dateTime = null): array
+    public function getUsersMarkedForDeletionBefore(?\DateTime $dateTime = null): array
     {
         $dateTime ??= new \DateTime();
 

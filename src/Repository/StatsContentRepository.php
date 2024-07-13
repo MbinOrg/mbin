@@ -22,9 +22,9 @@ class StatsContentRepository extends StatsRepository
 
     #[ArrayShape(['entries' => 'array', 'comments' => 'array', 'posts' => 'array', 'replies' => 'array'])]
     public function getOverallStats(
-        User $user = null,
-        Magazine $magazine = null,
-        bool $onlyLocal = null
+        ?User $user = null,
+        ?Magazine $magazine = null,
+        ?bool $onlyLocal = null
     ): array {
         $this->user = $user;
         $this->magazine = $magazine;
@@ -66,7 +66,7 @@ class StatsContentRepository extends StatsRepository
     }
 
     #[ArrayShape(['entries' => 'array', 'comments' => 'array', 'posts' => 'array', 'replies' => 'array'])]
-    public function getStatsByTime(\DateTime $start, User $user = null, Magazine $magazine = null, bool $onlyLocal = null): array
+    public function getStatsByTime(\DateTime $start, ?User $user = null, ?Magazine $magazine = null, ?bool $onlyLocal = null): array
     {
         $this->start = $start;
         $this->user = $user;
@@ -191,7 +191,7 @@ class StatsContentRepository extends StatsRepository
         return $entryComments + $postComments;
     }
 
-    public function countUsers(\DateTime $startDate = null): int
+    public function countUsers(?\DateTime $startDate = null): int
     {
         $users = $this->_em->createQueryBuilder()
             ->select('COUNT(u.id)')
