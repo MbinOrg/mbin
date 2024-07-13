@@ -1,7 +1,7 @@
 # Docker Installation
 
 > [!NOTE]
-> Mbin is still in development.
+> Docker installation is currently not adviced for production use. Try the [Bare Metal installation](./bare_metal.md) instead.
 
 ## System Requirements
 
