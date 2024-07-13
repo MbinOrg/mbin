@@ -61,7 +61,7 @@ class AzureAuthenticator extends OAuth2Authenticator
         $rememberBadge = $rememberBadge->enable();
 
         return new SelfValidatingPassport(
-            new UserBadge($accessToken->getToken(), function () use ($accessToken, $client, $slugger) {
+            new UserBadge($accessToken->getToken(), function () use ($accessToken, $client, $slugger, $request) {
                 /** @var AzureResourceOwner $azureUser */
                 $azureUser = $client->fetchUserFromToken($accessToken);
 
@@ -109,6 +109,8 @@ class AzureAuthenticator extends OAuth2Authenticator
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
 
+                $request->getSession()->set('is_newly_created', true);
+
                 return $user;
             }),
             [
@@ -119,7 +121,12 @@ class AzureAuthenticator extends OAuth2Authenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        $targetUrl = $this->router->generate('front');
+        if ($request->getSession()->get('is_newly_created')) {
+            $targetUrl = $this->router->generate('user_settings_profile');
+            $request->getSession()->remove('is_newly_created');
+        } else {
+            $targetUrl = $this->router->generate('front');
+        }
 
         return new RedirectResponse($targetUrl);
     }

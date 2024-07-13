@@ -52,7 +52,7 @@ class PrivacyPortalAuthenticator extends OAuth2Authenticator
         $slugger = $this->slugger;
 
         return new SelfValidatingPassport(
-            new UserBadge($accessToken->getToken(), function () use ($accessToken, $client, $slugger) {
+            new UserBadge($accessToken->getToken(), function () use ($accessToken, $client, $slugger, $request) {
                 /** @var PrivacyPortalResourceOwner $privacyPortalUser */
                 $privacyPortalUser = $client->fetchUserFromToken($accessToken);
 
@@ -101,17 +101,21 @@ class PrivacyPortalAuthenticator extends OAuth2Authenticator
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
 
+                $request->getSession()->set('is_newly_created', true);
+
                 return $user;
             })
         );
     }
 
-    public function onAuthenticationSuccess(
-        Request $request,
-        TokenInterface $token,
-        string $firewallName
-    ): ?Response {
-        $targetUrl = $this->router->generate('user_settings_profile');
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
+    {
+        if ($request->getSession()->get('is_newly_created')) {
+            $targetUrl = $this->router->generate('user_settings_profile');
+            $request->getSession()->remove('is_newly_created');
+        } else {
+            $targetUrl = $this->router->generate('front');
+        }
 
         return new RedirectResponse($targetUrl);
     }
