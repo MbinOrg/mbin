@@ -55,7 +55,7 @@ class MagazineLogResponseDto implements \JsonSerializable
         UserSmallResponseDto $moderator,
         \DateTimeImmutable $createdAt,
         string $type,
-        MagazineBanResponseDto $subject = null,
+        ?MagazineBanResponseDto $subject = null,
     ): self {
         $dto = new MagazineLogResponseDto();
         $dto->magazine = $magazine;

@@ -95,7 +95,7 @@ trait FactoryTrait
         ];
     }
 
-    private function createUser(string $username, string $email = null, string $password = null, string $type = 'Person', $active = true, $hideAdult = true, $about = null): User
+    private function createUser(string $username, ?string $email = null, ?string $password = null, string $type = 'Person', $active = true, $hideAdult = true, $about = null): User
     {
         $manager = $this->getService(EntityManagerInterface::class);
 
@@ -232,7 +232,7 @@ trait FactoryTrait
         ];
     }
 
-    protected function getUserByUsername(string $username, bool $isAdmin = false, bool $hideAdult = true, string $about = null, bool $active = true): User
+    protected function getUserByUsername(string $username, bool $isAdmin = false, bool $hideAdult = true, ?string $about = null, bool $active = true): User
     {
         $user = $this->users->filter(
             static function (User $user) use ($username) {
@@ -266,10 +266,10 @@ trait FactoryTrait
 
     private function createMagazine(
         string $name,
-        string $title = null,
-        User $user = null,
+        ?string $title = null,
+        ?User $user = null,
         bool $isAdult = false,
-        string $description = null
+        ?string $description = null
     ): Magazine {
         $manager = $this->getService(MagazineManager::class);
 
@@ -318,7 +318,7 @@ trait FactoryTrait
         );
     }
 
-    protected function getMagazineByName(string $name, User $user = null, bool $isAdult = false): Magazine
+    protected function getMagazineByName(string $name, ?User $user = null, bool $isAdult = false): Magazine
     {
         $magazine = $this->magazines->filter(
             static function (Magazine $magazine) use ($name) {
@@ -329,7 +329,7 @@ trait FactoryTrait
         return $magazine ?: $this->createMagazine($name, null, $user, $isAdult);
     }
 
-    protected function getMagazineByNameNoRSAKey(string $name, User $user = null, bool $isAdult = false): Magazine
+    protected function getMagazineByNameNoRSAKey(string $name, ?User $user = null, bool $isAdult = false): Magazine
     {
         $magazine = $this->magazines->filter(
             static function (Magazine $magazine) use ($name) {
@@ -382,11 +382,11 @@ trait FactoryTrait
 
     protected function getEntryByTitle(
         string $title,
-        string $url = null,
-        string $body = null,
-        Magazine $magazine = null,
-        User $user = null,
-        ImageDto $image = null,
+        ?string $url = null,
+        ?string $body = null,
+        ?Magazine $magazine = null,
+        ?User $user = null,
+        ?ImageDto $image = null,
         string $lang = 'en',
     ): Entry {
         $entry = $this->entries->filter(
@@ -408,9 +408,9 @@ trait FactoryTrait
         string $title,
         Magazine $magazine,
         User $user,
-        string $url = null,
+        ?string $url = null,
         ?string $body = 'Test entry content',
-        ImageDto $imageDto = null,
+        ?ImageDto $imageDto = null,
         string $lang = 'en',
     ): Entry {
         $manager = $this->getService(EntryManager::class);
@@ -433,10 +433,10 @@ trait FactoryTrait
 
     public function createEntryComment(
         string $body,
-        Entry $entry = null,
-        User $user = null,
-        EntryComment $parent = null,
-        ImageDto $imageDto = null,
+        ?Entry $entry = null,
+        ?User $user = null,
+        ?EntryComment $parent = null,
+        ?ImageDto $imageDto = null,
         string $lang = 'en',
     ): EntryComment {
         $manager = $this->getService(EntryCommentManager::class);
@@ -460,7 +460,7 @@ trait FactoryTrait
         return $manager->create($dto, $user ?? $this->getUserByUsername('JohnDoe'));
     }
 
-    public function createPost(string $body, Magazine $magazine = null, User $user = null, ImageDto $imageDto = null, string $lang = 'en'): Post
+    public function createPost(string $body, ?Magazine $magazine = null, ?User $user = null, ?ImageDto $imageDto = null, string $lang = 'en'): Post
     {
         $manager = $this->getService(PostManager::class);
         $dto = new PostDto();
@@ -472,7 +472,7 @@ trait FactoryTrait
         return $manager->create($dto, $user ?? $this->getUserByUsername('JohnDoe'));
     }
 
-    public function createPostComment(string $body, Post $post = null, User $user = null, ImageDto $imageDto = null, PostComment $parent = null, string $lang = 'en'): PostComment
+    public function createPostComment(string $body, ?Post $post = null, ?User $user = null, ?ImageDto $imageDto = null, ?PostComment $parent = null, string $lang = 'en'): PostComment
     {
         $manager = $this->getService(PostCommentManager::class);
 
@@ -486,7 +486,7 @@ trait FactoryTrait
         return $manager->create($dto, $user ?? $this->getUserByUsername('JohnDoe'));
     }
 
-    public function createPostCommentReply(string $body, Post $post = null, User $user = null, PostComment $parent = null): PostComment
+    public function createPostCommentReply(string $body, ?Post $post = null, ?User $user = null, ?PostComment $parent = null): PostComment
     {
         $manager = $this->getService(PostCommentManager::class);
 
@@ -511,7 +511,7 @@ trait FactoryTrait
         );
     }
 
-    public function createMessageNotification(User $to = null, User $from = null): Notification
+    public function createMessageNotification(?User $to = null, ?User $from = null): Notification
     {
         $messageManager = $this->getService(MessageManager::class);
         $repository = $this->getService(NotificationRepository::class);

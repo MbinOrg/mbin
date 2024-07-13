@@ -18,11 +18,11 @@ class MagazineBanResponseDto implements \JsonSerializable
 
     public static function create(
         int $id,
-        string $reason = null,
-        \DateTimeInterface $expiredAt = null,
-        MagazineSmallResponseDto $magazine = null,
-        UserSmallResponseDto $user = null,
-        UserSmallResponseDto $bannedBy = null,
+        ?string $reason = null,
+        ?\DateTimeInterface $expiredAt = null,
+        ?MagazineSmallResponseDto $magazine = null,
+        ?UserSmallResponseDto $user = null,
+        ?UserSmallResponseDto $bannedBy = null,
     ): self {
         $dto = new MagazineBanResponseDto();
         $dto->reason = $reason;

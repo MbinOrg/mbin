@@ -102,7 +102,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
     #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => 'english'])]
     private $bodyTs;
 
-    public function __construct(string $body, ?Post $post, User $user, PostComment $parent = null, string $ip = null)
+    public function __construct(string $body, ?Post $post, User $user, ?PostComment $parent = null, ?string $ip = null)
     {
         $this->body = $body;
         $this->post = $post;

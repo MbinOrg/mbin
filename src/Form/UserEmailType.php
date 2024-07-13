@@ -42,7 +42,7 @@ class UserEmailType extends AbstractType
                     'class' => 'password-preview',
                     'data-controller' => 'password-preview',
                 ],
-                ])
+            ])
             ->add('submit', SubmitType::class);
     }
 

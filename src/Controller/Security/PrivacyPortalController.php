@@ -16,9 +16,9 @@ class PrivacyPortalController extends AbstractController
         return $clientRegistry
             ->getClient('privacyportal')
             ->redirect([
-              'openid',
-              'name',
-              'email',
+                'openid',
+                'name',
+                'email',
             ]);
     }
 

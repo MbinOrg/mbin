@@ -30,8 +30,8 @@ class AdminDashboardController extends AbstractController
         }
 
         return $this->render('admin/dashboard.html.twig', [
-                'period' => $statsPeriod,
-                'withFederated' => $withFederated,
-            ] + $this->counter->count($statsPeriod ? "-$statsPeriod days" : null, $withFederated));
+            'period' => $statsPeriod,
+            'withFederated' => $withFederated,
+        ] + $this->counter->count($statsPeriod ? "-$statsPeriod days" : null, $withFederated));
     }
 }

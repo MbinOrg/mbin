@@ -23,7 +23,7 @@ class InstanceStatsManager
     ) {
     }
 
-    public function count(string $period = null, bool $withFederated = false)
+    public function count(?string $period = null, bool $withFederated = false)
     {
         $periodDate = $period ? \DateTimeImmutable::createFromMutable(new \DateTime($period)) : null;
 

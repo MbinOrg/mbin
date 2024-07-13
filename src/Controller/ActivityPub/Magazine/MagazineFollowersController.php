@@ -43,14 +43,14 @@ class MagazineFollowersController extends AbstractController
     }
 
     #[ArrayShape([
-     '@context' => 'string',
-     'type' => 'string',
-     'partOf' => 'string',
-     'id' => 'string',
-     'totalItems' => 'int',
-     'orderedItems' => 'array',
-     'next' => 'string',
- ])]
+        '@context' => 'string',
+        'type' => 'string',
+        'partOf' => 'string',
+        'id' => 'string',
+        'totalItems' => 'int',
+        'orderedItems' => 'array',
+        'next' => 'string',
+    ])]
     private function getCollectionItems(Magazine $magazine, int $page): array
     {
         $subscriptions = $this->magazineSubscriptionRepository->findMagazineSubscribers(1, $magazine);

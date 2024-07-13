@@ -40,7 +40,7 @@ class PostsBaseApi extends BaseApi
      *
      * @return PostDto A post with only certain fields allowed to be modified by the user
      */
-    protected function deserializePost(PostDto $dto = null): PostDto
+    protected function deserializePost(?PostDto $dto = null): PostDto
     {
         $dto = $dto ? $dto : new PostDto();
         $deserialized = $this->serializer->deserialize($this->request->getCurrentRequest()->getContent(), PostRequestDto::class, 'json', [
@@ -57,7 +57,7 @@ class PostsBaseApi extends BaseApi
         return $dto;
     }
 
-    protected function deserializePostFromForm(PostDto $dto = null): PostDto
+    protected function deserializePostFromForm(?PostDto $dto = null): PostDto
     {
         $request = $this->request->getCurrentRequest();
         $dto = $dto ? $dto : new PostDto();
@@ -100,7 +100,7 @@ class PostsBaseApi extends BaseApi
      *  * imageAlt (currently not working to modify the image)
      *  * imageUrl (currently not working to modify the image)
      */
-    protected function deserializePostComment(PostCommentDto $dto = null): PostCommentDto
+    protected function deserializePostComment(?PostCommentDto $dto = null): PostCommentDto
     {
         $request = $this->request->getCurrentRequest();
         $dto = $dto ? $dto : new PostCommentDto();
@@ -117,7 +117,7 @@ class PostsBaseApi extends BaseApi
         return $deserialized->mergeIntoDto($dto);
     }
 
-    protected function deserializePostCommentFromForm(PostCommentDto $dto = null): PostCommentDto
+    protected function deserializePostCommentFromForm(?PostCommentDto $dto = null): PostCommentDto
     {
         $request = $this->request->getCurrentRequest();
         $dto = $dto ? $dto : new PostCommentDto();
@@ -138,7 +138,7 @@ class PostsBaseApi extends BaseApi
      *
      * @return array An associative array representation of the comment's hierarchy, to be used as JSON
      */
-    protected function serializePostCommentTree(?PostComment $comment, int $depth = null): array
+    protected function serializePostCommentTree(?PostComment $comment, ?int $depth = null): array
     {
         if (null === $comment) {
             return [];

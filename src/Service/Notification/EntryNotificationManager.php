@@ -122,13 +122,13 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
                 'title' => $magazine->title,
                 'body' => $entry->title,
                 'icon' => $this->imageManager->getUrl($entry->image),
-//                'image' => $this->imageManager->getUrl($entry->image),
+                //                'image' => $this->imageManager->getUrl($entry->image),
                 'url' => $this->urlGenerator->generate('entry_single', [
                     'magazine_name' => $magazine->name,
                     'entry_id' => $entry->getId(),
                     'slug' => $entry->slug,
                 ]),
-//                'toast' => $this->twig->render('_layout/_toast.html.twig', ['notification' => $notification]),
+                //                'toast' => $this->twig->render('_layout/_toast.html.twig', ['notification' => $notification]),
             ]
         );
     }

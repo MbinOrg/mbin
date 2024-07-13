@@ -25,7 +25,7 @@ class UserAccountDeletionType extends AbstractType
                     'class' => 'password-preview',
                     'data-controller' => 'password-preview',
                 ],
-                ])
+            ])
             ->add('instantDelete', CheckboxType::class, ['required' => false])
             ->add('submit', SubmitType::class);
     }
