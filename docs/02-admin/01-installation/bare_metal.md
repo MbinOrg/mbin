@@ -3,9 +3,6 @@
 Below is a step-by-step guide of the process for creating your own Mbin instance from the moment a new VPS/VM is created or directly on bare-metal.  
 This is a preliminary outline that will help you launch an instance for your own needs.
 
-> [!NOTE]
-> Mbin is still in development.
-
 This guide is aimed for Debian / Ubuntu distribution servers, but it could run on any modern Linux distro. This guide will however uses the `apt` commands.
 
 > [!NOTE]
@@ -483,7 +480,6 @@ MESSENGER_TRANSPORT_DSN=amqp://kbin:${RABBITMQ_PASSWORD}@127.0.0.1:5672/%2f/mess
 # or PostgreSQL Database (Doctrine):
 #MESSENGER_TRANSPORT_DSN=doctrine://default
 ```
-
 
 ## Setup Supervisor
 
