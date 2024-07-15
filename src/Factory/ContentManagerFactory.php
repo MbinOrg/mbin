@@ -8,12 +8,12 @@ use App\Entity\Contracts\ContentInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Post;
+use App\Entity\PostComment;
 use App\Service\Contracts\ContentManagerInterface;
 use App\Service\EntryCommentManager;
 use App\Service\EntryManager;
 use App\Service\PostCommentManager;
 use App\Service\PostManager;
-use Doctrine\ORM\EntityManagerInterface;
 
 class ContentManagerFactory
 {
@@ -22,18 +22,20 @@ class ContentManagerFactory
         private readonly EntryCommentManager $entryCommentManager,
         private readonly PostManager $postManager,
         private readonly PostCommentManager $postCommentManager,
-        private readonly EntityManagerInterface $entityManager
     ) {
     }
 
     public function createManager(ContentInterface $subject): ContentManagerInterface
     {
-        return match ($this->entityManager->getClassMetadata(\get_class($subject))->name) {
-            Entry::class => $this->entryManager,
-            EntryComment::class => $this->entryCommentManager,
-            Post::class => $this->postManager,
-            PostCommentManager::class => $this->postCommentManager,
-            default => throw new \LogicException(),
-        };
+        if ($subject instanceof Entry) {
+            return $this->entryManager;
+        } elseif ($subject instanceof EntryComment) {
+            return $this->entryCommentManager;
+        } elseif ($subject instanceof Post) {
+            return $this->postManager;
+        } elseif ($subject instanceof PostComment) {
+            return $this->postCommentManager;
+        }
+        throw new \LogicException("Unsupported subject type: '".\get_class($subject)."'");
     }
 }
