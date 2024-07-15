@@ -231,13 +231,13 @@
   .entry-info,
   .user-info {
     .row {
+      text-align: center;
+
       h4 {
         font-size: 1rem;
         margin-bottom: 0;
         margin-top: .5rem;
       }
-
-      text-align: center;
     }
 
     a {
@@ -562,13 +562,13 @@
     }
 
     .btn {
-      .rounded-edges & {
-        border-radius: .5rem;
-      }
-
       display: block;
       text-align: center;
       width: 100% !important;
+
+      .rounded-edges & {
+        border-radius: .5rem;
+      }
     }
   }
 

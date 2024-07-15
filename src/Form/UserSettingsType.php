@@ -32,14 +32,14 @@ class UserSettingsType extends AbstractType
                 ['required' => false]
             )
             ->add('homepage', ChoiceType::class, [
-                    'autocomplete' => true,
-                    'choices' => [
-                        $this->translator->trans('all') => User::HOMEPAGE_ALL,
-                        $this->translator->trans('subscriptions') => User::HOMEPAGE_SUB,
-                        $this->translator->trans('favourites') => User::HOMEPAGE_FAV,
-                        $this->translator->trans('moderated') => User::HOMEPAGE_MOD,
-                    ],
-                ]
+                'autocomplete' => true,
+                'choices' => [
+                    $this->translator->trans('all') => User::HOMEPAGE_ALL,
+                    $this->translator->trans('subscriptions') => User::HOMEPAGE_SUB,
+                    $this->translator->trans('favourites') => User::HOMEPAGE_FAV,
+                    $this->translator->trans('moderated') => User::HOMEPAGE_MOD,
+                ],
+            ]
             )
             ->add('featuredMagazines', TextareaType::class, ['required' => false])
             ->add('preferredLanguages', LanguageType::class, [

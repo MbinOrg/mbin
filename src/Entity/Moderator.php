@@ -41,7 +41,7 @@ class Moderator
     #[Column(type: 'integer')]
     private int $id;
 
-    public function __construct(Magazine $magazine, User $user, User $addedByUser = null, $isOwner = false, $isConfirmed = false)
+    public function __construct(Magazine $magazine, User $user, ?User $addedByUser = null, $isOwner = false, $isConfirmed = false)
     {
         $this->magazine = $magazine;
         $this->user = $user;

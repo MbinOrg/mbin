@@ -586,7 +586,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $res;
     }
 
-    public function findActiveUsers(Magazine $magazine = null)
+    public function findActiveUsers(?Magazine $magazine = null)
     {
         if ($magazine) {
             $results = $this->findUsersForMagazine($magazine, null, 35, true, true);

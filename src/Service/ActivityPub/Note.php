@@ -48,7 +48,7 @@ class Note
      * @throws UserBannedException
      * @throws \Exception
      */
-    public function create(array $object, array $root = null, bool $stickyIt = false): EntryComment|PostComment|Post
+    public function create(array $object, ?array $root = null, bool $stickyIt = false): EntryComment|PostComment|Post
     {
         $current = $this->repository->findByObjectId($object['id']);
         if ($current) {
@@ -101,7 +101,7 @@ class Note
      * @throws UserBannedException
      * @throws \Exception
      */
-    private function createEntryComment(array $object, ActivityPubActivityInterface $parent, ActivityPubActivityInterface $root = null): EntryComment
+    private function createEntryComment(array $object, ActivityPubActivityInterface $parent, ?ActivityPubActivityInterface $root = null): EntryComment
     {
         $dto = new EntryCommentDto();
         if ($parent instanceof EntryComment) {
@@ -229,7 +229,7 @@ class Note
         }
     }
 
-    private function createPostComment(array $object, ActivityPubActivityInterface $parent, ActivityPubActivityInterface $root = null): PostComment
+    private function createPostComment(array $object, ActivityPubActivityInterface $parent, ?ActivityPubActivityInterface $root = null): PostComment
     {
         $dto = new PostCommentDto();
         if ($parent instanceof PostComment) {

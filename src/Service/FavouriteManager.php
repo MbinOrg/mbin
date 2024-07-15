@@ -30,7 +30,7 @@ class FavouriteManager
     ) {
     }
 
-    public function toggle(User $user, FavouriteInterface $subject, string $type = null): ?Favourite
+    public function toggle(User $user, FavouriteInterface $subject, ?string $type = null): ?Favourite
     {
         if (!($favourite = $this->repository->findBySubject($user, $subject))) {
             if (self::TYPE_UNLIKE === $type) {

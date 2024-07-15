@@ -22,7 +22,7 @@ class MagazineLogModeratorRemove extends MagazineLog
         $this->actingUser = $actingUser;
     }
 
-    public function getSubject(): ContentInterface|null
+    public function getSubject(): ?ContentInterface
     {
         return null;
     }

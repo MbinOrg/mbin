@@ -20,7 +20,7 @@ class ReportDto
     public ?string $reason = null;
     private ?int $id = null;
 
-    public static function create(ReportInterface $subject, string $reason = null, int $id = null): self
+    public static function create(ReportInterface $subject, ?string $reason = null, ?int $id = null): self
     {
         $dto = new ReportDto();
         $dto->id = $id;

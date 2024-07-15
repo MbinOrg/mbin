@@ -13,9 +13,9 @@ class StatsVotesRepository extends StatsRepository
 {
     #[ArrayShape(['entries' => 'array', 'comments' => 'array', 'posts' => 'array', 'replies' => 'array'])]
     public function getOverallStats(
-        User $user = null,
-        Magazine $magazine = null,
-        bool $onlyLocal = null
+        ?User $user = null,
+        ?Magazine $magazine = null,
+        ?bool $onlyLocal = null
     ): array {
         $this->user = $user;
         $this->magazine = $magazine;
@@ -36,7 +36,7 @@ class StatsVotesRepository extends StatsRepository
         'down' => 'int',
         'boost' => 'int',
     ]])]
-    private function getMonthlyStats(string $table, string $relation = null): array
+    private function getMonthlyStats(string $table, ?string $relation = null): array
     {
         $votes = $this->getMonthlyVoteStats($table, $relation);
         $favourites = $this->getMonthlyFavouriteStats($table);
@@ -165,7 +165,7 @@ class StatsVotesRepository extends StatsRepository
     }
 
     #[ArrayShape(['entries' => 'array', 'comments' => 'array', 'posts' => 'array', 'replies' => 'array'])]
-    public function getStatsByTime(\DateTime $start, User $user = null, Magazine $magazine = null, bool $onlyLocal = null): array
+    public function getStatsByTime(\DateTime $start, ?User $user = null, ?Magazine $magazine = null, ?bool $onlyLocal = null): array
     {
         $this->start = $start;
         $this->user = $user;

@@ -120,7 +120,7 @@ class ActivityPubManager
      *
      * @return User|Magazine|null or Magazine or null on error
      */
-    public function findActorOrCreate(?string $actorUrlOrHandle): null|User|Magazine
+    public function findActorOrCreate(?string $actorUrlOrHandle): User|Magazine|null
     {
         if (\is_null($actorUrlOrHandle)) {
             return null;
@@ -779,7 +779,7 @@ class ActivityPubManager
      *
      * @return Magazine|User|null null on error
      */
-    public function updateActor(string $actorUrl): null|Magazine|User
+    public function updateActor(string $actorUrl): Magazine|User|null
     {
         if ($this->userRepository->findOneBy(['apProfileId' => $actorUrl])) {
             return $this->updateUser($actorUrl);
@@ -790,7 +790,7 @@ class ActivityPubManager
         return null;
     }
 
-    public function findOrCreateMagazineByToCCAndAudience(array $object): Magazine|null
+    public function findOrCreateMagazineByToCCAndAudience(array $object): ?Magazine
     {
         $potentialGroups = self::getReceivers($object);
         $magazine = $this->magazineRepository->findByApGroupProfileId($potentialGroups);
@@ -890,7 +890,7 @@ class ActivityPubManager
      *
      * @see ChainActivityMessage
      */
-    public function getEntityObject(string|array $apObject, array $fullPayload, callable $chainDispatch): null|Entry|EntryComment|Post|PostComment
+    public function getEntityObject(string|array $apObject, array $fullPayload, callable $chainDispatch): Entry|EntryComment|Post|PostComment|null
     {
         $object = null;
         $calledUrl = null;

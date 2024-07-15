@@ -35,6 +35,16 @@ Disallow: /
 User-agent: ClaudeBot
 Disallow: /
 
+# Disable marketing/SEO bots 
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
 # Rest of indexing robots
 User-agent: *
 Request-rate: 1/1s

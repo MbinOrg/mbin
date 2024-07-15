@@ -12,7 +12,7 @@ readonly class VoteRepository
     {
     }
 
-    public function count(\DateTimeImmutable $date = null, bool $withFederated = null): int
+    public function count(?\DateTimeImmutable $date = null, ?bool $withFederated = null): int
     {
         $count = 0;
         foreach (['entry_vote', 'entry_comment_vote', 'post_vote', 'post_comment_vote', 'favourite'] as $table) {
@@ -30,7 +30,7 @@ readonly class VoteRepository
         return $count;
     }
 
-    private function where(\DateTimeImmutable $date = null, bool $withFederated = null): string
+    private function where(?\DateTimeImmutable $date = null, ?bool $withFederated = null): string
     {
         $where = 'WHERE u.is_deleted = false';
         $dateWhere = $date ? ' AND e.created_at > :date' : '';

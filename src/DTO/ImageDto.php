@@ -28,7 +28,7 @@ class ImageDto implements \JsonSerializable
     #[Ignore]
     public ?int $id = null;
 
-    public static function create(int $id, ?string $filePath, int $width = null, int $height = null, string $altText = null, string $sourceUrl = null, string $storageUrl = null, string $blurHash = null): self
+    public static function create(int $id, ?string $filePath, ?int $width = null, ?int $height = null, ?string $altText = null, ?string $sourceUrl = null, ?string $storageUrl = null, ?string $blurHash = null): self
     {
         $dto = new ImageDto();
         $dto->filePath = $filePath;
