@@ -8,7 +8,6 @@ use App\Entity\Moderator;
 use App\Entity\Report;
 use App\Entity\ReportApprovedNotification;
 use App\Entity\ReportCreatedNotification;
-use App\Entity\ReportRejectedNotification;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -55,21 +54,10 @@ class ReportNotificationManager
 
     public function sendReportRejectedNotification(Report $report): void
     {
-        if (null === $report->reporting->apId) {
-            $notification = new ReportRejectedNotification($report->reporting, $report);
-            $this->entityManager->persist($notification);
-            $this->entityManager->flush();
-        }
     }
 
     public function sendReportApprovedNotification(Report $report): void
     {
-        if (null === $report->reporting->apId) {
-            $notification = new ReportApprovedNotification($report->reporting, $report);
-            $this->entityManager->persist($notification);
-            $this->entityManager->flush();
-        }
-
         if (null === $report->reported->apId) {
             $notification = new ReportApprovedNotification($report->reported, $report);
             $this->entityManager->persist($notification);
