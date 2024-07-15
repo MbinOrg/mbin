@@ -300,7 +300,7 @@ mod_remove_your_post: Ein Moderator hat deinen Beitrag entfernt
 removed: Entfernt von einem Moderator
 deleted: Vom Author gelöscht
 post: Beitrag
-send_message: Nachricht senden
+send_message: Direktnachricht senden
 message: Nachricht
 left: Links
 right: Rechts
@@ -875,3 +875,9 @@ from: von
 someone: Jemand
 cake_day: Kuchen-Tag
 last_updated: Letzte Aktualisierung
+magazine_log_entry_unpinned: hat angehefteten Eintrag entfernt
+and: und
+back: Zurück
+magazine_log_entry_pinned: hat Eintrag angeheftet
+direct_message: Direktnachricht
+manually_approves_followers: Genehmigt Follower manuell

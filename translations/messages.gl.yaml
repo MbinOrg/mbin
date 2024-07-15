@@ -701,7 +701,7 @@ post: Publicación
 ban_expired: Caducou o veto
 infinite_scroll: Desprazamento sen fin
 purge: Purgar
-send_message: Enviar mensaxe
+send_message: Enviar mensaxe directa
 message: Mensaxe
 show_top_bar: Mostrar barra superior
 sticky_navbar: Barra nav. pegañenta
@@ -732,3 +732,34 @@ inactive: Inactivo
 type_search_term: Escribe termo a buscar
 federation_enabled: A federación está activada
 registrations_enabled: Permítese a creación de contas
+account_deletion_button: Eliminar Conta
+account_deletion_immediate: Eliminar inmediatamente
+errors.server500.title: 500 Erro Interno do Servidor
+private_instance: Forzar ás usuarias a iniciar sesión antes de poder ver calquera
+  contido
+delete_account_desc: Eliminar a conta, incluíndo as respostas doutras usuarias nas
+  conversas, publicacións e comentarios creados.
+schedule_delete_account: Programar a eliminación
+remove_schedule_delete_account: Desbotar a eliminación programada
+remove_schedule_delete_account_desc: Borrar a eliminación programada. Todo o contido
+  volverá a estar dispoñible e a usuaria poderá iniciar sesión.
+2fa.setup_error: Erro ao activar o 2FA para a conta
+2fa.user_active_tfa.title: A usuaria ten o 2FA activo
+password_and_2fa: Contrasinal e 2FA
+flash_account_settings_changed: Cambiaronse correctamente os axustes da conta. Debes
+  volver a iniciar sesión.
+show_subscriptions: Mostrar subscricións
+subscription_sort: Orde
+sidebars_same_side: En barras laterais no mesmo lado
+subscription_sidebar_pop_out_right: Mover a unha barra lateral separada na dereita
+subscription_sidebar_pop_out_left: Mover a unha barra lateral separada na esquerda
+errors.server500.description: Desculpa, pero algo fallou pola nosa parte. Se continúas
+  a ver este erro intenta contactar coa administración da instancia. Se a instancia
+  non funciona en absoluto entón mira %link_start%outras instancias Mbin%link_end%
+  ata que resolvamos o problema.
+schedule_delete_account_desc: Programa a eliminación desta conta en 30 días. Así ocultarás
+  á usuaria e aos seus contidos e evitarás que a usuaria poida iniciar sesión.
+alphabetically: Alfabético
+subscriptions_in_own_sidebar: Nunha barra lateral separada
+account_deletion_description: Vaise eliminar a túa conta en 30 días a non ser que
+  ti a elimines antes. A conta non pode restablecerse unha vez foi eliminada.
