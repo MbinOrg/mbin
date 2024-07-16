@@ -11,7 +11,7 @@ framework:
         handler_id: '%env(REDIS_DNS)%'
         cookie_secure: auto
         cookie_samesite: lax
-        gc_maxlifetime: 604800 # Match the remember_me lifetime
+        gc_maxlifetime: 1814400 # Match the remember_me lifetime
         storage_factory_id: session.storage.factory.native
 
     http_client:
