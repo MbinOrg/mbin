@@ -35,6 +35,22 @@ Disallow: /
 User-agent: ClaudeBot
 Disallow: /
 
+# TheHive.ai Image reverse image search
+User-agent: ImagesiftBot 
+Disallow: / 
+
+# Webz.io
+User-agent: OmigiliBot
+Disallow: /
+
+# ... also Webz.io
+User-agent: Omigili
+Disallow: /
+
+# Diffbot
+User-agent: Diffbot
+Disallow: /
+
 # Disable marketing/SEO bots 
 User-agent: AhrefsBot
 Disallow: /
