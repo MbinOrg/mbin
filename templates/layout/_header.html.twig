@@ -100,20 +100,16 @@
                 </ul>
             </li>
             {% if app.user %}
-                {% if app.user.countNewNotifications %}
-                    <li class="counter">
-                        <a href="{{ path('notifications_front') }}">
-                            <span class="badge secondary-bg">{{ app.user.countNewNotifications }}</span>
-                        </a>
-                    </li>
-                {% endif %}
-                {% if app.user.countNewMessages %}
-                    <li class="counter">
-                        <a href="{{ path('messages_front') }}">
-                            <span class="badge danger-bg">{{ app.user.countNewMessages }}</span>
-                        </a>
-                    </li>
-                {% endif %}
+                <li class="counter" id="header-notification-count" style="{{ app.user.countNewNotifications ? "" : "display: none;" }}">
+                    <a href="{{ path('notifications_front') }}">
+                        <span class="badge secondary-bg">{{ app.user.countNewNotifications }}</span>
+                    </a>
+                </li>
+                <li class="counter" id="header-messages-count" style="{{ app.user.countNewMessages ? "" : "display: none;" }}">
+                    <a href="{{ path('messages_front') }}">
+                        <span class="badge danger-bg">{{ app.user.countNewMessages }}</span>
+                    </a>
+                </li>
                 <li class="dropdown">
                     <a class="{{ app.user.avatar ? 'has-avatar' : '' }} {{ html_classes('login', {'active': is_route_name_contains('settings')}) }}"
                        href="{{ path('user_overview', {username: app.user.username}) }}">
@@ -135,22 +131,18 @@
                                 {{ 'settings'|trans }}
                             </a>
                         </li>
-                        <li>
+                        <li id="dropdown-messages-count">
                             <a href="{{ path('messages_front') }}"
                                class="{{ html_classes({'active': is_route_name_contains('messages')}) }}">
                                 {{ 'messages'|trans }}
-                                {% if app.user.countNewMessages %}
-                                    <span class="badge danger-bg ms-1">{{ app.user.countNewMessages }}</span>
-                                {% endif %}
+                                <span class="badge danger-bg ms-1" style="{{ app.user.countNewMessages ? "" : "display: none;" }}">{{ app.user.countNewMessages }}</span>
                             </a>
                         </li>
-                        <li>
+                        <li id="dropdown-notifications-count">
                             <a href="{{ path('notifications_front') }}"
                                class="{{ html_classes({'active': is_route_name_contains('notifications')}) }}">
                                 {{ 'notifications'|trans }}
-                                {% if app.user.countNewNotifications %}
-                                    <span class="badge secondary-bg ms-1">{{ app.user.countNewNotifications }}</span>
-                                {% endif %}
+                                <span class="badge secondary-bg ms-1" style="{{ app.user.countNewNotifications ? "" : "display: none;" }}">{{ app.user.countNewNotifications }}</span>
                             </a>
                         </li>
                         {% if is_granted('ROLE_ADMIN') %}

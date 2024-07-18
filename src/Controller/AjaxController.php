@@ -10,23 +10,46 @@ use App\Entity\EntryComment;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\Entity\UserPushSubscription;
 use App\Form\UserNoteType;
 use App\PageView\PostCommentPageView;
+use App\Payloads\NotificationsCountResponsePayload;
+use App\Payloads\PushNotification;
+use App\Payloads\RegisterPushRequestPayload;
+use App\Payloads\TestPushRequestPayload;
+use App\Payloads\UnRegisterPushRequestPayload;
 use App\Repository\Criteria;
 use App\Repository\EntryRepository;
-use App\Repository\NotificationRepository;
 use App\Repository\PostCommentRepository;
+use App\Repository\UserPushSubscriptionRepository;
 use App\Repository\UserRepository;
+use App\Service\Notification\UserPushSubscriptionManager;
+use App\Service\SettingsManager;
 use App\Service\UserNoteManager;
 use App\Utils\Embed;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AjaxController extends AbstractController
 {
+    public function __construct(
+        private readonly UserPushSubscriptionRepository $repository,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly LoggerInterface $logger,
+        private readonly UserPushSubscriptionManager $pushSubscriptionManager,
+        private readonly TranslatorInterface $translator,
+        private readonly SettingsManager $settingsManager,
+    ) {
+    }
+
     public function fetchTitle(Embed $embed, Request $request): JsonResponse
     {
         $url = json_decode($request->getContent())->url;
@@ -223,10 +246,80 @@ class AjaxController extends AbstractController
         );
     }
 
-    public function fetchNotificationsCount(User $user, NotificationRepository $repository): JsonResponse
+    #[IsGranted('ROLE_USER')]
+    public function fetchNotificationsCount(): JsonResponse
     {
-        return new JsonResponse([
-            'count' => $repository->countUnreadNotifications($user),
-        ]);
+        $user = $this->getUserOrThrow();
+
+        return new JsonResponse(new NotificationsCountResponsePayload($user->countNewNotifications(), $user->countNewMessages()));
+    }
+
+    public function registerPushNotifications(#[MapRequestPayload] RegisterPushRequestPayload $payload): JsonResponse
+    {
+        $user = $this->getUserOrThrow();
+        $pushSubscription = $this->repository->findOneBy(['userConsent' => null, 'deviceKey' => $payload->deviceKey, 'user' => $user]);
+        if (!$pushSubscription) {
+            $pushSubscription = new UserPushSubscription($user, $payload->endpoint, $payload->contentPublicKey, $payload->serverKey, []);
+            $pushSubscription->deviceKey = $payload->deviceKey;
+            $pushSubscription->locale = $this->settingsManager->getLocale();
+        } else {
+            $pushSubscription->endpoint = $payload->endpoint;
+            $pushSubscription->serverAuthKey = $payload->serverKey;
+            $pushSubscription->contentEncryptionPublicKey = $payload->contentPublicKey;
+        }
+        $this->entityManager->persist($pushSubscription);
+        $this->entityManager->flush();
+
+        try {
+            $testNotification = new PushNotification('', $this->translator->trans('test_push_message', locale: $pushSubscription->locale));
+            $this->pushSubscriptionManager->sendTextToUser($user, $testNotification, specificDeviceKey: $payload->deviceKey);
+
+            return new JsonResponse();
+        } catch (\ErrorException $e) {
+            $this->logger->error('There was an exception while deleting a UserPushSubscription: {e} - {m}. {o}', [
+                'e' => \get_class($e),
+                'm' => $e->getMessage(),
+                'o' => json_encode($e),
+            ]);
+
+            return new JsonResponse(status: 500);
+        }
+    }
+
+    public function unregisterPushNotifications(#[MapRequestPayload] UnRegisterPushRequestPayload $payload): JsonResponse
+    {
+        try {
+            $conn = $this->entityManager->getConnection();
+            $stmt = $conn->prepare('DELETE FROM user_push_subscription WHERE user_id = :user AND device_key = :device');
+            $stmt->executeQuery(['user' => $this->getUserOrThrow()->getId(), 'device' => $payload->deviceKey]);
+
+            return new JsonResponse();
+        } catch (\Exception $e) {
+            $this->logger->error('There was an exception while deleting a UserPushSubscription: {e} - {m}. {o}', [
+                'e' => \get_class($e),
+                'm' => $e->getMessage(),
+                'o' => json_encode($e),
+            ]);
+
+            return new JsonResponse(status: 500);
+        }
+    }
+
+    public function testPushNotification(#[MapRequestPayload] TestPushRequestPayload $payload): JsonResponse
+    {
+        $user = $this->getUserOrThrow();
+        try {
+            $this->pushSubscriptionManager->sendTextToUser($user, new PushNotification('', $this->translator->trans('test_push_message')), specificDeviceKey: $payload->deviceKey);
+
+            return new JsonResponse();
+        } catch (\ErrorException $e) {
+            $this->logger->error('There was an exception while deleting a UserPushSubscription: {e} - {m}. {o}', [
+                'e' => \get_class($e),
+                'm' => $e->getMessage(),
+                'o' => json_encode($e),
+            ]);
+
+            return new JsonResponse(status: 500);
+        }
     }
 }

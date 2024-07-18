@@ -836,3 +836,20 @@ last_updated: Last updated
 and: and
 direct_message: Direct message
 manually_approves_followers: Manually approves followers
+register_push_notifications_button: Register For Push Notifications
+unregister_push_notifications_button: Remove Push Registration
+test_push_notifications_button: Test Push Notifications
+test_push_message: Hello World!
+notification_title_new_comment: New comment
+notification_title_removed_comment: A comment was removed
+notification_title_edited_comment: A comment was edited
+notification_title_mention: You were mentioned
+notification_title_new_reply: New Reply
+notification_title_new_thread: New thread
+notification_title_removed_thread: A thread was removed
+notification_title_edited_thread: A thread was edited
+notification_title_ban: You were banned
+notification_title_message: New direct message
+notification_title_new_post: New Post
+notification_title_removed_post: A post was removed
+notification_title_edited_post: A post was edited

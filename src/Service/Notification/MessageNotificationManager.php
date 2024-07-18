@@ -7,9 +7,11 @@ namespace App\Service\Notification;
 use App\Entity\Message;
 use App\Entity\MessageNotification;
 use App\Entity\User;
+use App\Event\NotificationCreatedEvent;
 use App\Factory\MagazineFactory;
 use App\Repository\MagazineSubscriptionRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mercure\HubInterface;
 
 class MessageNotificationManager
@@ -17,6 +19,7 @@ class MessageNotificationManager
     use NotificationTrait;
 
     public function __construct(
+        private readonly EventDispatcherInterface $eventDispatcher,
         private readonly MagazineSubscriptionRepository $repository,
         private readonly MagazineFactory $magazineFactory,
         private readonly HubInterface $publisher,
@@ -30,10 +33,9 @@ class MessageNotificationManager
         $usersToNotify = $thread->getOtherParticipants($sender);
 
         foreach ($usersToNotify as $subscriber) {
-            $notify = new MessageNotification($subscriber, $message);
-            $this->entityManager->persist($notify);
-
-            // @todo Send push notification to user
+            $notification = new MessageNotification($subscriber, $message);
+            $this->entityManager->persist($notification);
+            $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
         }
 
         $this->entityManager->flush();
