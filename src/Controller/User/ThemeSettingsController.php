@@ -33,6 +33,10 @@ class ThemeSettingsController extends AbstractController
     public const KBIN_GENERAL_SIDEBAR_POSITION = 'kbin_general_sidebar_position';
     public const KBIN_GENERAL_DYNAMIC_LISTS = 'kbin_general_dynamic_lists';
     public const KBIN_GENERAL_FILTER_LABELS = 'kbin_general_filter_labels';
+    public const MBIN_GENERAL_SHOW_RELATED_POSTS = 'mbin_general_show_related_posts';
+    public const MBIN_GENERAL_SHOW_RELATED_ENTRIES = 'mbin_general_show_related_entries';
+    public const MBIN_GENERAL_SHOW_RELATED_MAGAZINES = 'mbin_general_show_related_magazines';
+    public const MBIN_GENERAL_SHOW_ACTIVE_USERS = 'mbin_general_show_active_users';
     public const KBIN_COMMENTS_SHOW_USER_AVATAR = 'kbin_comments_show_user_avatar';
     public const KBIN_COMMENTS_REPLY_POSITION = 'kbin_comments_reply_position';
     public const KBIN_SUBSCRIPTIONS_SHOW = 'kbin_subscriptions_show';
@@ -100,6 +104,10 @@ class ThemeSettingsController extends AbstractController
         self::KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON,
         self::MBIN_MODERATION_LOG_SHOW_USER_AVATARS,
         self::MBIN_MODERATION_LOG_SHOW_MAGAZINE_ICONS,
+        self::MBIN_GENERAL_SHOW_RELATED_POSTS,
+        self::MBIN_GENERAL_SHOW_RELATED_ENTRIES,
+        self::MBIN_GENERAL_SHOW_RELATED_MAGAZINES,
+        self::MBIN_GENERAL_SHOW_ACTIVE_USERS,
     ];
 
     public const VALUES = [
