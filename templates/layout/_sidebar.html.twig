@@ -63,6 +63,12 @@
     {% endif %}
 </div>
 
+{% set show_related_magazines = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_GENERAL_SHOW_RELATED_MAGAZINES')) %}
+{% set show_related_entries = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_GENERAL_SHOW_RELATED_ENTRIES')) %}
+{% set show_related_posts = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_GENERAL_SHOW_RELATED_POSTS')) %}
+{% set show_active_users = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_GENERAL_SHOW_ACTIVE_USERS')) %}
+{% set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') %}
+
 {% if sidebar_top is empty %}
 {% else %}
     {{ sidebar_top|raw }}
@@ -91,12 +97,18 @@
 {% if tag is defined and tag %}
     {% include 'tag/_panel.html.twig' %}
 {% endif %}
-{{ component('related_magazines', {magazine: magazine is defined and magazine ? magazine.name : null, tag: tag is defined and tag ? tag : null}) }}
-{% if not is_route_name_contains('people') %}
+{% if show_related_magazines is not same as V_FALSE %}
+    {{ component('related_magazines', {magazine: magazine is defined and magazine ? magazine.name : null, tag: tag is defined and tag ? tag : null}) }}
+{% endif %}
+{% if not is_route_name_contains('people') and show_active_users is not same as V_FALSE %}
     {{ component('active_users', {magazine: magazine is defined and magazine ? magazine : null}) }}
 {% endif %}
-{{ component('related_posts', {magazine: magazine is defined and magazine ? magazine.name : null, tag: tag is defined and tag ? tag : null}) }}
-{{ component('related_entries', {magazine: magazine is defined and magazine ? magazine.name : null, tag: tag is defined and tag ? tag : null}) }}
+{% if show_related_posts is not same as V_FALSE %}
+    {{ component('related_posts', {magazine: magazine is defined and magazine ? magazine.name : null, tag: tag is defined and tag ? tag : null}) }}
+{% endif%}
+{% if show_related_entries is not same as V_FALSE %}
+    {{ component('related_entries', {magazine: magazine is defined and magazine ? magazine.name : null, tag: tag is defined and tag ? tag : null}) }}
+{% endif%}
 <section class="about section">
     <h3>{{ kbin_domain() }}</h3>
     <div class="container">
