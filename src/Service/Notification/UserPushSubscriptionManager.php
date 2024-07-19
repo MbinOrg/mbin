@@ -59,7 +59,7 @@ class UserPushSubscriptionManager
                 'json' => json_encode($sub),
             ]);
             $webPush->queueNotification(
-                new Subscription($sub->endpoint, $sub->contentEncryptionPublicKey, $sub->serverAuthKey),
+                new Subscription($sub->endpoint, $sub->contentEncryptionPublicKey, $sub->serverAuthKey, contentEncoding: "aes128gcm"),
                 payload: json_encode($toSend)
             );
         }

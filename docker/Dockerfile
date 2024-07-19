@@ -2,7 +2,7 @@ FROM php:8.2-fpm-alpine as base
 
 # Install php extensions, by docker-php-extension-installer
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
-RUN install-php-extensions amqp pgsql pdo_pgsql gd curl simplexml dom xml redis intl opcache apcu pcntl exif
+RUN install-php-extensions amqp bcmath pgsql pdo_pgsql gd curl simplexml dom xml redis intl opcache apcu pcntl exif
 
 # Install composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
