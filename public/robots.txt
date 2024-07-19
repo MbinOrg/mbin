@@ -1,7 +1,7 @@
 # Ban several AI bots from indexing Mbin instances at all, in order to prevent training their models on users' data.
 
 # Using: https://github.com/mitchellkrogza/nginx-ultimate-bad-bot-blocker/blob/master/robots.txt/robots.txt
-### Version Information #
+### Version Information for nginx-ultimate-bad-bot-blocker #
 ###################################################
 ### Version: V4.2024.07.4631
 ### Updated: Thu Jul 18 22:01:11 UTC 2024
