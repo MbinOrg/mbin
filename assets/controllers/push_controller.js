@@ -9,9 +9,16 @@ export default class extends Controller {
         this.applicationServerPublicKey = this.element.dataset.applicationServerPublicKey
         console.log("got application server public key", this.applicationServerPublicKey)
         window.navigator.serviceWorker.getRegistration()
-            .then((registration) => registration?.pushManager.getSubscription())
+            .then((registration) => {
+                console.log("got service worker registration", registration)
+                return registration?.pushManager.getSubscription()
+            })
             .then(pushSubscription => {
                 this.updateButtonVisibility(pushSubscription)
+            })
+            .catch((error) => {
+                console.log("there was an error in the connect method", error)
+                this.element.style.display = "none"
             })
 
         if (!('serviceWorker' in navigator)) {
