@@ -65,7 +65,7 @@ RUN composer run-script --no-dev post-install-cmd && \
 
 ####################
 
-FROM node:22.5.1-alpine3.20 as builder-nodejs
+FROM node:22.4-alpine3.19 as builder-nodejs
 
 # Set NodeJS as production by default
 ARG NODE_ENV=production
