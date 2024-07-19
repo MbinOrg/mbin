@@ -37,16 +37,14 @@ OAUTH_FACEBOOK_SECRET=sdfpsajh329ura39ßseaoßjf30u # your client secret
 
 You need a GitHub account, if you do no have one, yet, go and create one: https://github.com/signup
 
-1. Go to https://github.com/settings/apps
-2. Click on "New GitHub App"
+1. Go to https://github.com/settings/developers
+2. Click on "New OAuth App"
 3. Enter the app name, description and Homepage URL (just your instance URL)
-4. Click the checkbox "Request user authorization (OAuth) during installation"
-5. Insert `https://YOURINSTANCE/oauth/github/verify` as the "Callback URL" (replace `YOURINSTANCE` with the URL of your instance)
-6. Uncheck the checkbox `Active` under the "Webhook" section
-7. Scroll down and click "Create GitHub App"
-8. Now you have the chance to upload an icon (at the bottom of the page)
-9. Click "Generate a new client secret"
-10. Insert the "Client ID" and the generated client secret into the `.env` file:
+4. Insert `https://YOURINSTANCE/oauth/github/verify` as the "Authorization callback URL" (replace `YOURINSTANCE` with the URL of your instance)
+5. Scroll down and click "Register application"
+6. Now you have the chance to upload an icon (at the bottom of the page)
+7. Click "Generate a new client secret"
+8. Insert the "Client ID" and the generated client secret into the `.env` file:
 ```dotenv
 OAUTH_GITHUB_ID=AS2easdioh912 # your client ID
 OAUTH_GITHUB_SECRET=sdfpsajh329ura39ßseaoßjf30u # your client secret
