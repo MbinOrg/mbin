@@ -36,8 +36,8 @@ User-agent: ClaudeBot
 Disallow: /
 
 # TheHive.ai Image reverse image search
-User-agent: ImagesiftBot 
-Disallow: / 
+User-agent: ImagesiftBot
+Disallow: /
 
 # Webz.io
 User-agent: OmigiliBot
@@ -49,6 +49,10 @@ Disallow: /
 
 # Diffbot
 User-agent: Diffbot
+Disallow: /
+
+# Amazon bot (Alexa)
+User-agent: Amazonbot
 Disallow: /
 
 # Disable marketing/SEO bots 
