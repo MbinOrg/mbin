@@ -18,7 +18,9 @@ export default class extends Controller {
 
             window.addEventListener('pagehide', this.closeEs);
         }
-        this.fetchAndSetNewNotificationAndMessageCount()
+        if (this.userValue) {
+            this.fetchAndSetNewNotificationAndMessageCount()
+        }
     }
 
     disconnect() {

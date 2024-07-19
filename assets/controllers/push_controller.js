@@ -13,6 +13,16 @@ export default class extends Controller {
             .then(pushSubscription => {
                 this.updateButtonVisibility(pushSubscription)
             })
+
+        if (!('serviceWorker' in navigator)) {
+            // Service Worker isn't supported on this browser, disable or hide UI.
+            this.element.style.display = "none"
+        }
+
+        if (!('PushManager' in window)) {
+            // Push isn't supported on this browser, disable or hide UI.
+            this.element.style.display = "none"
+        }
     }
 
     updateButtonVisibility(pushSubscription) {
