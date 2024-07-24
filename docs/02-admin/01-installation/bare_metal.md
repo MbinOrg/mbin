@@ -122,6 +122,7 @@ git clone https://github.com/MbinOrg/mbin.git .
 ### Create & configure media directory
 
 ```bash
+cd /var/www/mbin
 mkdir public/media
 sudo chmod -R 775 public/media
 sudo chown -R mbin:www-data public/media
