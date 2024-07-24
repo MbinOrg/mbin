@@ -127,14 +127,18 @@
 {% block report_created_notification %}
     {{ component('user_inline', {user: notification.report.reporting}) }} {{ 'reported'|trans|lower }} {{ component('user_inline', {user: notification.report.reported}) }}<br />
     {{ 'report_subject'|trans }}: {{ block('reportlink') }}<br />
-    <a href="{{ path('magazine_panel_reports', { 'name': notification.report.magazine.name, 'status': 'pending' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
+    {% if app.user.admin or app.user.moderator or notification.report.magazine.userIsModerator(app.user) %}
+        <a href="{{ path('magazine_panel_reports', { 'name': notification.report.magazine.name, 'status': 'pending' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
+    {% endif %}
 {% endblock report_created_notification %}
 
 {% block report_rejected_notification %}
     {{ 'own_report_rejected'|trans }} <br />
     {{ 'reported_user'|trans }}: {{ component('user_inline', {user: notification.report.reported}) }}<br />
     {{ 'report_subject'|trans }}: {{ block('reportlink') }}<br />
-    <a href="{{ path('user_settings_reports', {'status': 'rejected' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
+    {% if app.user.admin or app.user.moderator or notification.report.magazine.userIsModerator(app.user) %}
+        <a href="{{ path('user_settings_reports', {'status': 'rejected' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
+    {% endif %}
 {% endblock report_rejected_notification %}
 
 {% block report_approved_notification %}
@@ -148,5 +152,7 @@
         {{ 'reporting_user'|trans }}: {{ component('user_inline', {user: notification.report.reported}) }}<br />
     {% endif %}
     {{ 'report_subject'|trans }}: {{ block('reportlink') }}<br />
-    <a href="{{ path('magazine_panel_reports', { 'name': notification.report.magazine.name, 'status': 'approved' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
+    {% if app.user.admin or app.user.moderator or notification.report.magazine.userIsModerator(app.user) %}
+        <a href="{{ path('magazine_panel_reports', { 'name': notification.report.magazine.name, 'status': 'approved' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
+    {% endif %}
 {% endblock report_approved_notification %}
