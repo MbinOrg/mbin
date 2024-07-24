@@ -98,6 +98,7 @@ sudo su - mbin
 
 ```bash
 sudo mkdir -p /var/www/mbin
+cd /var/www/mbin
 sudo chown mbin:www-data /var/www/mbin
 ```
 
