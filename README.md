@@ -252,13 +252,6 @@ For developers:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/WebVoid">
-                    <img src="https://avatars.githubusercontent.com/u/5394649?v=4" width="100;" alt="WebVoid"/>
-                    <br />
-                    <sub><b>Webvoid</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/comradekingu">
                     <img src="https://avatars.githubusercontent.com/u/13802408?v=4" width="100;" alt="comradekingu"/>
                     <br />

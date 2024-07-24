@@ -98,6 +98,7 @@ sudo su - mbin
 
 ```bash
 sudo mkdir -p /var/www/mbin
+cd /var/www/mbin
 sudo chown mbin:www-data /var/www/mbin
 ```
 
@@ -122,6 +123,7 @@ git clone https://github.com/MbinOrg/mbin.git .
 ### Create & configure media directory
 
 ```bash
+cd /var/www/mbin
 mkdir public/media
 sudo chmod -R 775 public/media
 sudo chown -R mbin:www-data public/media
