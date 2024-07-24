@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
-use Doctrine\ORM\Mapping\OneToOne;
+use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 
 #[Entity]
 class UserPushSubscription
@@ -28,11 +28,11 @@ class UserPushSubscription
     public string $contentEncryptionPublicKey;
 
     /**
-     * @var OAuth2UserConsent|null this is only null for the web interface push messages
+     * @var AccessToken|null this is only null for the web interface push messages
      */
-    #[OneToOne(inversedBy: 'pushSubscription', targetEntity: OAuth2UserConsent::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[JoinColumn(name: 'user_consent', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
-    public ?OAuth2UserConsent $userConsent = null;
+    #[ManyToOne(targetEntity: AccessToken::class, cascade: ['persist', 'remove'])]
+    #[JoinColumn(name: 'api_token', referencedColumnName: 'identifier', unique: true, nullable: true, onDelete: 'CASCADE')]
+    public ?AccessToken $apiToken = null;
 
     #[Column(type: 'string', nullable: true)]
     public ?string $locale = null;
@@ -54,13 +54,13 @@ class UserPushSubscription
     /**
      * @param string[] $notifications
      */
-    public function __construct(User $user, string $endpoint, string $contentEncryptionPublicKey, string $serverAuthKey, array $notifications, ?OAuth2UserConsent $userConsent = null)
+    public function __construct(User $user, string $endpoint, string $contentEncryptionPublicKey, string $serverAuthKey, array $notifications, ?AccessToken $apiToken = null)
     {
         $this->user = $user;
         $this->endpoint = $endpoint;
         $this->serverAuthKey = $serverAuthKey;
         $this->contentEncryptionPublicKey = $contentEncryptionPublicKey;
         $this->notificationTypes = $notifications;
-        $this->userConsent = $userConsent;
+        $this->apiToken = $apiToken;
     }
 }

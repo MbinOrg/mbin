@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Service\Notification;
 
 use App\Entity\Notification;
-use App\Entity\OAuth2UserConsent;
 use App\Entity\User;
 use App\Payloads\PushNotification;
 use App\Repository\SiteRepository;
 use App\Repository\UserPushSubscriptionRepository;
 use App\Service\SettingsManager;
+use League\Bundle\OAuth2ServerBundle\Entity\AccessToken;
 use Minishlink\WebPush\MessageSentReport;
 use Minishlink\WebPush\Subscription;
 use Minishlink\WebPush\WebPush;
@@ -33,7 +33,7 @@ class UserPushSubscriptionManager
     /**
      * @throws \ErrorException
      */
-    public function sendTextToUser(User $user, PushNotification|Notification $pushNotification, ?string $specificDeviceKey = null, ?OAuth2UserConsent $specificToken = null): void
+    public function sendTextToUser(User $user, PushNotification|Notification $pushNotification, ?string $specificDeviceKey = null, ?AccessToken $specificToken = null): void
     {
         $webPush = $this->getWebPush();
         $criteria = ['user' => $user];
@@ -41,7 +41,7 @@ class UserPushSubscriptionManager
             $criteria['deviceKey'] = $specificDeviceKey;
         }
         if ($specificToken) {
-            $criteria['userConsent'] = $specificToken;
+            $criteria['apiToken'] = $specificToken;
         }
         $subs = $this->pushSubscriptionRepository->findBy($criteria);
         foreach ($subs as $sub) {

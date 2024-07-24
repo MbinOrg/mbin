@@ -257,7 +257,7 @@ class AjaxController extends AbstractController
     public function registerPushNotifications(#[MapRequestPayload] RegisterPushRequestPayload $payload): JsonResponse
     {
         $user = $this->getUserOrThrow();
-        $pushSubscription = $this->repository->findOneBy(['userConsent' => null, 'deviceKey' => $payload->deviceKey, 'user' => $user]);
+        $pushSubscription = $this->repository->findOneBy(['apiToken' => null, 'deviceKey' => $payload->deviceKey, 'user' => $user]);
         if (!$pushSubscription) {
             $pushSubscription = new UserPushSubscription($user, $payload->endpoint, $payload->contentPublicKey, $payload->serverKey, []);
             $pushSubscription->deviceKey = $payload->deviceKey;
