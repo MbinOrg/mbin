@@ -418,7 +418,9 @@ class EntryRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('e')
             ->where('e.magazine = :m')
             ->andWhere('e.sticky = true')
+            ->andWhere('e.visibility = :visibility')
             ->setParameter('m', $magazine)
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->getQuery()
             ->getResult()
         ;
