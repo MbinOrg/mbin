@@ -5,8 +5,21 @@ declare(strict_types=1);
 namespace App\Controller\Api\Notification;
 
 use App\Controller\Api\BaseApi;
+use App\DTO\EntryCommentResponseDto;
+use App\DTO\EntryResponseDto;
+use App\DTO\PostCommentResponseDto;
+use App\DTO\PostResponseDto;
+use App\Entity\Contracts\ReportInterface;
+use App\Entity\Entry;
+use App\Entity\EntryComment;
 use App\Entity\Notification;
+use App\Entity\Post;
+use App\Entity\PostComment;
+use App\Entity\ReportApprovedNotification;
+use App\Entity\ReportCreatedNotification;
+use App\Entity\ReportRejectedNotification;
 use App\Factory\MessageFactory;
+use GraphQL\Exception\ArgumentException;
 use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -110,8 +123,34 @@ class NotificationBaseApi extends BaseApi
                 $ban = $dto->getSubject();
                 $toReturn['subject'] = $this->magazineFactory->createBanDto($ban);
                 break;
+            case 'report_created_notification':
+                /** @var ReportCreatedNotification $n */
+                $n = $dto;
+                $toReturn['reason'] = $n->report->reason;
+                // no break
+            case 'report_rejected_notification':
+            case 'report_approved_notification':
+                /** @var ReportCreatedNotification|ReportRejectedNotification|ReportApprovedNotification $n */
+                $n = $dto;
+                $toReturn['subject'] = $this->createResponseDtoForReport($n->report->getSubject());
+                $toReturn['reportId'] = $n->report->getId();
+                break;
         }
 
         return $toReturn;
+    }
+
+    private function createResponseDtoForReport(ReportInterface $subject): EntryCommentResponseDto|EntryResponseDto|PostCommentResponseDto|PostResponseDto
+    {
+        if ($subject instanceof Entry) {
+            return $this->entryFactory->createResponseDto($subject, $this->tagLinkRepository->getTagsOfEntry($subject));
+        } elseif ($subject instanceof EntryComment) {
+            return $this->entryCommentFactory->createResponseDto($subject, $this->tagLinkRepository->getTagsOfEntryComment($subject));
+        } elseif ($subject instanceof Post) {
+            return $this->postFactory->createResponseDto($subject, $this->tagLinkRepository->getTagsOfPost($subject));
+        } elseif ($subject instanceof PostComment) {
+            return $this->postCommentFactory->createResponseDto($subject, $this->tagLinkRepository->getTagsOfPostComment($subject));
+        }
+        throw new ArgumentException("cannot work with: '".\get_class($subject)."'");
     }
 }
