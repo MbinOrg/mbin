@@ -656,7 +656,7 @@ last_active: Last Active
 flash_post_pin_success: The post has been successfully pinned.
 flash_post_unpin_success: The post has been successfully unpinned.
 comment_reply_position_help: Display the comment reply form either at the top or bottom
-  of the page. When 'infinite scroll' is enabled the posphp bin/console mbin:push:keys:updateition will always appear at
+  of the page. When 'infinite scroll' is enabled the position will always appear at
   the top.
 show_avatars_on_comments: Show Comment Avatars
 single_settings: Single
@@ -867,3 +867,8 @@ show_related_entries: Show random threads
 show_related_posts: Show random posts
 show_active_users: Show active users
 notification_title_new_report: A new report was created
+server_software: Server software
+version: Version
+last_successful_deliver: Last successful deliver
+last_successful_receive: Last successful receive
+last_failed_contact: Last failed contact

@@ -58,6 +58,11 @@
                             {% elseif user.moderator() %}
                                 <code title="{{ 'user_badge_global_moderator'|trans }}">{{ 'user_badge_global_moderator'|trans }}</code>
                             {% endif %}
+
+                            {% set instance = get_instance_of_user(user) %}
+                            {% if false and instance is not same as null %}
+                                <code title="{{ 'server_software'|trans }}">{{ instance.software }}{% if instance.version is not same as null %} v{{ instance.version }}{% endif %}</code>
+                            {% endif %}
                         </h1>
                     {% endif %}
                     <small>

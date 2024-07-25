@@ -30,6 +30,12 @@
                 {{ 'last_updated'|trans }}: {{ component('date', {date: user.apFetchedAt}) }}
             </li>
         {% endif %}
+
+        {% set instance = get_instance_of_user(user) %}
+        {% if instance is not same as null %}
+            <li>{{ 'server_software'|trans }}: <div><span>{{ instance.software }}{% if instance.version is not same as null %} v{{ instance.version }}{% endif %}</span></div></li>
+        {% endif %}
+
         {%- set TYPE_ENTRY = constant('App\\Repository\\ReputationRepository::TYPE_ENTRY') -%}
         <li><a href="{{ path('user_reputation', {username: user.username, reputationType: TYPE_ENTRY}) }}" class="stretched-link">{{ 'reputation_points'|trans }}:</a> {{ get_reputation_total(user) }}</li>
         <li><a href="{{ path('user_moderated', {username: user.username}) }}"

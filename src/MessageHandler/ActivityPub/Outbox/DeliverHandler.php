@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\MessageHandler\ActivityPub\Outbox;
 
 use App\Entity\User;
+use App\Exception\InvalidApPostException;
 use App\Message\ActivityPub\Outbox\DeliverMessage;
+use App\Repository\InstanceRepository;
 use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
 use App\Service\ActivityPub\ApHttpClient;
@@ -24,10 +26,14 @@ class DeliverHandler extends MbinMessageHandler
         private readonly ActivityPubManager $manager,
         private readonly SettingsManager $settingsManager,
         private readonly LoggerInterface $logger,
+        private readonly InstanceRepository $instanceRepository,
     ) {
         parent::__construct($this->entityManager);
     }
 
+    /**
+     * @throws InvalidApPostException
+     */
     public function __invoke(DeliverMessage $message): void
     {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
@@ -40,6 +46,17 @@ class DeliverHandler extends MbinMessageHandler
     {
         if (!($message instanceof DeliverMessage)) {
             throw new \LogicException();
+        }
+
+        $instance = $this->instanceRepository->findOneBy(['domain' => parse_url($message->apInboxUrl, PHP_URL_HOST)]);
+        if ($instance && $instance->isDead()) {
+            $this->logger->debug('instance {n} is considered dead. Last successful delivery date: {dd}, failed attempts since then: {fa}', [
+                'n' => $instance->domain,
+                'dd' => $instance->getLastSuccessfulDeliver(),
+                'fa' => $instance->getLastFailedDeliver(),
+            ]);
+
+            return;
         }
 
         if ('Announce' !== $message->payload['type']) {
@@ -62,6 +79,20 @@ class DeliverHandler extends MbinMessageHandler
             return;
         }
 
-        $this->client->post($message->apInboxUrl, $actor, $message->payload);
+        try {
+            $this->client->post($message->apInboxUrl, $actor, $message->payload);
+            if ($instance && $instance->getLastSuccessfulDeliver() < new \DateTime('now - 1 hour')) {
+                $instance->setLastSuccessfulDeliver();
+                $this->entityManager->persist($instance);
+                $this->entityManager->flush();
+            }
+        } catch (InvalidApPostException $e) {
+            if ($instance) {
+                $instance->setLastFailedDeliver();
+                $this->entityManager->persist($instance);
+                $this->entityManager->flush();
+            }
+            throw $e;
+        }
     }
 }
