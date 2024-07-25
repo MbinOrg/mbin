@@ -7,6 +7,7 @@ namespace App\MessageHandler\Notification;
 use App\Message\Notification\PostDeletedNotificationMessage;
 use App\Repository\PostRepository;
 use App\Service\NotificationManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
@@ -14,12 +15,18 @@ use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 class SentPostDeletedNotificationHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly PostRepository $repository,
         private readonly NotificationManager $manager
     ) {
     }
 
     public function __invoke(PostDeletedNotificationMessage $message): void
+    {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(PostDeletedNotificationMessage $message): void
     {
         $post = $this->repository->find($message->postId);
 

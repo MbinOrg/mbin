@@ -10,12 +10,14 @@ use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 class AddHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
         private readonly MagazineRepository $magazineRepository,
         private readonly SettingsManager $settingsManager,
@@ -25,6 +27,11 @@ class AddHandler
     }
 
     public function __invoke(AddMessage $message): void
+    {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(AddMessage $message): void
     {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;

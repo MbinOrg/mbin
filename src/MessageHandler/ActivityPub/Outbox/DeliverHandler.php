@@ -9,6 +9,7 @@ use App\Message\ActivityPub\Outbox\DeliverMessage;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPubManager;
 use App\Service\SettingsManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -16,6 +17,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 class DeliverHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly ApHttpClient $client,
         private readonly ActivityPubManager $manager,
         private readonly SettingsManager $settingsManager,
@@ -24,6 +26,11 @@ class DeliverHandler
     }
 
     public function __invoke(DeliverMessage $message): void
+    {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(DeliverMessage $message): void
     {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;

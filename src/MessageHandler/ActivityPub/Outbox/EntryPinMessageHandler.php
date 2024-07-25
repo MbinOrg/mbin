@@ -11,6 +11,7 @@ use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -18,6 +19,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 class EntryPinMessageHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly SettingsManager $settingsManager,
         private readonly EntryRepository $entryRepository,
         private readonly UserRepository $userRepository,
@@ -29,6 +31,11 @@ class EntryPinMessageHandler
     }
 
     public function __invoke(EntryPinMessage $message): void
+    {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(EntryPinMessage $message): void
     {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;

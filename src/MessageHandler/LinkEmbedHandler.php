@@ -7,6 +7,7 @@ namespace App\MessageHandler;
 use App\Message\LinkEmbedMessage;
 use App\Repository\EmbedRepository;
 use App\Utils\Embed;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -14,6 +15,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 class LinkEmbedHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly EmbedRepository $embedRepository,
         private readonly Embed $embed,
         private readonly CacheItemPoolInterface $markdownCache
@@ -21,6 +23,11 @@ class LinkEmbedHandler
     }
 
     public function __invoke(LinkEmbedMessage $message): void
+    {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(LinkEmbedMessage $message): void
     {
         preg_match_all('#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#', $message->body, $match);
 

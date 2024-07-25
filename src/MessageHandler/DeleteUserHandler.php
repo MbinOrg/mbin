@@ -34,6 +34,11 @@ class DeleteUserHandler
 
     public function __invoke(DeleteUserMessage $message): void
     {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(DeleteUserMessage $message): void
+    {
         $this->user = $this->entityManager
             ->getRepository(User::class)
             ->find($message->id);

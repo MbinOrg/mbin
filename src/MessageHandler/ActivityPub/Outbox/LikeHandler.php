@@ -38,6 +38,11 @@ class LikeHandler
 
     public function __invoke(LikeMessage $message): void
     {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(LikeMessage $message): void
+    {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;
         }

@@ -40,6 +40,11 @@ class MagazinePurgeHandler
 
     public function __invoke(MagazinePurgeMessage $message): void
     {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(MagazinePurgeMessage $message): void
+    {
         $this->magazine = $this->entityManager
             ->getRepository(Magazine::class)
             ->find($message->id);

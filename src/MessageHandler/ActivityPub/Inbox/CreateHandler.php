@@ -16,6 +16,7 @@ use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
 use App\Service\ActivityPubManager;
 use App\Service\MessageManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -27,6 +28,7 @@ class CreateHandler
     private bool $stickyIt;
 
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly Note $note,
         private readonly Page $page,
         private readonly MessageBusInterface $bus,
@@ -41,6 +43,14 @@ class CreateHandler
      * @throws \Exception
      */
     public function __invoke(CreateMessage $message): void
+    {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function doWork(CreateMessage $message): void
     {
         $this->object = $message->payload;
         $this->stickyIt = $message->stickyIt;

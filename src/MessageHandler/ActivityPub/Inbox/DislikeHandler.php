@@ -14,6 +14,7 @@ use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\DislikeMessage;
 use App\Service\ActivityPubManager;
 use App\Service\VoteManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -22,6 +23,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 class DislikeHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly ActivityPubManager $activityPubManager,
         private readonly MessageBusInterface $bus,
         private readonly VoteManager $voteManager,
@@ -30,6 +32,11 @@ class DislikeHandler
     }
 
     public function __invoke(DislikeMessage $message): void
+    {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(DislikeMessage $message): void
     {
         if (!isset($message->payload['type'])) {
             return;

@@ -8,6 +8,7 @@ use App\Message\ActivityPub\UpdateActorMessage;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPubManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -16,6 +17,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 class UpdateActorHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly ActivityPubManager $manager,
         private readonly LockFactory $lockFactory,
         private readonly UserRepository $userRepository,
@@ -25,6 +27,11 @@ class UpdateActorHandler
     }
 
     public function __invoke(UpdateActorMessage $message): void
+    {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(UpdateActorMessage $message): void
     {
         $actorUrl = $message->actorUrl;
         $lock = $this->lockFactory->createLock('update_actor_'.hash('sha256', $actorUrl), 60);

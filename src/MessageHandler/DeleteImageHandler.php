@@ -22,7 +22,12 @@ class DeleteImageHandler
     ) {
     }
 
-    public function __invoke(DeleteImageMessage $message)
+    public function __invoke(DeleteImageMessage $message): void
+    {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(DeleteImageMessage $message): void
     {
         $image = $this->imageRepository->find($message->id);
 

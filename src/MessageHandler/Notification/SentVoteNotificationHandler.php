@@ -11,6 +11,7 @@ use App\Service\GenerateHtmlClassService;
 use App\Service\SettingsManager;
 use App\Service\VotableRepositoryResolver;
 use App\Utils\IriGenerator;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -19,6 +20,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 class SentVoteNotificationHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly MagazineFactory $magazineFactory,
         private readonly VotableRepositoryResolver $resolver,
         private readonly HubInterface $publisher,
@@ -28,6 +30,11 @@ class SentVoteNotificationHandler
     }
 
     public function __invoke(VoteNotificationMessage $message): void
+    {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(VoteNotificationMessage $message): void
     {
         $repo = $this->resolver->resolve($message->subjectClass);
         $this->notifyMagazine($repo->find($message->subjectId));

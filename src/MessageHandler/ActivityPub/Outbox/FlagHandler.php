@@ -11,6 +11,7 @@ use App\Message\ActivityPub\Outbox\FlagMessage;
 use App\Repository\ReportRepository;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -18,6 +19,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 class FlagHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly SettingsManager $settingsManager,
         private readonly ReportRepository $reportRepository,
         private readonly FlagFactory $factory,
@@ -27,6 +29,11 @@ class FlagHandler
     }
 
     public function __invoke(FlagMessage $message): void
+    {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(FlagMessage $message): void
     {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;

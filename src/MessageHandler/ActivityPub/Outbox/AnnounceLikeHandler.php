@@ -42,6 +42,11 @@ class AnnounceLikeHandler
 
     public function __invoke(AnnounceLikeMessage $message): void
     {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(AnnounceLikeMessage $message): void
+    {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;
         }

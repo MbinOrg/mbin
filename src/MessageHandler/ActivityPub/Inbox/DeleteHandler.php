@@ -40,6 +40,11 @@ class DeleteHandler
 
     public function __invoke(DeleteMessage $message): void
     {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(DeleteMessage $message): void
+    {
         $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
 
         $id = \is_array($message->payload['object']) ? $message->payload['object']['id'] : $message->payload['object'];

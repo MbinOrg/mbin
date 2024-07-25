@@ -44,6 +44,11 @@ readonly class ActivityHandler
 
     public function __invoke(ActivityMessage $message): void
     {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(ActivityMessage $message): void
+    {
         $payload = @json_decode($message->payload, true);
 
         if ($message->request && $message->headers) {

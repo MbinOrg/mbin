@@ -29,6 +29,11 @@ class AttachEntryEmbedHandler
 
     public function __invoke(EntryEmbedMessage $message): void
     {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(EntryEmbedMessage $message): void
+    {
         $entry = $this->entryRepository->find($message->entryId);
 
         if (!$entry) {

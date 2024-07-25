@@ -9,6 +9,7 @@ use App\Message\Contracts\SendConfirmationEmailInterface;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
 use App\Service\SettingsManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -20,6 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class SentUserConfirmationEmailHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly SettingsManager $settingsManager,
         private readonly EmailVerifier $emailVerifier,
         private readonly UserRepository $repository,
@@ -28,7 +30,15 @@ class SentUserConfirmationEmailHandler
     ) {
     }
 
-    public function __invoke(SendConfirmationEmailInterface $message)
+    public function __invoke(SendConfirmationEmailInterface $message): void
+    {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function doWork(SendConfirmationEmailInterface $message): void
     {
         $user = $this->repository->find($message->userId);
         if (!$user) {
@@ -41,9 +51,9 @@ class SentUserConfirmationEmailHandler
     /**
      * @param User $user user that will be sent the confirmation email
      *
-     * @return void
+     * @throws \Exception
      */
-    public function sendConfirmationEmail(User $user)
+    public function sendConfirmationEmail(User $user): void
     {
         try {
             $this->emailVerifier->sendEmailConfirmation(

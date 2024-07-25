@@ -30,6 +30,11 @@ class AnnounceHandler
 
     public function __invoke(AnnounceMessage $message): void
     {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(AnnounceMessage $message): void
+    {
         $chainDispatchCallback = function (array $object, ?string $adjustedUrl) use ($message) {
             if ($adjustedUrl) {
                 $this->logger->info('got an adjusted url: {url}, using that instead of {old}', ['url' => $adjustedUrl, 'old' => $message->payload['object']['id'] ?? $message->payload['object']]);

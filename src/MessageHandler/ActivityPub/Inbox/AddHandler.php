@@ -18,6 +18,7 @@ use App\Service\ActivityPubManager;
 use App\Service\EntryManager;
 use App\Service\MagazineManager;
 use App\Service\SettingsManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -26,6 +27,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 class AddHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly ActivityPubManager $activityPubManager,
         private readonly ApHttpClient $apHttpClient,
         private readonly ApActivityRepository $apActivityRepository,
@@ -40,6 +42,11 @@ class AddHandler
     }
 
     public function __invoke(AddMessage $message): void
+    {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(AddMessage $message): void
     {
         $payload = $message->payload;
         $actor = $this->activityPubManager->findUserActorOrCreateOrThrow($payload['actor']);

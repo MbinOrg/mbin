@@ -14,6 +14,7 @@ use App\Message\ActivityPub\Outbox\AnnounceLikeMessage;
 use App\Service\ActivityPubManager;
 use App\Service\FavouriteManager;
 use App\Service\VoteManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -22,6 +23,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 class LikeHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly ActivityPubManager $activityPubManager,
         private readonly VoteManager $voteManager,
         private readonly MessageBusInterface $bus,
@@ -31,6 +33,11 @@ class LikeHandler
     }
 
     public function __invoke(LikeMessage $message): void
+    {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(LikeMessage $message): void
     {
         if (!isset($message->payload['type'])) {
             return;

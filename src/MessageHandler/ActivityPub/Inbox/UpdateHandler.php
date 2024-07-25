@@ -56,6 +56,11 @@ class UpdateHandler
 
     public function __invoke(UpdateMessage $message): void
     {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(UpdateMessage $message): void
+    {
         $this->payload = $message->payload;
 
         try {

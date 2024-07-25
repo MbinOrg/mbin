@@ -9,6 +9,7 @@ use App\Repository\MagazineRepository;
 use App\Service\ActivityPub\Wrapper\AnnounceWrapper;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -16,6 +17,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 readonly class GenericAnnounceHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private SettingsManager $settingsManager,
         private UrlGeneratorInterface $urlGenerator,
         private MagazineRepository $magazineRepository,
@@ -25,6 +27,11 @@ readonly class GenericAnnounceHandler
     }
 
     public function __invoke(GenericAnnounceMessage $message): void
+    {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(GenericAnnounceMessage $message): void
     {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;

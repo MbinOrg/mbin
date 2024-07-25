@@ -35,6 +35,11 @@ class CreateHandler
 
     public function __invoke(CreateMessage $message): void
     {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(CreateMessage $message): void
+    {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;
         }

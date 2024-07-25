@@ -10,12 +10,14 @@ use App\Repository\UserRepository;
 use App\Service\ActivityPubManager;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 class DeleteHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
         private readonly MagazineRepository $magazineRepository,
         private readonly ActivityPubManager $activityPubManager,
@@ -25,6 +27,11 @@ class DeleteHandler
     }
 
     public function __invoke(DeleteMessage $message): void
+    {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(DeleteMessage $message): void
     {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;

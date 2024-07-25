@@ -15,6 +15,7 @@ use App\Service\ActivityPubManager;
 use App\Service\EntryManager;
 use App\Service\MagazineManager;
 use App\Service\SettingsManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -22,6 +23,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 class RemoveHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly ApActivityRepository $apActivityRepository,
         private readonly ActivityPubManager $activityPubManager,
         private readonly MagazineRepository $magazineRepository,
@@ -34,6 +36,11 @@ class RemoveHandler
     }
 
     public function __invoke(RemoveMessage $message): void
+    {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(RemoveMessage $message): void
     {
         $payload = $message->payload;
         $actor = $this->activityPubManager->findUserActorOrCreateOrThrow($payload['actor']);

@@ -13,13 +13,14 @@ use App\Service\ActivityPub\Wrapper\UndoWrapper;
 use App\Service\ActivityPubManager;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
-use JetBrains\PhpStorm\ArrayShape;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 class FollowHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
         private readonly MagazineRepository $magazineRepository,
         private readonly ActivityPubManager $activityPubManager,
@@ -31,15 +32,13 @@ class FollowHandler
     ) {
     }
 
-    #[ArrayShape([
-        '@context' => 'string',
-        'id' => 'string',
-        'actor' => 'string',
-        'object' => 'string',
-    ])]
-    public function __invoke(
-        FollowMessage $message
-    ): void {
+    public function __invoke(FollowMessage $message): void
+    {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(FollowMessage $message): void
+    {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;
         }

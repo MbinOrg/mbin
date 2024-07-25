@@ -12,6 +12,7 @@ use App\Service\ActivityPub\Wrapper\FollowResponseWrapper;
 use App\Service\ActivityPubManager;
 use App\Service\MagazineManager;
 use App\Service\UserManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -19,6 +20,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 class FollowHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly ActivityPubManager $activityPubManager,
         private readonly UserManager $userManager,
         private readonly MagazineManager $magazineManager,
@@ -29,6 +31,11 @@ class FollowHandler
     }
 
     public function __invoke(FollowMessage $message): void
+    {
+        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+    }
+
+    public function doWork(FollowMessage $message): void
     {
         $this->logger->debug('got a FollowMessage: {message}', [$message]);
         $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
