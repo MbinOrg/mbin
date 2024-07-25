@@ -139,7 +139,7 @@ class ActivityPubManager
             if (!substr_count(ltrim($actorUrl, '@'), '@')) {
                 $user = $this->userRepository->findOneBy(['username' => ltrim($actorUrl, '@')]);
                 if ($user instanceof User) {
-                    if ($user->apId && (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
+                    if ($user->apId && !$user->isDeleted && !$user->isSoftDeleted() && !$user->isTrashed() && (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
                         $this->dispatchUpdateActor($user->apProfileId);
                     }
 
@@ -165,7 +165,7 @@ class ActivityPubManager
         $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
         if ($user instanceof User) {
             $this->logger->debug('found remote user for url "{url}" in db', ['url' => $actorUrl]);
-            if ($user->apId && (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
+            if ($user->apId && !$user->isDeleted && !$user->isSoftDeleted() && !$user->isTrashed() && (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
                 $this->dispatchUpdateActor($user->apProfileId);
             }
 
@@ -174,7 +174,7 @@ class ActivityPubManager
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
         if ($magazine instanceof Magazine) {
             $this->logger->debug('found remote user for url "{url}" in db', ['url' => $actorUrl]);
-            if (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 hour') < (new \DateTime())) {
+            if (!$magazine->isTrashed() && !$magazine->isSoftDeleted() && (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
                 $this->dispatchUpdateActor($magazine->apProfileId);
             }
 
@@ -309,6 +309,10 @@ class ActivityPubManager
     {
         $this->logger->info('updating user {name}', ['name' => $actorUrl]);
         $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
+
+        if ($user->isDeleted || $user->isTrashed() || $user->isSoftDeleted()) {
+            return $user;
+        }
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         if (!$actor || !\is_array($actor)) {
@@ -451,6 +455,10 @@ class ActivityPubManager
     {
         $this->logger->info('updating magazine "{magName}"', ['magName' => $actorUrl]);
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
+
+        if ($magazine->isTrashed() || $magazine->isSoftDeleted()) {
+            return $magazine;
+        }
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
         // Check if actor isn't empty (not set/null/empty array/etc.)
@@ -794,7 +802,7 @@ class ActivityPubManager
     {
         $potentialGroups = self::getReceivers($object);
         $magazine = $this->magazineRepository->findByApGroupProfileId($potentialGroups);
-        if ($magazine and $magazine->apId && (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 Day') < (new \DateTime()))) {
+        if ($magazine and $magazine->apId && !$magazine->isTrashed() && !$magazine->isSoftDeleted() && (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 Day') < (new \DateTime()))) {
             $this->dispatchUpdateActor($magazine->apPublicUrl);
         }
 
