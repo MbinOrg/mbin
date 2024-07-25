@@ -266,6 +266,13 @@ For developers:
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/DismalShadowX">
+                    <img src="https://avatars.githubusercontent.com/u/24910097?v=4" width="100;" alt="DismalShadowX"/>
+                    <br />
+                    <sub><b>Nathan Sparrow</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/privacyguard">
                     <img src="https://avatars.githubusercontent.com/u/92675882?v=4" width="100;" alt="privacyguard"/>
                     <br />
