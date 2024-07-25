@@ -12,6 +12,7 @@ use App\Entity\ModeratorRequest;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\Report;
+use App\Message\Contracts\MessageInterface;
 use App\Message\MagazinePurgeMessage;
 use App\Service\EntryCommentManager;
 use App\Service\EntryManager;
@@ -23,7 +24,7 @@ use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-class MagazinePurgeHandler
+class MagazinePurgeHandler extends MbinMessageHandler
 {
     private ?Magazine $magazine;
     private int $batchSize = 5;
@@ -36,10 +37,19 @@ class MagazinePurgeHandler
         private readonly MessageBusInterface $bus,
         private readonly EntityManagerInterface $entityManager
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(MagazinePurgeMessage $message): void
     {
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof MagazinePurgeMessage)) {
+            throw new \LogicException();
+        }
         $this->magazine = $this->entityManager
             ->getRepository(Magazine::class)
             ->find($message->id);
