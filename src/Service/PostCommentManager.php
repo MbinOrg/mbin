@@ -41,6 +41,7 @@ class PostCommentManager implements ContentManagerInterface
         private readonly EventDispatcherInterface $dispatcher,
         private readonly RateLimiterFactory $postCommentLimiter,
         private readonly MessageBusInterface $bus,
+        private readonly SettingsManager $settingsManager,
         private readonly EntityManagerInterface $entityManager
     ) {
     }
@@ -105,6 +106,15 @@ class PostCommentManager implements ContentManagerInterface
         $this->dispatcher->dispatch(new PostCommentCreatedEvent($comment));
 
         return $comment;
+    }
+
+    public function canUserEditPostComment(PostComment $postComment, User $user): bool
+    {
+        $postCommentHost = null !== $postComment->apId ? parse_url($postComment->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+        $userHost = null !== $user->apId ? parse_url($user->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+        $magazineHost = null !== $postComment->magazine->apId ? parse_url($postComment->magazine->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+
+        return $postCommentHost === $userHost || $userHost === $magazineHost || $postComment->magazine->userIsModerator($user);
     }
 
     /**

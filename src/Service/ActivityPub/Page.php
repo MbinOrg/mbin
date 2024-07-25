@@ -12,6 +12,7 @@ use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\User;
+use App\Exception\EntityNotFoundException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Factory\ImageFactory;
@@ -40,7 +41,8 @@ class Page
     /**
      * @throws TagBannedException
      * @throws UserBannedException
-     * @throws \Exception          if the user could not be found or a sub exception occurred
+     * @throws EntityNotFoundException if the user could not be found or a sub exception occurred
+     * @throws \Exception              if there was an error
      */
     public function create(array $object, bool $stickyIt = false): Entry
     {
@@ -104,12 +106,12 @@ class Page
 
             return $this->entryManager->create($dto, $actor, false, $stickyIt);
         } else {
-            throw new \Exception('Actor could not be found for entry.');
+            throw new EntityNotFoundException('Actor could not be found for entry.');
         }
     }
 
     /**
-     * @throws \Exception
+     * @throws \LogicException
      */
     private function getVisibility(array $object, User $actor): string
     {
@@ -123,7 +125,7 @@ class Page
                     array_merge($object['to'] ?? [], $object['cc'] ?? [])
                 )
             ) {
-                throw new \Exception('PM: not implemented.');
+                throw new \LogicException('PM: not implemented.');
             }
 
             return VisibilityInterface::VISIBILITY_PRIVATE;
