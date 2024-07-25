@@ -10,6 +10,7 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
+use App\Exception\UserDeletedException;
 use App\Message\ActivityPub\Inbox\AnnounceMessage;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\DislikeMessage;
@@ -116,6 +117,8 @@ class ChainActivityHandler
             }
         } catch (UserBannedException) {
             $this->logger->error('the user is banned, url: {url}', ['url' => $apUrl]);
+        } catch (UserDeletedException) {
+            $this->logger->error('the user is deleted, url: {url}', ['url' => $apUrl]);
         } catch (TagBannedException) {
             $this->logger->error('one of the used tags is banned, url: {url}', ['url' => $apUrl]);
         } catch (\Exception $e) {

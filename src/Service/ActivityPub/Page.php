@@ -14,13 +14,13 @@ use App\Entity\Entry;
 use App\Entity\User;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
+use App\Exception\UserDeletedException;
 use App\Factory\ImageFactory;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPubManager;
 use App\Service\EntryManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Psr\Log\LoggerInterface;
 
 class Page
@@ -40,7 +40,8 @@ class Page
     /**
      * @throws TagBannedException
      * @throws UserBannedException
-     * @throws \Exception          if the user could not be found or a sub exception occurred
+     * @throws UserDeletedException
+     * @throws \Exception           if the user could not be found or a sub exception occurred
      */
     public function create(array $object, bool $stickyIt = false): Entry
     {
@@ -49,6 +50,9 @@ class Page
         if (!empty($actor)) {
             if ($actor->isBanned) {
                 throw new UserBannedException();
+            }
+            if ($actor->isDeleted || $actor->isTrashed() || $actor->isSoftDeleted()) {
+                throw new UserDeletedException();
             }
 
             $current = $this->repository->findByObjectId($object['id']);
