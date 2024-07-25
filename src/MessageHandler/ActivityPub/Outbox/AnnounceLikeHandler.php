@@ -11,6 +11,8 @@ use App\Entity\PostComment;
 use App\Factory\ActivityPub\ActivityFactory;
 use App\Factory\ActivityPub\PersonFactory;
 use App\Message\ActivityPub\Outbox\AnnounceLikeMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\Wrapper\AnnounceWrapper;
@@ -23,7 +25,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsMessageHandler]
-class AnnounceLikeHandler
+class AnnounceLikeHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly UserRepository $userRepository,
@@ -38,17 +40,21 @@ class AnnounceLikeHandler
         private readonly PersonFactory $personFactory,
         private readonly DeliverManager $deliverManager,
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(AnnounceLikeMessage $message): void
     {
-        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
-    }
-
-    public function doWork(AnnounceLikeMessage $message): void
-    {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;
+        }
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof AnnounceLikeMessage)) {
+            throw new \LogicException();
         }
 
         $user = $this->userRepository->find($message->userId);

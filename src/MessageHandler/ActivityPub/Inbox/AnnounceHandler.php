@@ -8,6 +8,8 @@ use App\Entity\User;
 use App\EventSubscriber\VoteHandleSubscriber;
 use App\Message\ActivityPub\Inbox\AnnounceMessage;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Service\ActivityPubManager;
 use App\Service\VoteManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,7 +18,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-class AnnounceHandler
+class AnnounceHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly ActivityPubManager $activityPubManager,
@@ -26,15 +28,19 @@ class AnnounceHandler
         private readonly VoteHandleSubscriber $voteHandleSubscriber,
         private readonly LoggerInterface $logger,
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(AnnounceMessage $message): void
     {
-        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+        $this->workWrapper($message);
     }
 
-    public function doWork(AnnounceMessage $message): void
+    public function doWork(MessageInterface $message): void
     {
+        if (!($message instanceof AnnounceMessage)) {
+            throw new \LogicException();
+        }
         $chainDispatchCallback = function (array $object, ?string $adjustedUrl) use ($message) {
             if ($adjustedUrl) {
                 $this->logger->info('got an adjusted url: {url}, using that instead of {old}', ['url' => $adjustedUrl, 'old' => $message->payload['object']['id'] ?? $message->payload['object']]);

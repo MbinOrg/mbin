@@ -15,6 +15,8 @@ use App\Message\ActivityPub\Inbox\AnnounceMessage;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\DislikeMessage;
 use App\Message\ActivityPub\Inbox\LikeMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\Note;
@@ -26,7 +28,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-class ChainActivityHandler
+class ChainActivityHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -37,15 +39,19 @@ class ChainActivityHandler
         private readonly Note $note,
         private readonly Page $page
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(ChainActivityMessage $message): void
     {
-        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+        $this->workWrapper($message);
     }
 
-    public function doWork(ChainActivityMessage $message): void
+    public function doWork(MessageInterface $message): void
     {
+        if (!($message instanceof ChainActivityMessage)) {
+            throw new \LogicException();
+        }
         $this->logger->debug('Got chain activity message: {m}', ['m' => $message]);
         if (!$message->chain || 0 === \sizeof($message->chain)) {
             return;

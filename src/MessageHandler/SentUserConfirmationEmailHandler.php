@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\MessageHandler;
 
 use App\Entity\User;
+use App\Message\Contracts\MessageInterface;
 use App\Message\Contracts\SendConfirmationEmailInterface;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
@@ -18,7 +19,7 @@ use Symfony\Component\Mime\Address;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsMessageHandler]
-class SentUserConfirmationEmailHandler
+class SentUserConfirmationEmailHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -28,18 +29,19 @@ class SentUserConfirmationEmailHandler
         private readonly ParameterBagInterface $params,
         private readonly TranslatorInterface $translator
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(SendConfirmationEmailInterface $message): void
     {
-        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+        $this->workWrapper($message);
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function doWork(SendConfirmationEmailInterface $message): void
+    public function doWork(MessageInterface $message): void
     {
+        if (!($message instanceof SendConfirmationEmailInterface)) {
+            throw new \LogicException();
+        }
         $user = $this->repository->find($message->userId);
         if (!$user) {
             throw new UnrecoverableMessageHandlingException('User not found');

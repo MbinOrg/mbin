@@ -10,6 +10,8 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Factory\ActivityPub\ActivityFactory;
 use App\Message\ActivityPub\Outbox\LikeMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\Wrapper\LikeWrapper;
@@ -21,7 +23,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class LikeHandler
+class LikeHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly UserRepository $userRepository,
@@ -34,17 +36,21 @@ class LikeHandler
         private readonly SettingsManager $settingsManager,
         private readonly DeliverManager $deliverManager,
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(LikeMessage $message): void
     {
-        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
-    }
-
-    public function doWork(LikeMessage $message): void
-    {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;
+        }
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof LikeMessage)) {
+            throw new \LogicException();
         }
 
         $user = $this->userRepository->find($message->userId);

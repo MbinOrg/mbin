@@ -12,6 +12,8 @@ use App\Entity\PostComment;
 use App\Entity\User;
 use App\Factory\ActivityPub\ActivityFactory;
 use App\Message\ActivityPub\Outbox\AnnounceMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\Wrapper\AnnounceWrapper;
@@ -25,7 +27,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
 #[AsMessageHandler]
-class AnnounceHandler
+class AnnounceHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly UserRepository $userRepository,
@@ -39,17 +41,21 @@ class AnnounceHandler
         private readonly DeliverManager $deliverManager,
         private readonly SettingsManager $settingsManager,
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(AnnounceMessage $message): void
     {
-        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
-    }
-
-    public function doWork(AnnounceMessage $message): void
-    {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;
+        }
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof AnnounceMessage)) {
+            throw new \LogicException();
         }
 
         if (null !== $message->userId) {

@@ -9,6 +9,8 @@ use App\Entity\Contracts\ReportInterface;
 use App\Entity\User;
 use App\Exception\SubjectHasBeenReportedException;
 use App\Message\ActivityPub\Inbox\FlagMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\EntryCommentRepository;
 use App\Repository\EntryRepository;
 use App\Repository\PostCommentRepository;
@@ -21,7 +23,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class FlagHandler
+class FlagHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -34,15 +36,19 @@ class FlagHandler
         private readonly SettingsManager $settingsManager,
         private readonly LoggerInterface $logger,
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(FlagMessage $message): void
     {
-        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+        $this->workWrapper($message);
     }
 
-    public function doWork(FlagMessage $message): void
+    public function doWork(MessageInterface $message): void
     {
+        if (!($message instanceof FlagMessage)) {
+            throw new \LogicException();
+        }
         $this->logger->debug('Got FlagMessage: '.json_encode($message));
         $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
         $object = $message->payload['object'];

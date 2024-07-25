@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\MessageHandler\ActivityPub\Outbox;
 
 use App\Message\ActivityPub\Outbox\FollowMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\ApHttpClient;
@@ -17,7 +19,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class FollowHandler
+class FollowHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -30,17 +32,21 @@ class FollowHandler
         private readonly SettingsManager $settingsManager,
         private readonly DeliverManager $deliverManager,
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(FollowMessage $message): void
     {
-        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
-    }
-
-    public function doWork(FollowMessage $message): void
-    {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;
+        }
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof FollowMessage)) {
+            throw new \LogicException();
         }
 
         $follower = $this->userRepository->find($message->followerId);

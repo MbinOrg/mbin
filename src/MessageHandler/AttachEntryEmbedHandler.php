@@ -6,6 +6,7 @@ namespace App\MessageHandler;
 
 use App\Entity\Entry;
 use App\Entity\Image;
+use App\Message\Contracts\MessageInterface;
 use App\Message\EntryEmbedMessage;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
@@ -16,7 +17,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
 #[AsMessageHandler]
-class AttachEntryEmbedHandler
+class AttachEntryEmbedHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntryRepository $entryRepository,
@@ -25,15 +26,19 @@ class AttachEntryEmbedHandler
         private readonly ImageRepository $imageRepository,
         private readonly EntityManagerInterface $entityManager
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(EntryEmbedMessage $message): void
     {
-        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+        $this->workWrapper($message);
     }
 
-    public function doWork(EntryEmbedMessage $message): void
+    public function doWork(MessageInterface $message): void
     {
+        if (!($message instanceof EntryEmbedMessage)) {
+            throw new \LogicException();
+        }
         $entry = $this->entryRepository->find($message->entryId);
 
         if (!$entry) {

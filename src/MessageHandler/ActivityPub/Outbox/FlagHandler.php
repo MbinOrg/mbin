@@ -8,6 +8,8 @@ use App\Entity\Moderator;
 use App\Entity\Report;
 use App\Factory\ActivityPub\FlagFactory;
 use App\Message\ActivityPub\Outbox\FlagMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\ReportRepository;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
@@ -16,7 +18,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class FlagHandler
+class FlagHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -26,17 +28,21 @@ class FlagHandler
         private readonly LoggerInterface $logger,
         private readonly DeliverManager $deliverManager,
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(FlagMessage $message): void
     {
-        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
-    }
-
-    public function doWork(FlagMessage $message): void
-    {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;
+        }
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof FlagMessage)) {
+            throw new \LogicException();
         }
         $this->logger->debug('got a FlagMessage');
         $report = $this->reportRepository->find($message->reportId);

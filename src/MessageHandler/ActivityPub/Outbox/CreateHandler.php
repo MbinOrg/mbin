@@ -6,6 +6,8 @@ namespace App\MessageHandler\ActivityPub\Outbox;
 
 use App\Entity\Message;
 use App\Message\ActivityPub\Outbox\CreateMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\Wrapper\CreateWrapper;
@@ -18,7 +20,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class CreateHandler
+class CreateHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly UserRepository $userRepository,
@@ -31,17 +33,21 @@ class CreateHandler
         private readonly LoggerInterface $logger,
         private readonly DeliverManager $deliverManager,
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(CreateMessage $message): void
     {
-        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
-    }
-
-    public function doWork(CreateMessage $message): void
-    {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;
+        }
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof CreateMessage)) {
+            throw new \LogicException();
         }
 
         $entity = $this->entityManager->getRepository($message->type)->find($message->id);

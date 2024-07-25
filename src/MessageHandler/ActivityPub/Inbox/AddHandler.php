@@ -10,6 +10,8 @@ use App\Entity\Magazine;
 use App\Entity\User;
 use App\Message\ActivityPub\Inbox\AddMessage;
 use App\Message\ActivityPub\Inbox\CreateMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\ApActivityRepository;
 use App\Repository\EntryRepository;
 use App\Repository\MagazineRepository;
@@ -24,7 +26,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-class AddHandler
+class AddHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -39,15 +41,19 @@ class AddHandler
         private readonly EntryManager $entryManager,
         private readonly SettingsManager $settingsManager,
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(AddMessage $message): void
     {
-        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+        $this->workWrapper($message);
     }
 
-    public function doWork(AddMessage $message): void
+    public function doWork(MessageInterface $message): void
     {
+        if (!($message instanceof AddMessage)) {
+            throw new \LogicException();
+        }
         $payload = $message->payload;
         $actor = $this->activityPubManager->findUserActorOrCreateOrThrow($payload['actor']);
         $targetMag = $this->magazineRepository->getMagazineFromModeratorsUrl($payload['target']);

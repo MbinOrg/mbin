@@ -7,6 +7,7 @@ namespace App\MessageHandler;
 use App\DTO\UserDto;
 use App\Entity\User;
 use App\Message\ActivityPub\Outbox\DeliverMessage;
+use App\Message\Contracts\MessageInterface;
 use App\Message\DeleteUserMessage;
 use App\Service\ActivityPub\Wrapper\DeleteWrapper;
 use App\Service\ImageManager;
@@ -18,7 +19,7 @@ use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-class DeleteUserHandler
+class DeleteUserHandler extends MbinMessageHandler
 {
     private ?User $user;
 
@@ -30,15 +31,19 @@ class DeleteUserHandler
         private readonly MessageBusInterface $bus,
         private readonly EntityManagerInterface $entityManager
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(DeleteUserMessage $message): void
     {
-        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+        $this->workWrapper($message);
     }
 
-    public function doWork(DeleteUserMessage $message): void
+    public function doWork(MessageInterface $message): void
     {
+        if (!($message instanceof DeleteUserMessage)) {
+            throw new \LogicException();
+        }
         $this->user = $this->entityManager
             ->getRepository(User::class)
             ->find($message->id);

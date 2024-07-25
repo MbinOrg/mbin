@@ -11,6 +11,8 @@ use App\Exception\UserBannedException;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\CreateMessage;
 use App\Message\ActivityPub\Outbox\AnnounceMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
@@ -22,7 +24,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-class CreateHandler
+class CreateHandler extends MbinMessageHandler
 {
     private array $object;
     private bool $stickyIt;
@@ -37,6 +39,7 @@ class CreateHandler
         private readonly ActivityPubManager $activityPubManager,
         private readonly ApActivityRepository $repository
     ) {
+        parent::__construct($this->entityManager);
     }
 
     /**
@@ -44,14 +47,14 @@ class CreateHandler
      */
     public function __invoke(CreateMessage $message): void
     {
-        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+        $this->workWrapper($message);
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function doWork(CreateMessage $message): void
+    public function doWork(MessageInterface $message): void
     {
+        if (!($message instanceof CreateMessage)) {
+            throw new \LogicException();
+        }
         $this->object = $message->payload;
         $this->stickyIt = $message->stickyIt;
         $this->logger->debug('Got a CreateMessage of type {t}, {m}', ['t' => $message->payload['type'], 'm' => $message->payload]);

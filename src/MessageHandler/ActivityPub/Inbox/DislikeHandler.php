@@ -12,6 +12,8 @@ use App\Entity\PostComment;
 use App\Entity\User;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\DislikeMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Service\ActivityPubManager;
 use App\Service\VoteManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,7 +22,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-class DislikeHandler
+class DislikeHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -29,15 +31,19 @@ class DislikeHandler
         private readonly VoteManager $voteManager,
         private readonly LoggerInterface $logger,
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(DislikeMessage $message): void
     {
-        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+        $this->workWrapper($message);
     }
 
-    public function doWork(DislikeMessage $message): void
+    public function doWork(MessageInterface $message): void
     {
+        if (!($message instanceof DislikeMessage)) {
+            throw new \LogicException();
+        }
         if (!isset($message->payload['type'])) {
             return;
         }

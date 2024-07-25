@@ -6,7 +6,9 @@ namespace App\MessageHandler\Notification;
 
 use App\Entity\Contracts\FavouriteInterface;
 use App\Factory\MagazineFactory;
+use App\Message\Contracts\MessageInterface;
 use App\Message\Notification\FavouriteNotificationMessage;
+use App\MessageHandler\MbinMessageHandler;
 use App\Service\GenerateHtmlClassService;
 use App\Service\SettingsManager;
 use App\Service\VotableRepositoryResolver;
@@ -17,7 +19,7 @@ use Symfony\Component\Mercure\Update;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class SentFavouriteNotificationHandler
+class SentFavouriteNotificationHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -27,15 +29,19 @@ class SentFavouriteNotificationHandler
         private readonly GenerateHtmlClassService $classService,
         private readonly SettingsManager $settingsManager
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(FavouriteNotificationMessage $message): void
     {
-        $this->entityManager->wrapInTransaction(fn () => $this->doWork($message));
+        $this->workWrapper($message);
     }
 
-    public function doWork(FavouriteNotificationMessage $message): void
+    public function doWork(MessageInterface $message): void
     {
+        if (!($message instanceof FavouriteNotificationMessage)) {
+            throw new \LogicException();
+        }
         $repo = $this->resolver->resolve($message->subjectClass);
         $this->notifyMagazine($repo->find($message->subjectId));
     }
