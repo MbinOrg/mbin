@@ -866,3 +866,4 @@ show_related_magazines: Show random magazines
 show_related_entries: Show random threads
 show_related_posts: Show random posts
 show_active_users: Show active users
+notification_title_new_report: A new report was created
