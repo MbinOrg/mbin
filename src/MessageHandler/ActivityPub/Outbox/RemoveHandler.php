@@ -7,17 +7,21 @@ namespace App\MessageHandler\ActivityPub\Outbox;
 use App\Factory\ActivityPub\AddRemoveFactory;
 use App\Message\ActivityPub\Outbox\DeliverMessage;
 use App\Message\ActivityPub\Outbox\RemoveMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\SettingsManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-class RemoveHandler
+class RemoveHandler extends MbinMessageHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
         private readonly MagazineRepository $magazineRepository,
         private readonly LoggerInterface $logger,
@@ -25,12 +29,21 @@ class RemoveHandler
         private readonly MessageBusInterface $bus,
         private readonly AddRemoveFactory $factory,
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(RemoveMessage $message): void
     {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;
+        }
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof RemoveMessage)) {
+            throw new \LogicException();
         }
 
         $actor = $this->userRepository->find($message->userActorId);

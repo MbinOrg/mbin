@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\MessageHandler;
 
+use App\Message\Contracts\MessageInterface;
 use App\Message\DeleteImageMessage;
 use App\Repository\ImageRepository;
 use App\Service\ImageManager;
@@ -12,7 +13,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class DeleteImageHandler
+class DeleteImageHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly ImageRepository $imageRepository,
@@ -20,10 +21,19 @@ class DeleteImageHandler
         private readonly EntityManagerInterface $entityManager,
         private readonly ManagerRegistry $managerRegistry
     ) {
+        parent::__construct($this->entityManager);
     }
 
-    public function __invoke(DeleteImageMessage $message)
+    public function __invoke(DeleteImageMessage $message): void
     {
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof DeleteImageMessage)) {
+            throw new \LogicException();
+        }
         $image = $this->imageRepository->find($message->id);
 
         if ($image) {

@@ -6,32 +6,35 @@ namespace App\MessageHandler\ActivityPub\Inbox;
 
 use App\Entity\Entry;
 use App\Entity\EntryComment;
-use App\Entity\Post;
-use App\Entity\PostComment;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\CreateMessage;
 use App\Message\ActivityPub\Outbox\AnnounceMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-class CreateHandler
+class CreateHandler extends MbinMessageHandler
 {
     private array $object;
 
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly Note $note,
         private readonly Page $page,
         private readonly MessageBusInterface $bus,
         private readonly LoggerInterface $logger,
         private readonly ApActivityRepository $repository
     ) {
+        parent::__construct($this->entityManager);
     }
 
     /**
@@ -39,6 +42,14 @@ class CreateHandler
      */
     public function __invoke(CreateMessage $message): void
     {
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof CreateMessage)) {
+            throw new \LogicException();
+        }
         $this->object = $message->payload;
         $this->logger->debug('Got a CreateMessage of type {t}', [$message->payload['type'], $message->payload]);
 

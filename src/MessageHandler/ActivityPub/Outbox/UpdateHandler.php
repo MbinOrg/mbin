@@ -6,6 +6,8 @@ namespace App\MessageHandler\ActivityPub\Outbox;
 
 use App\Message\ActivityPub\Outbox\DeliverMessage;
 use App\Message\ActivityPub\Outbox\UpdateMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\Wrapper\CreateWrapper;
@@ -18,7 +20,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Uid\Uuid;
 
 #[AsMessageHandler]
-class UpdateHandler
+class UpdateHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly MessageBusInterface $bus,
@@ -30,12 +32,21 @@ class UpdateHandler
         private readonly SettingsManager $settingsManager,
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(UpdateMessage $message): void
     {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;
+        }
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof UpdateMessage)) {
+            throw new \LogicException();
         }
 
         $entity = $this->entityManager->getRepository($message->type)->find($message->id);

@@ -6,25 +6,38 @@ namespace App\MessageHandler\ActivityPub\Inbox;
 
 use App\DTO\ModeratorDto;
 use App\Message\ActivityPub\Inbox\AddMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Service\ActivityPubManager;
 use App\Service\MagazineManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class AddHandler
+class AddHandler extends MbinMessageHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly ActivityPubManager $activityPubManager,
         private readonly MagazineRepository $magazineRepository,
         private readonly MagazineManager $magazineManager,
         private readonly LoggerInterface $logger,
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(AddMessage $message): void
     {
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof AddMessage)) {
+            throw new \LogicException();
+        }
         $payload = $message->payload;
         $actor = $this->activityPubManager->findUserActorOrCreateOrThrow($payload['actor']);
         $targetMag = $this->magazineRepository->getMagazineFromModeratorsUrl($payload['target']);

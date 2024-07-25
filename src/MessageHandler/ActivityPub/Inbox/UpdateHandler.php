@@ -14,6 +14,8 @@ use App\Factory\EntryFactory;
 use App\Factory\PostCommentFactory;
 use App\Factory\PostFactory;
 use App\Message\ActivityPub\Inbox\UpdateMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\ApObjectExtractor;
 use App\Service\ActivityPub\MarkdownConverter;
@@ -27,7 +29,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-class UpdateHandler
+class UpdateHandler extends MbinMessageHandler
 {
     private array $payload;
 
@@ -47,10 +49,19 @@ class UpdateHandler
         private readonly MessageBusInterface $bus,
         private readonly ApObjectExtractor $objectExtractor,
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(UpdateMessage $message): void
     {
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof UpdateMessage)) {
+            throw new \LogicException();
+        }
         $this->payload = $message->payload;
 
         try {

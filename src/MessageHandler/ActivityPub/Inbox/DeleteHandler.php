@@ -10,7 +10,9 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
 use App\Message\ActivityPub\Inbox\DeleteMessage;
+use App\Message\Contracts\MessageInterface;
 use App\Message\DeleteUserMessage;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\ApActivityRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPubManager;
@@ -23,7 +25,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-class DeleteHandler
+class DeleteHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly MessageBusInterface $bus,
@@ -36,10 +38,19 @@ class DeleteHandler
         private readonly PostManager $postManager,
         private readonly PostCommentManager $postCommentManager
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(DeleteMessage $message): void
     {
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof DeleteMessage)) {
+            throw new \LogicException();
+        }
         $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
 
         $id = \is_array($message->payload['object']) ? $message->payload['object']['id'] : $message->payload['object'];
