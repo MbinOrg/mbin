@@ -35,7 +35,7 @@ readonly class GenericAnnounceHandler
         }
         $magazineUrl = $this->urlGenerator->generate('ap_magazine', ['name' => $magazine->name], UrlGeneratorInterface::ABSOLUTE_URL);
         $announce = $this->announceWrapper->build($magazineUrl, $message->payloadToAnnounce);
-        $inboxes = $this->magazineRepository->findAudience($magazine);
+        $inboxes = array_filter($this->magazineRepository->findAudience($magazine), fn ($item) => null !== $item && $item !== $message->sourceInstance);
         $this->deliverManager->deliver($inboxes, $announce);
     }
 }

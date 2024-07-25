@@ -19,6 +19,7 @@ use App\Factory\EntryFactory;
 use App\Factory\PostCommentFactory;
 use App\Factory\PostFactory;
 use App\Message\ActivityPub\Inbox\UpdateMessage;
+use App\Message\ActivityPub\Outbox\GenericAnnounceMessage;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\ApObjectExtractor;
 use App\Service\ActivityPubManager;
@@ -30,6 +31,7 @@ use App\Service\PostManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 class UpdateHandler
@@ -51,6 +53,7 @@ class UpdateHandler
         private readonly ApObjectExtractor $objectExtractor,
         private readonly MessageManager $messageManager,
         private readonly LoggerInterface $logger,
+        private readonly MessageBusInterface $bus,
     ) {
     }
 
@@ -71,31 +74,29 @@ class UpdateHandler
         }
 
         $object = $this->entityManager->getRepository($object['type'])->find((int) $object['id']);
-
-        if (Entry::class === \get_class($object)) {
+        if ($object instanceof Entry) {
             $this->editEntry($object, $actor);
-        } elseif (EntryComment::class === \get_class($object)) {
+            if (null === $object->magazine->apId) {
+                $this->bus->dispatch(new GenericAnnounceMessage($object->magazine->getId(), $message->payload, $actor->apInboxUrl));
+            }
+        } elseif ($object instanceof EntryComment) {
             $this->editEntryComment($object, $actor);
-        } elseif (Post::class === \get_class($object)) {
+            if (null === $object->magazine->apId) {
+                $this->bus->dispatch(new GenericAnnounceMessage($object->magazine->getId(), $message->payload, $actor->apInboxUrl));
+            }
+        } elseif ($object instanceof Post) {
             $this->editPost($object, $actor);
-        } elseif (PostComment::class === \get_class($object)) {
+            if (null === $object->magazine->apId) {
+                $this->bus->dispatch(new GenericAnnounceMessage($object->magazine->getId(), $message->payload, $actor->apInboxUrl));
+            }
+        } elseif ($object instanceof PostComment) {
             $this->editPostComment($object, $actor);
-        } elseif (Message::class === \get_class($object)) {
+            if (null === $object->magazine->apId) {
+                $this->bus->dispatch(new GenericAnnounceMessage($object->magazine->getId(), $message->payload, $actor->apInboxUrl));
+            }
+        } elseif ($object instanceof Message) {
             $this->editMessage($object, $actor);
         }
-
-        // Dead-code introduced by Ernest "Temp disable handler dispatch", in commit:
-        // 4573e87f91923b9a5758e0dfacb3870d55ef1166
-        //
-        //        if (null === $object->magazine->apId) {
-        //            $this->bus->dispatch(
-        //                new \App\Message\ActivityPub\Outbox\UpdateMessage(
-        //                    $actor->getId(),
-        //                    $object->getId(),
-        //                    get_class($object)
-        //                )
-        //            );
-        //        }
     }
 
     private function editEntry(Entry $entry, User $user): void
