@@ -33,15 +33,15 @@
 
     .social {
       grid-template-columns: repeat(1, 1fr);
+      display: grid;
+      gap: 0.5rem;
+      justify-content: center;
+
       @include media-breakpoint-up(lg) {
         &:has(a + a) {
           grid-template-columns: repeat(2, 1fr);
         }
       }
-
-      display: grid;
-      gap: 0.5rem;
-      justify-content: center;
 
       a {
         text-align: center;

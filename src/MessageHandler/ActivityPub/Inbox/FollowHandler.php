@@ -101,7 +101,7 @@ class FollowHandler
         $this->client->post($this->client->getInboxUrl($payload['actor']), $object, $response);
     }
 
-    private function handleUnfollow(User $actor, null|User|Magazine $object): void
+    private function handleUnfollow(User $actor, User|Magazine|null $object): void
     {
         if (!empty($object)) {
             match (true) {
@@ -112,7 +112,7 @@ class FollowHandler
         }
     }
 
-    private function handleAccept(User $actor, null|User|Magazine $object): void
+    private function handleAccept(User $actor, User|Magazine|null $object): void
     {
         if (!empty($object)) {
             if ($object instanceof User) {
@@ -125,7 +125,7 @@ class FollowHandler
         }
     }
 
-    private function handleReject(User $actor, null|User|Magazine $object): void
+    private function handleReject(User $actor, User|Magazine|null $object): void
     {
         if (!empty($object)) {
             match (true) {

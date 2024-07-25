@@ -391,7 +391,7 @@ class SearchApiTest extends WebTestCase
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', $value);
     }
 
-    private function setCacheKeysForApHttpClient(string $domain, LoggerInterface $logger = null): void
+    private function setCacheKeysForApHttpClient(string $domain, ?LoggerInterface $logger = null): void
     {
         $cache = new ArrayAdapter();
 

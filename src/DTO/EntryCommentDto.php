@@ -79,8 +79,8 @@ class EntryCommentDto
     public function createWithParent(
         Entry $entry,
         ?EntryComment $parent,
-        Image $image = null,
-        string $body = null
+        ?Image $image = null,
+        ?string $body = null
     ): self {
         $this->entry = $entry;
         $this->parent = $parent;

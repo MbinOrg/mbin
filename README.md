@@ -90,26 +90,26 @@ For developers:
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/BentiGorlich">
+                    <img src="https://avatars.githubusercontent.com/u/25664458?v=4" width="100;" alt="BentiGorlich"/>
+                    <br />
+                    <sub><b>BentiGorlich</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/SzymonKaminski">
                     <img src="https://avatars.githubusercontent.com/u/8536735?v=4" width="100;" alt="SzymonKaminski"/>
                     <br />
                     <sub><b>SzymonKaminski</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/nobodyatroot">
                     <img src="https://avatars.githubusercontent.com/u/35878315?v=4" width="100;" alt="nobodyatroot"/>
                     <br />
                     <sub><b>debounced</b></sub>
-                </a>
-            </td>
-		</tr>
-		<tr>
-            <td align="center">
-                <a href="https://github.com/BentiGorlich">
-                    <img src="https://avatars.githubusercontent.com/u/25664458?v=4" width="100;" alt="BentiGorlich"/>
-                    <br />
-                    <sub><b>BentiGorlich</b></sub>
                 </a>
             </td>
             <td align="center">
@@ -252,13 +252,6 @@ For developers:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/WebVoid">
-                    <img src="https://avatars.githubusercontent.com/u/5394649?v=4" width="100;" alt="WebVoid"/>
-                    <br />
-                    <sub><b>Webvoid</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/comradekingu">
                     <img src="https://avatars.githubusercontent.com/u/13802408?v=4" width="100;" alt="comradekingu"/>
                     <br />
@@ -270,6 +263,13 @@ For developers:
                     <img src="https://avatars.githubusercontent.com/u/31551856?v=4" width="100;" alt="CSDUMMI"/>
                     <br />
                     <sub><b>CSDUMMI</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/DismalShadowX">
+                    <img src="https://avatars.githubusercontent.com/u/24910097?v=4" width="100;" alt="DismalShadowX"/>
+                    <br />
+                    <sub><b>Nathan Sparrow</b></sub>
                 </a>
             </td>
             <td align="center">

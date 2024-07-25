@@ -17,7 +17,7 @@ class DomainDto implements \JsonSerializable
     #[OA\Property('domainId')]
     private ?int $id;
 
-    public static function create(string $name, ?int $entryCount, ?int $subscriptionsCount, int $id = null): self
+    public static function create(string $name, ?int $entryCount, ?int $subscriptionsCount, ?int $id = null): self
     {
         $toReturn = new DomainDto();
         $toReturn->id = $id;

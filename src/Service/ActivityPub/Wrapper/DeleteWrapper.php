@@ -33,7 +33,7 @@ class DeleteWrapper
         'to' => 'mixed',
         'cc' => 'mixed',
     ])]
-    public function build(ActivityPubActivityInterface $item, string $id, User $deletingUser = null): array
+    public function build(ActivityPubActivityInterface $item, string $id, ?User $deletingUser = null): array
     {
         $item = $this->factory->create($item);
 

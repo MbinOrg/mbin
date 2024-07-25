@@ -9,7 +9,7 @@ use League\CommonMark\Util\HtmlElement;
 
 class EmbedElement
 {
-    public static function buildEmbed(string $url, string $label = null): HtmlElement
+    public static function buildEmbed(string $url, ?string $label = null): HtmlElement
     {
         return new HtmlElement(
             'span',
@@ -54,7 +54,7 @@ class EmbedElement
         );
     }
 
-    public static function buildDestructed(string $url, string $label = null): HtmlElement
+    public static function buildDestructed(string $url, ?string $label = null): HtmlElement
     {
         return new HtmlElement(
             'span',

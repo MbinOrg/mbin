@@ -9,15 +9,14 @@ use App\Entity\User;
 use App\Entity\Vote;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
 
 trait VotableTrait
 {
-    #[ORM\Column(type: 'integer')]
+    #[Column(type: 'integer')]
     private int $upVotes = 0;
 
-    #[ORM\Column(type: 'integer')]
+    #[Column(type: 'integer')]
     private int $downVotes = 0;
 
     #[Column(type: 'integer', nullable: true)]

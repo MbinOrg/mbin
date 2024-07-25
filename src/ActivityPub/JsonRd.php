@@ -97,7 +97,7 @@ class JsonRd
         return $this;
     }
 
-    public function addProperty(string $uri, string $value = null): JsonRd
+    public function addProperty(string $uri, ?string $value = null): JsonRd
     {
         $this->properties[$uri] = $value;
 

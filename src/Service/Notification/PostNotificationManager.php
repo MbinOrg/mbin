@@ -117,13 +117,13 @@ class PostNotificationManager implements ContentNotificationManagerInterface
                 'title' => $post->magazine->name,
                 'body' => $post->body,
                 'icon' => $this->imageManager->getUrl($post->image),
-//                'image' => $this->imageManager->getUrl($post->image),
+                //                'image' => $this->imageManager->getUrl($post->image),
                 'url' => $this->urlGenerator->generate('post_single', [
                     'magazine_name' => $post->magazine->name,
                     'post_id' => $post->getId(),
                     'slug' => $post->slug,
                 ]),
-//                'toast' => $this->twig->render('_layout/_toast.html.twig', ['notification' => $notification]),
+                //                'toast' => $this->twig->render('_layout/_toast.html.twig', ['notification' => $notification]),
             ]
         );
     }

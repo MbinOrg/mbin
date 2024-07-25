@@ -23,7 +23,7 @@ class StatsManager
     ) {
     }
 
-    public function drawMonthlyContentChart(User $user = null, Magazine $magazine = null, bool $onlyLocal = null): Chart
+    public function drawMonthlyContentChart(?User $user = null, ?Magazine $magazine = null, ?bool $onlyLocal = null): Chart
     {
         $stats = $this->contentRepository->getOverallStats($user, $magazine, $onlyLocal);
 
@@ -66,7 +66,7 @@ class StatsManager
         ]);
     }
 
-    public function drawDailyContentStatsByTime(\DateTime $start, User $user = null, Magazine $magazine = null, bool $onlyLocal = null): Chart
+    public function drawDailyContentStatsByTime(\DateTime $start, ?User $user = null, ?Magazine $magazine = null, ?bool $onlyLocal = null): Chart
     {
         $stats = $this->contentRepository->getStatsByTime($start, $user, $magazine, $onlyLocal);
 
@@ -75,7 +75,7 @@ class StatsManager
         return $this->createGeneralDataset($stats, $labels);
     }
 
-    public function drawMonthlyVotesChart(User $user = null, Magazine $magazine = null, bool $onlyLocal = null): Chart
+    public function drawMonthlyVotesChart(?User $user = null, ?Magazine $magazine = null, ?bool $onlyLocal = null): Chart
     {
         $stats = $this->votesRepository->getOverallStats($user, $magazine, $onlyLocal);
 
@@ -122,7 +122,7 @@ class StatsManager
         ]);
     }
 
-    public function drawDailyVotesStatsByTime(\DateTime $start, User $user = null, Magazine $magazine = null, bool $onlyLocal = null): Chart
+    public function drawDailyVotesStatsByTime(\DateTime $start, ?User $user = null, ?Magazine $magazine = null, ?bool $onlyLocal = null): Chart
     {
         $stats = $this->votesRepository->getStatsByTime($start, $user, $magazine, $onlyLocal);
 
@@ -131,7 +131,7 @@ class StatsManager
         return $this->createVotesDataset($stats, $labels);
     }
 
-    public function resolveType(?string $value, string $default = null): string
+    public function resolveType(?string $value, ?string $default = null): string
     {
         $routes = [
             'general' => StatsRepository::TYPE_GENERAL,

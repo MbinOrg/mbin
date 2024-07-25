@@ -37,7 +37,7 @@ class MagazineThemeType extends AbstractType
             ->add('customCss', TextareaType::class, [
                 'required' => false,
                 'help' => 'magazine_theme_appearance_custom_css',
-                ]
+            ]
             )
             ->add('backgroundImage', ChoiceType::class, [
                 'multiple' => false,
