@@ -9,7 +9,6 @@ use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\EntryCommentReport;
 use App\Entity\EntryReport;
-use App\Entity\Moderator;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\PostCommentReport;
@@ -167,30 +166,21 @@ class ReportRepository extends ServiceEntityRepository
         return $pagerfanta;
     }
 
-    public function findByUserPaginated(
-        User $user,
-        int $page = 1,
-        string $status = Report::STATUS_PENDING
-    ): PagerfantaInterface {
-        $dql = 'SELECT r FROM App\Entity\Report r';
-
-        $dql .= ' WHERE EXISTS (SELECT 1 FROM '.Moderator::class.' m WHERE m.magazine = r.magazine AND m.user = :user)';
+    public function findByUserPaginated(User $user, int $page = 1, string $status = Report::STATUS_PENDING): PagerfantaInterface
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->where('r.reporting = :u')
+            ->setParameter('u', $user);
 
         if (Report::STATUS_ANY !== $status) {
-            $dql .= ' AND r.status = :status';
+            $qb->andWhere('r.status = :s')
+                ->setParameter('s', $status);
         }
 
-        $dql .= " ORDER BY CASE WHEN r.status = 'pending' THEN 1 ELSE 2 END, r.weight DESC, r.createdAt DESC";
-
-        $query = $this->getEntityManager()->createQuery($dql);
-        $query->setParameter('user', $user);
-
-        if (Report::STATUS_ANY !== $status) {
-            $query->setParameter('status', $status);
-        }
+        $qb->orderBy('r.createdAt');
 
         $pagerfanta = new Pagerfanta(
-            new QueryAdapter($query)
+            new QueryAdapter($qb)
         );
 
         try {

@@ -8,6 +8,7 @@ use App\Controller\AbstractController;
 use App\Entity\Magazine;
 use App\Entity\Report;
 use App\Repository\MagazineRepository;
+use App\Repository\NotificationRepository;
 use App\Service\ReportManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +19,7 @@ class MagazineReportController extends AbstractController
 {
     public function __construct(
         private readonly MagazineRepository $repository,
+        private readonly NotificationRepository $notificationRepository,
         private readonly ReportManager $reportManager
     ) {
     }
@@ -27,6 +29,7 @@ class MagazineReportController extends AbstractController
     public function reports(Magazine $magazine, Request $request, string $status): Response
     {
         $reports = $this->repository->findReports($magazine, $this->getPageNb($request), status: $status);
+        $this->notificationRepository->markReportNotificationsInMagazineAsRead($this->getUserOrThrow(), $magazine);
 
         return $this->render(
             'magazine/panel/reports.html.twig',
