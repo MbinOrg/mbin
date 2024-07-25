@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Controller\AbstractController;
+use App\Repository\NotificationRepository;
 use App\Repository\ReportRepository;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +16,7 @@ class AdminReportController extends AbstractController
 {
     public function __construct(
         private readonly ReportRepository $repository,
+        private readonly NotificationRepository $notificationRepository,
     ) {
     }
 
@@ -24,6 +26,7 @@ class AdminReportController extends AbstractController
         $page = (int) $request->get('p', 1);
 
         $reports = $this->repository->findAllPaginated($page, $status);
+        $this->notificationRepository->markReportNotificationsAsRead($this->getUserOrThrow());
 
         return $this->render(
             'admin/reports.html.twig',
