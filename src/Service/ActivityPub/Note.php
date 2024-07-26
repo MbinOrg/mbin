@@ -17,6 +17,7 @@ use App\Entity\PostComment;
 use App\Entity\User;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
+use App\Exception\UserDeletedException;
 use App\Factory\ImageFactory;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPubManager;
@@ -46,6 +47,7 @@ class Note
     /**
      * @throws TagBannedException
      * @throws UserBannedException
+     * @throws UserDeletedException
      * @throws \Exception
      */
     public function create(array $object, ?array $root = null, bool $stickyIt = false): EntryComment|PostComment|Post
@@ -99,6 +101,7 @@ class Note
     /**
      * @throws TagBannedException
      * @throws UserBannedException
+     * @throws UserDeletedException
      * @throws \Exception
      */
     private function createEntryComment(array $object, ActivityPubActivityInterface $parent, ?ActivityPubActivityInterface $root = null): EntryComment
@@ -121,6 +124,12 @@ class Note
 
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
         if (!empty($actor)) {
+            if ($actor->isBanned) {
+                throw new UserBannedException();
+            }
+            if ($actor->isDeleted || $actor->isSoftDeleted() || $actor->isTrashed()) {
+                throw new UserDeletedException();
+            }
             $dto->body = $this->objectExtractor->getMarkdownBody($object);
             if ($media = $this->objectExtractor->getExternalMediaBody($object)) {
                 $dto->body .= $media;
@@ -184,6 +193,11 @@ class Note
         }
     }
 
+    /**
+     * @throws UserDeletedException
+     * @throws TagBannedException
+     * @throws UserBannedException
+     */
     private function createPost(array $object, bool $stickyIt = false): Post
     {
         $dto = new PostDto();
@@ -193,7 +207,10 @@ class Note
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
         if (!empty($actor)) {
             if ($actor->isBanned) {
-                throw new \Exception('User is banned.');
+                throw new UserBannedException();
+            }
+            if ($actor->isDeleted || $actor->isSoftDeleted() || $actor->isTrashed()) {
+                throw new UserDeletedException();
             }
 
             if (isset($object['attachment']) && $image = $this->activityPubManager->handleImages($object['attachment'])) {
@@ -229,6 +246,11 @@ class Note
         }
     }
 
+    /**
+     * @throws UserDeletedException
+     * @throws TagBannedException
+     * @throws UserBannedException
+     */
     private function createPostComment(array $object, ActivityPubActivityInterface $parent, ?ActivityPubActivityInterface $root = null): PostComment
     {
         $dto = new PostCommentDto();
@@ -248,6 +270,12 @@ class Note
 
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
         if (!empty($actor)) {
+            if ($actor->isBanned) {
+                throw new UserBannedException();
+            }
+            if ($actor->isDeleted || $actor->isSoftDeleted() || $actor->isTrashed()) {
+                throw new UserDeletedException();
+            }
             $dto->body = $this->objectExtractor->getMarkdownBody($object);
             if ($media = $this->objectExtractor->getExternalMediaBody($object)) {
                 $dto->body .= $media;

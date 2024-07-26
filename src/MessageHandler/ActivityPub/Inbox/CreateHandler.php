@@ -8,6 +8,7 @@ use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
+use App\Exception\UserDeletedException;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\CreateMessage;
 use App\Message\ActivityPub\Outbox\AnnounceMessage;
@@ -71,11 +72,18 @@ class CreateHandler extends MbinMessageHandler
             }
         } catch (UserBannedException) {
             $this->logger->info('Did not create the post, because the user is banned');
+        } catch (UserDeletedException) {
+            $this->logger->info('Did not create the post, because the user is deleted');
         } catch (TagBannedException) {
             $this->logger->info('Did not create the post, because one of the used tags is banned');
         }
     }
 
+    /**
+     * @throws TagBannedException
+     * @throws UserBannedException
+     * @throws UserDeletedException
+     */
     private function handleChain(): void
     {
         if (isset($this->object['inReplyTo']) && $this->object['inReplyTo']) {
@@ -100,6 +108,7 @@ class CreateHandler extends MbinMessageHandler
     /**
      * @throws \Exception
      * @throws UserBannedException
+     * @throws UserDeletedException
      * @throws TagBannedException
      */
     private function handlePage(): void
