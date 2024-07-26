@@ -20,6 +20,8 @@ use App\Factory\PostCommentFactory;
 use App\Factory\PostFactory;
 use App\Message\ActivityPub\Inbox\UpdateMessage;
 use App\Message\ActivityPub\Outbox\GenericAnnounceMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\ApObjectExtractor;
 use App\Service\ActivityPubManager;
@@ -34,7 +36,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-class UpdateHandler
+class UpdateHandler extends MbinMessageHandler
 {
     private array $payload;
 
@@ -55,10 +57,19 @@ class UpdateHandler
         private readonly LoggerInterface $logger,
         private readonly MessageBusInterface $bus,
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(UpdateMessage $message): void
     {
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof UpdateMessage)) {
+            throw new \LogicException();
+        }
         $this->payload = $message->payload;
 
         try {
@@ -101,6 +112,11 @@ class UpdateHandler
 
     private function editEntry(Entry $entry, User $user): void
     {
+        if (!$this->entryManager->canUserEditEntry($entry, $user)) {
+            $this->logger->warning('User {u} tried to edit entry {et} ({eId}), but is not allowed to', ['u' => $user->apId ?? $user->username, 'et' => $entry->title, 'eId' => $entry->getId()]);
+
+            return;
+        }
         $dto = $this->entryFactory->createDto($entry);
 
         $dto->title = $this->payload['object']['name'];
@@ -111,6 +127,11 @@ class UpdateHandler
 
     private function editEntryComment(EntryComment $comment, User $user): void
     {
+        if (!$this->entryCommentManager->canUserEditComment($comment, $user)) {
+            $this->logger->warning('User {u} tried to edit entry comment {et} ({eId}), but is not allowed to', ['u' => $user->apId ?? $user->username, 'et' => $comment->getShortTitle(), 'eId' => $comment->getId()]);
+
+            return;
+        }
         $dto = $this->entryCommentFactory->createDto($comment);
 
         $this->extractChanges($dto);
@@ -120,6 +141,11 @@ class UpdateHandler
 
     private function editPost(Post $post, User $user): void
     {
+        if (!$this->postManager->canUserEditPost($post, $user)) {
+            $this->logger->warning('User {u} tried to edit post {pt} ({pId}), but is not allowed to', ['u' => $user->apId ?? $user->username, 'pt' => $post->getShortTitle(), 'pId' => $post->getId()]);
+
+            return;
+        }
         $dto = $this->postFactory->createDto($post);
 
         $this->extractChanges($dto);
@@ -129,6 +155,11 @@ class UpdateHandler
 
     private function editPostComment(PostComment $comment, User $user): void
     {
+        if (!$this->postCommentManager->canUserEditPostComment($comment, $user)) {
+            $this->logger->warning('User {u} tried to edit post comment {pt} ({pId}), but is not allowed to', ['u' => $user->apId ?? $user->username, 'pt' => $comment->getShortTitle(), 'pId' => $comment->getId()]);
+
+            return;
+        }
         $dto = $this->postCommentFactory->createDto($comment);
 
         $this->extractChanges($dto);

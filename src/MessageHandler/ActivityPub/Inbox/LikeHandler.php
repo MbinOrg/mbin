@@ -11,27 +11,40 @@ use App\Entity\PostComment;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\LikeMessage;
 use App\Message\ActivityPub\Outbox\AnnounceLikeMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Service\ActivityPubManager;
 use App\Service\FavouriteManager;
 use App\Service\VoteManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-class LikeHandler
+class LikeHandler extends MbinMessageHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly ActivityPubManager $activityPubManager,
         private readonly VoteManager $voteManager,
         private readonly MessageBusInterface $bus,
         private readonly FavouriteManager $manager,
         private readonly LoggerInterface $logger,
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(LikeMessage $message): void
     {
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof LikeMessage)) {
+            throw new \LogicException();
+        }
         if (!isset($message->payload['type'])) {
             return;
         }

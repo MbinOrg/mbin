@@ -19,6 +19,8 @@ use App\Message\ActivityPub\Inbox\FollowMessage;
 use App\Message\ActivityPub\Inbox\LikeMessage;
 use App\Message\ActivityPub\Inbox\RemoveMessage;
 use App\Message\ActivityPub\Inbox\UpdateMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\SignatureValidator;
 use App\Service\ActivityPubManager;
@@ -29,21 +31,30 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-readonly class ActivityHandler
+class ActivityHandler extends MbinMessageHandler
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private SignatureValidator $signatureValidator,
-        private SettingsManager $settingsManager,
-        private MessageBusInterface $bus,
-        private ActivityPubManager $manager,
-        private ApHttpClient $apHttpClient,
-        private LoggerInterface $logger
+        private readonly EntityManagerInterface $entityManager,
+        private readonly SignatureValidator $signatureValidator,
+        private readonly SettingsManager $settingsManager,
+        private readonly MessageBusInterface $bus,
+        private readonly ActivityPubManager $manager,
+        private readonly ApHttpClient $apHttpClient,
+        private readonly LoggerInterface $logger
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(ActivityMessage $message): void
     {
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof ActivityMessage)) {
+            throw new \LogicException();
+        }
         $payload = @json_decode($message->payload, true);
 
         if ($message->request && $message->headers) {

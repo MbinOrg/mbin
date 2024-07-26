@@ -8,6 +8,8 @@ use App\Entity\Entry;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Message\ActivityPub\Inbox\RemoveMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\ApActivityRepository;
 use App\Repository\EntryRepository;
 use App\Repository\MagazineRepository;
@@ -15,13 +17,15 @@ use App\Service\ActivityPubManager;
 use App\Service\EntryManager;
 use App\Service\MagazineManager;
 use App\Service\SettingsManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class RemoveHandler
+class RemoveHandler extends MbinMessageHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly ApActivityRepository $apActivityRepository,
         private readonly ActivityPubManager $activityPubManager,
         private readonly MagazineRepository $magazineRepository,
@@ -31,10 +35,19 @@ class RemoveHandler
         private readonly EntryManager $entryManager,
         private readonly SettingsManager $settingsManager,
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(RemoveMessage $message): void
     {
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof RemoveMessage)) {
+            throw new \LogicException();
+        }
         $payload = $message->payload;
         $actor = $this->activityPubManager->findUserActorOrCreateOrThrow($payload['actor']);
         $targetMag = $this->magazineRepository->getMagazineFromModeratorsUrl($payload['target']);
