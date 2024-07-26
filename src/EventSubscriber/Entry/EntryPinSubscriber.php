@@ -41,7 +41,7 @@ class EntryPinSubscriber implements EventSubscriberInterface
                     $activity = $this->addRemoveFactory->buildRemovePinnedPost($event->actor, $event->entry);
                 }
                 $this->logger->debug('dispatching announce for add pin post {e} by {u} in {m}', ['e' => $event->entry->title, 'u' => $event->actor->apId, 'm' => $event->entry->magazine->name]);
-                $this->bus->dispatch(new GenericAnnounceMessage($event->entry->magazine->getId(), $activity));
+                $this->bus->dispatch(new GenericAnnounceMessage($event->entry->magazine->getId(), $activity, $event->actor->apInboxUrl));
             } else {
                 $this->logger->debug('entry {e} got {p} by {u}, dispatching new EntryPinMessage', ['e' => $event->entry->title, 'p' => $event->entry->sticky ? 'pinned' : 'unpinned', 'u' => $event->actor?->username ?? 'system']);
                 $this->bus->dispatch(new EntryPinMessage($event->entry->getId(), $event->entry->sticky, $event->actor?->getId()));
