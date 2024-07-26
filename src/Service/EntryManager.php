@@ -43,6 +43,7 @@ class EntryManager implements ContentManagerInterface
 {
     public function __construct(
         private readonly LoggerInterface $logger,
+        private readonly SettingsManager $settingsManager,
         private readonly TagExtractor $tagExtractor,
         private readonly TagManager $tagManager,
         private readonly MentionManager $mentionManager,
@@ -161,6 +162,15 @@ class EntryManager implements ContentManagerInterface
         }
 
         return $entry;
+    }
+
+    public function canUserEditEntry(Entry $entry, User $user): bool
+    {
+        $entryHost = null !== $entry->apId ? parse_url($entry->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+        $userHost = null !== $user->apId ? parse_url($user->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+        $magazineHost = null !== $entry->magazine->apId ? parse_url($entry->magazine->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+
+        return $entryHost === $userHost || $userHost === $magazineHost || $entry->magazine->userIsModerator($user);
     }
 
     public function edit(Entry $entry, EntryDto $dto): Entry

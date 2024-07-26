@@ -42,6 +42,7 @@ class EntryCommentManager implements ContentManagerInterface
         private readonly MessageBusInterface $bus,
         private readonly EntityManagerInterface $entityManager,
         private readonly ImageRepository $imageRepository,
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 
@@ -100,6 +101,15 @@ class EntryCommentManager implements ContentManagerInterface
         $this->dispatcher->dispatch(new EntryCommentCreatedEvent($comment));
 
         return $comment;
+    }
+
+    public function canUserEditComment(EntryComment $comment, User $user): bool
+    {
+        $entryCommentHost = null !== $comment->apId ? parse_url($comment->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+        $userHost = null !== $user->apId ? parse_url($user->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+        $magazineHost = null !== $comment->magazine->apId ? parse_url($comment->magazine->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+
+        return $entryCommentHost === $userHost || $userHost === $magazineHost || $comment->magazine->userIsModerator($user);
     }
 
     public function edit(EntryComment $comment, EntryCommentDto $dto): EntryComment

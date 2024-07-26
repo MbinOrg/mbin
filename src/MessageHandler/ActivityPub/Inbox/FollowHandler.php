@@ -7,18 +7,22 @@ namespace App\MessageHandler\ActivityPub\Inbox;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Message\ActivityPub\Inbox\FollowMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\Wrapper\FollowResponseWrapper;
 use App\Service\ActivityPubManager;
 use App\Service\MagazineManager;
 use App\Service\UserManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class FollowHandler
+class FollowHandler extends MbinMessageHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly ActivityPubManager $activityPubManager,
         private readonly UserManager $userManager,
         private readonly MagazineManager $magazineManager,
@@ -26,10 +30,19 @@ class FollowHandler
         private readonly LoggerInterface $logger,
         private readonly FollowResponseWrapper $followResponseWrapper
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(FollowMessage $message): void
     {
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof FollowMessage)) {
+            throw new \LogicException();
+        }
         $this->logger->debug('got a FollowMessage: {message}', [$message]);
         $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
         // Check if actor is not empty
