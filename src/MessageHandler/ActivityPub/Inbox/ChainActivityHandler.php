@@ -8,6 +8,7 @@ use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Exception\EntityNotFoundException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Exception\UserDeletedException;
@@ -15,18 +16,23 @@ use App\Message\ActivityPub\Inbox\AnnounceMessage;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\DislikeMessage;
 use App\Message\ActivityPub\Inbox\LikeMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
+use Doctrine\DBAL\Exception;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-class ChainActivityHandler
+class ChainActivityHandler extends MbinMessageHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
         private readonly ApHttpClient $client,
         private readonly MessageBusInterface $bus,
@@ -34,10 +40,19 @@ class ChainActivityHandler
         private readonly Note $note,
         private readonly Page $page
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(ChainActivityMessage $message): void
     {
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof ChainActivityMessage)) {
+            throw new \LogicException();
+        }
         $this->logger->debug('Got chain activity message: {m}', ['m' => $message]);
         if (!$message->chain || 0 === \sizeof($message->chain)) {
             return;
@@ -71,6 +86,9 @@ class ChainActivityHandler
         }
     }
 
+    /**
+     * @throws \Exception if there was an unexpected exception
+     */
     private function retrieveObject(string $apUrl): Entry|EntryComment|Post|PostComment|null
     {
         try {
@@ -121,7 +139,7 @@ class ChainActivityHandler
             $this->logger->error('the user is deleted, url: {url}', ['url' => $apUrl]);
         } catch (TagBannedException) {
             $this->logger->error('one of the used tags is banned, url: {url}', ['url' => $apUrl]);
-        } catch (\Exception $e) {
+        } catch (EntityNotFoundException $e) {
             $this->logger->error('There was an exception while getting {url}: {ex} - {m}. {o}', ['url' => $apUrl, 'ex' => \get_class($e), 'm' => $e->getMessage(), 'o' => $e]);
         }
 

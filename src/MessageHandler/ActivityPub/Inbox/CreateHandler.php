@@ -12,22 +12,26 @@ use App\Exception\UserDeletedException;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\CreateMessage;
 use App\Message\ActivityPub\Outbox\AnnounceMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
 use App\Service\ActivityPubManager;
 use App\Service\MessageManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-class CreateHandler
+class CreateHandler extends MbinMessageHandler
 {
     private array $object;
     private bool $stickyIt;
 
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly Note $note,
         private readonly Page $page,
         private readonly MessageBusInterface $bus,
@@ -36,6 +40,7 @@ class CreateHandler
         private readonly ActivityPubManager $activityPubManager,
         private readonly ApActivityRepository $repository
     ) {
+        parent::__construct($this->entityManager);
     }
 
     /**
@@ -43,6 +48,14 @@ class CreateHandler
      */
     public function __invoke(CreateMessage $message): void
     {
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof CreateMessage)) {
+            throw new \LogicException();
+        }
         $this->object = $message->payload;
         $this->stickyIt = $message->stickyIt;
         $this->logger->debug('Got a CreateMessage of type {t}, {m}', ['t' => $message->payload['type'], 'm' => $message->payload]);
