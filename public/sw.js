@@ -8,7 +8,7 @@ self.addEventListener("push", (e) => {
     const data = e.data
     const json = data.json()
     console.log("received push notification", json)
-    const promiseChain = self.registration.showNotification(json.title, { body: json.message, data: json, icon: json.avatarUrl ?? json.iconUrl, badge: json.iconUrl })
+    const promiseChain = self.registration.showNotification(json.title, { body: json.message, data: json, icon: json.avatarUrl ?? json.iconUrl, badge: json.badgeUrl })
 
     e.waitUntil(promiseChain);
 })
