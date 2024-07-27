@@ -205,7 +205,7 @@ messages: Nachrichten
 privacy: Datenschutz
 notify_on_new_entry_reply: Kommentare aller Ebenen in Themen die ich verfasst habe
 notify_on_new_entry_comment_reply: Antworten zu meinen Kommentaren in allen Themen
-notify_on_new_post_comment_reply: Antworten zu meinen Mikroblog-Kommentaren
+notify_on_new_post_comment_reply: Antworten zu meinen Kommentaren in Beiträgen
 notify_on_new_entry: Neue Themen (Links und Artikel) in sämtlichen Magazinen die ich
   abonniert habe
 save: Speichern
@@ -898,3 +898,17 @@ notification_title_message: Neue Direktnachricht
 notification_title_new_post: Neuer Beitrag
 notification_title_removed_post: Ein Beitrag wurde entfernt
 notification_title_edited_post: Ein Beitrag wurde bearbeitet
+reported_user: Gemeldeter Nutzer
+reporting_user: Meldender Nutzer
+report_subject: Inhalt
+own_report_rejected: Deine Meldung wurde abgelehnt
+open_report: Meldung öffnen
+reported: gemeldet
+own_report_accepted: Deine Meldung wurde angenommen
+own_content_reported_accepted: Eine Meldung deines Inhalts wurde angenommen.
+report_accepted: Eine Meldung wurde angenommen
+show_active_users: Zeige aktive Nutzer
+show_related_magazines: Zeige zufällige Magazine
+show_related_entries: Zeige zufällige Themen
+show_related_posts: Zeige zufällige Beiträge
+notification_title_new_report: Eine neue Meldung wurde erstellt
