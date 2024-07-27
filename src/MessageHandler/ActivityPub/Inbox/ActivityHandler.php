@@ -83,11 +83,18 @@ class ActivityHandler extends MbinMessageHandler
             $instance = $this->instanceRepository->findOneBy(['domain' => $idHost]);
             if (!$instance) {
                 $instance = new Instance($idHost);
+                $instance->setLastSuccessfulReceive();
+                $this->entityManager->persist($instance);
+                $this->entityManager->flush();
+            } else {
+                $lastDate = $instance->getLastSuccessfulReceive();
+                if ($lastDate < new \DateTimeImmutable('now - 5 minutes')) {
+                    $instance->setLastSuccessfulReceive();
+                    $this->entityManager->persist($instance);
+                    $this->entityManager->flush();
+                }
             }
-            $instance->setLastSuccessfulReceive();
             $this->remoteInstanceManager->updateInstance($instance);
-            $this->entityManager->persist($instance);
-            $this->entityManager->flush();
         }
 
         if (isset($payload['payload'])) {
