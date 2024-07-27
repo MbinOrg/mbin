@@ -33,6 +33,8 @@ class MagazineResponseDto implements \JsonSerializable
     public ?string $apId = null;
     public ?string $apProfileId = null;
     public ?int $magazineId = null;
+    public ?string $serverSoftware = null;
+    public ?string $serverSoftwareVersion = null;
 
     public static function create(
         ?ModeratorResponseDto $owner = null,
@@ -55,6 +57,8 @@ class MagazineResponseDto implements \JsonSerializable
         ?string $apId = null,
         ?string $apProfileId = null,
         ?int $magazineId = null,
+        ?string $serverSoftware = null,
+        ?string $serverSoftwareVersion = null,
     ): self {
         $dto = new MagazineResponseDto();
         $dto->owner = $owner;
@@ -77,6 +81,8 @@ class MagazineResponseDto implements \JsonSerializable
         $dto->apId = $apId;
         $dto->apProfileId = $apProfileId;
         $dto->magazineId = $magazineId;
+        $dto->serverSoftware = $serverSoftware;
+        $dto->serverSoftwareVersion = $serverSoftwareVersion;
 
         return $dto;
     }
@@ -104,6 +110,8 @@ class MagazineResponseDto implements \JsonSerializable
             'moderators' => array_map(fn (ModeratorResponseDto $moderator) => $moderator->jsonSerialize(), $this->moderators),
             'apId' => $this->apId,
             'apProfileId' => $this->apProfileId,
+            'serverSoftware' => $this->serverSoftware,
+            'serverSoftwareVersion' => $this->serverSoftwareVersion,
         ];
     }
 }

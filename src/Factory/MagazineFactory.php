@@ -155,6 +155,8 @@ class MagazineFactory
             $dto->apId,
             $dto->apProfileId,
             $dto->getId(),
+            $dto->serverSoftware,
+            $dto->serverSoftwareVersion,
         );
     }
 
