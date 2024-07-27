@@ -6,6 +6,6 @@ namespace App\Payloads\NodeInfo;
 
 class NodeInfoSoftware
 {
-    public string $name;
-    public string $version;
+    public ?string $name = null;
+    public ?string $version = null;
 }

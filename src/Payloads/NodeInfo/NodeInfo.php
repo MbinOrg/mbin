@@ -6,11 +6,11 @@ namespace App\Payloads\NodeInfo;
 
 class NodeInfo
 {
-    public string $version;
-    public NodeInfoSoftware $software;
+    public ?string $version = null;
+    public ?NodeInfoSoftware $software = null;
     /** @var string[] */
-    public array $protocols;
-    public bool $openRegistrations;
-    public NodeInfoUsage $usage;
-    public NodeInfoServices $services;
+    public ?array $protocols = null;
+    public bool $openRegistrations = false;
+    public ?NodeInfoUsage $usage = null;
+    public ?NodeInfoServices $services = null;
 }

@@ -56,8 +56,8 @@ class RemoteInstanceManager
             $this->logger->debug('got raw nodeinfo for url {url}: {raw}', ['raw' => $nodeInfoRaw, 'url' => $linkToUse]);
             $nodeInfo = $serializer->deserialize($nodeInfoRaw, NodeInfo::class, 'json');
 
-            $instance->software = $nodeInfo->software->name;
-            $instance->version = $nodeInfo->software->version;
+            $instance->software = $nodeInfo?->software?->name;
+            $instance->version = $nodeInfo?->software?->version;
             $instance->setUpdatedAt();
             $this->entityManager->persist($instance);
 
