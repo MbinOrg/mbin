@@ -7,6 +7,12 @@ namespace App\Entity;
 use App\Repository\OAuth2UserConsentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToOne;
 
 #[ORM\Entity(repositoryClass: OAuth2UserConsentRepository::class)]
 class OAuth2UserConsent
@@ -161,30 +167,33 @@ class OAuth2UserConsent
         'admin:oauth_clients:read' => 'oauth2.grant.admin.oauth_clients.read',
         'admin:oauth_clients:revoke' => 'oauth2.grant.admin.oauth_clients.revoke',
     ];
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[Id]
+    #[GeneratedValue]
+    #[Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'oAuth2UserConsents')]
-    #[ORM\JoinColumn(name: 'user_id', nullable: false, onDelete: 'CASCADE')]
+    #[ManyToOne(inversedBy: 'oAuth2UserConsents')]
+    #[JoinColumn(name: 'user_id', nullable: false, onDelete: 'CASCADE')]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'oAuth2UserConsents')]
-    #[ORM\JoinColumn(name: 'client_identifier', referencedColumnName: 'identifier', nullable: false)]
+    #[ManyToOne(inversedBy: 'oAuth2UserConsents')]
+    #[JoinColumn(name: 'client_identifier', referencedColumnName: 'identifier', nullable: false)]
     private ?Client $client = null;
 
-    #[ORM\Column]
+    #[Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column]
+    #[Column]
     private ?\DateTimeImmutable $expiresAt = null;
 
-    #[ORM\Column(type: Types::JSON)]
+    #[Column(type: Types::JSON)]
     private array $scopes = [];
 
-    #[ORM\Column]
+    #[Column]
     private ?string $ipAddress = null;
+
+    #[OneToOne(mappedBy: 'userConsent', targetEntity: UserPushSubscription::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    public ?UserPushSubscription $pushSubscription = null;
 
     public function getId(): ?int
     {

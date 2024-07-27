@@ -61,8 +61,23 @@ ajax_fetch_user_popup:
 ajax_fetch_user_notifications_count:
   controller: App\Controller\AjaxController::fetchNotificationsCount
   defaults: { _format: json }
-  path: /ajax/fetch_user_notifications_count/{username}
+  path: /ajax/fetch_user_notifications_count
   methods: [ GET ]
+
+ajax_register_notification_push:
+  controller: App\Controller\AjaxController::registerPushNotifications
+  path: /ajax/register_push
+  methods: [ POST ]
+
+ajax_unregister_notification_push:
+    controller: App\Controller\AjaxController::unregisterPushNotifications
+    path: /ajax/unregister_push
+    methods: [ POST ]
+
+ajax_test_notification_push:
+    controller: App\Controller\AjaxController::testPushNotification
+    path: /ajax/test_push
+    methods: [ POST ]
 
 ajax_fetch_users_suggestions:
   controller: App\Controller\AjaxController::fetchUsersSuggestions

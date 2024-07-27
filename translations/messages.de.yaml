@@ -881,3 +881,20 @@ back: Zurück
 magazine_log_entry_pinned: hat Eintrag angeheftet
 direct_message: Direktnachricht
 manually_approves_followers: Genehmigt Follower manuell
+register_push_notifications_button: Push-Benachrichigungen aktivieren
+unregister_push_notifications_button: Push-Benachrichigungen deaktivieren
+test_push_notifications_button: Push-Benachrichtigung Testen
+test_push_message: Hallo Welt!
+notification_title_new_comment: Neuer Kommentar
+notification_title_removed_comment: Ein Kommentar wurde entfernt
+notification_title_edited_comment: Ein Kommentar wurde bearbeitet
+notification_title_mention: Du wurdest erwähnt
+notification_title_new_reply: Neue Antwort
+notification_title_new_thread: Neues Thema
+notification_title_removed_thread: Ein Thema wurde entfernt
+notification_title_edited_thread: Ein Thema wurde bearbeitet
+notification_title_ban: Du wurdest gebannt
+notification_title_message: Neue Direktnachricht
+notification_title_new_post: Neuer Beitrag
+notification_title_removed_post: Ein Beitrag wurde entfernt
+notification_title_edited_post: Ein Beitrag wurde bearbeitet

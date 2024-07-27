@@ -42,8 +42,11 @@ use App\Schema\PaginationSchema;
 use App\Service\IpResolver;
 use App\Service\ReportManager;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
 use Pagerfanta\Pagerfanta;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -154,6 +157,36 @@ class BaseApi extends AbstractController
             $access->setPath($this->request->getCurrentRequest()->get('_route'));
             $this->clientAccessRepository->save($access, flush: true);
         }
+    }
+
+    public function getOAuthToken(): ?OAuth2Token
+    {
+        try {
+            /** @var ?OAuth2Token $token */
+            $token = $this->container->get('security.token_storage')->getToken();
+            if ($token instanceof OAuth2Token) {
+                return $token;
+            }
+        } catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
+            $this->logger->warning('there was an error getting the access token: {e} - {m}, {stack}', [
+                'e' => \get_class($e),
+                'm' => $e->getMessage(),
+                'stack' => $e->getTraceAsString(),
+            ]);
+        }
+
+        return null;
+    }
+
+    public function getAccessToken(?OAuth2Token $oAuth2Token): ?AccessToken
+    {
+        if ($oAuth2Token) {
+            return null;
+        }
+
+        return $this->entityManager
+            ->getRepository(AccessToken::class)
+            ->findOneBy(['identifier' => $oAuth2Token->getAttribute('access_token_id')]);
     }
 
     public function serializePaginated(array $serializedItems, Pagerfanta $pagerfanta): array

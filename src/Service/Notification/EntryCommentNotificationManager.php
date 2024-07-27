@@ -12,6 +12,7 @@ use App\Entity\EntryCommentEditedNotification;
 use App\Entity\EntryCommentMentionedNotification;
 use App\Entity\EntryCommentReplyNotification;
 use App\Entity\Notification;
+use App\Event\NotificationCreatedEvent;
 use App\Factory\MagazineFactory;
 use App\Factory\UserFactory;
 use App\Repository\MagazineLogRepository;
@@ -24,6 +25,7 @@ use App\Service\MentionManager;
 use App\Service\SettingsManager;
 use App\Utils\IriGenerator;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -34,6 +36,7 @@ class EntryCommentNotificationManager implements ContentNotificationManagerInter
     use NotificationTrait;
 
     public function __construct(
+        private readonly EventDispatcherInterface $eventDispatcher,
         private readonly MentionManager $mentionManager,
         private readonly NotificationRepository $notificationRepository,
         private readonly MagazineLogRepository $magazineLogRepository,
@@ -70,6 +73,7 @@ class EntryCommentNotificationManager implements ContentNotificationManagerInter
             if (!$user->apId and !$user->isBlocked($subject->getUser())) {
                 $notification = new EntryCommentMentionedNotification($user, $subject);
                 $this->entityManager->persist($notification);
+                $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
             }
 
             $users[] = $user;
@@ -105,6 +109,7 @@ class EntryCommentNotificationManager implements ContentNotificationManagerInter
 
             $this->entityManager->persist($notification);
             $this->entityManager->flush();
+            $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
 
             $exclude[] = $notification->user;
         }
@@ -186,6 +191,7 @@ class EntryCommentNotificationManager implements ContentNotificationManagerInter
 
         foreach ($usersToNotify as $subscriber) {
             $notification = new EntryCommentCreatedNotification($subscriber, $comment);
+            $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
             $this->entityManager->persist($notification);
         }
 

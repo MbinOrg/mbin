@@ -1,5 +1,6 @@
 import { Controller } from '@hotwired/stimulus';
 import Subscribe from '../utils/event-source';
+import {fetch, ThrowResponseIfNotOk} from "../utils/http";
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -16,6 +17,9 @@ export default class extends Controller {
             this.connectEs(this.endpointValue, this.getTopics());
 
             window.addEventListener('pagehide', this.closeEs);
+        }
+        if (this.userValue) {
+            this.fetchAndSetNewNotificationAndMessageCount()
         }
     }
 
@@ -100,5 +104,54 @@ export default class extends Controller {
         }
 
         return topics;
+    }
+
+    fetchAndSetNewNotificationAndMessageCount() {
+        fetch("/ajax/fetch_user_notifications_count")
+            .then(ThrowResponseIfNotOk)
+            .then((data) => {
+                if (typeof data.notifications === "number") {
+                    this.setNotificationCount(data.notifications)
+                }
+                if (typeof data.messages === "number") {
+                    this.setMessageCount(data.messages)
+                }
+                window.setTimeout(() => this.fetchAndSetNewNotificationAndMessageCount(), 10 * 1000)
+            })
+    }
+
+    /**
+     * @param {number} count
+     */
+    setNotificationCount(count) {
+        let notificationHeader = self.window.document.getElementById("header-notification-count")
+        notificationHeader.style.display = count ? "" : "none"
+        this.setCountInSubBadgeElement(notificationHeader, count)
+        let notificationDropdown = self.window.document.getElementById("dropdown-notifications-count")
+        this.setCountInSubBadgeElement(notificationDropdown, count)
+    }
+
+    /**
+     * @param {number} count
+     */
+    setMessageCount(count) {
+        let messagesHeader = self.window.document.getElementById("header-messages-count")
+        messagesHeader.style.display = count ? "" : "none"
+        this.setCountInSubBadgeElement(messagesHeader, count)
+        let messageDropdown = self.window.document.getElementById("dropdown-messages-count")
+        this.setCountInSubBadgeElement(messageDropdown, count)
+    }
+
+    /**
+     * @param {Element} element
+     * @param {number} count
+     */
+    setCountInSubBadgeElement(element, count) {
+        let badgeElements = element.getElementsByClassName("badge")
+        for (let i = 0; i<badgeElements.length; i++) {
+            let el = badgeElements.item(i)
+            el.textContent = count.toString(10)
+            el.style.display = count ? "" : "none"
+        }
     }
 }

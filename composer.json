@@ -8,6 +8,7 @@
     "require": {
         "php": ">=8.2",
         "ext-amqp": "*",
+        "ext-bcmath": "*",
         "ext-ctype": "*",
         "ext-curl": "*",
         "ext-fileinfo": "*",
@@ -43,6 +44,7 @@
         "league/oauth2-server-bundle": "^0.8.0",
         "liip/imagine-bundle": "^2.0",
         "meteo-concept/hcaptcha-bundle": "^4.0.1",
+        "minishlink/web-push": "^9.0",
         "neitanod/forceutf8": "^2.0",
         "nelmio/api-doc-bundle": "^4.11",
         "nelmio/cors-bundle": "^2.1",

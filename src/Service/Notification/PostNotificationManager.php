@@ -11,6 +11,7 @@ use App\Entity\PostCreatedNotification;
 use App\Entity\PostDeletedNotification;
 use App\Entity\PostEditedNotification;
 use App\Entity\PostMentionedNotification;
+use App\Event\NotificationCreatedEvent;
 use App\Factory\MagazineFactory;
 use App\Repository\MagazineLogRepository;
 use App\Repository\MagazineSubscriptionRepository;
@@ -22,6 +23,7 @@ use App\Service\MentionManager;
 use App\Service\SettingsManager;
 use App\Utils\IriGenerator;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -32,6 +34,7 @@ class PostNotificationManager implements ContentNotificationManagerInterface
     use NotificationTrait;
 
     public function __construct(
+        private readonly EventDispatcherInterface $eventDispatcher,
         private readonly MentionManager $mentionManager,
         private readonly NotificationRepository $notificationRepository,
         private readonly MagazineLogRepository $magazineLogRepository,
@@ -60,6 +63,7 @@ class PostNotificationManager implements ContentNotificationManagerInterface
         foreach ($this->mentionManager->getUsersFromArray($mentions) as $user) {
             $notification = new PostMentionedNotification($user, $subject);
             $this->entityManager->persist($notification);
+            $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
         }
 
         // Notify subscribers
@@ -71,8 +75,9 @@ class PostNotificationManager implements ContentNotificationManagerInterface
         $subscribers = array_filter($subscribers, fn ($s) => !\in_array($s->username, $mentions ?? []));
 
         foreach ($subscribers as $subscriber) {
-            $notify = new PostCreatedNotification($subscriber, $subject);
-            $this->entityManager->persist($notify);
+            $notification2 = new PostCreatedNotification($subscriber, $subject);
+            $this->entityManager->persist($notification2);
+            $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification2));
         }
 
         $this->entityManager->flush();

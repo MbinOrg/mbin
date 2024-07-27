@@ -221,6 +221,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     #[OneToMany(mappedBy: 'user', targetEntity: Notification::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $notifications;
+    #[OneToMany(mappedBy: 'user', targetEntity: UserPushSubscription::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    public Collection $pushSubscriptions;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
