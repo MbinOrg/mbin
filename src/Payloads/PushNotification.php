@@ -13,7 +13,7 @@ class PushNotification
         public string $title,
         public ?string $actionUrl = null,
         public ?string $avatarUrl = null,
-        public string $iconUrl = '/assets/icons/icon-192-maskable.png',
+        public string $iconUrl = '/assets/icons/icon-192-maskable-no-bg.png',
         public EPushNotificationType $category = EPushNotificationType::Notification,
     ) {
     }
