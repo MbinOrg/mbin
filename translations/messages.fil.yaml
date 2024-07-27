@@ -214,3 +214,9 @@ deletion: Pagbura
 delete_magazine: Burahin ang magasin
 details: Mga detalye
 deleted_by_author: Binura ng may-akda ang [thread], [post] o puna
+report_accepted: Natanggap ang isang ulat
+own_content_reported_accepted: Natanggap ang isang ulat ng iyong nilalaman.
+own_report_accepted: Natanggap ang iyong ulat
+own_report_rejected: Naitanggi ang iyong ulat
+reported_user: Iniulat na tagagamit
+reporting_user: Paguulat sa tagagamit
