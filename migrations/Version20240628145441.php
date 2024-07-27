@@ -23,10 +23,12 @@ final class Version20240628145441 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN instance.last_successful_receive IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('COMMENT ON COLUMN instance.created_at IS \'(DC2Type:datetimetz_immutable)\'');
         $this->addSql('COMMENT ON COLUMN instance.updated_at IS \'(DC2Type:datetimetz_immutable)\'');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_4230B1DEA7A91E0B ON instance (domain)');
     }
 
     public function down(Schema $schema): void
     {
+        $this->addSql('DROP INDEX UNIQ_4230B1DEA7A91E0B');
         $this->addSql('DROP SEQUENCE instance_id_seq CASCADE');
         $this->addSql('DROP TABLE instance');
     }

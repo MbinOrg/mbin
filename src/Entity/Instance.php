@@ -32,7 +32,7 @@ class Instance
     #[Column(nullable: true)]
     public ?string $version;
 
-    #[Column]
+    #[Column(unique: true)]
     public string $domain;
 
     #[Column(type: 'datetimetz_immutable', nullable: true)]
