@@ -50,7 +50,7 @@
             <li>{{ 'subscribers'|trans }}: <span>{{ computed.magazine.subscriptionsCount }}</span></li>
             {% set instance = get_instance_of_magazine(computed.magazine) %}
             {% if instance is not same as null %}
-                <li>{{ 'server_software'|trans }}: <div><span>{{ instance.software }}{% if instance.version is not same as null %} v{{ instance.version }}{% endif %}</span></div></li>
+                <li>{{ 'server_software'|trans }}: <div><span>{{ instance.software }}{% if instance.version is not same as null and app.user is defined and app.user is not null and app.user.admin() %} v{{ instance.version }}{% endif %}</span></div></li>
             {% endif %}
         </ul>
     {% endif %}
