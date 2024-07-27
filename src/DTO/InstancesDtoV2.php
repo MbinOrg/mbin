@@ -4,17 +4,14 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
+use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[OA\Schema()]
-class InstancesDto implements \JsonSerializable
+class InstancesDtoV2 implements \JsonSerializable
 {
     public function __construct(
-        #[Assert\All([
-            new Assert\Hostname(),
-        ])]
-        #[OA\Property(type: 'array', items: new OA\Items(type: 'string', format: 'url'))]
+        #[OA\Property(type: 'array', items: new OA\Items(ref: new Model(type: InstanceDto::class)))]
         public ?array $instances
     ) {
     }
