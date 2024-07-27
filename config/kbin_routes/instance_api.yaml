@@ -23,10 +23,22 @@ api_instance_retrieve_content:
   format: json
 
 api_instance_retrieve_defederated_instances:
-  controller: App\Controller\Api\Instance\InstanceRetrieveFederationApi
+  controller: App\Controller\Api\Instance\InstanceRetrieveFederationApi::getDeFederated
   path: /api/defederated
   methods: [ GET ]
   format: json
+
+api_instance_retrieve_federated_instances:
+    controller: App\Controller\Api\Instance\InstanceRetrieveFederationApi::getFederated
+    path: /api/federated
+    methods: [ GET ]
+    format: json
+
+api_instance_retrieve_dead_instances:
+    controller: App\Controller\Api\Instance\InstanceRetrieveFederationApi::getDead
+    path: /api/dead
+    methods: [ GET ]
+    format: json
 
 api_instance_retrieve_info:
   controller: App\Controller\Api\Instance\InstanceRetrieveInfoApi

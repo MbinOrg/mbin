@@ -45,6 +45,8 @@ class UserDto implements UserDtoInterface
     public ?bool $isFollowerOfUser = null;
     public ?bool $isBlockedByUser = null;
     public ?string $totpSecret = null;
+    public ?string $serverSoftware = null;
+    public ?string $serverSoftwareVersion = null;
 
     #[Assert\Callback]
     public function validate(

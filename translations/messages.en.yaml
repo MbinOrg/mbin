@@ -448,6 +448,8 @@ toolbar.mention: Mention
 federation_page_enabled: Federation page enabled
 federation_page_allowed_description: Known instances we federate with
 federation_page_disallowed_description: Instances we do not federate with
+federation_page_dead_title: Dead instances
+federation_page_dead_description: Instances that we could not deliver at least 10 activities in a row and where the last successful deliver was more than a week ago
 federated_search_only_loggedin: Federated search limited if not logged in
 sidebar_sections_local_only: Restrict "Random X" and "Active People" sections to local
   only

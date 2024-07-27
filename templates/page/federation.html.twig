@@ -77,7 +77,8 @@
         {% endif %}
 
         {% if deadInstances is not empty %}
-            <h3>{{'federation_page_disallowed_description'|trans}}</h3>
+            <h3>{{'federation_page_dead_title'|trans}}</h3>
+            <p>{{ 'federation_page_dead_description'|trans }}</p>
             <table>
                 <thead>
                 <tr>

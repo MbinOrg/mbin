@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Instance;
+use App\Entity\Magazine;
 use App\Entity\User;
 use App\Service\SettingsManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -28,6 +29,11 @@ class InstanceRepository extends ServiceEntityRepository
     public function getInstanceOfUser(User $user): ?Instance
     {
         return $this->findOneBy(['domain' => $user->apDomain]);
+    }
+
+    public function getInstanceOfMagazine(Magazine $magazine): ?Instance
+    {
+        return $this->findOneBy(['domain' => $magazine->apDomain]);
     }
 
     public function getAllowedInstances(): array
