@@ -28,6 +28,12 @@ api_instance_retrieve_defederated_instances:
   methods: [ GET ]
   format: json
 
+api_instance_retrieve_defederated_instances_v2:
+    controller: App\Controller\Api\Instance\InstanceRetrieveFederationApi::getDeFederatedV2
+    path: /api/defederated/v2
+    methods: [ GET ]
+    format: json
+
 api_instance_retrieve_federated_instances:
     controller: App\Controller\Api\Instance\InstanceRetrieveFederationApi::getFederated
     path: /api/federated
