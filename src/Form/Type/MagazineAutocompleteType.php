@@ -31,7 +31,7 @@ class MagazineAutocompleteType extends AbstractType
                 if ($currentUser = $this->security->getUser()) {
                     $qb
                         ->andWhere(
-                            sprintf(
+                            \sprintf(
                                 'entity.id NOT IN (SELECT IDENTITY(mb.magazine) FROM %s mb WHERE mb.user = :user)',
                                 MagazineBlock::class,
                             )

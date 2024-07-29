@@ -146,7 +146,7 @@ class Embed
     {
         $c = clone $this;
         $c->url = $url;
-        $c->html = sprintf('<img src="%s">', $url);
+        $c->html = \sprintf('<img src="%s">', $url);
 
         return $c;
     }

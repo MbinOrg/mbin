@@ -16,7 +16,7 @@ class BadgeCollectionToStringTransformer implements DataTransformerInterface
             $value = $value->toArray();
             natcasesort($value);
         } elseif (null !== $value) {
-            throw new \TypeError(sprintf('$value must be array or NULL, %s given', get_debug_type($value)));
+            throw new \TypeError(\sprintf('$value must be array or NULL, %s given', get_debug_type($value)));
         }
 
         return implode(', ', $value ?? []);
@@ -29,7 +29,7 @@ class BadgeCollectionToStringTransformer implements DataTransformerInterface
         }
 
         if (null !== $value) {
-            throw new \TypeError(sprintf('$value must be string or NULL, %s given', get_debug_type($value)));
+            throw new \TypeError(\sprintf('$value must be string or NULL, %s given', get_debug_type($value)));
         }
 
         return new ArrayCollection();

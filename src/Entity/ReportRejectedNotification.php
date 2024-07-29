@@ -35,7 +35,7 @@ class ReportRejectedNotification extends Notification
     {
         /** @var Entry|EntryComment|Post|PostComment $subject */
         $subject = $this->report->getSubject();
-        $message = sprintf('%s: %s\n%s: %s',
+        $message = \sprintf('%s: %s\n%s: %s',
             $trans->trans('reported_user', locale: $locale), $this->report->reported->username,
             $trans->trans('report_subject', locale: $locale), $subject->getShortTitle()
         );

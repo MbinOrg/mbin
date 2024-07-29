@@ -75,7 +75,7 @@ class ReportController extends AbstractController
                 return new JsonResponse(
                     [
                         'success' => true,
-                        'html' => sprintf("<div class='alert %s'>%s</div>", ($reportError) ? 'alert__danger' : 'alert__info', $responseMessage),
+                        'html' => \sprintf("<div class='alert %s'>%s</div>", ($reportError) ? 'alert__danger' : 'alert__info', $responseMessage),
                     ]
                 );
             }

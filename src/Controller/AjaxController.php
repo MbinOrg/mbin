@@ -85,7 +85,7 @@ class AjaxController extends AbstractController
         $data = $embed->fetch($request->get('url'));
         // only wrap embed link for image embed as it doesn't make much sense for any other type for embed
         if ($data->isImageUrl()) {
-            $html = sprintf(
+            $html = \sprintf(
                 '<a href="%s" class="embed-link">%s</a>',
                 $data->url,
                 $data->html
@@ -96,7 +96,7 @@ class AjaxController extends AbstractController
 
         return new JsonResponse(
             [
-                'html' => sprintf('<div class="preview">%s</div>', $html),
+                'html' => \sprintf('<div class="preview">%s</div>', $html),
             ]
         );
     }

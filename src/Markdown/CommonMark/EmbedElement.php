@@ -61,7 +61,7 @@ class EmbedElement
             [],
             [
                 new HtmlElement('i', ['class' => 'fas fa-photo-video']),
-                $label ? sprintf(' %s (%s)', $label, $url) : ' '.$url,
+                $label ? \sprintf(' %s (%s)', $label, $url) : ' '.$url,
             ]
         );
     }
