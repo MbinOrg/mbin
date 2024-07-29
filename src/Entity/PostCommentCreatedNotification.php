@@ -42,7 +42,7 @@ class PostCommentCreatedNotification extends Notification
 
     public function getMessage(TranslatorInterface $trans, string $locale, UrlGeneratorInterface $urlGenerator): PushNotification
     {
-        $message = sprintf('%s %s - %s', $this->postComment->user->username, $trans->trans('added_new_comment'), $this->postComment->getShortTitle());
+        $message = \sprintf('%s %s - %s', $this->postComment->user->username, $trans->trans('added_new_comment'), $this->postComment->getShortTitle());
         $slash = $this->postComment->user->avatar && !str_starts_with('/', $this->postComment->user->avatar->filePath) ? '/' : '';
         $avatarUrl = $this->postComment->user->avatar ? '/media/cache/resolve/avatar_thumb'.$slash.$this->postComment->user->avatar->filePath : null;
         $url = $urlGenerator->generate('post_single', [

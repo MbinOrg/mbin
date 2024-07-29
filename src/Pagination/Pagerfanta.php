@@ -224,7 +224,7 @@ class Pagerfanta implements PagerfantaInterface, \JsonSerializable
             return $this->getNbPages();
         }
 
-        throw new OutOfRangeCurrentPageException(sprintf('Page "%d" does not exist. The currentPage must be inferior to "%d"', $currentPage, $this->getNbPages()));
+        throw new OutOfRangeCurrentPageException(\sprintf('Page "%d" does not exist. The currentPage must be inferior to "%d"', $currentPage, $this->getNbPages()));
     }
 
     private function resetForCurrentPageChange(): void
@@ -434,7 +434,7 @@ class Pagerfanta implements PagerfantaInterface, \JsonSerializable
             return new \ArrayIterator($results);
         }
 
-        throw new \InvalidArgumentException(sprintf('Cannot create iterator with page results of type "%s".', get_debug_type($results)));
+        throw new \InvalidArgumentException(\sprintf('Cannot create iterator with page results of type "%s".', get_debug_type($results)));
     }
 
     public function jsonSerialize(): array
@@ -460,7 +460,7 @@ class Pagerfanta implements PagerfantaInterface, \JsonSerializable
     public function getPageNumberForItemAtPosition(int $position): int
     {
         if ($this->getNbResults() < $position) {
-            throw new OutOfBoundsException(sprintf('Item requested at position %d, but there are only %d items.', $position, $this->getNbResults()));
+            throw new OutOfBoundsException(\sprintf('Item requested at position %d, but there are only %d items.', $position, $this->getNbResults()));
         }
 
         return (int) ceil($position / $this->getMaxPerPage());

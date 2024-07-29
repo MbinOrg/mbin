@@ -40,7 +40,7 @@ class EntryCommentMentionedNotification extends Notification
 
     public function getMessage(TranslatorInterface $trans, string $locale, UrlGeneratorInterface $urlGenerator): PushNotification
     {
-        $message = sprintf('%s %s - %s', $this->entryComment->user->username, $trans->trans('mentioned_you'), $this->entryComment->getShortTitle());
+        $message = \sprintf('%s %s - %s', $this->entryComment->user->username, $trans->trans('mentioned_you'), $this->entryComment->getShortTitle());
         $slash = $this->entryComment->user->avatar && !str_starts_with('/', $this->entryComment->user->avatar->filePath) ? '/' : '';
         $avatarUrl = $this->entryComment->user->avatar ? '/media/cache/resolve/avatar_thumb'.$slash.$this->entryComment->user->avatar->filePath : null;
         $url = $urlGenerator->generate('entry_comment_view', [

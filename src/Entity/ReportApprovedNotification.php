@@ -39,15 +39,15 @@ class ReportApprovedNotification extends Notification
         $linkToReport = $urlGenerator->generate('magazine_panel_reports', ['name' => $this->report->magazine->name, 'status' => Report::STATUS_APPROVED]);
         if ($this->report->reporting->getId() === $this->user->getId()) {
             $title = $trans->trans('own_report_accepted', locale: $locale);
-            $message = sprintf('%s: %s', $trans->trans('report_subject', locale: $locale), $subject->getShortTitle());
+            $message = \sprintf('%s: %s', $trans->trans('report_subject', locale: $locale), $subject->getShortTitle());
             $actionUrl = $linkToSubject;
         } elseif ($this->report->reported->getId() === $this->user->getId()) {
             $title = $trans->trans('own_content_reported_accepted', locale: $locale);
-            $message = sprintf('%s: %s', $trans->trans('report_subject', locale: $locale), $subject->getShortTitle());
+            $message = \sprintf('%s: %s', $trans->trans('report_subject', locale: $locale), $subject->getShortTitle());
             $actionUrl = $linkToSubject;
         } else {
             $title = $trans->trans('report_accepted', locale: $locale);
-            $message = sprintf('%s: %s\n%s: %s\n%s: %s - %s',
+            $message = \sprintf('%s: %s\n%s: %s\n%s: %s - %s',
                 $trans->trans('reported_user', locale: $locale), $this->report->reported->username,
                 $trans->trans('reporting_user', locale: $locale), $this->report->reporting->username,
                 $trans->trans('report_subject', locale: $locale), $subject->getShortTitle(), $linkToSubject

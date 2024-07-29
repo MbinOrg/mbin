@@ -37,7 +37,7 @@ class PostDeletedNotification extends Notification
 
     public function getMessage(TranslatorInterface $trans, string $locale, UrlGeneratorInterface $urlGenerator): PushNotification
     {
-        $message = sprintf('%s %s - %s', $trans->trans('post'), $this->post->getShortTitle(), $this->post->isTrashed() ? $trans->trans('removed') : $trans->trans('deleted'));
+        $message = \sprintf('%s %s - %s', $trans->trans('post'), $this->post->getShortTitle(), $this->post->isTrashed() ? $trans->trans('removed') : $trans->trans('deleted'));
         $slash = $this->post->user->avatar && !str_starts_with('/', $this->post->user->avatar->filePath) ? '/' : '';
         $avatarUrl = $this->post->user->avatar ? '/media/cache/resolve/avatar_thumb'.$slash.$this->post->user->avatar->filePath : null;
         $url = $urlGenerator->generate('post_single', [

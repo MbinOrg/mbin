@@ -275,7 +275,7 @@ class ActivityPubManager
             ? ':'.parse_url($id, PHP_URL_PORT)
             : '';
 
-        return sprintf(
+        return \sprintf(
             '%s@%s%s',
             $this->apHttpClient->getActorObject($id)['preferredUsername'],
             parse_url($id, PHP_URL_HOST),

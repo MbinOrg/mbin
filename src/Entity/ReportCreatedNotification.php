@@ -35,7 +35,7 @@ class ReportCreatedNotification extends Notification
         /** @var Entry|EntryComment|Post|PostComment $subject */
         $subject = $this->report->getSubject();
         $reportLink = $urlGenerator->generate('magazine_panel_reports', ['name' => $this->report->magazine->name, 'status' => Report::STATUS_PENDING]).'#report-id-'.$this->report->getId();
-        $message = sprintf('%s %s %s\n%s: %s', $this->report->reporting->username, $trans->trans('reported', locale: $locale), $this->report->reported->username,
+        $message = \sprintf('%s %s %s\n%s: %s', $this->report->reporting->username, $trans->trans('reported', locale: $locale), $this->report->reported->username,
             $trans->trans('report_subject', locale: $locale), $subject->getShortTitle());
 
         return new PushNotification($message, $trans->trans('notification_title_new_report'), actionUrl: $reportLink);

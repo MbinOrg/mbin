@@ -291,7 +291,7 @@ class MagazineManager
 
             $background = $background ? "#middle { background: url($background); height: 100%; }" : null;
             if ($background) {
-                $customCss = sprintf('%s %s', $customCss, $background);
+                $customCss = \sprintf('%s %s', $customCss, $background);
             }
         }
 
