@@ -38,9 +38,9 @@ class RemoteInstanceManager
             $nodeInfoEndpoints = $serializer->deserialize($nodeInfoEndpointsRaw, WellKnownNodeInfo::class, 'json');
             $linkToUse = null;
             foreach ($nodeInfoEndpoints->links as $link) {
-                if (NodeInfoController::NODE_REL_v21) {
+                if (NodeInfoController::NODE_REL_v21 === $link->rel) {
                     $linkToUse = $link;
-                } elseif (null === $linkToUse && NodeInfoController::NODE_REL_v20 === $link) {
+                } elseif (null === $linkToUse && NodeInfoController::NODE_REL_v20 === $link->rel) {
                     $linkToUse = $link;
                 }
             }
