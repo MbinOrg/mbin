@@ -512,6 +512,7 @@ class ActivityPubManager
             $magazine->apTimeoutAt = null;
             $magazine->apFetchedAt = new \DateTime();
             $magazine->isAdult = $actor['sensitive'] ?? false;
+            $magazine->postingRestrictedToMods = filter_var($actor['postingRestrictedToMods'] ?? false, FILTER_VALIDATE_BOOLEAN) ?? false;
 
             if (null !== $magazine->apFollowersUrl) {
                 try {
