@@ -16,16 +16,14 @@ class AdminUserController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    public function __invoke(?bool $withFederated = null)
+    public function __invoke()
     {
         return $this->render(
             'admin/users.html.twig',
             [
                 'users' => $this->repository->findAllPaginated(
-                    (int) $this->request->getCurrentRequest()->get('p', 1),
-                    !($withFederated ?? false)
+                    (int) $this->request->getCurrentRequest()->get('p', 1), true
                 ),
-                'withFederated' => $withFederated,
             ]
         );
     }

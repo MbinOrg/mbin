@@ -18,14 +18,6 @@
         {{ pagerfanta(users, null, {'pageParameter':'[p]'}) }}
     {% endif %}
     <div class="section" id="content">
-        <div class="flex" data-controller="selection">
-            <label class="select">
-                <select data-action="selection#changeLocation">"
-                    <option value="{{ options_url('withFederated', false) }}">{{ 'local'|trans }}</option>
-                    <option value="{{ options_url('withFederated', true) }}" {{ withFederated is same as true ? 'selected' : '' }}>{{ 'federated'|trans }}</option>
-                </select>
-            </label>
-        </div>
         <table>
             <thead>
             <tr>
@@ -46,7 +38,6 @@
                         <td>{{ component('date', {date: user.lastActive}) }}</td>
                         <td>
                             <button class="btn btn__secondary">{{ (user.isVerified or user.apId) and not user.isBanned ? 'active'|trans : 'inactive'|trans }}</button>
-                            <button class="btn btn__secondary">{{ user.apId ? 'federated'|trans : 'local'|trans }}</button>
                             {% if user.isTotpAuthenticationEnabled %}
                                 <button class="btn btn__secondary" title="{{ '2fa.user_active_tfa.title'|trans }}" aria-label="{{ '2fa.user_active_tfa.title'|trans }}"><i class="fa fa-mobile" aria-hidden="true"></i></button>
                             {% endif %}

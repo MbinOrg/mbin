@@ -1,7 +1,6 @@
 admin_users:
     controller: App\Controller\Admin\AdminUserController
-    defaults: { withFederated: false }
-    path: /admin/users/{withFederated}
+    path: /admin/users
     methods: [GET]
 
 admin_reports:
