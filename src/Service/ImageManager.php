@@ -135,7 +135,7 @@ class ImageManager
 
     public function getFilePath(string $file): string
     {
-        return sprintf(
+        return \sprintf(
             '%s/%s/%s',
             substr($this->getFileName($file), 0, 2),
             substr($this->getFileName($file), 2, 2),
@@ -158,7 +158,7 @@ class ImageManager
             throw new \RuntimeException("Couldn't guess extension of image (invalid image?)");
         }
 
-        return sprintf('%s.%s', $hash, $ext);
+        return \sprintf('%s.%s', $hash, $ext);
     }
 
     public function remove(string $path): void

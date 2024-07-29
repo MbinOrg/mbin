@@ -37,7 +37,7 @@ class PostMentionedNotification extends Notification
 
     public function getMessage(TranslatorInterface $trans, string $locale, UrlGeneratorInterface $urlGenerator): PushNotification
     {
-        $message = sprintf('%s %s - %s', $this->post->user->username, $trans->trans('mentioned_you'), $this->post->getShortTitle());
+        $message = \sprintf('%s %s - %s', $this->post->user->username, $trans->trans('mentioned_you'), $this->post->getShortTitle());
         $slash = $this->post->user->avatar && !str_starts_with('/', $this->post->user->avatar->filePath) ? '/' : '';
         $avatarUrl = $this->post->user->avatar ? '/media/cache/resolve/avatar_thumb'.$slash.$this->post->user->avatar->filePath : null;
         $url = $urlGenerator->generate('post_single', [

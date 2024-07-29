@@ -135,7 +135,7 @@ class ResetPasswordController extends AbstractController
         } catch (ResetPasswordExceptionInterface $e) {
             $this->addFlash(
                 'reset_password_error',
-                sprintf(
+                \sprintf(
                     '%s - %s',
                     $translator->trans(
                         ResetPasswordExceptionInterface::MESSAGE_PROBLEM_VALIDATE,

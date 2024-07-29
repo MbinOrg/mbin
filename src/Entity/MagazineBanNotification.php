@@ -39,7 +39,7 @@ class MagazineBanNotification extends Notification
     {
         $intl = new \IntlDateFormatter($trans->getLocale(), \IntlDateFormatter::SHORT, \IntlDateFormatter::SHORT, calendar: \IntlDateFormatter::GREGORIAN);
 
-        $message = sprintf('%s %s %s %s. %s %s. %s: %s',
+        $message = \sprintf('%s %s %s %s. %s %s. %s: %s',
             $this->ban->bannedBy->username,
             $trans->trans('banned'),
             $trans->trans('from'),
