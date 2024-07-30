@@ -192,9 +192,6 @@ class OAuth2UserConsent
     #[Column]
     private ?string $ipAddress = null;
 
-    #[OneToOne(mappedBy: 'userConsent', targetEntity: UserPushSubscription::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    public ?UserPushSubscription $pushSubscription = null;
-
     public function getId(): ?int
     {
         return $this->id;
