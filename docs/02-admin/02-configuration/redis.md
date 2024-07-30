@@ -29,7 +29,7 @@ Feel free to adjust the memory settings to your liking.
 
 ## Multithreading
 
-Configure multiple threads in Redis by enabling the following two lines:
+Configure multiple threads in Redis by setting the following two lines:
 
 ```ruby
 # THREADED I/O
