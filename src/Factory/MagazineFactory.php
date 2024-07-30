@@ -15,8 +15,10 @@ use App\Entity\Badge;
 use App\Entity\Magazine;
 use App\Entity\MagazineBan;
 use App\Entity\MagazineLog;
+use App\Entity\MagazineLogBan;
 use App\Entity\Moderator;
 use App\Entity\User;
+use App\Repository\InstanceRepository;
 use App\Repository\MagazineRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -25,6 +27,7 @@ class MagazineFactory
 {
     public function __construct(
         private ImageFactory $imageFactory,
+        private InstanceRepository $instanceRepository,
         private ModeratorFactory $moderatorFactory,
         private UserFactory $userFactory,
         private MagazineRepository $magazineRepository,
@@ -73,6 +76,12 @@ class MagazineFactory
         // Only return the user's vote if permission to control voting has been given
         $dto->isUserSubscribed = $this->security->isGranted('ROLE_OAUTH2_MAGAZINE:SUBSCRIBE') ? $magazine->isSubscribed($currentUser) : null;
         $dto->isBlockedByUser = $this->security->isGranted('ROLE_OAUTH2_MAGAZINE:BLOCK') ? $currentUser->isBlockedMagazine($magazine) : null;
+
+        $instance = $this->instanceRepository->getInstanceOfMagazine($magazine);
+        if ($instance) {
+            $dto->serverSoftware = $instance->software;
+            $dto->serverSoftwareVersion = $instance->version;
+        }
 
         return $dto;
     }
@@ -146,6 +155,8 @@ class MagazineFactory
             $dto->apId,
             $dto->apProfileId,
             $dto->getId(),
+            $dto->serverSoftware,
+            $dto->serverSoftwareVersion,
         );
     }
 

@@ -22,6 +22,8 @@ class UserResponseDto implements \JsonSerializable
     public ?bool $isFollowerOfUser = null;
     public ?bool $isBlockedByUser = null;
     public ?int $userId = null;
+    public ?string $serverSoftware = null;
+    public ?string $serverSoftwareVersion = null;
 
     public function __construct(UserDto $dto)
     {
@@ -38,6 +40,8 @@ class UserResponseDto implements \JsonSerializable
         $this->isFollowedByUser = $dto->isFollowedByUser;
         $this->isFollowerOfUser = $dto->isFollowerOfUser;
         $this->isBlockedByUser = $dto->isBlockedByUser;
+        $this->serverSoftware = $dto->serverSoftware;
+        $this->serverSoftwareVersion = $dto->serverSoftwareVersion;
     }
 
     public function jsonSerialize(): mixed
@@ -56,6 +60,8 @@ class UserResponseDto implements \JsonSerializable
             'isFollowedByUser' => $this->isFollowedByUser,
             'isFollowerOfUser' => $this->isFollowerOfUser,
             'isBlockedByUser' => $this->isBlockedByUser,
+            'serverSoftware' => $this->serverSoftware,
+            'serverSoftwareVersion' => $this->serverSoftwareVersion,
         ];
     }
 }
