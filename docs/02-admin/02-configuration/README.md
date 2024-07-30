@@ -7,5 +7,5 @@ Currently, the following configuration guides are provided:
 
 - [Mbin config](./mbin_config_files.md)
 - [Nginx](./nginx.md)
-- [Let's Encrypt](./letsencrypt.md)
+- [Let's Encrypt](./lets_encrypt.md)
 - [Redis / KeyDB](./redis.md)
