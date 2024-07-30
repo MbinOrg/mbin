@@ -219,14 +219,14 @@ class ActivityPubManager
         return null;
     }
 
-    public function dispatchUpdateActor(string $actorUrl, bool $force = false)
+    public function dispatchUpdateActor(string $actorUrl)
     {
         $limiter = $this->apUpdateActorLimiter
             ->create($actorUrl)
             ->consume(1);
 
         if ($limiter->isAccepted()) {
-            $this->bus->dispatch(new UpdateActorMessage($actorUrl, $force));
+            $this->bus->dispatch(new UpdateActorMessage($actorUrl));
         } else {
             $this->logger->debug(
                 'not dispatching updating actor for {actor}: one has been dispatched recently',

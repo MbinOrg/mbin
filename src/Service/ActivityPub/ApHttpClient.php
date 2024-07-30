@@ -143,6 +143,11 @@ class ApHttpClient
         return $resp ? json_decode($resp, true) : null;
     }
 
+    private function getActorCacheKey(string $apProfileId): string
+    {
+        return 'ap_'.hash('sha256', $apProfileId);
+    }
+
     /**
      * Retrieve AP actor object (could be a user or magazine).
      *
@@ -153,7 +158,7 @@ class ApHttpClient
     public function getActorObject(string $apProfileId): ?array
     {
         $resp = $this->cache->get(
-            'ap_'.hash('sha256', $apProfileId),
+            $this->getActorCacheKey($apProfileId),
             function (ItemInterface $item) use ($apProfileId) {
                 $this->logger->debug("ApHttpClient:getActorObject:url: $apProfileId");
                 $response = null;
@@ -208,6 +213,11 @@ class ApHttpClient
         );
 
         return $resp ? json_decode($resp, true) : null;
+    }
+
+    public function invalidateActorObjectCache(string $apProfileId): void
+    {
+        $this->cache->delete($this->getActorCacheKey($apProfileId));
     }
 
     public function invalidateCollectionObjectCache(string $apAddress): void

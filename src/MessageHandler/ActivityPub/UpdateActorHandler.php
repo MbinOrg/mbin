@@ -9,6 +9,7 @@ use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
+use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPubManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -21,6 +22,7 @@ class UpdateActorHandler extends MbinMessageHandler
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly ActivityPubManager $manager,
+        private readonly ApHttpClient $apHttpClient,
         private readonly LockFactory $lockFactory,
         private readonly UserRepository $userRepository,
         private readonly MagazineRepository $magazineRepository,
@@ -55,6 +57,9 @@ class UpdateActorHandler extends MbinMessageHandler
             ?? $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
 
         if ($actor) {
+            if ($message->force) {
+                $this->apHttpClient->invalidateActorObjectCache($actorUrl);
+            }
             if ($message->force || $actor->apFetchedAt < (new \DateTime())->modify('-1 hour')) {
                 $this->manager->updateActor($actorUrl);
             } else {

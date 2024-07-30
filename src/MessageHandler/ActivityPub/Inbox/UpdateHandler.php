@@ -24,6 +24,7 @@ use App\Factory\PostCommentFactory;
 use App\Factory\PostFactory;
 use App\Message\ActivityPub\Inbox\UpdateMessage;
 use App\Message\ActivityPub\Outbox\GenericAnnounceMessage;
+use App\Message\ActivityPub\UpdateActorMessage;
 use App\Message\Contracts\MessageInterface;
 use App\Message\DeleteImageMessage;
 use App\MessageHandler\MbinMessageHandler;
@@ -225,7 +226,7 @@ class UpdateHandler extends MbinMessageHandler
     {
         if ($user->canUpdateUser($actor)) {
             if (null !== $user->apId) {
-                $this->activityPubManager->dispatchUpdateActor($user->apProfileId, force: true);
+                $this->bus->dispatch(new UpdateActorMessage($user->apProfileId, force: true));
             }
         } else {
             $this->logger->warning('User {u1} wanted to update user {u2} without being allowed to do so', ['u1' => $actor->apId ?? $actor->username, 'u2' => $user->apId ?? $user->username]);
