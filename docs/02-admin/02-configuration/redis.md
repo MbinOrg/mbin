@@ -1,12 +1,12 @@
-# Redis
+# Redis / KeyDB
 
-This documentation is valid for both Redis as well as KeyDB. KeyDB is a fork of Redis, but should work in the same manner.
+This documentation is valid for both Redis as well as KeyDB. KeyDB is a fork of Redis, but should work mostly in the same manner.
 
 ## Configure Redis
 
 Edit the Redis instance for Mbin: `sudo nano /etc/redis/redis.conf`:
 
-```conf
+```ruby
 # NETWORK
 timeout 300
 tcp-keepalive 300
@@ -20,10 +20,6 @@ lazyfree-lazy-eviction yes
 lazyfree-lazy-expire yes
 lazyfree-lazy-server-del yes
 replica-lazy-flush yes
-
-# THREADED I/O
-io-threads 4
-io-threads-do-reads yes
 ```
 
 Feel free to adjust the memory settings to your liking.
@@ -31,13 +27,30 @@ Feel free to adjust the memory settings to your liking.
 > [!WARNING]
 > Mbin (more specifically Symfony RedisTagAwareAdapter) only support `noeviction` and `volatile-*` settings for the `maxmemory-policy` Redis setting.
 
+## Multithreading
+
+Configure multiple threads in Redis by setting the following two lines:
+
+```ruby
+# THREADED I/O
+io-threads 4
+io-threads-do-reads yes
+```
+
+However, when using **KeyDB**, you need to update the following line (`io-threads` doesn't exists in KeyDB):
+
+```ruby
+# WORKER THREADS
+server-threads 4
+```
+
 ## Redis as a cache
 
 _Optionally:_ If you are using this Redis instance only for Mbin as a cache, you can disable snapshots in Redis. Which will no longer dump the database to disk and reduce the amount of disk space used as well the disk I/O.
 
 First comment out existing "save lines" in the Redis configuration file:
 
-```conf
+```ruby
 #save 900 1
 #save 300 10
 #save 60 10000
@@ -45,6 +58,6 @@ First comment out existing "save lines" in the Redis configuration file:
 
 Then add the following line to disable snapshots fully:
 
-```conf
+```ruby
 save ""
 ```
