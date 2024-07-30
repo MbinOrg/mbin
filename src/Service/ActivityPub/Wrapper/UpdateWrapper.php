@@ -76,10 +76,18 @@ class UpdateWrapper
     {
         if ($item instanceof User) {
             $activity = $this->personFactory->create($item, false);
-            $cc = $this->urlGenerator->generate('ap_user_followers', ['username' => $item->username], UrlGeneratorInterface::ABSOLUTE_URL);
+            if (null === $item->apId) {
+                $cc = [$this->urlGenerator->generate('ap_user_followers', ['username' => $item->username], UrlGeneratorInterface::ABSOLUTE_URL)];
+            } else {
+                $cc = [$item->apFollowersUrl];
+            }
         } elseif ($item instanceof Magazine) {
             $activity = $this->groupFactory->create($item, false);
-            $cc = $this->urlGenerator->generate('ap_magazine_followers', ['name' => $item->name], UrlGeneratorInterface::ABSOLUTE_URL);
+            if (null === $item->apId) {
+                $cc = [$this->urlGenerator->generate('ap_magazine_followers', ['name' => $item->name], UrlGeneratorInterface::ABSOLUTE_URL)];
+            } else {
+                $cc = [$item->apFollowersUrl];
+            }
         } else {
             throw new \LogicException('Unknown actor type: '.\get_class($item));
         }
@@ -87,7 +95,11 @@ class UpdateWrapper
 
         $actorUrl = $activity['id'];
         if (null !== $editedBy) {
-            $actorUrl = $this->urlGenerator->generate('ap_user', ['username' => $editedBy->username], UrlGeneratorInterface::ABSOLUTE_URL);
+            if (null === $editedBy->apId) {
+                $actorUrl = $this->urlGenerator->generate('ap_user', ['username' => $editedBy->username], UrlGeneratorInterface::ABSOLUTE_URL);
+            } else {
+                $actorUrl = $editedBy->apProfileId;
+            }
         }
 
         return [

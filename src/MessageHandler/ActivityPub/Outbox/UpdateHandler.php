@@ -84,6 +84,9 @@ class UpdateHandler extends MbinMessageHandler
             } elseif ($entity instanceof Magazine) {
                 if (null === $entity->apId) {
                     $inboxes = $this->magazineRepository->findAudience($entity);
+                    if (null !== $editedByUser) {
+                        $inboxes = array_filter($inboxes, fn (string $domain) => $editedByUser->apInboxUrl !== $domain);
+                    }
                 } else {
                     $inboxes = [$entity->apInboxUrl];
                 }
