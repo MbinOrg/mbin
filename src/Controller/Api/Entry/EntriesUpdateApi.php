@@ -93,7 +93,7 @@ class EntriesUpdateApi extends EntriesBaseApi
             throw new BadRequestHttpException((string) $errors);
         }
 
-        $entry = $manager->edit($entry, $dto);
+        $entry = $manager->edit($entry, $dto, $this->getUserOrThrow());
 
         return new JsonResponse(
             $this->serializeEntry($entry, $this->tagLinkRepository->getTagsOfEntry($entry)),

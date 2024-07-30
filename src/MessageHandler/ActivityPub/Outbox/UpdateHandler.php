@@ -4,19 +4,26 @@ declare(strict_types=1);
 
 namespace App\MessageHandler\ActivityPub\Outbox;
 
+use App\Entity\Contracts\ActivityPubActivityInterface;
+use App\Entity\Contracts\ActivityPubActorInterface;
+use App\Entity\Entry;
+use App\Entity\EntryComment;
+use App\Entity\Magazine;
+use App\Entity\Message;
+use App\Entity\Post;
+use App\Entity\PostComment;
+use App\Entity\User;
 use App\Message\ActivityPub\Outbox\UpdateMessage;
 use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
-use App\Service\ActivityPub\Wrapper\CreateWrapper;
+use App\Service\ActivityPub\Wrapper\UpdateWrapper;
 use App\Service\ActivityPubManager;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Uid\Uuid;
 
 #[AsMessageHandler]
 class UpdateHandler extends MbinMessageHandler
@@ -24,12 +31,11 @@ class UpdateHandler extends MbinMessageHandler
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly MagazineRepository $magazineRepository,
-        private readonly CreateWrapper $createWrapper,
         private readonly EntityManagerInterface $entityManager,
         private readonly ActivityPubManager $activityPubManager,
         private readonly SettingsManager $settingsManager,
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly DeliverManager $deliverManager,
+        private readonly UpdateWrapper $updateWrapper,
     ) {
         parent::__construct($this->entityManager);
     }
@@ -49,23 +55,45 @@ class UpdateHandler extends MbinMessageHandler
         }
 
         $entity = $this->entityManager->getRepository($message->type)->find($message->id);
+        $editedByUser = null;
+        if ($message->editedByUserId) {
+            $editedByUser = $this->userRepository->findOneBy(['id' => $message->editedByUserId]);
+        }
 
-        $activity = $this->createWrapper->build($entity);
-        $activity['id'] = $this->urlGenerator->generate(
-            'ap_object',
-            ['id' => Uuid::v4()->toRfc4122()],
-            UrlGeneratorInterface::ABSOLUTE_URL,
-        );
-        $activity['type'] = 'Update';
-        $activity['object']['updated'] = $entity->editedAt
-            ? $entity->editedAt->format(DATE_ATOM)
-            : (new \DateTime())->format(DATE_ATOM);
+        if ($entity instanceof ActivityPubActivityInterface) {
+            $activity = $this->updateWrapper->buildForActivity($entity, $editedByUser);
 
-        $inboxes = array_filter(array_unique(array_merge(
-            $this->userRepository->findAudience($entity->user),
-            $this->activityPubManager->createInboxesFromCC($activity, $entity->user),
-            $this->magazineRepository->findAudience($entity->magazine)
-        )));
+            if ($entity instanceof Entry || $entity instanceof EntryComment || $entity instanceof Post || $entity instanceof PostComment) {
+                $inboxes = array_filter(array_unique(array_merge(
+                    $this->userRepository->findAudience($entity->user),
+                    $this->activityPubManager->createInboxesFromCC($activity, $entity->user),
+                    $this->magazineRepository->findAudience($entity->magazine)
+                )));
+            } elseif ($entity instanceof Message) {
+                if (null === $message->editedByUserId) {
+                    throw new \LogicException('a message has to be edited by someone');
+                }
+                $inboxes = array_unique(array_map(fn (User $u) => $u->apInboxUrl, $entity->thread->getOtherParticipants($message->editedByUserId)));
+            } else {
+                throw new \LogicException('unknown activity type: '.\get_class($entity));
+            }
+        } elseif ($entity instanceof ActivityPubActorInterface) {
+            $activity = $this->updateWrapper->buildForActor($entity, $editedByUser);
+            if ($entity instanceof User) {
+                $inboxes = $this->userRepository->findAudience($entity);
+            } elseif ($entity instanceof Magazine) {
+                if (null === $entity->apId) {
+                    $inboxes = $this->magazineRepository->findAudience($entity);
+                } else {
+                    $inboxes = [$entity->apInboxUrl];
+                }
+            } else {
+                throw new \LogicException('Unknown actor type: '.\get_class($entity));
+            }
+        } else {
+            throw new \LogicException('Unknown activity type: '.\get_class($entity));
+        }
+
         $this->deliverManager->deliver($inboxes, $activity);
     }
 }

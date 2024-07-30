@@ -6,27 +6,33 @@ namespace App\MessageHandler\ActivityPub\Inbox;
 
 use App\DTO\EntryCommentDto;
 use App\DTO\EntryDto;
+use App\DTO\MagazineThemeDto;
 use App\DTO\PostCommentDto;
 use App\DTO\PostDto;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\Magazine;
 use App\Entity\Message;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
 use App\Factory\EntryCommentFactory;
 use App\Factory\EntryFactory;
+use App\Factory\ImageFactory;
+use App\Factory\MagazineFactory;
 use App\Factory\PostCommentFactory;
 use App\Factory\PostFactory;
 use App\Message\ActivityPub\Inbox\UpdateMessage;
 use App\Message\ActivityPub\Outbox\GenericAnnounceMessage;
 use App\Message\Contracts\MessageInterface;
+use App\Message\DeleteImageMessage;
 use App\MessageHandler\MbinMessageHandler;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\ApObjectExtractor;
 use App\Service\ActivityPubManager;
 use App\Service\EntryCommentManager;
 use App\Service\EntryManager;
+use App\Service\MagazineManager;
 use App\Service\MessageManager;
 use App\Service\PostCommentManager;
 use App\Service\PostManager;
@@ -56,6 +62,9 @@ class UpdateHandler extends MbinMessageHandler
         private readonly MessageManager $messageManager,
         private readonly LoggerInterface $logger,
         private readonly MessageBusInterface $bus,
+        private readonly MagazineManager $magazineManager,
+        private readonly MagazineFactory $magazineFactory,
+        private readonly ImageFactory $imageFactory,
     ) {
         parent::__construct($this->entityManager);
     }
@@ -71,6 +80,7 @@ class UpdateHandler extends MbinMessageHandler
             throw new \LogicException();
         }
         $this->payload = $message->payload;
+        $this->logger->debug('received Update activity: {json}', ['json' => $this->payload]);
 
         try {
             $actor = $this->activityPubManager->findRemoteActor($message->payload['actor']);
@@ -80,10 +90,30 @@ class UpdateHandler extends MbinMessageHandler
 
         $object = $this->apActivityRepository->findByObjectId($message->payload['object']['id']);
 
-        if (!$object) {
+        if ($object) {
+            $this->editActivity($object, $message, $actor);
+
             return;
         }
 
+        $object = $this->activityPubManager->findActorOrCreate($message->payload['object']['id']);
+        if ($object instanceof User) {
+            $this->updateUser($object, $actor);
+
+            return;
+        }
+
+        if ($object instanceof Magazine) {
+            $this->updateMagazine($object, $actor);
+
+            return;
+        }
+
+        $this->logger->warning("didn't know what to do with the update activity concerning '{id}'. We don't have a local object that has this id", ['id' => $message->payload['object']['id']]);
+    }
+
+    private function editActivity(array $object, UpdateMessage $message, User $actor): void
+    {
         $object = $this->entityManager->getRepository($object['type'])->find((int) $object['id']);
         if ($object instanceof Entry) {
             $this->editEntry($object, $actor);
@@ -122,7 +152,7 @@ class UpdateHandler extends MbinMessageHandler
         $dto->title = $this->payload['object']['name'];
 
         $this->extractChanges($dto);
-        $this->entryManager->edit($entry, $dto);
+        $this->entryManager->edit($entry, $dto, $user);
     }
 
     private function editEntryComment(EntryComment $comment, User $user): void
@@ -136,7 +166,7 @@ class UpdateHandler extends MbinMessageHandler
 
         $this->extractChanges($dto);
 
-        $this->entryCommentManager->edit($comment, $dto);
+        $this->entryCommentManager->edit($comment, $dto, $user);
     }
 
     private function editPost(Post $post, User $user): void
@@ -150,7 +180,7 @@ class UpdateHandler extends MbinMessageHandler
 
         $this->extractChanges($dto);
 
-        $this->postManager->edit($post, $dto);
+        $this->postManager->edit($post, $dto, $user);
     }
 
     private function editPostComment(PostComment $comment, User $user): void
@@ -164,7 +194,7 @@ class UpdateHandler extends MbinMessageHandler
 
         $this->extractChanges($dto);
 
-        $this->postCommentManager->edit($comment, $dto);
+        $this->postCommentManager->edit($comment, $dto, $user);
     }
 
     private function extractChanges(EntryDto|EntryCommentDto|PostDto|PostCommentDto $dto): void
@@ -188,6 +218,52 @@ class UpdateHandler extends MbinMessageHandler
                 'Got an update message from a user that is not allowed to edit it. Update actor: {ua}. Original Author: {oa}',
                 ['ua' => $user->apId ?? $user->username, 'oa' => $message->sender->apId ?? $message->sender->username]
             );
+        }
+    }
+
+    private function updateUser(User $user, User $actor): void
+    {
+        if ($user->canUpdateUser($actor)) {
+            if (null !== $user->apId) {
+                $this->activityPubManager->dispatchUpdateActor($user->apProfileId, force: true);
+            }
+        } else {
+            $this->logger->warning('User {u1} wanted to update user {u2} without being allowed to do so', ['u1' => $actor->apId ?? $actor->username, 'u2' => $user->apId ?? $user->username]);
+        }
+    }
+
+    private function updateMagazine(Magazine $magazine, User $actor): void
+    {
+        if ($magazine->canUpdateMagazine($actor)) {
+            $payloadObject = $this->payload['object'];
+
+            $themeDto = new MagazineThemeDto($magazine);
+            if (isset($payloadObject['icon'])) {
+                $newImage = $this->activityPubManager->handleImages([$payloadObject['icon']]);
+                if ($magazine->icon && $newImage !== $magazine->icon) {
+                    $this->bus->dispatch(new DeleteImageMessage($magazine->icon->getId()));
+                }
+                $themeDto->icon = $this->imageFactory->createDto($newImage);
+            } elseif ($magazine->icon) {
+                $this->magazineManager->detachIcon($magazine);
+            }
+
+            $this->magazineManager->changeTheme($themeDto);
+
+            $dto = $this->magazineFactory->createDto($magazine);
+            if ($payloadObject['name']) {
+                $dto->title = $payloadObject['name'];
+            } elseif ($payloadObject['preferredUsername']) {
+                $dto->title = $payloadObject['preferredUsername'];
+            }
+            if (isset($payloadObject['summary'])) {
+                $dto->description = $this->activityPubManager->extractMarkdownSummary($payloadObject);
+            }
+            $dto->isAdult = $payloadObject['sensitive'] ?? false;
+
+            $this->magazineManager->edit($magazine, $dto, $actor);
+        } else {
+            $this->logger->warning('User {u} wanted to update magazine {m} without being allowed to do so', ['u' => $actor->apId ?? $actor->username, 'm' => $magazine->apId ?? $magazine->name]);
         }
     }
 }

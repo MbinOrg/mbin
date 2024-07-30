@@ -131,7 +131,7 @@ class PostManager implements ContentManagerInterface
         return $postHost === $userHost || $userHost === $magazineHost || $post->magazine->userIsModerator($user);
     }
 
-    public function edit(Post $post, PostDto $dto): Post
+    public function edit(Post $post, PostDto $dto, ?User $editedBy = null): Post
     {
         Assert::same($post->magazine->getId(), $dto->magazine->getId());
 
@@ -163,7 +163,7 @@ class PostManager implements ContentManagerInterface
             $this->bus->dispatch(new DeleteImageMessage($oldImage->getId()));
         }
 
-        $this->dispatcher->dispatch(new PostEditedEvent($post));
+        $this->dispatcher->dispatch(new PostEditedEvent($post, $editedBy));
 
         return $post;
     }

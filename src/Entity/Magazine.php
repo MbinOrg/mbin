@@ -476,4 +476,13 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
 
         return false;
     }
+
+    public function canUpdateMagazine(User $actor): bool
+    {
+        if (null === $this->apId) {
+            return $actor->isAdmin() || $actor->isModerator() || $this->userIsModerator($actor);
+        } else {
+            return $this->apDomain === $actor->apDomain || $this->userIsModerator($actor);
+        }
+    }
 }

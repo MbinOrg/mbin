@@ -9,6 +9,7 @@ use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\User;
 use App\Entity\UserFollowRequest;
 use App\Event\User\UserBlockEvent;
+use App\Event\User\UserEditedEvent;
 use App\Event\User\UserFollowEvent;
 use App\Exception\UserCannotBeBanned;
 use App\Factory\UserFactory;
@@ -230,6 +231,8 @@ readonly class UserManager
         if ($mailUpdated) {
             $this->bus->dispatch(new UserUpdatedMessage($user->getId()));
         }
+
+        $this->dispatcher->dispatch(new UserEditedEvent($user->getId()));
 
         return $user;
     }
@@ -459,28 +462,28 @@ readonly class UserManager
                 SELECT res.ap_inbox_url FROM entry
                     INNER JOIN magazine m on entry.magazine_id = m.id AND m.ap_id IS NULL
                     INNER JOIN magazine_subscription ms ON m.id = ms.magazine_id
-                    INNER JOIN public.user res ON ms.user_id = res.id AND res.ap_id IS NOT NULL 
+                    INNER JOIN public.user res ON ms.user_id = res.id AND res.ap_id IS NOT NULL
                         WHERE entry.user_id = :id
             UNION DISTINCT
                 -- local magazines the user posted thread comments to -> their subscribers
                 SELECT res.ap_inbox_url FROM entry_comment
                     INNER JOIN magazine m on entry_comment.magazine_id = m.id AND m.ap_id IS NULL
                     INNER JOIN magazine_subscription ms ON m.id = ms.magazine_id
-                    INNER JOIN public.user res ON ms.user_id = res.id AND res.ap_id IS NOT NULL 
+                    INNER JOIN public.user res ON ms.user_id = res.id AND res.ap_id IS NOT NULL
                         WHERE entry_comment.user_id = :id
             UNION DISTINCT
                 -- local magazines the user posted microblogs to -> their subscribers
                 SELECT res.ap_inbox_url FROM post
                     INNER JOIN magazine m on post.magazine_id = m.id AND m.ap_id IS NULL
                     INNER JOIN magazine_subscription ms ON m.id = ms.magazine_id
-                    INNER JOIN public.user res ON ms.user_id = res.id AND res.ap_id IS NOT NULL 
+                    INNER JOIN public.user res ON ms.user_id = res.id AND res.ap_id IS NOT NULL
                         WHERE post.user_id = :id
             UNION DISTINCT
                 -- local magazine the user posted microblog comments to -> their subscribers
                 SELECT res.ap_inbox_url FROM post_comment
                     INNER JOIN magazine m on post_comment.magazine_id = m.id AND m.ap_id IS NULL
                     INNER JOIN magazine_subscription ms ON m.id = ms.magazine_id
-                    INNER JOIN public.user res ON ms.user_id = res.id AND res.ap_id IS NOT NULL 
+                    INNER JOIN public.user res ON ms.user_id = res.id AND res.ap_id IS NOT NULL
                         WHERE post_comment.user_id = :id
             UNION DISTINCT
                 -- author of micro blogs the user commented on
@@ -506,25 +509,25 @@ readonly class UserManager
                     INNER JOIN entry_comment ec2 ON ec1.parent_id=ec2.id
                     INNER JOIN public.user res ON ec2.user_id=res.id AND res.ap_id IS NOT NULL
                         WHERE ec1.user_id = :id
-            
+
             UNION DISTINCT
                 -- author of thread the user voted on
                 SELECT res.ap_inbox_url FROM entry_vote
                     INNER JOIN public.user res on entry_vote.author_id = res.id AND res.ap_id IS NOT NULL
                         WHERE entry_vote.user_id = :id
-            UNION DISTINCT 
+            UNION DISTINCT
                 -- magazine of thread the user voted on
                 SELECT res.ap_inbox_url FROM entry_vote
                     INNER JOIN entry ON entry_vote.entry_id = entry.id
                     INNER JOIN magazine res ON entry.magazine_id=res.id AND res.ap_id IS NOT NULL
                         WHERE entry_vote.user_id = :id
-            
+
             UNION DISTINCT
                 -- author of thread comment the user voted on
                 SELECT res.ap_inbox_url FROM entry_comment_vote
                     INNER JOIN public.user res on entry_comment_vote.author_id = res.id AND res.ap_id IS NOT NULL
                         WHERE entry_comment_vote.user_id = :id
-            UNION DISTINCT 
+            UNION DISTINCT
                 -- magazine of thread comment the user voted on
                 SELECT res.ap_inbox_url FROM entry_comment_vote
                     INNER JOIN entry_comment ON entry_comment_vote.comment_id = entry_comment.id
@@ -535,50 +538,50 @@ readonly class UserManager
                 SELECT res.ap_inbox_url FROM post_vote
                     INNER JOIN public.user res on post_vote.author_id = res.id AND res.ap_id IS NOT NULL
                         WHERE post_vote.user_id = :id
-            UNION DISTINCT 
+            UNION DISTINCT
                 -- magazine of microblog the user voted on
                 SELECT res.ap_inbox_url FROM post_vote
                     INNER JOIN entry ON post_vote.post_id = entry.id
                     INNER JOIN magazine res ON entry.magazine_id=res.id AND res.ap_id IS NOT NULL
                         WHERE post_vote.user_id = :id
-            
+
             UNION DISTINCT
                 -- author of microblog comment the user voted on
                 SELECT res.ap_inbox_url FROM post_comment_vote
                     INNER JOIN public.user res on post_comment_vote.author_id = res.id AND res.ap_id IS NOT NULL
                         WHERE post_comment_vote.user_id = :id
-            UNION DISTINCT 
+            UNION DISTINCT
                 -- magazine of microblog comment the user voted on
                 SELECT res.ap_inbox_url FROM post_comment_vote
                     INNER JOIN post_comment ON post_comment_vote.comment_id = post_comment.id
                     INNER JOIN magazine res ON post_comment.magazine_id=res.id AND res.ap_id IS NOT NULL
                         WHERE post_comment_vote.user_id = :id
-            
-           
+
+
             UNION DISTINCT
                 -- voters of threads of the user
                 SELECT res.ap_inbox_url FROM entry_vote
                     INNER JOIN public.user res on entry_vote.user_id = res.id AND res.ap_id IS NOT NULL
                         WHERE entry_vote.author_id = :id
-            
+
             UNION DISTINCT
                 -- voters of thread comments of the user
                 SELECT res.ap_inbox_url FROM entry_comment_vote
-                    INNER JOIN public.user res on entry_comment_vote.user_id = res.id AND res.ap_id IS NOT NULL     
+                    INNER JOIN public.user res on entry_comment_vote.user_id = res.id AND res.ap_id IS NOT NULL
                         WHERE entry_comment_vote.author_id = :id
-                        
+
             UNION DISTINCT
                 -- voters of microblog of the user
                 SELECT res.ap_inbox_url FROM post_vote
                     INNER JOIN public.user res on post_vote.user_id = res.id AND res.ap_id IS NOT NULL
                         WHERE post_vote.author_id = :id
-                            
+
             UNION DISTINCT
                 -- voters of microblog comments of the user
                 SELECT res.ap_inbox_url FROM post_comment_vote
                     INNER JOIN public.user res on post_comment_vote.user_id = res.id
                         WHERE post_comment_vote.author_id = :id AND res.ap_id IS NOT NULL
-                        
+
             UNION DISTINCT
                 -- favourites of entries of the user
                 SELECT res.ap_inbox_url FROM favourite f
@@ -603,7 +606,7 @@ readonly class UserManager
                     INNER JOIN public.user res on f.user_id = res.id AND res.ap_id IS NOT NULL
                     INNER JOIN post_comment pc ON f.entry_id = pc.id
                         WHERE pc.user_id = :id
-            
+
             UNION DISTINCT
                 -- favourites of the user: entries
                 SELECT res.ap_inbox_url FROM favourite f
@@ -628,7 +631,7 @@ readonly class UserManager
                     INNER JOIN public.user u on f.user_id = u.id AND f.user_id = :id
                     INNER JOIN post_comment pc ON f.post_comment_id = pc.id
                     INNER JOIN public.user res ON pc.user_id=res.id AND res.ap_id IS NOT NULL
-            
+
             UNION DISTINCT
                 -- favourites of the user: entries -> their magazine
                 SELECT res.ap_inbox_url FROM favourite f
@@ -675,28 +678,28 @@ readonly class UserManager
     public function getAllImageFilePathsOfUser(User $user): array
     {
         $sql = '
-            SELECT i1.file_path FROM entry e INNER JOIN image i1 ON e.image_id = i1.id 
+            SELECT i1.file_path FROM entry e INNER JOIN image i1 ON e.image_id = i1.id
                 WHERE e.user_id = :userId AND i1.file_path IS NOT NULL
                     AND NOT EXISTS (SELECT id FROM entry e2 WHERE e2.user_id <> :userId AND e2.image_id = i1.id)
                     AND NOT EXISTS (SELECT id FROM post p2 WHERE p2.user_id <> :userId AND p2.image_id = i1.id)
                     AND NOT EXISTS (SELECT id FROM entry_comment ec2 WHERE ec2.user_id <> :userId AND ec2.image_id = i1.id)
                     AND NOT EXISTS (SELECT id FROM post_comment pc2 WHERE pc2.user_id <> :userId AND pc2.image_id = i1.id)
-            UNION DISTINCT 
-            SELECT i2.file_path FROM post p INNER JOIN image i2 ON p.image_id = i2.id 
+            UNION DISTINCT
+            SELECT i2.file_path FROM post p INNER JOIN image i2 ON p.image_id = i2.id
                 WHERE p.user_id = :userId AND i2.file_path IS NOT NULL
                     AND NOT EXISTS (SELECT id FROM entry e2 WHERE e2.user_id <> :userId AND e2.image_id = i2.id)
                     AND NOT EXISTS (SELECT id FROM post p2 WHERE p2.user_id <> :userId AND p2.image_id = i2.id)
                     AND NOT EXISTS (SELECT id FROM entry_comment ec2 WHERE ec2.user_id <> :userId AND ec2.image_id = i2.id)
                     AND NOT EXISTS (SELECT id FROM post_comment pc2 WHERE pc2.user_id <> :userId AND pc2.image_id = i2.id)
-            UNION DISTINCT 
-            SELECT i3.file_path FROM entry_comment ec INNER JOIN image i3 ON ec.image_id = i3.id 
+            UNION DISTINCT
+            SELECT i3.file_path FROM entry_comment ec INNER JOIN image i3 ON ec.image_id = i3.id
                 WHERE ec.user_id = :userId AND i3.file_path IS NOT NULL
                     AND NOT EXISTS (SELECT id FROM entry e2 WHERE e2.user_id <> :userId AND e2.image_id = i3.id)
                     AND NOT EXISTS (SELECT id FROM post p2 WHERE p2.user_id <> :userId AND p2.image_id = i3.id)
                     AND NOT EXISTS (SELECT id FROM entry_comment ec2 WHERE ec2.user_id <> :userId AND ec2.image_id = i3.id)
                     AND NOT EXISTS (SELECT id FROM post_comment pc2 WHERE pc2.user_id <> :userId AND pc2.image_id = i3.id)
-            UNION DISTINCT 
-            SELECT i4.file_path FROM post_comment pc INNER JOIN image i4 ON pc.image_id = i4.id 
+            UNION DISTINCT
+            SELECT i4.file_path FROM post_comment pc INNER JOIN image i4 ON pc.image_id = i4.id
                 WHERE pc.user_id = :userId AND i4.file_path IS NOT NULL
                     AND NOT EXISTS (SELECT id FROM entry e2 WHERE e2.user_id <> :userId AND e2.image_id = i4.id)
                     AND NOT EXISTS (SELECT id FROM post p2 WHERE p2.user_id <> :userId AND p2.image_id = i4.id)

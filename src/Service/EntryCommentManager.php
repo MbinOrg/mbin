@@ -112,7 +112,7 @@ class EntryCommentManager implements ContentManagerInterface
         return $entryCommentHost === $userHost || $userHost === $magazineHost || $comment->magazine->userIsModerator($user);
     }
 
-    public function edit(EntryComment $comment, EntryCommentDto $dto): EntryComment
+    public function edit(EntryComment $comment, EntryCommentDto $dto, ?User $editedByUser = null): EntryComment
     {
         Assert::same($comment->entry->getId(), $dto->entry->getId());
 
@@ -145,7 +145,7 @@ class EntryCommentManager implements ContentManagerInterface
             $this->bus->dispatch(new DeleteImageMessage($oldImage->getId()));
         }
 
-        $this->dispatcher->dispatch(new EntryCommentEditedEvent($comment));
+        $this->dispatcher->dispatch(new EntryCommentEditedEvent($comment, $editedByUser));
 
         return $comment;
     }

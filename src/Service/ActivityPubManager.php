@@ -215,14 +215,14 @@ class ActivityPubManager
         return null;
     }
 
-    public function dispatchUpdateActor(string $actorUrl)
+    public function dispatchUpdateActor(string $actorUrl, bool $force = false)
     {
         $limiter = $this->apUpdateActorLimiter
             ->create($actorUrl)
             ->consume(1);
 
         if ($limiter->isAccepted()) {
-            $this->bus->dispatch(new UpdateActorMessage($actorUrl));
+            $this->bus->dispatch(new UpdateActorMessage($actorUrl, $force));
         } else {
             $this->logger->debug(
                 'not dispatching updating actor for {actor}: one has been dispatched recently',
@@ -383,7 +383,7 @@ class ActivityPubManager
                         $user->apFollowersCount = $followersObj['totalItems'];
                         $user->updateFollowCounts();
                     }
-                } catch (InvalidApPostException $ignored) {
+                } catch (InvalidApPostException|InvalidArgumentException $ignored) {
                 }
             }
 
@@ -521,16 +521,22 @@ class ActivityPubManager
                         $magazine->apFollowersCount = $followersObj['totalItems'];
                         $magazine->updateSubscriptionsCount();
                     }
-                } catch (InvalidApPostException $ignored) {
+                } catch (InvalidApPostException|InvalidArgumentException $ignored) {
                 }
             }
 
             if (null !== $magazine->apAttributedToUrl) {
-                $this->handleModeratorCollection($actorUrl, $magazine);
+                try {
+                    $this->handleModeratorCollection($actorUrl, $magazine);
+                } catch (InvalidArgumentException $ignored) {
+                }
             }
 
             if (null !== $magazine->apFeaturedUrl) {
-                $this->handleMagazineFeaturedCollection($actorUrl, $magazine);
+                try {
+                    $this->handleMagazineFeaturedCollection($actorUrl, $magazine);
+                } catch (InvalidArgumentException $ignored) {
+                }
             }
 
             $this->entityManager->flush();

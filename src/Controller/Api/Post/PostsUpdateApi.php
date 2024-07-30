@@ -85,7 +85,8 @@ class PostsUpdateApi extends PostsBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 
-        if ($post->user->getId() !== $this->getUserOrThrow()->getId()) {
+        $user = $this->getUserOrThrow();
+        if ($post->user->getId() !== $user->getId()) {
             throw new AccessDeniedHttpException();
         }
 
@@ -96,7 +97,7 @@ class PostsUpdateApi extends PostsBaseApi
             throw new BadRequestHttpException((string) $errors);
         }
 
-        $post = $manager->edit($post, $dto);
+        $post = $manager->edit($post, $dto, $user);
 
         return new JsonResponse(
             $this->serializePost($factory->createDto($post), $this->tagLinkRepository->getTagsOfPost($post)),

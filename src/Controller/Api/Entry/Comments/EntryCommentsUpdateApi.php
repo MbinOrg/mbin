@@ -105,7 +105,7 @@ class EntryCommentsUpdateApi extends EntriesBaseApi
             throw new BadRequestHttpException((string) $errors);
         }
 
-        $comment = $manager->edit($comment, $dto);
+        $comment = $manager->edit($comment, $dto, $this->getUserOrThrow());
 
         return new JsonResponse(
             $this->serializeCommentTree($comment),
