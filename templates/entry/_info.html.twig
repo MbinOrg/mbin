@@ -27,6 +27,9 @@
     {{ component('user_actions', {user: entry.user}) }}
     <ul class="info">
         <li>{{ 'added'|trans }}: {{ component('date', {date: entry.createdAt}) }}</li>
+        {% if entry.editedAt %}
+            <li>{{ 'edited'|trans }}: {{ component('date', {date: entry.editedAt}) }}</li>
+        {% endif %}
     </ul>
     {% if entry.hashtags is not empty %}
         <h3 class="mt-3">{{ 'tags'|trans }}</h3>
