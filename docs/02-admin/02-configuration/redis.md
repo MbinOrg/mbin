@@ -6,7 +6,7 @@ This documentation is valid for both Redis as well as KeyDB. KeyDB is a fork of 
 
 Edit the Redis instance for Mbin: `sudo nano /etc/redis/redis.conf`:
 
-```conf
+```ruby
 # NETWORK
 timeout 300
 tcp-keepalive 300
@@ -37,7 +37,7 @@ _Optionally:_ If you are using this Redis instance only for Mbin as a cache, you
 
 First comment out existing "save lines" in the Redis configuration file:
 
-```conf
+```ruby
 #save 900 1
 #save 300 10
 #save 60 10000
@@ -45,6 +45,6 @@ First comment out existing "save lines" in the Redis configuration file:
 
 Then add the following line to disable snapshots fully:
 
-```conf
+```ruby
 save ""
 ```
