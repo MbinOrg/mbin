@@ -7,12 +7,14 @@ namespace App\Factory;
 use App\DTO\UserDto;
 use App\DTO\UserSmallResponseDto;
 use App\Entity\User;
+use App\Repository\InstanceRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class UserFactory
 {
     public function __construct(
         private readonly ImageFactory $imageFactory,
+        private readonly InstanceRepository $instanceRepository,
         private readonly Security $security,
     ) {
     }
@@ -40,6 +42,12 @@ class UserFactory
         $dto->isFollowedByUser = $this->security->isGranted('ROLE_OAUTH2_USER:FOLLOW') ? $currentUser->isFollowing($user) : null;
         $dto->isFollowerOfUser = $this->security->isGranted('ROLE_OAUTH2_USER:FOLLOW') && $user->showProfileFollowings ? $user->isFollowing($currentUser) : null;
         $dto->isBlockedByUser = $this->security->isGranted('ROLE_OAUTH2_USER:BLOCK') ? $currentUser->isBlocked($user) : null;
+
+        $instance = $this->instanceRepository->getInstanceOfUser($user);
+        if ($instance) {
+            $dto->serverSoftware = $instance->software;
+            $dto->serverSoftwareVersion = $instance->version;
+        }
 
         return $dto;
     }
