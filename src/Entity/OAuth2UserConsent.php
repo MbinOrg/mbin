@@ -12,7 +12,6 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
-use Doctrine\ORM\Mapping\OneToOne;
 
 #[ORM\Entity(repositoryClass: OAuth2UserConsentRepository::class)]
 class OAuth2UserConsent
@@ -191,9 +190,6 @@ class OAuth2UserConsent
 
     #[Column]
     private ?string $ipAddress = null;
-
-    #[OneToOne(mappedBy: 'userConsent', targetEntity: UserPushSubscription::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    public ?UserPushSubscription $pushSubscription = null;
 
     public function getId(): ?int
     {
