@@ -234,10 +234,12 @@ OAUTH_ENCRYPTION_KEY=<Hex string generated in previous step>
 Edit some PHP settings within your `php.ini` file:
 
 ```bash
-sudo nano /etc/php/8.2/fpm/php.ini
+sudo nano /etc/php/8.3/fpm/php.ini
 ```
 
 ```ini
+; Maximum execution time of each script, in seconds
+max_execution_time = 60
 ; Both max file size and post body size are personal preferences
 upload_max_filesize = 8M
 post_max_size = 8M
@@ -268,7 +270,7 @@ More info: [Symfony Performance docs](https://symfony.com/doc/current/performanc
 Edit your PHP `www.conf` file as well, to increase the amount of PHP child processes (optional):
 
 ```bash
-sudo nano /etc/php/8.2/fpm/pool.d/www.conf
+sudo nano /etc/php/8.3/fpm/pool.d/www.conf
 ```
 
 With the content (these are personal preferences, adjust to your needs):
