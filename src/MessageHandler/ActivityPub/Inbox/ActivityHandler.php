@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\MessageHandler\ActivityPub\Inbox;
 
+use App\Entity\Instance;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Exception\InboxForwardingException;
@@ -21,9 +22,11 @@ use App\Message\ActivityPub\Inbox\RemoveMessage;
 use App\Message\ActivityPub\Inbox\UpdateMessage;
 use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
+use App\Repository\InstanceRepository;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\SignatureValidator;
 use App\Service\ActivityPubManager;
+use App\Service\RemoteInstanceManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -40,6 +43,8 @@ class ActivityHandler extends MbinMessageHandler
         private readonly MessageBusInterface $bus,
         private readonly ActivityPubManager $manager,
         private readonly ApHttpClient $apHttpClient,
+        private readonly InstanceRepository $instanceRepository,
+        private readonly RemoteInstanceManager $remoteInstanceManager,
         private readonly LoggerInterface $logger
     ) {
         parent::__construct($this->entityManager);
@@ -71,6 +76,25 @@ class ActivityHandler extends MbinMessageHandler
 
                 return;
             }
+        }
+
+        $idHost = parse_url($payload['id'], PHP_URL_HOST);
+        if ($idHost) {
+            $instance = $this->instanceRepository->findOneBy(['domain' => $idHost]);
+            if (!$instance) {
+                $instance = new Instance($idHost);
+                $instance->setLastSuccessfulReceive();
+                $this->entityManager->persist($instance);
+                $this->entityManager->flush();
+            } else {
+                $lastDate = $instance->getLastSuccessfulReceive();
+                if ($lastDate < new \DateTimeImmutable('now - 5 minutes')) {
+                    $instance->setLastSuccessfulReceive();
+                    $this->entityManager->persist($instance);
+                    $this->entityManager->flush();
+                }
+            }
+            $this->remoteInstanceManager->updateInstance($instance);
         }
 
         if (isset($payload['payload'])) {

@@ -297,6 +297,50 @@ class ApHttpClient
         $this->cache->save($item);
     }
 
+    public function fetchInstanceNodeInfoEndpoints(string $domain, bool $decoded = true): array|string|null
+    {
+        $url = "https://$domain/.well-known/nodeinfo";
+        $resp = $this->cache->get('nodeinfo_endpoints_'.hash('sha256', $url), function (ItemInterface $item) use ($url) {
+            $item->expiresAt(new \DateTime('+1 day'));
+
+            return $this->generalFetch($url);
+        });
+
+        if (!$resp) {
+            return null;
+        }
+
+        return $decoded ? json_decode($resp, true) : $resp;
+    }
+
+    public function fetchInstanceNodeInfo(string $url, bool $decoded = true): array|string|null
+    {
+        $resp = $this->cache->get('nodeinfo_'.hash('sha256', $url), function (ItemInterface $item) use ($url) {
+            $item->expiresAt(new \DateTime('+1 day'));
+
+            return $this->generalFetch($url);
+        });
+
+        if (!$resp) {
+            return null;
+        }
+
+        return $decoded ? json_decode($resp, true) : $resp;
+    }
+
+    private function generalFetch(string $url): string
+    {
+        $client = new CurlHttpClient();
+        $this->logger->debug("ApHttpClient:fetchInstanceNodeInfo:url: $url");
+        $r = $client->request('GET', $url, [
+            'max_duration' => self::TIMEOUT,
+            'timeout' => self::TIMEOUT,
+            'headers' => $this->getInstanceHeaders($url),
+        ]);
+
+        return $r->getContent();
+    }
+
     private static function headersToCurlArray($headers): array
     {
         return array_map(function ($k, $v) {

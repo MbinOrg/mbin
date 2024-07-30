@@ -12,6 +12,7 @@ use App\Entity\Contracts\ActivityPubActorInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Image;
+use App\Entity\Instance;
 use App\Entity\Magazine;
 use App\Entity\Moderator;
 use App\Entity\Post;
@@ -28,6 +29,7 @@ use App\Message\DeleteUserMessage;
 use App\Repository\ApActivityRepository;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
+use App\Repository\InstanceRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\ApHttpClient;
@@ -67,6 +69,8 @@ class ActivityPubManager
         private readonly RateLimiterFactory $apUpdateActorLimiter,
         private readonly EntryRepository $entryRepository,
         private readonly EntryManager $entryManager,
+        private readonly RemoteInstanceManager $remoteInstanceManager,
+        private readonly InstanceRepository $instanceRepository,
     ) {
     }
 
@@ -387,6 +391,14 @@ class ActivityPubManager
                 }
             }
 
+            if (null !== $user->apId) {
+                $instance = $this->instanceRepository->findOneBy(['domain' => $user->apDomain]);
+                if (null === $instance) {
+                    $instance = new Instance($user->apDomain);
+                }
+                $this->remoteInstanceManager->updateInstance($instance);
+            }
+
             // Write to DB
             $this->entityManager->flush();
 
@@ -534,6 +546,13 @@ class ActivityPubManager
                 $this->handleMagazineFeaturedCollection($actorUrl, $magazine);
             }
 
+            if (null !== $magazine->apId) {
+                $instance = $this->instanceRepository->findOneBy(['domain' => $magazine->apDomain]);
+                if (null === $instance) {
+                    $instance = new Instance($magazine->apDomain);
+                }
+                $this->remoteInstanceManager->updateInstance($instance);
+            }
             $this->entityManager->flush();
 
             return $magazine;

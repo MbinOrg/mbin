@@ -17,6 +17,7 @@ class UserExtension extends AbstractExtension
             new TwigFunction('is_user_followed', [UserExtensionRuntime::class, 'isFollowed']),
             new TwigFunction('is_user_blocked', [UserExtensionRuntime::class, 'isBlocked']),
             new TwigFunction('get_reputation_total', [UserExtensionRuntime::class, 'getReputationTotal']),
+            new TwigFunction('get_instance_of_user', [UserExtensionRuntime::class, 'getInstanceOfUser']),
         ];
     }
 
