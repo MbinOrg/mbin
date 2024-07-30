@@ -12,7 +12,6 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
-use Doctrine\ORM\Mapping\OneToOne;
 
 #[ORM\Entity(repositoryClass: OAuth2UserConsentRepository::class)]
 class OAuth2UserConsent
