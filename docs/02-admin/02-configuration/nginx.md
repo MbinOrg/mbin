@@ -195,6 +195,13 @@ server {
 }
 ```
 
+> [!TIP]
+> If have multiple PHP versions installed. You can switch the PHP version that Nginx is using (`/var/run/php/php-fpm.sock`) via the the following command:
+> `sudo update-alternatives --config php-fpm.sock`
+>
+> Same is true for the PHP CLI command (`/usr/bin/php`), via the following command:
+> `sudo update-alternatives --config php`
+
 > [!WARNING]
 > If also want to also configure your `www.domain.tld` subdomain; our advise is to use a HTTP 301 redirect from the `www` subdomain towards the root domain. Do _NOT_ try to setup a double instance (you want to _avoid_ that ActivityPub will see `www` as a separate instance). See Nginx example below
 
