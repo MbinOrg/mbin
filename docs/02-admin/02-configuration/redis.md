@@ -1,6 +1,6 @@
 # Redis / KeyDB
 
-This documentation is valid for both Redis as well as KeyDB. KeyDB is a fork of Redis, but should work mostly in the samne manner.
+This documentation is valid for both Redis as well as KeyDB. KeyDB is a fork of Redis, but should work mostly in the same manner.
 
 ## Configure Redis
 
