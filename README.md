@@ -83,17 +83,17 @@ For developers:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/asdfzdfj">
-                    <img src="https://avatars.githubusercontent.com/u/20770492?v=4" width="100;" alt="asdfzdfj"/>
-                    <br />
-                    <sub><b>asdfzdfj</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/BentiGorlich">
                     <img src="https://avatars.githubusercontent.com/u/25664458?v=4" width="100;" alt="BentiGorlich"/>
                     <br />
                     <sub><b>BentiGorlich</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/asdfzdfj">
+                    <img src="https://avatars.githubusercontent.com/u/20770492?v=4" width="100;" alt="asdfzdfj"/>
+                    <br />
+                    <sub><b>asdfzdfj</b></sub>
                 </a>
             </td>
             <td align="center">
