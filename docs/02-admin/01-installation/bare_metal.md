@@ -311,6 +311,9 @@ composer clear-cache
 
 You can choose between either Redis or KeyDB.
 
+> [!TIP]
+> More Redis/KeyDB fine-tuning settings can be found in the [Redis configuration guide](../02-configuration/redis.md).
+
 #### Redis
 
 Edit `redis.conf` file:
