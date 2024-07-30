@@ -199,7 +199,7 @@ server {
 > If have multiple PHP versions installed. You can switch the PHP version that Nginx is using (`/var/run/php/php-fpm.sock`) via the the following command:
 > `sudo update-alternatives --config php-fpm.sock`
 >
-> Same is true for the php CLI command (`/usr/bin/php`), via the following command:
+> Same is true for the PHP CLI command (`/usr/bin/php`), via the following command:
 > `sudo update-alternatives --config php`
 
 > [!WARNING]
