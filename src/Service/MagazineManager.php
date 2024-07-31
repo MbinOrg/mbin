@@ -142,6 +142,7 @@ class MagazineManager
         $magazine->description = $dto->description;
         $magazine->rules = $dto->rules;
         $magazine->isAdult = $dto->isAdult;
+        $magazine->postingRestrictedToMods = $dto->isPostingRestrictedToMods;
 
         $this->entityManager->flush();
 

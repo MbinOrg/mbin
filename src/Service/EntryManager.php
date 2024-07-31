@@ -18,6 +18,7 @@ use App\Event\Entry\EntryDeletedEvent;
 use App\Event\Entry\EntryEditedEvent;
 use App\Event\Entry\EntryPinEvent;
 use App\Event\Entry\EntryRestoredEvent;
+use App\Exception\PostingRestrictedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Factory\EntryFactory;
@@ -68,6 +69,7 @@ class EntryManager implements ContentManagerInterface
      * @throws TagBannedException
      * @throws UserBannedException
      * @throws TooManyRequestsHttpException
+     * @throws PostingRestrictedException
      * @throws \Exception                   if title, body and image are empty
      */
     public function create(EntryDto $dto, User $user, bool $rateLimit = true, bool $stickyIt = false): Entry
@@ -85,6 +87,10 @@ class EntryManager implements ContentManagerInterface
 
         if ($this->tagManager->isAnyTagBanned($this->tagManager->extract($dto->body))) {
             throw new TagBannedException();
+        }
+
+        if ($dto->magazine->isActorPostingRestricted($user)) {
+            throw new PostingRestrictedException($dto->magazine, $user);
         }
 
         $this->logger->debug('creating entry from dto');

@@ -1,0 +1,5 @@
+{% if magazine.postingRestrictedToMods and (app.user is not defined or app.user is same as null or magazine.isActorPostingRestricted(app.user)) %}
+    <div class="alert alert__info">
+        {{ 'magazine_posting_restricted_to_mods_warning'|trans }}
+    </div>
+{% endif %}

@@ -7,6 +7,7 @@ namespace App\Controller\Entry;
 use App\Controller\AbstractController;
 use App\DTO\EntryDto;
 use App\Entity\Magazine;
+use App\Exception\PostingRestrictedException;
 use App\Exception\TagBannedException;
 use App\PageView\EntryPageView;
 use App\Repository\Criteria;
@@ -90,6 +91,19 @@ class EntryCreateController extends AbstractController
         } catch (TagBannedException $e) {
             // Show an error to the user
             $this->addFlash('error', 'flash_thread_tag_banned_error');
+            $this->logger->error($e);
+
+            return $this->render(
+                $this->getTemplateName((new EntryPageView(1))->resolveType($type)),
+                [
+                    'magazine' => $magazine,
+                    'user' => $user,
+                    'form' => $form->createView(),
+                ],
+                new Response(null, 422)
+            );
+        } catch (PostingRestrictedException $e) {
+            $this->addFlash('error', 'flash_posting_restricted_error');
             $this->logger->error($e);
 
             return $this->render(
