@@ -6,6 +6,8 @@ namespace App\MessageHandler\ActivityPub\Inbox;
 
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\User;
+use App\Exception\PostingRestrictedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Exception\UserDeletedException;
@@ -76,6 +78,13 @@ class CreateHandler extends MbinMessageHandler
             $this->logger->info('Did not create the post, because the user is deleted');
         } catch (TagBannedException) {
             $this->logger->info('Did not create the post, because one of the used tags is banned');
+        } catch (PostingRestrictedException $e) {
+            if ($e->actor instanceof User) {
+                $username = $e->actor->getUsername();
+            } else {
+                $username = $e->actor->name;
+            }
+            $this->logger->info('Did not create the post, because the magazine {m} restricts posting to mods and {u} is not a mod', ['m' => $e->magazine, 'u' => $username]);
         }
     }
 
@@ -110,6 +119,7 @@ class CreateHandler extends MbinMessageHandler
      * @throws UserBannedException
      * @throws UserDeletedException
      * @throws TagBannedException
+     * @throws PostingRestrictedException
      */
     private function handlePage(): void
     {

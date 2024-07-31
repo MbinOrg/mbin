@@ -869,6 +869,8 @@ show_related_entries: Show random threads
 show_related_posts: Show random posts
 show_active_users: Show active users
 notification_title_new_report: A new report was created
+magazine_posting_restricted_to_mods_warning: Only mods can create threads in this magazine
+flash_posting_restricted_error: Creating threads is restricted to mods in this magazine and you are not one
 server_software: Server software
 version: Version
 last_successful_deliver: Last successful deliver

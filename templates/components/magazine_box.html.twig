@@ -18,8 +18,17 @@
             </figure>
         {% endif %}
         <header>
-            <h4><a href="{{ path('front_magazine', {name: magazine.name}) }}"
-                   class="{{ html_classes({'stretched-link': false}) }}">{{ computed.magazine.title }}</a></h4>
+            <h4>
+                <a href="{{ path('front_magazine', {name: magazine.name}) }}" class="{{ html_classes({'stretched-link': false}) }}">
+                    {{ computed.magazine.title }}
+                </a>
+                {% if magazine.postingRestrictedToMods %}
+                    <i class="fa-solid fa-lock"
+                       aria-description="{{ 'magazine_posting_restricted_to_mods_warning'|trans }}"
+                       title="{{ 'magazine_posting_restricted_to_mods_warning'|trans }}"
+                       aria-describedby="{{ 'magazine_posting_restricted_to_mods_warning'|trans }}"></i>
+                {% endif %}
+            </h4>
             <p class="magazine__name">
                 <span>{{ ('@'~magazine.name)|username(true) }} {% if magazine.isAdult %}<small class="badge danger">18+</small>{% endif %}</span>
                 {% if magazine.apId %}

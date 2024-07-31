@@ -13,6 +13,7 @@ use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\User;
 use App\Exception\EntityNotFoundException;
+use App\Exception\PostingRestrictedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Exception\UserDeletedException;
@@ -42,8 +43,9 @@ class Page
      * @throws TagBannedException
      * @throws UserBannedException
      * @throws UserDeletedException
-     * @throws EntityNotFoundException if the user could not be found or a sub exception occurred
-     * @throws \Exception              if there was an error
+     * @throws EntityNotFoundException    if the user could not be found or a sub exception occurred
+     * @throws PostingRestrictedException if the target magazine has Magazine::postingRestrictedToMods = true and the actor is a magazine or a user that is not a mod
+     * @throws \Exception                 if there was an error
      */
     public function create(array $object, bool $stickyIt = false): Entry
     {
@@ -73,6 +75,10 @@ class Page
             }
 
             $magazine = $this->activityPubManager->findOrCreateMagazineByToCCAndAudience($object);
+            if ($magazine->isActorPostingRestricted($actor)) {
+                throw new PostingRestrictedException($magazine, $actor);
+            }
+
             $dto = new EntryDto();
             $dto->magazine = $magazine;
             $dto->title = $object['name'];

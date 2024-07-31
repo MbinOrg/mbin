@@ -24,6 +24,7 @@ class MagazineType extends AbstractType
             ->add('description', TextareaType::class, ['required' => false])
             ->add('rules', TextareaType::class, ['required' => false])
             ->add('isAdult', CheckboxType::class, ['required' => false])
+            ->add('isPostingRestrictedToMods', CheckboxType::class, ['required' => false])
             ->add('submit', SubmitType::class);
 
         $builder->addEventSubscriber(new DisableFieldsOnMagazineEdit());

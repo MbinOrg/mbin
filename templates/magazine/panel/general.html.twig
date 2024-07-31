@@ -40,6 +40,10 @@
                 {{ form_label(form.isAdult) }}
                 {{ form_widget(form.isAdult) }}
             </div>
+            <div class="checkbox">
+                {{ form_label(form.isPostingRestrictedToMods) }}
+                {{ form_widget(form.isPostingRestrictedToMods) }}
+            </div>
             <div class="actions">
                 {{ form_row(form.submit, { 'label': 'done'|trans, 'attr': {'class': 'btn btn__primary'} }) }}
             </div>

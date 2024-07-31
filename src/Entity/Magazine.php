@@ -53,6 +53,8 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public ?string $description = null;
     #[Column(type: 'text', length: self::MAX_RULES_LENGTH, nullable: true)]
     public ?string $rules = null;
+    #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
+    public bool $postingRestrictedToMods = false;
     #[Column(type: 'integer', nullable: false)]
     public int $subscriptionsCount = 0;
     #[Column(type: 'integer', nullable: false)]
@@ -475,5 +477,28 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         }
 
         return false;
+    }
+
+    /**
+     * @param Magazine|User $actor the actor trying to create an Entry
+     *
+     * @return bool false if the user is not restricted, true if the user is restricted
+     */
+    public function isActorPostingRestricted(Magazine|User $actor): bool
+    {
+        if (!$this->postingRestrictedToMods) {
+            return false;
+        }
+        if ($actor instanceof User) {
+            if (null !== $this->apId && $this->apDomain === $actor->apDomain) {
+                return false;
+            }
+
+            if (null === $this->apId && ($actor->isAdmin() || $actor->isModerator() || $this->userIsModerator($actor))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
