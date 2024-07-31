@@ -912,3 +912,16 @@ show_related_magazines: Zeige zufällige Magazine
 show_related_entries: Zeige zufällige Themen
 show_related_posts: Zeige zufällige Beiträge
 notification_title_new_report: Eine neue Meldung wurde erstellt
+federation_page_dead_title: Tote Instanzen
+federation_page_dead_description: Instanzen zu denen wir mindestens 10 Aktivitäten
+  in folge nicht zustellen konnten und bei denen die letzte erfolgreiche Zustellung
+  mehr als eine Woche zurückliegt
+server_software: Server Software
+version: Version
+magazine_posting_restricted_to_mods_warning: Nur Mods können Themen in diesem Magazin
+  erstellen
+flash_posting_restricted_error: Die Erstellung von Themen ist in diesem Magazin auf
+  mods eingeschränkt und du bist keiner
+last_successful_deliver: Letzte erfolgreiche Zustellung
+last_successful_receive: Letzter erfolgreicher Empfang
+last_failed_contact: Letzter misslungener Kontakt
