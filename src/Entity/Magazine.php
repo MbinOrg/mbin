@@ -116,6 +116,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         ?string $description,
         ?string $rules,
         bool $isAdult,
+        bool $postingRestrictedToMods,
         ?Image $icon
     ) {
         $this->name = $name;
@@ -123,6 +124,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         $this->description = $description;
         $this->rules = $rules;
         $this->isAdult = $isAdult;
+        $this->postingRestrictedToMods = $postingRestrictedToMods;
         $this->icon = $icon;
         $this->moderators = new ArrayCollection();
         $this->entries = new ArrayCollection();
