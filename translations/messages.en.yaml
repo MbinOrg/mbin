@@ -876,3 +876,4 @@ version: Version
 last_successful_deliver: Last successful deliver
 last_successful_receive: Last successful receive
 last_failed_contact: Last failed contact
+magazine_posting_restricted_to_mods: Restrict thread creation to moderators
