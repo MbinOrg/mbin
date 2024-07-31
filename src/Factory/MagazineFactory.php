@@ -44,6 +44,7 @@ class MagazineFactory
             $dto->description,
             $dto->rules,
             $dto->isAdult,
+            $dto->isPostingRestrictedToMods,
             $dto->icon
         );
     }
