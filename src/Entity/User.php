@@ -871,4 +871,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
             );
         }
     }
+
+    public function canUpdateUser(User $actor): bool
+    {
+        if (null === $this->apId) {
+            return null === $actor->apId && $actor->isAdmin();
+        } else {
+            return $this->apDomain === $actor->apDomain;
+        }
+    }
 }

@@ -120,7 +120,7 @@ class PostCommentManager implements ContentManagerInterface
     /**
      * @throws \Exception
      */
-    public function edit(PostComment $comment, PostCommentDto $dto): PostComment
+    public function edit(PostComment $comment, PostCommentDto $dto, ?User $editedBy = null): PostComment
     {
         Assert::same($comment->post->getId(), $dto->post->getId());
 
@@ -153,7 +153,7 @@ class PostCommentManager implements ContentManagerInterface
             $this->bus->dispatch(new DeleteImageMessage($oldImage->getId()));
         }
 
-        $this->dispatcher->dispatch(new PostCommentEditedEvent($comment));
+        $this->dispatcher->dispatch(new PostCommentEditedEvent($comment, $editedBy));
 
         return $comment;
     }

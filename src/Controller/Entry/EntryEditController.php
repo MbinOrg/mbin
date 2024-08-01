@@ -45,7 +45,7 @@ class EntryEditController extends AbstractController
                     throw new AccessDeniedHttpException();
                 }
 
-                $entry = $this->manager->edit($entry, $dto);
+                $entry = $this->manager->edit($entry, $dto, $this->getUserOrThrow());
 
                 $this->addFlash('success', 'flash_thread_edit_success');
 

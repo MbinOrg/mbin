@@ -46,7 +46,7 @@ class PostEditController extends AbstractController
                     throw new AccessDeniedHttpException();
                 }
 
-                $post = $this->manager->edit($post, $dto);
+                $post = $this->manager->edit($post, $dto, $this->getUserOrThrow());
 
                 if ($request->isXmlHttpRequest()) {
                     return new JsonResponse(

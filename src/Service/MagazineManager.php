@@ -19,6 +19,7 @@ use App\Event\Magazine\MagazineBlockedEvent;
 use App\Event\Magazine\MagazineModeratorAddedEvent;
 use App\Event\Magazine\MagazineModeratorRemovedEvent;
 use App\Event\Magazine\MagazineSubscribedEvent;
+use App\Event\Magazine\MagazineUpdatedEvent;
 use App\Exception\UserCannotBeBanned;
 use App\Factory\MagazineFactory;
 use App\Message\DeleteImageMessage;
@@ -133,7 +134,7 @@ class MagazineManager
         $this->dispatcher->dispatch(new MagazineSubscribedEvent($magazine, $user));
     }
 
-    public function edit(Magazine $magazine, MagazineDto $dto): Magazine
+    public function edit(Magazine $magazine, MagazineDto $dto, User $editedBy): Magazine
     {
         Assert::same($magazine->name, $dto->name);
 
@@ -144,6 +145,8 @@ class MagazineManager
         $magazine->postingRestrictedToMods = $dto->isPostingRestrictedToMods;
 
         $this->entityManager->flush();
+
+        $this->dispatcher->dispatch(new MagazineUpdatedEvent($magazine, $editedBy));
 
         return $magazine;
     }

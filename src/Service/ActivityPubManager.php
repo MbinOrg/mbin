@@ -387,7 +387,7 @@ class ActivityPubManager
                         $user->apFollowersCount = $followersObj['totalItems'];
                         $user->updateFollowCounts();
                     }
-                } catch (InvalidApPostException $ignored) {
+                } catch (InvalidApPostException|InvalidArgumentException $ignored) {
                 }
             }
 
@@ -534,16 +534,22 @@ class ActivityPubManager
                         $magazine->apFollowersCount = $followersObj['totalItems'];
                         $magazine->updateSubscriptionsCount();
                     }
-                } catch (InvalidApPostException $ignored) {
+                } catch (InvalidApPostException|InvalidArgumentException $ignored) {
                 }
             }
 
             if (null !== $magazine->apAttributedToUrl) {
-                $this->handleModeratorCollection($actorUrl, $magazine);
+                try {
+                    $this->handleModeratorCollection($actorUrl, $magazine);
+                } catch (InvalidArgumentException $ignored) {
+                }
             }
 
             if (null !== $magazine->apFeaturedUrl) {
-                $this->handleMagazineFeaturedCollection($actorUrl, $magazine);
+                try {
+                    $this->handleMagazineFeaturedCollection($actorUrl, $magazine);
+                } catch (InvalidArgumentException $ignored) {
+                }
             }
 
             if (null !== $magazine->apId) {
