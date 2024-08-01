@@ -182,9 +182,7 @@ edit: Edit
 are_you_sure: Are you sure?
 moderate: Moderate
 reason: Reason
-edit_link: Edit link
-edit_article: Edit thread
-edit_photo: Edit photo
+edit_entry: Edit thread
 delete: Delete
 edit_post: Edit post
 edit_comment: Save changes

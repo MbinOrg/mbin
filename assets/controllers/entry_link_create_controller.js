@@ -10,6 +10,8 @@ export default class extends ApplicationController {
         loading: Boolean,
     };
 
+    timeoutId = null;
+
     connect() {
         useThrottle(this, {
             wait: 1000,
@@ -23,20 +25,28 @@ export default class extends ApplicationController {
         }
     }
 
-    async fetchLink(event) {
+    fetchLink(event) {
         if (!event.target.value) {
             return;
         }
 
-        try {
-            this.loadingValue = true;
-
-            await this.fetchTitleAndDescription(event);
-
-            this.loadingValue = false;
-        } catch (e) {
-            this.loadingValue = false;
+        if (this.timeoutId) {
+            window.clearTimeout(this.timeoutId);
+            this.timeoutId = null;
         }
+
+        this.timeoutId = window.setTimeout(() => {
+            this.loadingValue = true;
+            this.fetchTitleAndDescription(event)
+                .then(() => {
+                    this.loadingValue = false;
+                    this.timeoutId = null;
+                })
+                .catch(() => {
+                    this.loadingValue = false;
+                    this.timeoutId = null;
+                })
+        }, 1000)
     }
 
     loadingValueChanged(val) {

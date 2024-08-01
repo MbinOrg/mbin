@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Controller\Entry;
 
 use App\Controller\AbstractController;
+use App\DTO\EntryDto;
 use App\Entity\Entry;
 use App\Entity\Magazine;
-use App\PageView\EntryPageView;
+use App\Form\EntryEditType;
 use App\Service\EntryManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,10 +20,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class EntryEditController extends AbstractController
 {
     use EntryTemplateTrait;
-    use EntryFormTrait;
 
     public function __construct(
         private readonly EntryManager $manager,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -36,7 +38,7 @@ class EntryEditController extends AbstractController
     ): Response {
         $dto = $this->manager->createDto($entry);
 
-        $form = $this->createFormByType((new EntryPageView(1))->resolveType($entry->type), $dto);
+        $form = $this->createForm(EntryEditType::class, $dto);
         try {
             $form->handleRequest($request);
 
@@ -44,6 +46,8 @@ class EntryEditController extends AbstractController
                 if (!$this->isGranted('create_content', $dto->magazine)) {
                     throw new AccessDeniedHttpException();
                 }
+                /** @var EntryDto $dto */
+                $dto = $form->getData();
 
                 $entry = $this->manager->edit($entry, $dto, $this->getUserOrThrow());
 
@@ -57,7 +61,7 @@ class EntryEditController extends AbstractController
         }
 
         return $this->render(
-            $this->getTemplateName((new EntryPageView(1))->resolveType($entry->type), true),
+            'entry/edit_entry.html.twig',
             [
                 'magazine' => $magazine,
                 'entry' => $entry,
