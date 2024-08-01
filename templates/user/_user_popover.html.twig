@@ -11,16 +11,16 @@
         <div>
             <h3>
                 <a class="link-muted" href="{{ path('user_overview', {username: user.username}) }}">{{ user.username|username }}</a>
+                {% if user.isNew() %}
+                    {% set days = constant('App\\Entity\\User::NEW_FOR_DAYS') %}
+                    <i class="fa-solid fa-leaf new-user-icon" title="{{ 'new_user_description'|trans({ '%days%': days }) }}" aria-description="{{ 'new_user_description'|trans({ '%days%': days }) }}"></i>
+                {% endif %}
             </h3>
             <p class="user__name">
                 <span>
                     {{ user.username|username(true) }}
                     {% if user.apManuallyApprovesFollowers is same as true %}
                         <i class="fa-solid fa-lock" aria-description="{{ 'manually_approves_followers'|trans }}" title="{{ 'manually_approves_followers'|trans }}" aria-describedby="{{ 'manually_approves_followers'|trans }}"></i>
-                    {% endif %}
-                    {% if user.isNew() %}
-                        {% set days = constant('App\\Entity\\User::NEW_FOR_DAYS') %}
-                        <i class="fa-solid fa-leaf new-user-icon" title="{{ 'new_user_description'|trans({ '%days%': days }) }}" aria-description="{{ 'new_user_description'|trans({ '%days%': days }) }}"></i>
                     {% endif %}
                 </span>
                 {% if user.apProfileId %}

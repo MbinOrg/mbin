@@ -1,5 +1,5 @@
 <section class="user-list section">
-    <h3 style="display: flex;justify-content: space-between;">
+    <h3 style="display: flex;justify-content: space-between;margin:0;">
         {{ 'moderators'|trans }}
         {% if app.user and magazine.apId is same as null and app.user.visibility is same as 'visible' %}
         <a href="{{ path('magazine_moderators', {name: magazine.name}) }}" title="{{ 'apply_for_moderator'|trans }}" aria-label="{{ 'apply_for_moderator'|trans }}">
@@ -11,18 +11,9 @@
         {% endif %}
     </h3>
     <ul>
-        {% for moderator in magazine.moderators|slice(0, 5) %}
-            <li>
-                {% if moderator.user.avatar %}
-                  <img class="image-inline"
-                       width="30"
-                       height="30"
-                       loading="lazy"
-                       src="{{ moderator.user.avatar.filePath ? (asset(moderator.user.avatar.filePath)|imagine_filter('avatar_thumb')) : moderator.user.avatar.sourceUrl }}"
-                       alt="{{ moderator.user.username ~ ' ' ~ 'avatar'|trans|lower }}">
-                {% endif %}
-                <a href="{{ path('user_overview', {username: moderator.user.username}) }}"
-                   class="stretched-link">{{ moderator.user.username|username }}</a>
+        {% for moderator in magazine.moderators %}
+            <li class="moderator-item">
+                {{ component('user_inline', { user: moderator.user }) }}
             </li>
         {% endfor %}
     </ul>
