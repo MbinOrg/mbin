@@ -11,7 +11,7 @@
         {% endif %}
     </h3>
     <ul>
-        {% for moderator in magazine.moderators %}
+        {% for moderator in magazine.moderators|slice(0, 5) %}
             <li class="moderator-item">
                 {{ component('user_inline', { user: moderator.user }) }}
             </li>
