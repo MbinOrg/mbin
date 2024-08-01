@@ -120,17 +120,17 @@ For developers:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/simonrcodrington">
-                    <img src="https://avatars.githubusercontent.com/u/12083338?v=4" width="100;" alt="simonrcodrington"/>
-                    <br />
-                    <sub><b>Simon Codrington</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/weblate">
                     <img src="https://avatars.githubusercontent.com/u/1607653?v=4" width="100;" alt="weblate"/>
                     <br />
                     <sub><b>Weblate (bot)</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/simonrcodrington">
+                    <img src="https://avatars.githubusercontent.com/u/12083338?v=4" width="100;" alt="simonrcodrington"/>
+                    <br />
+                    <sub><b>Simon Codrington</b></sub>
                 </a>
             </td>
             <td align="center">
