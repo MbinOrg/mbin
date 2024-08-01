@@ -925,3 +925,4 @@ flash_posting_restricted_error: Die Erstellung von Themen ist in diesem Magazin 
 last_successful_deliver: Letzte erfolgreiche Zustellung
 last_successful_receive: Letzter erfolgreicher Empfang
 last_failed_contact: Letzter misslungener Kontakt
+magazine_posting_restricted_to_mods: Erstellung von Themen auf Moderatoren beschränken
