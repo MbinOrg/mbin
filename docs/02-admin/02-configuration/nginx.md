@@ -268,10 +268,6 @@ server {
     server_name media.mbin.domain.tld;
     root /var/www/mbin/public/media;
 
-    location / {
-        try_files $uri @s3;
-    }
-
     listen 80;
 }
 ```
