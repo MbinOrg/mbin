@@ -26,6 +26,7 @@ trait CreatedAtTrait
     public function isNew(): bool
     {
         $days = self::NEW_FOR_DAYS;
+
         return $this->getCreatedAt() >= new \DateTime("now -$days days");
     }
 }
