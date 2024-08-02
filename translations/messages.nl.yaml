@@ -871,3 +871,45 @@ sso_show_first: Toon SSO (Single-Sign-On) als eerste op de inlog-en registratiep
 continue_with: Daargaan met
 magazine_log_entry_pinned: vastgezette gesprek
 magazine_log_entry_unpinned: verwijderde vastgezette gesprek
+own_content_reported_accepted: Een melding over uw inhoud was geaccepteerd.
+open_report: open melding
+report_accepted: Een melding was geaccepteerd
+show_related_entries: Toon willekeurige gesprekken
+show_related_magazines: Toon willekeurige tijdschriften
+show_related_posts: Toon willekeurige berichten
+show_active_users: Toon actieve gebruikers
+federation_page_dead_title: Dode instanties
+federation_page_dead_description: Instanties waarin we niet minimaal 10 activiteiten
+  achter elkaar konden leveren en waarbij de laatste succesvolle levering meer dan
+  een week geleden was
+reporting_user: Rapporterende gebruiker
+reported: gerapporteerd
+report_subject: Onderwerp
+own_report_rejected: Uw melding was afgewezen
+own_report_accepted: Uw rapport is geaccepteerd
+manually_approves_followers: Volgers handmatig goedkeuren
+register_push_notifications_button: Registreer voor Pushmeldingen
+unregister_push_notifications_button: Verwijder Push registratie
+test_push_notifications_button: Test pushmeldingen
+test_push_message: Hallo Wereld!
+notification_title_new_comment: New commentaar
+notification_title_mention: Je werd genoemd
+notification_title_new_reply: Nieuw Antwoord
+notification_title_new_thread: Nieuw gesprek
+notification_title_new_report: Een nieuwe melding is aangemaakt
+flash_posting_restricted_error: Het maken van gesprekken is beperkt tot moderators
+  van dit tijdschrift en jij bent er geen van
+server_software: Server software
+version: Versie
+reported_user: Gerapporteerde gebruiker
+notification_title_removed_comment: Een opmerking is verwijderd
+notification_title_ban: je bent verbannen
+notification_title_removed_post: Een bericht is verwijderd
+notification_title_removed_thread: Een gesprek is verwijderd
+notification_title_message: Nieuw direct bericht
+notification_title_edited_comment: Een opmerking is gewijzigd
+notification_title_new_post: Nieuw Bericht
+notification_title_edited_thread: Een gesprek is gewijzgd
+notification_title_edited_post: Een bericht is gewijzigd
+magazine_posting_restricted_to_mods_warning: Enkel moderators kunnen een nieuw gesprek
+  aanmaken in dit tijdschrift
