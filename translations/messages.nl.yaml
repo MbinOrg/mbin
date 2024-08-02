@@ -903,7 +903,7 @@ server_software: Server software
 version: Versie
 reported_user: Gerapporteerde gebruiker
 notification_title_removed_comment: Een opmerking is verwijderd
-notification_title_ban: je bent verbannen
+notification_title_ban: Je bent verbannen
 notification_title_removed_post: Een bericht is verwijderd
 notification_title_removed_thread: Een gesprek is verwijderd
 notification_title_message: Nieuw direct bericht
