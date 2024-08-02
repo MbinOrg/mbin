@@ -61,7 +61,8 @@ cover: Cover
 related_posts: Related posts
 random_posts: Random posts
 federated_magazine_info: This magazine is from a federated server and may be incomplete.
-disconnected_magazine_info: This magazine is not receiving updates (last activity %days% day(s) ago).
+disconnected_magazine_info: This magazine is not receiving updates (last activity
+  %days% day(s) ago).
 always_disconnected_magazine_info: This magazine is not receiving updates.
 subscribe_for_updates: Subscribe to start receiving updates.
 federated_user_info: This profile is from a federated server and may be incomplete.
@@ -314,11 +315,11 @@ approve: Approve
 ban: Ban
 unban: Unban
 ban_hashtag_btn: Ban Hashtag
-ban_hashtag_description: Banning a hashtag will stop posts with this hashtag from being created,
-  as well as hiding existing posts with this hashtag.
+ban_hashtag_description: Banning a hashtag will stop posts with this hashtag from
+  being created, as well as hiding existing posts with this hashtag.
 unban_hashtag_btn: Unban Hashtag
-unban_hashtag_description: Unbanning a hashtag will allow creating posts with this hashtag again.
-  Existing posts with this hashtag are no longer hidden.
+unban_hashtag_description: Unbanning a hashtag will allow creating posts with this
+  hashtag again. Existing posts with this hashtag are no longer hidden.
 filters: Filters
 approved: Approved
 rejected: Rejected
@@ -449,13 +450,14 @@ federation_page_enabled: Federation page enabled
 federation_page_allowed_description: Known instances we federate with
 federation_page_disallowed_description: Instances we do not federate with
 federation_page_dead_title: Dead instances
-federation_page_dead_description: Instances that we could not deliver at least 10 activities in a row and where the last successful deliver was more than a week ago
+federation_page_dead_description: Instances that we could not deliver at least 10
+  activities in a row and where the last successful deliver was more than a week ago
 federated_search_only_loggedin: Federated search limited if not logged in
 sidebar_sections_local_only: Restrict "Random X" and "Active People" sections to local
   only
 account_deletion_title: Account deletion
-account_deletion_description: Your account will be deleted in 30 days unless you choose to delete the account immediately.
-  The account cannot be restored once deleted.
+account_deletion_description: Your account will be deleted in 30 days unless you choose
+  to delete the account immediately. The account cannot be restored once deleted.
 account_deletion_button: Delete Account
 account_deletion_immediate: Delete immediately
 more_from_domain: More from domain
@@ -689,14 +691,14 @@ delete_content_desc: Delete the user's content while leaving the responses of ot
   users in the created threads, posts and comments.
 purge_content_desc: Completely purge the user's content, including deleting the responses
   of other users in created threads, posts and comments.
-delete_account_desc: Delete the account, including the responses
-  of other users in created threads, posts and comments.
+delete_account_desc: Delete the account, including the responses of other users in
+  created threads, posts and comments.
 schedule_delete_account: Schedule Deletion
-schedule_delete_account_desc: Schedule the deletion of this account in 30 days.
-  This will hide the user and their content as well as prevent the user from logging in.
+schedule_delete_account_desc: Schedule the deletion of this account in 30 days. This
+  will hide the user and their content as well as prevent the user from logging in.
 remove_schedule_delete_account: Remove Scheduled Deletion
-remove_schedule_delete_account_desc: Remove the scheduled deletion.
-  All the content will be available again and the user will be able to login.
+remove_schedule_delete_account_desc: Remove the scheduled deletion. All the content
+  will be available again and the user will be able to login.
 two_factor_authentication: Two-factor authentication
 two_factor_backup: Two-factor authentication backup codes
 2fa.authentication_code.label: Authentication Code
@@ -821,10 +823,12 @@ show: Show
 hide: Hide
 edited: edited
 sso_registrations_enabled: SSO registrations enabled
-sso_registrations_enabled.error: New account registrations with third-party identity managers are currently disabled.
+sso_registrations_enabled.error: New account registrations with third-party identity
+  managers are currently disabled.
 sso_only_mode: Restrict login and registration to SSO methods only
 related_entry: Related
-restrict_magazine_creation: Restrict local magazine creation to admins and global mods
+restrict_magazine_creation: Restrict local magazine creation to admins and global
+  mods
 sso_show_first: Show SSO first on login and registration pages
 continue_with: Continue with
 reported_user: Reported user
@@ -869,11 +873,15 @@ show_related_entries: Show random threads
 show_related_posts: Show random posts
 show_active_users: Show active users
 notification_title_new_report: A new report was created
-magazine_posting_restricted_to_mods_warning: Only mods can create threads in this magazine
-flash_posting_restricted_error: Creating threads is restricted to mods in this magazine and you are not one
+magazine_posting_restricted_to_mods_warning: Only mods can create threads in this
+  magazine
+flash_posting_restricted_error: Creating threads is restricted to mods in this magazine
+  and you are not one
 server_software: Server software
 version: Version
-last_successful_deliver: Last successful deliver
+last_successful_deliver: Last successful delivery
 last_successful_receive: Last successful receive
 last_failed_contact: Last failed contact
 magazine_posting_restricted_to_mods: Restrict thread creation to moderators
+new_user_description: This user is new (active for less than %days% days)
+new_magazine_description: This magazine is new (active for less than %days% days)
