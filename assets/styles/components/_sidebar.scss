@@ -190,6 +190,10 @@
       padding: 0;
     }
 
+    li.moderator-item {
+      height: calc(30px + 1rem);
+    }
+
     ul li {
       align-items: center;
       border-top: var(--kbin-meta-border);

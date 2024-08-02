@@ -38,6 +38,10 @@
                             {% if (user.type) == "Service" %}
                               <code title="{{ 'user_badge_bot'|trans }}">{{ 'user_badge_bot'|trans }}</code>
                             {% endif %}
+                            {% if user.isNew() %}
+                                {% set days = constant('App\\Entity\\User::NEW_FOR_DAYS') %}
+                                <i class="fa-solid fa-leaf new-user-icon" title="{{ 'new_user_description'|trans({ '%days%': days }) }}" aria-description="{{ 'new_user_description'|trans({ '%days%': days }) }}"></i>
+                            {% endif %}
 
                             {% if user.admin() %}
                               <code title="{{ 'user_badge_admin'|trans }}">{{ 'user_badge_admin'|trans }}</code>
@@ -51,6 +55,10 @@
 
                             {% if (user.type) == "Service" %}
                                 <code title="{{ 'user_badge_bot'|trans }}">{{ 'user_badge_bot'|trans }}</code>
+                            {% endif %}
+                            {% if user.isNew() %}
+                                {% set days = constant('App\\Entity\\User::NEW_FOR_DAYS') %}
+                                <i class="fa-solid fa-leaf new-user-icon" title="{{ 'new_user_description'|trans({ '%days%': days }) }}" aria-description="{{ 'new_user_description'|trans({ '%days%': days }) }}"></i>
                             {% endif %}
 
                             {% if user.admin() %}
