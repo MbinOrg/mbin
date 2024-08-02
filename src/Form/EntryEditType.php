@@ -10,7 +10,6 @@ use App\Form\DataTransformer\TagTransformer;
 use App\Form\EventListener\DefaultLanguage;
 use App\Form\EventListener\DisableFieldsOnEntryEdit;
 use App\Form\EventListener\ImageListener;
-use App\Form\EventListener\RemoveFieldsOnEntryImageEdit;
 use App\Form\Type\BadgesType;
 use App\Form\Type\LanguageType;
 use App\Form\Type\MagazineAutocompleteType;
@@ -30,7 +29,6 @@ class EntryEditType extends AbstractType
         private readonly ImageListener $imageListener,
         private readonly DefaultLanguage $defaultLanguage,
         private readonly DisableFieldsOnEntryEdit $disableFieldsOnEntryEdit,
-        private readonly RemoveFieldsOnEntryImageEdit $removeFieldsOnEntryImageEdit,
     ) {
     }
 
@@ -63,6 +61,7 @@ class EntryEditType extends AbstractType
                 [
                     'constraints' => ImageConstraint::default(),
                     'mapped' => false,
+                    'required' => false,
                 ]
             )
             ->add('imageUrl', UrlType::class, [
@@ -85,7 +84,6 @@ class EntryEditType extends AbstractType
         );
 
         $builder->addEventSubscriber($this->defaultLanguage);
-        $builder->addEventSubscriber($this->removeFieldsOnEntryImageEdit);
         $builder->addEventSubscriber($this->disableFieldsOnEntryEdit);
         $builder->addEventSubscriber($this->imageListener);
     }
