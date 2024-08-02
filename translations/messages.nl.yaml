@@ -913,3 +913,10 @@ notification_title_edited_thread: Een gesprek is gewijzgd
 notification_title_edited_post: Een bericht is gewijzigd
 magazine_posting_restricted_to_mods_warning: Enkel moderators kunnen een nieuw gesprek
   aanmaken in dit tijdschrift
+last_successful_deliver: Laatste succesvolle levering
+last_successful_receive: Laatste succesvolle ontvangst
+last_failed_contact: Laatste mislukte contact
+magazine_posting_restricted_to_mods: Beperk het aanmaken van gesprekken tot moderators
+new_user_description: Deze gebruiker is nieuw (actief voor minder dan %days% dagen)
+new_magazine_description: Dit tijdschrift is nieuw (actief voor minder dan %days%
+  dagen)
