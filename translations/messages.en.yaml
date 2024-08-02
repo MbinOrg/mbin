@@ -850,7 +850,7 @@ magazine_log_entry_unpinned: removed pinned entry
 last_updated: Last updated
 and: and
 direct_message: Direct message
-manually_approves_followers: Manually approve followers
+manually_approves_followers: Manually approves followers
 register_push_notifications_button: Register For Push Notifications
 unregister_push_notifications_button: Remove Push Registration
 test_push_notifications_button: Test Push Notifications
