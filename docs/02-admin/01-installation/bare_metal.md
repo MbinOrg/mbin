@@ -159,12 +159,23 @@ sudo setfacl -R -m u:"$HTTPDUSER":rwX -m u:$(whoami):rwX var
 
 ### The dot env file
 
-Make a copy of the `.env.example` the and edit the `.env` configure file:
+The `.env` file holds a lot of environment variables and is the main point for configuring mbin.
+We suggest you place your variables in the `.env.local` file and have a 'clean' default one as the `.env` file.
+Each time this documentation talks about the `.env` file be sure to edit the `.env.local` file if you decided to use that.
+
+> In all environments, the following files are loaded if they exist, the latter taking precedence over the former:  
+> - .env                contains default values for the environment variables needed by the app  
+> - .env.local          uncommitted file with local overrides
+
+Make a copy of the `.env.example` to `.env` and `.env.local` and edit the `.env.local` file:
 
 ```bash
 cp .env.example .env
-nano .env
+cp .env.example .env.local
+nano .env.local
 ```
+
+#### Service Passwords
 
 Make sure you have substituted all the passwords and configured the basic services in `.env` file.
 
@@ -179,7 +190,7 @@ RABBITMQ_PASSWORD="{!SECRET!!KEY!-16_2-!}"
 MERCURE_JWT_SECRET="{!SECRET!!KEY!-32_3-!}"
 ```
 
-Other important `.env` configs:
+#### Other important `.env` configs:
 
 ```ini
 # Configure your media URL correctly:
@@ -200,7 +211,7 @@ MAILER_DSN=smtp://username:password@smtpserver.tld:587?encryption=tls&auth_mode=
 MAILER_DSN=smtp://username:password@smtpserver.tld:465?encryption=ssl&auth_mode=log
 ```
 
-OAuth2 keys for API credential grants:
+#### OAuth2 keys for API credential grants
 
 1. Create an RSA key pair using OpenSSL:
 
@@ -539,29 +550,6 @@ Save and close the file.
 
 Note: you can increase the number of running messenger jobs if your queue is building up (i.e. more messages are coming in than your messengers can handle)
 
-We also use supervisor for running Mercure job:
-
-```bash
-sudo nano /etc/supervisor/conf.d/mercure.conf
-```
-
-With the following content:
-
-```ini
-[program:mercure]
-command=/usr/local/bin/mercure run --config /var/www/mbin/metal/caddy/Caddyfile
-process_name=%(program_name)s_%(process_num)s
-numprocs=1
-environment=MERCURE_PUBLISHER_JWT_KEY="{!SECRET!!KEY!-32_3-!}",MERCURE_SUBSCRIBER_JWT_KEY="{!SECRET!!KEY!-32_3-!}",SERVER_NAME=":3000",HTTP_PORT="3000"
-directory=/var/www/mbin/metal/caddy
-autostart=true
-autorestart=true
-startsecs=5
-startretries=10
-user=www-data
-redirect_stderr=false
-stdout_syslog=true
-```
 
 Save and close the file. Restart supervisor jobs:
 
