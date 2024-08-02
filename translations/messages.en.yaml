@@ -879,7 +879,7 @@ flash_posting_restricted_error: Creating threads is restricted to mods in this m
   and you are not one
 server_software: Server software
 version: Version
-last_successful_deliver: Last successful deliver
+last_successful_deliver: Last successful delivery
 last_successful_receive: Last successful receive
 last_failed_contact: Last failed contact
 magazine_posting_restricted_to_mods: Restrict thread creation to moderators
