@@ -38,8 +38,9 @@ For developers:
 
 ## Instances
 
-- [List of instances](https://fedidb.org/software/mbin)
-- [Alternative listing of instances](https://mbin.fediverse.observer/list)
+- [List of instances](https://joinmbin.org/servers)
+- [Alternative list of instances at fedidb.org](https://fedidb.org/software/mbin)
+- [Alternative list of instances at fediverse.observer](https://mbin.fediverse.observer/list)
 
 ![Mbin logo](docs/images/mbin.png)
 
