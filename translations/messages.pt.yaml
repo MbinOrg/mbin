@@ -120,8 +120,6 @@ edit: Editar
 are_you_sure: Tem a certeza?
 moderate: Moderar
 reason: Motivo
-edit_link: Editar link
-edit_article: Editar artigo
 delete: Apagar
 edit_post: Editar postagem
 edit_comment: Editar comentário
@@ -280,7 +278,6 @@ mod_log_alert: No Modlog pode encontrar conteúdo removido drasticamente por mod
 sticky_navbar: Barra de navegação fixa
 copy_url: Copiar url de Mbin
 off: Desligado
-edit_photo: Editar foto
 rejected: Rejeitado
 appearance: Aparência
 done: Feito

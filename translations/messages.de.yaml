@@ -60,8 +60,6 @@ add_new_video: Neues Video hinzufügen
 privacy_policy: Datenschutzbestimmungen
 useful: Nützlich
 edit: Bearbeiten
-edit_article: Thema bearbeiten
-edit_photo: Bild bearbeiten
 delete: Löschen
 edit_post: Beitrag bearbeiten
 edit_comment: Änderungen speichern
@@ -70,7 +68,6 @@ font_size: Schriftgröße
 no: Nein
 show_all: Alle anzeigen
 already_have_account: Hast du bereits ein Konto?
-edit_link: Link bearbeiten
 new_password: Neues Passwort
 yes: Ja
 online: Online

@@ -209,8 +209,6 @@ share_on_fediverse: Condividi sul Fediverso
 edit: Modifica
 are_you_sure: Confermi?
 reason: Motivo
-edit_article: Modifica thread
-edit_photo: Modifica foto
 delete: Cancella
 edit_post: Modifica il post
 edit_comment: Modifica il commento
@@ -265,7 +263,6 @@ joined: Iscritto
 go_to_filters: Vai ai filtri
 table_view: Vista a tabella
 videos: Video
-edit_link: Modifica collegamento
 notifications: Notifiche
 theme: Tema
 show_users_avatars: Mostra gli avatar degli utenti

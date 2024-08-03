@@ -143,7 +143,6 @@ edit: Düzenle
 are_you_sure: Emin misin?
 moderate: Yönet
 reason: Sebep
-edit_photo: Fotoğrafı düzenle
 delete: Sil
 edit_post: Gönderiyi düzenle
 edit_comment: Yorumu düzenle
@@ -273,7 +272,6 @@ cards_view: Kart görünümü
 approved: Onaylanmış
 copy_url: Mbin bağlantıyı kopyala
 ban_expired: Yasak süresi doldu
-edit_link: Bağlantıyı düzenle
 wrote_message: Mesaj yazdı
 mod_deleted_your_comment: Bir yönetici sizin yorumunuzu sildi
 appearance: Görünüm
@@ -317,7 +315,6 @@ add_new_article: Yeni başlık ekle
 domain: Alan
 joined: Katılanlar
 people_federated: Birleştirilmiş
-edit_article: Başlığı düzenle
 notify_on_new_entry_reply: Başlıklarımdaki bütün yorumlar
 notify_on_new_entry_comment_reply: Herhangi bir başlıkta yorumlarıma gelen yanıtlar
 notify_on_new_entry: Abone olduğum magazinlerdeki yeni başlıklar (bağlantılar veya

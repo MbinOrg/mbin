@@ -148,8 +148,6 @@ moderate: Modérer
 reason: Motif
 copy_url_to_fediverse: Copier l'URL d'origine
 share_on_fediverse: Partager sur le Fédivers
-edit_link: Modifier le lien
-edit_photo: Modifier la photo
 delete: Supprimer
 edit_post: Modifier le message
 edit_comment: Enregistrer les modifications
@@ -181,7 +179,6 @@ edit: Modifier
 go_to_search: Aller à la recherche
 privacy_policy: Politique de confidentialité
 subscriptions: Abonnements
-edit_article: Modifier le fil
 type.smart_contract: Contrat intelligent
 hot: Dernière minute
 agree_terms: Consentir aux %terms_link_start%conditions d’utilisation%terms_link_end%
