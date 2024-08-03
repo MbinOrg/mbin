@@ -41,3 +41,10 @@ npm run build # Builds frontend
 ```
 
 Make sure you have substituted all the passwords and configured the basic services.
+
+### Push Notification setup
+
+The push notification system needs encryption keys to work. They have to be generated only once, by running
+```bash
+php bin/console mbin:push:keys:update
+```
