@@ -421,11 +421,19 @@ class ActivityPubManager
 
         if (\count($images)) {
             try {
-                if ($tempFile = $this->imageManager->download($images[0]['url'])) {
+                $imageObject = $images[0];
+                if (isset($imageObject['height'])) {
+                    foreach ($images as $i) {
+                        if (isset($i['height']) && $i['height'] ?? 0 > $imageObject['height'] ?? 0) {
+                            $imageObject = $i;
+                        }
+                    }
+                }
+                if ($tempFile = $this->imageManager->download($imageObject['url'])) {
                     $image = $this->imageRepository->findOrCreateFromPath($tempFile);
-                    $image->sourceUrl = $images[0]['url'];
-                    if ($image && isset($images[0]['name'])) {
-                        $image->altText = $images[0]['name'];
+                    $image->sourceUrl = $imageObject['url'];
+                    if ($image && isset($imageObject['name'])) {
+                        $image->altText = $imageObject['name'];
                     }
                     $this->entityManager->persist($image);
                     $this->entityManager->flush();
