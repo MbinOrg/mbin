@@ -23,6 +23,7 @@ use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Factory\EntryFactory;
 use App\Message\DeleteImageMessage;
+use App\Message\EntryEmbedMessage;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
 use App\Service\ActivityPub\ApHttpClient;
@@ -184,6 +185,7 @@ class EntryManager implements ContentManagerInterface
         Assert::same($entry->magazine->getId(), $dto->magazine->getId());
 
         $entry->title = $dto->title;
+        $oldUrl = $entry->url;
         $entry->url = $dto->url;
         $entry->body = $dto->body;
         $entry->lang = $dto->lang;
@@ -217,6 +219,10 @@ class EntryManager implements ContentManagerInterface
 
         if ($oldImage && $entry->image !== $oldImage) {
             $this->bus->dispatch(new DeleteImageMessage($oldImage->getId()));
+        }
+
+        if ($entry->url !== $oldUrl) {
+            $this->bus->dispatch(new EntryEmbedMessage($entry->getId()));
         }
 
         $this->dispatcher->dispatch(new EntryEditedEvent($entry, $editedBy));

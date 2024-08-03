@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
 {%- block title -%}
-    {{- 'edit_link'|trans }} - {{ parent() -}}
+    {{- 'edit_article'|trans }} - {{ parent() -}}
 {%- endblock -%}
 
-{% block mainClass %}page-entry-create page-entry-edit-link{% endblock %}
+{% block mainClass %}page-entry-create page-entry-edit-article{% endblock %}
 
 {% block header_nav %}
 {% endblock %}
@@ -18,11 +18,11 @@
         class: 'section--top'
     }) }}
 
-    <h1 hidden>{{ 'edit_link'|trans }}</h1>
+    <h1 hidden>{{ 'edit_entry'|trans }}</h1>
     {% include 'layout/_flash.html.twig' %}
     <div id="content" class="section">
-        <div class="container">
-            {% include 'entry/_form_link.html.twig' with {edit: true} %}
+        <div class="container" data-controller="entry-link-create">
+            {% include 'entry/_form_edit.html.twig' %}
         </div>
     </div>
 {% endblock %}

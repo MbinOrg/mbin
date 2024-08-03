@@ -12,7 +12,7 @@ use App\Form\EntryLinkType;
 use Symfony\Component\Form\FormInterface;
 
 /**
- * @method createForm(string $class)
+ * @method FormInterface createForm(string $class, mixed $data = null, array $options = [])
  */
 trait EntryFormTrait
 {

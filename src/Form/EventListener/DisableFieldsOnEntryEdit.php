@@ -34,18 +34,5 @@ final class DisableFieldsOnEntryEdit implements EventSubscriberInterface
             \get_class($field->getConfig()->getType()->getInnerType()),
             $attrs
         );
-
-        if ($form->has('url')) {
-            $field = $form->get('url');
-            $attrs = $field->getConfig()->getOptions();
-            $attrs['disabled'] = 'disabled';
-
-            $form->remove($field->getName());
-            $form->add(
-                $field->getName(),
-                \get_class($field->getConfig()->getType()->getInnerType()),
-                $attrs
-            );
-        }
     }
 }
