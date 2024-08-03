@@ -118,7 +118,7 @@ services:
       - POSTGRES_USER=kbin
 
   rabbitmq:
-    image: rabbitmq:3.13.0-management-alpine
+    image: rabbitmq:3.13.6-management-alpine
     container_name: mbin-rabbitmq
     restart: unless-stopped
     networks:
