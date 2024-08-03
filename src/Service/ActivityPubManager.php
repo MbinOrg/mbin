@@ -364,7 +364,8 @@ class ActivityPubManager
 
             // Only update avatar if icon is set
             if (isset($actor['icon'])) {
-                $newImage = $this->handleImages([$actor['icon']]);
+                $icon = !\array_key_exists('type', $actor['icon']) ? $actor['icon'] : [$actor['icon']];
+                $newImage = $this->handleImages($icon);
                 if ($user->avatar && $newImage !== $user->avatar) {
                     $this->bus->dispatch(new DeleteImageMessage($user->avatar->getId()));
                 }
@@ -373,7 +374,8 @@ class ActivityPubManager
 
             // Only update cover if image is set
             if (isset($actor['image'])) {
-                $newImage = $this->handleImages([$actor['image']]);
+                $cover = !\array_key_exists('type', $actor['image']) ? $actor['image'] : [$actor['image']];
+                $newImage = $this->handleImages($cover);
                 if ($user->cover && $newImage !== $user->cover) {
                     $this->bus->dispatch(new DeleteImageMessage($user->cover->getId()));
                 }
@@ -488,7 +490,8 @@ class ActivityPubManager
             }
 
             if (isset($actor['icon'])) {
-                $newImage = $this->handleImages([$actor['icon']]);
+                $icon = !\array_key_exists('type', $actor['icon']) ? $actor['icon'] : [$actor['icon']];
+                $newImage = $this->handleImages($icon);
                 if ($magazine->icon && $newImage !== $magazine->icon) {
                     $this->bus->dispatch(new DeleteImageMessage($magazine->icon->getId()));
                 }
