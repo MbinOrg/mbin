@@ -128,8 +128,6 @@ report: 回報
 edit: 編輯
 moderate: 管理
 reason: 理由
-edit_link: 編輯連結
-edit_photo: 編輯圖片
 edit_post: 編輯鋪文
 edit_comment: 編輯留言
 settings: 設定
@@ -192,7 +190,6 @@ copy_url_to_fediverse: 複製聯邦網址
 share_on_fediverse: 分享至聯邦宇宙
 are_you_sure: 您確定嗎？
 articles: 帖子
-edit_article: 編輯帖子
 notify_on_new_entry_reply: 有人回覆我的帖子時
 notify_on_new_entry_comment_reply: 有人在帖子回覆我的留言時
 notify_on_new_entry: 訂閱的刊版有新帖子時

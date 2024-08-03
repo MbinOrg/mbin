@@ -164,10 +164,8 @@ chat_view: Babilo aspekto
 tree_view: Arba aspekto
 moderate: Kontroli
 reason: Kialo
-edit_article: Redakti fadenon
 delete: Forigi
 edit_post: Redakti afiŝon
-edit_photo: Redakti foton
 settings: Agordoj
 general: Ĝenerala
 reports: Raportoj
@@ -233,7 +231,6 @@ removed_thread_by: forigis fadenon de
 too_many_requests: Limo superita, bonvolu provi denove poste.
 set_magazines_bar_empty_desc: se la kampo estas malplena, aktivaj revuoj estas montrataj
   sur la breto.
-edit_link: Redakti ligilon
 edit_comment: Konservi ŝanĝojn
 profile: Profilo
 mod_log: Kontrol-protokolo

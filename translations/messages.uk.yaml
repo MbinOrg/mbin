@@ -283,7 +283,6 @@ add_moderator: Додати модератора
 oauth2.grant.moderate.entry.change_language: Змінювати мову гілок у ваших модерованих
   спільнотах.
 username: Імʼя користувача
-edit_photo: Редагувати зображення
 password_confirm_header: Необхідно підтвердити запит на зміну пароля.
 off: Вимк.
 light: Світла
@@ -495,7 +494,6 @@ flash_comment_edit_success: Коментар успішно оновлено.
 resend_account_activation_email_description: Введіть адресу е-пошти, повʼязану з вашим
   обліковим записом. Ми надішлемо вам іншого електронного листа для активації.
 reload_to_apply: Перезавантажте сторінку, щоб застосувати зміни
-edit_article: Редагувати гілку
 notify_on_new_post_reply: Відповіді будь-якого рівня на ваші дописи
 oauth2.grant.entry.delete: Видаляти ваші наявні гілки.
 he_unbanned: допускає
@@ -547,7 +545,6 @@ removed: Видалено модератором
 domain: Домен
 search: Шукати
 go_to_original_instance: Переглянути на оригінальному інстансі.
-edit_link: Редагувати посилання
 oauth2.grant.moderate.entry.set_adult: Позначати гілки як «Делікатне» у ваших модерованих
   спільнотах.
 oauth2.grant.delete.general: Видаляти будь-які ваші гілки, дописи чи коментарі.

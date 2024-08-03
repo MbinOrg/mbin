@@ -147,8 +147,6 @@ edit: 編集
 are_you_sure: よろしいですか？
 moderate: モデレートする
 reason: 理由
-edit_article: スレッドを編集する
-edit_photo: 画像を編集する
 delete: 削除する
 edit_post: 投稿を編集する
 settings: 設定
@@ -180,7 +178,6 @@ repeat_password: パスワードを再入力
 classic_view: クラシック表示
 table_view: テーブル表示
 copy_url: MbinのURLをコピー
-edit_link: リンクを編集する
 edit_comment: 上書き保存
 general: 全般
 hide_adult: R-18・NSFWを非表示する
