@@ -49,7 +49,7 @@ sudo apt-get install php8.3 php8.3-common php8.3-fpm php8.3-cli php8.3-amqp php8
 ```
 
 > [!NOTE]
-> If you are upgrading to PHP 8.3 from an older version, please re-review the [PHP configuration]("#php") section of this guide as existing `ini` settings are NOT copied to new versions.
+> If you are upgrading to PHP 8.3 from an older version, please re-review the [PHP configuration](#php) section of this guide as existing `ini` settings are NOT copied to new versions.
 
 Install Composer:
 
