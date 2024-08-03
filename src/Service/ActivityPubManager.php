@@ -364,6 +364,8 @@ class ActivityPubManager
 
             // Only update avatar if icon is set
             if (isset($actor['icon'])) {
+                // we only have to wrap the property in an array if it is not already an array, though that is not that easy to determine
+                // because each json object is an associative array -> each image has to have a 'type' property so use that to check it
                 $icon = !\array_key_exists('type', $actor['icon']) ? $actor['icon'] : [$actor['icon']];
                 $newImage = $this->handleImages($icon);
                 if ($user->avatar && $newImage !== $user->avatar) {
@@ -374,6 +376,8 @@ class ActivityPubManager
 
             // Only update cover if image is set
             if (isset($actor['image'])) {
+                // we only have to wrap the property in an array if it is not already an array, though that is not that easy to determine
+                // because each json object is an associative array -> each image has to have a 'type' property so use that to check it
                 $cover = !\array_key_exists('type', $actor['image']) ? $actor['image'] : [$actor['image']];
                 $newImage = $this->handleImages($cover);
                 if ($user->cover && $newImage !== $user->cover) {
@@ -423,6 +427,7 @@ class ActivityPubManager
             try {
                 $imageObject = $images[0];
                 if (isset($imageObject['height'])) {
+                    // determine the highest resolution image
                     foreach ($images as $i) {
                         if (isset($i['height']) && $i['height'] ?? 0 > $imageObject['height'] ?? 0) {
                             $imageObject = $i;
@@ -498,6 +503,8 @@ class ActivityPubManager
             }
 
             if (isset($actor['icon'])) {
+                // we only have to wrap the property in an array if it is not already an array, though that is not that easy to determine
+                // because each json object is an associative array -> each image has to have a 'type' property so use that to check it
                 $icon = !\array_key_exists('type', $actor['icon']) ? $actor['icon'] : [$actor['icon']];
                 $newImage = $this->handleImages($icon);
                 if ($magazine->icon && $newImage !== $magazine->icon) {
