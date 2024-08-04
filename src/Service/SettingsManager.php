@@ -36,6 +36,7 @@ class SettingsManager
         private readonly bool $kbinFederationPageEnabled,
         private readonly bool $kbinAdminOnlyOauthClients,
         private readonly bool $mbinSsoOnlyMode,
+        private readonly int $maxImageBytes
     ) {
         if (!self::$dto) {
             $results = $this->repository->findAll();
@@ -73,7 +74,8 @@ class SettingsManager
                 $this->find($results, 'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY', FILTER_VALIDATE_BOOLEAN) ?? false,
                 $this->find($results, 'MBIN_SSO_REGISTRATIONS_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? true,
                 $this->find($results, 'MBIN_RESTRICT_MAGAZINE_CREATION', FILTER_VALIDATE_BOOLEAN) ?? false,
-                $this->find($results, 'MBIN_SSO_SHOW_FIRST', FILTER_VALIDATE_BOOLEAN) ?? false
+                $this->find($results, 'MBIN_SSO_SHOW_FIRST', FILTER_VALIDATE_BOOLEAN) ?? false,
+                $this->find($results, 'MAX_IMAGE_BYTES', FILTER_VALIDATE_INT) ?? $this->maxImageBytes
             );
         }
     }
