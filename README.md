@@ -267,12 +267,21 @@ For developers:
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/jwr1">
+                    <img src="https://avatars.githubusercontent.com/u/47087725?v=4" width="100;" alt="jwr1"/>
+                    <br />
+                    <sub><b>John Wesley</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/DismalShadowX">
                     <img src="https://avatars.githubusercontent.com/u/24910097?v=4" width="100;" alt="DismalShadowX"/>
                     <br />
                     <sub><b>Nathan Sparrow</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/privacyguard">
                     <img src="https://avatars.githubusercontent.com/u/92675882?v=4" width="100;" alt="privacyguard"/>
