@@ -35,11 +35,14 @@ class RemoteInstanceManager
         if ($instance->getUpdatedAt() < new \DateTime('now - 1day') || $force) {
             $nodeInfoEndpointsRaw = $this->client->fetchInstanceNodeInfoEndpoints($instance->domain, false);
             $serializer = $this->getSerializer();
+            /** @var WellKnownNodeInfo */
             $nodeInfoEndpoints = $serializer->deserialize($nodeInfoEndpointsRaw, WellKnownNodeInfo::class, 'json');
+
             $linkToUse = null;
             foreach ($nodeInfoEndpoints->links as $link) {
                 if (NodeInfoController::NODE_REL_v21 === $link->rel) {
                     $linkToUse = $link;
+                    break;
                 } elseif (null === $linkToUse && NodeInfoController::NODE_REL_v20 === $link->rel) {
                     $linkToUse = $link;
                 }
@@ -54,6 +57,7 @@ class RemoteInstanceManager
 
             $nodeInfoRaw = $this->client->fetchInstanceNodeInfo($linkToUse->href, false);
             $this->logger->debug('got raw nodeinfo for url {url}: {raw}', ['raw' => $nodeInfoRaw, 'url' => $linkToUse]);
+            /** @var NodeInfo */
             $nodeInfo = $serializer->deserialize($nodeInfoRaw, NodeInfo::class, 'json');
 
             $instance->software = $nodeInfo?->software?->name;

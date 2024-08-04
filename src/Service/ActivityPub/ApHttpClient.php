@@ -32,6 +32,7 @@ enum ApRequestType
 {
     case ActivityPub;
     case WebFinger;
+    case NodeInfo;
 }
 
 class ApHttpClient
@@ -313,7 +314,7 @@ class ApHttpClient
         $resp = $this->cache->get('nodeinfo_endpoints_'.hash('sha256', $url), function (ItemInterface $item) use ($url) {
             $item->expiresAt(new \DateTime('+1 day'));
 
-            return $this->generalFetch($url);
+            return $this->generalFetch($url, ApRequestType::NodeInfo);
         });
 
         if (!$resp) {
@@ -328,7 +329,7 @@ class ApHttpClient
         $resp = $this->cache->get('nodeinfo_'.hash('sha256', $url), function (ItemInterface $item) use ($url) {
             $item->expiresAt(new \DateTime('+1 day'));
 
-            return $this->generalFetch($url);
+            return $this->generalFetch($url, ApRequestType::NodeInfo);
         });
 
         if (!$resp) {
@@ -338,17 +339,35 @@ class ApHttpClient
         return $decoded ? json_decode($resp, true) : $resp;
     }
 
-    private function generalFetch(string $url): string
+    private function generalFetch(string $url, ApRequestType $requestType = ApRequestType::ActivityPub): string
     {
         $client = new CurlHttpClient();
-        $this->logger->debug("ApHttpClient:fetchInstanceNodeInfo:url: $url");
+        $this->logger->debug("ApHttpClient:generalFetch:url: $url");
         $r = $client->request('GET', $url, [
             'max_duration' => self::TIMEOUT,
             'timeout' => self::TIMEOUT,
-            'headers' => $this->getInstanceHeaders($url),
+            'headers' => $this->getInstanceHeaders($url, requestType: $requestType),
         ]);
 
         return $r->getContent();
+    }
+
+    private function getFetchAcceptHeaders(ApRequestType $requestType): array
+    {
+        return match ($requestType) {
+            ApRequestType::WebFinger => [
+                'Accept' => 'application/jrd+json',
+                'Content-Type' => 'application/jrd+json',
+            ],
+            ApRequestType::ActivityPub => [
+                'Accept' => 'application/activity+json',
+                'Content-Type' => 'application/activity+json',
+            ],
+            ApRequestType::NodeInfo => [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ],
+        };
     }
 
     private static function headersToCurlArray($headers): array
@@ -395,13 +414,7 @@ class ApHttpClient
         unset($headers['(request-target)']);
         $headers['Signature'] = $signatureHeader;
         $headers['User-Agent'] = $this->projectInfo->getUserAgent().'/'.$this->projectInfo->getVersion().' (+https://'.$this->kbinDomain.'/agent)';
-        if (ApRequestType::WebFinger === $requestType) {
-            $headers['Accept'] = 'application/jrd+json';
-            $headers['Content-Type'] = 'application/jrd+json';
-        } else {
-            $headers['Accept'] = 'application/activity+json';
-            $headers['Content-Type'] = 'application/activity+json';
-        }
+        $headers = array_merge($headers, $this->getFetchAcceptHeaders($requestType));
 
         return $headers;
     }
