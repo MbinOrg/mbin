@@ -107,6 +107,9 @@ parameters:
     exif_exiftool_path: '%env(default::EXIF_EXIFTOOL_PATH)%'
     exif_exiftool_timeout: '%env(int:default::EXIF_EXIFTOOL_TIMEOUT)%'
 
+    max_image_bytes: "%env(int:default:max_image_bytes_default:MAX_IMAGE_BYTES)%"
+    max_image_bytes_default: 6000000
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -174,6 +177,7 @@ services:
             $kbinFederationPageEnabled: "%env(bool:KBIN_FEDERATION_PAGE_ENABLED)%"
             $kbinAdminOnlyOauthClients: "%env(bool:KBIN_ADMIN_ONLY_OAUTH_CLIENTS)%"
             $mbinSsoOnlyMode: "%sso_only_mode%"
+            $maxImageBytes: "%max_image_bytes%"
 
     # Markdown
     App\Markdown\Factory\EnvironmentFactory:

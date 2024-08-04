@@ -35,7 +35,8 @@ class SettingsDto implements \JsonSerializable
         public bool $MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY,
         public bool $MBIN_SSO_REGISTRATIONS_ENABLED,
         public bool $MBIN_RESTRICT_MAGAZINE_CREATION,
-        public bool $MBIN_SSO_SHOW_FIRST
+        public bool $MBIN_SSO_SHOW_FIRST,
+        public int $MAX_IMAGE_BYTES
     ) {
     }
 
@@ -66,6 +67,7 @@ class SettingsDto implements \JsonSerializable
         $dto->MBIN_SSO_REGISTRATIONS_ENABLED = $this->MBIN_SSO_REGISTRATIONS_ENABLED ?? $dto->MBIN_SSO_REGISTRATIONS_ENABLED;
         $dto->MBIN_RESTRICT_MAGAZINE_CREATION = $this->MBIN_RESTRICT_MAGAZINE_CREATION ?? $dto->MBIN_RESTRICT_MAGAZINE_CREATION;
         $dto->MBIN_SSO_SHOW_FIRST = $this->MBIN_SSO_SHOW_FIRST ?? $dto->MBIN_SSO_SHOW_FIRST;
+        $dto->MAX_IMAGE_BYTES = $this->MAX_IMAGE_BYTES ?? $dto->MAX_IMAGE_BYTES;
 
         return $dto;
     }
@@ -98,6 +100,7 @@ class SettingsDto implements \JsonSerializable
             'MBIN_SSO_REGISTRATIONS_ENABLED' => $this->MBIN_SSO_REGISTRATIONS_ENABLED,
             'MBIN_RESTRICT_MAGAZINE_CREATION' => $this->MBIN_RESTRICT_MAGAZINE_CREATION,
             'MBIN_SSO_SHOW_FIRST' => $this->MBIN_SSO_SHOW_FIRST,
+            'MAX_IMAGE_BYTES' => $this->MAX_IMAGE_BYTES,
         ];
     }
 }
