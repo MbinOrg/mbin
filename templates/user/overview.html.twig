@@ -15,7 +15,7 @@
         <div class="section magazine">
             <h3>{{ 'admin_panel'|trans }}</h3>
             <div class="panel">
-                {% if not user.isVerified and is_granted('ROLE_ADMIN') %}
+                {% if user.apId is null and not user.isVerified and is_granted('ROLE_ADMIN') %}
                     <form action="{{ path('user_verify', {username: user.username}) }}"
                           method="POST" {{ stimulus_controller('confirmation') }}
                           data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
