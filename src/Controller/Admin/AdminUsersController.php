@@ -19,7 +19,7 @@ class AdminUsersController extends AbstractController
     public function active(?bool $withFederated = null)
     {
         return $this->render(
-            'admin/users_active.html.twig',
+            'admin/users.html.twig',
             [
                 'users' => $this->repository->findAllActivePaginated(
                     (int) $this->request->getCurrentRequest()->get('p', 1),
@@ -34,7 +34,7 @@ class AdminUsersController extends AbstractController
     public function inactive()
     {
         return $this->render(
-            'admin/users_inactive.html.twig',
+            'admin/users.html.twig',
             [
                 'users' => $this->repository->findAllInactivePaginated(
                     (int) $this->request->getCurrentRequest()->get('p', 1)
@@ -47,7 +47,7 @@ class AdminUsersController extends AbstractController
     public function suspended(?bool $withFederated = null)
     {
         return $this->render(
-            'admin/users_suspended.html.twig',
+            'admin/users.html.twig',
             [
                 'users' => $this->repository->findAllSuspendedPaginated(
                     (int) $this->request->getCurrentRequest()->get('p', 1),
@@ -62,7 +62,7 @@ class AdminUsersController extends AbstractController
     public function banned(?bool $withFederated = null)
     {
         return $this->render(
-            'admin/users_banned.html.twig',
+            'admin/users.html.twig',
             [
                 'users' => $this->repository->findAllBannedPaginated(
                     (int) $this->request->getCurrentRequest()->get('p', 1),
