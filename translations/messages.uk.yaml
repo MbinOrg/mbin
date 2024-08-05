@@ -168,7 +168,6 @@ oauth2.grant.moderate.magazine.ban.create: Забороняти користув
   спільнотах.
 firstname: Імʼя
 sidebar_position: Положення бічної панелі
-inactive: Неактивні
 oauth2.grant.admin.user.delete: Видаляти користувачів з вашого інстансу.
 oauth.consent.app_requesting_permissions: хоче виконати наступні дії від вашого імені
 no: Ні

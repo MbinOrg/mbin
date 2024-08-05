@@ -341,7 +341,6 @@ meta: Meta
 instance: Instantie
 pages: Pagina's
 FAQ: Veelgestelde vragen
-inactive: Inactief
 federation_enabled: Verspreiding is ingeschakeld
 registrations_enabled: Registratie zijn ingeschakeld
 registration_disabled: Registraties zijn uitgeschakeld

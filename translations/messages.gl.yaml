@@ -725,7 +725,6 @@ local: Local
 admin_panel: Panel Admin
 pages: Páxinas
 FAQ: PMF
-inactive: Inactivo
 type_search_term: Escribe termo a buscar
 federation_enabled: A federación está activada
 registrations_enabled: Permítese a creación de contas

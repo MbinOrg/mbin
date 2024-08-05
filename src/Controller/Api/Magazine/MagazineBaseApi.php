@@ -50,13 +50,11 @@ class MagazineBaseApi extends BaseApi
      */
     protected function deserializeMagazine(?MagazineDto $dto = null): MagazineDto
     {
-        $dto = $dto ? $dto : new MagazineDto();
+        $dto = $dto ?? new MagazineDto();
         $deserialized = $this->serializer->deserialize($this->request->getCurrentRequest()->getContent(), MagazineRequestDto::class, 'json');
         \assert($deserialized instanceof MagazineRequestDto);
 
-        $dto = $deserialized->mergeIntoDto($dto);
-
-        return $dto;
+        return $deserialized->mergeIntoDto($dto);
     }
 
     protected function deserializeThemeFromForm(MagazineThemeDto $dto): MagazineThemeDto

@@ -159,6 +159,7 @@ class MagazineFactory
             $dto->getId(),
             $dto->serverSoftware,
             $dto->serverSoftwareVersion,
+            $dto->isPostingRestrictedToMods,
         );
     }
 

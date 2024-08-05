@@ -344,7 +344,6 @@ meta: Meta
 instance: Istanza
 pages: Pagine
 FAQ: FAQ
-inactive: Inattivo
 federation_enabled: Federazione abilitata
 registrations_enabled: Registrazioni abilitate
 registration_disabled: Registrazioni disabilitate
