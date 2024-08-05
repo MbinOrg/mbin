@@ -1,0 +1,40 @@
+{% if(users.haveToPaginate is defined and users.haveToPaginate) %}
+    {{ pagerfanta(users, null, {'pageParameter':'[p]'}) }}
+{% endif %}
+<div class="section" id="content">
+    {% if withFederated is defined %}
+    <div class="flex" data-controller="selection">
+        <label class="select">
+            <select data-action="selection#changeLocation">"
+                <option value="{{ options_url('withFederated', false) }}">{{ 'local'|trans }}</option>
+                <option value="{{ options_url('withFederated', true) }}" {{ withFederated is same as true ? 'selected' : '' }}>{{ 'federated'|trans }}</option>
+            </select>
+        </label>
+    </div>
+    {% endif %}
+    <table>
+        <thead>
+        <tr>
+            <th>{{ 'username'|trans }}</th>
+            <th>{{ 'email'|trans }}</th>
+            <th>{{ 'created_at'|trans }}</th>
+            <th>{{ 'last_active'|trans }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            {% if not user.isDeleted %}
+                <tr>
+                    <td>{{ component('user_inline', {user: user}) }}</td>
+                    <td>{{ user.apId ? '-' : user.email }}</td>
+                    <td>{{ component('date', {date: user.createdAt}) }}</td>
+                    <td>{{ component('date', {date: user.lastActive}) }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% if(users.haveToPaginate is defined and users.haveToPaginate) %}
+    {{ pagerfanta(users, null, {'pageParameter':'[p]'}) }}
+{% endif %}
