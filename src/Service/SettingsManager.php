@@ -75,7 +75,7 @@ class SettingsManager
                 $this->find($results, 'MBIN_SSO_REGISTRATIONS_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? true,
                 $this->find($results, 'MBIN_RESTRICT_MAGAZINE_CREATION', FILTER_VALIDATE_BOOLEAN) ?? false,
                 $this->find($results, 'MBIN_SSO_SHOW_FIRST', FILTER_VALIDATE_BOOLEAN) ?? false,
-                $this->find($results, 'MAX_IMAGE_BYTES', FILTER_VALIDATE_INT) ?? $this->maxImageBytes
+                \intval($this->find($results, 'MAX_IMAGE_BYTES', FILTER_VALIDATE_INT)) ?? $this->maxImageBytes
             );
         }
     }
@@ -109,6 +109,10 @@ class SettingsManager
 
             if (\is_bool($value)) {
                 $value = $value ? 'true' : 'false';
+            }
+
+            if (!\is_string($value) && !\is_array($value)) {
+                $value = \strval($value);
             }
 
             if (!$s) {
