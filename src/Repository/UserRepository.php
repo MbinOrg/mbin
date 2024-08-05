@@ -243,13 +243,13 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     {
         $builder = $this->createQueryBuilder('u');
         if ($onlyLocal) {
-            $builder->where('u.apId IS NULL');
+            $builder->where('u.apId IS NULL')
+            ->andWhere('u.isVerified = true');
         } else {
             $builder->where('u.apId IS NOT NULL');
         }
         $query = $builder
             ->andWhere('u.visibility = :visibility')
-            ->andWhere('u.isVerified = true')
             ->andWhere('u.isBanned = false')
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->orderBy('u.createdAt', 'ASC')
