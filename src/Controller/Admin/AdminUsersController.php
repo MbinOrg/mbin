@@ -58,7 +58,6 @@ class AdminUsersController extends AbstractController
         );
     }
 
-
     #[IsGranted('ROLE_ADMIN')]
     public function banned(?bool $withFederated = null)
     {
