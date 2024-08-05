@@ -24,6 +24,18 @@
             </a>
         </li>
         <li>
+            <a href="{{ path('admin_users_banned') }}"
+               class="{{ html_classes({'active': is_route_name('admin_users_banned')}) }}">
+                {{ 'users_banned'|trans }}
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('admin_users_suspended') }}"
+               class="{{ html_classes({'active': is_route_name('admin_users_suspended')}) }}">
+                {{ 'users_suspended'|trans }}
+            </a>
+        </li>
+        <li>
             <a href="{{ path('admin_reports', {status: STATUS_PENDING}) }}"
                class="{{ html_classes({'active': is_route_name('admin_reports')}) }}">
                 {{ 'reports'|trans }}

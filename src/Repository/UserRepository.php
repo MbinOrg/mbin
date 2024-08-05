@@ -267,6 +267,65 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $pagerfanta;
     }
 
+    public function findAllBannedPaginated(int $page, bool $onlyLocal = false): PagerfantaInterface
+    {
+        $builder = $this->createQueryBuilder('u');
+        if ($onlyLocal) {
+            $builder->where('u.apId IS NULL');
+        } else {
+            $builder->where('u.apId IS NOT NULL');
+        }
+        $query = $builder
+            ->andWhere('u.isBanned = true')
+            ->orderBy('u.createdAt', 'ASC')
+            ->getQuery();
+
+        $pagerfanta = new Pagerfanta(
+            new QueryAdapter(
+                $query
+            )
+        );
+
+        try {
+            $pagerfanta->setMaxPerPage(self::PER_PAGE);
+            $pagerfanta->setCurrentPage($page);
+        } catch (NotValidCurrentPageException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return $pagerfanta;
+    }
+
+    public function findAllSuspendedPaginated(int $page, bool $onlyLocal = false): PagerfantaInterface
+    {
+        $builder = $this->createQueryBuilder('u');
+        if ($onlyLocal) {
+            $builder->where('u.apId IS NULL');
+        } else {
+            $builder->where('u.apId IS NOT NULL');
+        }
+        $query = $builder
+            ->andWhere('u.visibility = :visibility')
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_TRASHED)
+            ->orderBy('u.createdAt', 'ASC')
+            ->getQuery();
+
+        $pagerfanta = new Pagerfanta(
+            new QueryAdapter(
+                $query
+            )
+        );
+
+        try {
+            $pagerfanta->setMaxPerPage(self::PER_PAGE);
+            $pagerfanta->setCurrentPage($page);
+        } catch (NotValidCurrentPageException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return $pagerfanta;
+    }
+
     public function findForDeletionPaginated(int $page): PagerfantaInterface
     {
         $query = $this->createQueryBuilder('u')

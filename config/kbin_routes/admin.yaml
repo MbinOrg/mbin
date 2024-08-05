@@ -4,6 +4,18 @@ admin_users:
     path: /admin/users/{withFederated}
     methods: [GET]
 
+admin_users_banned:
+    controller: App\Controller\Admin\AdminUserBansController
+    defaults: { withFederated: false }
+    path: /admin/users_banned/{withFederated}
+    methods: [GET]
+
+admin_users_suspended:
+    controller: App\Controller\Admin\AdminUserSuspendedController
+    defaults: { withFederated: false }
+    path: /admin/users_suspended/{withFederated}
+    methods: [GET]
+
 admin_reports:
     controller: App\Controller\Admin\AdminReportController
     path: /admin/reports/{status}

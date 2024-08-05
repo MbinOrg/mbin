@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{%- block title -%}
+    {{- 'users'|trans }} - {{ parent() -}}
+{%- endblock -%}
+
+{% block mainClass %}page-admin-users{% endblock %}
+
+{% block header_nav %}
+{% endblock %}
+
+{% block sidebar_top %}
+{% endblock %}
+
+{% block body %}
+    {% include 'admin/_options.html.twig' %}
+    {% if(users.haveToPaginate is defined and users.haveToPaginate) %}
+        {{ pagerfanta(users, null, {'pageParameter':'[p]'}) }}
+    {% endif %}
+    <div class="section" id="content">
+        <div class="flex" data-controller="selection">
+            <label class="select">
+                <select data-action="selection#changeLocation">"
+                    <option value="{{ options_url('withFederated', false) }}">{{ 'local'|trans }}</option>
+                    <option value="{{ options_url('withFederated', true) }}" {{ withFederated is same as true ? 'selected' : '' }}>{{ 'federated'|trans }}</option>
+                </select>
+            </label>
+        </div>
+        <table>
+            <thead>
+            <tr>
+                <th>{{ 'username'|trans }}</th>
+                <th>{{ 'email'|trans }}</th>
+                <th>{{ 'created_at'|trans }}</th>
+                <th>{{ 'last_active'|trans }}</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                {% if not user.isDeleted %}
+                    <tr>
+                        <td>{{ component('user_inline', {user: user}) }}</td>
+                        <td>{{ user.apId ? '-' : user.email }}</td>
+                        <td>{{ component('date', {date: user.createdAt}) }}</td>
+                        <td>{{ component('date', {date: user.lastActive}) }}</td>
+                        <td>
+                            <button class="btn btn__secondary">{{ (user.isVerified or user.apId) and not user.isBanned ? 'active'|trans : 'inactive'|trans }}</button>
+                            <button class="btn btn__secondary">{{ user.apId ? 'federated'|trans : 'local'|trans }}</button>
+                            {% if user.isTotpAuthenticationEnabled %}
+                                <button class="btn btn__secondary" title="{{ '2fa.user_active_tfa.title'|trans }}" aria-label="{{ '2fa.user_active_tfa.title'|trans }}"><i class="fa fa-mobile" aria-hidden="true"></i></button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if(users.haveToPaginate is defined and users.haveToPaginate) %}
+        {{ pagerfanta(users, null, {'pageParameter':'[p]'}) }}
+    {% endif %}
+{% endblock %}
