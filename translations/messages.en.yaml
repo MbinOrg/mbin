@@ -361,7 +361,6 @@ meta: Meta
 instance: Instance
 pages: Pages
 FAQ: FAQ
-inactive: Inactive
 type_search_term: Type search term
 federation_enabled: Federation enabled
 registrations_enabled: Registration enabled
