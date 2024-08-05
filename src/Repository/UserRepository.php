@@ -250,6 +250,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         }
         $query = $builder
             ->andWhere('u.visibility = :visibility')
+            ->andWhere('u.isVerified = true')
+            ->andWhere('u.isDeleted = false')
             ->andWhere('u.isBanned = false')
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->orderBy('u.createdAt', 'ASC')
@@ -275,10 +277,10 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     {
         $builder = $this->createQueryBuilder('u');
 
-        $query = $builder
-            ->where('u.apId IS NULL')
+        $query = $builder->where('u.apId IS NULL')
             ->andWhere('u.visibility = :visibility')
             ->andWhere('u.isVerified = false')
+            ->andWhere('u.isDeleted = false')
             ->andWhere('u.isBanned = false')
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->orderBy('u.createdAt', 'ASC')

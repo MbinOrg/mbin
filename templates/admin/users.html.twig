@@ -58,6 +58,14 @@
             </label>
         </div>
         {% endif %}
+
+        {% if not users|length %}
+            <aside class="section section--muted">
+                <p>{{ 'empty'|trans }}</p>
+            </aside>
+            
+        {% else %}
+
         <table>
             <thead>
             <tr>
@@ -69,17 +77,18 @@
             </thead>
             <tbody>
             {% for user in users %}
-                {% if not user.isDeleted %}
                     <tr>
                         <td>{{ component('user_inline', {user: user}) }}</td>
                         <td>{{ user.apId ? '-' : user.email }}</td>
                         <td>{{ component('date', {date: user.createdAt}) }}</td>
                         <td>{{ component('date', {date: user.lastActive}) }}</td>
                     </tr>
-                {% endif %}
             {% endfor %}
             </tbody>
         </table>
+        
+        {% endif %}
+
     </div>
     {% if(users.haveToPaginate is defined and users.haveToPaginate) %}
         {{ pagerfanta(users, null, {'pageParameter':'[p]'}) }}
