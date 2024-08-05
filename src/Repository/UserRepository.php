@@ -250,7 +250,6 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         }
         $query = $builder
             ->andWhere('u.visibility = :visibility')
-            ->andWhere('u.isVerified = true')
             ->andWhere('u.isDeleted = false')
             ->andWhere('u.isBanned = false')
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
