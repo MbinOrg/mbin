@@ -337,7 +337,6 @@ meta: Meta
 instance: Инстанс
 pages: Страницы
 FAQ: Часто задаваемые вопросы
-inactive: Неактивный
 type_search_term: Напишите вопрос
 federation_enabled: Федерация включена
 registrations_enabled: Регистрация включена

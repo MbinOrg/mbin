@@ -336,7 +336,6 @@ instance: Instancia
 registrations_enabled: Registro activado
 pages: Páginas
 FAQ: FAQ
-inactive: Inactivo
 type_search_term: Escribir término de búsqueda
 federation_enabled: Federación activada
 registration_disabled: Inscripciones desactivadas
