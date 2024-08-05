@@ -23,7 +23,7 @@ class AdminUsersInactiveController extends AbstractController
             [
                 'users' => $this->repository->findAllInactivePaginated(
                     (int) $this->request->getCurrentRequest()->get('p', 1)
-                )
+                ),
             ]
         );
     }
