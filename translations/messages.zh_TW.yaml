@@ -322,7 +322,6 @@ send: 傳送
 contact_email: 聯絡用電子郵件
 meta: Meta
 instance: 實體
-inactive: 不活躍
 unpin: 取消訂選
 registrations_enabled: 已開放註冊
 federation_enabled: 已連邦

@@ -367,7 +367,6 @@ add_mentions_entries: Ajouter des étiquettes dans le contenu
 add_mentions_posts: Ajouter des étiquettes dans les messages
 Password is invalid: Le mot de passe n'est pas valide.
 Your account is not active: Votre compte n'est pas actif.
-inactive: Inactif
 purge_account: Purger le compte
 magazine_panel_tags_info: Fournissez seulement si vous voulez inclure du contenu du
   Fédivers dans ce magazine, d'après ces étiquettes

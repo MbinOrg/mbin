@@ -360,7 +360,6 @@ magazine_panel_tags_info: 連合するサーバーからマガジンへ特定の
 kbin_intro_desc: はフェディバースネットワーク内で動作する、コンテンツの集約とミニブログのための分散型プラットフォームです。
 browsing_one_thread: 現在ディスカッション内の一つのスレッドだけを見ています！すべてのコメントは投稿ページから見られます。
 boost: ブースト
-inactive: 非アクティブ
 mercure_enabled: Mercureが有効
 report_issue: バグを報告
 tokyo_night: 東京ナイト
