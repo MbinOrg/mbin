@@ -5,13 +5,13 @@ admin_users:
     methods: [GET]
 
 admin_users_banned:
-    controller: App\Controller\Admin\AdminUserBansController
+    controller: App\Controller\Admin\AdminUsersBannedController
     defaults: { withFederated: false }
     path: /admin/users_banned/{withFederated}
     methods: [GET]
 
 admin_users_suspended:
-    controller: App\Controller\Admin\AdminUserSuspendedController
+    controller: App\Controller\Admin\AdminUsersSuspendedController
     defaults: { withFederated: false }
     path: /admin/users_suspended/{withFederated}
     methods: [GET]

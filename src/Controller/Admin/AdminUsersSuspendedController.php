@@ -9,7 +9,7 @@ use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class AdminUserBansController extends AbstractController
+class AdminUsersSuspendedController extends AbstractController
 {
     public function __construct(private readonly UserRepository $repository, private readonly RequestStack $request)
     {
@@ -19,9 +19,9 @@ class AdminUserBansController extends AbstractController
     public function __invoke(?bool $withFederated = null)
     {
         return $this->render(
-            'admin/users_banned.html.twig',
+            'admin/users_suspended.html.twig',
             [
-                'users' => $this->repository->findAllBannedPaginated(
+                'users' => $this->repository->findAllSuspendedPaginated(
                     (int) $this->request->getCurrentRequest()->get('p', 1),
                     !($withFederated ?? false)
                 ),
