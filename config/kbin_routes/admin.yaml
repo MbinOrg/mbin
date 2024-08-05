@@ -6,7 +6,6 @@ admin_users_active:
 
 admin_users_inactive:
     controller: App\Controller\Admin\AdminUsersController::inactive
-    defaults: { withFederated: false }
     path: /admin/users/inactive
     methods: [GET]
 
