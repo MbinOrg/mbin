@@ -15,34 +15,7 @@
 {% block body %}
     {% include 'admin/_options.html.twig' %}
 
-    <div class="pills">
-        <menu>
-            <li>
-                <a href="{{ path('admin_users_active') }}"
-                   class="{{ html_classes({'active': is_route_name('admin_users_active')}) }}">
-                    {{ 'admin_users_active'|trans }}
-                </a>
-            </li>
-            <li>
-                <a href="{{ path('admin_users_inactive') }}"
-                   class="{{ html_classes({'active': is_route_name('admin_users_inactive')}) }}">
-                    {{ 'admin_users_inactive'|trans }}
-                </a>
-            </li>
-            <li>
-                <a href="{{ path('admin_users_suspended') }}"
-                   class="{{ html_classes({'active': is_route_name('admin_users_suspended')}) }}">
-                    {{ 'admin_users_suspended'|trans }}
-                </a>
-            </li>
-            <li>
-                <a href="{{ path('admin_users_banned') }}"
-                   class="{{ html_classes({'active': is_route_name('admin_users_banned')}) }}">
-                    {{ 'admin_users_banned'|trans }}
-                </a>
-            </li>
-        </menu>
-    </div>
+    {% include 'admin/_users_options.html.twig' %}
 
     {% if(users.haveToPaginate is defined and users.haveToPaginate) %}
         {{ pagerfanta(users, null, {'pageParameter':'[p]'}) }}
