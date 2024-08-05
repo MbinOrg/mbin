@@ -21,7 +21,7 @@
                           data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                         <input type="hidden" name="token" value="{{ csrf_token('user_verify') }}">
                         <button type="submit" class="btn btn__secondary">
-                            <i class="fa fa-mobile" aria-hidden="true"></i> <span>{{ 'user_verify'|trans }}</span>
+                            <i class="fa fa-user-check" aria-hidden="true"></i> <span>{{ 'user_verify'|trans }}</span>
                         </button>
                     </form>
                     <hr>
@@ -51,7 +51,7 @@
                     data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                     <input type="hidden" name="token" value="{{ csrf_token('user_suspend') }}">
                     <button type="submit" class="btn btn__secondary" title="{{ 'user_suspend_desc'|trans }}">
-                        <i class="fa-solid fa-pause" aria-hidden="true"></i> {{ user.visibility is same as 'trashed' ? 'unsuspend_account'|trans : 'suspend_account'|trans }}
+                        <i class="fa-solid fa-pause" aria-hidden="true"></i> <span>{{ user.visibility is same as 'trashed' ? 'unsuspend_account'|trans : 'suspend_account'|trans }}</span>
                     </button>
                 </form>
 
