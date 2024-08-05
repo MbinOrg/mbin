@@ -312,6 +312,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         }
         $query = $builder
             ->andWhere('u.isBanned = true')
+            ->andWhere('u.isDeleted = false')
             ->orderBy('u.createdAt', 'ASC')
             ->getQuery();
 
@@ -341,6 +342,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         }
         $query = $builder
             ->andWhere('u.visibility = :visibility')
+            ->andWhere('u.isDeleted = false')
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_TRASHED)
             ->orderBy('u.createdAt', 'ASC')
             ->getQuery();
