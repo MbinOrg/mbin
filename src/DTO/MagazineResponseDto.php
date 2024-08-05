@@ -35,6 +35,7 @@ class MagazineResponseDto implements \JsonSerializable
     public ?int $magazineId = null;
     public ?string $serverSoftware = null;
     public ?string $serverSoftwareVersion = null;
+    public bool $isPostingRestrictedToMods = false;
 
     public static function create(
         ?ModeratorResponseDto $owner = null,
@@ -59,6 +60,7 @@ class MagazineResponseDto implements \JsonSerializable
         ?int $magazineId = null,
         ?string $serverSoftware = null,
         ?string $serverSoftwareVersion = null,
+        bool $isPostingRestrictedToMods = false,
     ): self {
         $dto = new MagazineResponseDto();
         $dto->owner = $owner;
@@ -83,6 +85,7 @@ class MagazineResponseDto implements \JsonSerializable
         $dto->magazineId = $magazineId;
         $dto->serverSoftware = $serverSoftware;
         $dto->serverSoftwareVersion = $serverSoftwareVersion;
+        $dto->isPostingRestrictedToMods = $isPostingRestrictedToMods;
 
         return $dto;
     }
@@ -112,6 +115,7 @@ class MagazineResponseDto implements \JsonSerializable
             'apProfileId' => $this->apProfileId,
             'serverSoftware' => $this->serverSoftware,
             'serverSoftwareVersion' => $this->serverSoftwareVersion,
+            'isPostingRestrictedToMods' => $this->isPostingRestrictedToMods,
         ];
     }
 }
