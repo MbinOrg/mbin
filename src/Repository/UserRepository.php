@@ -239,7 +239,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $pagerfanta;
     }
 
-    public function findAllPaginated(int $page, bool $onlyLocal = false): PagerfantaInterface
+    public function findAllActivePaginated(int $page, bool $onlyLocal = false): PagerfantaInterface
     {
         $builder = $this->createQueryBuilder('u');
         if ($onlyLocal) {
@@ -248,6 +248,39 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             $builder->where('u.apId IS NOT NULL');
         }
         $query = $builder
+            ->andWhere('u.visibility = :visibility')
+            ->andWhere('u.isVerified = true')
+            ->andWhere('u.isBanned = false')
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+            ->orderBy('u.createdAt', 'ASC')
+            ->getQuery();
+
+        $pagerfanta = new Pagerfanta(
+            new QueryAdapter(
+                $query
+            )
+        );
+
+        try {
+            $pagerfanta->setMaxPerPage(self::PER_PAGE);
+            $pagerfanta->setCurrentPage($page);
+        } catch (NotValidCurrentPageException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return $pagerfanta;
+    }
+
+    public function findAllInactivePaginated(int $page): PagerfantaInterface
+    {
+        $builder = $this->createQueryBuilder('u');
+
+        $query = $builder
+            ->where('u.apId IS NULL')
+            ->andWhere('u.visibility = :visibility')
+            ->andWhere('u.isVerified = false')
+            ->andWhere('u.isBanned = false')
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->orderBy('u.createdAt', 'ASC')
             ->getQuery();
 

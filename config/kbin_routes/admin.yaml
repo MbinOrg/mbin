@@ -1,19 +1,25 @@
-admin_users:
-    controller: App\Controller\Admin\AdminUserController
+admin_users_active:
+    controller: App\Controller\Admin\AdminUsersActiveController
     defaults: { withFederated: false }
-    path: /admin/users/{withFederated}
+    path: /admin/users/active/{withFederated}
     methods: [GET]
 
-admin_users_banned:
-    controller: App\Controller\Admin\AdminUsersBannedController
+admin_users_inactive:
+    controller: App\Controller\Admin\AdminUsersInactiveController
     defaults: { withFederated: false }
-    path: /admin/users_banned/{withFederated}
+    path: /admin/users/inactive
     methods: [GET]
 
 admin_users_suspended:
     controller: App\Controller\Admin\AdminUsersSuspendedController
     defaults: { withFederated: false }
-    path: /admin/users_suspended/{withFederated}
+    path: /admin/users/suspended/{withFederated}
+    methods: [GET]
+
+admin_users_banned:
+    controller: App\Controller\Admin\AdminUsersBannedController
+    defaults: { withFederated: false }
+    path: /admin/users/banned/{withFederated}
     methods: [GET]
 
 admin_reports:

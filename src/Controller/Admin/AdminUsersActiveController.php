@@ -9,7 +9,7 @@ use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class AdminUserController extends AbstractController
+class AdminUsersActiveController extends AbstractController
 {
     public function __construct(private readonly UserRepository $repository, private readonly RequestStack $request)
     {
@@ -19,9 +19,9 @@ class AdminUserController extends AbstractController
     public function __invoke(?bool $withFederated = null)
     {
         return $this->render(
-            'admin/users.html.twig',
+            'admin/users_active.html.twig',
             [
-                'users' => $this->repository->findAllPaginated(
+                'users' => $this->repository->findAllActivePaginated(
                     (int) $this->request->getCurrentRequest()->get('p', 1),
                     !($withFederated ?? false)
                 ),

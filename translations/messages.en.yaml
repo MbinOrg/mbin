@@ -883,6 +883,7 @@ last_failed_contact: Last failed contact
 magazine_posting_restricted_to_mods: Restrict thread creation to moderators
 new_user_description: This user is new (active for less than %days% days)
 new_magazine_description: This magazine is new (active for less than %days% days)
-users_banned: Banned
-users_suspended: Suspended
-
+admin_users_active: Active
+admin_users_inactive: Inactive
+admin_users_suspended: Suspended
+admin_users_banned: Banned

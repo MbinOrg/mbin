@@ -18,21 +18,9 @@
             </a>
         </li>
         <li>
-            <a href="{{ path('admin_users') }}"
-               class="{{ html_classes({'active': is_route_name('admin_users')}) }}">
+            <a href="{{ path('admin_users_active') }}"
+               class="{{ html_classes({'active': is_route_name('admin_users_active') or is_route_name('admin_users_inactive') or is_route_name('admin_users_suspended') or is_route_name('admin_users_banned')}) }}">
                 {{ 'users'|trans }}
-            </a>
-        </li>
-        <li>
-            <a href="{{ path('admin_users_banned') }}"
-               class="{{ html_classes({'active': is_route_name('admin_users_banned')}) }}">
-                {{ 'users_banned'|trans }}
-            </a>
-        </li>
-        <li>
-            <a href="{{ path('admin_users_suspended') }}"
-               class="{{ html_classes({'active': is_route_name('admin_users_suspended')}) }}">
-                {{ 'users_suspended'|trans }}
             </a>
         </li>
         <li>
