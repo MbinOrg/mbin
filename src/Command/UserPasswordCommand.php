@@ -48,6 +48,12 @@ class UserPasswordCommand extends Command
             return Command::FAILURE;
         }
 
+        if($user->apId) {
+            $io->error('The specified account is not a local user!');
+
+            return Command::FAILURE;
+        }
+
         // Encode(hash) the plain password, and set it.
         $encodedPassword = $this->userPasswordHasher->hashPassword(
             $user,
