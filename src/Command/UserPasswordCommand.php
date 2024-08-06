@@ -48,7 +48,7 @@ class UserPasswordCommand extends Command
             return Command::FAILURE;
         }
 
-        if($user->apId) {
+        if ($user->apId) {
             $io->error('The specified account is not a local user!');
 
             return Command::FAILURE;
