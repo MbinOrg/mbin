@@ -174,8 +174,8 @@ class EntryManager implements ContentManagerInterface
     public function canUserEditEntry(Entry $entry, User $user): bool
     {
         $entryHost = null !== $entry->apId ? parse_url($entry->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
-        $userHost = null !== $user->apId ? parse_url($user->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
-        $magazineHost = null !== $entry->magazine->apId ? parse_url($entry->magazine->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+        $userHost = null !== $user->apId ? parse_url($user->apProfileId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+        $magazineHost = null !== $entry->magazine->apId ? parse_url($entry->magazine->apProfileId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
 
         return $entryHost === $userHost || $userHost === $magazineHost || $entry->magazine->userIsModerator($user);
     }
