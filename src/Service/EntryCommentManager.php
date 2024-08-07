@@ -106,8 +106,8 @@ class EntryCommentManager implements ContentManagerInterface
     public function canUserEditComment(EntryComment $comment, User $user): bool
     {
         $entryCommentHost = null !== $comment->apId ? parse_url($comment->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
-        $userHost = null !== $user->apId ? parse_url($user->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
-        $magazineHost = null !== $comment->magazine->apId ? parse_url($comment->magazine->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+        $userHost = null !== $user->apId ? parse_url($user->apProfileId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+        $magazineHost = null !== $comment->magazine->apId ? parse_url($comment->magazine->apProfileId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
 
         return $entryCommentHost === $userHost || $userHost === $magazineHost || $comment->magazine->userIsModerator($user);
     }
