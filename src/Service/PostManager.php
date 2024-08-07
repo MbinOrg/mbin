@@ -125,8 +125,8 @@ class PostManager implements ContentManagerInterface
     public function canUserEditPost(Post $post, User $user): bool
     {
         $postHost = null !== $post->apId ? parse_url($post->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
-        $userHost = null !== $user->apId ? parse_url($user->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
-        $magazineHost = null !== $post->magazine->apId ? parse_url($post->magazine->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+        $userHost = null !== $user->apId ? parse_url($user->apProfileId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+        $magazineHost = null !== $post->magazine->apId ? parse_url($post->magazine->apProfileId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
 
         return $postHost === $userHost || $userHost === $magazineHost || $post->magazine->userIsModerator($user);
     }
