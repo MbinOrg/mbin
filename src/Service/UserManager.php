@@ -252,6 +252,14 @@ readonly class UserManager
         $this->verifier->handleEmailConfirmation($request, $user);
     }
 
+    public function adminUserVerify(User $user): void
+    {
+        $user->isVerified = true;
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+    }
+
     public function toggleTheme(User $user): void
     {
         $user->toggleTheme();

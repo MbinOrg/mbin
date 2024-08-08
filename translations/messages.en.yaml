@@ -886,3 +886,4 @@ admin_users_active: Active
 admin_users_inactive: Inactive
 admin_users_suspended: Suspended
 admin_users_banned: Banned
+user_verify: Activate account
