@@ -828,9 +828,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         $this->visibility = self::VISIBILITY_SOFT_DELETED;
     }
 
+    public function isSoftDeleted(): bool
+    {
+        return self::VISIBILITY_SOFT_DELETED === $this->visibility;
+    }
+
     public function trash(): void
     {
         $this->visibility = self::VISIBILITY_TRASHED;
+    }
+
+    public function isTrashed(): bool
+    {
+        return self::VISIBILITY_TRASHED === $this->visibility;
     }
 
     public function restore(): void
