@@ -56,6 +56,10 @@ class EntryCommentNotificationManager implements ContentNotificationManagerInter
     // @todo check if author is on the block list
     public function sendCreated(ContentInterface $subject): void
     {
+        if ($subject->user->isBanned || $subject->user->isTrashed()) {
+            return;
+        }
+        
         /**
          * @var EntryComment $subject
          */
