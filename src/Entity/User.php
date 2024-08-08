@@ -833,9 +833,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         $this->visibility = self::VISIBILITY_TRASHED;
     }
 
-    public function isTrashed() : bool
+    public function isTrashed(): bool
     {
-        return $this->visibility == self::VISIBILITY_TRASHED;
+        return self::VISIBILITY_TRASHED === $this->visibility;
     }
 
     public function restore(): void

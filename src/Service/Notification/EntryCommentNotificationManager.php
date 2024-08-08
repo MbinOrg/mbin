@@ -59,7 +59,7 @@ class EntryCommentNotificationManager implements ContentNotificationManagerInter
         if ($subject->user->isBanned || $subject->user->isTrashed()) {
             return;
         }
-        
+
         /**
          * @var EntryComment $subject
          */
