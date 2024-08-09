@@ -54,6 +54,10 @@ class PostCommentManager implements ContentManagerInterface
      */
     public function create(PostCommentDto $dto, User $user, $rateLimit = true): PostComment
     {
+        if (!$user->apId) {
+            $user->ip = $dto->ip;
+        }
+        
         if ($rateLimit) {
             $limiter = $this->postCommentLimiter->create($dto->ip);
             if ($limiter && false === $limiter->consume()->isAccepted()) {

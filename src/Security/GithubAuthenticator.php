@@ -6,6 +6,7 @@ namespace App\Security;
 
 use App\DTO\UserDto;
 use App\Entity\User;
+use App\Service\IpResolver;
 use App\Service\SettingsManager;
 use App\Service\UserManager;
 use App\Utils\Slugger;
@@ -31,6 +32,7 @@ class GithubAuthenticator extends OAuth2Authenticator
         private readonly RouterInterface $router,
         private readonly EntityManagerInterface $entityManager,
         private readonly UserManager $userManager,
+        private readonly IpResolver $ipResolver,
         private readonly Slugger $slugger,
         private readonly SettingsManager $settingsManager
     ) {
@@ -84,6 +86,7 @@ class GithubAuthenticator extends OAuth2Authenticator
                 );
 
                 $dto->plainPassword = bin2hex(random_bytes(20));
+                $dto->ip = $this->ipResolver->resolve();
 
                 $user = $this->userManager->create($dto, false);
                 $user->oauthGithubId = \strval($githubUser->getId());

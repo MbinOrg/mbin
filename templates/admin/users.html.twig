@@ -71,6 +71,9 @@
             <tr>
                 <th>{{ 'username'|trans }}</th>
                 <th>{{ 'email'|trans }}</th>
+                {% if withFederated is not defined or withFederated is same as false %}
+                <th>{{ 'IP' }}</th>
+                {% endif %}
                 <th>{{ 'created_at'|trans }}</th>
                 <th>{{ 'last_active'|trans }}</th>
             </tr>
@@ -80,6 +83,9 @@
                     <tr>
                         <td>{{ component('user_inline', {user: user}) }}</td>
                         <td>{{ user.apId ? '-' : user.email }}</td>
+                        {% if withFederated is not defined or withFederated is same as false %}
+                        <td>{{ user.ip }}</td>
+                        {% endif %}
                         <td>{{ component('date', {date: user.createdAt}) }}</td>
                         <td>{{ component('date', {date: user.lastActive}) }}</td>
                     </tr>
