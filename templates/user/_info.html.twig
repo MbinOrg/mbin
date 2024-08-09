@@ -25,7 +25,7 @@
     <ul class="info">
         {% set instance = get_instance_of_user(user) %}
 
-        {% if is_granted('ROLE_ADMIN') and instance is same as null %}
+        {% if app.user is defined and app.user is not null and app.user.admin() and user.apId is null %}
             <li>{{ 'IP' }}: <span>{{ user.ip }}</span></li>
             <li>{{ 'email'|trans }}: <span>{{ user.email }}</span></li>
         {% endif %}
