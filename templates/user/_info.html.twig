@@ -23,8 +23,6 @@
         {{ component('user_actions', {user: user}) }}
     {% endif %}
     <ul class="info">
-        {% set instance = get_instance_of_user(user) %}
-
         {% if app.user is defined and app.user is not null and app.user.admin() and user.apId is null %}
             <li>{{ 'IP' }}: <span>{{ user.ip }}</span></li>
             <li>{{ 'email'|trans }}: <span>{{ user.email }}</span></li>
@@ -38,6 +36,7 @@
             </li>
         {% endif %}
 
+        {% set instance = get_instance_of_user(user) %}
         {% if instance is not same as null %}
             <li>{{ 'server_software'|trans }}: <div><span>{{ instance.software }}{% if instance.version is not same as null and app.user is defined and app.user is not null and app.user.admin() %} v{{ instance.version }}{% endif %}</span></div></li>
         {% endif %}
