@@ -27,22 +27,22 @@ class Instance
     }
 
     #[Column(nullable: true)]
-    public ?string $software;
+    public ?string $software = null;
 
     #[Column(nullable: true)]
-    public ?string $version;
+    public ?string $version = null;
 
     #[Column(unique: true)]
     public string $domain;
 
     #[Column(type: 'datetimetz_immutable', nullable: true)]
-    private ?\DateTimeImmutable $lastSuccessfulDeliver;
+    private ?\DateTimeImmutable $lastSuccessfulDeliver = null;
 
     #[Column(type: 'datetimetz_immutable', nullable: true)]
-    private ?\DateTimeImmutable $lastFailedDeliver;
+    private ?\DateTimeImmutable $lastFailedDeliver = null;
 
     #[Column(type: 'datetimetz_immutable', nullable: true)]
-    private ?\DateTimeImmutable $lastSuccessfulReceive;
+    private ?\DateTimeImmutable $lastSuccessfulReceive = null;
 
     #[Column]
     private int $failedDelivers = 0;
