@@ -126,6 +126,10 @@ class PostCommentManager implements ContentManagerInterface
      */
     public function edit(PostComment $comment, PostCommentDto $dto, ?User $editedBy = null): PostComment
     {
+        if (null !== $editedBy && !$editedBy->apId) {
+            $editedBy->ip = $dto->ip;
+        }
+
         Assert::same($comment->post->getId(), $dto->post->getId());
 
         $comment->body = $dto->body;
