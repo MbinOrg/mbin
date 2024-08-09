@@ -51,7 +51,7 @@ class EntryCommentManager implements ContentManagerInterface
         if (!$user->apId) {
             $user->ip = $dto->ip;
         }
-        
+
         if ($rateLimit) {
             $limiter = $this->entryCommentLimiter->create($dto->ip);
             if ($limiter && false === $limiter->consume()->isAccepted()) {
