@@ -11,6 +11,7 @@ use App\Form\PostType;
 use App\PageView\PostCommentPageView;
 use App\Repository\PostCommentRepository;
 use App\Service\PostManager;
+use App\Service\IpResolver;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,8 +21,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class PostEditController extends AbstractController
 {
-    public function __construct(private readonly PostManager $manager)
-    {
+    public function __construct(
+        private readonly PostManager $manager,
+        private readonly IpResolver $ipResolver
+    ) {
     }
 
     #[IsGranted('ROLE_USER')]
@@ -37,6 +40,7 @@ class PostEditController extends AbstractController
         $dto = $this->manager->createDto($post);
 
         $form = $this->createForm(PostType::class, $dto);
+        $dto->ip = $this->ipResolver->resolve();
         try {
             // Could thrown an error on event handlers (eg. onPostSubmit if a user upload an incorrect image)
             $form->handleRequest($request);
