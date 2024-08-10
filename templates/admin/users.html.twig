@@ -83,8 +83,8 @@
                     <tr>
                         <td>{{ component('user_inline', {user: user}) }}</td>
                         {% if withFederated is not defined or withFederated is same as false %}
-                        <td>{{ user.email }}</td>
-                        <td>{{ user.ip }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.ip }}</td>
                         {% endif %}
                         <td>{{ component('date', {date: user.createdAt}) }}</td>
                         <td>{{ component('date', {date: user.lastActive}) }}</td>
