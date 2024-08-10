@@ -4,6 +4,8 @@ framework:
     annotations: false #no longer supported
     http_method_override: false
     handle_all_throwables: true
+    trusted_proxies: '%env(string:default::TRUSTED_PROXIES)%'
+    trusted_headers: ['x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-prefix']
 
     # Enables session support. Note that the session will ONLY be started if you read or write from it.
     # Remove or comment this section to explicitly disable session support.
