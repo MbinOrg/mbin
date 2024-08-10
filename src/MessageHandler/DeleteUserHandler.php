@@ -15,14 +15,11 @@ use App\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 class DeleteUserHandler extends MbinMessageHandler
 {
-    private ?User $user;
-
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly ImageManager $imageManager,
@@ -44,54 +41,74 @@ class DeleteUserHandler extends MbinMessageHandler
         if (!($message instanceof DeleteUserMessage)) {
             throw new \LogicException();
         }
-        $this->user = $this->entityManager
-            ->getRepository(User::class)
-            ->find($message->id);
+        /** @var ?User */
+        $user = $this->entityManager->getRepository(User::class)->find($message->id);
 
-        if (!$this->user) {
-            throw new UnrecoverableMessageHandlingException('User not found');
-        } elseif ($this->user->isDeleted && null === $this->user->markedForDeletionAt) {
-            throw new UnrecoverableMessageHandlingException('User already deleted');
+        if (!$user) {
+            $this->logger->warning('User not found for deletion', ['id' => $message->id]);
+
+            return;
         }
 
-        $isLocal = null === $this->user->apId;
+        if ($user->isDeleted && null === $user->markedForDeletionAt) {
+            $this->logger->notice('User was already deleted', ['id' => $message->id, 'user' => $user->username]);
 
-        $privateKey = $this->user->getPrivateKey();
-        $publicKey = $this->user->getPublicKey();
+            return;
+        }
 
-        $inboxes = $this->getInboxes();
+        $isLocal = null === $user->apId;
+
+        $privateKey = $user->getPrivateKey();
+        $publicKey = $user->getPublicKey();
+
+        $inboxes = $this->getInboxes($user);
 
         // note: email cannot be null. For remote accounts email is set to their 'handle@domain.tld' who knows why...
-        $userDto = UserDto::create($this->user->username, email: $this->user->username, createdAt: $this->user->createdAt);
+        $userDto = UserDto::create($user->username, email: $user->username, createdAt: $user->createdAt);
         $userDto->plainPassword = ''.time();
         if (!$isLocal) {
-            $userDto->apId = $this->user->apId;
-            $userDto->apProfileId = $this->user->apProfileId;
+            $userDto->apId = $user->apId;
+            $userDto->apProfileId = $user->apProfileId;
         }
 
         try {
-            $this->userManager->detachAvatar($this->user);
+            $this->userManager->detachAvatar($user);
         } catch (\Exception|\Error $e) {
-            $this->logger->error("couldn't delete the avatar of {user} at '{path}': {message}", ['user' => $this->user->username, 'path' => $this->user->avatar?->filePath, 'message' => \get_class($e).': '.$e->getMessage()]);
+            $this->logger->error("couldn't delete the avatar of {user} at '{path}': {message}", [
+                'user' => $user->username,
+                'path' => $user->avatar?->filePath,
+                'message' => \get_class($e).': '.$e->getMessage(),
+                'exception' => $e,
+            ]);
         }
         try {
-            $this->userManager->detachCover($this->user);
+            $this->userManager->detachCover($user);
         } catch (\Exception|\Error $e) {
-            $this->logger->error("couldn't delete the cover of {user} at '{path}': {message}", ['user' => $this->user->username, 'path' => $this->user->cover?->filePath, 'message' => \get_class($e).': '.$e->getMessage()]);
+            $this->logger->error("couldn't delete the cover of {user} at '{path}': {message}", [
+                'user' => $user->username,
+                'path' => $user->cover?->filePath,
+                'message' => \get_class($e).': '.$e->getMessage(),
+                'exception' => $e,
+            ]);
         }
-        $filePathsOfUser = $this->userManager->getAllImageFilePathsOfUser($this->user);
+        $filePathsOfUser = $this->userManager->getAllImageFilePathsOfUser($user);
         foreach ($filePathsOfUser as $path) {
             try {
                 $this->imageManager->remove($path);
             } catch (\Exception|\Error $e) {
-                $this->logger->error("couldn't delete image of {user} at '{path}': {message}", ['user' => $this->user->username, 'path' => $path, 'message' => \get_class($e).': '.$e->getMessage()]);
+                $this->logger->error("couldn't delete image of {user} at '{path}': {message}", [
+                    'user' => $user->username,
+                    'path' => $path,
+                    'message' => \get_class($e).': '.$e->getMessage(),
+                    'exception' => $e,
+                ]);
             }
         }
 
         $this->entityManager->beginTransaction();
 
         // delete the original user, so all the content is cascade deleted
-        $this->entityManager->remove($this->user);
+        $this->entityManager->remove($user);
         $this->entityManager->flush();
 
         // recreate a user with the same name, so this handle is blocked
@@ -115,9 +132,9 @@ class DeleteUserHandler extends MbinMessageHandler
         $this->entityManager->commit();
     }
 
-    private function getInboxes(): array
+    private function getInboxes(User $user): array
     {
-        return array_unique(array_filter($this->userManager->getAllInboxesOfInteractions($this->user)));
+        return array_unique(array_filter($this->userManager->getAllInboxesOfInteractions($user)));
     }
 
     private function sendDeleteMessages(array $targetInboxes, User $deletedUser): void
