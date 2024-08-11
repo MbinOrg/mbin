@@ -847,8 +847,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
 
     public function restore(): void
     {
-        $this->visibility = VisibilityInterface::VISIBILITY_VISIBLE;
         $this->markedForDeletionAt = null;
+        $this->visibility = VisibilityInterface::VISIBILITY_VISIBLE;
         $this->isDeleted = false;
     }
 
