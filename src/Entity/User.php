@@ -825,7 +825,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
 
     public function softDelete(): void
     {
-        $this->visibility = self::VISIBILITY_SOFT_DELETED;
+        $this->markedForDeletionAt = date_add(new \DateTime(), new \DateInterval('P30D'));
+        $this->visibility = VisibilityInterface::VISIBILITY_SOFT_DELETED;
+        $this->isDeleted = true;
     }
 
     public function isSoftDeleted(): bool

@@ -337,8 +337,7 @@ readonly class UserManager
     public function deleteRequest(User $user, bool $immediately): void
     {
         if (!$immediately) {
-            $user->markedForDeletionAt = date_add(new \DateTime(), new \DateInterval('P30D'));
-            $user->isDeleted = true;
+            $user->softDelete();
 
             $this->entityManager->persist($user);
             $this->entityManager->flush();
