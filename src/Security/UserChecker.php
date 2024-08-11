@@ -28,6 +28,10 @@ class UserChecker implements UserCheckerInterface
             return;
         }
 
+        if($user->apId) {
+            throw new BadCredentialsException();
+        }
+
         if ($user->isDeleted) {
             if ($user->markedForDeletionAt > (new \DateTime('now'))) {
                 $this->userManager->removeDeleteRequest($user);
