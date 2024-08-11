@@ -102,6 +102,8 @@ services:
     command: /bin/sh -c "redis-server --requirepass $${REDIS_PASSWORD}"
     volumes:
       - ./storage/redis:/data
+    env_file:
+      - .env
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
 
@@ -116,6 +118,8 @@ services:
     environment:
       - POSTGRES_DB=kbin
       - POSTGRES_USER=kbin
+    env_file:
+      - .env
 
   rabbitmq:
     image: rabbitmq:3.13.6-management-alpine
