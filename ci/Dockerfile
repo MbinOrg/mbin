@@ -15,7 +15,7 @@ RUN curl -sSLf \
   https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions
 RUN chmod +x /usr/local/bin/install-php-extensions
 
-RUN install-php-extensions amqp intl redis gd zip bcmath xsl
+RUN install-php-extensions amqp intl redis gd zip bcmath
 
 # Install local-php-security-checker (same as used by "symfony security:check")
 RUN curl -sSLf \
