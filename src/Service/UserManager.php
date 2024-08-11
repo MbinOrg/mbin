@@ -354,8 +354,7 @@ readonly class UserManager
     public function removeDeleteRequest(User $user): void
     {
         if (null !== $user->markedForDeletionAt) {
-            $user->markedForDeletionAt = null;
-            $user->isDeleted = false;
+            $user->restore();
 
             $this->entityManager->persist($user);
             $this->entityManager->flush();

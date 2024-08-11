@@ -848,6 +848,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public function restore(): void
     {
         $this->visibility = VisibilityInterface::VISIBILITY_VISIBLE;
+        $this->markedForDeletionAt = null;
+        $this->isDeleted = false;
     }
 
     public function hasModeratorRequest(Magazine $magazine): bool
