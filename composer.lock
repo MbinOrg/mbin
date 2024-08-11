@@ -62,6 +62,7 @@
         },
         {
             "name": "aws/aws-sdk-php",
+<<<<<<< HEAD
             "version": "3.320.2",
             "source": {
                 "type": "git",
@@ -72,6 +73,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/dbae075b861316237d63418715f8bf4bfdd9d33d",
                 "reference": "dbae075b861316237d63418715f8bf4bfdd9d33d",
+=======
+            "version": "3.319.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aws/aws-sdk-php.git",
+                "reference": "99b75502221af095f0a5a72b0df7ec44e865e699"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/99b75502221af095f0a5a72b0df7ec44e865e699",
+                "reference": "99b75502221af095f0a5a72b0df7ec44e865e699",
+>>>>>>> d51329c5e (run composer update)
                 "shasum": ""
             },
             "require": {
@@ -154,9 +167,15 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/aws/aws-sdk-php/tree/3.320.2"
             },
             "time": "2024-08-16T18:06:17+00:00"
+=======
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.319.2"
+            },
+            "time": "2024-08-09T18:32:29+00:00"
+>>>>>>> d51329c5e (run composer update)
         },
         {
             "name": "babdev/pagerfanta-bundle",
@@ -1098,6 +1117,7 @@
         },
         {
             "name": "doctrine/dbal",
+<<<<<<< HEAD
             "version": "3.9.0",
             "source": {
                 "type": "git",
@@ -1108,6 +1128,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/doctrine/dbal/zipball/d8f68ea6cc00912e5313237130b8c8decf4d28c6",
                 "reference": "d8f68ea6cc00912e5313237130b8c8decf4d28c6",
+=======
+            "version": "3.8.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/dbal.git",
+                "reference": "2093d670ca17f634f3c095ec10a20687eccebd99"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/2093d670ca17f634f3c095ec10a20687eccebd99",
+                "reference": "2093d670ca17f634f3c095ec10a20687eccebd99",
+>>>>>>> d51329c5e (run composer update)
                 "shasum": ""
             },
             "require": {
@@ -1191,7 +1223,11 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/dbal/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/doctrine/dbal/tree/3.9.0"
+=======
+                "source": "https://github.com/doctrine/dbal/tree/3.8.7"
+>>>>>>> d51329c5e (run composer update)
             },
             "funding": [
                 {
@@ -1207,7 +1243,11 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2024-08-15T07:34:42+00:00"
+=======
+            "time": "2024-08-07T11:57:25+00:00"
+>>>>>>> d51329c5e (run composer update)
         },
         {
             "name": "doctrine/deprecations",
@@ -5288,6 +5328,7 @@
         },
         {
             "name": "nelmio/api-doc-bundle",
+<<<<<<< HEAD
             "version": "v4.29.3",
             "source": {
                 "type": "git",
@@ -5298,6 +5339,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/nelmio/NelmioApiDocBundle/zipball/61a3f8bb95111fade6eace55c071c43da0cc75d9",
                 "reference": "61a3f8bb95111fade6eace55c071c43da0cc75d9",
+=======
+            "version": "v4.29.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nelmio/NelmioApiDocBundle.git",
+                "reference": "fbb94ebc33116fd10a67579c6eb970ff3c3ec067"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nelmio/NelmioApiDocBundle/zipball/fbb94ebc33116fd10a67579c6eb970ff3c3ec067",
+                "reference": "fbb94ebc33116fd10a67579c6eb970ff3c3ec067",
+>>>>>>> d51329c5e (run composer update)
                 "shasum": ""
             },
             "require": {
@@ -5398,7 +5451,11 @@
             ],
             "support": {
                 "issues": "https://github.com/nelmio/NelmioApiDocBundle/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/nelmio/NelmioApiDocBundle/tree/v4.29.3"
+=======
+                "source": "https://github.com/nelmio/NelmioApiDocBundle/tree/v4.29.1"
+>>>>>>> d51329c5e (run composer update)
             },
             "funding": [
                 {
@@ -5406,7 +5463,11 @@
                     "type": "github"
                 }
             ],
+<<<<<<< HEAD
             "time": "2024-08-17T13:03:07+00:00"
+=======
+            "time": "2024-08-08T15:00:40+00:00"
+>>>>>>> d51329c5e (run composer update)
         },
         {
             "name": "nelmio/cors-bundle",
@@ -6453,6 +6514,7 @@
         },
         {
             "name": "phpseclib/phpseclib",
+<<<<<<< HEAD
             "version": "3.0.41",
             "source": {
                 "type": "git",
@@ -6463,6 +6525,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/621c73f7dcb310b61de34d1da4c4204e8ace6ceb",
                 "reference": "621c73f7dcb310b61de34d1da4c4204e8ace6ceb",
+=======
+            "version": "3.0.40",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpseclib/phpseclib.git",
+                "reference": "3dd2561d14ed48c03fc30322df1ad46dbac85ea6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/3dd2561d14ed48c03fc30322df1ad46dbac85ea6",
+                "reference": "3dd2561d14ed48c03fc30322df1ad46dbac85ea6",
+>>>>>>> d51329c5e (run composer update)
                 "shasum": ""
             },
             "require": {
@@ -6543,7 +6617,11 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/phpseclib/phpseclib/tree/3.0.41"
+=======
+                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.40"
+>>>>>>> d51329c5e (run composer update)
             },
             "funding": [
                 {
@@ -6559,7 +6637,11 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2024-08-12T00:13:54+00:00"
+=======
+            "time": "2024-08-11T16:34:00+00:00"
+>>>>>>> d51329c5e (run composer update)
         },
         {
             "name": "phpstan/phpdoc-parser",
