@@ -455,7 +455,7 @@ sidebar_sections_local_only: Restrict "Random X" and "Active People" sections to
 account_deletion_title: Account deletion
 account_deletion_description: Your account will be deleted in 30 days unless you choose
   to delete the account immediately. To restore your account within 30 days, login with
-  the same user credentials or contact an instance administrator.
+  the same user credentials or contact an administrator.
 account_deletion_button: Delete Account
 account_deletion_immediate: Delete immediately
 more_from_domain: More from domain
