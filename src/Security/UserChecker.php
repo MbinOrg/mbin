@@ -28,7 +28,7 @@ class UserChecker implements UserCheckerInterface
             return;
         }
 
-        if($user->apId) {
+        if ($user->apId) {
             throw new BadCredentialsException();
         }
 
