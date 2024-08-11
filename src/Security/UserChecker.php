@@ -31,10 +31,9 @@ class UserChecker implements UserCheckerInterface
         if ($user->isDeleted) {
             if ($user->markedForDeletionAt > (new \DateTime('now'))) {
                 $this->userManager->removeDeleteRequest($user);
-            }
-            else {
+            } else {
                 throw new BadCredentialsException();
-            } 
+            }
         }
 
         if (!$user->isVerified) {
