@@ -4,8 +4,7 @@ services:
   www:
     # Builds the Docker image from scratch
     build:
-      context: ../
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/php/Dockerfile
     image: mbin
     # Or remove the build, context, dockerfile and image lines above and
     # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
@@ -20,9 +19,9 @@ services:
     ports:
       - 8008:80
     volumes:
-      - ./storage/caddy_config:/config
-      - ./storage/caddy_data:/data
-      - ./storage/media:/var/www/mbin/public/media
+      - ./docker/storage/caddy_config:/config
+      - ./docker/storage/caddy_data:/data
+      - ./:/var/www/mbin/
     environment:
       - SERVER_NAME=:80 # the address that the web server binds
       - PHP_FASTCGI_HOST=php:9000 # caddy forward traffic to this host via fastcgi
@@ -34,8 +33,7 @@ services:
   php:
     # Builds the Docker image from scratch
     build:
-      context: ../
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/php/Dockerfile
     image: mbin
     # Or remove the build, context, dockerfile and image lines above and
     # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
@@ -45,6 +43,8 @@ services:
     networks:
       - mbin_external_network
     command: php-fpm
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     healthcheck:
       test:
         [
@@ -52,10 +52,11 @@ services:
           "REQUEST_METHOD=GET SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping cgi-fcgi -bind -connect localhost:9000 || exit 1",
         ]
     volumes:
-      - ./storage/media:/var/www/mbin/public/media
-      - ./storage/logs:/var/www/mbin/var/log
+      - ./:/var/www/mbin/
+      - ./docker/storage/logs:/var/www/mbin/var/log
+      - ./docker/php/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini
     # If you want to change configs locally, without rebuilding the image use:
-    #  - ../config:/var/www/mbin/config
+    #  - ../docker/config:/var/www/mbin/config
     env_file:
       - .env
     depends_on:
@@ -66,8 +67,7 @@ services:
   messenger:
     # Builds the Docker image from scratch
     build:
-      context: ../
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/php/Dockerfile
     image: mbin
     # Or remove the build, context, dockerfile and image lines above and
     # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
@@ -79,10 +79,10 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "ps aux | grep 'messenger[:]consume' || exit 1"]
     volumes:
-      - ./storage/media:/var/www/mbin/public/media
-      - ./storage/logs:/var/www/mbin/var/log
+      - ./:/var/www/mbin/
+      - ./docker/storage/logs:/var/www/mbin/var/log
     # If you want to change configs locally, without rebuilding the image use:
-    #  - ../config:/var/www/mbin/config
+    #  - ../docker/config:/var/www/mbin/config
     env_file:
       - .env
     depends_on:
@@ -98,7 +98,7 @@ services:
       - mbin_external_network
     command: /bin/sh -c "redis-server --requirepass $${REDIS_PASSWORD}"
     volumes:
-      - ./storage/redis:/data
+      - ./docker/storage/redis:/data
     env_file:
       - .env
     healthcheck:
@@ -113,7 +113,7 @@ services:
     networks:
       - mbin_external_network
     volumes:
-      - ./storage/postgres:/var/lib/postgresql/data
+      - ./docker/storage/postgres:/var/lib/postgresql/data
     env_file:
       - .env
 
@@ -126,7 +126,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./storage/rabbitmq:/var/lib/rabbitmq
+      - ./docker/storage/rabbitmq:/var/lib/rabbitmq
     ports:
       - 15672:15672
 
@@ -140,7 +140,7 @@ services:
   #  ports:
   #    - 443:443
   #  volumes:
-  #    - ./nginx.conf:/etc/nginx/nginx.conf
+  #    - ./docker/nginx.conf:/etc/nginx/nginx.conf
 
   # Example of a SMTP docker service
   # More info: https://hub.docker.com/r/ixdotai/smtp

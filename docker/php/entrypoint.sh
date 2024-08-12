@@ -7,26 +7,14 @@ if [ "${1#-}" != "$1" ]; then
 fi
 
 if [ "$1" == "php-fpm" ] || [ "$1" == "php" ] || [ "$1" == "bin/console" ]; then
+    pwd
     # if running as a service install assets
     echo "Starting as service..."
 
-    # In production: dump the production PHP config files,
-    # validate the installed packages (no dev) and dump prod config
-    if [ "$APP_ENV" == "prod" ]; then
-        cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-        cp "$PHP_INI_DIR/conf.d/app.ini-production" "$PHP_INI_DIR/conf.d/app.prod.or.dev.ini"
-        composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
-        composer dump-env prod
-    fi
-
     # In development: dump the development PHP config files,
     # validate the installed packages (including dev dependencies) and dump dev config
-    if [ "$APP_ENV" == "dev" ]; then
-        cp "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
-        cp "$PHP_INI_DIR/conf.d/app.ini-development" "$PHP_INI_DIR/conf.d/app.prod.or.dev.ini"
-        composer install --prefer-dist --no-scripts --no-progress
-        composer dump-env dev
-    fi
+    composer install --prefer-dist --no-scripts --no-progress
+    composer dump-env dev
 
     echo "Waiting for db to be ready..."
     ATTEMPTS_LEFT_TO_REACH_DATABASE=60
