@@ -32,7 +32,7 @@ RUN install-php-extensions \
       xml
 
 
-
+# TODO Use a different entrypoint for prod?
 COPY ./docker/php/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
