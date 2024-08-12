@@ -14,7 +14,7 @@
 **/compose.*.yaml
 **/compose.*.yml
 **/compose.yaml
-**/compose.yml
+compose.yml
 **/Dockerfile
 **/Thumbs.db
 .github/
