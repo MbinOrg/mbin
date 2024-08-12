@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\Site;
 use App\Entity\User;
 use App\Service\SettingsManager;
+use App\Utils\DownvotesMode;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Adapter\ArrayAdapter;
@@ -38,7 +39,7 @@ class ReputationRepository extends ServiceEntityRepository
 
         $table = $this->getEntityManager()->getClassMetadata($className)->getTableName().'_vote';
 
-        $sql = "SELECT date_trunc('day', v.created_at) as day, sum(v.choice) as points FROM ".$table.' v 
+        $sql = "SELECT date_trunc('day', v.created_at) as day, sum(v.choice) as points FROM ".$table.' v
                 WHERE v.author_id = :userId GROUP BY day ORDER BY day DESC';
 
         $stmt = $conn->prepare($sql);
@@ -66,7 +67,7 @@ class ReputationRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()
             ->getConnection();
 
-        if ('disabled' === $this->settingsManager->get('MBIN_DOWNVOTES_MODE')) {
+        if (DownvotesMode::Disabled === $this->settingsManager->getDownvotesMode()) {
             $sql = 'SELECT
                 COALESCE((SELECT SUM((up_votes * 2) + favourite_count) FROM entry WHERE user_id = :user), 0) +
                 COALESCE((SELECT SUM((up_votes * 2) + favourite_count) FROM entry_comment WHERE user_id = :user), 0) +

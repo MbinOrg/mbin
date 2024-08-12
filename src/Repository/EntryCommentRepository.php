@@ -20,8 +20,8 @@ use App\Entity\Moderator;
 use App\Entity\User;
 use App\Entity\UserBlock;
 use App\Entity\UserFollow;
-use App\Repository\Contract\TagRepositoryInterface;
 use App\Service\SettingsManager;
+use App\Utils\DownvotesMode;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Types\Types;
@@ -50,8 +50,7 @@ class EntryCommentRepository extends ServiceEntityRepository
         ManagerRegistry $registry,
         private readonly Security $security,
         private readonly SettingsManager $settingsManager,
-    )
-    {
+    ) {
         parent::__construct($registry, EntryComment::class);
     }
 
@@ -245,7 +244,7 @@ class EntryCommentRepository extends ServiceEntityRepository
                 $qb->orderBy('c.upVotes', 'DESC');
                 break;
             case Criteria::SORT_TOP:
-                if ('disabled' === $this->settingsManager->get('MBIN_DOWNVOTES_MODE')) {
+                if (DownvotesMode::Disabled === $this->settingsManager->getDownvotesMode()) {
                     $qb->orderBy('c.upVotes + c.favouriteCount', 'DESC');
                 } else {
                     $qb->orderBy('c.upVotes + c.favouriteCount - c.downVotes', 'DESC');

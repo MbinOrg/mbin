@@ -10,6 +10,7 @@ use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Magazine;
 use App\Service\SettingsManager;
+use App\Utils\DownvotesMode;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +33,7 @@ class EntryCommentVotersController extends AbstractController
         Request $request,
         string $type
     ): Response {
-        if ('down' === $type && $this->settingsManager->get('MBIN_DOWNVOTES_MODE') !== 'enabled') {
+        if ('down' === $type && DownvotesMode::Enabled !== $this->settingsManager->getDownvotesMode()) {
             $votes = [];
         } else {
             $votes = $comment->votes->filter(
@@ -42,7 +43,7 @@ class EntryCommentVotersController extends AbstractController
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([
-                'html' => $this->renderView('_layout/_voters_inline.html.twig', [
+                'html' => $this->renderView('components/voters_inline.html.twig', [
                     'votes' => $votes,
                     'more' => null,
                 ]),

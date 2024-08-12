@@ -1,3 +1,5 @@
+{% set downvoteMode = mbin_downvotes_mode() %}
+{%- set DOWNVOTES_ENABLED = constant('App\\Utils\\DownvotesMode::Enabled') %}
 <aside id="activity" class="options options-activity">
     <div class="options__title">
         <h2>{{ 'activity'|trans }} ({{ comment.countVotes + comment.favouriteCount }})</h2>
@@ -15,8 +17,10 @@
                 {{ 'favourites'|trans }} ({{ comment.favouriteCount }})
             </a>
         </li>
-        <li>
-            <span class="options__nolink">{{ 'down_votes'|trans }} ({{ comment.countDownVotes }})</span>
-        </li>
+        {% if downvoteMode is same as DOWNVOTES_ENABLED %}
+            <li>
+                <span class="options__nolink">{{ 'down_votes'|trans }} ({{ comment.countDownVotes }})</span>
+            </li>
+        {% endif %}
     </menu>
 </aside>

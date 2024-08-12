@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Instance\Admin;
 
 use App\Tests\WebTestCase;
+use App\Utils\DownvotesMode;
 
 class InstanceSettingsUpdateApiTest extends WebTestCase
 {
@@ -111,7 +112,7 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY' => false,
             'MBIN_SSO_REGISTRATIONS_ENABLED' => true,
             'MBIN_RESTRICT_MAGAZINE_CREATION' => false,
-            'MBIN_DOWNVOTES_MODE' => 'enabled',
+            'MBIN_DOWNVOTES_MODE' => DownvotesMode::Enabled,
         ];
 
         $client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);
@@ -148,7 +149,7 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY' => true,
             'MBIN_SSO_REGISTRATIONS_ENABLED' => false,
             'MBIN_RESTRICT_MAGAZINE_CREATION' => true,
-            'MBIN_DOWNVOTES_MODE' => 'hidden',
+            'MBIN_DOWNVOTES_MODE' => DownvotesMode::Hidden,
         ];
 
         $client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);

@@ -7,14 +7,18 @@ namespace App\Repository;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Service\SettingsManager;
+use App\Utils\DownvotesMode;
 use Doctrine\DBAL\ParameterType;
+use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 
 class StatsVotesRepository extends StatsRepository
 {
     public function __construct(
         private readonly SettingsManager $settingsManager,
+        ManagerRegistry $registry
     ) {
+        parent::__construct($registry);
     }
 
     #[ArrayShape(['entries' => 'array', 'comments' => 'array', 'posts' => 'array', 'replies' => 'array'])]
@@ -105,11 +109,12 @@ class StatsVotesRepository extends StatsRepository
         }
 
         $results = $stmt->executeQuery()->fetchAllAssociative();
-        if ('disabled' === $this->settingsManager->get('MBIN_DOWNVOTES_MODE')) {
+        if (DownvotesMode::Disabled === $this->settingsManager->getDownvotesMode()) {
             for ($i = 0; $i < \count($results); ++$i) {
                 $results[$i]['down'] = 0;
             }
         }
+
         return $results;
     }
 
@@ -138,11 +143,12 @@ class StatsVotesRepository extends StatsRepository
         }
 
         $results = $stmt->executeQuery()->fetchAllAssociative();
-        if ('disabled' === $this->settingsManager->get('MBIN_DOWNVOTES_MODE')) {
+        if (DownvotesMode::Disabled === $this->settingsManager->getDownvotesMode()) {
             for ($i = 0; $i < \count($results); ++$i) {
                 $results[$i]['down'] = 0;
             }
         }
+
         return $results;
     }
 
@@ -166,7 +172,7 @@ class StatsVotesRepository extends StatsRepository
 
                 if (!empty($existed)) {
                     $results[] = current($existed);
-                    if ('disabled' === $this->settingsManager->get('MBIN_DOWNVOTES_MODE')) {
+                    if (DownvotesMode::Disabled === $this->settingsManager->getDownvotesMode()) {
                         $results[0]['down'] = 0;
                     }
                     continue;
@@ -223,7 +229,7 @@ class StatsVotesRepository extends StatsRepository
             if (!empty($existed)) {
                 $existed = current($existed);
                 $existed['day'] = new \DateTime($existed['day']);
-                if ('disabled' === $this->settingsManager->get('MBIN_DOWNVOTES_MODE')) {
+                if (DownvotesMode::Disabled === $this->settingsManager->getDownvotesMode()) {
                     $existed['down'] = 0;
                 }
 
@@ -288,7 +294,7 @@ class StatsVotesRepository extends StatsRepository
         $onlyLocalWhere = $this->onlyLocal ? ' AND u.ap_id IS NULL ' : '';
         $userWhere = $this->user ? ' AND e.user_id = :userId ' : '';
         $magazineJoin = $this->magazine ? 'INNER JOIN '.str_replace('_vote', '', $table).' AS parent ON '.$relation.' = parent.id AND parent.magazine_id = :magazineId' : '';
-        $sql = "SELECT date_trunc('day', e.created_at) as day, COUNT(case e.choice when 1 then 1 else null end) as boost, 
+        $sql = "SELECT date_trunc('day', e.created_at) as day, COUNT(case e.choice when 1 then 1 else null end) as boost,
             COUNT(case e.choice when -1 then 1 else null end) as down FROM $table e
             INNER JOIN public.user u ON u.id = e.user_id
             $magazineJoin
@@ -375,7 +381,7 @@ class StatsVotesRepository extends StatsRepository
             for ($i = 0; $i < \count($results[$table]); ++$i) {
                 $datemap[$results[$table][$i]['datetime']] = $i;
                 $results[$table][$i]['up'] = 0;
-                if ('disabled' === $this->settingsManager->get('MBIN_DOWNVOTES_MODE')) {
+                if (DownvotesMode::Disabled === $this->settingsManager->getDownvotesMode()) {
                     $results[$table][$i]['down'] = 0;
                 }
             }
@@ -407,7 +413,7 @@ class StatsVotesRepository extends StatsRepository
         $voteTable = $table.'_vote';
         $magazineJoinCond = $magazine ? ' AND parent.magazine_id = ? ' : '';
         $onlyLocalWhere = $this->onlyLocal ? 'u.ap_id IS NULL ' : '';
-        $sql = "SELECT date_trunc(?, e.created_at) as datetime, COUNT(case e.choice when 1 then 1 else null end) as boost, COUNT(case e.choice when -1 then 1 else null end) as down FROM $voteTable e 
+        $sql = "SELECT date_trunc(?, e.created_at) as datetime, COUNT(case e.choice when 1 then 1 else null end) as boost, COUNT(case e.choice when -1 then 1 else null end) as down FROM $voteTable e
                         INNER JOIN $table AS parent ON $relation = parent.id
                         INNER JOIN public.user u ON e.user_id = u.id $magazineJoinCond
                         WHERE u.is_deleted = false AND e.created_at BETWEEN ? AND ? $onlyLocalWhere GROUP BY 1 ORDER BY 1";
@@ -430,7 +436,7 @@ class StatsVotesRepository extends StatsRepository
         $magazineWhere = $magazine ? ' AND e.magazine_id = ? ' : '';
         $onlyLocalWhere = $this->onlyLocal ? 'u.ap_id IS NULL ' : '';
         $idCol = $table.'_id';
-        $sql = "SELECT date_trunc(?, e.created_at) as datetime, COUNT(e.id) as up FROM favourite e 
+        $sql = "SELECT date_trunc(?, e.created_at) as datetime, COUNT(e.id) as up FROM favourite e
                 INNER JOIN public.user u on e.user_id = u.id
                 WHERE u.is_deleted = false AND e.created_at BETWEEN ? AND ? AND e.$idCol IS NOT NULL $magazineWhere $onlyLocalWhere GROUP BY 1 ORDER BY 1";
 
@@ -470,7 +476,7 @@ class StatsVotesRepository extends StatsRepository
 
             $magazineWhere = $magazine ? ' AND e.magazine_id = ?' : '';
             $idCol = $table.'_id';
-            $sql = "SELECT COUNT(e.id) as up FROM favourite e 
+            $sql = "SELECT COUNT(e.id) as up FROM favourite e
                 INNER JOIN public.user u on u.id = e.user_id
                 WHERE u.is_deleted = false $magazineWhere $onlyLocalWhere AND e.$idCol IS NOT NULL";
 
@@ -496,7 +502,7 @@ class StatsVotesRepository extends StatsRepository
                     'up' => 0,
                 ];
             }
-            if ('disabled' === $this->settingsManager->get('MBIN_DOWNVOTES_MODE')) {
+            if (DownvotesMode::Disabled === $this->settingsManager->getDownvotesMode()) {
                 $results[$table][0]['down'] = 0;
             }
 

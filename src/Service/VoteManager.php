@@ -13,7 +13,6 @@ use App\Entity\User;
 use App\Entity\Vote;
 use App\Event\VoteEvent;
 use App\Factory\VoteFactory;
-use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -66,7 +65,7 @@ class VoteManager
             }
 
             $vote->choice = $choice;
-        } else if (VotableInterface::VOTE_DOWN !== $choice || 'disabled' !== $this->settingsManager->get('MBIN_DOWNVOTES_MODE')) {
+        } elseif (VotableInterface::VOTE_DOWN !== $choice) {
             if (VotableInterface::VOTE_UP === $choice) {
                 return $this->upvote($votable, $user);
             }
@@ -94,10 +93,6 @@ class VoteManager
     {
         if (VotableInterface::VOTE_NONE === $choice) {
             return $choice;
-        }
-
-        if (VotableInterface::VOTE_DOWN === $choice && 'disabled' === $this->settingsManager->get('MBIN_DOWNVOTES_MODE')) {
-            return VotableInterface::VOTE_NONE;
         }
 
         if (VotableInterface::VOTE_UP === $vote) {

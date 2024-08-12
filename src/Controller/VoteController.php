@@ -9,7 +9,10 @@ use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Service\SettingsManager;
 use App\Service\VoteManager;
+use App\Utils\DownvotesMode;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,8 +20,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class VoteController extends AbstractController
 {
-    public function __construct(private readonly VoteManager $manager)
-    {
+    public function __construct(
+        private readonly VoteManager $manager,
+        private readonly SettingsManager $settingsManager,
+    ) {
     }
 
     #[IsGranted('ROLE_USER')]
@@ -26,6 +31,9 @@ class VoteController extends AbstractController
     public function __invoke(VotableInterface $votable, int $choice, Request $request): Response
     {
         $this->validateCsrf('vote', $request->request->get('token'));
+        if (VotableInterface::VOTE_DOWN === $choice && DownvotesMode::Disabled === $this->settingsManager->getDownvotesMode()) {
+            throw new BadRequestException('Downvotes are disabled!');
+        }
 
         $vote = $this->manager->vote($choice, $votable, $this->getUserOrThrow());
 

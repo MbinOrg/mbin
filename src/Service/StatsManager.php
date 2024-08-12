@@ -9,7 +9,7 @@ use App\Entity\User;
 use App\Repository\StatsContentRepository;
 use App\Repository\StatsRepository;
 use App\Repository\StatsVotesRepository;
-use App\Service\SettingsManager;
+use App\Utils\DownvotesMode;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
 use Symfony\UX\Chartjs\Model\Chart;
@@ -92,7 +92,7 @@ class StatsManager
         $results = [];
         foreach ($stats['entries'] as $index => $entry) {
             $entry['up'] = array_sum(array_map(fn ($type) => $type[$index]['up'], $stats));
-            $entry['down'] = 'disabled' !== $this->settingsManager->get('MBIN_DOWNVOTES_MODE') ? 0 : array_sum(array_map(fn ($type) => $type[$index]['down'], $stats));
+            $entry['down'] = DownvotesMode::Disabled !== $this->settingsManager->getDownvotesMode() ? 0 : array_sum(array_map(fn ($type) => $type[$index]['down'], $stats));
             $entry['boost'] = array_sum(array_map(fn ($type) => $type[$index]['boost'], $stats));
 
             $results[] = $entry;
@@ -112,7 +112,7 @@ class StatsManager
             [
                 'label' => $this->translator->trans('down_votes'),
                 'borderColor' => '#8f0b00',
-                'data' => 'disabled' !== $this->settingsManager->get('MBIN_DOWNVOTES_MODE') ? [] : array_map(fn ($val) => $val['down'], $results),
+                'data' => DownvotesMode::Disabled !== $this->settingsManager->getDownvotesMode() ? [] : array_map(fn ($val) => $val['down'], $results),
             ],
         ];
 

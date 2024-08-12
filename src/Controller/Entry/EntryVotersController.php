@@ -9,6 +9,7 @@ use App\Entity\Contracts\VotableInterface;
 use App\Entity\Entry;
 use App\Entity\Magazine;
 use App\Service\SettingsManager;
+use App\Utils\DownvotesMode;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +29,7 @@ class EntryVotersController extends AbstractController
         Entry $entry,
         Request $request
     ): Response {
-        if ('down' === $type && $this->settingsManager->get('MBIN_DOWNVOTES_MODE') !== 'enabled') {
+        if ('down' === $type && DownvotesMode::Enabled !== $this->settingsManager->getDownvotesMode()) {
             $votes = [];
         } else {
             $votes = $entry->votes->filter(
