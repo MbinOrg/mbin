@@ -2,7 +2,7 @@
 - [ ] mention how to activate debug logs for symfony (`bin/console -vvv some-command`)
 # Docker dev
 
-- [ ] Make a separate `compose.dev.yml`
+- [x] Make a separate `compose.dev.yml`
   - [ ] Doc: `ln -s compose.dev.yml compose.override.yml`
   - [ ] rewrite `Dockerfile` to  have targets for dev
   - [ ] Use `Dockerfile` targets in `compose.yml` for dev and prod
@@ -12,8 +12,8 @@
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ```
-  - [ ] Make a separate `.env.dev` for development
-  - [ ] use `.env.dev` in `compose.dev.yml`
+  - [x] Make a separate `.env.dev` for development
+  - [x] use `.env.dev` in `compose.dev.yml`
 - [ ] Update `compose.prod.yml`
   - [ ] Use separate `entrypoint.sh` for prod image?
 - [ ] mention that resetting means `sudo rm -rf docker/storage`
