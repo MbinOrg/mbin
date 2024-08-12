@@ -18,7 +18,7 @@ tools/vendor/
 .env
 /public/media/*
 /public/media
-docker/compose.override.yml
+compose.override.yml
 yarn.lock
 /metal/
 
