@@ -14,7 +14,8 @@
     ```
   - [ ] Make a separate `.env.dev` for development
   - [ ] use `.env.dev` in `compose.dev.yml`
-
+- [ ] Update `compose.prod.yml`
+  - [ ] Use separate `entrypoint.sh` for prod image?
 - [ ] mention that resetting means `sudo rm -rf docker/storage`
   - [ ] move `.gitignore` out of storage otherwise resetting still creates a commit by deleting `.gitignore`
 - [ ] `docker/storage` needs to be writable to `mbin` user!
