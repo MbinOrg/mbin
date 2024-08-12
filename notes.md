@@ -22,4 +22,6 @@
   - [ ] `sudo chmod 777 docker/storage/*`
 - [ ] `MESSENGER_TRANSPORT_DSN=doctrine://default` doesn't work
 
+- [ ] Doc: inform how to enable xdebug (enabling it by default slows everything down)
+
 - [ ] nixos needs [iptables rules](https://discourse.nixos.org/t/docker-container-not-resolving-to-host/30259/8) for xdebug to access host
