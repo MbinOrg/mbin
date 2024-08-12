@@ -196,7 +196,7 @@ position_top: Itaas
 pending: Nakabinbin
 close: Isara
 direct_message: Direktang mensahe
-top: Itaas
+top: Pinakamahusay
 edited_post: Binago ang post
 edited_comment: Binago ang puna
 last_active: Huling Aktibo
@@ -219,3 +219,11 @@ own_report_accepted: Natanggap ang iyong ulat
 own_report_rejected: Naitanggi ang iyong ulat
 reported_user: Iniulat na tagagamit
 reporting_user: Paguulat sa tagagamit
+last_successful_receive: Huling matagumpay na pagtanggap
+notification_title_message: Bagong direktang mensahe
+hide: Itago
+show: Ipakita
+purge_magazine: Purgahin ang magasin
+sensitive_hide: Pindutin upang itago
+sensitive_show: Pindutin upang ipakita
+sensitive_warning: Sensitibong nilalaman

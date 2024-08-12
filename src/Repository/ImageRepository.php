@@ -37,9 +37,9 @@ class ImageRepository extends ServiceEntityRepository
     /**
      * Process and store an uploaded image.
      *
-     * @param upload file path of uploaded image
+     * @param $upload UploadedFile file path of uploaded image
      *
-     * @throws RuntimeException if image type can't be identified
+     * @throws \RuntimeException if image type can't be identified
      */
     public function findOrCreateFromUpload(UploadedFile $upload): ?Image
     {
@@ -49,9 +49,10 @@ class ImageRepository extends ServiceEntityRepository
     /**
      * Process and store an image from source path.
      *
-     * @param source file path of the image
+     * @param $source string file path of the image
      *
-     * @throws RuntimeException if image type can't be identified
+     * @throws \RuntimeException              if image type can't be identified
+     * @throws ImageDownloadTooLargeException
      */
     public function findOrCreateFromPath(string $source): ?Image
     {
@@ -63,6 +64,8 @@ class ImageRepository extends ServiceEntityRepository
      *
      * @param string      $source file path of the image
      * @param ImageOrigin $origin where the image comes from
+     *
+     * @throws ImageDownloadTooLargeException
      */
     private function findOrCreateFromSource(string $source, ImageOrigin $origin): ?Image
     {
@@ -108,9 +111,10 @@ class ImageRepository extends ServiceEntityRepository
                 return $image;
             } else {
                 $this->logger->error(
-                    'findOrCreateFromSource: failed to store image file, because it is too big',
-                    ['origin' => $origin, 'type' => \gettype($e)],
+                    'findOrCreateFromSource: failed to store image file, because it is too big - {msg}',
+                    ['origin' => $origin, 'type' => \gettype($e), 'msg' => $e->getMessage()],
                 );
+                throw $e;
             }
         } catch (\Exception $e) {
             $this->logger->error(

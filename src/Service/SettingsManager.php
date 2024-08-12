@@ -41,6 +41,11 @@ class SettingsManager
         if (!self::$dto) {
             $results = $this->repository->findAll();
 
+            $maxImageBytesEdited = $this->find($results, 'MAX_IMAGE_BYTES', FILTER_VALIDATE_INT);
+            if (null === $maxImageBytesEdited || 0 === $maxImageBytesEdited) {
+                $maxImageBytesEdited = $this->maxImageBytes;
+            }
+
             self::$dto = new SettingsDto(
                 $this->kbinDomain,
                 $this->find($results, 'KBIN_TITLE') ?? $this->kbinTitle,
@@ -75,7 +80,7 @@ class SettingsManager
                 $this->find($results, 'MBIN_SSO_REGISTRATIONS_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? true,
                 $this->find($results, 'MBIN_RESTRICT_MAGAZINE_CREATION', FILTER_VALIDATE_BOOLEAN) ?? false,
                 $this->find($results, 'MBIN_SSO_SHOW_FIRST', FILTER_VALIDATE_BOOLEAN) ?? false,
-                $this->find($results, 'MAX_IMAGE_BYTES', FILTER_VALIDATE_INT) ?? $this->maxImageBytes
+                $maxImageBytesEdited
             );
         }
     }
@@ -167,5 +172,12 @@ class SettingsManager
         $request = $this->requestStack->getCurrentRequest();
 
         return $request->cookies->get('kbin_lang') ?? $request->getLocale() ?? $this->get('KBIN_DEFAULT_LANG');
+    }
+
+    public function getMaxImageByteString(): string
+    {
+        $megaBytes = round($this->maxImageBytes / 1024 / 1024, 2);
+
+        return $megaBytes.'MB';
     }
 }

@@ -10,6 +10,7 @@ use App\Entity\Entry;
 use App\Entity\Magazine;
 use App\Form\EntryEditType;
 use App\Service\EntryManager;
+use App\Service\SettingsManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,6 +25,7 @@ class EntryEditController extends AbstractController
     public function __construct(
         private readonly EntryManager $manager,
         private readonly LoggerInterface $logger,
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 
@@ -37,6 +39,7 @@ class EntryEditController extends AbstractController
         Request $request
     ): Response {
         $dto = $this->manager->createDto($entry);
+        $maxBytes = $this->settingsManager->getMaxImageByteString();
 
         $form = $this->createForm(EntryEditType::class, $dto);
         try {
@@ -66,6 +69,7 @@ class EntryEditController extends AbstractController
                 'magazine' => $magazine,
                 'entry' => $entry,
                 'form' => $form->createView(),
+                'maxSize' => $maxBytes,
             ],
             new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200)
         );
