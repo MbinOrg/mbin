@@ -7,7 +7,7 @@
   - [ ] rewrite `Dockerfile` to  have targets for dev
   - [ ] Use `Dockerfile` targets in `compose.yml` for dev and prod
   - [ ] `host.docker.internal` doesn't exist on linux because it's not running docker in a VM
-    - [ ] conditionally add following for linux\
+    - [x] conditionally add following for linux\
     ```yaml
     extra_hosts:
       - "host.docker.internal:host-gateway"
