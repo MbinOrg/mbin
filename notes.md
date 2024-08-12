@@ -3,16 +3,18 @@
 # Docker dev
 
 - [ ] Make a separate `compose.dev.yml`
+  - [ ] Doc: `ln -s compose.dev.yml compose.override.yml`
   - [ ] rewrite `Dockerfile` to  have targets for dev
   - [ ] Use `Dockerfile` targets in `compose.yml` for dev and prod
   - [ ] `host.docker.internal` doesn't exist on linux because it's not running docker in a VM
     - [ ] conditionally add following for linux\
-    ```angular2html
+    ```yaml
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ```
-- [ ] Make a separate `.env.dev` for development
+  - [ ] Make a separate `.env.dev` for development
   - [ ] use `.env.dev` in `compose.dev.yml`
+
 - [ ] mention that resetting means `sudo rm -rf docker/storage`
   - [ ] move `.gitignore` out of storage otherwise resetting still creates a commit by deleting `.gitignore`
 - [ ] `docker/storage` needs to be writable to `mbin` user!
