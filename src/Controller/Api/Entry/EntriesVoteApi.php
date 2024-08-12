@@ -8,7 +8,9 @@ use App\DTO\EntryResponseDto;
 use App\Entity\Contracts\VotableInterface;
 use App\Entity\Entry;
 use App\Factory\EntryFactory;
+use App\Service\SettingsManager;
 use App\Service\VoteManager;
+use App\Utils\DownvotesMode;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Attributes as OA;
@@ -78,12 +80,17 @@ class EntriesVoteApi extends EntriesBaseApi
         int $choice,
         VoteManager $manager,
         EntryFactory $factory,
-        RateLimiterFactory $apiVoteLimiter
+        RateLimiterFactory $apiVoteLimiter,
+        SettingsManager $settingsManager,
     ): JsonResponse {
         $headers = $this->rateLimit($apiVoteLimiter);
 
         if (!\in_array($choice, VotableInterface::VOTE_CHOICES)) {
             throw new BadRequestHttpException('Vote must be either -1, 0, or 1');
+        }
+
+        if (DownvotesMode::Disabled === $settingsManager->getDownvotesMode() && VotableInterface::VOTE_DOWN === $choice) {
+            throw new BadRequestHttpException('Downvotes are disabled!');
         }
 
         // Rate limiting handled above
