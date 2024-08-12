@@ -1,18 +1,22 @@
-version: "3.9"
-
 services:
   www:
     # Builds the Docker image from scratch
     build:
-      target: prod
-    # Or remove the build, dockerfile and image lines above and
-    # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
-    #image: "ghcr.io/mbinorg/mbin:caddy-latest"
+      dockerfile: docker/caddy/Dockerfile
+      target: dev
+    container_name: mbin-www
+    restart: unless-stopped
+    networks:
+      - mbin_external_network
+    command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:2019/metrics || exit 1"]
     ports:
-      - 80:80
+      - 8008:80
     volumes:
-      - ./docker/storage/caddy_config:/config
-      - ./docker/storage/caddy_data:/data
+      - caddy_config:/config
+      - caddy_data:/data
+      - ./:/var/www/mbin
     environment:
       - SERVER_NAME=:80 # the address that the web server binds
       - PHP_FASTCGI_HOST=php:9000 # caddy forward traffic to this host via fastcgi
@@ -25,12 +29,26 @@ services:
     # Builds the Docker image from scratch
     build:
       dockerfile: docker/php/Dockerfile
-      target: prod
-    # Or remove the build, context, dockerfile and image lines above and
-    # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
-    #image: "ghcr.io/mbinorg/mbin:latest"
+      target: dev
+    container_name: mbin-php
+    command: php-fpm
+    working_dir: /var/www/mbin
+    restart: unless-stopped
+    networks:
+      - mbin_external_network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "REQUEST_METHOD=GET SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping cgi-fcgi -bind -connect localhost:9000 || exit 1",
+        ]
     volumes:
-      - ./docker/storage/logs:/var/www/mbin/var/log
+      - ./docker/php/entrypoint.sh:/entrypoint.sh
+      - ./:/var/www/mbin/
+      - ./docker/php/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini
+      - ./docker/php/php-fpm.d/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf
     # If you want to change configs locally, without rebuilding the image use:
     #  - ../docker/config:/var/www/mbin/config
     env_file:
@@ -40,14 +58,26 @@ services:
       - db
       - rabbitmq
 
+  node:
+    image: "node:22.5.1-alpine3.20"
+    command: docker/node/build.sh
+    container_name: node-builder
+    entrypoint:
+      - sh
+      - "-c"
+    working_dir: /var/www/mbin
+    depends_on:
+      php:
+        condition: service_healthy
+    networks:
+      - mbin_external_network
+    volumes:
+      - ./:/var/www/mbin/
+
   messenger:
     # Builds the Docker image from scratch
     build:
       dockerfile: docker/php/Dockerfile
-    image: mbin
-    # Or remove the build, context, dockerfile and image lines above and
-    # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
-    #image: "ghcr.io/mbinorg/mbin:latest"
     restart: unless-stopped
     networks:
       - mbin_external_network
@@ -56,7 +86,6 @@ services:
       test: ["CMD-SHELL", "ps aux | grep 'messenger[:]consume' || exit 1"]
     volumes:
       - ./:/var/www/mbin/
-      - ./docker/storage/logs:/var/www/mbin/var/log
     # If you want to change configs locally, without rebuilding the image use:
     #  - ../docker/config:/var/www/mbin/config
     env_file:
@@ -74,7 +103,7 @@ services:
       - mbin_external_network
     command: /bin/sh -c "redis-server --requirepass $${REDIS_PASSWORD}"
     volumes:
-      - ./docker/storage/redis:/data
+      - redis:/data
     env_file:
       - .env
     healthcheck:
@@ -89,9 +118,14 @@ services:
     networks:
       - mbin_external_network
     volumes:
-      - ./docker/storage/postgres:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
     env_file:
       - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   rabbitmq:
     image: rabbitmq:3.13.6-management-alpine
@@ -102,7 +136,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./docker/storage/rabbitmq:/var/lib/rabbitmq
+      - rabbitmq:/var/lib/rabbitmq
     ports:
       - 15672:15672
 
@@ -133,3 +167,11 @@ services:
 
 networks:
   mbin_external_network:
+
+volumes:
+  caddy_config:
+  caddy_data:
+  logs:
+  postgres:
+  rabbitmq:
+  redis:
