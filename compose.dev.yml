@@ -52,7 +52,7 @@ services:
     # If you want to change configs locally, without rebuilding the image use:
     #  - ../docker/config:/var/www/mbin/config
     env_file:
-      - .env
+      - .env.dev_docker
     depends_on:
       - redis
       - db
@@ -89,7 +89,7 @@ services:
     # If you want to change configs locally, without rebuilding the image use:
     #  - ../docker/config:/var/www/mbin/config
     env_file:
-      - .env
+      - .env.dev_docker
     depends_on:
       - redis
       - db
@@ -105,7 +105,7 @@ services:
     volumes:
       - redis:/data
     env_file:
-      - .env
+      - .env.dev_docker
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
 
@@ -120,7 +120,7 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
     env_file:
-      - .env
+      - .env.dev_docker
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready" ]
       interval: 10s
@@ -134,7 +134,7 @@ services:
     networks:
       - mbin_external_network
     env_file:
-      - .env
+      - .env.dev_docker
     volumes:
       - rabbitmq:/var/lib/rabbitmq
     ports:
