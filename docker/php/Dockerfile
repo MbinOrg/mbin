@@ -8,8 +8,6 @@ ENV GROUP=www-data
 RUN adduser -u $UID -D -g "" $USER $GROUP
 # Install deps
 RUN apk update && apk add acl fcgi exiftool
-# Install composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Install php extensions, by docker-php-extension-installer
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
@@ -40,17 +38,19 @@ ENTRYPOINT ["/entrypoint.sh"]
 #################
 
 FROM base as dev
+# Install composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Switch user
 USER $USER:$GROUP
-
-
 #################
 
 
 ####################
-
 FROM base as builder-composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR $MBIN_HOME
 
 # Composer: install package
 COPY composer.* $MBIN_HOME
@@ -60,6 +60,10 @@ RUN composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-pr
 
 # Copy repository
 COPY --link ./ $MBIN_HOME
+RUN cp .env.example_docker .env
+
+# Increase memory limit for following steps
+RUN echo "memory_limit = 512M" > /usr/local/etc/php/conf.d/memory_limit.ini
 
 # Dump-autoload and run post-install script
 RUN composer dump-autoload --classmap-authoritative --no-dev
@@ -102,13 +106,15 @@ COPY --from=builder-composer --chown=$USER:$GROUP $MBIN_HOME/vendor $MBIN_HOME/v
 COPY --from=builder-composer --chown=$USER:$GROUP $MBIN_HOME/public/bundles $MBIN_HOME/public/bundles
 COPY --from=builder-nodejs --chown=$USER:$GROUP $MBIN_HOME/public $MBIN_HOME/public
 
-
+WORKDIR $MBIN_HOME
+RUN cp .env.example_docker .env  # TODO why?
 RUN mkdir -p public/media var/log /data /config && \
     chown -R $USER:$GROUP public/media var /data /config .env && \
     chmod 777 public/media var
 
-# TODO copy app.prod.ini
+# Configure PHP for production
+COPY docker/php/conf.d/app.ini /usr/local/etc/php/conf.d/
+COPY docker/php/conf.d/app.prod.ini /usr/local/etc/php/conf.d/
 
 # Switch user
 USER $USER:$GROUP
-

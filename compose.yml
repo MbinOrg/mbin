@@ -9,6 +9,7 @@ services:
       - mbin_external_network
     command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
     healthcheck:
+      # TODO no curl in prod???
       test: ["CMD-SHELL", "curl -f http://localhost:2019/metrics || exit 1"]
     ports:
       - 8008:80

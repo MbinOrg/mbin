@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e
+set -ex
 
 # first arg is `-f` or `--some-option`
 if [ "${1#-}" != "$1" ]; then
@@ -11,10 +11,12 @@ if [ "$1" == "php-fpm" ] || [ "$1" == "php" ] || [ "$1" == "bin/console" ]; then
     # if running as a service install assets
     echo "Starting as service..."
 
-    # In development: dump the development PHP config files,
-    # validate the installed packages (including dev dependencies) and dump dev config
-    composer install --prefer-dist --no-scripts --no-progress
-    composer dump-env dev
+    if [ "$APP_ENV" == "dev" ] ; then
+      # In development: dump the development PHP config files,
+      # validate the installed packages (including dev dependencies) and dump dev config
+      composer install --prefer-dist --no-scripts --no-progress
+      composer dump-env dev
+    fi
 
     echo "Waiting for db to be ready..."
     ATTEMPTS_LEFT_TO_REACH_DATABASE=60
