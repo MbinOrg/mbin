@@ -34,6 +34,7 @@ services:
     volumes:
       - ./docker/php/entrypoint.sh:/entrypoint.sh
       - ./:/var/www/mbin/
+      - ./docker/php/conf.d/app.ini:/usr/local/etc/php/conf.d/app.ini
       - ./docker/php/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini
       - ./docker/php/php-fpm.d/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf
     # If you want to change configs locally, without rebuilding the image use:
