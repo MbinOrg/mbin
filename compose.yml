@@ -80,7 +80,7 @@ services:
       test: ["CMD", "redis-cli", "ping"]
 
   db:
-    image: postgres:${POSTGRES_VERSION:-13}-alpine
+    image: postgres:${POSTGRES_VERSION:-16}-alpine
     container_name: mbin-db
     restart: unless-stopped
     networks:
