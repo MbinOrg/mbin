@@ -1,10 +1,5 @@
-version: "3.9"
-
 services:
   www:
-    # Builds the Docker image from scratch
-    build:
-      target: prod
     # Or remove the build, dockerfile and image lines above and
     # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
     #image: "ghcr.io/mbinorg/mbin:caddy-latest"
@@ -31,6 +26,7 @@ services:
     #image: "ghcr.io/mbinorg/mbin:latest"
     volumes:
       - ./docker/storage/logs:/var/www/mbin/var/log
+      - ./docker/php/entrypoint.sh:/entrypoint.sh
     # If you want to change configs locally, without rebuilding the image use:
     #  - ../docker/config:/var/www/mbin/config
     env_file:
@@ -52,13 +48,13 @@ services:
     command: bin/console -vvvv messenger:consume --all --time-limit=3600
     deploy:
       mode: replicated
-      replicas: 6
+      replicas: 1
     healthcheck:
       test: ["CMD-SHELL", "ps aux | grep 'messenger[:]consume' || exit 1"]
     networks:
       - mbin_external_network
     volumes:
-      - ./:/var/www/mbin/
+      - ./docker/php/entrypoint.sh:/entrypoint.sh
       - ./docker/storage/logs:/var/www/mbin/var/log
     # If you want to change configs locally, without rebuilding the image use:
     #  - ../docker/config:/var/www/mbin/config
@@ -84,7 +80,7 @@ services:
       test: ["CMD", "redis-cli", "ping"]
 
   db:
-    image: postgres:${POSTGRES_VERSION:-13}-alpine
+    image: postgres:${POSTGRES_VERSION:-16}-alpine
     container_name: mbin-db
     restart: unless-stopped
     ports:
