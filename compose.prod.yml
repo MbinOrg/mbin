@@ -49,11 +49,14 @@ services:
     # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
     #image: "ghcr.io/mbinorg/mbin:latest"
     restart: unless-stopped
-    networks:
-      - mbin_external_network
     command: bin/console -vvvv messenger:consume --all --time-limit=3600
+    deploy:
+      mode: replicated
+      replicas: 6
     healthcheck:
       test: ["CMD-SHELL", "ps aux | grep 'messenger[:]consume' || exit 1"]
+    networks:
+      - mbin_external_network
     volumes:
       - ./:/var/www/mbin/
       - ./docker/storage/logs:/var/www/mbin/var/log
