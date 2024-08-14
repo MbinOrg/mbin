@@ -47,12 +47,6 @@ api_notification_retrieve:
   methods: [ GET ]
   format: json
 
-api_notification_push_get_public_key:
-    controller: App\Controller\Api\Notification\NotificationPushApi::GetServerPublicPushKey
-    path: /api/notification/push/publicKey
-    methods: [ GET ]
-    format: json
-
 api_notification_push_register:
     controller: App\Controller\Api\Notification\NotificationPushApi::createSubscription
     path: /api/notification/push
