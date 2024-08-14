@@ -26,7 +26,6 @@ services:
     #image: "ghcr.io/mbinorg/mbin:latest"
     volumes:
       - ./docker/storage/logs:/var/www/mbin/var/log
-      - ./docker/php/entrypoint.sh:/entrypoint.sh
     # If you want to change configs locally, without rebuilding the image use:
     #  - ../docker/config:/var/www/mbin/config
     env_file:
@@ -54,7 +53,6 @@ services:
     networks:
       - mbin_external_network
     volumes:
-      - ./docker/php/entrypoint.sh:/entrypoint.sh
       - ./docker/storage/logs:/var/www/mbin/var/log
     # If you want to change configs locally, without rebuilding the image use:
     #  - ../docker/config:/var/www/mbin/config
