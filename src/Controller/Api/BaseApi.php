@@ -180,7 +180,7 @@ class BaseApi extends AbstractController
 
     public function getAccessToken(?OAuth2Token $oAuth2Token): ?AccessToken
     {
-        if ($oAuth2Token) {
+        if (!$oAuth2Token) {
             return null;
         }
 
