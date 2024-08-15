@@ -149,21 +149,26 @@ class NotificationPushApi extends NotificationBaseApi
      */
     public function deleteSubscription(
         RateLimiterFactory $apiNotificationLimiter,
-        UserPushSubscriptionRepository $repository,
     ): JsonResponse {
         $headers = $this->rateLimit($apiNotificationLimiter);
         $user = $this->getUserOrThrow();
         $token = $this->getOAuthToken();
         $apiToken = $this->getAccessToken($token);
 
-        $sub = $repository->findOneBy(['user' => $user, 'apiToken' => $apiToken]);
-        if ($sub) {
-            $this->entityManager->remove($sub);
-            $this->entityManager->flush();
+        try {
+            $conn = $this->entityManager->getConnection();
+            $stmt = $conn->prepare('DELETE FROM user_push_subscription WHERE user_id = :user AND api_token = :token');
+            $stmt->executeQuery(['user' => $user->getId(), 'token' => $apiToken]);
 
             return new JsonResponse(headers: $headers);
-        } else {
-            throw new BadRequestException(message: 'PushSubscription not found', statusCode: 404);
+        } catch (\Exception $e) {
+            $this->logger->error('There was an exception while deleting a UserPushSubscription: {e} - {m}. {o}', [
+                'e' => \get_class($e),
+                'm' => $e->getMessage(),
+                'o' => json_encode($e),
+            ]);
+
+            return new JsonResponse(status: 500, headers: $headers);
         }
     }
 
