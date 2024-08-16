@@ -8,6 +8,8 @@ services:
     volumes:
       - ./docker/storage/caddy_config:/config
       - ./docker/storage/caddy_data:/data
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./docker/storage/mbin/public:${MBIN_HOME}/public:ro
     environment:
       - SERVER_NAME=:80 # the address that the web server binds
       - PHP_FASTCGI_HOST=php:9000 # caddy forward traffic to this host via fastcgi
@@ -26,8 +28,13 @@ services:
     #image: "ghcr.io/mbinorg/mbin:latest"
     volumes:
       - ./docker/storage/logs:/var/www/mbin/var/log
+      - ./docker/storage/mbin/:/opt/mbin/
+      - ./docker/php/entrypoint.sh:/entrypoint.sh
     # If you want to change configs locally, without rebuilding the image use:
     #  - ../docker/config:/var/www/mbin/config
+    environment:
+      # Where the public/ folder will be copied to for the reverse proxy to use
+      MBIN_PUBLIC_COPY_DIR: /opt/mbin/
     env_file:
       - .env
     depends_on:
@@ -39,7 +46,6 @@ services:
     # Builds the Docker image from scratch
     build:
       dockerfile: docker/php/Dockerfile
-    image: mbin
     # Or remove the build, context, dockerfile and image lines above and
     # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
     #image: "ghcr.io/mbinorg/mbin:latest"
@@ -54,6 +60,7 @@ services:
       - mbin_external_network
     volumes:
       - ./docker/storage/logs:/var/www/mbin/var/log
+      - ./docker/php/entrypoint.sh:/entrypoint.sh
     # If you want to change configs locally, without rebuilding the image use:
     #  - ../docker/config:/var/www/mbin/config
     env_file:

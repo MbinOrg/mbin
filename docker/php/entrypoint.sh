@@ -12,10 +12,20 @@ if [ "$1" == "php-fpm" ] || [ "$1" == "php" ] || [ "$1" == "bin/console" ]; then
     echo "Starting as service..."
 
     if [ "$APP_ENV" == "dev" ] ; then
+      echo "Installing PHP dependencies"
       # In development: dump the development PHP config files,
       # validate the installed packages (including dev dependencies) and dump dev config
       composer install --prefer-dist --no-scripts --no-progress
       composer dump-env dev
+    fi
+
+    if [ -d "$MBIN_PUBLIC_COPY_DIR" ] ; then
+      echo "Copying mbin to shared volume"
+      # Used in production to make the public folder available to the reverse proxy
+      # -f Overwrite
+      # -r - recursive
+      # -u - update older folder
+      cp -fru "$MBIN_HOME/public" -t "$MBIN_PUBLIC_COPY_DIR"
     fi
 
     echo "Waiting for db to be ready..."
@@ -55,6 +65,25 @@ if [ "$1" == "php-fpm" ] || [ "$1" == "php" ] || [ "$1" == "bin/console" ]; then
             echo "ENABLE_ACL is not set!"
         fi
     fi
+
+    if [ "$APP_ENV" == "prod" ] ; then
+      echo "Creating directories and setting ownership"
+       # Create necessary directories for php-fpm process run by mbin user
+      mkdir -p public/media var/log /data /config
+      chown -R $MBIN_USER:$MBIN_GROUP public/media var /data /config .env
+      chmod 777 public/media var
+    fi
 fi
 
-exec "$@"
+USER=$(whoami)
+if [ "$USER" == "$MBIN_USER" ] ; then
+  # Probably dev
+  exec "$@"
+else
+  # Most likely prod
+  # Run command as non-root user
+  # Workaround: Allow php-fpm to write to stderr
+  chown "$MBIN_USER" /proc/self/fd/2
+
+  exec su "$MBIN_USER" -c "$*"
+fi
