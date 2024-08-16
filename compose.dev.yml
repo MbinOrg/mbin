@@ -7,6 +7,8 @@ services:
     depends_on:
       node:
         condition: service_completed_successfully
+    env_file:
+      - .env.dev_docker
 
   # Builds the nodejs application
   node:

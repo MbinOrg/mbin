@@ -5,7 +5,7 @@
 	auto_https off
 }
 
-{$CADDY_EXTRA_CONFIG} 
+{$CADDY_EXTRA_CONFIG}
 
 {$SERVER_NAME} {
 	log
@@ -18,7 +18,7 @@
 	header @static_files Cache-Control max-age=259200
 
 	route {
-		root * /var/www/mbin/public
+		root * {$MBIN_HOME}/public
 
 		@supports_webp {
 			header_regexp Accept image/webp
