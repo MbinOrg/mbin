@@ -10,7 +10,7 @@ use App\Payloads\PushNotification;
 use App\Repository\SiteRepository;
 use App\Repository\UserPushSubscriptionRepository;
 use App\Service\SettingsManager;
-use League\Bundle\OAuth2ServerBundle\Entity\AccessToken;
+use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use Minishlink\WebPush\MessageSentReport;
 use Minishlink\WebPush\Subscription;
 use Minishlink\WebPush\WebPush;
