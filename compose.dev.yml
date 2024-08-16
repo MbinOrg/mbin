@@ -4,11 +4,14 @@ services:
       - caddy_config:/config
       - caddy_data:/data
       - ./:/var/www/mbin
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile
     depends_on:
       node:
         condition: service_completed_successfully
     env_file:
       - .env.dev_docker
+    ports:
+      - 8008:80
 
   # Builds the nodejs application
   node:
@@ -34,10 +37,10 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - ./docker/php/entrypoint.sh:/entrypoint.sh
       - ./:/var/www/mbin/
-      - ./docker/php/conf.d/app.ini:/usr/local/etc/php/conf.d/app.ini
       - ./docker/php/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini
+      - ./docker/php/conf.d/app.ini:/usr/local/etc/php/conf.d/app.ini
+      - ./docker/php/entrypoint.sh:/entrypoint.sh
       - ./docker/php/php-fpm.d/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf
     env_file:
       - .env.dev_docker
@@ -50,6 +53,7 @@ services:
     command: bin/console -vvvv messenger:consume --all --time-limit=3600
     volumes:
       - ./:/var/www/mbin/
+      - ./docker/php/entrypoint.sh:/entrypoint.sh
     env_file:
       - .env.dev_docker
 
