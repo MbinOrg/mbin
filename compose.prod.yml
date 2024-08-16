@@ -8,8 +8,7 @@ services:
     volumes:
       - ./docker/storage/caddy_config:/config
       - ./docker/storage/caddy_data:/data
-      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile
-      - ./docker/storage/mbin/public:${MBIN_HOME}/public:ro
+      - ./docker/storage/mbin/public:${MBIN_HOME}/public:ro  # Shared volume for php container to write into
     environment:
       - SERVER_NAME=:80 # the address that the web server binds
       - PHP_FASTCGI_HOST=php:9000 # caddy forward traffic to this host via fastcgi
@@ -28,8 +27,7 @@ services:
     #image: "ghcr.io/mbinorg/mbin:latest"
     volumes:
       - ./docker/storage/logs:/var/www/mbin/var/log
-      - ./docker/storage/mbin/:/opt/mbin/
-      - ./docker/php/entrypoint.sh:/entrypoint.sh
+      - ./docker/storage/mbin/:/opt/mbin/  # Shared folder with `caddy` to copy static resources into
     # If you want to change configs locally, without rebuilding the image use:
     #  - ../docker/config:/var/www/mbin/config
     environment:
@@ -53,14 +51,13 @@ services:
     command: bin/console -vvvv messenger:consume --all --time-limit=3600
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 1  # Increase this for better parallelism
     healthcheck:
       test: ["CMD-SHELL", "ps aux | grep 'messenger[:]consume' || exit 1"]
     networks:
       - mbin_external_network
     volumes:
       - ./docker/storage/logs:/var/www/mbin/var/log
-      - ./docker/php/entrypoint.sh:/entrypoint.sh
     # If you want to change configs locally, without rebuilding the image use:
     #  - ../docker/config:/var/www/mbin/config
     env_file:
@@ -88,8 +85,6 @@ services:
     image: postgres:${POSTGRES_VERSION:-16}-alpine
     container_name: mbin-db
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:5432:5432"
     networks:
       - mbin_external_network
     volumes:
