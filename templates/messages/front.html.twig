@@ -15,37 +15,35 @@
 {% block body %}
     <h1>{{ 'messages'|trans }}</h1>
     {% for thread in threads %}
-        <div class="{{ html_classes('section section--small thread', {'opacity-50': not thread.countNewMessages(app.user) }) }}">
-            <div>
+        {% set lastMessage = thread.getLastMessage() %}
+        {% if lastMessage is not same as null %}
+            <div class="{{ html_classes('section section--small thread', {'opacity-50': not thread.countNewMessages(app.user) }) }}">
                 <div>
-                    <small>
-                        {% set i = 0 %}
-                        {% set participants = thread.participants|filter(p => p is not same as app.user) %}
-                        {% for user in participants %}
-                            {% if i > 0 and i is same as (participants|length - 1) %}
-                                {{ 'and'|trans }}
-                            {% elseif i > 0 %}
-                                ,
-                            {% endif %}
-                            {{ component('user_inline', {user: user, showAvatar: false}) }}
-                            {% set i = i + 1 %}
-                        {% endfor %}
-                    </small>
-                </div>
-                <div>
-                    {% set lastMessage = thread.getLastMessage() %}
-                    {% if lastMessage is not same as null %}
+                    <div>
+                        <small>
+                            {% set i = 0 %}
+                            {% set participants = thread.participants|filter(p => p is not same as app.user) %}
+                            {% for user in participants %}
+                                {% if i > 0 and i is same as (participants|length - 1) %}
+                                    {{ 'and'|trans }}
+                                {% elseif i > 0 %}
+                                    ,
+                                {% endif %}
+                                {{ component('user_inline', {user: user, showAvatar: false}) }}
+                                {% set i = i + 1 %}
+                            {% endfor %}
+                        </small>
+                    </div>
+                    <div>
                         {{ component('user_inline', {user: lastMessage.sender, showAvatar: true}) -}}<span>:</span>
                         <a href="{{path('messages_single', {'id': thread.id}) }}">
                             {{ lastMessage.getTitle() }}
                         </a>
-                    {% else %}
-                        {{ 'empty_thread'|trans }}
-                    {% endif %}
+                    </div>
                 </div>
+                <span style="margin-top: auto">{{ component('date', {date: thread.updatedAt}) }}</span>
             </div>
-            <span style="margin-top: auto">{{ component('date', {date: thread.updatedAt}) }}</span>
-        </div>
+        {% endif %}
     {% endfor %}
     {% if threads|length == 0 %}
         <aside class="section section--muted">
@@ -54,10 +52,5 @@
     {% endif %}
     {% if(threads.haveToPaginate is defined and threads.haveToPaginate) %}
         {{ pagerfanta(threads, null, {'pageParameter':'[p]'}) }}
-    {% endif %}
-    {% if not threads|length %}
-        <aside class="section section--muted">
-            <p>{{ 'empty'|trans }}</p>
-        </aside>
     {% endif %}
 {% endblock %}
