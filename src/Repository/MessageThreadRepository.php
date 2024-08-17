@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Message;
 use App\Entity\MessageThread;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -33,8 +34,9 @@ class MessageThreadRepository extends ServiceEntityRepository
 
     public function findUserMessages(?User $user, int $page, int $perPage = self::PER_PAGE)
     {
-        $qb = $this->createQueryBuilder('mt')
-            ->where(':user MEMBER OF mt.participants')
+        $qb = $this->createQueryBuilder('mt');
+        $qb->where(':user MEMBER OF mt.participants')
+            ->andWhere($qb->expr()->exists('SELECT m FROM '.Message::class.' m WHERE m.thread = mt'))
             ->orderBy('mt.updatedAt', 'DESC')
             ->setParameter(':user', $user);
 
