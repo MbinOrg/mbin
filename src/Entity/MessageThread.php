@@ -104,8 +104,12 @@ class MessageThread
         $this->messages->removeElement($message);
     }
 
-    public function getLastMessage(): Message
+    public function getLastMessage(): ?Message
     {
+        if (0 === $this->messages->count()) {
+            return null;
+        }
+
         return $this->messages[$this->messages->count() - 1];
     }
 

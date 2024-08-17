@@ -34,10 +34,14 @@
                 </div>
                 <div>
                     {% set lastMessage = thread.getLastMessage() %}
-                    {{ component('user_inline', {user: lastMessage.sender, showAvatar: true}) -}}<span>:</span>
-                    <a href="{{path('messages_single', {'id': thread.id}) }}">
-                        {{ lastMessage.getTitle() }}
-                    </a>
+                    {% if lastMessage is not same as null %}
+                        {{ component('user_inline', {user: lastMessage.sender, showAvatar: true}) -}}<span>:</span>
+                        <a href="{{path('messages_single', {'id': thread.id}) }}">
+                            {{ lastMessage.getTitle() }}
+                        </a>
+                    {% else %}
+                        {{ 'empty_thread'|trans }}
+                    {% endif %}
                 </div>
             </div>
             <span style="margin-top: auto">{{ component('date', {date: thread.updatedAt}) }}</span>
