@@ -38,9 +38,11 @@ Your changes will be ignored by git.
 For docker versions `>= 2.20.0`, you can [include][docker compose include] other YAML files into a compose file.
 This has the benefit of keeping up to date with changes to the `compose.dev.yml` without modifying it.
 
+_compose.override.yml_
 ```yaml
 include:
   - compose.dev.yml
+  - compose.dev.override.yml # Modifications go into that file
 ```
 
 **Copy the compose.dev.yml**
