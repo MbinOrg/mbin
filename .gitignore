@@ -19,6 +19,7 @@ tools/vendor/
 /public/media/*
 /public/media
 compose.override.yml
+compose.*.override.yml
 yarn.lock
 /metal/
 
