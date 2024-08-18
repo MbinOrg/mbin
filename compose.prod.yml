@@ -1,8 +1,9 @@
 services:
   www:
-    # Or remove the build, dockerfile and image lines above and
-    # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
-    #image: "ghcr.io/mbinorg/mbin:caddy-latest"
+    # To use a prebuilt image from ghcr.io comment out the "image" and "pull_policy" lines
+    # You can also a tag eg.: "v1.0.0" instead of "latest"
+    #image: "ghcr.io/mbinorg/mbin:latest-caddy"
+    #pull_policy: never
     ports:
       - 80:80
     volumes:
@@ -18,13 +19,10 @@ services:
       - php
 
   php:
-    # Builds the Docker image from scratch
-    build:
-      dockerfile: docker/php/Dockerfile
-      target: prod
-    # Or remove the build, context, dockerfile and image lines above and
-    # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
+    # To use a prebuilt image from ghcr.io comment out the "image" and "pull_policy" lines
+    # You can also a tag eg.: "v1.0.0" instead of "latest"
     #image: "ghcr.io/mbinorg/mbin:latest"
+    #pull_policy: never
     volumes:
       - ./docker/storage/mbin:$MBIN_HOME
     # If you want to change configs locally, without rebuilding the image use:
@@ -37,12 +35,10 @@ services:
       - rabbitmq
 
   messenger:
-    # Builds the Docker image from scratch
-    build:
-      dockerfile: docker/php/Dockerfile
-    # Or remove the build, context, dockerfile and image lines above and
-    # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
+    # To use a prebuilt image from ghcr.io comment out the "image" and "pull_policy" lines
+    # You can also a tag eg.: "v1.0.0" instead of "latest"
     #image: "ghcr.io/mbinorg/mbin:latest"
+    #pull_policy: never
     restart: unless-stopped
     command: bin/console -vvvv messenger:consume --all --time-limit=3600
     deploy:
