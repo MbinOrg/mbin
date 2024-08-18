@@ -21,7 +21,9 @@ compose.yml
 node_modules/
 docker/storage/
 docs/
+public/build/
 public/bundles/
+public/media/
 tests/
 tools/
 var/

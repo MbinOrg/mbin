@@ -26,13 +26,9 @@ services:
     # use the pre-build image from ghcr.io (you can also a tag eg.: v1.0.0 instead of: latest):
     #image: "ghcr.io/mbinorg/mbin:latest"
     volumes:
-      - ./docker/storage/logs:/var/www/mbin/var/log
-      - ./docker/storage/mbin/:/opt/mbin/  # Shared folder with `caddy` to copy static resources into
+      - ./docker/storage/mbin:$MBIN_HOME
     # If you want to change configs locally, without rebuilding the image use:
     #  - ../docker/config:/var/www/mbin/config
-    environment:
-      # Where the public/ folder will be copied to for the reverse proxy to use
-      MBIN_PUBLIC_COPY_DIR: /opt/mbin/
     env_file:
       - .env
     depends_on:
@@ -57,7 +53,7 @@ services:
     networks:
       - mbin_external_network
     volumes:
-      - ./docker/storage/logs:/var/www/mbin/var/log
+      - ./docker/storage/mbin:$MBIN_HOME
     # If you want to change configs locally, without rebuilding the image use:
     #  - ../docker/config:/var/www/mbin/config
     env_file:
