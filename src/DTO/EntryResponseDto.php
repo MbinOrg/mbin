@@ -44,6 +44,7 @@ class EntryResponseDto implements \JsonSerializable
     public ?string $type = null;
     public ?string $slug = null;
     public ?string $apId = null;
+    public ?bool $canLoggedInUserModerate = null;
 
     public static function create(
         ?int $id = null,

@@ -30,6 +30,10 @@ class PostsBaseApi extends BaseApi
             $response->userVote = $dto instanceof PostDto ? $dto->userVote : $dto->getUserChoice($this->getUserOrThrow());
         }
 
+        if ($user = $this->getUser()) {
+            $response->canLoggedInUserModerate = $dto->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+        }
+
         return $response;
     }
 
@@ -81,6 +85,10 @@ class PostsBaseApi extends BaseApi
         if ($this->isGranted('ROLE_OAUTH2_POST_COMMENT:VOTE')) {
             $response->isFavourited = $comment instanceof PostCommentDto ? $comment->isFavourited : $comment->isFavored($this->getUserOrThrow());
             $response->userVote = $comment instanceof PostCommentDto ? $comment->userVote : $comment->getUserChoice($this->getUserOrThrow());
+        }
+
+        if ($user = $this->getUser()) {
+            $response->canLoggedInUserModerate = $comment->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
         }
 
         return $response;
@@ -149,6 +157,10 @@ class PostsBaseApi extends BaseApi
         }
 
         $commentTree = $this->postCommentFactory->createResponseTree($comment, $depth);
+
+        if ($user = $this->getUser()) {
+            $commentTree->canLoggedInUserModerate = $comment->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+        }
 
         return $commentTree->jsonSerialize();
     }

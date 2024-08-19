@@ -88,6 +88,7 @@ class EntryCommentResponseDto implements \JsonSerializable
     public array $children = [];
     #[OA\Property(description: 'The total number of children the comment has.')]
     public int $childCount = 0;
+    public ?bool $canLoggedInUserModerate = null;
 
     public static function create(
         ?int $id = null,
@@ -111,6 +112,7 @@ class EntryCommentResponseDto implements \JsonSerializable
         ?\DateTimeImmutable $editedAt = null,
         ?\DateTime $lastActive = null,
         int $childCount = 0,
+        ?bool $canLoggedInUserModerate = null,
     ): self {
         $dto = new EntryCommentResponseDto();
         $dto->commentId = $id;
@@ -134,6 +136,7 @@ class EntryCommentResponseDto implements \JsonSerializable
         $dto->editedAt = $editedAt;
         $dto->lastActive = $lastActive;
         $dto->childCount = $childCount;
+        $dto->canLoggedInUserModerate = $canLoggedInUserModerate;
 
         return $dto;
     }
@@ -184,6 +187,7 @@ class EntryCommentResponseDto implements \JsonSerializable
             'lastActive' => $this->lastActive?->format(\DateTimeInterface::ATOM),
             'childCount' => $this->childCount,
             'children' => $this->children,
+            'canLoggedInUserModerate' => $this->canLoggedInUserModerate,
         ]);
     }
 }

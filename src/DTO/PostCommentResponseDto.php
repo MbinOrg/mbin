@@ -80,6 +80,7 @@ class PostCommentResponseDto implements \JsonSerializable
         ]
     )]
     public array $children = [];
+    public ?bool $canLoggedInUserModerate = null;
 
     public static function create(
         int $id,
@@ -102,6 +103,7 @@ class PostCommentResponseDto implements \JsonSerializable
         ?\DateTimeImmutable $createdAt = null,
         ?\DateTimeImmutable $editedAt = null,
         ?\DateTime $lastActive = null,
+        ?bool $canLoggedInUserModerate = null,
     ): self {
         $dto = new PostCommentResponseDto();
         $dto->commentId = $id;
@@ -125,6 +127,7 @@ class PostCommentResponseDto implements \JsonSerializable
         $dto->editedAt = $editedAt;
         $dto->lastActive = $lastActive;
         $dto->childCount = $childCount;
+        $dto->canLoggedInUserModerate = $canLoggedInUserModerate;
 
         return $dto;
     }
@@ -171,6 +174,7 @@ class PostCommentResponseDto implements \JsonSerializable
             'lastActive' => $this->lastActive?->format(\DateTimeInterface::ATOM),
             'childCount' => $this->childCount,
             'children' => $this->children,
+            'canLoggedInUserModerate' => $this->canLoggedInUserModerate,
         ]);
     }
 

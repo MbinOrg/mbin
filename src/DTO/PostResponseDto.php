@@ -36,6 +36,7 @@ class PostResponseDto implements \JsonSerializable
     public ?\DateTimeImmutable $createdAt = null;
     public ?\DateTimeImmutable $editedAt = null;
     public ?\DateTime $lastActive = null;
+    public ?bool $canLoggedInUserModerate = null;
 
     public static function create(
         int $id,
@@ -57,7 +58,8 @@ class PostResponseDto implements \JsonSerializable
         ?\DateTimeImmutable $createdAt = null,
         ?\DateTimeImmutable $editedAt = null,
         ?\DateTime $lastActive = null,
-        ?string $slug = null
+        ?string $slug = null,
+        ?bool $canLoggedInUserModerate = null,
     ): self {
         $dto = new PostResponseDto();
         $dto->postId = $id;
@@ -80,6 +82,7 @@ class PostResponseDto implements \JsonSerializable
         $dto->editedAt = $editedAt;
         $dto->lastActive = $lastActive;
         $dto->slug = $slug;
+        $dto->canLoggedInUserModerate = $canLoggedInUserModerate;
 
         return $dto;
     }
@@ -124,6 +127,7 @@ class PostResponseDto implements \JsonSerializable
             'editedAt' => $this->editedAt?->format(\DateTimeInterface::ATOM),
             'lastActive' => $this->lastActive?->format(\DateTimeInterface::ATOM),
             'slug' => $this->slug,
+            'canLoggedInUserModerate' => $this->canLoggedInUserModerate,
         ]);
     }
 }
