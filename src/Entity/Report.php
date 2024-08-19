@@ -63,7 +63,7 @@ abstract class Report
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $reported;
     #[ManyToOne(targetEntity: User::class)]
-    #[JoinColumn(nullable: true)]
+    #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?User $consideredBy = null;
     #[Column(type: 'string', nullable: true)]
     public ?string $reason = null;
