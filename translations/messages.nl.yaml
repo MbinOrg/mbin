@@ -916,3 +916,12 @@ magazine_posting_restricted_to_mods: Beperk het aanmaken van gesprekken tot mode
 new_user_description: Deze gebruiker is nieuw (actief voor minder dan %days% dagen)
 new_magazine_description: Dit tijdschrift is nieuw (actief voor minder dan %days%
   dagen)
+flash_image_download_too_large_error: Afbeelding kon niet worden aangemaakt, deze
+  is te groot (max. grootte %bytes%)
+admin_users_banned: Geband
+max_image_size: Maximale bestandsgrootte
+user_verify: Account activeren
+admin_users_active: Actief
+admin_users_inactive: Inactief
+admin_users_suspended: Opgeschort
+edit_entry: Bewerk gesprek
