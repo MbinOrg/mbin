@@ -825,7 +825,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
 
     public function softDelete(): void
     {
-        $this->visibility = self::VISIBILITY_SOFT_DELETED;
+        $this->markedForDeletionAt = new \DateTime('now + 30days');
+        $this->visibility = VisibilityInterface::VISIBILITY_SOFT_DELETED;
+        $this->isDeleted = true;
     }
 
     public function isSoftDeleted(): bool
@@ -845,7 +847,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
 
     public function restore(): void
     {
+        $this->markedForDeletionAt = null;
         $this->visibility = VisibilityInterface::VISIBILITY_VISIBLE;
+        $this->isDeleted = false;
     }
 
     public function hasModeratorRequest(Magazine $magazine): bool
