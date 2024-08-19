@@ -31,7 +31,7 @@ class PostsBaseApi extends BaseApi
         }
 
         if ($user = $this->getUser()) {
-            $response->canLoggedInUserModerate = $dto->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+            $response->canAuthUserModerate = $dto->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
         }
 
         return $response;
@@ -88,7 +88,7 @@ class PostsBaseApi extends BaseApi
         }
 
         if ($user = $this->getUser()) {
-            $response->canLoggedInUserModerate = $comment->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+            $response->canAuthUserModerate = $comment->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
         }
 
         return $response;
@@ -159,7 +159,7 @@ class PostsBaseApi extends BaseApi
         $commentTree = $this->postCommentFactory->createResponseTree($comment, $depth);
 
         if ($user = $this->getUser()) {
-            $commentTree->canLoggedInUserModerate = $comment->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+            $commentTree->canAuthUserModerate = $comment->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
         }
 
         return $commentTree->jsonSerialize();
