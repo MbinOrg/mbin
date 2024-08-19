@@ -69,8 +69,10 @@ class MagazineModeratorAddedRemovedSubscriber implements EventSubscriberInterfac
         try {
             $this->cache->delete('ap_'.hash('sha256', $magazine->apProfileId));
             $this->cache->delete('ap_'.hash('sha256', $magazine->apId));
-            $this->cache->delete('ap_'.hash('sha256', $magazine->apAttributedToUrl));
-            $this->cache->delete('ap_collection'.hash('sha256', $magazine->apAttributedToUrl));
+            if (null !== $magazine->apAttributedToUrl) {
+                $this->cache->delete('ap_'.hash('sha256', $magazine->apAttributedToUrl));
+                $this->cache->delete('ap_collection'.hash('sha256', $magazine->apAttributedToUrl));
+            }
         } catch (InvalidArgumentException $e) {
             $this->logger->warning("There was an error while clearing the cache for magazine '{$magazine->name}' ({$magazine->getId()})");
         }
