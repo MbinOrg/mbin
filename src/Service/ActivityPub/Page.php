@@ -49,7 +49,7 @@ class Page
      */
     public function create(array $object, bool $stickyIt = false): Entry
     {
-        $actorUrl = $this->activityPubManager->getActorFromAttributedTo($object['attributedTo']);
+        $actorUrl = $this->activityPubManager->getSingleActorFromAttributedTo($object['attributedTo']);
         $actor = $this->activityPubManager->findActorOrCreate($actorUrl);
         if (!empty($actor)) {
             if ($actor->isBanned) {
