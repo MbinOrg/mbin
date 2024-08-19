@@ -95,7 +95,7 @@ services:
     volumes:
       - ./docker/storage/rabbitmq:/var/lib/rabbitmq
     ports:
-      - 15672:15672
+      - 127.0.0.1:15672:15672
 
   # Add your favorite reverse proxy (e.g nginx) which accept incoming HTTPS
   # traffic and forward to http://www:80
