@@ -56,14 +56,13 @@ class PostCreateSubscriber implements EventSubscriberInterface
 
     private function handleMagazine(Post $post): void
     {
+        if ('random' !== $post->magazine->name) {
+            // do not overwrite matched magazines
+            return;
+        }
         $tags = $this->tagLinkRepository->getTagsOfPost($post);
 
         foreach ($tags as $tag) {
-            if ($magazine = $this->magazineRepository->findOneByName($tag)) {
-                $this->postManager->changeMagazine($post, $magazine);
-                break;
-            }
-
             if ($magazine = $this->magazineRepository->findByTag($tag)) {
                 $this->postManager->changeMagazine($post, $magazine);
                 break;
