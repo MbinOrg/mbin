@@ -319,7 +319,13 @@ class ApHttpClient
             $item->expiresAt(new \DateTime('+1 day'));
             try {
                 return $this->generalFetch($url, ApRequestType::NodeInfo);
-            } catch (\Exception) {
+            } catch (\Exception $e) {
+                $this->logger->warning('There was an exception fetching nodeinfo endpoints from {url}: {e} - {msg}', [
+                    'url' => $url,
+                    'e' => \get_class($e),
+                    'msg' => $e->getMessage(),
+                ]);
+
                 return null;
             }
         });
@@ -338,7 +344,13 @@ class ApHttpClient
 
             try {
                 return $this->generalFetch($url, ApRequestType::NodeInfo);
-            } catch (\Exception) {
+            } catch (\Exception $e) {
+                $this->logger->warning('There was an exception fetching the nodeinfo from {url}: {e} - {msg}', [
+                    'url' => $url,
+                    'e' => \get_class($e),
+                    'msg' => $e->getMessage(),
+                ]);
+
                 return null;
             }
         });
