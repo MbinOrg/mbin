@@ -180,12 +180,13 @@ class EntriesBaseApi extends BaseApi
         if (null === $depth) {
             $depth = self::constrainDepth($this->request->getCurrentRequest()->get('d', self::DEPTH));
         }
-
-        $commentTree = $this->commentsFactory->createResponseTree($comment, $depth);
-
+        $canModerate = null;
         if ($user = $this->getUser()) {
-            $commentTree->canAuthUserModerate = $comment->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+            $canModerate = $comment->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
         }
+
+        $commentTree = $this->commentsFactory->createResponseTree($comment, $depth, $canModerate);
+        $commentTree->canAuthUserModerate = $canModerate;
 
         return $commentTree->jsonSerialize();
     }
