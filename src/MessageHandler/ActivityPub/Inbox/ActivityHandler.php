@@ -115,10 +115,10 @@ class ActivityHandler extends MbinMessageHandler
 
         try {
             if (isset($payload['actor']) || isset($payload['attributedTo'])) {
-                if (!$this->verifyInstanceDomain($payload['actor'] ?? $this->manager->getActorFromAttributedTo($payload['attributedTo']))) {
+                if (!$this->verifyInstanceDomain($payload['actor'] ?? $this->manager->getSingleActorFromAttributedTo($payload['attributedTo']))) {
                     return;
                 }
-                $user = $this->manager->findActorOrCreate($payload['actor'] ?? $this->manager->getActorFromAttributedTo($payload['attributedTo']));
+                $user = $this->manager->findActorOrCreate($payload['actor'] ?? $this->manager->getSingleActorFromAttributedTo($payload['attributedTo']));
             } else {
                 if (!$this->verifyInstanceDomain($payload['id'])) {
                     return;
