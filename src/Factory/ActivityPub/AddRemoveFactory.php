@@ -23,7 +23,7 @@ class AddRemoveFactory
 
     public function buildAddModerator(User $actor, User $added, Magazine $magazine): array
     {
-        $url = $magazine->apAttributedToUrl ?? $this->urlGenerator->generate(
+        $url = null !== $magazine->apId ? $magazine->apAttributedToUrl : $this->urlGenerator->generate(
             'ap_magazine_moderators', ['name' => $magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
         );
         $addedUserUrl = null !== $added->apId ? $added->apPublicUrl : $this->urlGenerator->generate(
@@ -35,7 +35,7 @@ class AddRemoveFactory
 
     public function buildRemoveModerator(User $actor, User $removed, Magazine $magazine): array
     {
-        $url = $magazine->apAttributedToUrl ?? $this->urlGenerator->generate(
+        $url = null !== $magazine->apId ? $magazine->apAttributedToUrl : $this->urlGenerator->generate(
             'ap_magazine_moderators', ['name' => $magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
         );
         $removedUserUrl = null !== $removed->apId ? $removed->apPublicUrl : $this->urlGenerator->generate(
