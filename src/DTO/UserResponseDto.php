@@ -21,6 +21,8 @@ class UserResponseDto implements \JsonSerializable
     public ?bool $isFollowedByUser = null;
     public ?bool $isFollowerOfUser = null;
     public ?bool $isBlockedByUser = null;
+    public ?bool $isAdmin = null;
+    public ?bool $isGlobalModerator = null;
     public ?int $userId = null;
     public ?string $serverSoftware = null;
     public ?string $serverSoftwareVersion = null;
@@ -42,6 +44,8 @@ class UserResponseDto implements \JsonSerializable
         $this->isBlockedByUser = $dto->isBlockedByUser;
         $this->serverSoftware = $dto->serverSoftware;
         $this->serverSoftwareVersion = $dto->serverSoftwareVersion;
+        $this->isAdmin = $dto->isAdmin;
+        $this->isGlobalModerator = $dto->isGlobalModerator;
     }
 
     public function jsonSerialize(): mixed
@@ -57,6 +61,8 @@ class UserResponseDto implements \JsonSerializable
             'apId' => $this->apId,
             'apProfileId' => $this->apProfileId,
             'isBot' => $this->isBot,
+            'isAdmin' => $this->isAdmin,
+            'isGlobalModerator' => $this->isGlobalModerator,
             'isFollowedByUser' => $this->isFollowedByUser,
             'isFollowerOfUser' => $this->isFollowerOfUser,
             'isBlockedByUser' => $this->isBlockedByUser,
