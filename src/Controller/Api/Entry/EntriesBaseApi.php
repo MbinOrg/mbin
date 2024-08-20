@@ -10,6 +10,7 @@ use App\DTO\EntryCommentRequestDto;
 use App\DTO\EntryCommentResponseDto;
 use App\DTO\EntryDto;
 use App\DTO\EntryRequestDto;
+use App\DTO\EntryResponseDto;
 use App\DTO\ImageDto;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
@@ -34,13 +35,17 @@ class EntriesBaseApi extends BaseApi
     /**
      * Serialize a single entry to JSON.
      */
-    protected function serializeEntry(EntryDto|Entry $dto, array $tags)
+    protected function serializeEntry(EntryDto|Entry $dto, array $tags): EntryResponseDto
     {
         $response = $this->entryFactory->createResponseDto($dto, $tags);
 
         if ($this->isGranted('ROLE_OAUTH2_ENTRY:VOTE')) {
             $response->isFavourited = $dto instanceof EntryDto ? $dto->isFavourited : $dto->isFavored($this->getUserOrThrow());
             $response->userVote = $dto instanceof EntryDto ? $dto->userVote : $dto->getUserChoice($this->getUserOrThrow());
+        }
+
+        if ($user = $this->getUser()) {
+            $response->canAuthUserModerate = $dto->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
         }
 
         return $response;
@@ -101,6 +106,10 @@ class EntriesBaseApi extends BaseApi
         if ($this->isGranted('ROLE_OAUTH2_ENTRY_COMMENT:VOTE')) {
             $response->isFavourited = $comment->isFavourited;
             $response->userVote = $comment->userVote;
+        }
+
+        if ($user = $this->getUser()) {
+            $response->canAuthUserModerate = $comment->magazine->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
         }
 
         return $response;
@@ -171,8 +180,13 @@ class EntriesBaseApi extends BaseApi
         if (null === $depth) {
             $depth = self::constrainDepth($this->request->getCurrentRequest()->get('d', self::DEPTH));
         }
+        $canModerate = null;
+        if ($user = $this->getUser()) {
+            $canModerate = $comment->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+        }
 
-        $commentTree = $this->commentsFactory->createResponseTree($comment, $depth);
+        $commentTree = $this->commentsFactory->createResponseTree($comment, $depth, $canModerate);
+        $commentTree->canAuthUserModerate = $canModerate;
 
         return $commentTree->jsonSerialize();
     }
