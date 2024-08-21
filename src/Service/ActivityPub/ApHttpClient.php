@@ -286,6 +286,11 @@ class ApHttpClient
         $cacheKey = 'ap_'.hash('sha256', $url.':'.$body['id']);
 
         if ($this->cache->hasItem($cacheKey)) {
+            $this->logger->warning('not posting activity with id {id} to {inbox} again, as we already did that sometime in the last 45 minutes', [
+                'id' => $body['id'],
+                'inbox' => $url
+            ]);
+
             return;
         }
 
