@@ -21,7 +21,7 @@ framework:
                     delay: 300000
                     multiplier: 4
                     max_delay: 86400000
-                    jitter: 0
+                    #jitter: 0
                 serializer: messenger.transport.symfony_serializer
             inbox:
                 dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
@@ -38,7 +38,7 @@ framework:
                     delay: 300000
                     multiplier: 4
                     max_delay: 86400000
-                    jitter: 0
+                    #jitter: 0
                 serializer: messenger.transport.symfony_serializer
             receive:
                 dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
@@ -55,7 +55,7 @@ framework:
                     delay: 300000
                     multiplier: 4
                     max_delay: 86400000
-                    jitter: 0
+                    #jitter: 0
                 serializer: messenger.transport.symfony_serializer
             deliver:
                 dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
@@ -72,7 +72,7 @@ framework:
                     delay: 300000
                     multiplier: 4
                     max_delay: 86400000
-                    jitter: 0
+                    #jitter: 0
                 serializer: messenger.transport.symfony_serializer
             outbox:
                 dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
@@ -89,7 +89,7 @@ framework:
                     delay: 300000
                     multiplier: 4
                     max_delay: 86400000
-                    jitter: 0
+                    #jitter: 0
                 serializer: messenger.transport.symfony_serializer
             resolve:
                 dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
@@ -106,7 +106,7 @@ framework:
                     delay: 300000
                     multiplier: 4
                     max_delay: 86400000
-                    jitter: 0
+                    #jitter: 0
                 serializer: messenger.transport.symfony_serializer
             old:
                 dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
@@ -118,7 +118,7 @@ framework:
                     delay: 300000
                     multiplier: 4
                     max_delay: 86400000
-                    jitter: 0
+                    #jitter: 0
                 serializer: messenger.transport.symfony_serializer
             failed:
                 failure_transport: dead
@@ -126,7 +126,7 @@ framework:
                     max_retries: 3
                     delay: 1800000
                     multiplier: 2
-                    jitter: 0
+                    #jitter: 0
                 dsn: "doctrine://default?queue_name=failed"
                 serializer: messenger.transport.symfony_serializer
             dead:
