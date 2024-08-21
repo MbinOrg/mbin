@@ -288,7 +288,7 @@ class ApHttpClient
         if ($this->cache->hasItem($cacheKey)) {
             $this->logger->warning('not posting activity with id {id} to {inbox} again, as we already did that sometime in the last 45 minutes', [
                 'id' => $body['id'],
-                'inbox' => $url
+                'inbox' => $url,
             ]);
 
             return;
