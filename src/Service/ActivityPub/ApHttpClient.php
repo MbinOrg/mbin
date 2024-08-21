@@ -59,7 +59,7 @@ class ApHttpClient
 
     public function getActivityObject(string $url, bool $decoded = true): array|string|null
     {
-        $resp = $this->cache->get('ap_'.hash('sha256', $url), function (ItemInterface $item) use ($url) {
+        $resp = $this->cache->get($this->getActivityObjectCacheKey($url), function (ItemInterface $item) use ($url) {
             $this->logger->debug("ApHttpClient:getActivityObject:url: $url");
 
             $client = new CurlHttpClient();
@@ -89,6 +89,11 @@ class ApHttpClient
         }
 
         return $decoded ? json_decode($resp, true) : $resp;
+    }
+
+    public function getActivityObjectCacheKey(string $url): string
+    {
+        return 'ap_object_'.hash('sha256', $url);
     }
 
     /**
