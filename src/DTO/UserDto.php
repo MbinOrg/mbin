@@ -8,6 +8,8 @@ use App\DTO\Contracts\UserDtoInterface;
 use App\Entity\User;
 use App\Utils\RegPatterns;
 use App\Validator\Unique;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -47,6 +49,11 @@ class UserDto implements UserDtoInterface
     public ?string $totpSecret = null;
     public ?string $serverSoftware = null;
     public ?string $serverSoftwareVersion = null;
+    public array $relatedSocialLinks = [];
+
+    // public function __construct() {
+    //     $this->relatedSocialLinks = new ArrayCollection();
+    // }
 
     #[Assert\Callback]
     public function validate(
