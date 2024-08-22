@@ -13,6 +13,7 @@ use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\User;
 use App\Exception\EntityNotFoundException;
+use App\Exception\InstanceBannedException;
 use App\Exception\PostingRestrictedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
@@ -45,11 +46,15 @@ class Page
      * @throws UserDeletedException
      * @throws EntityNotFoundException    if the user could not be found or a sub exception occurred
      * @throws PostingRestrictedException if the target magazine has Magazine::postingRestrictedToMods = true and the actor is a magazine or a user that is not a mod
+     * @throws InstanceBannedException    if the actor is from a banned instance
      * @throws \Exception                 if there was an error
      */
     public function create(array $object, bool $stickyIt = false): Entry
     {
         $actorUrl = $this->activityPubManager->getSingleActorFromAttributedTo($object['attributedTo']);
+        if ($this->settingsManager->isBannedInstance($actorUrl)) {
+            throw new InstanceBannedException();
+        }
         $actor = $this->activityPubManager->findActorOrCreate($actorUrl);
         if (!empty($actor)) {
             if ($actor->isBanned) {
