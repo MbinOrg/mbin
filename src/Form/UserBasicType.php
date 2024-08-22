@@ -33,7 +33,7 @@ class UserBasicType extends AbstractType
         $builder
             ->add('username', TextType::class, ['required' => false])
             ->add('about', TextareaType::class, ['required' => false])
-            ->add('relatedSocialLinks', CollectionType::class , [
+            ->add('relatedLinks', CollectionType::class , [
                 'entry_type' => UserRelatedLinkType::class,
                 'entry_options' => ['label' => false],
                 'label' => false,
@@ -44,16 +44,16 @@ class UserBasicType extends AbstractType
             ->add('submit', SubmitType::class)
         ;
         
-        $builder->addModelTransformer(new CallbackTransformer(
-            function ($associativeArrayData) {
-                $para = '';
-                return $associativeArrayData;
-            },
-            function ($dtoData) {
-                $para = '';
-                return $dtoData;
-            }
-        ));
+        // $builder->addModelTransformer(new CallbackTransformer(
+        //     function ($associativeArrayData) {
+        //         $para = '';
+        //         return $associativeArrayData;
+        //     },
+        //     function ($dtoData) {
+        //         $para = '';
+        //         return $dtoData;
+        //     }
+        // ));
 
         $builder->addEventSubscriber($this->disableUsernameFieldOnUserEdit);
         $builder->addEventSubscriber($this->addAvatarFieldOnUserEdit);

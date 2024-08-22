@@ -49,15 +49,15 @@
                 <legend>Related links</legend>
                 <span 
                     {{ stimulus_controller('form-related-social') }}
-                    data-form-related-social-index-value="{{ form.relatedSocialLinks|length }}"
+                    data-form-related-social-index-value="{{ form.relatedLinks|length }}"
                     data-form-related-social-name-value="{{ 
-                        form_row(form.relatedSocialLinks.vars.prototype.relatedName, {
+                        form_row(form.relatedLinks.vars.prototype.relatedName, {
                                     label: false,
                                     row_attr: { class: 'flex-grow-1' }
                         })|e('html_attr') 
                     }}"
                     data-form-related-social-link-value="{{ 
-                        form_row(form.relatedSocialLinks.vars.prototype.relatedLink, {
+                        form_row(form.relatedLinks.vars.prototype.relatedLink, {
                                     label: false,
                                     row_attr: { class: 'flex-grow-1' }
                         })|e('html_attr') 
@@ -65,7 +65,7 @@
                 >
                     <span {{ stimulus_target('form-related-social', 'relatedContainer') }}
                         class='relatedlinks'>
-                        {% for item_form in form.relatedSocialLinks %}
+                        {% for item_form in form.relatedLinks %}
                             <span class='flex related-link-group'>
                                 {{ form_row(item_form.relatedName, {
                                     label: false,

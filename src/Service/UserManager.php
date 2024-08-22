@@ -211,6 +211,8 @@ readonly class UserManager
                 $user->setTotpSecret($dto->totpSecret);
             }
 
+            $user->relatedLinks = $dto->relatedLinks;
+
             $user->lastActive = new \DateTime();
 
             $this->entityManager->flush();

@@ -33,7 +33,8 @@ class UserFactory
             $user->apProfileId,
             $user->getId(),
             $user->followersCount,
-            'Service' === $user->type // setting isBot
+            'Service' === $user->type, // setting isBot,
+            $user->relatedLinks
         );
 
         /** @var User $currentUser */
