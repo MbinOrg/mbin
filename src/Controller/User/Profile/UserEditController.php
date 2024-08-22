@@ -10,8 +10,6 @@ use App\Form\UserBasicType;
 use App\Form\UserEmailType;
 use App\Form\UserPasswordType;
 use App\Service\UserManager;
-use Error;
-use Exception;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -40,45 +38,27 @@ class UserEditController extends AbstractController
 
         $dto = $this->manager->createDto($user);
 
-        // $link1 = [
-        //     'relatedName' => 'name1',
-        //     'relatedLink' => 'link1'
-        // ];
-
-        // $link2 = [
-        //     'relatedName' => 'name2',
-        //     'relatedLink' => 'link2'
-        // ];
-
-        // $dto->relatedSocialLinks[] = $link1;
-        // $dto->relatedSocialLinks[] = $link2;
-
-        try {
-            $form = $this->createForm(UserBasicType::class, $dto);
-            $formHandler = $this->handleForm($form, $dto, $request);
-            if (null === $formHandler) {
-                $this->addFlash('error', 'flash_user_edit_profile_error');
-            } else {
-                if (!$formHandler instanceof FormInterface) {
-                    return $formHandler;
-                }
+        $form = $this->createForm(UserBasicType::class, $dto);
+        $formHandler = $this->handleForm($form, $dto, $request);
+        if (null === $formHandler) {
+            $this->addFlash('error', 'flash_user_edit_profile_error');
+        } else {
+            if (!$formHandler instanceof FormInterface) {
+                return $formHandler;
             }
-
-            return $this->render(
-                'user/settings/profile.html.twig',
-                [
-                    'user' => $user,
-                    'form' => $form->createView(),
-                ],
-                new Response(
-                    null,
-                    $form->isSubmitted() && !$form->isValid() ? 422 : 200
-                )
-            );
-        } catch (Error | Exception $e) {
-            $para = '';
-            throw $e;
         }
+
+        return $this->render(
+            'user/settings/profile.html.twig',
+            [
+                'user' => $user,
+                'form' => $form->createView(),
+            ],
+            new Response(
+                null,
+                $form->isSubmitted() && !$form->isValid() ? 422 : 200
+            )
+        );
     }
 
     #[IsGranted('ROLE_USER')]
