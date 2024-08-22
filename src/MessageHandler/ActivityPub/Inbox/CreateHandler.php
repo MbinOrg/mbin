@@ -89,7 +89,7 @@ class CreateHandler extends MbinMessageHandler
             }
             $this->logger->info('Did not create the post, because the magazine {m} restricts posting to mods and {u} is not a mod', ['m' => $e->magazine, 'u' => $username]);
         } catch (InstanceBannedException $e) {
-            $this->logger->error('Did not create the post, because the user\'s instance is banned');
+            $this->logger->info('Did not create the post, because the user\'s instance is banned');
         }
     }
 
