@@ -77,6 +77,7 @@ class UserEditController extends AbstractController
             );
         } catch (Error | Exception $e) {
             $para = '';
+            throw $e;
         }
     }
 

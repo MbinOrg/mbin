@@ -5,28 +5,23 @@ export default class extends Controller {
 
     static values = {
         index: Number,
-        name: String,
         link: String,
     };
 
     connect() {
         const container = this.element;
         container
-            .querySelectorAll('.related-link-group')
+            .querySelectorAll('.related-link-item')
             .forEach((item) => {
                 this.#addButtonDeleteLink(item);
             });
     }
 
     addRelatedElement() {
-        const item = document.createElement('span');
-        item.className = 'flex related-link-group';
+        console.log('addRelatedElement method');
 
-        const nodeName = this.#htmlToNode(this.nameValue.replace(
-            /__name__/g,
-            this.indexValue,
-        ));
-        item.append(nodeName);
+        const item = document.createElement('span');
+        item.className = 'flex related-link-item';
 
         const nodeLink = this.#htmlToNode(this.linkValue.replace(
             /__name__/g,
@@ -41,14 +36,11 @@ export default class extends Controller {
     }
 
     #addButtonDeleteLink(item) {
-        const div = document.createElement('div');
-
         const removeFormButton = document.createElement('button');
-        removeFormButton.innerText = 'Delete'; // TODO - Translation
-        removeFormButton.className = 'btn btn__secondry';
+        removeFormButton.innerText = '⌫';
+        removeFormButton.className = 'btn';
 
-        div.append(removeFormButton);
-        item.append(div);
+        item.append(removeFormButton);
 
         removeFormButton.addEventListener('click', (e) => {
             e.preventDefault();

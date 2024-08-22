@@ -531,3 +531,16 @@ div.input-box {
     margin: 0;
     padding: 0;
 }
+
+.related-link-item {
+    align-items: center;
+}
+
+.related-link-item button {
+    padding: 0;
+    background: none;
+    font-size: 1.5rem;
+    border: 0;
+    color: var(--kbin-input-text-color);
+
+}
