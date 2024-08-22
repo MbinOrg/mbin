@@ -41,6 +41,8 @@ class UserDto implements UserDtoInterface
     public ?int $id = null;
     public ?int $followersCount = 0;
     public ?bool $isBot = null;
+    public ?bool $isAdmin = null;
+    public ?bool $isGlobalModerator = null;
     public ?bool $isFollowedByUser = null;
     public ?bool $isFollowerOfUser = null;
     public ?bool $isBlockedByUser = null;
@@ -88,6 +90,8 @@ class UserDto implements UserDtoInterface
         ?int $id = null,
         ?int $followersCount = 0,
         ?bool $isBot = null,
+        ?bool $isAdmin = null,
+        ?bool $isGlobalModerator = null,
         array $relatedLinks = []
     ): self {
         $dto = new UserDto();
@@ -103,6 +107,8 @@ class UserDto implements UserDtoInterface
         $dto->apProfileId = $apProfileId;
         $dto->followersCount = $followersCount;
         $dto->isBot = $isBot;
+        $dto->isAdmin = $isAdmin;
+        $dto->isGlobalModerator = $isGlobalModerator;
         $dto->relatedLinks = $relatedLinks;
 
         return $dto;

@@ -62,12 +62,13 @@ class EntryCommentFactory
         );
     }
 
-    public function createResponseTree(EntryComment $comment, int $depth = -1): EntryCommentResponseDto
+    public function createResponseTree(EntryComment $comment, int $depth = -1, ?bool $canModerate = null): EntryCommentResponseDto
     {
         $commentDto = $this->createDto($comment);
         $toReturn = $this->createResponseDto($commentDto, $this->tagLinkRepository->getTagsOfEntryComment($comment), array_reduce($comment->children->toArray(), EntryCommentResponseDto::class.'::recursiveChildCount', 0));
         $toReturn->isFavourited = $commentDto->isFavourited;
         $toReturn->userVote = $commentDto->userVote;
+        $toReturn->canAuthUserModerate = $canModerate;
 
         if (0 === $depth) {
             return $toReturn;
@@ -75,7 +76,7 @@ class EntryCommentFactory
 
         foreach ($comment->children as $childComment) {
             \assert($childComment instanceof EntryComment);
-            $child = $this->createResponseTree($childComment, $depth > 0 ? $depth - 1 : -1);
+            $child = $this->createResponseTree($childComment, $depth > 0 ? $depth - 1 : -1, $canModerate);
             array_push($toReturn->children, $child);
         }
 
