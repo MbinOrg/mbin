@@ -9,6 +9,7 @@ use App\Entity\EntryComment;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\Exception\InstanceBannedException;
 use App\Exception\PostingRestrictedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
@@ -87,6 +88,8 @@ class CreateHandler extends MbinMessageHandler
                 $username = $e->actor->name;
             }
             $this->logger->info('Did not create the post, because the magazine {m} restricts posting to mods and {u} is not a mod', ['m' => $e->magazine, 'u' => $username]);
+        } catch (InstanceBannedException $e) {
+            $this->logger->error('Did not create the post, because the user\'s instance is banned');
         }
     }
 
@@ -94,6 +97,7 @@ class CreateHandler extends MbinMessageHandler
      * @throws TagBannedException
      * @throws UserBannedException
      * @throws UserDeletedException
+     * @throws InstanceBannedException
      */
     private function handleChain(): void
     {
@@ -121,6 +125,7 @@ class CreateHandler extends MbinMessageHandler
      * @throws UserDeletedException
      * @throws TagBannedException
      * @throws PostingRestrictedException
+     * @throws InstanceBannedException
      */
     private function handlePage(): void
     {

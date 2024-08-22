@@ -9,6 +9,7 @@ use App\Entity\EntryComment;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Exception\EntityNotFoundException;
+use App\Exception\InstanceBannedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Exception\UserDeletedException;
@@ -22,7 +23,6 @@ use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
-use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -141,6 +141,8 @@ class ChainActivityHandler extends MbinMessageHandler
             $this->logger->error('one of the used tags is banned, url: {url}', ['url' => $apUrl]);
         } catch (EntityNotFoundException $e) {
             $this->logger->error('There was an exception while getting {url}: {ex} - {m}. {o}', ['url' => $apUrl, 'ex' => \get_class($e), 'm' => $e->getMessage(), 'o' => $e]);
+        } catch (InstanceBannedException $e) {
+            $this->logger->error('the user\'s instance is banned, url: {url}', ['url' => $apUrl]);
         }
 
         return null;
