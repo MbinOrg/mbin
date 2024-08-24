@@ -9,9 +9,20 @@ Try to keep it to as few full sentences as possible.
 
 ## Checklist
 
+<!--
+Check off and cross out points that don't apply:
+
+Example
+
+ - [x] ~~Marked as draft PR while still working on PR~~ (ready from get-go)
+-->
+
+ - [ ] Marked as draft PR while still working on PR
+ - [ ] Marked as "ready for review" once not in progress
  - [ ] Filled in all sections
  - [ ] Added tests (for code changes)
  - [ ] Provided screenshots (for visual changes)
+
 
 # Additional information
 
