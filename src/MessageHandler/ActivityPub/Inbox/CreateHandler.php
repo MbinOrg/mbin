@@ -6,7 +6,10 @@ namespace App\MessageHandler\ActivityPub\Inbox;
 
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use App\Entity\User;
+use App\Exception\InstanceBannedException;
 use App\Exception\PostingRestrictedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
@@ -85,6 +88,8 @@ class CreateHandler extends MbinMessageHandler
                 $username = $e->actor->name;
             }
             $this->logger->info('Did not create the post, because the magazine {m} restricts posting to mods and {u} is not a mod', ['m' => $e->magazine, 'u' => $username]);
+        } catch (InstanceBannedException $e) {
+            $this->logger->info('Did not create the post, because the user\'s instance is banned');
         }
     }
 
@@ -92,6 +97,7 @@ class CreateHandler extends MbinMessageHandler
      * @throws TagBannedException
      * @throws UserBannedException
      * @throws UserDeletedException
+     * @throws InstanceBannedException
      */
     private function handleChain(): void
     {
@@ -105,8 +111,7 @@ class CreateHandler extends MbinMessageHandler
         }
 
         $note = $this->note->create($this->object, stickyIt: $this->stickyIt);
-        // TODO atm post and post comment are not announced, because of the micro blog spam towards lemmy. If we implement magazine name as hashtag to be optional than this may be reverted
-        if ($note instanceof EntryComment /* or $note instanceof Post or $note instanceof PostComment */) {
+        if ($note instanceof EntryComment || $note instanceof Post || $note instanceof PostComment) {
             if (null !== $note->apId and null === $note->magazine->apId and 'random' !== $note->magazine->name) {
                 // local magazine, but remote post. Random magazine is ignored, as it should not be federated at all
                 $this->bus->dispatch(new AnnounceMessage(null, $note->magazine->getId(), $note->getId(), \get_class($note)));
@@ -120,6 +125,7 @@ class CreateHandler extends MbinMessageHandler
      * @throws UserDeletedException
      * @throws TagBannedException
      * @throws PostingRestrictedException
+     * @throws InstanceBannedException
      */
     private function handlePage(): void
     {

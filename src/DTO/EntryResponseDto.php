@@ -44,6 +44,7 @@ class EntryResponseDto implements \JsonSerializable
     public ?string $type = null;
     public ?string $slug = null;
     public ?string $apId = null;
+    public ?bool $canAuthUserModerate = null;
 
     public static function create(
         ?int $id = null,
@@ -70,7 +71,8 @@ class EntryResponseDto implements \JsonSerializable
         ?\DateTime $lastActive = null,
         ?string $type = null,
         ?string $slug = null,
-        ?string $apId = null
+        ?string $apId = null,
+        ?bool $canAuthUserModerate = null,
     ): self {
         $dto = new EntryResponseDto();
         $dto->entryId = $id;
@@ -98,6 +100,7 @@ class EntryResponseDto implements \JsonSerializable
         $dto->type = $type;
         $dto->slug = $slug;
         $dto->apId = $apId;
+        $dto->canAuthUserModerate = $canAuthUserModerate;
 
         return $dto;
     }
@@ -150,6 +153,7 @@ class EntryResponseDto implements \JsonSerializable
             'type' => $this->type,
             'slug' => $this->slug,
             'apId' => $this->apId,
+            'canAuthUserModerate' => $this->canAuthUserModerate,
         ]);
     }
 }

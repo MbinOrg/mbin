@@ -21,6 +21,10 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\CurlHttpClient;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 /*
  * source:
@@ -313,8 +317,17 @@ class ApHttpClient
         $url = "https://$domain/.well-known/nodeinfo";
         $resp = $this->cache->get('nodeinfo_endpoints_'.hash('sha256', $url), function (ItemInterface $item) use ($url) {
             $item->expiresAt(new \DateTime('+1 day'));
+            try {
+                return $this->generalFetch($url, ApRequestType::NodeInfo);
+            } catch (\Exception $e) {
+                $this->logger->warning('There was an exception fetching nodeinfo endpoints from {url}: {e} - {msg}', [
+                    'url' => $url,
+                    'e' => \get_class($e),
+                    'msg' => $e->getMessage(),
+                ]);
 
-            return $this->generalFetch($url, ApRequestType::NodeInfo);
+                return null;
+            }
         });
 
         if (!$resp) {
@@ -329,7 +342,17 @@ class ApHttpClient
         $resp = $this->cache->get('nodeinfo_'.hash('sha256', $url), function (ItemInterface $item) use ($url) {
             $item->expiresAt(new \DateTime('+1 day'));
 
-            return $this->generalFetch($url, ApRequestType::NodeInfo);
+            try {
+                return $this->generalFetch($url, ApRequestType::NodeInfo);
+            } catch (\Exception $e) {
+                $this->logger->warning('There was an exception fetching the nodeinfo from {url}: {e} - {msg}', [
+                    'url' => $url,
+                    'e' => \get_class($e),
+                    'msg' => $e->getMessage(),
+                ]);
+
+                return null;
+            }
         });
 
         if (!$resp) {
@@ -339,6 +362,12 @@ class ApHttpClient
         return $decoded ? json_decode($resp, true) : $resp;
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ClientExceptionInterface
+     */
     private function generalFetch(string $url, ApRequestType $requestType = ApRequestType::ActivityPub): string
     {
         $client = new CurlHttpClient();
