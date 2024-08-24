@@ -21,7 +21,7 @@ class ContextsProvider
             ActivityPubActivityInterface::SECURITY_URL,
             [
                 ...ActivityPubActivityInterface::ADDITIONAL_CONTEXTS,
-            ]
+            ],
         ];
     }
 
