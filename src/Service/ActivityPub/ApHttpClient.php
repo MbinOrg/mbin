@@ -42,6 +42,7 @@ enum ApRequestType
 class ApHttpClient
 {
     public const TIMEOUT = 8;
+    public const MAX_DURATION = 15;
 
     public function __construct(
         private readonly string $kbinDomain,
@@ -64,7 +65,7 @@ class ApHttpClient
 
             $client = new CurlHttpClient();
             $r = $client->request('GET', $url, [
-                'max_duration' => self::TIMEOUT,
+                'max_duration' => self::MAX_DURATION,
                 'timeout' => self::TIMEOUT,
                 'headers' => $this->getInstanceHeaders($url),
             ]);
@@ -132,7 +133,7 @@ class ApHttpClient
                 try {
                     $client = new CurlHttpClient();
                     $r = $client->request('GET', $url, [
-                        'max_duration' => self::TIMEOUT,
+                        'max_duration' => self::MAX_DURATION,
                         'timeout' => self::TIMEOUT,
                         'headers' => $this->getInstanceHeaders($url, null, 'get', ApRequestType::WebFinger),
                     ]);
@@ -176,7 +177,7 @@ class ApHttpClient
                     // Set-up request
                     $client = new CurlHttpClient();
                     $response = $client->request('GET', $apProfileId, [
-                        'max_duration' => self::TIMEOUT,
+                        'max_duration' => self::MAX_DURATION,
                         'timeout' => self::TIMEOUT,
                         'headers' => $this->getInstanceHeaders($apProfileId, null, 'get', ApRequestType::ActivityPub),
                     ]);
@@ -249,7 +250,7 @@ class ApHttpClient
                     // Set-up request
                     $client = new CurlHttpClient();
                     $response = $client->request('GET', $apAddress, [
-                        'max_duration' => self::TIMEOUT,
+                        'max_duration' => self::MAX_DURATION,
                         'timeout' => self::TIMEOUT,
                         'headers' => $this->getInstanceHeaders($apAddress, null, 'get', ApRequestType::ActivityPub),
                     ]);
@@ -291,6 +292,11 @@ class ApHttpClient
         $cacheKey = 'ap_'.hash('sha256', $url.':'.$body['id']);
 
         if ($this->cache->hasItem($cacheKey)) {
+            $this->logger->warning('not posting activity with id {id} to {inbox} again, as we already did that sometime in the last 45 minutes', [
+                'id' => $body['id'],
+                'inbox' => $url,
+            ]);
+
             return;
         }
 
@@ -300,7 +306,7 @@ class ApHttpClient
         // Set-up request
         $client = new CurlHttpClient();
         $response = $client->request('POST', $url, [
-            'max_duration' => self::TIMEOUT,
+            'max_duration' => self::MAX_DURATION,
             'timeout' => self::TIMEOUT,
             'body' => json_encode($body),
             'headers' => $this->getHeaders($url, $actor, $body),
@@ -378,7 +384,7 @@ class ApHttpClient
         $client = new CurlHttpClient();
         $this->logger->debug("ApHttpClient:generalFetch:url: $url");
         $r = $client->request('GET', $url, [
-            'max_duration' => self::TIMEOUT,
+            'max_duration' => self::MAX_DURATION,
             'timeout' => self::TIMEOUT,
             'headers' => $this->getInstanceHeaders($url, requestType: $requestType),
         ]);
@@ -427,7 +433,7 @@ class ApHttpClient
         $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
         unset($headers['(request-target)']);
         $headers['Signature'] = $signatureHeader;
-        $headers['User-Agent'] = $this->projectInfo->getUserAgent().'/'.$this->projectInfo->getVersion().' (+https://'.$this->kbinDomain.'/agent)';
+        $headers['User-Agent'] = $this->projectInfo->getUserAgent();
         $headers['Accept'] = 'application/activity+json';
         $headers['Content-Type'] = 'application/activity+json';
 
@@ -447,7 +453,7 @@ class ApHttpClient
         $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
         unset($headers['(request-target)']);
         $headers['Signature'] = $signatureHeader;
-        $headers['User-Agent'] = $this->projectInfo->getUserAgent().'/'.$this->projectInfo->getVersion().' (+https://'.$this->kbinDomain.'/agent)';
+        $headers['User-Agent'] = $this->projectInfo->getUserAgent();
         $headers = array_merge($headers, $this->getFetchAcceptHeaders($requestType));
 
         return $headers;

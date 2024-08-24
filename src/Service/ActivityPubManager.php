@@ -18,7 +18,9 @@ use App\Entity\Moderator;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\Exception\InstanceBannedException;
 use App\Exception\InvalidApPostException;
+use App\Exception\InvalidWebfingerException;
 use App\Factory\ActivityPub\PersonFactory;
 use App\Factory\MagazineFactory;
 use App\Factory\UserFactory;
@@ -123,6 +125,11 @@ class ActivityPubManager
      * @param ?string $actorUrlOrHandle actorUrlOrHandle actor URL or actor handle (could even be null)
      *
      * @return User|Magazine|null or Magazine or null on error
+     *
+     * @throws InstanceBannedException
+     * @throws InvalidApPostException
+     * @throws InvalidArgumentException
+     * @throws InvalidWebfingerException
      */
     public function findActorOrCreate(?string $actorUrlOrHandle): User|Magazine|null
     {
@@ -221,6 +228,9 @@ class ActivityPubManager
 
     public function dispatchUpdateActor(string $actorUrl)
     {
+        if ($this->settingsManager->isBannedInstance($actorUrl)) {
+            return;
+        }
         $limiter = $this->apUpdateActorLimiter
             ->create($actorUrl)
             ->consume(1);
@@ -289,9 +299,14 @@ class ActivityPubManager
      * @param string $actorUrl actor URL
      *
      * @return ?User or null on error
+     *
+     * @throws InstanceBannedException
      */
     private function createUser(string $actorUrl): ?User
     {
+        if ($this->settingsManager->isBannedInstance($actorUrl)) {
+            throw new InstanceBannedException();
+        }
         $webfinger = $this->webfinger($actorUrl);
         $this->userManager->create(
             $this->userFactory->createDtoFromAp($actorUrl, $webfinger->getHandle()),
@@ -462,6 +477,9 @@ class ActivityPubManager
      */
     private function createMagazine(string $actorUrl): ?Magazine
     {
+        if ($this->settingsManager->isBannedInstance($actorUrl)) {
+            throw new InstanceBannedException();
+        }
         $this->magazineManager->create(
             $this->magazineFactory->createDtoFromAp($actorUrl, $this->buildHandle($actorUrl)),
             null,
