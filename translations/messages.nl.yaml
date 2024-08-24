@@ -823,8 +823,9 @@ account_deletion_button: Account verwijderen
 account_deletion_immediate: Onmiddellijk verwijderen
 marked_for_deletion: Gemarkeerd voor verwijdering
 account_deletion_description: Uw account wordt binnen 30 dagen verwijderd, tenzij
-  u ervoor kiest om het account onmiddellijk te verwijderen. Het account kan na verwijdering
-  niet meer worden hersteld.
+  u ervoor kiest om het account onmiddellijk te verwijderen. Om uw account binnen
+  30 dagen te herstellen, logt u in met dezelfde gebruikersreferenties of neemt u
+  contact op met een beheerder.
 remove_schedule_delete_account_desc: Verwijder de geplande verwijdering. Alle inhoud
   is weer beschikbaar en de gebruiker kan inloggen.
 schedule_delete_account: Plan Verwijdering
