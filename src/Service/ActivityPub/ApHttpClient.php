@@ -287,6 +287,11 @@ class ApHttpClient
         $cacheKey = 'ap_'.hash('sha256', $url.':'.$body['id']);
 
         if ($this->cache->hasItem($cacheKey)) {
+            $this->logger->warning('not posting activity with id {id} to {inbox} again, as we already did that sometime in the last 45 minutes', [
+                'id' => $body['id'],
+                'inbox' => $url,
+            ]);
+
             return;
         }
 
@@ -423,7 +428,7 @@ class ApHttpClient
         $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
         unset($headers['(request-target)']);
         $headers['Signature'] = $signatureHeader;
-        $headers['User-Agent'] = $this->projectInfo->getUserAgent().'/'.$this->projectInfo->getVersion().' (+https://'.$this->kbinDomain.'/agent)';
+        $headers['User-Agent'] = $this->projectInfo->getUserAgent();
         $headers['Accept'] = 'application/activity+json';
         $headers['Content-Type'] = 'application/activity+json';
 
@@ -443,7 +448,7 @@ class ApHttpClient
         $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
         unset($headers['(request-target)']);
         $headers['Signature'] = $signatureHeader;
-        $headers['User-Agent'] = $this->projectInfo->getUserAgent().'/'.$this->projectInfo->getVersion().' (+https://'.$this->kbinDomain.'/agent)';
+        $headers['User-Agent'] = $this->projectInfo->getUserAgent();
         $headers = array_merge($headers, $this->getFetchAcceptHeaders($requestType));
 
         return $headers;
