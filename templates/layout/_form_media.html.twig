@@ -3,7 +3,7 @@
         <img class="image-preview" src="#">
         <button type="button" class="image-preview-clear" data-action="image-upload#clearPreview">x</button>
     </div>
-    <div style="width:300px;">
+    <div class="image-form">
         {% if form.image is defined %}
             {{ form_row(form.image, {label: 'image', attr: {class: 'image-input'}}) }}
         {% endif %}
