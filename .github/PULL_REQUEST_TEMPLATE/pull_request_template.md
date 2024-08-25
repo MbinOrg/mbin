@@ -10,11 +10,12 @@ Try to keep it to as few full sentences as possible.
 ## Checklist
 
 <!--
-Check off and cross out points that don't apply:
+Points that don't don't apply can simply be checked off.
+Feel free to add **N/A** for clarity.
 
-Example
+Example:
 
- - [x] ~~Marked as draft PR while still working on PR~~ (ready from get-go)
+  - [x] Added tests (for code changes) **N/A**
 -->
 
  - [ ] Marked as draft PR while still working on PR
@@ -29,7 +30,6 @@ Example
 <!--
 In this section you can describe more in depth:
 
- - **what** your PR does
  - **why** you made it
  - **how** it achieves its goals
 
@@ -46,4 +46,6 @@ If your PR resolves and existing issue, please link to it in this section.
 Example:
 
   Resolves #1234
+
+Should it not be related to any issue just with "N/A" or "Not applicable"
 -->
