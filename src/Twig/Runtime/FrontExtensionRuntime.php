@@ -49,16 +49,18 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         $content = $params['content'] ?? null;
         $subscription = $params['subscription'] ?? null;
 
-        if (\in_array($currentRoute, ['front_sub', 'front_content']) && $content && $subscription) {
-            return 'front';
-        } elseif ('front_short' === $currentRoute) {
-            return match (true) {
-                !empty($content) => 'front_content',
-                !empty($subscription) => 'front_sub',
-                default => 'front',
-            };
+        if ('home' === $subscription) {
+            $subscription = null;
         }
 
-        return 'front';
+        if ($content && $subscription) {
+            return 'front';
+        } elseif ($subscription) {
+            return 'front_sub';
+        } elseif ($content) {
+            return 'front_content';
+        } else {
+            return 'front_short';
+        }
     }
 }

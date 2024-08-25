@@ -18,40 +18,12 @@
 
 {% if header_nav is empty %}
     <li>
-        <a href="
-            {% if magazine is defined and magazine %}
-                {% if is_route_name_starts_with('front') %}
-                    {{ options_url('content', 'threads', 'front_magazine', {'name': magazine.name, 'p': null}) }}
-                {% else %}
-                    {{ navbar_threads_url(magazine) }}
-                {% endif %}
-            {% else %}
-                {% if is_route_name_starts_with('front') %}
-                    {{ options_url('content', 'threads', 'front', {'p': null}) }}
-                {% else %}
-                    {{ navbar_threads_url(null) }}
-                {% endif %}
-            {% endif %}
-        " class="{{ html_classes({'active': activeLink == 'threads'}) }}">
+        <a href="{{ navbar_threads_url(magazine) }}" class="{{ html_classes({'active': activeLink == 'threads'}) }}">
             {{ 'threads'|trans }} {% if magazine is defined and magazine %}({{ magazine.entryCount }}){% endif %}
         </a>
     </li>
     <li>
-        <a href="
-            {% if magazine is defined and magazine %}
-                {% if is_route_name_starts_with('front') %}
-                    {{ options_url('content', 'microblog', 'front_magazine', {'name': magazine.name,'p': null,'type':null}) }}
-                {% else %}
-                    {{ navbar_posts_url(magazine) }}
-                {% endif %}
-            {% else %}
-                {% if is_route_name_starts_with('front') %}
-                    {{ options_url('content', 'microblog', 'front', {'p': null,'type':null}) }}
-                {% else %}
-                    {{ navbar_posts_url(null) }}
-                {% endif %}
-            {% endif
-        %}" class="{{ html_classes({'active': activeLink == 'microblog'}) }}">
+        <a href="{{ navbar_posts_url(magazine) }}" class="{{ html_classes({'active': activeLink == 'microblog'}) }}">
             {{ 'microblog'|trans }} {% if magazine is defined and magazine %}({{ magazine.postCount }}){% endif %}
         </a>
     </li>
