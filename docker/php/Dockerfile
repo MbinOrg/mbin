@@ -83,7 +83,7 @@ RUN composer run-script --no-dev post-install-cmd && \
 
 
 ######################################################
-FROM node:22.5.1-alpine3.20 as builder-nodejs
+FROM node:22.7.0-alpine3.20 as builder-nodejs
 ARG MBIN_SRC=/usr/src/mbin
 
 # Set NodeJS as production by default
