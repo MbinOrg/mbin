@@ -77,17 +77,17 @@ For developers:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/e-five256">
-                    <img src="https://avatars.githubusercontent.com/u/146029455?v=4" width="100;" alt="e-five256"/>
-                    <br />
-                    <sub><b>e-five</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/BentiGorlich">
                     <img src="https://avatars.githubusercontent.com/u/25664458?v=4" width="100;" alt="BentiGorlich"/>
                     <br />
                     <sub><b>BentiGorlich</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/e-five256">
+                    <img src="https://avatars.githubusercontent.com/u/146029455?v=4" width="100;" alt="e-five256"/>
+                    <br />
+                    <sub><b>e-five</b></sub>
                 </a>
             </td>
             <td align="center">
