@@ -20,7 +20,6 @@ Example:
 
  - [ ] Marked as draft PR while still working on PR
  - [ ] Marked as "ready for review" once not in progress
- - [ ] Filled in all sections
  - [ ] Added tests (for code changes)
  - [ ] Provided screenshots (for visual changes)
 
@@ -36,6 +35,12 @@ In this section you can describe more in depth:
 ====================Screenshots=====================
 If your PR is visual **provide screenshots**!
 It makes it much easier for reviewers to evaluate your work
+
+Copy this table out of the comment:
+
+|     Before   |    After    |
+| ------------ | ----------- |
+| image_before | image_after |
 -->
 
 # Related issues
