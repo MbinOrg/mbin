@@ -121,6 +121,3 @@ services:
   #    - SMARTHOST_USER=myuser
   #    - SMARTHOST_PASSWORD=secret
   #    - SMARTHOST_ALIASES=*.mysmtp.com
-
-networks:
-  mbin_external_network:
