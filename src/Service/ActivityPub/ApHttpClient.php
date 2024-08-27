@@ -25,6 +25,7 @@ use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 /*
  * source:
@@ -138,11 +139,7 @@ class ApHttpClient
                         'headers' => $this->getInstanceHeaders($url, null, 'get', ApRequestType::WebFinger),
                     ]);
                 } catch (\Exception $e) {
-                    $msg = "WebFinger Get fail: $url, ex: ".\get_class($e).": {$e->getMessage()}";
-                    if (null !== $r) {
-                        $msg .= ', '.$r->getContent(false);
-                    }
-                    throw new InvalidWebfingerException($msg);
+                    $this->logRequestException($r, $url, 'ApHttpClient:getWebfingerObject', $e);
                 }
 
                 $item->expiresAt(new \DateTime('+1 hour'));
@@ -171,59 +168,59 @@ class ApHttpClient
         $resp = $this->cache->get(
             $this->getActorCacheKey($apProfileId),
             function (ItemInterface $item) use ($apProfileId) {
-                $this->logger->debug("ApHttpClient:getActorObject:url: $apProfileId");
-                $response = null;
-                try {
-                    // Set-up request
-                    $client = new CurlHttpClient();
-                    $response = $client->request('GET', $apProfileId, [
-                        'max_duration' => self::MAX_DURATION,
-                        'timeout' => self::TIMEOUT,
-                        'headers' => $this->getInstanceHeaders($apProfileId, null, 'get', ApRequestType::ActivityPub),
-                    ]);
-                    // If 4xx error response, try to find the actor locally
-                    if (str_starts_with((string) $response->getStatusCode(), '4')) {
-                        if ($user = $this->userRepository->findOneByApProfileId($apProfileId)) {
-                            $user->apDeletedAt = new \DateTime();
-                            $this->userRepository->save($user, true);
-                        }
-                        if ($magazine = $this->magazineRepository->findOneByApProfileId($apProfileId)) {
-                            $magazine->apDeletedAt = new \DateTime();
-                            $this->magazineRepository->save($magazine, true);
-                        }
-                    }
-                } catch (\Exception $e) {
-                    // If an exception occurred, try to find the actor locally
-                    if ($user = $this->userRepository->findOneByApProfileId($apProfileId)) {
-                        $user->apTimeoutAt = new \DateTime();
-                        $this->userRepository->save($user, true);
-                    }
-                    if ($magazine = $this->magazineRepository->findOneByApProfileId($apProfileId)) {
-                        $magazine->apTimeoutAt = new \DateTime();
-                        $this->magazineRepository->save($magazine, true);
-                    }
-
-                    $msg = "AP Get fail: $apProfileId, ex: ".\get_class($e).": {$e->getMessage()}";
-                    if (null !== $response) {
-                        $msg .= ', '.$response->getContent(false);
-                    }
-                    throw new InvalidApPostException($msg);
-                }
-
                 $item->expiresAt(new \DateTime('+1 hour'));
 
-                if (404 === $response->getStatusCode()) {
-                    // treat a 404 error the same as a tombstone, since we think there was an actor, but it isn't there anymore
-                    return json_encode($this->tombstoneFactory->create($apProfileId));
-                }
-
-                // Return the content.
-                // Pass the 'false' option to getContent so it doesn't throw errors on "non-OK" respones (eg. 410 status codes).
-                return $response->getContent(false);
+                return $this->getActorObjectImpl($apProfileId);
             }
         );
 
         return $resp ? json_decode($resp, true) : null;
+    }
+
+    private function getActorObjectImpl(string $apProfileId): ?string
+    {
+        $this->logger->debug("ApHttpClient:getActorObject:url: $apProfileId");
+        $response = null;
+        try {
+            // Set-up request
+            $client = new CurlHttpClient();
+            $response = $client->request('GET', $apProfileId, [
+                'max_duration' => self::MAX_DURATION,
+                'timeout' => self::TIMEOUT,
+                'headers' => $this->getInstanceHeaders($apProfileId, null, 'get', ApRequestType::ActivityPub),
+            ]);
+            // If 4xx error response, try to find the actor locally
+            if (str_starts_with((string) $response->getStatusCode(), '4')) {
+                if ($user = $this->userRepository->findOneByApProfileId($apProfileId)) {
+                    $user->apDeletedAt = new \DateTime();
+                    $this->userRepository->save($user, true);
+                }
+                if ($magazine = $this->magazineRepository->findOneByApProfileId($apProfileId)) {
+                    $magazine->apDeletedAt = new \DateTime();
+                    $this->magazineRepository->save($magazine, true);
+                }
+            }
+        } catch (\Exception|TransportExceptionInterface $e) {
+            // If an exception occurred, try to find the actor locally
+            if ($user = $this->userRepository->findOneByApProfileId($apProfileId)) {
+                $user->apTimeoutAt = new \DateTime();
+                $this->userRepository->save($user, true);
+            }
+            if ($magazine = $this->magazineRepository->findOneByApProfileId($apProfileId)) {
+                $magazine->apTimeoutAt = new \DateTime();
+                $this->magazineRepository->save($magazine, true);
+            }
+            $this->logRequestException($response, $apProfileId, 'ApHttpClient:getActorObject', $e);
+        }
+
+        if (404 === $response->getStatusCode()) {
+            // treat a 404 error the same as a tombstone, since we think there was an actor, but it isn't there anymore
+            return json_encode($this->tombstoneFactory->create($apProfileId));
+        }
+
+        // Return the content.
+        // Pass the 'false' option to getContent so it doesn't throw errors on "non-OK" respones (eg. 410 status codes).
+        return $response->getContent(false);
     }
 
     public function invalidateActorObjectCache(string $apProfileId): void
@@ -244,38 +241,60 @@ class ApHttpClient
         $resp = $this->cache->get(
             'ap_collection'.hash('sha256', $apAddress),
             function (ItemInterface $item) use ($apAddress) {
-                $this->logger->debug("ApHttpClient:getCollectionObject:url: $apAddress");
-                $response = null;
-                try {
-                    // Set-up request
-                    $client = new CurlHttpClient();
-                    $response = $client->request('GET', $apAddress, [
-                        'max_duration' => self::MAX_DURATION,
-                        'timeout' => self::TIMEOUT,
-                        'headers' => $this->getInstanceHeaders($apAddress, null, 'get', ApRequestType::ActivityPub),
-                    ]);
-
-                    $statusCode = $response->getStatusCode();
-                    // Accepted status code are 2xx or 410 (used Tombstone types)
-                    if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
-                        throw new InvalidApPostException("Invalid status code while getting: $apAddress : $statusCode, ".substr($response->getContent(false), 0, 1000));
-                    }
-                } catch (\Exception $e) {
-                    $msg = "AP Get fail: $apAddress, ex: ".\get_class($e).": {$e->getMessage()}";
-                    if (null !== $response) {
-                        $msg .= ', '.$response->getContent(false);
-                    }
-                    throw new InvalidApPostException($msg);
-                }
-
                 $item->expiresAt(new \DateTime('+24 hour'));
 
-                // When everything goes OK, return the data
-                return $response->getContent();
+                return $this->getCollectionObjectImpl($apAddress);
             }
         );
 
         return $resp ? json_decode($resp, true) : null;
+    }
+
+    private function getCollectionObjectImpl(string $apAddress): ?string
+    {
+        $this->logger->debug("ApHttpClient:getCollectionObject:url: $apAddress");
+        $response = null;
+        try {
+            // Set-up request
+            $client = new CurlHttpClient();
+            $response = $client->request('GET', $apAddress, [
+                'max_duration' => self::MAX_DURATION,
+                'timeout' => self::TIMEOUT,
+                'headers' => $this->getInstanceHeaders($apAddress, null, 'get', ApRequestType::ActivityPub),
+            ]);
+
+            $statusCode = $response->getStatusCode();
+            // Accepted status code are 2xx or 410 (used Tombstone types)
+            if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
+                throw new InvalidApPostException("Invalid status code while getting: $apAddress : $statusCode, ".substr($response->getContent(false), 0, 1000));
+            }
+        } catch (\Exception $e) {
+            $this->logRequestException($response, $apAddress, 'ApHttpClient:getCollectionObject', $e);
+        }
+
+        // When everything goes OK, return the data
+        return $response->getContent();
+    }
+
+    private function logRequestException(?ResponseInterface $response, string $requestUrl, string $requestType, \Exception $e): void
+    {
+        if (null !== $response) {
+            try {
+                $content = $response->getContent(false);
+            } catch (ClientExceptionInterface|RedirectionExceptionInterface|ServerExceptionInterface|TransportExceptionInterface $e) {
+                $class = \get_class($e);
+                $content = "there was an exception while getting the content, $class: {$e->getMessage()}";
+            }
+        }
+
+        $this->logger->error('{type} get fail: {address}, ex: {e}: {msg} - {content}', [
+            'type' => $requestType,
+            'address' => $requestUrl,
+            'e' => \get_class($e),
+            'msg' => $e->getMessage(),
+            'content' => $content ?? 'no content provided',
+        ]);
+        throw $e;
     }
 
     /**
