@@ -18,6 +18,7 @@ use App\Service\ProjectInfoService;
 use JetBrains\PhpStorm\ArrayShape;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\HttpClient\CurlHttpClient;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -61,10 +62,36 @@ class ApHttpClient
 
     public function getActivityObject(string $url, bool $decoded = true): array|string|null
     {
-        $resp = $this->cache->get($this->getActivityObjectCacheKey($url), function (ItemInterface $item) use ($url) {
-            $this->logger->debug("ApHttpClient:getActivityObject:url: $url");
+        $key = $this->getActivityObjectCacheKey($url);
+        if ($this->cache->hasItem($key)) {
+            /** @var CacheItem $item */
+            $item = $this->cache->getItem($key);
+            $resp = $item->get();
 
-            $client = new CurlHttpClient();
+            return $decoded ? json_decode($resp, true) : $resp;
+        }
+
+        $resp = $this->getActivityObjectImpl($url);
+
+        if (!$resp) {
+            return null;
+        }
+
+        /** @var CacheItem $item */
+        $item = $this->cache->getItem($key);
+        $item->expiresAt(new \DateTime('+1 hour'));
+        $item->set($resp);
+        $this->cache->save($item);
+
+        return $decoded ? json_decode($resp, true) : $resp;
+    }
+
+    private function getActivityObjectImpl(string $url): ?string
+    {
+        $this->logger->debug("ApHttpClient:getActivityObject:url: $url");
+
+        $client = new CurlHttpClient();
+        try {
             $r = $client->request('GET', $url, [
                 'max_duration' => self::MAX_DURATION,
                 'timeout' => self::TIMEOUT,
@@ -77,20 +104,14 @@ class ApHttpClient
                 throw new InvalidApPostException("Invalid status code while getting: $url : $statusCode, ".substr($r->getContent(false), 0, 1000));
             }
 
-            $item->expiresAt(new \DateTime('+1 hour'));
-
             // Read also non-OK responses (like 410) by passing 'false'
             $content = $r->getContent(false);
             $this->logger->debug('ApHttpClient:getActivityObject:url: {url} - content: {content}', ['url' => $url, 'content' => $content]);
-
-            return $content;
-        });
-
-        if (!$resp) {
-            return null;
+        } catch (\Exception $e) {
+            $this->logRequestException($r, $url, 'ApHttpClient:getActivityObject', $e);
         }
 
-        return $decoded ? json_decode($resp, true) : $resp;
+        return $content;
     }
 
     public function getActivityObjectCacheKey(string $url): string
@@ -126,29 +147,42 @@ class ApHttpClient
      */
     public function getWebfingerObject(string $url): ?array
     {
-        $resp = $this->cache->get(
-            'wf_'.hash('sha256', $url),
-            function (ItemInterface $item) use ($url) {
-                $this->logger->debug("ApHttpClient:getWebfingerObject:url: $url");
-                $r = null;
-                try {
-                    $client = new CurlHttpClient();
-                    $r = $client->request('GET', $url, [
-                        'max_duration' => self::MAX_DURATION,
-                        'timeout' => self::TIMEOUT,
-                        'headers' => $this->getInstanceHeaders($url, null, 'get', ApRequestType::WebFinger),
-                    ]);
-                } catch (\Exception $e) {
-                    $this->logRequestException($r, $url, 'ApHttpClient:getWebfingerObject', $e);
-                }
+        $key = 'wf_'.hash('sha256', $url);
+        if ($this->cache->hasItem($key)) {
+            /** @var CacheItem $item */
+            $item = $this->cache->getItem($key);
+            $resp = $item->get();
 
-                $item->expiresAt(new \DateTime('+1 hour'));
+            return $resp ? json_decode($resp, true) : null;
+        }
 
-                return $r->getContent();
-            }
-        );
+        $resp = $this->getWebfingerObjectImpl($url);
+
+        /** @var CacheItem $item */
+        $item = $this->cache->getItem($key);
+        $item->expiresAt(new \DateTime('+1 hour'));
+        $item->set($resp);
+        $this->cache->save($item);
 
         return $resp ? json_decode($resp, true) : null;
+    }
+
+    private function getWebfingerObjectImpl(string $url): ?string
+    {
+        $this->logger->debug("ApHttpClient:getWebfingerObject:url: $url");
+        $r = null;
+        try {
+            $client = new CurlHttpClient();
+            $r = $client->request('GET', $url, [
+                'max_duration' => self::MAX_DURATION,
+                'timeout' => self::TIMEOUT,
+                'headers' => $this->getInstanceHeaders($url, null, 'get', ApRequestType::WebFinger),
+            ]);
+        } catch (\Exception $e) {
+            $this->logRequestException($r, $url, 'ApHttpClient:getWebfingerObject', $e);
+        }
+
+        return $r->getContent();
     }
 
     private function getActorCacheKey(string $apProfileId): string
@@ -165,14 +199,22 @@ class ApHttpClient
      */
     public function getActorObject(string $apProfileId): ?array
     {
-        $resp = $this->cache->get(
-            $this->getActorCacheKey($apProfileId),
-            function (ItemInterface $item) use ($apProfileId) {
-                $item->expiresAt(new \DateTime('+1 hour'));
+        $key = $this->getActorCacheKey($apProfileId);
+        if ($this->cache->hasItem($key)) {
+            /** @var CacheItem $item */
+            $item = $this->cache->getItem($key);
+            $resp = $item->get();
 
-                return $this->getActorObjectImpl($apProfileId);
-            }
-        );
+            return $resp ? json_decode($resp, true) : null;
+        }
+
+        $resp = $this->getActorObjectImpl($apProfileId);
+
+        /** @var CacheItem $item */
+        $item = $this->cache->getItem($key);
+        $item->expiresAt(new \DateTime('+1 hour'));
+        $item->set($resp);
+        $this->cache->save($item);
 
         return $resp ? json_decode($resp, true) : null;
     }
@@ -238,14 +280,22 @@ class ApHttpClient
      */
     public function getCollectionObject(string $apAddress): ?array
     {
-        $resp = $this->cache->get(
-            'ap_collection'.hash('sha256', $apAddress),
-            function (ItemInterface $item) use ($apAddress) {
-                $item->expiresAt(new \DateTime('+24 hour'));
+        $key = 'ap_collection'.hash('sha256', $apAddress);
+        if ($this->cache->hasItem($key)) {
+            /** @var CacheItem $item */
+            $item = $this->cache->getItem($key);
+            $resp = $item->get();
 
-                return $this->getCollectionObjectImpl($apAddress);
-            }
-        );
+            return $resp ? json_decode($resp, true) : null;
+        }
+
+        $resp = $this->getCollectionObjectImpl($apAddress);
+
+        /** @var CacheItem $item */
+        $item = $this->cache->getItem($key);
+        $item->expiresAt(new \DateTime('+24 hour'));
+        $item->set($resp);
+        $this->cache->save($item);
 
         return $resp ? json_decode($resp, true) : null;
     }
@@ -345,20 +395,8 @@ class ApHttpClient
     public function fetchInstanceNodeInfoEndpoints(string $domain, bool $decoded = true): array|string|null
     {
         $url = "https://$domain/.well-known/nodeinfo";
-        $resp = $this->cache->get('nodeinfo_endpoints_'.hash('sha256', $url), function (ItemInterface $item) use ($url) {
-            $item->expiresAt(new \DateTime('+1 day'));
-            try {
-                return $this->generalFetch($url, ApRequestType::NodeInfo);
-            } catch (\Exception $e) {
-                $this->logger->warning('There was an exception fetching nodeinfo endpoints from {url}: {e} - {msg}', [
-                    'url' => $url,
-                    'e' => \get_class($e),
-                    'msg' => $e->getMessage(),
-                ]);
 
-                return null;
-            }
-        });
+        $resp = $this->generalFetchCached('nodeinfo_endpoints_', 'nodeinfo endpoints', $url, ApRequestType::NodeInfo);
 
         if (!$resp) {
             return null;
@@ -369,21 +407,7 @@ class ApHttpClient
 
     public function fetchInstanceNodeInfo(string $url, bool $decoded = true): array|string|null
     {
-        $resp = $this->cache->get('nodeinfo_'.hash('sha256', $url), function (ItemInterface $item) use ($url) {
-            $item->expiresAt(new \DateTime('+1 day'));
-
-            try {
-                return $this->generalFetch($url, ApRequestType::NodeInfo);
-            } catch (\Exception $e) {
-                $this->logger->warning('There was an exception fetching the nodeinfo from {url}: {e} - {msg}', [
-                    'url' => $url,
-                    'e' => \get_class($e),
-                    'msg' => $e->getMessage(),
-                ]);
-
-                return null;
-            }
-        });
+        $resp = $this->generalFetchCached('nodeinfo_', 'nodeinfo', $url, ApRequestType::NodeInfo);
 
         if (!$resp) {
             return null;
@@ -409,6 +433,41 @@ class ApHttpClient
         ]);
 
         return $r->getContent();
+    }
+
+    private function generalFetchCached(string $cachePrefix, string $fetchType, string $url, ApRequestType $requestType = ApRequestType::ActivityPub): ?string
+    {
+        $key = $cachePrefix.hash('sha256', $url);
+
+        if ($this->cache->hasItem($key)) {
+            /** @var CacheItem $item */
+            $item = $this->cache->getItem($key);
+
+            return $item->get();
+        }
+
+        try {
+            $resp = $this->generalFetch($url, $requestType);
+        } catch (\Exception $e) {
+            $this->logger->warning('There was an exception fetching {type} from {url}: {e} - {msg}', [
+                'type' => $fetchType,
+                'url' => $url,
+                'e' => \get_class($e),
+                'msg' => $e->getMessage(),
+            ]);
+            $resp = null;
+        }
+
+        if (!$resp) {
+            return null;
+        }
+
+        $item = $this->cache->getItem($key);
+        $item->set($resp);
+        $item->expiresAt(new \DateTime('+1 day'));
+        $this->cache->save($item);
+
+        return $resp;
     }
 
     private function getFetchAcceptHeaders(ApRequestType $requestType): array
