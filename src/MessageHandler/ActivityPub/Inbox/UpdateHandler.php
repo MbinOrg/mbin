@@ -45,8 +45,6 @@ use Symfony\Component\Messenger\MessageBusInterface;
 #[AsMessageHandler]
 class UpdateHandler extends MbinMessageHandler
 {
-    private array $payload;
-
     public function __construct(
         private readonly ActivityPubManager $activityPubManager,
         private readonly ApActivityRepository $apActivityRepository,
@@ -80,24 +78,24 @@ class UpdateHandler extends MbinMessageHandler
         if (!($message instanceof UpdateMessage)) {
             throw new \LogicException();
         }
-        $this->payload = $message->payload;
-        $this->logger->debug('received Update activity: {json}', ['json' => $this->payload]);
+        $payload = $message->payload;
+        $this->logger->debug('received Update activity: {json}', ['json' => $payload]);
 
         try {
-            $actor = $this->activityPubManager->findRemoteActor($message->payload['actor']);
+            $actor = $this->activityPubManager->findRemoteActor($payload['actor']);
         } catch (\Exception) {
             return;
         }
 
-        $object = $this->apActivityRepository->findByObjectId($message->payload['object']['id']);
+        $object = $this->apActivityRepository->findByObjectId($payload['object']['id']);
 
         if ($object) {
-            $this->editActivity($object, $message, $actor);
+            $this->editActivity($object, $actor, $payload);
 
             return;
         }
 
-        $object = $this->activityPubManager->findActorOrCreate($message->payload['object']['id']);
+        $object = $this->activityPubManager->findActorOrCreate($payload['object']['id']);
         if ($object instanceof User) {
             $this->updateUser($object, $actor);
 
@@ -105,43 +103,44 @@ class UpdateHandler extends MbinMessageHandler
         }
 
         if ($object instanceof Magazine) {
-            $this->updateMagazine($object, $actor);
+            $this->updateMagazine($object, $actor, $payload);
 
             return;
         }
 
-        $this->logger->warning("didn't know what to do with the update activity concerning '{id}'. We don't have a local object that has this id", ['id' => $message->payload['object']['id']]);
+        $this->logger->warning("didn't know what to do with the update activity concerning '{id}'. We don't have a local object that has this id", ['id' => $payload['object']['id']]);
     }
 
-    private function editActivity(array $object, UpdateMessage $message, User $actor): void
+    private function editActivity(array $object, User $actor, array $payload): void
     {
         $object = $this->entityManager->getRepository($object['type'])->find((int) $object['id']);
+
         if ($object instanceof Entry) {
-            $this->editEntry($object, $actor);
+            $this->editEntry($object, $actor, $payload);
             if (null === $object->magazine->apId) {
-                $this->bus->dispatch(new GenericAnnounceMessage($object->magazine->getId(), $message->payload, $actor->apInboxUrl));
+                $this->bus->dispatch(new GenericAnnounceMessage($object->magazine->getId(), $payload, $actor->apInboxUrl));
             }
         } elseif ($object instanceof EntryComment) {
-            $this->editEntryComment($object, $actor);
+            $this->editEntryComment($object, $actor, $payload);
             if (null === $object->magazine->apId) {
-                $this->bus->dispatch(new GenericAnnounceMessage($object->magazine->getId(), $message->payload, $actor->apInboxUrl));
+                $this->bus->dispatch(new GenericAnnounceMessage($object->magazine->getId(), $payload, $actor->apInboxUrl));
             }
         } elseif ($object instanceof Post) {
-            $this->editPost($object, $actor);
+            $this->editPost($object, $actor, $payload);
             if (null === $object->magazine->apId) {
-                $this->bus->dispatch(new GenericAnnounceMessage($object->magazine->getId(), $message->payload, $actor->apInboxUrl));
+                $this->bus->dispatch(new GenericAnnounceMessage($object->magazine->getId(), $payload, $actor->apInboxUrl));
             }
         } elseif ($object instanceof PostComment) {
-            $this->editPostComment($object, $actor);
+            $this->editPostComment($object, $actor, $payload);
             if (null === $object->magazine->apId) {
-                $this->bus->dispatch(new GenericAnnounceMessage($object->magazine->getId(), $message->payload, $actor->apInboxUrl));
+                $this->bus->dispatch(new GenericAnnounceMessage($object->magazine->getId(), $payload, $actor->apInboxUrl));
             }
         } elseif ($object instanceof Message) {
-            $this->editMessage($object, $actor);
+            $this->editMessage($object, $actor, $payload);
         }
     }
 
-    private function editEntry(Entry $entry, User $user): void
+    private function editEntry(Entry $entry, User $user, array $payload): void
     {
         if (!$this->entryManager->canUserEditEntry($entry, $user)) {
             $this->logger->warning('User {u} tried to edit entry {et} ({eId}), but is not allowed to', ['u' => $user->apId ?? $user->username, 'et' => $entry->title, 'eId' => $entry->getId()]);
@@ -150,13 +149,13 @@ class UpdateHandler extends MbinMessageHandler
         }
         $dto = $this->entryFactory->createDto($entry);
 
-        $dto->title = $this->payload['object']['name'];
+        $dto->title = $payload['object']['name'];
 
-        $this->extractChanges($dto);
+        $this->extractChanges($dto, $payload);
         $this->entryManager->edit($entry, $dto, $user);
     }
 
-    private function editEntryComment(EntryComment $comment, User $user): void
+    private function editEntryComment(EntryComment $comment, User $user, array $payload): void
     {
         if (!$this->entryCommentManager->canUserEditComment($comment, $user)) {
             $this->logger->warning('User {u} tried to edit entry comment {et} ({eId}), but is not allowed to', ['u' => $user->apId ?? $user->username, 'et' => $comment->getShortTitle(), 'eId' => $comment->getId()]);
@@ -165,12 +164,12 @@ class UpdateHandler extends MbinMessageHandler
         }
         $dto = $this->entryCommentFactory->createDto($comment);
 
-        $this->extractChanges($dto);
+        $this->extractChanges($dto, $payload);
 
         $this->entryCommentManager->edit($comment, $dto, $user);
     }
 
-    private function editPost(Post $post, User $user): void
+    private function editPost(Post $post, User $user, array $payload): void
     {
         if (!$this->postManager->canUserEditPost($post, $user)) {
             $this->logger->warning('User {u} tried to edit post {pt} ({pId}), but is not allowed to', ['u' => $user->apId ?? $user->username, 'pt' => $post->getShortTitle(), 'pId' => $post->getId()]);
@@ -179,12 +178,12 @@ class UpdateHandler extends MbinMessageHandler
         }
         $dto = $this->postFactory->createDto($post);
 
-        $this->extractChanges($dto);
+        $this->extractChanges($dto, $payload);
 
         $this->postManager->edit($post, $dto, $user);
     }
 
-    private function editPostComment(PostComment $comment, User $user): void
+    private function editPostComment(PostComment $comment, User $user, array $payload): void
     {
         if (!$this->postCommentManager->canUserEditPostComment($comment, $user)) {
             $this->logger->warning('User {u} tried to edit post comment {pt} ({pId}), but is not allowed to', ['u' => $user->apId ?? $user->username, 'pt' => $comment->getShortTitle(), 'pId' => $comment->getId()]);
@@ -193,27 +192,27 @@ class UpdateHandler extends MbinMessageHandler
         }
         $dto = $this->postCommentFactory->createDto($comment);
 
-        $this->extractChanges($dto);
+        $this->extractChanges($dto, $payload);
 
         $this->postCommentManager->edit($comment, $dto, $user);
     }
 
-    private function extractChanges(EntryDto|EntryCommentDto|PostDto|PostCommentDto $dto): void
+    private function extractChanges(EntryDto|EntryCommentDto|PostDto|PostCommentDto $dto, array $payload): void
     {
-        if (!empty($this->payload['object']['content'])) {
-            $dto->body = $this->objectExtractor->getMarkdownBody($this->payload['object']);
+        if (!empty($payload['object']['content'])) {
+            $dto->body = $this->objectExtractor->getMarkdownBody($payload['object']);
         } else {
             $dto->body = null;
         }
-        $dto->apLikeCount = $this->activityPubManager->extractRemoteLikeCount($this->payload['object']);
-        $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($this->payload['object']);
-        $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($this->payload['object']);
+        $dto->apLikeCount = $this->activityPubManager->extractRemoteLikeCount($payload['object']);
+        $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($payload['object']);
+        $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($payload['object']);
     }
 
-    private function editMessage(Message $message, User $user): void
+    private function editMessage(Message $message, User $user, array $payload): void
     {
         if ($this->messageManager->canUserEditMessage($message, $user)) {
-            $this->messageManager->editMessage($message, $this->payload['object']);
+            $this->messageManager->editMessage($message, $payload['object']);
         } else {
             $this->logger->warning(
                 'Got an update message from a user that is not allowed to edit it. Update actor: {ua}. Original Author: {oa}',
@@ -233,10 +232,10 @@ class UpdateHandler extends MbinMessageHandler
         }
     }
 
-    private function updateMagazine(Magazine $magazine, User $actor): void
+    private function updateMagazine(Magazine $magazine, User $actor, array $payload): void
     {
         if ($magazine->canUpdateMagazine($actor)) {
-            $payloadObject = $this->payload['object'];
+            $payloadObject = $payload['object'];
 
             $themeDto = new MagazineThemeDto($magazine);
             if (isset($payloadObject['icon'])) {
