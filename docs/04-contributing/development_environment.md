@@ -22,6 +22,8 @@ The development environment is run with [docker compose].
 ```shell
 # Create a symbolic link to the dev setup that merges and overrides part of compose.yml
 ln -nfs compose.dev.yml compose.override.yml
+# Create a symbolic link to the configuration for the dev setup
+ln -nfs .env.dev_docker .env
 # Bring up all the services and detach from the console
 docker compose up -d
 ```

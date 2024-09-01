@@ -8,8 +8,6 @@ services:
     depends_on:
       node:
         condition: service_completed_successfully
-    env_file:
-      - .env.dev_docker
     ports:
       - 8008:80
 
@@ -42,8 +40,6 @@ services:
       - ./docker/php/conf.d/app.ini:/usr/local/etc/php/conf.d/app.ini
       - ./docker/php/entrypoint.sh:/entrypoint.sh
       - ./docker/php/php-fpm.d/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf
-    env_file:
-      - .env.dev_docker
 
 
   messenger:
@@ -54,14 +50,10 @@ services:
     volumes:
       - ./:/var/www/mbin/
       - ./docker/php/entrypoint.sh:/entrypoint.sh
-    env_file:
-      - .env.dev_docker
 
   redis:
     volumes:
       - redis:/data
-    env_file:
-      - .env.dev_docker
 
   db:
     # Allow connecting to the db from the localhost for debugging
@@ -69,12 +61,10 @@ services:
       - "127.0.0.1:5432:5432"
     volumes:
       - postgres:/var/lib/postgresql/data
-    env_file:
-      - .env.dev_docker
 
   rabbitmq:
-    env_file:
-      - .env.dev_docker
+    ports:
+      - 15672:15672
     volumes:
       - rabbitmq:/var/lib/rabbitmq
 
