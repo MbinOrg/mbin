@@ -12,8 +12,7 @@
 - Docker Engine
 - Docker Compose V2
 
-> [!WARNING]  
-> `docker-compose` is **not** supported!
+> If you are using Compose V1, replace `docker compose` with `docker-compose` in those commands below.
 
 ### Docker Install
 
