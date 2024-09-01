@@ -7,7 +7,6 @@ if [ "${1#-}" != "$1" ]; then
 fi
 
 if [ "$1" == "php-fpm" ] || [ "$1" == "php" ] || [ "$1" == "bin/console" ]; then
-    pwd
     # if running as a service install assets
     echo "Starting as service..."
 
