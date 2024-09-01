@@ -96,8 +96,6 @@ services:
       - mbin_external_network
     env_file:
       - .env
-    ports:
-      - 15672:15672
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 30s

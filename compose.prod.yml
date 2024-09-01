@@ -27,8 +27,6 @@ services:
       - ./docker/storage/mbin:$MBIN_HOME
     # If you want to change configs locally, without rebuilding the image use:
     #  - ../docker/config:/var/www/mbin/config
-    env_file:
-      - .env
     depends_on:
       - redis
       - db
@@ -52,8 +50,6 @@ services:
       - ./docker/storage/mbin:$MBIN_HOME
     # If you want to change configs locally, without rebuilding the image use:
     #  - ../docker/config:/var/www/mbin/config
-    env_file:
-      - .env
     depends_on:
       - redis
       - db
@@ -68,8 +64,6 @@ services:
     command: /bin/sh -c "redis-server --requirepass $${REDIS_PASSWORD}"
     volumes:
       - ./docker/storage/redis:/data
-    env_file:
-      - .env
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
 
@@ -81,8 +75,6 @@ services:
       - mbin_external_network
     volumes:
       - ./docker/storage/postgres:/var/lib/postgresql/data
-    env_file:
-      - .env
 
   rabbitmq:
     image: rabbitmq:3.13.6-management-alpine
@@ -90,8 +82,6 @@ services:
     restart: unless-stopped
     networks:
       - mbin_external_network
-    env_file:
-      - .env
     volumes:
       - ./docker/storage/rabbitmq:/var/lib/rabbitmq
     ports:
