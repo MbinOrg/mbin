@@ -69,7 +69,7 @@ is present, otherwise the list of files has to be passed with `docker compose -f
 
 [This][php-dockerfile] is the biggest and most complex `Dockerfile` in the repo.
 It's a multi-stage file that attempts to make the final image minimal. You can read it, but the most important things
-to keep in mind are
+to keep in mind are:
 
 - the `base` target only has the minimal common items for the next steps
 - for production there are builder targets to build the frontend and backend of mbin
