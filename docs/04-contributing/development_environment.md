@@ -54,7 +54,7 @@ in your compose setup automatically.
 
 ## How it works
 
-MBin depends on multiple services (postgreSQL, redis, a reverse proxy, PHP, ...). Instead of having one monolithic
+Mbin depends on multiple services (PostgreSQL, Redis, a reverse proxy, PHP, ...). Instead of having one monolithic
 docker image that includes these services and all their configs, the services each run in their own containers.
 
 There's minimal overlap between most services and their `Dockerfile`s. Here are a few things to know.
