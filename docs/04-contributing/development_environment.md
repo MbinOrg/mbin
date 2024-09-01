@@ -150,7 +150,7 @@ Nixos needs [iptables rules](https://discourse.nixos.org/t/docker-container-not-
 
 Requirements:
 
-- PHP v8.2
+- PHP v8.3
 - NodeJS
 - Redis
 - PostgreSQL
@@ -158,13 +158,13 @@ Requirements:
 
 ---
 
-- Increase execution time in PHP config file: `/etc/php/8.2/fpm/php.ini`:
+- Increase execution time in PHP config file: `/etc/php/8.3/fpm/php.ini`:
 
 ```ini
 max_execution_time = 120
 ```
 
-- Restart the PHP-FPM service: `sudo systemctl restart php8.2-fpm.service`
+- Restart the PHP-FPM service: `sudo systemctl restart php8.3-fpm.service`
 - Connect to PostgreSQL using the postgres user:
 
 ```bash
