@@ -227,9 +227,6 @@ filesystems.
 
 ### Mbin NGINX Server Block
 
-> ![WARNING]
-> This is not up to date! PRs for a valid nginx service and config welcome!
-
 NGINX reverse proxy example for the Mbin Docker instance:
 
 ```nginx
