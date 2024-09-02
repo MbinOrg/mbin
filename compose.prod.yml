@@ -5,7 +5,7 @@ services:
     #image: "ghcr.io/mbinorg/mbin:latest-caddy"
     #pull_policy: never
     ports:
-      - 80:80
+      - 8008:80
     volumes:
       - ./docker/storage/caddy_config:/config
       - ./docker/storage/caddy_data:/data
