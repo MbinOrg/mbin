@@ -1,4 +1,4 @@
-# Docker
+# Docker Development Server
 
 Using docker can get you up and running quickly as it spins up containers of all the required components.
 
