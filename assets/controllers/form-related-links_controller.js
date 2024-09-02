@@ -18,20 +18,14 @@ export default class extends Controller {
     }
 
     addRelatedElement() {
-        console.log('addRelatedElement method');
-
-        const item = document.createElement('span');
-        item.className = 'flex related-link-item';
-
         const nodeLink = this.#htmlToNode(this.linkValue.replace(
             /__name__/g,
             this.indexValue,
         ));
-        item.append(nodeLink);
 
-        this.#addButtonDeleteLink(item);
+        this.#addButtonDeleteLink(nodeLink);
 
-        this.relatedContainerTarget.appendChild(item);
+        this.relatedContainerTarget.appendChild(nodeLink);
         this.indexValue++;
     }
 

@@ -29,14 +29,14 @@
             {{ form_start(form) }}
             {{ component('editor_toolbar', {id: 'user_basic_about'}) }}
             {{ form_row(form.about, {label: false, attr: {
-                placeholder: 'about', 
-                'data-controller': 'input-length rich-textarea autogrow', 
+                placeholder: 'about',
+                'data-controller': 'input-length rich-textarea autogrow',
                 'data-entry-link-create-target': 'user_about',
                 'data-action' : 'input-length#updateDisplay',
                 'data-input-length-max-value' : constant('App\\DTO\\UserDto::MAX_ABOUT_LENGTH')
                 }}) }}
             {{ form_row(form.username, {label: 'username', attr: {
-                'data-controller': 'input-length autogrow', 
+                'data-controller': 'input-length autogrow',
                 'data-entry-link-create-target': 'user_about',
                 'data-action' : 'input-length#updateDisplay',
                 'data-input-length-max-value' : constant('App\\DTO\\UserDto::MAX_USERNAME_LENGTH')
@@ -47,35 +47,33 @@
             <fieldset class='related-link-fieldset'
                 {{ stimulus_controller('form-related-links') }}
                 data-form-related-links-index-value="{{ form.relatedLinks|length }}"
-                data-form-related-links-link-value="{{ 
-                    form_widget(form.relatedLinks.vars.prototype, {
+                data-form-related-links-link-value="{{
+                    form_row(form.relatedLinks.vars.prototype, {
                                 label: false,
-                                row_attr: { class: 'flex-grow-1' }
-                    })|e('html_attr') 
+                                row_attr: { class: 'flex related-link-item' }
+                    })|e('html_attr')
                 }}"
-                
+
             >
                 <legend>{{ 'related_links'|trans }}</legend>
-                
-                <div 
+
+                <div
                     class='related-links-group'
                     data-form-related-links-target="relatedContainer"
                 >
                     {% for item_form in form.relatedLinks %}
-                        <span class='flex related-link-item'>
-                            {{ form_widget(item_form, {
+                            {{ form_row(item_form, {
                                 label: false,
-                                row_attr: { class: 'flex-grow-1' }
+                                row_attr: { class: 'flex related-link-item' }
                             }) }}
-                        </span>
                     {% endfor %}
                 </div>
 
-                <button 
+                <button
                     type="button"
                     class="btn btn__primary"
                     {{ stimulus_action('form-related-links', 'addRelatedElement') }}
-                >Add link</button>
+                >{{ 'add'|trans }}</button>
             </fieldset>
 
             <div class="row actions">

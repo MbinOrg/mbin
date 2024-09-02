@@ -532,8 +532,13 @@ div.input-box {
     padding: 0;
 }
 
+.related-link-fieldset legend {
+  margin-bottom: 0.5rem;
+}
+
 .related-link-item {
     align-items: center;
+    margin-bottom: 0.25rem;
 }
 
 .related-link-item button {
