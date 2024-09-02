@@ -30,7 +30,8 @@ With an account on [GitHub](https://github.com) you will be able to [fork this r
 
 ### Development
 
-To get started with development, follow the [guide](docs/04-contributing/development_environment.md).
+To get started with development, follow the [bare metal](docs/04-contributing/bare_metal.md) or 
+[docker](docs/04-contributing/docker.md) guide.
 
 ### Coding Style Guide
 
