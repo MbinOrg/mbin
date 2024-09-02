@@ -2,11 +2,11 @@
 
 Using docker can get you up and running quickly as it spins up containers of all the required components.
 
-**Supported operating systems**
+## Supported operating systems
 
  - Linux
 
-**Requirements**
+## Requirements
 
  - [Docker](https://docs.docker.com/get-docker/)
 
@@ -30,7 +30,7 @@ Once everything has started, you can navigate to http://localhost:8008. Here's a
 Should you want to edit the `compose.override.yml` file without making changes to `compose.dev.yml`, read further.
 Your changes will be ignored by git.
 
-**Use the `include` directive**
+#### Use the `include` directive
 
 For docker versions `>= 2.20.0`, you can [include][docker compose include] other YAML files into a compose file.
 This has the benefit of keeping up to date with changes to the `compose.dev.yml` without modifying it.
@@ -42,7 +42,7 @@ include:
   - compose.dev.override.yml # Modifications go into that file
 ```
 
-**Copy the compose.dev.yml**
+#### Copy the compose.dev.yml
 
 Instead of linking, copy the `compose.dev.yml` to `compose.override.yml` and make your changes.
 
@@ -88,11 +88,11 @@ and requires files from the PHP dependencies to successfully build the frontend.
 
 The entire repository is mounted into the `caddy`, `php`, and `messenger` services.
 
-**PHP code**
+#### PHP code
 
 Most PHP code changes are picked up immediately after refreshing the page in the browser.
 
-**Other important files**
+#### Other important files
 
 | file          | services       | how to refresh                                                         |
 |---------------|----------------|------------------------------------------------------------------------|
@@ -124,11 +124,11 @@ sequenceDiagram
     rp-->>-Browser: response
 ```
 
-**Requirement**
+#### Requirement
 
 An XDebug server. The XDebug server is often hosted on port 9000 or 9003. Some IDEs (like [PHPStorm]) have it builtin.
 
-**Enabling**
+#### Enabling
 
 Open [app.dev.ini] and uncomment `;xdebug.start_with_request=yes` by removing the `;`, 
 then restart the `php` service using `docker compose restart php`.
@@ -139,7 +139,7 @@ Once you navigate to a page, your IDE/editor should get called from `php-fpm` wi
 
 Firewalls can sometimes get in the way of communication between the docker container and the docker host.
 
-**NixOS**
+##### NixOS
 
 Nixos needs [iptables rules](https://discourse.nixos.org/t/docker-container-not-resolving-to-host/30259/8).
 
