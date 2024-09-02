@@ -77,17 +77,17 @@ For developers:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/e-five256">
-                    <img src="https://avatars.githubusercontent.com/u/146029455?v=4" width="100;" alt="e-five256"/>
-                    <br />
-                    <sub><b>e-five</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/BentiGorlich">
                     <img src="https://avatars.githubusercontent.com/u/25664458?v=4" width="100;" alt="BentiGorlich"/>
                     <br />
                     <sub><b>BentiGorlich</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/e-five256">
+                    <img src="https://avatars.githubusercontent.com/u/146029455?v=4" width="100;" alt="e-five256"/>
+                    <br />
+                    <sub><b>e-five</b></sub>
                 </a>
             </td>
             <td align="center">
@@ -209,24 +209,17 @@ For developers:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/lilfade">
-                    <img src="https://avatars.githubusercontent.com/u/4168401?v=4" width="100;" alt="lilfade"/>
+                <a href="https://github.com/ryanmonsen">
+                    <img src="https://avatars.githubusercontent.com/u/55466117?v=4" width="100;" alt="ryanmonsen"/>
                     <br />
-                    <sub><b>Bryson</b></sub>
+                    <sub><b>ryanmonsen</b></sub>
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/vpzomtrrfrt">
-                    <img src="https://avatars.githubusercontent.com/u/3528358?v=4" width="100;" alt="vpzomtrrfrt"/>
+                <a href="https://github.com/drupol">
+                    <img src="https://avatars.githubusercontent.com/u/252042?v=4" width="100;" alt="drupol"/>
                     <br />
-                    <sub><b>vpzomtrrfrt</b></sub>
-                </a>
-            </td>
-            <td align="center">
-                <a href="https://github.com/cavebob">
-                    <img src="https://avatars.githubusercontent.com/u/75441692?v=4" width="100;" alt="cavebob"/>
-                    <br />
-                    <sub><b>cavebob</b></sub>
+                    <sub><b>Pol Dellaiera</b></sub>
                 </a>
             </td>
             <td align="center">
@@ -236,20 +229,27 @@ For developers:
                     <sub><b>John Wesley</b></sub>
                 </a>
             </td>
+            <td align="center">
+                <a href="https://github.com/cavebob">
+                    <img src="https://avatars.githubusercontent.com/u/75441692?v=4" width="100;" alt="cavebob"/>
+                    <br />
+                    <sub><b>cavebob</b></sub>
+                </a>
+            </td>
 		</tr>
 		<tr>
             <td align="center">
-                <a href="https://github.com/drupol">
-                    <img src="https://avatars.githubusercontent.com/u/252042?v=4" width="100;" alt="drupol"/>
+                <a href="https://github.com/vpzomtrrfrt">
+                    <img src="https://avatars.githubusercontent.com/u/3528358?v=4" width="100;" alt="vpzomtrrfrt"/>
                     <br />
-                    <sub><b>Pol Dellaiera</b></sub>
+                    <sub><b>vpzomtrrfrt</b></sub>
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/ryanmonsen">
-                    <img src="https://avatars.githubusercontent.com/u/55466117?v=4" width="100;" alt="ryanmonsen"/>
+                <a href="https://github.com/lilfade">
+                    <img src="https://avatars.githubusercontent.com/u/4168401?v=4" width="100;" alt="lilfade"/>
                     <br />
-                    <sub><b>ryanmonsen</b></sub>
+                    <sub><b>Bryson</b></sub>
                 </a>
             </td>
             <td align="center">
@@ -267,12 +267,21 @@ For developers:
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/LoveIsGrief">
+                    <img src="https://avatars.githubusercontent.com/u/2829538?v=4" width="100;" alt="LoveIsGrief"/>
+                    <br />
+                    <sub><b>LoveIsGrief</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/DismalShadowX">
                     <img src="https://avatars.githubusercontent.com/u/24910097?v=4" width="100;" alt="DismalShadowX"/>
                     <br />
                     <sub><b>Nathan Sparrow</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/privacyguard">
                     <img src="https://avatars.githubusercontent.com/u/92675882?v=4" width="100;" alt="privacyguard"/>

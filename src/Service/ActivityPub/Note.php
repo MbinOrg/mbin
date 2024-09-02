@@ -15,6 +15,7 @@ use App\Entity\EntryComment;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\Exception\InstanceBannedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Exception\UserDeletedException;
@@ -48,6 +49,7 @@ class Note
      * @throws TagBannedException
      * @throws UserBannedException
      * @throws UserDeletedException
+     * @throws InstanceBannedException
      * @throws \Exception
      */
     public function create(array $object, ?array $root = null, bool $stickyIt = false): EntryComment|PostComment|Post
@@ -55,6 +57,9 @@ class Note
         $current = $this->repository->findByObjectId($object['id']);
         if ($current) {
             return $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
+        }
+        if ($this->settingsManager->isBannedInstance($object['id'])) {
+            throw new InstanceBannedException();
         }
 
         if (\is_string($object['to'])) {
