@@ -106,7 +106,7 @@
         <a href="{{ path('entry_single', { 'magazine_name': entry.magazine.name, 'entry_id': entry.id, 'slug': entry.slug }) }}">
             {{ entry.title }}
         </a>
-    {% elseif notification.report.entryComment is defined and  notification.report.entryComment is not same as null %}
+    {% elseif notification.report.entryComment is defined and notification.report.entryComment is not same as null %}
         {% set entryComment = notification.report.entryComment %}
         <a href="{{ path('entry_comment_view', { 'magazine_name': entryComment.magazine.name, 'entry_id': entryComment.entry.id, 'slug': entryComment.entry.slug, 'comment_id': entryComment.id }) }}">
             {{ entryComment.getShortTitle() }}
