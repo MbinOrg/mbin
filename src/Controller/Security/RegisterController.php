@@ -53,7 +53,7 @@ class RegisterController extends AbstractController
         } elseif ($form->isSubmitted() && !$form->isValid()) {
             $this->logger->warning('Registration form submission was invalid.', [
                 'data' => $form->getData(),
-                'errors' => $form->getErrors(true),
+                'errors' => $form->getErrors(true, false),
             ]);
         }
 
