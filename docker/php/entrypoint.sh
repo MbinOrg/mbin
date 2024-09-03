@@ -10,22 +10,24 @@ if [ "$1" == "php-fpm" ] || [ "$1" == "php" ] || [ "$1" == "bin/console" ]; then
     # if running as a service install assets
     echo "Starting as service..."
 
-    # In production: dump the production PHP config files,
-    # validate the installed packages (no dev) and dump prod config
-    if [ "$APP_ENV" == "prod" ]; then
-        cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-        cp "$PHP_INI_DIR/conf.d/app.ini-production" "$PHP_INI_DIR/conf.d/app.prod.or.dev.ini"
-        composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
-        composer dump-env prod
+    if [ "$APP_ENV" == "dev" ] ; then
+      echo "Installing PHP dependencies"
+      # In development: dump the development PHP config files,
+      # validate the installed packages (including dev dependencies) and dump dev config
+      composer install --prefer-dist --no-scripts --no-progress
+      composer dump-env dev
     fi
 
-    # In development: dump the development PHP config files,
-    # validate the installed packages (including dev dependencies) and dump dev config
-    if [ "$APP_ENV" == "dev" ]; then
-        cp "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
-        cp "$PHP_INI_DIR/conf.d/app.ini-development" "$PHP_INI_DIR/conf.d/app.prod.or.dev.ini"
-        composer install --prefer-dist --no-scripts --no-progress
-        composer dump-env dev
+    if [ "$APP_ENV" == "prod" ] ; then
+      # Parts of mbin are served directly by the webserver without calling php-fpm (public/ folder)
+      # User uploads and other dynamically created content are inserted into public/ by this container
+      # The webserver needs access to those newly uploaded files
+      echo "Syncing mbin src"
+      rsync \
+        --links \
+        --recursive \
+        --chown $MBIN_USER:$MBIN_GROUP \
+        $MBIN_SRC/ $MBIN_HOME
     fi
 
     echo "Waiting for db to be ready..."
@@ -65,6 +67,25 @@ if [ "$1" == "php-fpm" ] || [ "$1" == "php" ] || [ "$1" == "bin/console" ]; then
             echo "ENABLE_ACL is not set!"
         fi
     fi
+
+    if [ "$APP_ENV" == "prod" ] ; then
+      echo "Creating directories and setting ownership"
+       # Create necessary directories for php-fpm process run by mbin user
+      mkdir -p public/media var/log /data /config
+      chown -R $MBIN_USER:$MBIN_GROUP public/media var /data /config .env
+      chmod 777 public/media var
+    fi
 fi
 
-exec "$@"
+USER=$(whoami)
+if [ "$USER" == "$MBIN_USER" ] ; then
+  # Probably dev
+  exec "$@"
+else
+  # Most likely prod
+  # Run command as non-root user
+  # Workaround: Allow php-fpm to write to stderr
+  chown "$MBIN_USER" /proc/self/fd/2
+
+  exec su "$MBIN_USER" -c "$*"
+fi

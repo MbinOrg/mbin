@@ -28,6 +28,11 @@ With an account on [GitHub](https://github.com) you will be able to [fork this r
 > [!Note]
 > If you are a Maintainer with GitHub org admin rights, you do NOT need to fork the project, instead you are allowed to use git branches. See also [C4](C4.md).
 
+### Development
+
+To get started with development, follow the [bare metal](docs/04-contributing/bare_metal.md) or 
+[docker](docs/04-contributing/docker.md) guide.
+
 ### Coding Style Guide
 
 We use [php-cs-fixer](https://cs.symfony.com/) to automatically fix code style issues according to [Symfony coding standard](https://symfony.com/doc/current/contributing/code/standards.html).

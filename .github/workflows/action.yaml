@@ -132,7 +132,7 @@ jobs:
       - name: php-cs-fixer dry-run
         run: tools/vendor/bin/php-cs-fixer fix --dry-run -v --show-progress=none #--format=checkstyle #would be nice if codeberg did something with this like github does.
 
-  build-and-publish-docker-image:
+  build-and-publish-docker-images:
     runs-on: ubuntu-latest
     # Let's only run this on branches and tagged releases only
     # Because the Docker build takes quite some time.
@@ -151,18 +151,36 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Docker meta data
-        id: meta
+      - name: Docker meta data for php image
+        id: meta_php
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/mbinorg/mbin
+          flavor: suffix=php
 
-      - name: Build and push Docker image
+      - name: Docker meta data for caddy image
+        id: meta_caddy
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/mbinorg/mbin
+          flavor: suffix=caddy
+
+      - name: Build and push php image
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./docker/Dockerfile
+          file: ./docker/php/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta_php.outputs.tags }}
+          labels: ${{ steps.meta_php.outputs.labels }}
+
+      - name: Build and push caddy image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/caddy/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta_caddy.outputs.tags }}
+          labels: ${{ steps.meta_caddy.outputs.labels }}
+
 # TODO: Integration tests

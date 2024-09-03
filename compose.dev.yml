@@ -1,0 +1,76 @@
+services:
+  www:
+    volumes:
+      - caddy_config:/config
+      - caddy_data:/data
+      - ./:/var/www/mbin
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile
+    depends_on:
+      node:
+        condition: service_completed_successfully
+    ports:
+      - 8008:80
+
+  # Builds the nodejs application
+  node:
+    image: "node:22.5.1-alpine3.20"
+    command: docker/node/build.sh
+    container_name: node-builder
+    entrypoint:
+      - sh
+      - "-c"
+    working_dir: /var/www/mbin
+    depends_on:
+      php:
+        condition: service_healthy
+    networks:
+      - mbin_external_network
+    volumes:
+      - ./:/var/www/mbin/
+
+  php:
+    # Builds the Docker image from scratch
+    build:
+      target: dev
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./:/var/www/mbin/
+      - ./docker/php/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini
+      - ./docker/php/conf.d/app.ini:/usr/local/etc/php/conf.d/app.ini
+      - ./docker/php/entrypoint.sh:/entrypoint.sh
+      - ./docker/php/php-fpm.d/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf
+
+
+  messenger:
+    # Builds the Docker image from scratch
+    build:
+      target: dev
+    command: bin/console -vvvv messenger:consume --all --time-limit=3600
+    volumes:
+      - ./:/var/www/mbin/
+      - ./docker/php/entrypoint.sh:/entrypoint.sh
+
+  redis:
+    volumes:
+      - redis:/data
+
+  db:
+    # Allow connecting to the db from the localhost for debugging
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  rabbitmq:
+    ports:
+      - 15672:15672
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+
+volumes:
+  caddy_config:
+  caddy_data:
+  postgres:
+  rabbitmq:
+  redis:

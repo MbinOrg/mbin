@@ -1,0 +1,107 @@
+services:
+  www:
+    # Builds the Docker image from scratch
+    build:
+      dockerfile: docker/caddy/Dockerfile
+    container_name: mbin-www
+    restart: unless-stopped
+    networks:
+      - mbin_external_network
+    command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
+    healthcheck:
+      test: ["CMD-SHELL", "wget -O /dev/null http://localhost:2019/metrics || exit 1"]
+    env_file:
+      - .env
+    depends_on:
+      - php
+
+  php:
+    # Builds the Docker image from scratch
+    build:
+      dockerfile: docker/php/Dockerfile
+    container_name: mbin-php
+    command: php-fpm
+    working_dir: /var/www/mbin
+    restart: unless-stopped
+    networks:
+      - mbin_external_network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "REQUEST_METHOD=GET SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping cgi-fcgi -bind -connect localhost:9000 || exit 1",
+        ]
+    env_file:
+      - .env
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      messenger:
+        # The main application depends on being able to send messages
+        condition: service_healthy
+
+  messenger:
+    # Builds the Docker image from scratch
+    build:
+      dockerfile: docker/php/Dockerfile
+    restart: unless-stopped
+    networks:
+      - mbin_external_network
+    command: bin/console messenger:consume --all --time-limit=3600
+    working_dir: /var/www/mbin
+    healthcheck:
+      test: ["CMD-SHELL", "ps aux | grep 'messenger[:]consume' || exit 1"]
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - db
+      - rabbitmq
+
+  redis:
+    image: redis:alpine
+    container_name: mbin-redis
+    restart: unless-stopped
+    networks:
+      - mbin_external_network
+    command: /bin/sh -c "redis-server --requirepass $${REDIS_PASSWORD}"
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+
+  db:
+    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    container_name: mbin-db
+    restart: unless-stopped
+    networks:
+      - mbin_external_network
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $POSTGRES_USER" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3.13.6-management-alpine
+    container_name: mbin-rabbitmq
+    restart: unless-stopped
+    networks:
+      - mbin_external_network
+    env_file:
+      - .env
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+networks:
+  mbin_external_network:
+
