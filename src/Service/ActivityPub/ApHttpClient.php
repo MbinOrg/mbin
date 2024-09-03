@@ -18,6 +18,7 @@ use App\Service\ProjectInfoService;
 use JetBrains\PhpStorm\ArrayShape;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\HttpClient\CurlHttpClient;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -25,6 +26,7 @@ use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 /*
  * source:
@@ -60,10 +62,36 @@ class ApHttpClient
 
     public function getActivityObject(string $url, bool $decoded = true): array|string|null
     {
-        $resp = $this->cache->get($this->getActivityObjectCacheKey($url), function (ItemInterface $item) use ($url) {
-            $this->logger->debug("ApHttpClient:getActivityObject:url: $url");
+        $key = $this->getActivityObjectCacheKey($url);
+        if ($this->cache->hasItem($key)) {
+            /** @var CacheItem $item */
+            $item = $this->cache->getItem($key);
+            $resp = $item->get();
 
-            $client = new CurlHttpClient();
+            return $decoded ? json_decode($resp, true) : $resp;
+        }
+
+        $resp = $this->getActivityObjectImpl($url);
+
+        if (!$resp) {
+            return null;
+        }
+
+        /** @var CacheItem $item */
+        $item = $this->cache->getItem($key);
+        $item->expiresAt(new \DateTime('+1 hour'));
+        $item->set($resp);
+        $this->cache->save($item);
+
+        return $decoded ? json_decode($resp, true) : $resp;
+    }
+
+    private function getActivityObjectImpl(string $url): ?string
+    {
+        $this->logger->debug("ApHttpClient:getActivityObject:url: $url");
+
+        $client = new CurlHttpClient();
+        try {
             $r = $client->request('GET', $url, [
                 'max_duration' => self::MAX_DURATION,
                 'timeout' => self::TIMEOUT,
@@ -76,20 +104,14 @@ class ApHttpClient
                 throw new InvalidApPostException("Invalid status code while getting: $url : $statusCode, ".substr($r->getContent(false), 0, 1000));
             }
 
-            $item->expiresAt(new \DateTime('+1 hour'));
-
             // Read also non-OK responses (like 410) by passing 'false'
             $content = $r->getContent(false);
             $this->logger->debug('ApHttpClient:getActivityObject:url: {url} - content: {content}', ['url' => $url, 'content' => $content]);
-
-            return $content;
-        });
-
-        if (!$resp) {
-            return null;
+        } catch (\Exception $e) {
+            $this->logRequestException($r, $url, 'ApHttpClient:getActivityObject', $e);
         }
 
-        return $decoded ? json_decode($resp, true) : $resp;
+        return $content;
     }
 
     public function getActivityObjectCacheKey(string $url): string
@@ -125,33 +147,42 @@ class ApHttpClient
      */
     public function getWebfingerObject(string $url): ?array
     {
-        $resp = $this->cache->get(
-            'wf_'.hash('sha256', $url),
-            function (ItemInterface $item) use ($url) {
-                $this->logger->debug("ApHttpClient:getWebfingerObject:url: $url");
-                $r = null;
-                try {
-                    $client = new CurlHttpClient();
-                    $r = $client->request('GET', $url, [
-                        'max_duration' => self::MAX_DURATION,
-                        'timeout' => self::TIMEOUT,
-                        'headers' => $this->getInstanceHeaders($url, null, 'get', ApRequestType::WebFinger),
-                    ]);
-                } catch (\Exception $e) {
-                    $msg = "WebFinger Get fail: $url, ex: ".\get_class($e).": {$e->getMessage()}";
-                    if (null !== $r) {
-                        $msg .= ', '.$r->getContent(false);
-                    }
-                    throw new InvalidWebfingerException($msg);
-                }
+        $key = 'wf_'.hash('sha256', $url);
+        if ($this->cache->hasItem($key)) {
+            /** @var CacheItem $item */
+            $item = $this->cache->getItem($key);
+            $resp = $item->get();
 
-                $item->expiresAt(new \DateTime('+1 hour'));
+            return $resp ? json_decode($resp, true) : null;
+        }
 
-                return $r->getContent();
-            }
-        );
+        $resp = $this->getWebfingerObjectImpl($url);
+
+        /** @var CacheItem $item */
+        $item = $this->cache->getItem($key);
+        $item->expiresAt(new \DateTime('+1 hour'));
+        $item->set($resp);
+        $this->cache->save($item);
 
         return $resp ? json_decode($resp, true) : null;
+    }
+
+    private function getWebfingerObjectImpl(string $url): ?string
+    {
+        $this->logger->debug("ApHttpClient:getWebfingerObject:url: $url");
+        $r = null;
+        try {
+            $client = new CurlHttpClient();
+            $r = $client->request('GET', $url, [
+                'max_duration' => self::MAX_DURATION,
+                'timeout' => self::TIMEOUT,
+                'headers' => $this->getInstanceHeaders($url, null, 'get', ApRequestType::WebFinger),
+            ]);
+        } catch (\Exception $e) {
+            $this->logRequestException($r, $url, 'ApHttpClient:getWebfingerObject', $e);
+        }
+
+        return $r->getContent();
     }
 
     private function getActorCacheKey(string $apProfileId): string
@@ -168,62 +199,70 @@ class ApHttpClient
      */
     public function getActorObject(string $apProfileId): ?array
     {
-        $resp = $this->cache->get(
-            $this->getActorCacheKey($apProfileId),
-            function (ItemInterface $item) use ($apProfileId) {
-                $this->logger->debug("ApHttpClient:getActorObject:url: $apProfileId");
-                $response = null;
-                try {
-                    // Set-up request
-                    $client = new CurlHttpClient();
-                    $response = $client->request('GET', $apProfileId, [
-                        'max_duration' => self::MAX_DURATION,
-                        'timeout' => self::TIMEOUT,
-                        'headers' => $this->getInstanceHeaders($apProfileId, null, 'get', ApRequestType::ActivityPub),
-                    ]);
-                    // If 4xx error response, try to find the actor locally
-                    if (str_starts_with((string) $response->getStatusCode(), '4')) {
-                        if ($user = $this->userRepository->findOneByApProfileId($apProfileId)) {
-                            $user->apDeletedAt = new \DateTime();
-                            $this->userRepository->save($user, true);
-                        }
-                        if ($magazine = $this->magazineRepository->findOneByApProfileId($apProfileId)) {
-                            $magazine->apDeletedAt = new \DateTime();
-                            $this->magazineRepository->save($magazine, true);
-                        }
-                    }
-                } catch (\Exception $e) {
-                    // If an exception occurred, try to find the actor locally
-                    if ($user = $this->userRepository->findOneByApProfileId($apProfileId)) {
-                        $user->apTimeoutAt = new \DateTime();
-                        $this->userRepository->save($user, true);
-                    }
-                    if ($magazine = $this->magazineRepository->findOneByApProfileId($apProfileId)) {
-                        $magazine->apTimeoutAt = new \DateTime();
-                        $this->magazineRepository->save($magazine, true);
-                    }
+        $key = $this->getActorCacheKey($apProfileId);
+        if ($this->cache->hasItem($key)) {
+            /** @var CacheItem $item */
+            $item = $this->cache->getItem($key);
+            $resp = $item->get();
 
-                    $msg = "AP Get fail: $apProfileId, ex: ".\get_class($e).": {$e->getMessage()}";
-                    if (null !== $response) {
-                        $msg .= ', '.$response->getContent(false);
-                    }
-                    throw new InvalidApPostException($msg);
-                }
+            return $resp ? json_decode($resp, true) : null;
+        }
 
-                $item->expiresAt(new \DateTime('+1 hour'));
+        $resp = $this->getActorObjectImpl($apProfileId);
 
-                if (404 === $response->getStatusCode()) {
-                    // treat a 404 error the same as a tombstone, since we think there was an actor, but it isn't there anymore
-                    return json_encode($this->tombstoneFactory->create($apProfileId));
-                }
-
-                // Return the content.
-                // Pass the 'false' option to getContent so it doesn't throw errors on "non-OK" respones (eg. 410 status codes).
-                return $response->getContent(false);
-            }
-        );
+        /** @var CacheItem $item */
+        $item = $this->cache->getItem($key);
+        $item->expiresAt(new \DateTime('+1 hour'));
+        $item->set($resp);
+        $this->cache->save($item);
 
         return $resp ? json_decode($resp, true) : null;
+    }
+
+    private function getActorObjectImpl(string $apProfileId): ?string
+    {
+        $this->logger->debug("ApHttpClient:getActorObject:url: $apProfileId");
+        $response = null;
+        try {
+            // Set-up request
+            $client = new CurlHttpClient();
+            $response = $client->request('GET', $apProfileId, [
+                'max_duration' => self::MAX_DURATION,
+                'timeout' => self::TIMEOUT,
+                'headers' => $this->getInstanceHeaders($apProfileId, null, 'get', ApRequestType::ActivityPub),
+            ]);
+            // If 4xx error response, try to find the actor locally
+            if (str_starts_with((string) $response->getStatusCode(), '4')) {
+                if ($user = $this->userRepository->findOneByApProfileId($apProfileId)) {
+                    $user->apDeletedAt = new \DateTime();
+                    $this->userRepository->save($user, true);
+                }
+                if ($magazine = $this->magazineRepository->findOneByApProfileId($apProfileId)) {
+                    $magazine->apDeletedAt = new \DateTime();
+                    $this->magazineRepository->save($magazine, true);
+                }
+            }
+        } catch (\Exception|TransportExceptionInterface $e) {
+            // If an exception occurred, try to find the actor locally
+            if ($user = $this->userRepository->findOneByApProfileId($apProfileId)) {
+                $user->apTimeoutAt = new \DateTime();
+                $this->userRepository->save($user, true);
+            }
+            if ($magazine = $this->magazineRepository->findOneByApProfileId($apProfileId)) {
+                $magazine->apTimeoutAt = new \DateTime();
+                $this->magazineRepository->save($magazine, true);
+            }
+            $this->logRequestException($response, $apProfileId, 'ApHttpClient:getActorObject', $e);
+        }
+
+        if (404 === $response->getStatusCode()) {
+            // treat a 404 error the same as a tombstone, since we think there was an actor, but it isn't there anymore
+            return json_encode($this->tombstoneFactory->create($apProfileId));
+        }
+
+        // Return the content.
+        // Pass the 'false' option to getContent so it doesn't throw errors on "non-OK" respones (eg. 410 status codes).
+        return $response->getContent(false);
     }
 
     public function invalidateActorObjectCache(string $apProfileId): void
@@ -241,41 +280,71 @@ class ApHttpClient
      */
     public function getCollectionObject(string $apAddress): ?array
     {
-        $resp = $this->cache->get(
-            'ap_collection'.hash('sha256', $apAddress),
-            function (ItemInterface $item) use ($apAddress) {
-                $this->logger->debug("ApHttpClient:getCollectionObject:url: $apAddress");
-                $response = null;
-                try {
-                    // Set-up request
-                    $client = new CurlHttpClient();
-                    $response = $client->request('GET', $apAddress, [
-                        'max_duration' => self::MAX_DURATION,
-                        'timeout' => self::TIMEOUT,
-                        'headers' => $this->getInstanceHeaders($apAddress, null, 'get', ApRequestType::ActivityPub),
-                    ]);
+        $key = 'ap_collection'.hash('sha256', $apAddress);
+        if ($this->cache->hasItem($key)) {
+            /** @var CacheItem $item */
+            $item = $this->cache->getItem($key);
+            $resp = $item->get();
 
-                    $statusCode = $response->getStatusCode();
-                    // Accepted status code are 2xx or 410 (used Tombstone types)
-                    if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
-                        throw new InvalidApPostException("Invalid status code while getting: $apAddress : $statusCode, ".substr($response->getContent(false), 0, 1000));
-                    }
-                } catch (\Exception $e) {
-                    $msg = "AP Get fail: $apAddress, ex: ".\get_class($e).": {$e->getMessage()}";
-                    if (null !== $response) {
-                        $msg .= ', '.$response->getContent(false);
-                    }
-                    throw new InvalidApPostException($msg);
-                }
+            return $resp ? json_decode($resp, true) : null;
+        }
 
-                $item->expiresAt(new \DateTime('+24 hour'));
+        $resp = $this->getCollectionObjectImpl($apAddress);
 
-                // When everything goes OK, return the data
-                return $response->getContent();
-            }
-        );
+        /** @var CacheItem $item */
+        $item = $this->cache->getItem($key);
+        $item->expiresAt(new \DateTime('+24 hour'));
+        $item->set($resp);
+        $this->cache->save($item);
 
         return $resp ? json_decode($resp, true) : null;
+    }
+
+    private function getCollectionObjectImpl(string $apAddress): ?string
+    {
+        $this->logger->debug("ApHttpClient:getCollectionObject:url: $apAddress");
+        $response = null;
+        try {
+            // Set-up request
+            $client = new CurlHttpClient();
+            $response = $client->request('GET', $apAddress, [
+                'max_duration' => self::MAX_DURATION,
+                'timeout' => self::TIMEOUT,
+                'headers' => $this->getInstanceHeaders($apAddress, null, 'get', ApRequestType::ActivityPub),
+            ]);
+
+            $statusCode = $response->getStatusCode();
+            // Accepted status code are 2xx or 410 (used Tombstone types)
+            if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
+                throw new InvalidApPostException("Invalid status code while getting: $apAddress : $statusCode, ".substr($response->getContent(false), 0, 1000));
+            }
+        } catch (\Exception $e) {
+            $this->logRequestException($response, $apAddress, 'ApHttpClient:getCollectionObject', $e);
+        }
+
+        // When everything goes OK, return the data
+        return $response->getContent();
+    }
+
+    private function logRequestException(?ResponseInterface $response, string $requestUrl, string $requestType, \Exception $e): void
+    {
+        if (null !== $response) {
+            try {
+                $content = $response->getContent(false);
+            } catch (ClientExceptionInterface|RedirectionExceptionInterface|ServerExceptionInterface|TransportExceptionInterface $e) {
+                $class = \get_class($e);
+                $content = "there was an exception while getting the content, $class: {$e->getMessage()}";
+            }
+        }
+
+        $this->logger->error('{type} get fail: {address}, ex: {e}: {msg} - {content}', [
+            'type' => $requestType,
+            'address' => $requestUrl,
+            'e' => \get_class($e),
+            'msg' => $e->getMessage(),
+            'content' => $content ?? 'no content provided',
+        ]);
+        throw $e;
     }
 
     /**
@@ -326,20 +395,8 @@ class ApHttpClient
     public function fetchInstanceNodeInfoEndpoints(string $domain, bool $decoded = true): array|string|null
     {
         $url = "https://$domain/.well-known/nodeinfo";
-        $resp = $this->cache->get('nodeinfo_endpoints_'.hash('sha256', $url), function (ItemInterface $item) use ($url) {
-            $item->expiresAt(new \DateTime('+1 day'));
-            try {
-                return $this->generalFetch($url, ApRequestType::NodeInfo);
-            } catch (\Exception $e) {
-                $this->logger->warning('There was an exception fetching nodeinfo endpoints from {url}: {e} - {msg}', [
-                    'url' => $url,
-                    'e' => \get_class($e),
-                    'msg' => $e->getMessage(),
-                ]);
 
-                return null;
-            }
-        });
+        $resp = $this->generalFetchCached('nodeinfo_endpoints_', 'nodeinfo endpoints', $url, ApRequestType::NodeInfo);
 
         if (!$resp) {
             return null;
@@ -350,21 +407,7 @@ class ApHttpClient
 
     public function fetchInstanceNodeInfo(string $url, bool $decoded = true): array|string|null
     {
-        $resp = $this->cache->get('nodeinfo_'.hash('sha256', $url), function (ItemInterface $item) use ($url) {
-            $item->expiresAt(new \DateTime('+1 day'));
-
-            try {
-                return $this->generalFetch($url, ApRequestType::NodeInfo);
-            } catch (\Exception $e) {
-                $this->logger->warning('There was an exception fetching the nodeinfo from {url}: {e} - {msg}', [
-                    'url' => $url,
-                    'e' => \get_class($e),
-                    'msg' => $e->getMessage(),
-                ]);
-
-                return null;
-            }
-        });
+        $resp = $this->generalFetchCached('nodeinfo_', 'nodeinfo', $url, ApRequestType::NodeInfo);
 
         if (!$resp) {
             return null;
@@ -390,6 +433,41 @@ class ApHttpClient
         ]);
 
         return $r->getContent();
+    }
+
+    private function generalFetchCached(string $cachePrefix, string $fetchType, string $url, ApRequestType $requestType = ApRequestType::ActivityPub): ?string
+    {
+        $key = $cachePrefix.hash('sha256', $url);
+
+        if ($this->cache->hasItem($key)) {
+            /** @var CacheItem $item */
+            $item = $this->cache->getItem($key);
+
+            return $item->get();
+        }
+
+        try {
+            $resp = $this->generalFetch($url, $requestType);
+        } catch (\Exception $e) {
+            $this->logger->warning('There was an exception fetching {type} from {url}: {e} - {msg}', [
+                'type' => $fetchType,
+                'url' => $url,
+                'e' => \get_class($e),
+                'msg' => $e->getMessage(),
+            ]);
+            $resp = null;
+        }
+
+        if (!$resp) {
+            return null;
+        }
+
+        $item = $this->cache->getItem($key);
+        $item->set($resp);
+        $item->expiresAt(new \DateTime('+1 day'));
+        $this->cache->save($item);
+
+        return $resp;
     }
 
     private function getFetchAcceptHeaders(ApRequestType $requestType): array
