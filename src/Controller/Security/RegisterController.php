@@ -51,8 +51,7 @@ class RegisterController extends AbstractController
 
             return $this->redirectToRoute('front');
         } elseif ($form->isSubmitted() && !$form->isValid()) {
-            $this->logger->warning('Registration form submission was invalid.', [
-                'data' => $form->getData(),
+            $this->logger->error('Registration form submission was invalid.', [
                 'errors' => $form->getErrors(true, false),
             ]);
         }
