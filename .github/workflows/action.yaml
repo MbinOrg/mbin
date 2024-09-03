@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.1.0
+      image: danger89/mbin-pipeline:1.2.0
     steps:
       - uses: actions/checkout@v4
 
@@ -63,7 +63,7 @@ jobs:
   unit-test:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.1.0
+      image: danger89/mbin-pipeline:1.2.0
     steps:
       - uses: actions/checkout@v4
 
@@ -96,7 +96,7 @@ jobs:
   security-check:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.1.0
+      image: danger89/mbin-pipeline:1.2.0
     steps:
       - uses: actions/checkout@v4
 
@@ -106,7 +106,7 @@ jobs:
   fixer-dry-run:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.1.0
+      image: danger89/mbin-pipeline:1.2.0
     steps:
       - uses: actions/checkout@v4
 
