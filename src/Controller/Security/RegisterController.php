@@ -9,6 +9,7 @@ use App\Form\UserRegisterType;
 use App\Service\IpResolver;
 use App\Service\SettingsManager;
 use App\Service\UserManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,6 +19,7 @@ class RegisterController extends AbstractController
         private readonly UserManager $manager,
         private readonly IpResolver $ipResolver,
         private readonly SettingsManager $settingsManager,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -48,6 +50,11 @@ class RegisterController extends AbstractController
             );
 
             return $this->redirectToRoute('front');
+        } elseif ($form->isSubmitted() && !$form->isValid()) {
+            $this->logger->warning('Registration form submission was invalid.', [
+                'data' => $form->getData(),
+                'errors' => $form->getErrors(),
+            ]);
         }
 
         return $this->render(
