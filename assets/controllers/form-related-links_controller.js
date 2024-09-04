@@ -5,34 +5,46 @@ export default class extends Controller {
 
     static values = {
         index: Number,
-        link: String,
+        label: String,
+        value: String,
+        deleteIcon: String,
     };
 
     connect() {
         const container = this.element;
         container
-            .querySelectorAll('.related-link-item')
+            .querySelectorAll('.related-link-row')
             .forEach((item) => {
                 this.#addButtonDeleteLink(item);
             });
     }
 
     addRelatedElement() {
-        const nodeLink = this.#htmlToNode(this.linkValue.replace(
+        const rowNode = document.createElement('div');
+        rowNode.className = 'related-link-row';
+
+        const nodeLabel = this.#htmlToNode(this.labelValue.replace(
             /__name__/g,
             this.indexValue,
         ));
+        rowNode.appendChild(nodeLabel);
 
-        this.#addButtonDeleteLink(nodeLink);
+        const nodeValue = this.#htmlToNode(this.valueValue.replace(
+            /__name__/g,
+            this.indexValue,
+        ));
+        rowNode.appendChild(nodeValue);
 
-        this.relatedContainerTarget.appendChild(nodeLink);
+        this.#addButtonDeleteLink(rowNode);
+
+        this.relatedContainerTarget.appendChild(rowNode);
         this.indexValue++;
     }
 
     #addButtonDeleteLink(item) {
         const removeFormButton = document.createElement('button');
-        removeFormButton.innerText = '⌫';
-        removeFormButton.className = 'btn';
+        removeFormButton.innerHTML = this.deleteIconValue;
+        removeFormButton.className = 'btn btn__secondary';
 
         item.append(removeFormButton);
 

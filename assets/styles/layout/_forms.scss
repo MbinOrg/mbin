@@ -536,16 +536,16 @@ div.input-box {
   margin-bottom: 0.5rem;
 }
 
-.related-link-item {
+.related-link-row {
+    display: flex;
+    flex-wrap: nowrap;
+    row-gap: 0.5rem;
+    column-gap: 0.2rem;
     align-items: center;
     margin-bottom: 0.25rem;
 }
 
-.related-link-item button {
-    padding: 0;
-    background: none;
-    font-size: 1.5rem;
-    border: 0;
-    color: var(--kbin-input-text-color);
-
+.related-link-row div {
+  margin-bottom: 0;
+  flex-grow: 1
 }

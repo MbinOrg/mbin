@@ -33,8 +33,8 @@ class UserBasicType extends AbstractType
         $builder
             ->add('username', TextType::class, ['required' => false])
             ->add('about', TextareaType::class, ['required' => false])
-            ->add('relatedLinks', CollectionType::class, [
-                'entry_type' => UrlType::class,
+            ->add('relatedLinks', CollectionType::class , [
+                'entry_type' => UserRelatedDataType::class,
                 'entry_options' => ['label' => false],
                 'label' => false,
                 'allow_add' => true,

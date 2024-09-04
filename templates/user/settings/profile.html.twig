@@ -48,12 +48,16 @@
                 {{ stimulus_controller('form-related-links') }}
                 data-form-related-links-index-value="{{ form.relatedLinks|length }}"
                 data-form-related-links-link-value="{{
-                    form_row(form.relatedLinks.vars.prototype, {
-                                label: false,
-                                row_attr: { class: 'flex related-link-item' }
+                    form_row(form.relatedLinks.vars.prototype.value, {
+                        label: false
                     })|e('html_attr')
                 }}"
-
+                data-form-related-links-label-value="{{
+                    form_row(form.relatedLinks.vars.prototype.label, {
+                        label: false
+                    })|e('html_attr')
+                }}"
+                data-form-related-links-delete-icon-value="<i class='fa-solid fa-trash'></i>"
             >
                 <legend>{{ 'related_links'|trans }}</legend>
 
@@ -62,10 +66,14 @@
                     data-form-related-links-target="relatedContainer"
                 >
                     {% for item_form in form.relatedLinks %}
-                            {{ form_row(item_form, {
-                                label: false,
-                                row_attr: { class: 'flex related-link-item' }
+                        <div class="related-link-row">
+                            {{ form_row(item_form.label, {
+                                label: false
                             }) }}
+                            {{ form_row(item_form.value, {
+                                label: false
+                            }) }}
+                        </div>
                     {% endfor %}
                 </div>
 

@@ -890,4 +890,5 @@ admin_users_suspended: Suspended
 admin_users_banned: Banned
 user_verify: Activate account
 max_image_size: Maximum file size
+comment_not_found: Comment not found
 related_links: Related links
