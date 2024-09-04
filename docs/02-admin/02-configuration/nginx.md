@@ -271,6 +271,12 @@ TRUSTED_PROXIES=127.0.0.1,REMOTE_ADDR
 > respond to traffic from _any_ clients other than your trusted load balancers
 > (eg. within AWS this can be achieved via security groups).
 
+Finally run the `post-upgrade` script to dump the `.env` to the `.env.local.php` and clear any cache:
+
+```sh
+./bin/post-upgrade
+```
+
 More detailed info can be found at: [Symfony Trusted Proxies docs](https://symfony.com/doc/current/deployment/proxies.html)
 
 ## Media reverse proxy
