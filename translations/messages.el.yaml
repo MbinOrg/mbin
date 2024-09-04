@@ -332,7 +332,7 @@ type.smart_contract: Έξυπνο συμβόλαιο
 up_votes: Ενισχύσεις
 enter_your_comment: Εισαγάγετε το σχόλιό σας
 enter_your_post: Εισαγάγετε την ανάρτησή σας
-comments_count: '{0}σχόλια|{1}σχόλιο|]1,Inf[ σχόλια'
+comments_count: '{0}Σχόλια|{1}Σχόλιο|]1,Inf[ Σχόλια'
 empty: Κενό
 unfollow: Κατάργηση ακολούθησης
 down_votes: Μειώσεις
@@ -404,3 +404,11 @@ toolbar.link: Σύνδεσμος
 toolbar.image: Εικόνα
 toolbar.mention: Αναφορά
 password_confirm_header: Επιβεβαιώστε το αίτημα αλλαγής κωδικού πρόσβασης.
+filter_by_subscription: Φιλτράρισμα βάσει εγγραφής
+filter_by_federation: Φιλτράρισμα βάσει κατάστασης ομοσπονδίας
+sort_by: Ταξινόμηση βάσει
+subscribers_count: '{0}Εγγεγραμμένοι|{1}Εγγεγραμμένος|]1,Inf[ Εγγεγραμμένοι'
+followers_count: '{0}Ακόλουθοι|{1}Ακόλουθος|]1,Inf[ Ακόλουθοι'
+marked_for_deletion: Επισημάνθηκε για διαγραφή
+marked_for_deletion_at: Επισημάνθηκε για διαγραφή στις %date%
+remove_media: Αφαίρεση πολυμέσων
