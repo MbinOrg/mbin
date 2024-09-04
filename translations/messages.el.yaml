@@ -108,8 +108,8 @@ reset_check_email_desc: Αν υπάρχει ήδη λογαριασμός με �
   email που θα περιέχει σύνδεσμο ώστε να επαναφέρετε τον κωδικό σας. Ο σύνδεσμος θα
   λήξει σε %expire%.
 random_posts: Τυχαίες αναρτήσεις
-email_confirm_content: 'Έτοιμος να ενεργοποιήσεις τον λογαριασμό σου στο /kbin; Πάτησε
-  στον παρακάτω σύνδεσμο:'
+email_confirm_content: 'Θες να ενεργοποιήσεις τον λογαριασμό σου στο Μbin; Πάτα στον
+  παρακάτω σύνδεσμο:'
 federated_user_info: Αυτό το προφίλ είναι από έναν συνενωμένο server και μπορεί να
   είναι ελλιπές.
 email_confirm_expire: Λάβετε υπόψη ότι ο σύνδεσμος θα λήξει σε μία ώρα.
@@ -141,7 +141,7 @@ articles: Νήματα
 photos: Φωτογραφίες
 videos: Βίντεο
 report: Αναφορά
-copy_url: Αντιγραφή /kbin URL
+copy_url: Αντιγραφή Mbin URL
 copy_url_to_fediverse: Αντιγραφή πρωτότυπου URL
 share_on_fediverse: Κοινοποίηση στο Fediverse
 are_you_sure: Είσαι σίγουρος;
@@ -160,7 +160,7 @@ hide_adult: Απόκρυψη περιεχομένου για ενήλικες (N
 privacy: Ιδιωτικότητα
 show_profile_subscriptions: Εμφάνιση συνδρομών σε περιοδικά
 notify_on_new_entry_comment_reply: Απαντήσεις στα σχόλια μου σε οποιοδήποτε νήμα
-notify_on_new_post_reply: Ειδοποίησέ με για απαντήσεις στις αναρτήσεις μου
+notify_on_new_post_reply: Απαντήσεις οποιοδήποτε επιπέδου σε αναρτήσεις που εξουσιοδότησα
 notify_on_new_entry: Νέα νήματα (σύνδεσμοι ή άρθρα) σε οποιοδήποτε περιοδικό στο οποίο
   έχω εγγραφεί
 save: Αποθήκευση
@@ -217,7 +217,7 @@ wrote_message: Έγραψε ένα μήνυμα
 mentioned_you: Σε ανέφερε
 comment: Σχόλιο
 post: Ανάρτηση
-send_message: Αποστολή μηνύματος
+send_message: Αποστολή άμεσου μηνύματος
 message: Μήνυμα
 infinite_scroll: Άπειρη κύλιση
 sticky_navbar: Καρφιτσωμένη μπάρα πλοήγησης
@@ -262,7 +262,7 @@ dashboard: Ταμπλό
 contact_email: Email επικοινωνίας
 pages: Σελίδες
 type_search_term: Πληκτρολογήστε τον όρο αναζήτησης
-registrations_enabled: Οι εγγραφές ενεργοποιήθηκαν
+registrations_enabled: Εγγραφή ενεργή
 registration_disabled: Οι εγγραφές απενεργοποιήθηκαν
 restore: Επαναφορά
 add_mentions_posts: Προσθήκη ετικετών αναφοράς σε αναρτήσεις
@@ -284,7 +284,7 @@ return: Επιστροφή
 boost: Ενίσχυση
 1d: 1 ημέρα
 edit: Επεξεργασία
-notify_on_new_entry_reply: Ειδοποίησέ με για σχόλια στα νήματά μου
+notify_on_new_entry_reply: Σχόλια οποιουδήποτε επιπέδου σε νήματα που εξουσιοδότησα
 1y: 1 έτος
 general: Γενικά
 solarized_dark: Solarized Σκοτεινό
@@ -338,7 +338,7 @@ unfollow: Κατάργηση ακολούθησης
 down_votes: Μειώσεις
 federated_magazine_info: Αυτό το περιοδικό είναι από έναν συνενωμένο server και ενδέχεται
   να είναι ελλιπές.
-go_to_original_instance: Περιηγηθείτε περισσότερο στο πρωτότυπο instance.
+go_to_original_instance: Προβολή σε απομακρυσμένη εντότητα.
 login_or_email: Όνομα χρήστη ή email
 in: στο
 up_vote: Ενίσχυση
@@ -356,11 +356,11 @@ flash_register_success: Καλώς ήρθες, ο λογαριασμός σου 
 set_magazines_bar: Μπάρα περιοδικών
 banned: Σε απαγόρευσε
 ban_expired: Η απαγόρευση έληξε
-ban: Απαγόρευση
+ban: Αποκλεισμός
 bans: Απαγορεύσεις
 add_ban: Προσθήκη απαγόρευσης
 federation: Ομοσπονδία
-instances: Instances
+instances: Οντότητες
 meta: Meta
 federated: Ομοσπονδιακός
 instance: Instance
@@ -396,7 +396,7 @@ your_account_is_not_active: Ο λογαριασμός σας δεν έχει ε�
   το email σας και κάντε κλικ στον σύνδεσμο ενεργοποίησης για να συνεχίσετε
 your_account_has_been_banned: Ο λογαριασμός σας έχει αποκλειστεί
 filter.origin.label: Επιλογή προέλευσης
-kbin_bot: /kbin Bot
+kbin_bot: Πράκτορας Mbin
 toolbar.header: Επικεφαλίδα
 toolbar.quote: Παράθεση
 toolbar.code: Κώδικας
@@ -412,3 +412,27 @@ followers_count: '{0}Ακόλουθοι|{1}Ακόλουθος|]1,Inf[ Ακόλο
 marked_for_deletion: Επισημάνθηκε για διαγραφή
 marked_for_deletion_at: Επισημάνθηκε για διαγραφή στις %date%
 remove_media: Αφαίρεση πολυμέσων
+edit_entry: Επεξεργασία νήματος
+default_theme_auto: Ανοιχτό/Σκοτεινό (Αυτόματος Εντοπισμός)
+unban: Άρση αποκλεισμού
+ban_hashtag_btn: Αποκλεισμός Ετικέτας
+ban_hashtag_description: Αποκλείοντας μία ετικέτα θα αποτρέπει τη δημιουργία αναρτήσεων
+  μ' αυτή την ετικέτα, αλλά και θα αποκρύπτει υπάρχουσες μ' αυτή την ετικέτα.
+unban_hashtag_description: Αφαιρόντας τον αποκλεισμό μιας ετικέτας θα επιτρέπεται
+  η δημιουργία αναρτήσεων μ' αυτή την ετικέτα ξανά. Υπάρχουσες αναρτήσεις μ' αυτή
+  δεν θα κρύβονται.
+mark_as_adult: Επισήμανση ως NSFW
+unmark_as_adult: Άρση επισήμανσης ως NSFW
+tag: Ετικέτα
+from: από
+default_theme: Προεπιλεγμένο θέμα
+solarized_auto: Solarized (Αυτόματος Εντοπισμός)
+local_and_federated: Τοπική και σε ομοσπονδία
+menu: Μενού
+flash_mark_as_adult_success: Αυτή η ανάρτηση έχει επισημανθεί επιτυχώς ως NSFW.
+flash_unmark_as_adult_success: Αυτή η ανάρτηση δεν είναι πλέον επισημασμένη ως NSFW.
+disconnected_magazine_info: Αυτό το περιοδικό δεν λαμβάνει ενημερώσεις (τελευταία
+  δραστηριότητα %days% ημέρα/-ες πριν).
+always_disconnected_magazine_info: Αυτό το περιοδικό δεν λαμβάνει ενημερώσεις.
+subscribe_for_updates: Κάνε εγγραφή για να λαμβάνεις ενημερώσεις.
+unban_hashtag_btn: Άρση αποκλεισμού Ετικέτας
