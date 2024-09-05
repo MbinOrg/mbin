@@ -7,8 +7,12 @@
 # For more details on the options available visit https://omines.github.io/antispam-bundle/configuration/
 #
 antispam:
+    stealth: false
+
     profiles:
         default:
+            stealth: false
+        
             # Insert a honeypot called "email_address" on all forms to lure bots into filling it in
             honeypot: email_address
 
