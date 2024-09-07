@@ -234,7 +234,7 @@ agree_terms:
 email_verify: 確認電子郵件地址
 email_confirm_expire: 請注意，此連結於一小時後失效。
 image_alt: 替代文字
-email_confirm_content: 準備好啟用你的 /kbin 帳號了嗎？點擊下方的連結：
+email_confirm_content: 準備好啟用你的 Mbin 帳號了嗎？點擊下方的連結：
 homepage: 首頁
 notify_on_new_post_comment_reply: 有人在任何鋪文回覆我的留言時
 notify_on_new_posts: 訂閱的刊版有新鋪文時
@@ -360,10 +360,10 @@ filter.origin.label: 選擇來源
 filter.adult.label: 選擇是否顯示成人內容
 filter.fields.only_names: 只有名字
 filter.fields.names_and_descriptions: 名字和描述
-kbin_bot: /kbin 機器人
+kbin_bot: Mbin 機器人
 preferred_languages: 過濾帖子和鋪文的語言
 magazine_panel_tags_info: 不建議使用，除非你想要來自其他聯邦宇宙的內容透過標籤(hashtags) 能被引進到這個刊版
-bot_body_content: "歡迎使用 /kbin 機器人！這個機器人在讓 /kbin 啟用 ActivityPub 的功能中有很重要的作用。它能確保 /kbin
+bot_body_content: "歡迎使用 Mbin 機器人！這個機器人在讓 Mbin 啟用 ActivityPub 的功能中有很重要的作用。它能確保 /kbin
   可以聯繫並並與其他聯邦宇宙的實體組成聯邦。\n\nActivityPub 是一個開放、標準的傳輸協定，能夠讓去中心化的社交網路平台可以互相構通和交流。讓用戶能在不同實體（也就是伺服器）在聯邦的社交網路中－又稱為聯邦宇宙－去追蹤、交流、並分享內容。
   提供一個標準，讓用戶可以推出新內容、追蹤其他用戶、進行像是按讚、分享、在刊版或鋪文留言等等的社交活動。"
 auto_preview_help: 自動展開媒體預覽。
