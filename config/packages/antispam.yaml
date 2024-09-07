@@ -16,9 +16,9 @@ antispam:
             # Insert a honeypot called "full_name" on all forms to lure bots into filling it in
             honeypot: full_name
 
-            # Reject all forms that have been submitted either within 3 seconds, or after more than 30 minutes
+            # Reject all forms that have been submitted either within 6 seconds, or after more than 30 minutes
             timer:
-                min: 3
+                min: 6
                 max: 1800
 
             # The measures above should already have notable effect on the amount of spam that gets through
