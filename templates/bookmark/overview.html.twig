@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{%- block title -%}
+    {{- 'bookmark_lists'|trans }} - {{ parent() -}}
+{%- endblock -%}
+
+{% block mainClass %}page-bookmark-lists{% endblock %}
+
+{% block header_nav %}
+{% endblock %}
+
+{% block sidebar_top %}
+{% endblock %}
+
+{% block body %}
+    <h1 hidden>{{ 'bookmark_lists'|trans }}</h1>
+
+    <div class="section section--top">
+        <div class="container">
+            {% include('bookmark/_form_edit.html.twig') with {is_create: true} %}
+        </div>
+    </div>
+
+    {% if lists|length %}
+        <div class="section">
+            <div class="container">
+                <table>
+                    <thead>
+                    <tr>
+                        <th style="width: 2em;"></th>
+                        <th>{{ 'name'|trans }}</th>
+                        <th>{{ 'count'|trans }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for list in lists %}
+                        <tr>
+                            <td>
+                                {% if list.isDefault %}
+                                    <i class="fa-solid fa-star active"></i>
+                                {% endif %}
+                            </td>
+                            <td><a href="{{ path('bookmark_front', {'list': list.name}) }}">{{ list.name }}</a></td>
+                            <td>{{ get_bookmark_list_entry_count(list) }}</td>
+                            <td>
+                                {% if not list.isDefault %}
+                                    <form action="{{ path('bookmark_lists_make_default') }}" method="get" style="display: inline;">
+                                        <input type="hidden" name="makeDefault" value="{{ list.id }}">
+                                        <button type="submit" class="btn btn__secondary" title="{{ 'bookmark_list_make_default'|trans }}">
+                                            <i class="fa-regular fa-star" aria-description="{{ 'bookmark_list_make_default'|trans }}" title="{{ 'bookmark_list_make_default'|trans }}"></i>
+                                        </button>
+                                    </form>
+                                {% endif %}
+                                <a href="{{ path('bookmark_lists_edit_list', {'list': list.id}) }}">
+                                    <button type="submit" class="btn btn__secondary" title="{{ 'edit'|trans }}">
+                                        <i class="fa-solid fa-pencil" aria-description="{{ 'edit'|trans }}" title="{{ 'edit'|trans }}"></i>
+                                    </button>
+                                </a>
+                                <a href="{{ path('bookmark_lists_delete_list', {'list': list.id}) }}">
+                                    <button type="submit" class="btn btn__secondary" title="{{ 'delete'|trans }}">
+                                        <i class="fa-solid fa-trash" aria-description="{{ 'delete'|trans }}" title="{{ 'delete'|trans }}"></i>
+                                    </button>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <aside class="section section--muted">
+            <p>{{ 'empty'|trans }}</p>
+        </aside>
+    {% endif %}
+{% endblock %}

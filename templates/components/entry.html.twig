@@ -171,6 +171,9 @@
                                 subject: entry
                             }) }}
                         </li>
+                        {% if app.user is defined %}
+                            {{ component('bookmark_standard', { subject: entry }) }}
+                        {% endif %}
                         {% include 'entry/_menu.html.twig' %}
                         <li data-subject-target="loader" style="display:none">
                             <div class="loader" role="status">

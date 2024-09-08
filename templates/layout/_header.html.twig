@@ -145,6 +145,9 @@
                                 <span class="badge secondary-bg ms-1" style="{{ app.user.countNewNotifications ? "" : "display: none;" }}">{{ app.user.countNewNotifications }}</span>
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ path('bookmark_lists') }}">{{ 'bookmark_lists'|trans }}</a>
+                        </li>
                         {% if is_granted('ROLE_ADMIN') %}
                             <li>
                                 <a href="{{ path('admin_dashboard') }}"

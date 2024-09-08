@@ -20,6 +20,16 @@
     </li>
     {% endif %}
 
+    {% if app.user is defined and app.user is not same as null %}
+        {% set bookmarkLists = get_bookmark_lists(app.user) %}
+        {% if bookmarkLists|length %}
+            <li class="dropdown__separator"></li>
+            {% for list in bookmarkLists %}
+                {{ component('bookmark_list', { subject: entry, subjectType: 'entry', list: list }) }}
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+
     <li class="dropdown__separator"></li>
     <li>
       <a target="_blank"
@@ -38,6 +48,7 @@
     <li>
       <a data-action="clipboard#copy" href="{{ entry_url(entry) }}">{{ 'copy_url'|trans }}</a>
     </li>
+
     {% if is_granted('edit', entry) or (app.user and entry.isAuthor(app.user)) or is_granted('moderate', entry) %}
     <li class="dropdown__separator"></li>
     {% endif %}

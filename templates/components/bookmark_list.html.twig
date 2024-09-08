@@ -1,0 +1,15 @@
+<li class="bookmark-list">
+    {% if is_bookmarked_in_list(app.user, list, subject) %}
+        <a href="{{ path('subject_remove_bookmark_from_list', { 'subject_id': subject.id, 'subject_type': get_subject_type(subject), 'list': list.id }) }}"
+           data-subject-cssclass-param="bookmark-list" data-action="subject#linkCallback">
+            <i class="fa-solid fa-bookmark active"></i>
+            {{ 'bookmark_remove_from_list'|trans({'%list%': list.name}) }}
+        </a>
+    {% else %}
+        <a href="{{ path('subject_bookmark_to_list', { 'subject_id': subject.id, 'subject_type': get_subject_type(subject), 'list': list.id }) }}"
+           data-subject-cssclass-param="bookmark-list" data-action="subject#linkCallback">
+            <i class="fa-regular fa-bookmark"></i>
+            {{ 'bookmark_add_to_list'|trans({'%list%': list.name}) }}
+        </a>
+    {% endif %}
+</li>

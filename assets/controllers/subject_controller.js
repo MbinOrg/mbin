@@ -199,6 +199,34 @@ export default class extends Controller {
         }
     }
 
+    /**
+     * Calls the address attached to the nearest link node. Replaces the outer html of the nearest `cssclass` parameter
+     * with the response from the link
+     */
+    async linkCallback(event) {
+        const cssClass = event.params.cssclass
+        console.log("called linkCallback", event, cssClass)
+        event.preventDefault();
+
+        const a = event.target.closest('a');
+
+        try {
+            this.loadingValue = true;
+
+            let response = await fetch(a.href, {
+                method: 'GET',
+            });
+
+            response = await ok(response);
+            response = await response.json();
+
+            event.target.closest(`.${cssClass}`).outerHTML = response.html;
+        } catch (e) {
+        } finally {
+            this.loadingValue = false;
+        }
+    }
+
     loadingValueChanged(val) {
         const submitButton = this.containerTarget.querySelector('form button[type="submit"]');
 

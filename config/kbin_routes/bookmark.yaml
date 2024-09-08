@@ -1,0 +1,57 @@
+bookmark_front:
+    controller: App\Controller\BookmarkListController::front
+    defaults: { sortBy: hot, time: '∞', federation: all }
+    path: /lists/show/{list}/{sortBy}/{time}/{federation}
+    methods: [GET]
+    requirements: &front_requirement
+        sortBy: "%default_sort_options%"
+        time: "%default_time_options%"
+        federation: "%default_federation_options%"
+
+bookmark_lists:
+    controller: App\Controller\BookmarkListController::list
+    path: /lists
+    methods: [GET, POST]
+
+bookmark_lists_make_default:
+    controller: App\Controller\BookmarkListController::makeDefault
+    path: /lists/makeDefault
+    methods: [GET]
+
+bookmark_lists_edit_list:
+    controller: App\Controller\BookmarkListController::editList
+    path: /lists/editList/{list}
+    methods: [GET, POST]
+
+bookmark_lists_delete_list:
+    controller: App\Controller\BookmarkListController::deleteList
+    path: /lists/deleteList/{list}
+    methods: [GET]
+
+subject_bookmark_standard:
+    controller: App\Controller\BookmarkController::subjectBookmarkStandard
+    path: /bos/{subject_id}/{subject_type}
+    requirements:
+        subject_type: "%default_subject_type_options%"
+    methods: [ GET ]
+
+subject_bookmark_to_list:
+    controller: App\Controller\BookmarkController::subjectBookmarkToList
+    path: /bol/{subject_id}/{subject_type}/{list}
+    requirements:
+        subject_type: "%default_subject_type_options%"
+    methods: [ GET ]
+
+subject_remove_bookmarks:
+    controller: App\Controller\BookmarkController::subjectRemoveBookmarks
+    path: /rbo/{subject_id}/{subject_type}
+    requirements:
+        subject_type: "%default_subject_type_options%"
+    methods: [ GET ]
+
+subject_remove_bookmark_from_list:
+    controller: App\Controller\BookmarkController::subjectRemoveBookmarkFromList
+    path: /rbol/{subject_id}/{subject_type}/{list}
+    requirements:
+        subject_type: "%default_subject_type_options%"
+    methods: [ GET ]

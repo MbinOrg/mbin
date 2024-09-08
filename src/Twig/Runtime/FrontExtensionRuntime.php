@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Twig\Runtime;
 
+use App\Entity\Entry;
+use App\Entity\EntryComment;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -62,5 +66,21 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         } else {
             return 'front_short';
         }
+    }
+
+    public function getClass(mixed $object): string
+    {
+        return \get_class($object);
+    }
+
+    public function getSubjectType(mixed $object): string
+    {
+        return match (\get_class($object)) {
+            Entry::class => 'entry',
+            EntryComment::class => 'entry_comment',
+            Post::class => 'post',
+            PostComment::class => 'post_comment',
+            default => null,
+        };
     }
 }

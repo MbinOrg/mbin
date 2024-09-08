@@ -230,6 +230,17 @@ security:
                 'ROLE_OAUTH2_USER:OAUTH_CLIENTS:READ',
                 'ROLE_OAUTH2_USER:OAUTH_CLIENTS:EDIT',
             ]
+        'ROLE_OAUTH2_USER:BOOKMARK':
+            [
+                'ROLE_OAUTH2_USER:BOOKMARK:ADD',
+                'ROLE_OAUTH2_USER:BOOKMARK:REMOVE',
+            ]
+        'ROLE_OAUTH2_USER:BOOKMARK_LIST':
+          [
+              'ROLE_OAUTH2_USER:BOOKMARK_LIST:READ',
+              'ROLE_OAUTH2_USER:BOOKMARK_LIST:EDIT',
+              'ROLE_OAUTH2_USER:BOOKMARK_LIST:DELETE',
+          ]
         'ROLE_OAUTH2_MODERATE':
             [
                 'ROLE_OAUTH2_MODERATE:ENTRY',

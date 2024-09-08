@@ -110,6 +110,9 @@
                                 subject: post
                             }) }}
                         </li>
+                        {% if app.user is defined %}
+                            {{ component('bookmark_standard', { subject: post }) }}
+                        {% endif %}
                         {% include 'post/_menu.html.twig' %}
                         <li data-subject-target="loader" style="display:none">
                             <div class="loader" role="status">
