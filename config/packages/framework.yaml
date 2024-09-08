@@ -5,7 +5,13 @@ framework:
     http_method_override: false
     handle_all_throwables: true
     trusted_proxies: '%env(string:default::TRUSTED_PROXIES)%'
-    trusted_headers: ['x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-prefix']
+    trusted_headers:
+        [
+            'x-forwarded-for',
+            'x-forwarded-proto',
+            'x-forwarded-port',
+            'x-forwarded-prefix',
+        ]
 
     # Enables session support. Note that the session will ONLY be started if you read or write from it.
     # Remove or comment this section to explicitly disable session support.
@@ -19,7 +25,7 @@ framework:
     http_client:
         default_options:
             headers:
-                'User-Agent': 'Mbin/1.7.1-rc5 (+https://%kbin_domain%/agent)'
+                'User-Agent': 'Mbin/1.7.1 (+https://%kbin_domain%/agent)'
 
     #esi: true
     #fragments: true
