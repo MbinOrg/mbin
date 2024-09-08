@@ -55,6 +55,14 @@ For developers:
 - [Translations](https://hosted.weblate.org/engage/mbin/)
 - [Contribution guidelines](CONTRIBUTING.md) - please read first, including before opening an issue!
 
+## Magazines
+
+Unofficial magazines:
+
+- [@mbinmeta@gehirneimer.de](https://gehirneimer.de/m/mbinmeta)
+- [@updates@kbin.melroy.org](https://kbin.melroy.org/m/updates)
+- [@AskMbin@fedia.io](https://fedia.io/m/AskMbin)
+
 ## Contributors
 
 <!-- readme: contributors -start -->
