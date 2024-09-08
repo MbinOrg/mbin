@@ -52,7 +52,6 @@ For developers:
 
 - [Official repository on GitHub](https://github.com/MbinOrg/mbin)
 - [Matrix Space for discussions](https://matrix.to/#/#mbin:melroy.org)
-- [Unofficial magazine for discussions within the fediverse](https://kbin.run/m/Mdev)
 - [Translations](https://hosted.weblate.org/engage/mbin/)
 - [Contribution guidelines](CONTRIBUTING.md) - please read first, including before opening an issue!
 
