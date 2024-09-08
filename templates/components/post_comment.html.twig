@@ -102,7 +102,7 @@
                                 subject: comment
                             }) }}
                         </li>
-                        {% if app.user is defined %}
+                        {% if app.user is defined and app.user is not same as null %}
                             {{ component('bookmark_standard', { subject: comment }) }}
                         {% endif %}
                         {% include 'post/comment/_menu.html.twig' %}

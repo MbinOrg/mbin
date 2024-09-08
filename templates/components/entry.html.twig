@@ -171,7 +171,7 @@
                                 subject: entry
                             }) }}
                         </li>
-                        {% if app.user is defined %}
+                        {% if app.user is defined and app.user is not same as null %}
                             {{ component('bookmark_standard', { subject: entry }) }}
                         {% endif %}
                         {% include 'entry/_menu.html.twig' %}

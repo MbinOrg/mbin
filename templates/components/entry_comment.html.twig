@@ -102,7 +102,7 @@
                         <li>
                             {{ component('boost', {subject: comment}) }}
                         </li>
-                        {% if true or app.user is defined %}
+                        {% if true or app.user is defined and app.user is not same as null %}
                             {{ component('bookmark_standard', { subject: comment }) }}
                         {% endif %}
                         {% include 'entry/comment/_menu.html.twig' %}
