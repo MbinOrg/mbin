@@ -57,11 +57,18 @@ class RemoteInstanceManager
 
             $nodeInfoRaw = $this->client->fetchInstanceNodeInfo($linkToUse->href, false);
             $this->logger->debug('got raw nodeinfo for url {url}: {raw}', ['raw' => $nodeInfoRaw, 'url' => $linkToUse]);
-            /** @var NodeInfo $nodeInfo */
-            $nodeInfo = $serializer->deserialize($nodeInfoRaw, NodeInfo::class, 'json');
-
-            $instance->software = $nodeInfo?->software?->name;
-            $instance->version = $nodeInfo?->software?->version;
+            try {
+                /** @var NodeInfo $nodeInfo */
+                $nodeInfo = $serializer->deserialize($nodeInfoRaw, NodeInfo::class, 'json');
+                $instance->software = $nodeInfo?->software?->name;
+                $instance->version = $nodeInfo?->software?->version;
+            } catch (\Error|\Exception $e) {
+                $this->logger->warning('There as an exception decoding the nodeinfo from {url}: {e} - {m}', [
+                    'url' => $instance->domain,
+                    'e' => \get_class($e),
+                    'm' => $e->getMessage(),
+                ]);
+            }
             $instance->setUpdatedAt();
             $this->entityManager->persist($instance);
 

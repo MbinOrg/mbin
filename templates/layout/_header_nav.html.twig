@@ -18,12 +18,12 @@
 
 {% if header_nav is empty %}
     <li>
-        <a href="{{ navbar_threads_url(magazine) }}" class="{{ html_classes({'active': activeLink == 'threads'}) }}">
+        <a href="{{ navbar_threads_url(magazine ?? null) }}" class="{{ html_classes({'active': activeLink == 'threads'}) }}">
             {{ 'threads'|trans }} {% if magazine is defined and magazine %}({{ magazine.entryCount }}){% endif %}
         </a>
     </li>
     <li>
-        <a href="{{ navbar_posts_url(magazine) }}" class="{{ html_classes({'active': activeLink == 'microblog'}) }}">
+        <a href="{{ navbar_posts_url(magazine ?? null) }}" class="{{ html_classes({'active': activeLink == 'microblog'}) }}">
             {{ 'microblog'|trans }} {% if magazine is defined and magazine %}({{ magazine.postCount }}){% endif %}
         </a>
     </li>

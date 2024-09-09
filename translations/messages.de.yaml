@@ -823,8 +823,8 @@ sidebar_sections_local_only: Beschränke "Zufällige X" und "Aktive Nutzer" Absc
   auf lokale Inhalte
 account_deletion_title: Kontolöschung
 account_deletion_description: Dein Konto wird in 30 Tagen gelöscht außer du entscheidest
-  dich dein Konto sofort zu löschen. Das Konto kann nicht wiederhergestellt werden
-  sobald es gelöscht ist.
+  dich dein Konto sofort zu löschen. Um das Konto wiederherzustellen, logge dich in
+  den nächsten 30 Tagen mit deinen Zugangsdaten ein oder kontaktiere einen Administrator.
 account_deletion_button: Lösche Konto
 account_deletion_immediate: Sofort Löschen
 remove_schedule_delete_account: Entferne geplante Löschung

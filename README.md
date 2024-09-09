@@ -34,7 +34,7 @@ For developers:
 - GitHub Security advisories, vulnerability reporting, [Dependabot](https://github.com/features/security) and [Advanced code scanning](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning) enabled. And we run [`local-php-security-checker`](https://github.com/fabpot/local-php-security-checker).
 - Improved **code documentation**
 - **Tight integration** with [Mbin Weblate project](https://hosted.weblate.org/engage/mbin/) for translations (Two way sync)
-- Last but not least, a **community-focus project embracing the Collective Code Construction Contract** (C4). No single maintainer.
+- Last but not least, a **community-focus project embracing the [Collective Code Construction Contract](./C4.md)** (C4). No single maintainer.
 
 ## Instances
 
@@ -52,9 +52,16 @@ For developers:
 
 - [Official repository on GitHub](https://github.com/MbinOrg/mbin)
 - [Matrix Space for discussions](https://matrix.to/#/#mbin:melroy.org)
-- [Unofficial magazine for discussions within the fediverse](https://kbin.run/m/Mdev)
 - [Translations](https://hosted.weblate.org/engage/mbin/)
 - [Contribution guidelines](CONTRIBUTING.md) - please read first, including before opening an issue!
+
+## Magazines
+
+Unofficial magazines:
+
+- [@mbinmeta@gehirneimer.de](https://gehirneimer.de/m/mbinmeta)
+- [@updates@kbin.melroy.org](https://kbin.melroy.org/m/updates)
+- [@AskMbin@fedia.io](https://fedia.io/m/AskMbin)
 
 ## Contributors
 
@@ -77,17 +84,17 @@ For developers:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/e-five256">
-                    <img src="https://avatars.githubusercontent.com/u/146029455?v=4" width="100;" alt="e-five256"/>
-                    <br />
-                    <sub><b>e-five</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/BentiGorlich">
                     <img src="https://avatars.githubusercontent.com/u/25664458?v=4" width="100;" alt="BentiGorlich"/>
                     <br />
                     <sub><b>BentiGorlich</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/e-five256">
+                    <img src="https://avatars.githubusercontent.com/u/146029455?v=4" width="100;" alt="e-five256"/>
+                    <br />
+                    <sub><b>e-five</b></sub>
                 </a>
             </td>
             <td align="center">
