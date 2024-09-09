@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "98e095b18eff5a1f05eb6e3f8fa63304",
+    "content-hash": "6fe34f235500d40bed36b5215e90e8a6",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -5865,26 +5865,24 @@
         },
         {
             "name": "pagerfanta/core",
-            "version": "v3.8.0",
+            "version": "v4.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Pagerfanta/core.git",
-                "reference": "a995f69ff9af64a45c3dc3d8217100624ae214f2"
+                "reference": "4509db0e1e22baea6678b724f3254609acbaa9cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Pagerfanta/core/zipball/a995f69ff9af64a45c3dc3d8217100624ae214f2",
-                "reference": "a995f69ff9af64a45c3dc3d8217100624ae214f2",
+                "url": "https://api.github.com/repos/Pagerfanta/core/zipball/4509db0e1e22baea6678b724f3254609acbaa9cc",
+                "reference": "4509db0e1e22baea6678b724f3254609acbaa9cc",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "php": "^7.4 || ^8.0",
-                "symfony/deprecation-contracts": "^2.1 || ^3.0",
-                "symfony/polyfill-php80": "^1.15"
+                "php": "^8.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "^9.6 || ^10.0"
+                "phpunit/phpunit": "^10.5"
             },
             "type": "library",
             "autoload": {
@@ -5904,9 +5902,9 @@
                 "pagerfanta"
             ],
             "support": {
-                "source": "https://github.com/Pagerfanta/core/tree/v3.8.0"
+                "source": "https://github.com/Pagerfanta/core/tree/v4.7.0"
             },
-            "time": "2023-04-15T16:39:14+00:00"
+            "time": "2024-08-13T23:43:44+00:00"
         },
         {
             "name": "pagerfanta/doctrine-collections-adapter",

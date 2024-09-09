@@ -51,7 +51,7 @@
         "nyholm/psr7": "^1.8.1",
         "omines/antispam-bundle": "^0.1.8",
         "oneup/flysystem-bundle": "^4.12.2",
-        "pagerfanta/core": "^3.8.0",
+        "pagerfanta/core": "^4.7.0",
         "pagerfanta/doctrine-collections-adapter": "^4.6.0",
         "pagerfanta/doctrine-dbal-adapter": "^4.6.0",
         "pagerfanta/doctrine-orm-adapter": "^4.6.0",
