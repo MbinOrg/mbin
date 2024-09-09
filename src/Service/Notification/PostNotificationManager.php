@@ -11,6 +11,7 @@ use App\Entity\PostCreatedNotification;
 use App\Entity\PostDeletedNotification;
 use App\Entity\PostEditedNotification;
 use App\Entity\PostMentionedNotification;
+use App\Entity\User;
 use App\Event\NotificationCreatedEvent;
 use App\Factory\MagazineFactory;
 use App\Repository\MagazineLogRepository;
@@ -50,27 +51,29 @@ class PostNotificationManager implements ContentNotificationManagerInterface
     ) {
     }
 
-    // @todo check if author is on the block list
     public function sendCreated(ContentInterface $subject): void
     {
         if ($subject->user->isBanned || $subject->user->isDeleted || $subject->user->isTrashed() || $subject->user->isSoftDeleted()) {
             return;
         }
+        if (!$subject instanceof Post) {
+            throw new \LogicException();
+        }
 
-        /*
-         * @var Post $subject
-         */
         $this->notifyMagazine(new PostCreatedNotification($subject->user, $subject));
 
         // Notify mentioned
         $mentions = MentionManager::clearLocal($this->mentionManager->extract($subject->body));
         foreach ($this->mentionManager->getUsersFromArray($mentions) as $user) {
-            $notification = new PostMentionedNotification($user, $subject);
-            $this->entityManager->persist($notification);
-            $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
+            if (!$user->isBlocked($subject->user)) {
+                $notification = new PostMentionedNotification($user, $subject);
+                $this->entityManager->persist($notification);
+                $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
+            }
         }
 
         // Notify subscribers
+        /** @var User[] $subscribers */
         $subscribers = $this->merge(
             $this->getUsersToNotify($this->magazineRepository->findNewPostSubscribers($subject)),
             [] // @todo user followers
@@ -79,15 +82,17 @@ class PostNotificationManager implements ContentNotificationManagerInterface
         $subscribers = array_filter($subscribers, fn ($s) => !\in_array($s->username, $mentions ?? []));
 
         foreach ($subscribers as $subscriber) {
-            $notification2 = new PostCreatedNotification($subscriber, $subject);
-            $this->entityManager->persist($notification2);
-            $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification2));
+            if (!$subscriber->isBlocked($subject->user)) {
+                $notification2 = new PostCreatedNotification($subscriber, $subject);
+                $this->entityManager->persist($notification2);
+                $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification2));
+            }
         }
 
         $this->entityManager->flush();
     }
 
-    private function notifyMagazine(Notification $notification)
+    private function notifyMagazine(Notification $notification): void
     {
         if (false === $this->settingsManager->get('KBIN_MERCURE_ENABLED')) {
             return;
@@ -139,18 +144,18 @@ class PostNotificationManager implements ContentNotificationManagerInterface
 
     public function sendEdited(ContentInterface $subject): void
     {
-        /*
-         * @var Post $subject
-         */
+        if (!$subject instanceof Post) {
+            throw new \LogicException();
+        }
         $this->notifyMagazine(new PostEditedNotification($subject->user, $subject));
     }
 
-    public function sendDeleted(ContentInterface $post): void
+    public function sendDeleted(ContentInterface $subject): void
     {
-        /*
-         * @var Post $post
-         */
-        $this->notifyMagazine($notification = new PostDeletedNotification($post->user, $post));
+        if (!$subject instanceof Post) {
+            throw new \LogicException();
+        }
+        $this->notifyMagazine($notification = new PostDeletedNotification($subject->user, $subject));
     }
 
     public function purgeNotifications(Post $post): void
