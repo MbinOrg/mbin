@@ -508,3 +508,64 @@ oauth.client_not_granted_message_read_permission: Αυτή η εφαρμογή �
 restrict_oauth_clients: Περιορισμός δημιουργίας Πελάτη OAuth2 για τους Διαχειριστές
 private_instance: Υποχρέωσε τους χρήστες να συνδεθούν πριν μπορούν να έχουν πρόσβαση
   σε περιεχόμενο
+oauth2.grant.entry.vote: Ψήφισε θετικά ή αρνητικά, ενίσχυσε οποιοδήποτε νήμα.
+oauth2.grant.entry.report: Ανέφερε οποιοδήποτε νήμα.
+oauth2.grant.entry_comment.create: Δημιούργησε νέα σχόλια σε νήματα.
+oauth2.grant.domain.block: Απέκλεισε τομείς ή αίρε τον αποκλεισμό και δες τους τομείς
+  που έχεις αποκλείσει.
+oauth2.grant.subscribe.general: Κάνε εγγραφή ή ακολούθησε οποιοδήποτε περιοδικό, τομέα
+  ή χρήστη και δες τα περιοδικά, τους τομείς και τους χρήστες που εγγράφεσαι.
+oauth2.grant.moderate.magazine.reports.all: Διαχειρίσου αναφορές στα περιοδικά που
+  συντονίζεις.
+oauth2.grant.domain.all: Εγγράψου σε τομείς ή απέκλεισέ τους και δες τους τομείς στους
+  οποίους έχεις εγγραφεί ή αποκλείσει.
+oauth2.grant.domain.subscribe: Εγγράψου ή κάνε απεγγραφή σε τομείς και δες τους τομείς
+  στους οποίους έχεις εγγραφεί.
+oauth2.grant.entry.edit: Επεξεργάσου τα υπάρχοντα σου νήματα.
+oauth2.grant.moderate.magazine_admin.stats: Δες το περιεχόμενο, τις ψήφους και τα
+  στατιστικά προβολής των ιδιόκτητων περιοδικών σου.
+oauth2.grant.entry_comment.edit: Επεξεργάσου τα υπάρχοντα σχόλιά σου σε νήματα.
+oauth2.grant.moderate.magazine_admin.delete: Διέγραψε κάποιο απ' τα ιδιότητα περιοδικά
+  σου.
+oauth2.grant.moderate.magazine.trash.read: Προβολή περιεχομένου απορριμάτων στα περιοδικά
+  που συντονίζεις.
+oauth2.grant.moderate.magazine_admin.edit_theme: Επεξεργάσου την προσαρμοσμένη CSS
+  οποιωνδήποτε από τα ιδιόκτητα περιοδικά σου.
+oauth2.grant.moderate.magazine_admin.moderators: Πρόσθεσε ή αφαίρεσε συντονιστές από
+  οποιοδήποτε από τα ιδιόκτητα περιοδικά σου.
+oauth2.grant.entry_comment.delete: Διέγραψε τα υπάρχοντα σχόλιά σου σε νήματα.
+oauth2.grant.entry.create: Δημιούργησε νέα νήματα.
+unblock: Άρση αποκλεισμού
+oauth2.grant.moderate.magazine.ban.delete: Άρση αποκλεισμού χρηστών σε περιοδικά που
+  συντονίζεις.
+oauth2.grant.moderate.magazine.list: Διάβασε μια λίστα με τα περιοδικά που συντονίζεις.
+oauth2.grant.moderate.magazine.reports.read: Διάβασε αναφορές στα περιοδικά που συντονίζεις.
+oauth2.grant.moderate.magazine.reports.action: Αποδέξου ή απέρριψε αναφορές στα περιοδικά
+  που συντονίζεις.
+oauth2.grant.moderate.magazine_admin.create: Δημιούργησε νέα περιοδικά.
+oauth2.grant.moderate.magazine_admin.update: Επεξεργάσου οποιονδήποτε από τους κανόνες,
+  την περιγραφή, τη κατάσταση NSFW ή το εικονίδιο των ιδιόκτητων περιοδικών σου.
+oauth2.grant.moderate.magazine_admin.all: Δημιούργησε, επεξεργάσου ή διέγραψε τα ιδιόκτητα
+  περιοδικά σου.
+oauth2.grant.moderate.magazine_admin.badges: Δημιούργησε ή αφαίρεσε τα σήματα από
+  τα ιδιόκτητα περιοδικά σου.
+oauth2.grant.moderate.magazine_admin.tags: Δημιούργησε ή αφαίρεσε ετικέτες από τα
+  ιδιόκτητα περιοδικά σου.
+oauth2.grant.admin.all: Εκτέλεσε οποιαδήποτε ενέργεια διαχειριστή στην οντότητά σου.
+oauth2.grant.admin.entry.purge: Διέγραψε πλήρως οποιοδήποτε νήμα από την οντότητά
+  σου.
+oauth2.grant.read.general: Διάβασε όλο το περιεχόμενο στο οποίο έχεις πρόσβαση.
+oauth2.grant.write.general: Δημιούργησε ή επεξεργάσου οποιοδήποτε από τα νήματα, αναρτήσεις
+  ή σχόλια σου.
+oauth2.grant.delete.general: Διάγραψε οποιοδήποτε από τα νήματα, αναρτήσεις ή σχόλια
+  σου.
+oauth2.grant.report.general: Ανάφερε νήματα, αναρτήσεις ή σχόλια.
+oauth2.grant.vote.general: Δώσε θετική, αρνητική ψήφο ή ενίσχυσε νήματα, αναρτήσεις
+  ή σχόλια.
+oauth2.grant.block.general: Απέκλεισε ή αίρε τον αποκλεισμό οποιουδήποτε περιοδικού,
+  τομέα ή χρήστη και δες τα περιοδικά, τους τομείς και τους χρήστες που έχεις αποκλείσει.
+oauth2.grant.entry.all: Δημιούργησε, επεξεργάσου ή διάγραψε τα νήματα σου και ψήφισε,
+  ενίσχυσε ή ανέφερε οποιοδήποτε νήμα.
+oauth2.grant.entry.delete: Διάγραψε τα υπάρχοντα σου νήματα.
+oauth2.grant.entry_comment.all: Δημιούργησε, επεξεργάσου ή διάγραψε τα σχόλιά σου
+  σε νήματα και ψήφισε, ενίσχυσε ή ανέφερε οποιοδήποτε σχόλιο σε ένα νήμα.
