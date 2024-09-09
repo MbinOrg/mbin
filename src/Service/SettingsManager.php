@@ -7,6 +7,7 @@ namespace App\Service;
 use App\DTO\SettingsDto;
 use App\Entity\Settings;
 use App\Repository\SettingsRepository;
+use App\Utils\DownvotesMode;
 use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -36,7 +37,8 @@ class SettingsManager
         private readonly bool $kbinFederationPageEnabled,
         private readonly bool $kbinAdminOnlyOauthClients,
         private readonly bool $mbinSsoOnlyMode,
-        private readonly int $maxImageBytes
+        private readonly int $maxImageBytes,
+        private readonly DownvotesMode $mbinDownvotesMode,
     ) {
         if (!self::$dto) {
             $results = $this->repository->findAll();
@@ -80,7 +82,8 @@ class SettingsManager
                 $this->find($results, 'MBIN_SSO_REGISTRATIONS_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? true,
                 $this->find($results, 'MBIN_RESTRICT_MAGAZINE_CREATION', FILTER_VALIDATE_BOOLEAN) ?? false,
                 $this->find($results, 'MBIN_SSO_SHOW_FIRST', FILTER_VALIDATE_BOOLEAN) ?? false,
-                $maxImageBytesEdited
+                $maxImageBytesEdited,
+                $this->find($results, 'MBIN_DOWNVOTES_MODE') ?? $this->mbinDownvotesMode->value,
             );
         }
     }
@@ -153,6 +156,11 @@ class SettingsManager
     public function get(string $name)
     {
         return self::$dto->{$name};
+    }
+
+    public function getDownvotesMode(): DownvotesMode
+    {
+        return DownvotesMode::from($this->get('MBIN_DOWNVOTES_MODE'));
     }
 
     public function set(string $name, $value): void

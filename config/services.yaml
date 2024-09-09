@@ -110,6 +110,9 @@ parameters:
     max_image_bytes: "%env(int:default:max_image_bytes_default:MAX_IMAGE_BYTES)%"
     max_image_bytes_default: 6000000
 
+    mbin_downvotes_mode_default: 'enabled'
+    mbin_downvotes_mode: '%env(enum:\App\Utils\DownvotesMode:default:mbin_downvotes_mode_default:MBIN_DOWNVOTES_MODE)%'
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -178,6 +181,7 @@ services:
             $kbinAdminOnlyOauthClients: "%env(bool:KBIN_ADMIN_ONLY_OAUTH_CLIENTS)%"
             $mbinSsoOnlyMode: "%sso_only_mode%"
             $maxImageBytes: "%max_image_bytes%"
+            $mbinDownvotesMode: "%mbin_downvotes_mode%"
 
     # Markdown
     App\Markdown\Factory\EnvironmentFactory:

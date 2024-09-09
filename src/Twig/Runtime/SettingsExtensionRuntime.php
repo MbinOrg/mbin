@@ -6,6 +6,7 @@ namespace App\Twig\Runtime;
 
 use App\Service\ProjectInfoService;
 use App\Service\SettingsManager;
+use App\Utils\DownvotesMode;
 use JetBrains\PhpStorm\Pure;
 use Twig\Extension\RuntimeExtensionInterface;
 
@@ -97,6 +98,11 @@ class SettingsExtensionRuntime implements RuntimeExtensionInterface
     public function kbinFederatedSearchOnlyLoggedIn(): bool
     {
         return $this->settings->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
+    }
+
+    public function mbinDownvotesMode(): DownvotesMode
+    {
+        return $this->settings->getDownvotesMode();
     }
 
     public function mbinCurrentVersion(): string
