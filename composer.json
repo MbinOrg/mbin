@@ -63,7 +63,7 @@
         "scheb/2fa-backup-code": "^7.5.0",
         "scheb/2fa-bundle": "^7.5.0",
         "scheb/2fa-totp": "^7.5.0",
-        "scienta/doctrine-json-functions": "^5.5.0",
+        "scienta/doctrine-json-functions": "^6.1.0",
         "stevenmaguire/oauth2-keycloak": "^5.1.0",
         "symfony/amqp-messenger": "7.1.*",
         "symfony/asset": "7.1.*",
