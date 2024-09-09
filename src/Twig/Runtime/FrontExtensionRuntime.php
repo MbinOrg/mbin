@@ -75,12 +75,16 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
 
     public function getSubjectType(mixed $object): string
     {
-        return match (\get_class($object)) {
-            Entry::class => 'entry',
-            EntryComment::class => 'entry_comment',
-            Post::class => 'post',
-            PostComment::class => 'post_comment',
-            default => null,
-        };
+        if ($object instanceof Entry) {
+            return 'entry';
+        } elseif ($object instanceof EntryComment) {
+            return 'entry_comment';
+        } elseif ($object instanceof Post) {
+            return 'post';
+        } elseif ($object instanceof PostComment) {
+            return 'post_comment';
+        } else {
+            throw new \LogicException('unknown class '.\get_class($object));
+        }
     }
 }
