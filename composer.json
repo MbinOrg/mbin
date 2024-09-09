@@ -34,7 +34,7 @@
         "knpuniversity/oauth2-client-bundle": "^2.18.1",
         "kornrunner/blurhash": "^1.2.2",
         "laminas/laminas-diactoros": "^3.3.1",
-        "landrok/activitypub": "^0.5.8",
+        "landrok/activitypub": "^0.7.2",
         "league/commonmark": "^2.5.1",
         "league/flysystem-aws-s3-v3": "^3.28.0",
         "league/html-to-markdown": "^5.1.1",
