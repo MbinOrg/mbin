@@ -501,16 +501,26 @@ class ApHttpClient
         $stringToSign = self::headersToSigningString($headers);
         $signedHeaders = implode(' ', array_map('strtolower', array_keys($headers)));
         $key = openssl_pkey_get_private($actor->privateKey);
-        openssl_sign($stringToSign, $signature, $key, OPENSSL_ALGO_SHA256);
-        $signature = base64_encode($signature);
-
-        $keyId = $actor instanceof User
-            ? $this->personFactory->getActivityPubId($actor).'#main-key'
-            : $this->groupFactory->getActivityPubId($actor).'#main-key';
-
-        $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
+        $success_sign = openssl_sign($stringToSign, $signature, $key, OPENSSL_ALGO_SHA256);
+        // Free the key from memory
+        openssl_free_key($key);
+        $signatureHeader = null;
+        if ($success_sign) {
+            $signature = base64_encode($signature);
+            $keyId = $actor instanceof User
+                ? $this->personFactory->getActivityPubId($actor).'#main-key'
+                : $this->groupFactory->getActivityPubId($actor).'#main-key';
+            $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
+        } else {
+            $this->logger->error('Failed to sign headers for {url}: {headers}', [
+                'url' => $url,
+                'headers' => $headers,
+            ]);
+        }
         unset($headers['(request-target)']);
-        $headers['Signature'] = $signatureHeader;
+        if ($signatureHeader) {
+            $headers['Signature'] = $signatureHeader;
+        }
         $headers['User-Agent'] = $this->projectInfo->getUserAgent();
         $headers['Accept'] = 'application/activity+json';
         $headers['Content-Type'] = 'application/activity+json';
@@ -526,11 +536,23 @@ class ApHttpClient
         $stringToSign = self::headersToSigningString($headers);
         $signedHeaders = implode(' ', array_map('strtolower', array_keys($headers)));
         $key = openssl_pkey_get_private($privateKey);
-        openssl_sign($stringToSign, $signature, $key, OPENSSL_ALGO_SHA256);
-        $signature = base64_encode($signature);
-        $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
+        $success_sign = openssl_sign($stringToSign, $signature, $key, OPENSSL_ALGO_SHA256);
+        // Free the key from memory
+        openssl_free_key($key);
+        $signatureHeader = null;
+        if ($success_sign) {
+            $signature = base64_encode($signature);
+            $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
+        } else {
+            $this->logger->error('Failed to sign headers for {url}: {headers}', [
+                'url' => $url,
+                'headers' => $headers,
+            ]);
+        }
         unset($headers['(request-target)']);
-        $headers['Signature'] = $signatureHeader;
+        if ($signatureHeader) {
+            $headers['Signature'] = $signatureHeader;
+        }
         $headers['User-Agent'] = $this->projectInfo->getUserAgent();
         $headers = array_merge($headers, $this->getFetchAcceptHeaders($requestType));
 
