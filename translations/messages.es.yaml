@@ -6,7 +6,7 @@ type.smart_contract: Contrato inteligente
 type.magazine: Revista
 thread: Hilo
 threads: Hilos
-microblog: Microblog
+microblog: Nanoblogueo
 people: Gente
 events: Eventos
 magazine: Revista
@@ -32,7 +32,7 @@ avatar: Avatar
 added: Añadido
 general: General
 created_at: Creado
-owner: Propietario/a
+owner: Propietari@
 subscribers: Suscriptores
 down_votes: Votos negativos
 no_comments: No hay comentarios
@@ -274,7 +274,7 @@ comment: Comentario
 post: Publicación
 ban_expired: Suspensión expirada
 purge: Eliminar
-send_message: Enviar un mensaje
+send_message: Enviar un mensaje directo
 message: Mensaje
 infinite_scroll: Desplazamiento infinito
 show_top_bar: Mostrar la barra superior
@@ -532,3 +532,58 @@ marked_for_deletion_at: Marcado para eliminar el %date%
 sort_by: Ordenar por
 filter_by_subscription: Filtrar por suscripción
 filter_by_federation: Filtrar por estado de la federación
+hidden: Oculto
+disabled: Desactivado
+edit_entry: Editar hilo
+oauth2.grant.entry_comment.create: Crear nuevos comentarios en hilos.
+oauth2.grant.entry_comment.delete: Elimina todos tus comentarios de los hilos.
+enabled: Activado
+downvotes_mode: Modo de votos negativos
+unban_hashtag_description: Si eliminas la prohibición de un hashtag, se podrán volver
+  a crear publicaciones con este hashtag. Las publicaciones existentes con este hashtag
+  ya no estarán ocultas.
+change_downvotes_mode: Cambiar la forma de votar negativamente
+oauth2.grant.magazine.all: Suscríbete o bloquea revistas y mira las revistas a las
+  que estás suscrito o bloqueadas.
+oauth2.grant.magazine.subscribe: Suscríbete o cancela tu suscripción a una revista
+  y consulta las revistas a las que estás suscrito.
+oauth2.grant.post.report: Reportar cualquier publicación.
+unban_hashtag_btn: Eliminar la prohibición de hashtags
+ban_hashtag_description: Prohibir un hashtag impedirá que se creen publicaciones con
+  ese hashtag, además de ocultar las publicaciones existentes con ese hashtag.
+account_deletion_immediate: Eliminar inmediatamente
+account_deletion_button: Eliminar cuenta
+private_instance: Obligar a los usuarios a iniciar sesión antes de poder acceder a
+  cualquier contenido
+oauth2.grant.entry.edit: Edite tus hilos.
+oauth2.grant.entry.report: Reportar cualquier hilo.
+oauth2.grant.entry_comment.all: Crea, edita o elimina tus comentarios en hilos, y
+  vota, impulsa o denuncia cualquier comentario en un hilo.
+oauth2.grant.entry_comment.vote: Vota a favor, impulsa o rechaza cualquier comentario
+  en un hilo.
+oauth2.grant.magazine.block: Bloquea o desbloquea revistas y visualiza las revistas
+  que has bloqueado.
+oauth2.grant.post.all: Crea, edita o elimina tus microblogs y vota, impulsa o denuncia
+  cualquier microblog.
+oauth2.grant.post.create: Crear nuevas publicaciones.
+oauth2.grant.post_comment.create: Crear nuevos comentarios en las publicaciones.
+oauth2.grant.post_comment.delete: Elimina todos tus comentarios en las publicaciones.
+oauth2.grant.post_comment.edit: Edita todos tus comentarios en las publicaciones.
+oauth2.grant.entry.create: Crear nuevos hilos.
+oauth2.grant.entry.vote: Vota a favor, impulsa o rechaza cualquier hilo.
+oauth2.grant.entry.delete: Elimina tus hilos.
+oauth2.grant.entry_comment.edit: Edita todos tus comentarios en los hilos.
+oauth2.grant.post.vote: Voto a favor o en contra, o promoción de cualquier publicación.
+oauth2.grant.entry.all: Crea, edita o elimina tus hilos y vota, impulsa o denuncia
+  cualquier hilo.
+account_deletion_title: Eliminar la cuenta
+oauth2.grant.post.edit: Edita todas tus publicaciones.
+oauth2.grant.post.delete: Elimina todas tus publicaciones.
+oauth2.grant.post_comment.all: Crea, edita o elimina tus comentarios en las publicaciones
+  y vota, impulsa o denuncia cualquier comentario en una publicación.
+oauth2.grant.entry_comment.report: Reportar cualquier comentario en un hilo.
+federation_page_dead_description: Casos en los que no pudimos realizar al menos 10
+  actividades seguidas y donde la última entrega exitosa fue hace más de una semana
+account_deletion_description: Tu cuenta se eliminará en 30 días a menos que elijas
+  eliminarla inmediatamente. Para recuperar tu cuenta en un plazo de 30 días, inicia
+  sesión con las mismas credenciales de usuario o comunícate con un administrador.
