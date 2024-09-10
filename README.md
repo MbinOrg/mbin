@@ -1,5 +1,5 @@
 # Mbin
- 
+
 Mbin is a fork of [/kbin](https://codeberg.org/Kbin/kbin-core), community-focused. Feel free to discuss on [Matrix](https://matrix.to/#/#mbin:melroy.org) and to create Pull Requests.
 
 > [!Important]
