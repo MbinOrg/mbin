@@ -933,3 +933,8 @@ admin_users_suspended: Suspendiert
 admin_users_banned: Gebannt
 user_verify: Account aktivieren
 max_image_size: Maximale Dateigröße
+change_downvotes_mode: Reduzieren Modus ändern
+disabled: Deaktiviert
+downvotes_mode: Reduzieren Modus
+hidden: Versteckt
+enabled: Aktiviert
