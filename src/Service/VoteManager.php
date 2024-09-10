@@ -25,7 +25,8 @@ class VoteManager
         private readonly VoteFactory $factory,
         private readonly RateLimiterFactory $voteLimiter,
         private readonly EventDispatcherInterface $dispatcher,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 
@@ -64,7 +65,7 @@ class VoteManager
             }
 
             $vote->choice = $choice;
-        } else {
+        } elseif (VotableInterface::VOTE_DOWN !== $choice) {
             if (VotableInterface::VOTE_UP === $choice) {
                 return $this->upvote($votable, $user);
             }
