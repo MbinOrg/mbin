@@ -114,17 +114,17 @@ Unofficial magazines:
 		</tr>
 		<tr>
             <td align="center">
-                <a href="https://github.com/cooperaj">
-                    <img src="https://avatars.githubusercontent.com/u/400210?v=4" width="100;" alt="cooperaj"/>
-                    <br />
-                    <sub><b>Adam Cooper</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/weblate">
                     <img src="https://avatars.githubusercontent.com/u/1607653?v=4" width="100;" alt="weblate"/>
                     <br />
                     <sub><b>Weblate (bot)</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/cooperaj">
+                    <img src="https://avatars.githubusercontent.com/u/400210?v=4" width="100;" alt="cooperaj"/>
+                    <br />
+                    <sub><b>Adam Cooper</b></sub>
                 </a>
             </td>
             <td align="center">
