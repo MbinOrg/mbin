@@ -53,16 +53,15 @@ class PostCommentNotificationManager implements ContentNotificationManagerInterf
     ) {
     }
 
-    // @todo check if author is on the block list
     public function sendCreated(ContentInterface $subject): void
     {
         if ($subject->user->isBanned || $subject->user->isDeleted || $subject->user->isTrashed() || $subject->user->isSoftDeleted()) {
             return;
         }
+        if (!$subject instanceof PostComment) {
+            throw new \LogicException();
+        }
 
-        /**
-         * @var PostComment $subject
-         */
         $users = $this->sendMentionedNotification($subject);
         $users = $this->sendUserReplyNotification($subject, $users);
         $this->sendMagazineSubscribersNotification($subject, $users);
@@ -222,17 +221,17 @@ class PostCommentNotificationManager implements ContentNotificationManagerInterf
 
     public function sendEdited(ContentInterface $subject): void
     {
-        /*
-         * @var PostComment $subject
-         */
+        if (!$subject instanceof PostComment) {
+            throw new \LogicException();
+        }
         $this->notifyMagazine(new PostCommentEditedNotification($subject->user, $subject));
     }
 
     public function sendDeleted(ContentInterface $subject): void
     {
-        /*
-         * @var PostComment $subject
-         */
+        if (!$subject instanceof PostComment) {
+            throw new \LogicException();
+        }
         $this->notifyMagazine($notification = new PostCommentDeletedNotification($subject->user, $subject));
     }
 

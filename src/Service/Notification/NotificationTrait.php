@@ -4,8 +4,16 @@ declare(strict_types=1);
 
 namespace App\Service\Notification;
 
+use App\Entity\MagazineSubscription;
+use App\Entity\User;
+
 trait NotificationTrait
 {
+    /**
+     * @param MagazineSubscription[] $subscriptions
+     *
+     * @return User[]
+     */
     private function getUsersToNotify(array $subscriptions): array
     {
         return array_map(fn ($sub) => $sub->user, $subscriptions);
