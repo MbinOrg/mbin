@@ -7,7 +7,7 @@
         <ul>
             {% for subject in list %}
                 <li>
-                    {% if attribute(subject, actor).icon and (app.user or attribute(subject, actor).isAdult is same as false) %}
+                    {% if attribute(subject, actor).icon and attribute(subject, actor).icon.filePath and (app.user or attribute(subject, actor).isAdult is same as false) %}
                         <figure>
                             <img width="32" height="32"
                                  loading="lazy"
