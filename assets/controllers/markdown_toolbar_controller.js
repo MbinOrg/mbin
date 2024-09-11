@@ -10,7 +10,7 @@ export default class extends Controller {
         event.preventDefault();
 
         const input = document.getElementById(this.element.getAttribute('for'));
-        let spoilerBody = '_____';
+        let spoilerBody = 'spoiler body';
         let contentAfterCursor;
 
         const start = input.selectionStart;
