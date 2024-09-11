@@ -38,7 +38,7 @@
                         <tr>
                             <td>
                                 {% if list.isDefault %}
-                                    <i class="fa-solid fa-star active"></i>
+                                    <i class="fa-solid fa-star active" title="{{ 'bookmark_list_is_default'|trans }}" aria-description="{{ 'bookmark_list_is_default'|trans }}"></i>
                                 {% endif %}
                             </td>
                             <td><a href="{{ path('bookmark_front', {'list': list.name}) }}">{{ list.name }}</a></td>

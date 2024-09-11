@@ -205,7 +205,6 @@ export default class extends Controller {
      */
     async linkCallback(event) {
         const cssClass = event.params.cssclass
-        console.log("called linkCallback", event, cssClass)
         event.preventDefault();
 
         const a = event.target.closest('a');

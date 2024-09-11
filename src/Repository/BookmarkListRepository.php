@@ -41,7 +41,7 @@ class BookmarkListRepository extends ServiceEntityRepository
     {
         $list = $this->findOneBy(['user' => $user, 'isDefault' => true]);
         if (null === $list) {
-            $list = new BookmarkList($user, 'default', true);
+            $list = new BookmarkList($user, 'Default', true);
             $this->entityManager->persist($list);
             $this->entityManager->flush();
         }

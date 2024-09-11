@@ -1,7 +1,7 @@
 bookmark_front:
     controller: App\Controller\BookmarkListController::front
     defaults: { sortBy: hot, time: '∞', federation: all }
-    path: /lists/show/{list}/{sortBy}/{time}/{federation}
+    path: /bookmark-lists/show/{list}/{sortBy}/{time}/{federation}
     methods: [GET]
     requirements: &front_requirement
         sortBy: "%default_sort_options%"
@@ -10,22 +10,22 @@ bookmark_front:
 
 bookmark_lists:
     controller: App\Controller\BookmarkListController::list
-    path: /lists
+    path: /bookmark-lists
     methods: [GET, POST]
 
 bookmark_lists_make_default:
     controller: App\Controller\BookmarkListController::makeDefault
-    path: /lists/makeDefault
+    path: /bookmark-lists/makeDefault
     methods: [GET]
 
 bookmark_lists_edit_list:
     controller: App\Controller\BookmarkListController::editList
-    path: /lists/editList/{list}
+    path: /bookmark-lists/editList/{list}
     methods: [GET, POST]
 
 bookmark_lists_delete_list:
     controller: App\Controller\BookmarkListController::deleteList
-    path: /lists/deleteList/{list}
+    path: /bookmark-lists/deleteList/{list}
     methods: [GET]
 
 subject_bookmark_standard:

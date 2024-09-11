@@ -1,30 +1,30 @@
 api_bookmark_front:
     controller: App\Controller\Api\Bookmark\BookmarkListApiController::front
-    path: /api/lists/show
+    path: /api/bookmark-lists/show
     methods: [GET]
     format: json
 
 api_bookmark_lists:
     controller: App\Controller\Api\Bookmark\BookmarkListApiController::list
-    path: /api/lists
+    path: /api/bookmark-lists
     methods: [GET]
     format: json
 
 api_bookmark_lists_make_default:
     controller: App\Controller\Api\Bookmark\BookmarkListApiController::makeDefault
-    path: /api/lists/{list_name}/makeDefault
+    path: /api/bookmark-lists/{list_name}/makeDefault
     methods: [GET]
     format: json
 
 api_bookmark_lists_edit_list:
     controller: App\Controller\Api\Bookmark\BookmarkListApiController::editList
-    path: /api/lists/{list_name}
+    path: /api/bookmark-lists/{list_name}
     methods: [POST]
     format: json
 
 api_bookmark_lists_delete_list:
     controller: App\Controller\Api\Bookmark\BookmarkListApiController::deleteList
-    path: /api/lists/{list_name}
+    path: /api/bookmark-lists/{list_name}
     methods: [DELETE]
     format: json
 
