@@ -926,3 +926,9 @@ admin_users_active: Actief
 admin_users_inactive: Inactief
 admin_users_suspended: Opgeschort
 edit_entry: Bewerk gesprek
+downvotes_mode: Omlaagstem-modus
+change_downvotes_mode: Wijzig omlaagstem modus
+disabled: Uitgeschakeld
+hidden: Verborgen
+enabled: Ingeschakeld
+toolbar.spoiler: Spoiler
