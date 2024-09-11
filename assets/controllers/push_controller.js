@@ -102,9 +102,6 @@ export default class extends Controller {
                 }
                 return response.json()
             })
-            .then(data => {
-                // Nothing?
-            })
             .catch(error => {
                 console.error(error)
                 this.unregisterPush()
