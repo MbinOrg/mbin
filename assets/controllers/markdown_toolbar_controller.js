@@ -25,7 +25,7 @@ export default class extends Controller {
         }
 
         const spoiler = `
-::: spoiler spoiler
+::: spoiler spoiler-title
 ${spoilerBody}
 :::`;
 
