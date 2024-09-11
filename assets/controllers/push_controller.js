@@ -74,7 +74,6 @@ export default class extends Controller {
         this.askPermission()
             .then(() => window.navigator.serviceWorker.getRegistration())
             .then(registration => {
-                console.log("got service worker registration:", registration)
                 const subscribeOptions = {
                     userVisibleOnly: true,
                     applicationServerKey: this.applicationServerPublicKey,
@@ -83,10 +82,8 @@ export default class extends Controller {
                 return registration.pushManager.subscribe(subscribeOptions)
             })
             .then(pushSubscription => {
-                console.log("Received PushSubscription: ", JSON.stringify(pushSubscription))
                 this.updateButtonVisibility(pushSubscription)
                 const jsonSub = pushSubscription.toJSON()
-                console.log("registering push to server")
                 let payload = {
                     endpoint: pushSubscription.endpoint,
                     deviceKey: this.getDeviceKey(),
@@ -105,9 +102,6 @@ export default class extends Controller {
                 }
                 return response.json()
             })
-            .then(data => {
-
-            })
             .catch(error => {
                 console.error(error)
                 this.unregisterPush()
@@ -120,7 +114,6 @@ export default class extends Controller {
             .then(pushSubscription => pushSubscription.unsubscribe())
             .then((successful) => {
                 if (successful) {
-                    console.log("removed push subscription")
                     this.updateButtonVisibility(null)
                     let payload = {
                         deviceKey: this.getDeviceKey(),
@@ -135,6 +128,9 @@ export default class extends Controller {
                         })
                         .catch(error => console.error(error))
                 }
+            })        
+            .catch((error) => {
+                console.error("There was an error in the service worker registration method, for unsubscribing", error)
             })
     }
 
