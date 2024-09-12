@@ -51,6 +51,10 @@ class Page
      */
     public function create(array $object, bool $stickyIt = false): Entry
     {
+        $current = $this->repository->findByObjectId($object['id']);
+        if ($current) {
+            return $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
+        }
         $actorUrl = $this->activityPubManager->getSingleActorFromAttributedTo($object['attributedTo']);
         if ($this->settingsManager->isBannedInstance($actorUrl)) {
             throw new InstanceBannedException();
