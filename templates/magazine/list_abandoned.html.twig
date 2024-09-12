@@ -13,6 +13,10 @@
 {% endblock %}
 
 {% block body %}
+    <header>
+        <h1 hidden>{{ 'magazines'|trans }}</h1>
+    </header>
+
     {% include 'magazine/_options.html.twig' %}
     <div id="content">
         {% if magazines|length %}

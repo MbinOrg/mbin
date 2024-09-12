@@ -13,6 +13,9 @@
 {% endblock %}
 
 {% block body %}
+    <header>
+        <h1 hidden>{{ 'create_new_magazine'|trans }}</h1>
+    </header>
     {% include 'entry/_create_options.html.twig' %}
     {% include('user/_visibility_info.html.twig') %}
 
