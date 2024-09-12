@@ -172,9 +172,6 @@
             "config/packages/knpu_oauth2_client.yaml"
         ]
     },
-    "laminas/laminas-diactoros": {
-        "version": "2.6.0"
-    },
     "lcobucci/clock": {
         "version": "2.0.0"
     },
