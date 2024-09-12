@@ -119,7 +119,7 @@
     {% elseif notification.report.postComment is defined and notification.report.postComment is not same as null %}
         {% set postComment = notification.report.postComment %}
         <a href="{{ path('post_single', { 'magazine_name': postComment.post.magazine.name, 'post_id': postComment.post.id, 'slug': postComment.post.slug }) }}#post-comment-{{ postComment.id }}">
-            {{ post.getShortTitle() }}
+            {{ postComment.getShortTitle() }}
         </a>
     {% endif %}
 {% endblock %}
