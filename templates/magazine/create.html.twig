@@ -13,13 +13,13 @@
 {% endblock %}
 
 {% block body %}
-    <header>
-        <h1 hidden>{{ 'create_new_magazine'|trans }}</h1>
-    </header>
     {% include 'entry/_create_options.html.twig' %}
     {% include('user/_visibility_info.html.twig') %}
 
     {% if user.visibility is same as 'visible' %}
+    <header>
+        <h1 hidden>{{ 'create_new_magazine'|trans }}</h1>
+    </header>
     <div id="content" class="section">
         <div class="container">
             {{ form_start(form) }}
