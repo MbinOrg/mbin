@@ -284,10 +284,14 @@ class ActivityPubManager
         $port = !\is_null(parse_url($id, PHP_URL_PORT))
             ? ':'.parse_url($id, PHP_URL_PORT)
             : '';
+        $apObj = $this->apHttpClient->getActorObject($id);
+        if (!isset($apObj['preferredUsername'])) {
+            throw new \InvalidArgumentException("$id does not supply a valid user object");
+        }
 
         return \sprintf(
             '%s@%s%s',
-            $this->apHttpClient->getActorObject($id)['preferredUsername'],
+            $apObj['preferredUsername'],
             parse_url($id, PHP_URL_HOST),
             $port
         );
