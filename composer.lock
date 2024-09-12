@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "31901a9c1f2e1aea0ffb42a18f6362d9",
+    "content-hash": "fbaab84932ac4f7c5bbea08a8650f4c6",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3331,65 +3331,6 @@
             "time": "2024-02-16T16:06:16+00:00"
         },
         {
-            "name": "landrok/activitypub",
-            "version": "0.7.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/landrok/activitypub.git",
-                "reference": "cc9d75bf910df0a6dcc3acc62a1885b963c27414"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/landrok/activitypub/zipball/cc9d75bf910df0a6dcc3acc62a1885b963c27414",
-                "reference": "cc9d75bf910df0a6dcc3acc62a1885b963c27414",
-                "shasum": ""
-            },
-            "require": {
-                "guzzlehttp/guzzle": ">=6.3",
-                "monolog/monolog": "^1.12|^2.0|^3.0",
-                "php": "^7.4|^8.0",
-                "phpseclib/phpseclib": "^3.0.7",
-                "psr/cache": "^1.0|^2.0|^3.0",
-                "symfony/cache": ">=4.0",
-                "symfony/http-foundation": ">=3.4"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "ActivityPhp\\": "src/ActivityPhp/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "A PHP implementation of ActivityPub protocol based upon the ActivityStreams 2.0 data format.",
-            "homepage": "https://github.com/landrok/activitypub",
-            "keywords": [
-                "Federation",
-                "activitypub",
-                "activitystreams"
-            ],
-            "support": {
-                "issues": "https://github.com/landrok/activitypub/issues",
-                "source": "https://github.com/landrok/activitypub/tree/0.7.2"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/landrok",
-                    "type": "github"
-                },
-                {
-                    "url": "https://ko-fi.com/landrok",
-                    "type": "ko_fi"
-                }
-            ],
-            "time": "2024-04-03T07:32:53+00:00"
-        },
-        {
             "name": "lcobucci/clock",
             "version": "3.2.0",
             "source": {
@@ -6391,116 +6332,6 @@
                 "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.8.2"
             },
             "time": "2024-02-23T11:10:43+00:00"
-        },
-        {
-            "name": "phpseclib/phpseclib",
-            "version": "3.0.41",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "621c73f7dcb310b61de34d1da4c4204e8ace6ceb"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/621c73f7dcb310b61de34d1da4c4204e8ace6ceb",
-                "reference": "621c73f7dcb310b61de34d1da4c4204e8ace6ceb",
-                "shasum": ""
-            },
-            "require": {
-                "paragonie/constant_time_encoding": "^1|^2|^3",
-                "paragonie/random_compat": "^1.4|^2.0|^9.99.99",
-                "php": ">=5.6.1"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "*"
-            },
-            "suggest": {
-                "ext-dom": "Install the DOM extension to load XML formatted public keys.",
-                "ext-gmp": "Install the GMP (GNU Multiple Precision) extension in order to speed up arbitrary precision integer arithmetic operations.",
-                "ext-libsodium": "SSH2/SFTP can make use of some algorithms provided by the libsodium-php extension.",
-                "ext-mcrypt": "Install the Mcrypt extension in order to speed up a few other cryptographic operations.",
-                "ext-openssl": "Install the OpenSSL extension in order to speed up a wide variety of cryptographic operations."
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "phpseclib/bootstrap.php"
-                ],
-                "psr-4": {
-                    "phpseclib3\\": "phpseclib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jim Wigginton",
-                    "email": "terrafrost@php.net",
-                    "role": "Lead Developer"
-                },
-                {
-                    "name": "Patrick Monnerat",
-                    "email": "pm@datasphere.ch",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Andreas Fischer",
-                    "email": "bantu@phpbb.com",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Hans-Jürgen Petrich",
-                    "email": "petrich@tronic-media.com",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Graham Campbell",
-                    "email": "graham@alt-three.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "PHP Secure Communications Library - Pure-PHP implementations of RSA, AES, SSH2, SFTP, X.509 etc.",
-            "homepage": "http://phpseclib.sourceforge.net",
-            "keywords": [
-                "BigInteger",
-                "aes",
-                "asn.1",
-                "asn1",
-                "blowfish",
-                "crypto",
-                "cryptography",
-                "encryption",
-                "rsa",
-                "security",
-                "sftp",
-                "signature",
-                "signing",
-                "ssh",
-                "twofish",
-                "x.509",
-                "x509"
-            ],
-            "support": {
-                "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.41"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/terrafrost",
-                    "type": "github"
-                },
-                {
-                    "url": "https://www.patreon.com/phpseclib",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/phpseclib/phpseclib",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2024-08-12T00:13:54+00:00"
         },
         {
             "name": "phpstan/phpdoc-parser",
