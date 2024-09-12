@@ -286,7 +286,7 @@ class ActivityPubManager
             : '';
         $apObj = $this->apHttpClient->getActorObject($id);
         if (!isset($apObj['preferredUsername'])) {
-            throw new \InvalidArgumentException("$id does not supply a valid user object");
+            throw new \InvalidArgumentException("webfinger from $id does not supply a valid user object");
         }
 
         return \sprintf(
