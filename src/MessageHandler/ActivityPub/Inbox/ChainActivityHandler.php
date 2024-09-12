@@ -75,7 +75,7 @@ class ChainActivityHandler extends MbinMessageHandler
         }
 
         if (!$entity) {
-            $this->logger->error('could not retrieve all the dependencies of {o}', ['o' => $object]);
+            $this->logger->error('could not retrieve all the dependencies of {o}', ['o' => $object['id']]);
 
             return;
         }
