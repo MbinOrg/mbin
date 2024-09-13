@@ -13,6 +13,7 @@ use App\Entity\User;
 use App\Entity\Vote;
 use App\Event\VoteEvent;
 use App\Factory\VoteFactory;
+use App\Utils\DownvotesMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -43,6 +44,11 @@ class VoteManager
             throw new AccessDeniedHttpException('Bots are not allowed to vote on items!');
         }
 
+        $downVotesMode = $this->settingsManager->getDownvotesMode();
+        if (DownvotesMode::Disabled === $downVotesMode && VotableInterface::VOTE_DOWN === $choice) {
+            throw new \LogicException('cannot downvote, because that is disabled');
+        }
+
         $vote = $votable->getUserVote($user);
         $votedAgain = false;
 
@@ -65,7 +71,7 @@ class VoteManager
             }
 
             $vote->choice = $choice;
-        } elseif (VotableInterface::VOTE_DOWN !== $choice) {
+        } else {
             if (VotableInterface::VOTE_UP === $choice) {
                 return $this->upvote($votable, $user);
             }
