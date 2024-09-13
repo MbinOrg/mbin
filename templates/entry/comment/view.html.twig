@@ -57,10 +57,10 @@
         {% else %}
         <div class="section alert alert__danger">
             <p>
-                <a href="{{ entry_url(entry) }}" class="btn btn-link btn__danger">
+                <a href="{{ entry_url(entry) }}" class="btn btn-link btn__danger" style="margin-right: 10px;">
                     <i class="fa-solid fa-arrow-left-long" title="{{ 'back'|trans }}"></i> {{ 'back'|trans }}
                 </a>
-                &nbsp; {{ 'comment_not_found'|trans }}
+                {{ 'comment_not_found'|trans }}
             </p>
         </div>
         {% endif %}
