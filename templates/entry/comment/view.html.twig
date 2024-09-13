@@ -41,16 +41,20 @@
     </div>
     {% set autoAction = 'notifications:EntryCommentCreatedNotification@window->subject-list#addComment' %}
     {% set manualAction = 'notifications:EntryCommentCreatedNotification@window->subject-list#increaseCounter' %}
-    <div class="{{ html_classes('comments entry-comments comments-tree', {
-        'show-comment-avatar' : SHOW_COMMENT_USER_AVATARS is same as V_TRUE
-        }) }}"
-        data-controller="subject-list"
-        data-action="{{- DYNAMIC_LISTS is same as V_TRUE ? autoAction : manualAction -}}">
-        {{ component('entry_comment', {
-            comment: comment.root ?? comment,
-            showEntryTitle: false,
-            showMagazineName: false,
-            showNested: true,
-        }) }}
-    </div>
+
+    {% set entryComment = comment.root ?? comment %}
+    {% if entryComment is defined and entryComment is not null %}
+        <div class="{{ html_classes('comments entry-comments comments-tree', {
+            'show-comment-avatar' : SHOW_COMMENT_USER_AVATARS is same as V_TRUE
+            }) }}"
+            data-controller="subject-list"
+            data-action="{{- DYNAMIC_LISTS is same as V_TRUE ? autoAction : manualAction -}}">
+            {{ component('entry_comment', {
+                comment: entryComment,
+                showEntryTitle: false,
+                showMagazineName: false,
+                showNested: true,
+            }) }}
+        </div>
+    {% endif %}
 {% endblock %}
