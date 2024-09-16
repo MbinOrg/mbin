@@ -36,8 +36,7 @@ abstract class AbstractController extends BaseAbstractController
     protected function validateCsrf(string $id, $token): void
     {
         if (!\is_string($token) || !$this->isCsrfTokenValid($id, $token)) {
-            $isTokenAString = \is_string($token);
-            throw new BadRequestHttpException("Invalid CSRF token, with ID: $id. Is token a string?: $isTokenAString");
+            throw new BadRequestHttpException("Invalid CSRF token, with ID: $id.");
         }
     }
 
