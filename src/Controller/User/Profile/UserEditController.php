@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller\User\Profile;
 
 use App\Controller\AbstractController;
-use App\DTO\RelatedLinkDTO;
 use App\DTO\UserDto;
 use App\Form\UserBasicType;
 use App\Form\UserEmailType;

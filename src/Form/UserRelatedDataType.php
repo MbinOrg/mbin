@@ -18,7 +18,7 @@ class UserRelatedDataType extends AbstractType implements DataMapperInterface
     {
         $builder
             ->add('label', TextType::class)
-            ->add('link', UrlType::class)
+            ->add('value', UrlType::class)
             ->setDataMapper($this);
         ;
     }
@@ -40,7 +40,7 @@ class UserRelatedDataType extends AbstractType implements DataMapperInterface
         $forms = iterator_to_array($forms);
 
         $forms['label']->setData($viewData->getLabel());
-        $forms['link']->setData($viewData->getLink());
+        $forms['value']->setData($viewData->getValue());
     }
 
     public function mapFormsToData(\Traversable $forms, &$viewData): void
@@ -53,7 +53,7 @@ class UserRelatedDataType extends AbstractType implements DataMapperInterface
         // beware of type inconsistency, see caution below
         $viewData = new RelatedLinkDTO();
         $viewData->setLabel($forms['label']->getData());
-        $viewData->setLink($forms['link']->getData());
+        $viewData->setValue($forms['value']->getData());
     }
 
     public function configureOptions(OptionsResolver $resolver): void

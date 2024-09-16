@@ -902,9 +902,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     {
         return $this->relatedLinks;
     }
-
-    public function setRelatedLinks(array $relatedLinks): void
-    {
-        $this->relatedLinks = $relatedLinks;
-    }
 }

@@ -24,8 +24,6 @@ class UserFactory
 
     public function createDto(User $user): UserDto
     {
-//        $temp = $this->denormalizer->denormalize($user->getRelatedLinks(), sprintf('%s[]', RelatedLinkDTO::class));
-
         $dto = UserDto::create(
             $user->username,
             $user->email,

@@ -48,7 +48,7 @@
                 {{ stimulus_controller('form-related-links') }}
                 data-form-related-links-index-value="{{ form.relatedLinks|length }}"
                 data-form-related-links-link-value="{{
-                    form_row(form.relatedLinks.vars.prototype.link, {
+                    form_row(form.relatedLinks.vars.prototype.value, {
                         label: false
                     })|e('html_attr')
                 }}"
@@ -70,7 +70,7 @@
                             {{ form_row(item_form.label, {
                                 label: false
                             }) }}
-                            {{ form_row(item_form.link, {
+                            {{ form_row(item_form.value, {
                                 label: false
                             }) }}
                         </div>

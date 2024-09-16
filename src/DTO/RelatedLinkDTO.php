@@ -5,8 +5,8 @@ namespace App\DTO;
 class RelatedLinkDTO
 {
     private string $label;
-    private string $link;
-    private bool $verified = false;
+    private string $value;
+    private bool $verifiedLink = false;
 
     /**
      * @return string
@@ -27,32 +27,32 @@ class RelatedLinkDTO
     /**
      * @return string
      */
-    public function getLink(): string
+    public function getValue(): string
     {
-        return $this->link;
+        return $this->value;
     }
 
     /**
-     * @param string $link
+     * @param string $value
      */
-    public function setLink(string $link): void
+    public function setValue(string $value): void
     {
-        $this->link = $link;
+        $this->value = $value;
     }
 
     /**
      * @return bool
      */
-    public function isVerified(): bool
+    public function isVerifiedLink(): bool
     {
-        return $this->verified;
+        return $this->verifiedLink;
     }
 
     /**
-     * @param bool $verified
+     * @param bool $verifiedLink
      */
-    public function setVerified(bool $verified): void
+    public function setVerifiedLink(bool $verifiedLink): void
     {
-        $this->verified = $verified;
+        $this->verifiedLink = $verifiedLink;
     }
 }

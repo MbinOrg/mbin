@@ -6,7 +6,7 @@ export default class extends Controller {
     static values = {
         index: Number,
         label: String,
-        link: String,
+        value: String,
         deleteIcon: String,
     };
 
@@ -29,11 +29,11 @@ export default class extends Controller {
         ));
         rowNode.appendChild(nodeLabel);
 
-        const nodeLink = this.#htmlToNode(this.linkValue.replace(
+        const nodeValue = this.#htmlToNode(this.valueValue.replace(
             /__name__/g,
             this.indexValue,
         ));
-        rowNode.appendChild(nodeLink);
+        rowNode.appendChild(nodeValue);
 
         this.#addButtonDeleteLink(rowNode);
 
@@ -44,7 +44,7 @@ export default class extends Controller {
     #addButtonDeleteLink(item) {
         const removeFormButton = document.createElement('button');
         removeFormButton.innerHTML = this.deleteIconValue;
-        removeFormButton.className = 'btn';
+        removeFormButton.className = 'btn btn__secondary';
 
         item.append(removeFormButton);
 
