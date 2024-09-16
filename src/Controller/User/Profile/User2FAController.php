@@ -101,7 +101,7 @@ class User2FAController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function disable(Request $request): Response
     {
-        $this->validateCsrf('user_2fa_remove', $request->request->get('token'));
+        $this->validateCsrf('user_2fa_remove', $request->getPayload()->get('token'));
 
         $user = $this->getUserOrThrow();
         if (!$user->isTotpAuthenticationEnabled()) {
@@ -142,7 +142,7 @@ class User2FAController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function remove(User $user, Request $request): Response
     {
-        $this->validateCsrf('user_2fa_remove', $request->request->get('token'));
+        $this->validateCsrf('user_2fa_remove', $request->getPayload()->get('token'));
 
         $this->twoFactorManager->remove2FA($user);
 

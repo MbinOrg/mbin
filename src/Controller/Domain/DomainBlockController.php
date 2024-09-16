@@ -22,7 +22,7 @@ class DomainBlockController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function block(Domain $domain, Request $request): Response
     {
-        $this->validateCsrf('block', $request->request->get('token'));
+        $this->validateCsrf('block', $request->getPayload()->get('token'));
 
         $this->manager->block($domain, $this->getUserOrThrow());
 
@@ -36,7 +36,7 @@ class DomainBlockController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function unblock(Domain $domain, Request $request): Response
     {
-        $this->validateCsrf('block', $request->request->get('token'));
+        $this->validateCsrf('block', $request->getPayload()->get('token'));
 
         $this->manager->unblock($domain, $this->getUserOrThrow());
 

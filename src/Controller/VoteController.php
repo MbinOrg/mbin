@@ -30,7 +30,7 @@ class VoteController extends AbstractController
     #[IsGranted('vote', subject: 'votable')]
     public function __invoke(VotableInterface $votable, int $choice, Request $request): Response
     {
-        $this->validateCsrf('down_vote', $request->request->get('token'));
+        $this->validateCsrf('down_vote', $request->getPayload()->get('token'));
         if (VotableInterface::VOTE_DOWN === $choice && DownvotesMode::Disabled === $this->settingsManager->getDownvotesMode()) {
             throw new BadRequestException('Downvotes are disabled!');
         }

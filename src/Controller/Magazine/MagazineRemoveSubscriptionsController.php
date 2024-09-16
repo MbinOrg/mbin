@@ -20,7 +20,7 @@ class MagazineRemoveSubscriptionsController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function __invoke(Magazine $magazine, Request $request): Response
     {
-        $this->validateCsrf('magazine_remove_subscriptions', $request->request->get('token'));
+        $this->validateCsrf('magazine_remove_subscriptions', $request->getPayload()->get('token'));
 
         $this->manager->removeSubscriptions($magazine);
 

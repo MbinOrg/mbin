@@ -22,7 +22,7 @@ class UserVerifyController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function __invoke(User $user, Request $request): Response
     {
-        $this->validateCsrf('user_verify', $request->request->get('token'));
+        $this->validateCsrf('user_verify', $request->getPayload()->get('token'));
 
         $this->manager->adminUserVerify($user);
 
