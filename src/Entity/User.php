@@ -902,4 +902,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     {
         return $this->relatedLinks;
     }
+
+    public function isVerifiedRelatedLinkExists(): bool
+    {
+        foreach ($this->relatedLinks as $relatedLink) {
+            if ($relatedLink['verifiedLink'] === true) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
