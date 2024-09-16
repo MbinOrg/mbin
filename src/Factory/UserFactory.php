@@ -39,7 +39,6 @@ class UserFactory
             'Service' === $user->type, // setting isBot
             $user->isAdmin(),
             $user->isModerator(),
-//            $user->relatedLinks,
             $this->denormalizer->denormalize($user->getRelatedLinks(), sprintf('%s[]', RelatedLinkDTO::class)),
         );
 

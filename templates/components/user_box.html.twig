@@ -78,11 +78,20 @@
                 {{ component('user_actions', {user: user}) }}
             </div>
         </div>
-        {% if user.about|length %}
+        {% if user.about|length or user.relatedLinks|length %}
             <div class="about">
-                <div class="content">
-                    {{ user.about|markdown|raw }}
-                </div>
+                {% if user.about|length %}
+                    <div class="content">
+                        {{ user.about|markdown|raw }}
+                    </div>
+                {% endif %}
+                {% if user.relatedLinks|length %}
+                    {% for rel in user.relatedLinks %}
+                        <div class="content">
+                            <a href="{{ rel.value }}" rel="me">{{ rel.label }}</a>
+                        </div>
+                    {% endfor %}
+                {% endif %}
             </div>
         {% endif %}
     </div>

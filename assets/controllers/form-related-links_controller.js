@@ -20,6 +20,10 @@ export default class extends Controller {
     }
 
     addRelatedElement() {
+        console.log('entra');
+        console.log(this.labelValue, 'label');
+        console.log(this.valueValue, 'value');
+
         const rowNode = document.createElement('div');
         rowNode.className = 'related-link-row';
 

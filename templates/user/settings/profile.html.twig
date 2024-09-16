@@ -47,7 +47,7 @@
             <fieldset class='related-link-fieldset'
                 {{ stimulus_controller('form-related-links') }}
                 data-form-related-links-index-value="{{ form.relatedLinks|length }}"
-                data-form-related-links-link-value="{{
+                data-form-related-links-value-value="{{
                     form_row(form.relatedLinks.vars.prototype.value, {
                         label: false
                     })|e('html_attr')
@@ -76,12 +76,15 @@
                         </div>
                     {% endfor %}
                 </div>
-
-                <button
-                    type="button"
-                    class="btn btn__primary"
-                    {{ stimulus_action('form-related-links', 'addRelatedElement') }}
-                >{{ 'add'|trans }}</button>
+                <div class="add-button-container">
+                    <button
+                        type="button"
+                        class="btn btn__primary"
+                        {{ stimulus_action('form-related-links', 'addRelatedElement') }}
+                    >
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
             </fieldset>
 
             <div class="row actions">
