@@ -22,7 +22,7 @@ class MagazineBlockController extends AbstractController
     #[IsGranted('block', subject: 'magazine')]
     public function block(Magazine $magazine, Request $request): Response
     {
-        $this->validateCsrf('block', $request->request->get('token'));
+        $this->validateCsrf('block', $request->getPayload()->get('token'));
 
         $this->manager->block($magazine, $this->getUserOrThrow());
 
@@ -37,7 +37,7 @@ class MagazineBlockController extends AbstractController
     #[IsGranted('block', subject: 'magazine')]
     public function unblock(Magazine $magazine, Request $request): Response
     {
-        $this->validateCsrf('block', $request->request->get('token'));
+        $this->validateCsrf('block', $request->getPayload()->get('token'));
 
         $this->manager->unblock($magazine, $this->getUserOrThrow());
 

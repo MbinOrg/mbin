@@ -28,7 +28,7 @@ class EntryChangeAdultController extends AbstractController
         Entry $entry,
         Request $request
     ): Response {
-        $this->validateCsrf('change_adult', $request->request->get('token'));
+        $this->validateCsrf('change_adult', $request->getPayload()->get('token'));
 
         $entry->isAdult = 'on' === $request->get('adult');
 

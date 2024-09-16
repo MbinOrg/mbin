@@ -18,7 +18,7 @@ class UserFollowController extends AbstractController
     #[IsGranted('follow', subject: 'following')]
     public function follow(User $following, UserManager $manager, Request $request): Response
     {
-        $this->validateCsrf('follow', $request->request->get('token'));
+        $this->validateCsrf('follow', $request->getPayload()->get('token'));
 
         $manager->follow($this->getUserOrThrow(), $following);
 
@@ -33,7 +33,7 @@ class UserFollowController extends AbstractController
     #[IsGranted('follow', subject: 'following')]
     public function unfollow(User $following, UserManager $manager, Request $request): Response
     {
-        $this->validateCsrf('follow', $request->request->get('token'));
+        $this->validateCsrf('follow', $request->getPayload()->get('token'));
 
         $manager->unfollow($this->getUserOrThrow(), $following);
 

@@ -22,7 +22,7 @@ class MagazineSubController extends AbstractController
     #[IsGranted('subscribe', subject: 'magazine')]
     public function subscribe(Magazine $magazine, Request $request): Response
     {
-        $this->validateCsrf('subscribe', $request->request->get('token'));
+        $this->validateCsrf('subscribe', $request->getPayload()->get('token'));
 
         $this->manager->subscribe($magazine, $this->getUserOrThrow());
 
@@ -37,7 +37,7 @@ class MagazineSubController extends AbstractController
     #[IsGranted('subscribe', subject: 'magazine')]
     public function unsubscribe(Magazine $magazine, Request $request): Response
     {
-        $this->validateCsrf('subscribe', $request->request->get('token'));
+        $this->validateCsrf('subscribe', $request->getPayload()->get('token'));
 
         $this->manager->unsubscribe($magazine, $this->getUserOrThrow());
 

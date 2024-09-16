@@ -1,6 +1,6 @@
 <form method="post"
       action="{{ path(formDest~'_favourite', {id: subject.id}) }}">
-    <input type="hidden" name="token" value="{{ csrf_token('favourite') }}">
+    <input type="hidden" name="token" value="{{ csrf_token('up_vote') }}">
     <button class="{{ html_classes('stretched-link', {'active': app.user and subject.isFavored(app.user) }) }}"
             type="submit"
             data-action="subject#favourite">

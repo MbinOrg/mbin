@@ -23,7 +23,7 @@ class BoostController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function __invoke(VotableInterface $subject, Request $request): Response
     {
-        $this->validateCsrf('boost', $request->request->get('token'));
+        $this->validateCsrf('boost', $request->getPayload()->get('token'));
 
         $this->manager->vote(VotableInterface::VOTE_UP, $subject, $this->getUserOrThrow());
 
