@@ -48,7 +48,7 @@ export default class extends Controller {
     #addButtonDeleteLink(item) {
         const removeFormButton = document.createElement('button');
         removeFormButton.innerHTML = this.deleteIconValue;
-        removeFormButton.className = 'btn btn__secondary';
+        removeFormButton.className = 'btn btn__secondary delete-button';
 
         item.append(removeFormButton);
 

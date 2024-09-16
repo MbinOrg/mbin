@@ -554,7 +554,13 @@ div.input-box {
   flex-grow: 1
 }
 
+.delete-button {
+  padding: 0;
+  border: 0;
+}
+
 .add-button-container {
   display: flex;
+  margin-right: 13.9px;
   justify-content: center;
 }
