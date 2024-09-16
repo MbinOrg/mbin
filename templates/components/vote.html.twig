@@ -33,7 +33,7 @@
                 data-action="subject#vote">
             <span data-subject-target="favCounter">{{ subject.apLikeCount ?? subject.favouriteCount }}</span> <span><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></span>
         </button>
-        <input type="hidden" name="token" value="{{ csrf_token('favourite') }}">
+        <input type="hidden" name="token" value="{{ csrf_token('up_vote') }}">
     </form>
     {% set downvoteMode = mbin_downvotes_mode() %}
     {% if showDownvote and downvoteMode is not same as DOWNVOTES_DISABLED %}
@@ -51,7 +51,7 @@
                 {% endif %}
                 <span><i class="fa-solid fa-arrow-down" aria-hidden="true"></i></span>
             </button>
-            <input type="hidden" name="token" value="{{ csrf_token('vote') }}">
+            <input type="hidden" name="token" value="{{ csrf_token('down_vote') }}">
         </form>
     {% endif %}
 </aside>
