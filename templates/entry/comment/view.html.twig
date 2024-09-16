@@ -46,11 +46,23 @@
         }) }}"
         data-controller="subject-list"
         data-action="{{- DYNAMIC_LISTS is same as V_TRUE ? autoAction : manualAction -}}">
-        {{ component('entry_comment', {
-            comment: comment.root ?? comment,
-            showEntryTitle: false,
-            showMagazineName: false,
-            showNested: true,
-        }) }}
+        {% set entryComment = comment.root ?? comment %}
+        {% if entryComment is defined and entryComment is not null %}
+            {{ component('entry_comment', {
+                comment: entryComment,
+                showEntryTitle: false,
+                showMagazineName: false,
+                showNested: true,
+            }) }}
+        {% else %}
+        <div class="section alert alert__danger">
+            <p>
+                <a href="{{ entry_url(entry) }}" class="btn btn-link btn__danger" style="margin-right: 10px;">
+                    <i class="fa-solid fa-arrow-left-long" title="{{ 'back'|trans }}"></i> {{ 'back'|trans }}
+                </a>
+                {{ 'comment_not_found'|trans }}
+            </p>
+        </div>
+        {% endif %}
     </div>
 {% endblock %}

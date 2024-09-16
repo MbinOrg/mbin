@@ -238,6 +238,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     #[Column(type: 'string', nullable: false, options: ['default' => self::USER_TYPE_PERSON])]
     public string $type;
 
+    #[Column(type: 'json', nullable: false, options: ['jsonb' => true, 'default' => '[]'])]
+    public array $relatedLinks = [];
+
     public function __construct(
         string $email,
         string $username,
@@ -893,5 +896,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         } else {
             return $this->apDomain === $actor->apDomain;
         }
+    }
+
+    public function getRelatedLinks(): array
+    {
+        return $this->relatedLinks;
     }
 }
