@@ -345,7 +345,7 @@ class ApHttpClient
             'address' => $requestUrl,
             'e' => \get_class($e),
             'msg' => $e->getMessage(),
-            'content' => substr($content, 0, 200) ?? 'No content provided',
+            'content' => substr($content ?? 'No content provided', 0, 200),
         ]);
         // And only log the full content in debug log mode
         if ($content) {
