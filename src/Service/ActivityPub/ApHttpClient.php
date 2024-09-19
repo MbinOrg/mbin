@@ -90,8 +90,8 @@ class ApHttpClient
     {
         $this->logger->debug("ApHttpClient:getActivityObject:url: $url");
 
-        $client = new CurlHttpClient();
         try {
+            $client = new CurlHttpClient();
             $r = $client->request('GET', $url, [
                 'max_duration' => self::MAX_DURATION,
                 'timeout' => self::TIMEOUT,
