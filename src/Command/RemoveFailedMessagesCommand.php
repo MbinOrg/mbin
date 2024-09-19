@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
     name: 'mbin:messenger:failed:remove_all',
     description: 'This command removes all failed messages from the failed queue (database).',
 )]
-class RemoveFailedMessangesCommand extends Command
+class RemoveFailedMessagesCommand extends Command
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
