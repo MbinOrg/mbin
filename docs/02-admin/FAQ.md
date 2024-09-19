@@ -146,7 +146,7 @@ And if you want to delete the dead messages (`dead` queue) you can execute the f
 ./bin/console mbin:messenger:dead:remove_all
 ```
 
-_Hint:_ Most messages that are stored in the database are most likely in the `failed` queue, thus running the first command (`mbin:messenger:failed:remove_all`) will most likely delete all messages in the `messenger_messages` table.
+_Hint:_ Most messages that are stored in the database are most likely in the `failed` queue, thus running the first command (`mbin:messenger:failed:remove_all`) will most likely delete all messages in the `messenger_messages` table. Regularly running this command will keep your database clean.
 
 ## Where can I find my logging?
 
