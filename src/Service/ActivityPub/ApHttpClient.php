@@ -101,7 +101,8 @@ class ApHttpClient
             $statusCode = $r->getStatusCode();
             // Accepted status code are 2xx or 410 (used Tombstone types)
             if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
-                throw new InvalidApPostException("Invalid status code while getting: $url : $statusCode, ".substr($r->getContent(false), 0, 1000));
+                // Do NOT include the content in the log, this will be often a full HTML page
+                throw new InvalidApPostException("Invalid status code while getting: $url : $statusCode");
             }
 
             // Read also non-OK responses (like 410) by passing 'false'
@@ -337,12 +338,16 @@ class ApHttpClient
             }
         }
 
-        $this->logger->error('{type} get fail: {address}, ex: {e}: {msg} - {content}', [
+        // Often 400, 404 errors just return the full HTML page, so we don't want to log the content of them
+        $this->logger->error('{type} get fail: {address}, ex: {e}: {msg}', [
             'type' => $requestType,
             'address' => $requestUrl,
             'e' => \get_class($e),
-            'msg' => $e->getMessage(),
-            'content' => $content ?? 'no content provided',
+            'msg' => $e->getMessage()
+        ]);
+        // Therefore, we only log the content in debug log mode
+        $this->logger->debug('Response body content: {content}', [
+            'content' => $content ?? 'No content provided',
         ]);
         throw $e;
     }
