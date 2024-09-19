@@ -338,17 +338,21 @@ class ApHttpClient
             }
         }
 
-        // Often 400, 404 errors just return the full HTML page, so we don't want to log the content of them
-        $this->logger->error('{type} get fail: {address}, ex: {e}: {msg}', [
+        // Often 400, 404 errors just return the full HTML page, so we don't want to log the full content of them
+        // We truncate the content to 200 characters max.
+        $this->logger->error('{type} get fail: {address}, ex: {e}: {msg}. Truncated content: {content}', [
             'type' => $requestType,
             'address' => $requestUrl,
             'e' => \get_class($e),
             'msg' => $e->getMessage(),
+            'content' => substr($content, 0, 200) ?? 'No content provided',
         ]);
-        // Therefore, we only log the content in debug log mode
-        $this->logger->debug('Response body content: {content}', [
-            'content' => $content ?? 'No content provided',
-        ]);
+        // And only log the full content in debug log mode
+        if ($content) {
+            $this->logger->debug('Full response body content: {content}', [
+                'content' => $content,
+            ]);
+        }
         throw $e;
     }
 
