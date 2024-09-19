@@ -103,8 +103,8 @@ RabbitMQ will now have new queues being added for the different delays (so a mes
 The global overview from RabbitMQ shows the ready messages for all queues combined. Messages in the retry queues count as ready messages the whole time they are in there,
 so for a correct ready count you have to go to the queue specific overview.
 
-| Overview                                                  | Queue Tab                                           | "Message" Queue Overview                                            |
-| --------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------- |
+| Overview                                                | Queue Tab                                         | "Message" Queue Overview                                          |
+| ------------------------------------------------------- | ------------------------------------------------- | ----------------------------------------------------------------- |
 | ![Queued messages](../images/rabbit_queue_overview.png) | ![Queue overview](../images/rabbit_queue_tab.png) | ![Message Queue Overview](../images/rabbit_messages_overview.png) |
 
 ## RabbitMQ Prometheus exporter
@@ -134,23 +134,19 @@ scrape_configs:
 
 ## How to clean-up all failed messages?
 
-If you wish to **delete all messages** (`dead` and `failed`) at once, execute the following PostgreSQL query (assuming you're connected to the correct PostgreSQL database):
+If you want to delete all failed messages (`failed` queue) you can execute the following command:
 
-```sql
-DELETE FROM messenger_messages;
+```bash
+./bin/console mbin:messenger:failed:remove_all
 ```
 
-If you want to delete only the messages that are no longer being worked (`dead`) on you can execute this query:
+And if you want to delete the dead messages (`dead` queue) you can execute the following command:
 
-```sql
-DELETE FROM messenger_messages WHERE queue_name = 'dead';
+```bash
+./bin/console mbin:messenger:dead:remove_all
 ```
 
-To free up the disk space used by the now deleted messages, execute the following query:
-
-```sql
-VACUUM messenger_messages;
-```
+_Hint:_ Most messages that are stored in the database are most likely in the `failed` queue, thus running the first command (`mbin:messenger:failed:remove_all`) will most likely delete all messages in the `messenger_messages` table.
 
 ## Where can I find my logging?
 
@@ -208,12 +204,14 @@ first, so any updates to the keys requires a `DEL instance_private_key instance_
 First thing you should do to debug the issue is looking at the "Queues and Streams" tab to find out what queues have the high publishing rate.
 If the queue/s in question are `inbox` and `resolve` it is most likely a circulating `ChainActivityMessage`.
 To verify that assumption:
+
 1. stop all messengers
-    - if you're on bare metal, as root: `supervisorctl stop messenger:*`
-    - if you're on docker, inside the `docker` folder : `docker compose down messenger*`
+   - if you're on bare metal, as root: `supervisorctl stop messenger:*`
+   - if you're on docker, inside the `docker` folder : `docker compose down messenger*`
 2. look again at the publishing rate. If it has gone down, then it definitely is a circulating message
 
 To fix the problem:
+
 1. start the messengers if they are not already started
 2. go to the `resolve` queue
 3. open the "Get Message" panel
