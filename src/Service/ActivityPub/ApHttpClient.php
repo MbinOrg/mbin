@@ -399,15 +399,16 @@ class ApHttpClient
                 // Do NOT include the response content in the error message, this will be often a full HTML page
                 throw new InvalidApPostException("Post failed: $url, status code: $statusCode, request body: $jsonBody");
             }
-
-            // build cache
-            $item = $this->cache->getItem($cacheKey);
-            $item->set(true);
-            $item->expiresAt(new \DateTime('+45 minutes'));
-            $this->cache->save($item);
         } catch (\Exception $e) {
             $this->logRequestException($response, $url, 'ApHttpClient:post', $e);
         }
+
+        // build cache
+        $item = $this->cache->getItem($cacheKey);
+        $item->set(true);
+        $item->expiresAt(new \DateTime('+45 minutes'));
+        $this->cache->save($item);
+
     }
 
     public function fetchInstanceNodeInfoEndpoints(string $domain, bool $decoded = true): array|string|null
