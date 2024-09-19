@@ -343,7 +343,7 @@ class ApHttpClient
             'type' => $requestType,
             'address' => $requestUrl,
             'e' => \get_class($e),
-            'msg' => $e->getMessage()
+            'msg' => $e->getMessage(),
         ]);
         // Therefore, we only log the content in debug log mode
         $this->logger->debug('Response body content: {content}', [
