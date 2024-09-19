@@ -101,7 +101,7 @@ class ApHttpClient
             $statusCode = $r->getStatusCode();
             // Accepted status code are 2xx or 410 (used Tombstone types)
             if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
-                // Do NOT include the content in the log, this will be often a full HTML page
+                // Do NOT include the content in the error message, this will be often a full HTML page
                 throw new InvalidApPostException("Invalid status code while getting: $url : $statusCode");
             }
 
@@ -317,7 +317,8 @@ class ApHttpClient
             $statusCode = $response->getStatusCode();
             // Accepted status code are 2xx or 410 (used Tombstone types)
             if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
-                throw new InvalidApPostException("Invalid status code while getting: $apAddress : $statusCode, ".substr($response->getContent(false), 0, 1000));
+                // Do NOT include the content in the error message, this will be often a full HTML page
+                throw new InvalidApPostException("Invalid status code while getting: $apAddress : $statusCode");
             }
         } catch (\Exception $e) {
             $this->logRequestException($response, $apAddress, 'ApHttpClient:getCollectionObject', $e);
