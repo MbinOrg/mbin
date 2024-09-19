@@ -11,7 +11,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'mbin:messenger:failed:remove_all')]
+#[AsCommand(
+    name: 'mbin:messenger:failed:remove_all',
+    description: 'This command removes all failed messages from the failed queue (database).',
+)]
 class RemoveFailedMessanges extends Command
 {
     public function __construct(
