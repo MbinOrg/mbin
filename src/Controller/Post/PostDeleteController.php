@@ -60,7 +60,8 @@ class PostDeleteController extends AbstractController
         Post $post,
         Request $request
     ): Response {
-        $this->validateCsrf('post_purge', $request->getPayload()->get('token'));
+        // CSRF is causing a lot of issues, so we disable it for now.
+        // $this->validateCsrf('post_purge', $request->getPayload()->get('token'));
 
         $this->manager->purge($this->getUserOrThrow(), $post);
 

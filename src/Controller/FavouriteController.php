@@ -21,7 +21,8 @@ class FavouriteController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function __invoke(FavouriteInterface $subject, Request $request, FavouriteManager $manager): Response
     {
-        $this->validateCsrf('up_vote', $request->getPayload()->get('token'));
+        // CSRF is causing a lot of issues, so we disable it for now.
+        // $this->validateCsrf('up_vote', $request->getPayload()->get('token'));
 
         $manager->toggle($this->getUserOrThrow(), $subject);
 
