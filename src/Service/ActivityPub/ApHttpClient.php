@@ -101,7 +101,8 @@ class ApHttpClient
             $statusCode = $r->getStatusCode();
             // Accepted status code are 2xx or 410 (used Tombstone types)
             if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
-                throw new InvalidApPostException("Invalid status code while getting: $url : $statusCode, ".substr($r->getContent(false), 0, 1000));
+                // Do NOT include the content in the error message, this will be often a full HTML page
+                throw new InvalidApPostException("Invalid status code while getting: $url : $statusCode");
             }
 
             // Read also non-OK responses (like 410) by passing 'false'
@@ -316,7 +317,8 @@ class ApHttpClient
             $statusCode = $response->getStatusCode();
             // Accepted status code are 2xx or 410 (used Tombstone types)
             if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
-                throw new InvalidApPostException("Invalid status code while getting: $apAddress : $statusCode, ".substr($response->getContent(false), 0, 1000));
+                // Do NOT include the content in the error message, this will be often a full HTML page
+                throw new InvalidApPostException("Invalid status code while getting: $apAddress : $statusCode");
             }
         } catch (\Exception $e) {
             $this->logRequestException($response, $apAddress, 'ApHttpClient:getCollectionObject', $e);
@@ -337,13 +339,21 @@ class ApHttpClient
             }
         }
 
-        $this->logger->error('{type} get fail: {address}, ex: {e}: {msg} - {content}', [
+        // Often 400, 404 errors just return the full HTML page, so we don't want to log the full content of them
+        // We truncate the content to 200 characters max.
+        $this->logger->error('{type} get fail: {address}, ex: {e}: {msg}. Truncated content: {content}', [
             'type' => $requestType,
             'address' => $requestUrl,
             'e' => \get_class($e),
             'msg' => $e->getMessage(),
-            'content' => $content ?? 'no content provided',
+            'content' => substr($content ?? 'No content provided', 0, 200),
         ]);
+        // And only log the full content in debug log mode
+        if ($content) {
+            $this->logger->debug('Full response body content: {content}', [
+                'content' => $content,
+            ]);
+        }
         throw $e;
     }
 
