@@ -31,7 +31,7 @@ class EntryDto implements ContentVisibilityInterface
     #[Assert\Length(max: Entry::MAX_BODY_LENGTH)]
     public ?string $body = null;
     public ?string $lang = null;
-    public string $type = Entry::ENTRY_TYPE_ARTICLE;
+    public string $type = Entry::ENTRY_TYPE_THREAD;
     public int $comments = 0;
     public int $uv = 0;
     public int $dv = 0;
@@ -145,7 +145,7 @@ class EntryDto implements ContentVisibilityInterface
         $type = Entry::ENTRY_TYPE_IMAGE;
 
         if ($this->body) {
-            $type = Entry::ENTRY_TYPE_ARTICLE;
+            $type = Entry::ENTRY_TYPE_THREAD;
         }
 
         return $type;

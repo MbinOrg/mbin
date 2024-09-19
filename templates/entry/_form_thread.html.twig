@@ -14,7 +14,7 @@
             'data-action' : 'input-length#updateDisplay',
             'data-input-length-max-value' : constant('App\\Entity\\Entry::MAX_TITLE_LENGTH')
             }}) }}
-    {{ component('editor_toolbar', {id: 'entry_article_body'}) }}
+    {{ component('editor_toolbar', {id: 'entry_thread_body'}) }}
     {{ form_row(form.body, {
         label: false, attr: {
             placeholder: 'body',
@@ -59,7 +59,7 @@
             {{ form_row(form.lang, {label: false}) }}
         </li>
         <li>
-            {{ form_row(form.submit, {label: edit ? 'edit_article' : 'add_new_article', attr: {class: 'btn btn__primary'}}) }}
+            {{ form_row(form.submit, {label: edit ? 'edit_thread' : 'add_new_thread', attr: {class: 'btn btn__primary'}}) }}
         </li>
     </ul>
 </div>

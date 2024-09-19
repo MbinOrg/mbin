@@ -79,7 +79,7 @@ parameters:
     front_sort_options: top|hot|active|newest|oldest|commented # TODO remove fallback after tag rework
     default_sort_options: top|hot|active|newest|oldest|commented
     default_time_options: 3h|6h|12h|1d|1w|1m|1y|all|∞
-    default_type_options: article|articles|link|links|video|videos|photo|photos|image|images|all
+    default_type_options: article|articles|thread|threads|link|links|video|videos|photo|photos|image|images|all
     default_subscription_options: sub|fav|mod|all|home
     default_federation_options: local|all
     default_content_options: threads|microblog

@@ -52,9 +52,9 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ path('magazine_entry_create', {name: magazine.name, type: 'article'}) }}"
-                               class="{{ html_classes({'active': is_route_name('magazine_entry_create') and route_has_param('type', 'article')}) }}">
-                                {{ 'add_new_article'|trans }}
+                            <a href="{{ path('magazine_entry_create', {name: magazine.name, type: 'thread'}) }}"
+                               class="{{ html_classes({'active': is_route_name('magazine_entry_create') and route_has_param('type', 'thread')}) }}">
+                                {{ 'add_new_thread'|trans }}
                             </a>
                         </li>
                         <li>
@@ -76,9 +76,9 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ path('entry_create', {type: 'article'}) }}"
-                               class="{{ html_classes({'active': is_route_name('entry_create') and route_has_param('type', 'article')}) }}">
-                                {{ 'add_new_article'|trans }}
+                            <a href="{{ path('entry_create', {type: 'thread'}) }}"
+                               class="{{ html_classes({'active': is_route_name('entry_create') and route_has_param('type', 'thread')}) }}">
+                                {{ 'add_new_thread'|trans }}
                             </a>
                         </li>
                         <li>

@@ -15,7 +15,7 @@
     {% elseif entry.cross %}
         {{ component('entry_cross', {entry: entry}) }}
     {% else %}
-        <article{{ attributes.defaults({
+        <thread{{ attributes.defaults({
             class: html_classes('entry section subject', {
                 'no-image': SHOW_THUMBNAILS is same as V_FALSE,
                 'own': app.user and entry.isAuthor(app.user),
@@ -113,7 +113,7 @@
                 {% if entry.image %}
                     {% if entry.type is same as 'link' or entry.type is same as 'video' %}
                         {{ include('components/_figure_entry.html.twig', {entry: entry, type: 'link'}) }}
-                    {% elseif entry.type is same as 'image' or entry.type is same as 'article' %}
+                    {% elseif entry.type is same as 'image' or entry.type is same as 'article' or entry.type is same as 'thread' %}
                         {{ include('components/_figure_entry.html.twig', {entry: entry, type: 'image'}) }}
                     {% endif %}
                 {% else %}
@@ -141,9 +141,9 @@
                                 </span>
                             </li>
                         {% endif %}
-                        {% if entry.type is same as 'article' %}
+                        {% if entry.type is same as 'article' or entry.type is same as 'thread' %}
                             <li class="meta-link">
-                                <span aria-label="{{ 'article'|trans }}">
+                                <span aria-label="{{ 'thread'|trans }}">
                                     <i class="fa-regular fa-newspaper" aria-hidden="true"></i>
                                 </span>
                             </li>
@@ -206,6 +206,6 @@
                 <div data-subject-target="container" class="js-container">
                 </div>
             </footer>
-        </article>
+        </thread>
     {% endif %}
 {% endif %}

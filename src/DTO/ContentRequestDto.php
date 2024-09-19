@@ -12,7 +12,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class ContentRequestDto extends ImageUploadDto
 {
     #[Groups([
-        Entry::ENTRY_TYPE_ARTICLE,
+        Entry::ENTRY_TYPE_THREAD,
         Entry::ENTRY_TYPE_LINK,
         'post',
         'comment',

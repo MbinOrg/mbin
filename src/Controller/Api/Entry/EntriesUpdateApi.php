@@ -65,7 +65,7 @@ class EntriesUpdateApi extends EntriesBaseApi
         type: EntryRequestDto::class,
         groups: [
             'common',
-            Entry::ENTRY_TYPE_ARTICLE,
+            Entry::ENTRY_TYPE_THREAD,
         ]
     ))]
     #[OA\Tag(name: 'entry')]
@@ -84,7 +84,7 @@ class EntriesUpdateApi extends EntriesBaseApi
         $dto = $this->deserializeEntry($manager->createDto($entry), context: [
             'groups' => [
                 'common',
-                Entry::ENTRY_TYPE_ARTICLE,
+                Entry::ENTRY_TYPE_THREAD,
             ],
         ]);
 

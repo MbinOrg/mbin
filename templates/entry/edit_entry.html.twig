@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
 {%- block title -%}
-    {{- 'edit_article'|trans }} - {{ parent() -}}
+    {{- 'edit_thread'|trans }} - {{ parent() -}}
 {%- endblock -%}
 
-{% block mainClass %}page-entry-create page-entry-edit-article{% endblock %}
+{% block mainClass %}page-entry-create page-entry-edit-thread{% endblock %}
 
 {% block header_nav %}
 {% endblock %}
@@ -19,7 +19,7 @@
     }) }}
 
     <header>
-        <h1 hidden>{{ 'edit_entry'|trans }}</h1>
+        <h1 hidden>{{ 'edit_thread'|trans }}</h1>
     </header>
     {% include 'layout/_flash.html.twig' %}
     <div id="content" class="section">

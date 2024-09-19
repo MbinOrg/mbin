@@ -56,12 +56,12 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
 
-    public const ENTRY_TYPE_ARTICLE = 'article';
+    public const ENTRY_TYPE_THREAD = 'thread';
     public const ENTRY_TYPE_LINK = 'link';
     public const ENTRY_TYPE_IMAGE = 'image';
     public const ENTRY_TYPE_VIDEO = 'video';
     public const ENTRY_TYPE_OPTIONS = [
-        self::ENTRY_TYPE_ARTICLE,
+        self::ENTRY_TYPE_THREAD,
         self::ENTRY_TYPE_LINK,
         self::ENTRY_TYPE_IMAGE,
         self::ENTRY_TYPE_VIDEO,
@@ -90,7 +90,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     #[Column(type: 'text', length: self::MAX_BODY_LENGTH, nullable: true)]
     public ?string $body = null;
     #[Column(type: 'string', nullable: false)]
-    public string $type = self::ENTRY_TYPE_ARTICLE;
+    public string $type = self::ENTRY_TYPE_THREAD;
     #[Column(type: 'string', nullable: false)]
     public string $lang = 'en';
     #[Column(type: 'boolean', options: ['default' => false])]

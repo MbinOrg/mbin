@@ -11,9 +11,9 @@
                 </a>
             </li>
             <li>
-                <a href="{{ path('magazine_entry_create', {name: magazine.name, type: 'article'}) }}"
-                   class="{{ html_classes({'active': route_has_param('type', 'article')}) }}">
-                    {{ 'type.article'|trans }}
+                <a href="{{ path('magazine_entry_create', {name: magazine.name, type: 'thread'}) }}"
+                   class="{{ html_classes({'active': route_has_param('type', 'thread')}) }}">
+                    {{ 'type.thread'|trans }}
                 </a>
             </li>  
             <li>
@@ -36,9 +36,9 @@
                 </a>
             </li>
             <li>
-                <a href="{{ path('entry_create', {type: 'article'}) }}"
-                   class="{{ html_classes({'active': route_has_param('type', 'article')}) }}">
-                    {{ 'type.article'|trans }}
+                <a href="{{ path('entry_create', {type: 'thread'}) }}"
+                   class="{{ html_classes({'active': route_has_param('type', 'thread')}) }}">
+                    {{ 'type.thread'|trans }}
                 </a>
             </li>    
             <li>
