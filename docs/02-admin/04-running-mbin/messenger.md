@@ -20,3 +20,11 @@ We have a few different queues:
 9. `dead` [PostgreSQL]: dead jobs that will not be retried
 
 We need the `dead` queue so that messages that throw a `UnrecoverableMessageHandlingException`, which is used to indicate that a message should not be retried and go straight to the supplied failure queue
+
+## Remove failed messages
+
+We created a simple command to clean-up all the failed messages from the database at once:
+
+```bash
+./bin/console mbin:messenger:failed:remove_all
+```
