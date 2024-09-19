@@ -408,7 +408,6 @@ class ApHttpClient
         $item->set(true);
         $item->expiresAt(new \DateTime('+45 minutes'));
         $this->cache->save($item);
-
     }
 
     public function fetchInstanceNodeInfoEndpoints(string $domain, bool $decoded = true): array|string|null
