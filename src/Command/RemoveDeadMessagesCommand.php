@@ -12,10 +12,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'mbin:messenger:failed:remove_all',
-    description: 'This command removes all failed messages from the failed queue (database).',
+    name: 'mbin:messenger:dead:remove_all',
+    description: 'This command removes all dead messages from the dead queue (database).',
 )]
-class RemoveFailedMessagesCommand extends Command
+class RemoveDeadMessagesCommand extends Command
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -31,19 +31,19 @@ class RemoveFailedMessagesCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $this->removeFailedMessages();
+        $this->removeDeadMessages();
 
         return Command::SUCCESS;
     }
 
     /**
-     * Remove all failed messages from database.
+     * Remove all dead messages from database.
      */
-    private function removeFailedMessages()
+    private function removeDeadMessages()
     {
         $this->entityManager->getConnection()->executeQuery(
             'DELETE FROM messenger_messages WHERE queue_name = ?',
-            ['failed']
+            ['dead']
         );
 
         // Followed by vacuuming the messenger_messages table.
