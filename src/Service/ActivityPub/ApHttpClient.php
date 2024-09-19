@@ -101,8 +101,8 @@ class ApHttpClient
             $statusCode = $r->getStatusCode();
             // Accepted status code are 2xx or 410 (used Tombstone types)
             if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
-                // Do NOT include the content in the error message, this will be often a full HTML page
-                throw new InvalidApPostException("Invalid status code while getting: $url : $statusCode");
+                // Do NOT include the response content in the error message, this will be often a full HTML page
+                throw new InvalidApPostException("Invalid status code while getting: $url, status code: $statusCode");
             }
 
             // Read also non-OK responses (like 410) by passing 'false'
@@ -317,8 +317,8 @@ class ApHttpClient
             $statusCode = $response->getStatusCode();
             // Accepted status code are 2xx or 410 (used Tombstone types)
             if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
-                // Do NOT include the content in the error message, this will be often a full HTML page
-                throw new InvalidApPostException("Invalid status code while getting: $apAddress : $statusCode");
+                // Do NOT include the response content in the error message, this will be often a full HTML page
+                throw new InvalidApPostException("Invalid status code while getting: $apAddress, status code: $statusCode");
             }
         } catch (\Exception $e) {
             $this->logRequestException($response, $apAddress, 'ApHttpClient:getCollectionObject', $e);
@@ -379,27 +379,35 @@ class ApHttpClient
             return;
         }
 
+        $jsonBody = json_encode($body ?? []);
+
         $this->logger->debug("ApHttpClient:post:url: $url");
-        $this->logger->debug('ApHttpClient:post:body '.json_encode($body ?? []));
+        $this->logger->debug("ApHttpClient:post:body $jsonBody");
 
         // Set-up request
-        $client = new CurlHttpClient();
-        $response = $client->request('POST', $url, [
-            'max_duration' => self::MAX_DURATION,
-            'timeout' => self::TIMEOUT,
-            'body' => json_encode($body),
-            'headers' => $this->getHeaders($url, $actor, $body),
-        ]);
+        try {
+            $client = new CurlHttpClient();
+            $response = $client->request('POST', $url, [
+                'max_duration' => self::MAX_DURATION,
+                'timeout' => self::TIMEOUT,
+                'body' => $jsonBody,
+                'headers' => $this->getHeaders($url, $actor, $body),
+            ]);
 
-        if (!str_starts_with((string) $response->getStatusCode(), '2')) {
-            throw new InvalidApPostException("Post fail: $url, ".substr($response->getContent(false), 0, 1000).' '.json_encode($body));
+            $statusCode = $response->getStatusCode();
+            if (!str_starts_with((string) $statusCode, '2')) {
+                // Do NOT include the response content in the error message, this will be often a full HTML page
+                throw new InvalidApPostException("Post failed: $url, status code: $statusCode, request body: $jsonBody");
+            }
+
+            // build cache
+            $item = $this->cache->getItem($cacheKey);
+            $item->set(true);
+            $item->expiresAt(new \DateTime('+45 minutes'));
+            $this->cache->save($item);
+        } catch (\Exception $e) {
+            $this->logRequestException($response, $url, 'ApHttpClient:post', $e);
         }
-
-        // build cache
-        $item = $this->cache->getItem($cacheKey);
-        $item->set(true);
-        $item->expiresAt(new \DateTime('+45 minutes'));
-        $this->cache->save($item);
     }
 
     public function fetchInstanceNodeInfoEndpoints(string $domain, bool $decoded = true): array|string|null
