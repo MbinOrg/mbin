@@ -89,16 +89,16 @@ class ApHttpClient
     private function getActivityObjectImpl(string $url): ?string
     {
         $this->logger->debug("ApHttpClient:getActivityObject:url: $url");
-
+        $content = null;
         try {
             $client = new CurlHttpClient();
-            $r = $client->request('GET', $url, [
+            $response = $client->request('GET', $url, [
                 'max_duration' => self::MAX_DURATION,
                 'timeout' => self::TIMEOUT,
                 'headers' => $this->getInstanceHeaders($url),
             ]);
 
-            $statusCode = $r->getStatusCode();
+            $statusCode = $response->getStatusCode();
             // Accepted status code are 2xx or 410 (used Tombstone types)
             if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
                 // Do NOT include the response content in the error message, this will be often a full HTML page
@@ -106,10 +106,10 @@ class ApHttpClient
             }
 
             // Read also non-OK responses (like 410) by passing 'false'
-            $content = $r->getContent(false);
+            $content = $response->getContent(false);
             $this->logger->debug('ApHttpClient:getActivityObject:url: {url} - content: {content}', ['url' => $url, 'content' => $content]);
         } catch (\Exception $e) {
-            $this->logRequestException($r, $url, 'ApHttpClient:getActivityObject', $e);
+            $this->logRequestException($response, $url, 'ApHttpClient:getActivityObject', $e);
         }
 
         return $content;
@@ -171,19 +171,19 @@ class ApHttpClient
     private function getWebfingerObjectImpl(string $url): ?string
     {
         $this->logger->debug("ApHttpClient:getWebfingerObject:url: $url");
-        $r = null;
+        $response = null;
         try {
             $client = new CurlHttpClient();
-            $r = $client->request('GET', $url, [
+            $response = $client->request('GET', $url, [
                 'max_duration' => self::MAX_DURATION,
                 'timeout' => self::TIMEOUT,
                 'headers' => $this->getInstanceHeaders($url, null, 'get', ApRequestType::WebFinger),
             ]);
         } catch (\Exception $e) {
-            $this->logRequestException($r, $url, 'ApHttpClient:getWebfingerObject', $e);
+            $this->logRequestException($response, $url, 'ApHttpClient:getWebfingerObject', $e);
         }
 
-        return $r->getContent();
+        return $response->getContent();
     }
 
     private function getActorCacheKey(string $apProfileId): string
@@ -354,7 +354,7 @@ class ApHttpClient
                 'content' => $content,
             ]);
         }
-        throw $e;
+        throw $e; // re-throw the exception
     }
 
     /**
