@@ -5,6 +5,13 @@ api_magazine_entry_create_thread:
   methods: [ POST ]
   format: json
 
+# Create thread entry, same as above, for for backwards compatibility, also points to thread method 
+api_magazine_entry_create_article:
+  controller: App\Controller\Api\Entry\MagazineEntryCreateApi::thread
+  path: /api/magazine/{magazine_id}/article
+  methods: [ POST ]
+  format: json
+
 # Create a link entry in a magazine
 api_magazine_entry_create_link:
   controller: App\Controller\Api\Entry\MagazineEntryCreateApi::link
