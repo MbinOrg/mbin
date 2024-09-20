@@ -1,5 +1,5 @@
 # Create a thread entry in a magazine
-api_magazine_entry_create_athread:
+api_magazine_entry_create_thread:
   controller: App\Controller\Api\Entry\MagazineEntryCreateApi::thread
   path: /api/magazine/{magazine_id}/thread
   methods: [ POST ]
