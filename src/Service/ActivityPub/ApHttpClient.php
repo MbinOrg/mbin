@@ -374,7 +374,7 @@ class ApHttpClient
      * @param User|Magazine $actor The actor initiating the request, either a User or Magazine object
      * @param array|null    $body  (Optional) The body of the POST request. Defaults to null.
      *
-     * @throws InvalidApPostException if the POST request fails with a non-2xx response status code
+     * @throws InvalidApPostException rethrows the error
      */
     public function post(string $url, User|Magazine $actor, ?array $body = null): void
     {
