@@ -22,7 +22,8 @@ class DomainSubController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function subscribe(Domain $domain, Request $request): Response
     {
-        $this->validateCsrf('subscribe', $request->getPayload()->get('token'));
+        // CSRF is causing a lot of issues, so we disable it for now. See PR: https://github.com/MbinOrg/mbin/pull/1136
+        // $this->validateCsrf('subscribe', $request->getPayload()->get('token'));
 
         $this->manager->subscribe($domain, $this->getUserOrThrow());
 
@@ -36,7 +37,8 @@ class DomainSubController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function unsubscribe(Domain $domain, Request $request): Response
     {
-        $this->validateCsrf('subscribe', $request->getPayload()->get('token'));
+        // CSRF is causing a lot of issues, so we disable it for now. See PR: https://github.com/MbinOrg/mbin/pull/1136
+        // $this->validateCsrf('subscribe', $request->getPayload()->get('token'));
 
         $this->manager->unsubscribe($domain, $this->getUserOrThrow());
 
