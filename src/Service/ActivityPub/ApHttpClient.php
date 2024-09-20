@@ -328,6 +328,16 @@ class ApHttpClient
         return $response->getContent();
     }
 
+    /**
+     * Helper function for logging get/post/.. requests to the error log with additional info.
+     *
+     * @param ResponseInterface|null $response    Optional response object
+     * @param string                 $requestUrl  Full URL of the request
+     * @param string                 $requestType an additional string where the error happened in the code
+     * @param \Exception             $e           Error object
+     *
+     * @throws InvalidArgumentException
+     */
     private function logRequestException(?ResponseInterface $response, string $requestUrl, string $requestType, \Exception $e): void
     {
         if (null !== $response) {
@@ -341,7 +351,7 @@ class ApHttpClient
 
         // Often 400, 404 errors just return the full HTML page, so we don't want to log the full content of them
         // We truncate the content to 200 characters max.
-        $this->logger->error('{type} get fail: {address}, ex: {e}: {msg}. Truncated content: {content}', [
+        $this->logger->error('{type} failed: {address}, ex: {e}: {msg}. Truncated content: {content}', [
             'type' => $requestType,
             'address' => $requestUrl,
             'e' => \get_class($e),
