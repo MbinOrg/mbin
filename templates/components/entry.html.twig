@@ -15,7 +15,7 @@
     {% elseif entry.cross %}
         {{ component('entry_cross', {entry: entry}) }}
     {% else %}
-        <thread{{ attributes.defaults({
+        <article{{ attributes.defaults({
             class: html_classes('entry section subject', {
                 'no-image': SHOW_THUMBNAILS is same as V_FALSE,
                 'own': app.user and entry.isAuthor(app.user),
@@ -206,6 +206,6 @@
                 <div data-subject-target="container" class="js-container">
                 </div>
             </footer>
-        </thread>
+        </article>
     {% endif %}
 {% endif %}
