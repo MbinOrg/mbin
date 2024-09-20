@@ -28,7 +28,8 @@ class PostDeleteController extends AbstractController
         Post $post,
         Request $request
     ): Response {
-        $this->validateCsrf('post_delete', $request->getPayload()->get('token'));
+        // CSRF is causing a lot of issues, so we disable it for now. See PR: https://github.com/MbinOrg/mbin/pull/1136
+        // $this->validateCsrf('post_delete', $request->getPayload()->get('token'));
 
         $this->manager->delete($this->getUserOrThrow(), $post);
 
@@ -44,7 +45,8 @@ class PostDeleteController extends AbstractController
         Post $post,
         Request $request
     ): Response {
-        $this->validateCsrf('post_restore', $request->getPayload()->get('token'));
+        // CSRF is causing a lot of issues, so we disable it for now. See PR: https://github.com/MbinOrg/mbin/pull/1136
+        // $this->validateCsrf('post_restore', $request->getPayload()->get('token'));
 
         $this->manager->restore($this->getUserOrThrow(), $post);
 
@@ -60,7 +62,7 @@ class PostDeleteController extends AbstractController
         Post $post,
         Request $request
     ): Response {
-        // CSRF is causing a lot of issues, so we disable it for now.
+        // CSRF is causing a lot of issues, so we disable it for now. See PR: https://github.com/MbinOrg/mbin/pull/1136
         // $this->validateCsrf('post_purge', $request->getPayload()->get('token'));
 
         $this->manager->purge($this->getUserOrThrow(), $post);

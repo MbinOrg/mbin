@@ -17,7 +17,7 @@ class UserBlockController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function block(User $blocked, UserManager $manager, Request $request): Response
     {
-        // CSRF is causing a lot of issues, so we disable it for now.
+        // CSRF is causing a lot of issues, so we disable it for now. See PR: https://github.com/MbinOrg/mbin/pull/1136
         // $this->validateCsrf('block', $request->getPayload()->get('token'));
 
         $manager->block($this->getUserOrThrow(), $blocked);
@@ -32,7 +32,7 @@ class UserBlockController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function unblock(User $blocked, UserManager $manager, Request $request): Response
     {
-        // CSRF is causing a lot of issues, so we disable it for now.
+        // CSRF is causing a lot of issues, so we disable it for now. See PR: https://github.com/MbinOrg/mbin/pull/1136
         // $this->validateCsrf('block', $request->getPayload()->get('token'));
 
         $manager->unblock($this->getUserOrThrow(), $blocked);

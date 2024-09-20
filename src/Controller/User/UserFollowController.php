@@ -18,7 +18,7 @@ class UserFollowController extends AbstractController
     #[IsGranted('follow', subject: 'following')]
     public function follow(User $following, UserManager $manager, Request $request): Response
     {
-        // CSRF is causing a lot of issues, so we disable it for now.
+        // CSRF is causing a lot of issues, so we disable it for now. See PR: https://github.com/MbinOrg/mbin/pull/1136
         // $this->validateCsrf('follow', $request->getPayload()->get('token'));
 
         $manager->follow($this->getUserOrThrow(), $following);
@@ -34,7 +34,7 @@ class UserFollowController extends AbstractController
     #[IsGranted('follow', subject: 'following')]
     public function unfollow(User $following, UserManager $manager, Request $request): Response
     {
-        // CSRF is causing a lot of issues, so we disable it for now.
+        // CSRF is causing a lot of issues, so we disable it for now. See PR: https://github.com/MbinOrg/mbin/pull/1136
         // $this->validateCsrf('follow', $request->getPayload()->get('token'));
 
         $manager->unfollow($this->getUserOrThrow(), $following);
