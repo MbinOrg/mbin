@@ -329,7 +329,7 @@ class ApHttpClient
     }
 
     /**
-     * Helper function for logging get/post/.. requests to the error log with additional info.
+     * Helper function for logging get/post/.. requests to the error & debug log with additional info.
      *
      * @param ResponseInterface|null $response    Optional response object
      * @param string                 $requestUrl  Full URL of the request
