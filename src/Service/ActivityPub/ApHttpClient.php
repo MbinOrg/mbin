@@ -336,7 +336,7 @@ class ApHttpClient
      * @param string                 $requestType an additional string where the error happened in the code
      * @param \Exception             $e           Error object
      *
-     * @throws InvalidArgumentException
+     * @throws InvalidApPostException rethrows the error
      */
     private function logRequestException(?ResponseInterface $response, string $requestUrl, string $requestType, \Exception $e): void
     {
@@ -374,7 +374,7 @@ class ApHttpClient
      * @param User|Magazine $actor The actor initiating the request, either a User or Magazine object
      * @param array|null    $body  (Optional) The body of the POST request. Defaults to null.
      *
-     * @throws InvalidApPostException rethrows the error
+     * @throws InvalidApPostException if the POST request fails with a non-2xx response status code
      */
     public function post(string $url, User|Magazine $actor, ?array $body = null): void
     {
