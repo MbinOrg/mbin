@@ -28,3 +28,11 @@ We created a simple command to clean-up all the failed messages from the databas
 ```bash
 ./bin/console mbin:messenger:failed:remove_all
 ```
+
+And to remove the dead messages from the database at once:
+
+```bash
+./bin/console mbin:messenger:dead:remove_all
+```
+
+However, most messages stored in the database are most likely failed messages. So it is advised to regularly run the `./bin/console mbin:messenger:failed:remove_all` command to clean-up the database.
