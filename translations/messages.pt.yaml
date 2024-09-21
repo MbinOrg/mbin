@@ -362,7 +362,6 @@ marked_for_deletion_at: Marcado para ser excluído em %date%
 mark_as_adult: Marcar como NSFW
 ban_account: Banir conta
 header_logo: Logotipo do cabeçalho
-your_account_is_not_active: ''
 filter.fields.only_names: Somente nomes
 filter.fields.names_and_descriptions: Nomes e descrições
 unban_account: Desbanir conta
