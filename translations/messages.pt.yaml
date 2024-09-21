@@ -47,8 +47,8 @@ activity: Atividade
 cover: Capa
 related_posts: Postagens relacionadas
 random_posts: Postagens aleatórias
-federated_user_info: O perfil do servidor federado pode estar incompleto.
-go_to_original_instance: Navega mais na instância federada.
+federated_user_info: Esse perfil é de um servidor federado e pode estar incompleto.
+go_to_original_instance: Visualizar na instância remota
 empty: Vazio
 subscribe: Subscrever
 unsubscribe: Cancelar subscrição
@@ -336,3 +336,63 @@ set_magazines_bar: Barra de magazines
 set_magazines_bar_desc: adicione os nomes dos magazines após a virgula
 set_magazines_bar_empty_desc: se o espaço estiver vazio, magazines ativos serão mostrados
   na barra
+subscribe_for_updates: Inscreva-se para começar a receber atualizações.
+remove_media: Remover mídia
+unmark_as_adult: Desmarcar como NSFW
+flash_mark_as_adult_success: A publicação foi marcada com sucesso como NSFW.
+delete_account: Excluir conta
+menu: Menu
+flash_unmark_as_adult_success: A publicação foi desmarcada com sucesso como NSFW.
+unban_hashtag_btn: Desbanir Hashtag
+unban_hashtag_description: Ao "desbanir" uma hashtag, novas publicações com essa hashtag
+  poderão ser criadas. As publicações existentes com essa hashtag não serão mais ocultadas.
+dynamic_lists: Listas dinâmicas
+banned_instances: Instâncias banidas
+report_issue: Relatar problema
+disabled: Desativado
+hidden: Oculto
+enabled: Ativado
+default_theme: Tema padrão
+ban_hashtag_description: Ao banir uma hashtag, você impedirá a criação de publicações
+  com essa hashtag, além de ocultar as publicações existentes com essa hashtag.
+Your account is not active: Sua conta não está ativa.
+firstname: Nome
+reload_to_apply: Recarregar a página para aplicar as alterações
+marked_for_deletion_at: Marcado para ser excluído em %date%
+mark_as_adult: Marcar como NSFW
+ban_account: Banir conta
+header_logo: Logotipo do cabeçalho
+filter.fields.only_names: Somente nomes
+filter.fields.names_and_descriptions: Nomes e descrições
+unban_account: Desbanir conta
+sidebar: Barra lateral
+captcha_enabled: Captcha ativado
+browsing_one_thread: Você está navegando apenas em um tópico da discussão! Todos os
+  comentários estão disponíveis na página do post.
+return: Retornar
+filter.adult.hide: Ocultar NSFW
+filter.adult.show: Mostrar NSFW
+filter.adult.only: Somente NSFW
+your_account_has_been_banned: Sua conta foi banida
+send: Enviar
+sticky_navbar_help: A barra de navegação permanecerá na parte superior da página quando
+  você rolar para baixo.
+toolbar.italic: Itálico
+kbin_promo_title: Crie sua própria instância
+kbin_intro_title: Explorar o Fediverso
+infinite_scroll_help: Carregar automaticamente mais conteúdo quando chegar ao final
+  da página.
+subscribers_count: '{0}Inscritos|{1}Inscrito|]1,Inf[ Inscritos'
+followers_count: '{0}Seguidores|{1}Seguidor|]1,Inf[ Seguidores'
+marked_for_deletion: Marcado para ser excluído
+sort_by: Ordenar por
+filter_by_subscription: Filtrar por assinatura
+filter_by_federation: Filtrar por status da federação
+kbin_bot: Agente Mbin
+toolbar.bold: Negrito
+Your account has been banned: Sua conta foi banida.
+active_users: Pessoas ativas
+password_confirm_header: Confirme sua solicitação de alteração de senha.
+toolbar.strikethrough: Riscado
+Password is invalid: Senha inválida.
+toolbar.header: Cabeçalho
