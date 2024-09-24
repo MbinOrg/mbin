@@ -396,3 +396,80 @@ password_confirm_header: Confirme sua solicitação de alteração de senha.
 toolbar.strikethrough: Riscado
 Password is invalid: Senha inválida.
 toolbar.header: Cabeçalho
+oauth2.grant.domain.all: Assine ou bloqueie domínios e visualize os domínios que você
+  assinou ou bloqueou.
+downvotes_mode: Modo de votos negativos
+change_downvotes_mode: Alterar o modo de votos negativos
+errors.server500.description: Desculpe, algo deu errado aqui do nosso lado. Se você
+  continuar a ver esse erro, tente entrar em contato com o proprietário da instância.
+  Se essa instância não estiver funcionando, verifique %link_start%outras instâncias
+  do Mbin%link_end% enquanto isso, até que o problema seja resolvido.
+errors.server404.title: 404 Não encontrado
+errors.server403.title: 403 Proibido
+email.delete.title: Pedido de exclusão da conta do usuário
+block: Bloquear
+always_disconnected_magazine_info: Esta revista não está recebendo atualizações.
+from: de
+resend_account_activation_email_success: Se houver uma conta associada a esse e-mail,
+  enviaremos um novo e-mail de ativação.
+resend_account_activation_email_description: Digite o endereço de e-mail associado
+  à sua conta. Nós te enviaremos outro e-mail de ativação.
+custom_css: CSS Personalizado
+ignore_magazines_custom_css: Ignorar o CSS personalizado das revistas
+oauth.consent.title: Formulário de Consentimento OAuth2
+oauth.consent.app_requesting_permissions: gostaria de realizar as seguintes ações
+  em seu nome
+oauth.consent.to_allow_access: Para permitir esse acesso, clique no botão 'Permitir'
+  abaixo
+oauth.consent.allow: Permitir
+oauth.client_identifier.invalid: ID de cliente OAuth inválido!
+oauth2.grant.moderate.magazine.ban.delete: Desbanir usuários em suas revistas moderadas.
+unblock: Desbloquear
+private_instance: Forçar os usuários a fazer login antes de poderem acessar qualquer
+  conteúdo
+oauth2.grant.moderate.magazine.list: Leia uma lista de suas revistas moderadas.
+oauth2.grant.moderate.magazine.reports.all: Gerencie denúncias nas suas revistas moderadas.
+oauth2.grant.moderate.magazine_admin.all: Crie, edite ou exclua suas próprias revistas.
+oauth2.grant.moderate.magazine.reports.read: Leia denúncias nas suas revistas moderadas.
+oauth2.grant.moderate.magazine.trash.read: Veja o conteúdo descartado em suas revistas
+  moderadas.
+oauth2.grant.moderate.magazine_admin.create: Crie novas revistas.
+oauth2.grant.moderate.magazine_admin.edit_theme: Edite o CSS personalizado de qualquer
+  uma de suas revistas.
+oauth2.grant.subscribe.general: Assine ou siga qualquer revista, domínio ou usuário
+  e veja as revistas, domínios e usuários nos quais você se inscreveu.
+oauth2.grant.moderate.magazine_admin.update: Edite as regras, a descrição, o status
+  NSFW ou o ícone de qualquer uma das suas revistas.
+oauth2.grant.domain.block: Bloqueie ou desbloqueie domínios e visualize os domínios
+  que você bloqueou.
+email.delete.description: O usuário seguinte solicitou que sua conta fosse excluída
+resend_account_activation_email: Reenviar o e-mail de ativação da conta
+errors.server429.title: 429 Solicitações em excesso
+email_confirm_button_text: Confirme sua solicitação de alteração de senha
+email_confirm_link_help: Como alternativa, você pode copiar e colar o seguinte em
+  seu navegador
+oauth.consent.app_has_permissions: já pode executar as seguintes ações
+oauth.client_not_granted_message_read_permission: Este aplicativo não recebeu permissão
+  para ler suas mensagens.
+restrict_oauth_clients: Restringir a criação de clientes OAuth2 aos administradores
+oauth2.grant.moderate.magazine.reports.action: Aceite ou rejeite denúncias em suas
+  revistas moderadas.
+oauth2.grant.admin.all: Execute ações administrativas em sua instância.
+oauth2.grant.read.general: Leia todo o conteúdo ao qual você tem acesso.
+resend_account_activation_email_error: Houve um problema ao enviar esta solicitação.
+  Talvez não tenha uma conta associada a esse e-mail ou talvez ele já esteja ativado.
+oauth2.grant.domain.subscribe: Assine ou cancele a assinatura de domínios e visualize
+  os domínios a que você se inscreveu.
+oauth2.grant.moderate.magazine_admin.delete: Exclua qualquer uma de suas revistas.
+oauth2.grant.block.general: Bloqueie ou desbloqueie qualquer revista, domínio ou usuário
+  e visualize as revistas, os domínios e os usuários que você bloqueou.
+comment_not_found: Comentário não encontrado
+oauth.consent.deny: Recusar
+oauth2.grant.moderate.magazine_admin.moderators: Adicionar ou remover moderadores
+  de qualquer uma de suas revistas.
+oauth2.grant.moderate.magazine_admin.badges: Crie ou remova selos de suas revistas
+  próprias.
+disconnected_magazine_info: Esta revista não está recebendo atualizações (última atividade
+  %dias% dia(s) atrás).
+resend_account_activation_email_question: Conta inativa?
+oauth.consent.grant_permissions: Conceder permissões
