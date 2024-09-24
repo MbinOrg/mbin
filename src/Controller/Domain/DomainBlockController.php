@@ -22,9 +22,6 @@ class DomainBlockController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function block(Domain $domain, Request $request): Response
     {
-        // CSRF is causing a lot of issues, so we disable it for now. See PR: https://github.com/MbinOrg/mbin/pull/1136
-        // $this->validateCsrf('block', $request->getPayload()->get('token'));
-
         $this->manager->block($domain, $this->getUserOrThrow());
 
         if ($request->isXmlHttpRequest()) {
@@ -37,9 +34,6 @@ class DomainBlockController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function unblock(Domain $domain, Request $request): Response
     {
-        // CSRF is causing a lot of issues, so we disable it for now. See PR: https://github.com/MbinOrg/mbin/pull/1136
-        // $this->validateCsrf('block', $request->getPayload()->get('token'));
-
         $this->manager->unblock($domain, $this->getUserOrThrow());
 
         if ($request->isXmlHttpRequest()) {

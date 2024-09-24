@@ -29,9 +29,6 @@ class UserNotificationController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function read(NotificationManager $manager, Request $request): Response
     {
-        // CSRF is causing a lot of issues, so we disable it for now. See PR: https://github.com/MbinOrg/mbin/pull/1136
-        // $this->validateCsrf('read_notifications', $request->getPayload()->get('token'));
-
         $manager->markAllAsRead($this->getUserOrThrow());
 
         return $this->redirectToRefererOrHome($request);
@@ -40,9 +37,6 @@ class UserNotificationController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function clear(NotificationManager $manager, Request $request): Response
     {
-        // CSRF is causing a lot of issues, so we disable it for now. See PR: https://github.com/MbinOrg/mbin/pull/1136
-        // $this->validateCsrf('clear_notifications', $request->getPayload()->get('token'));
-
         $manager->clear($this->getUserOrThrow());
 
         return $this->redirectToRefererOrHome($request);
