@@ -18,7 +18,7 @@ class UserBanController extends AbstractController
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
     public function ban(User $user, UserManager $manager, Request $request): Response
     {
-        $this->validateCsrf('user_ban', $request->request->get('token'));
+        $this->validateCsrf('user_ban', $request->getPayload()->get('token'));
 
         $manager->ban($user);
 
@@ -38,7 +38,7 @@ class UserBanController extends AbstractController
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
     public function unban(User $user, UserManager $manager, Request $request): Response
     {
-        $this->validateCsrf('user_ban', $request->request->get('token'));
+        $this->validateCsrf('user_ban', $request->getPayload()->get('token'));
 
         $manager->unban($user);
 

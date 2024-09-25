@@ -595,3 +595,29 @@ oauth2.grant.post_comment.delete: Διέγραψε τα υπάρχοντα σχ�
 oauth2.grant.post_comment.all: Δημιούργησε, επεξεργάσου ή διέγραψε τα σχόλιά σου σε
   αναρτήσεις και ψήφισε, ενίσχυσε ή να ανέφερε οποιοδήποτε σχόλιο σε με μια ανάρτηση.
 oauth2.grant.post_comment.create: Δημιούργησε νέα σχόλια σε αναρτήσεις.
+oauth2.grant.user.message.create: Στείλε μηνύματα σε άλλους χρήστες.
+oauth2.grant.user.notification.all: Διάβασε και καθάρισε τις ειδοποιήσεις σου.
+oauth2.grant.user.notification.read: Διάβασε τις ειδοποιήσεις σου, συμπεριλαμβανομένων
+  αυτών για μηνύματα.
+oauth2.grant.user.notification.delete: Καθάρισε τις ειδοποιήσεις σου.
+toolbar.spoiler: Σπόιλερ
+oauth2.grant.user.profile.all: Διάβασε και επεξεργάσου το προφίλ σου.
+oauth2.grant.user.message.all: Διάβασε τα μηνύματά σου και στείλε μηνύματα σε άλλους
+  χρήστες.
+oauth2.grant.user.profile.read: Διάβασε το προφίλ σου.
+oauth2.grant.post_comment.vote: Ψήφισε θετικά ή αρητικά, ενίσχυσε οποιοδήποτε σχόλιο
+  σε μια ανάρτηση.
+oauth2.grant.post_comment.report: Ανέφερε οποιοδήποτε σχόλιο σε μια ανάρτηση.
+oauth2.grant.user.profile.edit: Επεξεργάσου το προφίλ σου.
+oauth2.grant.user.message.read: Διάβασε τα μηνύματά σου.
+oauth2.grant.user.oauth_clients.all: Διάβασε και επεξεργάσου τα δικαιώματα που έχεις
+  χορηγήσει σε άλλες εφαρμογές OAuth2.
+oauth2.grant.user.oauth_clients.read: Διάβασε τα δικαιώματα που έχεις χορηγήσει σε
+  άλλες εφαρμογές OAuth2.
+oauth2.grant.user.all: Διάβασε και επεξεργάσου το προφίλ, τα μηνύματα ή τις ειδοποιήσεις
+  σου· διάβασε και επεξεργάσου δικαιώματα που έχεις δώσει σε άλλες εφαρμογές, ακολούθησε
+  ή μπλόκαρε άλλους χρήστες· δες λίστες των χρηστών που ακολουθείς ή έχεις αποκλείσει.
+oauth2.grant.user.oauth_clients.edit: Επεξεργάσου τα δικαιώματα που έχεις χορηγήσει
+  σε άλλες εφαρμογές OAuth2.
+oauth2.grant.user.follow: Ακολούθησε ή αφαίρεσε από ακόλουθο χρήστες και διάβασε μια
+  λίστα χρηστών που ακολουθείς.

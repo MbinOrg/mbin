@@ -30,7 +30,8 @@ class VoteController extends AbstractController
     #[IsGranted('vote', subject: 'votable')]
     public function __invoke(VotableInterface $votable, int $choice, Request $request): Response
     {
-        $this->validateCsrf('vote', $request->request->get('token'));
+        // CSRF is causing a lot of issues, so we disable it for now. See PR: https://github.com/MbinOrg/mbin/pull/1136
+        // $this->validateCsrf('down_vote', $request->getPayload()->get('token'));
         if (VotableInterface::VOTE_DOWN === $choice && DownvotesMode::Disabled === $this->settingsManager->getDownvotesMode()) {
             throw new BadRequestException('Downvotes are disabled!');
         }

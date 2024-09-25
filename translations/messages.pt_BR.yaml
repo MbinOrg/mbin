@@ -46,3 +46,249 @@ moderators: Moderadores
 mod_log: Registro de moderação
 add_comment: Adicionar comentário
 add_post: Adicionar postagem
+contact: Contato
+faq: Perguntas Freqüentes (FAQ)
+delete: Excluir
+comments_count: '{0}Comentários|{1}Comentário|]1,Inf[ Comentários'
+subscribers_count: '{0}Inscritos|{1}Inscrito|]1,Inf[ Inscritos'
+followers_count: '{0}Seguidores|{1}Seguidor|]1,Inf[ Seguidores'
+add_media: Adicionar mídia
+remove_media: Remover mídia
+markdown_howto: Como funciona o editor?
+enter_your_comment: Insira seu comentário
+activity: Atividade
+cover: Capa
+subscribe_for_updates: Inscreva-se para começar a receber atualizações.
+federated_user_info: Este perfil é de um servidor federado e pode estar incompleto.
+empty: Vazio
+go_to_original_instance: Ver na instância remota
+subscribe: Se inscrever
+follow: Seguir
+unfollow: Deixar de seguir
+unsubscribe: Cancelar inscrição
+remember_me: Lembrar de mim
+reply: Responder
+login_or_email: Login ou e-mail
+password: Senha
+dont_have_account: Não possui uma conta?
+you_cant_login: Esqueceu a sua senha?
+show_more: Mostrar mais
+to: para
+in: em
+already_have_account: Você já possui uma conta?
+reset_password: Redefinir a senha
+username: Nome do usuário
+email: E-mail
+repeat_password: Repetir a senha
+privacy_policy: Política de privacidade
+useful: Útil
+help: Ajuda
+check_email: Verifique o seu e-mail
+email_confirm_content: 'Pronto para ativar a sua conta Mbin? Clique no link abaixo:'
+email_verify: Confirmar endereço de e-mail
+email_confirm_expire: O link expirará em uma hora.
+email_confirm_title: Confirme seu endereço de e-mail.
+add_new: Adicionar novo(a)
+overview: Visão Geral
+new_email_repeat: Confirme novo e-mail
+current_password: Senha atual
+new_password: Nova senha
+new_password_repeat: Confirmar nova senha
+change_email: Alterar e-mail
+change_password: Alterar a senha
+expand: Expandir
+domains: Domínios
+flash_register_success: 'Bem-vindo a bordo! Sua conta já está registrada. Uma última
+  etapa: verifique sua caixa de entrada para receber um link de ativação que dará
+  vida à sua conta.'
+send: Enviar
+firstname: Nome
+unban_account: Desbanir conta
+banned_instances: Instâncias banidas
+kbin_intro_title: Explore o Fediverso
+kbin_promo_title: Crie sua própria instância
+return: Retornar
+reload_to_apply: Recarregar a página para aplicar alterações
+filter.origin.label: Escolha a origem
+filter.adult.hide: Ocultar NSFW
+filter.adult.show: Mostrar NSFW
+filter.adult.only: Somente NSFW
+password_confirm_header: Confirme seu pedido de alteração de senha.
+disabled: Desativado
+hidden: Oculto
+enabled: Ativado
+reset_check_email_desc2: Se você não receber um e-mail, verifique sua pasta de spam.
+url: URL
+title: Título
+reset_check_email_desc: Se já houver uma conta associada ao seu endereço de e-mail,
+  você deverá receber um e-mail em breve contendo um link que poderá ser usado para
+  redefinir sua senha. Esse link expirará em %expire%.
+body: Conteúdo
+rules: Regras
+domain: Domínio
+followers: Seguidores
+compact_view: Vista compacta
+chat_view: Vista do chat
+links: Links
+photos: Fotos
+1m: 1m
+general: Geral
+about: Sobre
+old_email: E-mail atual
+solarized_light: Luz Solarizada
+solarized_dark: Escuro Solarizado
+size: Tamanho
+type_search_term: Digite o termo de pesquisa
+auto_preview: Visualização automática de mídia
+dynamic_lists: Listas dinâmicas
+captcha_enabled: Captcha habilitado
+from: de
+about_instance: Sobre
+stats: Estatísticas
+fediverse: Fediverso
+add_new_link: Adicionar novo link
+add_new_photo: Adicionar nova foto
+add_new_video: Adicionar novo vídeo
+rss: RSS
+change_theme: Mudar tema
+try_again: Tente novamente
+down_vote: Reduzir
+is_adult: 18+ / NSFW
+email_confirm_header: Olá! Confirme seu endereço de e-mail.
+image_alt: Texto alternativo da imagem
+description: Descrição
+image: Imagem
+name: Nome
+following: Seguindo
+columns: Colunas
+user: Usuário
+people_federated: Federado
+go_to_content: Ir para o conteúdo
+logout: Sair
+classic_view: Vista clássica
+go_to_filters: Ir para os filtros
+subscribed: Inscrito
+all: Todos
+3h: 3h
+12h: 12h
+1d: 1d
+6h: 6h
+1w: 1s
+1y: 1a
+videos: Vídeos
+share: Compartilhar
+copy_url: Copiar URL Mbin
+copy_url_to_fediverse: Copiar URL original
+share_on_fediverse: Compartilhar no Fediverso
+edit: Editar
+are_you_sure: Tem certeza?
+moderate: Moderar
+reason: Razão
+menu: Menu
+profile: Perfil
+blocked: Bloqueado
+reports: Denúncias
+notifications: Notificações
+messages: Mensagens
+appearance: Aparência
+homepage: Página inicial
+hide_adult: Ocultar conteúdo NSFW
+privacy: Privacidade
+save: Salvar
+error: Erro
+new_email: Novo e-mail
+theme: Tema
+dark: Escuro
+light: Claro
+default_theme: Tema padrão
+solarized_auto: Solarizado (Detecção Automática)
+default_theme_auto: Claro/escuro (Detecção Automática)
+font_size: Tamanho da fonte
+show_users_avatars: Mostrar avatares dos usuários
+yes: Sim
+no: Não
+show_thumbnails: Mostrar miniaturas
+rounded_edges: Bordas arredondadas
+read_all: Ler tudo
+show_all: Mostrar tudo
+FAQ: Perguntas Frequentes (FAQ)
+restore: Restaurar
+settings: Configurações
+federation_enabled: Federação habilitada
+registration_disabled: Registro desativado
+registrations_enabled: Registro ativado
+Password is invalid: A senha é inválida.
+Your account is not active: Sua conta não está ativa.
+Your account has been banned: Sua conta foi banida.
+delete_account: Excluir conta
+purge_account: Purgar conta
+ban_account: Banir conta
+sidebar: Barra lateral
+sticky_navbar_help: A barra de navegação permanecerá na parte superior da página quando
+  você rolar para baixo.
+auto_preview_help: Expanda automaticamente as pré-visualizações de mídia.
+filter.adult.label: Escolha se você deseja exibir NSFW
+local_and_federated: Local e federado
+filter.fields.only_names: Apenas nomes
+header_logo: Logotipo do cabeçalho
+mercure_enabled: Mercure ativado
+report_issue: Relatar problema
+infinite_scroll_help: Carregar automaticamente mais conteúdo quando chegar ao final
+  da página.
+filter.fields.names_and_descriptions: Nomes e descrições
+kbin_bot: Agente Mbin
+up_votes: Boosts
+enter_your_post: Insira sua publicação
+related_posts: Publicações relacionadas
+random_posts: Publicações aleatórias
+federated_magazine_info: Esta revista é de um servidor federado e pode estar incompleta.
+disconnected_magazine_info: Esta revista não está recebendo atualizações (última atividade
+  %days% dia(s) atrás).
+always_disconnected_magazine_info: Esta revista não está recebendo atualizações.
+select_magazine: Selecione uma revista
+collapse: Mostrar menos
+flash_magazine_edit_success: A revista foi editada com sucesso.
+set_magazines_bar_empty_desc: se o campo estiver vazio, as revistas ativas serão exibidas
+  na barra.
+edited_comment: Editou um comentário
+added_new_comment: Adicionou um novo comentário
+edited_post: Editou uma publicação
+replied_to_your_comment: Respondeu ao seu comentário
+mod_remove_your_post: Um moderador removeu a sua publicação
+added_new_reply: Adicionou uma nova resposta
+change_downvotes_mode: Alterar o modo de votos negativos
+downvotes_mode: Modo de votos negativos
+notify_on_new_post_comment_reply: Respostas aos meus comentários em qualquer publicação
+notify_on_new_posts: Novas publicações de qualquer revista a que estou inscrito
+flash_unmark_as_adult_success: A publicação foi desmarcada como NSFW.
+too_many_requests: Limite ultrapassado, tente novamente mais tarde.
+set_magazines_bar: Barra de revistas
+mod_deleted_your_comment: Um moderador excluiu seu comentário
+added_new_post: Adicionou uma nova publicação
+wrote_message: Escreveu uma mensagem
+removed: Removido por mod
+deleted: Excluído pelo autor
+mentioned_you: Mencionou você
+all_magazines: Todas as revistas
+create_new_magazine: Criar nova revista
+add_new_post: Adicionar nova publicação
+up_vote: Impulsionar
+badges: Selos
+joined: Membro desde
+moderated: Moderado
+reputation_points: Pontos de reputação
+go_to_search: Ir para a busca
+table_view: Visualização da tabela
+tree_view: Visualização em árvore
+report: Denunciar
+edit_comment: Salvar alterações
+edit_post: Editar publicação
+show_profile_subscriptions: Mostrar assinaturas de revistas
+featured_magazines: Revistas em destaque
+votes: Votos
+boosts: Boosts
+show_magazines_icons: Mostrar ícones das revistas
+flash_magazine_new_success: A revista foi criada com sucesso. Você pode adicionar
+  novo conteúdo ou explorar o painel de administração da revista.
+flash_mark_as_adult_success: A publicação foi marcada como NSFW.
+post: Publicação
