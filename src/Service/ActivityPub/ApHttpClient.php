@@ -89,27 +89,27 @@ class ApHttpClient
     private function getActivityObjectImpl(string $url): ?string
     {
         $this->logger->debug("ApHttpClient:getActivityObject:url: $url");
-
-        $client = new CurlHttpClient();
+        $content = null;
         try {
-            $r = $client->request('GET', $url, [
+            $client = new CurlHttpClient();
+            $response = $client->request('GET', $url, [
                 'max_duration' => self::MAX_DURATION,
                 'timeout' => self::TIMEOUT,
                 'headers' => $this->getInstanceHeaders($url),
             ]);
 
-            $statusCode = $r->getStatusCode();
+            $statusCode = $response->getStatusCode();
             // Accepted status code are 2xx or 410 (used Tombstone types)
             if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
-                // Do NOT include the content in the error message, this will be often a full HTML page
-                throw new InvalidApPostException("Invalid status code while getting: $url : $statusCode");
+                // Do NOT include the response content in the error message, this will be often a full HTML page
+                throw new InvalidApPostException("Invalid status code while getting: $url, status code: $statusCode");
             }
 
             // Read also non-OK responses (like 410) by passing 'false'
-            $content = $r->getContent(false);
+            $content = $response->getContent(false);
             $this->logger->debug('ApHttpClient:getActivityObject:url: {url} - content: {content}', ['url' => $url, 'content' => $content]);
         } catch (\Exception $e) {
-            $this->logRequestException($r, $url, 'ApHttpClient:getActivityObject', $e);
+            $this->logRequestException($response, $url, 'ApHttpClient:getActivityObject', $e);
         }
 
         return $content;
@@ -171,19 +171,19 @@ class ApHttpClient
     private function getWebfingerObjectImpl(string $url): ?string
     {
         $this->logger->debug("ApHttpClient:getWebfingerObject:url: $url");
-        $r = null;
+        $response = null;
         try {
             $client = new CurlHttpClient();
-            $r = $client->request('GET', $url, [
+            $response = $client->request('GET', $url, [
                 'max_duration' => self::MAX_DURATION,
                 'timeout' => self::TIMEOUT,
                 'headers' => $this->getInstanceHeaders($url, null, 'get', ApRequestType::WebFinger),
             ]);
         } catch (\Exception $e) {
-            $this->logRequestException($r, $url, 'ApHttpClient:getWebfingerObject', $e);
+            $this->logRequestException($response, $url, 'ApHttpClient:getWebfingerObject', $e);
         }
 
-        return $r->getContent();
+        return $response->getContent();
     }
 
     private function getActorCacheKey(string $apProfileId): string
@@ -317,8 +317,8 @@ class ApHttpClient
             $statusCode = $response->getStatusCode();
             // Accepted status code are 2xx or 410 (used Tombstone types)
             if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
-                // Do NOT include the content in the error message, this will be often a full HTML page
-                throw new InvalidApPostException("Invalid status code while getting: $apAddress : $statusCode");
+                // Do NOT include the response content in the error message, this will be often a full HTML page
+                throw new InvalidApPostException("Invalid status code while getting: $apAddress, status code: $statusCode");
             }
         } catch (\Exception $e) {
             $this->logRequestException($response, $apAddress, 'ApHttpClient:getCollectionObject', $e);
@@ -328,6 +328,16 @@ class ApHttpClient
         return $response->getContent();
     }
 
+    /**
+     * Helper function for logging get/post/.. requests to the error & debug log with additional info.
+     *
+     * @param ResponseInterface|null $response    Optional response object
+     * @param string                 $requestUrl  Full URL of the request
+     * @param string                 $requestType an additional string where the error happened in the code
+     * @param \Exception             $e           Error object
+     *
+     * @throws InvalidApPostException rethrows the error
+     */
     private function logRequestException(?ResponseInterface $response, string $requestUrl, string $requestType, \Exception $e): void
     {
         if (null !== $response) {
@@ -341,7 +351,7 @@ class ApHttpClient
 
         // Often 400, 404 errors just return the full HTML page, so we don't want to log the full content of them
         // We truncate the content to 200 characters max.
-        $this->logger->error('{type} get fail: {address}, ex: {e}: {msg}. Truncated content: {content}', [
+        $this->logger->error('{type} failed: {address}, ex: {e}: {msg}. Truncated content: {content}', [
             'type' => $requestType,
             'address' => $requestUrl,
             'e' => \get_class($e),
@@ -354,7 +364,7 @@ class ApHttpClient
                 'content' => $content,
             ]);
         }
-        throw $e;
+        throw $e; // re-throw the exception
     }
 
     /**
@@ -379,20 +389,28 @@ class ApHttpClient
             return;
         }
 
+        $jsonBody = json_encode($body ?? []);
+
         $this->logger->debug("ApHttpClient:post:url: $url");
-        $this->logger->debug('ApHttpClient:post:body '.json_encode($body ?? []));
+        $this->logger->debug("ApHttpClient:post:body $jsonBody");
 
         // Set-up request
-        $client = new CurlHttpClient();
-        $response = $client->request('POST', $url, [
-            'max_duration' => self::MAX_DURATION,
-            'timeout' => self::TIMEOUT,
-            'body' => json_encode($body),
-            'headers' => $this->getHeaders($url, $actor, $body),
-        ]);
+        try {
+            $client = new CurlHttpClient();
+            $response = $client->request('POST', $url, [
+                'max_duration' => self::MAX_DURATION,
+                'timeout' => self::TIMEOUT,
+                'body' => $jsonBody,
+                'headers' => $this->getHeaders($url, $actor, $body),
+            ]);
 
-        if (!str_starts_with((string) $response->getStatusCode(), '2')) {
-            throw new InvalidApPostException("Post fail: $url, ".substr($response->getContent(false), 0, 1000).' '.json_encode($body));
+            $statusCode = $response->getStatusCode();
+            if (!str_starts_with((string) $statusCode, '2')) {
+                // Do NOT include the response content in the error message, this will be often a full HTML page
+                throw new InvalidApPostException("Post failed: $url, status code: $statusCode, request body: $jsonBody");
+            }
+        } catch (\Exception $e) {
+            $this->logRequestException($response, $url, 'ApHttpClient:post', $e);
         }
 
         // build cache
