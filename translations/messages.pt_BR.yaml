@@ -237,3 +237,58 @@ infinite_scroll_help: Carregar automaticamente mais conteúdo quando chegar ao f
   da página.
 filter.fields.names_and_descriptions: Nomes e descrições
 kbin_bot: Agente Mbin
+up_votes: Boosts
+enter_your_post: Insira sua publicação
+related_posts: Publicações relacionadas
+random_posts: Publicações aleatórias
+federated_magazine_info: Esta revista é de um servidor federado e pode estar incompleta.
+disconnected_magazine_info: Esta revista não está recebendo atualizações (última atividade
+  %days% dia(s) atrás).
+always_disconnected_magazine_info: Esta revista não está recebendo atualizações.
+select_magazine: Selecione uma revista
+collapse: Mostrar menos
+flash_magazine_edit_success: A revista foi editada com sucesso.
+set_magazines_bar_empty_desc: se o campo estiver vazio, as revistas ativas serão exibidas
+  na barra.
+edited_comment: Editou um comentário
+added_new_comment: Adicionou um novo comentário
+edited_post: Editou uma publicação
+replied_to_your_comment: Respondeu ao seu comentário
+mod_remove_your_post: Um moderador removeu a sua publicação
+added_new_reply: Adicionou uma nova resposta
+change_downvotes_mode: Alterar o modo de votos negativos
+downvotes_mode: Modo de votos negativos
+notify_on_new_post_comment_reply: Respostas aos meus comentários em qualquer publicação
+notify_on_new_posts: Novas publicações de qualquer revista a que estou inscrito
+flash_unmark_as_adult_success: A publicação foi desmarcada como NSFW.
+too_many_requests: Limite ultrapassado, tente novamente mais tarde.
+set_magazines_bar: Barra de revistas
+mod_deleted_your_comment: Um moderador excluiu seu comentário
+added_new_post: Adicionou uma nova publicação
+wrote_message: Escreveu uma mensagem
+removed: Removido por mod
+deleted: Excluído pelo autor
+mentioned_you: Mencionou você
+all_magazines: Todas as revistas
+create_new_magazine: Criar nova revista
+add_new_post: Adicionar nova publicação
+up_vote: Impulsionar
+badges: Selos
+joined: Membro desde
+moderated: Moderado
+reputation_points: Pontos de reputação
+go_to_search: Ir para a busca
+table_view: Visualização da tabela
+tree_view: Visualização em árvore
+report: Denunciar
+edit_comment: Salvar alterações
+edit_post: Editar publicação
+show_profile_subscriptions: Mostrar assinaturas de revistas
+featured_magazines: Revistas em destaque
+votes: Votos
+boosts: Boosts
+show_magazines_icons: Mostrar ícones das revistas
+flash_magazine_new_success: A revista foi criada com sucesso. Você pode adicionar
+  novo conteúdo ou explorar o painel de administração da revista.
+flash_mark_as_adult_success: A publicação foi marcada como NSFW.
+post: Publicação
