@@ -13,6 +13,13 @@ bookmark_lists:
     path: /bookmark-lists
     methods: [GET, POST]
 
+bookmark_lists_menu_refresh_status:
+    controller: App\Controller\BookmarkListController::subjectBookmarkMenuListRefresh
+    path: /blr/{subject_id}/{subject_type}
+    requirements:
+        subject_type: "%default_subject_type_options%"
+    methods: [ GET ]
+
 bookmark_lists_make_default:
     controller: App\Controller\BookmarkListController::makeDefault
     path: /bookmark-lists/makeDefault
@@ -31,6 +38,13 @@ bookmark_lists_delete_list:
 subject_bookmark_standard:
     controller: App\Controller\BookmarkController::subjectBookmarkStandard
     path: /bos/{subject_id}/{subject_type}
+    requirements:
+        subject_type: "%default_subject_type_options%"
+    methods: [ GET ]
+
+subject_bookmark_refresh_status:
+    controller: App\Controller\BookmarkController::subjectBookmarkRefresh
+    path: /bor/{subject_id}/{subject_type}
     requirements:
         subject_type: "%default_subject_type_options%"
     methods: [ GET ]

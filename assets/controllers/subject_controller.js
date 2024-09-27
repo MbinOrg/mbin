@@ -204,7 +204,7 @@ export default class extends Controller {
      * with the response from the link
      */
     async linkCallback(event) {
-        const cssClass = event.params.cssclass
+        const { cssclass: cssClass, refreshlink: refreshLink, refreshselector: refreshSelector } = event.params
         event.preventDefault();
 
         const a = event.target.closest('a');
@@ -220,6 +220,19 @@ export default class extends Controller {
             response = await response.json();
 
             event.target.closest(`.${cssClass}`).outerHTML = response.html;
+
+            const refreshElement = this.element.querySelector(refreshSelector)
+            console.log("linkCallback refresh stuff", refreshLink, refreshSelector, refreshElement)
+
+            if (!!refreshLink && refreshLink !== "" && !!refreshElement) {
+                let response = await fetch(refreshLink, {
+                    method: 'GET',
+                });
+
+                response = await ok(response);
+                response = await response.json();
+                refreshElement.outerHTML = response.html;
+            }
         } catch (e) {
         } finally {
             this.loadingValue = false;

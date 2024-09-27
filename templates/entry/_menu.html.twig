@@ -24,9 +24,7 @@
         {% set bookmarkLists = get_bookmark_lists(app.user) %}
         {% if bookmarkLists|length %}
             <li class="dropdown__separator"></li>
-            {% for list in bookmarkLists %}
-                {{ component('bookmark_list', { subject: entry, subjectType: 'entry', list: list }) }}
-            {% endfor %}
+            {{ component('bookmark_menu_list', { bookmarkLists: bookmarkLists, subject: entry }) }}
         {% endif %}
     {% endif %}
 

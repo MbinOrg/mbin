@@ -12,6 +12,7 @@ use App\Repository\BookmarkListRepository;
 use App\Repository\BookmarkRepository;
 use App\Repository\Criteria;
 use App\Service\BookmarkManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,6 +29,7 @@ class BookmarkListController extends AbstractController
         private readonly BookmarkRepository $bookmarkRepository,
         private readonly BookmarkManager $bookmarkManager,
         private readonly LoggerInterface $logger,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -104,6 +106,30 @@ class BookmarkListController extends AbstractController
         ],
             new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200)
         );
+    }
+
+    #[IsGranted('ROLE_USER')]
+    public function subjectBookmarkMenuListRefresh(int $subject_id, string $subject_type, Request $request): Response
+    {
+        $user = $this->getUserOrThrow();
+        $bookmarkLists = $this->bookmarkListRepository->findByUser($user);
+        $subjectClass = BookmarkManager::GetClassFromSubjectType($subject_type);
+        $subjectEntity = $this->entityManager->getRepository($subjectClass)->findOneBy(['id' => $subject_id]);
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse([
+                'html' => $this->renderView('components/_ajax.html.twig', [
+                    'component' => 'bookmark_menu_list',
+                    'attributes' => [
+                        'subject' => $subjectEntity,
+                        'subjectClass' => $subjectClass,
+                        'bookmarkLists' => $bookmarkLists,
+                    ],
+                ]
+                ),
+            ]);
+        }
+
+        return $this->redirect($request->headers->get('Referer'));
     }
 
     #[IsGranted('ROLE_USER')]

@@ -47,6 +47,27 @@ class BookmarkController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
+    public function subjectBookmarkRefresh(int $subject_id, string $subject_type, Request $request): Response
+    {
+        $subjectClass = BookmarkManager::GetClassFromSubjectType($subject_type);
+        $subjectEntity = $this->entityManager->getRepository($subjectClass)->findOneBy(['id' => $subject_id]);
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse([
+                'html' => $this->renderView('components/_ajax.html.twig', [
+                    'component' => 'bookmark_standard',
+                    'attributes' => [
+                        'subject' => $subjectEntity,
+                        'subjectClass' => $subjectClass,
+                    ],
+                ]
+                ),
+            ]);
+        }
+
+        return $this->redirect($request->headers->get('Referer'));
+    }
+
+    #[IsGranted('ROLE_USER')]
     public function subjectBookmarkToList(int $subject_id, string $subject_type, #[MapEntity] BookmarkList $list, Request $request): Response
     {
         $subjectClass = BookmarkManager::GetClassFromSubjectType($subject_type);
