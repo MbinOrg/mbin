@@ -8,8 +8,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "sunday"
-      time: "16:00"
+      day: "saturday"
+      time: "14:00"
     groups:
       dev-symfony-and-webpack-dependencies:
         dependency-type: "development"
