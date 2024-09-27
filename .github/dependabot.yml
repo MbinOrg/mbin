@@ -22,6 +22,11 @@ updates:
           - "minor"
           - "patch"
   - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+      time: "14:00"
     groups:
       php:
         applies-to: security-updates
