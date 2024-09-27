@@ -4,9 +4,11 @@ on:
     branches:
       - main
       - develop
+      - dev/new_features
   push:
     branches:
       - main
+      - dev/new_features
     tags:
       - 'v*'
 
