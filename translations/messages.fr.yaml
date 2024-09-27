@@ -742,3 +742,7 @@ two_factor_authentication: Authentification à deux facteurs
 admin_users_suspended: Suspendus
 admin_users_banned: Bannis
 admin_users_inactive: Inactifs
+enabled: Activé
+disabled: Désactivé
+hidden: Masqué
+magazine_deletion: Suppression de magazine
