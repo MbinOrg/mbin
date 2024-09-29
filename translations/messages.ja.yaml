@@ -10,7 +10,7 @@ microblog: ミニブログ
 people: ユーザー
 events: イベント
 magazine: 雑誌
-magazines: 雑誌ら
+magazines: 雑誌
 search: 検索
 add: 追加
 select_channel: チャンネルを選択
@@ -24,7 +24,7 @@ commented: コメントの多い順
 change_view: 表示を変更
 filter_by_time: 時間でフィルター
 filter_by_type: 投稿でフィルター
-favourites: お気に入りら
+favourites: お気に入り
 favourite: お気に入り
 more: さらに
 avatar: アバター
@@ -50,8 +50,8 @@ activity: アクティビティ
 cover: プロフィールのバナー
 related_posts: 関連投稿
 random_posts: 最近のコメント
-federated_user_info: このプロフィールは連合サーバから、 かも知れない未完だ。
-go_to_original_instance: 連合元インスタンスで表示する。
+federated_user_info: このプロフィールは連合サーバからのもので、不完全な可能性があります。
+go_to_original_instance: 連合元インスタンスで表示
 empty: 投稿なし
 subscribe: 購読する
 unsubscribe: 購読を解除
@@ -140,7 +140,7 @@ articles: スレッド
 photos: 画像
 videos: 動画
 report: 通報
-share: シェア
+share: 共有
 copy_url_to_fediverse: オリジナルURLをコピー
 share_on_fediverse: フェディバースへシェア
 edit: 編集
@@ -164,7 +164,7 @@ email_confirm_expire: リンクの有効期限は１時間です。
 enter_your_comment: コメントを入力してください
 fediverse: フェディバース
 create_new_magazine: 新しいマガジンを作成
-federated_magazine_info: この雑誌は連合サーバから、 かも知れない未完だ。
+federated_magazine_info: この雑誌は連合サーバからのもので、不完全な可能性があります。
 add_new_photo: 新しい画像を追加
 image_alt: 画像の代替テキスト
 moderated: モデレートしている雑誌
@@ -192,7 +192,7 @@ notify_on_new_post_comment_reply: 自分の投稿のコメントのリプライ�
 notify_on_new_entry: 購読しているマガジンの新スレッドを通知する
 notify_on_new_posts: 購読しているマガジンの新規投稿を通知する
 save: 保存
-about: kvinについて
+about: Mbinについて
 old_email: 現在のメールアドレス
 new_email: 新しいメールアドレス
 new_email_repeat: もう一度新しいメールを入力
@@ -264,7 +264,7 @@ post: 投稿する
 comment: コメントする
 ban_expired: バンの期限切れました
 purge: 消去する
-send_message: メッセージを送る
+send_message: ダイレクトメッセージを送る
 message: メッセージ
 infinite_scroll: 無限スクロール
 show_top_bar: トップバーを表示する
@@ -363,7 +363,7 @@ boost: ブースト
 mercure_enabled: Mercureが有効
 report_issue: バグを報告
 tokyo_night: 東京ナイト
-oauth2.grant.post.edit: 既存ポストをエディット 。
+oauth2.grant.post.edit: 既存ポストを編集 。
 oauth2.grant.user.message.all: メッセージを読んで、 他ユーザーにメッセージを飛ばす。
 oauth2.grant.moderate.magazine_admin.create: 新しい雑誌を作る。
 filter.adult.hide: R18/NSFWを見せない
@@ -379,10 +379,10 @@ filter.fields.names_and_descriptions: 名前と記述
 oauth2.grant.user.profile.all: プロフィールを読んで、 エディットする。
 oauth2.grant.entry_comment.create: スレッドに新しいコメントを作る。
 oauth.consent.deny: 打ち消す
-oauth2.grant.entry_comment.delete: スレッドに既存コメントを消す。
+oauth2.grant.entry_comment.delete: スレッドの既存コメントを消す。
 subject_reported_exists: このコンテンツはもう報告しました。
-oauth2.grant.entry.edit: 既存スレッドをエディットする。
-oauth2.grant.entry_comment.edit: スレッドに既存コメントをエディットする。
+oauth2.grant.entry.edit: 既存スレッドを編集する。
+oauth2.grant.entry_comment.edit: スレッドの既存コメントを編集する。
 oauth2.grant.user.profile.read: プロフィールを読む。
 toolbar.link: リンク
 moderation.report.ban_user_title: ユーザーを禁止します
@@ -398,24 +398,27 @@ toolbar.italic: 斜体
 oauth2.grant.user.profile.edit: プロフィールをエディット。
 moderation.report.approve_report_title: 通知を許す
 moderation.report.reject_report_title: 通知を断る
-errors.server429.title: ４２９要望する過ぎる
+errors.server429.title: 429 Too Many Requests
 local_and_federated: ローカルと連合
 toolbar.ordered_list: 順序付きリスト
 custom_css: カスタムCSS
-toolbar.quote: 引き合いに出す
+toolbar.quote: 引用
 toolbar.unordered_list: 順序不同リスト
-errors.server404.title: ４０４見つからない
+errors.server404.title: 404 Not found
 resend_account_activation_email: もう一度アカウントアクティブ化メールを飛ばす
-errors.server500.title: ５００サーバエラー
+errors.server500.title: 500 Internal Server Error
 toolbar.mention: メンション
 oauth2.grant.write.general: スレッドとポストとコメントを作ってか、 エディットする。
 single_settings: 単一
 resend_account_activation_email_question: 非活動アカウント？
-your_account_has_been_banned: アカウントは禁しました
+your_account_has_been_banned: あなたのアカウントはバンされました
 oauth2.grant.delete.general: スレッドとポストとコメントを消す。
-oauth2.grant.user.notification.delete: 通知を晴れる。
+oauth2.grant.user.notification.delete: 通知を消去する。
 email.delete.title: ユーザーのアカウント削除を要望する
 comment_reply_position: コメントのレスの位置
 kbin_bot: Mbinのボット
 federation_page_enabled: 連合は使用可能をしました
 show_avatars_on_comments: コメントでアバターを見せる
+tag: タグ
+remove_media: メディアを削除
+edit_entry: スレッドを編集
