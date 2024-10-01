@@ -898,7 +898,5 @@ user_verify: Activate account
 max_image_size: Maximum file size
 comment_not_found: Comment not found
 type.thread: Thread
-thread: Thread
-threads: Threads
 add_new_thread: Add new thread
 edit_thread: Edit thread
