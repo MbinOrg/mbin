@@ -3,12 +3,18 @@ entry_comment_create:
   defaults: { slug: -, parent_comment_id: null }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/comment/create/{parent_comment_id}
   methods: [ GET, POST ]
+  requirements:
+    entry_id: \d+
+    parent_comment_id: \d+
 
 entry_comment_view:
-    controller: App\Controller\Entry\Comment\EntryCommentViewController
-    defaults: { slug: -, comment_id: null }
-    path: /m/{magazine_name}/t/{entry_id}/{slug}/comment/{comment_id}
-    methods: [ GET ]
+  controller: App\Controller\Entry\Comment\EntryCommentViewController
+  defaults: { slug: -, comment_id: null }
+  path: /m/{magazine_name}/t/{entry_id}/{slug}/comment/{comment_id}
+  methods: [ GET ]
+  requirements:
+    entry_id: \d+
+    comment_id: \d+
 
 entry_comment_edit:
   controller: App\Controller\Entry\Comment\EntryCommentEditController
