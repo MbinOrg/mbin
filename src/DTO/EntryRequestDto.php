@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class EntryRequestDto extends ContentRequestDto
 {
     #[Groups([
-        Entry::ENTRY_TYPE_ARTICLE,
+        Entry::ENTRY_TYPE_THREAD,
         Entry::ENTRY_TYPE_LINK,
         Entry::ENTRY_TYPE_IMAGE,
         Entry::ENTRY_TYPE_VIDEO,
@@ -26,7 +26,7 @@ class EntryRequestDto extends ContentRequestDto
     ])]
     public ?string $url = null;
     #[Groups([
-        Entry::ENTRY_TYPE_ARTICLE,
+        Entry::ENTRY_TYPE_THREAD,
         Entry::ENTRY_TYPE_LINK,
         Entry::ENTRY_TYPE_IMAGE,
         Entry::ENTRY_TYPE_VIDEO,
@@ -36,7 +36,7 @@ class EntryRequestDto extends ContentRequestDto
 
     // TODO: Support badges whenever/however they're implemented
     // #[Groups([
-    //     Entry::ENTRY_TYPE_ARTICLE,
+    //     Entry::ENTRY_TYPE_THREAD,
     //     Entry::ENTRY_TYPE_LINK,
     //     Entry::ENTRY_TYPE_IMAGE,
     //     Entry::ENTRY_TYPE_VIDEO,
@@ -45,7 +45,7 @@ class EntryRequestDto extends ContentRequestDto
     // public ?array $badges = null;
 
     #[Groups([
-        Entry::ENTRY_TYPE_ARTICLE,
+        Entry::ENTRY_TYPE_THREAD,
         Entry::ENTRY_TYPE_LINK,
         Entry::ENTRY_TYPE_IMAGE,
         Entry::ENTRY_TYPE_VIDEO,

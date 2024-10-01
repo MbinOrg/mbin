@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
 {%- block title -%}
-    {{- 'add_new_article'|trans }} - {{ parent() -}}
+    {{- 'add_new_thread'|trans }} - {{ parent() -}}
 {%- endblock -%}
 
-{% block mainClass %}page-entry-create page-entry-create-article{% endblock %}
+{% block mainClass %}page-entry-create page-entry-create-thread{% endblock %}
 
 {% block header_nav %}
 {% endblock %}
@@ -15,7 +15,7 @@
 {% block body %}
     {% include 'entry/_create_options.html.twig' %}
     <header>
-        <h1 hidden>{{ 'add_new_article'|trans }}</h1>
+        <h1 hidden>{{ 'add_new_thread'|trans }}</h1>
     </header>
     {% include 'layout/_flash.html.twig' %}
     {% include('user/_visibility_info.html.twig') %}
@@ -23,7 +23,7 @@
     {% if user.visibility is same as 'visible' %}
     <div id="content" class="section">
         <div class="container">
-            {% include 'entry/_form_article.html.twig' %}
+            {% include 'entry/_form_thread.html.twig' %}
         </div>
     </div>
     {% endif %}

@@ -164,7 +164,7 @@ class EntryManager implements ContentManagerInterface
         }
 
         if ($dto->body) {
-            $entry->type = Entry::ENTRY_TYPE_ARTICLE;
+            $entry->type = Entry::ENTRY_TYPE_THREAD;
             $entry->hasEmbed = false;
         }
 

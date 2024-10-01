@@ -12,8 +12,8 @@ trait EntryTemplateTrait
     {
         $prefix = $edit ? 'edit' : 'create';
 
-        if (!$type || Entry::ENTRY_TYPE_ARTICLE === $type) {
-            return "entry/{$prefix}_article.html.twig";
+        if (!$type || Entry::ENTRY_TYPE_THREAD === $type) {
+            return "entry/{$prefix}_thread.html.twig";
         }
 
         if (Entry::ENTRY_TYPE_IMAGE === $type) {

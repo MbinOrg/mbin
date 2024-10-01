@@ -40,7 +40,7 @@ class EntryResponseDto implements \JsonSerializable
     public ?\DateTimeImmutable $createdAt = null;
     public ?\DateTimeImmutable $editedAt = null;
     public ?\DateTime $lastActive = null;
-    #[OA\Property(example: Entry::ENTRY_TYPE_ARTICLE, enum: Entry::ENTRY_TYPE_OPTIONS)]
+    #[OA\Property(example: Entry::ENTRY_TYPE_THREAD, enum: Entry::ENTRY_TYPE_OPTIONS)]
     public ?string $type = null;
     public ?string $slug = null;
     public ?string $apId = null;
