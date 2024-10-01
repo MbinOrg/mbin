@@ -21,42 +21,63 @@ entry_comment_edit:
   defaults: { slug: -, }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/comment/{comment_id}/edit
   methods: [ GET, POST ]
+  requirements:
+    entry_id: \d+
+    comment_id: \d+
 
 entry_comment_delete:
   controller: App\Controller\Entry\Comment\EntryCommentDeleteController::delete
   defaults: { slug: -, }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/comments/{comment_id}/delete
   methods: [ POST ]
+  requirements:
+    entry_id: \d+
+    comment_id: \d+
 
 entry_comment_restore:
   controller: App\Controller\Entry\Comment\EntryCommentDeleteController::restore
   defaults: { slug: -, }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/comments/{comment_id}/restore
   methods: [ POST ]
+  requirements:
+    entry_id: \d+
+    comment_id: \d+
 
 entry_comment_purge:
   controller: App\Controller\Entry\Comment\EntryCommentDeleteController::purge
   defaults: { slug: -, }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/comments/{comment_id}/purge
   methods: [ POST ]
+  requirements:
+    entry_id: \d+
+    comment_id: \d+
 
 entry_comment_change_lang:
   controller: App\Controller\Entry\Comment\EntryCommentChangeLangController
   defaults: { slug: - }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/comments/{comment_id}/change_lang
   methods: [ POST ]
+  requirements:
+    entry_id: \d+
+    comment_id: \d+
 
 entry_comment_change_adult:
   controller: App\Controller\Entry\Comment\EntryCommentChangeAdultController
   defaults: { slug: - }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/comments/{comment_id}/change_adult
   methods: [ POST ]
+  requirements:
+    entry_id: \d+
+    comment_id: \d+
 
 entry_comment_image_delete:
   controller: App\Controller\Entry\Comment\EntryCommentDeleteImageController
   defaults: { slug: -, }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/comments/{comment_id}/delete_image
   methods: [ POST ]
+  requirements:
+    entry_id: \d+
+    comment_id: \d+
 
 entry_comment_voters:
   controller: App\Controller\Entry\Comment\EntryCommentVotersController
@@ -64,18 +85,27 @@ entry_comment_voters:
   requirements: { type: 'up' }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/comment/{comment_id}/votes/{type}
   methods: [ GET ]
+  requirements:
+    entry_id: \d+
+    comment_id: \d+
 
 entry_comment_favourites:
   controller: App\Controller\Entry\Comment\EntryCommentFavouriteController
   defaults: { slug: -, }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/comment/{comment_id}/favourites
   methods: [ GET ]
+  requirements:
+    entry_id: \d+
+    comment_id: \d+
 
 entry_comment_moderate:
   controller: App\Controller\Entry\Comment\EntryCommentModerateController
   defaults: { slug: -, }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/comment/{comment_id}/moderate
   methods: [ GET ]
+  requirements:
+    entry_id: \d+
+    comment_id: \d+
 
 entry_comments_front:
   controller: App\Controller\Entry\Comment\EntryCommentFrontController::front
@@ -127,24 +157,32 @@ entry_comment_vote:
   defaults: { entityClass: App\Entity\EntryComment }
   path: /ecv/{id}/{choice}
   methods: [ POST ]
+  requirements:
+    id: \d+
 
 entry_comment_report:
   controller: App\Controller\ReportController
   defaults: { entityClass: App\Entity\EntryComment }
   path: /ecr/{id}
   methods: [ GET, POST ]
+  requirements:
+    id: \d+
 
 entry_comment_favourite:
   controller: App\Controller\FavouriteController
   defaults: { entityClass: App\Entity\EntryComment }
   path: /ecf/{id}
   methods: [ POST ]
+  requirements:
+    id: \d+
 
 entry_comment_boost:
   controller: App\Controller\BoostController
   defaults: { entityClass: App\Entity\EntryComment }
   path: /ecb/{id}
   methods: [ POST ]
+  requirements:
+    id: \d+
 
 entry_create:
   controller: App\Controller\Entry\EntryCreateController
@@ -163,60 +201,80 @@ entry_edit:
   defaults: { slug: -, sortBy: hot }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/edit
   methods: [ GET, POST ]
+  requirements:
+    entry_id: \d+
 
 entry_moderate:
   controller: App\Controller\Entry\EntryModerateController
   defaults: { slug: -, sortBy: hot }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/moderate
   methods: [ GET ]
+  requirements:
+    entry_id: \d+
 
 entry_delete:
   controller: App\Controller\Entry\EntryDeleteController::delete
   defaults: { slug: -, sortBy: hot }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/delete
   methods: [ POST ]
+  requirements:
+    entry_id: \d+
 
 entry_restore:
   controller: App\Controller\Entry\EntryDeleteController::restore
   defaults: { slug: -, sortBy: hot }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/restore
   methods: [ POST ]
+  requirements:
+    entry_id: \d+
 
 entry_purge:
   controller: App\Controller\Entry\EntryDeleteController::purge
   defaults: { slug: -, sortBy: hot }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/purge
   methods: [ POST ]
+  requirements:
+    entry_id: \d+
 
 entry_image_delete:
   controller: App\Controller\Entry\EntryDeleteImageController
   defaults: { slug: -, }
   path: /m/{magazine_name}/e/{entry_id}/{slug}/delete_image
   methods: [ POST ]
+  requirements:
+    entry_id: \d+
 
 entry_change_magazine:
   controller: App\Controller\Entry\EntryChangeMagazineController
   defaults: { slug: - }
   path: /m/{magazine_name}/e/{entry_id}/{slug}/change_magazine
   methods: [ POST ]
+  requirements:
+    entry_id: \d+
 
 entry_change_lang:
   controller: App\Controller\Entry\EntryChangeLangController
   defaults: { slug: - }
   path: /m/{magazine_name}/e/{entry_id}/{slug}/change_lang
   methods: [ POST ]
+  requirements:
+    entry_id: \d+
 
 entry_change_adult:
   controller: App\Controller\Entry\EntryChangeAdultController
   defaults: { slug: - }
   path: /m/{magazine_name}/e/{entry_id}/{slug}/change_adult
   methods: [ POST ]
+  requirements:
+    entry_id: \d+
 
 entry_pin:
   controller: App\Controller\Entry\EntryPinController
   defaults: { slug: -, sortBy: hot }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/pin
   methods: [ POST ]
+  requirements:
+    entry_id: \d+
 
 entry_voters:
   controller: App\Controller\Entry\EntryVotersController
@@ -224,18 +282,24 @@ entry_voters:
   requirements: { type: 'up' }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/votes/{type}
   methods: [ GET ]
+  requirements:
+    entry_id: \d+
 
 entry_fav:
   controller: App\Controller\Entry\EntryFavouriteController
   defaults: { slug: -, sortBy: hot }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/favourites
   methods: [ GET ]
+  requirements:
+    entry_id: \d+
 
 entry_tips:
   controller: App\Controller\Entry\EntryTipController
   defaults: { slug: -, sortBy: hot }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/tips
   methods: [ GET ]
+  requirements:
+    entry_id: \d+
 
 entry_single:
   controller: App\Controller\Entry\EntrySingleController
@@ -244,6 +308,7 @@ entry_single:
   methods: [ GET ]
   requirements:
     sortBy: "%comment_sort_options%"
+    entry_id: \d+
 
 entry_single_comments:
   controller: App\Controller\Entry\EntrySingleController
@@ -252,27 +317,36 @@ entry_single_comments:
   methods: [ GET ]
   requirements:
     sortBy: "%comment_sort_options%"
+    entry_id: \d+
 
 entry_vote:
   controller: App\Controller\VoteController
   defaults: { entityClass: App\Entity\Entry }
   path: /ev/{id}/{choice}
   methods: [ POST ]
+  requirements:
+    id: \d+
 
 entry_report:
   controller: App\Controller\ReportController
   defaults: { entityClass: App\Entity\Entry }
   path: /er/{id}
   methods: [ GET, POST ]
+  requirements:
+    id: \d+
 
 entry_favourite:
   controller: App\Controller\FavouriteController
   defaults: { entityClass: App\Entity\Entry }
   path: /ef/{id}
   methods: [ POST ]
+  requirements:
+    id: \d+
 
 entry_boost:
   controller: App\Controller\BoostController
   defaults: { entityClass: App\Entity\Entry }
   path: /eb/{id}
   methods: [ POST ]
+  requirements:
+    id: \d+
