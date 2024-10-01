@@ -82,10 +82,10 @@ entry_comment_image_delete:
 entry_comment_voters:
   controller: App\Controller\Entry\Comment\EntryCommentVotersController
   defaults: { slug: -, }
-  requirements: { type: 'up' }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/comment/{comment_id}/votes/{type}
   methods: [ GET ]
   requirements:
+    type: 'up'
     entry_id: \d+
     comment_id: \d+
 
@@ -279,10 +279,10 @@ entry_pin:
 entry_voters:
   controller: App\Controller\Entry\EntryVotersController
   defaults: { slug: -, sortBy: hot }
-  requirements: { type: 'up' }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/votes/{type}
   methods: [ GET ]
   requirements:
+    type: 'up'
     entry_id: \d+
 
 entry_fav:
