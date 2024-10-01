@@ -689,3 +689,234 @@ notification_title_removed_comment: Um comentário foi removido
 notification_title_new_comment: Novo comentário
 test_push_message: Olá, mundo!
 test_push_notifications_button: Teste as notificações por push
+flash_magazine_theme_changed_success: Atualizou com sucesso a aparência da revista.
+open_url_to_fediverse: Abrir URL original
+change_my_avatar: Modificar meu avatar
+filter_labels: Filtrar Etiquetas
+unsuspend_account: Cancelar a suspensão da conta
+account_suspended: A conta foi suspensa.
+account_unsuspended: A suspensão da conta foi cancelada.
+deletion: Exclusão
+cancel_request: Cancelar pedido
+abandoned: Abandonado
+ownership_requests: Solicitações de propriedade
+sensitive_warning: Conteúdo sensível
+sensitive_toggle: Alternar a visibilidade de conteúdo sensível
+last_successful_deliver: Última entrega bem-sucedida
+version: Versão
+last_successful_receive: Última recepção bem-sucedida
+last_failed_contact: Último contato que não deu certo
+admin_users_inactive: Inativo
+admin_users_active: Ativo
+user_verify: Ativar conta
+oauth2.grant.moderate.magazine.ban.create: Banir usuários nas suas revistas moderadas.
+oauth2.grant.admin.entry_comment.purge: Exclua completamente um comentário em fios
+  da sua instância.
+oauth2.grant.admin.post.purge: Excluir completamente qualquer publicação de sua instância.
+oauth2.grant.moderate.magazine.ban.read: Visualizar usuários banidos em suas revistas
+  moderadas.
+oauth2.grant.admin.user.ban: Banir ou desbanir usuários da sua instância.
+oauth2.grant.admin.magazine.move_entry: Mover fios entre revistas da sua instância.
+oauth2.grant.admin.magazine.purge: Excluir completamente revistas da sua instância.
+oauth2.grant.admin.user.all: Banir, verificar ou excluir completamente os usuários
+  da sua instância.
+oauth2.grant.admin.user.verify: Verificar usuários da sua instância.
+oauth2.grant.admin.user.delete: Excluir usuários da sua instância.
+comment_reply_position: Posição de resposta ao comentário
+magazine_theme_appearance_custom_css: CSS personalizado que será aplicado quando você
+  visualizar o conteúdo da sua revista.
+update_comment: Atualizar comentário
+show_avatars_on_comments_help: Exibir/ocultar avatares de usuários ao visualizar comentários
+  em um único fio ou publicação.
+moderation.report.ban_user_title: Banir Usuário
+moderation.report.reject_report_confirmation: Você tem certeza de que deseja rejeitar
+  essa denúncia?
+schedule_delete_account: Programar exclusão
+schedule_delete_account_desc: Programar a exclusão dessa conta em 30 dias. Isso ocultará
+  o usuário e seu conteúdo, além de impedir que ele faça login.
+2fa.code_invalid: O código de autenticação não é válido
+cancel: Cancelar
+2fa.enable: Configurar a autenticação de dois fatores
+2fa.setup_error: Erro ao ativar a 2FA para a conta
+magazine_is_deleted: A revista foi excluída. Você pode <a href="%link_target%">restaurá-la</a>
+  dentro de 30 dias.
+user_suspend_desc: Suspender sua conta oculta seu conteúdo na instância, mas não o
+  remove permanentemente, e você pode restaurá-la a qualquer momento.
+remove_subscriptions: Remover assinaturas
+remove_following: Remover seguidor
+apply_for_moderator: Candidatar-se a moderador
+deleted_by_moderator: O fio, a publicação ou o comentário foi excluído pelo moderador
+announcement: Anúncio
+keywords: Palavras-chave
+delete_content: Excluir conteúdo
+remove_schedule_delete_account: Remover a exclusão programada
+two_factor_backup: Códigos de backup da autenticação de dois fatores
+cards_view: Visualização dos cartões
+oauth2.grant.admin.user.purge: Excluir completamente usuários da sua instância.
+oauth2.grant.moderate.magazine.ban.all: Gerenciar usuários banidos em suas revistas
+  moderadas.
+2fa.verify: Verificar
+flash_email_failed_to_sent: O e-mail não pode ser enviado.
+flash_user_edit_password_error: Não foi possível alterar a senha.
+edit_my_profile: Editar meu perfil
+hide: Ocultar
+all_time: Todo o período
+spoiler: Spoiler
+oauth2.grant.moderate.magazine.all: Gerenciar banimentos, denúncias e visualizar itens
+  descartados em suas revistas moderadas.
+oauth2.grant.admin.post_comment.purge: Excluir completamente uma publicação da sua
+  instância.
+oauth2.grant.admin.instance.all: Visualizar e atualizar as configurações ou informações
+  da instância.
+oauth2.grant.admin.instance.settings.all: Exibir ou atualizar as configurações da
+  sua instância.
+oauth2.grant.admin.federation.read: Exibir a lista das instâncias desfederadas.
+oauth2.grant.admin.oauth_clients.all: Visualizar ou revogar clientes OAuth2 que existem
+  em sua instância.
+flash_post_pin_success: A publicação foi fixada com sucesso.
+show_avatars_on_comments: Mostrar avatares de comentários
+single_settings: Único
+moderation.report.approve_report_confirmation: Você tem certeza de que deseja aprovar
+  esta denúncia?
+subject_reported_exists: Esse conteúdo já foi denunciado.
+oauth2.grant.moderate.post.pin: Fixe as publicações na parte superior de suas revistas
+  moderadas.
+purge_content: Purgar conteúdo
+delete_content_desc: Excluir o conteúdo do usuário, deixando as respostas de outros
+  usuários nos fios, publicações e comentários criados.
+remove_schedule_delete_account_desc: Remover a exclusão programada. Todo o conteúdo
+  estará disponível novamente e o usuário poderá fazer login.
+2fa.authentication_code.label: Código de Autenticação
+2fa.disable: Desativar a autenticação de dois fatores
+2fa.backup: Seus códigos de backup de dois fatores
+2fa.backup-create.help: Você pode criar novos códigos de autenticação de backup; ao
+  fazer isso, os códigos existentes serão invalidados.
+2fa.backup-create.label: Criar novos códigos de autenticação de backup
+2fa.remove: Remover 2FA
+2fa.verify_authentication_code.label: Inserir um código de dois fatores para verificar
+  a configuração
+2fa.qr_code_link.title: Ao acessar este link, você permite que sua plataforma registre
+  essa autenticação de dois fatores
+2fa.backup_codes.recommendation: Recomenda-se que você mantenha uma cópia deles em
+  um local seguro.
+password_and_2fa: Senha e 2FA
+show_subscriptions: Mostrar assinaturas
+alphabetically: Por ordem alfabética
+subscriptions_in_own_sidebar: Em uma barra lateral separada
+sidebars_same_side: Barras laterais no mesmo lado
+subscription_sidebar_pop_out_right: Mover para a barra lateral separada à direita
+subscription_sidebar_pop_out_left: Mover para a barra lateral separada à esquerda
+subscription_panel_large: Painel grande
+subscription_header: Revistas Assinadas
+close: Fechar
+position_bottom: Inferior
+flash_image_download_too_large_error: Não foi possível criar a imagem, pois ela é
+  muito grande (tamanho máximo %bytes%)
+flash_post_new_error: Não foi possível criar a publicação. Algo deu errado.
+flash_magazine_theme_changed_error: Não foi possível atualizar a aparência da revista.
+flash_comment_new_success: O comentário foi criado com sucesso.
+flash_comment_edit_success: O comentário foi atualizado com sucesso.
+flash_comment_edit_error: Não foi possível editar o comentário. Algo deu errado.
+flash_user_settings_general_error: Não foi possível salvar as configurações do usuário.
+flash_user_edit_profile_error: Não foi possível salvar as configurações de perfil.
+flash_user_edit_email_error: Não foi possível alterar o e-mail.
+flash_thread_edit_error: Não foi possível editar o fio. Algo deu errado.
+flash_post_edit_error: Não foi possível editar a publicação.
+change_my_cover: Modificar minha capa
+account_settings_changed: As configurações da sua conta foram alteradas com sucesso.
+  Você precisará fazer login novamente.
+magazine_deletion: Exclusão da revista
+restore_magazine: Restaurar revista
+purge_magazine: Purgar revista
+suspend_account: Suspender conta
+account_banned: A conta foi banida.
+account_unbanned: A conta foi desbanida.
+account_is_suspended: A conta do usuário está suspensa.
+request_magazine_ownership: Solicitar a propriedade da revista
+action: Ação
+user_badge_op: OP
+user_badge_admin: Administrador
+deleted_by_author: O fio, a publicação ou o comentário foi excluído pelo autor
+sensitive_show: Clique para mostrar
+sensitive_hide: Clique para ocultar
+details: Detalhes
+show: Exibir
+edited: editado
+sso_registrations_enabled.error: Novos registros de conta com gerenciadores de identidade
+  de terceiros estão desativados no momento.
+sso_only_mode: Restringir o login e o registro apenas aos métodos de SSO
+magazine_posting_restricted_to_mods: Restringir a criação de fios aos moderadores
+new_user_description: Este usuário é novo (ativo há menos de %days% dias)
+admin_users_suspended: Suspenso
+admin_users_banned: Banido
+max_image_size: Tamanho máximo do arquivo
+cards: Cartões
+oauth2.grant.moderate.post_comment.trash: Remover ou restaurar comentários de publicações
+  em suas revistas moderadas.
+oauth2.grant.admin.magazine.all: Mover fios entre revistas ou excluí-las completamente
+  da sua instância.
+oauth2.grant.admin.instance.stats: Veja as estatísticas da sua instância.
+oauth2.grant.admin.federation.all: Exibir e atualizar instâncias atualmente desfederadas.
+oauth2.grant.admin.federation.update: Adicionar ou remover instâncias de ou para a
+  lista de instâncias desfederadas.
+oauth2.grant.admin.oauth_clients.read: Veja os clientes OAuth2 que existem em sua
+  instância e suas estatísticas de uso.
+last_active: Última atividade
+magazine_theme_appearance_icon: Ícone personalizado para a revista. Se você não selecionar
+  nenhum, será usado o ícone padrão.
+purge_content_desc: Purgar completamente o conteúdo do usuário, incluindo excluir
+  as respostas de outros usuários em fios, publicações e comentários criados.
+delete_account_desc: Excluir a conta, incluindo as respostas de outros usuários em
+  fios, publicações e comentários criados.
+two_factor_authentication: Autenticação de dois fatores
+2fa.add: Adicionar à minha conta
+2fa.qr_code_img.alt: Um código QR que permite a configuração da autenticação de dois
+  fatores para sua conta
+2fa.user_active_tfa.title: O usuário tem a 2FA ativada
+2fa.available_apps: Use um aplicativo de autenticação de dois fatores, como %google_authenticator%,
+  %aegis% (Android) ou %raivo% (iOS) para fazer a leitura do código QR.
+2fa.backup_codes.help: Você pode usar esses códigos quando não tiver seu dispositivo
+  ou aplicativo de autenticação de dois fatores. Você <strong>não os verá novamente</strong>
+  e poderá usar cada um deles <strong>apenas uma vez</strong>.
+subscription_sort: Ordenar
+flash_thread_tag_banned_error: Não foi possível criar o fio. O conteúdo não é permitido.
+flash_email_was_sent: O email foi enviado com sucesso.
+flash_post_new_success: A publicação foi criada com sucesso.
+flash_comment_new_error: Não foi possível criar o comentário. Algo deu errado.
+flash_user_edit_profile_success: As configurações do perfil do usuário foram salvas
+  com sucesso.
+flash_post_edit_success: A publicação foi editada com sucesso.
+auto: Automático
+delete_magazine: Excluir revista
+sso_show_first: Mostrar o SSO primeiro nas páginas de login e registro
+new_magazine_description: Esta revista é nova (ativa há menos de %days% dias)
+comment_not_found: Comentário não encontrado
+oauth2.grant.admin.oauth_clients.revoke: Revogar o acesso a clientes OAuth2 na sua
+  instância.
+flash_post_unpin_success: A publicação foi desafixada com sucesso.
+oauth2.grant.admin.instance.settings.read: Exibir as configurações da sua instância.
+oauth2.grant.admin.instance.settings.edit: Atualizar as configurações da sua instância.
+oauth2.grant.admin.instance.information.edit: Atualizar as páginas Sobre, Perguntas
+  frequentes, Contato, Termos de serviço e Política de privacidade da sua instância.
+magazine_theme_appearance_background_image: Imagem de fundo personalizada que será
+  aplicada quando você visualizar o conteúdo da sua revista.
+moderation.report.approve_report_title: Aprovar a Denúncia
+flash_user_settings_general_success: As configurações do usuário foram salvas com
+  sucesso.
+accept: Aceitar
+sso_registrations_enabled: Registros SSO ativados
+back: Anterior
+comment_reply_position_help: Exibir o formulário de resposta a comentários na parte
+  superior ou inferior da página. Quando a “rolagem infinita” estiver ativada, a posição
+  sempre aparecerá na parte superior.
+moderation.report.reject_report_title: Rejeitar a Denúncia
+moderation.report.ban_user_description: Você deseja banir o usuário (%username%) que
+  criou esse conteúdo desta revista?
+subscription_sidebar_pop_in: Mover as assinaturas para o painel em linha
+position_top: Topo
+pending: Pendente
+flash_account_settings_changed: As configurações da sua conta foram alteradas com
+  sucesso. Você precisará fazer login novamente.
+flash_thread_new_error: Não foi possível criar o fio. Algo deu errado.
+reported: denunciado
+open_report: abrir denúncia
