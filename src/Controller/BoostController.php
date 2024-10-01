@@ -23,9 +23,6 @@ class BoostController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function __invoke(VotableInterface $subject, Request $request): Response
     {
-        // CSRF is causing a lot of issues, so we disable it for now. See PR: https://github.com/MbinOrg/mbin/pull/1136
-        // $this->validateCsrf('boost', $request->getPayload()->get('token'));
-
         $this->manager->vote(VotableInterface::VOTE_UP, $subject, $this->getUserOrThrow());
 
         if ($request->isXmlHttpRequest()) {

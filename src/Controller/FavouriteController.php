@@ -21,9 +21,6 @@ class FavouriteController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function __invoke(FavouriteInterface $subject, Request $request, FavouriteManager $manager): Response
     {
-        // CSRF is causing a lot of issues, so we disable it for now. See PR: https://github.com/MbinOrg/mbin/pull/1136
-        // $this->validateCsrf('up_vote', $request->getPayload()->get('token'));
-
         $manager->toggle($this->getUserOrThrow(), $subject);
 
         if ($request->isXmlHttpRequest()) {
