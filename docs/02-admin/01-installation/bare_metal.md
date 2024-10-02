@@ -157,9 +157,10 @@ The `.env` file holds a lot of environment variables and is the main point for c
 We suggest you place your variables in the `.env.local` file and have a 'clean' default one as the `.env` file.
 Each time this documentation talks about the `.env` file be sure to edit the `.env.local` file if you decided to use that.
 
-> In all environments, the following files are loaded if they exist, the latter taking precedence over the former:  
-> - .env                contains default values for the environment variables needed by the app  
-> - .env.local          uncommitted file with local overrides
+> In all environments, the following files are loaded if they exist, the latter taking precedence over the former:
+>
+> - .env contains default values for the environment variables needed by the app
+> - .env.local uncommitted file with local overrides
 
 Make a copy of the `.env.example` to `.env` and `.env.local` and edit the `.env.local` file:
 
@@ -325,10 +326,10 @@ composer clear-cache
 
 ### Caching
 
-You can choose between either Redis or KeyDB.
+You can choose between either Redis, Valkey or KeyDB.
 
 > [!TIP]
-> More Redis/KeyDB fine-tuning settings can be found in the [Redis configuration guide](../02-configuration/redis.md).
+> More Redis/Valkey/KeyDB fine-tuning settings can be found in the [Redis configuration guide](../02-configuration/redis.md).
 
 #### Redis
 
@@ -543,7 +544,6 @@ process_name=%(program_name)s_%(process_num)02d
 Save and close the file.
 
 Note: you can increase the number of running messenger jobs if your queue is building up (i.e. more messages are coming in than your messengers can handle)
-
 
 Save and close the file. Restart supervisor jobs:
 
