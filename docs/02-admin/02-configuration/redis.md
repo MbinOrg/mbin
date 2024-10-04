@@ -1,6 +1,6 @@
 # Redis / KeyDB
 
-This documentation is valid for both Redis as well as KeyDB. KeyDB is a fork of Redis, but should work mostly in the same manner.
+This documentation is valid for both Redis as well as KeyDB and Valkey. Both Valkey and KeyDB are forks of Redis, but should work mostly in the same manner.
 
 ## Configure Redis
 
@@ -29,7 +29,7 @@ Feel free to adjust the memory settings to your liking.
 
 ## Multithreading
 
-Configure multiple threads in Redis by setting the following two lines:
+Configure multiple threads in Redis/Valkey by setting the following two lines:
 
 ```ruby
 # THREADED I/O
@@ -46,9 +46,9 @@ server-threads 4
 
 ## Redis as a cache
 
-_Optionally:_ If you are using this Redis instance only for Mbin as a cache, you can disable snapshots in Redis. Which will no longer dump the database to disk and reduce the amount of disk space used as well the disk I/O.
+_Optionally:_ If you are using this Redis instance only for Mbin as a cache, you can disable snapshots in Redis/Valkey/KeyDB. Which will no longer dump the database to disk and reduce the amount of disk space used as well the disk I/O.
 
-First comment out existing "save lines" in the Redis configuration file:
+First comment out existing "save lines" in the Redis/Valkey/KeyDB configuration file:
 
 ```ruby
 #save 900 1
