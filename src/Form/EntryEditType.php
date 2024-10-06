@@ -37,7 +37,9 @@ class EntryEditType extends AbstractType
         $builder
             ->add('url', UrlType::class, ['required' => false])
             ->add('title', TextareaType::class)
-            ->add('body', TextareaType::class)
+            ->add('body', TextareaType::class, [
+                'required' => false,
+            ])
             ->add('magazine', MagazineAutocompleteType::class)
             ->add('tags', TextType::class, [
                 'required' => false,
