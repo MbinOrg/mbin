@@ -199,6 +199,46 @@ export default class extends Controller {
         }
     }
 
+    /**
+     * Calls the address attached to the nearest link node. Replaces the outer html of the nearest `cssclass` parameter
+     * with the response from the link
+     */
+    async linkCallback(event) {
+        const { cssclass: cssClass, refreshlink: refreshLink, refreshselector: refreshSelector } = event.params
+        event.preventDefault();
+
+        const a = event.target.closest('a');
+
+        try {
+            this.loadingValue = true;
+
+            let response = await fetch(a.href, {
+                method: 'GET',
+            });
+
+            response = await ok(response);
+            response = await response.json();
+
+            event.target.closest(`.${cssClass}`).outerHTML = response.html;
+
+            const refreshElement = this.element.querySelector(refreshSelector)
+            console.log("linkCallback refresh stuff", refreshLink, refreshSelector, refreshElement)
+
+            if (!!refreshLink && refreshLink !== "" && !!refreshElement) {
+                let response = await fetch(refreshLink, {
+                    method: 'GET',
+                });
+
+                response = await ok(response);
+                response = await response.json();
+                refreshElement.outerHTML = response.html;
+            }
+        } catch (e) {
+        } finally {
+            this.loadingValue = false;
+        }
+    }
+
     loadingValueChanged(val) {
         const submitButton = this.containerTarget.querySelector('form button[type="submit"]');
 
