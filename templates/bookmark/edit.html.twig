@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{%- block title -%}
+    {{- 'bookmarks_list'|trans({'%list%': list.name}) }} - {{ parent() -}}
+{%- endblock -%}
+
+{% block mainClass %}page-bookmarks{% endblock %}
+
+{% block header_nav %}
+{% endblock %}
+
+{% block sidebar_top %}
+{% endblock %}
+
+{% block body %}
+    <h1 hidden>{{ 'bookmarks_list_edit'|trans }}</h1>
+
+    <div class="container">
+        <div class="section section--top">
+            {% include 'bookmark/_form_edit.html.twig' with {is_create: false} %}
+        </div>
+    </div>
+
+{% endblock %}
