@@ -897,4 +897,21 @@ admin_users_banned: Banned
 user_verify: Activate account
 max_image_size: Maximum file size
 comment_not_found: Comment not found
+bookmark_add_to_list: Add bookmark to %list%
+bookmark_remove_from_list: Remove bookmark from %list%
+bookmark_remove_all: Remove all bookmarks
+bookmark_add_to_default_list: Add bookmark to default list
+bookmark_lists: Bookmark Lists
+bookmarks: Bookmarks
+bookmarks_list: Bookmarks in %list%
+count: Count
+is_default: Is Default
+bookmark_list_is_default: Is default list
+bookmark_list_make_default: Make Default
+bookmark_list_create: Create
+bookmark_list_create_placeholder: type name...
+bookmark_list_create_label: List name
+bookmarks_list_edit: Edit bookmark list
+bookmark_list_edit: Edit
+bookmark_list_selected_list: Selected list
 table_of_contents: Table of contents
