@@ -30,6 +30,8 @@ use App\Factory\MagazineFactory;
 use App\Factory\PostCommentFactory;
 use App\Factory\PostFactory;
 use App\Form\Constraint\ImageConstraint;
+use App\Repository\BookmarkListRepository;
+use App\Repository\BookmarkRepository;
 use App\Repository\Criteria;
 use App\Repository\EntryCommentRepository;
 use App\Repository\EntryRepository;
@@ -39,12 +41,13 @@ use App\Repository\PostCommentRepository;
 use App\Repository\PostRepository;
 use App\Repository\TagLinkRepository;
 use App\Schema\PaginationSchema;
+use App\Service\BookmarkManager;
 use App\Service\IpResolver;
 use App\Service\ReportManager;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
-use Pagerfanta\Pagerfanta;
+use Pagerfanta\PagerfantaInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
@@ -85,6 +88,9 @@ class BaseApi extends AbstractController
         protected readonly EntryCommentRepository $entryCommentRepository,
         protected readonly PostRepository $postRepository,
         protected readonly PostCommentRepository $postCommentRepository,
+        protected readonly BookmarkListRepository $bookmarkListRepository,
+        protected readonly BookmarkRepository $bookmarkRepository,
+        protected readonly BookmarkManager $bookmarkManager,
         private readonly ImageRepository $imageRepository,
         private readonly ReportManager $reportManager,
         private readonly OAuth2ClientAccessRepository $clientAccessRepository,
@@ -189,7 +195,7 @@ class BaseApi extends AbstractController
             ->findOneBy(['identifier' => $oAuth2Token->getAttribute('access_token_id')]);
     }
 
-    public function serializePaginated(array $serializedItems, Pagerfanta $pagerfanta): array
+    public function serializePaginated(array $serializedItems, PagerfantaInterface $pagerfanta): array
     {
         return [
             'items' => $serializedItems,
