@@ -224,6 +224,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public Collection $notifications;
     #[OneToMany(mappedBy: 'user', targetEntity: UserPushSubscription::class, fetch: 'EXTRA_LAZY')]
     public Collection $pushSubscriptions;
+    #[OneToMany(mappedBy: 'user', targetEntity: BookmarkList::class, fetch: 'EXTRA_LAZY')]
+    public Collection $bookmarkLists;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]

@@ -1,5 +1,6 @@
 @use '@fortawesome/fontawesome-free/scss/fontawesome';
 @use '@fortawesome/fontawesome-free/scss/solid';
+@use '@fortawesome/fontawesome-free/scss/regular';
 @use '@fortawesome/fontawesome-free/scss/brands';
 @use 'simple-icons-font/font/simple-icons';
 @use 'variables';
@@ -14,6 +15,7 @@
 @use 'layout/alerts';
 @use 'layout/forms';
 @use 'layout/images';
+@use 'layout/icons';
 @use 'components/announcement';
 @use 'components/topbar';
 @use 'components/header';
@@ -44,6 +46,7 @@
 @use 'components/settings_row';
 @use 'pages/post_single';
 @use 'pages/post_front';
+@use 'pages/page_bookmarks';
 @use 'themes/kbin';
 @use 'themes/default';
 @use 'themes/solarized';

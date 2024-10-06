@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Schema;
 
 use OpenApi\Attributes as OA;
-use Pagerfanta\Pagerfanta;
+use Pagerfanta\PagerfantaInterface;
 
 #[OA\Schema()]
 class PaginationSchema implements \JsonSerializable
@@ -19,7 +19,7 @@ class PaginationSchema implements \JsonSerializable
     #[OA\Property(description: 'Max number of items per page')]
     public int $perPage = 0;
 
-    public function __construct(Pagerfanta $pagerfanta)
+    public function __construct(PagerfantaInterface $pagerfanta)
     {
         $this->count = $pagerfanta->count();
         $this->currentPage = $pagerfanta->getCurrentPage();
