@@ -240,7 +240,7 @@ class ActivityJsonBuilder
 
         $result = [
             '@context' => ActivityPubActivityInterface::CONTEXT_URL,
-            'id' => $this->urlGenerator->generate('ap_object', ['report_id' => $activity->uuid], UrlGeneratorInterface::ABSOLUTE_URL),
+            'id' => $this->urlGenerator->generate('ap_object', ['id' => $activity->uuid], UrlGeneratorInterface::ABSOLUTE_URL),
             'type' => 'Flag',
             'actor' => $this->personFactory->getActivityPubId($activity->userActor),
             'object' => $object,
@@ -258,12 +258,19 @@ class ActivityJsonBuilder
 
     public function buildFollowFromActivity(Activity $activity): array
     {
+        $object = $activity->getObject();
+        if ($object instanceof User) {
+            $activityObject = $this->personFactory->getActivityPubId($object);
+        } else {
+            $activityObject = $this->groupFactory->getActivityPubId($object);
+        }
+
         return [
             '@context' => $this->contextsProvider->referencedContexts(),
             'id' => $this->urlGenerator->generate('ap_object', ['id' => $activity->uuid], UrlGeneratorInterface::ABSOLUTE_URL),
             'type' => 'Follow',
             'actor' => $this->personFactory->getActivityPubId($activity->userActor),
-            'object' => $this->personFactory->getActivityPubId($activity->objectUser),
+            'object' => $activityObject,
         ];
     }
 
