@@ -11,6 +11,7 @@ use App\MessageHandler\MbinMessageHandler;
 use App\Repository\EntryRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
+use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,6 +32,7 @@ class EntryPinMessageHandler extends MbinMessageHandler
         private readonly MagazineRepository $magazineRepository,
         private readonly DeliverManager $deliverManager,
         private readonly LoggerInterface $logger,
+        private readonly ActivityJsonBuilder $activityJsonBuilder,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
@@ -74,6 +76,7 @@ class EntryPinMessageHandler extends MbinMessageHandler
             $audience = $this->magazineRepository->findAudience($entry->magazine);
         }
 
-        $this->deliverManager->deliver($audience, $activity);
+        $json = $this->activityJsonBuilder->buildActivityJson($activity);
+        $this->deliverManager->deliver($audience, $json);
     }
 }
