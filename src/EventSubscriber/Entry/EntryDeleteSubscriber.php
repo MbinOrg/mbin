@@ -12,10 +12,10 @@ use App\Event\Entry\EntryDeletedEvent;
 use App\Message\ActivityPub\Outbox\DeleteMessage;
 use App\Message\Notification\EntryDeletedNotificationMessage;
 use App\Repository\EntryRepository;
+use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\ActivityPub\Wrapper\DeleteWrapper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Uid\Uuid;
 
 class EntryDeleteSubscriber implements EventSubscriberInterface
 {
@@ -23,6 +23,7 @@ class EntryDeleteSubscriber implements EventSubscriberInterface
         private readonly MessageBusInterface $bus,
         private readonly EntryRepository $entryRepository,
         private readonly DeleteWrapper $deleteWrapper,
+        private readonly ActivityJsonBuilder $activityJsonBuilder,
     ) {
     }
 
@@ -58,7 +59,8 @@ class EntryDeleteSubscriber implements EventSubscriberInterface
         $this->bus->dispatch(new EntryDeletedNotificationMessage($entry->getId()));
 
         if (!$entry->apId || !$entry->magazine->apId || (null !== $user && $entry->magazine->userIsModerator($user))) {
-            $payload = $this->deleteWrapper->adjustDeletePayload($user, $entry, Uuid::v4()->toRfc4122());
+            $activity = $this->deleteWrapper->adjustDeletePayload($user, $entry);
+            $payload = $this->activityJsonBuilder->buildActivityJson($activity);
             $this->bus->dispatch(new DeleteMessage($payload, $entry->user->getId(), $entry->magazine->getId()));
         }
     }

@@ -4,44 +4,27 @@ declare(strict_types=1);
 
 namespace App\Service\ActivityPub\Wrapper;
 
-use App\Entity\Contracts\ActivityPubActivityInterface;
-use JetBrains\PhpStorm\ArrayShape;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Uid\Uuid;
+use App\Entity\Activity;
+use App\Entity\Magazine;
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 
 class FollowResponseWrapper
 {
     public function __construct(
-        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
-    #[ArrayShape([
-        '@context' => 'string',
-        'id' => 'string',
-        'type' => 'string',
-        'actor' => 'string',
-        'object' => 'string',
-    ])]
-    public function build(string $user, string $actor, string $remoteId, bool $isReject = false): array
+    public function build(User|Magazine $actor, array $request, bool $isReject = false): Activity
     {
-        $id = Uuid::v4()->toRfc4122();
+        $activity = new Activity($isReject ? 'Reject' : 'Accept');
+        $activity->setActor($actor);
+        $activity->setObject($request);
 
-        return [
-            '@context' => ActivityPubActivityInterface::CONTEXT_URL,
-            'id' => $this->urlGenerator->generate(
-                'ap_object',
-                ['id' => $id],
-                UrlGeneratorInterface::ABSOLUTE_URL
-            ).($isReject ? '#reject' : '#accept'),
-            'type' => $isReject ? 'Reject' : 'Accept',
-            'actor' => $user,
-            'object' => [
-                'id' => $remoteId,
-                'type' => 'Follow',
-                'actor' => $actor,
-                'object' => $user,
-            ],
-        ];
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
+
+        return $activity;
     }
 }
