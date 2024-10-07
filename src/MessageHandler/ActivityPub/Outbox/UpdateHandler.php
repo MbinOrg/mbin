@@ -18,6 +18,7 @@ use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
+use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\ActivityPub\Wrapper\UpdateWrapper;
 use App\Service\ActivityPubManager;
 use App\Service\DeliverManager;
@@ -38,6 +39,7 @@ class UpdateHandler extends MbinMessageHandler
         private readonly DeliverManager $deliverManager,
         private readonly UpdateWrapper $updateWrapper,
         private readonly KernelInterface $kernel,
+        private readonly ActivityJsonBuilder $activityJsonBuilder,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
@@ -63,7 +65,8 @@ class UpdateHandler extends MbinMessageHandler
         }
 
         if ($entity instanceof ActivityPubActivityInterface) {
-            $activity = $this->updateWrapper->buildForActivity($entity, $editedByUser);
+            $activityObject = $this->updateWrapper->buildForActivity($entity, $editedByUser);
+            $activity = $this->activityJsonBuilder->buildActivityJson($activityObject);
 
             if ($entity instanceof Entry || $entity instanceof EntryComment || $entity instanceof Post || $entity instanceof PostComment) {
                 if ('random' === $entity->magazine->name) {
@@ -85,7 +88,9 @@ class UpdateHandler extends MbinMessageHandler
                 throw new \LogicException('unknown activity type: '.\get_class($entity));
             }
         } elseif ($entity instanceof ActivityPubActorInterface) {
-            $activity = $this->updateWrapper->buildForActor($entity, $editedByUser);
+            $activityObject = $this->updateWrapper->buildForActor($entity, $editedByUser);
+            $activity = $this->activityJsonBuilder->buildActivityJson($activityObject);
+
             if ($entity instanceof User) {
                 $inboxes = $this->userRepository->findAudience($entity);
             } elseif ($entity instanceof Magazine) {
