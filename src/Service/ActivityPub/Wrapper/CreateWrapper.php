@@ -4,47 +4,34 @@ declare(strict_types=1);
 
 namespace App\Service\ActivityPub\Wrapper;
 
+use App\Entity\Activity;
 use App\Entity\Contracts\ActivityPubActivityInterface;
-use App\Factory\ActivityPub\ActivityFactory;
-use JetBrains\PhpStorm\ArrayShape;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Uid\Uuid;
+use App\Entity\Entry;
+use App\Entity\EntryComment;
+use App\Entity\Message;
+use App\Entity\Post;
+use App\Entity\PostComment;
+use Doctrine\ORM\EntityManagerInterface;
 
 class CreateWrapper
 {
     public function __construct(
-        private readonly ActivityFactory $factory,
-        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
-    #[ArrayShape([
-        '@context' => 'mixed',
-        'id' => 'mixed',
-        'type' => 'string',
-        'actor' => 'mixed',
-        'published' => 'mixed',
-        'to' => 'mixed',
-        'cc' => 'mixed',
-        'object' => 'array',
-    ])]
-    public function build(ActivityPubActivityInterface $item): array
+    public function build(ActivityPubActivityInterface $item): Activity
     {
-        $item = $this->factory->create($item, true);
-        $id = Uuid::v4()->toRfc4122();
+        $activity = new Activity('Create');
+        $activity->setObject($item);
+        if ($item instanceof Entry || $item instanceof EntryComment || $item instanceof Post || $item instanceof PostComment) {
+            $activity->userActor = $item->getUser();
+        } elseif ($item instanceof Message) {
+            $activity->userActor = $item->sender;
+        }
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
 
-        $context = $item['@context'];
-        unset($item['@context']);
-
-        return [
-            '@context' => $context,
-            'id' => $this->urlGenerator->generate('ap_object', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL),
-            'type' => 'Create',
-            'actor' => $item['attributedTo'],
-            'published' => $item['published'],
-            'to' => $item['to'],
-            'cc' => $item['cc'],
-            'object' => $item,
-        ];
+        return $activity;
     }
 }
