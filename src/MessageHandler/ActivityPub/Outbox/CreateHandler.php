@@ -10,6 +10,7 @@ use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
+use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\ActivityPub\Wrapper\CreateWrapper;
 use App\Service\ActivityPubManager;
 use App\Service\DeliverManager;
@@ -34,6 +35,7 @@ class CreateHandler extends MbinMessageHandler
         private readonly LoggerInterface $logger,
         private readonly DeliverManager $deliverManager,
         private readonly KernelInterface $kernel,
+        private readonly ActivityJsonBuilder $activityJsonBuilder,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
@@ -55,6 +57,7 @@ class CreateHandler extends MbinMessageHandler
         $entity = $this->entityManager->getRepository($message->type)->find($message->id);
 
         $activity = $this->createWrapper->build($entity);
+        $json = $this->activityJsonBuilder->buildActivityJson($activity);
 
         if ($entity instanceof Message) {
             $receivers = $this->messageManager->findAudience($entity->thread);
@@ -62,7 +65,7 @@ class CreateHandler extends MbinMessageHandler
         } else {
             $receivers = [
                 ...$this->userRepository->findAudience($entity->user),
-                ...$this->activityPubManager->createInboxesFromCC($activity, $entity->user),
+                ...$this->activityPubManager->createInboxesFromCC($json, $entity->user),
             ];
             if ('random' !== $entity->magazine->name) {
                 // only add the magazine subscribers if it is not the random magazine
@@ -70,6 +73,6 @@ class CreateHandler extends MbinMessageHandler
             }
             $this->logger->debug('[CreateHandler::doWork] Sending create activity to {p}', ['p' => $receivers]);
         }
-        $this->deliverManager->deliver(array_filter(array_unique($receivers)), $activity);
+        $this->deliverManager->deliver(array_filter(array_unique($receivers)), $json);
     }
 }

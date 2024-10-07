@@ -8,22 +8,22 @@ use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Post;
 use App\Entity\PostComment;
-use App\Factory\ActivityPub\ActivityFactory;
-use App\Factory\ActivityPub\PersonFactory;
 use App\Message\ActivityPub\Outbox\AnnounceLikeMessage;
 use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
+use App\Service\ActivityPub\ActivityJsonBuilder;
+use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\Wrapper\AnnounceWrapper;
 use App\Service\ActivityPub\Wrapper\LikeWrapper;
 use App\Service\ActivityPub\Wrapper\UndoWrapper;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsMessageHandler]
 class AnnounceLikeHandler extends MbinMessageHandler
@@ -36,11 +36,11 @@ class AnnounceLikeHandler extends MbinMessageHandler
         private readonly AnnounceWrapper $announceWrapper,
         private readonly UndoWrapper $undoWrapper,
         private readonly LikeWrapper $likeWrapper,
-        private readonly ActivityFactory $activityFactory,
         private readonly SettingsManager $settingsManager,
-        private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly PersonFactory $personFactory,
         private readonly DeliverManager $deliverManager,
+        private readonly ActivityJsonBuilder $activityJsonBuilder,
+        private readonly ApHttpClient $apHttpClient,
+        private readonly LoggerInterface $logger,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
@@ -73,22 +73,33 @@ class AnnounceLikeHandler extends MbinMessageHandler
             return;
         }
 
-        $activityObject = $this->activityFactory->create($object);
-        $likeActivity = $this->likeWrapper->build($this->personFactory->getActivityPubId($user), $activityObject);
+        if (null === $message->likeMessageId) {
+            $this->logger->warning('Got an AnnounceLikeMessage without a remote like id, probably an old message though');
 
-        if ($message->undo) {
-            $likeActivity = $this->undoWrapper->build($likeActivity);
+            return;
+        }
+        if (false === filter_var($message->likeMessageId, FILTER_VALIDATE_URL)) {
+            $this->logger->warning('Got an AnnounceLikeMessage without a valid remote like id: {url}', ['url' => $message->likeMessageId]);
+
+            return;
         }
 
-        $activity = $this->announceWrapper->build(
-            $this->urlGenerator->generate('ap_magazine', ['name' => $object->magazine->name], UrlGeneratorInterface::ABSOLUTE_URL),
-            $likeActivity
-        );
+        $this->logger->debug('got AnnounceLikeMessage: {m}', ['m' => json_encode($message)]);
+        $this->logger->debug('building like activity for: {a}', ['a' => json_encode($object)]);
+
+        if (!$message->undo) {
+            $likeActivity = $message->likeMessageId;
+        } else {
+            $likeActivity = $this->undoWrapper->build($message->likeMessageId, $user);
+        }
+
+        $activity = $this->announceWrapper->build($object->magazine, $likeActivity);
+        $json = $this->activityJsonBuilder->buildActivityJson($activity);
 
         // send the announcement only to the subscribers of the magazine
         $inboxes = array_filter(
             $this->magazineRepository->findAudience($object->magazine)
         );
-        $this->deliverManager->deliver($inboxes, $activity);
+        $this->deliverManager->deliver($inboxes, $json);
     }
 }
