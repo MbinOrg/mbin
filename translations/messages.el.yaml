@@ -637,3 +637,5 @@ oauth2.grant.moderate.entry_comment.all: Συντόνισε τα σχόλια σ
   που συντονίζεις.
 oauth2.grant.moderate.entry_comment.change_language: Άλλαξε τη γλώσσα των σχολίων
   σε νήματα στα περιοδικά που συντονίζεις.
+oauth2.grant.moderate.entry_comment.set_adult: Επισημάνετε τα σχόλια στα νήματα ως
+  NSFW στα περιοδικά που συντονίζετε.
