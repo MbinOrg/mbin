@@ -48,6 +48,11 @@ class FlagHandler extends MbinMessageHandler
         }
         $this->logger->debug('got a FlagMessage');
         $report = $this->reportRepository->find($message->reportId);
+        if (!$report) {
+            $this->logger->info("couldn't find report with id {id}", ['id' => $message->reportId]);
+
+            return;
+        }
         $this->logger->debug('found the report: '.json_encode($report));
         $inboxes = $this->getInboxUrls($report);
         if (0 === \sizeof($inboxes)) {
