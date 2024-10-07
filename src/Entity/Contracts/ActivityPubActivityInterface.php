@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity\Contracts;
 
+use App\Entity\User;
+
 interface ActivityPubActivityInterface
 {
     public const FOLLOWERS = 'followers';
@@ -37,4 +39,6 @@ interface ActivityPubActivityInterface
         'postingRestrictedToMods' => 'lemmy:postingRestrictedToMods',
         'stickied' => 'lemmy:stickied',
     ];
+
+    public function getUser(): ?User;
 }
