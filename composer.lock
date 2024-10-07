@@ -12586,16 +12586,16 @@
         },
         {
             "name": "symfony/stimulus-bundle",
-            "version": "v2.19.0",
+            "version": "v2.20.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/stimulus-bundle.git",
-                "reference": "5e2e1aff3e7cff2875e2f901437543fda9ca9910"
+                "reference": "ae69e3a764694b9f45d8a009dd2b8c22444c5e0c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/stimulus-bundle/zipball/5e2e1aff3e7cff2875e2f901437543fda9ca9910",
-                "reference": "5e2e1aff3e7cff2875e2f901437543fda9ca9910",
+                "url": "https://api.github.com/repos/symfony/stimulus-bundle/zipball/ae69e3a764694b9f45d8a009dd2b8c22444c5e0c",
+                "reference": "ae69e3a764694b9f45d8a009dd2b8c22444c5e0c",
                 "shasum": ""
             },
             "require": {
@@ -12635,7 +12635,7 @@
                 "symfony-ux"
             ],
             "support": {
-                "source": "https://github.com/symfony/stimulus-bundle/tree/v2.19.0"
+                "source": "https://github.com/symfony/stimulus-bundle/tree/v2.20.0"
             },
             "funding": [
                 {
@@ -12651,7 +12651,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-07-30T19:26:23+00:00"
+            "time": "2024-09-24T09:27:42+00:00"
         },
         {
             "name": "symfony/stopwatch",
@@ -13417,16 +13417,16 @@
         },
         {
             "name": "symfony/ux-chartjs",
-            "version": "v2.19.3",
+            "version": "v2.20.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ux-chartjs.git",
-                "reference": "a16c8272e8e9d362c0f3b4d70742747e26d66147"
+                "reference": "3a669e28d6665515da4d3117d245650d325212da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ux-chartjs/zipball/a16c8272e8e9d362c0f3b4d70742747e26d66147",
-                "reference": "a16c8272e8e9d362c0f3b4d70742747e26d66147",
+                "url": "https://api.github.com/repos/symfony/ux-chartjs/zipball/3a669e28d6665515da4d3117d245650d325212da",
+                "reference": "3a669e28d6665515da4d3117d245650d325212da",
                 "shasum": ""
             },
             "require": {
@@ -13477,7 +13477,7 @@
                 "symfony-ux"
             ],
             "support": {
-                "source": "https://github.com/symfony/ux-chartjs/tree/v2.19.3"
+                "source": "https://github.com/symfony/ux-chartjs/tree/v2.20.0"
             },
             "funding": [
                 {
@@ -13493,7 +13493,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-08-14T04:55:38+00:00"
+            "time": "2024-09-24T09:27:42+00:00"
         },
         {
             "name": "symfony/ux-twig-component",
