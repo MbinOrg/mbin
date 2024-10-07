@@ -12,7 +12,6 @@ use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\DomainBlock;
 use App\Entity\DomainSubscription;
 use App\Entity\Entry;
-use App\Entity\EntryFavourite;
 use App\Entity\HashtagLink;
 use App\Entity\Magazine;
 use App\Entity\MagazineBlock;
@@ -29,6 +28,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Exception\NotValidCurrentPageException;
@@ -215,9 +215,7 @@ class EntryRepository extends ServiceEntityRepository
         }
 
         if ($criteria->favourite) {
-            $qb->andWhere(
-                'e.id IN (SELECT IDENTITY(mf.entry) FROM '.EntryFavourite::class.' mf WHERE mf.user = :user)'
-            );
+            $qb->innerJoin('e.favourites', 'mf', Join::ON, 'mf.user = :user AND mf.entry = e');
             $qb->setParameter('user', $this->security->getUser());
         }
 
@@ -261,7 +259,11 @@ class EntryRepository extends ServiceEntityRepository
             default:
         }
 
-        $qb->addOrderBy('e.createdAt', Criteria::SORT_OLD === $criteria->sortOption ? 'ASC' : 'DESC');
+        if (!$criteria->favourite) {
+            $qb->addOrderBy('e.createdAt', Criteria::SORT_OLD === $criteria->sortOption ? 'ASC' : 'DESC');
+        } else {
+            $qb->addOrderBy('mf.createdAt', Criteria::SORT_OLD === $criteria->sortOption ? 'ASC' : 'DESC');
+        }
         $qb->addOrderBy('e.id', 'DESC');
 
         return $qb;

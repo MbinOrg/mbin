@@ -10,6 +10,7 @@ use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
+use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,6 +28,7 @@ class AddHandler extends MbinMessageHandler
         private readonly SettingsManager $settingsManager,
         private readonly AddRemoveFactory $factory,
         private readonly DeliverManager $deliverManager,
+        private readonly ActivityJsonBuilder $activityJsonBuilder,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
@@ -59,6 +61,7 @@ class AddHandler extends MbinMessageHandler
         }
 
         $activity = $this->factory->buildAddModerator($actor, $added, $magazine);
-        $this->deliverManager->deliver($audience, $activity);
+        $json = $this->activityJsonBuilder->buildActivityJson($activity);
+        $this->deliverManager->deliver($audience, $json);
     }
 }
