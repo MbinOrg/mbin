@@ -621,3 +621,19 @@ oauth2.grant.user.oauth_clients.edit: Επεξεργάσου τα δικαιώμ
   σε άλλες εφαρμογές OAuth2.
 oauth2.grant.user.follow: Ακολούθησε ή αφαίρεσε από ακόλουθο χρήστες και διάβασε μια
   λίστα χρηστών που ακολουθείς.
+oauth2.grant.moderate.entry.all: Συντόνισε τα νήματα στα περιοδικά που συντονίζεις.
+oauth2.grant.moderate.entry.change_language: Άλλαξε τη γλώσσα των νημάτων στα περιοδικά
+  που συντονίζεις.
+oauth2.grant.moderate.all: Εκτέλεσε οποιαδήποτε ενέργεια συντονισμού που έχετε την
+  άδεια να εκτελέσετε στα περιοδικά που συντονίζεις.
+oauth2.grant.user.block: Αποκλεισμός ή άρση αποκλεισμού χρήστη και δες την λίστα χρηστών
+  που έχεις αποκλείσει.
+oauth2.grant.moderate.entry.pin: Καρφίτσωσε νήματα στην κορυφή των περιοδικών που
+  συντονίζεις.
+oauth2.grant.moderate.entry.set_adult: Επισήμανση νημάτων ως NSFW στα περιοδικά που
+  συντονίζεις.
+oauth2.grant.moderate.entry.trash: Απόρριψε ή ανάκτησε νήματα στα περιοδικά που συντονίζεις.
+oauth2.grant.moderate.entry_comment.all: Συντόνισε τα σχόλια σε νήματα στα περιοδικά
+  που συντονίζεις.
+oauth2.grant.moderate.entry_comment.change_language: Άλλαξε τη γλώσσα των σχολίων
+  σε νήματα στα περιοδικά που συντονίζεις.
