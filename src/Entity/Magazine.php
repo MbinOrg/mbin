@@ -505,7 +505,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
                 return false;
             }
 
-            if (null === $this->apId && ($actor->isAdmin() || $actor->isModerator() || $this->userIsModerator($actor))) {
+            if ((null === $this->apId && ($actor->isAdmin() || $actor->isModerator())) || $this->userIsModerator($actor)) {
                 return false;
             }
         }
