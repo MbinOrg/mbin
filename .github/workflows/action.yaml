@@ -95,15 +95,37 @@ jobs:
           SYMFONY_DEPRECATIONS_HELPER: disabled
         run: php bin/phpunit tests/Unit
 
-  security-check:
+  audit-check:
     runs-on: ubuntu-latest
     container:
       image: danger89/mbin-pipeline:1.2.0
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run security checker
-        run: local-php-security-checker
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Calculate composer.lock hash
+        id: composer-lock-hash
+        run: |
+          echo "hash=$(md5sum composer.lock)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ steps.composer-lock-hash.outputs.hash }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - run: cp .env.example .env
+      - name: Composer install
+        run: composer install --no-scripts --no-progress
+
+      - name: Run Composer audit
+        env:
+          COMPOSER_AUDIT_ABANDONED: ignore
+        run: composer audit
 
   fixer-dry-run:
     runs-on: ubuntu-latest
