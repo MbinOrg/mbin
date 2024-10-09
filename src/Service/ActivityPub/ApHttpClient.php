@@ -318,7 +318,7 @@ class ApHttpClient
             // Accepted status code are 2xx or 410 (used Tombstone types)
             if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
                 // Do NOT include the response content in the error message, this will be often a full HTML page
-                throw new InvalidApGetException("Invalid status code while getting: $apAddress, status code: $statusCode");
+                throw new InvalidApPostException("Invalid status code while getting: $apAddress, status code: $statusCode");
             }
         } catch (\Exception $e) {
             $this->logRequestException($response, $apAddress, 'ApHttpClient:getCollectionObject', $e);
