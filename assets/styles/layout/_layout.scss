@@ -361,6 +361,12 @@ figure {
   gap: .25rem;
 }
 
+@include media-breakpoint-down(lg) {
+  .flex.mobile {
+    display: block;
+  }
+}
+
 .flex-wrap {
   flex-wrap: wrap;
 }
