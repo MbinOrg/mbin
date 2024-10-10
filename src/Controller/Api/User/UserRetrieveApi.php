@@ -275,6 +275,18 @@ class UserRetrieveApi extends UserBaseApi
         in: 'query',
         schema: new OA\Schema(type: 'string', default: UserRepository::USERS_ALL, enum: UserRepository::USERS_OPTIONS)
     )]
+    #[OA\Parameter(
+        name: 'q',
+        description: 'The term to search for',
+        in: 'query',
+        schema: new OA\Schema(type: 'string')
+    )]
+    #[OA\Parameter(
+        name: 'withAbout',
+        description: 'Only include users with a filled in profile',
+        in: 'query',
+        schema: new OA\Schema(type: 'boolean')
+    )]
     #[OA\Tag(name: 'user')]
     public function collection(
         UserRepository $userRepository,
@@ -286,11 +298,15 @@ class UserRetrieveApi extends UserBaseApi
 
         $request = $this->request->getCurrentRequest();
         $group = $request->get('group', UserRepository::USERS_ALL);
+        $withAboutRaw = $request->get('withAbout');
+        $withAbout = null === $withAboutRaw ? false : \boolval($withAboutRaw);
 
-        $users = $userRepository->findWithAboutPaginated(
+        $users = $userRepository->findPaginated(
             $this->getPageNb($request),
+            $withAbout,
             $group,
-            $this->constrainPerPage($request->get('perPage', UserRepository::PER_PAGE))
+            $this->constrainPerPage($request->get('perPage', UserRepository::PER_PAGE)),
+            $request->get('q'),
         );
 
         $dtos = [];
