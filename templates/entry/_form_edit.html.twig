@@ -20,7 +20,7 @@
             'data-action' : 'input-length#updateDisplay',
             'data-input-length-max-value' : constant('App\\Entity\\Entry::MAX_TITLE_LENGTH')
         }}) }}
-    {{ component('editor_toolbar', {id: 'entry_article_body'}) }}
+    {{ component('editor_toolbar', {id: 'entry_edit_body'}) }}
     {{ form_row(form.body, {
         label: false, attr: {
             placeholder: 'body',
