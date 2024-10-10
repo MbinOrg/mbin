@@ -59,6 +59,7 @@ jobs:
         run: npm ci --include=dev
         env:
           NODE_ENV: production
+
       - name: Build frontend (production)
         run: npm run build
 
@@ -121,6 +122,9 @@ jobs:
       - run: cp .env.example .env
       - name: Composer install
         run: composer install --no-scripts --no-progress
+
+      - name: Run Npm audit
+        run: npm audit --omit=dev
 
       - name: Run Composer audit
         env:
