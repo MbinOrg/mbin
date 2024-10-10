@@ -53,6 +53,7 @@ class DeliverHandler extends MbinMessageHandler
             $this->doWork($message);
             $conn->commit();
         } catch (InvalidApPostException $e) {
+            $conn->commit();
             // we don't roll back on an InvalidApPostException, so the failed delivery attempt gets written to the DB
             throw $e;
         } catch (\Exception $e) {
