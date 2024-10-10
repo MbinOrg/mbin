@@ -1,8 +1,8 @@
-# Development Server
+# Bare Metal Development Server
 
 Requirements:
 
-- PHP v8.2
+- PHP v8.3
 - NodeJS
 - Redis
 - PostgreSQL
@@ -10,13 +10,13 @@ Requirements:
 
 ---
 
-- Increase execution time in PHP config file: `/etc/php/8.2/fpm/php.ini`:
+- Increase execution time in PHP config file: `/etc/php/8.3/fpm/php.ini`:
 
 ```ini
 max_execution_time = 120
 ```
 
-- Restart the PHP-FPM service: `sudo systemctl restart php8.2-fpm.service`
+- Restart the PHP-FPM service: `sudo systemctl restart php8.3-fpm.service`
 - Connect to PostgreSQL using the postgres user:
 
 ```bash
@@ -79,4 +79,4 @@ This will give you a minimal working frontend with PostgreSQL setup. Keep in min
 
 _Optionally:_ you could also setup RabbitMQ, but the Doctrine messenger configuration will be sufficient for local development.
 
-More info: [Contributing guide](./README.md), [Admin guide](../02-admin/README.md) and [Symfony Local Web Server](https://symfony.com/doc/current/setup/symfony_server.html)
+More info: [Contributing guide](../../README.md), [Admin guide](../02-admin/README.md) and [Symfony Local Web Server](https://symfony.com/doc/current/setup/symfony_server.html)
