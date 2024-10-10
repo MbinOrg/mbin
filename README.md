@@ -31,7 +31,7 @@ For developers:
 - Improved [bare metal/VM guide](https://docs.joinmbin.org/admin/installation/bare_metal) and [Docker guide](https://docs.joinmbin.org/admin/installation/docker/)
 - [Improved Docker setup](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Amerged+label%3Adocker)
 - _Developer_ server explained (see [Development Server documentation here](https://docs.joinmbin.org/contributing/development_server) )
-- GitHub Security advisories, vulnerability reporting, [Dependabot](https://github.com/features/security) and [Advanced code scanning](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning) enabled. And we run [`local-php-security-checker`](https://github.com/fabpot/local-php-security-checker).
+- GitHub Security advisories, vulnerability reporting, [Dependabot](https://github.com/features/security) and [Advanced code scanning](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning) enabled. And we run `composer audit`.
 - Improved **code documentation**
 - **Tight integration** with [Mbin Weblate project](https://hosted.weblate.org/engage/mbin/) for translations (Two way sync)
 - Last but not least, a **community-focus project embracing the [Collective Code Construction Contract](./C4.md)** (C4). No single maintainer.
@@ -291,7 +291,6 @@ Unofficial magazines:
 	<tbody>
 </table>
 <!-- readme: contributors -end -->
-
 
 ## Getting Started
 
