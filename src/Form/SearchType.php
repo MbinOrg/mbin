@@ -17,7 +17,12 @@ class SearchType extends AbstractType
     {
         $builder
             ->setMethod('GET')
-            ->add('q', TextType::class, ['required' => true])
+            ->add('q', TextType::class, [
+                'required' => true,
+                'attr' => [
+                    'placeholder' => 'type_search_term',
+                ],
+            ])
             ->add('magazine', MagazineAutocompleteType::class, ['required' => false])
             ->add('user', UserAutocompleteType::class, ['required' => false])
             ->add('type', ChoiceType::class, [
