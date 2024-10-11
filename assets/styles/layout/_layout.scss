@@ -214,7 +214,9 @@ figure {
   code,
   .ts-control > [data-value].item,
   .image-preview-container {
-    border-radius: var(--kbin-rounded-edges-radius) !important;
+    &:not(.ignore-edges) {
+      border-radius: var(--kbin-rounded-edges-radius) !important;
+    }
   }
 
   .ts-wrapper {

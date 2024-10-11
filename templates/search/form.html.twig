@@ -1,9 +1,9 @@
 {{ form_start(form, {'attr': {'class': 'search-form'}}) }}
 
-    <div class="flex" style="align-items: center">
+    <div class="search-container flex" style="align-items: center">
         {{ form_widget(form.q, {label: false, 'attr': {'class': 'form-control'}}) }}
 
-        <button class="btn btn__primary" type="submit" title="{{ 'search'|trans }}" aria-label="{{ 'search'|trans }}">
+        <button class="btn btn__primary ignore-edges" type="submit" title="{{ 'search'|trans }}" aria-label="{{ 'search'|trans }}">
             <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
         </button>
     </div>
