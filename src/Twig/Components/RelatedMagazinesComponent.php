@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Twig\Components;
 
 use App\Entity\Magazine;
+use App\Entity\User;
 use App\Repository\MagazineRepository;
 use App\Service\SettingsManager;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -28,6 +30,7 @@ final class RelatedMagazinesComponent
         private readonly MagazineRepository $repository,
         private readonly CacheInterface $cache,
         private readonly SettingsManager $settingsManager,
+        private readonly Security $security,
     ) {
     }
 
@@ -44,16 +47,18 @@ final class RelatedMagazinesComponent
         }
 
         $magazine = str_replace('@', '', $magazine ?? '');
+        /** @var User|null $user */
+        $user = $this->security->getUser();
 
         $magazineIds = $this->cache->get(
-            "related_magazines_{$magazine}_{$tag}_{$this->type}_{$this->settingsManager->getLocale()}",
-            function (ItemInterface $item) use ($magazine, $tag) {
+            "related_magazines_{$magazine}_{$tag}_{$this->type}_{$this->settingsManager->getLocale()}_{$user?->getId()}",
+            function (ItemInterface $item) use ($magazine, $tag, $user) {
                 $item->expiresAfter(60 * 5); // 5 minutes
 
                 $magazines = match ($this->type) {
-                    self::TYPE_TAG => $this->repository->findRelated($tag),
-                    self::TYPE_MAGAZINE => $this->repository->findRelated($magazine),
-                    default => $this->repository->findRandom(),
+                    self::TYPE_TAG => $this->repository->findRelated($tag, user: $user),
+                    self::TYPE_MAGAZINE => $this->repository->findRelated($magazine, user: $user),
+                    default => $this->repository->findRandom(user: $user),
                 };
 
                 $magazines = array_filter($magazines, fn ($m) => $m->name !== $magazine);
