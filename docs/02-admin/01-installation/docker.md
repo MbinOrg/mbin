@@ -1,18 +1,23 @@
 # Docker Installation
 
 > [!NOTE]
-> Docker installation is currently not advised for production use. Try the [Bare Metal installation](./bare_metal.md) instead.
+> Docker installation is currently not advised for production use. Try the [Bare Metal installation](./bare_metal.md)
+> instead.
+
+> [!IMPORTANT]  
+> If you were already using docker in production, please see the [migration guide](#migration-guide) for updates
 
 ## System Requirements
 
 - Docker Engine
 - Docker Compose V2
 
-  > If you are using Compose V1, replace `docker compose` with `docker-compose` in those commands below.
+> If you are using Compose V1, replace `docker compose` with `docker-compose` in those commands below.
 
 ### Docker Install
 
-The most convenient way to install docker is using an official [convenience script](https://docs.docker.com/engine/install/ubuntu/#install-using-the-convenience-script)
+The most convenient way to install docker is using an
+official [convenience script](https://docs.docker.com/engine/install/ubuntu/#install-using-the-convenience-script)
 provided at [get.docker.com](https://get.docker.com/):
 
 ```bash
@@ -20,7 +25,8 @@ curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 ```
 
-Alternatively, you can follow the official [Docker install documentation](https://docs.docker.com/engine/install/) for your platform.
+Alternatively, you can follow the official [Docker install documentation](https://docs.docker.com/engine/install/) for
+your platform.
 
 Once Docker is installed on your system, it is recommended to create a `docker` group and add it to your user:
 
@@ -31,82 +37,68 @@ sudo usermod -aG docker $USER
 
 ## Mbin Installation
 
-### Preparation
-
-Clone git repository:
+First clone the git repository:
 
 ```bash
 git clone https://github.com/MbinOrg/mbin.git
 cd mbin
 ```
 
-### Docker image preparation
+For a test "production" instance, all you have to do is
 
-> [!NOTE]
-> If you're using a version of Docker Engine earlier than 23.0, run `export DOCKER_BUILDKIT=1`, prior to building the image. This does not apply to users running Docker Desktop. More info can be found [here](https://docs.docker.com/build/buildkit/#getting-started)
+- [Copy example configuration](#copy-the-example-configuration)
+    - Replace `mbin.domain.tdl` with localhost in the `.env` file
+- [Make compose override files](#make-override-files)
+- [Start the instance](#start-the-instance)
 
-1. First go to the _docker directory_:
+For a full production instance, you'll have to follow the steps below.
 
-```bash
-cd docker
+### Configuration
+
+The configuration is held in a `.env` file. It contains information to connect the components to each other (passwords,
+service names, ...), where certain things should end up (uploaded files and such), the domain name of your instance,
+and more.
+
+`docker compose` references it in nearly every service.
+
+#### Copy the example configuration
+
+`.env.example_docker` contains an example configuration that with very a few tweaks can have you up and running.
+
+```shell
+cp .env.example_docker .env
 ```
 
-2. Use the existing Docker image _OR_ build the docker image. Select one of the two options.
+#### Configure `.env`
 
-#### Build our own Docker image
+Below is a table with env variables that are **mandatory** to update
 
-If you want to build our own image, run (_no_ need to update the `compose.yml` file):
+| Variable              | Purpose                                                                                         |
+|-----------------------|-------------------------------------------------------------------------------------------------|
+| APP_SECRET            | Salt passwords and other secrets. Generate a random text at least 16 characters long            |
+| KBIN_DOMAIN           | The postgres user's password                                                                    |
+| KBIN_STORAGE_URL      | Where the uploaded media will reachable from externally. See [doc below](#uploaded-media-files) |
+| POSTGRES_PASSWORD     | The postgres user's password                                                                    |
+| RABBITMQ_DEFAULT_PASS | Used to connect to RabbitMQ                                                                     |
+| REDIS_PASSWORD        | Used to connect to Redis                                                                        |
+| SERVER_NAME           | Forces server to accept requests only to this domain. **Must have `www:80`**                    |
 
-```bash
-docker build --no-cache -t mbin -f Dockerfile  ..
-```
+These are optional but recommended to update
 
-#### Use Mbin pre-build image
+| Variable           | Purpose                                           |
+|--------------------|---------------------------------------------------|
+| MERCURE_JWT_SECRET | Used to connect to the optional mercure service   |
+| POSTGRES_VERSION   | Ensure you're running the latest postgres version |
 
-_OR_ use our pre-build images from [ghcr.io](https://ghcr.io). In this case you need to update the `compose.yml` file:
+> [!IMPORTANT]
+> Ensure the `HTTPS` environmental variable is set to `TRUE` in `compose.override.yml` for the `php`, `messenger`,
+> and `messenger_ap` containers **if your environment is using a valid certificate behind a reverse proxy**. This is
+> likely true for most production environments and is required for proper federation, that is, this will ensure the
+> webfinger responses include `https:` in the URLs generated.
 
-```bash
-nano compose.yml
-```
+#### Configure OAuth2 keys (optional)
 
-Find and replace or comment-out the following 4 lines:
-
-```yml
-build:
-  context: ../
-  dockerfile: docker/Dockerfile
-image: mbin
-```
-
-And instead use the following line on all places (`www`, `php`, and `messenger` services):
-
-```yml
-image: "ghcr.io/mbinorg/mbin:latest"
-```
-
-**Important:** Do _NOT_ forget to change **ALL LINES** in that matches `image: mbin` to: `image: "ghcr.io/mbinorg/mbin:latest"` in the `compose.yml` file (should be 4 matches in total).
-
-3. Create config files and storage directories:
-
-```bash
-cp ../.env.example_docker .env
-cp compose.prod.yml compose.override.yml
-mkdir -p storage/media storage/caddy_config storage/caddy_data storage/logs
-sudo chown $USER:$USER storage/media storage/caddy_config storage/caddy_data storage/logs
-```
-
-### Configure `.env` and `compose.override.yml`
-
-1. Choose your Redis password, PostgreSQL password, RabbitMQ password, and Mercure password.
-2. Place the passwords in the corresponding variables in both `.env` and `compose.override.yml`.
-3. Update the `SERVER_NAME`, `KBIN_DOMAIN` and `KBIN_STORAGE_URL` in `.env`.
-4. Update `APP_SECRET` in `.env`, generate a new one via: `node -e  "console.log(require('crypto').randomBytes(16).toString('hex'))"`
-5. _Optionally_: Use a newer PostgreSQL version (current fallback is v13). Update/set the `POSTGRES_VERSION` variable in your `.env` and `compose.override.yml` under `db`.
-
-> [!NOTE]
-> Ensure the `HTTPS` environmental variable is set to `TRUE` in `compose.override.yml` for the `php`, `messenger`, and `messenger_ap` containers **if your environment is using a valid certificate behind a reverse proxy**. This is likely true for most production environments and is required for proper federation, that is, this will ensure the webfinger responses include `https:` in the URLs generated.
-
-### Configure OAuth2 keys
+OAuth is used by 3rd party app developers. Without these, they will not be able to connect to the server.
 
 1. Create an RSA key pair using OpenSSL:
 
@@ -134,11 +126,72 @@ OAUTH_PASSPHRASE=<Your (optional) passphrase from above here>
 OAUTH_ENCRYPTION_KEY=<Hex string generated in previous step>
 ```
 
+### Compose override files
+
+`docker compose` allows overriding a compose configuration by merging `compose.yml` and `compose.override.yml`.
+The latter is ignored by git, which allows you to make modifications to the services without making changes to version
+controlled files.
+
+Create a **compose.override.yml** with these contents
+
+```yaml
+include:
+  - compose.prod.yml
+  - compose.prod.override.yml
+```
+
+And an empty `compose.prod.override.yml`.
+
+docker compose will load these files in order and [merge][docker compose merging] sequentially
+(last file is most significant):
+
+- `docker.compose.yml`
+- `docker.prod.yml`
+- `docker.prod.override.yml` (ignored by git)
+
+### Docker image preparation
+
+You have two options for the docker images:
+
+- [Build your own](#build-our-own-docker-image)
+- [Use prebuilt images](#use-mbin-prebuilt-images)
+
+#### Build our own Docker image
+
+> ![WARNING]
+> Building your own image will use the code you currently checked out!
+> Beware that updates to a running instance might break it. Read the release notes first!
+
+If you want to build our own image, run (_no_ need to update the compose files):
+
+```bash
+docker compose build --no-cache
+```
+
+#### Use Mbin prebuilt images
+
+There are prebuilt images from [ghcr.io](https://ghcr.io) which can speed up deployment. Should you want to use them
+In this case you need to update the `compose.prod.override.yml` file with:
+
+```yaml
+services:
+  www:
+    image: "ghcr.io/mbinorg/mbin:latest-caddy"
+    pull_policy: never
+  php:
+    image: "ghcr.io/mbinorg/mbin:latest"
+    pull_policy: never
+  messenger:
+    image: "ghcr.io/mbinorg/mbin:latest"
+    pull_policy: never
+```
+
+> ![NOTE]
+> You can replace `latest` with a version number e.g `1.0.0`
+
 ### Running the containers
 
-By default `docker compose` will execute the `compose.yml` and `compose.override.yml` files.
-
-Run the container in the background (`-d` means detach, but this can also be omitted for testing or debugging purposes):
+Run the services in the background (`-d` means detach, but this can also be omitted for testing or debugging purposes):
 
 ```bash
 # Go to the docker directory within the git repo
@@ -148,43 +201,29 @@ cd docker
 docker compose up -d
 ```
 
-See your running containers via: `docker ps`.
+See your running services via: `docker compose ps`.
 
-Then, you should be able to access the new instance via [http://localhost:8008](http://localhost:8008).
+Then, you should be able to access the new instance via [http://localhost](http://localhost:8008).
 You can also access RabbitMQ management UI via [http://localhost:15672](http://localhost:15672).
 
-### Add auxiliary containers to `compose.yml`
-
-Add any auxiliary container as you want. For example, add a Nginx container as reverse proxy to provide HTTPS encryption.
-
-> [!NOTE]
-> If you are building the docker images yourself, you might get merge conflicts when changing the `compose.yml`
+## Notes
 
 ### Uploaded media files
 
-Uploaded media files (e.g. photos uploaded by users) will be stored on the host directory `storage/media`. They will be served by the Caddy web server in the `www` container as static files.
+Uploaded media files (e.g. photos uploaded by users) will be stored on the host directory `storage/mbin/public/media`
+by the `php` container and served by the Caddy web server in the `www` container as static files.
 
-Make sure `KBIN_STORAGE_URL` in your `.env` configuration file is set to be `https://yourdomain.tld/media` (assuming you setup Nginx with SSL certificate by now).
+Make sure `KBIN_STORAGE_URL` in your `.env` configuration file is set to be `https://yourdomain.tld/media`
+(assuming you setup Nginx with SSL certificate by now).
 
-You can also serve those media files on another server by mirroring the files at `storage/media` and changing `KBIN_STORAGE_URL` correspondingly.
+You can also serve those media files on another server by mirroring the files at `storage/mbin/public/media` and
+changing `KBIN_STORAGE_URL` correspondingly.
 
 ### Filesystem ACL support
 
-The filesystem ACL is disabled by default, in the `mbin` image. You can set the environment variable `ENABLE_ACL=1` to enable it. Remember that not all filesystems support ACL. This will cause an error if you enable filesystem ACL for such filesystems.
-
-## Run Production
-
-If you created the file `compose.override.yml` with your configs (`cp compose.prod.yml compose.override.yml`), running production would be the same command:
-
-```bash
-docker compose up -d
-```
-
-**Important:** The docker instance is can be reached at [http://127.0.0.1:8008](http://127.0.0.1:8008), we strongly advise you to put a reverse proxy (like Nginx) in front of the docker instance. Nginx can could listen on ports 80 and 443 and Nginx should handle SSL/TLS offloading. See also Nginx example below.
-
-If you want to deploy your app on a cluster of machines, you can
-use [Docker Swarm](https://docs.docker.com/engine/swarm/stack-deploy/), which is compatible with the provided Compose
-files.
+The filesystem ACL is disabled by default, in the `mbin` image. You can set the environment variable `ENABLE_ACL=1` to
+enable it. Remember that not all filesystems support ACL. This will cause an error if you enable filesystem ACL for such
+filesystems.
 
 ### Mbin NGINX Server Block
 
@@ -248,3 +287,21 @@ server {
     }
 }
 ```
+
+## Migration Guide
+
+For admins using docker already, as of 2024-08-19, the docker configuration has changed. Read this guide to be sure
+you're up to date. The major change is where media files are stored.
+
+Previously media files were stored at `docker/storage/media`. They will now be stored in `docker/storage/mbin/public/media`.
+The easiest way to migrate them is by running these commands as root (`sudo`)
+
+```shell
+mkdir -p docker/storage/www/public
+# Copy to have the previous files as a backup
+cp -r docker/storage/media docker/storage/www/public
+```
+
+You should then be set all set.
+
+[docker compose merging]: https://docs.docker.com/compose/compose-file/13-merge/
