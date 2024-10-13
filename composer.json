@@ -27,7 +27,7 @@
         "embed/embed": "^4.4.12",
         "endroid/qr-code": "^5.1.0",
         "friendsofsymfony/jsrouting-bundle": "^3.5.0",
-        "furqansiddiqui/bip39-mnemonic-php": "^0.1.7",
+        "furqansiddiqui/bip39-mnemonic-php": "^0.2.1",
         "gmostafa/php-graphql-client": "^1.13",
         "gumlet/php-image-resize": "^2.0.4",
         "knplabs/knp-time-bundle": "^2.4.0",
