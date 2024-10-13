@@ -24,6 +24,7 @@ use App\Entity\UserFollow;
 use App\PageView\EntryPageView;
 use App\Pagination\AdapterFactory;
 use App\Service\SettingsManager;
+use App\Utils\SqlHelpers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Types\Types;
@@ -56,6 +57,7 @@ class EntryRepository extends ServiceEntityRepository
         private readonly CacheInterface $cache,
         private readonly AdapterFactory $adapterFactory,
         private readonly SettingsManager $settingsManager,
+        private readonly SqlHelpers $sqlHelpers
     ) {
         parent::__construct($registry, Entry::class);
     }
@@ -151,6 +153,7 @@ class EntryRepository extends ServiceEntityRepository
 
     private function filter(QueryBuilder $qb, EntryPageView $criteria): QueryBuilder
     {
+        /** @var User $user */
         $user = $this->security->getUser();
 
         if (Criteria::AP_LOCAL === $criteria->federation) {
@@ -339,12 +342,11 @@ class EntryRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findRelatedByTag(string $tag, ?int $limit = 1): array
+    public function findRelatedByTag(string $tag, ?int $limit = 1, ?User $user = null): array
     {
         $qb = $this->createQueryBuilder('e');
 
-        return $qb
-            ->andWhere('e.visibility = :visibility')
+        $qb->andWhere('e.visibility = :visibility')
             ->andWhere('m.visibility = :visibility')
             ->andWhere('u.visibility = :visibility')
             ->andWhere('u.isDeleted = false')
@@ -360,16 +362,23 @@ class EntryRepository extends ServiceEntityRepository
                 'visibility' => VisibilityInterface::VISIBILITY_VISIBLE,
                 'tag' => $tag,
             ])
-            ->setMaxResults($limit)
-            ->getQuery()
+            ->setMaxResults($limit);
+
+        if (null !== $user) {
+            $qb->andWhere($qb->expr()->not($qb->expr()->exists($this->sqlHelpers->getBlockedMagazinesDql($user))))
+                ->andWhere($qb->expr()->not($qb->expr()->exists($this->sqlHelpers->getBlockedUsersDql($user))));
+            $qb->setParameter('user', $user);
+        }
+
+        return $qb->getQuery()
             ->getResult();
     }
 
-    public function findRelatedByMagazine(string $name, ?int $limit = 1): array
+    public function findRelatedByMagazine(string $name, ?int $limit = 1, ?User $user = null): array
     {
         $qb = $this->createQueryBuilder('e');
 
-        return $qb->where('m.name LIKE :name OR m.title LIKE :title')
+        $qb->where('m.name LIKE :name OR m.title LIKE :title')
             ->andWhere('e.visibility = :visibility')
             ->andWhere('m.visibility = :visibility')
             ->andWhere('u.visibility = :visibility')
@@ -382,12 +391,19 @@ class EntryRepository extends ServiceEntityRepository
             ->setParameters(
                 ['name' => "%{$name}%", 'title' => "%{$name}%", 'visibility' => VisibilityInterface::VISIBILITY_VISIBLE]
             )
-            ->setMaxResults($limit)
-            ->getQuery()
+            ->setMaxResults($limit);
+
+        if (null !== $user) {
+            $qb->andWhere($qb->expr()->not($qb->expr()->exists($this->sqlHelpers->getBlockedMagazinesDql($user))))
+                ->andWhere($qb->expr()->not($qb->expr()->exists($this->sqlHelpers->getBlockedUsersDql($user))));
+            $qb->setParameter('user', $user);
+        }
+
+        return $qb->getQuery()
             ->getResult();
     }
 
-    public function findLast(int $limit): array
+    public function findLast(int $limit, ?User $user = null): array
     {
         $qb = $this->createQueryBuilder('e');
 
@@ -401,10 +417,16 @@ class EntryRepository extends ServiceEntityRepository
             $qb = $qb->andWhere('m.apId IS NULL');
         }
 
+        if (null !== $user) {
+            $qb->andWhere($qb->expr()->not($qb->expr()->exists($this->sqlHelpers->getBlockedMagazinesDql($user))))
+                ->andWhere($qb->expr()->not($qb->expr()->exists($this->sqlHelpers->getBlockedUsersDql($user))));
+            $qb->setParameter('user', $user);
+        }
+
         return $qb->join('e.magazine', 'm')
             ->join('e.user', 'u')
             ->orderBy('e.createdAt', 'DESC')
-            ->setParameters(['visibility' => VisibilityInterface::VISIBILITY_VISIBLE])
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();

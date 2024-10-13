@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Twig\Components;
 
 use App\Entity\Entry;
+use App\Entity\User;
 use App\Repository\EntryRepository;
 use App\Service\MentionManager;
 use App\Service\SettingsManager;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -31,7 +33,8 @@ final class RelatedEntriesComponent
         private readonly EntryRepository $repository,
         private readonly CacheInterface $cache,
         private readonly SettingsManager $settingsManager,
-        private readonly MentionManager $mentionManager
+        private readonly MentionManager $mentionManager,
+        private readonly Security $security,
     ) {
     }
 
@@ -49,19 +52,23 @@ final class RelatedEntriesComponent
 
         $entryId = $this->entry?->getId();
         $magazine = str_replace('@', '', $magazine ?? '');
+        /** @var User|null $user */
+        $user = $this->security->getUser();
 
+        $cacheKey = "related_entries_{$magazine}_{$tag}_{$entryId}_{$this->type}_{$this->settingsManager->getLocale()}_{$user?->getId()}";
         $entryIds = $this->cache->get(
-            "related_entries_{$magazine}_{$tag}_{$entryId}_{$this->type}_{$this->settingsManager->getLocale()}",
-            function (ItemInterface $item) use ($magazine, $tag) {
+            $cacheKey,
+            function (ItemInterface $item) use ($magazine, $tag, $user) {
                 $item->expiresAfter(60 * 5); // 5 minutes
 
                 $entries = match ($this->type) {
-                    self::TYPE_TAG => $this->repository->findRelatedByMagazine($tag, $this->limit + 20),
+                    self::TYPE_TAG => $this->repository->findRelatedByMagazine($tag, $this->limit + 20, user: $user),
                     self::TYPE_MAGAZINE => $this->repository->findRelatedByTag(
                         $this->mentionManager->getUsername($magazine),
-                        $this->limit + 20
+                        $this->limit + 20,
+                        user: $user,
                     ),
-                    default => $this->repository->findLast($this->limit + 150),
+                    default => $this->repository->findLast($this->limit + 150, user: $user),
                 };
 
                 $entries = array_filter($entries, fn (Entry $e) => !$e->isAdult && !$e->magazine->isAdult);
