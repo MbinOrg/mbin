@@ -16,6 +16,7 @@ use App\Entity\Report;
 use App\Entity\User;
 use App\PageView\MagazinePageView;
 use App\Service\SettingsManager;
+use App\Utils\SqlHelpers;
 use App\Utils\SubscriptionSort;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
@@ -49,7 +50,7 @@ class MagazineRepository extends ServiceEntityRepository
         self::SORT_NEWEST,
     ];
 
-    public function __construct(ManagerRegistry $registry, private readonly SettingsManager $settingsManager)
+    public function __construct(ManagerRegistry $registry, private readonly SettingsManager $settingsManager, private readonly SqlHelpers $sqlHelpers)
     {
         parent::__construct($registry, Magazine::class);
     }
@@ -478,21 +479,23 @@ class MagazineRepository extends ServiceEntityRepository
         return $pagerfanta;
     }
 
-    public function findRandom(): array
+    public function findRandom(?User $user = null): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = '
-            SELECT id FROM magazine
-            ';
+        $whereClauses = [];
+        $parameters = [];
         if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
-            $sql .= 'WHERE ap_id IS NULL';
+            $whereClauses[] = 'm.ap_id IS NULL';
         }
-        $sql .= '
-            ORDER BY random()
-            LIMIT 5
-            ';
+        if (null !== $user) {
+            $subSql = 'SELECT * FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :user';
+            $whereClauses[] = "NOT EXISTS($subSql)";
+            $parameters['user'] = $user->getId();
+        }
+        $whereString = SqlHelpers::makeWhereString($whereClauses);
+        $sql = "SELECT m.id FROM magazine m $whereString ORDER BY random() LIMIT 5";
         $stmt = $conn->prepare($sql);
-        $stmt = $stmt->executeQuery();
+        $stmt = $stmt->executeQuery($parameters);
         $ids = $stmt->fetchAllAssociative();
 
         return $this->createQueryBuilder('m')
@@ -505,17 +508,23 @@ class MagazineRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findRelated(string $magazine): array
+    public function findRelated(string $magazine, ?User $user = null): array
     {
-        return $this->createQueryBuilder('m')
+        $qb = $this->createQueryBuilder('m')
             ->where('m.entryCount > 0 OR m.postCount > 0')
             ->andWhere('m.title LIKE :magazine OR m.description LIKE :magazine OR m.name LIKE :magazine')
             ->andWhere('m.isAdult = false')
             ->andWhere('m.visibility = :visibility')
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->setParameter('magazine', "%{$magazine}%")
-            ->setMaxResults(5)
-            ->getQuery()
+            ->setMaxResults(5);
+
+        if (null !== $user) {
+            $qb->andWhere($qb->expr()->not($qb->expr()->exists($this->sqlHelpers->getBlockedMagazinesDql($user))));
+            $qb->setParameter('user', $user);
+        }
+
+        return $qb->getQuery()
             ->getResult();
     }
 

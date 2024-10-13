@@ -14,6 +14,7 @@ use App\Entity\User;
 use App\Pagination\NativeQueryAdapter;
 use App\Pagination\Pagerfanta;
 use App\Pagination\Transformation\ContentPopulationTransformer;
+use App\Utils\SqlHelpers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -130,10 +131,10 @@ class BookmarkRepository extends ServiceEntityRepository
             $parameters['time'] = $criteria->getSince();
         }
 
-        $entryWhere = $this->makeWhereString($entryWhereArr);
-        $entryCommentWhere = $this->makeWhereString($entryCommentWhereArr);
-        $postWhere = $this->makeWhereString($postWhereArr);
-        $postCommentWhere = $this->makeWhereString($postCommentWhereArr);
+        $entryWhere = SqlHelpers::makeWhereString($entryWhereArr);
+        $entryCommentWhere = SqlHelpers::makeWhereString($entryCommentWhereArr);
+        $postWhere = SqlHelpers::makeWhereString($postWhereArr);
+        $postCommentWhere = SqlHelpers::makeWhereString($postCommentWhereArr);
 
         $sql = "
             SELECT * FROM (
@@ -157,24 +158,5 @@ class BookmarkRepository extends ServiceEntityRepository
         $adapter = new NativeQueryAdapter($conn, $sql, $parameters, transformer: $this->transformer);
 
         return Pagerfanta::createForCurrentPageWithMaxPerPage($adapter, $criteria->page, $perPage ?? EntryRepository::PER_PAGE);
-    }
-
-    private function makeWhereString(array $whereClauses): string
-    {
-        if (empty($whereClauses)) {
-            return '';
-        }
-
-        $where = 'WHERE ';
-        $i = 0;
-        foreach ($whereClauses as $whereClause) {
-            if ($i > 0) {
-                $where .= ' AND ';
-            }
-            $where .= $whereClause;
-            ++$i;
-        }
-
-        return $where;
     }
 }
