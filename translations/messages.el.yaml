@@ -639,3 +639,34 @@ oauth2.grant.moderate.entry_comment.change_language: Άλλαξε τη γλώσ�
   σε νήματα στα περιοδικά που συντονίζεις.
 oauth2.grant.moderate.entry_comment.set_adult: Επισημάνετε τα σχόλια στα νήματα ως
   NSFW στα περιοδικά που συντονίζετε.
+oauth2.grant.admin.post_comment.purge: Διέγραψε εντελώς οποιοδήποτε σχόλιο σε μια
+  ανάρτηση από την οντότητα σου.
+oauth2.grant.admin.entry_comment.purge: Διέγραψε εντελώς οποιοδήποτε σχόλιο σε ένα
+  νήμα από την οντότητα σου.
+oauth2.grant.admin.post.purge: Διέγραψε εντελώς οποιαδήποτε ανάρτηση από την οντότητα
+  σου.
+oauth2.grant.moderate.entry_comment.trash: Πέταξε ή επανέφερε σχολίων σε νήματα στα
+  περιοδικά που διαχειρίζεσαι.
+oauth2.grant.moderate.post.set_adult: Επισήμανε τις αναρτήσεις ως NSFW στα περιοδικά
+  που συντονίζεις.
+oauth2.grant.moderate.post_comment.set_adult: Επισήμανε τα σχόλια σε αναρτήσεις ως
+  NSFW στα περιοδικά που συντονίζεις.
+oauth2.grant.moderate.post_comment.all: Συντόνισε σχόλια σε αναρτήσεις στα περιοδικά
+  που συντονίζεις.
+oauth2.grant.moderate.post_comment.change_language: Άλλαξε τη γλώσσα των σχολίων σε
+  αναρτήσεις στα περιοδικά που συντονίζεις.
+oauth2.grant.moderate.magazine.ban.all: Διαχειρίσου τους αποκλεισμένους χρήστες στα
+  περιοδικά που συντονίζεις.
+oauth2.grant.moderate.post.all: Συντόνισε αναρτήσεις στα περιοδικά που συντονίζεις.
+oauth2.grant.moderate.post.change_language: Άλλαξε τη γλώσσα των αναρτήσεων στα περιοδικά
+  που συντονίζεις.
+oauth2.grant.moderate.post.trash: Πέταξε ή επανέφερε τις αναρτήσεις στα περιοδικά
+  που συντονίζεις.
+oauth2.grant.moderate.post_comment.trash: Πέταξε ή επανέφερε τα σχόλια σε αναρτήσεις
+  στα περιοδικά που συντονίζεις.
+oauth2.grant.moderate.magazine.all: Διαχειρίσου τους αποκλεισμούς, τις αναφορές και
+  την προβολή αντικειμένων στον κάδο απορριμμάτων στα περιοδικά που συντονίζεις.
+oauth2.grant.moderate.magazine.ban.read: Δες τους αποκλεισμένους χρήστες στα περιοδικά
+  που συντονίζεις.
+oauth2.grant.moderate.magazine.ban.create: Απέκλεισε τους χρήστες στα περιοδικά που
+  συντονίζεις.

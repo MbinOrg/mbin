@@ -227,3 +227,20 @@ purge_magazine: Purgahin ang magasin
 sensitive_hide: Pindutin upang itago
 sensitive_show: Pindutin upang ipakita
 sensitive_warning: Sensitibong nilalaman
+notification_title_mention: Binabanggit ka
+notification_title_edited_comment: Nabago ang puna
+notification_title_new_reply: Bagong tugon
+notification_title_removed_comment: Natanggal ang puna
+notification_title_ban: Binabawalan ka
+max_image_size: Pinakamataas na laki ng file
+hidden: Nakatago
+enabled: Pinagana
+notification_title_new_report: Nagawa ang isang bagong ulat
+notification_title_edited_post: Nabago ang isang post
+notification_title_removed_post: Natanggal ang isang post
+magazine_posting_restricted_to_mods_warning: Mga tagatimpi lamang ang gumagawa ng
+  mga thread sa magasin na ito
+open_report: nakabukas na ulat
+already_have_account: Mayroon ka na bang account?
+eng: ENG
+comment_not_found: Hindi nakita ang puna
