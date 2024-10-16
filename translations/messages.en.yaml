@@ -915,7 +915,7 @@ bookmarks_list_edit: Edit bookmark list
 bookmark_list_edit: Edit
 bookmark_list_selected_list: Selected list
 table_of_contents: Table of contents
-search_type_both: Both
-search_type_entry: Thread
-search_type_post: Microblog
+search_type_all: Threads + Microblogs
+search_type_entry: Threads
+search_type_post: Microblogs
 select_user: Choose a user

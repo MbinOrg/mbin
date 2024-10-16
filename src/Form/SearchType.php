@@ -27,7 +27,7 @@ class SearchType extends AbstractType
             ->add('user', UserAutocompleteType::class, ['required' => false])
             ->add('type', ChoiceType::class, [
                 'choices' => [
-                    'search_type_both' => null,
+                    'search_type_all' => null,
                     'search_type_entry' => 'entry',
                     'search_type_post' => 'post',
                 ],
