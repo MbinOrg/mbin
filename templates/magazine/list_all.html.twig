@@ -21,9 +21,9 @@
         <div class="container">
             {{ form_start(form) }}
 
-            <div class="flex" style="align-items: center">
-                {{ form_widget(form.query) }}
-                <button class="btn btn__primary" type="submit" title="{{ 'search'|trans }}" aria-label="{{ 'search'|trans }}">
+            <div class="flex search-container" style="align-items: center">
+                {{ form_widget(form.query, {'attr': {'class': 'form-control'}}) }}
+                <button class="btn btn__primary ignore-edges" type="submit" title="{{ 'search'|trans }}" aria-label="{{ 'search'|trans }}">
                     <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
                 </button>
             </div>
