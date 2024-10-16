@@ -477,12 +477,9 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->orderBy('u.lastActive', 'DESC');
     }
 
-    public function findWithAboutPaginated(
-        int $page,
-        string $group = self::USERS_ALL,
-        int $perPage = self::PER_PAGE
-    ): PagerfantaInterface {
-        $query = $this->findWithAboutQueryBuilder($group)->getQuery();
+    public function findPaginated(int $page, bool $needsAbout, string $group = self::USERS_ALL, int $perPage = self::PER_PAGE, ?string $query = null): PagerfantaInterface
+    {
+        $query = $this->findQueryBuilder($group, $query, $needsAbout)->getQuery();
 
         $pagerfanta = new Pagerfanta(
             new QueryAdapter(
@@ -500,11 +497,19 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $pagerfanta;
     }
 
-    private function findWithAboutQueryBuilder(string $group): QueryBuilder
+    private function findQueryBuilder(string $group, ?string $query, bool $needsAbout): QueryBuilder
     {
-        $qb = $this->createQueryBuilder('u')
-            ->andWhere('u.about != \'\'')
-            ->andWhere('u.about IS NOT NULL');
+        $qb = $this->createQueryBuilder('u');
+
+        if ($needsAbout) {
+            $qb->andWhere('u.about != \'\'')
+                ->andWhere('u.about IS NOT NULL');
+        }
+
+        if (null !== $query) {
+            $qb->andWhere('u.username LIKE :query')
+                ->setParameter('query', '%'.$query.'%');
+        }
 
         switch ($group) {
             case self::USERS_LOCAL:
