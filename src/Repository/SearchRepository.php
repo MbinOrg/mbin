@@ -13,6 +13,7 @@ use App\Pagination\Transformation\ContentPopulationTransformer;
 use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\PagerfantaInterface;
+use Psr\Log\LoggerInterface;
 
 class SearchRepository
 {
@@ -21,6 +22,7 @@ class SearchRepository
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly ContentPopulationTransformer $transformer,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -79,10 +81,15 @@ class SearchRepository
         return $pagerfanta;
     }
 
-    public function search(?User $searchingUser, string $query, int $page = 1): PagerfantaInterface
+    /**
+     * @param 'entry'|'post'|null $specificType
+     */
+    public function search(?User $searchingUser, string $query, int $page = 1, ?int $authorId = null, ?int $magazineId = null, ?string $specificType = null): PagerfantaInterface
     {
+        $authorWhere = null !== $authorId ? 'AND e.user_id = :authorId' : '';
+        $magazineWhere = null !== $magazineId ? 'AND e.magazine_id = :magazineId' : '';
         $conn = $this->entityManager->getConnection();
-        $sql = "SELECT e.id, e.created_at, e.visibility, 'entry' AS type FROM entry e
+        $sqlEntry = "SELECT e.id, e.created_at, e.visibility, 'entry' AS type FROM entry e
             INNER JOIN public.user u ON u.id = user_id
             INNER JOIN magazine m ON e.magazine_id = m.id
             WHERE (body_ts @@ plainto_tsquery( :query ) = true OR title_ts @@ plainto_tsquery( :query ) = true)
@@ -91,6 +98,7 @@ class SearchRepository
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.entry_id = e.id)
+                $authorWhere $magazineWhere
         UNION ALL
         SELECT e.id, e.created_at, e.visibility, 'entry_comment' AS type FROM entry_comment e
             INNER JOIN public.user u ON u.id = user_id
@@ -101,8 +109,9 @@ class SearchRepository
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.entry_comment_id = e.id)
-        UNION ALL
-        SELECT e.id, e.created_at, e.visibility, 'post' AS type FROM post e
+                $authorWhere $magazineWhere
+        ";
+        $sqlPost = "SELECT e.id, e.created_at, e.visibility, 'post' AS type FROM post e
             INNER JOIN public.user u ON u.id = user_id
             INNER JOIN magazine m ON e.magazine_id = m.id
             WHERE body_ts @@ plainto_tsquery( :query ) = true
@@ -111,6 +120,7 @@ class SearchRepository
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.post_id = e.id)
+                $authorWhere $magazineWhere
         UNION ALL
         SELECT e.id, e.created_at, e.visibility, 'post_comment' AS type FROM post_comment e
             INNER JOIN public.user u ON u.id = user_id
@@ -121,12 +131,38 @@ class SearchRepository
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.post_comment_id = e.id)
-        ORDER BY created_at DESC";
-        $adapter = new NativeQueryAdapter($conn, $sql, [
+                $authorWhere $magazineWhere
+        ";
+
+        if (null === $specificType) {
+            $sql = "$sqlEntry UNION ALL $sqlPost ORDER BY created_at DESC";
+        } else {
+            if ('entry' === $specificType) {
+                $sql = "$sqlEntry ORDER BY created_at DESC";
+            } elseif ('post' === $specificType) {
+                $sql = "$sqlPost ORDER BY created_at DESC";
+            } else {
+                throw new \LogicException($specificType.' is not supported');
+            }
+        }
+
+        $this->logger->debug('Search query: {sql}', ['sql' => $sql]);
+
+        $parameters = [
             'query' => $query,
             'visibility' => VisibilityInterface::VISIBILITY_VISIBLE,
             'queryingUser' => $searchingUser?->getId() ?? -1,
-        ], transformer: $this->transformer);
+        ];
+
+        if (null !== $authorId) {
+            $parameters['authorId'] = $authorId;
+        }
+
+        if (null !== $magazineId) {
+            $parameters['magazineId'] = $magazineId;
+        }
+
+        $adapter = new NativeQueryAdapter($conn, $sql, $parameters, transformer: $this->transformer);
 
         $pagerfanta = new Pagerfanta($adapter);
         $pagerfanta->setCurrentPage($page);
