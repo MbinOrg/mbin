@@ -47,9 +47,9 @@ class SearchManager
         return $this->domainRepository->search($domain, $page, $perPage);
     }
 
-    public function findPaginated(?User $queryingUser, string $val, int $page = 1, int $perPage = SearchRepository::PER_PAGE): PagerfantaInterface
+    public function findPaginated(?User $queryingUser, string $val, int $page = 1, int $perPage = SearchRepository::PER_PAGE, ?int $authorId = null, ?int $magazineId = null, ?string $specificType = null): PagerfantaInterface
     {
-        return $this->repository->search($queryingUser, $val, $page, $perPage);
+        return $this->repository->search($queryingUser, $val, $page, authorId: $authorId, magazineId: $magazineId, specificType: $specificType);
     }
 
     public function findByApId(string $url): array

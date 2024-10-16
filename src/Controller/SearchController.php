@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\ActivityPub\ActorHandle;
+use App\DTO\SearchDto;
 use App\Entity\Magazine;
 use App\Entity\User;
+use App\Form\SearchType;
 use App\Message\ActivityPub\Inbox\CreateMessage;
 use App\MessageHandler\ActivityPub\Inbox\CreateHandler;
 use App\Service\ActivityPub\ApHttpClient;
@@ -33,63 +35,74 @@ class SearchController extends AbstractController
 
     public function __invoke(Request $request): Response
     {
-        $query = $request->query->get('q') ? trim($request->query->get('q')) : null;
+        $dto = new SearchDto();
+        $form = $this->createForm(SearchType::class, $dto, ['csrf_protection' => false]);
+        try {
+            $form = $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                /** @var SearchDto $dto */
+                $dto = $form->getData();
+                $query = $dto->q;
+                $this->logger->debug('searching for {query}', ['query' => $query]);
 
-        if (!$query) {
-            return $this->render(
-                'search/front.html.twig',
-                [
-                    'objects' => [],
-                    'results' => [],
-                    'q' => '',
-                ]
-            );
-        }
+                $objects = [];
 
-        $this->logger->debug('searching for {query}', ['query' => $query]);
-
-        $objects = [];
-
-        // looking up handles (users and mags)
-        if (str_contains($query, '@') && $this->federatedSearchAllowed()) {
-            if ($handle = ActorHandle::parse($query)) {
-                $this->logger->debug('searching for a matched webfinger {query}', ['query' => $query]);
-                $objects = array_merge($objects, $this->lookupHandle($handle));
-            } else {
-                $this->logger->debug("query doesn't look like a valid handle...", ['query' => $query]);
-            }
-        }
-
-        // looking up object by AP id (i.e. urls)
-        if (false !== filter_var($query, FILTER_VALIDATE_URL)) {
-            $this->logger->debug('Query is a valid url');
-            $objects = $this->manager->findByApId($query);
-            if (0 === \sizeof($objects)) {
-                $body = $this->apHttpClient->getActivityObject($query);
-                // the returned id could be different from the query url.
-                $postId = $body['id'];
-                $objects = $this->manager->findByApId($postId);
-                if (0 === \sizeof($objects)) {
-                    try {
-                        $this->createHandler->doWork(new CreateMessage($body));
-                        $objects = $this->manager->findByApId($postId);
-                    } catch (\Exception $e) {
-                        $this->addFlash('error', $e->getMessage());
+                // looking up handles (users and mags)
+                if (str_contains($query, '@') && $this->federatedSearchAllowed()) {
+                    if ($handle = ActorHandle::parse($query)) {
+                        $this->logger->debug('searching for a matched webfinger {query}', ['query' => $query]);
+                        $objects = array_merge($objects, $this->lookupHandle($handle));
+                    } else {
+                        $this->logger->debug("query doesn't look like a valid handle...", ['query' => $query]);
                     }
                 }
-            }
-        }
 
-        $user = $this->getUser();
-        $res = $this->manager->findPaginated($user, $query, $this->getPageNb($request));
+                // looking up object by AP id (i.e. urls)
+                if (false !== filter_var($query, FILTER_VALIDATE_URL)) {
+                    $this->logger->debug('Query is a valid url');
+                    $objects = $this->manager->findByApId($query);
+                    if (0 === \sizeof($objects)) {
+                        $body = $this->apHttpClient->getActivityObject($query, false);
+                        // the returned id could be different from the query url.
+                        $postId = $body['id'];
+                        $objects = $this->manager->findByApId($postId);
+                        if (0 === \sizeof($objects)) {
+                            try {
+                                $this->createHandler->doWork(new CreateMessage($body));
+                                $objects = $this->manager->findByApId($postId);
+                            } catch (\Exception $e) {
+                                $this->addFlash('error', $e->getMessage());
+                            }
+                        }
+                    }
+                }
+
+                $user = $this->getUser();
+                $res = $this->manager->findPaginated($user, $query, $this->getPageNb($request), authorId: $dto->user?->getId(), magazineId: $dto->magazine?->getId(), specificType: $dto->type);
+
+                $this->logger->debug('results: {num}', ['num' => $res->count()]);
+
+                return $this->render(
+                    'search/front.html.twig',
+                    [
+                        'objects' => $objects,
+                        'results' => $this->overviewManager->buildList($res),
+                        'pagination' => $res,
+                        'form' => $form->createView(),
+                        'q' => $query,
+                    ]
+                );
+            }
+        } catch (\Exception $e) {
+            $this->logger->error($e);
+        }
 
         return $this->render(
             'search/front.html.twig',
             [
-                'objects' => $objects,
-                'results' => $this->overviewManager->buildList($res),
-                'pagination' => $res,
-                'q' => $request->query->get('q'),
+                'objects' => [],
+                'results' => [],
+                'form' => $form->createView(),
             ]
         );
     }
