@@ -84,7 +84,7 @@ class InstanceRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('i')
             ->where('i.failedDelivers >= :numToDead')
-            ->andWhere('i.lastSuccessfulDeliver < :dateBeforeDead')
+            ->andWhere('i.lastSuccessfulDeliver < :dateBeforeDead OR i.lastSuccessfulDeliver IS NULL')
             ->setParameter('numToDead', Instance::NUMBER_OF_FAILED_DELIVERS_UNTIL_DEAD)
             ->setParameter('dateBeforeDead', Instance::getDateBeforeDead())
             ->orderBy('i.id')
