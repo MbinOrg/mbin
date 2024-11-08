@@ -42,6 +42,28 @@ class DeliverHandler extends MbinMessageHandler
         $this->workWrapper($message);
     }
 
+    public function workWrapper(MessageInterface $message): void
+    {
+        $conn = $this->entityManager->getConnection();
+        if (!$conn->isConnected()) {
+            $conn->connect();
+        }
+        $conn->beginTransaction();
+        try {
+            $this->doWork($message);
+            $conn->commit();
+        } catch (InvalidApPostException $e) {
+            $conn->commit();
+            // we don't roll back on an InvalidApPostException, so the failed delivery attempt gets written to the DB
+            throw $e;
+        } catch (\Exception $e) {
+            $conn->rollBack();
+            throw $e;
+        }
+
+        $conn->close();
+    }
+
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof DeliverMessage)) {

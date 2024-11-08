@@ -29,7 +29,7 @@ class PostPinController extends AbstractController
         Post $post,
         Request $request
     ): Response {
-        $this->validateCsrf('post_pin', $request->request->get('token'));
+        $this->validateCsrf('post_pin', $request->getPayload()->get('token'));
 
         $entry = $this->manager->pin($post);
 

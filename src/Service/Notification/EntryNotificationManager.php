@@ -12,6 +12,7 @@ use App\Entity\EntryEditedNotification;
 use App\Entity\EntryMentionedNotification;
 use App\Entity\Magazine;
 use App\Entity\Notification;
+use App\Entity\User;
 use App\Event\NotificationCreatedEvent;
 use App\Factory\MagazineFactory;
 use App\Repository\MagazineLogRepository;
@@ -22,6 +23,7 @@ use App\Service\GenerateHtmlClassService;
 use App\Service\ImageManager;
 use App\Service\MentionManager;
 use App\Service\SettingsManager;
+use App\Service\UserManager;
 use App\Utils\IriGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -47,15 +49,19 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly ImageManager $imageManager,
         private readonly GenerateHtmlClassService $classService,
+        private readonly UserManager $userManager,
         private readonly SettingsManager $settingsManager
     ) {
     }
 
-    // @todo check if author is on the block list
     public function sendCreated(ContentInterface $subject): void
     {
         if ($subject->user->isBanned || $subject->user->isDeleted || $subject->user->isTrashed() || $subject->user->isSoftDeleted()) {
             return;
+        }
+
+        if (!$subject instanceof Entry) {
+            throw new \LogicException();
         }
 
         /*
@@ -66,7 +72,7 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
         // Notify mentioned
         $mentions = MentionManager::clearLocal($this->mentionManager->extract($subject->body));
         foreach ($this->mentionManager->getUsersFromArray($mentions) as $user) {
-            if (!$user->apId) {
+            if (!$user->apId && !$user->isBlocked($subject->user)) {
                 $notification = new EntryMentionedNotification($user, $subject);
                 $this->entityManager->persist($notification);
                 $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
@@ -74,6 +80,7 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
         }
 
         // Notify subscribers
+        /** @var User[] $subscribers */
         $subscribers = $this->merge(
             $this->getUsersToNotify($this->magazineRepository->findNewEntrySubscribers($subject)),
             [] // @todo user followers
@@ -82,9 +89,11 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
         $subscribers = array_filter($subscribers, fn ($s) => !\in_array($s->username, $mentions ?? []));
 
         foreach ($subscribers as $subscriber) {
-            $notification = new EntryCreatedNotification($subscriber, $subject);
-            $this->entityManager->persist($notification);
-            $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
+            if (!$subscriber->isBlocked($subject->user)) {
+                $notification = new EntryCreatedNotification($subscriber, $subject);
+                $this->entityManager->persist($notification);
+                $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
+            }
         }
 
         $this->entityManager->flush();
@@ -144,17 +153,17 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
 
     public function sendEdited(ContentInterface $subject): void
     {
-        /*
-         * @var Entry $subject
-         */
+        if (!$subject instanceof Entry) {
+            throw new \LogicException();
+        }
         $this->notifyMagazine(new EntryEditedNotification($subject->user, $subject));
     }
 
     public function sendDeleted(ContentInterface $subject): void
     {
-        /*
-         * @var Entry $subject
-         */
+        if (!$subject instanceof Entry) {
+            throw new \LogicException();
+        }
         $this->notifyMagazine($notification = new EntryDeletedNotification($subject->user, $subject));
     }
 

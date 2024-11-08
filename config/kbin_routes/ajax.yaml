@@ -21,30 +21,40 @@ ajax_fetch_post_comments:
   defaults: { _format: json }
   path: /ajax/fetch_post_comments/{id}
   methods: [GET]
+  requirements:
+    id: \d+
 
 ajax_fetch_entry:
   controller: App\Controller\AjaxController::fetchEntry
   defaults: { _format: json }
   path: /ajax/fetch_entry/{id}
   methods: [GET]
+  requirements:
+    id: \d+
 
 ajax_fetch_entry_comment:
   controller: App\Controller\AjaxController::fetchEntryComment
   defaults: { _format: json }
   path: /ajax/fetch_entry_comment/{id}
   methods: [GET]
+  requirements:
+    id: \d+
 
 ajax_fetch_post:
   controller: App\Controller\AjaxController::fetchPost
   defaults: { _format: json }
   path: /ajax/fetch_post/{id}
   methods: [GET]
+  requirements:
+    id: \d+
 
 ajax_fetch_post_comment:
   controller: App\Controller\AjaxController::fetchPostComment
   defaults: { _format: json }
   path: /ajax/fetch_post_comment/{id}
   methods: [GET]
+  requirements:
+    id: \d+
 
 ajax_fetch_online:
   controller: App\Controller\AjaxController::fetchOnline

@@ -27,7 +27,7 @@ class MagazineModeratorRequestController extends AbstractController
             throw new AccessDeniedException();
         }
 
-        $this->validateCsrf('moderator_request', $request->request->get('token'));
+        $this->validateCsrf('moderator_request', $request->getPayload()->get('token'));
 
         $this->manager->toggleModeratorRequest($magazine, $this->getUserOrThrow());
 

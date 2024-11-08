@@ -1,0 +1,19 @@
+{{ form_start(form, {'attr': {'class': 'search-form'}}) }}
+
+    <div class="search-container flex" style="align-items: center">
+        {{ form_widget(form.q, {label: false, 'attr': {'class': 'form-control'}}) }}
+
+        <button class="btn btn__primary ignore-edges" type="submit" title="{{ 'search'|trans }}" aria-label="{{ 'search'|trans }}">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        </button>
+    </div>
+
+    <div class="flex mobile" style="align-items: center; margin-bottom: 0">
+        {{ form_widget(form.magazine, {label: false, 'attr': {'class': 'form-control'}}) }}
+        {{ form_widget(form.user, {label: false, 'attr': {'class': 'form-control'}}) }}
+        <div class="form-control">
+            {{ form_widget(form.type, {label: false, 'attr': {'class': 'form-control', 'style': 'padding: 1rem .5rem;'}}) }}
+        </div>
+    </div>
+
+{{ form_end(form) }}

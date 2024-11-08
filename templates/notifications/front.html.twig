@@ -19,14 +19,12 @@
     <div class="pills">
         <div>
             <form action="{{ path('notifications_read') }}" method="POST" class="me-2">
-                <input type="hidden" name="token" value="{{ csrf_token('read_notifications') }}">
                 <button class="btn btn__primary" type="submit">
                     {{ 'read_all'|trans }}
                 </button>
             </form>
             <form method="post" action="{{ path('notifications_clear') }}"
                   data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
-                <input type="hidden" name="token" value="{{ csrf_token('clear_notifications') }}">
                 <button class="btn btn__secondary" type="submit">
                     <i class="fa-solid fa-dumpster" aria-hidden="true"></i> <span>{{ 'purge'|trans }}</span>
                 </button>

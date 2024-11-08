@@ -49,7 +49,7 @@ class MagazineReportController extends AbstractController
         Report $report,
         Request $request
     ): Response {
-        $this->validateCsrf('report_approve', $request->request->get('token'));
+        $this->validateCsrf('report_approve', $request->getPayload()->get('token'));
 
         $this->reportManager->accept($report, $this->getUserOrThrow());
 
@@ -65,7 +65,7 @@ class MagazineReportController extends AbstractController
         Report $report,
         Request $request
     ): Response {
-        $this->validateCsrf('report_decline', $request->request->get('token'));
+        $this->validateCsrf('report_decline', $request->getPayload()->get('token'));
 
         $this->reportManager->reject($report, $this->getUserOrThrow());
 

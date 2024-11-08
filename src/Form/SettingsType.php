@@ -6,6 +6,9 @@ namespace App\Form;
 
 use App\DTO\SettingsDto;
 use App\Repository\Criteria;
+use App\Service\SettingsManager;
+use App\Utils\DownvotesMode;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -16,8 +19,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SettingsType extends AbstractType
 {
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly SettingsManager $settingsManager,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $dto = $this->settingsManager->getDto();
+        $this->logger->debug('downvotes mode is: {mode}', ['mode' => $dto->MBIN_DOWNVOTES_MODE]);
         $builder
             ->add('KBIN_DOMAIN')
             ->add('KBIN_CONTACT_EMAIL', EmailType::class)
@@ -42,6 +53,12 @@ class SettingsType extends AbstractType
             ->add('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY', CheckboxType::class, ['required' => false])
             ->add('MBIN_RESTRICT_MAGAZINE_CREATION', CheckboxType::class, ['required' => false])
             ->add('MBIN_SSO_SHOW_FIRST', CheckboxType::class, ['required' => false])
+            ->add('MBIN_DOWNVOTES_MODE', ChoiceType::class, [
+                'choices' => DownvotesMode::GetChoices(),
+                'choice_attr' => [
+                    $dto->MBIN_DOWNVOTES_MODE => ['checked' => true],
+                ],
+            ])
             ->add('submit', SubmitType::class);
     }
 

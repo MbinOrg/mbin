@@ -22,7 +22,7 @@ class TagBanController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function ban(string $name, Request $request): Response
     {
-        $this->validateCsrf('ban', $request->request->get('token'));
+        $this->validateCsrf('ban', $request->getPayload()->get('token'));
 
         $hashtag = $this->tagRepository->findOneBy(['tag' => $name]);
         if (null === $hashtag) {
@@ -36,7 +36,7 @@ class TagBanController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function unban(string $name, Request $request): Response
     {
-        $this->validateCsrf('ban', $request->request->get('token'));
+        $this->validateCsrf('ban', $request->getPayload()->get('token'));
 
         $hashtag = $this->tagRepository->findOneBy(['tag' => $name]);
         if ($hashtag) {
