@@ -28,6 +28,10 @@ class Site
     public ?string $privateKey = null;
     #[Column(type: 'text', nullable: true)]
     public ?string $publicKey = null;
+    #[Column(type: 'text', nullable: true)]
+    public ?string $pushPrivateKey = null;
+    #[Column(type: 'text', nullable: true)]
+    public ?string $pushPublicKey = null;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]

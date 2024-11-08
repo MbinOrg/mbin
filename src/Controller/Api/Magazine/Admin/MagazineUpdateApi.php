@@ -99,7 +99,7 @@ class MagazineUpdateApi extends MagazineBaseApi
             throw new BadRequestHttpException('Magazine name cannot be edited');
         }
 
-        $magazine = $manager->edit($magazine, $dto);
+        $magazine = $manager->edit($magazine, $dto, $this->getUserOrThrow());
 
         return new JsonResponse(
             $this->serializeMagazine($factory->createDto($magazine)),

@@ -1,0 +1,159 @@
+import { Controller } from '@hotwired/stimulus';
+import {fetch, ThrowResponseIfNotOk} from "../utils/http";
+
+export default class extends Controller {
+
+    applicationServerPublicKey;
+
+    connect() {
+        this.applicationServerPublicKey = this.element.dataset.applicationServerPublicKey
+        window.navigator.serviceWorker.getRegistration()
+            .then((registration) => {
+                return registration?.pushManager.getSubscription()
+            })
+            .then(pushSubscription => {
+                this.updateButtonVisibility(pushSubscription)
+            })
+            .catch((error) => {
+                console.error("There was an error in the service worker registration method", error)
+                this.element.style.display = "none"
+            })
+
+        if (!('serviceWorker' in navigator)) {
+            // Service Worker isn't supported on this browser, disable or hide UI.
+            this.element.style.display = "none"
+        }
+
+        if (!('PushManager' in window)) {
+            // Push isn't supported on this browser, disable or hide UI.
+            this.element.style.display = "none"
+        }
+    }
+
+    updateButtonVisibility(pushSubscription) {
+        let registerBtn = document.getElementById("push-subscription-register-btn")
+        let unregisterBtn = document.getElementById("push-subscription-unregister-btn")
+        let testBtn = document.getElementById("push-subscription-test-btn")
+        if (pushSubscription) {
+            registerBtn.style.display = "none"
+            testBtn.style.display = ""
+            unregisterBtn.style.display = ""
+        } else {
+            registerBtn.style.display = ""
+            testBtn.style.display = "none"
+            unregisterBtn.style.display = "none"
+        }
+    }
+
+    async retry(event) {
+
+    }
+
+    async show(event) {
+
+    }
+
+    askPermission() {
+        return new Promise(function(resolve, reject) {
+            const permissionResult = Notification.requestPermission(function(result) {
+                resolve(result);
+            });
+
+            if (permissionResult) {
+                permissionResult.then(resolve, reject);
+            }
+        })
+            .then(function(permissionResult) {
+                if (permissionResult !== 'granted') {
+                    throw new Error('We weren\'t granted permission.');
+                }
+            });
+    }
+
+    registerPush() {
+        this.askPermission()
+            .then(() => window.navigator.serviceWorker.getRegistration())
+            .then(registration => {
+                const subscribeOptions = {
+                    userVisibleOnly: true,
+                    applicationServerKey: this.applicationServerPublicKey,
+                }
+
+                return registration.pushManager.subscribe(subscribeOptions)
+            })
+            .then(pushSubscription => {
+                this.updateButtonVisibility(pushSubscription)
+                const jsonSub = pushSubscription.toJSON()
+                let payload = {
+                    endpoint: pushSubscription.endpoint,
+                    deviceKey: this.getDeviceKey(),
+                    contentPublicKey: jsonSub.keys["p256dh"],
+                    serverKey: jsonSub.keys["auth"],
+                }
+                return fetch('/ajax/register_push', {
+                    method: "post",
+                    body: JSON.stringify(payload),
+                    headers: {"Content-Type": "application/json"}
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw response
+                }
+                return response.json()
+            })
+            .catch(error => {
+                console.error(error)
+                this.unregisterPush()
+            })
+    }
+
+    unregisterPush() {
+        window.navigator.serviceWorker.getRegistration()
+            .then((registration) => registration?.pushManager.getSubscription())
+            .then(pushSubscription => pushSubscription.unsubscribe())
+            .then((successful) => {
+                if (successful) {
+                    this.updateButtonVisibility(null)
+                    let payload = {
+                        deviceKey: this.getDeviceKey(),
+                    }
+                    fetch('/ajax/unregister_push', {
+                        method: "post",
+                        body: JSON.stringify(payload),
+                        headers: {"Content-Type": "application/json"}
+                    })
+                        .then(ThrowResponseIfNotOk)
+                        .then(data => {
+                        })
+                        .catch(error => console.error(error))
+                }
+            })        
+            .catch((error) => {
+                console.error("There was an error in the service worker registration method, for unsubscribing", error)
+            })
+    }
+
+    testPush() {
+        fetch('/ajax/test_push', { method: "post", body: JSON.stringify({deviceKey: this.getDeviceKey()}), headers: { "Content-Type": "application/json" } })
+            .then(response => {
+                if (!response.ok) {
+                    throw response
+                }
+                return response.json()
+            })
+            .then(data => { })
+            .catch(error => console.error(error))
+    }
+
+    storageKeyPushSubscriptionDevice = "push_subscription_device_key"
+
+    getDeviceKey() {
+        if (localStorage.getItem(this.storageKeyPushSubscriptionDevice)) {
+            return localStorage.getItem(this.storageKeyPushSubscriptionDevice)
+        }
+        const subscriptionKey = crypto.randomUUID()
+        localStorage.setItem(this.storageKeyPushSubscriptionDevice, subscriptionKey)
+        return subscriptionKey
+    }
+}

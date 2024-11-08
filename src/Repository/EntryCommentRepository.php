@@ -13,13 +13,15 @@ use App\Entity\DomainBlock;
 use App\Entity\DomainSubscription;
 use App\Entity\EntryComment;
 use App\Entity\EntryCommentFavourite;
+use App\Entity\HashtagLink;
 use App\Entity\MagazineBlock;
 use App\Entity\MagazineSubscription;
 use App\Entity\Moderator;
 use App\Entity\User;
 use App\Entity\UserBlock;
 use App\Entity\UserFollow;
-use App\Repository\Contract\TagRepositoryInterface;
+use App\Service\SettingsManager;
+use App\Utils\DownvotesMode;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Types\Types;
@@ -39,18 +41,17 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * @method EntryComment[]    findAll()
  * @method EntryComment[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class EntryCommentRepository extends ServiceEntityRepository implements TagRepositoryInterface
+class EntryCommentRepository extends ServiceEntityRepository
 {
     public const SORT_DEFAULT = 'active';
     public const PER_PAGE = 15;
 
-    private Security $security;
-
-    public function __construct(ManagerRegistry $registry, Security $security)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly Security $security,
+        private readonly SettingsManager $settingsManager,
+    ) {
         parent::__construct($registry, EntryComment::class);
-
-        $this->security = $security;
     }
 
     public function findByCriteria(Criteria $criteria): PagerfantaInterface
@@ -102,6 +103,7 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
 
         $this->addTimeClause($qb, $criteria);
         $this->filter($qb, $criteria);
+        $this->addBannedHashtagClause($qb);
 
         return $qb;
     }
@@ -114,6 +116,18 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
             $qb->andWhere('c.createdAt > :time')
                 ->setParameter('time', $since, Types::DATETIMETZ_IMMUTABLE);
         }
+    }
+
+    private function addBannedHashtagClause(QueryBuilder $qb): void
+    {
+        $dql = $this->getEntityManager()->createQueryBuilder()
+            ->select('hl2')
+            ->from(HashtagLink::class, 'hl2')
+            ->join('hl2.hashtag', 'h2')
+            ->where('h2.banned = true')
+            ->andWhere('hl2.entryComment = c')
+            ->getDQL();
+        $qb->andWhere($qb->expr()->not($qb->expr()->exists($dql)));
     }
 
     private function filter(QueryBuilder $qb, Criteria $criteria): QueryBuilder
@@ -159,13 +173,16 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
         }
 
         if ($criteria->tag) {
-            $qb->andWhere("JSONB_CONTAINS(c.tags, '\"".$criteria->tag."\"') = true");
+            $qb->andWhere('t.tag = :tag')
+                ->join('c.hashtags', 'h')
+                ->join('h.hashtag', 't')
+                ->setParameter('tag', $criteria->tag);
         }
 
         if ($criteria->subscribed) {
             $qb->andWhere(
-                'c.magazine IN (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :follower) 
-                OR 
+                'c.magazine IN (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :follower)
+                OR
                 c.user IN (SELECT IDENTITY(uf.following) FROM '.UserFollow::class.' uf WHERE uf.follower = :follower)
                 OR
                 c.user = :follower
@@ -227,7 +244,11 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
                 $qb->orderBy('c.upVotes', 'DESC');
                 break;
             case Criteria::SORT_TOP:
-                $qb->orderBy('c.upVotes + c.favouriteCount - c.downVotes', 'DESC');
+                if (DownvotesMode::Disabled === $this->settingsManager->getDownvotesMode()) {
+                    $qb->orderBy('c.upVotes + c.favouriteCount', 'DESC');
+                } else {
+                    $qb->orderBy('c.upVotes + c.favouriteCount - c.downVotes', 'DESC');
+                }
                 break;
             case Criteria::SORT_ACTIVE:
                 $qb->orderBy('c.lastActive', 'DESC');
@@ -324,14 +345,6 @@ class EntryCommentRepository extends ServiceEntityRepository implements TagRepos
         }
 
         return $query
-            ->getQuery()
-            ->getResult();
-    }
-
-    public function findWithTags(): array
-    {
-        return $this->createQueryBuilder('c')
-            ->where('c.tags IS NOT NULL')
             ->getQuery()
             ->getResult();
     }

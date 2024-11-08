@@ -36,7 +36,7 @@ class MagazineLogBan extends MagazineLog
         return 'log_ban';
     }
 
-    public function getSubject(): ContentInterface|null
+    public function getSubject(): ?ContentInterface
     {
         return null;
     }

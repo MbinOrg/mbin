@@ -21,30 +21,40 @@ ajax_fetch_post_comments:
   defaults: { _format: json }
   path: /ajax/fetch_post_comments/{id}
   methods: [GET]
+  requirements:
+    id: \d+
 
 ajax_fetch_entry:
   controller: App\Controller\AjaxController::fetchEntry
   defaults: { _format: json }
   path: /ajax/fetch_entry/{id}
   methods: [GET]
+  requirements:
+    id: \d+
 
 ajax_fetch_entry_comment:
   controller: App\Controller\AjaxController::fetchEntryComment
   defaults: { _format: json }
   path: /ajax/fetch_entry_comment/{id}
   methods: [GET]
+  requirements:
+    id: \d+
 
 ajax_fetch_post:
   controller: App\Controller\AjaxController::fetchPost
   defaults: { _format: json }
   path: /ajax/fetch_post/{id}
   methods: [GET]
+  requirements:
+    id: \d+
 
 ajax_fetch_post_comment:
   controller: App\Controller\AjaxController::fetchPostComment
   defaults: { _format: json }
   path: /ajax/fetch_post_comment/{id}
   methods: [GET]
+  requirements:
+    id: \d+
 
 ajax_fetch_online:
   controller: App\Controller\AjaxController::fetchOnline
@@ -61,8 +71,23 @@ ajax_fetch_user_popup:
 ajax_fetch_user_notifications_count:
   controller: App\Controller\AjaxController::fetchNotificationsCount
   defaults: { _format: json }
-  path: /ajax/fetch_user_notifications_count/{username}
+  path: /ajax/fetch_user_notifications_count
   methods: [ GET ]
+
+ajax_register_notification_push:
+  controller: App\Controller\AjaxController::registerPushNotifications
+  path: /ajax/register_push
+  methods: [ POST ]
+
+ajax_unregister_notification_push:
+    controller: App\Controller\AjaxController::unregisterPushNotifications
+    path: /ajax/unregister_push
+    methods: [ POST ]
+
+ajax_test_notification_push:
+    controller: App\Controller\AjaxController::testPushNotification
+    path: /ajax/test_push
+    methods: [ POST ]
 
 ajax_fetch_users_suggestions:
   controller: App\Controller\AjaxController::fetchUsersSuggestions

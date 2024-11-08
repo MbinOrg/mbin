@@ -63,9 +63,9 @@ class ReportController extends AbstractController
 
     private function handleReportRequest(ReportDto $dto, Request $request): Response
     {
+        $reportError = false;
         try {
             $this->manager->report($dto, $this->getUserOrThrow());
-            $reportError = false;
             $responseMessage = $this->translator->trans('subject_reported');
         } catch (SubjectHasBeenReportedException $exception) {
             $reportError = true;
@@ -75,7 +75,7 @@ class ReportController extends AbstractController
                 return new JsonResponse(
                     [
                         'success' => true,
-                        'html' => sprintf("<div class='alert %s'>%s</div>", ($reportError) ? 'alert__danger' : 'alert__info', $responseMessage),
+                        'html' => \sprintf("<div class='alert %s'>%s</div>", ($reportError) ? 'alert__danger' : 'alert__info', $responseMessage),
                     ]
                 );
             }

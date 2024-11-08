@@ -15,6 +15,7 @@ use App\Event\PostComment\PostCommentDeletedEvent;
 use App\Event\PostComment\PostCommentEditedEvent;
 use App\Event\PostComment\PostCommentPurgedEvent;
 use App\Event\PostComment\PostCommentRestoredEvent;
+use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Factory\PostCommentFactory;
 use App\Message\DeleteImageMessage;
@@ -22,6 +23,7 @@ use App\Repository\ImageRepository;
 use App\Service\Contracts\ContentManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
@@ -30,17 +32,26 @@ use Webmozart\Assert\Assert;
 class PostCommentManager implements ContentManagerInterface
 {
     public function __construct(
+        private readonly LoggerInterface $logger,
         private readonly TagManager $tagManager,
+        private readonly TagExtractor $tagExtractor,
         private readonly MentionManager $mentionManager,
         private readonly PostCommentFactory $factory,
         private readonly ImageRepository $imageRepository,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly RateLimiterFactory $postCommentLimiter,
         private readonly MessageBusInterface $bus,
+        private readonly SettingsManager $settingsManager,
         private readonly EntityManagerInterface $entityManager
     ) {
     }
 
+    /**
+     * @throws TagBannedException
+     * @throws UserBannedException
+     * @throws TooManyRequestsHttpException
+     * @throws \Exception
+     */
     public function create(PostCommentDto $dto, User $user, $rateLimit = true): PostComment
     {
         if ($rateLimit) {
@@ -54,6 +65,10 @@ class PostCommentManager implements ContentManagerInterface
             throw new UserBannedException();
         }
 
+        if ($this->tagManager->isAnyTagBanned($this->tagManager->extract($dto->body))) {
+            throw new TagBannedException();
+        }
+
         $comment = $this->factory->createFromDto($dto, $user);
 
         $comment->magazine = $dto->post->magazine;
@@ -63,12 +78,14 @@ class PostCommentManager implements ContentManagerInterface
         if ($comment->image && !$comment->image->altText) {
             $comment->image->altText = $dto->imageAlt;
         }
-        $comment->tags = $dto->body ? $this->tagManager->extract($dto->body, $comment->magazine->name) : null;
         $comment->mentions = $dto->body
             ? array_merge($dto->mentions ?? [], $this->mentionManager->handleChain($comment))
             : $dto->mentions;
         $comment->visibility = $dto->visibility;
         $comment->apId = $dto->apId;
+        $comment->apLikeCount = $dto->apLikeCount;
+        $comment->apDislikeCount = $dto->apDislikeCount;
+        $comment->apShareCount = $dto->apShareCount;
         $comment->magazine->lastActive = new \DateTime();
         $comment->user->lastActive = new \DateTime();
         $comment->lastActive = $dto->lastActive ?? $comment->lastActive;
@@ -78,16 +95,32 @@ class PostCommentManager implements ContentManagerInterface
         }
 
         $comment->post->addComment($comment);
+        $comment->updateScore();
+        $comment->updateRanking();
 
         $this->entityManager->persist($comment);
         $this->entityManager->flush();
+
+        $this->tagManager->updatePostCommentTags($comment, $this->tagExtractor->extract($comment->body) ?? []);
 
         $this->dispatcher->dispatch(new PostCommentCreatedEvent($comment));
 
         return $comment;
     }
 
-    public function edit(PostComment $comment, PostCommentDto $dto): PostComment
+    public function canUserEditPostComment(PostComment $postComment, User $user): bool
+    {
+        $postCommentHost = null !== $postComment->apId ? parse_url($postComment->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+        $userHost = null !== $user->apId ? parse_url($user->apProfileId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+        $magazineHost = null !== $postComment->magazine->apId ? parse_url($postComment->magazine->apProfileId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+
+        return $postCommentHost === $userHost || $userHost === $magazineHost || $postComment->magazine->userIsModerator($user);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function edit(PostComment $comment, PostCommentDto $dto, ?User $editedBy = null): PostComment
     {
         Assert::same($comment->post->getId(), $dto->post->getId());
 
@@ -98,7 +131,7 @@ class PostCommentManager implements ContentManagerInterface
         if ($dto->image) {
             $comment->image = $this->imageRepository->find($dto->image->id);
         }
-        $comment->tags = $dto->body ? $this->tagManager->extract($dto->body, $comment->magazine->name) : null;
+        $this->tagManager->updatePostCommentTags($comment, $this->tagExtractor->extract($dto->body) ?? []);
         $comment->mentions = $dto->body
             ? array_merge($dto->mentions ?? [], $this->mentionManager->handleChain($comment))
             : $dto->mentions;
@@ -108,20 +141,28 @@ class PostCommentManager implements ContentManagerInterface
             throw new \Exception('Comment body and image cannot be empty');
         }
 
+        $comment->apLikeCount = $dto->apLikeCount;
+        $comment->apDislikeCount = $dto->apDislikeCount;
+        $comment->apShareCount = $dto->apShareCount;
+        $comment->updateScore();
+        $comment->updateRanking();
+
         $this->entityManager->flush();
 
         if ($oldImage && $comment->image !== $oldImage) {
             $this->bus->dispatch(new DeleteImageMessage($oldImage->getId()));
         }
 
-        $this->dispatcher->dispatch(new PostCommentEditedEvent($comment));
+        $this->dispatcher->dispatch(new PostCommentEditedEvent($comment, $editedBy));
 
         return $comment;
     }
 
     public function delete(User $user, PostComment $comment): void
     {
-        if ($user->apDomain && $user->apDomain !== parse_url($comment->apId, PHP_URL_HOST)) {
+        if ($user->apDomain && $user->apDomain !== parse_url($comment->apId ?? '', PHP_URL_HOST) && !$comment->magazine->userIsModerator($user)) {
+            $this->logger->info('Got a delete activity from user {u}, but they are not from the same instance as the deleted post and they are not a moderator on {m]', ['u' => $user->apId, 'm' => $comment->magazine->apId ?? $comment->magazine->name]);
+
             return;
         }
 
@@ -173,6 +214,9 @@ class PostCommentManager implements ContentManagerInterface
         return !$comment->isAuthor($user);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function restore(User $user, PostComment $comment): void
     {
         if (VisibilityInterface::VISIBILITY_TRASHED !== $comment->visibility) {

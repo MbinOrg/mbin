@@ -200,11 +200,9 @@ class MagazineRepository extends ServiceEntityRepository
         ?int $page = 1,
         int $perPage = self::PER_PAGE
     ): PagerfantaInterface {
-        $criteria = Criteria::create()->orderBy(['createdAt' => 'ASC']);
-
-        if ($magazine->apId) {
-            $criteria->where(Criteria::expr()->eq('isOwner', false));
-        }
+        $criteria = Criteria::create()
+            ->orderBy(['isOwner' => 'DESC'])
+            ->orderBy(['createdAt' => 'ASC']);
 
         $moderators = new Pagerfanta(new SelectableAdapter($magazine->moderators, $criteria));
         try {
@@ -394,6 +392,10 @@ class MagazineRepository extends ServiceEntityRepository
 
     public function findAudience(Magazine $magazine): array
     {
+        if (null !== $magazine->apId) {
+            return [$magazine->apInboxUrl];
+        }
+
         $dql =
             'SELECT COUNT(u.id), u.apInboxUrl FROM '.User::class.' u WHERE u IN ('.
             'SELECT IDENTITY(ms.user) FROM '.MagazineSubscription::class.' ms WHERE ms.magazine = :magazine)'.
@@ -524,6 +526,7 @@ class MagazineRepository extends ServiceEntityRepository
             ->andWhere('m.apDomain IS NULL')
             ->andWhere('m.apDeletedAt IS NULL')
             ->andWhere('m.apTimeoutAt IS NULL')
+            ->addOrderBy('m.apFetchedAt', 'ASC')
             ->setMaxResults(1000)
             ->getQuery()
             ->getResult();
@@ -594,6 +597,22 @@ class MagazineRepository extends ServiceEntityRepository
             }
         } else {
             return $this->findOneBy(['apAttributedToUrl' => $target]);
+        }
+
+        return null;
+    }
+
+    public function getMagazineFromPinnedUrl($target): ?Magazine
+    {
+        if ($this->settingsManager->isLocalUrl($target)) {
+            $matches = [];
+            if (preg_match_all("/\/m\/([a-zA-Z0-9\-_:]+)\/pinned/", $target, $matches)) {
+                $magName = $matches[1][0];
+
+                return $this->findOneByName($magName);
+            }
+        } else {
+            return $this->findOneBy(['apFeaturedUrl' => $target]);
         }
 
         return null;

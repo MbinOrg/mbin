@@ -1,6 +1,8 @@
 {%- set VOTE_NONE = constant('App\\Entity\\Contracts\\VotableInterface::VOTE_NONE') -%}
 {%- set VOTE_UP = constant('App\\Entity\\Contracts\\VotableInterface::VOTE_UP') -%}
 {%- set VOTE_DOWN = constant('App\\Entity\\Contracts\\VotableInterface::VOTE_DOWN') -%}
+{%- set DOWNVOTES_HIDDEN = constant('App\\Utils\\DownvotesMode::Hidden') %}
+{%- set DOWNVOTES_DISABLED = constant('App\\Utils\\DownvotesMode::Disabled') %}
 {% if app.user %}
     {%- set user_choice = is_granted('ROLE_USER') ? subject.userChoice(app.user) : null -%}
 
@@ -29,11 +31,11 @@
                 title="{{ 'favourite'|trans }}"
                 aria-label="{{ 'favourite'|trans }}"
                 data-action="subject#vote">
-            <span data-subject-target="favCounter">{{ subject.favouriteCount }}</span> <span><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></span>
+            <span data-subject-target="favCounter">{{ subject.apLikeCount ?? subject.favouriteCount }}</span> <span><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></span>
         </button>
-        <input type="hidden" name="token" value="{{ csrf_token('favourite') }}">
     </form>
-    {% if showDownvote %}
+    {% set downvoteMode = mbin_downvotes_mode() %}
+    {% if showDownvote and downvoteMode is not same as DOWNVOTES_DISABLED %}
         <form method="post"
               action="{{ downUrl }}"
               class="{{ html_classes('vote__down', {
@@ -43,9 +45,11 @@
                     title="{{ 'down_vote'|trans }}"
                     aria-label="{{ 'down_vote'|trans }}"
                     data-action="subject#vote">
-                <span data-subject-target="downvoteCounter">{{ subject.countDownvotes }}</span> <span><i class="fa-solid fa-arrow-down" aria-hidden="true"></i></span>
+                {% if downvoteMode is not same as DOWNVOTES_HIDDEN %}
+                    <span data-subject-target="downvoteCounter">{{ subject.apDislikeCount ?? subject.countDownvotes }}</span>
+                {% endif %}
+                <span><i class="fa-solid fa-arrow-down" aria-hidden="true"></i></span>
             </button>
-            <input type="hidden" name="token" value="{{ csrf_token('vote') }}">
         </form>
     {% endif %}
 </aside>

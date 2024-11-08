@@ -12,6 +12,8 @@ use App\Entity\EntryEditedNotification;
 use App\Entity\EntryMentionedNotification;
 use App\Entity\Magazine;
 use App\Entity\Notification;
+use App\Entity\User;
+use App\Event\NotificationCreatedEvent;
 use App\Factory\MagazineFactory;
 use App\Repository\MagazineLogRepository;
 use App\Repository\MagazineSubscriptionRepository;
@@ -21,8 +23,10 @@ use App\Service\GenerateHtmlClassService;
 use App\Service\ImageManager;
 use App\Service\MentionManager;
 use App\Service\SettingsManager;
+use App\Service\UserManager;
 use App\Utils\IriGenerator;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -33,6 +37,7 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
     use NotificationTrait;
 
     public function __construct(
+        private readonly EventDispatcherInterface $eventDispatcher,
         private readonly NotificationRepository $notificationRepository,
         private readonly MagazineLogRepository $magazineLogRepository,
         private readonly MagazineSubscriptionRepository $magazineRepository,
@@ -44,13 +49,21 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly ImageManager $imageManager,
         private readonly GenerateHtmlClassService $classService,
+        private readonly UserManager $userManager,
         private readonly SettingsManager $settingsManager
     ) {
     }
 
-    // @todo check if author is on the block list
     public function sendCreated(ContentInterface $subject): void
     {
+        if ($subject->user->isBanned || $subject->user->isDeleted || $subject->user->isTrashed() || $subject->user->isSoftDeleted()) {
+            return;
+        }
+
+        if (!$subject instanceof Entry) {
+            throw new \LogicException();
+        }
+
         /*
          * @var Entry $subject
          */
@@ -59,13 +72,15 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
         // Notify mentioned
         $mentions = MentionManager::clearLocal($this->mentionManager->extract($subject->body));
         foreach ($this->mentionManager->getUsersFromArray($mentions) as $user) {
-            if (!$user->apId) {
+            if (!$user->apId && !$user->isBlocked($subject->user)) {
                 $notification = new EntryMentionedNotification($user, $subject);
                 $this->entityManager->persist($notification);
+                $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
             }
         }
 
         // Notify subscribers
+        /** @var User[] $subscribers */
         $subscribers = $this->merge(
             $this->getUsersToNotify($this->magazineRepository->findNewEntrySubscribers($subject)),
             [] // @todo user followers
@@ -74,8 +89,11 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
         $subscribers = array_filter($subscribers, fn ($s) => !\in_array($s->username, $mentions ?? []));
 
         foreach ($subscribers as $subscriber) {
-            $notification = new EntryCreatedNotification($subscriber, $subject);
-            $this->entityManager->persist($notification);
+            if (!$subscriber->isBlocked($subject->user)) {
+                $notification = new EntryCreatedNotification($subscriber, $subject);
+                $this->entityManager->persist($notification);
+                $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
+            }
         }
 
         $this->entityManager->flush();
@@ -122,30 +140,30 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
                 'title' => $magazine->title,
                 'body' => $entry->title,
                 'icon' => $this->imageManager->getUrl($entry->image),
-//                'image' => $this->imageManager->getUrl($entry->image),
+                //                'image' => $this->imageManager->getUrl($entry->image),
                 'url' => $this->urlGenerator->generate('entry_single', [
                     'magazine_name' => $magazine->name,
                     'entry_id' => $entry->getId(),
                     'slug' => $entry->slug,
                 ]),
-//                'toast' => $this->twig->render('_layout/_toast.html.twig', ['notification' => $notification]),
+                //                'toast' => $this->twig->render('_layout/_toast.html.twig', ['notification' => $notification]),
             ]
         );
     }
 
     public function sendEdited(ContentInterface $subject): void
     {
-        /*
-         * @var Entry $subject
-         */
+        if (!$subject instanceof Entry) {
+            throw new \LogicException();
+        }
         $this->notifyMagazine(new EntryEditedNotification($subject->user, $subject));
     }
 
     public function sendDeleted(ContentInterface $subject): void
     {
-        /*
-         * @var Entry $subject
-         */
+        if (!$subject instanceof Entry) {
+            throw new \LogicException();
+        }
         $this->notifyMagazine($notification = new EntryDeletedNotification($subject->user, $subject));
     }
 

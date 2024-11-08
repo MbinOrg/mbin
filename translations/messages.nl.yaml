@@ -87,7 +87,7 @@ add_new_post: Bericht toevoegen
 add_new_video: Video toevoegen
 contact: Contact
 faq: Veelgestelde vragen
-rss: Rss
+rss: RSS
 change_theme: Thema wijzigen
 useful: Nuttig
 help: Hulp
@@ -157,9 +157,6 @@ share_on_fediverse: Delen op fediverse
 edit: Bewerken
 moderate: Modereren
 reason: Reden
-edit_link: Link bewerken
-edit_article: Artikel bewerken
-edit_photo: Foto bewerken
 delete: Verwijderen
 edit_post: Bericht bewerken
 show_profile_followings: Gevolgde gebruikers tonen
@@ -288,7 +285,7 @@ mentioned_you: Heeft je vermeld
 comment: Reactie
 post: Bericht
 purge: Vernietigen
-send_message: Bericht versturen
+send_message: Direct bericht versturen
 message: Bericht
 infinite_scroll: Oneindig scrollen
 show_top_bar: Bovenbalk tonen
@@ -344,7 +341,6 @@ meta: Meta
 instance: Instantie
 pages: Pagina's
 FAQ: Veelgestelde vragen
-inactive: Inactief
 federation_enabled: Verspreiding is ingeschakeld
 registrations_enabled: Registratie zijn ingeschakeld
 registration_disabled: Registraties zijn uitgeschakeld
@@ -827,17 +823,113 @@ account_deletion_button: Account verwijderen
 account_deletion_immediate: Onmiddellijk verwijderen
 marked_for_deletion: Gemarkeerd voor verwijdering
 account_deletion_description: Uw account wordt binnen 30 dagen verwijderd, tenzij
-  u ervoor kiest om het account onmiddellijk te verwijderen. Het account kan na verwijdering
-  niet meer worden hersteld.
+  u ervoor kiest om het account onmiddellijk te verwijderen. Om uw account binnen
+  30 dagen te herstellen, logt u in met dezelfde gebruikersreferenties of neemt u
+  contact op met een beheerder.
 remove_schedule_delete_account_desc: Verwijder de geplande verwijdering. Alle inhoud
   is weer beschikbaar en de gebruiker kan inloggen.
 schedule_delete_account: Plan Verwijdering
 schedule_delete_account_desc: Plan de verwijdering van dit account over 30 dagen.
   Hierdoor worden de gebruiker en zijn inhoud verborgen en kan de gebruiker niet inloggen.
 remove_schedule_delete_account: Geplande verwijdering verwijderen
-filter_by_subscription: ''
-auto: ''
-restrict_magazine_creation: ''
-sort_by: ''
-filter_by_federation: ''
-filter_labels: ''
+from: van
+ban_hashtag_description: Als je een hashtag verbiedt, dan worden er geen berichten
+  met deze hashtag meer aangemaakt en tevens worden bestaande berichten met deze hashtag
+  verborgen.
+restrict_magazine_creation: Beperk het maken van lokale tijdschriften tot beheerders
+  en algemene moderatoren
+direct_message: Direct bericht
+magazine_log_mod_added: heeft een moderator toegevoegd
+magazine_log_mod_removed: heeft een moderator verwijderd
+tag: Label
+unban: Ban opheffen
+ban_hashtag_btn: Ban Hastag
+unban_hashtag_btn: Opheffen Hashtag Ban
+unban_hashtag_description: Als je een ban van een hashtag ongedaan maakt, dan kun
+  je weer berichten met deze hashtag aanmaken. Bestaande berichten met deze hashtag
+  zijn niet langer verborgen.
+private_instance: Dwing gebruikers om in te loggen voordat ze toegang krijgen tot
+  inhoud
+flash_thread_tag_banned_error: Discussie kon niet worden aangemaakt. Deze inhoud is
+  niet toegestaan.
+filter_labels: Filter labels
+sso_only_mode: Beperk inloggen en registratie alleen tot SSO (Single-Sign-On) methoden
+related_entry: Gerelateerd
+cake_day: Taart dag
+someone: Iemand
+last_updated: Laatst bijgewerkt
+sort_by: Sorteer op
+filter_by_subscription: Filter op abonnement
+filter_by_federation: Filter op federatiestatus
+auto: Automatisch
+back: Terug
+and: en
+sso_show_first: Toon SSO (Single-Sign-On) als eerste op de inlog-en registratiepagina's
+continue_with: Daargaan met
+magazine_log_entry_pinned: vastgezette gesprek
+magazine_log_entry_unpinned: verwijderde vastgezette gesprek
+own_content_reported_accepted: Een melding over uw inhoud was geaccepteerd.
+open_report: open melding
+report_accepted: Een melding was geaccepteerd
+show_related_entries: Toon willekeurige gesprekken
+show_related_magazines: Toon willekeurige tijdschriften
+show_related_posts: Toon willekeurige berichten
+show_active_users: Toon actieve gebruikers
+federation_page_dead_title: Dode instanties
+federation_page_dead_description: Instanties waarin we niet minimaal 10 activiteiten
+  achter elkaar konden leveren en waarbij de laatste succesvolle levering meer dan
+  een week geleden was
+reporting_user: Rapporterende gebruiker
+reported: gerapporteerd
+report_subject: Onderwerp
+own_report_rejected: Uw melding was afgewezen
+own_report_accepted: Uw rapport is geaccepteerd
+manually_approves_followers: Volgers handmatig goedkeuren
+register_push_notifications_button: Registreer voor Pushmeldingen
+unregister_push_notifications_button: Verwijder Push registratie
+test_push_notifications_button: Test pushmeldingen
+test_push_message: Hallo Wereld!
+notification_title_new_comment: New commentaar
+notification_title_mention: Je werd genoemd
+notification_title_new_reply: Nieuw Antwoord
+notification_title_new_thread: Nieuw gesprek
+notification_title_new_report: Een nieuwe melding is aangemaakt
+flash_posting_restricted_error: Het maken van gesprekken is beperkt tot moderators
+  van dit tijdschrift en jij bent er geen van
+server_software: Server software
+version: Versie
+reported_user: Gerapporteerde gebruiker
+notification_title_removed_comment: Een opmerking is verwijderd
+notification_title_ban: Je bent verbannen
+notification_title_removed_post: Een bericht is verwijderd
+notification_title_removed_thread: Een gesprek is verwijderd
+notification_title_message: Nieuw direct bericht
+notification_title_edited_comment: Een opmerking is gewijzigd
+notification_title_new_post: Nieuw Bericht
+notification_title_edited_thread: Een gesprek is gewijzgd
+notification_title_edited_post: Een bericht is gewijzigd
+magazine_posting_restricted_to_mods_warning: Enkel moderators kunnen een nieuw gesprek
+  aanmaken in dit tijdschrift
+last_successful_deliver: Laatste succesvolle levering
+last_successful_receive: Laatste succesvolle ontvangst
+last_failed_contact: Laatste mislukte contact
+magazine_posting_restricted_to_mods: Beperk het aanmaken van gesprekken tot moderators
+new_user_description: Deze gebruiker is nieuw (actief voor minder dan %days% dagen)
+new_magazine_description: Dit tijdschrift is nieuw (actief voor minder dan %days%
+  dagen)
+flash_image_download_too_large_error: Afbeelding kon niet worden aangemaakt, deze
+  is te groot (max. grootte %bytes%)
+admin_users_banned: Geband
+max_image_size: Maximale bestandsgrootte
+user_verify: Account activeren
+admin_users_active: Actief
+admin_users_inactive: Inactief
+admin_users_suspended: Opgeschort
+edit_entry: Bewerk gesprek
+downvotes_mode: Omlaagstem-modus
+change_downvotes_mode: Wijzig omlaagstem modus
+disabled: Uitgeschakeld
+hidden: Verborgen
+enabled: Ingeschakeld
+toolbar.spoiler: Spoiler
+comment_not_found: Commentaar niet gevonden

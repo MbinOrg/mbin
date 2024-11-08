@@ -37,7 +37,7 @@ class MessageThread
     #[ManyToMany(targetEntity: User::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $participants;
     #[OneToMany(mappedBy: 'thread', targetEntity: Message::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => 'ASC'])]
     public Collection $messages;
     #[Id]
     #[GeneratedValue]
@@ -102,6 +102,15 @@ class MessageThread
     public function removeMessage(Message $message): void
     {
         $this->messages->removeElement($message);
+    }
+
+    public function getLastMessage(): ?Message
+    {
+        if (0 === $this->messages->count()) {
+            return null;
+        }
+
+        return $this->messages[$this->messages->count() - 1];
     }
 
     public function getTitle(): string

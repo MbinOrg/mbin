@@ -44,33 +44,35 @@ class EntryResponseDto implements \JsonSerializable
     public ?string $type = null;
     public ?string $slug = null;
     public ?string $apId = null;
+    public ?bool $canAuthUserModerate = null;
 
     public static function create(
-        int $id = null,
-        MagazineSmallResponseDto $magazine = null,
-        UserSmallResponseDto $user = null,
-        DomainDto $domain = null,
-        string $title = null,
-        string $url = null,
-        ImageDto $image = null,
-        string $body = null,
-        string $lang = null,
-        array $tags = null,
-        array $badges = null,
-        int $comments = null,
-        int $uv = null,
-        int $dv = null,
-        bool $isPinned = null,
-        string $visibility = null,
-        int $favouriteCount = null,
-        bool $isOc = null,
-        bool $isAdult = null,
-        \DateTimeImmutable $createdAt = null,
-        \DateTimeImmutable $editedAt = null,
-        \DateTime $lastActive = null,
-        string $type = null,
-        string $slug = null,
-        string $apId = null
+        ?int $id = null,
+        ?MagazineSmallResponseDto $magazine = null,
+        ?UserSmallResponseDto $user = null,
+        ?DomainDto $domain = null,
+        ?string $title = null,
+        ?string $url = null,
+        ?ImageDto $image = null,
+        ?string $body = null,
+        ?string $lang = null,
+        ?array $tags = null,
+        ?array $badges = null,
+        ?int $comments = null,
+        ?int $uv = null,
+        ?int $dv = null,
+        ?bool $isPinned = null,
+        ?string $visibility = null,
+        ?int $favouriteCount = null,
+        ?bool $isOc = null,
+        ?bool $isAdult = null,
+        ?\DateTimeImmutable $createdAt = null,
+        ?\DateTimeImmutable $editedAt = null,
+        ?\DateTime $lastActive = null,
+        ?string $type = null,
+        ?string $slug = null,
+        ?string $apId = null,
+        ?bool $canAuthUserModerate = null,
     ): self {
         $dto = new EntryResponseDto();
         $dto->entryId = $id;
@@ -98,6 +100,7 @@ class EntryResponseDto implements \JsonSerializable
         $dto->type = $type;
         $dto->slug = $slug;
         $dto->apId = $apId;
+        $dto->canAuthUserModerate = $canAuthUserModerate;
 
         return $dto;
     }
@@ -150,6 +153,7 @@ class EntryResponseDto implements \JsonSerializable
             'type' => $this->type,
             'slug' => $this->slug,
             'apId' => $this->apId,
+            'canAuthUserModerate' => $this->canAuthUserModerate,
         ]);
     }
 }

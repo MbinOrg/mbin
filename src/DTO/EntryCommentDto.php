@@ -38,8 +38,10 @@ class EntryCommentDto
     public ?string $visibility = VisibilityInterface::VISIBILITY_VISIBLE;
     public ?string $ip = null;
     public ?string $apId = null;
+    public ?int $apLikeCount = null;
+    public ?int $apDislikeCount = null;
+    public ?int $apShareCount = null;
     public ?array $mentions = null;
-    public ?array $tags = null;
     public ?\DateTimeImmutable $createdAt = null;
     public ?\DateTimeImmutable $editedAt = null;
     public ?\DateTime $lastActive = null;
@@ -77,8 +79,8 @@ class EntryCommentDto
     public function createWithParent(
         Entry $entry,
         ?EntryComment $parent,
-        Image $image = null,
-        string $body = null
+        ?Image $image = null,
+        ?string $body = null
     ): self {
         $this->entry = $entry;
         $this->parent = $parent;

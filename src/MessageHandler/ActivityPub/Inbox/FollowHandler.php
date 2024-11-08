@@ -7,18 +7,22 @@ namespace App\MessageHandler\ActivityPub\Inbox;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Message\ActivityPub\Inbox\FollowMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\Wrapper\FollowResponseWrapper;
 use App\Service\ActivityPubManager;
 use App\Service\MagazineManager;
 use App\Service\UserManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class FollowHandler
+class FollowHandler extends MbinMessageHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly ActivityPubManager $activityPubManager,
         private readonly UserManager $userManager,
         private readonly MagazineManager $magazineManager,
@@ -26,10 +30,19 @@ class FollowHandler
         private readonly LoggerInterface $logger,
         private readonly FollowResponseWrapper $followResponseWrapper
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(FollowMessage $message): void
     {
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof FollowMessage)) {
+            throw new \LogicException();
+        }
         $this->logger->debug('got a FollowMessage: {message}', [$message]);
         $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
         // Check if actor is not empty
@@ -101,7 +114,7 @@ class FollowHandler
         $this->client->post($this->client->getInboxUrl($payload['actor']), $object, $response);
     }
 
-    private function handleUnfollow(User $actor, null|User|Magazine $object): void
+    private function handleUnfollow(User $actor, User|Magazine|null $object): void
     {
         if (!empty($object)) {
             match (true) {
@@ -112,7 +125,7 @@ class FollowHandler
         }
     }
 
-    private function handleAccept(User $actor, null|User|Magazine $object): void
+    private function handleAccept(User $actor, User|Magazine|null $object): void
     {
         if (!empty($object)) {
             if ($object instanceof User) {
@@ -125,7 +138,7 @@ class FollowHandler
         }
     }
 
-    private function handleReject(User $actor, null|User|Magazine $object): void
+    private function handleReject(User $actor, User|Magazine|null $object): void
     {
         if (!empty($object)) {
             match (true) {

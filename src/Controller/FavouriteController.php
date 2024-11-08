@@ -21,20 +21,18 @@ class FavouriteController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function __invoke(FavouriteInterface $subject, Request $request, FavouriteManager $manager): Response
     {
-        $this->validateCsrf('favourite', $request->request->get('token'));
-
         $manager->toggle($this->getUserOrThrow(), $subject);
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse(
                 [
                     'html' => $this->renderView('components/_ajax.html.twig', [
-                            'component' => 'vote',
-                            'attributes' => [
-                                'subject' => $subject,
-                                'showDownvote' => str_contains(\get_class($subject), 'Entry'),
-                            ],
-                        ]
+                        'component' => 'vote',
+                        'attributes' => [
+                            'subject' => $subject,
+                            'showDownvote' => str_contains(\get_class($subject), 'Entry'),
+                        ],
+                    ]
                     ),
                 ]
             );

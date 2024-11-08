@@ -13,21 +13,41 @@
             {% endif %}
             <h4><a href="{{ path('user_overview', {username:user.username}) }}"
                    class="stretched-link">{{ user.username|username(false) }}</a></h4>
-            <p class="user__name">{{ user.username|username }}{% if not user.apId %}@{{ kbin_domain() }}{% endif %}</p>
+            <p class="user__name">
+                {{ user.username|username }}{% if not user.apId %}@{{ kbin_domain() }}{% endif %}
+                {% if user.apManuallyApprovesFollowers is same as true %}
+                    <i class="fa-solid fa-lock" aria-description="{{ 'manually_approves_followers'|trans }}" title="{{ 'manually_approves_followers'|trans }}" aria-describedby="{{ 'manually_approves_followers'|trans }}"></i>
+                {% endif %}
+            </p>
         </div>
         {{ component('user_actions', {user: user}) }}
     {% endif %}
     <ul class="info">
         <li>{{ 'joined'|trans }}: {{ component('date', {date: user.createdAt}) }}</li>
+        <li>{{ 'cake_day'|trans }}: <div><i class="fa-solid fa-cake" aria-hidden="true"></i> <span>{{ user.createdAt|format_date('short', '', null, 'gregorian', mbin_lang()) }}</span></div></li>
+        {% if app.user is defined and app.user is not null and app.user.admin() and user.apId is not null %}
+            <li>
+                {{ 'last_updated'|trans }}: {{ component('date', {date: user.apFetchedAt}) }}
+            </li>
+        {% endif %}
+
+        {% set instance = get_instance_of_user(user) %}
+        {% if instance is not same as null %}
+            <li>{{ 'server_software'|trans }}: <div><span>{{ instance.software }}{% if instance.version is not same as null and app.user is defined and app.user is not null and app.user.admin() %} v{{ instance.version }}{% endif %}</span></div></li>
+        {% endif %}
+
         {%- set TYPE_ENTRY = constant('App\\Repository\\ReputationRepository::TYPE_ENTRY') -%}
         <li><a href="{{ path('user_reputation', {username: user.username, reputationType: TYPE_ENTRY}) }}" class="stretched-link">{{ 'reputation_points'|trans }}:</a> {{ get_reputation_total(user) }}</li>
         <li><a href="{{ path('user_moderated', {username: user.username}) }}"
                class="stretched-link">{{ 'moderated'|trans }}:</a> {{ count_user_moderated(user) }}
         </li>
         {% if app.user is not same as user %}
-            <li><a href="{{ path('messages_create', {username: user.username}) }}"
-                   class="stretched-link">{{ 'send_message'|trans }}</a> <i
-                        class="fa-solid fa-envelope" aria-hidden="true"></i></li>
+            <li>
+                <a href="{{ path('messages_create', {username: user.username}) }}" class="stretched-link">
+                    {{ 'send_message'|trans }}
+                </a>
+                <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+            </li>
         {% endif %}
     </ul>
 </section>

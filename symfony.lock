@@ -64,7 +64,7 @@
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "2.12",
-            "ref": "32f890075233ac4a1176e848a0f8e932ac6536d6"
+            "ref": "7266981c201efbbe02ae53c87f8bb378e3f825ae"
         },
         "files": [
             "config/packages/doctrine.yaml",
@@ -171,12 +171,6 @@
         "files": [
             "config/packages/knpu_oauth2_client.yaml"
         ]
-    },
-    "laminas/laminas-diactoros": {
-        "version": "2.6.0"
-    },
-    "landrok/activitypub": {
-        "version": "0.5.6"
     },
     "lcobucci/clock": {
         "version": "2.0.0"
@@ -328,9 +322,6 @@
     "phpdocumentor/type-resolver": {
         "version": "1.4.0"
     },
-    "phpseclib/phpseclib": {
-        "version": "3.0.9"
-    },
     "phpstan/phpdoc-parser": {
         "version": "0.4.9"
     },
@@ -359,6 +350,9 @@
             "phpunit.xml.dist",
             "tests/bootstrap.php"
         ]
+    },
+    "privacyportal/oauth2-privacyportal": {
+        "version": "0.1.1"
     },
     "psr/cache": {
         "version": "1.0.1"
@@ -575,7 +569,7 @@
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "0.3",
-            "ref": "d097c114aae82c5bc88d48ac164fe523f1003292"
+            "ref": "528285147494380298f8f991ee8c47abebaf79db"
         },
         "files": [
             "config/packages/mercure.yaml"

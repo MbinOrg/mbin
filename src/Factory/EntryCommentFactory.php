@@ -8,6 +8,7 @@ use App\DTO\EntryCommentDto;
 use App\DTO\EntryCommentResponseDto;
 use App\Entity\EntryComment;
 use App\Entity\User;
+use App\Repository\TagLinkRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class EntryCommentFactory
@@ -17,6 +18,7 @@ class EntryCommentFactory
         private readonly ImageFactory $imageFactory,
         private readonly UserFactory $userFactory,
         private readonly MagazineFactory $magazineFactory,
+        private readonly TagLinkRepository $tagLinkRepository,
     ) {
     }
 
@@ -31,7 +33,7 @@ class EntryCommentFactory
         );
     }
 
-    public function createResponseDto(EntryCommentDto|EntryComment $comment, int $childCount = 0): EntryCommentResponseDto
+    public function createResponseDto(EntryCommentDto|EntryComment $comment, array $tags, int $childCount = 0): EntryCommentResponseDto
     {
         $dto = $comment instanceof EntryComment ? $this->createDto($comment) : $comment;
 
@@ -52,7 +54,7 @@ class EntryCommentFactory
             $dto->visibility,
             $dto->apId,
             $dto->mentions,
-            $dto->tags,
+            $tags,
             $dto->createdAt,
             $dto->editedAt,
             $dto->lastActive,
@@ -60,12 +62,13 @@ class EntryCommentFactory
         );
     }
 
-    public function createResponseTree(EntryComment $comment, int $depth = -1): EntryCommentResponseDto
+    public function createResponseTree(EntryComment $comment, int $depth = -1, ?bool $canModerate = null): EntryCommentResponseDto
     {
         $commentDto = $this->createDto($comment);
-        $toReturn = $this->createResponseDto($commentDto, array_reduce($comment->children->toArray(), EntryCommentResponseDto::class.'::recursiveChildCount', 0));
+        $toReturn = $this->createResponseDto($commentDto, $this->tagLinkRepository->getTagsOfEntryComment($comment), array_reduce($comment->children->toArray(), EntryCommentResponseDto::class.'::recursiveChildCount', 0));
         $toReturn->isFavourited = $commentDto->isFavourited;
         $toReturn->userVote = $commentDto->userVote;
+        $toReturn->canAuthUserModerate = $canModerate;
 
         if (0 === $depth) {
             return $toReturn;
@@ -73,7 +76,7 @@ class EntryCommentFactory
 
         foreach ($comment->children as $childComment) {
             \assert($childComment instanceof EntryComment);
-            $child = $this->createResponseTree($childComment, $depth > 0 ? $depth - 1 : -1);
+            $child = $this->createResponseTree($childComment, $depth > 0 ? $depth - 1 : -1, $canModerate);
             array_push($toReturn->children, $child);
         }
 
@@ -96,10 +99,13 @@ class EntryCommentFactory
         $dto->dv = $comment->countDownVotes();
         $dto->favouriteCount = $comment->favouriteCount;
         $dto->mentions = $comment->mentions;
-        $dto->tags = $comment->tags;
         $dto->createdAt = $comment->createdAt;
         $dto->editedAt = $comment->editedAt;
         $dto->lastActive = $comment->lastActive;
+        $dto->apId = $comment->apId;
+        $dto->apLikeCount = $comment->apLikeCount;
+        $dto->apDislikeCount = $comment->apDislikeCount;
+        $dto->apShareCount = $comment->apShareCount;
         $dto->setId($comment->getId());
 
         $currentUser = $this->security->getUser();

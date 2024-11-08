@@ -27,7 +27,7 @@ class MagazineOwnershipRequestController extends AbstractController
             throw new AccessDeniedException();
         }
 
-        $this->validateCsrf('magazine_ownership_request', $request->request->get('token'));
+        $this->validateCsrf('magazine_ownership_request', $request->getPayload()->get('token'));
 
         $this->manager->toggleOwnershipRequest($magazine, $this->getUserOrThrow());
 
@@ -37,7 +37,7 @@ class MagazineOwnershipRequestController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function accept(Magazine $magazine, Request $request): Response
     {
-        $this->validateCsrf('magazine_ownership_request', $request->request->get('token'));
+        $this->validateCsrf('magazine_ownership_request', $request->getPayload()->get('token'));
 
         $user = $this->getUserOrThrow();
         $this->manager->acceptOwnershipRequest($magazine, $user, $user);

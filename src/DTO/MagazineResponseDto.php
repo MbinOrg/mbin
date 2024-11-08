@@ -33,28 +33,34 @@ class MagazineResponseDto implements \JsonSerializable
     public ?string $apId = null;
     public ?string $apProfileId = null;
     public ?int $magazineId = null;
+    public ?string $serverSoftware = null;
+    public ?string $serverSoftwareVersion = null;
+    public bool $isPostingRestrictedToMods = false;
 
     public static function create(
-        ModeratorResponseDto $owner = null,
-        ImageDto $icon = null,
-        string $name = null,
-        string $title = null,
-        string $description = null,
-        string $rules = null,
+        ?ModeratorResponseDto $owner = null,
+        ?ImageDto $icon = null,
+        ?string $name = null,
+        ?string $title = null,
+        ?string $description = null,
+        ?string $rules = null,
         int $subscriptionsCount = 0,
         int $entryCount = 0,
         int $entryCommentCount = 0,
         int $postCount = 0,
         int $postCommentCount = 0,
         bool $isAdult = false,
-        bool $isUserSubscribed = null,
-        bool $isBlockedByUser = null,
-        array $tags = null,
-        array $badges = null,
-        array $moderators = null,
-        string $apId = null,
-        string $apProfileId = null,
-        int $magazineId = null,
+        ?bool $isUserSubscribed = null,
+        ?bool $isBlockedByUser = null,
+        ?array $tags = null,
+        ?array $badges = null,
+        ?array $moderators = null,
+        ?string $apId = null,
+        ?string $apProfileId = null,
+        ?int $magazineId = null,
+        ?string $serverSoftware = null,
+        ?string $serverSoftwareVersion = null,
+        bool $isPostingRestrictedToMods = false,
     ): self {
         $dto = new MagazineResponseDto();
         $dto->owner = $owner;
@@ -77,6 +83,9 @@ class MagazineResponseDto implements \JsonSerializable
         $dto->apId = $apId;
         $dto->apProfileId = $apProfileId;
         $dto->magazineId = $magazineId;
+        $dto->serverSoftware = $serverSoftware;
+        $dto->serverSoftwareVersion = $serverSoftwareVersion;
+        $dto->isPostingRestrictedToMods = $isPostingRestrictedToMods;
 
         return $dto;
     }
@@ -104,6 +113,9 @@ class MagazineResponseDto implements \JsonSerializable
             'moderators' => array_map(fn (ModeratorResponseDto $moderator) => $moderator->jsonSerialize(), $this->moderators),
             'apId' => $this->apId,
             'apProfileId' => $this->apProfileId,
+            'serverSoftware' => $this->serverSoftware,
+            'serverSoftwareVersion' => $this->serverSoftwareVersion,
+            'isPostingRestrictedToMods' => $this->isPostingRestrictedToMods,
         ];
     }
 }

@@ -31,14 +31,22 @@ use App\Factory\PostCommentFactory;
 use App\Factory\PostFactory;
 use App\Form\Constraint\ImageConstraint;
 use App\Repository\Criteria;
+use App\Repository\EntryCommentRepository;
+use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
 use App\Repository\OAuth2ClientAccessRepository;
+use App\Repository\PostCommentRepository;
+use App\Repository\PostRepository;
+use App\Repository\TagLinkRepository;
 use App\Schema\PaginationSchema;
 use App\Service\IpResolver;
 use App\Service\ReportManager;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
 use Pagerfanta\Pagerfanta;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -72,6 +80,11 @@ class BaseApi extends AbstractController
         protected readonly EntryCommentFactory $entryCommentFactory,
         protected readonly MagazineFactory $magazineFactory,
         protected readonly RequestStack $request,
+        protected readonly TagLinkRepository $tagLinkRepository,
+        protected readonly EntryRepository $entryRepository,
+        protected readonly EntryCommentRepository $entryCommentRepository,
+        protected readonly PostRepository $postRepository,
+        protected readonly PostCommentRepository $postCommentRepository,
         private readonly ImageRepository $imageRepository,
         private readonly ReportManager $reportManager,
         private readonly OAuth2ClientAccessRepository $clientAccessRepository,
@@ -90,8 +103,8 @@ class BaseApi extends AbstractController
      * @throws TooManyRequestsHttpException If the limit is hit, rate limit the connection
      */
     protected function rateLimit(
-        RateLimiterFactory $limiterFactory = null,
-        RateLimiterFactory $anonLimiterFactory = null
+        ?RateLimiterFactory $limiterFactory = null,
+        ?RateLimiterFactory $anonLimiterFactory = null
     ): array {
         $this->logAccess();
         if (null === $limiterFactory && null === $anonLimiterFactory) {
@@ -146,6 +159,36 @@ class BaseApi extends AbstractController
         }
     }
 
+    public function getOAuthToken(): ?OAuth2Token
+    {
+        try {
+            /** @var ?OAuth2Token $token */
+            $token = $this->container->get('security.token_storage')->getToken();
+            if ($token instanceof OAuth2Token) {
+                return $token;
+            }
+        } catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
+            $this->logger->warning('there was an error getting the access token: {e} - {m}, {stack}', [
+                'e' => \get_class($e),
+                'm' => $e->getMessage(),
+                'stack' => $e->getTraceAsString(),
+            ]);
+        }
+
+        return null;
+    }
+
+    public function getAccessToken(?OAuth2Token $oAuth2Token): ?AccessToken
+    {
+        if (!$oAuth2Token) {
+            return null;
+        }
+
+        return $this->entityManager
+            ->getRepository(AccessToken::class)
+            ->findOneBy(['identifier' => $oAuth2Token->getAttribute('access_token_id')]);
+    }
+
     public function serializePaginated(array $serializedItems, Pagerfanta $pagerfanta): array
     {
         return [
@@ -163,7 +206,7 @@ class BaseApi extends AbstractController
                 /**
                  * @var Entry $content
                  */
-                $dto = $this->entryFactory->createResponseDto($content);
+                $dto = $this->entryFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfEntry($content));
                 $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
                 $toReturn = $dto->jsonSerialize();
                 $toReturn['itemType'] = 'entry';
@@ -172,7 +215,7 @@ class BaseApi extends AbstractController
                 /**
                  * @var EntryComment $content
                  */
-                $dto = $this->entryCommentFactory->createResponseDto($content);
+                $dto = $this->entryCommentFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfEntryComment($content));
                 $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
                 $toReturn = $dto->jsonSerialize();
                 $toReturn['itemType'] = 'entry_comment';
@@ -181,7 +224,7 @@ class BaseApi extends AbstractController
                 /**
                  * @var Post $content
                  */
-                $dto = $this->postFactory->createResponseDto($content);
+                $dto = $this->postFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfPost($content));
                 $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
                 $toReturn = $dto->jsonSerialize();
                 $toReturn['itemType'] = 'post';
@@ -190,7 +233,7 @@ class BaseApi extends AbstractController
                 /**
                  * @var PostComment $content
                  */
-                $dto = $this->postCommentFactory->createResponseDto($content);
+                $dto = $this->postCommentFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfPostComment($content));
                 $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
                 $toReturn = $dto->jsonSerialize();
                 $toReturn['itemType'] = 'post_comment';
@@ -220,6 +263,7 @@ class BaseApi extends AbstractController
             $this->entryCommentFactory,
             $this->postFactory,
             $this->postCommentFactory,
+            $this->tagLinkRepository,
         );
 
         if ($response->subject) {

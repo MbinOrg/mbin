@@ -46,3 +46,21 @@ api_notification_retrieve:
   path: /api/notification/{notification_id}
   methods: [ GET ]
   format: json
+
+api_notification_push_register:
+    controller: App\Controller\Api\Notification\NotificationPushApi::createSubscription
+    path: /api/notification/push
+    methods: [ POST ]
+    format: json
+
+api_notification_push_unregister:
+    controller: App\Controller\Api\Notification\NotificationPushApi::deleteSubscription
+    path: /api/notification/push
+    methods: [ DELETE ]
+    format: json
+
+api_notification_push_test:
+    controller: App\Controller\Api\Notification\NotificationPushApi::testSubscription
+    path: /api/notification/push/test
+    methods: [ GET ]
+    format: json

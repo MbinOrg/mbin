@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Factory\ActivityPub;
 
 use App\Entity\Contracts\ActivityPubActivityInterface;
+use App\Entity\Entry;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Service\ActivityPub\ContextsProvider;
@@ -20,14 +21,52 @@ class AddRemoveFactory
     ) {
     }
 
-    public function buildAdd(User $actor, User $added, Magazine $magazine): array
+    public function buildAddModerator(User $actor, User $added, Magazine $magazine): array
     {
-        return $this->build($actor, $added, $magazine, 'Add');
+        $url = null !== $magazine->apId ? $magazine->apAttributedToUrl : $this->urlGenerator->generate(
+            'ap_magazine_moderators', ['name' => $magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
+        );
+        $addedUserUrl = null !== $added->apId ? $added->apPublicUrl : $this->urlGenerator->generate(
+            'ap_user', ['username' => $added->username], UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
+        return $this->build($actor, $addedUserUrl, $magazine, 'Add', $url);
     }
 
-    public function buildRemove(User $actor, User $removed, Magazine $magazine): array
+    public function buildRemoveModerator(User $actor, User $removed, Magazine $magazine): array
     {
-        return $this->build($actor, $removed, $magazine, 'Remove');
+        $url = null !== $magazine->apId ? $magazine->apAttributedToUrl : $this->urlGenerator->generate(
+            'ap_magazine_moderators', ['name' => $magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
+        );
+        $removedUserUrl = null !== $removed->apId ? $removed->apPublicUrl : $this->urlGenerator->generate(
+            'ap_user', ['username' => $removed->username], UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
+        return $this->build($actor, $removedUserUrl, $magazine, 'Remove', $url);
+    }
+
+    public function buildAddPinnedPost(User $actor, Entry $added): array
+    {
+        $url = null !== $added->magazine->apId ? $added->magazine->apFeaturedUrl : $this->urlGenerator->generate(
+            'ap_magazine_pinned', ['name' => $added->magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
+        );
+        $entryUrl = $added->apId ?? $this->urlGenerator->generate(
+            'ap_entry', ['entry_id' => $added->getId(), 'magazine_name' => $added->magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
+        return $this->build($actor, $entryUrl, $added->magazine, 'Add', $url);
+    }
+
+    public function buildRemovePinnedPost(User $actor, Entry $removed): array
+    {
+        $url = null !== $removed->magazine->apId ? $removed->magazine->apFeaturedUrl : $this->urlGenerator->generate(
+            'ap_magazine_pinned', ['name' => $removed->magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
+        );
+        $entryUrl = $removed->apId ?? $this->urlGenerator->generate(
+            'ap_entry', ['entry_id' => $removed->getId(), 'magazine_name' => $removed->magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
+        return $this->build($actor, $entryUrl, $removed->magazine, 'Remove', $url);
     }
 
     #[ArrayShape([
@@ -41,7 +80,7 @@ class AddRemoveFactory
         'target' => 'string',
         'audience' => 'string',
     ])]
-    private function build(User $actor, User $targetUser, Magazine $magazine, string $type): array
+    private function build(User $actor, string $targetObjectUrl, Magazine $magazine, string $type, string $collectionUrl): array
     {
         $id = Uuid::v4()->toRfc4122();
 
@@ -50,23 +89,19 @@ class AddRemoveFactory
             'id' => $this->urlGenerator->generate(
                 'ap_object', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL
             ),
-            'actor' => $actor->apId ?? $this->urlGenerator->generate(
+            'actor' => null !== $actor->apId ? $actor->apPublicUrl : $this->urlGenerator->generate(
                 'ap_user', ['username' => $actor->username], UrlGeneratorInterface::ABSOLUTE_URL
             ),
             'to' => [ActivityPubActivityInterface::PUBLIC_URL],
-            'object' => $targetUser->apId ?? $this->urlGenerator->generate(
-                'ap_user', ['username' => $targetUser->username], UrlGeneratorInterface::ABSOLUTE_URL
-            ),
+            'object' => $targetObjectUrl,
             'cc' => [
-                $magazine->apId ?? $this->urlGenerator->generate(
+                null !== $magazine->apId ? $magazine->apPublicUrl : $this->urlGenerator->generate(
                     'ap_magazine', ['name' => $magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
                 ),
             ],
             'type' => $type,
-            'target' => $magazine->apAttributedToUrl ?? $this->urlGenerator->generate(
-                'ap_magazine_moderators', ['name' => $magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
-            ),
-            'audience' => $magazine->apId ?? $this->urlGenerator->generate(
+            'target' => $collectionUrl,
+            'audience' => null !== $magazine->apId ? $magazine->apPublicUrl : $this->urlGenerator->generate(
                 'ap_magazine', ['name' => $magazine->name], UrlGeneratorInterface::ABSOLUTE_URL
             ),
         ];

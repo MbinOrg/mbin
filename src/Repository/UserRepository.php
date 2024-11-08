@@ -211,7 +211,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         $dql =
             'SELECT COUNT(u.id), u.apInboxUrl FROM '.User::class.' u WHERE u IN ('.
             'SELECT IDENTITY(us.follower) FROM '.UserFollow::class.' us WHERE us.following = :user)'.
-            'AND u.apId IS NOT NULL AND u.isBanned = false AND u.apTimeoutAt IS NULL '.
+            'AND u.apId IS NOT NULL AND u.isBanned = false AND u.isDeleted = false AND u.apTimeoutAt IS NULL '.
             'GROUP BY u.apInboxUrl';
 
         $res = $this->getEntityManager()->createQuery($dql)
@@ -239,7 +239,69 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $pagerfanta;
     }
 
-    public function findAllPaginated(int $page, bool $onlyLocal = false): PagerfantaInterface
+    public function findAllActivePaginated(int $page, bool $onlyLocal = false): PagerfantaInterface
+    {
+        $builder = $this->createQueryBuilder('u');
+        if ($onlyLocal) {
+            $builder->where('u.apId IS NULL')
+            ->andWhere('u.isVerified = true');
+        } else {
+            $builder->where('u.apId IS NOT NULL');
+        }
+        $query = $builder
+            ->andWhere('u.visibility = :visibility')
+            ->andWhere('u.isDeleted = false')
+            ->andWhere('u.isBanned = false')
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+            ->orderBy('u.createdAt', 'ASC')
+            ->getQuery();
+
+        $pagerfanta = new Pagerfanta(
+            new QueryAdapter(
+                $query
+            )
+        );
+
+        try {
+            $pagerfanta->setMaxPerPage(self::PER_PAGE);
+            $pagerfanta->setCurrentPage($page);
+        } catch (NotValidCurrentPageException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return $pagerfanta;
+    }
+
+    public function findAllInactivePaginated(int $page): PagerfantaInterface
+    {
+        $builder = $this->createQueryBuilder('u');
+
+        $query = $builder->where('u.apId IS NULL')
+            ->andWhere('u.visibility = :visibility')
+            ->andWhere('u.isVerified = false')
+            ->andWhere('u.isDeleted = false')
+            ->andWhere('u.isBanned = false')
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+            ->orderBy('u.createdAt', 'ASC')
+            ->getQuery();
+
+        $pagerfanta = new Pagerfanta(
+            new QueryAdapter(
+                $query
+            )
+        );
+
+        try {
+            $pagerfanta->setMaxPerPage(self::PER_PAGE);
+            $pagerfanta->setCurrentPage($page);
+        } catch (NotValidCurrentPageException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return $pagerfanta;
+    }
+
+    public function findAllBannedPaginated(int $page, bool $onlyLocal = false): PagerfantaInterface
     {
         $builder = $this->createQueryBuilder('u');
         if ($onlyLocal) {
@@ -248,6 +310,39 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             $builder->where('u.apId IS NOT NULL');
         }
         $query = $builder
+            ->andWhere('u.isBanned = true')
+            ->andWhere('u.isDeleted = false')
+            ->orderBy('u.createdAt', 'ASC')
+            ->getQuery();
+
+        $pagerfanta = new Pagerfanta(
+            new QueryAdapter(
+                $query
+            )
+        );
+
+        try {
+            $pagerfanta->setMaxPerPage(self::PER_PAGE);
+            $pagerfanta->setCurrentPage($page);
+        } catch (NotValidCurrentPageException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return $pagerfanta;
+    }
+
+    public function findAllSuspendedPaginated(int $page, bool $onlyLocal = false): PagerfantaInterface
+    {
+        $builder = $this->createQueryBuilder('u');
+        if ($onlyLocal) {
+            $builder->where('u.apId IS NULL');
+        } else {
+            $builder->where('u.apId IS NOT NULL');
+        }
+        $query = $builder
+            ->andWhere('u.visibility = :visibility')
+            ->andWhere('u.isDeleted = false')
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_TRASHED)
             ->orderBy('u.createdAt', 'ASC')
             ->getQuery();
 
@@ -295,7 +390,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
         if (!$user instanceof User) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', $user::class));
+            throw new UnsupportedUserException(\sprintf('Instances of "%s" are not supported.', $user::class));
         }
 
         $user->setPassword($newHashedPassword);
@@ -349,6 +444,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere('u.apDomain IS NULL')
             ->andWhere('u.apDeletedAt IS NULL')
             ->andWhere('u.apTimeoutAt IS NULL')
+            ->addOrderBy('u.apFetchedAt', 'ASC')
             ->setMaxResults(1000)
             ->getQuery()
             ->getResult();
@@ -358,9 +454,12 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     {
         $qb = $this->createQueryBuilder('u');
 
+        $qb->where('u.visibility = :visibility')
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
+
         if ($recentlyActive) {
-            $qb->where('u.lastActive >= :lastActive')
-                ->setParameters(['lastActive' => (new \DateTime())->modify('-7 days')]);
+            $qb->andWhere('u.lastActive >= :lastActive')
+                ->setParameter('lastActive', (new \DateTime())->modify('-7 days'));
         }
 
         switch ($group) {
@@ -481,6 +580,18 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $result[0];
     }
 
+    /**
+     * @return User[]
+     */
+    public function findAllAdmins(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere("JSONB_CONTAINS(u.roles, '\"".'ROLE_ADMIN'."\"') = true")
+            ->andWhere('u.isDeleted = false')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findUsersSuggestions(string $query): array
     {
         $qb = $this->createQueryBuilder('u');
@@ -489,13 +600,14 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere($qb->expr()->like('u.username', ':query'))
             ->orWhere($qb->expr()->like('u.email', ':query'))
             ->andWhere('u.isBanned = false')
+            ->andWhere('u.isDeleted = false')
             ->setParameters(['query' => "{$query}%"])
             ->setMaxResults(5)
             ->getQuery()
             ->getResult();
     }
 
-    public function findPeople(Magazine $magazine, ?bool $federated = false, $limit = 200, bool $limitTime = false): array
+    public function findUsersForMagazine(Magazine $magazine, ?bool $federated = false, $limit = 200, bool $limitTime = false, bool $requireAvatar = false): array
     {
         $conn = $this->_em->getConnection();
         $timeWhere = $limitTime ? "AND created_at > now() - '30 days'::interval" : '';
@@ -529,10 +641,14 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         $qb = $this->createQueryBuilder('u', 'u.id');
         $qb->andWhere($qb->expr()->in('u.id', $user))
             ->andWhere('u.isBanned = false')
+            ->andWhere('u.isDeleted = false')
+            ->andWhere('u.visibility = :visibility')
             ->andWhere('u.apDeletedAt IS NULL')
-            ->andWhere('u.apTimeoutAt IS NULL')
-            ->andWhere('u.about IS NOT NULL')
-            ->andWhere('u.avatar IS NOT NULL');
+            ->andWhere('u.apTimeoutAt IS NULL');
+
+        if (true === $requireAvatar) {
+            $qb->andWhere('u.avatar IS NOT NULL');
+        }
 
         if (null !== $federated) {
             if ($federated) {
@@ -543,7 +659,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             }
         }
 
-        $qb->setMaxResults($limit);
+        $qb->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+            ->setMaxResults($limit);
 
         try {
             $users = $qb->getQuery()->getResult(); // @todo
@@ -564,14 +681,16 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $res;
     }
 
-    public function findActiveUsers(Magazine $magazine = null)
+    public function findActiveUsers(?Magazine $magazine = null)
     {
         if ($magazine) {
-            $results = $this->findPeople($magazine, null, 35, true);
+            $results = $this->findUsersForMagazine($magazine, null, 35, true, true);
         } else {
             $results = $this->createQueryBuilder('u')
                 ->andWhere('u.lastActive >= :lastActive')
                 ->andWhere('u.isBanned = false')
+                ->andWhere('u.isDeleted = false')
+                ->andWhere('u.visibility = :visibility')
                 ->andWhere('u.apDeletedAt IS NULL')
                 ->andWhere('u.apTimeoutAt IS NULL')
                 ->andWhere('u.avatar IS NOT NULL');
@@ -581,7 +700,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
             $results = $results->join('u.avatar', 'a')
                 ->orderBy('u.lastActive', 'DESC')
-                ->setParameters(['lastActive' => (new \DateTime())->modify('-7 days')])
+                ->setParameters(['lastActive' => (new \DateTime())->modify('-7 days'), 'visibility' => VisibilityInterface::VISIBILITY_VISIBLE])
                 ->setMaxResults(35)
                 ->getQuery()
                 ->getResult();
@@ -622,5 +741,19 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         }
 
         return $pagerfanta;
+    }
+
+    /**
+     * @return User[]
+     */
+    public function findAllModerators(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->where("JSONB_CONTAINS(u.roles, '\"".'ROLE_MODERATOR'."\"') = true")
+            ->andWhere('u.visibility = :visibility')
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 }

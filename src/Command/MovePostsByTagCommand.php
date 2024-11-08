@@ -54,7 +54,10 @@ class MovePostsByTagCommand extends Command
 
         $qb = $this->postRepository->createQueryBuilder('p');
 
-        $qb->andWhere("JSONB_CONTAINS(p.tags, '\"".$tag."\"') = true");
+        $qb->andWhere('t.tag = :tag')
+            ->join('p.hashtags', 'h')
+            ->join('h.hashtag', 't')
+            ->setParameter('tag', $tag);
 
         $posts = $qb->getQuery()->getResult();
 

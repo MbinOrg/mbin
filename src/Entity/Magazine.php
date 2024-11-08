@@ -53,6 +53,8 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public ?string $description = null;
     #[Column(type: 'text', length: self::MAX_RULES_LENGTH, nullable: true)]
     public ?string $rules = null;
+    #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
+    public bool $postingRestrictedToMods = false;
     #[Column(type: 'integer', nullable: false)]
     public int $subscriptionsCount = 0;
     #[Column(type: 'integer', nullable: false)]
@@ -110,10 +112,11 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public function __construct(
         string $name,
         string $title,
-        User $user,
+        ?User $user,
         ?string $description,
         ?string $rules,
         bool $isAdult,
+        bool $postingRestrictedToMods,
         ?Image $icon
     ) {
         $this->name = $name;
@@ -121,6 +124,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         $this->description = $description;
         $this->rules = $rules;
         $this->isAdult = $isAdult;
+        $this->postingRestrictedToMods = $postingRestrictedToMods;
         $this->icon = $icon;
         $this->moderators = new ArrayCollection();
         $this->entries = new ArrayCollection();
@@ -131,7 +135,9 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         $this->badges = new ArrayCollection();
         $this->logs = new ArrayCollection();
 
-        $this->addModerator(new Moderator($this, $user, null, true, true));
+        if (null !== $user) {
+            $this->addModerator(new Moderator($this, $user, null, true, true));
+        }
 
         $this->createdAtTraitConstruct();
     }
@@ -233,10 +239,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
 
     public function getModeratorCount(): int
     {
-        $criteria = Criteria::create()
-            ->where(Criteria::expr()->eq('isOwner', false));
-
-        return $this->moderators->matching($criteria)->count();
+        return $this->moderators->count();
     }
 
     public function addEntry(Entry $entry): self
@@ -364,7 +367,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
 
     public function softDelete(): void
     {
-        $this->markedForDeletionAt = new \DateTime();
+        $this->markedForDeletionAt = new \DateTime('now + 30days');
         $this->visibility = VisibilityInterface::VISIBILITY_SOFT_DELETED;
     }
 
@@ -476,5 +479,37 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         }
 
         return false;
+    }
+
+    public function canUpdateMagazine(User $actor): bool
+    {
+        if (null === $this->apId) {
+            return $actor->isAdmin() || $actor->isModerator() || $this->userIsModerator($actor);
+        } else {
+            return $this->apDomain === $actor->apDomain || $this->userIsModerator($actor);
+        }
+    }
+
+    /**
+     * @param Magazine|User $actor the actor trying to create an Entry
+     *
+     * @return bool false if the user is not restricted, true if the user is restricted
+     */
+    public function isActorPostingRestricted(Magazine|User $actor): bool
+    {
+        if (!$this->postingRestrictedToMods) {
+            return false;
+        }
+        if ($actor instanceof User) {
+            if (null !== $this->apId && $this->apDomain === $actor->apDomain) {
+                return false;
+            }
+
+            if ((null === $this->apId && ($actor->isAdmin() || $actor->isModerator())) || $this->userIsModerator($actor)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

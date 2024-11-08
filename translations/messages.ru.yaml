@@ -169,9 +169,6 @@ edit: Редактировать
 are_you_sure: Вы уверены?
 moderate: Модерация
 reason: Причина
-edit_link: Изменить ссылку
-edit_article: Изменить ветку
-edit_photo: Изменить фото
 delete: Удалить
 edit_post: Редактировать пост
 edit_comment: Сохранить изменения
@@ -340,7 +337,6 @@ meta: Meta
 instance: Инстанс
 pages: Страницы
 FAQ: Часто задаваемые вопросы
-inactive: Неактивный
 type_search_term: Напишите вопрос
 federation_enabled: Федерация включена
 registrations_enabled: Регистрация включена
@@ -794,28 +790,3 @@ followers_count: '{0}Подписчиков|{1}Подписчик|]1,Inf[ Под
 remove_media: Удалить медиа
 details: Детали
 spoiler: Спойлер
-always_disconnected_magazine_info: ''
-marked_for_deletion_at: ''
-account_deletion_title: ''
-account_deletion_description: ''
-remove_schedule_delete_account_desc: ''
-remove_schedule_delete_account: ''
-schedule_delete_account_desc: ''
-show: ''
-hide: ''
-disconnected_magazine_info: ''
-sidebar_sections_local_only: ''
-schedule_delete_account: ''
-restrict_magazine_creation: ''
-auto: ''
-account_deletion_button: ''
-account_deletion_immediate: ''
-sso_registrations_enabled: ''
-marked_for_deletion: ''
-sso_registrations_enabled.error: ''
-subscribe_for_updates: ''
-filter_by_federation: ''
-sort_by: ''
-filter_labels: ''
-filter_by_subscription: ''
-edited: ''

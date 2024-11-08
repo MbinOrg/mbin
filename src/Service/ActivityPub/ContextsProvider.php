@@ -19,7 +19,9 @@ class ContextsProvider
         return [
             ActivityPubActivityInterface::CONTEXT_URL,
             ActivityPubActivityInterface::SECURITY_URL,
-            ActivityPubActivityInterface::ADDITIONAL_CONTEXTS,
+            [
+                ...ActivityPubActivityInterface::ADDITIONAL_CONTEXTS,
+            ],
         ];
     }
 

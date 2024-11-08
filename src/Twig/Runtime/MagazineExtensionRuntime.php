@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Twig\Runtime;
 
+use App\Entity\Instance;
 use App\Entity\Magazine;
+use App\Repository\InstanceRepository;
 use App\Repository\MagazineSubscriptionRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -12,6 +14,7 @@ use Twig\Extension\RuntimeExtensionInterface;
 class MagazineExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
+        private readonly InstanceRepository $instanceRepository,
         private readonly Security $security,
         private readonly MagazineSubscriptionRepository $magazineSubscriptionRepository)
     {
@@ -40,5 +43,10 @@ class MagazineExtensionRuntime implements RuntimeExtensionInterface
         $subscribers = $this->magazineSubscriptionRepository->findMagazineSubscribers(1, $magazine);
 
         return $subscribers->getNbResults() > 0;
+    }
+
+    public function getInstanceOfMagazine(Magazine $magazine): ?Instance
+    {
+        return $this->instanceRepository->getInstanceOfMagazine($magazine);
     }
 }

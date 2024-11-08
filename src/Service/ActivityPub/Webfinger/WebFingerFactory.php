@@ -36,7 +36,7 @@ class WebFingerFactory
         }
 
         // Build a WebFinger URL
-        $url = sprintf(
+        $url = \sprintf(
             self::WEBFINGER_URL,
             $scheme,
             $actorHandle->host,

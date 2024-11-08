@@ -92,7 +92,7 @@ class SignatureValidatorTest extends TestCase
         $stubMagazine = $this->createStub(Magazine::class);
         $stubMagazine->apProfileId = 'https://kbin.localhost/m/group';
 
-        $this->headers['signature'][0] = sprintf($this->headers['signature'][0], 'https://kbin.localhost/m/group');
+        $this->headers['signature'][0] = \sprintf($this->headers['signature'][0], 'https://kbin.localhost/m/group');
 
         $apManager = $this->createStub(ActivityPubManager::class);
         $apManager->method('findActorOrCreate')
@@ -125,7 +125,7 @@ class SignatureValidatorTest extends TestCase
         $stubMagazine = $this->createStub(Magazine::class);
         $stubMagazine->apProfileId = 'https://kbin.localhost/m/group';
 
-        $this->headers['signature'][0] = sprintf($this->headers['signature'][0], 'https://kbin.localhost/m/group');
+        $this->headers['signature'][0] = \sprintf($this->headers['signature'][0], 'https://kbin.localhost/m/group');
 
         $apManager = $this->createStub(ActivityPubManager::class);
         $apManager->method('findActorOrCreate')
@@ -155,7 +155,7 @@ class SignatureValidatorTest extends TestCase
         $stubMagazine = $this->createStub(Magazine::class);
         $stubMagazine->apProfileId = 'https://kbin.localhost/m/group';
 
-        $this->headers['signature'][0] = sprintf($this->headers['signature'][0], 'https://kbin.localhost/m/group');
+        $this->headers['signature'][0] = \sprintf($this->headers['signature'][0], 'https://kbin.localhost/m/group');
 
         $apManager = $this->createStub(ActivityPubManager::class);
         $apManager->method('findActorOrCreate')
@@ -192,7 +192,7 @@ class SignatureValidatorTest extends TestCase
         $stubMagazine = $this->createStub(Magazine::class);
         $stubMagazine->apProfileId = 'https://kbin.localhost/m/group';
 
-        $this->headers['signature'][0] = sprintf($this->headers['signature'][0], 'https://kbin.localhost/m/group');
+        $this->headers['signature'][0] = \sprintf($this->headers['signature'][0], 'https://kbin.localhost/m/group');
 
         $apManager = $this->createStub(ActivityPubManager::class);
         $apHttpClient = $this->createStub(ApHttpClient::class);
@@ -218,7 +218,7 @@ class SignatureValidatorTest extends TestCase
         $stubMagazine = $this->createStub(Magazine::class);
         $stubMagazine->apProfileId = 'http://kbin.localhost/m/group';
 
-        $this->headers['signature'][0] = sprintf($this->headers['signature'][0], 'http://kbin.localhost/m/group');
+        $this->headers['signature'][0] = \sprintf($this->headers['signature'][0], 'http://kbin.localhost/m/group');
 
         $apManager = $this->createStub(ActivityPubManager::class);
         $apHttpClient = $this->createStub(ApHttpClient::class);

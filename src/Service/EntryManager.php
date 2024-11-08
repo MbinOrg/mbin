@@ -8,6 +8,8 @@ use App\DTO\EntryDto;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\Magazine;
+use App\Entity\MagazineLogEntryPinned;
+use App\Entity\MagazineLogEntryUnpinned;
 use App\Entity\User;
 use App\Event\Entry\EntryBeforeDeletedEvent;
 use App\Event\Entry\EntryBeforePurgeEvent;
@@ -16,11 +18,15 @@ use App\Event\Entry\EntryDeletedEvent;
 use App\Event\Entry\EntryEditedEvent;
 use App\Event\Entry\EntryPinEvent;
 use App\Event\Entry\EntryRestoredEvent;
+use App\Exception\PostingRestrictedException;
+use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Factory\EntryFactory;
 use App\Message\DeleteImageMessage;
+use App\Message\EntryEmbedMessage;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
+use App\Service\ActivityPub\ApHttpClient;
 use App\Service\Contracts\ContentManagerInterface;
 use App\Utils\Slugger;
 use App\Utils\UrlCleaner;
@@ -39,6 +45,8 @@ class EntryManager implements ContentManagerInterface
 {
     public function __construct(
         private readonly LoggerInterface $logger,
+        private readonly SettingsManager $settingsManager,
+        private readonly TagExtractor $tagExtractor,
         private readonly TagManager $tagManager,
         private readonly MentionManager $mentionManager,
         private readonly EntryCommentManager $entryCommentManager,
@@ -53,11 +61,19 @@ class EntryManager implements ContentManagerInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly EntryRepository $entryRepository,
         private readonly ImageRepository $imageRepository,
+        private readonly ApHttpClient $apHttpClient,
         private readonly CacheInterface $cache
     ) {
     }
 
-    public function create(EntryDto $dto, User $user, bool $rateLimit = true): Entry
+    /**
+     * @throws TagBannedException
+     * @throws UserBannedException
+     * @throws TooManyRequestsHttpException
+     * @throws PostingRestrictedException
+     * @throws \Exception                   if title, body and image are empty
+     */
+    public function create(EntryDto $dto, User $user, bool $rateLimit = true, bool $stickyIt = false): Entry
     {
         if ($rateLimit) {
             $limiter = $this->entryLimiter->create($dto->ip);
@@ -68,6 +84,14 @@ class EntryManager implements ContentManagerInterface
 
         if ($dto->magazine->isBanned($user) || $user->isBanned()) {
             throw new UserBannedException();
+        }
+
+        if ($this->tagManager->isAnyTagBanned($this->tagManager->extract($dto->body))) {
+            throw new TagBannedException();
+        }
+
+        if ($dto->magazine->isActorPostingRestricted($user)) {
+            throw new PostingRestrictedException($dto->magazine, $user);
         }
 
         $this->logger->debug('creating entry from dto');
@@ -81,13 +105,12 @@ class EntryManager implements ContentManagerInterface
         if ($entry->image && !$entry->image->altText) {
             $entry->image->altText = $dto->imageAlt;
         }
-        $entry->tags = $dto->tags ? $this->tagManager->extract(
-            implode(' ', array_map(fn ($tag) => str_starts_with($tag, '#') ? $tag : '#'.$tag, $dto->tags)),
-            $entry->magazine->name
-        ) : null;
         $entry->mentions = $dto->body ? $this->mentionManager->extract($dto->body) : null;
         $entry->visibility = $dto->visibility;
         $entry->apId = $dto->apId;
+        $entry->apLikeCount = $dto->apLikeCount;
+        $entry->apDislikeCount = $dto->apDislikeCount;
+        $entry->apShareCount = $dto->apShareCount;
         $entry->magazine->lastActive = new \DateTime();
         $entry->user->lastActive = new \DateTime();
         $entry->lastActive = $dto->lastActive ?? $entry->lastActive;
@@ -102,10 +125,19 @@ class EntryManager implements ContentManagerInterface
             $this->badgeManager->assign($entry, $dto->badges);
         }
 
+        $entry->updateScore();
+        $entry->updateRanking();
+
         $this->entityManager->persist($entry);
         $this->entityManager->flush();
 
+        $this->tagManager->updateEntryTags($entry, $this->tagExtractor->extract($entry->body) ?? []);
+
         $this->dispatcher->dispatch(new EntryCreatedEvent($entry));
+
+        if ($stickyIt) {
+            $this->pin($entry, null);
+        }
 
         return $entry;
     }
@@ -118,7 +150,7 @@ class EntryManager implements ContentManagerInterface
             $isImageUrl = ImageManager::isImageUrl($dto->url);
         }
 
-        if (($dto->image && !$dto->body) || $isImageUrl) {
+        if (($dto->image && !$dto->url) || $isImageUrl) {
             $entry->type = Entry::ENTRY_TYPE_IMAGE;
             $entry->hasEmbed = true;
 
@@ -139,11 +171,21 @@ class EntryManager implements ContentManagerInterface
         return $entry;
     }
 
-    public function edit(Entry $entry, EntryDto $dto): Entry
+    public function canUserEditEntry(Entry $entry, User $user): bool
+    {
+        $entryHost = null !== $entry->apId ? parse_url($entry->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+        $userHost = null !== $user->apId ? parse_url($user->apProfileId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+        $magazineHost = null !== $entry->magazine->apId ? parse_url($entry->magazine->apProfileId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+
+        return $entryHost === $userHost || $userHost === $magazineHost || $entry->magazine->userIsModerator($user);
+    }
+
+    public function edit(Entry $entry, EntryDto $dto, User $editedBy): Entry
     {
         Assert::same($entry->magazine->getId(), $dto->magazine->getId());
 
         $entry->title = $dto->title;
+        $oldUrl = $entry->url;
         $entry->url = $dto->url;
         $entry->body = $dto->body;
         $entry->lang = $dto->lang;
@@ -154,10 +196,8 @@ class EntryManager implements ContentManagerInterface
         if ($dto->image) {
             $entry->image = $this->imageRepository->find($dto->image->id);
         }
-        $entry->tags = $dto->tags ? $this->tagManager->extract(
-            implode(' ', array_map(fn ($tag) => str_starts_with($tag, '#') ? $tag : '#'.$tag, $dto->tags)),
-            $entry->magazine->name
-        ) : null;
+        $this->tagManager->updateEntryTags($entry, $this->tagManager->getTagsFromEntryDto($dto));
+
         $entry->mentions = $dto->body ? $this->mentionManager->extract($dto->body) : null;
         $entry->isOc = $dto->isOc;
         $entry->lang = $dto->lang;
@@ -169,20 +209,32 @@ class EntryManager implements ContentManagerInterface
             throw new \Exception('Entry body, name, url and image cannot all be empty');
         }
 
+        $entry->apLikeCount = $dto->apLikeCount;
+        $entry->apDislikeCount = $dto->apDislikeCount;
+        $entry->apShareCount = $dto->apShareCount;
+        $entry->updateScore();
+        $entry->updateRanking();
+
         $this->entityManager->flush();
 
         if ($oldImage && $entry->image !== $oldImage) {
             $this->bus->dispatch(new DeleteImageMessage($oldImage->getId()));
         }
 
-        $this->dispatcher->dispatch(new EntryEditedEvent($entry));
+        if ($entry->url !== $oldUrl) {
+            $this->bus->dispatch(new EntryEmbedMessage($entry->getId()));
+        }
+
+        $this->dispatcher->dispatch(new EntryEditedEvent($entry, $editedBy));
 
         return $entry;
     }
 
     public function delete(User $user, Entry $entry): void
     {
-        if ($user->apDomain && $user->apDomain !== parse_url($entry->apId, PHP_URL_HOST)) {
+        if ($user->apDomain && $user->apDomain !== parse_url($entry->apId ?? '', PHP_URL_HOST) && !$entry->magazine->userIsModerator($user)) {
+            $this->logger->info('Got a delete activity from user {u}, but they are not from the same instance as the deleted post and they are not a moderator on {m]', ['u' => $user->apId, 'm' => $entry->magazine->apId ?? $entry->magazine->name]);
+
             return;
         }
 
@@ -245,13 +297,29 @@ class EntryManager implements ContentManagerInterface
         $this->dispatcher->dispatch(new EntryRestoredEvent($entry, $user));
     }
 
-    public function pin(Entry $entry): Entry
+    /**
+     * this toggles the pin state of the entry. If it was not pinned it pins, if it was pinned it unpins it.
+     *
+     * @param User|null $actor this should only be null if it is a system call
+     */
+    public function pin(Entry $entry, ?User $actor): Entry
     {
         $entry->sticky = !$entry->sticky;
 
+        if ($entry->sticky) {
+            $log = new MagazineLogEntryPinned($entry->magazine, $actor, $entry);
+        } else {
+            $log = new MagazineLogEntryUnpinned($entry->magazine, $actor, $entry);
+        }
+        $this->entityManager->persist($log);
+
         $this->entityManager->flush();
 
-        $this->dispatcher->dispatch(new EntryPinEvent($entry));
+        $this->dispatcher->dispatch(new EntryPinEvent($entry, $actor));
+
+        if (null !== $entry->magazine->apFeaturedUrl) {
+            $this->apHttpClient->invalidateCollectionObjectCache($entry->magazine->apFeaturedUrl);
+        }
 
         return $entry;
     }

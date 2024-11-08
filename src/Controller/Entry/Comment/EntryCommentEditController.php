@@ -95,7 +95,7 @@ class EntryCommentEditController extends AbstractController
 
     private function handleValidRequest(EntryCommentDto $dto, EntryComment $comment, Request $request): Response
     {
-        $comment = $this->manager->edit($comment, $dto);
+        $comment = $this->manager->edit($comment, $dto, $this->getUserOrThrow());
 
         if ($request->isXmlHttpRequest()) {
             return $this->getJsonCommentSuccessResponse($comment);

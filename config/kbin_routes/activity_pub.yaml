@@ -111,6 +111,12 @@ ap_magazine_moderators:
     methods: [GET]
     condition: '%kbin_ap_route_condition%'
 
+ap_magazine_pinned:
+    controller: App\Controller\ActivityPub\Magazine\MagazinePinnedController
+    path: /m/{name}/pinned
+    methods: [GET]
+    condition: '%kbin_ap_route_condition%'
+
 ap_entry:
     controller: App\Controller\ActivityPub\EntryController
     defaults: { slug: -, sortBy: hot }
@@ -142,6 +148,12 @@ ap_post_comment:
 ap_report:
     controller: App\Controller\ActivityPub\ReportController
     path: /reports/{report_id}
+    methods: [GET]
+    condition: '%kbin_ap_route_condition%'
+
+ap_message:
+    controller: App\Controller\ActivityPub\MessageController
+    path: /message/{uuid}
     methods: [GET]
     condition: '%kbin_ap_route_condition%'
 

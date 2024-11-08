@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Message;
 use App\PageView\MessageThreadPageView;
+use App\Service\SettingsManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
@@ -25,7 +26,7 @@ class MessageRepository extends ServiceEntityRepository
 {
     public const PER_PAGE = 25;
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly SettingsManager $settingsManager)
     {
         parent::__construct($registry, Message::class);
     }
@@ -59,5 +60,41 @@ class MessageRepository extends ServiceEntityRepository
         }
 
         return $messages;
+    }
+
+    public function findLastMessageBefore(Message $message): ?Message
+    {
+        $results = $this->createQueryBuilder('m')
+            ->where('m.createdAt < :previous_message')
+            ->andWhere('m.thread = :thread')
+            ->orderBy('m.createdAt', 'DESC')
+            ->setMaxResults(1)
+            ->setParameter('previous_message', $message->createdAt)
+            ->setParameter('thread', $message->thread)
+            ->getQuery()
+            ->getResult();
+
+        if (1 === \sizeof($results)) {
+            return $results[0];
+        }
+
+        return null;
+    }
+
+    public function findByApId(string $apId): ?Message
+    {
+        if ($this->settingsManager->isLocalUrl($apId)) {
+            $path = parse_url($apId, PHP_URL_PATH);
+            preg_match('/\/messages\/([\w\-]+)/', $path, $matches);
+            if (2 === \sizeof($matches)) {
+                $uuid = $matches[1];
+
+                return $this->findOneBy(['uuid' => $uuid]);
+            }
+        } else {
+            return $this->findOneBy(['apId' => $apId]);
+        }
+
+        return null;
     }
 }

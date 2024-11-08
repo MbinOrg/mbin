@@ -3,20 +3,15 @@
         <img class="image-preview" src="#">
         <button type="button" class="image-preview-clear" data-action="image-upload#clearPreview">x</button>
     </div>
-    <div>
+    <div class="image-form">
         {% if form.image is defined %}
             {{ form_row(form.image, {label: 'image', attr: {class: 'image-input'}}) }}
         {% endif %}
+        {% if maxSize is defined %}
+            <div>{{ 'max_image_size'|trans }}: {{ maxSize }}</div>
+        {% endif %}
         <div hidden>
             {{ form_row(form.imageUrl, {label: 'url'}) }}
-        </div>
-        <div class="actions">
-            <button type="button" class="btn btn__secondary" data-action="media#add">
-                <i class="fa-solid fa-upload" aria-hidden="true"></i> {{ 'upload_file'|trans }}
-            </button>
-            <button type="button" class="btn btn__secondary" data-action="media#add">
-                <i class="fa-solid fa-globe" aria-hidden="true"></i> {{ 'from_url'|trans }}
-            </button>
         </div>
         {{ form_row(form.imageAlt, {label: 'image_alt'}) }}
     </div>

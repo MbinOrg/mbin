@@ -15,11 +15,13 @@ use App\Event\Post\PostCreatedEvent;
 use App\Event\Post\PostDeletedEvent;
 use App\Event\Post\PostEditedEvent;
 use App\Event\Post\PostRestoredEvent;
+use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Factory\PostFactory;
 use App\Message\DeleteImageMessage;
 use App\Repository\ImageRepository;
 use App\Repository\PostRepository;
+use App\Service\ActivityPub\ApHttpClient;
 use App\Service\Contracts\ContentManagerInterface;
 use App\Utils\Slugger;
 use Doctrine\Common\Collections\Criteria;
@@ -41,6 +43,7 @@ class PostManager implements ContentManagerInterface
         private readonly MentionManager $mentionManager,
         private readonly PostCommentManager $postCommentManager,
         private readonly TagManager $tagManager,
+        private readonly TagExtractor $tagExtractor,
         private readonly PostFactory $factory,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly RateLimiterFactory $postLimiter,
@@ -49,11 +52,19 @@ class PostManager implements ContentManagerInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly PostRepository $postRepository,
         private readonly ImageRepository $imageRepository,
+        private readonly ApHttpClient $apHttpClient,
+        private readonly SettingsManager $settingsManager,
         private readonly CacheInterface $cache
     ) {
     }
 
-    public function create(PostDto $dto, User $user, $rateLimit = true): Post
+    /**
+     * @throws TagBannedException
+     * @throws UserBannedException
+     * @throws TooManyRequestsHttpException
+     * @throws \Exception
+     */
+    public function create(PostDto $dto, User $user, $rateLimit = true, bool $stickyIt = false): Post
     {
         if ($rateLimit) {
             $limiter = $this->postLimiter->create($dto->ip);
@@ -66,6 +77,10 @@ class PostManager implements ContentManagerInterface
             throw new UserBannedException();
         }
 
+        if ($this->tagManager->isAnyTagBanned($this->tagManager->extract($dto->body))) {
+            throw new TagBannedException();
+        }
+
         $post = $this->factory->createFromDto($dto, $user);
 
         $post->lang = $dto->lang;
@@ -76,10 +91,12 @@ class PostManager implements ContentManagerInterface
         if ($post->image && !$post->image->altText) {
             $post->image->altText = $dto->imageAlt;
         }
-        $post->tags = $dto->body ? $this->tagManager->extract($dto->body, $post->magazine->name) : null;
         $post->mentions = $dto->body ? $this->mentionManager->extract($dto->body) : null;
         $post->visibility = $dto->visibility;
         $post->apId = $dto->apId;
+        $post->apLikeCount = $dto->apLikeCount;
+        $post->apDislikeCount = $dto->apDislikeCount;
+        $post->apShareCount = $dto->apShareCount;
         $post->magazine->lastActive = new \DateTime();
         $post->user->lastActive = new \DateTime();
         $post->lastActive = $dto->lastActive ?? $post->lastActive;
@@ -88,15 +105,33 @@ class PostManager implements ContentManagerInterface
             throw new \Exception('Post body and image cannot be empty');
         }
 
+        $post->updateScore();
+        $post->updateRanking();
+
         $this->entityManager->persist($post);
         $this->entityManager->flush();
 
+        $this->tagManager->updatePostTags($post, $this->tagExtractor->extract($post->body) ?? []);
+
         $this->dispatcher->dispatch(new PostCreatedEvent($post));
+
+        if ($stickyIt) {
+            $this->pin($post);
+        }
 
         return $post;
     }
 
-    public function edit(Post $post, PostDto $dto): Post
+    public function canUserEditPost(Post $post, User $user): bool
+    {
+        $postHost = null !== $post->apId ? parse_url($post->apId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+        $userHost = null !== $user->apId ? parse_url($user->apProfileId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+        $magazineHost = null !== $post->magazine->apId ? parse_url($post->magazine->apProfileId, PHP_URL_HOST) : $this->settingsManager->get('KBIN_DOMAIN');
+
+        return $postHost === $userHost || $userHost === $magazineHost || $post->magazine->userIsModerator($user);
+    }
+
+    public function edit(Post $post, PostDto $dto, ?User $editedBy = null): Post
     {
         Assert::same($post->magazine->getId(), $dto->magazine->getId());
 
@@ -108,7 +143,7 @@ class PostManager implements ContentManagerInterface
         if ($dto->image) {
             $post->image = $this->imageRepository->find($dto->image->id);
         }
-        $post->tags = $dto->body ? $this->tagManager->extract($dto->body, $post->magazine->name) : null;
+        $this->tagManager->updatePostTags($post, $this->tagExtractor->extract($dto->body) ?? []);
         $post->mentions = $dto->body ? $this->mentionManager->extract($dto->body) : null;
         $post->visibility = $dto->visibility;
         $post->editedAt = new \DateTimeImmutable('@'.time());
@@ -116,20 +151,28 @@ class PostManager implements ContentManagerInterface
             throw new \Exception('Post body and image cannot be empty');
         }
 
+        $post->apLikeCount = $dto->apLikeCount;
+        $post->apDislikeCount = $dto->apDislikeCount;
+        $post->apShareCount = $dto->apShareCount;
+        $post->updateScore();
+        $post->updateRanking();
+
         $this->entityManager->flush();
 
         if ($oldImage && $post->image !== $oldImage) {
             $this->bus->dispatch(new DeleteImageMessage($oldImage->getId()));
         }
 
-        $this->dispatcher->dispatch(new PostEditedEvent($post));
+        $this->dispatcher->dispatch(new PostEditedEvent($post, $editedBy));
 
         return $post;
     }
 
     public function delete(User $user, Post $post): void
     {
-        if ($user->apDomain && $user->apDomain !== parse_url($post->apId, PHP_URL_HOST)) {
+        if ($user->apDomain && $user->apDomain !== parse_url($post->apId ?? '', PHP_URL_HOST) && !$post->magazine->userIsModerator($user)) {
+            $this->logger->info('Got a delete activity from user {u}, but they are not from the same instance as the deleted post and they are not a moderator on {m]', ['u' => $user->apId, 'm' => $post->magazine->apId ?? $post->magazine->name]);
+
             return;
         }
 
@@ -197,11 +240,18 @@ class PostManager implements ContentManagerInterface
         $this->dispatcher->dispatch(new PostRestoredEvent($post, $user));
     }
 
+    /**
+     * this toggles the pin state of the post. If it was not pinned it pins, if it was pinned it unpins it.
+     */
     public function pin(Post $post): Post
     {
         $post->sticky = !$post->sticky;
 
         $this->entityManager->flush();
+
+        if (null !== $post->magazine->apFeaturedUrl) {
+            $this->apHttpClient->invalidateCollectionObjectCache($post->magazine->apFeaturedUrl);
+        }
 
         return $post;
     }

@@ -53,7 +53,7 @@ class ApObjectExtractor
                 $body .= "\n\n".implode(
                     "  \n",
                     array_map(
-                        fn ($image) => sprintf(
+                        fn ($image) => \sprintf(
                             '![%s](%s)',
                             preg_replace('/\r\n|\r|\n/', ' ', $image->name),
                             $image->url
@@ -67,7 +67,7 @@ class ApObjectExtractor
                 $body .= "\n\n".implode(
                     "  \n",
                     array_map(
-                        fn ($video) => sprintf(
+                        fn ($video) => \sprintf(
                             '![%s](%s)',
                             preg_replace('/\r\n|\r|\n/', ' ', $video->name),
                             $video->url

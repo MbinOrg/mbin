@@ -36,11 +36,11 @@ abstract class AbstractController extends BaseAbstractController
     protected function validateCsrf(string $id, $token): void
     {
         if (!\is_string($token) || !$this->isCsrfTokenValid($id, $token)) {
-            throw new BadRequestHttpException('Invalid CSRF token');
+            throw new BadRequestHttpException("Invalid CSRF token, with ID: $id.");
         }
     }
 
-    protected function redirectToRefererOrHome(Request $request, string $element = null): Response
+    protected function redirectToRefererOrHome(Request $request, ?string $element = null): Response
     {
         if (!$request->headers->has('Referer')) {
             return $this->redirectToRoute('front'.($element ? '#'.$element : ''));
@@ -62,7 +62,7 @@ abstract class AbstractController extends BaseAbstractController
     protected function getJsonFormResponse(
         FormInterface $form,
         string $template,
-        array $variables = null
+        ?array $variables = null
     ): JsonResponse {
         return new JsonResponse(
             [
@@ -105,7 +105,7 @@ abstract class AbstractController extends BaseAbstractController
         );
     }
 
-    protected function redirectToMagazine(Magazine $magazine, string $sortBy = null): Response
+    protected function redirectToMagazine(Magazine $magazine, ?string $sortBy = null): Response
     {
         return $this->redirectToRoute(
             'front_magazine',

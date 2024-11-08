@@ -6,6 +6,7 @@ namespace App\Service\ActivityPub;
 
 use App\Exception\InboxForwardingException;
 use App\Exception\InvalidApSignatureException;
+use App\Exception\InvalidUserPublicKeyException;
 use App\Message\ActivityPub\Inbox\ActivityMessage;
 use App\Service\ActivityPubManager;
 use Psr\Log\LoggerInterface;
@@ -31,7 +32,8 @@ readonly class SignatureValidator
      * @param array  $headers Headers attached to the incoming request
      * @param string $body    The body of the incoming request
      *
-     * @throws InvalidApSignatureException The HTTP request was not signed appropriately
+     * @throws InvalidApSignatureException   The HTTP request was not signed appropriately
+     * @throws InvalidUserPublicKeyException The public key of the specified user is invalid or null
      * @throws InboxForwardingException
      */
     public function validate(array $request, array $headers, string $body): void
@@ -111,7 +113,16 @@ readonly class SignatureValidator
 
         $user = $this->activityPubManager->findActorOrCreate($actorUrl);
         if (!empty($user)) {
-            $pkey = openssl_pkey_get_public($this->client->getActorObject($user->apProfileId)['publicKey']['publicKeyPem']);
+            $pem = $this->client->getActorObject($user->apProfileId)['publicKey']['publicKeyPem'] ?? null;
+            if (null === $pem) {
+                throw new InvalidUserPublicKeyException($user->apProfileId);
+            }
+            $pkey = openssl_pkey_get_public($pem);
+
+            if (false === $pkey) {
+                throw new InvalidUserPublicKeyException($user->apProfileId);
+            }
+
             $this->verifySignature($pkey, $signature, $headers, $request['uri'], $body);
         }
     }

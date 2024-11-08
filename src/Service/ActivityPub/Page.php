@@ -12,6 +12,12 @@ use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\User;
+use App\Exception\EntityNotFoundException;
+use App\Exception\InstanceBannedException;
+use App\Exception\PostingRestrictedException;
+use App\Exception\TagBannedException;
+use App\Exception\UserBannedException;
+use App\Exception\UserDeletedException;
 use App\Factory\ImageFactory;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPubManager;
@@ -24,7 +30,6 @@ class Page
 {
     public function __construct(
         private readonly ApActivityRepository $repository,
-        private readonly MarkdownConverter $markdownConverter,
         private readonly EntryManager $entryManager,
         private readonly ActivityPubManager $activityPubManager,
         private readonly EntityManagerInterface $entityManager,
@@ -35,12 +40,32 @@ class Page
     ) {
     }
 
-    public function create(array $object): Entry
+    /**
+     * @throws TagBannedException
+     * @throws UserBannedException
+     * @throws UserDeletedException
+     * @throws EntityNotFoundException    if the user could not be found or a sub exception occurred
+     * @throws PostingRestrictedException if the target magazine has Magazine::postingRestrictedToMods = true and the actor is a magazine or a user that is not a mod
+     * @throws InstanceBannedException    if the actor is from a banned instance
+     * @throws \Exception                 if there was an error
+     */
+    public function create(array $object, bool $stickyIt = false): Entry
     {
-        $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
+        $current = $this->repository->findByObjectId($object['id']);
+        if ($current) {
+            return $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
+        }
+        $actorUrl = $this->activityPubManager->getSingleActorFromAttributedTo($object['attributedTo']);
+        if ($this->settingsManager->isBannedInstance($actorUrl)) {
+            throw new InstanceBannedException();
+        }
+        $actor = $this->activityPubManager->findActorOrCreate($actorUrl);
         if (!empty($actor)) {
             if ($actor->isBanned) {
-                throw new \Exception('User is banned.');
+                throw new UserBannedException();
+            }
+            if ($actor->isDeleted || $actor->isTrashed() || $actor->isSoftDeleted()) {
+                throw new UserDeletedException();
             }
 
             $current = $this->repository->findByObjectId($object['id']);
@@ -58,7 +83,11 @@ class Page
                 $object['cc'] = [$object['cc']];
             }
 
-            $magazine = $this->activityPubManager->findOrCreateMagazineByToAndCC($object);
+            $magazine = $this->activityPubManager->findOrCreateMagazineByToCCAndAudience($object);
+            if ($magazine->isActorPostingRestricted($actor)) {
+                throw new PostingRestrictedException($magazine, $actor);
+            }
+
             $dto = new EntryDto();
             $dto->magazine = $magazine;
             $dto->title = $object['name'];
@@ -88,19 +117,21 @@ class Page
             } else {
                 $dto->lang = $this->settingsManager->get('KBIN_DEFAULT_LANG');
             }
+            $dto->apLikeCount = $this->activityPubManager->extractRemoteLikeCount($object);
+            $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($object);
+            $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($object);
 
             $this->logger->debug('creating page');
 
-            return $this->entryManager->create(
-                $dto,
-                $actor,
-                false
-            );
+            return $this->entryManager->create($dto, $actor, false, $stickyIt);
         } else {
-            throw new \Exception('Actor could not be found for entry.');
+            throw new EntityNotFoundException('Actor could not be found for entry.');
         }
     }
 
+    /**
+     * @throws \LogicException
+     */
     private function getVisibility(array $object, User $actor): string
     {
         if (!\in_array(
@@ -113,7 +144,7 @@ class Page
                     array_merge($object['to'] ?? [], $object['cc'] ?? [])
                 )
             ) {
-                throw new \Exception('PM: not implemented.');
+                throw new \LogicException('PM: not implemented.');
             }
 
             return VisibilityInterface::VISIBILITY_PRIVATE;
@@ -143,10 +174,13 @@ class Page
         }
 
         if (!$dto->url && isset($object['url'])) {
-            $dto->url = $object['url'];
+            $dto->url = $this->activityPubManager->extractUrl($object['url']);
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     private function handleDate(EntryDto $dto, string $date): void
     {
         $dto->createdAt = new \DateTimeImmutable($date);

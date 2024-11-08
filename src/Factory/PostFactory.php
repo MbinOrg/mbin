@@ -31,7 +31,7 @@ class PostFactory
         );
     }
 
-    public function createResponseDto(PostDto|Post $post): PostResponseDto
+    public function createResponseDto(PostDto|Post $post, array $tags): PostResponseDto
     {
         $dto = $post instanceof Post ? $this->createDto($post) : $post;
 
@@ -49,7 +49,7 @@ class PostFactory
             $dto->dv,
             $dto->favouriteCount,
             $dto->visibility,
-            $dto->tags,
+            $tags,
             $dto->mentions,
             $dto->apId,
             $dto->createdAt,
@@ -80,9 +80,11 @@ class PostFactory
         $dto->editedAt = $post->editedAt;
         $dto->lastActive = $post->lastActive;
         $dto->ip = $post->ip;
-        $dto->tags = $post->tags;
         $dto->mentions = $post->mentions;
         $dto->apId = $post->apId;
+        $dto->apLikeCount = $post->apLikeCount;
+        $dto->apDislikeCount = $post->apDislikeCount;
+        $dto->apShareCount = $post->apShareCount;
         $dto->setId($post->getId());
 
         $currentUser = $this->security->getUser();

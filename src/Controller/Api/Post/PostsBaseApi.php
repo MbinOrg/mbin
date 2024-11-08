@@ -18,16 +18,20 @@ class PostsBaseApi extends BaseApi
     /**
      * Serialize a single post to JSON.
      */
-    protected function serializePost(PostDto $dto): PostResponseDto
+    protected function serializePost(PostDto $dto, array $tags): PostResponseDto
     {
         if (null === $dto) {
             return [];
         }
-        $response = $this->postFactory->createResponseDto($dto);
+        $response = $this->postFactory->createResponseDto($dto, $tags);
 
         if ($this->isGranted('ROLE_OAUTH2_POST:VOTE')) {
             $response->isFavourited = $dto instanceof PostDto ? $dto->isFavourited : $dto->isFavored($this->getUserOrThrow());
             $response->userVote = $dto instanceof PostDto ? $dto->userVote : $dto->getUserChoice($this->getUserOrThrow());
+        }
+
+        if ($user = $this->getUser()) {
+            $response->canAuthUserModerate = $dto->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
         }
 
         return $response;
@@ -40,7 +44,7 @@ class PostsBaseApi extends BaseApi
      *
      * @return PostDto A post with only certain fields allowed to be modified by the user
      */
-    protected function deserializePost(PostDto $dto = null): PostDto
+    protected function deserializePost(?PostDto $dto = null): PostDto
     {
         $dto = $dto ? $dto : new PostDto();
         $deserialized = $this->serializer->deserialize($this->request->getCurrentRequest()->getContent(), PostRequestDto::class, 'json', [
@@ -57,7 +61,7 @@ class PostsBaseApi extends BaseApi
         return $dto;
     }
 
-    protected function deserializePostFromForm(PostDto $dto = null): PostDto
+    protected function deserializePostFromForm(?PostDto $dto = null): PostDto
     {
         $request = $this->request->getCurrentRequest();
         $dto = $dto ? $dto : new PostDto();
@@ -74,13 +78,17 @@ class PostsBaseApi extends BaseApi
     /**
      * Serialize a single comment to JSON.
      */
-    protected function serializePostComment(PostCommentDto $comment): PostCommentResponseDto
+    protected function serializePostComment(PostCommentDto $comment, array $tags): PostCommentResponseDto
     {
-        $response = $this->postCommentFactory->createResponseDto($comment);
+        $response = $this->postCommentFactory->createResponseDto($comment, $tags);
 
         if ($this->isGranted('ROLE_OAUTH2_POST_COMMENT:VOTE')) {
             $response->isFavourited = $comment instanceof PostCommentDto ? $comment->isFavourited : $comment->isFavored($this->getUserOrThrow());
             $response->userVote = $comment instanceof PostCommentDto ? $comment->userVote : $comment->getUserChoice($this->getUserOrThrow());
+        }
+
+        if ($user = $this->getUser()) {
+            $response->canAuthUserModerate = $comment->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
         }
 
         return $response;
@@ -100,7 +108,7 @@ class PostsBaseApi extends BaseApi
      *  * imageAlt (currently not working to modify the image)
      *  * imageUrl (currently not working to modify the image)
      */
-    protected function deserializePostComment(PostCommentDto $dto = null): PostCommentDto
+    protected function deserializePostComment(?PostCommentDto $dto = null): PostCommentDto
     {
         $request = $this->request->getCurrentRequest();
         $dto = $dto ? $dto : new PostCommentDto();
@@ -117,7 +125,7 @@ class PostsBaseApi extends BaseApi
         return $deserialized->mergeIntoDto($dto);
     }
 
-    protected function deserializePostCommentFromForm(PostCommentDto $dto = null): PostCommentDto
+    protected function deserializePostCommentFromForm(?PostCommentDto $dto = null): PostCommentDto
     {
         $request = $this->request->getCurrentRequest();
         $dto = $dto ? $dto : new PostCommentDto();
@@ -138,7 +146,7 @@ class PostsBaseApi extends BaseApi
      *
      * @return array An associative array representation of the comment's hierarchy, to be used as JSON
      */
-    protected function serializePostCommentTree(?PostComment $comment, int $depth = null): array
+    protected function serializePostCommentTree(?PostComment $comment, ?int $depth = null): array
     {
         if (null === $comment) {
             return [];
@@ -148,7 +156,13 @@ class PostsBaseApi extends BaseApi
             $depth = self::constrainDepth($this->request->getCurrentRequest()->get('d', self::DEPTH));
         }
 
-        $commentTree = $this->postCommentFactory->createResponseTree($comment, $depth);
+        $canModerate = null;
+        if ($user = $this->getUser()) {
+            $canModerate = $comment->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+        }
+
+        $commentTree = $this->postCommentFactory->createResponseTree($comment, $depth, $canModerate);
+        $commentTree->canAuthUserModerate = $canModerate;
 
         return $commentTree->jsonSerialize();
     }

@@ -42,6 +42,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[UniqueConstraint(name: 'user_username_idx', columns: ['username'])]
 #[UniqueConstraint(name: 'user_ap_id_idx', columns: ['ap_id'])]
 #[UniqueConstraint(name: 'user_ap_profile_id_idx', columns: ['ap_profile_id'])]
+#[UniqueConstraint(name: 'user_ap_public_url_idx', columns: ['ap_public_url'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, VisibilityInterface, TwoFactorInterface, BackupCodeInterface, EquatableInterface, ActivityPubActorInterface, ApiResourceInterface
 {
     use ActivityPubActorTrait;
@@ -116,10 +117,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public ?string $oauthGoogleId = null;
     #[Column(type: 'string', nullable: true)]
     public ?string $oauthFacebookId = null;
+    #[Column(name: 'oauth_privacyportal_id', type: 'string', nullable: true)]
+    public ?string $oauthPrivacyPortalId = null;
     #[Column(type: 'string', nullable: true)]
     public ?string $oauthKeycloakId = null;
     #[Column(type: 'string', nullable: true)]
+    public ?string $oauthSimpleLoginId = null;
+    #[Column(type: 'string', nullable: true)]
+    public ?string $oauthDiscordId = null;
+    #[Column(type: 'string', nullable: true)]
     public ?string $oauthZitadelId = null;
+    #[Column(type: 'string', nullable: true)]
+    public ?string $oauthAuthentikId = null;
     #[Column(type: 'boolean', nullable: false, options: ['default' => true])]
     public bool $hideAdult = true;
     #[Column(type: 'json', nullable: false, options: ['jsonb' => true, 'default' => '[]'])]
@@ -212,6 +221,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     #[OneToMany(mappedBy: 'user', targetEntity: Notification::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $notifications;
+    #[OneToMany(mappedBy: 'user', targetEntity: UserPushSubscription::class, fetch: 'EXTRA_LAZY')]
+    public Collection $pushSubscriptions;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
@@ -232,8 +243,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         string $username,
         string $password,
         string $type,
-        string $apProfileId = null,
-        string $apId = null
+        ?string $apProfileId = null,
+        ?string $apId = null
     ) {
         $this->email = $email;
         $this->password = $password;
@@ -755,7 +766,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
 
     public function isSsoControlled(): bool
     {
-        return $this->oauthAzureId || $this->oauthGithubId || $this->oauthGoogleId || $this->oauthFacebookId || $this->oauthKeycloakId || $this->oauthZitadelId;
+        return $this->oauthAzureId || $this->oauthGithubId || $this->oauthGoogleId || $this->oauthDiscordId || $this->oauthFacebookId || $this->oauthKeycloakId || $this->oauthSimpleLoginId || $this->oauthZitadelId || $this->oauthAuthentikId || $this->oauthPrivacyPortalId;
     }
 
     public function getCustomCss(): ?string
@@ -814,7 +825,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
 
     public function softDelete(): void
     {
-        $this->visibility = self::VISIBILITY_SOFT_DELETED;
+        $this->markedForDeletionAt = new \DateTime('now + 30days');
+        $this->visibility = VisibilityInterface::VISIBILITY_SOFT_DELETED;
+        $this->isDeleted = true;
+    }
+
+    public function isSoftDeleted(): bool
+    {
+        return self::VISIBILITY_SOFT_DELETED === $this->visibility;
     }
 
     public function trash(): void
@@ -822,9 +840,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         $this->visibility = self::VISIBILITY_TRASHED;
     }
 
+    public function isTrashed(): bool
+    {
+        return self::VISIBILITY_TRASHED === $this->visibility;
+    }
+
     public function restore(): void
     {
+        $this->markedForDeletionAt = null;
         $this->visibility = VisibilityInterface::VISIBILITY_VISIBLE;
+        $this->isDeleted = false;
     }
 
     public function hasModeratorRequest(Magazine $magazine): bool
@@ -858,6 +883,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
                 ['username' => $this->username],
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
+        }
+    }
+
+    public function canUpdateUser(User $actor): bool
+    {
+        if (null === $this->apId) {
+            return null === $actor->apId && $actor->isAdmin();
+        } else {
+            return $this->apDomain === $actor->apDomain;
         }
     }
 }

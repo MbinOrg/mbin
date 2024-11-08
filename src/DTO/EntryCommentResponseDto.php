@@ -88,29 +88,31 @@ class EntryCommentResponseDto implements \JsonSerializable
     public array $children = [];
     #[OA\Property(description: 'The total number of children the comment has.')]
     public int $childCount = 0;
+    public ?bool $canAuthUserModerate = null;
 
     public static function create(
-        int $id = null,
-        UserSmallResponseDto $user = null,
-        MagazineSmallResponseDto $magazine = null,
-        int $entryId = null,
-        int $parentId = null,
-        int $rootId = null,
-        ImageDto $image = null,
-        string $body = null,
-        string $lang = null,
-        bool $isAdult = null,
-        int $uv = null,
-        int $dv = null,
-        int $favourites = null,
-        string $visibility = null,
-        string $apId = null,
-        array $mentions = null,
-        array $tags = null,
-        \DateTimeImmutable $createdAt = null,
-        \DateTimeImmutable $editedAt = null,
-        \DateTime $lastActive = null,
+        ?int $id = null,
+        ?UserSmallResponseDto $user = null,
+        ?MagazineSmallResponseDto $magazine = null,
+        ?int $entryId = null,
+        ?int $parentId = null,
+        ?int $rootId = null,
+        ?ImageDto $image = null,
+        ?string $body = null,
+        ?string $lang = null,
+        ?bool $isAdult = null,
+        ?int $uv = null,
+        ?int $dv = null,
+        ?int $favourites = null,
+        ?string $visibility = null,
+        ?string $apId = null,
+        ?array $mentions = null,
+        ?array $tags = null,
+        ?\DateTimeImmutable $createdAt = null,
+        ?\DateTimeImmutable $editedAt = null,
+        ?\DateTime $lastActive = null,
         int $childCount = 0,
+        ?bool $canAuthUserModerate = null,
     ): self {
         $dto = new EntryCommentResponseDto();
         $dto->commentId = $id;
@@ -134,6 +136,7 @@ class EntryCommentResponseDto implements \JsonSerializable
         $dto->editedAt = $editedAt;
         $dto->lastActive = $lastActive;
         $dto->childCount = $childCount;
+        $dto->canAuthUserModerate = $canAuthUserModerate;
 
         return $dto;
     }
@@ -184,6 +187,7 @@ class EntryCommentResponseDto implements \JsonSerializable
             'lastActive' => $this->lastActive?->format(\DateTimeInterface::ATOM),
             'childCount' => $this->childCount,
             'children' => $this->children,
+            'canAuthUserModerate' => $this->canAuthUserModerate,
         ]);
     }
 }

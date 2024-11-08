@@ -15,6 +15,10 @@ use App\Entity\EntryComment;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\Exception\InstanceBannedException;
+use App\Exception\TagBannedException;
+use App\Exception\UserBannedException;
+use App\Exception\UserDeletedException;
 use App\Factory\ImageFactory;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPubManager;
@@ -35,18 +39,27 @@ class Note
         private readonly PostCommentManager $postCommentManager,
         private readonly ActivityPubManager $activityPubManager,
         private readonly EntityManagerInterface $entityManager,
-        private readonly MarkdownConverter $markdownConverter,
         private readonly SettingsManager $settingsManager,
         private readonly ImageFactory $imageFactory,
         private readonly ApObjectExtractor $objectExtractor,
     ) {
     }
 
-    public function create(array $object, array $root = null): EntryComment|PostComment|Post
+    /**
+     * @throws TagBannedException
+     * @throws UserBannedException
+     * @throws UserDeletedException
+     * @throws InstanceBannedException
+     * @throws \Exception
+     */
+    public function create(array $object, ?array $root = null, bool $stickyIt = false): EntryComment|PostComment|Post
     {
         $current = $this->repository->findByObjectId($object['id']);
         if ($current) {
             return $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
+        }
+        if ($this->settingsManager->isBannedInstance($object['id'])) {
+            throw new InstanceBannedException();
         }
 
         if (\is_string($object['to'])) {
@@ -87,10 +100,16 @@ class Note
             }
         }
 
-        return $this->createPost($object);
+        return $this->createPost($object, $stickyIt);
     }
 
-    private function createEntryComment(array $object, ActivityPubActivityInterface $parent, ActivityPubActivityInterface $root = null): EntryComment
+    /**
+     * @throws TagBannedException
+     * @throws UserBannedException
+     * @throws UserDeletedException
+     * @throws \Exception
+     */
+    private function createEntryComment(array $object, ActivityPubActivityInterface $parent, ?ActivityPubActivityInterface $root = null): EntryComment
     {
         $dto = new EntryCommentDto();
         if ($parent instanceof EntryComment) {
@@ -110,6 +129,12 @@ class Note
 
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
         if (!empty($actor)) {
+            if ($actor->isBanned) {
+                throw new UserBannedException();
+            }
+            if ($actor->isDeleted || $actor->isSoftDeleted() || $actor->isTrashed()) {
+                throw new UserDeletedException();
+            }
             $dto->body = $this->objectExtractor->getMarkdownBody($object);
             if ($media = $this->objectExtractor->getExternalMediaBody($object)) {
                 $dto->body .= $media;
@@ -129,11 +154,11 @@ class Note
                 $dto->lang = $this->settingsManager->get('KBIN_DEFAULT_LANG');
             }
 
-            return $this->entryCommentManager->create(
-                $dto,
-                $actor,
-                false
-            );
+            $dto->apLikeCount = $this->activityPubManager->extractRemoteLikeCount($object);
+            $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($object);
+            $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($object);
+
+            return $this->entryCommentManager->create($dto, $actor, false);
         } else {
             throw new \Exception('Actor could not be found for entry comment.');
         }
@@ -173,16 +198,24 @@ class Note
         }
     }
 
-    private function createPost(array $object): Post
+    /**
+     * @throws UserDeletedException
+     * @throws TagBannedException
+     * @throws UserBannedException
+     */
+    private function createPost(array $object, bool $stickyIt = false): Post
     {
         $dto = new PostDto();
-        $dto->magazine = $this->activityPubManager->findOrCreateMagazineByToAndCC($object);
+        $dto->magazine = $this->activityPubManager->findOrCreateMagazineByToCCAndAudience($object);
         $dto->apId = $object['id'];
 
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
         if (!empty($actor)) {
             if ($actor->isBanned) {
-                throw new \Exception('User is banned.');
+                throw new UserBannedException();
+            }
+            if ($actor->isDeleted || $actor->isSoftDeleted() || $actor->isTrashed()) {
+                throw new UserDeletedException();
             }
 
             if (isset($object['attachment']) && $image = $this->activityPubManager->handleImages($object['attachment'])) {
@@ -208,18 +241,22 @@ class Note
             } else {
                 $dto->lang = $this->settingsManager->get('KBIN_DEFAULT_LANG');
             }
+            $dto->apLikeCount = $this->activityPubManager->extractRemoteLikeCount($object);
+            $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($object);
+            $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($object);
 
-            return $this->postManager->create(
-                $dto,
-                $actor,
-                false
-            );
+            return $this->postManager->create($dto, $actor, false, $stickyIt);
         } else {
             throw new \Exception('Actor could not be found for post.');
         }
     }
 
-    private function createPostComment(array $object, ActivityPubActivityInterface $parent, ActivityPubActivityInterface $root = null): PostComment
+    /**
+     * @throws UserDeletedException
+     * @throws TagBannedException
+     * @throws UserBannedException
+     */
+    private function createPostComment(array $object, ActivityPubActivityInterface $parent, ?ActivityPubActivityInterface $root = null): PostComment
     {
         $dto = new PostCommentDto();
         if ($parent instanceof PostComment) {
@@ -238,6 +275,12 @@ class Note
 
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
         if (!empty($actor)) {
+            if ($actor->isBanned) {
+                throw new UserBannedException();
+            }
+            if ($actor->isDeleted || $actor->isSoftDeleted() || $actor->isTrashed()) {
+                throw new UserDeletedException();
+            }
             $dto->body = $this->objectExtractor->getMarkdownBody($object);
             if ($media = $this->objectExtractor->getExternalMediaBody($object)) {
                 $dto->body .= $media;
@@ -256,12 +299,11 @@ class Note
             } else {
                 $dto->lang = $this->settingsManager->get('KBIN_DEFAULT_LANG');
             }
+            $dto->apLikeCount = $this->activityPubManager->extractRemoteLikeCount($object);
+            $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($object);
+            $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($object);
 
-            return $this->postCommentManager->create(
-                $dto,
-                $actor,
-                false
-            );
+            return $this->postCommentManager->create($dto, $actor, false);
         } else {
             throw new \Exception('Actor could not be found for post comment.');
         }

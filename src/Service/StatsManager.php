@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Repository\StatsContentRepository;
 use App\Repository\StatsRepository;
 use App\Repository\StatsVotesRepository;
+use App\Utils\DownvotesMode;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
 use Symfony\UX\Chartjs\Model\Chart;
@@ -19,11 +20,12 @@ class StatsManager
         private readonly StatsVotesRepository $votesRepository,
         private readonly StatsContentRepository $contentRepository,
         private readonly ChartBuilderInterface $chartBuilder,
+        private readonly SettingsManager $settingsManager,
         private readonly TranslatorInterface $translator,
     ) {
     }
 
-    public function drawMonthlyContentChart(User $user = null, Magazine $magazine = null, bool $onlyLocal = null): Chart
+    public function drawMonthlyContentChart(?User $user = null, ?Magazine $magazine = null, ?bool $onlyLocal = null): Chart
     {
         $stats = $this->contentRepository->getOverallStats($user, $magazine, $onlyLocal);
 
@@ -66,7 +68,7 @@ class StatsManager
         ]);
     }
 
-    public function drawDailyContentStatsByTime(\DateTime $start, User $user = null, Magazine $magazine = null, bool $onlyLocal = null): Chart
+    public function drawDailyContentStatsByTime(\DateTime $start, ?User $user = null, ?Magazine $magazine = null, ?bool $onlyLocal = null): Chart
     {
         $stats = $this->contentRepository->getStatsByTime($start, $user, $magazine, $onlyLocal);
 
@@ -75,7 +77,7 @@ class StatsManager
         return $this->createGeneralDataset($stats, $labels);
     }
 
-    public function drawMonthlyVotesChart(User $user = null, Magazine $magazine = null, bool $onlyLocal = null): Chart
+    public function drawMonthlyVotesChart(?User $user = null, ?Magazine $magazine = null, ?bool $onlyLocal = null): Chart
     {
         $stats = $this->votesRepository->getOverallStats($user, $magazine, $onlyLocal);
 
@@ -90,7 +92,7 @@ class StatsManager
         $results = [];
         foreach ($stats['entries'] as $index => $entry) {
             $entry['up'] = array_sum(array_map(fn ($type) => $type[$index]['up'], $stats));
-            $entry['down'] = array_sum(array_map(fn ($type) => $type[$index]['down'], $stats));
+            $entry['down'] = DownvotesMode::Disabled !== $this->settingsManager->getDownvotesMode() ? 0 : array_sum(array_map(fn ($type) => $type[$index]['down'], $stats));
             $entry['boost'] = array_sum(array_map(fn ($type) => $type[$index]['boost'], $stats));
 
             $results[] = $entry;
@@ -110,7 +112,7 @@ class StatsManager
             [
                 'label' => $this->translator->trans('down_votes'),
                 'borderColor' => '#8f0b00',
-                'data' => array_map(fn ($val) => $val['down'], $results),
+                'data' => DownvotesMode::Disabled !== $this->settingsManager->getDownvotesMode() ? [] : array_map(fn ($val) => $val['down'], $results),
             ],
         ];
 
@@ -122,7 +124,7 @@ class StatsManager
         ]);
     }
 
-    public function drawDailyVotesStatsByTime(\DateTime $start, User $user = null, Magazine $magazine = null, bool $onlyLocal = null): Chart
+    public function drawDailyVotesStatsByTime(\DateTime $start, ?User $user = null, ?Magazine $magazine = null, ?bool $onlyLocal = null): Chart
     {
         $stats = $this->votesRepository->getStatsByTime($start, $user, $magazine, $onlyLocal);
 
@@ -131,7 +133,7 @@ class StatsManager
         return $this->createVotesDataset($stats, $labels);
     }
 
-    public function resolveType(?string $value, string $default = null): string
+    public function resolveType(?string $value, ?string $default = null): string
     {
         $routes = [
             'general' => StatsRepository::TYPE_GENERAL,

@@ -23,10 +23,12 @@ class ImageDto implements \JsonSerializable
     public ?int $width = null;
     #[Groups(['common'])]
     public ?int $height = null;
+    #[Groups(['common'])]
+    public ?string $blurHash = null;
     #[Ignore]
     public ?int $id = null;
 
-    public static function create(int $id, ?string $filePath, int $width = null, int $height = null, string $altText = null, string $sourceUrl = null, string $storageUrl = null): self
+    public static function create(int $id, ?string $filePath, ?int $width = null, ?int $height = null, ?string $altText = null, ?string $sourceUrl = null, ?string $storageUrl = null, ?string $blurHash = null): self
     {
         $dto = new ImageDto();
         $dto->filePath = $filePath;
@@ -35,12 +37,13 @@ class ImageDto implements \JsonSerializable
         $dto->height = $height;
         $dto->sourceUrl = $sourceUrl;
         $dto->storageUrl = $storageUrl;
+        $dto->blurHash = $blurHash;
         $dto->id = $id;
 
         return $dto;
     }
 
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): array
     {
         return [
             'filePath' => $this->filePath,
@@ -49,6 +52,7 @@ class ImageDto implements \JsonSerializable
             'altText' => $this->altText,
             'width' => $this->width,
             'height' => $this->height,
+            'blurHash' => $this->blurHash,
         ];
     }
 }

@@ -6,31 +6,41 @@ namespace App\MessageHandler\ActivityPub\Outbox;
 
 use App\Factory\ActivityPub\AddRemoveFactory;
 use App\Message\ActivityPub\Outbox\AddMessage;
-use App\Message\ActivityPub\Outbox\DeliverMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
+use App\Service\DeliverManager;
 use App\Service\SettingsManager;
-use Psr\Log\LoggerInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-class AddHandler
+class AddHandler extends MbinMessageHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
         private readonly MagazineRepository $magazineRepository,
-        private readonly LoggerInterface $logger,
         private readonly SettingsManager $settingsManager,
-        private readonly MessageBusInterface $bus,
         private readonly AddRemoveFactory $factory,
+        private readonly DeliverManager $deliverManager,
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(AddMessage $message): void
     {
         if (!$this->settingsManager->get('KBIN_FEDERATION_ENABLED')) {
             return;
+        }
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof AddMessage)) {
+            throw new \LogicException();
         }
 
         $actor = $this->userRepository->find($message->userActorId);
@@ -42,11 +52,7 @@ class AddHandler
             $audience = $this->magazineRepository->findAudience($magazine);
         }
 
-        $activity = $this->factory->buildAdd($actor, $added, $magazine);
-        foreach ($audience as $inboxUrl) {
-            if (!$this->settingsManager->isBannedInstance($inboxUrl)) {
-                $this->bus->dispatch(new DeliverMessage($inboxUrl, $activity));
-            }
-        }
+        $activity = $this->factory->buildAddModerator($actor, $added, $magazine);
+        $this->deliverManager->deliver($audience, $activity);
     }
 }

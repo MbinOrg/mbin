@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\MessageHandler\ActivityPub\Inbox;
 
+use App\Entity\Instance;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Exception\InboxForwardingException;
+use App\Exception\InvalidUserPublicKeyException;
 use App\Message\ActivityPub\Inbox\ActivityMessage;
 use App\Message\ActivityPub\Inbox\AddMessage;
 use App\Message\ActivityPub\Inbox\AnnounceMessage;
@@ -18,32 +20,54 @@ use App\Message\ActivityPub\Inbox\FollowMessage;
 use App\Message\ActivityPub\Inbox\LikeMessage;
 use App\Message\ActivityPub\Inbox\RemoveMessage;
 use App\Message\ActivityPub\Inbox\UpdateMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
+use App\Repository\InstanceRepository;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\SignatureValidator;
 use App\Service\ActivityPubManager;
+use App\Service\RemoteInstanceManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-readonly class ActivityHandler
+class ActivityHandler extends MbinMessageHandler
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private SignatureValidator $signatureValidator,
-        private SettingsManager $settingsManager,
-        private MessageBusInterface $bus,
-        private ActivityPubManager $manager,
-        private ApHttpClient $apHttpClient,
-        private LoggerInterface $logger
+        private readonly EntityManagerInterface $entityManager,
+        private readonly SignatureValidator $signatureValidator,
+        private readonly SettingsManager $settingsManager,
+        private readonly MessageBusInterface $bus,
+        private readonly ActivityPubManager $manager,
+        private readonly ApHttpClient $apHttpClient,
+        private readonly InstanceRepository $instanceRepository,
+        private readonly RemoteInstanceManager $remoteInstanceManager,
+        private readonly LoggerInterface $logger
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(ActivityMessage $message): void
     {
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof ActivityMessage)) {
+            throw new \LogicException();
+        }
+
         $payload = @json_decode($message->payload, true);
+
+        if (null === $payload) {
+            $this->logger->warning('activity message from was empty: {json}, ignoring it', ['json' => json_encode($message->payload)]);
+            throw new UnrecoverableMessageHandlingException('activity message from was empty');
+        }
 
         if ($message->request && $message->headers) {
             try {
@@ -54,7 +78,35 @@ readonly class ActivityHandler
                 $this->bus->dispatch(new ActivityMessage($body));
 
                 return;
+            } catch (InvalidUserPublicKeyException $exception) {
+                $this->logger->warning("Unable to extract public key for '{user}'.", ['user' => $exception->apProfileId]);
+
+                return;
             }
+        }
+
+        if (null === $payload['id']) {
+            $this->logger->warning('activity message has no id field which is required: {json}', ['json' => json_encode($message->payload)]);
+            throw new UnrecoverableMessageHandlingException('activity message has no id field');
+        }
+
+        $idHost = parse_url($payload['id'], PHP_URL_HOST);
+        if ($idHost) {
+            $instance = $this->instanceRepository->findOneBy(['domain' => $idHost]);
+            if (!$instance) {
+                $instance = new Instance($idHost);
+                $instance->setLastSuccessfulReceive();
+                $this->entityManager->persist($instance);
+                $this->entityManager->flush();
+            } else {
+                $lastDate = $instance->getLastSuccessfulReceive();
+                if ($lastDate < new \DateTimeImmutable('now - 5 minutes')) {
+                    $instance->setLastSuccessfulReceive();
+                    $this->entityManager->persist($instance);
+                    $this->entityManager->flush();
+                }
+            }
+            $this->remoteInstanceManager->updateInstance($instance);
         }
 
         if (isset($payload['payload'])) {
@@ -63,10 +115,10 @@ readonly class ActivityHandler
 
         try {
             if (isset($payload['actor']) || isset($payload['attributedTo'])) {
-                if (!$this->verifyInstanceDomain($payload['actor'] ?? $payload['attributedTo'])) {
+                if (!$this->verifyInstanceDomain($payload['actor'] ?? $this->manager->getSingleActorFromAttributedTo($payload['attributedTo']))) {
                     return;
                 }
-                $user = $this->manager->findActorOrCreate($payload['actor'] ?? $payload['attributedTo']);
+                $user = $this->manager->findActorOrCreate($payload['actor'] ?? $this->manager->getSingleActorFromAttributedTo($payload['attributedTo']));
             } else {
                 if (!$this->verifyInstanceDomain($payload['id'])) {
                     return;
@@ -83,6 +135,12 @@ readonly class ActivityHandler
             return;
         }
 
+        if (null === $user) {
+            $this->logger->warning('Could not find an actor discarding ActivityMessage {m}', ['m' => $message->payload]);
+
+            return;
+        }
+
         $this->handle($payload);
     }
 
@@ -93,14 +151,17 @@ readonly class ActivityHandler
         }
 
         if ('Announce' === $payload['type']) {
-            $actor = $this->manager->findActorOrCreate($payload['actor']);
-            if ($actor instanceof Magazine) {
-                $actor->lastOriginUpdate = new \DateTime();
-                $this->entityManager->persist($actor);
-                $this->entityManager->flush();
-            }
             // we check for an array here, because boosts are announces with an url (string) as the object
             if (\is_array($payload['object'])) {
+                $actorObject = $this->manager->findActorOrCreate($payload['actor']);
+                if ($actorObject instanceof Magazine && $actorObject->lastOriginUpdate < (new \DateTime())->modify('-3 hours')) {
+                    if (isset($payload['object']['type']) && 'Create' === $payload['object']['type']) {
+                        $actorObject->lastOriginUpdate = new \DateTime();
+                        $this->entityManager->persist($actorObject);
+                        $this->entityManager->flush();
+                    }
+                }
+
                 $payload = $payload['object'];
                 $actor = $payload['actor'] ?? $payload['attributedTo'] ?? null;
                 if ($actor) {
@@ -125,6 +186,7 @@ readonly class ActivityHandler
             case 'Page':
             case 'Article':
             case 'Question':
+            case 'Video':
                 $this->bus->dispatch(new CreateMessage($payload));
                 // no break
             case 'Announce':

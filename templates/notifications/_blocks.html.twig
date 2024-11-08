@@ -93,9 +93,66 @@
 
 {% block message_notification %}
     {{ component('user_inline', {user: notification.message.sender}) }} {{ 'wrote_message'|trans|lower }} <a
-        href="{{ path('messages_front', {'id': notification.message.thread.id}) }}">{{ notification.message.thread.title }}</a>
+        href="{{ path('messages_single', {'id': notification.message.thread.id}) }}">{{ notification.message.title }}</a>
 {% endblock message_notification %}
 
 {% block magazine_ban_notification %}
     {{ component('user_inline', {user: notification.ban.bannedBy}) }} {{ 'banned'|trans|lower }}. {{ 'ban_expired'|trans }} {{ component('date', {date: notification.ban.expiredAt}) }}. {{ notification.ban.reason }}
 {% endblock magazine_ban_notification %}
+
+{% block reportlink %}
+    {% if notification.report.entry is defined and notification.report.entry is not same as null %}
+        {% set entry = notification.report.entry %}
+        <a href="{{ path('entry_single', { 'magazine_name': entry.magazine.name, 'entry_id': entry.id, 'slug': entry.slug }) }}">
+            {{ entry.title }}
+        </a>
+    {% elseif notification.report.entryComment is defined and notification.report.entryComment is not same as null %}
+        {% set entryComment = notification.report.entryComment %}
+        <a href="{{ path('entry_comment_view', { 'magazine_name': entryComment.magazine.name, 'entry_id': entryComment.entry.id, 'slug': entryComment.entry.slug, 'comment_id': entryComment.id }) }}">
+            {{ entryComment.getShortTitle() }}
+        </a>
+    {% elseif notification.report.post is defined and notification.report.post is not same as null %}
+        {% set post = notification.report.post %}
+        <a href="{{ path('post_single', { 'magazine_name': post.magazine.name, 'post_id': post.id, 'slug': post.slug }) }}">
+            {{ post.getShortTitle() }}
+        </a>
+    {% elseif notification.report.postComment is defined and notification.report.postComment is not same as null %}
+        {% set postComment = notification.report.postComment %}
+        <a href="{{ path('post_single', { 'magazine_name': postComment.post.magazine.name, 'post_id': postComment.post.id, 'slug': postComment.post.slug }) }}#post-comment-{{ postComment.id }}">
+            {{ postComment.getShortTitle() }}
+        </a>
+    {% endif %}
+{% endblock %}
+
+{% block report_created_notification %}
+    {{ component('user_inline', {user: notification.report.reporting}) }} {{ 'reported'|trans|lower }} {{ component('user_inline', {user: notification.report.reported}) }}<br />
+    {{ 'report_subject'|trans }}: {{ block('reportlink') }}<br />
+    {% if app.user.admin or app.user.moderator or notification.report.magazine.userIsModerator(app.user) %}
+        <a href="{{ path('magazine_panel_reports', { 'name': notification.report.magazine.name, 'status': 'pending' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
+    {% endif %}
+{% endblock report_created_notification %}
+
+{% block report_rejected_notification %}
+    {{ 'own_report_rejected'|trans }} <br />
+    {{ 'reported_user'|trans }}: {{ component('user_inline', {user: notification.report.reported}) }}<br />
+    {{ 'report_subject'|trans }}: {{ block('reportlink') }}<br />
+    {% if app.user.admin or app.user.moderator or notification.report.magazine.userIsModerator(app.user) %}
+        <a href="{{ path('user_settings_reports', {'status': 'rejected' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
+    {% endif %}
+{% endblock report_rejected_notification %}
+
+{% block report_approved_notification %}
+    {% if notification.report.reporting.id is same as app.user.id %}
+        {{ 'own_report_accepted'|trans }}<br />
+    {% elseif notification.report.reported.id is same as app.user.id %}
+        {{ 'own_content_reported_accepted'|trans }}<br />
+    {% else %}
+        {{ 'report_accepted'|trans }}<br />
+        {{ 'reported_user'|trans }}: {{ component('user_inline', {user: notification.report.reported}) }}<br />
+        {{ 'reporting_user'|trans }}: {{ component('user_inline', {user: notification.report.reported}) }}<br />
+    {% endif %}
+    {{ 'report_subject'|trans }}: {{ block('reportlink') }}<br />
+    {% if app.user.admin or app.user.moderator or notification.report.magazine.userIsModerator(app.user) %}
+        <a href="{{ path('magazine_panel_reports', { 'name': notification.report.magazine.name, 'status': 'approved' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
+    {% endif %}
+{% endblock report_approved_notification %}

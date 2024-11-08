@@ -17,8 +17,6 @@ class UserBlockController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function block(User $blocked, UserManager $manager, Request $request): Response
     {
-        $this->validateCsrf('block', $request->request->get('token'));
-
         $manager->block($this->getUserOrThrow(), $blocked);
 
         if ($request->isXmlHttpRequest()) {
@@ -31,8 +29,6 @@ class UserBlockController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function unblock(User $blocked, UserManager $manager, Request $request): Response
     {
-        $this->validateCsrf('block', $request->request->get('token'));
-
         $manager->unblock($this->getUserOrThrow(), $blocked);
 
         if ($request->isXmlHttpRequest()) {

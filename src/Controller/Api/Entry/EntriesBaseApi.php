@@ -10,6 +10,7 @@ use App\DTO\EntryCommentRequestDto;
 use App\DTO\EntryCommentResponseDto;
 use App\DTO\EntryDto;
 use App\DTO\EntryRequestDto;
+use App\DTO\EntryResponseDto;
 use App\DTO\ImageDto;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
@@ -34,13 +35,17 @@ class EntriesBaseApi extends BaseApi
     /**
      * Serialize a single entry to JSON.
      */
-    protected function serializeEntry(EntryDto|Entry $dto)
+    protected function serializeEntry(EntryDto|Entry $dto, array $tags): EntryResponseDto
     {
-        $response = $this->entryFactory->createResponseDto($dto);
+        $response = $this->entryFactory->createResponseDto($dto, $tags);
 
         if ($this->isGranted('ROLE_OAUTH2_ENTRY:VOTE')) {
             $response->isFavourited = $dto instanceof EntryDto ? $dto->isFavourited : $dto->isFavored($this->getUserOrThrow());
             $response->userVote = $dto instanceof EntryDto ? $dto->userVote : $dto->getUserChoice($this->getUserOrThrow());
+        }
+
+        if ($user = $this->getUser()) {
+            $response->canAuthUserModerate = $dto->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
         }
 
         return $response;
@@ -63,7 +68,7 @@ class EntriesBaseApi extends BaseApi
      *  * imageAlt
      *  * imageUrl
      */
-    protected function deserializeEntry(EntryDto $dto = null, array $context = []): EntryDto
+    protected function deserializeEntry(?EntryDto $dto = null, array $context = []): EntryDto
     {
         $dto = $dto ? $dto : new EntryDto();
         $deserialized = $this->serializer->deserialize($this->request->getCurrentRequest()->getContent(), EntryRequestDto::class, 'json', $context);
@@ -94,13 +99,17 @@ class EntriesBaseApi extends BaseApi
     /**
      * Serialize a single comment to JSON.
      */
-    protected function serializeComment(EntryCommentDto $comment): EntryCommentResponseDto
+    protected function serializeComment(EntryCommentDto $comment, array $tags): EntryCommentResponseDto
     {
-        $response = $this->entryCommentFactory->createResponseDto($comment);
+        $response = $this->entryCommentFactory->createResponseDto($comment, $tags);
 
         if ($this->isGranted('ROLE_OAUTH2_ENTRY_COMMENT:VOTE')) {
             $response->isFavourited = $comment->isFavourited;
             $response->userVote = $comment->userVote;
+        }
+
+        if ($user = $this->getUser()) {
+            $response->canAuthUserModerate = $comment->magazine->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
         }
 
         return $response;
@@ -120,7 +129,7 @@ class EntriesBaseApi extends BaseApi
      *  * imageAlt (currently not working to modify the image)
      *  * imageUrl (currently not working to modify the image)
      */
-    protected function deserializeComment(EntryCommentDto $dto = null): EntryCommentDto
+    protected function deserializeComment(?EntryCommentDto $dto = null): EntryCommentDto
     {
         $dto = $dto ? $dto : new EntryCommentDto();
 
@@ -140,7 +149,7 @@ class EntriesBaseApi extends BaseApi
         return $deserialized->mergeIntoDto($dto);
     }
 
-    protected function deserializeCommentFromForm(EntryCommentDto $dto = null): EntryCommentDto
+    protected function deserializeCommentFromForm(?EntryCommentDto $dto = null): EntryCommentDto
     {
         $request = $this->request->getCurrentRequest();
         $dto = $dto ? $dto : new EntryCommentDto();
@@ -162,7 +171,7 @@ class EntriesBaseApi extends BaseApi
      *
      * @return array An associative array representation of the comment's hierarchy, to be used as JSON
      */
-    protected function serializeCommentTree(?EntryComment $comment, int $depth = null): array
+    protected function serializeCommentTree(?EntryComment $comment, ?int $depth = null): array
     {
         if (null === $comment) {
             return [];
@@ -171,13 +180,18 @@ class EntriesBaseApi extends BaseApi
         if (null === $depth) {
             $depth = self::constrainDepth($this->request->getCurrentRequest()->get('d', self::DEPTH));
         }
+        $canModerate = null;
+        if ($user = $this->getUser()) {
+            $canModerate = $comment->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+        }
 
-        $commentTree = $this->commentsFactory->createResponseTree($comment, $depth);
+        $commentTree = $this->commentsFactory->createResponseTree($comment, $depth, $canModerate);
+        $commentTree->canAuthUserModerate = $canModerate;
 
         return $commentTree->jsonSerialize();
     }
 
-    public function createEntry(Magazine $magazine, EntryManager $manager, array $context, ImageDto $image = null): Entry
+    public function createEntry(Magazine $magazine, EntryManager $manager, array $context, ?ImageDto $image = null): Entry
     {
         $dto = new EntryDto();
         $dto->magazine = $magazine;

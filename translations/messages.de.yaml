@@ -60,8 +60,6 @@ add_new_video: Neues Video hinzufügen
 privacy_policy: Datenschutzbestimmungen
 useful: Nützlich
 edit: Bearbeiten
-edit_article: Thema bearbeiten
-edit_photo: Bild bearbeiten
 delete: Löschen
 edit_post: Beitrag bearbeiten
 edit_comment: Änderungen speichern
@@ -70,7 +68,6 @@ font_size: Schriftgröße
 no: Nein
 show_all: Alle anzeigen
 already_have_account: Hast du bereits ein Konto?
-edit_link: Link bearbeiten
 new_password: Neues Passwort
 yes: Ja
 online: Online
@@ -205,7 +202,7 @@ messages: Nachrichten
 privacy: Datenschutz
 notify_on_new_entry_reply: Kommentare aller Ebenen in Themen die ich verfasst habe
 notify_on_new_entry_comment_reply: Antworten zu meinen Kommentaren in allen Themen
-notify_on_new_post_comment_reply: Antworten zu meinen Mikroblog-Kommentaren
+notify_on_new_post_comment_reply: Antworten zu meinen Kommentaren in Beiträgen
 notify_on_new_entry: Neue Themen (Links und Artikel) in sämtlichen Magazinen die ich
   abonniert habe
 save: Speichern
@@ -300,7 +297,7 @@ mod_remove_your_post: Ein Moderator hat deinen Beitrag entfernt
 removed: Entfernt von einem Moderator
 deleted: Vom Author gelöscht
 post: Beitrag
-send_message: Nachricht senden
+send_message: Direktnachricht senden
 message: Nachricht
 left: Links
 right: Rechts
@@ -324,7 +321,6 @@ random_entries: Zufällige Themen
 related_entries: Verwandte Themen
 delete_account: Konto löschen
 auto_preview: Automatische Medienvorschau
-inactive: Inaktiv
 mod_remove_your_thread: Ein Moderator hat dein Thema entfernt
 mod_log_alert: WARNUNG - Der Modlog kann unangenehme oder verstörende Inhalte enthalten,
   welche von Moderatoren entfernt wurden. Bitte bedenke was du tust.
@@ -422,8 +418,7 @@ toolbar.ordered_list: Geordnete Liste
 your_account_is_not_active: Dein Profil wurde noch nicht aktiviert. Bitte prüfe deine
   E-Mails und klicke den Aktivierungslink um fortzufahren. Falls du keine Mail erhalten
   hast frage <a href="%link_target%">eine neue Aktivierungsmail</a> an.
-your_account_has_been_banned: E-Mails für Anweisungen zur Kontoaktivierung oder <a
-  href="%link_target%">fordere eine neue E-Mail zur Aktivierung an</a>
+your_account_has_been_banned: Dein Konto wurde gesperrt
 federation_page_enabled: Föderationsseite aktiviert
 federation_page_disallowed_description: Instanzen mit denen wir nicht föderieren
 federation_page_allowed_description: Bekannte Instanzen mit denen wir föderieren
@@ -469,7 +464,7 @@ subscription_sort: Sortierung
 unblock: Entblockieren
 oauth.consent.grant_permissions: Gebe Berechtigungen
 oauth2.grant.moderate.magazine.ban.delete: Nutzer in deinen moderierten Magazinen
-  entbannen.
+  entsperren.
 subscriptions_in_own_sidebar: In eigener Seitenleiste
 subscription_sidebar_pop_out_left: Nach links in eigene Seitenleiste verschieben
 subscription_sidebar_pop_out_right: Nach rechts in eigene Seitenleiste verschieben
@@ -828,8 +823,8 @@ sidebar_sections_local_only: Beschränke "Zufällige X" und "Aktive Nutzer" Absc
   auf lokale Inhalte
 account_deletion_title: Kontolöschung
 account_deletion_description: Dein Konto wird in 30 Tagen gelöscht außer du entscheidest
-  dich dein Konto sofort zu löschen. Das Konto kann nicht wiederhergestellt werden
-  sobald es gelöscht ist.
+  dich dein Konto sofort zu löschen. Um das Konto wiederherzustellen, logge dich in
+  den nächsten 30 Tagen mit deinen Zugangsdaten ein oder kontaktiere einen Administrator.
 account_deletion_button: Lösche Konto
 account_deletion_immediate: Sofort Löschen
 remove_schedule_delete_account: Entferne geplante Löschung
@@ -854,3 +849,94 @@ restrict_magazine_creation: 'Erstellung lokaler Magazine auf Admins und globale 
 sort_by: 'Sortieren nach'
 filter_by_subscription: 'Nach Abonnements filtern'
 related_entry: Zugehörig
+tag: Hashtag
+unban: Sperre aufheben
+ban_hashtag_btn: Hashtag Sperren
+unban_hashtag_btn: Hashtag Sperre Aufheben
+private_instance: Nutzer zur Anmeldung zwingen um auf Inhalte zugreifen zu können
+flash_thread_tag_banned_error: Thema konnte nicht erstellt werden. Der Inhalt ist
+  nicht erlaubt.
+sso_only_mode: Anmeldung und Registrierung auf SSO Methoden beschränken
+magazine_log_mod_added: hat einen Moderator hinzugefügt
+magazine_log_mod_removed: hat einen Moderator entfernt
+ban_hashtag_description: Durch das Sperren eines Hashtags wird verhindert, dass Beiträge
+  mit diesem Hashtag erstellt werden. Außerdem werden vorhandene Beiträge mit diesem
+  Hashtag ausgeblendet.
+unban_hashtag_description: Wenn Sie eine Hashtag Sperre aufheben, können wieder Beiträge
+  mit diesem Hashtag erstellt werden. Vorhandene Beiträge mit diesem Hashtag werden
+  nicht mehr ausgeblendet.
+sso_show_first: SSO als erstes auf der Anmeldungs- und Registrierungsseite anzeigen
+continue_with: Weiter mit
+from: von
+someone: Jemand
+cake_day: Kuchen-Tag
+last_updated: Letzte Aktualisierung
+magazine_log_entry_unpinned: hat angehefteten Eintrag entfernt
+and: und
+back: Zurück
+magazine_log_entry_pinned: hat Eintrag angeheftet
+direct_message: Direktnachricht
+manually_approves_followers: Genehmigt Follower manuell
+register_push_notifications_button: Push-Benachrichigungen aktivieren
+unregister_push_notifications_button: Push-Benachrichigungen deaktivieren
+test_push_notifications_button: Push-Benachrichtigung Testen
+test_push_message: Hallo Welt!
+notification_title_new_comment: Neuer Kommentar
+notification_title_removed_comment: Ein Kommentar wurde entfernt
+notification_title_edited_comment: Ein Kommentar wurde bearbeitet
+notification_title_mention: Du wurdest erwähnt
+notification_title_new_reply: Neue Antwort
+notification_title_new_thread: Neues Thema
+notification_title_removed_thread: Ein Thema wurde entfernt
+notification_title_edited_thread: Ein Thema wurde bearbeitet
+notification_title_ban: Du wurdest gebannt
+notification_title_message: Neue Direktnachricht
+notification_title_new_post: Neuer Beitrag
+notification_title_removed_post: Ein Beitrag wurde entfernt
+notification_title_edited_post: Ein Beitrag wurde bearbeitet
+reported_user: Gemeldeter Nutzer
+reporting_user: Meldender Nutzer
+report_subject: Inhalt
+own_report_rejected: Deine Meldung wurde abgelehnt
+open_report: Meldung öffnen
+reported: gemeldet
+own_report_accepted: Deine Meldung wurde angenommen
+own_content_reported_accepted: Eine Meldung deines Inhalts wurde angenommen.
+report_accepted: Eine Meldung wurde angenommen
+show_active_users: Zeige aktive Nutzer
+show_related_magazines: Zeige zufällige Magazine
+show_related_entries: Zeige zufällige Themen
+show_related_posts: Zeige zufällige Beiträge
+notification_title_new_report: Eine neue Meldung wurde erstellt
+federation_page_dead_title: Tote Instanzen
+federation_page_dead_description: Instanzen zu denen wir mindestens 10 Aktivitäten
+  in folge nicht zustellen konnten und bei denen die letzte erfolgreiche Zustellung
+  mehr als eine Woche zurückliegt
+server_software: Server Software
+version: Version
+magazine_posting_restricted_to_mods_warning: Nur Mods können Themen in diesem Magazin
+  erstellen
+flash_posting_restricted_error: Die Erstellung von Themen ist in diesem Magazin auf
+  mods eingeschränkt und du bist keiner
+last_successful_deliver: Letzte erfolgreiche Zustellung
+last_successful_receive: Letzter erfolgreicher Empfang
+last_failed_contact: Letzter misslungener Kontakt
+magazine_posting_restricted_to_mods: Erstellung von Themen auf Moderatoren beschränken
+new_user_description: Dieser Nutzer ist neu (seit weniger als %days% Tagen aktiv)
+new_magazine_description: Dieses Magazin ist neu (seit weniger als %days% Tagen aktiv)
+edit_entry: Thema bearbeiten
+flash_image_download_too_large_error: 'Bild konnte nicht erstellt werden, da es zu
+  groß ist (maximale Größe: %bytes%)'
+admin_users_active: Aktiv
+admin_users_inactive: Inaktiv
+admin_users_suspended: Suspendiert
+admin_users_banned: Gebannt
+user_verify: Account aktivieren
+max_image_size: Maximale Dateigröße
+change_downvotes_mode: Reduzieren Modus ändern
+disabled: Deaktiviert
+downvotes_mode: Reduzieren Modus
+hidden: Versteckt
+enabled: Aktiviert
+toolbar.spoiler: Spoiler
+comment_not_found: Kommentar nicht gefunden

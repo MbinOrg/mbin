@@ -80,28 +80,30 @@ class PostCommentResponseDto implements \JsonSerializable
         ]
     )]
     public array $children = [];
+    public ?bool $canAuthUserModerate = null;
 
     public static function create(
         int $id,
-        UserSmallResponseDto $user = null,
-        MagazineSmallResponseDto $magazine = null,
-        Post $post = null,
-        PostComment $parent = null,
+        ?UserSmallResponseDto $user = null,
+        ?MagazineSmallResponseDto $magazine = null,
+        ?Post $post = null,
+        ?PostComment $parent = null,
         int $childCount = 0,
-        ImageDto $image = null,
-        string $body = null,
-        string $lang = null,
-        bool $isAdult = null,
-        int $uv = null,
-        int $dv = null,
-        int $favourites = null,
-        string $visibility = null,
-        string $apId = null,
-        array $mentions = null,
-        array $tags = null,
-        \DateTimeImmutable $createdAt = null,
-        \DateTimeImmutable $editedAt = null,
-        \DateTime $lastActive = null,
+        ?ImageDto $image = null,
+        ?string $body = null,
+        ?string $lang = null,
+        ?bool $isAdult = null,
+        ?int $uv = null,
+        ?int $dv = null,
+        ?int $favourites = null,
+        ?string $visibility = null,
+        ?string $apId = null,
+        ?array $mentions = null,
+        ?array $tags = null,
+        ?\DateTimeImmutable $createdAt = null,
+        ?\DateTimeImmutable $editedAt = null,
+        ?\DateTime $lastActive = null,
+        ?bool $canAuthUserModerate = null,
     ): self {
         $dto = new PostCommentResponseDto();
         $dto->commentId = $id;
@@ -125,6 +127,7 @@ class PostCommentResponseDto implements \JsonSerializable
         $dto->editedAt = $editedAt;
         $dto->lastActive = $lastActive;
         $dto->childCount = $childCount;
+        $dto->canAuthUserModerate = $canAuthUserModerate;
 
         return $dto;
     }
@@ -171,6 +174,7 @@ class PostCommentResponseDto implements \JsonSerializable
             'lastActive' => $this->lastActive?->format(\DateTimeInterface::ATOM),
             'childCount' => $this->childCount,
             'children' => $this->children,
+            'canAuthUserModerate' => $this->canAuthUserModerate,
         ]);
     }
 

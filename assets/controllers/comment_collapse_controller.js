@@ -4,7 +4,7 @@ import { getLevel } from '../utils/kbin';
 const COMMENT_ELEMENT_TAG = 'BLOCKQUOTE';
 const COLLAPSIBLE_CLASS = 'collapsible';
 const COLLAPSED_CLASS = 'collapsed';
-const HIDDEN_CLASS = 'hidden'
+const HIDDEN_CLASS = 'hidden';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -17,7 +17,7 @@ export default class extends Controller {
     connect() {
         // derive depth value if it doesn't exist
         // or when attached depth is 1 but css depth says otherwise (trying to handle dynamic list)
-        let cssLevel = getLevel(this.element);
+        const cssLevel = getLevel(this.element);
         if (!this.hasDepthValue
             || (1 === this.depthValue && cssLevel > this.depthValue)) {
             this.depthValue = cssLevel;
@@ -36,7 +36,7 @@ export default class extends Controller {
             nextSibling && COMMENT_ELEMENT_TAG === nextSibling.tagName;
             nextSibling = nextSibling.nextElementSibling
         ) {
-            let siblingDepth = nextSibling.dataset.commentCollapseDepthValue;
+            const siblingDepth = nextSibling.dataset.commentCollapseDepthValue;
             if (!siblingDepth || siblingDepth <= this.depthValue) {
                 break;
             }
@@ -47,7 +47,7 @@ export default class extends Controller {
 
         this.toggleCollapseSelf();
 
-        if (collapsed > 0) {
+        if (0 < collapsed) {
             this.updateCounter(collapsed);
         }
     }

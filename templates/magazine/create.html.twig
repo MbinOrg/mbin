@@ -17,7 +17,9 @@
     {% include('user/_visibility_info.html.twig') %}
 
     {% if user.visibility is same as 'visible' %}
-    <h1 hidden>{{ 'create_new_magazine'|trans }}</h1>
+    <header>
+        <h1 hidden>{{ 'create_new_magazine'|trans }}</h1>
+    </header>
     <div id="content" class="section">
         <div class="container">
             {{ form_start(form) }}
@@ -47,6 +49,7 @@
                 'data-input-length-max-value': constant('App\\Entity\\Magazine::MAX_RULES_LENGTH')
                 }}) }}
             {{ form_row(form.isAdult, {label:'is_adult', row_attr: {class: 'checkbox'}}) }}
+            {{ form_row(form.isPostingRestrictedToMods, {label:'magazine_posting_restricted_to_mods',row_attr: {class: 'checkbox'}}) }}
             <div class="row actions">
                 {{ form_row(form.submit, {label: 'create_new_magazine', attr: {class: 'btn btn__primary'}, row_attr: {class: 'float-end'}}) }}
             </div>

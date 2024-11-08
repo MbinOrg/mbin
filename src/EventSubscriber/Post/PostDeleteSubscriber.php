@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\EventSubscriber\Post;
 
+use App\Entity\Post;
+use App\Entity\User;
+use App\Event\Post\PostBeforeDeletedEvent;
 use App\Event\Post\PostBeforePurgeEvent;
 use App\Event\Post\PostDeletedEvent;
 use App\Message\ActivityPub\Outbox\DeleteMessage;
@@ -28,6 +31,7 @@ class PostDeleteSubscriber implements EventSubscriberInterface
         return [
             PostDeletedEvent::class => 'onPostDeleted',
             PostBeforePurgeEvent::class => 'onPostBeforePurge',
+            PostBeforeDeletedEvent::class => 'onPostBeforeDelete',
         ];
     }
 
@@ -39,17 +43,21 @@ class PostDeleteSubscriber implements EventSubscriberInterface
     public function onPostBeforePurge(PostBeforePurgeEvent $event): void
     {
         $event->post->magazine->postCount = $this->postRepository->countPostsByMagazine($event->post->magazine) - 1;
+        $this->onPostBeforeDeleteImpl($event->user, $event->post);
+    }
 
-        $this->bus->dispatch(new PostDeletedNotificationMessage($event->post->getId()));
+    public function onPostBeforeDelete(PostBeforeDeletedEvent $event): void
+    {
+        $this->onPostBeforeDeleteImpl($event->user, $event->post);
+    }
 
-        if (!$event->post->apId) {
-            $this->bus->dispatch(
-                new DeleteMessage(
-                    $this->deleteWrapper->build($event->post, Uuid::v4()->toRfc4122()),
-                    $event->post->user->getId(),
-                    $event->post->magazine->getId()
-                )
-            );
+    public function onPostBeforeDeleteImpl(?User $user, Post $post): void
+    {
+        $this->bus->dispatch(new PostDeletedNotificationMessage($post->getId()));
+
+        if (!$post->apId || !$post->magazine->apId || (null !== $user && $post->magazine->userIsModerator($user))) {
+            $payload = $this->deleteWrapper->adjustDeletePayload($user, $post, Uuid::v4()->toRfc4122());
+            $this->bus->dispatch(new DeleteMessage($payload, $post->user->getId(), $post->magazine->getId()));
         }
     }
 }

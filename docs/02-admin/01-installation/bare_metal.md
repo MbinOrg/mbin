@@ -3,9 +3,6 @@
 Below is a step-by-step guide of the process for creating your own Mbin instance from the moment a new VPS/VM is created or directly on bare-metal.  
 This is a preliminary outline that will help you launch an instance for your own needs.
 
-> [!NOTE]
-> Mbin is still in development.
-
 This guide is aimed for Debian / Ubuntu distribution servers, but it could run on any modern Linux distro. This guide will however uses the `apt` commands.
 
 > [!NOTE]
@@ -32,7 +29,7 @@ Install prequirements:
 sudo apt-get install lsb-release ca-certificates curl wget unzip gnupg apt-transport-https software-properties-common python3-launchpadlib git redis-server postgresql postgresql-contrib nginx acl -y
 ```
 
-On **Ubuntu 22.04 LTS** or older, prepare latest PHP package repositoy (8.2) by using a Ubuntu PPA (this step is optional for Ubuntu 23.10 or later) via:
+On **Ubuntu 22.04 LTS** or older, prepare latest PHP package repositoy (8.3) by using a Ubuntu PPA (this step is optional for Ubuntu 23.10 or later) via:
 
 ```bash
 sudo add-apt-repository ppa:ondrej/php -y
@@ -44,12 +41,15 @@ On **Debian 12** or later, you can install the latest PHP package repository (th
 sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
 ```
 
-Install PHP 8.2 with some important PHP extensions:
+Install _PHP 8.3_ with PHP extensions:
 
 ```bash
 sudo apt-get update
-sudo apt-get install php8.2 php8.2-common php8.2-fpm php8.2-cli php8.2-amqp php8.2-pgsql php8.2-gd php8.2-curl php8.2-xml php8.2-redis php8.2-mbstring php8.2-zip php8.2-bz2 php8.2-intl php8.2-bcmath -y
+sudo apt-get install php8.3 php8.3-common php8.3-fpm php8.3-cli php8.3-amqp php8.3-bcmath php8.3-pgsql php8.3-gd php8.3-curl php8.3-xml php8.3-redis php8.3-mbstring php8.3-zip php8.3-bz2 php8.3-intl php8.3-bcmath -y
 ```
+
+> [!NOTE]
+> If you are upgrading to PHP 8.3 from an older version, please re-review the [PHP configuration](#php) section of this guide as existing `ini` settings are NOT automatically copied to new versions. Additionally review which php-fpm version is configured in your nginx site.
 
 Install Composer:
 
@@ -101,6 +101,7 @@ sudo su - mbin
 
 ```bash
 sudo mkdir -p /var/www/mbin
+cd /var/www/mbin
 sudo chown mbin:www-data /var/www/mbin
 ```
 
@@ -125,6 +126,7 @@ git clone https://github.com/MbinOrg/mbin.git .
 ### Create & configure media directory
 
 ```bash
+cd /var/www/mbin
 mkdir public/media
 sudo chmod -R 775 public/media
 sudo chown -R mbin:www-data public/media
@@ -151,12 +153,24 @@ sudo setfacl -R -m u:"$HTTPDUSER":rwX -m u:$(whoami):rwX var
 
 ### The dot env file
 
-Make a copy of the `.env.example` the and edit the `.env` configure file:
+The `.env` file holds a lot of environment variables and is the main point for configuring mbin.
+We suggest you place your variables in the `.env.local` file and have a 'clean' default one as the `.env` file.
+Each time this documentation talks about the `.env` file be sure to edit the `.env.local` file if you decided to use that.
+
+> In all environments, the following files are loaded if they exist, the latter taking precedence over the former:
+>
+> - .env contains default values for the environment variables needed by the app
+> - .env.local uncommitted file with local overrides
+
+Make a copy of the `.env.example` to `.env` and `.env.local` and edit the `.env.local` file:
 
 ```bash
 cp .env.example .env
-nano .env
+cp .env.example .env.local
+nano .env.local
 ```
+
+#### Service Passwords
 
 Make sure you have substituted all the passwords and configured the basic services in `.env` file.
 
@@ -171,7 +185,7 @@ RABBITMQ_PASSWORD="{!SECRET!!KEY!-16_2-!}"
 MERCURE_JWT_SECRET="{!SECRET!!KEY!-32_3-!}"
 ```
 
-Other important `.env` configs:
+#### Other important `.env` configs:
 
 ```ini
 # Configure your media URL correctly:
@@ -192,7 +206,7 @@ MAILER_DSN=smtp://username:password@smtpserver.tld:587?encryption=tls&auth_mode=
 MAILER_DSN=smtp://username:password@smtpserver.tld:465?encryption=ssl&auth_mode=log
 ```
 
-OAuth2 keys for API credential grants:
+#### OAuth2 keys for API credential grants
 
 1. Create an RSA key pair using OpenSSL:
 
@@ -226,10 +240,12 @@ OAUTH_ENCRYPTION_KEY=<Hex string generated in previous step>
 Edit some PHP settings within your `php.ini` file:
 
 ```bash
-sudo nano /etc/php/8.2/fpm/php.ini
+sudo nano /etc/php/8.3/fpm/php.ini
 ```
 
 ```ini
+; Maximum execution time of each script, in seconds
+max_execution_time = 60
 ; Both max file size and post body size are personal preferences
 upload_max_filesize = 8M
 post_max_size = 8M
@@ -260,14 +276,14 @@ More info: [Symfony Performance docs](https://symfony.com/doc/current/performanc
 Edit your PHP `www.conf` file as well, to increase the amount of PHP child processes (optional):
 
 ```bash
-sudo nano /etc/php/8.2/fpm/pool.d/www.conf
+sudo nano /etc/php/8.3/fpm/pool.d/www.conf
 ```
 
 With the content (these are personal preferences, adjust to your needs):
 
 ```ini
 pm = dynamic
-pm.max_children = 60
+pm.max_children = 70
 pm.start_servers = 10
 pm.min_spare_servers = 5
 pm.max_spare_servers = 10
@@ -276,7 +292,7 @@ pm.max_spare_servers = 10
 Be sure to restart (or reload) the PHP-FPM service after you applied any changing to the `php.ini` file:
 
 ```bash
-sudo systemctl restart php8.2-fpm.service
+sudo systemctl restart php8.3-fpm.service
 ```
 
 ### Composer
@@ -310,7 +326,10 @@ composer clear-cache
 
 ### Caching
 
-You can choose between either Redis or KeyDB.
+You can choose between either Redis, Valkey or KeyDB.
+
+> [!TIP]
+> More Redis/Valkey/KeyDB fine-tuning settings can be found in the [Redis configuration guide](../02-configuration/redis.md).
 
 #### Redis
 
@@ -422,21 +441,29 @@ php bin/console doctrine:migrations:migrate
 ## Team RabbitMQ's main signing key
 curl -1sLf "https://keys.openpgp.org/vks/v1/by-fingerprint/0A9AF2115F4687BD29803A206B73A36E6026DFCA" | sudo gpg --dearmor | sudo tee /usr/share/keyrings/com.rabbitmq.team.gpg > /dev/null
 ## Community mirror of Cloudsmith: modern Erlang repository
-curl -1sLf https://ppa1.novemberain.com/gpg.E495BB49CC4BBE5B.key | sudo gpg --dearmor | sudo tee /usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg > /dev/null
+curl -1sLf https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key | sudo gpg --dearmor | sudo tee /usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg > /dev/null
 ## Community mirror of Cloudsmith: RabbitMQ repository
-curl -1sLf https://ppa1.novemberain.com/gpg.9F4587F226208342.key | sudo gpg --dearmor | sudo tee /usr/share/keyrings/rabbitmq.9F4587F226208342.gpg > /dev/null
+curl -1sLf https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key | sudo gpg --dearmor | sudo tee /usr/share/keyrings/rabbitmq.9F4587F226208342.gpg > /dev/null
 
 ## Add apt repositories maintained by Team RabbitMQ
 sudo tee /etc/apt/sources.list.d/rabbitmq.list <<EOF
 ## Provides modern Erlang/OTP releases
 ##
-deb [signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa1.novemberain.com/rabbitmq/rabbitmq-erlang/deb/ubuntu jammy main
+deb [arch=amd64 signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa1.novemberain.com/rabbitmq/rabbitmq-erlang/deb/ubuntu jammy main
 deb-src [signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa1.novemberain.com/rabbitmq/rabbitmq-erlang/deb/ubuntu jammy main
+
+# another mirror for redundancy
+deb [arch=amd64 signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa2.novemberain.com/rabbitmq/rabbitmq-erlang/deb/ubuntu jammy main
+deb-src [signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa2.novemberain.com/rabbitmq/rabbitmq-erlang/deb/ubuntu jammy main
 
 ## Provides RabbitMQ
 ##
-deb [signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa1.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu jammy main
+deb [arch=amd64 signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa1.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu jammy main
 deb-src [signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa1.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu jammy main
+
+# another mirror for redundancy
+deb [arch=amd64 signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa2.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu jammy main
+deb-src [signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa2.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu jammy main
 EOF
 
 ## Update package indices
@@ -484,7 +511,6 @@ MESSENGER_TRANSPORT_DSN=amqp://kbin:${RABBITMQ_PASSWORD}@127.0.0.1:5672/%2f/mess
 #MESSENGER_TRANSPORT_DSN=doctrine://default
 ```
 
-
 ## Setup Supervisor
 
 We use Supervisor to run our background workers, aka. "Messengers".
@@ -518,30 +544,6 @@ process_name=%(program_name)s_%(process_num)02d
 Save and close the file.
 
 Note: you can increase the number of running messenger jobs if your queue is building up (i.e. more messages are coming in than your messengers can handle)
-
-We also use supervisor for running Mercure job:
-
-```bash
-sudo nano /etc/supervisor/conf.d/mercure.conf
-```
-
-With the following content:
-
-```ini
-[program:mercure]
-command=/usr/local/bin/mercure run --config /var/www/mbin/metal/caddy/Caddyfile
-process_name=%(program_name)s_%(process_num)s
-numprocs=1
-environment=MERCURE_PUBLISHER_JWT_KEY="{!SECRET!!KEY!-32_3-!}",MERCURE_SUBSCRIBER_JWT_KEY="{!SECRET!!KEY!-32_3-!}",SERVER_NAME=":3000",HTTP_PORT="3000"
-directory=/var/www/mbin/metal/caddy
-autostart=true
-autorestart=true
-startsecs=5
-startretries=10
-user=www-data
-redirect_stderr=false
-stdout_syslog=true
-```
 
 Save and close the file. Restart supervisor jobs:
 

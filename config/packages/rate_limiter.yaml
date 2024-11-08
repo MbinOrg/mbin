@@ -116,3 +116,7 @@ framework:
       policy: 'fixed_window'
       limit: 4
       interval: '1 day'
+    ap_update_actor:
+      policy: 'sliding_window'
+      limit: 1
+      interval: '5 minutes'

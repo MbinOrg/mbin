@@ -29,9 +29,9 @@ class EntryPinController extends AbstractController
         Entry $entry,
         Request $request
     ): Response {
-        $this->validateCsrf('entry_pin', $request->request->get('token'));
+        $this->validateCsrf('entry_pin', $request->getPayload()->get('token'));
 
-        $entry = $this->manager->pin($entry);
+        $entry = $this->manager->pin($entry, $this->getUserOrThrow());
 
         $this->addFlash(
             'success',

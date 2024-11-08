@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\ApActivity;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\Message;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Service\SettingsManager;
@@ -46,6 +47,7 @@ class ApActivityRepository extends ServiceEntityRepository
             ['table' => 'entry_comment', 'class' => EntryComment::class],
             ['table' => 'post', 'class' => Post::class],
             ['table' => 'post_comment', 'class' => PostComment::class],
+            ['table' => 'message', 'class' => Message::class],
         ];
         foreach ($tables as $table) {
             $t = $table['table'];
@@ -72,12 +74,16 @@ class ApActivityRepository extends ServiceEntityRepository
         'id' => 'int',
         'type' => 'string',
     ])]
-    private function findLocalByApId(string $apId): ?array
+    public function findLocalByApId(string $apId): ?array
     {
         $parsed = parse_url($apId);
         if ($parsed['host'] === $this->settingsManager->get('KBIN_DOMAIN')) {
             $exploded = array_filter(explode('/', $parsed['path']));
             $id = \intval(end($exploded));
+            if (\sizeof($exploded) < 3) {
+                return null;
+            }
+
             if ('p' === $exploded[3]) {
                 if (4 === \count($exploded)) {
                     return [
@@ -102,6 +108,15 @@ class ApActivityRepository extends ServiceEntityRepository
                     return [
                         'id' => $id,
                         'type' => EntryComment::class,
+                    ];
+                }
+            }
+
+            if ('message' === $exploded[3]) {
+                if (4 === \count($exploded)) {
+                    return [
+                        'id' => $id,
+                        'type' => Message::class,
                     ];
                 }
             }

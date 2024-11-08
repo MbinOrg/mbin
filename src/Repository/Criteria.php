@@ -101,15 +101,15 @@ abstract class Criteria
     public const THEME_TOKYO_NIGHT = 'tokyo-night';
 
     public const THEME_OPTIONS = [
-      // 'Mbin' => SELF::THEME_MBIN, // TODO uncomment when theme is ready
-      '/kbin' => self::THEME_KBIN,
-      'default_theme_auto' => self::THEME_AUTO,
-      'light' => self::THEME_LIGHT,
-      'dark' => self::THEME_DARK,
-      'solarized_auto' => self::THEME_SOLARIZED_AUTO,
-      'solarized_light' => self::THEME_SOLARIZED_LIGHT,
-      'solarized_dark' => self::THEME_SOLARIZED_DARK,
-      'tokyo_night' => self::THEME_TOKYO_NIGHT,
+        // 'Mbin' => SELF::THEME_MBIN, // TODO uncomment when theme is ready
+        '/kbin' => self::THEME_KBIN,
+        'default_theme_auto' => self::THEME_AUTO,
+        'light' => self::THEME_LIGHT,
+        'dark' => self::THEME_DARK,
+        'solarized_auto' => self::THEME_SOLARIZED_AUTO,
+        'solarized_light' => self::THEME_SOLARIZED_LIGHT,
+        'solarized_dark' => self::THEME_SOLARIZED_DARK,
+        'tokyo_night' => self::THEME_TOKYO_NIGHT,
     ];
 
     public function __construct(int $page)
@@ -230,22 +230,13 @@ abstract class Criteria
 
     public function resolveType(?string $value): ?string
     {
-        // @todo
-        $routes = [
-            'all' => 'all',
-            'article' => Entry::ENTRY_TYPE_ARTICLE,
-            'articles' => Entry::ENTRY_TYPE_ARTICLE,
-            'link' => Entry::ENTRY_TYPE_LINK,
-            'links' => Entry::ENTRY_TYPE_LINK,
-            'video' => Entry::ENTRY_TYPE_VIDEO,
-            'videos' => Entry::ENTRY_TYPE_VIDEO,
-            'photo' => Entry::ENTRY_TYPE_IMAGE,
-            'photos' => Entry::ENTRY_TYPE_IMAGE,
-            'image' => Entry::ENTRY_TYPE_IMAGE,
-            'images' => Entry::ENTRY_TYPE_IMAGE,
-        ];
-
-        return $routes[$value] ?? 'all';
+        return match ($value) {
+            'article', 'articles' => Entry::ENTRY_TYPE_ARTICLE,
+            'link', 'links' => Entry::ENTRY_TYPE_LINK,
+            'video', 'videos' => Entry::ENTRY_TYPE_VIDEO,
+            'photo', 'photos', 'image', 'images' => Entry::ENTRY_TYPE_IMAGE,
+            default => 'all'
+        };
     }
 
     public function translateType(): string

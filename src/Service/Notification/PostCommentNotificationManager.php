@@ -12,6 +12,7 @@ use App\Entity\PostCommentDeletedNotification;
 use App\Entity\PostCommentEditedNotification;
 use App\Entity\PostCommentMentionedNotification;
 use App\Entity\PostCommentReplyNotification;
+use App\Event\NotificationCreatedEvent;
 use App\Factory\MagazineFactory;
 use App\Factory\UserFactory;
 use App\Repository\MagazineLogRepository;
@@ -24,6 +25,7 @@ use App\Service\MentionManager;
 use App\Service\SettingsManager;
 use App\Utils\IriGenerator;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -34,6 +36,7 @@ class PostCommentNotificationManager implements ContentNotificationManagerInterf
     use NotificationTrait;
 
     public function __construct(
+        private readonly EventDispatcherInterface $eventDispatcher,
         private readonly MentionManager $mentionManager,
         private readonly NotificationRepository $notificationRepository,
         private readonly MagazineLogRepository $magazineLogRepository,
@@ -50,12 +53,15 @@ class PostCommentNotificationManager implements ContentNotificationManagerInterf
     ) {
     }
 
-    // @todo check if author is on the block list
     public function sendCreated(ContentInterface $subject): void
     {
-        /**
-         * @var PostComment $subject
-         */
+        if ($subject->user->isBanned || $subject->user->isDeleted || $subject->user->isTrashed() || $subject->user->isSoftDeleted()) {
+            return;
+        }
+        if (!$subject instanceof PostComment) {
+            throw new \LogicException();
+        }
+
         $users = $this->sendMentionedNotification($subject);
         $users = $this->sendUserReplyNotification($subject, $users);
         $this->sendMagazineSubscribersNotification($subject, $users);
@@ -70,6 +76,7 @@ class PostCommentNotificationManager implements ContentNotificationManagerInterf
             if (!$user->apId and !$user->isBlocked($subject->getUser())) {
                 $notification = new PostCommentMentionedNotification($user, $subject);
                 $this->entityManager->persist($notification);
+                $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
             }
 
             $users[] = $user;
@@ -106,6 +113,7 @@ class PostCommentNotificationManager implements ContentNotificationManagerInterf
             $this->entityManager->persist($notification);
             $this->entityManager->flush();
 
+            $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
             $exclude[] = $notification->user;
         }
 
@@ -156,13 +164,13 @@ class PostCommentNotificationManager implements ContentNotificationManagerInterf
                 'title' => $comment->post->body,
                 'body' => $comment->body,
                 'icon' => $this->imageManager->getUrl($comment->image),
-//                'image' => $this->imageManager->getUrl($comment->image),
+                //                'image' => $this->imageManager->getUrl($comment->image),
                 'url' => $this->urlGenerator->generate('post_single', [
-                        'magazine_name' => $comment->magazine->name,
-                        'post_id' => $comment->post->getId(),
-                        'slug' => $comment->post->slug,
-                    ]).'#post-comment-'.$comment->getId(),
-//                'toast' => $this->twig->render('_layout/_toast.html.twig', ['notification' => $notification]),
+                    'magazine_name' => $comment->magazine->name,
+                    'post_id' => $comment->post->getId(),
+                    'slug' => $comment->post->slug,
+                ]).'#post-comment-'.$comment->getId(),
+                //                'toast' => $this->twig->render('_layout/_toast.html.twig', ['notification' => $notification]),
             ]
         );
     }
@@ -186,6 +194,7 @@ class PostCommentNotificationManager implements ContentNotificationManagerInterf
         foreach ($usersToNotify as $subscriber) {
             $notification = new PostCommentCreatedNotification($subscriber, $comment);
             $this->entityManager->persist($notification);
+            $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
         }
 
         $this->entityManager->flush();
@@ -212,17 +221,17 @@ class PostCommentNotificationManager implements ContentNotificationManagerInterf
 
     public function sendEdited(ContentInterface $subject): void
     {
-        /*
-         * @var PostComment $subject
-         */
+        if (!$subject instanceof PostComment) {
+            throw new \LogicException();
+        }
         $this->notifyMagazine(new PostCommentEditedNotification($subject->user, $subject));
     }
 
     public function sendDeleted(ContentInterface $subject): void
     {
-        /*
-         * @var PostComment $subject
-         */
+        if (!$subject instanceof PostComment) {
+            throw new \LogicException();
+        }
         $this->notifyMagazine($notification = new PostCommentDeletedNotification($subject->user, $subject));
     }
 

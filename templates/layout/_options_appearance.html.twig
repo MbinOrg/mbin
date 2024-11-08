@@ -16,6 +16,10 @@
         {{ component('settings_row_switch', {label: 'infinite_scroll'|trans, help: 'infinite_scroll_help'|trans ,  settingsKey: 'KBIN_GENERAL_INFINITE_SCROLL'}) }}
         {{ component('settings_row_switch', {label: 'sticky_navbar'|trans, help: 'sticky_navbar_help'|trans,  settingsKey: 'KBIN_GENERAL_FIXED_NAVBAR'}) }}
         {{ component('settings_row_switch', {label: 'show_top_bar'|trans, settingsKey: 'KBIN_GENERAL_TOPBAR'}) }}
+        {{ component('settings_row_switch', {label: 'show_related_magazines'|trans, settingsKey: 'MBIN_GENERAL_SHOW_RELATED_MAGAZINES', defaultValue: 'true'}) }}
+        {{ component('settings_row_switch', {label: 'show_related_entries'|trans, settingsKey: 'MBIN_GENERAL_SHOW_RELATED_ENTRIES', defaultValue: 'true'}) }}
+        {{ component('settings_row_switch', {label: 'show_related_posts'|trans, settingsKey: 'MBIN_GENERAL_SHOW_RELATED_POSTS', defaultValue: 'true'}) }}
+        {{ component('settings_row_switch', {label: 'show_active_users'|trans, settingsKey: 'MBIN_GENERAL_SHOW_ACTIVE_USERS', defaultValue: 'true'}) }}
     </div>
     {% if app.user is defined and app.user is not same as null %}
         <strong>{{ 'subscriptions'|trans }}</strong>
@@ -50,5 +54,10 @@
     <div class="settings-section">
         {{ component('settings_row_enum', {label: 'comment_reply_position'|trans, help: 'comment_reply_position_help'|trans, settingsKey: 'KBIN_COMMENTS_REPLY_POSITION', values: [ {name: 'position_top'|trans , value: 'TOP'}, {name: 'position_bottom'|trans , value: 'BOTTOM' } ], defaultValue: 'TOP' } ) }}
         {{ component('settings_row_switch', {label: 'show_avatars_on_comments'|trans, help: 'show_avatars_on_comments_help'|trans, settingsKey: 'KBIN_COMMENTS_SHOW_USER_AVATAR', defaultValue: true}) }}
+    </div>
+    <strong>{{ 'mod_log'|trans }}</strong>
+    <div class="settings-section">
+        {{ component('settings_row_switch', {label: 'show_users_avatars'|trans, settingsKey: 'MBIN_MODERATION_LOG_SHOW_USER_AVATARS', defaultValue: false}) }}
+        {{ component('settings_row_switch', {label: 'show_magazines_icons'|trans, settingsKey: 'MBIN_MODERATION_LOG_SHOW_MAGAZINE_ICONS', defaultValue: false}) }}
     </div>
 </div>

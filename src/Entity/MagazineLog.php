@@ -25,11 +25,15 @@ use Doctrine\ORM\Mapping\ManyToOne;
     'entry_restored' => MagazineLogEntryRestored::class,
     'entry_comment_deleted' => MagazineLogEntryCommentDeleted::class,
     'entry_comment_restored' => MagazineLogEntryCommentRestored::class,
+    'entry_pinned' => MagazineLogEntryPinned::class,
+    'entry_unpinned' => MagazineLogEntryUnpinned::class,
     'post_deleted' => MagazineLogPostDeleted::class,
     'post_restored' => MagazineLogPostRestored::class,
     'post_comment_deleted' => MagazineLogPostCommentDeleted::class,
     'post_comment_restored' => MagazineLogPostCommentRestored::class,
     'ban' => MagazineLogBan::class,
+    'moderator_add' => MagazineLogModeratorAdd::class,
+    'moderator_remove' => MagazineLogModeratorRemove::class,
 ])]
 abstract class MagazineLog
 {
@@ -56,7 +60,7 @@ abstract class MagazineLog
         $this->createdAtTraitConstruct();
     }
 
-    abstract public function getSubject(): ContentInterface|null;
+    abstract public function getSubject(): ?ContentInterface;
 
     abstract public function clearSubject(): MagazineLog;
 

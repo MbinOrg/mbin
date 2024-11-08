@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Message;
 use App\Entity\MessageThread;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Exception\NotValidCurrentPageException;
 use Pagerfanta\Pagerfanta;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -24,15 +27,16 @@ class MessageThreadRepository extends ServiceEntityRepository
 {
     public const PER_PAGE = 25;
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)
     {
         parent::__construct($registry, MessageThread::class);
     }
 
     public function findUserMessages(?User $user, int $page, int $perPage = self::PER_PAGE)
     {
-        $qb = $this->createQueryBuilder('mt')
-            ->where(':user MEMBER OF mt.participants')
+        $qb = $this->createQueryBuilder('mt');
+        $qb->where(':user MEMBER OF mt.participants')
+            ->andWhere($qb->expr()->exists('SELECT m FROM '.Message::class.' m WHERE m.thread = mt'))
             ->orderBy('mt.updatedAt', 'DESC')
             ->setParameter(':user', $user);
 
@@ -45,5 +49,45 @@ class MessageThreadRepository extends ServiceEntityRepository
         }
 
         return $pager;
+    }
+
+    /**
+     * @param User[] $participants
+     *
+     * @return MessageThread[] the message threads that contain the participants and no one else, order by their updated date (last message)
+     *
+     * @throws Exception
+     */
+    public function findByParticipants(array $participants): array
+    {
+        $this->logger->debug('looking for thread with participants: {p}', ['p' => array_map(fn (User $u) => $u->username, $participants)]);
+        $whereString = '';
+        $parameters = [':ctn' => \sizeof($participants)];
+        $i = 0;
+        foreach ($participants as $participant) {
+            $whereString .= "AND EXISTS(SELECT * FROM message_thread_participants mtp WHERE mtp.message_thread_id = mt.id AND mtp.user_id = :p$i)";
+            $parameters["p$i"] = $participant->getId();
+            ++$i;
+        }
+        $sql = "SELECT mt.id FROM message_thread mt
+                WHERE (SELECT COUNT(*) FROM message_thread_participants mtp WHERE mtp.message_thread_id = mt.id) = :ctn $whereString
+                ORDER BY mt.updated_at DESC";
+        $em = $this->getEntityManager();
+        $results = $em->getConnection()
+            ->prepare($sql)
+            ->executeQuery($parameters)
+            ->fetchAllAssociative();
+
+        $this->logger->debug('got results for query {q}: {r}', ['q' => $sql, 'r' => $results]);
+        if (\sizeof($results) > 0) {
+            $ids = [];
+            foreach ($results as $result) {
+                $ids[] = $result['id'];
+            }
+
+            return $this->findBy(['id' => $ids], ['updatedAt' => 'DESC']);
+        }
+
+        return [];
     }
 }

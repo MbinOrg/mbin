@@ -4,6 +4,7 @@
     flex-direction: row;
     justify-content: center;
     margin-bottom: 2.5rem;
+    opacity: .75;
 
     div {
       align-items: center;
@@ -36,8 +37,6 @@
       position: relative;
       right: 1px;
     }
-
-    opacity: .75;
   }
 
   &__name {
@@ -333,4 +332,8 @@ td .user__actions {
     align-items: center;
     margin-bottom: 1rem;
   }
+}
+
+.new-user-icon {
+  color: green;
 }

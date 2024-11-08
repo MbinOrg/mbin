@@ -1,8 +1,8 @@
-FROM php:8.2-fpm-alpine as base
+FROM php:8.3-fpm-alpine as base
 
 # Install php extensions, by docker-php-extension-installer
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
-RUN install-php-extensions amqp pgsql pdo_pgsql gd curl simplexml dom xml redis intl opcache apcu pcntl exif
+RUN install-php-extensions amqp bcmath pgsql pdo_pgsql gd curl simplexml dom xml redis intl opcache apcu pcntl exif
 
 # Install composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -36,7 +36,7 @@ RUN chown -R $USER:$GROUP /usr/local/etc/php-fpm.d
 
 ####################
 
-FROM caddy:2.7-builder-alpine AS builder-caddy
+FROM caddy:2.8.4-builder-alpine AS builder-caddy
 
 # Build Caddy with the Mercure and Vulcain and brotil cache modules
 RUN xcaddy build \
@@ -65,7 +65,7 @@ RUN composer run-script --no-dev post-install-cmd && \
 
 ####################
 
-FROM node:alpine as builder-nodejs
+FROM node:22.5.1-alpine3.20 as builder-nodejs
 
 # Set NodeJS as production by default
 ARG NODE_ENV=production

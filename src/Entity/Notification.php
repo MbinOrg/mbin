@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Traits\CreatedAtTrait;
+use App\Payloads\PushNotification;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Doctrine\ORM\Mapping\DiscriminatorMap;
@@ -14,6 +15,8 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\InheritanceType;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Entity]
 #[InheritanceType('SINGLE_TABLE')]
@@ -39,6 +42,9 @@ use Doctrine\ORM\Mapping\ManyToOne;
     'post_comment_mentioned' => 'PostCommentMentionedNotification',
     'message' => 'MessageNotification',
     'ban' => 'MagazineBanNotification',
+    'report_created' => 'ReportCreatedNotification',
+    'report_approved' => 'ReportApprovedNotification',
+    'report_rejected' => 'ReportRejectedNotification',
 ])]
 abstract class Notification
 {
@@ -71,4 +77,6 @@ abstract class Notification
     }
 
     abstract public function getType(): string;
+
+    abstract public function getMessage(TranslatorInterface $trans, string $locale, UrlGeneratorInterface $urlGenerator): PushNotification;
 }

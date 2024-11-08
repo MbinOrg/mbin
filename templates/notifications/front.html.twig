@@ -17,21 +17,31 @@
     <h1>{{ 'notifications'|trans }}</h1>
 
     <div class="pills">
-        <menu>
+        <div>
             <form action="{{ path('notifications_read') }}" method="POST" class="me-2">
-                <input type="hidden" name="token" value="{{ csrf_token('read_notifications') }}">
                 <button class="btn btn__primary" type="submit">
                     {{ 'read_all'|trans }}
                 </button>
             </form>
             <form method="post" action="{{ path('notifications_clear') }}"
                   data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
-                <input type="hidden" name="token" value="{{ csrf_token('clear_notifications') }}">
                 <button class="btn btn__secondary" type="submit">
                     <i class="fa-solid fa-dumpster" aria-hidden="true"></i> <span>{{ 'purge'|trans }}</span>
                 </button>
             </form>
-        </menu>
+
+            <div data-controller="push" id="push-subscription-div" data-application-server-public-key="{{ applicationServerKey }}" style="margin-left: auto;">
+                <button id="push-subscription-test-btn" data-action="push#testPush" class="btn btn__secondary" style="height: auto;">
+                    {{ 'test_push_notifications_button'|trans }}
+                </button>
+                <button id="push-subscription-register-btn" data-action="push#registerPush" class="btn btn__primary" style="height: auto;">
+                    {{ 'register_push_notifications_button'|trans }}
+                </button>
+                <button id="push-subscription-unregister-btn" data-action="push#unregisterPush" class="btn btn__secondary" style="height: auto;">
+                    {{ 'unregister_push_notifications_button'|trans }}
+                </button>
+            </div>
+        </div>
 
     </div>
 

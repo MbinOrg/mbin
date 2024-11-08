@@ -29,7 +29,7 @@ class MagazineEditController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->manager->edit($magazine, $magazineDto);
+            $this->manager->edit($magazine, $magazineDto, $this->getUserOrThrow());
 
             $this->addFlash('success', 'flash_magazine_edit_success');
 

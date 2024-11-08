@@ -6,14 +6,14 @@ namespace App\Service\ActivityPub;
 
 use App\Service\ActivityPubManager;
 use App\Service\MentionManager;
-use App\Service\TagManager;
+use App\Service\TagExtractor;
 use League\HTMLToMarkdown\Converter\TableConverter;
 use League\HTMLToMarkdown\HtmlConverter;
 
 class MarkdownConverter
 {
     public function __construct(
-        private readonly TagManager $tagManager,
+        private readonly TagExtractor $tagExtractor,
         private readonly MentionManager $mentionManager,
         private readonly ActivityPubManager $activityPubManager
     ) {
@@ -37,7 +37,7 @@ class MarkdownConverter
                 $value = str_replace($match[0], $replace, $value);
             }
 
-            if ($this->tagManager->extract($match[1])) {
+            if ($this->tagExtractor->extract($match[1])) {
                 $value = str_replace($match[0], $match[1], $value);
             }
         }

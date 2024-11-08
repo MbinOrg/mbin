@@ -1,0 +1,246 @@
+add: Magdagdag
+people: Mga tao
+oldest: Pinakaluma
+owner: May-ari
+replies: Mga tugon
+sort_by: Isaayos ayon sa
+more: Higit pa
+favourites: Mga paborito
+newest: Pinakabago
+search: Maghanap
+added: Idinagdag
+show_more: Ipakita ang higit pa
+in: sa
+rules: Mga patakaran
+followers: Mga tagasunod
+following: Sinusundan
+go_to_content: Pumunta sa nilalaman
+all: Lahat
+3h: 3o
+report: Iulat
+reason: Dahilan
+reports: Mga pagulat
+dark: Madilim
+light: Maliwanag
+title: Pamagat
+try_again: Subukang muli
+from: mula
+about_instance: Tungkol dito
+help: Tulong
+add_new: Magdagdag ng bago
+6h: 6o
+1m: 1b
+1y: 1t
+12h: 12o
+1w: 1l
+1d: 1a
+save: IImbak
+subscription_sort: Isaayos
+up_votes: Mga pagpalakas
+down_votes: Mga pagpahina
+created_at: Ginawa
+comments: Mga Puna
+add_comment: Magdagdag ng puna
+enter_your_comment: Ipasok ang iyong puna
+login: Mag-log in
+active: Aktibo
+no_comments: Walang mga puna
+moderators: Mga tagatimpi
+mod_log: Talaan ng pagtitimpi
+add_post: Magdagdag ng post
+activity: Aktibidad
+cover: Pangtakip
+empty: Walang laman
+follow: Sundan
+unfollow: Huwag sundan
+reply: Tumugon
+register: Mag-rehistro
+to: sa
+up_vote: Palakasin
+down_vote: Pahinain
+copy_url: Kopyahin ang URL sa Mbin
+copy_url_to_fediverse: Kopyahin ang orihinal na URL
+delete: Burahin
+about: Tungkol dito
+off: Nakapatay
+reject: Tanggihan
+done: Tapos na
+change: Baguhin
+preview: Paunang tingin
+content: Nilalaman
+week: Linggo
+weeks: (na) linggo
+month: Buwan
+months: (na) buwan
+year: Taon
+send: Ipadala
+delete_account: Tanggalin ang account
+purge_account: Purgahin ang account
+return: Bumalik
+followers_count: '{0}Mga tagasunod|{1}Tagasunod|]1,Inf[Mga tagasunod'
+marked_for_deletion: Naka-marka para sa pagbura
+marked_for_deletion_at: Naka-marka para sa pagbura sa %date%
+enter_your_post: Ipasok ang iyong post
+comments_count: '{0}Mga puna|{1}Puna|]1,Inf[ Mga puna'
+notifications: Mga abiso
+blocked: Hinarangan
+show_profile_followings: Ipakita ang mga sinusundan na tagagamit
+expand: Palakihin
+size: Laki
+left: Kaliwa
+right: Kanan
+on: Pinagana
+ban: Bawalan
+rejected: Tinatanggihan
+bans: Mga pagbawal
+created: Ginawa
+pages: Mga pahina
+Your account is not active: Hindi aktibo ang iyong account.
+ban_account: Bawalan ang account
+Your account has been banned: Binabawalan na ang iyong account.
+mercure_enabled: Pinagana ang Mercure
+filter.adult.show: Ipakita ang NSFW
+filter.adult.only: NSFW lamang
+filter.adult.hide: Itago ang NSFW
+filter.fields.names_and_descriptions: Mga pamagat at paglalarawan
+filter.fields.only_names: Mga pamagat lamang
+your_account_has_been_banned: Binabawalan na ang iyong account
+errors.server403.title: 403 Ipinagbabawal
+errors.server500.title: 500 Pangloob na pagkamali sa Serbiro
+block: Harangan
+oauth.consent.allow: Payagan
+oauth2.grant.moderate.magazine_admin.create: Gumawa ng mga bagong magasin.
+oauth2.grant.moderate.magazine_admin.delete: Burahin ang ilan sa mga magasin na pinag-aari
+  mo.
+oauth2.grant.moderate.magazine_admin.all: Gawin, baguhin, o burahin ang mga magasin
+  na pinag-aari mo.
+moderation.report.reject_report_title: Tanggihan ang Ulat
+moderation.report.ban_user_description: Nais mo bang bawalan ang tagagamit (%username%)
+  na gumagawa ng nilalaman na ito mula sa magasin na ito?
+subject_reported_exists: Inuulat na ang nilalaman na ito.
+purge_content: Purgahin ang nilalaman
+moderation.report.approve_report_confirmation: Sigorado ka bang nais mo na aprubahin
+  ang ulat na ito?
+ban_hashtag_btn: Bawalan ang Hashtag
+errors.server429.title: 429 Masyadong Maraming mga Hiling
+errors.server404.title: 404 Hindi nakita
+oauth.consent.to_allow_access: Upang payagan ang access, pindutin ang pindutang 'Payagan'
+  sa ilalim
+moderation.report.approve_report_title: Aprubahin ang Ulat
+moderation.report.ban_user_title: Bawalan ang Tagagamit
+delete_content: Tanggalin ang nilalaman
+oauth.consent.deny: Tanggihan
+type.magazine: Magasin
+magazine: Magasin
+magazines: Mga magasin
+dont_have_account: Wala bang account?
+you_cant_login: Nakalimutan ang password?
+repeat_password: Ulitin ang password
+all_magazines: Lahat ng mga magasin
+create_new_magazine: Gumawa ng bagong magasin
+change_theme: Palitan ang tema
+select_magazine: Pumili ng magasin
+joined: Sumali noong
+logout: Mag log out
+share_on_fediverse: Ibahagi sa Fediverse
+edit: Baguhin
+are_you_sure: Sigurado ka ba?
+share: Ibahagi
+votes: Mga boto
+yes: Oo
+no: Hindi
+subject_reported: Iniulat na ang nilalaman na ito.
+online: Nasa linya
+markdown_howto: Paano gumagana ang editor?
+random_posts: Pasadyang mga post
+related_posts: Kaugnay na mga post
+remember_me: Tandaan ako
+terms: Mga tuntunin ng serbisyo
+stats: Istatistika
+body: Katawan
+name: Pamagat
+description: Paglalarawan
+go_to_search: Pumunta sa paghahanap
+messages: Mga mensahe
+featured_magazines: Itinatampok na mga magasin
+notify_on_new_post_reply: Mga tugon ng anumang antas sa mga post na inaakda ko
+notify_on_new_post_comment_reply: Mga tugon sa aking puna sa anumang mga post
+theme: Tema
+boosts: Mga pagpalakas
+read_all: Basahin lahat
+flash_magazine_edit_success: Matagumpay na nabago ang magasin na ito.
+banned: Binawalan ka
+send_message: Magpadala ng direktang mensahe
+message: Mensahe
+status: Katayuan
+change_language: Baguhin ang wika
+change_magazine: baguhin ang magasin
+mark_as_adult: Markahin bilang NSFW
+registrations_enabled: Pinagana ang pagrehistro
+registration_disabled: Nakapatay ang pagrehistro
+report_issue: Iulat ang isyu
+kbin_bot: Ahente sa Mbin
+account_deletion_title: Pagbura ng account
+account_deletion_button: Burahin ang account
+more_from_domain: Higit pa mula sa domain
+single_settings: Pang-isahan
+continue_with: Magpatuloy gamit ang
+purge: Purgahin
+show_all: Ipakita lahat
+deleted: Tinanggal ng may-akda
+mentioned_you: Binabanggit sa iyo
+filter_by_type: Salain ayon sa uri
+alphabetically: Paalpabetiko
+cancel: Kanselahin
+position_top: Itaas
+pending: Nakabinbin
+close: Isara
+direct_message: Direktang mensahe
+top: Pinakamahusay
+edited_post: Binago ang post
+edited_comment: Binago ang puna
+last_active: Huling Aktibo
+comment_reply_position: Posisyon ng tugon sa puna
+position_bottom: Ibaba
+edited: binago
+and: at
+back: Bumalik
+mod_remove_your_post: Binura ang iyong post ng isang tagatimpi
+moderation.report.reject_report_confirmation: Sigurado ka bang tanggihan ang ulat
+  na ito?
+open_url_to_fediverse: Buksan ang orihinal na URL
+deletion: Pagbura
+delete_magazine: Burahin ang magasin
+details: Mga detalye
+deleted_by_author: Binura ng may-akda ang [thread], [post] o puna
+report_accepted: Natanggap ang isang ulat
+own_content_reported_accepted: Natanggap ang isang ulat ng iyong nilalaman.
+own_report_accepted: Natanggap ang iyong ulat
+own_report_rejected: Naitanggi ang iyong ulat
+reported_user: Iniulat na tagagamit
+reporting_user: Paguulat sa tagagamit
+last_successful_receive: Huling matagumpay na pagtanggap
+notification_title_message: Bagong direktang mensahe
+hide: Itago
+show: Ipakita
+purge_magazine: Purgahin ang magasin
+sensitive_hide: Pindutin upang itago
+sensitive_show: Pindutin upang ipakita
+sensitive_warning: Sensitibong nilalaman
+notification_title_mention: Binabanggit ka
+notification_title_edited_comment: Nabago ang puna
+notification_title_new_reply: Bagong tugon
+notification_title_removed_comment: Natanggal ang puna
+notification_title_ban: Binabawalan ka
+max_image_size: Pinakamataas na laki ng file
+hidden: Nakatago
+enabled: Pinagana
+notification_title_new_report: Nagawa ang isang bagong ulat
+notification_title_edited_post: Nabago ang isang post
+notification_title_removed_post: Natanggal ang isang post
+magazine_posting_restricted_to_mods_warning: Mga tagatimpi lamang ang gumagawa ng
+  mga thread sa magasin na ito
+open_report: nakabukas na ulat
+already_have_account: Mayroon ka na bang account?
+eng: ENG
+comment_not_found: Hindi nakita ang puna

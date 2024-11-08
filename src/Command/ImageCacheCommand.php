@@ -50,6 +50,9 @@ class ImageCacheCommand extends Command
             ->getArrayResult();
 
         foreach ($res as $image) {
+            if (!$image['filePath']) {
+                continue;
+            }
             $command = $this->getApplication()->find('liip:imagine:cache:resolve');
 
             $arguments = [
@@ -57,8 +60,8 @@ class ImageCacheCommand extends Command
                 '--filter' => ['avatar_thumb'],
             ];
 
-            $greetInput = new ArrayInput($arguments);
-            $returnCode = $command->run($greetInput, new NullOutput());
+            $input = new ArrayInput($arguments);
+            $returnCode = $command->run($input, new NullOutput());
         }
     }
 
@@ -71,6 +74,9 @@ class ImageCacheCommand extends Command
             ->getArrayResult();
 
         foreach ($res as $image) {
+            if (!$image['filePath']) {
+                continue;
+            }
             $command = $this->getApplication()->find('liip:imagine:cache:resolve');
 
             $arguments = [
@@ -78,8 +84,8 @@ class ImageCacheCommand extends Command
                 '--filter' => ['entry_thumb'],
             ];
 
-            $greetInput = new ArrayInput($arguments);
-            $returnCode = $command->run($greetInput, new NullOutput());
+            $input = new ArrayInput($arguments);
+            $returnCode = $command->run($input, new NullOutput());
         }
     }
 
@@ -92,6 +98,9 @@ class ImageCacheCommand extends Command
             ->getArrayResult();
 
         foreach ($res as $image) {
+            if (!$image['filePath']) {
+                continue;
+            }
             $command = $this->getApplication()->find('liip:imagine:cache:resolve');
 
             $arguments = [
@@ -99,8 +108,8 @@ class ImageCacheCommand extends Command
                 '--filter' => ['post_thumb'],
             ];
 
-            $greetInput = new ArrayInput($arguments);
-            $returnCode = $command->run($greetInput, new NullOutput());
+            $input = new ArrayInput($arguments);
+            $returnCode = $command->run($input, new NullOutput());
         }
     }
 
@@ -113,6 +122,9 @@ class ImageCacheCommand extends Command
             ->getArrayResult();
 
         foreach ($res as $image) {
+            if (!$image['filePath']) {
+                continue;
+            }
             $command = $this->getApplication()->find('liip:imagine:cache:resolve');
 
             $arguments = [
@@ -120,8 +132,8 @@ class ImageCacheCommand extends Command
                 '--filter' => ['post_thumb'],
             ];
 
-            $greetInput = new ArrayInput($arguments);
-            $returnCode = $command->run($greetInput, new NullOutput());
+            $input = new ArrayInput($arguments);
+            $returnCode = $command->run($input, new NullOutput());
         }
     }
 
@@ -134,6 +146,9 @@ class ImageCacheCommand extends Command
             ->getArrayResult();
 
         foreach ($res as $image) {
+            if (!$image['filePath']) {
+                continue;
+            }
             $command = $this->getApplication()->find('liip:imagine:cache:resolve');
 
             $arguments = [
@@ -141,8 +156,8 @@ class ImageCacheCommand extends Command
                 '--filter' => ['post_thumb'],
             ];
 
-            $greetInput = new ArrayInput($arguments);
-            $returnCode = $command->run($greetInput, new NullOutput());
+            $input = new ArrayInput($arguments);
+            $returnCode = $command->run($input, new NullOutput());
         }
     }
 
@@ -155,6 +170,9 @@ class ImageCacheCommand extends Command
             ->getArrayResult();
 
         foreach ($res as $image) {
+            if (!$image['filePath']) {
+                continue;
+            }
             $command = $this->getApplication()->find('liip:imagine:cache:resolve');
 
             $arguments = [
@@ -162,8 +180,8 @@ class ImageCacheCommand extends Command
                 '--filter' => ['post_thumb'],
             ];
 
-            $greetInput = new ArrayInput($arguments);
-            $returnCode = $command->run($greetInput, new NullOutput());
+            $input = new ArrayInput($arguments);
+            $returnCode = $command->run($input, new NullOutput());
         }
     }
 }

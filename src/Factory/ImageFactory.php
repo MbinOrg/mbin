@@ -32,6 +32,7 @@ class ImageFactory
             $image->altText,
             $image->sourceUrl,
             $this->imageManager->getUrl($image),
+            $image->blurhash,
         );
     }
 }

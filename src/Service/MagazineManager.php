@@ -19,6 +19,7 @@ use App\Event\Magazine\MagazineBlockedEvent;
 use App\Event\Magazine\MagazineModeratorAddedEvent;
 use App\Event\Magazine\MagazineModeratorRemovedEvent;
 use App\Event\Magazine\MagazineSubscribedEvent;
+use App\Event\Magazine\MagazineUpdatedEvent;
 use App\Exception\UserCannotBeBanned;
 use App\Factory\MagazineFactory;
 use App\Message\DeleteImageMessage;
@@ -56,7 +57,7 @@ class MagazineManager
     ) {
     }
 
-    public function create(MagazineDto $dto, User $user, bool $rateLimit = true): Magazine
+    public function create(MagazineDto $dto, ?User $user, bool $rateLimit = true): Magazine
     {
         if (!$dto->apId && true === $this->settingsManager->get('MBIN_RESTRICT_MAGAZINE_CREATION') && !$user->isAdmin() && !$user->isModerator()) {
             throw new AccessDeniedException();
@@ -72,6 +73,7 @@ class MagazineManager
         $magazine = $this->factory->createFromDto($dto, $user);
         $magazine->apId = $dto->apId;
         $magazine->apProfileId = $dto->apProfileId;
+        $magazine->apFeaturedUrl = $dto->apFeaturedUrl;
 
         if (!$dto->apId) {
             $magazine = KeysGenerator::generate($magazine);
@@ -132,7 +134,7 @@ class MagazineManager
         $this->dispatcher->dispatch(new MagazineSubscribedEvent($magazine, $user));
     }
 
-    public function edit(Magazine $magazine, MagazineDto $dto): Magazine
+    public function edit(Magazine $magazine, MagazineDto $dto, User $editedBy): Magazine
     {
         Assert::same($magazine->name, $dto->name);
 
@@ -140,8 +142,11 @@ class MagazineManager
         $magazine->description = $dto->description;
         $magazine->rules = $dto->rules;
         $magazine->isAdult = $dto->isAdult;
+        $magazine->postingRestrictedToMods = $dto->isPostingRestrictedToMods;
 
         $this->entityManager->flush();
+
+        $this->dispatcher->dispatch(new MagazineUpdatedEvent($magazine, $editedBy));
 
         return $magazine;
     }
@@ -290,7 +295,7 @@ class MagazineManager
 
             $background = $background ? "#middle { background: url($background); height: 100%; }" : null;
             if ($background) {
-                $customCss = sprintf('%s %s', $customCss, $background);
+                $customCss = \sprintf('%s %s', $customCss, $background);
             }
         }
 

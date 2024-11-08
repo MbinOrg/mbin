@@ -21,7 +21,7 @@ class GroupFactory
     ) {
     }
 
-    public function create(Magazine $magazine): array
+    public function create(Magazine $magazine, bool $includeContext = true): array
     {
         $markdownSummary = $magazine->description ?? '';
 
@@ -55,6 +55,11 @@ class GroupFactory
                 ['name' => $magazine->name],
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
+            'featured' => $this->urlGenerator->generate(
+                'ap_magazine_pinned',
+                ['name' => $magazine->name],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            ),
             'url' => $this->getActivityPubId($magazine),
             'publicKey' => [
                 'owner' => $this->getActivityPubId($magazine),
@@ -72,7 +77,7 @@ class GroupFactory
                 ['name' => $magazine->name],
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
-            'postingRestrictedToMods' => false,
+            'postingRestrictedToMods' => $magazine->postingRestrictedToMods,
             'endpoints' => [
                 'sharedInbox' => $this->urlGenerator->generate(
                     'ap_shared_inbox',
@@ -91,6 +96,10 @@ class GroupFactory
                 'type' => 'Image',
                 'url' => $this->imageManager->getUrl($magazine->icon),
             ];
+        }
+
+        if (!$includeContext) {
+            unset($group['@context']);
         }
 
         return $group;

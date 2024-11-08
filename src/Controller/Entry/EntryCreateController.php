@@ -7,16 +7,24 @@ namespace App\Controller\Entry;
 use App\Controller\AbstractController;
 use App\DTO\EntryDto;
 use App\Entity\Magazine;
+use App\Exception\ImageDownloadTooLargeException;
+use App\Exception\PostingRestrictedException;
+use App\Exception\TagBannedException;
 use App\PageView\EntryPageView;
 use App\Repository\Criteria;
+use App\Repository\TagLinkRepository;
+use App\Repository\TagRepository;
 use App\Service\EntryCommentManager;
 use App\Service\EntryManager;
 use App\Service\IpResolver;
+use App\Service\SettingsManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EntryCreateController extends AbstractController
 {
@@ -24,6 +32,11 @@ class EntryCreateController extends AbstractController
     use EntryFormTrait;
 
     public function __construct(
+        private readonly TranslatorInterface $translator,
+        private readonly SettingsManager $settingsManager,
+        private readonly LoggerInterface $logger,
+        private readonly TagLinkRepository $tagLinkRepository,
+        private readonly TagRepository $tagRepository,
         private readonly EntryManager $manager,
         private readonly EntryCommentManager $commentManager,
         private readonly ValidatorInterface $validator,
@@ -37,6 +50,7 @@ class EntryCreateController extends AbstractController
         $dto = new EntryDto();
         $dto->magazine = $magazine;
         $user = $this->getUserOrThrow();
+        $maxBytes = $this->settingsManager->getMaxImageByteString();
 
         $form = $this->createFormByType((new EntryPageView(1))->resolveType($type), $dto);
         try {
@@ -44,6 +58,7 @@ class EntryCreateController extends AbstractController
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
+                /** @var EntryDto $dto */
                 $dto = $form->getData();
                 $dto->ip = $this->ipResolver->resolve();
 
@@ -52,6 +67,15 @@ class EntryCreateController extends AbstractController
                 }
 
                 $entry = $this->manager->create($dto, $this->getUserOrThrow());
+                foreach ($dto->tags ?? [] as $tag) {
+                    $hashtag = $this->tagRepository->findOneBy(['tag' => $tag]);
+                    if (!$hashtag) {
+                        $hashtag = $this->tagRepository->create($tag);
+                    } elseif ($this->tagLinkRepository->entryHasTag($entry, $hashtag)) {
+                        continue;
+                    }
+                    $this->tagLinkRepository->addTagToEntry($entry, $hashtag);
+                }
 
                 $this->addFlash('success', 'flash_thread_new_success');
 
@@ -67,12 +91,14 @@ class EntryCreateController extends AbstractController
                     'magazine' => $magazine,
                     'user' => $user,
                     'form' => $form->createView(),
+                    'maxSize' => $maxBytes,
                 ],
                 new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200)
             );
-        } catch (\Exception $e) {
+        } catch (TagBannedException $e) {
             // Show an error to the user
-            $this->addFlash('error', 'flash_thread_new_error');
+            $this->addFlash('error', 'flash_thread_tag_banned_error');
+            $this->logger->error($e);
 
             return $this->render(
                 $this->getTemplateName((new EntryPageView(1))->resolveType($type)),
@@ -80,6 +106,50 @@ class EntryCreateController extends AbstractController
                     'magazine' => $magazine,
                     'user' => $user,
                     'form' => $form->createView(),
+                    'maxSize' => $maxBytes,
+                ],
+                new Response(null, 422)
+            );
+        } catch (PostingRestrictedException $e) {
+            $this->addFlash('error', 'flash_posting_restricted_error');
+            $this->logger->error($e);
+
+            return $this->render(
+                $this->getTemplateName((new EntryPageView(1))->resolveType($type)),
+                [
+                    'magazine' => $magazine,
+                    'user' => $user,
+                    'form' => $form->createView(),
+                    'maxSize' => $maxBytes,
+                ],
+                new Response(null, 422)
+            );
+        } catch (ImageDownloadTooLargeException $e) {
+            $this->addFlash('error', $this->translator->trans('flash_image_download_too_large_error', ['%bytes%' => $maxBytes]));
+            $this->logger->error($e);
+
+            return $this->render(
+                $this->getTemplateName((new EntryPageView(1))->resolveType($type)),
+                [
+                    'magazine' => $magazine,
+                    'user' => $user,
+                    'form' => $form->createView(),
+                    'maxSize' => $maxBytes,
+                ],
+                new Response(null, 422)
+            );
+        } catch (\Exception $e) {
+            // Show an error to the user
+            $this->addFlash('error', 'flash_thread_new_error');
+            $this->logger->error($e);
+
+            return $this->render(
+                $this->getTemplateName((new EntryPageView(1))->resolveType($type)),
+                [
+                    'magazine' => $magazine,
+                    'user' => $user,
+                    'form' => $form->createView(),
+                    'maxSize' => $maxBytes,
                 ],
                 new Response(null, 422)
             );

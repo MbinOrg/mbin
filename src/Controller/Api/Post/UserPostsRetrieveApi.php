@@ -144,7 +144,7 @@ class UserPostsRetrieveApi extends PostsBaseApi
             try {
                 \assert($value instanceof Post);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializePost($factory->createDto($value)));
+                array_push($dtos, $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfPost($value)));
             } catch (\Exception $e) {
                 continue;
             }

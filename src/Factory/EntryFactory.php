@@ -9,6 +9,7 @@ use App\DTO\EntryResponseDto;
 use App\Entity\Badge;
 use App\Entity\Entry;
 use App\Entity\User;
+use App\Repository\TagLinkRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class EntryFactory
@@ -20,6 +21,7 @@ class EntryFactory
         private readonly MagazineFactory $magazineFactory,
         private readonly UserFactory $userFactory,
         private readonly BadgeFactory $badgeFactory,
+        private readonly TagLinkRepository $tagLinkRepository,
     ) {
     }
 
@@ -38,7 +40,7 @@ class EntryFactory
         );
     }
 
-    public function createResponseDto(EntryDto|Entry $entry): EntryResponseDto
+    public function createResponseDto(EntryDto|Entry $entry, array $tags): EntryResponseDto
     {
         $dto = $entry instanceof Entry ? $this->createDto($entry) : $entry;
         $badges = $dto->badges ? array_map(fn (Badge $badge) => $this->badgeFactory->createDto($badge), $dto->badges->toArray()) : null;
@@ -53,7 +55,7 @@ class EntryFactory
             $dto->image,
             $dto->body,
             $dto->lang,
-            $dto->tags,
+            $tags,
             $badges,
             $dto->comments,
             $dto->uv,
@@ -95,7 +97,6 @@ class EntryFactory
         $dto->score = $entry->score;
         $dto->visibility = $entry->visibility;
         $dto->ip = $entry->ip;
-        $dto->tags = $entry->tags;
         $dto->createdAt = $entry->createdAt;
         $dto->editedAt = $entry->editedAt;
         $dto->lastActive = $entry->lastActive;
@@ -103,6 +104,10 @@ class EntryFactory
         $dto->isPinned = $entry->sticky;
         $dto->type = $entry->type;
         $dto->apId = $entry->apId;
+        $dto->apLikeCount = $entry->apLikeCount;
+        $dto->apDislikeCount = $entry->apDislikeCount;
+        $dto->apShareCount = $entry->apShareCount;
+        $dto->tags = $this->tagLinkRepository->getTagsOfEntry($entry);
 
         $currentUser = $this->security->getUser();
         // Only return the user's vote if permission to control voting has been given

@@ -61,7 +61,8 @@ cover: Cover
 related_posts: Related posts
 random_posts: Random posts
 federated_magazine_info: This magazine is from a federated server and may be incomplete.
-disconnected_magazine_info: This magazine is not receiving updates (last activity %days% day(s) ago).
+disconnected_magazine_info: This magazine is not receiving updates (last activity
+  %days% day(s) ago).
 always_disconnected_magazine_info: This magazine is not receiving updates.
 subscribe_for_updates: Subscribe to start receiving updates.
 federated_user_info: This profile is from a federated server and may be incomplete.
@@ -83,6 +84,7 @@ reset_password: Reset password
 show_more: Show more
 to: to
 in: in
+from: from
 username: Username
 email: Email
 repeat_password: Repeat password
@@ -104,6 +106,11 @@ contact: Contact
 faq: FAQ
 rss: RSS
 change_theme: Change theme
+downvotes_mode: Downvotes mode
+change_downvotes_mode: Change downvotes mode
+disabled: Disabled
+hidden: Hidden
+enabled: Enabled
 useful: Useful
 help: Help
 check_email: Check your email
@@ -125,6 +132,7 @@ url: URL
 title: Title
 body: Body
 tags: Tags
+tag: Tag
 badges: Badges
 is_adult: 18+ / NSFW
 eng: ENG
@@ -180,9 +188,7 @@ edit: Edit
 are_you_sure: Are you sure?
 moderate: Moderate
 reason: Reason
-edit_link: Edit link
-edit_article: Edit thread
-edit_photo: Edit photo
+edit_entry: Edit thread
 delete: Delete
 edit_post: Edit post
 edit_comment: Save changes
@@ -290,7 +296,7 @@ comment: Comment
 post: Post
 ban_expired: Ban expired
 purge: Purge
-send_message: Send message
+send_message: Send direct message
 message: Message
 infinite_scroll: Infinite scrolling
 show_top_bar: Show top bar
@@ -310,6 +316,13 @@ magazine_panel: Magazine panel
 reject: Reject
 approve: Approve
 ban: Ban
+unban: Unban
+ban_hashtag_btn: Ban Hashtag
+ban_hashtag_description: Banning a hashtag will stop posts with this hashtag from
+  being created, as well as hiding existing posts with this hashtag.
+unban_hashtag_btn: Unban Hashtag
+unban_hashtag_description: Unbanning a hashtag will allow creating posts with this
+  hashtag again. Existing posts with this hashtag are no longer hidden.
 filters: Filters
 approved: Approved
 rejected: Rejected
@@ -353,7 +366,6 @@ meta: Meta
 instance: Instance
 pages: Pages
 FAQ: FAQ
-inactive: Inactive
 type_search_term: Type search term
 federation_enabled: Federation enabled
 registrations_enabled: Registration enabled
@@ -436,15 +448,20 @@ toolbar.image: Image
 toolbar.unordered_list: Unordered List
 toolbar.ordered_list: Ordered List
 toolbar.mention: Mention
+toolbar.spoiler: Spoiler
 federation_page_enabled: Federation page enabled
 federation_page_allowed_description: Known instances we federate with
 federation_page_disallowed_description: Instances we do not federate with
+federation_page_dead_title: Dead instances
+federation_page_dead_description: Instances that we could not deliver at least 10
+  activities in a row and where the last successful deliver was more than a week ago
 federated_search_only_loggedin: Federated search limited if not logged in
 sidebar_sections_local_only: Restrict "Random X" and "Active People" sections to local
   only
 account_deletion_title: Account deletion
-account_deletion_description: Your account will be deleted in 30 days unless you choose to delete the account immediately.
-  The account cannot be restored once deleted.
+account_deletion_description: Your account will be deleted in 30 days unless you choose
+  to delete the account immediately. To restore your account within 30 days, login with
+  the same user credentials or contact an administrator.
 account_deletion_button: Delete Account
 account_deletion_immediate: Delete immediately
 more_from_domain: More from domain
@@ -678,14 +695,14 @@ delete_content_desc: Delete the user's content while leaving the responses of ot
   users in the created threads, posts and comments.
 purge_content_desc: Completely purge the user's content, including deleting the responses
   of other users in created threads, posts and comments.
-delete_account_desc: Delete the account, including the responses
-  of other users in created threads, posts and comments.
+delete_account_desc: Delete the account, including the responses of other users in
+  created threads, posts and comments.
 schedule_delete_account: Schedule Deletion
-schedule_delete_account_desc: Schedule the deletion of this account in 30 days.
-  This will hide the user and their content as well as prevent the user from logging in.
+schedule_delete_account_desc: Schedule the deletion of this account in 30 days. This
+  will hide the user and their content as well as prevent the user from logging in.
 remove_schedule_delete_account: Remove Scheduled Deletion
-remove_schedule_delete_account_desc: Remove the scheduled deletion.
-  All the content will be available again and the user will be able to login.
+remove_schedule_delete_account_desc: Remove the scheduled deletion. All the content
+  will be available again and the user will be able to login.
 two_factor_authentication: Two-factor authentication
 two_factor_backup: Two-factor authentication backup codes
 2fa.authentication_code.label: Authentication Code
@@ -732,6 +749,8 @@ position_bottom: Bottom
 position_top: Top
 pending: Pending
 flash_thread_new_error: Thread could not be created. Something went wrong.
+flash_thread_tag_banned_error: Thread could not be created. The content is not allowed.
+flash_image_download_too_large_error: Image could not be created, it is too big (max size %bytes%)
 flash_email_was_sent: Email has been successfully sent.
 flash_email_failed_to_sent: Email could not be sent.
 flash_post_new_success: Post has been successfully created.
@@ -809,7 +828,73 @@ show: Show
 hide: Hide
 edited: edited
 sso_registrations_enabled: SSO registrations enabled
-sso_registrations_enabled.error: New account registrations with third-party identity managers are currently disabled.
+sso_registrations_enabled.error: New account registrations with third-party identity
+  managers are currently disabled.
 sso_only_mode: Restrict login and registration to SSO methods only
 related_entry: Related
-restrict_magazine_creation: Restrict local magazine creation to admins and global mods
+restrict_magazine_creation: Restrict local magazine creation to admins and global
+  mods
+sso_show_first: Show SSO first on login and registration pages
+continue_with: Continue with
+reported_user: Reported user
+reporting_user: Reporting user
+reported: reported
+report_subject: Subject
+own_report_rejected: Your report was rejected
+own_report_accepted: Your report was accepted
+own_content_reported_accepted: A report of your content was accepted.
+report_accepted: A report was accepted
+open_report: open report
+cake_day: Cake day
+someone: Someone
+back: Back
+magazine_log_mod_added: has added a moderator
+magazine_log_mod_removed: has removed a moderator
+magazine_log_entry_pinned: pinned entry
+magazine_log_entry_unpinned: removed pinned entry
+last_updated: Last updated
+and: and
+direct_message: Direct message
+manually_approves_followers: Manually approves followers
+register_push_notifications_button: Register For Push Notifications
+unregister_push_notifications_button: Remove Push Registration
+test_push_notifications_button: Test Push Notifications
+test_push_message: Hello World!
+notification_title_new_comment: New comment
+notification_title_removed_comment: A comment was removed
+notification_title_edited_comment: A comment was edited
+notification_title_mention: You were mentioned
+notification_title_new_reply: New Reply
+notification_title_new_thread: New thread
+notification_title_removed_thread: A thread was removed
+notification_title_edited_thread: A thread was edited
+notification_title_ban: You were banned
+notification_title_message: New direct message
+notification_title_new_post: New Post
+notification_title_removed_post: A post was removed
+notification_title_edited_post: A post was edited
+show_related_magazines: Show random magazines
+show_related_entries: Show random threads
+show_related_posts: Show random posts
+show_active_users: Show active users
+notification_title_new_report: A new report was created
+magazine_posting_restricted_to_mods_warning: Only mods can create threads in this
+  magazine
+flash_posting_restricted_error: Creating threads is restricted to mods in this magazine
+  and you are not one
+server_software: Server software
+version: Version
+last_successful_deliver: Last successful delivery
+last_successful_receive: Last successful receive
+last_failed_contact: Last failed contact
+magazine_posting_restricted_to_mods: Restrict thread creation to moderators
+new_user_description: This user is new (active for less than %days% days)
+new_magazine_description: This magazine is new (active for less than %days% days)
+admin_users_active: Active
+admin_users_inactive: Inactive
+admin_users_suspended: Suspended
+admin_users_banned: Banned
+user_verify: Activate account
+max_image_size: Maximum file size
+comment_not_found: Comment not found
+table_of_contents: Table of contents

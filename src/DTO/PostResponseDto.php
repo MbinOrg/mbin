@@ -36,28 +36,30 @@ class PostResponseDto implements \JsonSerializable
     public ?\DateTimeImmutable $createdAt = null;
     public ?\DateTimeImmutable $editedAt = null;
     public ?\DateTime $lastActive = null;
+    public ?bool $canAuthUserModerate = null;
 
     public static function create(
         int $id,
         UserSmallResponseDto $user,
         MagazineSmallResponseDto $magazine,
-        ImageDto $image = null,
-        string $body = null,
-        string $lang = null,
-        bool $isAdult = null,
+        ?ImageDto $image = null,
+        ?string $body = null,
+        ?string $lang = null,
+        ?bool $isAdult = null,
         bool $isPinned = false,
-        int $comments = null,
-        int $uv = null,
-        int $dv = null,
-        int $favouriteCount = null,
-        string $visibility = null,
-        array $tags = null,
-        array $mentions = null,
-        string $apId = null,
-        \DateTimeImmutable $createdAt = null,
-        \DateTimeImmutable $editedAt = null,
-        \DateTime $lastActive = null,
-        string $slug = null
+        ?int $comments = null,
+        ?int $uv = null,
+        ?int $dv = null,
+        ?int $favouriteCount = null,
+        ?string $visibility = null,
+        ?array $tags = null,
+        ?array $mentions = null,
+        ?string $apId = null,
+        ?\DateTimeImmutable $createdAt = null,
+        ?\DateTimeImmutable $editedAt = null,
+        ?\DateTime $lastActive = null,
+        ?string $slug = null,
+        ?bool $canAuthUserModerate = null,
     ): self {
         $dto = new PostResponseDto();
         $dto->postId = $id;
@@ -80,6 +82,7 @@ class PostResponseDto implements \JsonSerializable
         $dto->editedAt = $editedAt;
         $dto->lastActive = $lastActive;
         $dto->slug = $slug;
+        $dto->canAuthUserModerate = $canAuthUserModerate;
 
         return $dto;
     }
@@ -124,6 +127,7 @@ class PostResponseDto implements \JsonSerializable
             'editedAt' => $this->editedAt?->format(\DateTimeInterface::ATOM),
             'lastActive' => $this->lastActive?->format(\DateTimeInterface::ATOM),
             'slug' => $this->slug,
+            'canAuthUserModerate' => $this->canAuthUserModerate,
         ]);
     }
 }

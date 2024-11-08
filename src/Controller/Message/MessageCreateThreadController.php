@@ -7,6 +7,7 @@ namespace App\Controller\Message;
 use App\Controller\AbstractController;
 use App\Entity\User;
 use App\Form\MessageType;
+use App\Repository\MessageThreadRepository;
 use App\Service\MessageManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,16 +15,19 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class MessageCreateThreadController extends AbstractController
 {
-    public function __construct(private readonly MessageManager $manager)
-    {
+    public function __construct(
+        private readonly MessageManager $manager,
+        private readonly MessageThreadRepository $threadRepository,
+    ) {
     }
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('message', subject: 'receiver')]
     public function __invoke(User $receiver, Request $request): Response
     {
-        if ($receiver->apId) {
-            throw $this->createAccessDeniedException();
+        $threads = $this->threadRepository->findByParticipants([$this->getUserOrThrow(), $receiver]);
+        if ($threads && \sizeof($threads) > 0) {
+            return $this->redirectToRoute('messages_single', ['id' => $threads[0]->getId()]);
         }
 
         $form = $this->createForm(MessageType::class);

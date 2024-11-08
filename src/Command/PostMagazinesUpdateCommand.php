@@ -7,6 +7,7 @@ namespace App\Command;
 use App\Entity\Post;
 use App\Repository\MagazineRepository;
 use App\Repository\PostRepository;
+use App\Repository\TagLinkRepository;
 use App\Service\PostManager;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -22,6 +23,7 @@ class PostMagazinesUpdateCommand extends Command
     public function __construct(
         private readonly PostRepository $postRepository,
         private readonly PostManager $postManager,
+        private readonly TagLinkRepository $tagLinkRepository,
         private readonly MagazineRepository $magazineRepository
     ) {
         parent::__construct();
@@ -39,12 +41,10 @@ class PostMagazinesUpdateCommand extends Command
 
     private function handleMagazine(Post $post, OutputInterface $output): void
     {
-        if (!$post->tags) {
-            return;
-        }
+        $tags = $this->tagLinkRepository->getTagsOfPost($post);
 
         $output->writeln((string) $post->getId());
-        foreach ($post->tags as $tag) {
+        foreach ($tags as $tag) {
             if ($magazine = $this->magazineRepository->findOneByName($tag)) {
                 $output->writeln($magazine->name);
                 $this->postManager->changeMagazine($post, $magazine);

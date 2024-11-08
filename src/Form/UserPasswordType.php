@@ -18,13 +18,13 @@ class UserPasswordType extends AbstractType
     {
         $builder
             ->add('currentPassword', PasswordType::class, [
-                    'label' => 'current_password',
-                    'mapped' => false,
-                    'row_attr' => [
-                        'class' => 'password-preview',
-                        'data-controller' => 'password-preview',
-                    ],
-                ])
+                'label' => 'current_password',
+                'mapped' => false,
+                'row_attr' => [
+                    'class' => 'password-preview',
+                    'data-controller' => 'password-preview',
+                ],
+            ])
             ->add(
                 'plainPassword',
                 RepeatedType::class,

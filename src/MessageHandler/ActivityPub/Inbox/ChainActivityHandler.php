@@ -8,49 +8,74 @@ use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Exception\EntityNotFoundException;
+use App\Exception\InstanceBannedException;
+use App\Exception\TagBannedException;
+use App\Exception\UserBannedException;
+use App\Exception\UserDeletedException;
 use App\Message\ActivityPub\Inbox\AnnounceMessage;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\DislikeMessage;
 use App\Message\ActivityPub\Inbox\LikeMessage;
+use App\Message\Contracts\MessageInterface;
+use App\MessageHandler\MbinMessageHandler;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
+use App\Service\SettingsManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-class ChainActivityHandler
+class ChainActivityHandler extends MbinMessageHandler
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
         private readonly ApHttpClient $client,
         private readonly MessageBusInterface $bus,
         private readonly ApActivityRepository $repository,
         private readonly Note $note,
-        private readonly Page $page
+        private readonly Page $page,
+        private readonly SettingsManager $settingsManager,
     ) {
+        parent::__construct($this->entityManager);
     }
 
     public function __invoke(ChainActivityMessage $message): void
     {
+        $this->workWrapper($message);
+    }
+
+    public function doWork(MessageInterface $message): void
+    {
+        if (!($message instanceof ChainActivityMessage)) {
+            throw new \LogicException();
+        }
         $this->logger->debug('Got chain activity message: {m}', ['m' => $message]);
         if (!$message->chain || 0 === \sizeof($message->chain)) {
             return;
         }
-        $validObjectTypes = ['Page', 'Note', 'Article', 'Question'];
+        $validObjectTypes = ['Page', 'Note', 'Article', 'Question', 'Video'];
         $object = $message->chain[0];
         if (!\in_array($object['type'], $validObjectTypes)) {
             $this->logger->error('cannot get the dependencies of the object, its type {t} is not one we can handle. {m]', ['t' => $object['type'], 'm' => $message]);
 
             return;
         }
+        try {
+            $entity = $this->retrieveObject($object['id']);
+        } catch (InstanceBannedException) {
+            $this->logger->info('the instance is banned, url: {url}', ['url' => $object['id']]);
 
-        $entity = $this->retrieveObject($object['id']);
+            return;
+        }
 
         if (!$entity) {
-            $this->logger->error('could not retrieve all the dependencies of {o}', ['o' => $object]);
+            $this->logger->error('could not retrieve all the dependencies of {o}', ['o' => $object['id']]);
 
             return;
         }
@@ -68,8 +93,14 @@ class ChainActivityHandler
         }
     }
 
+    /**
+     * @throws \Exception if there was an unexpected exception
+     */
     private function retrieveObject(string $apUrl): Entry|EntryComment|Post|PostComment|null
     {
+        if ($this->settingsManager->isBannedInstance($apUrl)) {
+            throw new InstanceBannedException();
+        }
         try {
             $object = $this->client->getActivityObject($apUrl);
             if (!$object) {
@@ -105,14 +136,23 @@ class ChainActivityHandler
                     return $this->note->create($object);
                 case 'Page':
                 case 'Article':
+                case 'Video':
                     $this->logger->debug('creating page {o}', ['o' => $object]);
 
                     return $this->page->create($object);
                 default:
                     $this->logger->warning('Could not create an object from type {t} on {url}: {o}', ['t' => $object['type'], 'url' => $apUrl, 'o' => $object]);
             }
-        } catch (\Exception $e) {
+        } catch (UserBannedException) {
+            $this->logger->info('the user is banned, url: {url}', ['url' => $apUrl]);
+        } catch (UserDeletedException) {
+            $this->logger->info('the user is deleted, url: {url}', ['url' => $apUrl]);
+        } catch (TagBannedException) {
+            $this->logger->info('one of the used tags is banned, url: {url}', ['url' => $apUrl]);
+        } catch (EntityNotFoundException $e) {
             $this->logger->error('There was an exception while getting {url}: {ex} - {m}. {o}', ['url' => $apUrl, 'ex' => \get_class($e), 'm' => $e->getMessage(), 'o' => $e]);
+        } catch (InstanceBannedException) {
+            $this->logger->info('the instance is banned, url: {url}', ['url' => $apUrl]);
         }
 
         return null;

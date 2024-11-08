@@ -24,7 +24,7 @@ class PostEditSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onPostEdited(PostEditedEvent $event)
+    public function onPostEdited(PostEditedEvent $event): void
     {
         $this->bus->dispatch(new PostEditedNotificationMessage($event->post->getId()));
         if ($event->post->body) {
@@ -32,7 +32,7 @@ class PostEditSubscriber implements EventSubscriberInterface
         }
 
         if (!$event->post->apId) {
-            $this->bus->dispatch(new UpdateMessage($event->post->getId(), \get_class($event->post)));
+            $this->bus->dispatch(new UpdateMessage($event->post->getId(), \get_class($event->post), $event->editedBy->getId()));
         }
     }
 }

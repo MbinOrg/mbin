@@ -31,8 +31,8 @@ class MagazinePeopleFrontController extends AbstractController
                     $this->magazineRepository->findByActivity(),
                     fn ($val) => 'random' !== $val->name && $val !== $magazine
                 ),
-                'local' => $this->userRepository->findPeople($magazine),
-                'federated' => $this->userRepository->findPeople($magazine, true),
+                'local' => $this->userRepository->findUsersForMagazine($magazine),
+                'federated' => $this->userRepository->findUsersForMagazine($magazine, true),
             ]
         );
     }

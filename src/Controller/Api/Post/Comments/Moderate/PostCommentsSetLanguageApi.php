@@ -100,7 +100,7 @@ class PostCommentsSetLanguageApi extends PostsBaseApi
         $manager->flush();
 
         return new JsonResponse(
-            $this->serializePostComment($factory->createDto($comment)),
+            $this->serializePostComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfPostComment($comment)),
             headers: $headers
         );
     }

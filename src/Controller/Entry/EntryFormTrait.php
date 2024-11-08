@@ -12,11 +12,11 @@ use App\Form\EntryLinkType;
 use Symfony\Component\Form\FormInterface;
 
 /**
- * @method createForm(string $class)
+ * @method FormInterface createForm(string $class, mixed $data = null, array $options = [])
  */
 trait EntryFormTrait
 {
-    private function createFormByType(string $type, EntryDto $dto = null): FormInterface
+    private function createFormByType(string $type, ?EntryDto $dto = null): FormInterface
     {
         if (Entry::ENTRY_TYPE_ARTICLE === $type) {
             return $this->createForm(EntryArticleType::class, $dto);

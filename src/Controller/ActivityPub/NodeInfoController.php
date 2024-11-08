@@ -10,8 +10,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class NodeInfoController
 {
-    private const NODE_REL_v20 = 'http://nodeinfo.diaspora.software/ns/schema/2.0';
-    private const NODE_REL_v21 = 'http://nodeinfo.diaspora.software/ns/schema/2.1';
+    public const NODE_REL_v20 = 'http://nodeinfo.diaspora.software/ns/schema/2.0';
+    public const NODE_REL_v21 = 'http://nodeinfo.diaspora.software/ns/schema/2.1';
 
     public function __construct(
         private readonly NodeInfoFactory $nodeInfoFactory,

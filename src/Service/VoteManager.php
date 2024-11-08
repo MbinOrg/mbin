@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Contracts\VotableInterface;
+use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
 use App\Entity\Vote;
 use App\Event\VoteEvent;
 use App\Factory\VoteFactory;
+use App\Utils\DownvotesMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -23,7 +26,8 @@ class VoteManager
         private readonly VoteFactory $factory,
         private readonly RateLimiterFactory $voteLimiter,
         private readonly EventDispatcherInterface $dispatcher,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 
@@ -40,16 +44,42 @@ class VoteManager
             throw new AccessDeniedHttpException('Bots are not allowed to vote on items!');
         }
 
+        $downVotesMode = $this->settingsManager->getDownvotesMode();
+        if (DownvotesMode::Disabled === $downVotesMode && VotableInterface::VOTE_DOWN === $choice) {
+            throw new \LogicException('cannot downvote, because that is disabled');
+        }
+
         $vote = $votable->getUserVote($user);
         $votedAgain = false;
 
         if ($vote) {
             $votedAgain = true;
             $choice = $this->guessUserChoice($choice, $votable->getUserChoice($user));
+
+            if ($votable instanceof Entry || $votable instanceof EntryComment || $votable instanceof Post || $votable instanceof PostComment) {
+                if (VotableInterface::VOTE_UP === $vote->choice && null !== $votable->apShareCount) {
+                    --$votable->apShareCount;
+                } elseif (VotableInterface::VOTE_DOWN === $vote->choice && null !== $votable->apDislikeCount) {
+                    --$votable->apDislikeCount;
+                }
+
+                if (VotableInterface::VOTE_UP === $choice && null !== $votable->apShareCount) {
+                    ++$votable->apShareCount;
+                } elseif (VotableInterface::VOTE_DOWN === $choice && null !== $votable->apDislikeCount) {
+                    ++$votable->apDislikeCount;
+                }
+            }
+
             $vote->choice = $choice;
         } else {
             if (VotableInterface::VOTE_UP === $choice) {
                 return $this->upvote($votable, $user);
+            }
+
+            if ($votable instanceof Entry || $votable instanceof EntryComment || $votable instanceof Post || $votable instanceof PostComment) {
+                if (null !== $votable->apDislikeCount) {
+                    ++$votable->apDislikeCount;
+                }
             }
 
             $vote = $this->factory->create($choice, $votable, $user);
@@ -117,6 +147,12 @@ class VoteManager
             $votable->entry->lastActive = new \DateTime();
         }
 
+        if ($votable instanceof Entry || $votable instanceof EntryComment || $votable instanceof Post || $votable instanceof PostComment) {
+            if (null !== $votable->apShareCount) {
+                ++$votable->apShareCount;
+            }
+        }
+
         $this->entityManager->flush();
 
         $this->dispatcher->dispatch(new VoteEvent($votable, $vote, false));
@@ -135,6 +171,19 @@ class VoteManager
 
         if (!$vote) {
             return null;
+        }
+        if (VotableInterface::VOTE_UP === $vote->choice) {
+            if ($votable instanceof Entry || $votable instanceof EntryComment || $votable instanceof Post || $votable instanceof PostComment) {
+                if (null !== $votable->apShareCount) {
+                    --$votable->apShareCount;
+                }
+            }
+        } elseif (VotableInterface::VOTE_DOWN === $vote->choice) {
+            if ($votable instanceof Entry || $votable instanceof EntryComment || $votable instanceof Post || $votable instanceof PostComment) {
+                if (null !== $votable->apDislikeCount) {
+                    --$votable->apDislikeCount;
+                }
+            }
         }
 
         $vote->choice = VotableInterface::VOTE_NONE;

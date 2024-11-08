@@ -9,7 +9,9 @@ use App\DTO\EntryCommentResponseDto;
 use App\Entity\Contracts\VotableInterface;
 use App\Entity\EntryComment;
 use App\Factory\EntryCommentFactory;
+use App\Service\SettingsManager;
 use App\Service\VoteManager;
+use App\Utils\DownvotesMode;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Attributes as OA;
@@ -79,7 +81,8 @@ class EntryCommentsVoteApi extends EntriesBaseApi
         int $choice,
         VoteManager $manager,
         EntryCommentFactory $factory,
-        RateLimiterFactory $apiVoteLimiter
+        RateLimiterFactory $apiVoteLimiter,
+        SettingsManager $settingsManager,
     ): JsonResponse {
         $headers = $this->rateLimit($apiVoteLimiter);
 
@@ -87,11 +90,15 @@ class EntryCommentsVoteApi extends EntriesBaseApi
             throw new BadRequestHttpException('Vote must be either -1, 0, or 1');
         }
 
+        if (DownvotesMode::Disabled === $settingsManager->getDownvotesMode() && VotableInterface::VOTE_DOWN === $choice) {
+            throw new BadRequestHttpException('Downvotes are disabled!');
+        }
+
         // Rate limiting handled above
         $manager->vote($choice, $comment, $this->getUserOrThrow(), rateLimit: false);
 
         return new JsonResponse(
-            $this->serializeComment($factory->createDto($comment)),
+            $this->serializeComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfEntryComment($comment)),
             headers: $headers
         );
     }

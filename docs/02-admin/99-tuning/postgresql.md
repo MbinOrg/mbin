@@ -1,4 +1,4 @@
-### PostgreSQL tuning
+# PostgreSQL tuning
 
 For production, you **do want to change** the default PostgreSQL settings (since the default configuration is _not_ recommended).
 

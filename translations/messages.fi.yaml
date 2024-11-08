@@ -1,0 +1,381 @@
+people: Ihmiset
+type.video: Video
+thread: Ketju
+microblog: Mikroblogi
+threads: Ketjut
+add: Lisää
+search: Haku
+commented: Kommentoitu
+up_votes: Tehostukset
+more: Lisää
+added: Lisätty
+comments: Kommentit
+created_at: Luotu
+mod_log: Moderointiloki
+posts: Viestit
+replies: Vastaukset
+moderators: Moderaattorit
+reply: Vastaa
+login_or_email: Käyttäjätunnus tai sähköpostiosoite
+password: Salasana
+dont_have_account: Eikö sinulla ole tiliä?
+you_cant_login: Unohditko salasanasi?
+already_have_account: Onko sinulla jo tili?
+register: Rekisteröidy
+reset_password: Palauta salasana
+username: Käyttäjätunnus
+repeat_password: Toista salasana
+about_instance: Tietoja
+add_new_article: Lisää uusi ketju
+add_new_link: Lisää uusi linkki
+add_new_photo: Lisää uusi kuva
+add_new_post: Lisää uusi viesti
+add_new_video: Lisää uusi video
+contact: Yhteydenotto
+terms: Käyttöehdot
+privacy_policy: Tietosuojakäytäntö
+faq: UKK
+rss: RSS
+change_theme: Vaihda teema
+check_email: Tarkista sähköpostisi
+up_vote: Tehosta
+email_confirm_expire: Huomioi, että linkki vanhenee tunnissa.
+image: Kuva
+image_alt: Kuvan vaihtoehtoinen teksti
+name: Nimi
+description: Kuvaus
+rules: Säännöt
+subscriptions: Tilaukset
+user: Käyttäjä
+people_local: Paikallinen
+subscribed: Tilattu
+people_federated: Federoitu
+all: Kaikki
+logout: Kirjaudu ulos
+classic_view: Klassinen näkymä
+compact_view: Kompakti näkymä
+3h: 3 tuntia
+6h: 6 tuntia
+12h: 12 tuntia
+1w: 1 viikko
+1m: 1 kuukausi
+1y: 1 vuosi
+share: Jaa
+edit: Muokkaa
+are_you_sure: Oletko varma?
+share_on_fediverse: Jaa fediversessä
+edit_entry: Muokkaa ketjua
+edit_comment: Tallenna muutokset
+edit_post: Muokkaa viestiä
+notifications: Ilmoitukset
+blocked: Estetty
+privacy: Yksityisyys
+new_password_repeat: Vahvista uusi salasana
+change_email: Vaihda sähköpostiosoite
+change_password: Vaihda salasana
+expand: Laajenna
+theme: Teema
+dark: Tumma
+light: Vaalea
+error: Virhe
+default_theme: Oletusteema
+default_theme_auto: Vaalea/tumma (havaitse automaattisesti)
+solarized_auto: Solarized (havaitse automaattisesti)
+boosts: Tehostukset
+yes: Kyllä
+no: Ei
+rounded_edges: Pyöristetyt reunat
+show_thumbnails: Näytä pikkukuvat
+show_users_avatars: Näytä käyttäjien avatarit
+read_all: Lue kaikki
+infinite_scroll: Loputon vieritys
+show_top_bar: Näytä yläpalkki
+off: Pois
+upload_file: Lähetä tiedosto
+instances: Instanssit
+federation: Federointi
+filters: Suodattimet
+icon: Kuvake
+done: Valmis
+pin: Kiinnitä
+unpin: Poista kiinnitys
+change_language: Vaihda kieli
+pinned: Kiinnitetty
+users: Käyttäjät
+content: Sisältö
+year: Vuosi
+local: Paikallinen
+instance: Instanssi
+pages: Sivut
+FAQ: UKK
+admin_panel: Ylläpitäjän paneeli
+registrations_enabled: Rekisteröinti käytössä
+random_entries: Satunnaiset ketjut
+active_users: Aktiiviset ihmiset
+auto_preview: Median automaattinen esikatselu
+banned_instances: Estetyt instanssit
+captcha_enabled: Captcha käytössä
+boost: Tehosta
+return: Palaa
+browsing_one_thread: Selaat vain yhtä ketjua keskustelussa! Kaikki kommentit ovat
+  näkyvillä viestisivulla.
+infinite_scroll_help: Lataa lisää sisältöä automaattisesti, kun saavutat sivun alalaidan.
+reload_to_apply: Lataa sivu uudelleen, jotta muutokset tulevat voimaan
+auto_preview_help: Laajenna automaattisesti median esikatselut.
+filter.fields.only_names: Vain nimet
+filter.fields.names_and_descriptions: Nimet ja kuvaukset
+kbin_bot: Mbin-agentti
+toolbar.strikethrough: Yliviivaus
+toolbar.code: Koodi
+toolbar.unordered_list: Järjestämätön luettelo
+toolbar.ordered_list: Järjestetty luettelo
+account_deletion_title: Tilin poistaminen
+account_deletion_button: Poista tili
+custom_css: Mukautettu CSS
+block: Estä
+unblock: Poista esto
+schedule_delete_account: Ajasta poistaminen
+two_factor_backup: Kaksivaiheisen todennuksen varmistuskoodit
+show_subscriptions: Näytä tilaukset
+close: Sulje
+flash_email_failed_to_sent: Sähköpostia ei voitu lähettää.
+flash_user_edit_profile_success: Käyttäjäprofiilin asetukset tallennettu.
+flash_user_edit_email_error: Sähköpostiosoitteen vaihtaminen epäonnistui.
+flash_user_edit_password_error: Salasanan vaihtaminen epäonnistui.
+edit_my_profile: Muokkaa omaa profiilia
+all_time: Kaikelta ajalta
+show: Näytä
+back: Takaisin
+last_updated: Viimeksi päivitetty
+and: ja
+notification_title_new_reply: Uusi vastaus
+notification_title_new_thread: Uusi ketju
+server_software: Palvelinohjelmisto
+version: Versio
+user_verify: Aktivoi tili
+max_image_size: Tiedoston enimmäiskoko
+type.link: Linkki
+type.photo: Kuva
+type.article: Ketju
+select_channel: Valitse kanava
+events: Tapahtumat
+login: Kirjaudu sisään
+favourites: Suosikit
+subscribers: Tilaajat
+hot: Kuumat
+oldest: Vanhimmat
+sort_by: Järjestä
+top: Parhaimmat
+active: Aktiivinen
+newest: Uusimmat
+no_comments: Ei kommentteja
+favourite: Suosi
+add_comment: Lisää kommentti
+remove_media: Poista media
+empty: Tyhjä
+unfollow: Lopeta seuraaminen
+owner: Omistaja
+add_post: Lisää viesti
+enter_your_post: Kirjoita viestisi
+subscribe: Tilaa
+follow: Seuraa
+add_media: Lisää media
+enter_your_comment: Kirjoita kommenttisi
+unsubscribe: Lopeta tilaus
+email: Sähköpostiosoite
+remember_me: Muista minut
+show_more: Näytä lisää
+stats: Tilastot
+photos: Kuvat
+email_verify: Vahvista sähköpostiosoite
+try_again: Yritä uudelleen
+email_confirm_content: 'Olethan valmis aktivoidaksesi Mbin-tilisi? Napsauta linkkiä
+  alla:'
+email_confirm_header: Hei! Vahvista sähköpostiosoitteesi.
+email_confirm_title: Vahvista sähköpostiosoitteesi.
+add_new: Lisää uusi
+new_email: Uusi sähköpostiosoite
+new_password: Uusi salasana
+collapse: Supista
+links: Linkit
+articles: Ketjut
+Your account is not active: Tilisi ei ole aktiivinen.
+videos: Videot
+messages: Viestit
+save: Tallenna
+homepage: Kotisivu
+hide_adult: Piilota NSFW-sisältö
+current_password: Nykyinen salasana
+delete: Poista
+profile: Profiili
+old_email: Nykyinen sähköpostiosoite
+new_email_repeat: Vahvista uusi sähköpostiosoite
+font_size: Fontin koko
+menu: Valikko
+settings: Asetukset
+appearance: Ulkoasu
+general: Yleinen
+size: Koko
+show_all: Näytä kaikki
+flash_register_success: Tervetuloa mukaan! Tilisi on nyt rekisteröity. Vielä yksi
+  asia - tarkista sähköpostisi ja napsauta vastaanottamaasi aktivointilinkkiä saattaaksesi
+  tilisi eloon.
+created: Luotu
+expired_at: Vanheni
+firstname: Etunimi
+sidebar_position: Sivupalkin sijainti
+left: Vasen
+right: Oikea
+on: Päällä
+status: Tila
+expires: Vanhenee
+perm: Pysyvä
+delete_account: Poista tili
+type_search_term: Kirjoita hakuehto
+federation_enabled: Federaatio käytössä
+Password is invalid: Salasana on virheellinen.
+send: Lähetä
+sidebar: Sivupalkki
+kbin_intro_title: Selaa fediverseä
+kbin_promo_title: Luo oma instanssi
+mercure_enabled: Mercure käytössä
+report_issue: Ilmoita ongelmasta
+filter.adult.show: Näytä NSFW
+kbin_promo_desc: '%link_start%Kloonaa tietovarasto%link_end% ja kehitä fediverseä'
+toolbar.image: Kuva
+filter.adult.hide: Piilota NSFW
+filter.adult.only: Vain NSFW
+toolbar.link: Linkki
+account_deletion_immediate: Poista välittömästi
+local_and_federated: Paikallinen ja federoitu
+agree_terms: Hyväksy %terms_link_start%käyttöehdot%terms_link_end% ja %policy_link_start%tietosuojakäytäntö%policy_link_end%
+reason: Syy
+preview: Esikatselu
+article: Ketju
+reputation: Maine
+toolbar.bold: Lihavointi
+toolbar.italic: Kursivointi
+toolbar.quote: Lainaus
+oauth.consent.allow: Salli
+oauth.consent.deny: Estä
+flash_post_pin_success: Viesti on kiinnitetty.
+two_factor_authentication: Kaksivaiheinen todennus
+2fa.authentication_code.label: Todennuskoodi
+2fa.code_invalid: Todennuskoodi ei ole kelvollinen
+2fa.verify: Vahvista
+cancel: Peruuta
+password_and_2fa: Salasana ja 2FA
+flash_email_was_sent: Sähköposti on lähetetty.
+page_width: Sivun leveys
+sensitive_show: Napsauta näyttääksesi
+flash_user_settings_general_success: Käyttäjäasetukset tallennettu.
+sensitive_hide: Napsauta piilottaaksesi
+hide: Piilota
+cake_day: Kakkupäivä
+show_active_users: Näytä aktiiviset käyttäjät
+notification_title_new_comment: Uusi kommentti
+random_posts: Satunnaiset viestit
+1d: 1 päivä
+page_width_fixed: Kiinteä
+kbin_intro_desc: on hajautettu alusta sisällön yhteenkokoamiseen sekä mikrobloggaukseen,
+  ja se toimii osana Fediverse-verkkoa.
+show_profile_subscriptions: Näytä makasiinitilaukset
+show_related_entries: Näytä satunnaisia ketjuja
+show_related_posts: Näytä satunnaisia viestejä
+filter_by_federation: Suodata federoinnin tilan mukaan
+filter_by_time: Suodata ajan mukaan
+subscribers_count: '{0}tilaajaa|{1}tilaaja|]1,Inf[ tilaajaa'
+marked_for_deletion: Merkitty poistettavaksi
+marked_for_deletion_at: Merkitty poistettavaksi %date%
+subscriptions_in_own_sidebar: Erillisessä sivupalkissa
+sidebars_same_side: Sivupalkit samalla puolella
+type.magazine: Makasiini
+magazine: Makasiini
+magazines: Makasiinit
+change_view: Vaihda näkymää
+comments_count: '{0}kommenttia|{1}kommentti|]1,Inf[ kommenttia'
+followers_count: '{0}seuraajaa|{1}seuraaja|]1,Inf[ seuraajaa'
+filter_by_type: Suodata tyypin mukaan
+filter_by_subscription: Suodata tilauksen mukaan
+markdown_howto: Kuinka muokkain toimii?
+related_posts: Asiaan liittyvät viestit
+always_disconnected_magazine_info: Tämä makasiini ei vastaanota päivityksiä.
+subscribe_for_updates: Tilaa vastaanottaaksesi päivityksiä.
+all_magazines: Kaikki makasiinit
+create_new_magazine: Luo uusi makasiini
+useful: Hyödyllinen
+down_vote: Vähennä
+select_magazine: Valitse makasiini
+followers: Seuraajat
+go_to_content: Siirry sisältöön
+go_to_filters: Siirry suodattimiin
+go_to_search: Siirry hakuun
+tree_view: Puunäkymä
+chat_view: Keskustelunäkymä
+table_view: Taulukkonäkymä
+cards_view: Korttinäkymä
+copy_url: Kopioi Mbin-osoite
+copy_url_to_fediverse: Kopioi alkuperäinen osoite
+show_magazines_icons: Näytä makasiinien kuvakkeet
+subject_reported: Sisällöstä on ilmoitettu.
+change_magazine: Vaihda makasiinia
+related_magazines: Aiheeseen liittyvät makasiinit
+random_magazines: Satunnaiset makasiinit
+comment_reply_position: Kommentin vastauksen sijainti
+subscription_header: TIlatut makasiinit
+position_bottom: Alhaalla
+position_top: Ylhäällä
+flash_account_settings_changed: Tilisi asetukset on muutettu onnistuneesti. Sinun
+  täytyy kirjautua uudelleen sisään.
+subscription_sort: Järjestä
+alphabetically: Aakkosjärjestys
+subscription_sidebar_pop_out_right: Siirrä erilliseen sivupalkkiin oikealle
+subscription_sidebar_pop_out_left: Siirrä erilliseen sivupalkkiin vasemmalle
+flash_user_edit_profile_error: Profiilin asetusten tallentaminen epäonnistui.
+flash_user_settings_general_error: Käyttäjän asetusten tallentaminen epäonnistui.
+magazine_deletion: Makasiinin poisto
+delete_magazine: Poista makasiini
+restore_magazine: Palauta makasiini
+open_url_to_fediverse: Avaa alkuperäinen osoite
+magazine_is_deleted: Makasiini on poistettu. Voit <a href="%link_target%">palauttaa</a>
+  sen 30 päivän sisällä.
+request_magazine_ownership: Pyydä makasiinin omistajuutta
+accept: Hyväksy
+abandoned: Hylätty
+cancel_request: Peru pyyntö
+sso_registrations_enabled: Kertakirjautumisrekisteröinnit käytössä
+edited: muokattu
+keywords: Avainsanat
+notification_title_mention: Sinut mainittiin
+notification_title_removed_comment: Kommentti poistettiin
+notification_title_edited_comment: Kommenttia muokattiin
+notification_title_removed_thread: Ketju poistettiin
+notification_title_edited_thread: Ketjua muokattiin
+show_related_magazines: Näytä satunnaisia makasiineja
+new_user_description: Tämä käyttäjä on uusi (aktiivinen alle %days% päivää)
+new_magazine_description: Tämä makasiini on uusi (aktiivinen alle %days% päivää)
+hidden: Piilotettu
+enabled: Käytössä
+title: Otsikko
+is_adult: 18+ / NSFW
+overview: Yleisnäkymä
+columns: Sarakkeet
+joined: Liittynyt
+rejected: Hylätty
+help: Tuki
+url: URL-osoite
+body: Sisältö
+tags: Tunnisteet
+tag: Tunniste
+cards: Kortit
+featured_magazines: Esittelyssä olevat makasiinit
+votes: Äänet
+reject: Hylkää
+approve: Hyväksy
+approved: Hyväksytty
+dashboard: Kojelauta
+registration_disabled: Rekisteröinti poistettu käytöstä
+password_confirm_header: Vahvista salasanan vaihtopyyntö.
+notification_title_new_report: Uusi raportti luotiin
+comment_not_found: Kommenttia ei löydy
+table_of_contents: Sisällysluettelo

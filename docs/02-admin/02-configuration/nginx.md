@@ -195,6 +195,13 @@ server {
 }
 ```
 
+> [!TIP]
+> If have multiple PHP versions installed. You can switch the PHP version that Nginx is using (`/var/run/php/php-fpm.sock`) via the the following command:
+> `sudo update-alternatives --config php-fpm.sock`
+>
+> Same is true for the PHP CLI command (`/usr/bin/php`), via the following command:
+> `sudo update-alternatives --config php`
+
 > [!WARNING]
 > If also want to also configure your `www.domain.tld` subdomain; our advise is to use a HTTP 301 redirect from the `www` subdomain towards the root domain. Do _NOT_ try to setup a double instance (you want to _avoid_ that ActivityPub will see `www` as a separate instance). See Nginx example below
 
@@ -235,3 +242,88 @@ Restart (or reload) NGINX:
 ```bash
 sudo systemctl restart nginx
 ```
+
+## Trusted Proxies
+
+If you are using a reverse proxy, you need to configure your trusted proxies to use the `X-Forwarded-For` header. Mbin configured the following trusted headers for you already: `x-forwarded-for`, `x-forwarded-proto`, `x-forwarded-port` and `x-forwarded-prefix`.
+
+Trusted proxies can be configured in the `.env` file (or your `.env.local` file):
+
+```sh
+nano /var/www/mbin/.env
+```
+
+You can configure a single IP address and/or a range of IP addresses (this configuration should be sufficient if you are running Nginx yourself):
+
+```dotenv
+# Change the IP range if needed, this is just an example
+TRUSTED_PROXIES=127.0.0.1,192.168.1.0/24
+```
+
+Or if the IP address is dynamic, you can set the `REMOTE_ADDR` string which will be replaced at runtime by `$_SERVER['REMOTE_ADDR']`:
+
+```dotenv
+TRUSTED_PROXIES=127.0.0.1,REMOTE_ADDR
+```
+
+> [!WARNING]
+> In this last example be sure that you configure the web server to _not_
+> respond to traffic from _any_ clients other than your trusted load balancers
+> (eg. within AWS this can be achieved via security groups).
+
+Finally run the `post-upgrade` script to dump the `.env` to the `.env.local.php` and clear any cache:
+
+```sh
+./bin/post-upgrade
+```
+
+More detailed info can be found at: [Symfony Trusted Proxies docs](https://symfony.com/doc/current/deployment/proxies.html)
+
+## Media reverse proxy
+
+we suggest that you do not use this configuration:
+
+```dotenv
+KBIN_STORAGE_URL=https://mbin.domain.tld/media
+```
+
+Instead we suggest to use a subdomain for serving your media files:
+
+```dotenv
+KBIN_STORAGE_URL=https://media.mbin.domain.tld
+```
+
+That way you can let nginx cache media assets and seamlessly switch to an object storage provider later.
+
+```bash
+sudo nano /etc/nginx/sites-available/mbin-media.conf
+```
+
+```nginx
+proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=CACHE:10m inactive=7d max_size=10g;
+
+server {
+    server_name media.mbin.domain.tld;
+    root /var/www/mbin/public/media;
+
+    listen 80;
+}
+```
+
+Be sure that the `root /path` is correct (maybe you use `/var/www/kbin/public`).
+
+Enable the NGINX site, using a symlink:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/mbin-media.conf /etc/nginx/sites-enabled/
+```
+
+> [!TIP]
+> before reloading nginx in a production environment you can run `nginx -t` to test your configuration.
+> If your configuration is faulty and you run `systemctl reload nginx` it will crash the webserver.
+
+Run `systemctl reload nginx` so the site is loaded.
+For it to be a usable https site you have to run `certbot --nginx` and select the media domain or supply your certificates manually.
+
+> [!TIP]
+> don't forget to enable http2 by adding `http2 on;` after certbot ran (underneath the `listen 443 ssl;` line)

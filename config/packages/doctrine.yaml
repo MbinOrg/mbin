@@ -1,8 +1,11 @@
 doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'
+        types:
+            citext: App\DoctrineExtensions\DBAL\Types\Citext
         mapping_types:
             user_type: string
+            citext: citext
 
         # IMPORTANT: You MUST configure your server version,
         # either here or in the DATABASE_URL env var (see .env file)
@@ -16,9 +19,7 @@ doctrine:
                 JSONB_CONTAINS: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Postgresql\JsonbContains
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true
-        # This option needs to be set to 'false', otherwise PHP class inheritance will fail with
-        # a separate sequence number generator table in PostgreSQL for each child class
-        report_fields_where_declared: false
+        report_fields_where_declared: true
         validate_xml_mapping: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         auto_mapping: true

@@ -14,33 +14,43 @@
 
 {% block body %}
     <h1>{{ 'messages'|trans }}</h1>
-    {% set purgedUsers = 0 %}
     {% for thread in threads %}
-        {% if thread.otherParticipants(app.user)[0] is defined %}
+        {% set lastMessage = thread.getLastMessage() %}
+        {% if lastMessage is not same as null %}
             <div class="{{ html_classes('section section--small thread', {'opacity-50': not thread.countNewMessages(app.user) }) }}">
                 <div>
-                    {{ (thread.messages|length - 1)|format_number }} {{ 'replies'|trans }}
-                    - {{ component('user_inline', {user: thread.otherParticipants(app.user)[0]}) }} - <a
-                            href="{{ path('messages_single', {'id': thread.id}) }}">{{ thread.title }}</a>
+                    <div>
+                        <small>
+                            {% set i = 0 %}
+                            {% set participants = thread.participants|filter(p => p is not same as app.user) %}
+                            {% for user in participants %}
+                                {% if i > 0 and i is same as (participants|length - 1) %}
+                                    {{ 'and'|trans }}
+                                {% elseif i > 0 %}
+                                    ,
+                                {% endif %}
+                                {{ component('user_inline', {user: user, showAvatar: false}) }}
+                                {% set i = i + 1 %}
+                            {% endfor %}
+                        </small>
+                    </div>
+                    <div>
+                        {{ component('user_inline', {user: lastMessage.sender, showAvatar: true}) -}}<span>:</span>
+                        <a href="{{path('messages_single', {'id': thread.id}) }}">
+                            {{ lastMessage.getTitle() }}
+                        </a>
+                    </div>
                 </div>
-                <span>{{ component('date', {date: thread.updatedAt}) }}</span>
+                <span style="margin-top: auto">{{ component('date', {date: thread.updatedAt}) }}</span>
             </div>
-        {% else %}
-            {% set purgedUsers = purgedUsers + 1 %}
-        {% endif %}
-
-        {% if threads|length == purgedUsers %}
-            <aside class="section section--muted">
-                <p>{{ 'empty'|trans }}</p>
-            </aside>
         {% endif %}
     {% endfor %}
-    {% if(threads.haveToPaginate is defined and threads.haveToPaginate) %}
-        {{ pagerfanta(threads, null, {'pageParameter':'[p]'}) }}
-    {% endif %}
-    {% if not threads|length %}
+    {% if threads|length == 0 %}
         <aside class="section section--muted">
             <p>{{ 'empty'|trans }}</p>
         </aside>
+    {% endif %}
+    {% if(threads.haveToPaginate is defined and threads.haveToPaginate) %}
+        {{ pagerfanta(threads, null, {'pageParameter':'[p]'}) }}
     {% endif %}
 {% endblock %}

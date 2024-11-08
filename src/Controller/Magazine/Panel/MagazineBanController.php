@@ -40,7 +40,7 @@ class MagazineBanController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('moderate', subject: 'magazine')]
-    public function ban(Magazine $magazine, Request $request, User $user = null): Response
+    public function ban(Magazine $magazine, Request $request, ?User $user = null): Response
     {
         if (!$user) {
             $user = $this->userRepository->findOneByUsername($request->query->get('username'));
@@ -69,7 +69,7 @@ class MagazineBanController extends AbstractController
     #[IsGranted('moderate', subject: 'magazine')]
     public function unban(Magazine $magazine, User $user, Request $request): Response
     {
-        $this->validateCsrf('magazine_unban', $request->request->get('token'));
+        $this->validateCsrf('magazine_unban', $request->getPayload()->get('token'));
 
         $this->manager->unban($magazine, $user);
 

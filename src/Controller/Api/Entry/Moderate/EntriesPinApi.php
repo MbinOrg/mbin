@@ -73,10 +73,10 @@ class EntriesPinApi extends EntriesBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        $manager->pin($entry);
+        $manager->pin($entry, $this->getUserOrThrow());
 
         return new JsonResponse(
-            $this->serializeEntry($factory->createDto($entry)),
+            $this->serializeEntry($factory->createDto($entry), $this->tagLinkRepository->getTagsOfEntry($entry)),
             headers: $headers
         );
     }

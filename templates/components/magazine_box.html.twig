@@ -18,8 +18,21 @@
             </figure>
         {% endif %}
         <header>
-            <h4><a href="{{ path('front_magazine', {name: magazine.name}) }}"
-                   class="{{ html_classes({'stretched-link': false}) }}">{{ computed.magazine.title }}</a></h4>
+            <h4>
+                <a href="{{ path('front_magazine', {name: magazine.name}) }}" class="{{ html_classes({'stretched-link': false}) }}">
+                    {{ computed.magazine.title }}
+                </a>
+                {% if magazine.postingRestrictedToMods %}
+                    <i class="fa-solid fa-lock"
+                       aria-description="{{ 'magazine_posting_restricted_to_mods_warning'|trans }}"
+                       title="{{ 'magazine_posting_restricted_to_mods_warning'|trans }}"
+                       aria-describedby="{{ 'magazine_posting_restricted_to_mods_warning'|trans }}"></i>
+                {% endif %}
+                {% if magazine.isNew() %}
+                    {% set days = constant('App\\Entity\\Magazine::NEW_FOR_DAYS') %}
+                    <i class="fa-solid fa-leaf new-magazine-icon" title="{{ 'new_magazine_description'|trans({ '%days%': days }) }}" aria-description="{{ 'new_magazine_description'|trans({ '%days%': days }) }}"></i>
+                {% endif %}
+            </h4>
             <p class="magazine__name">
                 <span>{{ ('@'~magazine.name)|username(true) }} {% if magazine.isAdult %}<small class="badge danger">18+</small>{% endif %}</span>
                 {% if magazine.apId %}
@@ -42,7 +55,16 @@
             <li>{{ 'created_at'|trans }}:
                 {{ component('date', {date: computed.magazine.createdAt}) }}
             </li>
+            {% if app.user is defined and app.user is not null and app.user.admin() and computed.magazine.apId is not null %}
+                <li>
+                    {{ 'last_updated'|trans }}: {{ component('date', {date: computed.magazine.apFetchedAt}) }}
+                </li>
+            {% endif %}
             <li>{{ 'subscribers'|trans }}: <span>{{ computed.magazine.subscriptionsCount }}</span></li>
+            {% set instance = get_instance_of_magazine(computed.magazine) %}
+            {% if instance is not same as null %}
+                <li>{{ 'server_software'|trans }}: <div><span>{{ instance.software }}{% if instance.version is not same as null and app.user is defined and app.user is not null and app.user.admin() %} v{{ instance.version }}{% endif %}</span></div></li>
+            {% endif %}
         </ul>
     {% endif %}
     {% if showMeta %}

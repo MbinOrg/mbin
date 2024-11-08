@@ -265,7 +265,7 @@ class UrlExtensionRuntime implements RuntimeExtensionInterface
     // $additionalParams indicates extra parameters to set in addition to [$name] = $value
     // Set $value to null to indicate deleting a parameter
     // TODO: It'd be better to have just a single $params which is an associative array
-    public function optionsUrl(string $name, string $value, string $routeName = null, array $additionalParams = []): string
+    public function optionsUrl(string $name, ?string $value, ?string $routeName = null, array $additionalParams = []): string
     {
         $route = $routeName ?? $this->requestStack->getCurrentRequest()->attributes->get('_route');
         $params = $this->requestStack->getCurrentRequest()->attributes->get('_route_params', []);

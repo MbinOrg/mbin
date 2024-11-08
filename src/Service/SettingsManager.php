@@ -7,8 +7,10 @@ namespace App\Service;
 use App\DTO\SettingsDto;
 use App\Entity\Settings;
 use App\Repository\SettingsRepository;
+use App\Utils\DownvotesMode;
 use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\Pure;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class SettingsManager
 {
@@ -17,6 +19,7 @@ class SettingsManager
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly SettingsRepository $repository,
+        private readonly RequestStack $requestStack,
         private readonly string $kbinDomain,
         private readonly string $kbinTitle,
         private readonly string $kbinMetaTitle,
@@ -34,9 +37,16 @@ class SettingsManager
         private readonly bool $kbinFederationPageEnabled,
         private readonly bool $kbinAdminOnlyOauthClients,
         private readonly bool $mbinSsoOnlyMode,
+        private readonly int $maxImageBytes,
+        private readonly DownvotesMode $mbinDownvotesMode,
     ) {
         if (!self::$dto) {
             $results = $this->repository->findAll();
+
+            $maxImageBytesEdited = $this->find($results, 'MAX_IMAGE_BYTES', FILTER_VALIDATE_INT);
+            if (null === $maxImageBytesEdited || 0 === $maxImageBytesEdited) {
+                $maxImageBytesEdited = $this->maxImageBytes;
+            }
 
             self::$dto = new SettingsDto(
                 $this->kbinDomain,
@@ -70,12 +80,15 @@ class SettingsManager
                 $this->find($results, 'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', FILTER_VALIDATE_BOOLEAN) ?? true,
                 $this->find($results, 'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY', FILTER_VALIDATE_BOOLEAN) ?? false,
                 $this->find($results, 'MBIN_SSO_REGISTRATIONS_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? true,
-                $this->find($results, 'MBIN_RESTRICT_MAGAZINE_CREATION', FILTER_VALIDATE_BOOLEAN) ?? false
+                $this->find($results, 'MBIN_RESTRICT_MAGAZINE_CREATION', FILTER_VALIDATE_BOOLEAN) ?? false,
+                $this->find($results, 'MBIN_SSO_SHOW_FIRST', FILTER_VALIDATE_BOOLEAN) ?? false,
+                $maxImageBytesEdited,
+                $this->find($results, 'MBIN_DOWNVOTES_MODE') ?? $this->mbinDownvotesMode->value,
             );
         }
     }
 
-    private function find(array $results, string $name, int $filter = null)
+    private function find(array $results, string $name, ?int $filter = null)
     {
         $res = array_values(array_filter($results, fn ($s) => $s->name === $name));
 
@@ -104,6 +117,10 @@ class SettingsManager
 
             if (\is_bool($value)) {
                 $value = $value ? 'true' : 'false';
+            }
+
+            if (!\is_string($value) && !\is_array($value)) {
+                $value = \strval($value);
             }
 
             if (!$s) {
@@ -141,6 +158,11 @@ class SettingsManager
         return self::$dto->{$name};
     }
 
+    public function getDownvotesMode(): DownvotesMode
+    {
+        return DownvotesMode::from($this->get('MBIN_DOWNVOTES_MODE'));
+    }
+
     public function set(string $name, $value): void
     {
         self::$dto->{$name} = $value;
@@ -151,5 +173,19 @@ class SettingsManager
     public static function getValue(string $name): string
     {
         return self::$dto->{$name};
+    }
+
+    public function getLocale(): string
+    {
+        $request = $this->requestStack->getCurrentRequest();
+
+        return $request->cookies->get('kbin_lang') ?? $request->getLocale() ?? $this->get('KBIN_DEFAULT_LANG');
+    }
+
+    public function getMaxImageByteString(): string
+    {
+        $megaBytes = round($this->maxImageBytes / 1024 / 1024, 2);
+
+        return $megaBytes.'MB';
     }
 }

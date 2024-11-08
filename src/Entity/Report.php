@@ -63,7 +63,7 @@ abstract class Report
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $reported;
     #[ManyToOne(targetEntity: User::class)]
-    #[JoinColumn(nullable: true)]
+    #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?User $consideredBy = null;
     #[Column(type: 'string', nullable: true)]
     public ?string $reason = null;
@@ -80,7 +80,7 @@ abstract class Report
     #[Column(type: 'integer')]
     private int $id;
 
-    public function __construct(User $reporting, User $reported, Magazine $magazine, string $reason = null)
+    public function __construct(User $reporting, User $reported, Magazine $magazine, ?string $reason = null)
     {
         $this->reporting = $reporting;
         $this->reported = $reported;

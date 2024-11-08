@@ -22,7 +22,6 @@ class ImageManager
         'image/webp', 'image/avif',
     ];
     public const IMAGE_MIMETYPE_STR = 'image/jpeg, image/jpg, image/gif, image/png, image/jxl, image/heic, image/heif, image/webp, image/avif';
-    public const MAX_IMAGE_BYTES = 6000000;
 
     public function __construct(
         private readonly string $storageUrl,
@@ -31,6 +30,7 @@ class ImageManager
         private readonly MimeTypesInterface $mimeTypeGuesser,
         private readonly ValidatorInterface $validator,
         private readonly LoggerInterface $logger,
+        private readonly SettingsManager $settings,
     ) {
     }
 
@@ -56,8 +56,8 @@ class ImageManager
         $fh = fopen($source, 'rb');
 
         try {
-            if (filesize($source) > self::MAX_IMAGE_BYTES) {
-                throw new ImageDownloadTooLargeException('the image is too large, max size is '.self::MAX_IMAGE_BYTES);
+            if (filesize($source) > $this->settings->get('MAX_IMAGE_BYTES')) {
+                throw new ImageDownloadTooLargeException('the image is too large, max size is '.$this->settings->get('MAX_IMAGE_BYTES'));
             }
 
             $this->validate($source);
@@ -135,7 +135,7 @@ class ImageManager
 
     public function getFilePath(string $file): string
     {
-        return sprintf(
+        return \sprintf(
             '%s/%s/%s',
             substr($this->getFileName($file), 0, 2),
             substr($this->getFileName($file), 2, 2),
@@ -158,7 +158,7 @@ class ImageManager
             throw new \RuntimeException("Couldn't guess extension of image (invalid image?)");
         }
 
-        return sprintf('%s.%s', $hash, $ext);
+        return \sprintf('%s.%s', $hash, $ext);
     }
 
     public function remove(string $path): void

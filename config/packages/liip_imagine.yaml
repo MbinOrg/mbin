@@ -19,7 +19,7 @@ liip_imagine:
     data_loader: kbin.liip_loader
     default_image: null
     twig:
-        mode: legacy
+        mode: lazy
     default_filter_set_settings:
         quality: 90
 

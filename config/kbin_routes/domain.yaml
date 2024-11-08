@@ -1,12 +1,11 @@
 domain_entries:
   controller: App\Controller\Domain\DomainFrontController
-  defaults: { sortBy: hot, time: '∞', type: ~ }
-  path: /d/{name}/{sortBy}/{time}/{type}
+  defaults: { sortBy: hot, time: '∞'}
+  path: /d/{name}/{sortBy}/{time}
   methods: [ GET ]
   requirements:
     sortBy: "%default_sort_options%"
     time: "%default_time_options%"
-    type: "%default_type_options%"
 
 domain_comments:
   controller: App\Controller\Domain\DomainCommentFrontController

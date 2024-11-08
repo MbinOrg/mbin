@@ -15,8 +15,10 @@ use App\Entity\Badge;
 use App\Entity\Magazine;
 use App\Entity\MagazineBan;
 use App\Entity\MagazineLog;
+use App\Entity\MagazineLogBan;
 use App\Entity\Moderator;
 use App\Entity\User;
+use App\Repository\InstanceRepository;
 use App\Repository\MagazineRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -25,6 +27,7 @@ class MagazineFactory
 {
     public function __construct(
         private ImageFactory $imageFactory,
+        private InstanceRepository $instanceRepository,
         private ModeratorFactory $moderatorFactory,
         private UserFactory $userFactory,
         private MagazineRepository $magazineRepository,
@@ -32,7 +35,7 @@ class MagazineFactory
     ) {
     }
 
-    public function createFromDto(MagazineDto $dto, User $user): Magazine
+    public function createFromDto(MagazineDto $dto, ?User $user): Magazine
     {
         return new Magazine(
             $dto->name,
@@ -41,6 +44,7 @@ class MagazineFactory
             $dto->description,
             $dto->rules,
             $dto->isAdult,
+            $dto->isPostingRestrictedToMods,
             $dto->icon
         );
     }
@@ -60,11 +64,13 @@ class MagazineFactory
         $dto->postCount = $magazine->postCount;
         $dto->postCommentCount = $magazine->postCommentCount;
         $dto->isAdult = $magazine->isAdult;
+        $dto->isPostingRestrictedToMods = $magazine->postingRestrictedToMods;
         $dto->tags = $magazine->tags;
         $dto->badges = $magazine->badges;
         $dto->moderators = $magazine->moderators;
         $dto->apId = $magazine->apId;
         $dto->apProfileId = $magazine->apProfileId;
+        $dto->apFeaturedUrl = $magazine->apFeaturedUrl;
         $dto->setId($magazine->getId());
 
         /** @var User $currentUser */
@@ -72,6 +78,12 @@ class MagazineFactory
         // Only return the user's vote if permission to control voting has been given
         $dto->isUserSubscribed = $this->security->isGranted('ROLE_OAUTH2_MAGAZINE:SUBSCRIBE') ? $magazine->isSubscribed($currentUser) : null;
         $dto->isBlockedByUser = $this->security->isGranted('ROLE_OAUTH2_MAGAZINE:BLOCK') ? $currentUser->isBlockedMagazine($magazine) : null;
+
+        $instance = $this->instanceRepository->getInstanceOfMagazine($magazine);
+        if ($instance) {
+            $dto->serverSoftware = $instance->software;
+            $dto->serverSoftwareVersion = $instance->version;
+        }
 
         return $dto;
     }
@@ -145,6 +157,9 @@ class MagazineFactory
             $dto->apId,
             $dto->apProfileId,
             $dto->getId(),
+            $dto->serverSoftware,
+            $dto->serverSoftwareVersion,
+            $dto->isPostingRestrictedToMods,
         );
     }
 
