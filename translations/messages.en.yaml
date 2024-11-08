@@ -919,3 +919,6 @@ search_type_all: Threads + Microblogs
 search_type_entry: Threads
 search_type_post: Microblogs
 select_user: Choose a user
+type.thread: Thread
+add_new_thread: Add new thread
+edit_thread: Edit thread

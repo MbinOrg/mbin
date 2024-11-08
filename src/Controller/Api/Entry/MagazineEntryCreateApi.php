@@ -78,14 +78,14 @@ class MagazineEntryCreateApi extends EntriesBaseApi
     #[OA\RequestBody(content: new Model(
         type: EntryRequestDto::class,
         groups: [
-            Entry::ENTRY_TYPE_ARTICLE,
+            Entry::ENTRY_TYPE_THREAD,
             'common',
         ]
     ))]
     #[OA\Tag(name: 'magazine')]
     #[Security(name: 'oauth2', scopes: ['entry:create'])]
     #[IsGranted('ROLE_OAUTH2_ENTRY:CREATE')]
-    public function article(
+    public function thread(
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
         EntryManager $manager,
@@ -95,7 +95,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
 
         $entry = $this->createEntry($magazine, $manager, context: [
             'groups' => [
-                Entry::ENTRY_TYPE_ARTICLE,
+                Entry::ENTRY_TYPE_THREAD,
                 'common',
             ],
         ]);

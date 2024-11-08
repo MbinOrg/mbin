@@ -18,7 +18,7 @@ trait EntryFormTrait
 {
     private function createFormByType(string $type, ?EntryDto $dto = null): FormInterface
     {
-        if (Entry::ENTRY_TYPE_ARTICLE === $type) {
+        if (Entry::ENTRY_TYPE_THREAD === $type) {
             return $this->createForm(EntryArticleType::class, $dto);
         }
 

@@ -231,7 +231,7 @@ abstract class Criteria
     public function resolveType(?string $value): ?string
     {
         return match ($value) {
-            'article', 'articles' => Entry::ENTRY_TYPE_ARTICLE,
+            'article', 'articles', 'thread' => Entry::ENTRY_TYPE_THREAD,
             'link', 'links' => Entry::ENTRY_TYPE_LINK,
             'video', 'videos' => Entry::ENTRY_TYPE_VIDEO,
             'photo', 'photos', 'image', 'images' => Entry::ENTRY_TYPE_IMAGE,
@@ -242,7 +242,7 @@ abstract class Criteria
     public function translateType(): string
     {
         return match ($this->resolveType($this->type)) {
-            Entry::ENTRY_TYPE_ARTICLE => 'threads',
+            Entry::ENTRY_TYPE_THREAD => 'threads',
             Entry::ENTRY_TYPE_LINK => 'links',
             Entry::ENTRY_TYPE_VIDEO => 'videos',
             Entry::ENTRY_TYPE_IMAGE => 'photos',
