@@ -63,6 +63,7 @@ class CreateHandler extends MbinMessageHandler
                 ...$this->activityPubManager->createInboxesFromCC($activity, $entity->user),
                 ...$this->magazineRepository->findAudience($entity->magazine),
             ];
+            $this->logger->debug('sending create activity to {p}', ['p' => $receivers]);
         }
         $this->deliverManager->deliver(array_filter(array_unique($receivers)), $activity);
     }

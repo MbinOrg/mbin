@@ -100,6 +100,7 @@ class Instance
 
     public function isDead(): bool
     {
-        return $this->getLastSuccessfulDeliver() < self::getDateBeforeDead() && $this->getFailedDelivers() >= self::NUMBER_OF_FAILED_DELIVERS_UNTIL_DEAD;
+        return ($this->getLastSuccessfulDeliver() < self::getDateBeforeDead() || null === $this->getLastSuccessfulDeliver())
+            && $this->getFailedDelivers() >= self::NUMBER_OF_FAILED_DELIVERS_UNTIL_DEAD;
     }
 }

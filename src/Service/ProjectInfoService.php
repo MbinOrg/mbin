@@ -10,10 +10,15 @@ namespace App\Service;
 class ProjectInfoService
 {
     // If updating version, please also update http client UA in [/config/packages/framework.yaml]
-    private const VERSION = '1.7.1-rc2'; // TODO: Retrieve the version from git tags or getenv()?
+    private const VERSION = '1.7.2'; // TODO: Retrieve the version from git tags or getenv()?
     private const NAME = 'mbin';
-    private const USER_AGENT = 'Mbin';
+    private const CANONICAL_NAME = 'Mbin';
     private const REPOSITORY_URL = 'https://github.com/MbinOrg/mbin';
+
+    public function __construct(
+        private readonly string $kbinDomain,
+    ) {
+    }
 
     /**
      * Get Mbin current project version.
@@ -36,13 +41,23 @@ class ProjectInfoService
     }
 
     /**
-     * Get user-agent name we use as HTTP client requests.
+     * Get project canonical name.
+     *
+     * @return string canonical name
+     */
+    public function getCanonicalName(): string
+    {
+        return self::CANONICAL_NAME;
+    }
+
+    /**
+     * Get user-agent name usable as HTTP client requests.
      *
      * @return user-agent string
      */
     public function getUserAgent(): string
     {
-        return self::USER_AGENT;
+        return "{$this->getCanonicalName()}/{$this->getVersion()} (+https://{$this->kbinDomain}/agent)";
     }
 
     /**

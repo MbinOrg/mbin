@@ -7,17 +7,20 @@
 # For more details on the options available visit https://omines.github.io/antispam-bundle/configuration/
 #
 antispam:
+    stealth: false
+
     profiles:
         default:
-            # Insert a honeypot called "email_address" on all forms to lure bots into filling it in
-            honeypot: email_address
+            stealth: false
 
-            # Reject all forms that have been submitted either within 3 seconds, or after more than an hour
+            # Insert a honeypot called "full_name" on all forms to lure bots into filling it in
+            honeypot: full_name
+
+            # Reject all forms that have been submitted either within 6 seconds, or after more than 30 minutes
             timer:
-                min: 3
-                max: 3600
+                min: 6
+                max: 1800
 
-            #
             # The measures above should already have notable effect on the amount of spam that gets through
             # your forms. Still getting annoying amounts? Analyze the patterns of uncaught spam, then
             # consider uncommenting and modifying some of the examples below after careful consideration
@@ -25,17 +28,17 @@ antispam:
             #
 
             # Reject text fields that contain (lame attempts at) HTML or BBCode
-#            banned_markup: true
+            banned_markup: true
 
             # Reject text fields that consist for more than 40% of Cyrillic (Russian) characters
-#            banned_scripts:
-#                scripts: [ cyrillic ]
-#                max_percentage: 40
+            # banned_scripts:
+            #     scripts: [ cyrillic ]
+            #     max_percentage: 40
 
             # Reject fields that contain more than 3 URLs, or repeat a single URL more than once
-#            url_count:
-#                max: 3
-#                max_identical: 1
+            # url_count:
+            #     max: 3
+            #     max_identical: 1
 
 when@test:
     antispam:

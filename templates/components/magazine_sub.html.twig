@@ -16,7 +16,6 @@
                 <i class="fa-sharp fa-solid fa-folder-plus" aria-hidden="true"></i><span>{{ 'subscribe'|trans }}</span>
             {% endif %}
         </button>
-        <input type="hidden" name="token" value="{{ csrf_token('subscribe') }}">
     </form>
     <form action="{{ path('magazine_' ~ (is_magazine_blocked(magazine) ? 'unblock' : 'block'), {name: magazine.name}) }}"
           name="magazine_block"
@@ -26,6 +25,5 @@
                 data-action="subs#send">
             <i class="fa-solid fa-ban" aria-hidden="true"></i><span>{{ is_magazine_blocked(magazine) ? 'unblock'|trans : 'block'|trans }}</span>
         </button>
-        <input type="hidden" name="token" value="{{ csrf_token('block') }}">
     </form>
 </aside>

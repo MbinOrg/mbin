@@ -13,16 +13,17 @@ use App\Event\User\UserEditedEvent;
 use App\Event\User\UserFollowEvent;
 use App\Exception\UserCannotBeBanned;
 use App\Factory\UserFactory;
+use App\Message\ClearDeletedUserMessage;
 use App\Message\DeleteImageMessage;
 use App\Message\DeleteUserMessage;
 use App\Message\UserCreatedMessage;
 use App\Message\UserUpdatedMessage;
+use App\MessageHandler\ClearDeletedUserHandler;
 use App\Repository\ImageRepository;
 use App\Repository\ReputationRepository;
 use App\Repository\UserFollowRepository;
 use App\Repository\UserFollowRequestRepository;
 use App\Repository\UserRepository;
-use App\Scheduler\Messages\ClearDeletedUserMessage;
 use App\Security\EmailVerifier;
 use App\Service\ActivityPub\KeysGenerator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -337,8 +338,7 @@ readonly class UserManager
     public function deleteRequest(User $user, bool $immediately): void
     {
         if (!$immediately) {
-            $user->markedForDeletionAt = date_add(new \DateTime(), new \DateInterval('P30D'));
-            $user->isDeleted = true;
+            $user->softDelete();
 
             $this->entityManager->persist($user);
             $this->entityManager->flush();
@@ -355,8 +355,7 @@ readonly class UserManager
     public function removeDeleteRequest(User $user): void
     {
         if (null !== $user->markedForDeletionAt) {
-            $user->markedForDeletionAt = null;
-            $user->isDeleted = false;
+            $user->restore();
 
             $this->entityManager->persist($user);
             $this->entityManager->flush();

@@ -30,6 +30,10 @@ class PostsBaseApi extends BaseApi
             $response->userVote = $dto instanceof PostDto ? $dto->userVote : $dto->getUserChoice($this->getUserOrThrow());
         }
 
+        if ($user = $this->getUser()) {
+            $response->canAuthUserModerate = $dto->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+        }
+
         return $response;
     }
 
@@ -81,6 +85,10 @@ class PostsBaseApi extends BaseApi
         if ($this->isGranted('ROLE_OAUTH2_POST_COMMENT:VOTE')) {
             $response->isFavourited = $comment instanceof PostCommentDto ? $comment->isFavourited : $comment->isFavored($this->getUserOrThrow());
             $response->userVote = $comment instanceof PostCommentDto ? $comment->userVote : $comment->getUserChoice($this->getUserOrThrow());
+        }
+
+        if ($user = $this->getUser()) {
+            $response->canAuthUserModerate = $comment->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
         }
 
         return $response;
@@ -148,7 +156,13 @@ class PostsBaseApi extends BaseApi
             $depth = self::constrainDepth($this->request->getCurrentRequest()->get('d', self::DEPTH));
         }
 
-        $commentTree = $this->postCommentFactory->createResponseTree($comment, $depth);
+        $canModerate = null;
+        if ($user = $this->getUser()) {
+            $canModerate = $comment->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+        }
+
+        $commentTree = $this->postCommentFactory->createResponseTree($comment, $depth, $canModerate);
+        $commentTree->canAuthUserModerate = $canModerate;
 
         return $commentTree->jsonSerialize();
     }

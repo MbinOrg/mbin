@@ -6,6 +6,7 @@ namespace App\Controller\Api\Instance;
 
 use App\DTO\SiteResponseDto;
 use App\Repository\SiteRepository;
+use App\Service\SettingsManager;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -46,13 +47,14 @@ class InstanceDetailsApi extends InstanceBaseApi
         SiteRepository $repository,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
+        SettingsManager $settingsManager,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
         $results = $repository->findAll();
-        $dto = new SiteResponseDto(null);
+        $dto = new SiteResponseDto(null, $settingsManager->getDownvotesMode());
         if (0 < \count($results)) {
-            $dto = new SiteResponseDto($results[0]);
+            $dto = new SiteResponseDto($results[0], $settingsManager->getDownvotesMode());
         }
 
         return new JsonResponse(

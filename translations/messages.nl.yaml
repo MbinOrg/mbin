@@ -87,7 +87,7 @@ add_new_post: Bericht toevoegen
 add_new_video: Video toevoegen
 contact: Contact
 faq: Veelgestelde vragen
-rss: Rss
+rss: RSS
 change_theme: Thema wijzigen
 useful: Nuttig
 help: Hulp
@@ -823,8 +823,9 @@ account_deletion_button: Account verwijderen
 account_deletion_immediate: Onmiddellijk verwijderen
 marked_for_deletion: Gemarkeerd voor verwijdering
 account_deletion_description: Uw account wordt binnen 30 dagen verwijderd, tenzij
-  u ervoor kiest om het account onmiddellijk te verwijderen. Het account kan na verwijdering
-  niet meer worden hersteld.
+  u ervoor kiest om het account onmiddellijk te verwijderen. Om uw account binnen
+  30 dagen te herstellen, logt u in met dezelfde gebruikersreferenties of neemt u
+  contact op met een beheerder.
 remove_schedule_delete_account_desc: Verwijder de geplande verwijdering. Alle inhoud
   is weer beschikbaar en de gebruiker kan inloggen.
 schedule_delete_account: Plan Verwijdering
@@ -916,3 +917,19 @@ magazine_posting_restricted_to_mods: Beperk het aanmaken van gesprekken tot mode
 new_user_description: Deze gebruiker is nieuw (actief voor minder dan %days% dagen)
 new_magazine_description: Dit tijdschrift is nieuw (actief voor minder dan %days%
   dagen)
+flash_image_download_too_large_error: Afbeelding kon niet worden aangemaakt, deze
+  is te groot (max. grootte %bytes%)
+admin_users_banned: Geband
+max_image_size: Maximale bestandsgrootte
+user_verify: Account activeren
+admin_users_active: Actief
+admin_users_inactive: Inactief
+admin_users_suspended: Opgeschort
+edit_entry: Bewerk gesprek
+downvotes_mode: Omlaagstem-modus
+change_downvotes_mode: Wijzig omlaagstem modus
+disabled: Uitgeschakeld
+hidden: Verborgen
+enabled: Ingeschakeld
+toolbar.spoiler: Spoiler
+comment_not_found: Commentaar niet gevonden

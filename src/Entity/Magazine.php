@@ -367,7 +367,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
 
     public function softDelete(): void
     {
-        $this->markedForDeletionAt = new \DateTime();
+        $this->markedForDeletionAt = new \DateTime('now + 30days');
         $this->visibility = VisibilityInterface::VISIBILITY_SOFT_DELETED;
     }
 
@@ -505,7 +505,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
                 return false;
             }
 
-            if (null === $this->apId && ($actor->isAdmin() || $actor->isModerator() || $this->userIsModerator($actor))) {
+            if ((null === $this->apId && ($actor->isAdmin() || $actor->isModerator())) || $this->userIsModerator($actor)) {
                 return false;
             }
         }

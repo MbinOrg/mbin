@@ -128,7 +128,6 @@
                             <form method="post"
                                   action="{{ path('post_restore', {magazine_name: post.magazine.name, post_id: post.id}) }}"
                                   data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
-                                <input type="hidden" name="token" value="{{ csrf_token('post_restore') }}">
                                 <button type="submit">{{ 'restore'|trans }}</button>
                             </form>
                         </li>

@@ -7,6 +7,7 @@ namespace App\Security;
 use App\Entity\User as AppUser;
 use App\Service\IpResolver;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\UserManager;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAccountStatusException;
@@ -20,7 +21,8 @@ class UserChecker implements UserCheckerInterface
         private readonly TranslatorInterface $translator,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly EntityManagerInterface $entityManager,
-        private readonly IpResolver $ipResolver
+        private readonly IpResolver $ipResolver,
+        private readonly UserManager $userManager
     ) {
     }
 
@@ -30,8 +32,16 @@ class UserChecker implements UserCheckerInterface
             return;
         }
 
-        if ($user->isDeleted) {
+        if ($user->apId) {
             throw new BadCredentialsException();
+        }
+
+        if ($user->isDeleted) {
+            if ($user->markedForDeletionAt > (new \DateTime('now'))) {
+                $this->userManager->removeDeleteRequest($user);
+            } else {
+                throw new BadCredentialsException();
+            }
         }
 
         if (!$user->isVerified) {

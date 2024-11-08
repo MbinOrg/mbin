@@ -32,6 +32,7 @@ interface ActivityPubActivityInterface
         'blurhash' => 'toot:blurhash',
         'focalPoint' => 'toot:focalPoint',
         'votersCount' => 'toot:votersCount',
+        'featured' => 'toot:featured',
         'commentsEnabled' => 'pt:commentsEnabled',
         'postingRestrictedToMods' => 'lemmy:postingRestrictedToMods',
         'stickied' => 'lemmy:stickied',

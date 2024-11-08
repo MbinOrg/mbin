@@ -34,7 +34,7 @@ class MagazineModeratorRequestsController extends AbstractController
     #[IsGranted('edit', subject: 'magazine')]
     public function accept(Magazine $magazine, User $user, Request $request): Response
     {
-        $this->validateCsrf('magazine_panel_moderator_request_accept', $request->request->get('token'));
+        $this->validateCsrf('magazine_panel_moderator_request_accept', $request->getPayload()->get('token'));
 
         $this->manager->acceptModeratorRequest($magazine, $user, $this->getUserOrThrow());
 
@@ -45,7 +45,7 @@ class MagazineModeratorRequestsController extends AbstractController
     #[IsGranted('edit', subject: 'magazine')]
     public function reject(Magazine $magazine, User $user, Request $request): Response
     {
-        $this->validateCsrf('magazine_panel_moderator_request_reject', $request->request->get('token'));
+        $this->validateCsrf('magazine_panel_moderator_request_reject', $request->getPayload()->get('token'));
 
         $this->manager->toggleModeratorRequest($magazine, $user);
 

@@ -55,7 +55,7 @@ password: Password
 remember_me: Ricordami
 reset_password: Reimposta password
 show_more: Mostra di più
-email_confirm_content: 'Sei pronto ad attivare il tuo account Kbin? Clicca sul link
+email_confirm_content: 'Sei pronto ad attivare il tuo account Mbin? Clicca sul link
   sottostante:'
 reset_check_email_desc2: Se non vedi alcuna e-mail, controlla nella cartella della
   posta indesiderata.

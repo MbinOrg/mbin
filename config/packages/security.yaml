@@ -49,7 +49,7 @@ security:
             user_checker: App\Security\UserChecker
             remember_me:
                 secret: '%kernel.secret%'
-                lifetime: 1814400
+                lifetime: 10512000 # 4 Months
                 path: /
                 token_provider:
                     doctrine: true

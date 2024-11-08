@@ -686,3 +686,63 @@ oauth2.grant.moderate.magazine_admin.badges: Créer ou supprimer des badges des 
   qui vous appartiennent.
 oauth2.grant.moderate.post.pin: Épinglez des publications en haut de vos magazines
   modérés.
+user_badge_bot: Robot
+suspend_account: Suspendre le compte
+user_badge_op: OP
+user_badge_admin: Admin
+announcement: Annonce
+show: Afficher
+hide: Masquer
+back: Retour
+version: Version
+admin_users_active: Actifs
+2fa.authentication_code.label: Code d'authentification
+related_entry: Connexes
+and: et
+edited: édité
+auto: Auto
+delete_magazine: Supprimer le magazine
+purge_magazine: Purger le magazine
+purge_content: Purger le contenu
+delete_content: Supprimer le contenu
+subscription_panel_large: Grand panneau
+page_width: Largeur de la page
+page_width_max: Max
+restore_magazine: Restaurer le magazine
+deletion: Suppression
+accept: Accepter
+action: Action
+keywords: Mots-clés
+details: Détails
+sensitive_warning: Contenu sensible
+from: de
+tag: Étiquette
+someone: Quelqu'un
+default_theme: Thème par défaut
+2fa.remove: Supprimer 2FA
+menu: Menu
+abandoned: Abandonné
+cancel_request: Annuler la demande
+show_subscriptions: Afficher les abonnements
+alphabetically: Alphabétiquement
+page_width_auto: Auto
+page_width_fixed: Fixe
+user_badge_moderator: Mod
+reported: signalé
+report_subject: Sujet
+unsuspend_account: Annuler la suspension du compte
+sort_by: Trier par
+filter_by_subscription: Filtrer par abonnement
+filter_by_federation: Filtrer par statut de fédération
+close: Fermer
+pending: En attente
+position_bottom: En bas
+position_top: En haut
+two_factor_authentication: Authentification à deux facteurs
+admin_users_suspended: Suspendus
+admin_users_banned: Bannis
+admin_users_inactive: Inactifs
+enabled: Activé
+disabled: Désactivé
+hidden: Masqué
+magazine_deletion: Suppression de magazine

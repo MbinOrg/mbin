@@ -85,7 +85,10 @@ SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Unit
 ### Fixtures
 
 You might want to load random data to database instead of manually adding magazines, users, posts, comments etc.
-To do so, execute: `bin/console doctrine:fixtures:load --append --no-debug`
+To do so, execute: `php bin/console doctrine:fixtures:load --append --no-debug`
+You should stop the messenger processes, as they are not able to access the data while it is being created, but try to do so.
+- Docker: `docker compose stop messenger`
+- Bare Metal: `supervisorctl stop messenger:*`
 
 If you want to do the same but with the Docker setup, execute: `docker compose exec php bin/console doctrine:fixtures:load --append --no-debug` (from the `docker` directory)
 

@@ -6,7 +6,10 @@ namespace App\MessageHandler\ActivityPub\Inbox;
 
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use App\Entity\User;
+use App\Exception\InstanceBannedException;
 use App\Exception\PostingRestrictedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
@@ -29,9 +32,6 @@ use Symfony\Component\Messenger\MessageBusInterface;
 #[AsMessageHandler]
 class CreateHandler extends MbinMessageHandler
 {
-    private array $object;
-    private bool $stickyIt;
-
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly Note $note,
@@ -58,19 +58,19 @@ class CreateHandler extends MbinMessageHandler
         if (!($message instanceof CreateMessage)) {
             throw new \LogicException();
         }
-        $this->object = $message->payload;
-        $this->stickyIt = $message->stickyIt;
+        $object = $message->payload;
+        $stickyIt = $message->stickyIt;
         $this->logger->debug('Got a CreateMessage of type {t}, {m}', ['t' => $message->payload['type'], 'm' => $message->payload]);
         $entryTypes = ['Page', 'Article', 'Video'];
         $postTypes = ['Question', 'Note'];
 
         try {
-            if ('ChatMessage' === $this->object['type']) {
-                $this->handlePrivateMessage();
-            } elseif (\in_array($this->object['type'], $postTypes)) {
-                $this->handleChain();
-            } elseif (\in_array($this->object['type'], $entryTypes)) {
-                $this->handlePage();
+            if ('ChatMessage' === $object['type']) {
+                $this->handlePrivateMessage($object);
+            } elseif (\in_array($object['type'], $postTypes)) {
+                $this->handleChain($object, $stickyIt);
+            } elseif (\in_array($object['type'], $entryTypes)) {
+                $this->handlePage($object, $stickyIt);
             }
         } catch (UserBannedException) {
             $this->logger->info('Did not create the post, because the user is banned');
@@ -85,6 +85,8 @@ class CreateHandler extends MbinMessageHandler
                 $username = $e->actor->name;
             }
             $this->logger->info('Did not create the post, because the magazine {m} restricts posting to mods and {u} is not a mod', ['m' => $e->magazine, 'u' => $username]);
+        } catch (InstanceBannedException $e) {
+            $this->logger->info('Did not create the post, because the user\'s instance is banned');
         }
     }
 
@@ -92,21 +94,21 @@ class CreateHandler extends MbinMessageHandler
      * @throws TagBannedException
      * @throws UserBannedException
      * @throws UserDeletedException
+     * @throws InstanceBannedException
      */
-    private function handleChain(): void
+    private function handleChain(array $object, bool $stickyIt): void
     {
-        if (isset($this->object['inReplyTo']) && $this->object['inReplyTo']) {
-            $existed = $this->repository->findByObjectId($this->object['inReplyTo']);
+        if (isset($object['inReplyTo']) && $object['inReplyTo']) {
+            $existed = $this->repository->findByObjectId($object['inReplyTo']);
             if (!$existed) {
-                $this->bus->dispatch(new ChainActivityMessage([$this->object]));
+                $this->bus->dispatch(new ChainActivityMessage([$object]));
 
                 return;
             }
         }
 
-        $note = $this->note->create($this->object, stickyIt: $this->stickyIt);
-        // TODO atm post and post comment are not announced, because of the micro blog spam towards lemmy. If we implement magazine name as hashtag to be optional than this may be reverted
-        if ($note instanceof EntryComment /* or $note instanceof Post or $note instanceof PostComment */) {
+        $note = $this->note->create($object, stickyIt: $stickyIt);
+        if ($note instanceof EntryComment || $note instanceof Post || $note instanceof PostComment) {
             if (null !== $note->apId and null === $note->magazine->apId and 'random' !== $note->magazine->name) {
                 // local magazine, but remote post. Random magazine is ignored, as it should not be federated at all
                 $this->bus->dispatch(new AnnounceMessage(null, $note->magazine->getId(), $note->getId(), \get_class($note)));
@@ -120,10 +122,11 @@ class CreateHandler extends MbinMessageHandler
      * @throws UserDeletedException
      * @throws TagBannedException
      * @throws PostingRestrictedException
+     * @throws InstanceBannedException
      */
-    private function handlePage(): void
+    private function handlePage(array $object, bool $stickyIt): void
     {
-        $page = $this->page->create($this->object, stickyIt: $this->stickyIt);
+        $page = $this->page->create($object, stickyIt: $stickyIt);
         if ($page instanceof Entry) {
             if (null !== $page->apId and null === $page->magazine->apId and 'random' !== $page->magazine->name) {
                 // local magazine, but remote post. Random magazine is ignored, as it should not be federated at all
@@ -132,9 +135,9 @@ class CreateHandler extends MbinMessageHandler
         }
     }
 
-    private function handlePrivateMessage(): void
+    private function handlePrivateMessage(array $object): void
     {
-        $this->messageManager->createMessage($this->object);
+        $this->messageManager->createMessage($object);
     }
 
     private function handlePrivateMentions(): void

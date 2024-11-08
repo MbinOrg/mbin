@@ -9,6 +9,7 @@ use App\Entity\EntryComment;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Exception\EntityNotFoundException;
+use App\Exception\InstanceBannedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Exception\UserDeletedException;
@@ -22,7 +23,7 @@ use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
-use Doctrine\DBAL\Exception;
+use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -38,7 +39,8 @@ class ChainActivityHandler extends MbinMessageHandler
         private readonly MessageBusInterface $bus,
         private readonly ApActivityRepository $repository,
         private readonly Note $note,
-        private readonly Page $page
+        private readonly Page $page,
+        private readonly SettingsManager $settingsManager,
     ) {
         parent::__construct($this->entityManager);
     }
@@ -64,11 +66,16 @@ class ChainActivityHandler extends MbinMessageHandler
 
             return;
         }
+        try {
+            $entity = $this->retrieveObject($object['id']);
+        } catch (InstanceBannedException) {
+            $this->logger->info('the instance is banned, url: {url}', ['url' => $object['id']]);
 
-        $entity = $this->retrieveObject($object['id']);
+            return;
+        }
 
         if (!$entity) {
-            $this->logger->error('could not retrieve all the dependencies of {o}', ['o' => $object]);
+            $this->logger->error('could not retrieve all the dependencies of {o}', ['o' => $object['id']]);
 
             return;
         }
@@ -91,6 +98,9 @@ class ChainActivityHandler extends MbinMessageHandler
      */
     private function retrieveObject(string $apUrl): Entry|EntryComment|Post|PostComment|null
     {
+        if ($this->settingsManager->isBannedInstance($apUrl)) {
+            throw new InstanceBannedException();
+        }
         try {
             $object = $this->client->getActivityObject($apUrl);
             if (!$object) {
@@ -134,13 +144,15 @@ class ChainActivityHandler extends MbinMessageHandler
                     $this->logger->warning('Could not create an object from type {t} on {url}: {o}', ['t' => $object['type'], 'url' => $apUrl, 'o' => $object]);
             }
         } catch (UserBannedException) {
-            $this->logger->error('the user is banned, url: {url}', ['url' => $apUrl]);
+            $this->logger->info('the user is banned, url: {url}', ['url' => $apUrl]);
         } catch (UserDeletedException) {
-            $this->logger->error('the user is deleted, url: {url}', ['url' => $apUrl]);
+            $this->logger->info('the user is deleted, url: {url}', ['url' => $apUrl]);
         } catch (TagBannedException) {
-            $this->logger->error('one of the used tags is banned, url: {url}', ['url' => $apUrl]);
+            $this->logger->info('one of the used tags is banned, url: {url}', ['url' => $apUrl]);
         } catch (EntityNotFoundException $e) {
             $this->logger->error('There was an exception while getting {url}: {ex} - {m}. {o}', ['url' => $apUrl, 'ex' => \get_class($e), 'm' => $e->getMessage(), 'o' => $e]);
+        } catch (InstanceBannedException) {
+            $this->logger->info('the instance is banned, url: {url}', ['url' => $apUrl]);
         }
 
         return null;

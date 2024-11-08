@@ -392,6 +392,10 @@ class MagazineRepository extends ServiceEntityRepository
 
     public function findAudience(Magazine $magazine): array
     {
+        if (null !== $magazine->apId) {
+            return [$magazine->apInboxUrl];
+        }
+
         $dql =
             'SELECT COUNT(u.id), u.apInboxUrl FROM '.User::class.' u WHERE u IN ('.
             'SELECT IDENTITY(ms.user) FROM '.MagazineSubscription::class.' ms WHERE ms.magazine = :magazine)'.

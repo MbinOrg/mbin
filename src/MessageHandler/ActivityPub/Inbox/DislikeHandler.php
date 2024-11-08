@@ -15,7 +15,9 @@ use App\Message\ActivityPub\Inbox\DislikeMessage;
 use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
 use App\Service\ActivityPubManager;
+use App\Service\SettingsManager;
 use App\Service\VoteManager;
+use App\Utils\DownvotesMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -30,6 +32,7 @@ class DislikeHandler extends MbinMessageHandler
         private readonly MessageBusInterface $bus,
         private readonly VoteManager $voteManager,
         private readonly LoggerInterface $logger,
+        private readonly SettingsManager $settingsManager,
     ) {
         parent::__construct($this->entityManager);
     }
@@ -45,6 +48,9 @@ class DislikeHandler extends MbinMessageHandler
             throw new \LogicException();
         }
         if (!isset($message->payload['type'])) {
+            return;
+        }
+        if (DownvotesMode::Disabled === $this->settingsManager->getDownvotesMode()) {
             return;
         }
 

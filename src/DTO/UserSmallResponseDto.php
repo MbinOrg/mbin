@@ -15,6 +15,8 @@ class UserSmallResponseDto implements \JsonSerializable
     public ?bool $isFollowedByUser = null;
     public ?bool $isFollowerOfUser = null;
     public ?bool $isBlockedByUser = null;
+    public ?bool $isAdmin = null;
+    public ?bool $isGlobalModerator = null;
     public ?ImageDto $avatar = null;
     public ?string $apId = null;
     public ?string $apProfileId = null;
@@ -32,6 +34,8 @@ class UserSmallResponseDto implements \JsonSerializable
         $this->apId = $dto->apId;
         $this->apProfileId = $dto->apProfileId;
         $this->createdAt = $dto->createdAt;
+        $this->isAdmin = $dto->isAdmin;
+        $this->isGlobalModerator = $dto->isGlobalModerator;
     }
 
     public function jsonSerialize(): mixed
@@ -43,6 +47,8 @@ class UserSmallResponseDto implements \JsonSerializable
             'isFollowedByUser' => $this->isFollowedByUser,
             'isFollowerOfUser' => $this->isFollowerOfUser,
             'isBlockedByUser' => $this->isBlockedByUser,
+            'isAdmin' => $this->isAdmin,
+            'isGlobalModerator' => $this->isGlobalModerator,
             'avatar' => $this->avatar,
             'apId' => $this->apId,
             'apProfileId' => $this->apProfileId,

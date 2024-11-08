@@ -18,7 +18,9 @@ use App\Entity\Moderator;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\Exception\InstanceBannedException;
 use App\Exception\InvalidApPostException;
+use App\Exception\InvalidWebfingerException;
 use App\Factory\ActivityPub\PersonFactory;
 use App\Factory\MagazineFactory;
 use App\Factory\UserFactory;
@@ -123,6 +125,11 @@ class ActivityPubManager
      * @param ?string $actorUrlOrHandle actorUrlOrHandle actor URL or actor handle (could even be null)
      *
      * @return User|Magazine|null or Magazine or null on error
+     *
+     * @throws InstanceBannedException
+     * @throws InvalidApPostException
+     * @throws InvalidArgumentException
+     * @throws InvalidWebfingerException
      */
     public function findActorOrCreate(?string $actorUrlOrHandle): User|Magazine|null
     {
@@ -221,6 +228,9 @@ class ActivityPubManager
 
     public function dispatchUpdateActor(string $actorUrl)
     {
+        if ($this->settingsManager->isBannedInstance($actorUrl)) {
+            return;
+        }
         $limiter = $this->apUpdateActorLimiter
             ->create($actorUrl)
             ->consume(1);
@@ -274,10 +284,14 @@ class ActivityPubManager
         $port = !\is_null(parse_url($id, PHP_URL_PORT))
             ? ':'.parse_url($id, PHP_URL_PORT)
             : '';
+        $apObj = $this->apHttpClient->getActorObject($id);
+        if (!isset($apObj['preferredUsername'])) {
+            throw new \InvalidArgumentException("webfinger from $id does not supply a valid user object");
+        }
 
         return \sprintf(
             '%s@%s%s',
-            $this->apHttpClient->getActorObject($id)['preferredUsername'],
+            $apObj['preferredUsername'],
             parse_url($id, PHP_URL_HOST),
             $port
         );
@@ -289,9 +303,14 @@ class ActivityPubManager
      * @param string $actorUrl actor URL
      *
      * @return ?User or null on error
+     *
+     * @throws InstanceBannedException
      */
     private function createUser(string $actorUrl): ?User
     {
+        if ($this->settingsManager->isBannedInstance($actorUrl)) {
+            throw new InstanceBannedException();
+        }
         $webfinger = $this->webfinger($actorUrl);
         $this->userManager->create(
             $this->userFactory->createDtoFromAp($actorUrl, $webfinger->getHandle()),
@@ -462,6 +481,9 @@ class ActivityPubManager
      */
     private function createMagazine(string $actorUrl): ?Magazine
     {
+        if ($this->settingsManager->isBannedInstance($actorUrl)) {
+            throw new InstanceBannedException();
+        }
         $this->magazineManager->create(
             $this->magazineFactory->createDtoFromAp($actorUrl, $this->buildHandle($actorUrl)),
             null,
@@ -533,7 +555,7 @@ class ActivityPubManager
             $magazine->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
             $magazine->apDomain = parse_url($actor['id'], PHP_URL_HOST);
             $magazine->apFollowersUrl = $actor['followers'] ?? null;
-            $magazine->apAttributedToUrl = $this->getActorFromAttributedTo($actor['attributedTo'] ?? null, filterForPerson: false);
+            $magazine->apAttributedToUrl = isset($actor['attributedTo']) && \is_string($actor['attributedTo']) ? $actor['attributedTo'] : null;
             $magazine->apFeaturedUrl = $actor['featured'] ?? null;
             $magazine->apPreferredUsername = $actor['preferredUsername'] ?? null;
             $magazine->apDiscoverable = $actor['discoverable'] ?? true;
@@ -561,6 +583,8 @@ class ActivityPubManager
                     $this->handleModeratorCollection($actorUrl, $magazine);
                 } catch (InvalidArgumentException $ignored) {
                 }
+            } elseif (isset($actor['attributedTo']) && \is_array($actor['attributedTo'])) {
+                $this->handleModeratorArray($magazine, $this->getActorFromAttributedTo($actor['attributedTo']));
             }
 
             if (null !== $magazine->apFeaturedUrl) {
@@ -605,52 +629,57 @@ class ActivityPubManager
             $this->logger->debug('got moderator items for magazine "{magName}": {json}', ['magName' => $magazine->name, 'json' => json_encode($attributedObj)]);
 
             if (null !== $items) {
-                $moderatorsToRemove = [];
-                /** @var Moderator $mod */
-                foreach ($magazine->moderators as $mod) {
-                    $moderatorsToRemove[] = $mod->user;
-                }
-                $indexesNotToRemove = [];
-
-                foreach ($items as $item) {
-                    if (\is_string($item)) {
-                        try {
-                            $user = $this->findActorOrCreate($item);
-                            if ($user instanceof User) {
-                                foreach ($moderatorsToRemove as $key => $existMod) {
-                                    if ($existMod->username === $user->username) {
-                                        $indexesNotToRemove[] = $key;
-                                        break;
-                                    }
-                                }
-                                if (!$magazine->userIsModerator($user)) {
-                                    $this->logger->info('adding "{user}" as moderator in "{magName}" because they are a mod upstream, but not locally', ['user' => $user->username, 'magName' => $magazine->name]);
-                                    $this->magazineManager->addModerator(new ModeratorDto($magazine, $user, null));
-                                }
-                            }
-                        } catch (\Exception) {
-                            $this->logger->warning('Something went wrong while fetching actor "{actor}" as moderator of "{magName}"', ['actor' => $item, 'magName' => $magazine->name]);
-                        }
-                    }
-                }
-
-                foreach ($indexesNotToRemove as $i) {
-                    $moderatorsToRemove[$i] = null;
-                }
-
-                foreach ($moderatorsToRemove as $modToRemove) {
-                    if (null === $modToRemove) {
-                        continue;
-                    }
-                    $criteria = Criteria::create()->where(Criteria::expr()->eq('magazine', $magazine));
-                    $modObject = $modToRemove->moderatorTokens->matching($criteria)->first();
-                    $this->logger->info('removing "{exMod}" from "{magName}" as mod locally because they are no longer mod upstream', ['exMod' => $modToRemove->username, 'magName' => $magazine->name]);
-                    $this->magazineManager->removeModerator($modObject, null);
-                }
+                $this->handleModeratorArray($magazine, $items);
             } else {
                 $this->logger->warning('could not update the moderators of "{url}", the response doesn\'t have a "items" or "orderedItems" property or it is not an array', ['url' => $actorUrl]);
             }
         } catch (InvalidApPostException $ignored) {
+        }
+    }
+
+    private function handleModeratorArray(Magazine $magazine, array $items): void
+    {
+        $moderatorsToRemove = [];
+        /** @var Moderator $mod */
+        foreach ($magazine->moderators as $mod) {
+            $moderatorsToRemove[] = $mod->user;
+        }
+        $indexesNotToRemove = [];
+
+        foreach ($items as $item) {
+            if (\is_string($item)) {
+                try {
+                    $user = $this->findActorOrCreate($item);
+                    if ($user instanceof User) {
+                        foreach ($moderatorsToRemove as $key => $existMod) {
+                            if ($existMod->username === $user->username) {
+                                $indexesNotToRemove[] = $key;
+                                break;
+                            }
+                        }
+                        if (!$magazine->userIsModerator($user)) {
+                            $this->logger->info('adding "{user}" as moderator in "{magName}" because they are a mod upstream, but not locally', ['user' => $user->username, 'magName' => $magazine->name]);
+                            $this->magazineManager->addModerator(new ModeratorDto($magazine, $user, null));
+                        }
+                    }
+                } catch (\Exception) {
+                    $this->logger->warning('Something went wrong while fetching actor "{actor}" as moderator of "{magName}"', ['actor' => $item, 'magName' => $magazine->name]);
+                }
+            }
+        }
+
+        foreach ($indexesNotToRemove as $i) {
+            $moderatorsToRemove[$i] = null;
+        }
+
+        foreach ($moderatorsToRemove as $modToRemove) {
+            if (null === $modToRemove) {
+                continue;
+            }
+            $criteria = Criteria::create()->where(Criteria::expr()->eq('magazine', $magazine));
+            $modObject = $modToRemove->moderatorTokens->matching($criteria)->first();
+            $this->logger->info('removing "{exMod}" from "{magName}" as mod locally because they are no longer mod upstream', ['exMod' => $modToRemove->username, 'magName' => $magazine->name]);
+            $this->magazineManager->removeModerator($modObject, null);
         }
     }
 
@@ -1042,22 +1071,30 @@ class ActivityPubManager
         return false;
     }
 
-    public function getActorFromAttributedTo(string|array|null $attributedTo, bool $filterForPerson = true): ?string
+    public function getSingleActorFromAttributedTo(string|array|null $attributedTo, bool $filterForPerson = true): ?string
     {
-        if (\is_string($attributedTo)) {
-            return $attributedTo;
-        } elseif (\is_array($attributedTo)) {
-            $actors = array_filter($attributedTo, fn ($item) => \is_string($item) || (\is_array($item) && !empty($item['type']) && (!$filterForPerson || 'Person' === $item['type'])));
-            if (\sizeof($actors) >= 1) {
-                if (\is_string($actors[0])) {
-                    return $actors[0];
-                } elseif (!empty($actors[0]['id'])) {
-                    return $actors[0]['id'];
-                }
-            }
+        $actors = $this->getActorFromAttributedTo($attributedTo, $filterForPerson);
+        if (\sizeof($actors) > 0) {
+            return $actors[0];
         }
 
         return null;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getActorFromAttributedTo(string|array|null $attributedTo, bool $filterForPerson = true): array
+    {
+        if (\is_string($attributedTo)) {
+            return [$attributedTo];
+        } elseif (\is_array($attributedTo)) {
+            $actors = array_filter($attributedTo, fn ($item) => \is_string($item) || (\is_array($item) && !empty($item['type']) && (!$filterForPerson || 'Person' === $item['type'])));
+
+            return array_map(fn ($item) => $item['id'], $actors);
+        }
+
+        return [];
     }
 
     public function extractUrl(string|array|null $url): ?string
