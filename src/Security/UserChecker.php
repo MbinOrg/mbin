@@ -6,8 +6,8 @@ namespace App\Security;
 
 use App\Entity\User as AppUser;
 use App\Service\IpResolver;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Service\UserManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAccountStatusException;
