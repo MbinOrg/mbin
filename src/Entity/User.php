@@ -908,10 +908,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public function isVerifiedRelatedLinkExists(): bool
     {
         foreach ($this->relatedLinks as $relatedLink) {
-            if ($relatedLink['verifiedLink'] === true) {
+            if (true === $relatedLink['verifiedLink']) {
                 return true;
             }
         }
+
         return false;
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\DTO\RelatedLinkDTO;
@@ -20,7 +22,6 @@ class UserRelatedDataType extends AbstractType implements DataMapperInterface
             ->add('label', TextType::class)
             ->add('value', UrlType::class)
             ->setDataMapper($this);
-        ;
     }
 
     /**
@@ -60,7 +61,7 @@ class UserRelatedDataType extends AbstractType implements DataMapperInterface
     {
         $resolver->setDefaults(
             [
-                'data_class' => RelatedLinkDTO::class
+                'data_class' => RelatedLinkDTO::class,
             ]
         );
     }

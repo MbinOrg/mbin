@@ -14,7 +14,6 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -33,7 +32,7 @@ class UserBasicType extends AbstractType
         $builder
             ->add('username', TextType::class, ['required' => false])
             ->add('about', TextareaType::class, ['required' => false])
-            ->add('relatedLinks', CollectionType::class , [
+            ->add('relatedLinks', CollectionType::class, [
                 'entry_type' => UserRelatedDataType::class,
                 'entry_options' => ['label' => false],
                 'label' => false,
