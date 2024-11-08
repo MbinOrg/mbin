@@ -283,7 +283,7 @@ With the content (these are personal preferences, adjust to your needs):
 
 ```ini
 pm = dynamic
-pm.max_children = 60
+pm.max_children = 70
 pm.start_servers = 10
 pm.min_spare_servers = 5
 pm.max_spare_servers = 10
