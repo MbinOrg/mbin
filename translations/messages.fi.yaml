@@ -354,3 +354,28 @@ notification_title_edited_thread: Ketjua muokattiin
 show_related_magazines: Näytä satunnaisia makasiineja
 new_user_description: Tämä käyttäjä on uusi (aktiivinen alle %days% päivää)
 new_magazine_description: Tämä makasiini on uusi (aktiivinen alle %days% päivää)
+hidden: Piilotettu
+enabled: Käytössä
+title: Otsikko
+is_adult: 18+ / NSFW
+overview: Yleisnäkymä
+columns: Sarakkeet
+joined: Liittynyt
+rejected: Hylätty
+help: Tuki
+url: URL-osoite
+body: Sisältö
+tags: Tunnisteet
+tag: Tunniste
+cards: Kortit
+featured_magazines: Esittelyssä olevat makasiinit
+votes: Äänet
+reject: Hylkää
+approve: Hyväksy
+approved: Hyväksytty
+dashboard: Kojelauta
+registration_disabled: Rekisteröinti poistettu käytöstä
+password_confirm_header: Vahvista salasanan vaihtopyyntö.
+notification_title_new_report: Uusi raportti luotiin
+comment_not_found: Kommenttia ei löydy
+table_of_contents: Sisällysluettelo
