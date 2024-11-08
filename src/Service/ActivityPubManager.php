@@ -284,10 +284,14 @@ class ActivityPubManager
         $port = !\is_null(parse_url($id, PHP_URL_PORT))
             ? ':'.parse_url($id, PHP_URL_PORT)
             : '';
+        $apObj = $this->apHttpClient->getActorObject($id);
+        if (!isset($apObj['preferredUsername'])) {
+            throw new \InvalidArgumentException("webfinger from $id does not supply a valid user object");
+        }
 
         return \sprintf(
             '%s@%s%s',
-            $this->apHttpClient->getActorObject($id)['preferredUsername'],
+            $apObj['preferredUsername'],
             parse_url($id, PHP_URL_HOST),
             $port
         );
@@ -551,7 +555,7 @@ class ActivityPubManager
             $magazine->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
             $magazine->apDomain = parse_url($actor['id'], PHP_URL_HOST);
             $magazine->apFollowersUrl = $actor['followers'] ?? null;
-            $magazine->apAttributedToUrl = \is_string($actor['attributedTo']) ? $actor['attributedTo'] : null;
+            $magazine->apAttributedToUrl = isset($actor['attributedTo']) && \is_string($actor['attributedTo']) ? $actor['attributedTo'] : null;
             $magazine->apFeaturedUrl = $actor['featured'] ?? null;
             $magazine->apPreferredUsername = $actor['preferredUsername'] ?? null;
             $magazine->apDiscoverable = $actor['discoverable'] ?? true;
@@ -579,7 +583,7 @@ class ActivityPubManager
                     $this->handleModeratorCollection($actorUrl, $magazine);
                 } catch (InvalidArgumentException $ignored) {
                 }
-            } elseif (\is_array($actor['attributedTo'])) {
+            } elseif (isset($actor['attributedTo']) && \is_array($actor['attributedTo'])) {
                 $this->handleModeratorArray($magazine, $this->getActorFromAttributedTo($actor['attributedTo']));
             }
 

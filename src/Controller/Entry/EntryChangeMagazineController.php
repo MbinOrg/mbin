@@ -30,7 +30,7 @@ class EntryChangeMagazineController extends AbstractController
         Entry $entry,
         Request $request
     ): Response {
-        $this->validateCsrf('change_magazine', $request->request->get('token'));
+        $this->validateCsrf('change_magazine', $request->getPayload()->get('token'));
 
         $newMagazine = $this->repository->findOneByName($request->get('change_magazine')['new_magazine']);
 

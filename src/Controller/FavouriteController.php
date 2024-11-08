@@ -21,8 +21,6 @@ class FavouriteController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function __invoke(FavouriteInterface $subject, Request $request, FavouriteManager $manager): Response
     {
-        $this->validateCsrf('favourite', $request->request->get('token'));
-
         $manager->toggle($this->getUserOrThrow(), $subject);
 
         if ($request->isXmlHttpRequest()) {

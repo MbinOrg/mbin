@@ -12,8 +12,8 @@ use App\Service\TwoFactorManager;
 use App\Service\UserManager;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
 use Psr\Log\LoggerInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Totp\TotpAuthenticatorInterface;
@@ -101,7 +101,7 @@ class User2FAController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function disable(Request $request): Response
     {
-        $this->validateCsrf('user_2fa_remove', $request->request->get('token'));
+        $this->validateCsrf('user_2fa_remove', $request->getPayload()->get('token'));
 
         $user = $this->getUserOrThrow();
         if (!$user->isTotpAuthenticationEnabled()) {
@@ -130,10 +130,10 @@ class User2FAController extends AbstractController
             ->writerOptions([])
             ->data($this->totpAuthenticator->getQRContent($user))
             ->encoding(new Encoding('UTF-8'))
-            ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
+            ->errorCorrectionLevel(ErrorCorrectionLevel::High)
             ->size(250)
             ->margin(0)
-            ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
+            ->roundBlockSizeMode(RoundBlockSizeMode::Margin)
             ->build();
 
         return new Response($result->getString(), 200, ['Content-Type' => 'image/png']);
@@ -142,7 +142,7 @@ class User2FAController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function remove(User $user, Request $request): Response
     {
-        $this->validateCsrf('user_2fa_remove', $request->request->get('token'));
+        $this->validateCsrf('user_2fa_remove', $request->getPayload()->get('token'));
 
         $this->twoFactorManager->remove2FA($user);
 

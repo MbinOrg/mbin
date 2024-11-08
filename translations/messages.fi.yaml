@@ -169,7 +169,7 @@ top: Parhaimmat
 active: Aktiivinen
 newest: Uusimmat
 no_comments: Ei kommentteja
-favourite: Suosikki
+favourite: Suosi
 add_comment: Lisää kommentti
 remove_media: Poista media
 empty: Tyhjä
@@ -279,3 +279,103 @@ random_posts: Satunnaiset viestit
 page_width_fixed: Kiinteä
 kbin_intro_desc: on hajautettu alusta sisällön yhteenkokoamiseen sekä mikrobloggaukseen,
   ja se toimii osana Fediverse-verkkoa.
+show_profile_subscriptions: Näytä makasiinitilaukset
+show_related_entries: Näytä satunnaisia ketjuja
+show_related_posts: Näytä satunnaisia viestejä
+filter_by_federation: Suodata federoinnin tilan mukaan
+filter_by_time: Suodata ajan mukaan
+subscribers_count: '{0}tilaajaa|{1}tilaaja|]1,Inf[ tilaajaa'
+marked_for_deletion: Merkitty poistettavaksi
+marked_for_deletion_at: Merkitty poistettavaksi %date%
+subscriptions_in_own_sidebar: Erillisessä sivupalkissa
+sidebars_same_side: Sivupalkit samalla puolella
+type.magazine: Makasiini
+magazine: Makasiini
+magazines: Makasiinit
+change_view: Vaihda näkymää
+comments_count: '{0}kommenttia|{1}kommentti|]1,Inf[ kommenttia'
+followers_count: '{0}seuraajaa|{1}seuraaja|]1,Inf[ seuraajaa'
+filter_by_type: Suodata tyypin mukaan
+filter_by_subscription: Suodata tilauksen mukaan
+markdown_howto: Kuinka muokkain toimii?
+related_posts: Asiaan liittyvät viestit
+always_disconnected_magazine_info: Tämä makasiini ei vastaanota päivityksiä.
+subscribe_for_updates: Tilaa vastaanottaaksesi päivityksiä.
+all_magazines: Kaikki makasiinit
+create_new_magazine: Luo uusi makasiini
+useful: Hyödyllinen
+down_vote: Vähennä
+select_magazine: Valitse makasiini
+followers: Seuraajat
+go_to_content: Siirry sisältöön
+go_to_filters: Siirry suodattimiin
+go_to_search: Siirry hakuun
+tree_view: Puunäkymä
+chat_view: Keskustelunäkymä
+table_view: Taulukkonäkymä
+cards_view: Korttinäkymä
+copy_url: Kopioi Mbin-osoite
+copy_url_to_fediverse: Kopioi alkuperäinen osoite
+show_magazines_icons: Näytä makasiinien kuvakkeet
+subject_reported: Sisällöstä on ilmoitettu.
+change_magazine: Vaihda makasiinia
+related_magazines: Aiheeseen liittyvät makasiinit
+random_magazines: Satunnaiset makasiinit
+comment_reply_position: Kommentin vastauksen sijainti
+subscription_header: TIlatut makasiinit
+position_bottom: Alhaalla
+position_top: Ylhäällä
+flash_account_settings_changed: Tilisi asetukset on muutettu onnistuneesti. Sinun
+  täytyy kirjautua uudelleen sisään.
+subscription_sort: Järjestä
+alphabetically: Aakkosjärjestys
+subscription_sidebar_pop_out_right: Siirrä erilliseen sivupalkkiin oikealle
+subscription_sidebar_pop_out_left: Siirrä erilliseen sivupalkkiin vasemmalle
+flash_user_edit_profile_error: Profiilin asetusten tallentaminen epäonnistui.
+flash_user_settings_general_error: Käyttäjän asetusten tallentaminen epäonnistui.
+magazine_deletion: Makasiinin poisto
+delete_magazine: Poista makasiini
+restore_magazine: Palauta makasiini
+open_url_to_fediverse: Avaa alkuperäinen osoite
+magazine_is_deleted: Makasiini on poistettu. Voit <a href="%link_target%">palauttaa</a>
+  sen 30 päivän sisällä.
+request_magazine_ownership: Pyydä makasiinin omistajuutta
+accept: Hyväksy
+abandoned: Hylätty
+cancel_request: Peru pyyntö
+sso_registrations_enabled: Kertakirjautumisrekisteröinnit käytössä
+edited: muokattu
+keywords: Avainsanat
+notification_title_mention: Sinut mainittiin
+notification_title_removed_comment: Kommentti poistettiin
+notification_title_edited_comment: Kommenttia muokattiin
+notification_title_removed_thread: Ketju poistettiin
+notification_title_edited_thread: Ketjua muokattiin
+show_related_magazines: Näytä satunnaisia makasiineja
+new_user_description: Tämä käyttäjä on uusi (aktiivinen alle %days% päivää)
+new_magazine_description: Tämä makasiini on uusi (aktiivinen alle %days% päivää)
+hidden: Piilotettu
+enabled: Käytössä
+title: Otsikko
+is_adult: 18+ / NSFW
+overview: Yleisnäkymä
+columns: Sarakkeet
+joined: Liittynyt
+rejected: Hylätty
+help: Tuki
+url: URL-osoite
+body: Sisältö
+tags: Tunnisteet
+tag: Tunniste
+cards: Kortit
+featured_magazines: Esittelyssä olevat makasiinit
+votes: Äänet
+reject: Hylkää
+approve: Hyväksy
+approved: Hyväksytty
+dashboard: Kojelauta
+registration_disabled: Rekisteröinti poistettu käytöstä
+password_confirm_header: Vahvista salasanan vaihtopyyntö.
+notification_title_new_report: Uusi raportti luotiin
+comment_not_found: Kommenttia ei löydy
+table_of_contents: Sisällysluettelo

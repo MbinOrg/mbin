@@ -69,7 +69,7 @@ class MagazineBanController extends AbstractController
     #[IsGranted('moderate', subject: 'magazine')]
     public function unban(Magazine $magazine, User $user, Request $request): Response
     {
-        $this->validateCsrf('magazine_unban', $request->request->get('token'));
+        $this->validateCsrf('magazine_unban', $request->getPayload()->get('token'));
 
         $this->manager->unban($magazine, $user);
 

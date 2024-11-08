@@ -106,6 +106,11 @@ contact: Contact
 faq: FAQ
 rss: RSS
 change_theme: Change theme
+downvotes_mode: Downvotes mode
+change_downvotes_mode: Change downvotes mode
+disabled: Disabled
+hidden: Hidden
+enabled: Enabled
 useful: Useful
 help: Help
 check_email: Check your email
@@ -443,6 +448,7 @@ toolbar.image: Image
 toolbar.unordered_list: Unordered List
 toolbar.ordered_list: Ordered List
 toolbar.mention: Mention
+toolbar.spoiler: Spoiler
 federation_page_enabled: Federation page enabled
 federation_page_allowed_description: Known instances we federate with
 federation_page_disallowed_description: Instances we do not federate with
@@ -890,3 +896,5 @@ admin_users_suspended: Suspended
 admin_users_banned: Banned
 user_verify: Activate account
 max_image_size: Maximum file size
+comment_not_found: Comment not found
+table_of_contents: Table of contents

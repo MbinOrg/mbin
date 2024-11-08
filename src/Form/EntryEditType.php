@@ -10,7 +10,7 @@ use App\Form\DataTransformer\TagTransformer;
 use App\Form\EventListener\DefaultLanguage;
 use App\Form\EventListener\DisableFieldsOnEntryEdit;
 use App\Form\EventListener\ImageListener;
-use App\Form\Type\BadgesType;
+// use App\Form\Type\BadgesType;
 use App\Form\Type\LanguageType;
 use App\Form\Type\MagazineAutocompleteType;
 use Symfony\Component\Form\AbstractType;
@@ -37,7 +37,9 @@ class EntryEditType extends AbstractType
         $builder
             ->add('url', UrlType::class, ['required' => false])
             ->add('title', TextareaType::class)
-            ->add('body', TextareaType::class)
+            ->add('body', TextareaType::class, [
+                'required' => false,
+            ])
             ->add('magazine', MagazineAutocompleteType::class)
             ->add('tags', TextType::class, [
                 'required' => false,
@@ -48,13 +50,13 @@ class EntryEditType extends AbstractType
                     'delimiter' => ' ',
                 ],
             ])
-            ->add(
-                'badges',
-                BadgesType::class,
-                [
-                    'required' => false,
-                ]
-            )
+            // ->add(
+            //     'badges',
+            //     BadgesType::class,
+            //     [
+            //         'required' => false,
+            //     ]
+            // )
             ->add(
                 'image',
                 FileType::class,

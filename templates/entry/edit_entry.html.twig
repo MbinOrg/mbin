@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {%- block title -%}
-    {{- 'edit_article'|trans }} - {{ parent() -}}
+    {{- 'edit_entry'|trans }} - {{ parent() -}}
 {%- endblock -%}
 
 {% block mainClass %}page-entry-create page-entry-edit-article{% endblock %}
@@ -18,7 +18,9 @@
         class: 'section--top'
     }) }}
 
-    <h1 hidden>{{ 'edit_entry'|trans }}</h1>
+    <header>
+        <h1 hidden>{{ 'edit_entry'|trans }}</h1>
+    </header>
     {% include 'layout/_flash.html.twig' %}
     <div id="content" class="section">
         <div class="container" data-controller="entry-link-create">

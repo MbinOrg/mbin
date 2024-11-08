@@ -28,7 +28,7 @@ class PostCommentDeleteController extends AbstractController
         PostComment $comment,
         Request $request
     ): Response {
-        $this->validateCsrf('post_comment_delete', $request->request->get('token'));
+        $this->validateCsrf('post_comment_delete', $request->getPayload()->get('token'));
 
         $this->manager->delete($this->getUserOrThrow(), $comment);
 
@@ -44,7 +44,7 @@ class PostCommentDeleteController extends AbstractController
         PostComment $comment,
         Request $request
     ): Response {
-        $this->validateCsrf('post_comment_restore', $request->request->get('token'));
+        $this->validateCsrf('post_comment_restore', $request->getPayload()->get('token'));
 
         $this->manager->restore($this->getUserOrThrow(), $comment);
 
@@ -60,7 +60,7 @@ class PostCommentDeleteController extends AbstractController
         PostComment $comment,
         Request $request
     ): Response {
-        $this->validateCsrf('post_comment_purge', $request->request->get('token'));
+        $this->validateCsrf('post_comment_purge', $request->getPayload()->get('token'));
 
         $this->manager->purge($this->getUserOrThrow(), $comment);
 

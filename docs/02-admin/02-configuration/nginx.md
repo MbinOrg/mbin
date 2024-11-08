@@ -243,19 +243,57 @@ Restart (or reload) NGINX:
 sudo systemctl restart nginx
 ```
 
+## Trusted Proxies
+
+If you are using a reverse proxy, you need to configure your trusted proxies to use the `X-Forwarded-For` header. Mbin configured the following trusted headers for you already: `x-forwarded-for`, `x-forwarded-proto`, `x-forwarded-port` and `x-forwarded-prefix`.
+
+Trusted proxies can be configured in the `.env` file (or your `.env.local` file):
+
+```sh
+nano /var/www/mbin/.env
+```
+
+You can configure a single IP address and/or a range of IP addresses (this configuration should be sufficient if you are running Nginx yourself):
+
+```dotenv
+# Change the IP range if needed, this is just an example
+TRUSTED_PROXIES=127.0.0.1,192.168.1.0/24
+```
+
+Or if the IP address is dynamic, you can set the `REMOTE_ADDR` string which will be replaced at runtime by `$_SERVER['REMOTE_ADDR']`:
+
+```dotenv
+TRUSTED_PROXIES=127.0.0.1,REMOTE_ADDR
+```
+
+> [!WARNING]
+> In this last example be sure that you configure the web server to _not_
+> respond to traffic from _any_ clients other than your trusted load balancers
+> (eg. within AWS this can be achieved via security groups).
+
+Finally run the `post-upgrade` script to dump the `.env` to the `.env.local.php` and clear any cache:
+
+```sh
+./bin/post-upgrade
+```
+
+More detailed info can be found at: [Symfony Trusted Proxies docs](https://symfony.com/doc/current/deployment/proxies.html)
+
 ## Media reverse proxy
 
 we suggest that you do not use this configuration:
+
 ```dotenv
 KBIN_STORAGE_URL=https://mbin.domain.tld/media
 ```
 
 Instead we suggest to use a subdomain for serving your media files:
+
 ```dotenv
 KBIN_STORAGE_URL=https://media.mbin.domain.tld
 ```
 
-That way you can let nginx cache media assets and seamlessly switch to an object storage provider later. 
+That way you can let nginx cache media assets and seamlessly switch to an object storage provider later.
 
 ```bash
 sudo nano /etc/nginx/sites-available/mbin-media.conf
@@ -289,4 +327,3 @@ For it to be a usable https site you have to run `certbot --nginx` and select th
 
 > [!TIP]
 > don't forget to enable http2 by adding `http2 on;` after certbot ran (underneath the `listen 443 ssl;` line)
-

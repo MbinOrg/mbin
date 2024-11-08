@@ -32,7 +32,7 @@ class EntryCommentDeleteController extends AbstractController
         EntryComment $comment,
         Request $request
     ): Response {
-        $this->validateCsrf('entry_comment_delete', $request->request->get('token'));
+        $this->validateCsrf('entry_comment_delete', $request->getPayload()->get('token'));
 
         $this->manager->delete($this->getUserOrThrow(), $comment);
 
@@ -50,7 +50,7 @@ class EntryCommentDeleteController extends AbstractController
         EntryComment $comment,
         Request $request
     ): Response {
-        $this->validateCsrf('entry_comment_restore', $request->request->get('token'));
+        $this->validateCsrf('entry_comment_restore', $request->getPayload()->get('token'));
 
         $this->manager->restore($this->getUserOrThrow(), $comment);
 
@@ -68,7 +68,7 @@ class EntryCommentDeleteController extends AbstractController
         EntryComment $comment,
         Request $request
     ): Response {
-        $this->validateCsrf('entry_comment_purge', $request->request->get('token'));
+        $this->validateCsrf('entry_comment_purge', $request->getPayload()->get('token'));
 
         $this->manager->purge($this->getUserOrThrow(), $comment);
 

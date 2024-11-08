@@ -9,6 +9,7 @@ use App\DTO\PageDto;
 use App\DTO\SiteResponseDto;
 use App\Entity\Site;
 use App\Repository\SiteRepository;
+use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
@@ -72,7 +73,8 @@ class InstanceUpdatePagesApi extends InstanceBaseApi
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
+        SettingsManager $settingsManager,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
@@ -103,7 +105,7 @@ class InstanceUpdatePagesApi extends InstanceBaseApi
         $entityManager->flush();
 
         return new JsonResponse(
-            new SiteResponseDto($entity),
+            new SiteResponseDto($entity, $settingsManager->getDownvotesMode()),
             headers: $headers
         );
     }

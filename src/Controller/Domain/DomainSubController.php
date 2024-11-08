@@ -22,8 +22,6 @@ class DomainSubController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function subscribe(Domain $domain, Request $request): Response
     {
-        $this->validateCsrf('subscribe', $request->request->get('token'));
-
         $this->manager->subscribe($domain, $this->getUserOrThrow());
 
         if ($request->isXmlHttpRequest()) {
@@ -36,8 +34,6 @@ class DomainSubController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function unsubscribe(Domain $domain, Request $request): Response
     {
-        $this->validateCsrf('subscribe', $request->request->get('token'));
-
         $this->manager->unsubscribe($domain, $this->getUserOrThrow());
 
         if ($request->isXmlHttpRequest()) {

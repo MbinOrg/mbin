@@ -16,7 +16,7 @@ class UserRemoveFollowing extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function __invoke(User $user, UserManager $manager, Request $request): Response
     {
-        $this->validateCsrf('user_remove_following', $request->request->get('token'));
+        $this->validateCsrf('user_remove_following', $request->getPayload()->get('token'));
 
         $manager->removeFollowing($user);
 

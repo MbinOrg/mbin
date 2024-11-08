@@ -5,21 +5,33 @@ framework:
     http_method_override: false
     handle_all_throwables: true
     trusted_proxies: '%env(string:default::TRUSTED_PROXIES)%'
-    trusted_headers: ['x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-prefix']
+    trusted_headers:
+        [
+            'x-forwarded-for',
+            'x-forwarded-proto',
+            'x-forwarded-port',
+            'x-forwarded-prefix',
+        ]
 
-    # Enables session support. Note that the session will ONLY be started if you read or write from it.
-    # Remove or comment this section to explicitly disable session support.
+    # Sessions are stored in database, because saving sessions in Redis can give race conditions.
+    # See last paragraph of https://symfony.com/doc/current/session.html#store-sessions-in-a-key-value-database-redis
+    #
+    # PHP session handling is often (in Debian/Ubuntu) not doing gargage collection for sessions
+    # (session.gc_probability option in PHP).
+    # Hence we do also not want to set gc_maxlifetime for idle periods.
+    # We set our cookie session lifetime to the same value as remember_me token.
+    # More info: https://symfony.com/doc/current/session.html#session-idle-time-keep-alive
     session:
-        handler_id: '%env(REDIS_DNS)%'
+        handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler
         cookie_secure: auto
         cookie_samesite: lax
-        gc_maxlifetime: 1814400 # Match the remember_me lifetime
+        cookie_lifetime: 10512000 # 4 months long lifetime
         storage_factory_id: session.storage.factory.native
 
     http_client:
         default_options:
             headers:
-                'User-Agent': 'Mbin/1.7.1-rc5 (+https://%kbin_domain%/agent)'
+                'User-Agent': 'Mbin/1.7.2 (+https://%kbin_domain%/agent)'
 
     #esi: true
     #fragments: true

@@ -59,10 +59,10 @@ class EntryCommentNotificationManager implements ContentNotificationManagerInter
         if ($subject->user->isBanned || $subject->user->isDeleted || $subject->user->isTrashed() || $subject->user->isSoftDeleted()) {
             return;
         }
+        if (!$subject instanceof EntryComment) {
+            throw new \LogicException();
+        }
 
-        /**
-         * @var EntryComment $subject
-         */
         $users = $this->sendMentionedNotification($subject);
         $users = $this->sendUserReplyNotification($subject, $users);
         $this->sendMagazineSubscribersNotification($subject, $users);
@@ -223,17 +223,17 @@ class EntryCommentNotificationManager implements ContentNotificationManagerInter
 
     public function sendEdited(ContentInterface $subject): void
     {
-        /*
-         * @var EntryComment $subject
-         */
+        if (!$subject instanceof EntryComment) {
+            throw new \LogicException();
+        }
         $this->notifyMagazine(new EntryCommentEditedNotification($subject->user, $subject));
     }
 
     public function sendDeleted(ContentInterface $subject): void
     {
-        /*
-         * @var EntryComment $subject
-         */
+        if (!$subject instanceof EntryComment) {
+            throw new \LogicException();
+        }
         $this->notifyMagazine($notification = new EntryCommentDeletedNotification($subject->user, $subject));
     }
 
