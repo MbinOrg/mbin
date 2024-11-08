@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Entity\Traits\ActivityPubActorTrait;
 use App\Message\ActivityPub\Outbox\DeliverMessage;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 readonly class DeliverManager
@@ -13,6 +14,7 @@ readonly class DeliverManager
     public function __construct(
         private SettingsManager $settingsManager,
         private MessageBusInterface $bus,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -29,6 +31,11 @@ readonly class DeliverManager
             $inboxUrl = \is_string($inbox) ? $inbox : $inbox->apInboxUrl;
 
             if ($this->settingsManager->isBannedInstance($inboxUrl)) {
+                continue;
+            }
+
+            if ($this->settingsManager->isLocalUrl($inboxUrl)) {
+                $this->logger->warning('tried delivering to a local url, {payload}', ['payload' => $activity]);
                 continue;
             }
 
