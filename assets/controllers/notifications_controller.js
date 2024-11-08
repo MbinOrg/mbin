@@ -116,7 +116,7 @@ export default class extends Controller {
                 if (typeof data.messages === "number") {
                     this.setMessageCount(data.messages)
                 }
-                window.setTimeout(() => this.fetchAndSetNewNotificationAndMessageCount(), 10 * 1000)
+                window.setTimeout(() => this.fetchAndSetNewNotificationAndMessageCount(), 30 * 1000)
             })
     }
 

@@ -13,11 +13,25 @@
 {% endblock %}
 
 {% block body %}
-    <h1>{{ 'federation'|trans }}</h1>
-    <div id="content" class="section" style="overflow: auto;">
 
+    <h1>{{ 'federation'|trans }}</h1>
+    <div class="section">
+        <h3 id="toc" style="margin-top: 0">{{ 'table_of_contents'|trans }}</h3>
+        <ol>
+            <li>
+                <a href="#allowed-instances">{{ 'federation_page_allowed_description'|trans }}</a>
+            </li>
+            <li>
+                <a href="#banned-instances">{{ 'federation_page_disallowed_description'|trans }}</a>
+            </li>
+            <li>
+                <a href="#dead-instances">{{ 'federation_page_dead_title'|trans }}</a>
+            </li>
+        </ol>
+    </div>
+    <div class="section">
+        <h3 id="allowed-instances" style="margin-top: 0">{{'federation_page_allowed_description'|trans}}</h3>
         {% if allowedInstances is not empty %}
-            <h3>{{'federation_page_allowed_description'|trans}}</h3>
             <table>
                 <thead>
                     <tr>
@@ -52,10 +66,15 @@
                     {% endfor %}
                 </tbody>
            </table>
+        {% else %}
+            <aside class="section--muted">
+                <p>{{ 'empty'|trans }}</p>
+            </aside>
         {% endif %}
-
+    </div>
+    <div class="section">
+        <h3 id="banned-instances" style="margin-top: 0">{{'federation_page_disallowed_description'|trans}}</h3>
         {% if defederatedInstances is not empty %}
-            <h3>{{'federation_page_disallowed_description'|trans}}</h3>
             <table>
                 <thead>
                 <tr>
@@ -65,20 +84,26 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for instance in defederatedInstances %}
-                    <tr>
-                        <td><a href="https://{{ instance.domain }}" rel="noopener noreferrer nofollow">{{instance.domain}}</a></td>
-                        <td>{{ instance.software ?? '' }}</td>
-                        <td>{{ instance.version ?? '' }}</td>
-                    </tr>
-                {% endfor %}
+                    {% for instance in defederatedInstances %}
+                        <tr>
+                            <td><a href="https://{{ instance.domain }}" rel="noopener noreferrer nofollow">{{instance.domain}}</a></td>
+                            <td>{{ instance.software ?? '' }}</td>
+                            <td>{{ instance.version ?? '' }}</td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
+        {% else %}
+            <aside class="section--muted">
+                <p>{{ 'empty'|trans }}</p>
+            </aside>
         {% endif %}
+    </div>
+    <div class="section">
+        <h3 id="dead-instances" style="margin-top: 0">{{'federation_page_dead_title'|trans}}</h3>
+        <p>{{ 'federation_page_dead_description'|trans }}</p>
 
         {% if deadInstances is not empty %}
-            <h3>{{'federation_page_dead_title'|trans}}</h3>
-            <p>{{ 'federation_page_dead_description'|trans }}</p>
             <table>
                 <thead>
                 <tr>
@@ -91,22 +116,26 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for instance in deadInstances %}
-                    <tr>
-                        <td><a href="https://{{ instance.domain }}" rel="noopener noreferrer nofollow">{{instance.domain}}</a></td>
-                        <td>{{ instance.software ?? ''}}</td>
-                        <td>{{ instance.version ?? '' }}</td>
-                        {% if app.user is defined and app.user is not same as null and app.user.admin %}
-                            <td>
-                                {% if instance.lastFailedDeliver is not same as null %}
-                                    {{ component('date', { date: instance.lastFailedDeliver }) }}
-                                {% endif %}
-                            </td>
-                        {% endif %}
-                    </tr>
-                {% endfor %}
+                    {% for instance in deadInstances %}
+                        <tr>
+                            <td><a href="https://{{ instance.domain }}" rel="noopener noreferrer nofollow">{{instance.domain}}</a></td>
+                            <td>{{ instance.software ?? ''}}</td>
+                            <td>{{ instance.version ?? '' }}</td>
+                            {% if app.user is defined and app.user is not same as null and app.user.admin %}
+                                <td>
+                                    {% if instance.lastFailedDeliver is not same as null %}
+                                        {{ component('date', { date: instance.lastFailedDeliver }) }}
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
+        {% else %}
+            <aside class="section--muted">
+                <p>{{ 'empty'|trans }}</p>
+            </aside>
         {% endif %}
     </div>
 {% endblock %}

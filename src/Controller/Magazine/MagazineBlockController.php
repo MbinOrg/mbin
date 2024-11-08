@@ -22,9 +22,6 @@ class MagazineBlockController extends AbstractController
     #[IsGranted('block', subject: 'magazine')]
     public function block(Magazine $magazine, Request $request): Response
     {
-        // CSRF is causing a lot of issues, so we disable it for now. See PR: https://github.com/MbinOrg/mbin/pull/1136
-        // $this->validateCsrf('block', $request->getPayload()->get('token'));
-
         $this->manager->block($magazine, $this->getUserOrThrow());
 
         if ($request->isXmlHttpRequest()) {
@@ -38,9 +35,6 @@ class MagazineBlockController extends AbstractController
     #[IsGranted('block', subject: 'magazine')]
     public function unblock(Magazine $magazine, Request $request): Response
     {
-        // CSRF is causing a lot of issues, so we disable it for now. See PR: https://github.com/MbinOrg/mbin/pull/1136
-        // $this->validateCsrf('block', $request->getPayload()->get('token'));
-
         $this->manager->unblock($magazine, $this->getUserOrThrow());
 
         if ($request->isXmlHttpRequest()) {

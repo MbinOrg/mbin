@@ -292,3 +292,631 @@ flash_magazine_new_success: A revista foi criada com sucesso. Você pode adicion
   novo conteúdo ou explorar o painel de administração da revista.
 flash_mark_as_adult_success: A publicação foi marcada como NSFW.
 post: Publicação
+terms: Termos de Serviço
+people_local: Local
+page_width_fixed: Fixo
+magazine_posting_restricted_to_mods_warning: Somente os moderadores podem criar tópicos
+  nesta revista
+flash_posting_restricted_error: Criar fios é restrito aos moderadores desta revista
+  e você não é um deles
+magazine_log_mod_removed: removeu um moderador
+magazine_log_mod_added: adicionou um moderador
+down_votes: Reduz
+register: Criar conta
+agree_terms: Concordo com os %terms_link_start%Termos e Condições%terms_link_end%
+  e a %policy_link_start%Política de Privacidade%policy_link_end%
+flash_thread_new_success: O tópico foi criado com sucesso e agora está visível para
+  outros usuários.
+flash_thread_delete_success: O fio foi excluído com sucesso.
+flash_thread_edit_success: O fio foi editado com sucesso.
+flash_thread_pin_success: O fio foi fixado com sucesso.
+flash_thread_unpin_success: O tópico foi desafixado com sucesso.
+mod_log_alert: AVISO - O Modlog pode conter conteúdo desagradável ou perturbador que
+  foi removido pelos moderadores. Por favor, tenha cuidado.
+banned: baniu você
+show_top_bar: Mostrar barra superior
+sticky_navbar: Barra de navegação fixa
+federation: Federação
+status: Status
+sidebar_position: Posição da barra lateral
+left: Esquerda
+right: Direita
+ban_hashtag_description: Ao banir uma hashtag, você impedirá a criação de publicações
+  com essa hashtag, além de ocultar as publicações existentes que a utilizam.
+unban_hashtag_btn: Desbanir Hashtag
+unban_hashtag_description: Ao desbanir uma hashtag, você poderá criar novamente publicações
+  com essa hashtag. As publicações existentes com essa hashtag não serão mais ocultadas.
+filters: Filtros
+add_moderator: Adicionar moderador
+add_badge: Adicionar selo
+change_magazine: Mudar a revista
+change_language: Alterar idioma
+mark_as_adult: Marcar como NSFW
+users: Usuários
+writing: Escrever
+meta: Meta
+contact_email: E-mail de contato
+active_users: Pessoas ativas
+related_magazines: Revistas relacionadas
+random_magazines: Revistas aleatórias
+kbin_intro_desc: é uma plataforma descentralizada para agregação de conteúdo e microblogging
+  que opera dentro da rede Fediverso.
+kbin_promo_desc: '%link_start%Clone o repositório%link_end% e desenvolva o fediverso'
+your_account_is_not_active: Sua conta não foi ativada. Verifique seu e-mail para obter
+  instruções de ativação da conta ou<a href="%link_target%">solicite um novo e-mail
+  de ativação da conta.</a>
+toolbar.code: Código
+toolbar.bold: Negrito
+toolbar.italic: Itálico
+toolbar.header: Cabeçalho
+toolbar.quote: Citação
+toolbar.strikethrough: Tachado
+federated_search_only_loggedin: Pesquisa federada limitada se você não estiver logado
+federation_page_allowed_description: Instâncias conhecidas com as quais federamos
+federation_page_disallowed_description: Instâncias com as quais não nos federamos
+errors.server500.description: Desculpe, algo deu errado do nosso lado. Se você continuar
+  a ver esse erro, tente entrar em contato com o proprietário da instância. Se essa
+  instância não estiver funcionando, verifique enquanto isso %link_start%outras instâncias
+  do Mbin%link_end%, até que o problema seja resolvido.
+errors.server500.title: 500 Erro interno do servidor
+resend_account_activation_email_description: Digite o endereço de e-mail associado
+  à sua conta. Nós enviaremos outro e-mail de ativação para você.
+custom_css: CSS personalizado
+oauth.consent.to_allow_access: Para permitir esse acesso, clique no botão “Permitir”
+  abaixo
+oauth.consent.allow: Permitir
+oauth.consent.deny: Negar
+oauth.consent.app_requesting_permissions: gostaria de realizar as seguintes ações
+  em seu nome
+oauth.client_identifier.invalid: ID de cliente OAuth inválido!
+block: Bloquear
+oauth.consent.app_has_permissions: já pode executar as seguintes ações
+oauth2.grant.admin.all: Execute ações administrativas na sua instância.
+oauth2.grant.delete.general: Exclua qualquer um dos seus fios, publicações ou comentários.
+oauth2.grant.write.general: Você pode criar ou editar qualquer um dos seus fios, publicações
+  ou comentários.
+oauth2.grant.read.general: Leia todo o conteúdo ao qual você tem acesso.
+oauth2.grant.entry.create: Criar novos fios.
+oauth2.grant.entry.edit: Edite os fios existentes.
+oauth2.grant.entry.all: Crie, edite ou exclua seus fios e vote, impulsione ou denuncie
+  qualquer um deles.
+oauth2.grant.post.report: Denuncie qualquer publicação.
+oauth2.grant.moderate.entry.set_adult: Marcar os fios como NSFW nas suas revistas
+  moderadas.
+oauth2.grant.moderate.entry.trash: Jogar no lixo ou restaurar fios nas suas revistas
+  moderadas.
+tags: Tags
+articles: Fios
+notify_on_new_post_reply: Qualquer nível de resposta a publicações de minha autoria
+mod_remove_your_thread: Um moderador removeu o seu fio
+purge: Purgar
+instances: Instâncias
+preview: Visualizar
+random_entries: Fios aleatórios
+federation_page_dead_title: Instâncias mortas
+errors.server429.title: 429 Requisições em excesso
+oauth2.grant.moderate.magazine.reports.all: Gerencie as denúncias de suas revistas
+  moderadas.
+ignore_magazines_custom_css: Ignorar o CSS personalizado das revistas
+oauth2.grant.moderate.magazine.reports.read: Leia as denúncias nas suas revistas moderadas.
+oauth2.grant.moderate.magazine_admin.moderators: Adicione ou remova moderadores das
+  suas revistas.
+oauth2.grant.report.general: Denunciar fios, publicações ou comentários.
+oauth2.grant.moderate.magazine_admin.edit_theme: Edite o CSS personalizado das suas
+  revistas.
+oauth2.grant.vote.general: Você pode votar a favor, contra ou impulsionar fios, publicações
+  ou comentários.
+oauth2.grant.post.all: Crie, edite ou exclua seus microblogs e vote, impulsione ou
+  denuncie qualquer microblog.
+oauth2.grant.magazine.block: Bloqueie ou desbloqueie revistas e veja as revistas que
+  você bloqueou.
+oauth2.grant.user.message.read: Leia suas mensagens.
+oauth2.grant.moderate.post.all: Moderar as publicações nas suas revistas moderadas.
+approve: Aprovar
+approved: Aprovado
+rejected: Rejeitado
+created: Criado
+expires: Expira em
+bans: Banimentos
+months: Meses
+content: Conteúdo
+week: Semana
+month: Mês
+year: Ano
+add_new_article: Adicionar novo fio
+subscriptions: Assinaturas
+notify_on_new_entry_comment_reply: Respostas aos meus comentários em qualquer fio
+removed_comment_by: removeu um comentário de
+restored_comment_by: restaurou o comentário de
+removed_post_by: removeu um post de
+restored_post_by: restaurou uma publicação de
+he_banned: banir
+he_unbanned: desbanir
+set_magazines_bar_desc: adicionar os nomes da revista após a vírgula
+added_new_thread: Novo fio adicionado
+comment: Comentário
+send_message: Enviar mensagem direta
+message: Mensagem
+infinite_scroll: Rolagem infinita
+from_url: Do URL
+upload_file: Fazer upload do arquivo
+magazine_panel: Painel de revista
+reject: Rejeitar
+ban: Banir
+add_ban: Adicionar banimento
+unban: Desbanir
+ban_hashtag_btn: Banir Hashtag
+perm: Permanente
+expired_at: Expirou em
+change: Alterar
+trash: Lixeira
+icon: Ícone
+done: Feito
+pin: Fixar
+unpin: Desafixar
+unmark_as_adult: Desmarcar como NSFW
+pinned: Fixado
+article: Fio
+reputation: Reputação
+note: Nota
+weeks: Semanas
+federated: Federado
+local: Local
+admin_panel: Painel de administração
+dashboard: Painel de controle
+instance: Instância
+pages: Páginas
+toolbar.mention: Menção
+email.delete.description: O usuário a seguir solicitou a exclusão de sua conta
+resend_account_activation_email: Reenviar email de ativação da conta
+unblock: Desbloquear
+oauth2.grant.moderate.magazine.trash.read: Veja o conteúdo descartado em suas revistas
+  moderadas.
+oauth2.grant.moderate.magazine_admin.all: Crie, edite ou exclua as revistas que você
+  possui.
+oauth2.grant.user.profile.edit: Edite o seu perfil.
+oauth2.grant.user.profile.read: Leia o seu perfil.
+oauth2.grant.moderate.post.trash: Eliminar ou restaurar publicações nas suas revistas
+  moderadas.
+oauth2.grant.moderate.post_comment.set_adult: Marcar comentários em publicações como
+  NSFW nas suas revistas moderadas.
+continue_with: Continue com
+account_deletion_button: Excluir conta
+account_deletion_immediate: Excluir imediatamente
+more_from_domain: Mais do domínio
+federation_page_enabled: Página da federação ativada
+errors.server404.title: 404 Não encontrado
+toolbar.spoiler: Spoiler
+sidebar_sections_local_only: Restringir as seções “X Aleatório” e “Pessoas Ativas”
+  somente em local
+oauth2.grant.moderate.magazine.ban.delete: Desbanir usuários de suas revistas moderadas.
+oauth2.grant.moderate.magazine_admin.delete: Exclua as revistas que você possui.
+oauth2.grant.moderate.magazine_admin.update: Edite as regras, a descrição, o status
+  NSFW ou o ícone de qualquer uma das revistas que você possui.
+oauth2.grant.admin.entry.purge: Exclua completamente qualquer fio de sua instância.
+oauth2.grant.block.general: Bloqueie ou desbloqueie qualquer revista, domínio ou usuário
+  e veja quais foram bloqueados.
+oauth2.grant.domain.all: Assine ou bloqueie domínios e visualize os domínios que você
+  assinou ou bloqueou.
+oauth2.grant.domain.block: Bloqueie ou desbloqueie domínios e visualize os domínios
+  que você bloqueou.
+oauth2.grant.entry.delete: Exclua os fios existentes.
+oauth2.grant.entry.vote: Vote a favor, contra ou dê um impulso em qualquer fio.
+oauth2.grant.entry.report: Denunciar qualquer fio.
+oauth2.grant.entry_comment.create: Criar novos comentários nos fios.
+oauth2.grant.entry_comment.edit: Edite seus comentários existentes nos fios.
+oauth2.grant.entry_comment.delete: Exclua seus comentários existentes nos fios.
+oauth2.grant.entry_comment.report: Denunciar comentário em um fio.
+oauth2.grant.magazine.all: Assine ou bloqueie revistas e veja as revistas assinadas
+  ou bloqueadas.
+oauth2.grant.post.create: Criar novas publicações.
+oauth2.grant.post.edit: Edite suas publicações existentes.
+oauth2.grant.post.delete: Exclua suas publicações existentes.
+oauth2.grant.post.vote: Dê um voto positivo, negativo ou um impulso em uma publicação.
+oauth2.grant.post_comment.all: Crie, edite ou exclua seus comentários nas publicações
+  e vote, impulsione ou denuncie qualquer comentário em uma publicação.
+oauth2.grant.post_comment.create: Crie novos comentários nas publicações.
+oauth2.grant.post_comment.edit: Edite seus comentários existentes em publicações.
+oauth2.grant.post_comment.delete: Exclua seus comentários existentes em publicações.
+oauth2.grant.user.message.all: Leia suas mensagens e envie mensagens para outros usuários.
+oauth2.grant.user.message.create: Envie mensagens para outros usuários.
+oauth2.grant.user.notification.all: Leia e limpe suas notificações.
+oauth2.grant.user.notification.read: Leia suas notificações, inclusive as de mensagens.
+oauth2.grant.user.notification.delete: Limpe suas notificações.
+oauth2.grant.user.follow: Siga ou deixe de seguir usuários e veja uma lista dos usuários
+  que você segue.
+oauth2.grant.user.block: Bloquear ou desbloquear usuários e ver a lista de usuários
+  bloqueados.
+oauth2.grant.moderate.all: Execute ações de moderação para as quais você tem permissão
+  em suas revistas moderadas.
+oauth2.grant.moderate.entry.pin: Fixar os tópicos na parte superior das revistas moderadas.
+oauth2.grant.moderate.entry_comment.all: Moderar comentários em fios nas suas revistas
+  moderadas.
+oauth2.grant.moderate.entry_comment.change_language: Altere o idioma dos comentários
+  nos fios das suas revistas moderadas.
+oauth2.grant.moderate.post_comment.all: Moderar comentários nas publicações das suas
+  revistas moderadas.
+show_related_posts: Mostrar publicações aleatórias
+someone: Alguém
+report_accepted: Uma denúncia foi aceita
+related_entry: Relacionado
+ban_expired: Banimento expirado
+on: Em
+off: Desligado
+subject_reported: O conteúdo foi denunciado.
+browsing_one_thread: Você está navegando apenas em um fio da discussão! Todos os comentários
+  estão disponíveis na página da publicação.
+tag: Tag
+eng: ENG
+notify_on_new_entry: Novos fios (links ou artigos) em qualquer revista da qual eu
+  seja assinante
+notify_on_new_entry_reply: Qualquer nível de comentários nos fios de minha autoria
+removed_thread_by: removeu um fio de
+restored_thread_by: restaurou um fio de
+toolbar.ordered_list: Lista ordenada
+errors.server403.title: 403 Proibido
+resend_account_activation_email_question: Conta inativa?
+resend_account_activation_email_error: Houve um problema ao enviar esta solicitação.
+  Talvez você não tenha uma conta associada a esse e-mail ou talvez ele já esteja
+  ativado.
+resend_account_activation_email_success: Se você tiver uma conta associada a esse
+  e-mail, enviaremos um novo e-mail de ativação.
+oauth2.grant.domain.subscribe: Assine ou cancele a assinatura de domínios e visualize
+  os domínios que você assinou.
+related_tags: Tags relacionadas
+oc: OC
+oauth.consent.title: Formulário de Consentimento OAuth2
+private_instance: Forçar os usuários a fazer login antes de poderem acessar qualquer
+  conteúdo
+oauth2.grant.moderate.magazine.reports.action: Aceite ou rejeite denúncias em suas
+  revistas moderadas.
+oauth2.grant.moderate.magazine_admin.create: Criar novas revistas.
+oauth2.grant.moderate.magazine_admin.badges: Crie ou remova selos das revistas que
+  você possui.
+oauth2.grant.moderate.magazine_admin.stats: Veja o conteúdo, vote e veja as estatísticas
+  das revistas que você possui.
+oauth2.grant.moderate.magazine_admin.tags: Crie ou remova tags das revistas que você
+  possui.
+oauth2.grant.subscribe.general: Assine ou siga qualquer revista, domínio ou usuário
+  e veja em quais você se inscreveu.
+oauth2.grant.entry_comment.all: Crie, edite ou exclua seus comentários nos fios e
+  vote, impulsione ou denuncie quaisquer comentários em um fio.
+oauth2.grant.entry_comment.vote: Dê um voto positivo, negativo ou impulsione qualquer
+  comentário em um fio.
+oauth2.grant.magazine.subscribe: Assine ou cancele a assinatura de revistas e veja
+  as revistas que você assinou.
+oauth2.grant.post_comment.vote: Dê um voto positivo, negativo ou impulsione um comentário
+  em uma publicação.
+oauth2.grant.user.oauth_clients.all: Leia e edite as permissões que você concedeu
+  a outros aplicativos OAuth2.
+oauth2.grant.user.oauth_clients.read: Leia as permissões que você concedeu a outros
+  aplicativos OAuth2.
+oauth2.grant.user.oauth_clients.edit: Edite as permissões que você concedeu a outros
+  aplicativos OAuth2.
+oauth2.grant.moderate.entry.all: Moderar fios em suas revistas moderadas.
+oauth2.grant.moderate.entry.change_language: Altere o idioma dos fios em suas revistas
+  moderadas.
+page_width: Largura da página
+page_width_max: Max
+page_width_auto: Automático
+oauth2.grant.moderate.entry_comment.trash: Eliminar ou restaurar comentários em fios
+  das suas revistas moderadas.
+oauth2.grant.moderate.post.change_language: Altere o idioma das publicações das suas
+  revistas moderadas.
+oauth2.grant.moderate.post.set_adult: Marcar as publicações como NSFW nas suas revistas
+  moderadas.
+show_active_users: Mostrar usuários ativos
+cake_day: Dia do bolo
+oauth2.grant.moderate.post_comment.change_language: Alterar o idioma dos comentários
+  das publicações nas suas revistas moderadas.
+own_content_reported_accepted: Uma denúncia do seu conteúdo foi aceita.
+restrict_magazine_creation: Restringir a criação de revistas locais a administradores
+  e moderadores globais
+report_subject: Assunto
+own_report_accepted: Sua denúncia foi aceita
+own_report_rejected: Uma denúncia foi rejeitada
+direct_message: Mensagem direta
+last_updated: Última atualização
+magazine_log_entry_unpinned: removida a entrada fixada
+email_confirm_button_text: Confirme seu pedido de alteração de senha
+email_confirm_link_help: Como alternativa, você pode copiar e colar o que se segue
+  em seu navegador
+email.delete.title: Pedido de exclusão da conta do usuário
+oauth.consent.grant_permissions: Conceder Permissões
+oauth.client_not_granted_message_read_permission: Este aplicativo não recebeu permissão
+  para ler suas mensagens.
+restrict_oauth_clients: Restringir a criação de clientes OAuth2 a administradores
+oauth2.grant.moderate.entry_comment.set_adult: Marcar comentários em fios como NSFW
+  nas suas revistas moderadas.
+notification_title_new_report: Uma nova denúncia foi criada
+server_software: Software do servidor
+edit_entry: Editar fio
+edited_thread: Editou um fio
+and: e
+show_related_magazines: Mostrar revistas aleatórias
+related_entries: Fios relacionados
+magazine_panel_tags_info: Preencha apenas se você quiser que o conteúdo do fediverso
+  seja incluído nesta revista com base em tags
+add_mentions_entries: Adicionar tags de menção nos fios
+add_mentions_posts: Adicionar tags de menção em publicações
+your_account_has_been_banned: Sua conta foi banida
+toolbar.link: Link
+toolbar.image: Imagem
+toolbar.unordered_list: Lista desordenada
+boost: Dar Boost
+tokyo_night: Noite em Tóquio
+preferred_languages: Filtrar idiomas dos fios e publicações
+filter.fields.label: Escolha os campos que você deseja pesquisar
+bot_body_content: "Bem-vindo ao Agente Mbin! Esse Agente desempenha um papel crucial
+  na implementação do ActivityPub na Mbin. Ele garante que a Mbin possa se comunicar
+  e se federar com outras instâncias no fediverso.\n\nO ActivityPub é um protocolo
+  de padrão aberto que permite que plataformas descentralizadas de redes sociais se
+  comuniquem e interajam entre si. Ele permite que usuários em diferentes instâncias
+  (servidores) sigam, interajam e compartilhem conteúdo na rede social federada conhecida
+  como fediverso. Ele fornece uma maneira padronizada para que os usuários publiquem
+  conteúdo, sigam outros usuários e participem de interações sociais, como curtir,
+  compartilhar e comentar em fios ou publicações."
+oauth2.grant.moderate.magazine.list: Leia uma lista de suas revistas moderadas.
+account_deletion_title: Exclusão da conta
+account_deletion_description: Sua conta será excluída em 30 dias, a menos que você
+  opte por excluir a conta imediatamente. Para restaurar sua conta dentro de 30 dias,
+  faça login com as mesmas credenciais de usuário ou entre em contato com um administrador.
+federation_page_dead_description: Instâncias em que não conseguimos entregar pelo
+  menos 10 atividades seguidas e em que a última entrega bem-sucedida foi há mais
+  de uma semana
+oauth2.grant.post_comment.report: Denuncie qualquer comentário em uma publicação.
+oauth2.grant.user.all: Leia e edite seu perfil, mensagens ou notificações; Leia e
+  edite as permissões que você concedeu a outros aplicativos; siga ou bloqueie outros
+  usuários; visualize listas de usuários que você segue ou bloqueia.
+oauth2.grant.user.profile.all: Leia e edite seu perfil.
+unregister_push_notifications_button: Remover registro de push
+register_push_notifications_button: Cadastre-se para notificações push
+manually_approves_followers: Aprovar manualmente os seguidores
+reported_user: Usuário denunciado
+show_related_entries: Mostrar fios aleatórios
+notification_title_edited_post: Uma publicação foi editada
+notification_title_removed_post: Uma publicação foi removida
+notification_title_new_post: Nova publicação
+notification_title_message: Nova mensagem direta
+notification_title_ban: Você foi banido
+notification_title_edited_thread: Um fio foi editado
+notification_title_removed_thread: Um fio foi removido
+notification_title_new_thread: Novo fio
+notification_title_new_reply: Nova resposta
+notification_title_mention: Você foi mencionado
+notification_title_edited_comment: Um comentário foi editado
+notification_title_removed_comment: Um comentário foi removido
+notification_title_new_comment: Novo comentário
+test_push_message: Olá, mundo!
+test_push_notifications_button: Teste as notificações por push
+flash_magazine_theme_changed_success: Atualizou com sucesso a aparência da revista.
+open_url_to_fediverse: Abrir URL original
+change_my_avatar: Modificar meu avatar
+filter_labels: Filtrar Etiquetas
+unsuspend_account: Cancelar a suspensão da conta
+account_suspended: A conta foi suspensa.
+account_unsuspended: A suspensão da conta foi cancelada.
+deletion: Exclusão
+cancel_request: Cancelar pedido
+abandoned: Abandonado
+ownership_requests: Solicitações de propriedade
+sensitive_warning: Conteúdo sensível
+sensitive_toggle: Alternar a visibilidade de conteúdo sensível
+last_successful_deliver: Última entrega bem-sucedida
+version: Versão
+last_successful_receive: Última recepção bem-sucedida
+last_failed_contact: Último contato que não deu certo
+admin_users_inactive: Inativo
+admin_users_active: Ativo
+user_verify: Ativar conta
+oauth2.grant.moderate.magazine.ban.create: Banir usuários nas suas revistas moderadas.
+oauth2.grant.admin.entry_comment.purge: Exclua completamente um comentário em fios
+  da sua instância.
+oauth2.grant.admin.post.purge: Excluir completamente qualquer publicação de sua instância.
+oauth2.grant.moderate.magazine.ban.read: Visualizar usuários banidos em suas revistas
+  moderadas.
+oauth2.grant.admin.user.ban: Banir ou desbanir usuários da sua instância.
+oauth2.grant.admin.magazine.move_entry: Mover fios entre revistas da sua instância.
+oauth2.grant.admin.magazine.purge: Excluir completamente revistas da sua instância.
+oauth2.grant.admin.user.all: Banir, verificar ou excluir completamente os usuários
+  da sua instância.
+oauth2.grant.admin.user.verify: Verificar usuários da sua instância.
+oauth2.grant.admin.user.delete: Excluir usuários da sua instância.
+comment_reply_position: Posição de resposta ao comentário
+magazine_theme_appearance_custom_css: CSS personalizado que será aplicado quando você
+  visualizar o conteúdo da sua revista.
+update_comment: Atualizar comentário
+show_avatars_on_comments_help: Exibir/ocultar avatares de usuários ao visualizar comentários
+  em um único fio ou publicação.
+moderation.report.ban_user_title: Banir Usuário
+moderation.report.reject_report_confirmation: Você tem certeza de que deseja rejeitar
+  essa denúncia?
+schedule_delete_account: Programar exclusão
+schedule_delete_account_desc: Programar a exclusão dessa conta em 30 dias. Isso ocultará
+  o usuário e seu conteúdo, além de impedir que ele faça login.
+2fa.code_invalid: O código de autenticação não é válido
+cancel: Cancelar
+2fa.enable: Configurar a autenticação de dois fatores
+2fa.setup_error: Erro ao ativar a 2FA para a conta
+magazine_is_deleted: A revista foi excluída. Você pode <a href="%link_target%">restaurá-la</a>
+  dentro de 30 dias.
+user_suspend_desc: Suspender sua conta oculta seu conteúdo na instância, mas não o
+  remove permanentemente, e você pode restaurá-la a qualquer momento.
+remove_subscriptions: Remover assinaturas
+remove_following: Remover seguidor
+apply_for_moderator: Candidatar-se a moderador
+deleted_by_moderator: O fio, a publicação ou o comentário foi excluído pelo moderador
+announcement: Anúncio
+keywords: Palavras-chave
+delete_content: Excluir conteúdo
+remove_schedule_delete_account: Remover a exclusão programada
+two_factor_backup: Códigos de backup da autenticação de dois fatores
+cards_view: Visualização dos cartões
+oauth2.grant.admin.user.purge: Excluir completamente usuários da sua instância.
+oauth2.grant.moderate.magazine.ban.all: Gerenciar usuários banidos em suas revistas
+  moderadas.
+2fa.verify: Verificar
+flash_email_failed_to_sent: O e-mail não pode ser enviado.
+flash_user_edit_password_error: Não foi possível alterar a senha.
+edit_my_profile: Editar meu perfil
+hide: Ocultar
+all_time: Todo o período
+spoiler: Spoiler
+oauth2.grant.moderate.magazine.all: Gerenciar banimentos, denúncias e visualizar itens
+  descartados em suas revistas moderadas.
+oauth2.grant.admin.post_comment.purge: Excluir completamente uma publicação da sua
+  instância.
+oauth2.grant.admin.instance.all: Visualizar e atualizar as configurações ou informações
+  da instância.
+oauth2.grant.admin.instance.settings.all: Exibir ou atualizar as configurações da
+  sua instância.
+oauth2.grant.admin.federation.read: Exibir a lista das instâncias desfederadas.
+oauth2.grant.admin.oauth_clients.all: Visualizar ou revogar clientes OAuth2 que existem
+  em sua instância.
+flash_post_pin_success: A publicação foi fixada com sucesso.
+show_avatars_on_comments: Mostrar avatares de comentários
+single_settings: Único
+moderation.report.approve_report_confirmation: Você tem certeza de que deseja aprovar
+  esta denúncia?
+subject_reported_exists: Esse conteúdo já foi denunciado.
+oauth2.grant.moderate.post.pin: Fixe as publicações na parte superior de suas revistas
+  moderadas.
+purge_content: Purgar conteúdo
+delete_content_desc: Excluir o conteúdo do usuário, deixando as respostas de outros
+  usuários nos fios, publicações e comentários criados.
+remove_schedule_delete_account_desc: Remover a exclusão programada. Todo o conteúdo
+  estará disponível novamente e o usuário poderá fazer login.
+2fa.authentication_code.label: Código de Autenticação
+2fa.disable: Desativar a autenticação de dois fatores
+2fa.backup: Seus códigos de backup de dois fatores
+2fa.backup-create.help: Você pode criar novos códigos de autenticação de backup; ao
+  fazer isso, os códigos existentes serão invalidados.
+2fa.backup-create.label: Criar novos códigos de autenticação de backup
+2fa.remove: Remover 2FA
+2fa.verify_authentication_code.label: Inserir um código de dois fatores para verificar
+  a configuração
+2fa.qr_code_link.title: Ao acessar este link, você permite que sua plataforma registre
+  essa autenticação de dois fatores
+2fa.backup_codes.recommendation: Recomenda-se que você mantenha uma cópia deles em
+  um local seguro.
+password_and_2fa: Senha e 2FA
+show_subscriptions: Mostrar assinaturas
+alphabetically: Por ordem alfabética
+subscriptions_in_own_sidebar: Em uma barra lateral separada
+sidebars_same_side: Barras laterais no mesmo lado
+subscription_sidebar_pop_out_right: Mover para a barra lateral separada à direita
+subscription_sidebar_pop_out_left: Mover para a barra lateral separada à esquerda
+subscription_panel_large: Painel grande
+subscription_header: Revistas Assinadas
+close: Fechar
+position_bottom: Inferior
+flash_image_download_too_large_error: Não foi possível criar a imagem, pois ela é
+  muito grande (tamanho máximo %bytes%)
+flash_post_new_error: Não foi possível criar a publicação. Algo deu errado.
+flash_magazine_theme_changed_error: Não foi possível atualizar a aparência da revista.
+flash_comment_new_success: O comentário foi criado com sucesso.
+flash_comment_edit_success: O comentário foi atualizado com sucesso.
+flash_comment_edit_error: Não foi possível editar o comentário. Algo deu errado.
+flash_user_settings_general_error: Não foi possível salvar as configurações do usuário.
+flash_user_edit_profile_error: Não foi possível salvar as configurações de perfil.
+flash_user_edit_email_error: Não foi possível alterar o e-mail.
+flash_thread_edit_error: Não foi possível editar o fio. Algo deu errado.
+flash_post_edit_error: Não foi possível editar a publicação.
+change_my_cover: Modificar minha capa
+account_settings_changed: As configurações da sua conta foram alteradas com sucesso.
+  Você precisará fazer login novamente.
+magazine_deletion: Exclusão da revista
+restore_magazine: Restaurar revista
+purge_magazine: Purgar revista
+suspend_account: Suspender conta
+account_banned: A conta foi banida.
+account_unbanned: A conta foi desbanida.
+account_is_suspended: A conta do usuário está suspensa.
+request_magazine_ownership: Solicitar a propriedade da revista
+action: Ação
+user_badge_op: OP
+user_badge_admin: Administrador
+deleted_by_author: O fio, a publicação ou o comentário foi excluído pelo autor
+sensitive_show: Clique para mostrar
+sensitive_hide: Clique para ocultar
+details: Detalhes
+show: Exibir
+edited: editado
+sso_registrations_enabled.error: Novos registros de conta com gerenciadores de identidade
+  de terceiros estão desativados no momento.
+sso_only_mode: Restringir o login e o registro apenas aos métodos de SSO
+magazine_posting_restricted_to_mods: Restringir a criação de fios aos moderadores
+new_user_description: Este usuário é novo (ativo há menos de %days% dias)
+admin_users_suspended: Suspenso
+admin_users_banned: Banido
+max_image_size: Tamanho máximo do arquivo
+cards: Cartões
+oauth2.grant.moderate.post_comment.trash: Remover ou restaurar comentários de publicações
+  em suas revistas moderadas.
+oauth2.grant.admin.magazine.all: Mover fios entre revistas ou excluí-las completamente
+  da sua instância.
+oauth2.grant.admin.instance.stats: Veja as estatísticas da sua instância.
+oauth2.grant.admin.federation.all: Exibir e atualizar instâncias atualmente desfederadas.
+oauth2.grant.admin.federation.update: Adicionar ou remover instâncias de ou para a
+  lista de instâncias desfederadas.
+oauth2.grant.admin.oauth_clients.read: Veja os clientes OAuth2 que existem em sua
+  instância e suas estatísticas de uso.
+last_active: Última atividade
+magazine_theme_appearance_icon: Ícone personalizado para a revista. Se você não selecionar
+  nenhum, será usado o ícone padrão.
+purge_content_desc: Purgar completamente o conteúdo do usuário, incluindo excluir
+  as respostas de outros usuários em fios, publicações e comentários criados.
+delete_account_desc: Excluir a conta, incluindo as respostas de outros usuários em
+  fios, publicações e comentários criados.
+two_factor_authentication: Autenticação de dois fatores
+2fa.add: Adicionar à minha conta
+2fa.qr_code_img.alt: Um código QR que permite a configuração da autenticação de dois
+  fatores para sua conta
+2fa.user_active_tfa.title: O usuário tem a 2FA ativada
+2fa.available_apps: Use um aplicativo de autenticação de dois fatores, como %google_authenticator%,
+  %aegis% (Android) ou %raivo% (iOS) para fazer a leitura do código QR.
+2fa.backup_codes.help: Você pode usar esses códigos quando não tiver seu dispositivo
+  ou aplicativo de autenticação de dois fatores. Você <strong>não os verá novamente</strong>
+  e poderá usar cada um deles <strong>apenas uma vez</strong>.
+subscription_sort: Ordenar
+flash_thread_tag_banned_error: Não foi possível criar o fio. O conteúdo não é permitido.
+flash_email_was_sent: O email foi enviado com sucesso.
+flash_post_new_success: A publicação foi criada com sucesso.
+flash_comment_new_error: Não foi possível criar o comentário. Algo deu errado.
+flash_user_edit_profile_success: As configurações do perfil do usuário foram salvas
+  com sucesso.
+flash_post_edit_success: A publicação foi editada com sucesso.
+auto: Automático
+delete_magazine: Excluir revista
+sso_show_first: Mostrar o SSO primeiro nas páginas de login e registro
+new_magazine_description: Esta revista é nova (ativa há menos de %days% dias)
+comment_not_found: Comentário não encontrado
+oauth2.grant.admin.oauth_clients.revoke: Revogar o acesso a clientes OAuth2 na sua
+  instância.
+flash_post_unpin_success: A publicação foi desafixada com sucesso.
+oauth2.grant.admin.instance.settings.read: Exibir as configurações da sua instância.
+oauth2.grant.admin.instance.settings.edit: Atualizar as configurações da sua instância.
+oauth2.grant.admin.instance.information.edit: Atualizar as páginas Sobre, Perguntas
+  frequentes, Contato, Termos de serviço e Política de privacidade da sua instância.
+magazine_theme_appearance_background_image: Imagem de fundo personalizada que será
+  aplicada quando você visualizar o conteúdo da sua revista.
+moderation.report.approve_report_title: Aprovar a Denúncia
+flash_user_settings_general_success: As configurações do usuário foram salvas com
+  sucesso.
+accept: Aceitar
+sso_registrations_enabled: Registros SSO ativados
+back: Anterior
+comment_reply_position_help: Exibir o formulário de resposta a comentários na parte
+  superior ou inferior da página. Quando a “rolagem infinita” estiver ativada, a posição
+  sempre aparecerá na parte superior.
+moderation.report.reject_report_title: Rejeitar a Denúncia
+moderation.report.ban_user_description: Você deseja banir o usuário (%username%) que
+  criou esse conteúdo desta revista?
+subscription_sidebar_pop_in: Mover as assinaturas para o painel em linha
+position_top: Topo
+pending: Pendente
+flash_account_settings_changed: As configurações da sua conta foram alteradas com
+  sucesso. Você precisará fazer login novamente.
+flash_thread_new_error: Não foi possível criar o fio. Algo deu errado.
+reported: denunciado
+open_report: abrir denúncia

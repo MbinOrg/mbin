@@ -14,6 +14,17 @@
                 {{ 'activity'|trans }}
             </a>
         </li>
+
+        {% if app.user is defined and app.user is not same as null %}
+            {% set bookmarkLists = get_bookmark_lists(app.user) %}
+            {% if bookmarkLists|length %}
+                <li class="dropdown__separator"></li>
+                {% for list in bookmarkLists %}
+                    {{ component('bookmark_list', { subject: post, subjectType: 'post', list: list }) }}
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+
         <li class="dropdown__separator"></li>
         <li>
             <a target="_blank"
@@ -51,7 +62,6 @@
                 <form method="post"
                         action="{{ post_delete_url(post) }}"
                         data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
-                    <input type="hidden" name="token" value="{{ csrf_token('post_delete') }}">
                     <button type="submit">{{ 'delete'|trans }}</button>
                 </form>
             </li>

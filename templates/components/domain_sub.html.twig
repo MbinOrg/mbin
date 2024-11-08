@@ -12,7 +12,6 @@
                 data-action="subs#send">
             {{ is_domain_subscribed(domain) ? 'unsubscribe'|trans : 'subscribe'|trans }}
         </button>
-        <input type="hidden" name="token" value="{{ csrf_token('subscribe') }}">
     </form>
     <form action="{{ path('domain_' ~ (is_domain_blocked(domain) ? 'unblock' : 'block'), {name: domain.name}) }}"
           name="domain_block"
@@ -22,6 +21,5 @@
                 data-action="subs#send">
             <i class="fa-solid fa-ban" aria-hidden="true"></i><span>{{ is_domain_blocked(domain) ? 'unblock'|trans : 'block'|trans  }}</span>
         </button>
-        <input type="hidden" name="token" value="{{ csrf_token('block') }}">
     </form>
 </aside>
