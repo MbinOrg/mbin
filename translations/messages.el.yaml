@@ -670,3 +670,43 @@ oauth2.grant.moderate.magazine.ban.read: Δες τους αποκλεισμέν�
   που συντονίζεις.
 oauth2.grant.moderate.magazine.ban.create: Απέκλεισε τους χρήστες στα περιοδικά που
   συντονίζεις.
+comment_reply_position_help: Εμφανίζει τη φόρμα απάντησης σχολίων είτε στην κορυφή
+  ή στο κάτω μέρος της σελίδας. Όταν η "Άπειρη κύλιση" είναι ενεργή η θέση θα είναι
+  πάντα στην κορυφή.
+flash_post_pin_success: Η ανάρτηση έχει καρφιτσωθεί επιτυχώς.
+oauth2.grant.admin.magazine.purge: Πλήρης διαγραφή περιοδικών στην οντότητα σου.
+oauth2.grant.admin.user.ban: Αποκλεισμός ή άρση αποκλεισμού χρηστών από την οντότητά
+  σου.
+oauth2.grant.admin.user.verify: Επαλήθευσε τους χρήστες στην οντότητά σου.
+oauth2.grant.admin.federation.update: Πρόσθεσε ή αφαίρεσε οντότητες στον ή από τον
+  κατάλογο των οντοτήτων εκτός ομοσπονδίας.
+oauth2.grant.admin.oauth_clients.all: Δες ή ανακάλεσε τους πελάτες OAuth2 που υπάρχουν
+  στην οντότητα σου.
+oauth2.grant.admin.user.all: Αποκλεισμός, επαλήθευση ή πλήρης διαγραφή των χρηστών
+  στην οντότητά σου.
+flash_post_unpin_success: Η ανάρτηση έχει ξεκαρφιτσωθεί επιτυχώς.
+show_avatars_on_comments: Εμφάνιση Άβαταρ Σχολίων
+oauth2.grant.admin.magazine.move_entry: Μετακίνησε τα νήματα μεταξύ των περιοδικών
+  της οντότητας σου.
+oauth2.grant.admin.instance.settings.read: Δες τις ρυθμίσεις στην οντότητά σου.
+oauth2.grant.admin.oauth_clients.read: Δες τους πελάτες OAuth2 που υπάρχουν στην οντότητα
+  σου και τα στατιστικά χρήσης τους.
+single_settings: Απλό
+update_comment: Ενημέρωση σχολίου
+oauth2.grant.admin.oauth_clients.revoke: Ανακάλεσε την πρόσβαση στους πελάτες OAuth2
+  στην οντότητα σου.
+last_active: Τελευταία Ενεργό
+oauth2.grant.admin.instance.settings.edit: Ενημέρωσε τις ρυθμίσεις στην οντότητα σου.
+oauth2.grant.admin.instance.information.edit: Ενημέρωσε τα Σχετικά, FAQ, Συμβόλαιο,
+  Όρους Της Υπηρεσίας και τις σελίδες Πολιτικής Απορρήτου στην οντότητά σου.
+oauth2.grant.admin.magazine.all: Μετακίνησε νήματα μεταξύ ή διέγραψε εντελώς τα περιοδικά
+  στην οντότητα σου.
+oauth2.grant.admin.user.delete: Διέγραψε χρήστες από την οντότητά σου.
+oauth2.grant.admin.user.purge: Διέγραψε πλήρως τους χρήστες από την οντότητά σου.
+oauth2.grant.admin.instance.all: Δες και ενημέρωσε τις ρυθμίσεις οντότητας ή τις πληροφορίες.
+oauth2.grant.admin.instance.stats: Δες τα στατιστικά στοιχεία της οντότητας σου.
+oauth2.grant.admin.instance.settings.all: Δες ή ενημέρωσε τις ρυθμίσεις στην οντότητά
+  σου.
+oauth2.grant.admin.federation.all: Δες και ενημέρωσε τις τρέχουσες - εκτός ομοσπονδίας,
+  οντότητες.
+oauth2.grant.admin.federation.read: Δες τη λίστα των οντοτήτων εκτός ομοσπονδίας.
