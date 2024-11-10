@@ -710,3 +710,23 @@ oauth2.grant.admin.instance.settings.all: Δες ή ενημέρωσε τις ρ
 oauth2.grant.admin.federation.all: Δες και ενημέρωσε τις τρέχουσες - εκτός ομοσπονδίας,
   οντότητες.
 oauth2.grant.admin.federation.read: Δες τη λίστα των οντοτήτων εκτός ομοσπονδίας.
+moderation.report.ban_user_description: Θες να αποκλείσεις τον χρήστη (%username%)
+  που δημιούργησε αυτό το περιεχόμενο από αυτό το περιοδικό;
+subject_reported_exists: Το περιεχόμενο αυτό έχει ήδη αναφερθεί.
+moderation.report.ban_user_title: Αποκλεισμός Χρήστη
+magazine_theme_appearance_custom_css: Το Custom CSS που θα ισχύει κατά την προβολή
+  περιεχομένου εντός του περιοδικού σου.
+moderation.report.approve_report_title: Έγκριση Αναφοράς
+moderation.report.reject_report_title: Απόρριψη Αναφοράς
+purge_content: Εκκαθάριση περιεχομένου
+delete_content: Διαγραφή περιεχομένου
+show_avatars_on_comments_help: Εμφάνιση/απόκρυψη άβαταρ χρήστη κατά την προβολή σχολίων
+  σε ένα ενιαίο νήμα ή ανάρτηση.
+comment_reply_position: Θέση απάντησης σχολίου
+magazine_theme_appearance_icon: Προσαρμοσμένο εικονίδιο για το περιοδικό. Αν δεν επιλεχθεί
+  κανένα, θα χρησιμοποιηθεί το προεπιλεγμένο.
+magazine_theme_appearance_background_image: Προσαρμοσμένη εικόνα παρασκηνίου που θα
+  εφαρμοστεί κατά την προβολή περιεχομένου εντός του περιοδικού σου.
+moderation.report.approve_report_confirmation: Σίγουρα θες να εγκρίνεις αυτή την αναφορά;
+moderation.report.reject_report_confirmation: Σίγουρα θες να απορρίψεις αυτή την αναφορά;
+oauth2.grant.moderate.post.pin: Καρφίτσωσε στην κορυφή των περιοδικών που συντονίζεις.
