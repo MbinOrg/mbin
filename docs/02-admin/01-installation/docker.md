@@ -200,12 +200,9 @@ map $request $inboxRequest {
     default                 0;
 }
 
-map $request $regularRequest {
-    ~^POST\ \/f\/inbox      0;
-    ~^POST\ \/i\/inbox      0;
-    ~^POST\ \/m\/.+\/inbox  0;
-    ~^POST\ \/u\/.+\/inbox  0;
-    default                 1;
+map $inboxRequest $regularRequest {
+    1 0;
+    default 1;
 }
 
 # Redirect HTTP to HTTPS
