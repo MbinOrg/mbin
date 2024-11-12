@@ -141,7 +141,7 @@ server {
     # Logs
     error_log /var/log/nginx/mbin_error.log;
     access_log /var/log/nginx/mbin_access.log if=$regularRequest;
-    access_log /var/log/nginx/mbin_inbox.log if=$inboxRequest;
+    access_log /var/log/nginx/mbin_inbox.log if=$inboxRequest buffer=32k flush=5m;
 
     location / {
         # try to serve file directly, fallback to index.php
