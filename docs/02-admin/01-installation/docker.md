@@ -193,15 +193,19 @@ NGINX reverse proxy example for the Mbin Docker instance:
 ```nginx
 # Map between POST requests on inbox vs the rest
 map $request $inboxRequest {
-    ~^POST\ \/f\/inbox   1;
-    ~^POST\ \/i\/inbox   1;
-    default              0;
+    ~^POST\ \/f\/inbox      1;
+    ~^POST\ \/i\/inbox      1;
+    ~^POST\ \/m\/.+\/inbox  1;
+    ~^POST\ \/u\/.+\/inbox  1;
+    default                 0;
 }
 
 map $request $regularRequest {
-    ~^POST\ \/f\/inbox  0;
-    ~^POST\ \/i\/inbox  0;
-    default             1;
+    ~^POST\ \/f\/inbox      0;
+    ~^POST\ \/i\/inbox      0;
+    ~^POST\ \/m\/.+\/inbox  0;
+    ~^POST\ \/u\/.+\/inbox  0;
+    default                 1;
 }
 
 # Redirect HTTP to HTTPS
