@@ -191,6 +191,11 @@ files.
 NGINX reverse proxy example for the Mbin Docker instance:
 
 ```nginx
+upstream backend {
+    server 127.0.0.1:8008;
+    keepalive 12;
+}
+
 # Redirect HTTP to HTTPS
 server {
     server_name domain.tld;
@@ -228,16 +233,18 @@ server {
     access_log /var/log/nginx/mbin_access.log;
 
     location / {
+        proxy_http_version 1.1;
         proxy_set_header HOST $host;
         proxy_set_header X-Forwarded-Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_pass http://127.0.0.1:8008;
+        proxy_set_header Connection "";
+        proxy_pass http://backend;
     }
 
     location /.well-known/mercure {
-        proxy_pass http://127.0.0.1:8008$request_uri;
+        proxy_pass http://backend$request_uri;
         proxy_read_timeout 24h;
         proxy_http_version 1.1;
         proxy_set_header Connection "";
