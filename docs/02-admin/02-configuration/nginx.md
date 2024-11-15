@@ -130,6 +130,11 @@ server {
     error_log /var/log/nginx/mbin_error.log;
     access_log /var/log/nginx/mbin_access.log;
 
+    open_file_cache          max=1000 inactive=20s;
+    open_file_cache_valid    60s;
+    open_file_cache_min_uses 2;
+    open_file_cache_errors   on;
+
     location / {
         # try to serve file directly, fallback to app.php
         try_files $uri /index.php$is_args$args;
