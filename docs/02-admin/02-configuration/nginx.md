@@ -41,7 +41,7 @@ gzip            on;
 gzip_disable    msie6;
 
 gzip_vary       on;
-gzip_comp_level 3;
+gzip_comp_level 5;
 gzip_min_length 256;
 gzip_buffers    16 8k;
 gzip_proxied    any;
