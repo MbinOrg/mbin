@@ -62,6 +62,8 @@ sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=compose
 
 If you have a firewall installed (or you're behind a NAT), be sure to open port `443` for the web server. Mbin should run behind a reverse proxy like Nginx.
 
+For Nginx see: [Nginx configuration](../02-configuration/nginx.md).
+
 ## Install NodeJS (frontend tools)
 
 1. Prepare & download keyring:

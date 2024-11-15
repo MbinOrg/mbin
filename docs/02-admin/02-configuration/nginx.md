@@ -85,6 +85,20 @@ sudo nano /etc/nginx/sites-available/mbin.conf
 With the content:
 
 ```nginx
+# Map between POST requests on inbox vs the rest
+map $request $inboxRequest {
+    ~^POST\ \/f\/inbox      1;
+    ~^POST\ \/i\/inbox      1;
+    ~^POST\ \/m\/.+\/inbox  1;
+    ~^POST\ \/u\/.+\/inbox  1;
+    default                 0;
+}
+
+map $inboxRequest $regularRequest {
+    1 0;
+    default 1;
+}
+
 # Redirect HTTP to HTTPS
 server {
     server_name domain.tld;
@@ -123,15 +137,16 @@ server {
 
     # Logs
     error_log /var/log/nginx/mbin_error.log;
-    access_log /var/log/nginx/mbin_access.log;
+    access_log /var/log/nginx/mbin_access.log if=$regularRequest;
+    access_log /var/log/nginx/mbin_inbox.log if=$inboxRequest buffer=32k flush=5m;
 
     location / {
-        # try to serve file directly, fallback to app.php
+        # try to serve file directly, fallback to index.php
         try_files $uri /index.php$is_args$args;
     }
 
     location = /favicon.ico { access_log off; log_not_found off; }
-    location = /robots.txt  { access_log off; log_not_found off; }
+    location = /robots.txt  { allow all; access_log off; log_not_found off; }
 
     location /.well-known/mercure {
         proxy_pass http://127.0.0.1:3000$request_uri;
@@ -167,30 +182,23 @@ server {
       try_files $uri $uri/ /index.php?$query_string;
     }
 
-    # assets, documents, archives, media
-    location ~* \.(?:css(\.map)?|js(\.map)?|jpe?g|png|tgz|gz|rar|bz2|doc|pdf|ptt|tar|gif|ico|cur|heic|webp|tiff?|mp3|m4a|aac|ogg|midi?|wav|mp4|mov|webm|mpe?g|avi|ogv|flv|wmv)$ {
+    # Static assets
+    location ~* \.(?:css(\.map)?|js(\.map)?|jpe?g|png|tgz|gz|rar|bz2|doc|pdf|ptt|tar|gif|ico|cur|heic|webp|tiff?|mp3|m4a|aac|ogg|midi?|wav|mp4|mov|webm|mpe?g|avi|ogv|flv|wmv|svgz?|ttf|ttc|otf|eot|woff2?)$ {
         expires    30d;
         add_header Access-Control-Allow-Origin "*";
         add_header Cache-Control "public, no-transform";
         access_log off;
-    }
-
-    # svg, fonts
-    location ~* \.(?:svgz?|ttf|ttc|otf|eot|woff2?)$ {
-        expires    30d;
-        add_header Access-Control-Allow-Origin "*";
-        add_header Cache-Control "public, no-transform";
-        access_log off;
-    }
-
-    location ~ /\.(?!well-known).* {
-        deny all;
     }
 
     # return 404 for all other php files not matching the front controller
     # this prevents access to other php files you don't want to be accessible.
     location ~ \.php$ {
         return 404;
+    }
+
+    # Deny dot folders and files, except for the .well-known folder
+    location ~ /\.(?!well-known).* {
+        deny all;
     }
 }
 ```
