@@ -122,9 +122,12 @@ input[type=radio] {
   align-content: center;
   cursor: pointer;
 
+  @extend %fa-icon;
+  @extend .fa-solid;
+
   &::before {
     font-family: var(--kbin-font-awesome-font-family);
-    content: "\f00c";
+    content: fa-content($fa-var-check);
     transform: scale(0);
     transition: 100ms transform ease-in;
   }
