@@ -8,6 +8,8 @@ use App\DTO\UserDto;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\User;
 use App\Entity\UserFollowRequest;
+use App\Event\User\UserApplicationApprovedEvent;
+use App\Event\User\UserApplicationRejectedEvent;
 use App\Event\User\UserBlockEvent;
 use App\Event\User\UserEditedEvent;
 use App\Event\User\UserFollowEvent;
@@ -29,6 +31,7 @@ use App\Service\ActivityPub\KeysGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -58,7 +61,10 @@ readonly class UserManager
         private ImageRepository $imageRepository,
         private Security $security,
         private CacheInterface $cache,
-        private ReputationRepository $reputationRepository
+        private ReputationRepository $reputationRepository,
+        private SettingsManager $settingsManager,
+        private EventDispatcherInterface $eventDispatcher,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -143,7 +149,7 @@ readonly class UserManager
         $this->dispatcher->dispatch(new UserFollowEvent($follower, $following, true));
     }
 
-    public function create(UserDto $dto, bool $verifyUserEmail = true, $rateLimit = true): User
+    public function create(UserDto $dto, bool $verifyUserEmail = true, $rateLimit = true, ?bool $preApprove = null): User
     {
         if ($rateLimit) {
             $limiter = $this->userRegisterLimiter->create($dto->ip);
@@ -151,8 +157,12 @@ readonly class UserManager
                 throw new TooManyRequestsHttpException();
             }
         }
+        $approved = true;
+        if (true !== $preApprove && $this->settingsManager->getNewUsersNeedApproval()) {
+            $approved = false;
+        }
 
-        $user = new User($dto->email, $dto->username, '', ($dto->isBot) ? 'Service' : 'Person', $dto->apProfileId, $dto->apId);
+        $user = new User($dto->email, $dto->username, '', ($dto->isBot) ? 'Service' : 'Person', $dto->apProfileId, $dto->apId, isApproved: $approved, applicationText: $dto->applicationText);
         $user->setPassword($this->passwordHasher->hashPassword($user, $dto->plainPassword));
 
         if (!$dto->apId) {
@@ -418,6 +428,32 @@ readonly class UserManager
             ->setParameter(':datetime', $dateTime)
             ->getQuery()
             ->getResult();
+    }
+
+    public function rejectUserApplication(User $user): void
+    {
+        if (!$user->isApproved && $user->isRejected) {
+            return;
+        }
+        $user->isApproved = false;
+        $user->isRejected = true;
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        $this->logger->debug('Rejecting application for {u}', ['u' => $user->username]);
+        $this->eventDispatcher->dispatch(new UserApplicationRejectedEvent($user));
+    }
+
+    public function approveUserApplication(User $user): void
+    {
+        if ($user->isApproved && !$user->isRejected) {
+            return;
+        }
+        $user->isApproved = true;
+        $user->isRejected = false;
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        $this->logger->debug('Approving application for {u}', ['u' => $user->username]);
+        $this->eventDispatcher->dispatch(new UserApplicationApprovedEvent($user));
     }
 
     public function getAllInboxesOfInteractions(User $user): array

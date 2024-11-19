@@ -40,6 +40,10 @@ class UserFrontController extends AbstractController
         $requestedByUser = $this->getUser();
         $hideAdult = (!$requestedByUser || $requestedByUser->hideAdult);
 
+        if (!$user->isApproved || $user->isRejected) {
+            throw $this->createNotFoundException();
+        }
+
         if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
             throw $this->createNotFoundException();
         }

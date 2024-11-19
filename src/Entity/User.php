@@ -240,13 +240,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     #[Column(type: 'string', nullable: false, options: ['default' => self::USER_TYPE_PERSON])]
     public string $type;
 
+    #[Column(type: 'string', nullable: true)]
+    public string $applicationText;
+
+    #[Column(type: 'boolean', nullable: false, options: ['default' => true])]
+    public bool $isApproved;
+
+    #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
+    public bool $isRejected = false;
+
     public function __construct(
         string $email,
         string $username,
         string $password,
         string $type,
         ?string $apProfileId = null,
-        ?string $apId = null
+        ?string $apId = null,
+        bool $isApproved = true,
+        ?string $applicationText = null,
     ) {
         $this->email = $email;
         $this->password = $password;
@@ -280,6 +291,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         $this->lastActive = new \DateTime();
         $this->createdAtTraitConstruct();
         $this->oAuth2UserConsents = new ArrayCollection();
+        $this->isApproved = $isApproved;
+        $this->applicationText = $applicationText;
     }
 
     public function getId(): int

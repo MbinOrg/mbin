@@ -252,6 +252,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere('u.visibility = :visibility')
             ->andWhere('u.isDeleted = false')
             ->andWhere('u.isBanned = false')
+            ->andWhere('u.isApproved = true')
+            ->andWhere('u.isRejected = false')
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->orderBy('u.createdAt', 'ASC')
             ->getQuery();
@@ -281,6 +283,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere('u.isVerified = false')
             ->andWhere('u.isDeleted = false')
             ->andWhere('u.isBanned = false')
+            ->andWhere('u.isApproved = true')
+            ->andWhere('u.isRejected = false')
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->orderBy('u.createdAt', 'ASC')
             ->getQuery();
@@ -474,6 +478,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
         return $qb
             ->andWhere('u.isDeleted = false')
+            ->andWhere('u.isApproved = true')
+            ->andWhere('u.isRejected = false')
             ->orderBy('u.lastActive', 'DESC');
     }
 
@@ -521,7 +527,10 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
                 break;
         }
 
-        return $qb->orderBy('u.lastActive', 'DESC');
+        return $qb
+            ->andWhere('u.isApproved = true')
+            ->andWhere('u.isRejected = false')
+            ->orderBy('u.lastActive', 'DESC');
     }
 
     public function findUsersForGroup(string $group = self::USERS_ALL, ?bool $recentlyActive = true): array
@@ -576,6 +585,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         $result = $this->createQueryBuilder('u')
             ->andWhere("JSONB_CONTAINS(u.roles, '\"".'ROLE_ADMIN'."\"') = true")
             ->andWhere('u.isDeleted = false')
+            ->andWhere('u.isApproved = true')
+            ->andWhere('u.isRejected = false')
             ->getQuery()
             ->getResult();
         if (0 === \sizeof($result)) {
@@ -593,6 +604,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $this->createQueryBuilder('u')
             ->andWhere("JSONB_CONTAINS(u.roles, '\"".'ROLE_ADMIN'."\"') = true")
             ->andWhere('u.isDeleted = false')
+            ->andWhere('u.isApproved = true')
+            ->andWhere('u.isRejected = false')
             ->getQuery()
             ->getResult();
     }
@@ -606,6 +619,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->orWhere($qb->expr()->like('u.email', ':query'))
             ->andWhere('u.isBanned = false')
             ->andWhere('u.isDeleted = false')
+            ->andWhere('u.isApproved = true')
+            ->andWhere('u.isRejected = false')
             ->setParameters(['query' => "{$query}%"])
             ->setMaxResults(5)
             ->getQuery()
@@ -647,6 +662,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         $qb->andWhere($qb->expr()->in('u.id', $user))
             ->andWhere('u.isBanned = false')
             ->andWhere('u.isDeleted = false')
+            ->andWhere('u.isApproved = true')
+            ->andWhere('u.isRejected = false')
             ->andWhere('u.visibility = :visibility')
             ->andWhere('u.apDeletedAt IS NULL')
             ->andWhere('u.apTimeoutAt IS NULL');
@@ -692,6 +709,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             $results = $this->findUsersForMagazine($magazine, null, 35, true, true);
         } else {
             $results = $this->createQueryBuilder('u')
+                ->andWhere('u.isApproved = true')
+                ->andWhere('u.isRejected = false')
                 ->andWhere('u.lastActive >= :lastActive')
                 ->andWhere('u.isBanned = false')
                 ->andWhere('u.isDeleted = false')
@@ -760,5 +779,22 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    public function findAllSignupRequestsPaginated(int $page = 1): PagerfantaInterface
+    {
+        $query = $this->createQueryBuilder('u')
+            ->where('u.isApproved = false')
+            ->andWhere('u.isRejected = false')
+            ->andWhere('u.apId IS NULL')
+            ->andWhere('u.isDeleted = false')
+            ->andWhere('u.markedForDeletionAt IS NULL')
+            ->getQuery();
+
+        $fanta = new Pagerfanta(new QueryAdapter($query));
+        $fanta->setCurrentPage($page);
+        $fanta->setMaxPerPage(self::PER_PAGE);
+
+        return $fanta;
     }
 }

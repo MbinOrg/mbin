@@ -35,6 +35,7 @@ class UserCommand extends Command
         $this->addArgument('username', InputArgument::REQUIRED)
             ->addArgument('email', InputArgument::REQUIRED)
             ->addArgument('password', InputArgument::REQUIRED)
+            ->addOption('applicationText', 'a', InputOption::VALUE_NONE, 'The application text of the user')
             ->addOption('remove', 'r', InputOption::VALUE_NONE, 'Remove user')
             ->addOption('admin', null, InputOption::VALUE_NONE, 'Grant administrator privileges')
             ->addOption('moderator', null, InputOption::VALUE_NONE, 'Grant global moderator privileges');

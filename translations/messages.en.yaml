@@ -437,6 +437,8 @@ your_account_is_not_active: Your account has not been activated. Please check yo
   email for account activation instructions or <a href="%link_target%">request a new
   account activation email.</a>
 your_account_has_been_banned: Your account has been banned
+your_account_is_not_yet_approved: Your account has not been approved, yet.
+  We will send you an email as soon as the admins have processed your application.
 toolbar.bold: Bold
 toolbar.italic: Italic
 toolbar.strikethrough: Strikethrough
@@ -919,3 +921,15 @@ search_type_all: Threads + Microblogs
 search_type_entry: Threads
 search_type_post: Microblogs
 select_user: Choose a user
+new_users_need_approval: New users have to be approved by an admin before they can log in.
+applications: Applications
+application_text: Application text
+signup_requests_header: These users would like to join your server. They cannot log in until you've approved their application
+flash_application_info: Your admin needs to approve your account before you can log in.
+  You will receive an email when they processed your application.
+email_application_approved_title: Your application was approved
+email_application_approved_body: Your signup application was approved by the admins. You can log into the server at <a href="%link%">%siteName%</a>.
+email_application_rejected_title: Your application was rejected
+email_application_rejected_body: Your signup application was rejected by the admins
+email_application_pending: Your admin needs to approve your account before you can log in.
+email_verification_pending: You have to verify your email address before you can log in.

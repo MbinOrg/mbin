@@ -10,6 +10,11 @@
     <p>
         <a class="btn btn__primary" href="{{ signedUrl|raw }}">{{ 'email_verify'|trans }}</a>
     </p>
+    {% if user.isApproved is same as false %}
+        <p>
+            {{ 'email_application_pending'|trans }}
+        </p>
+    {% endif %}
     <p>{{ 'email_confirm_expire'|trans }}</p>
     <p>Cheers!</p>
 {% endblock %}

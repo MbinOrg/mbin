@@ -39,6 +39,7 @@ class SettingsManager
         private readonly bool $mbinSsoOnlyMode,
         private readonly int $maxImageBytes,
         private readonly DownvotesMode $mbinDownvotesMode,
+        private readonly bool $mbinNewUsersNeedApproval,
     ) {
         if (!self::$dto) {
             $results = $this->repository->findAll();
@@ -46,6 +47,13 @@ class SettingsManager
             $maxImageBytesEdited = $this->find($results, 'MAX_IMAGE_BYTES', FILTER_VALIDATE_INT);
             if (null === $maxImageBytesEdited || 0 === $maxImageBytesEdited) {
                 $maxImageBytesEdited = $this->maxImageBytes;
+            }
+
+            $newUsersNeedApprovalEdited = $this->find($results, 'MBIN_NEW_USERS_NEED_APPROVAL');
+            if ('true' === $newUsersNeedApprovalEdited) {
+                $newUsersNeedApprovalEdited = true;
+            } elseif (null === $newUsersNeedApprovalEdited) {
+                $newUsersNeedApprovalEdited = $this->mbinNewUsersNeedApproval;
             }
 
             self::$dto = new SettingsDto(
@@ -84,6 +92,7 @@ class SettingsManager
                 $this->find($results, 'MBIN_SSO_SHOW_FIRST', FILTER_VALIDATE_BOOLEAN) ?? false,
                 $maxImageBytesEdited,
                 $this->find($results, 'MBIN_DOWNVOTES_MODE') ?? $this->mbinDownvotesMode->value,
+                $newUsersNeedApprovalEdited,
             );
         }
     }
@@ -161,6 +170,11 @@ class SettingsManager
     public function getDownvotesMode(): DownvotesMode
     {
         return DownvotesMode::from($this->get('MBIN_DOWNVOTES_MODE'));
+    }
+
+    public function getNewUsersNeedApproval(): bool
+    {
+        return $this->get('MBIN_NEW_USERS_NEED_APPROVAL');
     }
 
     public function set(string $name, $value): void

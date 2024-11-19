@@ -25,6 +25,10 @@ class UserController extends AbstractController
             throw $this->createNotFoundException();
         }
 
+        if (!$user->isApproved || $user->isRejected) {
+            throw $this->createNotFoundException();
+        }
+
         if (!$user->isDeleted || null !== $user->markedForDeletionAt) {
             $response = new JsonResponse($this->personFactory->create($user, true));
         } else {

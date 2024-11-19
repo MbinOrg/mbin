@@ -41,6 +41,14 @@
                 {{ 'ownership_requests'|trans }}
             </a>
         </li>
+        {% if do_new_users_need_approval() %}
+            <li>
+                <a href="{{ path('admin_signup_requests', { page: 1 }) }}"
+                   class="{{ html_classes({'active': is_route_name('admin_signup_requests') }) }}">
+                    {{ 'applications'|trans }}
+                </a>
+            </li>
+        {% endif %}
         <li>
             <a href="{{ path('admin_pages', {page: 'announcement'}) }}"
                class="{{ html_classes({'active': is_route_name('admin_pages')}) }}">
