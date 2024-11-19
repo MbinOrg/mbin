@@ -1,14 +1,18 @@
-# PostgreSQL tuning
+# PostgreSQL
 
-For production, you **do want to change** the default PostgreSQL settings (since the default configuration is _not_ recommended).
+PostgreSQL is used as the database for Mbin.
 
-Edit your PostgreSQL configuration file (assuming you're running PostgreSQL v14):
+For production, you **do** want to change the default PostgreSQL settings (since the default settings are _not_ recommended).
+
+Edit your PostgreSQL configuration file (assuming you're running PostgreSQL v16 or up):
 
 ```bash
-sudo nano /etc/postgresql/14/main/postgresql.conf
+sudo nano /etc/postgresql/16/main/postgresql.conf
 ```
 
-Then adjust the following settings **depending to your server specifications** (the configuration below is a good indication for a server with around 32GB of RAM):
+These settings below are more **an indication and heavily depends on your server specifications**. As well as if you are running other services on the same server.
+
+However, the following settings are a good starting point when your serve is around 12 vCPUs and 32GB of RAM. Be sure to fune-tune these settings to your needs.
 
 ```ini
 # Increase max connections
@@ -17,13 +21,14 @@ max_connections = 100
 # Increase shared buffers
 shared_buffers = 8GB
 # Enable huge pages (Be sure to check the note down below in order to enable huge pages!)
-# This will fail if you didn't configure huge pages under Linux (if you do NOT want to use huge pages, set it to: try instead of: on)
+# This will fail if you didn't configure huge pages under Linux
+# (if you do NOT want to use huge pages, set it to: "try" instead of: "on")
 huge_pages = on
 
 # Increase work memory
-work_mem = 20MB
+work_mem = 15MB
 # Increase maintenance work memory
-maintenance_work_mem = 1GB
+maintenance_work_mem = 2GB
 
 # Should be posix under Linux anyway, just to be sure...
 dynamic_shared_memory_type = posix
@@ -46,6 +51,10 @@ max_parallel_workers = 16
 # Write ahead log sizes (unless you expect to write more than 1GB/hour of data in the DB)
 max_wal_size = 8GB
 min_wal_size = 2GB
+
+# Group write commits to combine multiple transactions by a single flush (this is a time delay in ms)
+commit_delay = 300
+
 checkpoint_completion_target = 0.9
 
 # Query tuning
@@ -54,11 +63,11 @@ checkpoint_completion_target = 0.9
 random_page_cost = 1.1
 
 # Increase the cache size, increasing the likelihood of index scans (if we have enough RAM memory)
-# Try to aim for: RAM size * 0.8 (on a dedicated server)
-effective_cache_size = 25GB
+# Try to aim for: RAM size * 0.8 (on a dedicated DB server)
+effective_cache_size = 24GB
 ```
 
-For a reference you can check out [PGTune](https://pgtune.leopard.in.ua/)
+For reference check out [PGTune](https://pgtune.leopard.in.ua/)
 
 > [!NOTE]
-> We try to set `huge_pages` to: `on` in PostgreSQL, in order to make this works you need to [enable huge pages under Linux (click here)](https://www.enterprisedb.com/blog/tuning-debian-ubuntu-postgresql) as well! Please follow that guide. and play around with your kernel configurations.
+> We try to set `huge_pages` to: `on` in PostgreSQL, in order to make this work you will need to [enable huge pages under Linux (click here)](https://www.enterprisedb.com/blog/tuning-debian-ubuntu-postgresql) as well! Please follow that guide. And play around with your kernel configurations.
