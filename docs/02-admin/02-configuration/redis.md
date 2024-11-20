@@ -1,4 +1,4 @@
-# Redis / KeyDB
+# Redis / KeyDB / Valkey
 
 This documentation is valid for both Redis as well as KeyDB and Valkey. Both Valkey and KeyDB are forks of Redis, but should work mostly in the same manner.
 
