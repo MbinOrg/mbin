@@ -29,12 +29,12 @@ Or:
 
 Web-server (Nginx):
 
-- `sudo tail -f /var/log/nginx/mbin_access.log`
-- `sudo tail -f /var/log/nginx/mbin_error.log`
+- Normal access log: `sudo tail -f /var/log/nginx/mbin_access.log`
+- Inbox access log: `sudo tail -f /var/log/nginx/mbin_inbox.log`
+- Error log: `sudo tail -f /var/log/nginx/mbin_error.log`
 
 ## Debugging
 
 **Please, check the logs above first.** If you are really stuck, visit to our [Matrix space](https://matrix.to/#/%23mbin:melroy.org), there is a 'General' room and dedicated room for 'Issues/Support'.
 
 Test PostgreSQL connections if using a remote server, same with Redis (or KeyDB is you are using that instead). Ensure no firewall rules blocking are any incoming or out-coming traffic (eg. port on 80 and 443).
-

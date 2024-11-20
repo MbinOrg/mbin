@@ -62,6 +62,8 @@ sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=compose
 
 If you have a firewall installed (or you're behind a NAT), be sure to open port `443` for the web server. Mbin should run behind a reverse proxy like Nginx.
 
+For Nginx see: [Nginx configuration](../02-configuration/nginx.md).
+
 ## Install NodeJS (frontend tools)
 
 1. Prepare & download keyring:
@@ -427,8 +429,8 @@ php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
 ```
 
-> [!TIP]
-> Check out [PostgreSQL tuning](../99-tuning/postgresql.md), you should not run the default PostgreSQL configuration in production.
+> [!IMPORTANT]
+> Check out the [PostgreSQL configuration page](../02-configuration/postgresql.md). You should not run the default PostgreSQL configuration in production!
 
 ## Install RabbitMQ
 
