@@ -52,7 +52,7 @@ max_parallel_workers = 16
 max_wal_size = 8GB
 min_wal_size = 2GB
 
-# Group write commits to combine multiple transactions by a single flush (this is a time delay in ms)
+# Group write commits to combine multiple transactions by a single flush (this is a time delay in μs)
 commit_delay = 300
 
 checkpoint_completion_target = 0.9
