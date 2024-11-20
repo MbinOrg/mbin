@@ -159,7 +159,7 @@ server {
     location = /robots.txt  { allow all; access_log off; log_not_found off; }
 
     location /.well-known/mercure {
-        proxy_pass http://127.0.0.1:3000$request_uri;
+        proxy_pass http://mercure$request_uri;
         # Increase this time-out if you want clients have a Mercure connection open for longer (eg. 24h)
         proxy_read_timeout 2h;
         proxy_http_version 1.1;
