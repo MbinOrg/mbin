@@ -41,7 +41,7 @@ gzip            on;
 gzip_disable    msie6;
 
 gzip_vary       on;
-gzip_comp_level 3;
+gzip_comp_level 5;
 gzip_min_length 256;
 gzip_buffers    16 8k;
 gzip_proxied    any;
@@ -85,6 +85,11 @@ sudo nano /etc/nginx/sites-available/mbin.conf
 With the content:
 
 ```nginx
+upstream mercure {
+    server 127.0.0.1:3000;
+    keepalive 10;
+}
+
 # Map between POST requests on inbox vs the rest
 map $request $inboxRequest {
     ~^POST\ \/f\/inbox      1;
@@ -140,6 +145,11 @@ server {
     access_log /var/log/nginx/mbin_access.log if=$regularRequest;
     access_log /var/log/nginx/mbin_inbox.log if=$inboxRequest buffer=32k flush=5m;
 
+    open_file_cache          max=1000 inactive=20s;
+    open_file_cache_valid    60s;
+    open_file_cache_min_uses 2;
+    open_file_cache_errors   on;
+
     location / {
         # try to serve file directly, fallback to index.php
         try_files $uri /index.php$is_args$args;
@@ -149,7 +159,7 @@ server {
     location = /robots.txt  { allow all; access_log off; log_not_found off; }
 
     location /.well-known/mercure {
-        proxy_pass http://127.0.0.1:3000$request_uri;
+        proxy_pass http://mercure$request_uri;
         # Increase this time-out if you want clients have a Mercure connection open for longer (eg. 24h)
         proxy_read_timeout 2h;
         proxy_http_version 1.1;
