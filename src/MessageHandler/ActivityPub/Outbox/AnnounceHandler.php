@@ -96,6 +96,10 @@ class AnnounceHandler extends MbinMessageHandler
                 $this->activityPubManager->createInboxesFromCC($activity, $actor),
             );
         } elseif ($actor instanceof Magazine) {
+            if ('random' === $actor->name) {
+                // do not federate the random magazine
+                return;
+            }
             $createHost = parse_url($object->apId, PHP_URL_HOST);
             $inboxes = array_filter(array_merge(
                 $inboxes,

@@ -63,6 +63,10 @@ class CreateHandler extends MbinMessageHandler
                 ...$this->activityPubManager->createInboxesFromCC($activity, $entity->user),
                 ...$this->magazineRepository->findAudience($entity->magazine),
             ];
+            if ('random' === $entity->magazine->name) {
+                // do not federate the random magazine
+                return;
+            }
             $this->logger->debug('sending create activity to {p}', ['p' => $receivers]);
         }
         $this->deliverManager->deliver(array_filter(array_unique($receivers)), $activity);

@@ -49,6 +49,10 @@ class AddHandler extends MbinMessageHandler
         if ($magazine->apId) {
             $audience = [$magazine->apInboxUrl];
         } else {
+            if ('random' === $magazine->name) {
+                // do not federate the random magazine
+                return;
+            }
             $audience = $this->magazineRepository->findAudience($magazine);
         }
 

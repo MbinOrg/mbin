@@ -57,6 +57,11 @@ class LikeHandler extends MbinMessageHandler
         /** @var Entry|EntryComment|Post|PostComment $object */
         $object = $this->entityManager->getRepository($message->objectType)->find($message->objectId);
 
+        if ('random' === $object->magazine->name) {
+            // do not federate the random magazine
+            return;
+        }
+
         $activity = $this->likeWrapper->build(
             $this->activityPubManager->getActorProfileId($user),
             $this->activityFactory->create($object),

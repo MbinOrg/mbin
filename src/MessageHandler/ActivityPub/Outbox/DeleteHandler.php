@@ -45,6 +45,10 @@ class DeleteHandler extends MbinMessageHandler
 
         $user = $this->userRepository->find($message->userId);
         $magazine = $this->magazineRepository->find($message->magazineId);
+        if ('random' === $magazine->name) {
+            // do not federate the random magazine
+            return;
+        }
 
         $inboxes = array_filter(array_unique(array_merge(
             $this->userRepository->findAudience($user),
