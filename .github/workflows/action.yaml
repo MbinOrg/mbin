@@ -37,7 +37,6 @@ jobs:
           restore-keys: ${{ runner.os }}-npm-
 
       - uses: actions/cache@v4
-        id: vendor-cache
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-no-dev-${{ hashFiles('**/composer.lock') }}
@@ -45,10 +44,8 @@ jobs:
 
       - run: cp .env.example .env
       - name: Composer install
-        if: steps.vendor-cache.outputs.cache-hit != 'true'
         run: composer install --no-dev --no-progress
       - name: NPM install
-        if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm ci --include=dev
         env:
           NODE_ENV: production
@@ -69,7 +66,6 @@ jobs:
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v4
-        id: vendor-cache
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -77,7 +73,6 @@ jobs:
 
       - run: cp .env.example .env
       - name: Composer install
-        if: steps.vendor-cache.outputs.cache-hit != 'true'
         run: composer install --no-scripts --no-progress
 
       - name: Run unit tests
@@ -100,7 +95,6 @@ jobs:
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache vendor directory
-        id: cache-vendor
         uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
@@ -109,7 +103,6 @@ jobs:
 
       - run: cp .env.example .env
       - name: Composer install
-        if: steps.cache-vendor.outputs.cache-hit != 'true'
         run: composer install --no-scripts --no-progress
 
       - name: Run Npm audit
@@ -133,14 +126,12 @@ jobs:
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v4
-        id: vendor-cache
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-tools-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-tools-
 
       - name: Composer tools install
-        if: steps.vendor-cache.outputs.cache-hit != 'true'
         run: composer -d tools install --no-scripts --no-progress
 
       - name: php-cs-fixer dry-run
