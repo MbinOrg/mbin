@@ -24,38 +24,31 @@ jobs:
         id: npm-cache-dir-path
         run: echo "dir=$(npm get cache)" >> $GITHUB_OUTPUT
 
-      - name: Calculate package-lock.json hash
-        id: npm-lock-hash
-        run: |
-          echo "hash=$(md5sum package-lock.json)" >> $GITHUB_OUTPUT
-
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - name: Calculate composer.lock hash
-        id: composer-lock-hash
-        run: |
-          echo "hash=$(md5sum composer.lock)" >> $GITHUB_OUTPUT
-
       - uses: actions/cache@v4
-        id: npm-cache # use this to check for `cache-hit` (`steps.npm-cache.outputs.cache-hit != 'true'`)
+        id: npm-cache
         with:
           path: ${{ steps.npm-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-npm-${{ steps.npm-lock-hash.outputs.hash }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
           restore-keys: ${{ runner.os }}-npm-
 
       - uses: actions/cache@v4
+        id: vendor-cache
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-no-dev-${{ steps.composer-lock-hash.outputs.hash }}
+          key: ${{ runner.os }}-composer-no-dev-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-no-dev-
 
       - run: cp .env.example .env
       - name: Composer install
+        if: steps.vendor-cache.outputs.cache-hit != 'true'
         run: composer install --no-dev --no-progress
       - name: NPM install
+        if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm ci --include=dev
         env:
           NODE_ENV: production
@@ -75,19 +68,16 @@ jobs:
         run: |
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - name: Calculate composer.lock hash
-        id: composer-lock-hash
-        run: |
-          echo "hash=$(md5sum composer.lock)" >> $GITHUB_OUTPUT
-
       - uses: actions/cache@v4
+        id: vendor-cache
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ steps.composer-lock-hash.outputs.hash }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - run: cp .env.example .env
       - name: Composer install
+        if: steps.vendor-cache.outputs.cache-hit != 'true'
         run: composer install --no-scripts --no-progress
 
       - name: Run unit tests
@@ -104,24 +94,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get Composer Cache Directory
+      - name: Get Composer cache directory
         id: composer-cache
         run: |
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - name: Calculate composer.lock hash
-        id: composer-lock-hash
-        run: |
-          echo "hash=$(md5sum composer.lock)" >> $GITHUB_OUTPUT
-
-      - uses: actions/cache@v4
+      - name: Cache vendor directory
+        id: cache-vendor
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ steps.composer-lock-hash.outputs.hash }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - run: cp .env.example .env
       - name: Composer install
+        if: steps.cache-vendor.outputs.cache-hit != 'true'
         run: composer install --no-scripts --no-progress
 
       - name: Run Npm audit
@@ -144,18 +132,15 @@ jobs:
         run: |
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - name: Calculate tools/composer.lock hash
-        id: composer-lock-hash
-        run: |
-          echo "hash=$(md5sum tools/composer.lock)" >> $GITHUB_OUTPUT
-
       - uses: actions/cache@v4
+        id: vendor-cache
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-tools-${{ steps.composer-lock-hash.outputs.hash }}
+          key: ${{ runner.os }}-composer-tools-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-tools-
 
       - name: Composer tools install
+        if: steps.vendor-cache.outputs.cache-hit != 'true'
         run: composer -d tools install --no-scripts --no-progress
 
       - name: php-cs-fixer dry-run
