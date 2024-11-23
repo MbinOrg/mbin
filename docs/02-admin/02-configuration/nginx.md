@@ -142,8 +142,8 @@ server {
 
     # Logs
     error_log /var/log/nginx/mbin_error.log;
-    access_log /var/log/nginx/mbin_access.log if=$regularRequest;
-    access_log /var/log/nginx/mbin_inbox.log if=$inboxRequest buffer=32k flush=5m;
+    access_log /var/log/nginx/mbin_access.log combined if=$regularRequest;
+    access_log /var/log/nginx/mbin_inbox.log combined if=$inboxRequest buffer=32k flush=5m;
 
     open_file_cache          max=1000 inactive=20s;
     open_file_cache_valid    60s;
