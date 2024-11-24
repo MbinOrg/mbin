@@ -59,6 +59,7 @@ class SettingsType extends AbstractType
                     $dto->MBIN_DOWNVOTES_MODE => ['checked' => true],
                 ],
             ])
+            ->add('MBIN_NEW_USERS_NEED_APPROVAL', CheckboxType::class, ['required' => false])
             ->add('submit', SubmitType::class);
     }
 

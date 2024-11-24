@@ -96,7 +96,7 @@ class DeleteUserHandler extends MbinMessageHandler
         $this->entityManager->flush();
 
         // recreate a user with the same name, so this handle is blocked
-        $user = $this->userManager->create($userDto, verifyUserEmail: false, rateLimit: false);
+        $user = $this->userManager->create($userDto, verifyUserEmail: false, rateLimit: false, preApprove: true);
         $user->isDeleted = true;
         $user->markedForDeletionAt = null;
         $user->isVerified = false;

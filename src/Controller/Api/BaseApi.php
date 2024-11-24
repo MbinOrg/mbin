@@ -41,10 +41,12 @@ use App\Repository\OAuth2ClientAccessRepository;
 use App\Repository\PostCommentRepository;
 use App\Repository\PostRepository;
 use App\Repository\TagLinkRepository;
+use App\Repository\UserRepository;
 use App\Schema\PaginationSchema;
 use App\Service\BookmarkManager;
 use App\Service\IpResolver;
 use App\Service\ReportManager;
+use App\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
@@ -94,6 +96,8 @@ class BaseApi extends AbstractController
         protected readonly BookmarkListRepository $bookmarkListRepository,
         protected readonly BookmarkRepository $bookmarkRepository,
         protected readonly BookmarkManager $bookmarkManager,
+        protected readonly UserManager $userManager,
+        protected readonly UserRepository $userRepository,
         private readonly ImageRepository $imageRepository,
         private readonly ReportManager $reportManager,
         private readonly OAuth2ClientAccessRepository $clientAccessRepository,
