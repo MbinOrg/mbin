@@ -12,7 +12,8 @@ class AnnounceLikeMessage implements ActivityPubOutboxInterface
         public int $userId,
         public int $objectId,
         public string $objectType,
-        public bool $undo = false
+        public bool $undo = false,
+        public ?string $likeMessageId = null,
     ) {
     }
 }
