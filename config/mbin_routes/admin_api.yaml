@@ -111,3 +111,21 @@ api_admin_purge_magazine:
   path: /api/admin/magazine/{magazine_id}/purge
   methods: [ DELETE ]
   format: json
+
+api_admin_view_user_applications:
+    controller: App\Controller\Api\User\Admin\UserApplicationApi::retrieve
+    path: /api/admin/users/applications
+    methods: [ GET ]
+    format: json
+
+api_admin_view_user_application_approve:
+    controller: App\Controller\Api\User\Admin\UserApplicationApi::approve
+    path: /api/admin/users/applications/{user_id}/approve
+    methods: [ GET ]
+    format: json
+
+api_admin_view_user_application_reject:
+    controller: App\Controller\Api\User\Admin\UserApplicationApi::reject
+    path: /api/admin/users/applications/{user_id}/reject
+    methods: [ GET ]
+    format: json

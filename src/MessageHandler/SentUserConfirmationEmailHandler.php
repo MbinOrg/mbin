@@ -70,6 +70,7 @@ class SentUserConfirmationEmailHandler extends MbinMessageHandler
                     ->to($user->email)
                     ->subject($this->translator->trans('email_confirm_title'))
                     ->htmlTemplate('_email/confirmation_email.html.twig')
+                    ->context(['user' => $user])
             );
         } catch (\Exception $e) {
             throw $e;

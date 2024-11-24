@@ -113,6 +113,8 @@ parameters:
     mbin_downvotes_mode_default: 'enabled'
     mbin_downvotes_mode: '%env(enum:\App\Utils\DownvotesMode:default:mbin_downvotes_mode_default:MBIN_DOWNVOTES_MODE)%'
 
+    mbin_new_users_need_approval: '%env(bool:default::MBIN_NEW_USERS_NEED_APPROVAL)%'
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -182,6 +184,7 @@ services:
             $mbinSsoOnlyMode: '%sso_only_mode%'
             $maxImageBytes: '%max_image_bytes%'
             $mbinDownvotesMode: '%mbin_downvotes_mode%'
+            $mbinNewUsersNeedApproval: '%mbin_new_users_need_approval%'
 
     # Markdown
     App\Markdown\Factory\EnvironmentFactory:

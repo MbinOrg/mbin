@@ -38,6 +38,7 @@ class SettingsDto implements \JsonSerializable
         public bool $MBIN_SSO_SHOW_FIRST,
         public int $MAX_IMAGE_BYTES,
         public string $MBIN_DOWNVOTES_MODE,
+        public bool $MBIN_NEW_USERS_NEED_APPROVAL,
     ) {
     }
 
@@ -70,6 +71,7 @@ class SettingsDto implements \JsonSerializable
         $dto->MBIN_SSO_SHOW_FIRST = $this->MBIN_SSO_SHOW_FIRST ?? $dto->MBIN_SSO_SHOW_FIRST;
         $dto->MAX_IMAGE_BYTES = $this->MAX_IMAGE_BYTES ?? $dto->MAX_IMAGE_BYTES;
         $dto->MBIN_DOWNVOTES_MODE = $this->MBIN_DOWNVOTES_MODE ?? $dto->MBIN_DOWNVOTES_MODE;
+        $dto->MBIN_NEW_USERS_NEED_APPROVAL = $this->MBIN_NEW_USERS_NEED_APPROVAL ?? $dto->MBIN_NEW_USERS_NEED_APPROVAL;
 
         return $dto;
     }
@@ -104,6 +106,7 @@ class SettingsDto implements \JsonSerializable
             'MBIN_SSO_SHOW_FIRST' => $this->MBIN_SSO_SHOW_FIRST,
             'MAX_IMAGE_BYTES' => $this->MAX_IMAGE_BYTES,
             'MBIN_DOWNVOTES_MODE' => $this->MBIN_DOWNVOTES_MODE,
+            'MBIN_NEW_USERS_NEED_APPROVAL' => $this->MBIN_NEW_USERS_NEED_APPROVAL,
         ];
     }
 }

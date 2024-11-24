@@ -320,7 +320,8 @@ class ActivityPubManager
         $this->userManager->create(
             $this->userFactory->createDtoFromAp($actorUrl, $webfinger->getHandle()),
             false,
-            false
+            false,
+            preApprove: true,
         );
 
         return $this->updateUser($actorUrl);
