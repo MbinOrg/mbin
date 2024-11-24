@@ -9,13 +9,15 @@ use App\Entity\User;
 use App\Form\ResendEmailActivationFormType;
 use App\MessageHandler\SentUserConfirmationEmailHandler;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ResendActivationEmailController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -43,6 +45,7 @@ class ResendActivationEmailController extends AbstractController
 
                 return $this->redirectToRoute('app_resend_email_activation');
             } catch (\Exception $e) {
+                $this->logger->error('There was an exception trying to re-send the activation email to: {u} - {mail}: {e} - {msg}', ['u' => $user->username, 'mail' => $user->email, 'e' => \get_class($e), 'msg' => $e->getMessage()]);
                 $this->addFlash('error', 'resend_account_activation_email_error');
 
                 return $this->redirectToRoute('app_resend_email_activation');

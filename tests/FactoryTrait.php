@@ -185,7 +185,7 @@ trait FactoryTrait
         $userDto->email = 'test@kbin.test';
         $userDto->plainPassword = hash('sha512', random_bytes(32));
         $userDto->isBot = true;
-        $user = $userManager->create($userDto, false, false);
+        $user = $userManager->create($userDto, false, false, true);
         $client->setUser($user);
 
         $client->setDescription('An OAuth2 client for testing purposes');
