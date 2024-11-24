@@ -3,6 +3,7 @@ doctrine:
         url: '%env(resolve:DATABASE_URL)%'
         types:
             citext: App\DoctrineExtensions\DBAL\Types\Citext
+            enumApplicationStatus: App\DoctrineExtensions\DBAL\Types\EnumApplicationStatus
         mapping_types:
             user_type: string
             citext: citext

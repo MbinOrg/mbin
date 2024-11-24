@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Security;
 
 use App\Controller\AbstractController;
+use App\DTO\UserDto;
 use App\Form\UserRegisterType;
 use App\Service\IpResolver;
 use App\Service\SettingsManager;
@@ -39,6 +40,7 @@ class RegisterController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UserDto $dto */
             $dto = $form->getData();
             $dto->ip = $this->ipResolver->resolve();
 
@@ -49,7 +51,14 @@ class RegisterController extends AbstractController
                 'flash_register_success'
             );
 
-            return $this->redirectToRoute('front');
+            if ($this->settingsManager->getNewUsersNeedApproval()) {
+                $this->addFlash(
+                    'success',
+                    'flash_application_info'
+                );
+            }
+
+            return $this->redirectToRoute('app_login');
         } elseif ($form->isSubmitted() && !$form->isValid()) {
             $this->logger->error('Registration form submission was invalid.', [
                 'errors' => $form->getErrors(true, false),
