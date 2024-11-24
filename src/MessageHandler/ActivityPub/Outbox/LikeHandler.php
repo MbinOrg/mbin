@@ -57,11 +57,6 @@ class LikeHandler extends MbinMessageHandler
         /** @var Entry|EntryComment|Post|PostComment $object */
         $object = $this->entityManager->getRepository($message->objectType)->find($message->objectId);
 
-        if ('random' === $object->magazine->name) {
-            // do not federate the random magazine
-            return;
-        }
-
         $activity = $this->likeWrapper->build(
             $this->activityPubManager->getActorProfileId($user),
             $this->activityFactory->create($object),
@@ -71,11 +66,16 @@ class LikeHandler extends MbinMessageHandler
             $activity = $this->undoWrapper->build($activity);
         }
 
-        $inboxes = array_filter(array_unique(array_merge(
+        $inboxes = array_merge(
             $this->userRepository->findAudience($user),
-            $this->magazineRepository->findAudience($object->magazine),
-            [$object->user->apInboxUrl, $object->magazine->apId ? $object->magazine->apInboxUrl : null]
-        )));
-        $this->deliverManager->deliver($inboxes, $activity);
+            [$object->user->apInboxUrl],
+        );
+
+        if ('random' !== $object->magazine->name) {
+            // only add the magazine subscribers if it is not the random magazine
+            $inboxes = array_merge($inboxes, $this->magazineRepository->findAudience($object->magazine));
+        }
+
+        $this->deliverManager->deliver(array_filter(array_unique($inboxes)), $activity);
     }
 }
