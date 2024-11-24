@@ -102,7 +102,7 @@ class ApHttpClient
             // Accepted status code are 2xx or 410 (used Tombstone types)
             if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
                 // Do NOT include the response content in the error message, this will be often a full HTML page
-                throw new InvalidApPostException("Invalid status code while getting: $url, status code: $statusCode");
+                throw new InvalidApPostException('Invalid status code while getting', $url, $statusCode);
             }
 
             // Read also non-OK responses (like 410) by passing 'false'
@@ -318,7 +318,7 @@ class ApHttpClient
             // Accepted status code are 2xx or 410 (used Tombstone types)
             if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
                 // Do NOT include the response content in the error message, this will be often a full HTML page
-                throw new InvalidApPostException("Invalid status code while getting: $apAddress, status code: $statusCode");
+                throw new InvalidApPostException('Invalid status code while getting', $apAddress, $statusCode);
             }
         } catch (\Exception $e) {
             $this->logRequestException($response, $apAddress, 'ApHttpClient:getCollectionObject', $e);
@@ -374,7 +374,8 @@ class ApHttpClient
      * @param User|Magazine $actor The actor initiating the request, either a User or Magazine object
      * @param array|null    $body  (Optional) The body of the POST request. Defaults to null.
      *
-     * @throws InvalidApPostException if the POST request fails with a non-2xx response status code
+     * @throws InvalidApPostException      if the POST request fails with a non-2xx response status code
+     * @throws TransportExceptionInterface
      */
     public function post(string $url, User|Magazine $actor, ?array $body = null): void
     {
@@ -407,7 +408,7 @@ class ApHttpClient
             $statusCode = $response->getStatusCode();
             if (!str_starts_with((string) $statusCode, '2')) {
                 // Do NOT include the response content in the error message, this will be often a full HTML page
-                throw new InvalidApPostException("Post failed: $url, status code: $statusCode, request body: $jsonBody");
+                throw new InvalidApPostException('Post failed', $url, $statusCode, $body);
             }
         } catch (\Exception $e) {
             $this->logRequestException($response, $url, 'ApHttpClient:post', $e);
