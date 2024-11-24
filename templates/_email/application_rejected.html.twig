@@ -1,0 +1,11 @@
+{% extends '_email/email_base.html.twig' %}
+
+{%- block title -%}
+    {{- 'email_application_rejected_title'|trans }}
+{%- endblock -%}
+
+{% block body %}
+    <p>
+        {{ 'email_application_rejected_body'|trans }}
+    </p>
+{% endblock %}

@@ -77,6 +77,21 @@ admin_magazine_ownership_requests_reject:
     path: /admin/magazine_ownership/{name}/{username}/reject
     methods: [POST]
 
+admin_signup_requests:
+    controller: App\Controller\Admin\AdminSignupRequestsController::requests
+    path: /admin/signup_requests
+    methods: [ GET ]
+
+admin_signup_requests_approve:
+    controller: App\Controller\Admin\AdminSignupRequestsController::approve
+    path: /admin/signup_requests/{id}/approve
+    methods: [ POST ]
+
+admin_signup_requests_reject:
+    controller: App\Controller\Admin\AdminSignupRequestsController::reject
+    path: /admin/signup_requests/{id}/reject
+    methods: [ POST ]
+
 admin_cc:
     controller: App\Controller\Admin\AdminClearCacheController
     path: /admin/cc
