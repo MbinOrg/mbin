@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {%- block title -%}
-    {{- 'applications'|trans }} - {{ parent() -}}
+    {{- 'signup_requests'|trans }} - {{ parent() -}}
 {%- endblock -%}
 
 {% block mainClass %}page-admin-federation{% endblock %}
@@ -16,6 +16,7 @@
     {% include 'admin/_options.html.twig' %}
     <div class="section">
         <h3>{{ 'signup_requests_header'|trans }}</h3>
+        <p>{{ 'signup_requests_paragraph'|trans }}</p>
     </div>
     {% if requests|length %}
         {% for request in requests %}

@@ -8,6 +8,7 @@ use App\DTO\UserDto;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\User;
 use App\Entity\UserFollowRequest;
+use App\Enums\EApplicationStatus;
 use App\Event\User\UserApplicationApprovedEvent;
 use App\Event\User\UserApplicationRejectedEvent;
 use App\Event\User\UserBlockEvent;
@@ -157,12 +158,12 @@ readonly class UserManager
                 throw new TooManyRequestsHttpException();
             }
         }
-        $approved = true;
+        $status = EApplicationStatus::Approved;
         if (true !== $preApprove && $this->settingsManager->getNewUsersNeedApproval()) {
-            $approved = false;
+            $status = EApplicationStatus::Pending;
         }
 
-        $user = new User($dto->email, $dto->username, '', ($dto->isBot) ? 'Service' : 'Person', $dto->apProfileId, $dto->apId, isApproved: $approved, applicationText: $dto->applicationText);
+        $user = new User($dto->email, $dto->username, '', ($dto->isBot) ? 'Service' : 'Person', $dto->apProfileId, $dto->apId, applicationStatus: $status, applicationText: $dto->applicationText);
         $user->setPassword($this->passwordHasher->hashPassword($user, $dto->plainPassword));
 
         if (!$dto->apId) {
@@ -432,11 +433,10 @@ readonly class UserManager
 
     public function rejectUserApplication(User $user): void
     {
-        if (!$user->isApproved && $user->isRejected) {
+        if (EApplicationStatus::Rejected === $user->getApplicationStatus()) {
             return;
         }
-        $user->isApproved = false;
-        $user->isRejected = true;
+        $user->setApplicationStatus(EApplicationStatus::Rejected);
         $this->entityManager->persist($user);
         $this->entityManager->flush();
         $this->logger->debug('Rejecting application for {u}', ['u' => $user->username]);
@@ -445,11 +445,10 @@ readonly class UserManager
 
     public function approveUserApplication(User $user): void
     {
-        if ($user->isApproved && !$user->isRejected) {
+        if (EApplicationStatus::Approved === $user->getApplicationStatus()) {
             return;
         }
-        $user->isApproved = true;
-        $user->isRejected = false;
+        $user->setApplicationStatus(EApplicationStatus::Approved);
         $this->entityManager->persist($user);
         $this->entityManager->flush();
         $this->logger->debug('Approving application for {u}', ['u' => $user->username]);

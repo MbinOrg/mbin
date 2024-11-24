@@ -10,7 +10,7 @@
     <p>
         <a class="btn btn__primary" href="{{ signedUrl|raw }}">{{ 'email_verify'|trans }}</a>
     </p>
-    {% if user.isApproved is same as false %}
+    {% if user.getApplicationStatus() is not same as enum('App\\Enums\\EApplicationStatus').Approved %}
         <p>
             {{ 'email_application_pending'|trans }}
         </p>

@@ -35,7 +35,7 @@ class UserCommand extends Command
         $this->addArgument('username', InputArgument::REQUIRED)
             ->addArgument('email', InputArgument::REQUIRED)
             ->addArgument('password', InputArgument::REQUIRED)
-            ->addOption('applicationText', 'a', InputOption::VALUE_NONE, 'The application text of the user')
+            ->addOption('applicationText', 'a', InputOption::VALUE_REQUIRED, 'The application text of the user, if set the user will not be pre-approved')
             ->addOption('remove', 'r', InputOption::VALUE_NONE, 'Remove user')
             ->addOption('admin', null, InputOption::VALUE_NONE, 'Grant administrator privileges')
             ->addOption('moderator', null, InputOption::VALUE_NONE, 'Grant global moderator privileges');
@@ -70,10 +70,14 @@ class UserCommand extends Command
 
     private function createUser(InputInterface $input, SymfonyStyle $io): void
     {
-        $dto = (new UserDto())->create($input->getArgument('username'), $input->getArgument('email'));
+        $applicationText = $input->getOption('applicationText');
+        if ('' === $applicationText) {
+            $applicationText = null;
+        }
+        $dto = (new UserDto())->create($input->getArgument('username'), $input->getArgument('email'), applicationText: $applicationText);
         $dto->plainPassword = $input->getArgument('password');
 
-        $user = $this->manager->create($dto, false, false);
+        $user = $this->manager->create($dto, false, false, preApprove: null === $applicationText);
 
         if ($input->getOption('admin')) {
             $user->setOrRemoveAdminRole();

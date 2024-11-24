@@ -12,6 +12,7 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
 use App\Entity\UserFollow;
+use App\Enums\EApplicationStatus;
 use App\Service\SettingsManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Result;
@@ -252,8 +253,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere('u.visibility = :visibility')
             ->andWhere('u.isDeleted = false')
             ->andWhere('u.isBanned = false')
-            ->andWhere('u.isApproved = true')
-            ->andWhere('u.isRejected = false')
+            ->andWhere('u.applicationStatus = :status')
+            ->setParameter('status', EApplicationStatus::Approved->value)
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->orderBy('u.createdAt', 'ASC')
             ->getQuery();
@@ -283,8 +284,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere('u.isVerified = false')
             ->andWhere('u.isDeleted = false')
             ->andWhere('u.isBanned = false')
-            ->andWhere('u.isApproved = true')
-            ->andWhere('u.isRejected = false')
+            ->andWhere('u.applicationStatus = :status')
+            ->setParameter('status', EApplicationStatus::Approved->value)
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->orderBy('u.createdAt', 'ASC')
             ->getQuery();
@@ -407,6 +408,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     {
         return $this->createQueryBuilder('u')
             ->Where('LOWER(u.username) = LOWER(:username)')
+            ->andWhere('u.applicationStatus = :status')
+            ->setParameter('status', EApplicationStatus::Approved->value)
             ->setParameter('username', $username)
             ->getQuery()
             ->getOneOrNullResult();
@@ -416,6 +419,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     {
         return $this->createQueryBuilder('u')
             ->where('u.username IN (?1)')
+            ->andWhere('u.applicationStatus = :status')
+            ->setParameter('status', EApplicationStatus::Approved->value)
             ->setParameter(1, $users)
             ->getQuery()
             ->getResult();
@@ -478,8 +483,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
         return $qb
             ->andWhere('u.isDeleted = false')
-            ->andWhere('u.isApproved = true')
-            ->andWhere('u.isRejected = false')
+            ->andWhere('u.applicationStatus = :status')
+            ->setParameter('status', EApplicationStatus::Approved->value)
             ->orderBy('u.lastActive', 'DESC');
     }
 
@@ -528,8 +533,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         }
 
         return $qb
-            ->andWhere('u.isApproved = true')
-            ->andWhere('u.isRejected = false')
+            ->andWhere('u.applicationStatus = :status')
+            ->setParameter('status', EApplicationStatus::Approved->value)
             ->orderBy('u.lastActive', 'DESC');
     }
 
@@ -585,8 +590,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         $result = $this->createQueryBuilder('u')
             ->andWhere("JSONB_CONTAINS(u.roles, '\"".'ROLE_ADMIN'."\"') = true")
             ->andWhere('u.isDeleted = false')
-            ->andWhere('u.isApproved = true')
-            ->andWhere('u.isRejected = false')
+            ->andWhere('u.applicationStatus = :status')
+            ->setParameter('status', EApplicationStatus::Approved->value)
             ->getQuery()
             ->getResult();
         if (0 === \sizeof($result)) {
@@ -604,8 +609,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $this->createQueryBuilder('u')
             ->andWhere("JSONB_CONTAINS(u.roles, '\"".'ROLE_ADMIN'."\"') = true")
             ->andWhere('u.isDeleted = false')
-            ->andWhere('u.isApproved = true')
-            ->andWhere('u.isRejected = false')
+            ->andWhere('u.applicationStatus = :status')
+            ->setParameter('status', EApplicationStatus::Approved->value)
             ->getQuery()
             ->getResult();
     }
@@ -619,9 +624,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->orWhere($qb->expr()->like('u.email', ':query'))
             ->andWhere('u.isBanned = false')
             ->andWhere('u.isDeleted = false')
-            ->andWhere('u.isApproved = true')
-            ->andWhere('u.isRejected = false')
-            ->setParameters(['query' => "{$query}%"])
+            ->andWhere('u.applicationStatus = :status')
+            ->setParameters(['query' => "{$query}%", 'status' => EApplicationStatus::Approved->value])
             ->setMaxResults(5)
             ->getQuery()
             ->getResult();
@@ -662,8 +666,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         $qb->andWhere($qb->expr()->in('u.id', $user))
             ->andWhere('u.isBanned = false')
             ->andWhere('u.isDeleted = false')
-            ->andWhere('u.isApproved = true')
-            ->andWhere('u.isRejected = false')
+            ->andWhere('u.applicationStatus = :status')
             ->andWhere('u.visibility = :visibility')
             ->andWhere('u.apDeletedAt IS NULL')
             ->andWhere('u.apTimeoutAt IS NULL');
@@ -682,6 +685,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         }
 
         $qb->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+            ->setParameter('status', EApplicationStatus::Approved->value)
             ->setMaxResults($limit);
 
         try {
@@ -709,8 +713,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             $results = $this->findUsersForMagazine($magazine, null, 35, true, true);
         } else {
             $results = $this->createQueryBuilder('u')
-                ->andWhere('u.isApproved = true')
-                ->andWhere('u.isRejected = false')
+                ->andWhere('u.applicationStatus = :status')
                 ->andWhere('u.lastActive >= :lastActive')
                 ->andWhere('u.isBanned = false')
                 ->andWhere('u.isDeleted = false')
@@ -724,7 +727,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
             $results = $results->join('u.avatar', 'a')
                 ->orderBy('u.lastActive', 'DESC')
-                ->setParameters(['lastActive' => (new \DateTime())->modify('-7 days'), 'visibility' => VisibilityInterface::VISIBILITY_VISIBLE])
+                ->setParameters(['lastActive' => (new \DateTime())->modify('-7 days'), 'visibility' => VisibilityInterface::VISIBILITY_VISIBLE, 'status' => EApplicationStatus::Approved->value])
                 ->setMaxResults(35)
                 ->getQuery()
                 ->getResult();
@@ -784,11 +787,11 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     public function findAllSignupRequestsPaginated(int $page = 1): PagerfantaInterface
     {
         $query = $this->createQueryBuilder('u')
-            ->where('u.isApproved = false')
-            ->andWhere('u.isRejected = false')
+            ->where('u.applicationStatus = :status')
             ->andWhere('u.apId IS NULL')
             ->andWhere('u.isDeleted = false')
             ->andWhere('u.markedForDeletionAt IS NULL')
+            ->setParameter('status', EApplicationStatus::Pending->value)
             ->getQuery();
 
         $fanta = new Pagerfanta(new QueryAdapter($query));

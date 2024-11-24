@@ -49,10 +49,12 @@ class SettingsManager
                 $maxImageBytesEdited = $this->maxImageBytes;
             }
 
-            $newUsersNeedApprovalEdited = $this->find($results, 'MBIN_NEW_USERS_NEED_APPROVAL');
-            if ('true' === $newUsersNeedApprovalEdited) {
+            $newUsersNeedApprovalDb = $this->find($results, 'MBIN_NEW_USERS_NEED_APPROVAL');
+            if ('true' === $newUsersNeedApprovalDb) {
                 $newUsersNeedApprovalEdited = true;
-            } elseif (null === $newUsersNeedApprovalEdited) {
+            } elseif ('false' === $newUsersNeedApprovalDb) {
+                $newUsersNeedApprovalEdited = false;
+            } else {
                 $newUsersNeedApprovalEdited = $this->mbinNewUsersNeedApproval;
             }
 

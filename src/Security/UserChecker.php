@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Security;
 
 use App\Entity\User as AppUser;
+use App\Enums\EApplicationStatus;
 use App\Service\UserManager;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
@@ -40,8 +41,15 @@ class UserChecker implements UserCheckerInterface
             }
         }
 
-        if (!$user->isApproved) {
-            throw new CustomUserMessageAccountStatusException($this->translator->trans('your_account_is_not_yet_approved'));
+        $applicationStatus = $user->getApplicationStatus();
+        if (EApplicationStatus::Approved !== $applicationStatus) {
+            if (EApplicationStatus::Pending === $applicationStatus) {
+                throw new CustomUserMessageAccountStatusException($this->translator->trans('your_account_is_not_yet_approved'));
+            } elseif (EApplicationStatus::Rejected === $applicationStatus) {
+                throw new BadCredentialsException();
+            } else {
+                throw new \LogicException("Unrecognized application status $applicationStatus->value");
+            }
         }
 
         if (!$user->isVerified) {

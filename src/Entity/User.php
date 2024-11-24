@@ -10,6 +10,7 @@ use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Traits\ActivityPubActorTrait;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\VisibilityTrait;
+use App\Enums\EApplicationStatus;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\ApHttpClient;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -240,14 +241,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     #[Column(type: 'string', nullable: false, options: ['default' => self::USER_TYPE_PERSON])]
     public string $type;
 
-    #[Column(type: 'string', nullable: true)]
+    #[Column(type: 'text', nullable: true)]
     public string $applicationText;
 
-    #[Column(type: 'boolean', nullable: false, options: ['default' => true])]
-    public bool $isApproved;
-
-    #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
-    public bool $isRejected = false;
+    #[Column(type: 'enumApplicationStatus', nullable: false, options: ['default' => EApplicationStatus::Approved->value])]
+    private string $applicationStatus;
 
     public function __construct(
         string $email,
@@ -256,7 +254,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         string $type,
         ?string $apProfileId = null,
         ?string $apId = null,
-        bool $isApproved = true,
+        EApplicationStatus $applicationStatus = EApplicationStatus::Approved,
         ?string $applicationText = null,
     ) {
         $this->email = $email;
@@ -291,7 +289,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         $this->lastActive = new \DateTime();
         $this->createdAtTraitConstruct();
         $this->oAuth2UserConsents = new ArrayCollection();
-        $this->isApproved = $isApproved;
+        $this->setApplicationStatus($applicationStatus);
         $this->applicationText = $applicationText;
     }
 
@@ -908,5 +906,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         } else {
             return $this->apDomain === $actor->apDomain;
         }
+    }
+
+    public function getApplicationStatus(): EApplicationStatus
+    {
+        return EApplicationStatus::getFromString($this->applicationStatus);
+    }
+
+    public function setApplicationStatus(EApplicationStatus $applicationStatus): void
+    {
+        $this->applicationStatus = $applicationStatus->value;
     }
 }

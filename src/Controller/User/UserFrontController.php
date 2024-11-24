@@ -6,6 +6,7 @@ namespace App\Controller\User;
 
 use App\Controller\AbstractController;
 use App\Entity\User;
+use App\Enums\EApplicationStatus;
 use App\PageView\EntryCommentPageView;
 use App\PageView\EntryPageView;
 use App\PageView\MagazinePageView;
@@ -40,7 +41,7 @@ class UserFrontController extends AbstractController
         $requestedByUser = $this->getUser();
         $hideAdult = (!$requestedByUser || $requestedByUser->hideAdult);
 
-        if (!$user->isApproved || $user->isRejected) {
+        if (EApplicationStatus::Approved !== $user->getApplicationStatus()) {
             throw $this->createNotFoundException();
         }
 
