@@ -670,3 +670,118 @@ oauth2.grant.moderate.magazine.ban.read: Δες τους αποκλεισμέν�
   που συντονίζεις.
 oauth2.grant.moderate.magazine.ban.create: Απέκλεισε τους χρήστες στα περιοδικά που
   συντονίζεις.
+comment_reply_position_help: Εμφανίζει τη φόρμα απάντησης σχολίων είτε στην κορυφή
+  ή στο κάτω μέρος της σελίδας. Όταν η "Άπειρη κύλιση" είναι ενεργή η θέση θα είναι
+  πάντα στην κορυφή.
+flash_post_pin_success: Η ανάρτηση έχει καρφιτσωθεί επιτυχώς.
+oauth2.grant.admin.magazine.purge: Πλήρης διαγραφή περιοδικών στην οντότητα σου.
+oauth2.grant.admin.user.ban: Αποκλεισμός ή άρση αποκλεισμού χρηστών από την οντότητά
+  σου.
+oauth2.grant.admin.user.verify: Επαλήθευσε τους χρήστες στην οντότητά σου.
+oauth2.grant.admin.federation.update: Πρόσθεσε ή αφαίρεσε οντότητες στον ή από τον
+  κατάλογο των οντοτήτων εκτός ομοσπονδίας.
+oauth2.grant.admin.oauth_clients.all: Δες ή ανακάλεσε τους πελάτες OAuth2 που υπάρχουν
+  στην οντότητα σου.
+oauth2.grant.admin.user.all: Αποκλεισμός, επαλήθευση ή πλήρης διαγραφή των χρηστών
+  στην οντότητά σου.
+flash_post_unpin_success: Η ανάρτηση έχει ξεκαρφιτσωθεί επιτυχώς.
+show_avatars_on_comments: Εμφάνιση Άβαταρ Σχολίων
+oauth2.grant.admin.magazine.move_entry: Μετακίνησε τα νήματα μεταξύ των περιοδικών
+  της οντότητας σου.
+oauth2.grant.admin.instance.settings.read: Δες τις ρυθμίσεις στην οντότητά σου.
+oauth2.grant.admin.oauth_clients.read: Δες τους πελάτες OAuth2 που υπάρχουν στην οντότητα
+  σου και τα στατιστικά χρήσης τους.
+single_settings: Απλό
+update_comment: Ενημέρωση σχολίου
+oauth2.grant.admin.oauth_clients.revoke: Ανακάλεσε την πρόσβαση στους πελάτες OAuth2
+  στην οντότητα σου.
+last_active: Τελευταία Ενεργό
+oauth2.grant.admin.instance.settings.edit: Ενημέρωσε τις ρυθμίσεις στην οντότητα σου.
+oauth2.grant.admin.instance.information.edit: Ενημέρωσε τα Σχετικά, FAQ, Συμβόλαιο,
+  Όρους Της Υπηρεσίας και τις σελίδες Πολιτικής Απορρήτου στην οντότητά σου.
+oauth2.grant.admin.magazine.all: Μετακίνησε νήματα μεταξύ ή διέγραψε εντελώς τα περιοδικά
+  στην οντότητα σου.
+oauth2.grant.admin.user.delete: Διέγραψε χρήστες από την οντότητά σου.
+oauth2.grant.admin.user.purge: Διέγραψε πλήρως τους χρήστες από την οντότητά σου.
+oauth2.grant.admin.instance.all: Δες και ενημέρωσε τις ρυθμίσεις οντότητας ή τις πληροφορίες.
+oauth2.grant.admin.instance.stats: Δες τα στατιστικά στοιχεία της οντότητας σου.
+oauth2.grant.admin.instance.settings.all: Δες ή ενημέρωσε τις ρυθμίσεις στην οντότητά
+  σου.
+oauth2.grant.admin.federation.all: Δες και ενημέρωσε τις τρέχουσες - εκτός ομοσπονδίας,
+  οντότητες.
+oauth2.grant.admin.federation.read: Δες τη λίστα των οντοτήτων εκτός ομοσπονδίας.
+moderation.report.ban_user_description: Θες να αποκλείσεις τον χρήστη (%username%)
+  που δημιούργησε αυτό το περιεχόμενο από αυτό το περιοδικό;
+subject_reported_exists: Το περιεχόμενο αυτό έχει ήδη αναφερθεί.
+moderation.report.ban_user_title: Αποκλεισμός Χρήστη
+magazine_theme_appearance_custom_css: Το Custom CSS που θα ισχύει κατά την προβολή
+  περιεχομένου εντός του περιοδικού σου.
+moderation.report.approve_report_title: Έγκριση Αναφοράς
+moderation.report.reject_report_title: Απόρριψη Αναφοράς
+purge_content: Εκκαθάριση περιεχομένου
+delete_content: Διαγραφή περιεχομένου
+show_avatars_on_comments_help: Εμφάνιση/απόκρυψη άβαταρ χρήστη κατά την προβολή σχολίων
+  σε ένα ενιαίο νήμα ή ανάρτηση.
+comment_reply_position: Θέση απάντησης σχολίου
+magazine_theme_appearance_icon: Προσαρμοσμένο εικονίδιο για το περιοδικό. Αν δεν επιλεχθεί
+  κανένα, θα χρησιμοποιηθεί το προεπιλεγμένο.
+magazine_theme_appearance_background_image: Προσαρμοσμένη εικόνα παρασκηνίου που θα
+  εφαρμοστεί κατά την προβολή περιεχομένου εντός του περιοδικού σου.
+moderation.report.approve_report_confirmation: Σίγουρα θες να εγκρίνεις αυτή την αναφορά;
+moderation.report.reject_report_confirmation: Σίγουρα θες να απορρίψεις αυτή την αναφορά;
+oauth2.grant.moderate.post.pin: Καρφίτσωσε στην κορυφή των περιοδικών που συντονίζεις.
+cancel: Ακύρωση
+subscription_sort: Ταξινόμηση
+2fa.qr_code_img.alt: Ένας κωδικός QR που επιτρέπει τη ρύθμιση ταυτότητας δύο παραγόντων
+  για τον λογαριασμό σου
+two_factor_backup: Εφεδρικό κωδικοί ταυτοποίησης δύο παραγόντων
+2fa.authentication_code.label: Κωδικός Ταυτοποίησης
+2fa.remove: Αφαίρεση 2FA
+2fa.disable: Απενεργοποίηση ταυτοποίησης δύο παραγόντων
+2fa.backup: Οι εφεδρικό κωδικοί ταυτοποίησης δύο παραγόντων σου
+2fa.backup_codes.recommendation: Συνιστάται να κρατήσεις ένα αντίγραφο αυτών σε ασφαλή
+  θέση.
+flash_account_settings_changed: Οι ρυθμίσεις λογαριασμού σου έχουν αλλάξει με επιτυχία.
+  Θα χρειαστεί να συνδεθείς ξανά.
+show_subscriptions: Εμφάνιση εγγραφών
+subscription_panel_large: Μεγάλο πάνελ
+delete_account_desc: Διέγραψε το λογαριασμό, συμπεριλαμβανομένων των απαντήσεων άλλων
+  χρηστών σε δημιουργημένα νήματα, αναρτήσεις και σχόλια.
+2fa.code_invalid: Ο κωδικός ταυτοποίησης δεν είναι έγκυρος
+2fa.enable: Ρύθμιση ταυτοποίησης δύο παραγόντων
+subscription_sidebar_pop_out_left: Μετακίνηση σε ξεχωριστή sidebar στα αριστερά
+2fa.setup_error: Σφάλμα ενεργοποίησης 2FA για λογαριασμό
+purge_content_desc: Πλήρης εκκαθάριση του περιεχομένου του χρήστη, συμπεριλαμβανομένης
+  της διαγραφής των απαντήσεων άλλων χρηστών σε δημιουργημένα νήματα, αναρτήσεις και
+  σχόλια.
+delete_content_desc: Διέγραψε το περιεχόμενο του χρήστη, αφήνοντας τις απαντήσεις
+  άλλων χρηστών στα δημιουργημένα νήματα, αναρτήσεις και σχόλια.
+schedule_delete_account: Προγραμματισμός Διαγραφής
+schedule_delete_account_desc: Προγραμμάτισε τη διαγραφή αυτού του λογαριασμού σε 30
+  ημέρες. Αυτό θα αποκρύψει τον χρήστη και το περιεχόμενό του, καθώς και θα εμποδίσει
+  τον χρήστη να συνδεθεί.
+remove_schedule_delete_account: Αφαίρεση Προγραμματισμένης Διαγραφής
+remove_schedule_delete_account_desc: Αφαίρεσε την προγραμματισμένη διαγραφή. Όλο το
+  περιεχόμενο θα είναι διαθέσιμο ξανά και ο χρήστης θα είναι σε θέση να συνδεθεί.
+two_factor_authentication: Έλεγχος ταυτότητας δύο παραγόντων
+2fa.verify: Επαλήθευση
+2fa.backup-create.help: Μπορείτε να δημιουργήσεις νέους εφεδρικούς κωδικούς αυθεντικοποίησης·
+  αυτό θα ακυρώσει τους υφιστάμενους κωδικούς.
+2fa.add: Προσθήκη στον λογαριασμό μου
+2fa.backup-create.label: Δημιουργία νέων εφεδρικών κωδικών ταυτοποίησης
+2fa.qr_code_link.title: Η επίσκεψη σε αυτόν τον σύνδεσμο μπορεί να επιτρέψει στην
+  πλατφόρμα σου να καταχωρήσει αυτή την επαλήθευση δύο παραγόντων
+2fa.user_active_tfa.title: Ο χρήστης έχει ενεργό 2FA
+2fa.backup_codes.help: Μπορείς να χρησιμοποιήσεις αυτούς τους κωδικούς όταν δεν έχεις
+  τη συσκευή επαλήθευσης δύο παραγόντων ή εφαρμογή σου. <strong>Δεν θα τους δείξεις
+  ξανά </strong> και θα μπορείς να χρησιμοποιήσεις τον καθένα τους <strong> μόνο μία
+  φορά </strong>.
+password_and_2fa: Κωδικός & 2FA
+alphabetically: Αλφαβητικά
+subscriptions_in_own_sidebar: Σε ξεχωριστή sidebar
+sidebars_same_side: Sidebars στην ίδια πλευρά
+subscription_sidebar_pop_out_right: Μετακίνηση σε ξεχωριστή sidebar στα δεξιά
+subscription_sidebar_pop_in: Μετακίνηση συνδρομών στο inline πάνελ
+2fa.available_apps: Χρησιμοποίησε μια εφαρμογή επαλήθευσης δύο παραγόντων, όπως το
+  %google_authenticator%, %aegis% (Android) ή το %raivo% (iOS) για να σαρώσεις τον
+  κωδικό QR.

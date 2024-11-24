@@ -191,6 +191,25 @@ files.
 NGINX reverse proxy example for the Mbin Docker instance:
 
 ```nginx
+upstream backend {
+    server 127.0.0.1:8008;
+    keepalive 12;
+}
+
+# Map between POST requests on inbox vs the rest
+map $request $inboxRequest {
+    ~^POST\ \/f\/inbox      1;
+    ~^POST\ \/i\/inbox      1;
+    ~^POST\ \/m\/.+\/inbox  1;
+    ~^POST\ \/u\/.+\/inbox  1;
+    default                 0;
+}
+
+map $inboxRequest $regularRequest {
+    1 0;
+    default 1;
+}
+
 # Redirect HTTP to HTTPS
 server {
     server_name domain.tld;
@@ -200,7 +219,8 @@ server {
 }
 
 server {
-    listen 443 ssl http2;
+    listen 443 ssl;
+    http2 on;
     server_name domain.tld;
 
     charset utf-8;
@@ -225,19 +245,27 @@ server {
 
     # Logs
     error_log /var/log/nginx/mbin_error.log;
-    access_log /var/log/nginx/mbin_access.log;
+    access_log /var/log/nginx/mbin_access.log if=$regularRequest;
+    access_log /var/log/nginx/mbin_inbox.log if=$inboxRequest buffer=32k flush=5m;
+
+    open_file_cache          max=1000 inactive=20s;
+    open_file_cache_valid    60s;
+    open_file_cache_min_uses 2;
+    open_file_cache_errors   on;
 
     location / {
+        proxy_http_version 1.1;
         proxy_set_header HOST $host;
         proxy_set_header X-Forwarded-Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_pass http://127.0.0.1:8008;
+        proxy_set_header Connection "";
+        proxy_pass http://backend;
     }
 
     location /.well-known/mercure {
-        proxy_pass http://127.0.0.1:8008$request_uri;
+        proxy_pass http://backend$request_uri;
         proxy_read_timeout 24h;
         proxy_http_version 1.1;
         proxy_set_header Connection "";
