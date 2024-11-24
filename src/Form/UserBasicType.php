@@ -10,6 +10,7 @@ use App\Form\EventListener\AvatarListener;
 use App\Form\EventListener\DisableFieldsOnUserEdit;
 use App\Form\EventListener\ImageListener;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -31,7 +32,15 @@ class UserBasicType extends AbstractType
         $builder
             ->add('username', TextType::class, ['required' => false])
             ->add('about', TextareaType::class, ['required' => false])
-            ->add('submit', SubmitType::class);
+            ->add('relatedLinks', CollectionType::class, [
+                'entry_type' => UserRelatedDataType::class,
+                'entry_options' => ['label' => false],
+                'label' => false,
+                'allow_add' => true,
+                'allow_delete' => true,
+            ])
+            ->add('submit', SubmitType::class)
+        ;
 
         $builder->addEventSubscriber($this->disableUsernameFieldOnUserEdit);
         $builder->addEventSubscriber($this->addAvatarFieldOnUserEdit);

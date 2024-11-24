@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Factory;
 
+use App\DTO\RelatedLinkDTO;
 use App\DTO\UserDto;
 use App\DTO\UserSmallResponseDto;
 use App\Entity\User;
 use App\Repository\InstanceRepository;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 class UserFactory
 {
@@ -16,6 +18,7 @@ class UserFactory
         private readonly ImageFactory $imageFactory,
         private readonly InstanceRepository $instanceRepository,
         private readonly Security $security,
+        private readonly DenormalizerInterface $denormalizer,
     ) {
     }
 
@@ -36,6 +39,7 @@ class UserFactory
             'Service' === $user->type, // setting isBot
             $user->isAdmin(),
             $user->isModerator(),
+            $this->denormalizer->denormalize($user->getRelatedLinks(), \sprintf('%s[]', RelatedLinkDTO::class)),
         );
 
         /** @var User $currentUser */

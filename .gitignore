@@ -1,6 +1,7 @@
 # IDEA/PhpStorm
 *.iml
 .idea/
+.run/
 .DS_Store
 supervisord.log
 supervisord.pid

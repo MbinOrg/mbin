@@ -37,6 +37,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -58,7 +59,8 @@ readonly class UserManager
         private ImageRepository $imageRepository,
         private Security $security,
         private CacheInterface $cache,
-        private ReputationRepository $reputationRepository
+        private ReputationRepository $reputationRepository,
+        private NormalizerInterface $normalizer,
     ) {
     }
 
@@ -211,6 +213,8 @@ readonly class UserManager
                 && $dto->totpSecret) {
                 $user->setTotpSecret($dto->totpSecret);
             }
+
+            $user->relatedLinks = $this->normalizer->normalize($dto->relatedLinks);
 
             $user->lastActive = new \DateTime();
 

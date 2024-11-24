@@ -531,6 +531,44 @@ div.input-box {
 
 .form-control {
   display: block;
-  width: 100%;
+  width: 100
+}
 
+.related-link-fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.related-link-fieldset legend {
+  margin-bottom: 0.5rem;
+}
+
+.related-links-group {
+  margin-bottom: 0.25rem;
+}
+
+.related-link-row {
+  display: flex;
+  flex-wrap: nowrap;
+  row-gap: 0.5rem;
+  column-gap: 0.2rem;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.related-link-row div {
+  margin-bottom: 0;
+  flex-grow: 1
+}
+
+.delete-button {
+  padding: 0;
+  border: 0;
+}
+
+.add-button-container {
+  display: flex;
+  margin-right: 13.9px;
+  justify-content: center;
 }

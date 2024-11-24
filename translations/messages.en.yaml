@@ -919,3 +919,4 @@ search_type_all: Threads + Microblogs
 search_type_entry: Threads
 search_type_post: Microblogs
 select_user: Choose a user
+related_links: Related links
