@@ -31,7 +31,7 @@ framework:
     http_client:
         default_options:
             headers:
-                'User-Agent': 'Mbin/1.7.2 (+https://%kbin_domain%/agent)'
+                'User-Agent': 'Mbin/1.7.3 (+https://%kbin_domain%/agent)'
 
     #esi: true
     #fragments: true
