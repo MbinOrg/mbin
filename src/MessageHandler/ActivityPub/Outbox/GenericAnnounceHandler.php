@@ -46,6 +46,11 @@ class GenericAnnounceHandler extends MbinMessageHandler
         if (null !== $magazine->apId) {
             return;
         }
+
+        if ('random' === $magazine->name) {
+            // do not federate the random magazine
+            return;
+        }
         $magazineUrl = $this->urlGenerator->generate('ap_magazine', ['name' => $magazine->name], UrlGeneratorInterface::ABSOLUTE_URL);
         $announce = $this->announceWrapper->build($magazineUrl, $message->payloadToAnnounce);
         $inboxes = array_filter($this->magazineRepository->findAudience($magazine), fn ($item) => null !== $item && $item !== $message->sourceInstance);

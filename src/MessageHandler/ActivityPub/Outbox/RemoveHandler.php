@@ -46,6 +46,12 @@ class RemoveHandler extends MbinMessageHandler
         $actor = $this->userRepository->find($message->userActorId);
         $removed = $this->userRepository->find($message->removedUserId);
         $magazine = $this->magazineRepository->find($message->magazineId);
+
+        if ('random' === $magazine->name) {
+            // do not federate the random magazine
+            return;
+        }
+
         if ($magazine->apId) {
             $audience = [$magazine->apInboxUrl];
         } else {
