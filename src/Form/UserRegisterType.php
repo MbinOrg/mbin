@@ -9,12 +9,14 @@ use App\Form\EventListener\AddFieldsOnUserEdit;
 use App\Form\EventListener\CaptchaListener;
 use App\Form\EventListener\DisableFieldsOnUserEdit;
 use App\Form\EventListener\ImageListener;
+use App\Service\SettingsManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -25,6 +27,7 @@ class UserRegisterType extends AbstractType
         private readonly AddFieldsOnUserEdit $addAvatarFieldOnUserEdit,
         private readonly DisableFieldsOnUserEdit $disableUsernameFieldOnUserEdit,
         private readonly CaptchaListener $captchaListener,
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 
@@ -63,6 +66,11 @@ class UserRegisterType extends AbstractType
                 ]
             )
             ->add('submit', SubmitType::class);
+
+        if ($this->settingsManager->getNewUsersNeedApproval()) {
+            $builder
+                ->add('applicationText', TextareaType::class, ['required' => true]);
+        }
 
         $builder->addEventSubscriber($this->disableUsernameFieldOnUserEdit);
         $builder->addEventSubscriber($this->captchaListener);
