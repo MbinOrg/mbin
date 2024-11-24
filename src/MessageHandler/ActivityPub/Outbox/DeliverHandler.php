@@ -26,6 +26,8 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 #[AsMessageHandler]
 class DeliverHandler extends MbinMessageHandler
 {
+    public const HTTP_RESPONSE_CODE_RATE_LIMITED = 429;
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly ApHttpClient $client,
@@ -59,10 +61,15 @@ class DeliverHandler extends MbinMessageHandler
             $this->doWork($message);
             $conn->commit();
         } catch (InvalidApPostException $e) {
-            if (400 <= $e->responseCode && 500 > $e->responseCode && 429 !== $e->responseCode) {
+            if (400 <= $e->responseCode && 500 > $e->responseCode && self::HTTP_RESPONSE_CODE_RATE_LIMITED !== $e->responseCode) {
                 $conn->rollBack();
+                $this->logger->debug('{domain} responded with {code} for our request, rolling back the changes and not trying again, request: {body}', [
+                    'domain' => $e->url,
+                    'code' => $e->responseCode,
+                    'body' => $e->payload,
+                ]);
                 throw new UnrecoverableMessageHandlingException('There is a problem with the request which will stay the same, so discarding', previous: $e);
-            } elseif (429 === $e->responseCode) {
+            } elseif (self::HTTP_RESPONSE_CODE_RATE_LIMITED === $e->responseCode) {
                 $conn->rollBack();
                 // a rate limit is always recoverable
                 throw new RecoverableMessageHandlingException(previous: $e);
