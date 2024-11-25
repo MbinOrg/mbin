@@ -7,7 +7,8 @@ namespace App\Controller;
 use App\ActivityPub\ActorHandle;
 use App\Entity\Magazine;
 use App\Entity\User;
-use App\Message\ActivityPub\Inbox\ActivityMessage;
+use App\Message\ActivityPub\Inbox\CreateMessage;
+use App\MessageHandler\ActivityPub\Inbox\CreateHandler;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPubManager;
 use App\Service\SearchManager;
@@ -16,18 +17,17 @@ use App\Service\SubjectOverviewManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 class SearchController extends AbstractController
 {
     public function __construct(
         private readonly SearchManager $manager,
         private readonly ActivityPubManager $activityPubManager,
-        private readonly MessageBusInterface $bus,
         private readonly ApHttpClient $apHttpClient,
         private readonly SubjectOverviewManager $overviewManager,
         private readonly SettingsManager $settingsManager,
         private readonly LoggerInterface $logger,
+        private readonly CreateHandler $createHandler,
     ) {
     }
 
@@ -62,10 +62,21 @@ class SearchController extends AbstractController
 
         // looking up object by AP id (i.e. urls)
         if (false !== filter_var($query, FILTER_VALIDATE_URL)) {
+            $this->logger->debug('Query is a valid url');
             $objects = $this->manager->findByApId($query);
-            if (!$objects) {
-                $body = $this->apHttpClient->getActivityObject($query, false);
-                $this->bus->dispatch(new ActivityMessage($body));
+            if (0 === \sizeof($objects)) {
+                $body = $this->apHttpClient->getActivityObject($query);
+                // the returned id could be different from the query url.
+                $postId = $body['id'];
+                $objects = $this->manager->findByApId($postId);
+                if (0 === \sizeof($objects)) {
+                    try {
+                        $this->createHandler->doWork(new CreateMessage($body));
+                        $objects = $this->manager->findByApId($postId);
+                    } catch (\Exception $e) {
+                        $this->addFlash('error', $e->getMessage());
+                    }
+                }
             }
         }
 
