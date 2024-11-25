@@ -19,7 +19,7 @@ First install some generic packages you will need:
 
 ```sh
 sudo apt update
-sudo apt install lsb-release ca-certificates curl wget unzip gnupg apt-transport-https software-properties-common git valkey
+sudo apt install lsb-release ca-certificates curl wget unzip gnupg apt-transport-https software-properties-common git valkey-server
 ```
 
 ### Clone the code
