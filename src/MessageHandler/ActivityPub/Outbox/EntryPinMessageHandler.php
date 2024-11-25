@@ -55,6 +55,11 @@ class EntryPinMessageHandler extends MbinMessageHandler
             return;
         }
 
+        if ('random' === $entry->magazine->name) {
+            // do not federate the random magazine
+            return;
+        }
+
         if ($message->sticky) {
             $activity = $this->addRemoveFactory->buildAddPinnedPost($user, $entry);
         } else {

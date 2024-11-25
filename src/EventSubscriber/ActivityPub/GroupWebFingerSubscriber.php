@@ -62,6 +62,10 @@ class GroupWebFingerSubscriber implements EventSubscriberInterface
 
     protected function getActor($name): ?Magazine
     {
+        if ('random' === $name) {
+            return null;
+        }
+
         return $this->magazineRepository->findOneByName($name);
     }
 }

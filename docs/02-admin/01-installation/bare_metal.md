@@ -429,8 +429,8 @@ php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
 ```
 
-> [!TIP]
-> Check out [PostgreSQL tuning](../99-tuning/postgresql.md), you should not run the default PostgreSQL configuration in production.
+> [!IMPORTANT]
+> Check out the [PostgreSQL configuration page](../02-configuration/postgresql.md). You should not run the default PostgreSQL configuration in production!
 
 ## Install RabbitMQ
 
