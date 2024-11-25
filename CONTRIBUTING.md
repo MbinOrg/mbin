@@ -19,86 +19,21 @@ Below some general non-technical agreements and guidelines:
 - **Appreciation and Recognition**: Acknowledge and appreciate the efforts and achievements of team members. Recognize their contributions publicly and privately.
 - **Embrace Fun and Camaraderie**: Encourage team members to engage in light-hearted conversations, share jokes, and enjoy each other's company. Take breaks to socialize and build relationships beyond the scope of the project.
 
-## Getting started
+## Code
 
-The code is mainly written in PHP using the Symfony framework with Twig templating and a bit of JavaScript & CSS.
-
-With an account on [GitHub](https://github.com) you will be able to [fork this repository](https://github.com/MbinOrg/mbin) and `git clone` the repository locally if you wish.
-
-Then follow the [Development Server setup instructions](./docs/04-contributing/development_server.md).
-
-> [!Note]
-> If you are a Maintainer with GitHub org admin rights, you do NOT need to fork the project, instead you are allowed to use git branches. See also [C4](C4.md).
+Follow the [Getting started](https://docs.joinmbin.org/contributing/getting_started) to get up and running.
 
 ### Coding Style Guide
 
-We use [php-cs-fixer](https://cs.symfony.com/) to automatically fix code style issues according to [Symfony coding standard](https://symfony.com/doc/current/contributing/code/standards.html).
-It is based on the [PHP-FIG coding standards](https://www.php-fig.org/psr/).
-
-Install PHP-CS-Fixer first: `composer -d tools install`
-
-Then run the following command trying to auto-fix the issues: `./tools/vendor/bin/php-cs-fixer fix`
-
-For JavaScript code inside the `assets/` directory, we use ESLint for linting and potentially fix the code style issues.
-
-Install eslint and its required plugins by: `npm install`.
-
-Run the following command to perform linting: `npm run lint`, or you could use eslint directly by `npx eslint` if needed.
-
-Run the following command to attempt auto-fix linting issues: `npm run lint-fix`, or `npx eslint --fix .`.  
-Note that unlike PHP-CS-Fixer, _not all linting problems could be automatically fixed_, some of these would requires manually fixing them as appropiate, be sure to do those.
+Follow the [linting guide](https://docs.joinmbin.org/contributing/linting).
 
 ### Tests
 
-When fixing a bug or implementing a new feature or improvement, we expect that test code will also be included with every delivery of production code.
-
-There are three levels of tests that we distinguish between:
-
-- Unit Tests: test a specific unit (SUT), mock external functions/classes/database calls, etc. Unit-tests are fast, isolated and repeatable
-- Integration Tests: test larger part of the code, combining multiple units together (classes, services or alike).
-- Application Tests: test high-level functionality, APIs or web calls.
-
-For more info read: [Symfony Testing guide](https://symfony.com/doc/current/testing.html).
-
-#### Unit Tests
-
-- First increase execution time in your PHP config file: `/etc/php/8.2/fpm/php.ini`:
-
-```ini
-max_execution_time = 120
-```
-
-- Increase/set max_nesting_level in `/etc/php/8.2/fpm/conf.d/20-xdebug.ini`:
-
-```ini
-xdebug.max_nesting_level=512
-```
-
-- Restart the PHP-FPM service: `sudo systemctl restart php8.2-fpm.service`
-- Copy the dot env file: `cp .env.example .env`
-- Install composer packages: `composer install --no-scripts`
-
-Running the unit tests by executing:
-
-```bash
-SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Unit
-```
+See: [Getting started](https://docs.joinmbin.org/contributing/getting_started).
 
 ### Fixtures
 
-You might want to load random data to database instead of manually adding magazines, users, posts, comments etc.
-To do so, execute: `php bin/console doctrine:fixtures:load --append --no-debug`
-You should stop the messenger processes, as they are not able to access the data while it is being created, but try to do so.
-
-- Docker: `docker compose stop messenger`
-- Bare Metal: `supervisorctl stop messenger:*`
-
-If you want to do the same but with the Docker setup, execute: `docker compose exec php bin/console doctrine:fixtures:load --append --no-debug` (from the `docker` directory)
-
-Please note, that the command may take some time and data will not be visible during the process, but only after the finish.
-
-- Omit `--append` flag to override data currently stored in the database
-- Customize inserted data by editing files inside `src/DataFixtures` directory
+See also: [Getting started](https://docs.joinmbin.org/contributing/getting_started).
 
 ## Translations
 

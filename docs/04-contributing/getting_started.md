@@ -100,7 +100,7 @@ sudo systemctl restart postgresql
 
 ### Prepare dotenv file
 
-1. Move to the `mbin` git repository directory (if you weren't there already).
+1. Change to the `mbin` git repository directory (if you weren't there already).
 2. Copy the dot env file: `cp .env.example .env`. And let's configure the `.env` file to your needs. Pay attention to the following changes:
 
 ```ini
@@ -189,15 +189,31 @@ More info: [Contributing guide](https://github.com/MbinOrg/mbin/blob/main/CONTRI
 
 ## Unit tests
 
-When fixing a bug or implementing a new feature or improvement, we expect that test code will also be included with every delivery of production code.
-
-There are three levels of tests that we distinguish between:
+When fixing a bug or implementing a new feature or improvement, we expect that test code will also be included with every delivery of production code. There are three levels of tests that we distinguish between:
 
 - Unit Tests: test a specific unit (SUT), mock external functions/classes/database calls, etc. Unit-tests are fast, isolated and repeatable
 - Integration Tests: test larger part of the code, combining multiple units together (classes, services or alike).
 - Application Tests: test high-level functionality, APIs or web calls.
 
-For more info read: [Symfony Testing guide](https://symfony.com/doc/current/testing.html).
+### Prepare for unit tests
+
+1. First increase execution time in your PHP config file: `/etc/php/8.3/fpm/php.ini`:
+
+```ini
+max_execution_time = 120
+```
+
+2. Increase/set max_nesting_level in `/etc/php/8.3/fpm/conf.d/20-xdebug.ini`:
+
+```ini
+xdebug.max_nesting_level=512
+```
+
+3. Restart the PHP-FPM service: `sudo systemctl restart php8.3-fpm.service`
+4. Copy the dot env file (if you haven't already): `cp .env.example .env`
+5. Install composer packages: `composer install --no-scripts`
+
+### Running unit tests
 
 Running the unit tests can be done by executing:
 
@@ -205,6 +221,8 @@ Running the unit tests can be done by executing:
 SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Unit
 ```
 
-## linting
+For more info read: [Symfony Testing guide](https://symfony.com/doc/current/testing.html).
+
+## Linting
 
 For linting see the [linting documentation page](linting.md).

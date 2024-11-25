@@ -33,7 +33,3 @@ If you observe an error or any other issue, [create an new issue](https://github
 ## Reporting Security Vulnerability
 
 Contact Melroy (`@melroy:melroy.org`) or any other community member you trust via Matrix chat, using an encrypted room.
-
-## I Have a Question
-
-If you still feel the need for asking a question, we recommend [joining our community on Matrix](https://matrix.to/#/#mbin:melroy.org) where you can ask your questions to our community members.
