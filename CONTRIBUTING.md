@@ -19,11 +19,13 @@ Below some general non-technical agreements and guidelines:
 - **Appreciation and Recognition**: Acknowledge and appreciate the efforts and achievements of team members. Recognize their contributions publicly and privately.
 - **Embrace Fun and Camaraderie**: Encourage team members to engage in light-hearted conversations, share jokes, and enjoy each other's company. Take breaks to socialize and build relationships beyond the scope of the project.
 
-## Code
+## Getting started
 
 The code is mainly written in PHP using the Symfony framework with Twig templating and a bit of JavaScript & CSS.
 
 With an account on [GitHub](https://github.com) you will be able to [fork this repository](https://github.com/MbinOrg/mbin) and `git clone` the repository locally if you wish.
+
+Then follow the [Development Server setup instructions](./docs/04-contributing/development_server.md).
 
 > [!Note]
 > If you are a Maintainer with GitHub org admin rights, you do NOT need to fork the project, instead you are allowed to use git branches. See also [C4](C4.md).
@@ -44,7 +46,7 @@ Install eslint and its required plugins by: `npm install`.
 Run the following command to perform linting: `npm run lint`, or you could use eslint directly by `npx eslint` if needed.
 
 Run the following command to attempt auto-fix linting issues: `npm run lint-fix`, or `npx eslint --fix .`.  
-Note that unlike PHP-CS-Fixer, *not all linting problems could be automatically fixed*, some of these would requires manually fixing them as appropiate, be sure to do those.
+Note that unlike PHP-CS-Fixer, _not all linting problems could be automatically fixed_, some of these would requires manually fixing them as appropiate, be sure to do those.
 
 ### Tests
 
@@ -87,6 +89,7 @@ SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Unit
 You might want to load random data to database instead of manually adding magazines, users, posts, comments etc.
 To do so, execute: `php bin/console doctrine:fixtures:load --append --no-debug`
 You should stop the messenger processes, as they are not able to access the data while it is being created, but try to do so.
+
 - Docker: `docker compose stop messenger`
 - Bare Metal: `supervisorctl stop messenger:*`
 
