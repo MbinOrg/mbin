@@ -125,16 +125,19 @@ class User2FAController extends AbstractController
         }
         $user->setTotpSecret($totpSecret);
 
-        $result = Builder::create()
-            ->writer(new PngWriter())
-            ->writerOptions([])
-            ->data($this->totpAuthenticator->getQRContent($user))
-            ->encoding(new Encoding('UTF-8'))
-            ->errorCorrectionLevel(ErrorCorrectionLevel::High)
-            ->size(250)
-            ->margin(0)
-            ->roundBlockSizeMode(RoundBlockSizeMode::Margin)
-            ->build();
+        $builder = new Builder(
+            writer: new PngWriter(),
+            writerOptions: [],
+            data: $this->totpAuthenticator->getQRContent($user),
+            encoding: new Encoding('UTF-8'),
+            errorCorrectionLevel: ErrorCorrectionLevel::High,
+            size: 250,
+            margin: 0,
+            roundBlockSizeMode: RoundBlockSizeMode::Margin,
+            logoPath: $this->getParameter('kernel.project_dir').'/public/logo.png',
+            logoResizeToWidth: 60, 
+        );
+        $result = $builder->build();
 
         return new Response($result->getString(), 200, ['Content-Type' => 'image/png']);
     }
