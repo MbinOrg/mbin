@@ -135,7 +135,7 @@ class User2FAController extends AbstractController
             margin: 0,
             roundBlockSizeMode: RoundBlockSizeMode::Margin,
             logoPath: $this->getParameter('kernel.project_dir').'/public/logo.png',
-            logoResizeToWidth: 60, 
+            logoResizeToWidth: 60,
         );
         $result = $builder->build();
 
