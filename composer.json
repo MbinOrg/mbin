@@ -25,7 +25,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.3.1",
         "doctrine/orm": "^2.19.6",
         "embed/embed": "^4.4.12",
-        "endroid/qr-code": "^6.0.3",
+        "endroid/qr-code": "^5.1.0",
         "friendsofsymfony/jsrouting-bundle": "^3.5.0",
         "furqansiddiqui/bip39-mnemonic-php": "^0.1.7",
         "gmostafa/php-graphql-client": "^1.13",
