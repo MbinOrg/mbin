@@ -45,6 +45,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
     'report_created' => 'ReportCreatedNotification',
     'report_approved' => 'ReportApprovedNotification',
     'report_rejected' => 'ReportRejectedNotification',
+    'new_signup' => 'NewSignupNotification',
 ])]
 abstract class Notification
 {
