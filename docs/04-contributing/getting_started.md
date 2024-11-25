@@ -181,9 +181,11 @@ Start the development server:
 6. Start Mbin: `symfony server:start`
 7. Go to: [http://127.0.0.1:8000](http://127.0.0.1:8000/)
 
-This will give you a minimal working frontend with PostgreSQL setup. Keep in mind: this will _not_ start federating, for that you also need to setup RabbitMQ and host your server behind a reverse proxy to test the full Mbin setup.
+You might want to also follow the [Mbin first setup](../02-admin/04-running-mbin/first_setup.md). This explains how to create a user.
 
-_Optionally:_ Doctrine messenger configuration will be sufficient for local development, but RabbitMQ might be required for an acceptance environment.
+This will give you a minimal working frontend with PostgreSQL setup. Keep in mind: this will _not_ start federating.
+
+_Optionally:_ If you want to start federating, you will also need to messenger jobs + RabbitMQ and host your server behind a reverse proxy with valid SSL certificate.
 
 More info: [Contributing guide](https://github.com/MbinOrg/mbin/blob/main/CONTRIBUTING.md), [Admin guide](../02-admin/README.md) and [Symfony Local Web Server](https://symfony.com/doc/current/setup/symfony_server.html)
 
