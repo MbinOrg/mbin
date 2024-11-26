@@ -39,7 +39,7 @@ git clone git@github.com:MbinOrg/mbin.git
 ```
 
 > [!TIP]
-> You do not need to clone the GitHub repository if you are member of our Mbin Organisation on GitHub
+> You do not need to fork the GitHub repository if you are member of our Mbin Organisation on GitHub. Just create a new branch right away.
 
 ### Prepare PHP
 
