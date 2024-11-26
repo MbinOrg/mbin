@@ -307,7 +307,7 @@ See [docs.joinmbin.org](https://docs.joinmbin.org)
 - NGINX / Apache / Caddy
 - PostgreSQL
 - RabbitMQ
-- Redis / KeyDB
+- Valkey / KeyDB / Redis
 - Mercure (optional)
 
 ## Languages
