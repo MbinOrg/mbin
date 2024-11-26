@@ -32,6 +32,7 @@ class PostsBaseApi extends BaseApi
 
         if ($user = $this->getUser()) {
             $response->canAuthUserModerate = $dto->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto);
         }
 
         return $response;
