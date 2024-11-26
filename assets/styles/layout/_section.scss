@@ -5,7 +5,7 @@
   margin-bottom: .5rem;
   padding: 2rem 1rem;
 
-  a {
+  a:not(.notification-setting) {
     color: var(--kbin-section-title-link-color);
     overflow-wrap: anywhere;
 

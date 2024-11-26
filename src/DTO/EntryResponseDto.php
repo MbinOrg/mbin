@@ -6,6 +6,7 @@ namespace App\DTO;
 
 use App\DTO\Contracts\VisibilityAwareDtoTrait;
 use App\Entity\Entry;
+use App\Enums\ENotificationStatus;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 
@@ -45,6 +46,7 @@ class EntryResponseDto implements \JsonSerializable
     public ?string $slug = null;
     public ?string $apId = null;
     public ?bool $canAuthUserModerate = null;
+    public ?ENotificationStatus $notificationStatus = null;
 
     public static function create(
         ?int $id = null,

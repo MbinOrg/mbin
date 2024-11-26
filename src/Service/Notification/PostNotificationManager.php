@@ -11,12 +11,13 @@ use App\Entity\PostCreatedNotification;
 use App\Entity\PostDeletedNotification;
 use App\Entity\PostEditedNotification;
 use App\Entity\PostMentionedNotification;
-use App\Entity\User;
 use App\Event\NotificationCreatedEvent;
 use App\Factory\MagazineFactory;
 use App\Repository\MagazineLogRepository;
 use App\Repository\MagazineSubscriptionRepository;
 use App\Repository\NotificationRepository;
+use App\Repository\NotificationSettingsRepository;
+use App\Repository\UserRepository;
 use App\Service\Contracts\ContentNotificationManagerInterface;
 use App\Service\GenerateHtmlClassService;
 use App\Service\ImageManager;
@@ -47,7 +48,9 @@ class PostNotificationManager implements ContentNotificationManagerInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly ImageManager $imageManager,
         private readonly GenerateHtmlClassService $classService,
-        private readonly SettingsManager $settingsManager
+        private readonly SettingsManager $settingsManager,
+        private readonly NotificationSettingsRepository $notificationSettingsRepository,
+        private readonly UserRepository $userRepository,
     ) {
     }
 
@@ -73,20 +76,17 @@ class PostNotificationManager implements ContentNotificationManagerInterface
         }
 
         // Notify subscribers
-        /** @var User[] $subscribers */
-        $subscribers = $this->merge(
-            $this->getUsersToNotify($this->magazineRepository->findNewPostSubscribers($subject)),
-            [] // @todo user followers
-        );
+        $subscriberIds = $this->notificationSettingsRepository->findNotificationSubscribersByTarget($subject);
+        $subscribers = $this->userRepository->findBy(['id' => $subscriberIds]);
 
-        $subscribers = array_filter($subscribers, fn ($s) => !\in_array($s->username, $mentions ?? []));
+        if (\count($mentions)) {
+            $subscribers = array_filter($subscribers, fn ($s) => !\in_array($s->username, $mentions));
+        }
 
         foreach ($subscribers as $subscriber) {
-            if (!$subscriber->isBlocked($subject->user)) {
-                $notification2 = new PostCreatedNotification($subscriber, $subject);
-                $this->entityManager->persist($notification2);
-                $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification2));
-            }
+            $notification2 = new PostCreatedNotification($subscriber, $subject);
+            $this->entityManager->persist($notification2);
+            $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification2));
         }
 
         $this->entityManager->flush();
