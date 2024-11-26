@@ -10,7 +10,7 @@ Requirements:
 
 - PHP v8.3 or higher
 - NodeJS
-- Redis / Valkey / KeyDB
+- Valkey / KeyDB / Redis
 - PostgreSQL
 - _Optionally:_ Mercure
 - _Optionally:_ Symfony CLI
@@ -112,7 +112,7 @@ SERVER_NAME=127.0.0.1:8000
 KBIN_DOMAIN=127.0.0.1:8000
 KBIN_STORAGE_URL=http://127.0.0.1:8000/media
 
-#Redis (without password)
+# Valkey/Redis (without password)
 REDIS_DNS=redis://127.0.0.1:6379
 
 # Set App configs
