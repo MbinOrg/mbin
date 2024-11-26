@@ -56,12 +56,12 @@ If you are using an object storage provider, we strongly advise you to use a med
 That way media URLs will not change and break links on remote instances when you decide to switch providers
 and it hides your S3 endpoint from users of your instance.
 
-This replaces the media reverse proxy from [NGINX](../02-configuration/nginx.md).
+This replaces the media reverse proxy from [NGINX](../02-configuration/02-nginx.md).
 
 If you already had a reverse proxy for your media, then you only have to change the NGINX config,
-otherwise please follow the steps in our [media-reverse-proxy](../02-configuration/nginx.md) docs
+otherwise please follow the steps in our [media-reverse-proxy](../02-configuration/02-nginx.md) docs
 
-This config is heavily inspired by [mastodons nginx config](https://docs.joinmastodon.org/admin/optional/object-storage-proxy/)
+This config is heavily inspired by [Mastodons Nginx config](https://docs.joinmastodon.org/admin/optional/object-storage-proxy/).
 
 ```nginx
 proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=CACHE:10m inactive=7d max_size=10g;
@@ -115,7 +115,7 @@ server {
 }
 ```
 
-For it to be a usable https site you have to run certbot or supply your certificates manually.
+For it to be a usable HTTPS site you have to run `certbot` or supply your certificates manually.
 
 > [!TIP]
-> don't forget to enable http2 by adding `http2 on;` after certbot ran
+> Do not forget to enable http2 by adding `http2 on;` after certbot ran succesfully.
