@@ -184,7 +184,7 @@ Start the development server:
 6. Start Mbin: `symfony server:start`
 7. Go to: [http://127.0.0.1:8000](http://127.0.0.1:8000/)
 
-You might want to also follow the [Mbin first setup](../02-admin/04-running-mbin/first_setup.md). This explains how to create a user.
+You might want to also follow the [Mbin first setup](../02-admin/04-running-mbin/01-first_setup.md). This explains how to create a user.
 
 This will give you a minimal working frontend with PostgreSQL setup. Keep in mind: this will _not_ start federating.
 
@@ -230,4 +230,4 @@ For more info read: [Symfony Testing guide](https://symfony.com/doc/current/test
 
 ## Linting
 
-For linting see the [linting documentation page](linting.md).
+For linting see the [linting documentation page](02-linting.md).
