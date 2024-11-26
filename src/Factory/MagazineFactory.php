@@ -20,6 +20,7 @@ use App\Entity\Moderator;
 use App\Entity\User;
 use App\Repository\InstanceRepository;
 use App\Repository\MagazineRepository;
+use App\Repository\MagazineSubscriptionRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -31,6 +32,7 @@ class MagazineFactory
         private ModeratorFactory $moderatorFactory,
         private UserFactory $userFactory,
         private MagazineRepository $magazineRepository,
+        private MagazineSubscriptionRepository $magazineSubscriptionRepository,
         private Security $security,
     ) {
     }
@@ -78,6 +80,9 @@ class MagazineFactory
         // Only return the user's vote if permission to control voting has been given
         $dto->isUserSubscribed = $this->security->isGranted('ROLE_OAUTH2_MAGAZINE:SUBSCRIBE') ? $magazine->isSubscribed($currentUser) : null;
         $dto->isBlockedByUser = $this->security->isGranted('ROLE_OAUTH2_MAGAZINE:BLOCK') ? $currentUser->isBlockedMagazine($magazine) : null;
+
+        $subs = $this->magazineSubscriptionRepository->findMagazineSubscribers(1, $magazine)->count();
+        $dto->localSubscribers = $subs;
 
         $instance = $this->instanceRepository->getInstanceOfMagazine($magazine);
         if ($instance) {
@@ -160,6 +165,7 @@ class MagazineFactory
             $dto->serverSoftware,
             $dto->serverSoftwareVersion,
             $dto->isPostingRestrictedToMods,
+            $dto->localSubscribers,
         );
     }
 
