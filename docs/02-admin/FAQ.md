@@ -16,14 +16,14 @@ Have a look at our guides. A bare metal/VM setup is **recommended** at this time
 
 You can [join our Matrix community](https://matrix.to/#/#mbin:melroy.org) and ask for help, and/or make an [issue ticket](https://github.com/MbinOrg/mbin/issues) in GitHub if that adds value (always check for duplicates).
 
-See also our [contributing page](../04-contributing/README.md).
+See also our [contributing page](../03-contributing/README.md).
 
 ## How can I contribute?
 
 New contributors are always _warmly welcomed_ to join us. The most valuable contributions come from helping with bug fixes and features through Pull Requests.
 As well as helping out with [translations](https://hosted.weblate.org/engage/mbin/) and documentation.
 
-Read more on our [contributing page](../04-contributing/README.md).
+Read more on our [contributing page](../03-contributing/README.md).
 
 Do _not_ forget to [join our Matrix community](https://matrix.to/#/#mbin:melroy.org).
 
