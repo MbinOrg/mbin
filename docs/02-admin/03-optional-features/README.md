@@ -2,7 +2,7 @@
 
 There are several options features in Mbin, which you may want to configure.
 
-Like setting up:
+Like setting-up:
 
 - [Mercure](01-mercure.md) - Mercure is used to provide real-time data from the server towards the clients.
 - [Single sign-on (SSO)](02-sso.md) - SSO can be configured to allow registrations via other SSO providers.
