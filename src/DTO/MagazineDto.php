@@ -41,6 +41,7 @@ class MagazineDto
     public bool $isPostingRestrictedToMods = false;
     public ?bool $isUserSubscribed = null;
     public ?bool $isBlockedByUser = null;
+    public ?int $localSubscribers = null;
     public ?array $tags = null;
     public ?Collection $badges = null;
     public ?Collection $moderators = null;
