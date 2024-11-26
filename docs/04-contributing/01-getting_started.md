@@ -230,4 +230,4 @@ For more info read: [Symfony Testing guide](https://symfony.com/doc/current/test
 
 ## Linting
 
-For linting see the [linting documentation page](linting.md).
+For linting see the [linting documentation page](02-linting.md).
