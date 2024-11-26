@@ -40,4 +40,4 @@ Run the following command to attempt auto-fix linting issues:
 npm run lint-fix
 ```
 
-Note that unlike PHP-CS-Fixer, _not all linting problems could be automatically fixed_, some of these would requires manually fixing them as appropiate, be sure to do those.
+Note that unlike PHP-CS-Fixer, _not all linting problems could be automatically fixed_, some of these would requires manually fixing them as appropriate, be sure to do those.

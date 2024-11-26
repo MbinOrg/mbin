@@ -118,4 +118,4 @@ server {
 For it to be a usable HTTPS site you have to run `certbot` or supply your certificates manually.
 
 > [!TIP]
-> Do not forget to enable http2 by adding `http2 on;` after certbot ran succesfully.
+> Do not forget to enable http2 by adding `http2 on;` after certbot ran successfully.
