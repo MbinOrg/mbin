@@ -239,7 +239,7 @@ OAUTH_PASSPHRASE=<Your (optional) passphrase from above here>
 OAUTH_ENCRYPTION_KEY=<Hex string generated in previous step>
 ```
 
-See also: [Mbin config files](../02-configuration/01-mbin_config_files) for more configuration options.
+See also: [Mbin config files](../02-configuration/01-mbin_config_files.md) for more configuration options.
 
 ## Service Configuration
 
