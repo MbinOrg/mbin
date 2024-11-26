@@ -55,7 +55,7 @@
             <li>{{ 'created_at'|trans }}:
                 {{ component('date', {date: computed.magazine.createdAt}) }}
             </li>
-            {% if app.user is defined and app.user is not null and app.user.admin() and computed.magazine.apId is not null %}
+            {% if app.user is defined and app.user is not null and app.user.admin() and computed.magazine.apId is not null and computed.magazine.apFetchedAt is not same as null %}
                 <li>
                     {{ 'last_updated'|trans }}: {{ component('date', {date: computed.magazine.apFetchedAt}) }}
                 </li>
