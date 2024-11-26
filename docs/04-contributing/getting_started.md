@@ -26,7 +26,7 @@ sudo apt install lsb-release ca-certificates curl wget unzip gnupg apt-transport
 
 With an account on [GitHub](https://github.com) you will be able to [fork this repository](https://github.com/MbinOrg/mbin).
 
-Once you forked the GitHub repository you can clone it locally (my advice is to use SSH to clone repositories from GitHub):
+Once you forked the GitHub repository you can clone it locally (our advice is to use SSH to clone repositories from GitHub):
 
 ```sh
 git clone git-repository-url
@@ -37,6 +37,9 @@ For example:
 ```sh
 git clone git@github.com:MbinOrg/mbin.git
 ```
+
+> [!TIP]
+> You do not need to clone the GitHub repository if you are member of our Mbin Organisation on GitHub
 
 ### Prepare PHP
 
