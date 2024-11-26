@@ -478,6 +478,7 @@ class ActivityPubManager
      * @param string $actorUrl actor URL
      *
      * @return ?Magazine or null on error
+     *
      * @throws InstanceBannedException
      */
     private function createMagazine(string $actorUrl): ?Magazine

@@ -78,7 +78,7 @@ class ActivityHandler extends MbinMessageHandler
                     $body = $this->apHttpClient->getActivityObject($exception->realOrigin, false);
                     $this->bus->dispatch(new ActivityMessage($body));
                 } else {
-                    $this->logger->info("The instance is banned, url: {url}", ['url' => $exception->realOrigin]);
+                    $this->logger->info('The instance is banned, url: {url}', ['url' => $exception->realOrigin]);
                 }
 
                 return;
