@@ -1,7 +1,7 @@
 # Docker Installation
 
 > [!NOTE]
-> Docker installation is currently not advised for production use. Try the [Bare Metal installation](./bare_metal.md) instead.
+> Docker installation is currently not advised for production use. Try the [Bare Metal installation](01-bare_metal.md) instead.
 
 ## System Requirements
 
