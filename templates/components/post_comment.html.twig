@@ -21,7 +21,7 @@
                 'show-preview': SHOW_PREVIEW is same as V_TRUE and not comment.isAdult,
             })}).without('id') }}
                 id="post-comment-{{ comment.id }}"
-                data-controller="comment subject mentions comment-collapse"
+                data-controller="comment subject mentions comment-collapse html-refresh"
                 data-comment-collapse-depth-value="{{ level }}"
                 data-subject-parent-value="{{ comment.parent ? comment.parent.id : '' }}"
                 data-action="notifications:Notification@window->subject#notification">

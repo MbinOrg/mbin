@@ -44,6 +44,9 @@
                 </li>
             </ul>
             {{ component('user_actions', {user: user}) }}
+            {% if app.user is defined and app.user is not same as null and app.user is not same as user %}
+                {{ component('notification_switch', {target: user}) }}
+            {% endif %}
         </div>
     </header>
     <div class="user-note">
