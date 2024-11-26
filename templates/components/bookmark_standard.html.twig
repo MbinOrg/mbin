@@ -1,16 +1,16 @@
 <li class="bookmark-standard">
     {% if is_bookmarked(app.user, subject) %}
         <a href="{{ path('subject_remove_bookmarks', { 'subject_id': subject.id, 'subject_type': get_subject_type(subject) }) }}"
-           data-subject-cssclass-param="bookmark-standard" data-subject-refreshselector-param=".bookmark-menu-list"
-           data-subject-refreshlink-param="{{ path('bookmark_lists_menu_refresh_status', { 'subject_id': subject.id, 'subject_type': get_subject_type(subject) }) }}"
-           data-action="subject#linkCallback">
+           data-html-refresh-cssclass-param="bookmark-standard" data-html-refresh-refreshselector-param=".bookmark-menu-list"
+           data-html-refresh-refreshlink-param="{{ path('bookmark_lists_menu_refresh_status', { 'subject_id': subject.id, 'subject_type': get_subject_type(subject) }) }}"
+           data-action="html-refresh#linkCallback">
             <i class="fa-solid fa-bookmark active" aria-description="{{ 'bookmark_remove_all'|trans }}" title="{{ 'bookmark_remove_all'|trans }}"></i>
         </a>
     {% else %}
         <a href="{{ path('subject_bookmark_standard', { 'subject_id': subject.id, 'subject_type': get_subject_type(subject) }) }}"
-           data-subject-cssclass-param="bookmark-standard" data-subject-refreshselector-param=".bookmark-menu-list"
-           data-subject-refreshlink-param="{{ path('bookmark_lists_menu_refresh_status', { 'subject_id': subject.id, 'subject_type': get_subject_type(subject) }) }}"
-           data-action="subject#linkCallback">
+           data-html-refresh-cssclass-param="bookmark-standard" data-html-refresh-refreshselector-param=".bookmark-menu-list"
+           data-html-refresh-refreshlink-param="{{ path('bookmark_lists_menu_refresh_status', { 'subject_id': subject.id, 'subject_type': get_subject_type(subject) }) }}"
+           data-action="html-refresh#linkCallback">
             <i class="fa-regular fa-bookmark" aria-description="{{ 'bookmark_add_to_default_list'|trans }}" title="{{ 'bookmark_add_to_default_list'|trans }}"></i>
         </a>
     {% endif %}

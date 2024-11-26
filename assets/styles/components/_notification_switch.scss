@@ -1,0 +1,58 @@
+.notification-switch-container .notification-switch {
+  align-items: center;
+  justify-content: center;
+}
+
+.entry-info,
+.user-main {
+  .notification-switch > * {
+    opacity: .75;
+  }
+}
+
+footer .notification-switch {
+  padding: 0.25em 0;
+  margin-top: 0;
+  line-height: 1.25em;
+}
+
+.notification-switch {
+  display: flex;
+  flex-direction: row;
+  margin-top: .25em;
+  line-height: 1.5;
+
+  >* {
+    cursor: pointer;
+    padding: .25em .375em;
+    border: var(--kbin-button-secondary-border);
+    background: var(--kbin-button-secondary-bg);
+    color: var(--kbin-button-secondary-text-color);
+
+    &:hover:not(.active) {
+      background: var(--kbin-button-secondary-hover-bg);
+      color: var(--kbin-button-secondary-text-hover-color);
+    }
+
+    &.active {
+      cursor: unset;
+      background: var(--kbin-button-primary-bg);
+      color: var(--kbin-button-primary-text-color);
+
+      &:hover {
+        background: var(--kbin-button-primary-hover-bg);
+        color: var(--kbin-button-primary-text-hover-color);
+      }
+    }
+
+    &:last-child {
+      border-radius: 0 1em 1em 0;
+      padding-right: .75em;
+    }
+
+    &:first-child {
+      border-radius: 1em 0 0 1em;
+      padding-left: .75em;
+    }
+  }
+}

@@ -76,6 +76,11 @@
                     </small>
                 </div>
                 {{ component('user_actions', {user: user}) }}
+                {% if app.user is defined and app.user is not same as null and app.user is not same as user %}
+                    <div class="notification-switch-container" data-controller="html-refresh">
+                        {{ component('notification_switch', {target: user}) }}
+                    </div>
+                {% endif %}
             </div>
         </div>
         {% if user.about|length %}
