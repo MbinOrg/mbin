@@ -62,7 +62,7 @@ sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=compose
 
 If you have a firewall installed (or you're behind a NAT), be sure to open port `443` for the web server. Mbin should run behind a reverse proxy like Nginx.
 
-For Nginx see: [Nginx configuration](../02-configuration/nginx.md).
+For Nginx see: [Nginx configuration](../02-configuration/02-nginx.md).
 
 ## Install NodeJS (frontend tools)
 
@@ -125,6 +125,10 @@ cd /var/www/mbin
 git clone https://github.com/MbinOrg/mbin.git .
 ```
 
+> [!TIP]
+> You might now want to switch to the latest stable release tag instead of using the `main` branch.
+> Try: `git checkout v1.7.3` (v1.7.3 might **not** be the latest version: [lookup the latest version](https://github.com/MbinOrg/mbin/releases))
+
 ### Create & configure media directory
 
 ```bash
@@ -177,7 +181,7 @@ nano .env.local
 Make sure you have substituted all the passwords and configured the basic services in `.env` file.
 
 > [!NOTE]
-> The snippet below are to variables inside the .env file. Using the keys generated in the section above "Generating Secrets" fill in the values. You should fully review this file to ensure everything is configured correctly.
+> The snippet below are to variables inside the `.env` file. Using the keys generated in the section above "Generating Secrets" fill in the values. You should fully review this file to ensure everything is configured correctly.
 
 ```ini
 REDIS_PASSWORD="{!SECRET!!KEY!-32_1-!}"
@@ -208,7 +212,7 @@ MAILER_DSN=smtp://username:password@smtpserver.tld:587?encryption=tls&auth_mode=
 MAILER_DSN=smtp://username:password@smtpserver.tld:465?encryption=ssl&auth_mode=log
 ```
 
-#### OAuth2 keys for API credential grants
+### OAuth2 keys for API credential grants
 
 1. Create an RSA key pair using OpenSSL:
 
@@ -234,6 +238,8 @@ OAUTH_PUBLIC_KEY=%kernel.project_dir%/config/oauth2/public.pem
 OAUTH_PASSPHRASE=<Your (optional) passphrase from above here>
 OAUTH_ENCRYPTION_KEY=<Hex string generated in previous step>
 ```
+
+See also: [Mbin config files](../02-configuration/01-mbin_config_files.md) for more configuration options.
 
 ## Service Configuration
 
@@ -328,14 +334,14 @@ composer clear-cache
 
 ### Caching
 
-You can choose between either Redis, Valkey or KeyDB.
+You can choose between either Valkey, KeyDB or Redis.
 
 > [!TIP]
-> More Redis/Valkey/KeyDB fine-tuning settings can be found in the [Redis configuration guide](../02-configuration/redis.md).
+> More Valkey/KeyDB/Redis fine-tuning settings can be found in the [Valkey / KeyDB / Redis configuration guide](../02-configuration/05-redis.md).
 
-#### Redis
+#### Valkey / KeyDB or Redis
 
-Edit `redis.conf` file:
+Edit `redis.conf` file (or the corresponding Valkey or KeyDB config file):
 
 ```bash
 sudo nano /etc/redis/redis.conf
@@ -430,7 +436,7 @@ php bin/console doctrine:migrations:migrate
 ```
 
 > [!IMPORTANT]
-> Check out the [PostgreSQL configuration page](../02-configuration/postgresql.md). You should not run the default PostgreSQL configuration in production!
+> Check out the [PostgreSQL configuration page](../02-configuration/04-postgresql.md). You should not run the default PostgreSQL configuration in production!
 
 ## Install RabbitMQ
 
