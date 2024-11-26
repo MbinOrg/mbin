@@ -4,23 +4,24 @@
 
 If you're starting a new instance, you can skip this part.
 
-To migrate to s3 storage we have to sync the media files located at `/var/www/mbin/public/media` into our s3 bucket.
+To migrate to S3 storage we have to sync the media files located at `/var/www/mbin/public/media` into our S3 bucket.
 We suggest running the sync once while your instance is still up and using the local storage for media, then shutting mbin down,
-configure it to use the s3 storage and do another sync to get all the files created during the initial sync.
+configure it to use the S3 storage and do another sync to get all the files created during the initial sync.
 
-To actually do the file sync you can use different tools, like `aws-cli`, `rclone` and others, 
-just search for it and you will find plenty tutorials on how to do that 
+To actually do the file sync you can use different tools, like `aws-cli`, `rclone` and others,
+just search for it and you will find plenty tutorials on how to do that
 
-## Configuring mbin
+## Configuring Mbin
+
 Edit your `.env` file:
 
 ```ini
 S3_KEY=$AWS_ACCESS_KEY_ID
 S3_SECRET=$AWS_SECRET_ACCESS_KEY
 S3_BUCKET=bucket-name
-# safe default for s3 deployments like minio or single zone ceph/radosgw
+# safe default for S3 deployments like minio or single zone ceph/radosgw
 S3_REGION=us-east-1
-# set if not using aws s3, note that the scheme is also required
+# set if not using aws S3, note that the scheme is also required
 S3_ENDPOINT=https://endpoint.domain.tld
 S3_VERSION=latest
 ```
@@ -51,9 +52,9 @@ oneup_flysystem:
 
 ## NGINX reverse proxy
 
-If you are using an object storage provider, we strongly advise you to use a media reverse proxy. 
-That way media URLs will not change and break links on remote instances when you decide to switch providers 
-and it hides your s3 endpoint from users of your instance.
+If you are using an object storage provider, we strongly advise you to use a media reverse proxy.
+That way media URLs will not change and break links on remote instances when you decide to switch providers
+and it hides your S3 endpoint from users of your instance.
 
 This replaces the media reverse proxy from [NGINX](../02-configuration/nginx.md).
 
