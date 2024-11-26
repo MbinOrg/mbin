@@ -140,7 +140,7 @@ class ActivityPubManager
         $this->logger->debug('ActivityPubManager:findActorOrCreate: searching for actor at "{handle}"', ['handle' => $actorUrlOrHandle]);
         if (str_contains($actorUrlOrHandle, $this->settingsManager->get('KBIN_DOMAIN').'/m/')) {
             $magazine = str_replace('https://'.$this->settingsManager->get('KBIN_DOMAIN').'/m/', '', $actorUrlOrHandle);
-            $this->logger->debug('found magazine "{magName}"', ['magName' => $magazine]);
+            $this->logger->debug('Found magazine: "{magName}"', ['magName' => $magazine]);
 
             return $this->magazineRepository->findOneByName($magazine);
         }
@@ -168,14 +168,14 @@ class ActivityPubManager
             $name = explode('/', $actorUrl);
             $name = end($name);
 
-            $this->logger->debug('found user "{user}"', ['user' => $name]);
+            $this->logger->debug('Found user: "{user}"', ['user' => $name]);
 
             return $this->userRepository->findOneBy(['username' => $name]);
         }
 
         $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
         if ($user instanceof User) {
-            $this->logger->debug('found remote user for url "{url}" in db', ['url' => $actorUrl]);
+            $this->logger->debug('Found remote user for url: "{url}" in db', ['url' => $actorUrl]);
             if ($user->apId && !$user->isDeleted && !$user->isSoftDeleted() && !$user->isTrashed() && (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
                 $this->dispatchUpdateActor($user->apProfileId);
             }
@@ -184,7 +184,7 @@ class ActivityPubManager
         }
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
         if ($magazine instanceof Magazine) {
-            $this->logger->debug('found remote user for url "{url}" in db', ['url' => $actorUrl]);
+            $this->logger->debug('Found remote user for url: "{url}" in db', ['url' => $actorUrl]);
             if (!$magazine->isTrashed() && !$magazine->isSoftDeleted() && (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
                 $this->dispatchUpdateActor($magazine->apProfileId);
             }
@@ -197,14 +197,14 @@ class ActivityPubManager
         if (!empty($actor) && isset($actor['type'])) {
             // User (we don't make a distinction between bots with type Service as Lemmy does)
             if (\in_array($actor['type'], User::USER_TYPES)) {
-                $this->logger->debug('found remote user at "{url}"', ['url' => $actorUrl]);
+                $this->logger->debug('Found remote user at "{url}"', ['url' => $actorUrl]);
 
                 return $this->createUser($actorUrl);
             }
 
             // Magazine (Group)
             if ('Group' === $actor['type']) {
-                $this->logger->debug('found remote magazine at "{url}"', ['url' => $actorUrl]);
+                $this->logger->debug('Found remote magazine at "{url}"', ['url' => $actorUrl]);
 
                 return $this->createMagazine($actorUrl);
             }
@@ -213,10 +213,10 @@ class ActivityPubManager
                 // deleted actor
                 if (null !== ($magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl])) && null !== $magazine->apId) {
                     $this->magazineManager->purge($magazine);
-                    $this->logger->warning('got a tombstone for magazine {name} at {url}, deleting it', ['name' => $magazine->name, 'url' => $actorUrl]);
+                    $this->logger->warning('Got a tombstone for magazine {name} at {url}, deleting it', ['name' => $magazine->name, 'url' => $actorUrl]);
                 } elseif (null !== ($user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl])) && null !== $user->apId) {
                     $this->bus->dispatch(new DeleteUserMessage($user->getId()));
-                    $this->logger->warning('got a tombstone for user {name} at {url}, deleting it', ['name' => $user->username, 'url' => $actorUrl]);
+                    $this->logger->warning('Got a tombstone for user {name} at {url}, deleting it', ['name' => $user->username, 'url' => $actorUrl]);
                 }
             }
         } else {
@@ -239,7 +239,7 @@ class ActivityPubManager
             $this->bus->dispatch(new UpdateActorMessage($actorUrl));
         } else {
             $this->logger->debug(
-                'not dispatching updating actor for {actor}: one has been dispatched recently',
+                'Not dispatching updating actor for {actor}: one has been dispatched recently',
                 ['actor' => $actorUrl, 'retry' => $limiter->getRetryAfter()]
             );
         }
@@ -266,7 +266,7 @@ class ActivityPubManager
 
     public function webfinger(string $id): WebFinger
     {
-        $this->logger->debug('fetching webfinger "{id}"', ['id' => $id]);
+        $this->logger->debug('Fetching webfinger "{id}"', ['id' => $id]);
 
         if (false === filter_var($id, FILTER_VALIDATE_URL)) {
             $id = ltrim($id, '@');
@@ -478,6 +478,7 @@ class ActivityPubManager
      * @param string $actorUrl actor URL
      *
      * @return ?Magazine or null on error
+     * @throws InstanceBannedException
      */
     private function createMagazine(string $actorUrl): ?Magazine
     {
@@ -568,7 +569,7 @@ class ActivityPubManager
 
             if (null !== $magazine->apFollowersUrl) {
                 try {
-                    $this->logger->debug('updating remote followers of magazine "{magUrl}"', ['magUrl' => $actorUrl]);
+                    $this->logger->debug('Updating remote followers of magazine "{magUrl}"', ['magUrl' => $actorUrl]);
                     $followersObj = $this->apHttpClient->getCollectionObject($magazine->apFollowersUrl);
                     if (isset($followersObj['totalItems']) and \is_int($followersObj['totalItems'])) {
                         $magazine->apFollowersCount = $followersObj['totalItems'];
@@ -617,7 +618,7 @@ class ActivityPubManager
     private function handleModeratorCollection(string $actorUrl, Magazine $magazine): void
     {
         try {
-            $this->logger->debug('fetching moderators of remote magazine "{magUrl}"', ['magUrl' => $actorUrl]);
+            $this->logger->debug('Fetching moderators of remote magazine: "{magUrl}"', ['magUrl' => $actorUrl]);
             $attributedObj = $this->apHttpClient->getCollectionObject($magazine->apAttributedToUrl);
             $items = null;
             if (isset($attributedObj['items']) and \is_array($attributedObj['items'])) {
@@ -626,12 +627,12 @@ class ActivityPubManager
                 $items = $attributedObj['orderedItems'];
             }
 
-            $this->logger->debug('got moderator items for magazine "{magName}": {json}', ['magName' => $magazine->name, 'json' => json_encode($attributedObj)]);
+            $this->logger->debug('Got moderator items for magazine: "{magName}": {json}', ['magName' => $magazine->name, 'json' => json_encode($attributedObj)]);
 
             if (null !== $items) {
                 $this->handleModeratorArray($magazine, $items);
             } else {
-                $this->logger->warning('could not update the moderators of "{url}", the response doesn\'t have a "items" or "orderedItems" property or it is not an array', ['url' => $actorUrl]);
+                $this->logger->warning('Could not update the moderators of "{url}", the response doesn\'t have a "items" or "orderedItems" property or it is not an array', ['url' => $actorUrl]);
             }
         } catch (InvalidApPostException $ignored) {
         }
@@ -689,7 +690,7 @@ class ActivityPubManager
     private function handleMagazineFeaturedCollection(string $actorUrl, Magazine $magazine): void
     {
         try {
-            $this->logger->debug('fetching featured posts of remote magazine "{magUrl}"', ['magUrl' => $actorUrl]);
+            $this->logger->debug('Fetching featured posts of remote magazine: {url}', ['url' => $actorUrl]);
             $attributedObj = $this->apHttpClient->getCollectionObject($magazine->apFeaturedUrl);
             $items = null;
             if (isset($attributedObj['items']) and \is_array($attributedObj['items'])) {
@@ -698,7 +699,7 @@ class ActivityPubManager
                 $items = $attributedObj['orderedItems'];
             }
 
-            $this->logger->debug('got featured items for magazine "{magName}": {json}', ['magName' => $magazine->name, 'json' => json_encode($attributedObj)]);
+            $this->logger->debug('Got featured items for magazine: "{magName}": {json}', ['magName' => $magazine->name, 'json' => json_encode($attributedObj)]);
 
             if (null !== $items) {
                 $pinnedToRemove = $this->entryRepository->findPinned($magazine);
@@ -713,7 +714,7 @@ class ActivityPubManager
                     } elseif (\is_array($item)) {
                         $apId = $item['id'];
                     } else {
-                        $this->logger->debug('ignoring {item} because it is not a string and not an array', ['item' => json_encode($item)]);
+                        $this->logger->debug('Ignoring {item}, because it is not a string and not an array', ['item' => json_encode($item)]);
                         continue;
                     }
 
@@ -741,16 +742,20 @@ class ActivityPubManager
                         if (!$alreadyPinned) {
                             $existingEntry = $this->entryRepository->findOneBy(['apId' => $apId]);
                             if ($existingEntry) {
-                                $this->logger->debug('pinning existing entry: {title}', ['title' => $existingEntry->title]);
+                                $this->logger->debug('Pinning existing entry: {title}', ['title' => $existingEntry->title]);
                                 $this->entryManager->pin($existingEntry, null);
                             } else {
                                 $object = $item;
                                 if ($isString) {
-                                    $this->logger->debug('getting {url} because we dont have it', ['url' => $apId]);
-                                    $object = $this->apHttpClient->getActivityObject($apId);
+                                    if (!$this->settingsManager->isBannedInstance($apId)) {
+                                        $this->logger->debug('Getting {url} because we dont have it', ['url' => $apId]);
+                                        $object = $this->apHttpClient->getActivityObject($apId);
+                                        $this->logger->debug('Dispatching create message for entry: {e}', ['e' => json_encode($object)]);
+                                        $this->bus->dispatch(new CreateMessage($object, true));
+                                    } else {
+                                        $this->logger->info('The instance is banned, url: {url}', ['url' => $apId]);
+                                    }
                                 }
-                                $this->logger->debug('dispatching create message for entry: {e}', ['e' => json_encode($object)]);
-                                $this->bus->dispatch(new CreateMessage($object, true));
                             }
                         }
                     }
@@ -762,7 +767,7 @@ class ActivityPubManager
 
                 foreach (array_filter($pinnedToRemove) as $pinnedEntry) {
                     // the pin method also unpins if the entry is already pinned
-                    $this->logger->debug('unpinning entry: {title}', ['title' => $pinnedEntry->title]);
+                    $this->logger->debug('Unpinning entry: "{title}"', ['title' => $pinnedEntry->title]);
                     $this->entryManager->pin($pinnedEntry, null);
                 }
             }
@@ -981,17 +986,22 @@ class ActivityPubManager
 
                 return null;
             }
+            // First try to find the activity object in our database
             $activity = $this->activityRepository->findByObjectId($apObject);
             $calledUrl = $apObject;
             if (!$activity) {
-                $this->logger->debug('object is fetched from {url} because it is a string and could not be found in our repo', ['url' => $apObject]);
-                $object = $this->apHttpClient->getActivityObject($apObject);
+                if (!$this->settingsManager->isBannedInstance($apObject)) {
+                    $this->logger->debug('Object is fetched from {url} because it is a string and could not be found in our repo', ['url' => $apObject]);
+                    $object = $this->apHttpClient->getActivityObject($apObject);
+                } else {
+                    $this->logger->info('The instance is banned, url: {url}', ['url' => $apObject]);
+                }
             }
         } else {
             $activity = $this->activityRepository->findByObjectId($apObject['id']);
             $calledUrl = $apObject['id'];
             if (!$activity) {
-                $this->logger->debug('object is fetched from {url} because it is not a string and could not be found in our repo', ['url' => $apObject['id']]);
+                $this->logger->debug('Object is fetched from {url} because it is not a string and could not be found in our repo', ['url' => $apObject['id']]);
                 $object = $apObject;
             }
         }
@@ -1009,8 +1019,8 @@ class ActivityPubManager
                 $adjustedUrl = $object['id'];
             }
 
-            $this->logger->debug('dispatching a ChainActivityMessage, because the object could not be found: {o}', ['o' => $apObject]);
-            $this->logger->debug('the object for ChainActivityMessage with object {o}', ['o' => $object]);
+            $this->logger->debug('Dispatching a ChainActivityMessage, because the object could not be found: {o}', ['o' => $apObject]);
+            $this->logger->debug('The object for ChainActivityMessage with object {o}', ['o' => $object]);
             $chainDispatch($object, $adjustedUrl);
 
             return null;

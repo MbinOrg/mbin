@@ -51,6 +51,7 @@ class Page
      */
     public function create(array $object, bool $stickyIt = false): Entry
     {
+        // First try to find the activity object in the database
         $current = $this->repository->findByObjectId($object['id']);
         if ($current) {
             return $this->entityManager->getRepository($current['type'])->find((int) $current['id']);

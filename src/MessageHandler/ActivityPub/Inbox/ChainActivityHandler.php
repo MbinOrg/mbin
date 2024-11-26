@@ -62,20 +62,20 @@ class ChainActivityHandler extends MbinMessageHandler
         $validObjectTypes = ['Page', 'Note', 'Article', 'Question', 'Video'];
         $object = $message->chain[0];
         if (!\in_array($object['type'], $validObjectTypes)) {
-            $this->logger->error('cannot get the dependencies of the object, its type {t} is not one we can handle. {m]', ['t' => $object['type'], 'm' => $message]);
+            $this->logger->error('Cannot get the dependencies of the object, its type {t} is not one we can handle. {m]', ['t' => $object['type'], 'm' => $message]);
 
             return;
         }
         try {
             $entity = $this->retrieveObject($object['id']);
         } catch (InstanceBannedException) {
-            $this->logger->info('the instance is banned, url: {url}', ['url' => $object['id']]);
+            $this->logger->info('The instance is banned, url: {url}', ['url' => $object['id']]);
 
             return;
         }
 
         if (!$entity) {
-            $this->logger->error('could not retrieve all the dependencies of {o}', ['o' => $object['id']]);
+            $this->logger->error('Could not retrieve all the dependencies of {o}', ['o' => $object['id']]);
 
             return;
         }
@@ -144,15 +144,15 @@ class ChainActivityHandler extends MbinMessageHandler
                     $this->logger->warning('Could not create an object from type {t} on {url}: {o}', ['t' => $object['type'], 'url' => $apUrl, 'o' => $object]);
             }
         } catch (UserBannedException) {
-            $this->logger->info('the user is banned, url: {url}', ['url' => $apUrl]);
+            $this->logger->info('The user is banned, url: {url}', ['url' => $apUrl]);
         } catch (UserDeletedException) {
-            $this->logger->info('the user is deleted, url: {url}', ['url' => $apUrl]);
+            $this->logger->info('The user is deleted, url: {url}', ['url' => $apUrl]);
         } catch (TagBannedException) {
-            $this->logger->info('one of the used tags is banned, url: {url}', ['url' => $apUrl]);
+            $this->logger->info('One of the used tags is banned, url: {url}', ['url' => $apUrl]);
+        } catch (InstanceBannedException) {
+            $this->logger->info('The instance is banned, url: {url}', ['url' => $apUrl]);
         } catch (EntityNotFoundException $e) {
             $this->logger->error('There was an exception while getting {url}: {ex} - {m}. {o}', ['url' => $apUrl, 'ex' => \get_class($e), 'm' => $e->getMessage(), 'o' => $e]);
-        } catch (InstanceBannedException) {
-            $this->logger->info('the instance is banned, url: {url}', ['url' => $apUrl]);
         }
 
         return null;

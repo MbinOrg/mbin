@@ -60,6 +60,12 @@ class ApHttpClient
     ) {
     }
 
+    /**
+     * Retrieve a remote activity object from an URL. And cache the result.
+     * @param string $url
+     * @param bool $decoded (optional)
+     * @return array|string|null Response body
+     */
     public function getActivityObject(string $url, bool $decoded = true): array|string|null
     {
         $key = $this->getActivityObjectCacheKey($url);
@@ -86,6 +92,11 @@ class ApHttpClient
         return $decoded ? json_decode($resp, true) : $resp;
     }
 
+    /**
+     * Do a GET request for an ActivityPub object and return the response content.
+     * @return string|null Returns the response content or null if the request failed.
+     * @throws InvalidApPostException
+     */
     private function getActivityObjectImpl(string $url): ?string
     {
         $this->logger->debug("ApHttpClient:getActivityObject:url: $url");

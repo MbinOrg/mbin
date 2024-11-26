@@ -145,6 +145,11 @@ class SettingsManager
         return parse_url($url, PHP_URL_HOST) === $this->get('KBIN_DOMAIN');
     }
 
+    /**
+     * Check if an instance is banned by 
+     * checking if the instance URL has a match with the banned instances list.
+     * @param string $inboxUrl The inbox URL to check.
+     */
     public function isBannedInstance(string $inboxUrl): bool
     {
         return \in_array(
