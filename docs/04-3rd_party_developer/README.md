@@ -1,6 +1,8 @@
-# OAuth2 Guide
+# 3rd Party Developer
 
-## Available Grants
+## OAuth2 Guide
+
+### Available Grants
 
 1. `client_credentials`
    - [documentation here](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/)
@@ -17,11 +19,11 @@
    - [documentation here](https://www.oauth.com/oauth2-servers/making-authenticated-requests/refreshing-an-access-token/)
    - Refresh tokens are used with the `authorization_code` grant type to reduce the number of times the user must log in.
 
-## Endpoints
+### Endpoints
 
 For all the API endpoints go to the swagger documentation page, which is: `https://your_domain.com/api/docs`. Assuming you setup the server and the API correctly.
 
-## Obtaining OAuth2 credentials from a new server
+### Obtaining OAuth2 credentials from a new server
 
 > [!NOTE]
 > Some of these structures contain comments that need to be removed before making the API calls. Copy/paste with care.
@@ -95,9 +97,9 @@ POST /api/client
    }
    ```
 
-## Available Scopes
+### Available Scopes
 
-### Scope tree
+#### Scope tree
 
 1. `read` - Allows retrieval of threads from the user's subscribed magazines/domains and viewing the user's favorited entries.
 2. `write` - Provides all of the following nested scopes

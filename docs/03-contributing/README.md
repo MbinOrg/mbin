@@ -4,15 +4,15 @@ Thanks for considering contributing to Mbin! We appreciate your interest in help
 
 ## Code
 
-Follow the [getting started instructions](getting_started.md) to setup a development server.
+Follow the [getting started instructions](01-getting_started.md) to setup a development server.
 
 ## Coding Style
 
-Please, follow the [linting guide](linting.md).
+Please, follow the [linting guide](02-linting.md).
 
 ## Way of Working
 
-Comply with **our version** of [Collective Code Construction Contract (C4)](C4.md) specification. Read this document to understand how we work together and how the development process works at Mbin.
+Comply with **our version** of [Collective Code Construction Contract (C4)](03-C4.md) specification. Read this document to understand how we work together and how the development process works at Mbin.
 
 ## Translations
 
