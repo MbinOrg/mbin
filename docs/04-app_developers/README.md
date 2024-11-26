@@ -1,4 +1,12 @@
-# 3rd Party Developer
+# App Developers
+
+If you wish to develop an app that uses the Mbin API end-points, that is possible by using the OAuth2.
+
+## API Endpoints
+
+For all the API endpoints go to the [API documentation page](https://docs.joinmbin.org/api/).
+
+Or use the Swagger documentation on an existing Mbin instance: `https://mbin_site.com/api/docs`. Assuming you setup the server and the API correctly.
 
 ## OAuth2 Guide
 
@@ -18,10 +26,6 @@
 3. `refresh_token`
    - [documentation here](https://www.oauth.com/oauth2-servers/making-authenticated-requests/refreshing-an-access-token/)
    - Refresh tokens are used with the `authorization_code` grant type to reduce the number of times the user must log in.
-
-### Endpoints
-
-For all the API endpoints go to the swagger documentation page, which is: `https://your_domain.com/api/docs`. Assuming you setup the server and the API correctly.
 
 ### Obtaining OAuth2 credentials from a new server
 
