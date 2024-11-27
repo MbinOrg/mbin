@@ -138,6 +138,7 @@ class AddHandler extends MbinMessageHandler
                 if (!\is_array($object)) {
                     if (!$this->settingsManager->isBannedInstance($apId)) {
                         $object = $this->apHttpClient->getActivityObject($apId);
+
                         return;
                     } else {
                         $this->logger->info('The instance is banned, url: {url}', ['url' => $apId]);
