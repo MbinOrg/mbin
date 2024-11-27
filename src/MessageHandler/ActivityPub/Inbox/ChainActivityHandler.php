@@ -62,7 +62,7 @@ class ChainActivityHandler extends MbinMessageHandler
         $validObjectTypes = ['Page', 'Note', 'Article', 'Question', 'Video'];
         $object = $message->chain[0];
         if (!\in_array($object['type'], $validObjectTypes)) {
-            $this->logger->error('Cannot get the dependencies of the object, its type {t} is not one we can handle. {m]', ['t' => $object['type'], 'm' => $message]);
+            $this->logger->error('[ChainActivityHandler::doWork] Cannot get the dependencies of the object, its type {t} is not one we can handle. {m]', ['t' => $object['type'], 'm' => $message]);
 
             return;
         }
@@ -75,7 +75,7 @@ class ChainActivityHandler extends MbinMessageHandler
         }
 
         if (!$entity) {
-            $this->logger->error('Could not retrieve all the dependencies of {o}', ['o' => $object['id']]);
+            $this->logger->error('[ChainActivityHandler::doWork] Could not retrieve all the dependencies of {o}', ['o' => $object['id']]);
 
             return;
         }
@@ -104,12 +104,12 @@ class ChainActivityHandler extends MbinMessageHandler
         try {
             $object = $this->client->getActivityObject($apUrl);
             if (!$object) {
-                $this->logger->warning('Got an empty object for {url}', ['url' => $apUrl]);
+                $this->logger->warning('[ChainActivityHandler::retrieveObject] Got an empty object for {url}', ['url' => $apUrl]);
 
                 return null;
             }
             if (!\is_array($object)) {
-                $this->logger->warning("Didn't get an array for {url}. Got '{val}' instead, exiting", ['url' => $apUrl, 'val' => $object]);
+                $this->logger->warning("[ChainActivityHandler::retrieveObject] Didn't get an array for {url}. Got '{val}' instead, exiting", ['url' => $apUrl, 'val' => $object]);
 
                 return null;
             }
@@ -122,7 +122,7 @@ class ChainActivityHandler extends MbinMessageHandler
                 }
                 $meta = $this->repository->findByObjectId($parentUrl);
                 if (!$meta) {
-                    $this->logger->warning('fetching the parent object ({parent}) did not work for {url}, aborting', ['parent' => $parentUrl, 'url' => $apUrl]);
+                    $this->logger->warning('[ChainActivityHandler::retrieveObject] Fetching the parent object ({parent}) did not work for {url}, aborting', ['parent' => $parentUrl, 'url' => $apUrl]);
 
                     return null;
                 }
@@ -131,17 +131,17 @@ class ChainActivityHandler extends MbinMessageHandler
             switch ($object['type']) {
                 case 'Question':
                 case 'Note':
-                    $this->logger->debug('creating note {o}', ['o' => $object]);
+                    $this->logger->debug('[ChainActivityHandler::retrieveObject] Creating note {o}', ['o' => $object]);
 
                     return $this->note->create($object);
                 case 'Page':
                 case 'Article':
                 case 'Video':
-                    $this->logger->debug('creating page {o}', ['o' => $object]);
+                    $this->logger->debug('[ChainActivityHandler::retrieveObject] Creating page {o}', ['o' => $object]);
 
                     return $this->page->create($object);
                 default:
-                    $this->logger->warning('Could not create an object from type {t} on {url}: {o}', ['t' => $object['type'], 'url' => $apUrl, 'o' => $object]);
+                    $this->logger->warning('[ChainActivityHandler::retrieveObject] Could not create an object from type {t} on {url}: {o}', ['t' => $object['type'], 'url' => $apUrl, 'o' => $object]);
             }
         } catch (UserBannedException) {
             $this->logger->info('[ChainActivityHandler::retrieveObject] The user is banned, url: {url}', ['url' => $apUrl]);
