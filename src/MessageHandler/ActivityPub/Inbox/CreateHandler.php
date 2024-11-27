@@ -73,20 +73,20 @@ class CreateHandler extends MbinMessageHandler
                 $this->handlePage($object, $stickyIt);
             }
         } catch (UserBannedException) {
-            $this->logger->info('Did not create the post, because the user is banned');
+            $this->logger->info('[CreateHandler::handleModeratorAdd] Did not create the post, because the user is banned');
         } catch (UserDeletedException) {
-            $this->logger->info('Did not create the post, because the user is deleted');
+            $this->logger->info('[CreateHandler::handleModeratorAdd] Did not create the post, because the user is deleted');
         } catch (TagBannedException) {
-            $this->logger->info('Did not create the post, because one of the used tags is banned');
+            $this->logger->info('[CreateHandler::handleModeratorAdd] Did not create the post, because one of the used tags is banned');
         } catch (PostingRestrictedException $e) {
             if ($e->actor instanceof User) {
                 $username = $e->actor->getUsername();
             } else {
                 $username = $e->actor->name;
             }
-            $this->logger->info('Did not create the post, because the magazine {m} restricts posting to mods and {u} is not a mod', ['m' => $e->magazine, 'u' => $username]);
+            $this->logger->info('[CreateHandler::handleModeratorAdd] Did not create the post, because the magazine {m} restricts posting to mods and {u} is not a mod', ['m' => $e->magazine, 'u' => $username]);
         } catch (InstanceBannedException $e) {
-            $this->logger->info('Did not create the post, because the user\'s instance is banned');
+            $this->logger->info('[CreateHandler::handleModeratorAdd] Did not create the post, because the user\'s instance is banned');
         }
     }
 

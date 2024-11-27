@@ -1,0 +1,211 @@
+Controller/ContactController.php:            $this->logger->error('there was an exception sending an email: {e} - {m}', ['e' => \get_class($e), 'm' => $e->getMessage(), 'exception' => $e]);
+Controller/SearchController.php:        $this->logger->debug('searching for {query}', ['query' => $query]);
+Controller/SearchController.php:                $this->logger->debug('searching for a matched webfinger {query}', ['query' => $query]);
+Controller/SearchController.php:                $this->logger->debug("query doesn't look like a valid handle...", ['query' => $query]);
+Controller/SearchController.php:            $this->logger->debug('Query is a valid url');
+Controller/SearchController.php:                $this->logger->debug('Found "{profileId}" at "{name}"', ['profileId' => $profileId, 'name' => $name]);
+Controller/SearchController.php:            $this->logger->warning(
+Controller/Api/Notification/NotificationPushApi.php:            $this->logger->error('There was an exception while deleting a UserPushSubscription: {e} - {m}. {o}', [
+Controller/Api/Notification/NotificationPushApi.php:            $this->logger->error('There was an exception while deleting a UserPushSubscription: {e} - {m}. {o}', [
+Controller/Api/Notification/NotificationPushApi.php:                $this->logger->error('There was an exception while deleting a UserPushSubscription: {e} - {m}. {o}', [
+Controller/Api/Post/PostsRetrieveApi.php:        $this->logger->debug(var_export($criteria, true));
+Controller/Api/BaseApi.php:            $this->logger->warning('there was an error getting the access token: {e} - {m}, {stack}', [
+Controller/User/AccountDeletionController.php:            $this->logger->error('An error occurred during account deletion of user {username}: {error}', ['username' => $user->username, 'error' => \get_class($e).': '.$e->getMessage()]);
+Controller/User/Profile/User2FAController.php:            $this->logger->warning('2fa error occurred user "{username}" submitting the form "{errors}"', [
+Controller/Entry/EntryCreateController.php:            $this->logger->error($e);
+Controller/Entry/EntryCreateController.php:            $this->logger->error($e);
+Controller/Entry/EntryCreateController.php:            $this->logger->error($e);
+Controller/Entry/EntryCreateController.php:            $this->logger->error($e);
+Controller/Security/RegisterController.php:            $this->logger->error('Registration form submission was invalid.', [
+Controller/AjaxController.php:            $this->logger->error('There was an exception while deleting a UserPushSubscription: {e} - {m}. {o}', [
+Controller/AjaxController.php:            $this->logger->error('There was an exception while deleting a UserPushSubscription: {e} - {m}. {o}', [
+Controller/AjaxController.php:            $this->logger->error('There was an exception while deleting a UserPushSubscription: {e} - {m}. {o}', [
+Controller/Post/PostCreateController.php:            $this->logger->error('{user} tried to create a post, but an exception occurred: {ex} - {message}', ['user' => $user->username, 'ex' => \get_class($e), 'message' => $e->getMessage(), 'stacktrace' => $e->getTrace()]);
+Controller/ActivityPub/User/UserInboxController.php:        $this->logger->debug('UserInboxController:request: '.$requestInfo['method'].' '.$requestInfo['uri']);
+Controller/ActivityPub/User/UserInboxController.php:        $this->logger->debug('UserInboxController:headers: '.$request->headers);
+Controller/ActivityPub/User/UserInboxController.php:        $this->logger->debug('UserInboxController:content: '.$request->getContent());
+Controller/ActivityPub/SharedInboxController.php:        $this->logger->debug('SharedInboxController:request: '.$requestInfo['method'].' '.$requestInfo['uri']);
+Controller/ActivityPub/SharedInboxController.php:        $this->logger->debug('SharedInboxController:headers: '.$request->headers);
+Controller/ActivityPub/SharedInboxController.php:        $this->logger->debug('SharedInboxController:body: '.$request->getContent());
+Controller/ActivityPub/Magazine/MagazineInboxController.php:        $this->logger->debug('MagazineInboxController:request: '.$requestInfo['method'].' '.$requestInfo['uri']);
+Controller/ActivityPub/Magazine/MagazineInboxController.php:        $this->logger->debug('MagazineInboxController:headers: '.$request->headers);
+Controller/ActivityPub/Magazine/MagazineInboxController.php:        $this->logger->debug('MagazineInboxController:content: '.$request->getContent());
+EventSubscriber/Image/ExifCleanerSubscriber.php:        $this->logger->debug(
+EventSubscriber/SubjectReportedSubscriber.php:        $this->logger->debug($reportedEvent->report->reported->username.' was reported for '.$reportedEvent->report->reason);
+EventSubscriber/SubjectReportedSubscriber.php:            $this->logger->debug('was on a remote magazine, dispatching a new FlagMessage');
+EventSubscriber/SubjectReportedSubscriber.php:            $this->logger->debug('was on the random magazine, dispatching a new FlagMessage');
+EventSubscriber/Entry/EntryPinSubscriber.php:            $this->logger->debug('entry {e} got {p} by {u}, dispatching new EntryPinMessage', ['e' => $event->entry->title, 'p' => $event->entry->sticky ? 'pinned' : 'unpinned', 'u' => $event->actor?->username ?? 'system']);
+EventSubscriber/Entry/EntryPinSubscriber.php:                $this->logger->debug('dispatching announce for add pin post {e} by {u} in {m}', ['e' => $event->entry->title, 'u' => $event->actor->apId, 'm' => $event->entry->magazine->name]);
+EventSubscriber/Entry/EntryPinSubscriber.php:                $this->logger->debug('entry {e} got {p} by {u}, dispatching new EntryPinMessage', ['e' => $event->entry->title, 'p' => $event->entry->sticky ? 'pinned' : 'unpinned', 'u' => $event->actor?->username ?? 'system']);
+EventSubscriber/NotificationCreatedSubscriber.php:            $this->logger->error('there was an exception while sending a {t} to {u}. {e} - {m}', [
+EventSubscriber/ActivityPub/UserWebFingerProfileSubscriber.php:            $this->logger->debug("got webfinger query for $query");
+EventSubscriber/ActivityPub/MagazineModeratorAddedRemovedSubscriber.php:            $this->logger->warning("There was an error while clearing the cache for magazine '{$magazine->name}' ({$magazine->getId()})");
+Form/SettingsType.php:        $this->logger->debug('downvotes mode is: {mode}', ['mode' => $dto->MBIN_DOWNVOTES_MODE]);
+MessageHandler/DeleteUserHandler.php:            $this->logger->error("couldn't delete the avatar of {user} at '{path}': {message}", ['user' => $user->username, 'path' => $user->avatar?->filePath, 'message' => \get_class($e).': '.$e->getMessage()]);
+MessageHandler/DeleteUserHandler.php:            $this->logger->error("couldn't delete the cover of {user} at '{path}': {message}", ['user' => $user->username, 'path' => $user->cover?->filePath, 'message' => \get_class($e).': '.$e->getMessage()]);
+MessageHandler/DeleteUserHandler.php:                $this->logger->error("couldn't delete image of {user} at '{path}': {message}", ['user' => $user->username, 'path' => $path, 'message' => \get_class($e).': '.$e->getMessage()]);
+MessageHandler/ClearDeletedUserHandler.php:                $this->logger->error("couldn't delete user {user}: {message}", ['user' => $user->username, 'message' => \get_class($e).': '.$e->getMessage()]);
+MessageHandler/ClearDeadMessagesHandler.php:        $this->logger->info('Clearing dead messages');
+MessageHandler/ActivityPub/Inbox/FollowHandler.php:        $this->logger->debug('got a FollowMessage: {message}', [$message]);
+MessageHandler/ActivityPub/Inbox/UpdateHandler.php:        $this->logger->debug('received Update activity: {json}', ['json' => $payload]);
+MessageHandler/ActivityPub/Inbox/UpdateHandler.php:        $this->logger->warning("didn't know what to do with the update activity concerning '{id}'. We don't have a local object that has this id", ['id' => $payload['object']['id']]);
+MessageHandler/ActivityPub/Inbox/UpdateHandler.php:            $this->logger->warning('User {u} tried to edit entry {et} ({eId}), but is not allowed to', ['u' => $user->apId ?? $user->username, 'et' => $entry->title, 'eId' => $entry->getId()]);
+MessageHandler/ActivityPub/Inbox/UpdateHandler.php:            $this->logger->warning('User {u} tried to edit entry comment {et} ({eId}), but is not allowed to', ['u' => $user->apId ?? $user->username, 'et' => $comment->getShortTitle(), 'eId' => $comment->getId()]);
+MessageHandler/ActivityPub/Inbox/UpdateHandler.php:            $this->logger->warning('User {u} tried to edit post {pt} ({pId}), but is not allowed to', ['u' => $user->apId ?? $user->username, 'pt' => $post->getShortTitle(), 'pId' => $post->getId()]);
+MessageHandler/ActivityPub/Inbox/UpdateHandler.php:            $this->logger->warning('User {u} tried to edit post comment {pt} ({pId}), but is not allowed to', ['u' => $user->apId ?? $user->username, 'pt' => $comment->getShortTitle(), 'pId' => $comment->getId()]);
+MessageHandler/ActivityPub/Inbox/UpdateHandler.php:            $this->logger->warning(
+MessageHandler/ActivityPub/Inbox/UpdateHandler.php:            $this->logger->warning('User {u1} wanted to update user {u2} without being allowed to do so', ['u1' => $actor->apId ?? $actor->username, 'u2' => $user->apId ?? $user->username]);
+MessageHandler/ActivityPub/Inbox/UpdateHandler.php:            $this->logger->warning('User {u} wanted to update magazine {m} without being allowed to do so', ['u' => $actor->apId ?? $actor->username, 'm' => $magazine->apId ?? $magazine->name]);
+MessageHandler/ActivityPub/Inbox/LikeHandler.php:                $this->logger->info('got an adjusted url: {url}, using that instead of {old}', ['url' => $adjustedUrl, 'old' => $message->payload['object']['id'] ?? $message->payload['object']]);
+MessageHandler/ActivityPub/Inbox/CreateHandler.php:        $this->logger->debug('Got a CreateMessage of type {t}, {m}', ['t' => $message->payload['type'], 'm' => $message->payload]);
+MessageHandler/ActivityPub/Inbox/CreateHandler.php:            $this->logger->info('[CreateHandler::handleModeratorAdd] Did not create the post, because the user is banned');
+MessageHandler/ActivityPub/Inbox/CreateHandler.php:            $this->logger->info('[CreateHandler::handleModeratorAdd] Did not create the post, because the user is deleted');
+MessageHandler/ActivityPub/Inbox/CreateHandler.php:            $this->logger->info('[CreateHandler::handleModeratorAdd] Did not create the post, because one of the used tags is banned');
+MessageHandler/ActivityPub/Inbox/CreateHandler.php:            $this->logger->info('[CreateHandler::handleModeratorAdd] Did not create the post, because the magazine {m} restricts posting to mods and {u} is not a mod', ['m' => $e->magazine, 'u' => $username]);
+MessageHandler/ActivityPub/Inbox/CreateHandler.php:            $this->logger->info('[CreateHandler::handleModeratorAdd] Did not create the post, because the user\'s instance is banned');
+MessageHandler/ActivityPub/Inbox/DislikeHandler.php:                $this->logger->info('got an adjusted url: {url}, using that instead of {old}', ['url' => $adjustedUrl, 'old' => $message->payload['object']['id'] ?? $message->payload['object']]);
+MessageHandler/ActivityPub/Inbox/FlagHandler.php:        $this->logger->debug('Got FlagMessage: '.json_encode($message));
+MessageHandler/ActivityPub/Inbox/FlagHandler.php:                $this->logger->warning("could not find the subject of a report: '$item'");
+MessageHandler/ActivityPub/Inbox/ActivityHandler.php:            $this->logger->warning('Activity message from was empty: {json}, ignoring it', ['json' => json_encode($message->payload)]);
+MessageHandler/ActivityPub/Inbox/ActivityHandler.php:                $this->logger->info("The message was forwarded by {receivedFrom}. Dispatching a new activity message '{origin}'", ['receivedFrom' => $exception->receivedFrom, 'origin' => $exception->realOrigin]);
+MessageHandler/ActivityPub/Inbox/ActivityHandler.php:                    $this->logger->info('[ActivityHandler::doWork] The instance is banned, url: {url}', ['url' => $exception->realOrigin]);
+MessageHandler/ActivityPub/Inbox/ActivityHandler.php:                $this->logger->warning("Unable to extract public key for '{user}'.", ['user' => $exception->apProfileId]);
+MessageHandler/ActivityPub/Inbox/ActivityHandler.php:            $this->logger->warning('activity message has no id field which is required: {json}', ['json' => json_encode($message->payload)]);
+MessageHandler/ActivityPub/Inbox/ActivityHandler.php:            $this->logger->error('payload: '.json_encode($payload));
+MessageHandler/ActivityPub/Inbox/ActivityHandler.php:            $this->logger->warning('Could not find an actor discarding ActivityMessage {m}', ['m' => $message->payload]);
+MessageHandler/ActivityPub/Inbox/ActivityHandler.php:                        $this->logger->warning('ignoring this message because it announces an activity from a local user');
+MessageHandler/ActivityPub/Inbox/ActivityHandler.php:        $this->logger->debug('Got activity message of type {type}: {message}', ['type' => $payload['type'], 'message' => json_encode($payload)]);
+MessageHandler/ActivityPub/Inbox/AnnounceHandler.php:                $this->logger->info('got an adjusted url: {url}, using that instead of {old}', ['url' => $adjustedUrl, 'old' => $message->payload['object']['id'] ?? $message->payload['object']]);
+MessageHandler/ActivityPub/Inbox/AddHandler.php:            $this->logger->warning('the user "{added}" ({addedId}) already is a moderator of "{magName}" ({magId}). Discarding message', [
+MessageHandler/ActivityPub/Inbox/AddHandler.php:        $this->logger->info('[AddHandler::handleModeratorAdd] "{actor}" ({actorId}) added "{added}" ({addedId}) as moderator to "{magName}" ({magId})', [
+MessageHandler/ActivityPub/Inbox/AddHandler.php:                    $this->logger->info('[AddHandler::handlePinnedAdd] Pinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
+MessageHandler/ActivityPub/Inbox/AddHandler.php:                    $this->logger->info('[AddHandler::handlePinnedAdd] Pinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
+MessageHandler/ActivityPub/Inbox/AddHandler.php:                        $this->logger->info('[AddHandler::handlePinnedAdd] The instance is banned, url: {url}', ['url' => $apId]);
+MessageHandler/ActivityPub/Inbox/ChainActivityHandler.php:        $this->logger->debug('Got chain activity message: {m}', ['m' => $message]);
+MessageHandler/ActivityPub/Inbox/ChainActivityHandler.php:            $this->logger->error('Cannot get the dependencies of the object, its type {t} is not one we can handle. {m]', ['t' => $object['type'], 'm' => $message]);
+MessageHandler/ActivityPub/Inbox/ChainActivityHandler.php:            $this->logger->info('[ChainActivityHandler::doWork] The instance is banned, url: {url}', ['url' => $object['id']]);
+MessageHandler/ActivityPub/Inbox/ChainActivityHandler.php:            $this->logger->error('Could not retrieve all the dependencies of {o}', ['o' => $object['id']]);
+MessageHandler/ActivityPub/Inbox/ChainActivityHandler.php:                $this->logger->warning('Got an empty object for {url}', ['url' => $apUrl]);
+MessageHandler/ActivityPub/Inbox/ChainActivityHandler.php:                $this->logger->warning("Didn't get an array for {url}. Got '{val}' instead, exiting", ['url' => $apUrl, 'val' => $object]);
+MessageHandler/ActivityPub/Inbox/ChainActivityHandler.php:                    $this->logger->warning('fetching the parent object ({parent}) did not work for {url}, aborting', ['parent' => $parentUrl, 'url' => $apUrl]);
+MessageHandler/ActivityPub/Inbox/ChainActivityHandler.php:                    $this->logger->debug('creating note {o}', ['o' => $object]);
+MessageHandler/ActivityPub/Inbox/ChainActivityHandler.php:                    $this->logger->debug('creating page {o}', ['o' => $object]);
+MessageHandler/ActivityPub/Inbox/ChainActivityHandler.php:                    $this->logger->warning('Could not create an object from type {t} on {url}: {o}', ['t' => $object['type'], 'url' => $apUrl, 'o' => $object]);
+MessageHandler/ActivityPub/Inbox/ChainActivityHandler.php:            $this->logger->info('[ChainActivityHandler::retrieveObject] The user is banned, url: {url}', ['url' => $apUrl]);
+MessageHandler/ActivityPub/Inbox/ChainActivityHandler.php:            $this->logger->info('[ChainActivityHandler::retrieveObject] The user is deleted, url: {url}', ['url' => $apUrl]);
+MessageHandler/ActivityPub/Inbox/ChainActivityHandler.php:            $this->logger->info('[ChainActivityHandler::retrieveObject] One of the used tags is banned, url: {url}', ['url' => $apUrl]);
+MessageHandler/ActivityPub/Inbox/ChainActivityHandler.php:            $this->logger->info('[ChainActivityHandler::retrieveObject] The instance is banned, url: {url}', ['url' => $apUrl]);
+MessageHandler/ActivityPub/Inbox/ChainActivityHandler.php:            $this->logger->error('[ChainActivityHandler::retrieveObject] There was an exception while getting {url}: {ex} - {m}. {o}', ['url' => $apUrl, 'ex' => \get_class($e), 'm' => $e->getMessage(), 'o' => $e]);
+MessageHandler/ActivityPub/Inbox/RemoveHandler.php:            $this->logger->warning('the user "{toRemove}" ({toRemoveId}) is not a moderator of {magName} ({magId}) and can therefore not be removed as one. Discarding message', $loggerParams);
+MessageHandler/ActivityPub/Inbox/RemoveHandler.php:            $this->logger->warning('the user "{toRemove}" ({toRemoveId}) is the owner of {magName} ({magId}) and can therefore not be removed. Discarding message', $loggerParams);
+MessageHandler/ActivityPub/Inbox/RemoveHandler.php:        $this->logger->info('[RemoveHandler::handleModeratorRemove] "{actor}" ({actorId}) removed "{removed}" ({removedId}) as moderator from "{magName}" ({magId})', [
+MessageHandler/ActivityPub/Inbox/RemoveHandler.php:                    $this->logger->info('[RemoveHandler::handlePinnedRemove] Unpinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
+MessageHandler/ActivityPub/Inbox/RemoveHandler.php:                $this->logger->info('[RemoveHandler::handlePinnedRemove] Unpinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
+MessageHandler/ActivityPub/Outbox/EntryPinMessageHandler.php:            $this->logger->warning('got an EntryPinMessage for remote magazine {m} by remote user {u}. That does not need to be propagated, as this instance is not the source', ['m' => $entry->magazine->apId, 'u' => $user->apId]);
+MessageHandler/ActivityPub/Outbox/CreateHandler.php:            $this->logger->info('sending message to {p}', ['p' => $receivers]);
+MessageHandler/ActivityPub/Outbox/CreateHandler.php:            $this->logger->debug('sending create activity to {p}', ['p' => $receivers]);
+MessageHandler/ActivityPub/Outbox/FlagHandler.php:        $this->logger->debug('[FlagHandler::doWork] Got a FlagMessage');
+MessageHandler/ActivityPub/Outbox/FlagHandler.php:        $this->logger->debug('[FlagHandler::doWork] Found the report: '.json_encode($report));
+MessageHandler/ActivityPub/Outbox/FlagHandler.php:            $this->logger->info("[FlagHandler::doWork] couldn't find any inboxes to send the FlagMessage to");
+MessageHandler/ActivityPub/Outbox/DeliverHandler.php:                $this->logger->debug('{domain} responded with {code} for our request, rolling back the changes and not trying again, request: {body}', [
+MessageHandler/ActivityPub/Outbox/DeliverHandler.php:            $this->logger->debug('instance {n} is considered dead. Last successful delivery date: {dd}, failed attempts since then: {fa}', [
+MessageHandler/ActivityPub/Outbox/DeliverHandler.php:        $this->logger->debug("Getting Actor for url: $url");
+MessageHandler/ActivityPub/Outbox/DeliverHandler.php:            $this->logger->debug('got no actor :(');
+MessageHandler/ActivityPub/Outbox/DeliverHandler.php:            $this->logger->debug('got an actor, but he is banned :(');
+MessageHandler/ActivityPub/UpdateActorHandler.php:            $this->logger->debug(
+MessageHandler/ActivityPub/UpdateActorHandler.php:                $this->logger->debug('not updating actor {url}: last updated is recent: {fetched}', [
+Repository/EmbedRepository.php:                $this->logger->warning('Embed URL exceeds allowed length: {url, length}', ['url' => $entity->url, \strlen($entity->url)]);
+Repository/ImageRepository.php:            $this->logger->debug('found image by Sha256, imageId: {id}', ['id' => $image->getId()]);
+Repository/ImageRepository.php:                $this->logger->warning(
+Repository/ImageRepository.php:                $this->logger->error(
+Repository/ImageRepository.php:            $this->logger->error(
+Repository/ImageRepository.php:            $this->logger->info('Failed to calculate blurhash: '.$e->getMessage());
+Repository/MessageThreadRepository.php:        $this->logger->debug('looking for thread with participants: {p}', ['p' => array_map(fn (User $u) => $u->username, $participants)]);
+Repository/MessageThreadRepository.php:        $this->logger->debug('got results for query {q}: {r}', ['q' => $sql, 'r' => $results]);
+Service/MessageManager.php:        $this->logger->debug('creating message from {o}', ['o' => $object]);
+Service/MessageManager.php:        $this->logger->debug('editing message {m}', ['m' => $message->apId]);
+Service/RemoteInstanceManager.php:                $this->logger->info('Instance {i} does not supply a valid nodeinfo endpoint.', ['i' => $instance->domain]);
+Service/RemoteInstanceManager.php:            $this->logger->debug('got raw nodeinfo for url {url}: {raw}', ['raw' => $nodeInfoRaw, 'url' => $linkToUse]);
+Service/RemoteInstanceManager.php:                $this->logger->warning('There as an exception decoding the nodeinfo from {url}: {e} - {m}', [
+Service/ActivityPubManager.php:        $this->logger->debug('ActivityPubManager:findActorOrCreate: searching for actor at "{handle}"', ['handle' => $actorUrlOrHandle]);
+Service/ActivityPubManager.php:            $this->logger->debug('Found magazine: "{magName}"', ['magName' => $magazine]);
+Service/ActivityPubManager.php:            $this->logger->debug('Found user: "{user}"', ['user' => $name]);
+Service/ActivityPubManager.php:            $this->logger->debug('Found remote user for url: "{url}" in db', ['url' => $actorUrl]);
+Service/ActivityPubManager.php:            $this->logger->debug('Found remote user for url: "{url}" in db', ['url' => $actorUrl]);
+Service/ActivityPubManager.php:                $this->logger->debug('Found remote user at "{url}"', ['url' => $actorUrl]);
+Service/ActivityPubManager.php:                $this->logger->debug('Found remote magazine at "{url}"', ['url' => $actorUrl]);
+Service/ActivityPubManager.php:                    $this->logger->warning('Got a tombstone for magazine {name} at {url}, deleting it', ['name' => $magazine->name, 'url' => $actorUrl]);
+Service/ActivityPubManager.php:                    $this->logger->warning('Got a tombstone for user {name} at {url}, deleting it', ['name' => $user->username, 'url' => $actorUrl]);
+Service/ActivityPubManager.php:            $this->logger->debug("ActivityPubManager:findActorOrCreate:actorUrl: $actorUrl. Actor not found.");
+Service/ActivityPubManager.php:            $this->logger->debug(
+Service/ActivityPubManager.php:        $this->logger->debug('Fetching webfinger "{id}"', ['id' => $id]);
+Service/ActivityPubManager.php:        $this->logger->info('[ActivityPubManager::updateUser] Updating user {name}', ['name' => $actorUrl]);
+Service/ActivityPubManager.php:            $this->logger->debug("ActivityPubManager:updateUser:actorUrl: $actorUrl. Actor not found.");
+Service/ActivityPubManager.php:        $this->logger->info('[ActivityPubManager::updateMagazine] Updating magazine "{magName}"', ['magName' => $actorUrl]);
+Service/ActivityPubManager.php:                    $this->logger->debug('Updating remote followers of magazine "{magUrl}"', ['magUrl' => $actorUrl]);
+Service/ActivityPubManager.php:            $this->logger->debug("ActivityPubManager:updateMagazine:actorUrl: $actorUrl. Actor not found.");
+Service/ActivityPubManager.php:            $this->logger->debug('Fetching moderators of remote magazine: "{magUrl}"', ['magUrl' => $actorUrl]);
+Service/ActivityPubManager.php:            $this->logger->debug('Got moderator items for magazine: "{magName}": {json}', ['magName' => $magazine->name, 'json' => json_encode($attributedObj)]);
+Service/ActivityPubManager.php:                $this->logger->warning('Could not update the moderators of "{url}", the response doesn\'t have a "items" or "orderedItems" property or it is not an array', ['url' => $actorUrl]);
+Service/ActivityPubManager.php:                            $this->logger->info('[ActivityPubManager::handleModeratorArray] Adding "{user}" as moderator in "{magName}" because they are a mod upstream, but not locally', ['user' => $user->username, 'magName' => $magazine->name]);
+Service/ActivityPubManager.php:                    $this->logger->warning('[ActivityPubManager::handleModeratorArray] Something went wrong while fetching actor "{actor}" as moderator of "{magName}"', ['actor' => $item, 'magName' => $magazine->name]);
+Service/ActivityPubManager.php:            $this->logger->info('[ActivityPubManager::handleModeratorArray] Removing "{exMod}" from "{magName}" as mod locally because they are no longer mod upstream', ['exMod' => $modToRemove->username, 'magName' => $magazine->name]);
+Service/ActivityPubManager.php:            $this->logger->debug('Fetching featured posts of remote magazine: {url}', ['url' => $actorUrl]);
+Service/ActivityPubManager.php:            $this->logger->debug('Got featured items for magazine: "{magName}": {json}', ['magName' => $magazine->name, 'json' => json_encode($attributedObj)]);
+Service/ActivityPubManager.php:                        $this->logger->debug('Ignoring {item}, because it is not a string and not an array', ['item' => json_encode($item)]);
+Service/ActivityPubManager.php:                                $this->logger->debug('[ActivityPubManager::handleMagazineFeaturedCollection] Pinning existing entry: {title}', ['title' => $existingEntry->title]);
+Service/ActivityPubManager.php:                                        $this->logger->debug('Getting {url} because we dont have it', ['url' => $apId]);
+Service/ActivityPubManager.php:                                    $this->logger->debug('[ActivityPubManager::handleMagazineFeaturedCollection] Dispatching create message for entry: {e}', ['e' => json_encode($object)]);
+Service/ActivityPubManager.php:                                    $this->logger->info('[ActivityPubManager::handleMagazineFeaturedCollection] The instance is banned, url: {url}', ['url' => $apId]);
+Service/ActivityPubManager.php:                    $this->logger->debug('Unpinning entry: "{title}"', ['title' => $pinnedEntry->title]);
+Service/ActivityPubManager.php:                $this->logger->error('The like activity references an object by string, but that is not a URL, discarding the message', $fullPayload);
+Service/ActivityPubManager.php:                    $this->logger->debug('Object is fetched from {url} because it is a string and could not be found in our repo', ['url' => $apObject]);
+Service/ActivityPubManager.php:                    $this->logger->info('[ActivityPubManager::getEntityObject] The instance is banned, url: {url}', ['url' => $apObject]);
+Service/ActivityPubManager.php:                $this->logger->debug('Object is fetched from {url} because it is not a string and could not be found in our repo', ['url' => $apObject['id']]);
+Service/ActivityPubManager.php:            $this->logger->error("[ActivityPubManager::getEntityObject] The activity is still null and we couldn't get the object from the url, discarding", $fullPayload);
+Service/ActivityPubManager.php:                $this->logger->warning('the url {url} returned a different object id: {id}', ['url' => $calledUrl, 'id' => $object['id']]);
+Service/ActivityPubManager.php:            $this->logger->debug('Dispatching a ChainActivityMessage, because the object could not be found: {o}', ['o' => $apObject]);
+Service/ActivityPubManager.php:            $this->logger->debug('The object for ChainActivityMessage with object {o}', ['o' => $object]);
+Service/MagazineManager.php:        $this->logger->debug('created magazine with name {n}, apId {id} and public url {url}', ['n' => $magazine->name, 'id' => $magazine->apId, 'url' => $magazine->apProfileId]);
+Service/EntryManager.php:        $this->logger->debug('creating entry from dto');
+Service/EntryManager.php:        $this->logger->debug('setting image to {imageId}, dto was {dtoImageId}', ['imageId' => $entry->image?->getId() ?? 'none', 'dtoImageId' => $dto->image?->id ?? 'none']);
+Service/EntryManager.php:            $this->logger->info('Got a delete activity from user {u}, but they are not from the same instance as the deleted post and they are not a moderator on {m]', ['u' => $user->apId, 'm' => $entry->magazine->apId ?? $entry->magazine->name]);
+Service/ImageManager.php:            $this->logger->debug('downloaded file from {url}', ['url' => $url]);
+Service/ImageManager.php:            $this->logger->warning("couldn't download file from {url}", ['url' => $url]);
+Service/Notification/UserPushSubscriptionManager.php:            $this->logger->debug("Sending text '{t}' to {u}#{dk}. {json}", [
+Service/Notification/UserPushSubscriptionManager.php:                $this->logger->debug('[v] Message sent successfully for subscription {e}.', ['e' => $endpoint]);
+Service/Notification/UserPushSubscriptionManager.php:                $this->logger->debug('[x] Message failed to sent for subscription {e}: {r}', ['e' => $endpoint, 'r' => $report->getReason()]);
+Service/EntryCommentManager.php:            $this->logger->info('Got a delete activity from user {u}, but they are not from the same instance as the deleted post and they are not a moderator on {m]', ['u' => $user->apId, 'm' => $comment->magazine->apId ?? $comment->magazine->name]);
+Service/DeliverManager.php:                $this->logger->warning('tried delivering to a local url, {payload}', ['payload' => $activity]);
+Service/PostManager.php:        $this->logger->debug('setting image to {imageId}, dto was {dtoImageId}', ['imageId' => $post->image?->getId() ?? 'none', 'dtoImageId' => $dto->image?->id ?? 'none']);
+Service/PostManager.php:            $this->logger->info('Got a delete activity from user {u}, but they are not from the same instance as the deleted post and they are not a moderator on {m]', ['u' => $user->apId, 'm' => $post->magazine->apId ?? $post->magazine->name]);
+Service/ActivityPub/Note.php:                $this->logger->debug("adding image to post '{title}', {image}", ['title' => $dto->slug, 'image' => $image->getId()]);
+Service/ActivityPub/SignatureValidator.php:            $this->logger->warning('Supplied digest of incoming request does not match calculated value', ['supplied-digest' => $suppliedDigest]);
+Service/ActivityPub/SignatureValidator.php:        $this->logger->debug('Successfully verified signature of incoming AP request.', ['digest' => $digest]);
+Service/ActivityPub/Page.php:                $this->logger->debug('Page already exists, not creating it');
+Service/ActivityPub/Page.php:                $this->logger->debug("adding image to entry '{title}', {image}", ['title' => $dto->title, 'image' => $image->getId()]);
+Service/ActivityPub/Page.php:            $this->logger->debug('creating page');
+Service/ActivityPub/ApHttpClient.php:        $this->logger->debug("ApHttpClient:getActivityObject:url: $url");
+Service/ActivityPub/ApHttpClient.php:            $this->logger->debug('ApHttpClient:getActivityObject:url: {url} - content: {content}', ['url' => $url, 'content' => $content]);
+Service/ActivityPub/ApHttpClient.php:        $this->logger->debug("ApHttpClient:getWebfingerObject:url: $url");
+Service/ActivityPub/ApHttpClient.php:        $this->logger->debug("ApHttpClient:getActorObject:url: $apProfileId");
+Service/ActivityPub/ApHttpClient.php:        $this->logger->debug("ApHttpClient:getCollectionObject:url: $apAddress");
+Service/ActivityPub/ApHttpClient.php:        $this->logger->error('[ApHttpClient::updateUser] {type} failed: {address}, ex: {e}: {msg}. Truncated content: {content}', [
+Service/ActivityPub/ApHttpClient.php:            $this->logger->debug('Full response body content: {content}', [
+Service/ActivityPub/ApHttpClient.php:            $this->logger->warning('not posting activity with id {id} to {inbox} again, as we already did that sometime in the last 45 minutes', [
+Service/ActivityPub/ApHttpClient.php:        $this->logger->debug("ApHttpClient:post:url: $url");
+Service/ActivityPub/ApHttpClient.php:        $this->logger->debug("ApHttpClient:post:body $jsonBody");
+Service/ActivityPub/ApHttpClient.php:        $this->logger->debug("ApHttpClient:generalFetch:url: $url");
+Service/ActivityPub/ApHttpClient.php:            $this->logger->warning('There was an exception fetching {type} from {url}: {e} - {msg}', [
+Service/ActivityPub/ApHttpClient.php:            $this->logger->error('[ApHttpClient::getHeaders] Failed to sign headers for {url}: {headers}', [
+Service/ActivityPub/ApHttpClient.php:            $this->logger->error('[ApHttpClient::getInstanceHeaders] Failed to sign headers for {url}: {headers}', [
+Service/PostCommentManager.php:            $this->logger->info('Got a delete activity from user {u}, but they are not from the same instance as the deleted post and they are not a moderator on {m]', ['u' => $user->apId, 'm' => $comment->magazine->apId ?? $comment->magazine->name]);
+Utils/Embed.php:        $this->logger->debug('[Embed::fetch] leftover data', [
+Utils/Embed.php:                    $this->logger->info('[Embed::fetch] Fetch failed: '.$e->getMessage());
+Utils/Embed.php:                    $this->logger->info('[Embed::fetch] HTML prepare failed: '.$e->getMessage());
+Utils/Embed.php:                $this->logger->debug('[Embed::fetch] Fetch success, returning', [
+Utils/Embed.php:            $this->logger->debug('[Embed::fetch] Suspecting faulty redirect, refetching', [
+Utils/ExifCleaner.php:            $this->logger->debug("ExifCleaner:cleanImage: cleaning mode is 'None', nothing will be done.");
+Utils/ExifCleaner.php:            $this->logger->info('ExifCleaner:cleanImage: exiftool binary was not found, nothing will be done.');
+Utils/ExifCleaner.php:            $this->logger->debug(
+Utils/ExifCleaner.php:            $this->logger->warning('ExifCleaner:cleanImage: exiftool failed: '.$e->getMessage());

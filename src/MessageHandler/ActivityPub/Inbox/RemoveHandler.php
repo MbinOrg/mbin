@@ -91,7 +91,7 @@ class RemoveHandler extends MbinMessageHandler
             return;
         }
 
-        $this->logger->info(' "{actor}" ({actorId}) removed "{removed}" ({removedId}) as moderator from "{magName}" ({magId})', [
+        $this->logger->info('[RemoveHandler::handleModeratorRemove] "{actor}" ({actorId}) removed "{removed}" ({removedId}) as moderator from "{magName}" ({magId})', [
             'actor' => $actor->username,
             'actorId' => $actor->getId(),
             'removed' => $object->username,
@@ -121,14 +121,14 @@ class RemoveHandler extends MbinMessageHandler
             if (Entry::class === $pair['type']) {
                 $existingEntry = $this->entryRepository->findOneBy(['id' => $pair['id']]);
                 if ($existingEntry && $existingEntry->sticky) {
-                    $this->logger->info('unpinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
+                    $this->logger->info('[RemoveHandler::handlePinnedRemove] Unpinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
                     $this->entryManager->pin($existingEntry, $actor);
                 }
             }
         } else {
             $existingEntry = $this->entryRepository->findOneBy(['apId' => $apId]);
             if ($existingEntry && $existingEntry->sticky) {
-                $this->logger->info('unpinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
+                $this->logger->info('[RemoveHandler::handlePinnedRemove] Unpinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
                 $this->entryManager->pin($existingEntry, $actor);
             }
         }

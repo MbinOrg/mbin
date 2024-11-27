@@ -65,7 +65,7 @@ class ActivityHandler extends MbinMessageHandler
         $payload = @json_decode($message->payload, true);
 
         if (null === $payload) {
-            $this->logger->warning('Activity message from was empty: {json}, ignoring it', ['json' => json_encode($message->payload)]);
+            $this->logger->warning('[ActivityHandler::doWork] Activity message from was empty: {json}, ignoring it', ['json' => json_encode($message->payload)]);
             throw new UnrecoverableMessageHandlingException('activity message from was empty');
         }
 
@@ -73,7 +73,7 @@ class ActivityHandler extends MbinMessageHandler
             try {
                 $this->signatureValidator->validate($message->request, $message->headers, $message->payload);
             } catch (InboxForwardingException $exception) {
-                $this->logger->info("The message was forwarded by {receivedFrom}. Dispatching a new activity message '{origin}'", ['receivedFrom' => $exception->receivedFrom, 'origin' => $exception->realOrigin]);
+                $this->logger->info("[ActivityHandler::doWork] The message was forwarded by {receivedFrom}. Dispatching a new activity message '{origin}'", ['receivedFrom' => $exception->receivedFrom, 'origin' => $exception->realOrigin]);
                 if (!$this->settingsManager->isBannedInstance($exception->realOrigin)) {
                     $body = $this->apHttpClient->getActivityObject($exception->realOrigin, false);
                     $this->bus->dispatch(new ActivityMessage($body));
@@ -83,14 +83,14 @@ class ActivityHandler extends MbinMessageHandler
 
                 return;
             } catch (InvalidUserPublicKeyException $exception) {
-                $this->logger->warning("Unable to extract public key for '{user}'.", ['user' => $exception->apProfileId]);
+                $this->logger->warning("[ActivityHandler::doWork] Unable to extract public key for '{user}'.", ['user' => $exception->apProfileId]);
 
                 return;
             }
         }
 
         if (null === $payload['id']) {
-            $this->logger->warning('activity message has no id field which is required: {json}', ['json' => json_encode($message->payload)]);
+            $this->logger->warning('[ActivityHandler::doWork] Activity message has no id field which is required: {json}', ['json' => json_encode($message->payload)]);
             throw new UnrecoverableMessageHandlingException('activity message has no id field');
         }
 
@@ -130,7 +130,7 @@ class ActivityHandler extends MbinMessageHandler
                 $user = $this->manager->findActorOrCreate($payload['id']);
             }
         } catch (\Exception $e) {
-            $this->logger->error('payload: '.json_encode($payload));
+            $this->logger->error('[ActivityHandler::doWork] Payload: '.json_encode($payload));
 
             return;
         }
@@ -140,7 +140,7 @@ class ActivityHandler extends MbinMessageHandler
         }
 
         if (null === $user) {
-            $this->logger->warning('Could not find an actor discarding ActivityMessage {m}', ['m' => $message->payload]);
+            $this->logger->warning('[ActivityHandler::doWork] Could not find an actor discarding ActivityMessage {m}', ['m' => $message->payload]);
 
             return;
         }
@@ -172,7 +172,7 @@ class ActivityHandler extends MbinMessageHandler
                     $user = $this->manager->findActorOrCreate($actor);
                     if ($user instanceof User && null === $user->apId) {
                         // don't do anything if we get an announce activity for something a local user did (unless it's a boost, see comment above)
-                        $this->logger->warning('ignoring this message because it announces an activity from a local user');
+                        $this->logger->warning('[ActivityHandler::handle] Ignoring this message because it announces an activity from a local user');
 
                         return;
                     }
@@ -180,7 +180,7 @@ class ActivityHandler extends MbinMessageHandler
             }
         }
 
-        $this->logger->debug('Got activity message of type {type}: {message}', ['type' => $payload['type'], 'message' => json_encode($payload)]);
+        $this->logger->debug('[ActivityHandler::handle] Got activity message of type {type}: {message}', ['type' => $payload['type'], 'message' => json_encode($payload)]);
 
         switch ($payload['type']) {
             case 'Create':
