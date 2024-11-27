@@ -65,7 +65,7 @@ class ActivityHandler extends MbinMessageHandler
         $payload = @json_decode($message->payload, true);
 
         if (null === $payload) {
-            $this->logger->warning('activity message from was empty: {json}, ignoring it', ['json' => json_encode($message->payload)]);
+            $this->logger->warning('Activity message from was empty: {json}, ignoring it', ['json' => json_encode($message->payload)]);
             throw new UnrecoverableMessageHandlingException('activity message from was empty');
         }
 
@@ -74,8 +74,12 @@ class ActivityHandler extends MbinMessageHandler
                 $this->signatureValidator->validate($message->request, $message->headers, $message->payload);
             } catch (InboxForwardingException $exception) {
                 $this->logger->info("The message was forwarded by {receivedFrom}. Dispatching a new activity message '{origin}'", ['receivedFrom' => $exception->receivedFrom, 'origin' => $exception->realOrigin]);
-                $body = $this->apHttpClient->getActivityObject($exception->realOrigin, false);
-                $this->bus->dispatch(new ActivityMessage($body));
+                if (!$this->settingsManager->isBannedInstance($exception->realOrigin)) {
+                    $body = $this->apHttpClient->getActivityObject($exception->realOrigin, false);
+                    $this->bus->dispatch(new ActivityMessage($body));
+                } else {
+                    $this->logger->info('[ActivityHandler::doWork] The instance is banned, url: {url}', ['url' => $exception->realOrigin]);
+                }
 
                 return;
             } catch (InvalidUserPublicKeyException $exception) {
