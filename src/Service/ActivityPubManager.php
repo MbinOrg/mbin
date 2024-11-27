@@ -751,11 +751,16 @@ class ActivityPubManager
                                     if (!$this->settingsManager->isBannedInstance($apId)) {
                                         $this->logger->debug('Getting {url} because we dont have it', ['url' => $apId]);
                                         $object = $this->apHttpClient->getActivityObject($apId);
-                                        $this->logger->debug('Dispatching create message for entry: {e}', ['e' => json_encode($object)]);
-                                        $this->bus->dispatch(new CreateMessage($object, true));
                                     } else {
                                         $this->logger->info('The instance is banned, url: {url}', ['url' => $apId]);
                                     }
+                                }
+                                
+                                if (!$this->settingsManager->isBannedInstance($apId)) {
+                                    $this->logger->debug('Dispatching create message for entry: {e}', ['e' => json_encode($object)]);
+                                    $this->bus->dispatch(new CreateMessage($object, true));
+                                 } else {
+                                    $this->logger->info('The instance is banned, url: {url}', ['url' => $apId]);
                                 }
                             }
                         }
