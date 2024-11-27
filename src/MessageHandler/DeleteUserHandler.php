@@ -71,19 +71,19 @@ class DeleteUserHandler extends MbinMessageHandler
         try {
             $this->userManager->detachAvatar($user);
         } catch (\Exception|\Error $e) {
-            $this->logger->error("couldn't delete the avatar of {user} at '{path}': {message}", ['user' => $user->username, 'path' => $user->avatar?->filePath, 'message' => \get_class($e).': '.$e->getMessage()]);
+            $this->logger->error("[ClearDeletedUserHandler::__invoke] Couldn't delete the avatar of {user} at '{path}': {message}", ['user' => $user->username, 'path' => $user->avatar?->filePath, 'message' => \get_class($e).': '.$e->getMessage()]);
         }
         try {
             $this->userManager->detachCover($user);
         } catch (\Exception|\Error $e) {
-            $this->logger->error("couldn't delete the cover of {user} at '{path}': {message}", ['user' => $user->username, 'path' => $user->cover?->filePath, 'message' => \get_class($e).': '.$e->getMessage()]);
+            $this->logger->error("[ClearDeletedUserHandler::__invoke] Couldn't delete the cover of {user} at '{path}': {message}", ['user' => $user->username, 'path' => $user->cover?->filePath, 'message' => \get_class($e).': '.$e->getMessage()]);
         }
         $filePathsOfUser = $this->userManager->getAllImageFilePathsOfUser($user);
         foreach ($filePathsOfUser as $path) {
             try {
                 $this->imageManager->remove($path);
             } catch (\Exception|\Error $e) {
-                $this->logger->error("couldn't delete image of {user} at '{path}': {message}", ['user' => $user->username, 'path' => $path, 'message' => \get_class($e).': '.$e->getMessage()]);
+                $this->logger->error("[ClearDeletedUserHandler::__invoke] Couldn't delete image of {user} at '{path}': {message}", ['user' => $user->username, 'path' => $path, 'message' => \get_class($e).': '.$e->getMessage()]);
             }
         }
 

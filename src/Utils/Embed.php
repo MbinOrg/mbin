@@ -45,7 +45,7 @@ class Embed
             return $this;
         }
 
-        $this->logger->debug('Embed:fetch: leftover data', [
+        $this->logger->debug('[Embed::fetch] leftover data', [
             'url' => $this->url,
             'title' => $this->title,
             'description' => $this->description,
@@ -62,7 +62,7 @@ class Embed
                     $embed = $this->fetchEmbed($url);
                     $oembed = $embed->getOEmbed();
                 } catch (\Exception $e) {
-                    $this->logger->info('Embed:fetch: fetch failed: '.$e->getMessage());
+                    $this->logger->info('[Embed::fetch] Fetch failed: '.$e->getMessage());
                     $c = clone $this;
 
                     return $c;
@@ -81,10 +81,10 @@ class Embed
                         $c->html = $this->cleanIframe($embed->code->html);
                     }
                 } catch (\TypeError $e) {
-                    $this->logger->info('Embed:fetch: html prepare failed: '.$e->getMessage());
+                    $this->logger->info('[Embed::fetch] HTML prepare failed: '.$e->getMessage());
                 }
 
-                $this->logger->debug('Embed:fetch: fetch success, returning', [
+                $this->logger->debug('[Embed::fetch] Fetch success, returning', [
                     'url' => $c->url,
                     'title' => $c->title,
                     'description' => $c->description,
@@ -103,7 +103,7 @@ class Embed
         $embed = $fetcher->get($url);
 
         if ($this->detectFaultyRedirectEmbed($embed)) {
-            $this->logger->debug('Embed:fetch: suspecting faulty redirect, refetching', [
+            $this->logger->debug('[Embed::fetch] Suspecting faulty redirect, refetching', [
                 'requestUrl' => $url,
                 'responseUrl' => $embed->getUri(),
             ]);

@@ -28,7 +28,7 @@ class ClearDeletedUserHandler
             try {
                 $this->bus->dispatch(new DeleteUserMessage($user->getId()));
             } catch (\Exception|\Error $e) {
-                $this->logger->error("couldn't delete user {user}: {message}", ['user' => $user->username, 'message' => \get_class($e).': '.$e->getMessage()]);
+                $this->logger->error("[ClearDeletedUserHandler::__invoke] Couldn't delete user {user}: {message}", ['user' => $user->username, 'message' => \get_class($e).': '.$e->getMessage()]);
             }
         }
     }

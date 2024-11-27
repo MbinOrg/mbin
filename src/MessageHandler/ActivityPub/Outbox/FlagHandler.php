@@ -44,12 +44,12 @@ class FlagHandler extends MbinMessageHandler
         if (!($message instanceof FlagMessage)) {
             throw new \LogicException();
         }
-        $this->logger->debug('got a FlagMessage');
+        $this->logger->debug('[FlagHandler::doWork] Got a FlagMessage');
         $report = $this->reportRepository->find($message->reportId);
-        $this->logger->debug('found the report: '.json_encode($report));
+        $this->logger->debug('[FlagHandler::doWork] Found the report: '.json_encode($report));
         $inboxes = $this->getInboxUrls($report);
         if (0 === \sizeof($inboxes)) {
-            $this->logger->info("couldn't find any inboxes to send the FlagMessage to");
+            $this->logger->info("[FlagHandler::doWork] couldn't find any inboxes to send the FlagMessage to");
 
             return;
         }

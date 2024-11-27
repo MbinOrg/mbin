@@ -89,7 +89,7 @@ class AddHandler extends MbinMessageHandler
 
             return;
         }
-        $this->logger->info('"{actor}" ({actorId}) added "{added}" ({addedId}) as moderator to "{magName}" ({magId})', [
+        $this->logger->info('[AddHandler::handleModeratorAdd] "{actor}" ({actorId}) added "{added}" ({addedId}) as moderator to "{magName}" ({magId})', [
             'actor' => $actor->username,
             'actorId' => $actor->getId(),
             'added' => $object->username,
@@ -120,7 +120,7 @@ class AddHandler extends MbinMessageHandler
             if (Entry::class === $pair['type']) {
                 $existingEntry = $this->entryRepository->findOneBy(['id' => $pair['id']]);
                 if ($existingEntry && !$existingEntry->sticky) {
-                    $this->logger->info('pinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
+                    $this->logger->info('[AddHandler::handlePinnedAdd] Pinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
                     $this->entryManager->pin($existingEntry, $actor);
                 }
             }
@@ -131,7 +131,7 @@ class AddHandler extends MbinMessageHandler
                     $this->apHttpClient->invalidateCollectionObjectCache($existingEntry->magazine->apFeaturedUrl);
                 }
                 if (!$existingEntry->sticky) {
-                    $this->logger->info('pinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
+                    $this->logger->info('[AddHandler::handlePinnedAdd] Pinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
                     $this->entryManager->pin($existingEntry, $actor);
                 }
             } else {
