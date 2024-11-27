@@ -746,20 +746,15 @@ class ActivityPubManager
                                 $this->logger->debug('Pinning existing entry: {title}', ['title' => $existingEntry->title]);
                                 $this->entryManager->pin($existingEntry, null);
                             } else {
-                                $object = $item;
-                                if ($isString) {
-                                    if (!$this->settingsManager->isBannedInstance($apId)) {
+                                if (!$this->settingsManager->isBannedInstance($apId)) {
+                                    $object = $item;
+                                    if ($isString) {
                                         $this->logger->debug('Getting {url} because we dont have it', ['url' => $apId]);
                                         $object = $this->apHttpClient->getActivityObject($apId);
-                                    } else {
-                                        $this->logger->info('The instance is banned, url: {url}', ['url' => $apId]);
                                     }
-                                }
-                                
-                                if (!$this->settingsManager->isBannedInstance($apId)) {
                                     $this->logger->debug('Dispatching create message for entry: {e}', ['e' => json_encode($object)]);
                                     $this->bus->dispatch(new CreateMessage($object, true));
-                                 } else {
+                                } else {
                                     $this->logger->info('The instance is banned, url: {url}', ['url' => $apId]);
                                 }
                             }
