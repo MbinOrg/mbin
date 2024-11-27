@@ -755,7 +755,7 @@ class ActivityPubManager
                                     $this->logger->debug('Dispatching create message for entry: {e}', ['e' => json_encode($object)]);
                                     $this->bus->dispatch(new CreateMessage($object, true));
                                 } else {
-                                    $this->logger->info('The instance is banned, url: {url}', ['url' => $apId]);
+                                    $this->logger->info('[ActivityPubManager::handleMagazineFeaturedCollection] The instance is banned, url: {url}', ['url' => $apId]);
                                 }
                             }
                         }
@@ -995,7 +995,7 @@ class ActivityPubManager
                     $this->logger->debug('Object is fetched from {url} because it is a string and could not be found in our repo', ['url' => $apObject]);
                     $object = $this->apHttpClient->getActivityObject($apObject);
                 } else {
-                    $this->logger->info('The instance is banned, url: {url}', ['url' => $apObject]);
+                    $this->logger->info('[ActivityPubManager::getEntityObject] The instance is banned, url: {url}', ['url' => $apObject]);
                 }
             }
         } else {
@@ -1008,7 +1008,7 @@ class ActivityPubManager
         }
 
         if (!$activity && !$object) {
-            $this->logger->error("The activity is still null and we couldn't get the object from the url, discarding", $fullPayload);
+            $this->logger->error("[ActivityPubManager::getEntityObject] The activity is still null and we couldn't get the object from the url, discarding", $fullPayload);
 
             return null;
         }

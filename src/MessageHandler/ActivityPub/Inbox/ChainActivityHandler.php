@@ -69,7 +69,7 @@ class ChainActivityHandler extends MbinMessageHandler
         try {
             $entity = $this->retrieveObject($object['id']);
         } catch (InstanceBannedException) {
-            $this->logger->info('The instance is banned, url: {url}', ['url' => $object['id']]);
+            $this->logger->info('[ChainActivityHandler::doWork] The instance is banned, url: {url}', ['url' => $object['id']]);
 
             return;
         }
@@ -144,15 +144,15 @@ class ChainActivityHandler extends MbinMessageHandler
                     $this->logger->warning('Could not create an object from type {t} on {url}: {o}', ['t' => $object['type'], 'url' => $apUrl, 'o' => $object]);
             }
         } catch (UserBannedException) {
-            $this->logger->info('The user is banned, url: {url}', ['url' => $apUrl]);
+            $this->logger->info('[ChainActivityHandler::retrieveObject] The user is banned, url: {url}', ['url' => $apUrl]);
         } catch (UserDeletedException) {
-            $this->logger->info('The user is deleted, url: {url}', ['url' => $apUrl]);
+            $this->logger->info('[ChainActivityHandler::retrieveObject] The user is deleted, url: {url}', ['url' => $apUrl]);
         } catch (TagBannedException) {
-            $this->logger->info('One of the used tags is banned, url: {url}', ['url' => $apUrl]);
+            $this->logger->info('[ChainActivityHandler::retrieveObject] One of the used tags is banned, url: {url}', ['url' => $apUrl]);
         } catch (InstanceBannedException) {
-            $this->logger->info('The instance is banned, url: {url}', ['url' => $apUrl]);
+            $this->logger->info('[ChainActivityHandler::retrieveObject] The instance is banned, url: {url}', ['url' => $apUrl]);
         } catch (EntityNotFoundException $e) {
-            $this->logger->error('There was an exception while getting {url}: {ex} - {m}. {o}', ['url' => $apUrl, 'ex' => \get_class($e), 'm' => $e->getMessage(), 'o' => $e]);
+            $this->logger->error('[ChainActivityHandler::retrieveObject] There was an exception while getting {url}: {ex} - {m}. {o}', ['url' => $apUrl, 'ex' => \get_class($e), 'm' => $e->getMessage(), 'o' => $e]);
         }
 
         return null;
