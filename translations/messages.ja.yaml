@@ -436,3 +436,6 @@ toolbar.strikethrough: 取り消し線
 federation_page_dead_description: 10回のアクティビティが連続で配送に失敗したか、一週間以上配送に成功していないインスタンス
 federated_search_only_loggedin: ログインしていない場合は連合検索が制限されます
 ignore_magazines_custom_css: マガジンのカスタムCSSを無視する
+show_related_entries: ランダムなスレッドを表示
+show_related_posts: ランダムな投稿を表示
+show_active_users: アクティブなユーザーを表示
