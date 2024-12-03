@@ -22,7 +22,7 @@ class Kernel extends BaseKernel
     {
         $projectDir = $this->getProjectDir();
         $routes->import($projectDir.'/config/{routes}/'.$this->environment.'/*.yaml');
-        $routes->import($projectDir.'/config/{kbin_routes}/*.yaml');
+        $routes->import($projectDir.'/config/{mbin_routes}/*.yaml');
         $routes->import($projectDir.'/config/{routes}/*.yaml');
 
         if (is_file($projectDir.'/config/routes.yaml')) {

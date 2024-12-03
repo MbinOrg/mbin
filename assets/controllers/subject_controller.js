@@ -1,5 +1,5 @@
 import { fetch, ok } from '../utils/http';
-import getIntIdFromElement, { getDepth, getLevel, getTypeFromNotification } from '../utils/kbin';
+import getIntIdFromElement, { getDepth, getLevel, getTypeFromNotification } from '../utils/mbin';
 import { Controller } from '@hotwired/stimulus';
 import GLightbox from 'glightbox';
 import router from '../utils/routing';
