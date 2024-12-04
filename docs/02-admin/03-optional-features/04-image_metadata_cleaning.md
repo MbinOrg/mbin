@@ -22,5 +22,5 @@ Available cleaning modes are:
 
 - `none`: no metadata cleaning occurs.
 - `sanitize`: GPS and serial number metadata is removed. This is the default for uploaded images.
-- `scrub`: removes most of image metadata save for those needed for proper image rendering
+- `scrub`: most metadata is removed, except for the metadata required for proper image rendering
   and XMP IPTC attribution metadata. [This line needs improvement]
