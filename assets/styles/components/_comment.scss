@@ -154,7 +154,7 @@ $comment-margin-sm: .3rem;
       button,
       a {
         font-size: .8rem;
-        @include kbin-btn-link;
+        @include mbin-btn-link;
       }
 
       > li {
@@ -171,7 +171,7 @@ $comment-margin-sm: .3rem;
     }
 
     a {
-      @include kbin-btn-link;
+      @include mbin-btn-link;
     }
 
     figure {

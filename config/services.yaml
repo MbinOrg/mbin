@@ -1,7 +1,7 @@
 framework:
     serializer:
         mapping:
-            paths: ['%kernel.project_dir%/config/kbin_serialization']
+            paths: ['%kernel.project_dir%/config/mbin_serialization']
 
 parameters:
     kbin_domain: '%env(KBIN_DOMAIN)%'

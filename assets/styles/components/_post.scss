@@ -139,7 +139,7 @@
       button,
       a {
         font-size: .8rem;
-        @include kbin-btn-link;
+        @include mbin-btn-link;
       }
 
       li:first-child a {
@@ -148,7 +148,7 @@
     }
 
     a {
-      @include kbin-btn-link;
+      @include mbin-btn-link;
     }
 
     figure {

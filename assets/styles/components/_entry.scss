@@ -332,7 +332,7 @@
       }
 
       button, input[type='submit'], a {
-        @include kbin-btn-link;
+        @include mbin-btn-link;
       }
     }
 
