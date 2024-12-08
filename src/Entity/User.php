@@ -93,6 +93,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public ?Image $cover = null;
     #[Column(type: 'string', unique: true, nullable: false)]
     public string $email;
+    #[Column(type: 'string', nullable: true)]
+    public ?string $ip = null;
     #[Column(type: 'string', unique: true, nullable: false)]
     public string $username;
     #[Column(type: 'json', nullable: false, options: ['jsonb' => true])]

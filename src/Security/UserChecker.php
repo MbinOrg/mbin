@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Security;
 
 use App\Entity\User as AppUser;
+use App\Service\IpResolver;
 use App\Service\UserManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAccountStatusException;
@@ -18,6 +20,8 @@ class UserChecker implements UserCheckerInterface
     public function __construct(
         private readonly TranslatorInterface $translator,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly IpResolver $ipResolver,
         private readonly UserManager $userManager
     ) {
     }
@@ -55,5 +59,8 @@ class UserChecker implements UserCheckerInterface
         if (!$user instanceof AppUser) {
             return;
         }
+
+        $user->ip = $this->ipResolver->resolve();
+        $this->entityManager->flush();
     }
 }
