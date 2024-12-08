@@ -2448,16 +2448,16 @@
         },
         {
             "name": "friendsofsymfony/jsrouting-bundle",
-            "version": "3.5.1",
+            "version": "3.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSJsRoutingBundle.git",
-                "reference": "57ba412d813bb150b8a4ff9b65d4513725e31a1d"
+                "reference": "af2ee3a5406a3b57dfe1a0c010d2a29c2fdbfeed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSJsRoutingBundle/zipball/57ba412d813bb150b8a4ff9b65d4513725e31a1d",
-                "reference": "57ba412d813bb150b8a4ff9b65d4513725e31a1d",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSJsRoutingBundle/zipball/af2ee3a5406a3b57dfe1a0c010d2a29c2fdbfeed",
+                "reference": "af2ee3a5406a3b57dfe1a0c010d2a29c2fdbfeed",
                 "shasum": ""
             },
             "require": {
@@ -2508,9 +2508,9 @@
             ],
             "support": {
                 "issues": "https://github.com/FriendsOfSymfony/FOSJsRoutingBundle/issues",
-                "source": "https://github.com/FriendsOfSymfony/FOSJsRoutingBundle/tree/3.5.1"
+                "source": "https://github.com/FriendsOfSymfony/FOSJsRoutingBundle/tree/3.5.2"
             },
-            "time": "2024-11-22T10:11:52+00:00"
+            "time": "2024-11-26T15:26:56+00:00"
         },
         {
             "name": "furqansiddiqui/bip39-mnemonic-php",
@@ -9473,12 +9473,12 @@
             },
             "type": "library",
             "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/contracts",
+                    "name": "symfony/contracts"
+                },
                 "branch-alias": {
                     "dev-main": "3.5-dev"
-                },
-                "thanks": {
-                    "name": "symfony/contracts",
-                    "url": "https://github.com/symfony/contracts"
                 }
             },
             "autoload": {
@@ -12420,16 +12420,16 @@
         },
         {
             "name": "symfony/serializer",
-            "version": "v7.1.8",
+            "version": "v7.1.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/serializer.git",
-                "reference": "6066de113408496e1e3d4bf9e21fb209d344768b"
+                "reference": "39ec8beb1b8149c96785abad0e9ee390375a3e58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/serializer/zipball/6066de113408496e1e3d4bf9e21fb209d344768b",
-                "reference": "6066de113408496e1e3d4bf9e21fb209d344768b",
+                "url": "https://api.github.com/repos/symfony/serializer/zipball/39ec8beb1b8149c96785abad0e9ee390375a3e58",
+                "reference": "39ec8beb1b8149c96785abad0e9ee390375a3e58",
                 "shasum": ""
             },
             "require": {
@@ -12499,7 +12499,7 @@
             "description": "Handles serializing and deserializing data structures, including object graphs, into array structures or other formats like XML and JSON.",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/serializer/tree/v7.1.8"
+                "source": "https://github.com/symfony/serializer/tree/v7.1.9"
             },
             "funding": [
                 {
@@ -12515,7 +12515,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-09T09:16:45+00:00"
+            "time": "2024-11-14T21:24:44+00:00"
         },
         {
             "name": "symfony/service-contracts",
