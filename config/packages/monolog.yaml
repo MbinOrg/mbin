@@ -7,13 +7,13 @@ when@dev:
         handlers:
             main:
                 type: rotating_file
-                path: '%kernel.logs_dir%/%kernel.environment%.log'
+                path: '/var/log/mbin/%kernel.environment%.log'
                 # Or use: "debug" instead of "info" for more verbose log (debug) messages
-                level: info
+                level: debug
                 # Enable full stacktrace, set this to false to disable stacktraces
                 include_stacktraces: true
                 max_files: 10
-                channels: ['!event']
+                channels: ['!event', '!deprecation', '!doctrine', '!security']
             stderr:
                 type: stream
                 path: 'php://stderr'

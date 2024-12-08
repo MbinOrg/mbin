@@ -20,12 +20,12 @@
   z-index: var(--z-index-popover, 25);
 
   a {
-    color: var(--kbin-meta-link-color) !important;
+    color: var(--kbin-meta-link-color);
     line-height: normal;
     display: inline-block;
 
     &:hover {
-      color: var(--kbin-meta-link-color-hover) !important;
+      color: var(--kbin-meta-link-color-hover);
     }
   }
 }

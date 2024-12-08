@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
+use App\Enums\ENotificationStatus;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 
@@ -36,6 +37,7 @@ class MagazineResponseDto implements \JsonSerializable
     public ?string $serverSoftware = null;
     public ?string $serverSoftwareVersion = null;
     public bool $isPostingRestrictedToMods = false;
+    public ?ENotificationStatus $notificationStatus = null;
 
     public static function create(
         ?ModeratorResponseDto $owner = null,
