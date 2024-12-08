@@ -15,7 +15,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(
     name: 'mbin:ap:import',
-    description: 'This command allows you import AP resource.'
+    description: 'This command allows you to import an AP resource.'
 )]
 class ApImportObject extends Command
 {

@@ -23,7 +23,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'mbin:entries:move',
-    description: 'This command will allow you to move the entries to the new magazine based on the tag.'
+    description: 'This command allows you to move entries to a new magazine based on their tag.'
 )]
 class MoveEntriesByTagCommand extends Command
 {
