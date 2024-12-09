@@ -25,6 +25,11 @@
         </p>
     </div>
     {{ component('user_actions', {user: post.user}) }}
+    {% if app.user is defined and app.user is not same as null and app.user is not same as post.user %}
+        <div class="notification-switch-container" data-controller="html-refresh">
+            {{ component('notification_switch', {target: post.user}) }}
+        </div>
+    {% endif %}
     <ul class="info">
         <li>{{ 'added'|trans }}: {{ component('date', {date: post.createdAt}) }}</li>
         <li>{{ 'up_votes'|trans }}:

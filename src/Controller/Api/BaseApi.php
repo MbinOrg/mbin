@@ -6,6 +6,7 @@ namespace App\Controller\Api;
 
 use App\Controller\AbstractController;
 use App\DTO\MagazineDto;
+use App\DTO\MagazineResponseDto;
 use App\DTO\ReportDto;
 use App\DTO\ReportRequestDto;
 use App\DTO\UserDto;
@@ -36,6 +37,7 @@ use App\Repository\Criteria;
 use App\Repository\EntryCommentRepository;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
+use App\Repository\NotificationSettingsRepository;
 use App\Repository\OAuth2ClientAccessRepository;
 use App\Repository\PostCommentRepository;
 use App\Repository\PostRepository;
@@ -98,6 +100,7 @@ class BaseApi extends AbstractController
         private readonly ImageRepository $imageRepository,
         private readonly ReportManager $reportManager,
         private readonly OAuth2ClientAccessRepository $clientAccessRepository,
+        protected readonly NotificationSettingsRepository $notificationSettingsRepository,
     ) {
     }
 
@@ -297,11 +300,15 @@ class BaseApi extends AbstractController
      *
      * @param MagazineDto $dto The MagazineDto to serialize
      *
-     * @return array An associative array representation of the entry's safe fields, to be used as JSON
+     * @return MagazineResponseDto An associative array representation of the entry's safe fields, to be used as JSON
      */
-    protected function serializeMagazine(MagazineDto $dto)
+    protected function serializeMagazine(MagazineDto $dto): MagazineResponseDto
     {
         $response = $this->magazineFactory->createResponseDto($dto);
+
+        if ($user = $this->getUser()) {
+            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto);
+        }
 
         return $response;
     }
@@ -316,6 +323,10 @@ class BaseApi extends AbstractController
     protected function serializeUser(UserDto $dto): UserResponseDto
     {
         $response = new UserResponseDto($dto);
+
+        if ($user = $this->getUser()) {
+            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto);
+        }
 
         return $response;
     }
