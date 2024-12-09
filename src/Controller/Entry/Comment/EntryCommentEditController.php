@@ -13,6 +13,7 @@ use App\Form\EntryCommentType;
 use App\PageView\EntryCommentPageView;
 use App\Repository\EntryCommentRepository;
 use App\Service\EntryCommentManager;
+use App\Service\IpResolver;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,6 +28,7 @@ class EntryCommentEditController extends AbstractController
     public function __construct(
         private readonly EntryCommentManager $manager,
         private readonly EntryCommentRepository $repository,
+        private readonly IpResolver $ipResolver
     ) {
     }
 
@@ -44,6 +46,7 @@ class EntryCommentEditController extends AbstractController
         $dto = $this->manager->createDto($comment);
 
         $form = $this->getForm($dto, $comment);
+        $dto->ip = $this->ipResolver->resolve();
         try {
             // Could thrown an error on event handlers (eg. onPostSubmit if a user upload an incorrect image)
             $form->handleRequest($request);
