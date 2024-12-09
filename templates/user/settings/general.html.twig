@@ -41,6 +41,9 @@
             {{ form_row(form.notifyOnNewPostCommentReply, {label: 'notify_on_new_post_comment_reply', row_attr: {class: 'checkbox'}}) }}
             {{ form_row(form.notifyOnNewEntry, {label: 'notify_on_new_entry', row_attr: {class: 'checkbox'}}) }}
             {{ form_row(form.notifyOnNewPost, {label: 'notify_on_new_posts', row_attr: {class: 'checkbox'}}) }}
+            {% if app.user.admin %}
+                {{ form_row(form.notifyOnUserSignup, {label: 'notify_on_user_signup', row_attr: {class: 'checkbox'}}) }}
+            {% endif %}
             <div class="row actions">
                 {{ form_row(form.submit, {label: 'save', attr: {class: 'btn btn__primary'}}) }}
             </div>

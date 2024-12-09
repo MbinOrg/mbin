@@ -214,6 +214,7 @@ notify_on_new_post_comment_reply: Replies to my comments on any posts
 notify_on_new_entry: New threads (links or articles) in any magazine to which I'm
   subscribed
 notify_on_new_posts: New posts in any magazine to which I'm subscribed
+notify_on_user_signup: New signups
 save: Save
 about: About
 old_email: Current email
@@ -875,6 +876,9 @@ notification_title_message: New direct message
 notification_title_new_post: New Post
 notification_title_removed_post: A post was removed
 notification_title_edited_post: A post was edited
+notification_title_new_signup: A new user registered
+notification_body_new_signup: The user %u% registered.
+notification_body2_new_signup_approval: You need to approve the request before they can log in
 show_related_magazines: Show random magazines
 show_related_entries: Show random threads
 show_related_posts: Show random posts
