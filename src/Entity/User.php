@@ -243,7 +243,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public string $type;
 
     #[Column(type: 'text', nullable: true)]
-    public string $applicationText;
+    public ?string $applicationText;
 
     #[Column(type: 'enumApplicationStatus', nullable: false, options: ['default' => EApplicationStatus::Approved->value])]
     private string $applicationStatus;
