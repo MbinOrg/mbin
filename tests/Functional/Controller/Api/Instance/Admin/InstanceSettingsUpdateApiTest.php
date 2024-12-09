@@ -38,6 +38,7 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
         'MBIN_SSO_ONLY_MODE',
         'MBIN_SSO_SHOW_FIRST',
         'MAX_IMAGE_BYTES',
+        'MBIN_NEW_USERS_NEED_APPROVAL',
     ];
 
     public function testApiCannotUpdateInstanceSettingsAnonymous(): void
@@ -112,6 +113,7 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'MBIN_SSO_ONLY_MODE' => false,
             'MBIN_SSO_SHOW_FIRST' => false,
             'MAX_IMAGE_BYTES' => 10000,
+            'MBIN_NEW_USERS_NEED_APPROVAL' => false,
         ];
 
         $this->client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);
@@ -152,6 +154,7 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'MBIN_SSO_ONLY_MODE' => true,
             'MBIN_SSO_SHOW_FIRST' => true,
             'MAX_IMAGE_BYTES' => 30000,
+            'MBIN_NEW_USERS_NEED_APPROVAL' => false,
         ];
 
         $this->client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);
