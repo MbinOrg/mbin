@@ -20,7 +20,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'mbin:posts:move',
-    description: 'This command will allow you to move the posts to the new magazine based on the tag.'
+    description: 'This command allows you to move posts to a new magazine based on their tag.'
 )]
 class MovePostsByTagCommand extends Command
 {

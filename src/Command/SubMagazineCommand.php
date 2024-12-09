@@ -17,7 +17,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'mbin:magazine:sub',
-    description: 'This command allows subscribe magazine.',
+    description: 'This command allows to subscribe a user to a magazine.',
 )]
 class SubMagazineCommand extends Command
 {

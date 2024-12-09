@@ -1,0 +1,305 @@
+# CLI
+
+## User Management
+
+### mbin:user:create
+This command allows you to create user, optionally granting administrator or global moderator privileges.
+
+Usage:
+```shell
+php bin/console mbin:user:create [-r|--remove] [--admin] [--moderator] <username> <email> <password>
+```
+
+Arguments:
+- `username`: the username that should be created.
+- `email`: the email for the user, keep in mind that this command will automatically verify the created user, so no email will be sent.
+- `password`: the password for the user.
+
+Options:
+- `-r|--remove`: purge the user from the database, **without notifying the rest of the fediverse about it**. 
+  If you want the rest of the fediverse notified please use the `mbin:user:delete` command instead.
+- `--admin`: make the created user an admin.
+- `--moderator`: make the created user a global moderator.
+
+### mbin:user:admin
+
+This command allows you to grant administrator privileges to the user.
+
+Usage:
+```shell
+php bin/console mbin:user:admin [-r|--remove] <username>
+```
+
+Arguments:
+- `username`: the username whose rights are to be modified.
+
+Options:
+- `-r|--remove`: instead of granting privileges, remove them.
+
+### mbin:user:delete
+This command will delete the supplied user and notify the fediverse about it. This is an asynchronous job, 
+so you will not see the change immediately.
+
+Usage:
+```shell
+php bin/console mbin:user:delete <user>
+```
+
+Arguments:
+- `user`: the username of the user.
+
+### mbin:user:moderator
+This command allows you to grant global moderator privileges to the user.
+
+Usage:
+```shell
+php bin/console mbin:user:moderator [-r|--remove] <username>
+```
+
+Arguments:
+- `username`: the username whose rights are to be modified.
+
+Options:
+- `-r|--remove`: instead of granting privileges, remove them.
+
+### mbin:user:password
+This command allows you to manually set or reset a users' password.
+
+Usage:
+```shell
+php bin/console mbin:user:password <username> <password>
+```
+
+Arguments:
+- `username`: the username whose password should be changed.
+- `password`: the password to change to.
+
+### mbin:user:verify
+This command allows you to manually activate or deactivate a user, bypassing email verification requirement.
+
+Usage:
+```shell
+php bin/console mbin:user:verify [-a|--activate] [-d|--deactivate] <username>
+```
+
+Arguments:
+- `username`: the user to activate (verify) or deactivate (remove verification).
+
+Options:
+- `-a|--activate`: Activate user, bypass email verification.
+- `-d|--deactivate`: Deactivate user, require email (re)verification.
+
+> [!NOTE] 
+> If neither `--activate` nor `--deactivate` are provided, the current verification status will be returned
+
+### mbin:user:unsub
+
+> [!NOTE]
+> This command is old and should probably not be used
+
+Removes all followers from a user.
+
+Usage:
+```shell
+php bin/console mbin:user:unsub <username>
+```
+
+Arguments:
+- `username`: the user from which to remove all local followers.
+
+## Magazine Management
+
+### mbin:magazine:create
+
+This command allows you to create, delete and purge magazines.
+
+Usage:
+```shell
+php bin/console mbin:magazine:create [-o|--owner OWNER] [-r|--remove] [--purge] [--restricted] [-t|--title TITLE] [-d|--description DESCRIPTION] <name>
+```
+
+Arguments:
+- `name`: the name of the magazine that is part of the URL
+
+Options:
+- `-o|--owner OWNER`: makes the supplied username the owner of the newly created magazine. 
+  If this is omitted the admin account will be the owner of the magazine.
+- `--restricted`: create the magazine with posting restricted to the moderators of this magazine.
+- `-r|--remove`: instead of creating the magazine, remove it (not notifying the rest of the fediverse).
+- `--purge`: completely remove the magazine from the db (not notifying the rest of the fediverse).
+  If this and `--remove` are supplied, `--remove` has precedence over this.
+- `-t|--title TITLE`: makes the supplied string the title of the magazine (aka. the display name).
+- `-d|--description DESCRIPTION`: makes the supplied string the description of the magazine.
+
+### mbin:magazine:sub
+
+This command allows to subscribe a user to a magazine.
+
+Usage:
+```shell
+php bin/console mbin:magazine:sub [-u|--unsub] <magazine> <username>
+```
+
+Arguments:
+- `magazine`: the magazine name to subscribe the user to.
+- `username`: the user that should be subscribed to the magazine.
+
+Options:
+- `-u|--unsub`: instead of subscribing to the magazine, unsubscribe the user from the magazine.
+
+### mbin:magazine:unsub
+
+Remove all the subscribers from a magazine.
+
+Usage:
+```shell
+php bin/console mbin:magazine:unsub <magazine>
+```
+
+Arguments:
+- `magazine`: the magazine name from which to remove all the subscribers.
+
+## Post Management
+
+### mbin:entries:move
+
+> [!WARN]
+> This command should not be used, as none of the changes will be federated.
+
+This command allows you to move entries to a new magazine based on their tag.
+
+Usage:
+```shell
+php bin/console mbin:entries:move <magazine> <tag>
+```
+
+Arguments:
+- `magazine`: the magazine to which the entries should be moved
+- `tag`: the (hash)tag based on which the entries should be moved 
+
+### mbin:posts:move
+
+> [!WARN]
+> This command should not be used, as none of the changes will be federated.
+
+This command allows you to move posts to a new magazine based on their tag.
+
+Usage:
+```shell
+php bin/console mbin:posts:move <magazine> <tag>
+```
+
+Arguments:
+- `magazine`: the magazine to which the posts should be moved
+- `tag`: the (hash)tag based on which the posts should be moved
+
+### mbin:posts:magazines
+
+> [!WARN]
+> This command should not be used. Posts are automatically assigned to a magazine based on their tag.
+
+This command will assign magazines to posts based on their tags.
+
+Usage:
+```shell
+php bin/console mbin:posts:magazines
+```
+
+## Activity Pub
+
+### mbin:actor:update
+
+> [!NOTE]
+> This command will trigger **asynchronous** updates of remote users or magazines
+
+This command will allow you to update remote actor (user/magazine) info.
+
+Usage:
+```shell
+php bin/console mbin:actor:update [--users] [--magazines] [--force] [<user>]
+```
+
+Arguments:
+- `user`: the username to dispatch an update for. 
+
+Options:
+- `--users`: if this options is provided up to 10,000 remote users ordered by their last update time will be updated
+- `--magazines`: if this options is provided up to 10,000 remote magazines ordered by their last update time will be updated
+
+### mbin:ap:import
+
+> [!NOTE]
+> This command will trigger an **asynchronous** import
+
+This command allows you to import an AP resource.
+
+Usage:
+```shell
+php bin/console mbin:ap:import <url>
+```
+
+Arguments:
+- `url`: the "id" of the ActivityPub object to import
+
+## Miscellaneous
+
+### mbin:cache:build
+
+This command allows you to rebuild image thumbnail cache.
+It executes the `liip:imagine:cache:resolve` command for every user- and magazine-avatar and linked image in entries and posts.
+
+> [!NOTE]
+> This command will trigger **a lot** of processing if you execute it on a long-running server.
+
+Usage:
+```shell
+php bin/console mbin:cache:build
+```
+
+### mbin:users:remove-marked-for-deletion
+
+> [!NOTE]
+> The same job is executed on a daily schedule automatically. There should be no need to execute this command.
+
+Removes all accounts that are marked for deletion today or in the past.
+
+Usage:
+```shell
+php bin/console mbin:users:remove-marked-for-deletion
+```
+
+### mbin:messenger:failed:remove_all
+
+> [!NOTE]
+> The same job is executed on a daily schedule automatically. There should be no need to execute this command.
+ 
+This command removes all failed messages from the failed queue (database).
+
+Usage:
+```shell
+php bin/console mbin:messenger:failed:remove_all
+```
+
+### mbin:messenger:dead:remove_all
+
+> [!NOTE]
+> The same job is executed on a daily schedule automatically. There should be no need to execute this command.
+
+This command removes all dead messages from the dead queue (database).
+
+Usage:
+```shell
+php bin/console mbin:messenger:dead:remove_all
+```
+
+### mbin:post:remove-duplicates
+
+This command removes post and user duplicates by their ActivityPub ID.
+
+> [!NOTE]
+> We've had a unique index on the ActivityPub ID for a while, hence this command should not do anything
+
+Usage:
+```shell
+php bin/console mbin:user:create [-r|--remove] [--admin] [--moderator] [--] <username> <email> <password>
+```
