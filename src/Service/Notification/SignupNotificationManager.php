@@ -24,6 +24,9 @@ readonly class SignupNotificationManager
     {
         $receivers = $this->userRepository->findAllAdmins();
         foreach ($receivers as $receiver) {
+            if (!$receiver->notifyOnUserSignup) {
+                continue;
+            }
             $notification = new NewSignupNotification($receiver);
             $notification->newUser = $newUser;
             $this->entityManager->persist($notification);
