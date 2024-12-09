@@ -16,8 +16,8 @@ class LanguageListener
     {
         $request = $event->getRequest();
 
-        if ($request->cookies->has('kbin_lang')) {
-            $request->setLocale($request->cookies->get('kbin_lang'));
+        if ($request->cookies->has('mbin_lang')) {
+            $request->setLocale($request->cookies->get('mbin_lang'));
 
             return;
         }
