@@ -131,6 +131,6 @@ class EntryPageFactory
             return $this->imageManager->getUrl($entry->image);
         }
 
-        return $entry->url ?? $this->getActivityPubId($entry);
+        return $entry->url;
     }
 }
