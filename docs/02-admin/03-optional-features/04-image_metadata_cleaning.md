@@ -23,4 +23,6 @@ Available cleaning modes are:
 - `none`: no metadata cleaning occurs.
 - `sanitize`: GPS and serial number metadata is removed. This is the default for uploaded images.
 - `scrub`: most metadata is removed, except for the metadata required for proper image rendering
-  and XMP IPTC attribution metadata. [This line needs improvement]
+  and XMP IPTC attribution metadata.
+
+More detailed information can [be found in the source-code](https://github.com/MbinOrg/mbin/blob/de20877d2d10e085bb35e1e1716ea393b7b8b9fc/src/Utils/ExifCleaner.php#L16) (for example look at `EXIFTOOL_ARGS_SCRUB`). Showing which arguments are passed to the `exiftool` CLI command.
