@@ -60,6 +60,6 @@ export default class extends ApplicationController {
     }
 
     changeLang(event) {
-        window.location.href = '/settings/theme/kbin_lang/' + event.target.value;
+        window.location.href = '/settings/theme/mbin_lang/' + event.target.value;
     }
 }

@@ -16,13 +16,17 @@
         padding: inherit;
         overflow: inherit;
     }
+    header #logo {
+        position: inherit;
+        transform: unset;
+    }
     </style>
 {% endblock %}
 
 {% block header_block %}
     <header id="header" class="header">
-        <div class="kbin-container">
-            <nav class="head-nav"  data-action="click->kbin#toggleNav">
+        <div class="mbin-container">
+            <nav class="head-nav">
                 <div class="brand">
                     <a href="{{ '/' }}">
                         {% if kbin_header_logo() %}

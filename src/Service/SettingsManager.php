@@ -185,7 +185,7 @@ class SettingsManager
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        return $request->cookies->get('kbin_lang') ?? $request->getLocale() ?? $this->get('KBIN_DEFAULT_LANG');
+        return $request->cookies->get('mbin_lang') ?? $request->getLocale() ?? $this->get('KBIN_DEFAULT_LANG');
     }
 
     public function getMaxImageByteString(): string

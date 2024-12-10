@@ -66,7 +66,7 @@
         "stevenmaguire/oauth2-keycloak": "^5.1.0",
         "symfony/amqp-messenger": "7.1.*",
         "symfony/asset": "7.1.*",
-        "symfony/cache": "7.1.*",
+        "symfony/cache": "7.2.*",
         "symfony/console": "7.1.*",
         "symfony/css-selector": "7.1.*",
         "symfony/doctrine-messenger": "7.1.*",
