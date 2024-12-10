@@ -156,3 +156,8 @@
         <a href="{{ path('magazine_panel_reports', { 'name': notification.report.magazine.name, 'status': 'approved' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
     {% endif %}
 {% endblock report_approved_notification %}
+
+{% block new_signup %}
+    {{ 'notification_title_new_signup'|trans }}<br />
+    {{ component('user_inline', { user: notification.newUser } ) }}
+{% endblock %}
