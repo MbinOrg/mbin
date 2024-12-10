@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Message\ActivityPub\Inbox\FollowMessage;
 use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
+use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\Wrapper\FollowResponseWrapper;
 use App\Service\ActivityPubManager;
@@ -28,7 +29,8 @@ class FollowHandler extends MbinMessageHandler
         private readonly MagazineManager $magazineManager,
         private readonly ApHttpClient $client,
         private readonly LoggerInterface $logger,
-        private readonly FollowResponseWrapper $followResponseWrapper
+        private readonly FollowResponseWrapper $followResponseWrapper,
+        private readonly ActivityJsonBuilder $activityJsonBuilder,
     ) {
         parent::__construct($this->entityManager);
     }
@@ -104,13 +106,8 @@ class FollowHandler extends MbinMessageHandler
 
     private function handleFollowRequest(array $payload, User|Magazine $object, bool $isReject = false): void
     {
-        $response = $this->followResponseWrapper->build(
-            $payload['object'],
-            $payload['actor'],
-            $payload['id'],
-            $isReject
-        );
-
+        $activity = $this->followResponseWrapper->build($object, $payload['object'], $isReject);
+        $response = $this->activityJsonBuilder->buildActivityJson($activity);
         $this->client->post($this->client->getInboxUrl($payload['actor']), $object, $response);
     }
 
