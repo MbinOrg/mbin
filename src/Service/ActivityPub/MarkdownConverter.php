@@ -23,6 +23,7 @@ class MarkdownConverter
     {
         $converter = new HtmlConverter(['strip_tags' => true]);
         $converter->getEnvironment()->addConverter(new TableConverter());
+        $converter->getEnvironment()->addConverter(new StrikethroughConverter());
         $value = stripslashes($converter->convert($value));
 
         preg_match_all('/\[([^]]*)\] *\(([^)]*)\)/i', $value, $matches, PREG_SET_ORDER);
