@@ -29,7 +29,8 @@ class UserSettingsDto implements \JsonSerializable
         #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
         public ?array $preferredLanguages = null,
         public ?string $customCss = null,
-        public ?bool $ignoreMagazinesCustomCss = null
+        public ?bool $ignoreMagazinesCustomCss = null,
+        public ?bool $notifyOnUserSignup = null,
     ) {
     }
 
@@ -52,6 +53,7 @@ class UserSettingsDto implements \JsonSerializable
             'preferredLanguages' => $this->preferredLanguages,
             'customCss' => $this->customCss,
             'ignoreMagazinesCustomCss' => $this->ignoreMagazinesCustomCss,
+            'notifyOnUserSignup' => $this->notifyOnUserSignup,
         ];
     }
 

@@ -152,6 +152,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public bool $notifyOnNewPostReply = true;
     #[Column(type: 'boolean', nullable: false)]
     public bool $notifyOnNewPostCommentReply = true;
+    #[Column(type: 'boolean', nullable: false, options: ['default' => true])]
+    public bool $notifyOnUserSignup = true;
     #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
     public bool $addMentionsEntries = false;
     #[Column(type: 'boolean', nullable: false, options: ['default' => true])]

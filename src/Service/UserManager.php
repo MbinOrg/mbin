@@ -19,6 +19,7 @@ use App\Factory\UserFactory;
 use App\Message\ClearDeletedUserMessage;
 use App\Message\DeleteImageMessage;
 use App\Message\DeleteUserMessage;
+use App\Message\Notification\SentNewSignupNotificationMessage;
 use App\Message\UserCreatedMessage;
 use App\Message\UserUpdatedMessage;
 use App\MessageHandler\ClearDeletedUserHandler;
@@ -173,10 +174,17 @@ readonly class UserManager
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
+        if (!$dto->apId) {
+            try {
+                $this->bus->dispatch(new SentNewSignupNotificationMessage($user->getId()));
+            } catch (\Throwable $e) {
+            }
+        }
+
         if ($verifyUserEmail) {
             try {
                 $this->bus->dispatch(new UserCreatedMessage($user->getId()));
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
             }
         }
 
