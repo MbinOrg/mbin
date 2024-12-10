@@ -86,7 +86,7 @@ class NotificationSettingsRepository extends ServiceEntityRepository
             if ($target instanceof Entry) {
                 $targetId = $target->getId();
                 $notifyCol = 'notify_on_new_entry';
-                $activateMagazineNotifications = true;
+                $isMagazineLevel = true;
                 $dontNeedSubscription = false;
                 $dontNeedToBeAuthor = true;
                 $targetParentUserId = null;
@@ -99,7 +99,7 @@ class NotificationSettingsRepository extends ServiceEntityRepository
                     $notifyCol = 'notify_on_new_entry_comment_reply';
                     $targetParentUserId = $target->parent->user->getId();
                 }
-                $activateMagazineNotifications = false;
+                $isMagazineLevel = false;
                 $dontNeedSubscription = true;
                 $dontNeedToBeAuthor = false;
             }
@@ -108,7 +108,7 @@ class NotificationSettingsRepository extends ServiceEntityRepository
             if ($target instanceof Post) {
                 $targetId = $target->getId();
                 $notifyCol = 'notify_on_new_post';
-                $activateMagazineNotifications = true;
+                $isMagazineLevel = true;
                 $dontNeedSubscription = false;
                 $dontNeedToBeAuthor = true;
                 $targetParentUserId = null;
@@ -121,13 +121,14 @@ class NotificationSettingsRepository extends ServiceEntityRepository
                     $notifyCol = 'notify_on_new_post_comment_reply';
                     $targetParentUserId = $target->parent->user->getId();
                 }
-                $activateMagazineNotifications = false;
+                $isMagazineLevel = false;
                 $dontNeedSubscription = true;
                 $dontNeedToBeAuthor = false;
             }
         }
 
-        $activateMagazineNotificationsString = $activateMagazineNotifications ? 'true' : 'false';
+        $isMagazineLevelString = $isMagazineLevel ? 'true' : 'false';
+        $isNotMagazineLevelString = !$isMagazineLevel ? 'true' : 'false';
         $dontNeedSubscriptionString = $dontNeedSubscription ? 'true' : 'false';
         $dontNeedToBeAuthorString = $dontNeedToBeAuthor ? 'true' : 'false';
 
@@ -149,12 +150,16 @@ class NotificationSettingsRepository extends ServiceEntityRepository
                         AND COALESCE(ns_post.notification_status, :normal) = :normal
                         AND COALESCE(ns_mag.notification_status, :normal) = :loud
                         -- deactivate loud magazine notifications for comments
-                        AND $activateMagazineNotificationsString
+                        AND $isMagazineLevelString
                     )
                     OR (
                         COALESCE(ns_user.notification_status, :normal) = :normal
                         AND COALESCE(ns_post.notification_status, :normal) = :normal
-                        AND COALESCE(ns_mag.notification_status, :normal) = :normal
+                        AND (
+                            -- ignore the magazine level settings for comments
+                            COALESCE(ns_mag.notification_status, :normal) = :normal
+                            OR $isNotMagazineLevelString
+                        )
                         AND u.$notifyCol = true
                         AND (
                             -- deactivate magazine subscription need for comments
@@ -181,7 +186,17 @@ class NotificationSettingsRepository extends ServiceEntityRepository
             'targetParentUserId' => $targetParentUserId,
         ]);
         $rows = $result->fetchAllAssociative();
-        $this->logger->debug('got subscribers for target {c} id {id}: {subs}', ['c' => \get_class($target), 'id' => $target->getId(), 'subs' => $rows]);
+        $this->logger->debug('got subscribers for target {c} id {id}: {subs}, (magLevel: {ml}, notMagLevel: {nml}, targetCol: {tc}, notifyCol: {nc}, dontNeedSubs: {dns}, doneNeedAuthor: {dna})', [
+            'c' => \get_class($target),
+            'id' => $target->getId(),
+            'subs' => $rows,
+            'ml' => $isMagazineLevelString,
+            'nml' => $isNotMagazineLevelString,
+            'tc' => $targetCol,
+            'nc' => $notifyCol,
+            'dns' => $dontNeedSubscriptionString,
+            'dna' => $dontNeedToBeAuthorString,
+        ]);
 
         return array_map(fn (array $row) => $row['id'], $rows);
     }
