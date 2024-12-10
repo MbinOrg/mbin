@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ThemeSettingsController extends AbstractController
 {
-    public const KBIN_LANG = 'kbin_lang';
+    public const MBIN_LANG = 'mbin_lang';
     public const ENTRIES_VIEW = 'entries_view';
     public const ENTRY_COMMENTS_VIEW = 'entry_comments_view';
     public const POST_COMMENTS_VIEW = 'post_comments_view';
@@ -93,7 +93,7 @@ class ThemeSettingsController extends AbstractController
         self::KBIN_POSTS_SHOW_PREVIEW,
         self::KBIN_POSTS_SHOW_USERS_AVATARS,
         self::KBIN_GENERAL_DYNAMIC_LISTS,
-        self::KBIN_LANG,
+        self::MBIN_LANG,
         self::KBIN_COMMENTS_SHOW_USER_AVATAR,
         self::KBIN_COMMENTS_REPLY_POSITION,
         self::KBIN_SUBSCRIPTIONS_SHOW,
@@ -149,8 +149,8 @@ class ThemeSettingsController extends AbstractController
             $response->headers->setCookie(new Cookie($key, $value, strtotime('+1 year')));
         }
 
-        if (self::KBIN_LANG === $key) {
-            $response->headers->setCookie(new Cookie(self::KBIN_LANG, $value, strtotime('+1 year')));
+        if (self::MBIN_LANG === $key) {
+            $response->headers->setCookie(new Cookie(self::MBIN_LANG, $value, strtotime('+1 year')));
         }
 
         if ($request->isXmlHttpRequest()) {
