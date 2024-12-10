@@ -1,6 +1,6 @@
 {%- set STATUS_PENDING = constant('App\\Entity\\Report::STATUS_PENDING') -%}
 <header id="header" class="header">
-    <div class="kbin-container
+    <div class="mbin-container
           {{ html_classes(app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_PAGE_WIDTH'))
             ? 'width--'~app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_PAGE_WIDTH'))
             : '') }}">
@@ -11,7 +11,7 @@
         </div>
         <nav class="head-nav">
             <div class="brand">
-                <div id="nav-toggle" data-action="click->kbin#handleNavToggleClick" aria-label="{{ 'menu'|trans }}"><i class="fa-solid fa-bars" aria-hidden="true"></i></div>
+                <div id="nav-toggle" data-action="click->mbin#handleNavToggleClick" aria-label="{{ 'menu'|trans }}"><i class="fa-solid fa-bars" aria-hidden="true"></i></div>
                 <a href="/">
                     {% if kbin_header_logo() %}
                         <img id="logo" src="{{ asset('mbin_logo.svg') }}" alt="{{ 'homepage'|trans }}" title="{{ 'homepage'|trans}}">

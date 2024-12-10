@@ -7,7 +7,7 @@ body {
   fill: red
 }
 
-.kbin-container {
+.mbin-container {
   margin: 0 auto;
   max-width: 1360px;
 
@@ -27,7 +27,7 @@ body {
   z-index: 5;
   position: relative;
 
-  .kbin-container {
+  .mbin-container {
     display: grid;
     grid-template-areas: 'main sidebar';
     grid-template-columns: 3fr 1fr;
