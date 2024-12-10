@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
     name: 'mbin:posts:magazines',
-    description: 'This command allows assing post to magazine.'
+    description: 'This command allows to assign a magazine to a post.',
 )]
 class PostMagazinesUpdateCommand extends Command
 {
