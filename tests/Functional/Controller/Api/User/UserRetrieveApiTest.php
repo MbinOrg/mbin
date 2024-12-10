@@ -26,6 +26,7 @@ class UserRetrieveApiTest extends WebTestCase
         'preferredLanguages',
         'customCss',
         'ignoreMagazinesCustomCss',
+        'notifyOnUserSignup',
     ];
     public const NUM_USERS = 10;
 
