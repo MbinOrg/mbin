@@ -1,6 +1,6 @@
 # Image metadata cleaning with `exiftool`
 
-You could configure Mbin to remove meta-data from images.
+It is possible to configure Mbin to remove meta-data from images.
 
 To use this feature, install `exiftool` (`libimage-exiftool-perl` package for Ubuntu/Debian)
 and make sure `exiftool` executable exist and and visible in PATH
@@ -20,7 +20,9 @@ EXIF_EXIFTOOL_TIMEOUT=10
 
 Available cleaning modes are:
 
-- `none`: no metadata cleaning would be done.
-- `sanitize`: removes GPS and serial number metadata. this is the default for uploaded images.
-- `scrub`: removes most of image metadata save for those needed for proper image rendering
+- `none`: no metadata cleaning occurs.
+- `sanitize`: GPS and serial number metadata is removed. This is the default for uploaded images.
+- `scrub`: most metadata is removed, except for the metadata required for proper image rendering
   and XMP IPTC attribution metadata.
+
+More detailed information can [be found in the source-code](https://github.com/MbinOrg/mbin/blob/de20877d2d10e085bb35e1e1716ea393b7b8b9fc/src/Utils/ExifCleaner.php#L16) (for example look at `EXIFTOOL_ARGS_SCRUB`). Showing which arguments are passed to the `exiftool` CLI command.
