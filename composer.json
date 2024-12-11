@@ -71,7 +71,7 @@
         "symfony/css-selector": "7.1.*",
         "symfony/doctrine-messenger": "7.1.*",
         "symfony/dotenv": "7.1.*",
-        "symfony/expression-language": "7.1.*",
+        "symfony/expression-language": "7.2.*",
         "symfony/flex": "^2.4.5",
         "symfony/form": "7.1.*",
         "symfony/framework-bundle": "7.1.*",
