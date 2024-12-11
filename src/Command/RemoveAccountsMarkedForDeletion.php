@@ -14,7 +14,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(
     name: 'mbin:users:remove-marked-for-deletion',
-    description: 'removes all accounts that are marked for deletion today or in the past'
+    description: 'removes all accounts that are marked for deletion today or in the past.',
 )]
 class RemoveAccountsMarkedForDeletion extends Command
 {
