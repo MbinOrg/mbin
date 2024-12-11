@@ -11,13 +11,8 @@ updates:
       day: "saturday"
       time: "14:00"
     groups:
-      dev-symfony-and-webpack-dependencies:
-        dependency-type: "development"
-        patterns:
-          - "@symfony/*"
-          - "webpack*"
-      dev-dependencies:
-        dependency-type: "development"
+      npm:
+        applies-to: security-updates
         update-types:
           - "minor"
           - "patch"
