@@ -123,7 +123,7 @@ class EntryPageFactory
         );
     }
 
-    private function getUrl(Entry $entry): string
+    private function getUrl(Entry $entry): ?string
     {
         $imageUrl = $this->imageManager->getUrl($entry->image);
 
