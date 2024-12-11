@@ -126,7 +126,6 @@ class ActivityPubManager
      *
      * @return User|Magazine|null or Magazine or null on error
      *
-     * @throws InstanceBannedException
      * @throws InvalidApPostException
      * @throws InvalidArgumentException
      * @throws InvalidWebfingerException
@@ -159,6 +158,11 @@ class ActivityPubManager
             }
 
             $actorUrl = $this->webfinger($actorUrl)->getProfileId();
+        }
+
+        // Check if the instance is banned
+        if ($this->settingsManager->isBannedInstance($actorUrl)) {
+            return null;
         }
 
         if (\in_array(
@@ -279,7 +283,7 @@ class ActivityPubManager
         return $this->webFingerFactory->get($handle);
     }
 
-    public function buildHandle(string $id): string
+    private function buildHandle(string $id): string
     {
         $port = !\is_null(parse_url($id, PHP_URL_PORT))
             ? ':'.parse_url($id, PHP_URL_PORT)
@@ -335,6 +339,10 @@ class ActivityPubManager
 
         if ($user->isDeleted || $user->isTrashed() || $user->isSoftDeleted()) {
             return $user;
+        }
+
+        if ($this->settingsManager->isBannedInstance($actorUrl)) {
+            return null;
         }
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
@@ -509,6 +517,10 @@ class ActivityPubManager
 
         if ($magazine->isTrashed() || $magazine->isSoftDeleted()) {
             return $magazine;
+        }
+
+        if ($this->settingsManager->isBannedInstance($actorUrl)) {
+            return null;
         }
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
@@ -868,6 +880,10 @@ class ActivityPubManager
      */
     public function updateActor(string $actorUrl): Magazine|User|null
     {
+        if ($this->settingsManager->isBannedInstance($actorUrl)) {
+            return null;
+        }
+
         if ($this->userRepository->findOneBy(['apProfileId' => $actorUrl])) {
             return $this->updateUser($actorUrl);
         } elseif ($this->magazineRepository->findOneBy(['apProfileId' => $actorUrl])) {

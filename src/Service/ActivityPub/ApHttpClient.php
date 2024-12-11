@@ -205,6 +205,11 @@ class ApHttpClient
         return 'ap_'.hash('sha256', $apProfileId);
     }
 
+    private function getCollectinCacheKey(string $apAddress): string
+    {
+        return 'ap_collection'.hash('sha256', $apAddress);
+    }
+
     /**
      * Retrieve AP actor object (could be a user or magazine).
      *
@@ -280,22 +285,37 @@ class ApHttpClient
         return $response->getContent(false);
     }
 
+    /**
+     * Remove actor object from cache.
+     *
+     * @param string $apProfileId AP profile ID to remove from cache
+     */
     public function invalidateActorObjectCache(string $apProfileId): void
     {
         $this->cache->delete($this->getActorCacheKey($apProfileId));
     }
 
+    /**
+     * Remove collection object from cache.
+     *
+     * @param string $apAddress AP address to remove from cache
+     */
     public function invalidateCollectionObjectCache(string $apAddress): void
     {
-        $this->cache->delete('ap_collection'.hash('sha256', $apAddress));
+        $this->cache->delete($this->getCollectinCacheKey($apAddress));
     }
 
     /**
+     * Retrieve AP collection object. First look in cache, then try to retrieve from AP server.
+     * And finally, save the response to cache.
+     *
+     * @return Response body
+     *
      * @throws InvalidArgumentException
      */
     public function getCollectionObject(string $apAddress): ?array
     {
-        $key = 'ap_collection'.hash('sha256', $apAddress);
+        $key = $this->getCollectinCacheKey($apAddress);
         if ($this->cache->hasItem($key)) {
             /** @var CacheItem $item */
             $item = $this->cache->getItem($key);
