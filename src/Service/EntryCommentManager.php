@@ -48,6 +48,10 @@ class EntryCommentManager implements ContentManagerInterface
 
     public function create(EntryCommentDto $dto, User $user, $rateLimit = true): EntryComment
     {
+        if (!$user->apId) {
+            $user->ip = $dto->ip;
+        }
+
         if ($rateLimit) {
             $limiter = $this->entryCommentLimiter->create($dto->ip);
             if ($limiter && false === $limiter->consume()->isAccepted()) {
@@ -114,6 +118,10 @@ class EntryCommentManager implements ContentManagerInterface
 
     public function edit(EntryComment $comment, EntryCommentDto $dto, ?User $editedByUser = null): EntryComment
     {
+        if (null !== $editedByUser && !$editedByUser->apId) {
+            $editedByUser->ip = $dto->ip;
+        }
+
         Assert::same($comment->entry->getId(), $dto->entry->getId());
 
         $comment->body = $dto->body;

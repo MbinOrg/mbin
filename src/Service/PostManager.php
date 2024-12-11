@@ -66,6 +66,10 @@ class PostManager implements ContentManagerInterface
      */
     public function create(PostDto $dto, User $user, $rateLimit = true, bool $stickyIt = false): Post
     {
+        if (!$user->apId) {
+            $user->ip = $dto->ip;
+        }
+
         if ($rateLimit) {
             $limiter = $this->postLimiter->create($dto->ip);
             if ($limiter && false === $limiter->consume()->isAccepted()) {
@@ -133,6 +137,10 @@ class PostManager implements ContentManagerInterface
 
     public function edit(Post $post, PostDto $dto, ?User $editedBy = null): Post
     {
+        if (null !== $editedBy && !$editedBy->apId) {
+            $editedBy->ip = $dto->ip;
+        }
+
         Assert::same($post->magazine->getId(), $dto->magazine->getId());
 
         $post->body = $dto->body;
