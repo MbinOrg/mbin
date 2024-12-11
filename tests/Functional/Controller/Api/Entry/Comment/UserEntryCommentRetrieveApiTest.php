@@ -13,16 +13,15 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
 {
     public function testApiCanGetUserEntryCommentsAnonymous(): void
     {
-        $client = self::createClient();
         $this->getEntryByTitle('an entry', body: 'test');
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $entry = $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
         $comment = $this->createEntryComment('test comment', $entry);
         $user = $entry->user;
 
-        $client->request('GET', "/api/users/{$user->getId()}/comments");
+        $this->client->request('GET', "/api/users/{$user->getId()}/comments");
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -48,7 +47,6 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetUserEntryComments(): void
     {
-        $client = self::createClient();
         $this->getEntryByTitle('an entry', body: 'test');
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $entry = $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
@@ -56,14 +54,14 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
         $user = $entry->user;
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/users/{$user->getId()}/comments", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/users/{$user->getId()}/comments", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -89,7 +87,6 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetUserEntryCommentsDepth(): void
     {
-        $client = self::createClient();
         $this->getEntryByTitle('an entry', body: 'test');
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $entry = $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
@@ -100,14 +97,14 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
         $user = $entry->user;
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/users/{$user->getId()}/comments?d=2", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/users/{$user->getId()}/comments?d=2", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -136,7 +133,6 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetUserEntryCommentsNewest(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('entry', url: 'https://google.com');
         $first = $this->createEntryComment('first', $entry);
         $second = $this->createEntryComment('second', $entry);
@@ -154,14 +150,14 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
         $entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/users/{$user->getId()}/comments?sort=newest", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/users/{$user->getId()}/comments?sort=newest", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -187,7 +183,6 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetUserEntryCommentsOldest(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('entry', url: 'https://google.com');
         $first = $this->createEntryComment('first', $entry);
         $second = $this->createEntryComment('second', $entry);
@@ -205,14 +200,14 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
         $entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/users/{$user->getId()}/comments?sort=oldest", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/users/{$user->getId()}/comments?sort=oldest", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -238,7 +233,6 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetUserEntryCommentsActive(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('entry', url: 'https://google.com');
         $first = $this->createEntryComment('first', $entry);
         $second = $this->createEntryComment('second', $entry);
@@ -256,14 +250,14 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
         $entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/users/{$user->getId()}/comments?sort=active", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/users/{$user->getId()}/comments?sort=active", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -289,7 +283,6 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetUserEntryCommentsTop(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('entry', url: 'https://google.com');
         $first = $this->createEntryComment('first', $entry);
         $second = $this->createEntryComment('second', $entry);
@@ -302,14 +295,14 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
         $favouriteManager->toggle($this->getUserByUsername('voter1'), $second);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/users/{$user->getId()}/comments?sort=top", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/users/{$user->getId()}/comments?sort=top", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -338,7 +331,6 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetUserEntryCommentsHot(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('entry', url: 'https://google.com');
         $first = $this->createEntryComment('first', $entry);
         $second = $this->createEntryComment('second', $entry);
@@ -351,14 +343,14 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
         $voteManager->vote(1, $second, $this->getUserByUsername('voter1'), rateLimit: false);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/users/{$user->getId()}/comments?sort=hot", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/users/{$user->getId()}/comments?sort=hot", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -387,7 +379,6 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetUserEntryCommentsWithUserVoteStatus(): void
     {
-        $client = self::createClient();
         $this->getEntryByTitle('an entry', body: 'test');
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $entry = $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
@@ -395,14 +386,14 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
         $user = $entry->user;
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read vote');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read vote');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/users/{$user->getId()}/comments", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/users/{$user->getId()}/comments", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -423,9 +414,11 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
         self::assertSame($magazine->getId(), $jsonData['items'][0]['magazine']['magazineId']);
         self::assertIsArray($jsonData['items'][0]['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['user']);
-        self::assertNull($jsonData['items'][0]['image']);
+        if (null !== $jsonData['items'][0]['image']) {
+            self::assertStringContainsString('google.com', parse_url($jsonData['items'][0]['image']['sourceUrl'], PHP_URL_HOST));
+        }
         self::assertEquals('en', $jsonData['items'][0]['lang']);
-        self::assertNull($jsonData['items'][0]['tags']);
+        self::assertEmpty($jsonData['items'][0]['tags']);
         self::assertSame(0, $jsonData['items'][0]['childCount']);
         self::assertIsArray($jsonData['items'][0]['children']);
         self::assertEmpty($jsonData['items'][0]['children']);

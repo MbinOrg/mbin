@@ -20,30 +20,28 @@ class UserRetrieveOAuthConsentsApiTest extends WebTestCase
 
     public function testApiCannotGetConsentsWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('someuser');
 
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:follow user:block');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:follow user:block');
 
-        $client->request('GET', '/api/users/consents', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/consents', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanGetConsents(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('someuser');
 
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:oauth_clients:read user:follow user:block');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:oauth_clients:read user:follow user:block');
 
-        $client->request('GET', '/api/users/consents', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/consents', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -73,21 +71,20 @@ class UserRetrieveOAuthConsentsApiTest extends WebTestCase
 
     public function testApiCannotGetOtherUsersConsentsById(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('someuser');
         $testUser2 = $this->getUserByUsername('someuser2');
 
-        $client->loginUser($testUser);
-        $codes1 = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:oauth_clients:read user:follow user:block');
+        $this->client->loginUser($testUser);
+        $codes1 = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:oauth_clients:read user:follow user:block');
 
-        $client->loginUser($testUser2);
-        $codes2 = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:oauth_clients:read user:follow user:block');
+        $this->client->loginUser($testUser2);
+        $codes2 = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:oauth_clients:read user:follow user:block');
 
-        $client->request('GET', '/api/users/consents', server: ['HTTP_AUTHORIZATION' => $codes1['token_type'].' '.$codes1['access_token']]);
+        $this->client->request('GET', '/api/users/consents', server: ['HTTP_AUTHORIZATION' => $codes1['token_type'].' '.$codes1['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -98,7 +95,7 @@ class UserRetrieveOAuthConsentsApiTest extends WebTestCase
         self::assertIsArray($jsonData['items'][0]);
         self::assertArrayKeysMatch(self::CONSENT_RESPONSE_KEYS, $jsonData['items'][0]);
 
-        $client->request(
+        $this->client->request(
             'GET', '/api/users/consents/'.(string) $jsonData['items'][0]['consentId'],
             server: ['HTTP_AUTHORIZATION' => $codes2['token_type'].' '.$codes2['access_token']]
         );
@@ -107,17 +104,16 @@ class UserRetrieveOAuthConsentsApiTest extends WebTestCase
 
     public function testApiCanGetConsentsById(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('someuser');
 
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:oauth_clients:read user:follow user:block');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:oauth_clients:read user:follow user:block');
 
-        $client->request('GET', '/api/users/consents', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/consents', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -130,13 +126,13 @@ class UserRetrieveOAuthConsentsApiTest extends WebTestCase
 
         $consent = $jsonData['items'][0];
 
-        $client->request(
+        $this->client->request(
             'GET', '/api/users/consents/'.(string) $consent['consentId'],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertEquals($consent, $jsonData);

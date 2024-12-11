@@ -11,14 +11,13 @@ class PostCommentPurgeApiTest extends WebTestCase
 {
     public function testApiCannotPurgeCommentAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', magazine: $magazine);
         $comment = $this->createPostComment('test comment', $post);
 
         $commentRepository = $this->getService(PostCommentRepository::class);
 
-        $client->request('DELETE', "/api/admin/post-comment/{$comment->getId()}/purge");
+        $this->client->request('DELETE', "/api/admin/post-comment/{$comment->getId()}/purge");
         self::assertResponseStatusCodeSame(401);
 
         $comment = $commentRepository->find($comment->getId());
@@ -27,7 +26,6 @@ class PostCommentPurgeApiTest extends WebTestCase
 
     public function testApiCannotPurgeCommentWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user', isAdmin: true);
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
@@ -36,12 +34,12 @@ class PostCommentPurgeApiTest extends WebTestCase
         $commentRepository = $this->getService(PostCommentRepository::class);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('DELETE', "/api/admin/post-comment/{$comment->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/admin/post-comment/{$comment->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
 
         $comment = $commentRepository->find($comment->getId());
@@ -50,7 +48,6 @@ class PostCommentPurgeApiTest extends WebTestCase
 
     public function testApiNonAdminCannotPurgeComment(): void
     {
-        $client = self::createClient();
         $otherUser = $this->getUserByUsername('somebody');
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
@@ -60,12 +57,12 @@ class PostCommentPurgeApiTest extends WebTestCase
         $commentRepository = $this->getService(PostCommentRepository::class);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read admin:post_comment:purge');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read admin:post_comment:purge');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('DELETE', "/api/admin/post-comment/{$comment->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/admin/post-comment/{$comment->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
 
         $comment = $commentRepository->find($comment->getId());
@@ -74,7 +71,6 @@ class PostCommentPurgeApiTest extends WebTestCase
 
     public function testApiCanPurgeComment(): void
     {
-        $client = self::createClient();
         $admin = $this->getUserByUsername('admin', isAdmin: true);
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
@@ -84,12 +80,12 @@ class PostCommentPurgeApiTest extends WebTestCase
         $commentRepository = $this->getService(PostCommentRepository::class);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($admin);
+        $this->client->loginUser($admin);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read admin:post_comment:purge');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read admin:post_comment:purge');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('DELETE', "/api/admin/post-comment/{$comment->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/admin/post-comment/{$comment->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(204);
 
         $comment = $commentRepository->find($comment->getId());
@@ -98,7 +94,6 @@ class PostCommentPurgeApiTest extends WebTestCase
 
     public function testApiCannotPurgeImageCommentAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
 
         $imageDto = $this->getKibbyImageDto();
@@ -107,7 +102,7 @@ class PostCommentPurgeApiTest extends WebTestCase
 
         $commentRepository = $this->getService(PostCommentRepository::class);
 
-        $client->request('DELETE', "/api/admin/post-comment/{$comment->getId()}/purge");
+        $this->client->request('DELETE', "/api/admin/post-comment/{$comment->getId()}/purge");
         self::assertResponseStatusCodeSame(401);
 
         $comment = $commentRepository->find($comment->getId());
@@ -116,7 +111,6 @@ class PostCommentPurgeApiTest extends WebTestCase
 
     public function testApiCannotPurgeImageCommentWithoutScope(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $user = $this->getUserByUsername('user', isAdmin: true);
 
@@ -127,12 +121,12 @@ class PostCommentPurgeApiTest extends WebTestCase
         $commentRepository = $this->getService(PostCommentRepository::class);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('DELETE', "/api/admin/post-comment/{$comment->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/admin/post-comment/{$comment->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
 
         $comment = $commentRepository->find($comment->getId());
@@ -141,7 +135,6 @@ class PostCommentPurgeApiTest extends WebTestCase
 
     public function testApiNonAdminCannotPurgeImageComment(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
 
@@ -152,12 +145,12 @@ class PostCommentPurgeApiTest extends WebTestCase
         $commentRepository = $this->getService(PostCommentRepository::class);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read admin:post_comment:purge');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read admin:post_comment:purge');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('DELETE', "/api/admin/post-comment/{$comment->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/admin/post-comment/{$comment->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
 
         $comment = $commentRepository->find($comment->getId());
@@ -166,7 +159,6 @@ class PostCommentPurgeApiTest extends WebTestCase
 
     public function testApiCanPurgeImageComment(): void
     {
-        $client = self::createClient();
         $admin = $this->getUserByUsername('admin', isAdmin: true);
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
 
@@ -177,12 +169,12 @@ class PostCommentPurgeApiTest extends WebTestCase
         $commentRepository = $this->getService(PostCommentRepository::class);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($admin);
+        $this->client->loginUser($admin);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read admin:post_comment:purge');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read admin:post_comment:purge');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('DELETE', "/api/admin/post-comment/{$comment->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/admin/post-comment/{$comment->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(204);
 
         $comment = $commentRepository->find($comment->getId());

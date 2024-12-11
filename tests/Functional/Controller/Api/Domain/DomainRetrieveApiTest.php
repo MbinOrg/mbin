@@ -11,14 +11,12 @@ class DomainRetrieveApiTest extends WebTestCase
 {
     public function testApiCanRetrieveDomainsAnonymous()
     {
-        $client = self::createClient();
-
         $this->getEntryByTitle('Test link to a domain', 'https://example.com');
 
-        $client->request('GET', '/api/domains');
+        $this->client->request('GET', '/api/domains');
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -39,19 +37,17 @@ class DomainRetrieveApiTest extends WebTestCase
 
     public function testApiCanRetrieveDomains()
     {
-        $client = self::createClient();
-
         $this->getEntryByTitle('Test link to a domain', 'https://example.com');
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/domains', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/domains', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -73,22 +69,20 @@ class DomainRetrieveApiTest extends WebTestCase
 
     public function testApiCanRetrieveDomainsSubscriptionAndBlockStatus()
     {
-        $client = self::createClient();
-
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
         $user = $this->getUserByUsername('JohnDoe');
         $manager = $this->getService(DomainManager::class);
         $manager->subscribe($domain, $user);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read domain:subscribe domain:block');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read domain:subscribe domain:block');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/domains', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/domains', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -110,16 +104,12 @@ class DomainRetrieveApiTest extends WebTestCase
 
     public function testApiCannotRetrieveSubscribedDomainsAnonymous()
     {
-        $client = self::createClient();
-
-        $client->request('GET', '/api/domains/subscribed');
+        $this->client->request('GET', '/api/domains/subscribed');
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotRetrieveSubscribedDomainsWithoutScope()
     {
-        $client = self::createClient();
-
         $this->getEntryByTitle('Test link to a second domain', 'https://example.org');
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
         $user = $this->getUserByUsername('JohnDoe');
@@ -127,18 +117,16 @@ class DomainRetrieveApiTest extends WebTestCase
         $manager->subscribe($domain, $user);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/domains/subscribed', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/domains/subscribed', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanRetrieveSubscribedDomains()
     {
-        $client = self::createClient();
-
         $this->getEntryByTitle('Test link to a second domain', 'https://example.org');
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
         $user = $this->getUserByUsername('JohnDoe');
@@ -146,14 +134,14 @@ class DomainRetrieveApiTest extends WebTestCase
         $manager->subscribe($domain, $user);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read domain:subscribe');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read domain:subscribe');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/domains/subscribed', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/domains/subscribed', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -176,16 +164,12 @@ class DomainRetrieveApiTest extends WebTestCase
 
     public function testApiCannotRetrieveBlockedDomainsAnonymous()
     {
-        $client = self::createClient();
-
-        $client->request('GET', '/api/domains/blocked');
+        $this->client->request('GET', '/api/domains/blocked');
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotRetrieveBlockedDomainsWithoutScope()
     {
-        $client = self::createClient();
-
         $this->getEntryByTitle('Test link to a second domain', 'https://example.org');
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
         $user = $this->getUserByUsername('JohnDoe');
@@ -193,18 +177,16 @@ class DomainRetrieveApiTest extends WebTestCase
         $manager->block($domain, $user);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/domains/blocked', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/domains/blocked', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanRetrieveBlockedDomains()
     {
-        $client = self::createClient();
-
         $this->getEntryByTitle('Test link to a second domain', 'https://example.org');
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
         $user = $this->getUserByUsername('JohnDoe');
@@ -212,14 +194,14 @@ class DomainRetrieveApiTest extends WebTestCase
         $manager->block($domain, $user);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read domain:block');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read domain:block');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/domains/blocked', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/domains/blocked', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -242,14 +224,12 @@ class DomainRetrieveApiTest extends WebTestCase
 
     public function testApiCanRetrieveDomainByIdAnonymous()
     {
-        $client = self::createClient();
-
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
 
-        $client->request('GET', "/api/domain/{$domain->getId()}");
+        $this->client->request('GET', "/api/domain/{$domain->getId()}");
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData);
@@ -262,22 +242,20 @@ class DomainRetrieveApiTest extends WebTestCase
 
     public function testApiCanRetrieveDomainById()
     {
-        $client = self::createClient();
-
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
         $user = $this->getUserByUsername('JohnDoe');
         $manager = $this->getService(DomainManager::class);
         $manager->subscribe($domain, $user);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/domain/{$domain->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/domain/{$domain->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData);
@@ -291,22 +269,20 @@ class DomainRetrieveApiTest extends WebTestCase
 
     public function testApiCanRetrieveDomainByIdSubscriptionAndBlockStatus()
     {
-        $client = self::createClient();
-
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
         $user = $this->getUserByUsername('JohnDoe');
         $manager = $this->getService(DomainManager::class);
         $manager->subscribe($domain, $user);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read domain:subscribe domain:block');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read domain:subscribe domain:block');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/domain/{$domain->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/domain/{$domain->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData);

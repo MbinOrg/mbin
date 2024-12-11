@@ -10,19 +10,18 @@ class PostEditControllerTest extends WebTestCase
 {
     public function testAuthorCanEditOwnPost(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $post = $this->createPost('test post 1');
-        $crawler = $client->request('GET', "/m/acme/p/{$post->getId()}/test-post-1");
+        $crawler = $this->client->request('GET', "/m/acme/p/{$post->getId()}/test-post-1");
 
-        $crawler = $client->click($crawler->filter('#main .post')->selectLink('edit')->link());
+        $crawler = $this->client->click($crawler->filter('#main .post')->selectLink('Edit')->link());
 
         $this->assertSelectorExists('#main .post');
         $this->assertSelectorTextContains('#post_body', 'test post 1');
         //        $this->assertEquals('disabled', $crawler->filter('#post_magazine_autocomplete')->attr('disabled')); @todo
 
-        $client->submit(
+        $this->client->submit(
             $crawler->filter('form[name=post]')->selectButton('Edit post')->form(
                 [
                     'post[body]' => 'test post 2 body',
@@ -30,20 +29,19 @@ class PostEditControllerTest extends WebTestCase
             )
         );
 
-        $client->followRedirect();
+        $this->client->followRedirect();
 
         $this->assertSelectorTextContains('#main .post .content', 'test post 2 body');
     }
 
     public function testAuthorCanEditOwnPostWithImage(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $post = $this->createPost('test post 1', imageDto: $this->getKibbyImageDto());
-        $crawler = $client->request('GET', "/m/acme/p/{$post->getId()}/test-post-1");
+        $crawler = $this->client->request('GET', "/m/acme/p/{$post->getId()}/test-post-1");
 
-        $crawler = $client->click($crawler->filter('#main .post')->selectLink('edit')->link());
+        $crawler = $this->client->click($crawler->filter('#main .post')->selectLink('Edit')->link());
 
         $this->assertSelectorExists('#main .post');
         $this->assertSelectorTextContains('#post_body', 'test post 1');
@@ -53,7 +51,7 @@ class PostEditControllerTest extends WebTestCase
         $this->assertNotNull($node);
         $this->assertStringContainsString(self::KIBBY_PNG_URL_RESULT, $node->attributes->getNamedItem('src')->textContent);
 
-        $client->submit(
+        $this->client->submit(
             $crawler->filter('form[name=post]')->selectButton('Edit post')->form(
                 [
                     'post[body]' => 'test post 2 body',
@@ -61,7 +59,7 @@ class PostEditControllerTest extends WebTestCase
             )
         );
 
-        $crawler = $client->followRedirect();
+        $crawler = $this->client->followRedirect();
 
         $this->assertSelectorTextContains('#main .post .content', 'test post 2 body');
         $this->assertSelectorExists('#main .post img');
@@ -72,17 +70,16 @@ class PostEditControllerTest extends WebTestCase
 
     public function testAuthorCanEditPostToMarkItIsForAdults(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $post = $this->createPost('test post 1');
-        $crawler = $client->request('GET', "/m/acme/p/{$post->getId()}/test-post-1/edit");
+        $crawler = $this->client->request('GET', "/m/acme/p/{$post->getId()}/test-post-1/edit");
 
-        $crawler = $client->click($crawler->filter('#main .post')->selectLink('edit')->link());
+        $crawler = $this->client->click($crawler->filter('#main .post')->selectLink('Edit')->link());
 
         $this->assertSelectorExists('#main .post');
 
-        $client->submit(
+        $this->client->submit(
             $crawler->filter('form[name=post]')->selectButton('Edit post')->form(
                 [
                     'post[isAdult]' => '1',
@@ -90,7 +87,7 @@ class PostEditControllerTest extends WebTestCase
             )
         );
 
-        $client->followRedirect();
+        $this->client->followRedirect();
 
         $this->assertSelectorTextContains('blockquote header .danger', '18+');
     }

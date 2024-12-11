@@ -21,6 +21,7 @@ use App\Service\EntryManager;
 use App\Service\PostCommentManager;
 use App\Service\PostManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -30,6 +31,7 @@ class DeleteHandler extends MbinMessageHandler
     public function __construct(
         private readonly MessageBusInterface $bus,
         private readonly ActivityPubManager $activityPubManager,
+        private readonly KernelInterface $kernel,
         private readonly ApActivityRepository $apActivityRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
@@ -38,7 +40,7 @@ class DeleteHandler extends MbinMessageHandler
         private readonly PostManager $postManager,
         private readonly PostCommentManager $postCommentManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(DeleteMessage $message): void

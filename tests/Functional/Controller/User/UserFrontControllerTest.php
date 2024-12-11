@@ -13,11 +13,11 @@ class UserFrontControllerTest extends WebTestCase
 {
     public function testOverview(): void
     {
-        $client = $this->prepareEntries();
+        $this->client = $this->prepareEntries();
 
-        $crawler = $client->request('GET', '/u/JohnDoe');
+        $crawler = $this->client->request('GET', '/u/JohnDoe');
 
-        $this->assertSelectorTextContains('.options.options .active', 'overview');
+        $this->assertSelectorTextContains('.options.options .active', 'Overview');
         $this->assertEquals(2, $crawler->filter('#main .entry')->count());
         $this->assertEquals(2, $crawler->filter('#main .entry-comment')->count());
         $this->assertEquals(2, $crawler->filter('#main .post')->count());
@@ -26,53 +26,51 @@ class UserFrontControllerTest extends WebTestCase
 
     public function testThreadsPage(): void
     {
-        $client = $this->prepareEntries();
+        $this->client = $this->prepareEntries();
 
-        $crawler = $client->request('GET', '/u/JohnDoe');
-        $crawler = $client->click($crawler->filter('#main .options')->selectLink('threads')->link());
+        $crawler = $this->client->request('GET', '/u/JohnDoe');
+        $crawler = $this->client->click($crawler->filter('#main .options')->selectLink('Threads')->link());
 
-        $this->assertSelectorTextContains('.options.options--top .active', 'threads (1)');
+        $this->assertSelectorTextContains('.options.options--top .active', 'Threads (1)');
         $this->assertEquals(1, $crawler->filter('#main .entry')->count());
     }
 
     public function testCommentsPage(): void
     {
-        $client = $this->prepareEntries();
+        $this->client = $this->prepareEntries();
 
-        $crawler = $client->request('GET', '/u/JohnDoe');
-        $client->click($crawler->filter('#main .options')->selectLink('comments')->link());
+        $crawler = $this->client->request('GET', '/u/JohnDoe');
+        $this->client->click($crawler->filter('#main .options')->selectLink('Comments')->link());
 
-        $this->assertSelectorTextContains('.options.options--top .active', 'comments (2)');
+        $this->assertSelectorTextContains('.options.options--top .active', 'Comments (2)');
         $this->assertEquals(2, $crawler->filter('#main .entry-comment')->count());
     }
 
     public function testPostsPage(): void
     {
-        $client = $this->prepareEntries();
+        $this->client = $this->prepareEntries();
 
-        $crawler = $client->request('GET', '/u/JohnDoe');
-        $crawler = $client->click($crawler->filter('#main .options')->selectLink('posts')->link());
+        $crawler = $this->client->request('GET', '/u/JohnDoe');
+        $crawler = $this->client->click($crawler->filter('#main .options')->selectLink('Posts')->link());
 
-        $this->assertSelectorTextContains('.options.options--top .active', 'posts (1)');
+        $this->assertSelectorTextContains('.options.options--top .active', 'Posts (1)');
         $this->assertEquals(1, $crawler->filter('#main .post')->count());
     }
 
     public function testRepliesPage(): void
     {
-        $client = $this->prepareEntries();
+        $this->client = $this->prepareEntries();
 
-        $crawler = $client->request('GET', '/u/JohnDoe');
-        $crawler = $client->click($crawler->filter('#main .options')->selectLink('replies')->link());
+        $crawler = $this->client->request('GET', '/u/JohnDoe');
+        $crawler = $this->client->click($crawler->filter('#main .options')->selectLink('Replies')->link());
 
-        $this->assertSelectorTextContains('.options.options--top .active', 'replies (2)');
+        $this->assertSelectorTextContains('.options.options--top .active', 'Replies (2)');
         $this->assertEquals(2, $crawler->filter('#main .post-comment')->count());
         $this->assertEquals(2, $crawler->filter('#main .post')->count());
     }
 
     public function createSubscriptionsPage()
     {
-        $client = $this->createClient();
-
         $user = $this->getUserByUsername('JohnDoe');
         $this->getMagazineByName('kbin');
         $this->getMagazineByName('mag', $this->getUserByUsername('JaneDoe'));
@@ -80,10 +78,10 @@ class UserFrontControllerTest extends WebTestCase
         $manager = $this->getService(MagazineManager::class);
         $manager->subscribe($this->getMagazineByName('mag'), $user);
 
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $crawler = $client->request('GET', '/u/JohnDoe');
-        $crawler = $client->click($crawler->filter('#main .options')->selectLink('subscriptions')->link());
+        $crawler = $this->client->request('GET', '/u/JohnDoe');
+        $crawler = $this->client->click($crawler->filter('#main .options')->selectLink('subscriptions')->link());
 
         $this->assertSelectorTextContains('.options.options--top .active', 'subscriptions (2)');
         $this->assertEquals(2, $crawler->filter('#main .magazines ul li')->count());
@@ -91,46 +89,40 @@ class UserFrontControllerTest extends WebTestCase
 
     public function testFollowersPage(): void
     {
-        $client = $this->createClient();
-
         $user1 = $this->getUserByUsername('JohnDoe');
         $user2 = $this->getUserByUsername('JaneDoe');
 
         $manager = $this->getService(UserManager::class);
         $manager->follow($user2, $user1);
 
-        $client->loginUser($user1);
+        $this->client->loginUser($user1);
 
-        $crawler = $client->request('GET', '/u/JohnDoe');
-        $crawler = $client->click($crawler->filter('#main .options')->selectLink('followers')->link());
+        $crawler = $this->client->request('GET', '/u/JohnDoe');
+        $crawler = $this->client->click($crawler->filter('#main .options')->selectLink('Followers')->link());
 
-        $this->assertSelectorTextContains('.options.options--top .active', 'followers (1)');
+        $this->assertSelectorTextContains('.options.options--top .active', 'Followers (1)');
         $this->assertEquals(1, $crawler->filter('#main .users ul li')->count());
     }
 
     public function testFollowingPage(): void
     {
-        $client = $this->createClient();
-
         $user1 = $this->getUserByUsername('JohnDoe');
         $user2 = $this->getUserByUsername('JaneDoe');
 
         $manager = $this->getService(UserManager::class);
         $manager->follow($user1, $user2);
 
-        $client->loginUser($user1);
+        $this->client->loginUser($user1);
 
-        $crawler = $client->request('GET', '/u/JohnDoe');
-        $crawler = $client->click($crawler->filter('#main .options')->selectLink('following')->link());
+        $crawler = $this->client->request('GET', '/u/JohnDoe');
+        $crawler = $this->client->click($crawler->filter('#main .options')->selectLink('Following')->link());
 
-        $this->assertSelectorTextContains('.options.options--top .active', 'following (1)');
+        $this->assertSelectorTextContains('.options.options--top .active', 'Following (1)');
         $this->assertEquals(1, $crawler->filter('#main .users ul li')->count());
     }
 
     private function prepareEntries(): KernelBrowser
     {
-        $client = $this->createClient();
-
         $entry1 = $this->getEntryByTitle(
             'test entry 1',
             'https://kbin.pub',
@@ -167,6 +159,6 @@ class UserFrontControllerTest extends WebTestCase
         $this->createPostComment('test post comment 2', $post2, $this->getUserByUsername('JaneDoe'));
         $this->createPostComment('test post comment 3', $post3);
 
-        return $client;
+        return $this->client;
     }
 }

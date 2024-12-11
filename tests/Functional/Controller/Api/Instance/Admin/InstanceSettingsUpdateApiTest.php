@@ -34,58 +34,53 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
         'MBIN_SSO_REGISTRATIONS_ENABLED',
         'MBIN_RESTRICT_MAGAZINE_CREATION',
         'MBIN_DOWNVOTES_MODE',
+        'MBIN_SSO_ONLY_MODE',
+        'MBIN_SSO_SHOW_FIRST',
+        'MAX_IMAGE_BYTES',
     ];
 
     public function testApiCannotUpdateInstanceSettingsAnonymous(): void
     {
-        $client = self::createClient();
-
-        $client->request('PUT', '/api/instance/settings');
+        $this->client->request('PUT', '/api/instance/settings');
 
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotUpdateInstanceSettingsWithoutAdmin(): void
     {
-        $client = self::createClient();
-
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', '/api/instance/settings', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', '/api/instance/settings', server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotUpdateInstanceSettingsWithoutScope(): void
     {
-        $client = self::createClient();
-
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe', isAdmin: true);
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', '/api/instance/settings', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', '/api/instance/settings', server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanUpdateInstanceSettings(): void
     {
-        $client = self::createClient();
-
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe', isAdmin: true);
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read admin:instance:settings:edit');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read admin:instance:settings:edit');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
         $settings = [
@@ -112,13 +107,16 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY' => false,
             'MBIN_SSO_REGISTRATIONS_ENABLED' => true,
             'MBIN_RESTRICT_MAGAZINE_CREATION' => false,
-            'MBIN_DOWNVOTES_MODE' => DownvotesMode::Enabled,
+            'MBIN_DOWNVOTES_MODE' => DownvotesMode::Enabled->value,
+            'MBIN_SSO_ONLY_MODE' => false,
+            'MBIN_SSO_SHOW_FIRST' => false,
+            'MAX_IMAGE_BYTES' => 10000,
         ];
 
-        $client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertArrayKeysMatch(self::INSTANCE_SETTINGS_RESPONSE_KEYS, $jsonData);
         foreach ($jsonData as $key => $value) {
@@ -149,11 +147,60 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY' => true,
             'MBIN_SSO_REGISTRATIONS_ENABLED' => false,
             'MBIN_RESTRICT_MAGAZINE_CREATION' => true,
-            'MBIN_DOWNVOTES_MODE' => DownvotesMode::Hidden,
+            'MBIN_DOWNVOTES_MODE' => DownvotesMode::Hidden->value,
+            'MBIN_SSO_ONLY_MODE' => true,
+            'MBIN_SSO_SHOW_FIRST' => true,
+            'MAX_IMAGE_BYTES' => 30000,
         ];
 
-        $client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertArrayKeysMatch(self::INSTANCE_SETTINGS_RESPONSE_KEYS, $jsonData);
+        foreach ($jsonData as $key => $value) {
+            self::assertEquals($settings[$key], $value, "$key did not match!");
+        }
+
+        $settings = [
+            'KBIN_DOMAIN' => 'kbin.test',
+            'KBIN_TITLE' => 'updated title',
+            'KBIN_META_TITLE' => 'meta title',
+            'KBIN_META_KEYWORDS' => 'this, is, a, test',
+            'KBIN_META_DESCRIPTION' => 'Testing out the API',
+            'KBIN_DEFAULT_LANG' => 'de',
+            'KBIN_CONTACT_EMAIL' => 'test@kbinupdated.test',
+            'KBIN_SENDER_EMAIL' => 'noreply@kbinupdated.test',
+            'MBIN_DEFAULT_THEME' => 'dark',
+            'KBIN_JS_ENABLED' => true,
+            'KBIN_FEDERATION_ENABLED' => true,
+            'KBIN_REGISTRATIONS_ENABLED' => true,
+            'KBIN_BANNED_INSTANCES' => [],
+            'KBIN_HEADER_LOGO' => true,
+            'KBIN_CAPTCHA_ENABLED' => false,
+            'KBIN_MERCURE_ENABLED' => false,
+            'KBIN_FEDERATION_PAGE_ENABLED' => false,
+            'KBIN_ADMIN_ONLY_OAUTH_CLIENTS' => false,
+            'MBIN_PRIVATE_INSTANCE' => false,
+            'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN' => false,
+            'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY' => false,
+            'MBIN_SSO_REGISTRATIONS_ENABLED' => true,
+            'MBIN_RESTRICT_MAGAZINE_CREATION' => false,
+            'MBIN_DOWNVOTES_MODE' => DownvotesMode::Enabled->value,
+            'MBIN_SSO_ONLY_MODE' => false,
+            'MBIN_SSO_SHOW_FIRST' => false,
+            'MAX_IMAGE_BYTES' => 10000,
+        ];
+
+        $this->client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);
+
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertArrayKeysMatch(self::INSTANCE_SETTINGS_RESPONSE_KEYS, $jsonData);
+        foreach ($jsonData as $key => $value) {
+            self::assertEquals($settings[$key], $value, "$key did not match!");
+        }
     }
 }

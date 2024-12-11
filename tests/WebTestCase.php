@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
 
@@ -16,17 +17,17 @@ abstract class WebTestCase extends BaseWebTestCase
 
     protected const PAGINATED_KEYS = ['items', 'pagination'];
     protected const PAGINATION_KEYS = ['count', 'currentPage', 'maxPage', 'perPage'];
-    protected const IMAGE_KEYS = ['filePath', 'sourceUrl', 'storageUrl', 'altText', 'width', 'height'];
+    protected const IMAGE_KEYS = ['filePath', 'sourceUrl', 'storageUrl', 'altText', 'width', 'height', 'blurHash'];
     protected const MESSAGE_RESPONSE_KEYS = ['messageId', 'threadId', 'sender', 'body', 'status', 'createdAt'];
-    protected const USER_RESPONSE_KEYS = ['userId', 'username', 'about', 'avatar', 'cover', 'createdAt', 'followersCount', 'apId', 'apProfileId', 'isBot', 'isFollowedByUser', 'isFollowerOfUser', 'isBlockedByUser'];
-    protected const USER_SMALL_RESPONSE_KEYS = ['userId', 'username', 'isBot', 'isFollowedByUser', 'isFollowerOfUser', 'isBlockedByUser', 'avatar', 'apId', 'apProfileId', 'createdAt'];
-    protected const ENTRY_RESPONSE_KEYS = ['entryId', 'magazine', 'user', 'domain', 'title', 'url', 'image', 'body', 'lang', 'tags', 'badges', 'numComments', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'isOc', 'isAdult', 'isPinned', 'createdAt', 'editedAt', 'lastActive', 'visibility', 'type', 'slug', 'apId'];
-    protected const ENTRY_COMMENT_RESPONSE_KEYS = ['commentId', 'magazine', 'user', 'entryId', 'parentId', 'rootId', 'image', 'body', 'lang', 'isAdult', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'mentions', 'tags', 'createdAt', 'editedAt', 'lastActive', 'childCount', 'children'];
-    protected const POST_RESPONSE_KEYS = ['postId', 'user', 'magazine', 'image', 'body', 'lang', 'isAdult', 'isPinned', 'comments', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'tags', 'mentions', 'createdAt', 'editedAt', 'lastActive', 'slug'];
-    protected const POST_COMMENT_RESPONSE_KEYS = ['commentId', 'user', 'magazine', 'postId', 'parentId', 'rootId', 'image', 'body', 'lang', 'isAdult', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'mentions', 'tags', 'createdAt', 'editedAt', 'lastActive', 'childCount', 'children'];
+    protected const USER_RESPONSE_KEYS = ['userId', 'username', 'about', 'avatar', 'cover', 'createdAt', 'followersCount', 'apId', 'apProfileId', 'isBot', 'isFollowedByUser', 'isFollowerOfUser', 'isBlockedByUser', 'isAdmin', 'isGlobalModerator', 'serverSoftware', 'serverSoftwareVersion'];
+    protected const USER_SMALL_RESPONSE_KEYS = ['userId', 'username', 'isBot', 'isFollowedByUser', 'isFollowerOfUser', 'isBlockedByUser', 'avatar', 'apId', 'apProfileId', 'createdAt', 'isAdmin', 'isGlobalModerator'];
+    protected const ENTRY_RESPONSE_KEYS = ['entryId', 'magazine', 'user', 'domain', 'title', 'url', 'image', 'body', 'lang', 'tags', 'badges', 'numComments', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'isOc', 'isAdult', 'isPinned', 'createdAt', 'editedAt', 'lastActive', 'visibility', 'type', 'slug', 'apId', 'canAuthUserModerate'];
+    protected const ENTRY_COMMENT_RESPONSE_KEYS = ['commentId', 'magazine', 'user', 'entryId', 'parentId', 'rootId', 'image', 'body', 'lang', 'isAdult', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'mentions', 'tags', 'createdAt', 'editedAt', 'lastActive', 'childCount', 'children', 'canAuthUserModerate'];
+    protected const POST_RESPONSE_KEYS = ['postId', 'user', 'magazine', 'image', 'body', 'lang', 'isAdult', 'isPinned', 'comments', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'tags', 'mentions', 'createdAt', 'editedAt', 'lastActive', 'slug', 'canAuthUserModerate'];
+    protected const POST_COMMENT_RESPONSE_KEYS = ['commentId', 'user', 'magazine', 'postId', 'parentId', 'rootId', 'image', 'body', 'lang', 'isAdult', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'mentions', 'tags', 'createdAt', 'editedAt', 'lastActive', 'childCount', 'children', 'canAuthUserModerate'];
     protected const BAN_RESPONSE_KEYS = ['banId', 'reason', 'expired', 'expiredAt', 'bannedUser', 'bannedBy', 'magazine'];
     protected const LOG_ENTRY_KEYS = ['type', 'createdAt', 'magazine', 'moderator', 'subject'];
-    protected const MAGAZINE_RESPONSE_KEYS = ['magazineId', 'owner', 'icon', 'name', 'title', 'description', 'rules', 'subscriptionsCount', 'entryCount', 'entryCommentCount', 'postCount', 'postCommentCount', 'isAdult', 'isUserSubscribed', 'isBlockedByUser', 'tags', 'badges', 'moderators', 'apId', 'apProfileId'];
+    protected const MAGAZINE_RESPONSE_KEYS = ['magazineId', 'owner', 'icon', 'name', 'title', 'description', 'rules', 'subscriptionsCount', 'entryCount', 'entryCommentCount', 'postCount', 'postCommentCount', 'isAdult', 'isUserSubscribed', 'isBlockedByUser', 'tags', 'badges', 'moderators', 'apId', 'apProfileId', 'serverSoftware', 'serverSoftwareVersion', 'isPostingRestrictedToMods', 'localSubscribers'];
     protected const MAGAZINE_SMALL_RESPONSE_KEYS = ['magazineId', 'name', 'icon', 'isUserSubscribed', 'isBlockedByUser', 'apId', 'apProfileId'];
     protected const DOMAIN_RESPONSE_KEYS = ['domainId', 'name', 'entryCount', 'subscriptionsCount', 'isUserSubscribed', 'isBlockedByUser'];
 
@@ -36,6 +37,9 @@ abstract class WebTestCase extends BaseWebTestCase
     protected ArrayCollection $magazines;
     protected ArrayCollection $entries;
 
+    protected EntityManagerInterface $entityManager;
+    protected KernelBrowser $client;
+
     protected string $kibbyPath;
 
     public function setUp(): void
@@ -44,6 +48,8 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->magazines = new ArrayCollection();
         $this->entries = new ArrayCollection();
         $this->kibbyPath = \dirname(__FILE__).'/assets/kibby_emoji.png';
+        $this->client = static::createClient();
+        $this->entityManager = $this->getService(EntityManagerInterface::class);
     }
 
     /**
@@ -82,5 +88,15 @@ abstract class WebTestCase extends BaseWebTestCase
     public static function assertNotReached(string $message = 'This branch should never happen'): void
     {
         self::assertFalse(true, $message);
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        $entityManager = $this->entityManager;
+        if ($entityManager->isOpen()) {
+            $entityManager->close();
+        }
     }
 }

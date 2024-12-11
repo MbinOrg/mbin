@@ -10,15 +10,14 @@ class MagazineAppearanceControllerTest extends WebTestCase
 {
     public function testOwnerCanEditMagazineTheme(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
         $this->getMagazineByName('acme');
 
-        $crawler = $client->request('GET', '/m/acme/panel/appearance');
-        $this->assertSelectorTextContains('#main .options__main a.active', 'appearance');
+        $crawler = $this->client->request('GET', '/m/acme/panel/appearance');
+        $this->assertSelectorTextContains('#main .options__main a.active', 'Appearance');
         $form = $crawler->filter('#main form[name=magazine_theme]')->selectButton('Done')->form();
         $form['magazine_theme[icon]']->upload($this->kibbyPath);
-        $crawler = $client->submit($form);
+        $crawler = $this->client->submit($form);
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('#sidebar .magazine img');
@@ -28,27 +27,25 @@ class MagazineAppearanceControllerTest extends WebTestCase
 
     public function testOwnerCanEditMagazineCSS(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
         $this->getMagazineByName('acme');
 
-        $crawler = $client->request('GET', '/m/acme/panel/appearance');
-        $this->assertSelectorTextContains('#main .options__main a.active', 'appearance');
+        $crawler = $this->client->request('GET', '/m/acme/panel/appearance');
+        $this->assertSelectorTextContains('#main .options__main a.active', 'Appearance');
         $form = $crawler->filter('#main form[name=magazine_theme]')->selectButton('Done')->form();
         $form['magazine_theme[customCss]']->setValue('#middle { display: none; }');
-        $crawler = $client->submit($form);
+        $crawler = $this->client->submit($form);
 
         $this->assertResponseIsSuccessful();
     }
 
     public function testUnauthorizedUserCannotEditMagazineTheme(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JaneDoe'));
+        $this->client->loginUser($this->getUserByUsername('JaneDoe'));
 
         $this->getMagazineByName('acme');
 
-        $client->request('GET', '/m/acme/panel/appearance');
+        $this->client->request('GET', '/m/acme/panel/appearance');
 
         $this->assertResponseStatusCodeSame(403);
     }

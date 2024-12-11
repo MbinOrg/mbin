@@ -11,7 +11,6 @@ class EntryCommentCreateApiTest extends WebTestCase
 {
     public function testApiCannotCreateCommentAnonymous(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
 
         $comment = [
@@ -20,7 +19,7 @@ class EntryCommentCreateApiTest extends WebTestCase
             'isAdult' => false,
         ];
 
-        $client->jsonRequest(
+        $this->client->jsonRequest(
             'POST', "/api/entry/{$entry->getId()}/comments",
             parameters: $comment
         );
@@ -30,7 +29,6 @@ class EntryCommentCreateApiTest extends WebTestCase
 
     public function testApiCannotCreateCommentWithoutScope(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
 
         $comment = [
@@ -40,12 +38,12 @@ class EntryCommentCreateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest(
+        $this->client->jsonRequest(
             'POST', "/api/entry/{$entry->getId()}/comments",
             parameters: $comment, server: ['HTTP_AUTHORIZATION' => $token]
         );
@@ -55,7 +53,6 @@ class EntryCommentCreateApiTest extends WebTestCase
 
     public function testApiCanCreateComment(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
 
         $comment = [
@@ -66,18 +63,18 @@ class EntryCommentCreateApiTest extends WebTestCase
 
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('user');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read entry_comment:create');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry_comment:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest(
+        $this->client->jsonRequest(
             'POST', "/api/entry/{$entry->getId()}/comments",
             parameters: $comment, server: ['HTTP_AUTHORIZATION' => $token]
         );
 
         self::assertResponseStatusCodeSame(201);
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_COMMENT_RESPONSE_KEYS, $jsonData);
@@ -97,7 +94,6 @@ class EntryCommentCreateApiTest extends WebTestCase
 
     public function testApiCannotCreateCommentReplyAnonymous(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $entryComment = $this->createEntryComment('a comment', $entry);
 
@@ -107,7 +103,7 @@ class EntryCommentCreateApiTest extends WebTestCase
             'isAdult' => false,
         ];
 
-        $client->jsonRequest(
+        $this->client->jsonRequest(
             'POST', "/api/entry/{$entry->getId()}/comments/{$entryComment->getId()}/reply",
             parameters: $comment
         );
@@ -117,7 +113,6 @@ class EntryCommentCreateApiTest extends WebTestCase
 
     public function testApiCannotCreateCommentReplyWithoutScope(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $entryComment = $this->createEntryComment('a comment', $entry);
 
@@ -128,12 +123,12 @@ class EntryCommentCreateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest(
+        $this->client->jsonRequest(
             'POST', "/api/entry/{$entry->getId()}/comments/{$entryComment->getId()}/reply",
             parameters: $comment, server: ['HTTP_AUTHORIZATION' => $token]
         );
@@ -143,7 +138,6 @@ class EntryCommentCreateApiTest extends WebTestCase
 
     public function testApiCanCreateCommentReply(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $entryComment = $this->createEntryComment('a comment', $entry);
 
@@ -155,18 +149,18 @@ class EntryCommentCreateApiTest extends WebTestCase
 
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('user');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read entry_comment:create');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry_comment:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest(
+        $this->client->jsonRequest(
             'POST', "/api/entry/{$entry->getId()}/comments/{$entryComment->getId()}/reply",
             parameters: $comment, server: ['HTTP_AUTHORIZATION' => $token]
         );
 
         self::assertResponseStatusCodeSame(201);
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_COMMENT_RESPONSE_KEYS, $jsonData);
@@ -186,7 +180,6 @@ class EntryCommentCreateApiTest extends WebTestCase
 
     public function testApiCannotCreateImageCommentAnonymous(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
 
         $comment = [
@@ -200,7 +193,7 @@ class EntryCommentCreateApiTest extends WebTestCase
         copy($this->kibbyPath, $this->kibbyPath.'.tmp');
         $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
 
-        $client->request(
+        $this->client->request(
             'POST', "/api/entry/{$entry->getId()}/comments/image",
             parameters: $comment, files: ['uploadImage' => $image]
         );
@@ -210,7 +203,6 @@ class EntryCommentCreateApiTest extends WebTestCase
 
     public function testApiCannotCreateImageCommentWithoutScope(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
 
         $comment = [
@@ -225,12 +217,12 @@ class EntryCommentCreateApiTest extends WebTestCase
         $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request(
+        $this->client->request(
             'POST', "/api/entry/{$entry->getId()}/comments/image",
             parameters: $comment, files: ['uploadImage' => $image],
             server: ['HTTP_AUTHORIZATION' => $token]
@@ -241,7 +233,6 @@ class EntryCommentCreateApiTest extends WebTestCase
 
     public function testApiCanCreateImageComment(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
 
         $comment = [
@@ -257,19 +248,19 @@ class EntryCommentCreateApiTest extends WebTestCase
 
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('user');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read entry_comment:create');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry_comment:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request(
+        $this->client->request(
             'POST', "/api/entry/{$entry->getId()}/comments/image",
             parameters: $comment, files: ['uploadImage' => $image],
             server: ['HTTP_AUTHORIZATION' => $token]
         );
 
         self::assertResponseStatusCodeSame(201);
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_COMMENT_RESPONSE_KEYS, $jsonData);
@@ -289,7 +280,6 @@ class EntryCommentCreateApiTest extends WebTestCase
 
     public function testApiCannotCreateImageCommentReplyAnonymous(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $entryComment = $this->createEntryComment('a comment', $entry);
 
@@ -304,7 +294,7 @@ class EntryCommentCreateApiTest extends WebTestCase
         copy($this->kibbyPath, $this->kibbyPath.'.tmp');
         $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
 
-        $client->request(
+        $this->client->request(
             'POST', "/api/entry/{$entry->getId()}/comments/{$entryComment->getId()}/reply/image",
             parameters: $comment, files: ['uploadImage' => $image]
         );
@@ -314,7 +304,6 @@ class EntryCommentCreateApiTest extends WebTestCase
 
     public function testApiCannotCreateImageCommentReplyWithoutScope(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $entryComment = $this->createEntryComment('a comment', $entry);
 
@@ -329,12 +318,12 @@ class EntryCommentCreateApiTest extends WebTestCase
         $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request(
+        $this->client->request(
             'POST', "/api/entry/{$entry->getId()}/comments/{$entryComment->getId()}/reply/image",
             parameters: $comment, files: ['uploadImage' => $image],
             server: ['HTTP_AUTHORIZATION' => $token]
@@ -345,7 +334,6 @@ class EntryCommentCreateApiTest extends WebTestCase
 
     public function testApiCanCreateImageCommentReply(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $entryComment = $this->createEntryComment('a comment', $entry);
 
@@ -362,19 +350,19 @@ class EntryCommentCreateApiTest extends WebTestCase
 
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('user');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read entry_comment:create');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry_comment:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request(
+        $this->client->request(
             'POST', "/api/entry/{$entry->getId()}/comments/{$entryComment->getId()}/reply/image",
             parameters: $comment, files: ['uploadImage' => $image],
             server: ['HTTP_AUTHORIZATION' => $token]
         );
 
         self::assertResponseStatusCodeSame(201);
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_COMMENT_RESPONSE_KEYS, $jsonData);

@@ -6,10 +6,12 @@ namespace App\Tests\Functional\Controller\Api\Search;
 
 use App\Factory\ActivityPub\GroupFactory;
 use App\Factory\ActivityPub\PersonFactory;
+use App\Factory\ActivityPub\TombstoneFactory;
 use App\Repository\MagazineRepository;
 use App\Repository\SiteRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ProjectInfoService;
 use App\Service\SettingsManager;
 use App\Tests\WebTestCase;
 use phpseclib3\Crypt\RSA;
@@ -33,24 +35,20 @@ class SearchApiTest extends WebTestCase
 
     public function testApiCannotSearchWithNoQuery(): void
     {
-        $client = self::createClient();
-
-        $client->request('GET', '/api/search');
+        $this->client->request('GET', '/api/search');
 
         self::assertResponseStatusCodeSame(400);
     }
 
     public function testApiCanFindEntryByTitleAnonymous(): void
     {
-        $client = self::createClient();
-
         $entry = $this->getEntryByTitle('A test title to search for');
         $this->getEntryByTitle('Cannot find this');
 
-        $client->request('GET', '/api/search?q=title');
+        $this->client->request('GET', '/api/search?q=title');
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::SEARCH_PAGINATED_KEYS, $jsonData);
@@ -71,17 +69,15 @@ class SearchApiTest extends WebTestCase
 
     public function testApiCanFindContentByBodyAnonymous(): void
     {
-        $client = self::createClient();
-
         $entry = $this->getEntryByTitle('A test title to search for', body: 'This is the body we\'re finding');
         $this->getEntryByTitle('Cannot find this', body: 'No keywords here!');
         $post = $this->createPost('Lets get a post with its body in there too!');
         $this->createPost('But not this one.');
 
-        $client->request('GET', '/api/search?q=body');
+        $this->client->request('GET', '/api/search?q=body');
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::SEARCH_PAGINATED_KEYS, $jsonData);
@@ -121,17 +117,15 @@ class SearchApiTest extends WebTestCase
 
     public function testApiCanFindCommentsByBodyAnonymous(): void
     {
-        $client = self::createClient();
-
         $entry = $this->getEntryByTitle('Cannot find this', body: 'No keywords here!');
         $post = $this->createPost('But not this one.');
         $entryComment = $this->createEntryComment('Some comment on a thread', $entry);
         $postComment = $this->createPostComment('Some comment on a post', $post);
 
-        $client->request('GET', '/api/search?q=comment');
+        $this->client->request('GET', '/api/search?q=comment');
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::SEARCH_PAGINATED_KEYS, $jsonData);
@@ -171,16 +165,14 @@ class SearchApiTest extends WebTestCase
 
     public function testApiCannotFindRemoteUserAnonymousWhenOptionSet(): void
     {
-        $client = self::createClient();
-
         $settingsManager = $this->getService(SettingsManager::class);
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', true);
 
-        $client->request('GET', '/api/search?q=ernest@kbin.social');
+        $this->client->request('GET', '/api/search?q=ernest@kbin.social');
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::SEARCH_PAGINATED_KEYS, $jsonData);
@@ -199,16 +191,14 @@ class SearchApiTest extends WebTestCase
 
     public function testApiCannotFindRemoteMagazineAnonymousWhenOptionSet(): void
     {
-        $client = self::createClient();
-
         $settingsManager = $this->getService(SettingsManager::class);
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', true);
 
-        $client->request('GET', '/api/search?q=kbinMeta@kbin.social');
+        $this->client->request('GET', '/api/search?q=kbinMeta@kbin.social');
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::SEARCH_PAGINATED_KEYS, $jsonData);
@@ -225,22 +215,21 @@ class SearchApiTest extends WebTestCase
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', $value);
     }
 
+    /*
+     * These tests do work, but we should not do requests to a remote server when running tests
     public function testApiCanFindRemoteUserAnonymousWhenOptionUnset(): void
     {
-        $client = self::createClient();
-
         $settingsManager = $this->getService(SettingsManager::class);
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', false);
         $domain = $settingsManager->get('KBIN_DOMAIN');
+        $this->getUserByUsername('test');
         $this->setCacheKeysForApHttpClient($domain);
 
-        // TODO: This test should not rely on kbin.social. A more guaranteed option
-        //   would be to spin up a second instance on the same machine.
-        $client->request('GET', '/api/search?q=ernest@kbin.social');
+        $this->client->request('GET', "/api/search?q=@eugen@mastodon.social");
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::SEARCH_PAGINATED_KEYS, $jsonData);
@@ -258,16 +247,14 @@ class SearchApiTest extends WebTestCase
         self::assertSame('user', $jsonData['apActors'][0]['type']);
         self::assertIsArray($jsonData['apActors'][0]['object']);
         self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData['apActors'][0]['object']);
-        self::assertSame('ernest@kbin.social', $jsonData['apActors'][0]['object']['apId']);
+        self::assertSame('eugen@mastodon.social', $jsonData['apActors'][0]['object']['apId']);
 
         // Seems like settings can persist in the test environment? Might only be for bare metal setups
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', $value);
     }
 
     public function testApiCanFindRemoteMagazineAnonymousWhenOptionUnset(): void
-    {
-        $client = self::createClient();
-        // Admin user must exist to retrieve a remote magazine since remote mods aren't federated (yet)
+    {        // Admin user must exist to retrieve a remote magazine since remote mods aren't federated (yet)
         $this->getUserByUsername('admin', isAdmin: true);
 
         $settingsManager = $this->getService(SettingsManager::class);
@@ -276,13 +263,12 @@ class SearchApiTest extends WebTestCase
         $domain = $settingsManager->get('KBIN_DOMAIN');
         $logger = $this->getService(LoggerInterface::class);
         $this->setCacheKeysForApHttpClient($domain, $logger);
+        $this->getMagazineByName('testMag');
 
-        // TODO: This test should not rely on kbin.social. A more guaranteed option
-        //   would be to spin up a second instance on the same machine.
-        $client->request('GET', '/api/search?q=kbinMeta@kbin.social');
+        $this->client->request('GET', "/api/search?q=!technology@lemmy.world");
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::SEARCH_PAGINATED_KEYS, $jsonData);
@@ -300,8 +286,7 @@ class SearchApiTest extends WebTestCase
         self::assertSame('magazine', $jsonData['apActors'][0]['type']);
         self::assertIsArray($jsonData['apActors'][0]['object']);
         self::assertArrayKeysMatch(self::MAGAZINE_RESPONSE_KEYS, $jsonData['apActors'][0]['object']);
-        self::assertSame('kbinMeta@kbin.social', $jsonData['apActors'][0]['object']['apId']);
-        self::assertSame('admin', $jsonData['apActors'][0]['object']['owner']['username']);
+        self::assertSame('technology@lemmy.world', $jsonData['apActors'][0]['object']['apId']);
 
         // Seems like settings can persist in the test environment? Might only be for bare metal setups
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', $value);
@@ -309,22 +294,19 @@ class SearchApiTest extends WebTestCase
 
     public function testApiCanFindRemoteUser(): void
     {
-        $client = self::createClient();
-
         $settingsManager = $this->getService(SettingsManager::class);
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', true);
         $domain = $settingsManager->get('KBIN_DOMAIN');
         $this->setCacheKeysForApHttpClient($domain);
+        $this->getUserByUsername('test');
 
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        // TODO: This test should not rely on kbin.social. A more guaranteed option
-        //   would be to spin up a second instance on the same machine.
-        $client->request('GET', '/api/search?q=ernest@kbin.social');
+        $this->client->request('GET', "/api/search?q=@eugen@mastodon.social");
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::SEARCH_PAGINATED_KEYS, $jsonData);
@@ -342,7 +324,7 @@ class SearchApiTest extends WebTestCase
         self::assertSame('user', $jsonData['apActors'][0]['type']);
         self::assertIsArray($jsonData['apActors'][0]['object']);
         self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData['apActors'][0]['object']);
-        self::assertSame('ernest@kbin.social', $jsonData['apActors'][0]['object']['apId']);
+        self::assertSame('eugen@mastodon.social', $jsonData['apActors'][0]['object']['apId']);
 
         // Seems like settings can persist in the test environment? Might only be for bare metal setups
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', $value);
@@ -350,7 +332,6 @@ class SearchApiTest extends WebTestCase
 
     public function testApiCanFindRemoteMagazine(): void
     {
-        $client = self::createClient();
         $this->getUserByUsername('admin', isAdmin: true);
 
         $settingsManager = $this->getService(SettingsManager::class);
@@ -359,14 +340,13 @@ class SearchApiTest extends WebTestCase
         $domain = $settingsManager->get('KBIN_DOMAIN');
         $this->setCacheKeysForApHttpClient($domain);
 
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
+        $this->getMagazineByName('testMag');
 
-        // TODO: This test should not rely on kbin.social. A more guaranteed option
-        //   would be to spin up a second instance on the same machine.
-        $client->request('GET', '/api/search?q=kbinMeta@kbin.social');
+        $this->client->request('GET', "/api/search?q=!technology@lemmy.world");
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::SEARCH_PAGINATED_KEYS, $jsonData);
@@ -384,12 +364,12 @@ class SearchApiTest extends WebTestCase
         self::assertSame('magazine', $jsonData['apActors'][0]['type']);
         self::assertIsArray($jsonData['apActors'][0]['object']);
         self::assertArrayKeysMatch(self::MAGAZINE_RESPONSE_KEYS, $jsonData['apActors'][0]['object']);
-        self::assertSame('kbinMeta@kbin.social', $jsonData['apActors'][0]['object']['apId']);
-        self::assertSame('admin', $jsonData['apActors'][0]['object']['owner']['username']);
+        self::assertSame('technology@lemmy.world', $jsonData['apActors'][0]['object']['apId']);
 
         // Seems like settings can persist in the test environment? Might only be for bare metal setups
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', $value);
     }
+     */
 
     private function setCacheKeysForApHttpClient(string $domain, ?LoggerInterface $logger = null): void
     {
@@ -412,6 +392,7 @@ class SearchApiTest extends WebTestCase
         // Inject fake keys into apHttpClient
         $apHttpClient = new ApHttpClient(
             $domain,
+            $this->getService(TombstoneFactory::class),
             $this->getService(PersonFactory::class),
             $this->getService(GroupFactory::class),
             $logger ?? $this->getService(LoggerInterface::class),
@@ -419,6 +400,7 @@ class SearchApiTest extends WebTestCase
             $this->getService(UserRepository::class),
             $this->getService(MagazineRepository::class),
             $this->getService(SiteRepository::class),
+            $this->getService(ProjectInfoService::class),
         );
         self::getContainer()->set(ApHttpClient::class, $apHttpClient);
     }

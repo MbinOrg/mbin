@@ -12,7 +12,6 @@ class PostReportApiTest extends WebTestCase
 {
     public function testApiCannotReportPostAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test for report', magazine: $magazine);
 
@@ -20,13 +19,12 @@ class PostReportApiTest extends WebTestCase
             'reason' => 'Test reporting',
         ];
 
-        $client->jsonRequest('POST', "/api/post/{$post->getId()}/report", $reportRequest);
+        $this->client->jsonRequest('POST', "/api/post/{$post->getId()}/report", $reportRequest);
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotReportPostWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test for report', user: $user, magazine: $magazine);
@@ -36,18 +34,17 @@ class PostReportApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('POST', "/api/post/{$post->getId()}/report", $reportRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/post/{$post->getId()}/report", $reportRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanReportPost(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $otherUser = $this->getUserByUsername('somebody');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
@@ -60,12 +57,12 @@ class PostReportApiTest extends WebTestCase
         $magazineRepository = $this->getService(MagazineRepository::class);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read post:report');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read post:report');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('POST', "/api/post/{$post->getId()}/report", $reportRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/post/{$post->getId()}/report", $reportRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(204);
 
         $magazine = $magazineRepository->find($magazine->getId());

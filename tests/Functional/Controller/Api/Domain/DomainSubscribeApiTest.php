@@ -11,44 +11,38 @@ class DomainSubscribeApiTest extends WebTestCase
 {
     public function testApiCannotSubscribeToDomainAnonymous()
     {
-        $client = self::createClient();
-
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
 
-        $client->request('PUT', "/api/domain/{$domain->getId()}/subscribe");
+        $this->client->request('PUT', "/api/domain/{$domain->getId()}/subscribe");
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotSubscribeToDomainWithoutScope()
     {
-        $client = self::createClient();
-
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', "/api/domain/{$domain->getId()}/subscribe", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/domain/{$domain->getId()}/subscribe", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanSubscribeToDomain()
     {
-        $client = self::createClient();
-
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read domain:subscribe');
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read domain:subscribe');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', "/api/domain/{$domain->getId()}/subscribe", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/domain/{$domain->getId()}/subscribe", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(DomainRetrieveApiTest::DOMAIN_RESPONSE_KEYS, $jsonData);
@@ -60,10 +54,10 @@ class DomainSubscribeApiTest extends WebTestCase
         self::assertNull($jsonData['isBlockedByUser']);
 
         // Idempotent when called multiple times
-        $client->request('PUT', "/api/domain/{$domain->getId()}/subscribe", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/domain/{$domain->getId()}/subscribe", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(DomainRetrieveApiTest::DOMAIN_RESPONSE_KEYS, $jsonData);
@@ -77,47 +71,41 @@ class DomainSubscribeApiTest extends WebTestCase
 
     public function testApiCannotUnsubscribeFromDomainAnonymous()
     {
-        $client = self::createClient();
-
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
 
-        $client->request('PUT', "/api/domain/{$domain->getId()}/unsubscribe");
+        $this->client->request('PUT', "/api/domain/{$domain->getId()}/unsubscribe");
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotUnsubscribeFromDomainWithoutScope()
     {
-        $client = self::createClient();
-
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', "/api/domain/{$domain->getId()}/unsubscribe", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/domain/{$domain->getId()}/unsubscribe", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanUnsubscribeFromDomain()
     {
-        $client = self::createClient();
-
         $user = $this->getUserByUsername('JohnDoe');
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
         $manager = $this->getService(DomainManager::class);
         $manager->subscribe($domain, $user);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read domain:subscribe');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read domain:subscribe');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', "/api/domain/{$domain->getId()}/unsubscribe", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/domain/{$domain->getId()}/unsubscribe", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(DomainRetrieveApiTest::DOMAIN_RESPONSE_KEYS, $jsonData);
@@ -129,10 +117,10 @@ class DomainSubscribeApiTest extends WebTestCase
         self::assertNull($jsonData['isBlockedByUser']);
 
         // Idempotent when called multiple times
-        $client->request('PUT', "/api/domain/{$domain->getId()}/unsubscribe", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/domain/{$domain->getId()}/unsubscribe", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(DomainRetrieveApiTest::DOMAIN_RESPONSE_KEYS, $jsonData);

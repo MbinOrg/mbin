@@ -11,47 +11,44 @@ class EntryVoteApiTest extends WebTestCase
 {
     public function testApiCannotUpvoteEntryAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for upvote', magazine: $magazine);
 
-        $client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/vote/1");
+        $this->client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/vote/1");
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotUpvoteEntryWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for upvote', user: $user, magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/vote/1", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/vote/1", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanUpvoteEntry(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for upvote', user: $user, magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read entry:vote');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry:vote');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/vote/1", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/vote/1", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData);
@@ -69,7 +66,7 @@ class EntryVoteApiTest extends WebTestCase
         self::assertEquals($entry->body, $jsonData['body']);
         self::assertNull($jsonData['image']);
         self::assertEquals($entry->lang, $jsonData['lang']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertIsArray($jsonData['badges']);
         self::assertEmpty($jsonData['badges']);
         self::assertSame(0, $jsonData['numComments']);
@@ -92,47 +89,44 @@ class EntryVoteApiTest extends WebTestCase
 
     public function testApiCannotDownvoteEntryAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for upvote', magazine: $magazine);
 
-        $client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/vote/-1");
+        $this->client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/vote/-1");
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotDownvoteEntryWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for upvote', user: $user, magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/vote/-1", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/vote/-1", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanDownvoteEntry(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for upvote', user: $user, magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read entry:vote');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry:vote');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/vote/-1", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/vote/-1", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData);
@@ -150,7 +144,7 @@ class EntryVoteApiTest extends WebTestCase
         self::assertEquals($entry->body, $jsonData['body']);
         self::assertNull($jsonData['image']);
         self::assertEquals($entry->lang, $jsonData['lang']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertIsArray($jsonData['badges']);
         self::assertEmpty($jsonData['badges']);
         self::assertSame(0, $jsonData['numComments']);
@@ -173,17 +167,15 @@ class EntryVoteApiTest extends WebTestCase
 
     public function testApiCannotClearVoteEntryAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for upvote', magazine: $magazine);
 
-        $client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/vote/0");
+        $this->client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/vote/0");
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotClearVoteEntryWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for upvote', user: $user, magazine: $magazine);
@@ -192,18 +184,17 @@ class EntryVoteApiTest extends WebTestCase
         $voteManager->vote(1, $entry, $user, rateLimit: false);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/vote/0", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/vote/0", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanClearVoteEntry(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for upvote', user: $user, magazine: $magazine);
@@ -212,14 +203,14 @@ class EntryVoteApiTest extends WebTestCase
         $voteManager->vote(1, $entry, $user, rateLimit: false);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read entry:vote');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry:vote');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/vote/0", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/vote/0", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData);
@@ -237,7 +228,7 @@ class EntryVoteApiTest extends WebTestCase
         self::assertEquals($entry->body, $jsonData['body']);
         self::assertNull($jsonData['image']);
         self::assertEquals($entry->lang, $jsonData['lang']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertIsArray($jsonData['badges']);
         self::assertEmpty($jsonData['badges']);
         self::assertSame(0, $jsonData['numComments']);

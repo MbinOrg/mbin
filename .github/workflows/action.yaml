@@ -79,6 +79,61 @@ jobs:
           SYMFONY_DEPRECATIONS_HELPER: disabled
         run: php bin/phpunit tests/Unit
 
+  integration-test:
+    runs-on: ubuntu-latest
+    container:
+      image: danger89/mbin-pipeline:1.2.0
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - run: cp .env.example .env
+      - name: Composer install
+        run: composer install --no-scripts --no-progress
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Run integration tests
+        env:
+          COMPOSER_CACHE_DIR: ${{ steps.composer-cache.outputs.dir }}
+          SYMFONY_DEPRECATIONS_HELPER: disabled
+        run: php bin/phpunit tests/Functional
+    services:
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_DB: mbin_test
+          POSTGRES_USER: mbin
+          POSTGRES_PASSWORD: ChangeThisPostgresPass
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        # Docker Hub image
+        image: redis
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps port 6379 on service container to the host
+          - 6380:6379
+
   audit-check:
     runs-on: ubuntu-latest
     container:

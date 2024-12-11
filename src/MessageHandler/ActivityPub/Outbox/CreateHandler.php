@@ -17,6 +17,7 @@ use App\Service\MessageManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -32,8 +33,9 @@ class CreateHandler extends MbinMessageHandler
         private readonly MessageManager $messageManager,
         private readonly LoggerInterface $logger,
         private readonly DeliverManager $deliverManager,
+        private readonly KernelInterface $kernel,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(CreateMessage $message): void

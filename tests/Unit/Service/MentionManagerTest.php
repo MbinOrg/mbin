@@ -15,8 +15,6 @@ class MentionManagerTest extends WebTestCase
      */
     public function testExtract(string $input, ?array $output): void
     {
-        $this->createClient();
-
         // Create a SettingsManager mock
         $settingsManagerMock = $this->createMock(SettingsManager::class);
 

@@ -12,19 +12,18 @@ class PostCommentSetLanguageApiTest extends WebTestCase
 {
     public function testApiCannotSetCommentLanguageAnonymous(): void
     {
-        $client = self::createClient();
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post);
 
-        $client->jsonRequest('PUT', "/api/moderate/post-comment/{$comment->getId()}/de");
+        $this->client->jsonRequest('PUT', "/api/moderate/post-comment/{$comment->getId()}/de");
 
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotSetCommentLanguageWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
+        $admin = $this->getUserByUsername('admin', isAdmin: true);
         $magazine = $this->getMagazineByName('acme');
         $user2 = $this->getUserByUsername('user2');
         $post = $this->createPost('a post', magazine: $magazine);
@@ -33,42 +32,42 @@ class PostCommentSetLanguageApiTest extends WebTestCase
         $magazineManager = $this->getService(MagazineManager::class);
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
+        $moderator->addedBy = $admin;
         $magazineManager->addModerator($moderator);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/post-comment/{$comment->getId()}/de", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post-comment/{$comment->getId()}/de", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiNonModCannotSetCommentLanguage(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $user2 = $this->getUserByUsername('user2');
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post, $user2);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:post_comment:language');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:post_comment:language');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/post-comment/{$comment->getId()}/de", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post-comment/{$comment->getId()}/de", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanSetCommentLanguage(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
+        $admin = $this->getUserByUsername('admin', isAdmin: true);
         $magazine = $this->getMagazineByName('acme');
         $user2 = $this->getUserByUsername('other');
         $post = $this->createPost('a post', magazine: $magazine);
@@ -77,18 +76,19 @@ class PostCommentSetLanguageApiTest extends WebTestCase
         $magazineManager = $this->getService(MagazineManager::class);
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
+        $moderator->addedBy = $admin;
         $magazineManager->addModerator($moderator);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:post_comment:language');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:post_comment:language');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/post-comment/{$comment->getId()}/de", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post-comment/{$comment->getId()}/de", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(200);
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::POST_COMMENT_RESPONSE_KEYS, $jsonData);

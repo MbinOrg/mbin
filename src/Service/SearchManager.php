@@ -74,7 +74,8 @@ class SearchManager
         }
 
         $objects = [];
-        $name = str_starts_with($query, '@') ? $query : '@'.$query;
+        $name = str_starts_with($query, '!') ? '@'.substr($query, 1) : $query;
+        $name = str_starts_with($name, '@') ? $name : '@'.$name;
         preg_match(RegPatterns::AP_USER, $name, $matches);
         if (\count(array_filter($matches)) >= 4) {
             try {

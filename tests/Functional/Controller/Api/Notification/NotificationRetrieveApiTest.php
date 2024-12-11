@@ -16,29 +16,25 @@ class NotificationRetrieveApiTest extends WebTestCase
 
     public function testApiCannotGetNotificationsByStatusAnonymous(): void
     {
-        $client = self::createClient();
-
-        $client->request('GET', '/api/notifications/all');
+        $this->client->request('GET', '/api/notifications/all');
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotGetNotificationsByStatusWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/notifications/all', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/notifications/all', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanGetNotificationsByStatusMessagesRedactedWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
         $messagingUser = $this->getUserByUsername('JaneDoe');
@@ -54,13 +50,13 @@ class NotificationRetrieveApiTest extends WebTestCase
         // Create unread notification
         $thread = $messageManager->toThread($dto, $messagingUser, $user);
 
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:notification:read');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:notification:read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/notifications/all', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/notifications/all', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -88,7 +84,6 @@ class NotificationRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetNotificationsByStatusAll(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
         $messagingUser = $this->getUserByUsername('JaneDoe');
@@ -100,13 +95,13 @@ class NotificationRetrieveApiTest extends WebTestCase
         /** @var Message $message */
         $message = $thread->messages->get(0);
 
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:notification:read user:message:read');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:notification:read user:message:read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/notifications/all', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/notifications/all', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -133,7 +128,6 @@ class NotificationRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetNotificationsFromThreads(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
         $messagingUser = $this->getUserByUsername('JaneDoe');
@@ -146,13 +140,13 @@ class NotificationRetrieveApiTest extends WebTestCase
         $reply = $this->createEntryComment('Test reply comment', $entry, $messagingUser, $parent);
         $this->createEntryComment('Test not notified comment', $entry, $messagingUser);
 
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:notification:read user:message:read');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:notification:read user:message:read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/notifications/all', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/notifications/all', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -190,7 +184,6 @@ class NotificationRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetNotificationsFromPosts(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
         $messagingUser = $this->getUserByUsername('JaneDoe');
@@ -203,13 +196,13 @@ class NotificationRetrieveApiTest extends WebTestCase
         $reply = $this->createPostCommentReply('Test reply comment', $post, $messagingUser, $parent);
         $this->createPostComment('Test not notified comment', $post, $messagingUser);
 
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:notification:read user:message:read');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:notification:read user:message:read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/notifications/all', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/notifications/all', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -247,7 +240,6 @@ class NotificationRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetNotificationsByStatusRead(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
         $messagingUser = $this->getUserByUsername('JaneDoe');
@@ -263,13 +255,13 @@ class NotificationRetrieveApiTest extends WebTestCase
         // Create unread notification
         $thread = $messageManager->toThread($dto, $messagingUser, $user);
 
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:notification:read');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:notification:read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/notifications/read', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/notifications/read', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -294,7 +286,6 @@ class NotificationRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetNotificationsByStatusNew(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
         $messagingUser = $this->getUserByUsername('JaneDoe');
@@ -310,13 +301,13 @@ class NotificationRetrieveApiTest extends WebTestCase
         // Create unread notification
         $thread = $messageManager->toThread($dto, $messagingUser, $user);
 
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:notification:read');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:notification:read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/notifications/new', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/notifications/new', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -341,7 +332,6 @@ class NotificationRetrieveApiTest extends WebTestCase
 
     public function testApiCannotGetNotificationsByInvalidStatus(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
         $messagingUser = $this->getUserByUsername('JaneDoe');
@@ -357,39 +347,35 @@ class NotificationRetrieveApiTest extends WebTestCase
         // Create unread notification
         $thread = $messageManager->toThread($dto, $messagingUser, $user);
 
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:notification:read');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:notification:read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/notifications/invalid', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/notifications/invalid', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(400);
     }
 
     public function testApiCannotGetNotificationCountAnonymous(): void
     {
-        $client = self::createClient();
-
-        $client->request('GET', '/api/notifications/count');
+        $this->client->request('GET', '/api/notifications/count');
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotGetNotificationCountWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/notifications/count', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/notifications/count', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanGetNotificationCount(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
         $messagingUser = $this->getUserByUsername('JaneDoe');
@@ -404,13 +390,13 @@ class NotificationRetrieveApiTest extends WebTestCase
         /** @var Message $message */
         $message = $thread->messages->get(0);
 
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:notification:read');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:notification:read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/notifications/count', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/notifications/count', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(['count'], $jsonData);
@@ -419,35 +405,31 @@ class NotificationRetrieveApiTest extends WebTestCase
 
     public function testApiCannotGetNotificationByIdAnonymous(): void
     {
-        $client = self::createClient();
-
         $notification = $this->createMessageNotification();
         self::assertNotNull($notification);
 
-        $client->request('GET', "/api/notification/{$notification->getId()}");
+        $this->client->request('GET', "/api/notification/{$notification->getId()}");
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotGetNotificationByIdWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
         $notification = $this->createMessageNotification();
         self::assertNotNull($notification);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/notification/{$notification->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/notification/{$notification->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotGetOtherUsersNotificationById(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
         $messagedUser = $this->getUserByUsername('JamesDoe');
@@ -455,30 +437,29 @@ class NotificationRetrieveApiTest extends WebTestCase
         $notification = $this->createMessageNotification($messagedUser);
         self::assertNotNull($notification);
 
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:notification:read');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:notification:read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/notification/{$notification->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/notification/{$notification->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanGetNotificationById(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
 
         $notification = $this->createMessageNotification();
         self::assertNotNull($notification);
 
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:notification:read');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:notification:read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/notification/{$notification->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/notification/{$notification->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::NOTIFICATION_RESPONSE_KEYS, $jsonData);

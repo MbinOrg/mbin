@@ -18,6 +18,7 @@ use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\RecoverableMessageHandlingException;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
@@ -30,13 +31,14 @@ class DeliverHandler extends MbinMessageHandler
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly ApHttpClient $client,
         private readonly ActivityPubManager $manager,
         private readonly SettingsManager $settingsManager,
         private readonly LoggerInterface $logger,
         private readonly InstanceRepository $instanceRepository,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     /**

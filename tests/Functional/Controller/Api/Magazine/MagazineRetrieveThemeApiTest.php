@@ -13,8 +13,6 @@ class MagazineRetrieveThemeApiTest extends WebTestCase
 
     public function testApiCanRetrieveMagazineThemeByIdAnonymously(): void
     {
-        $client = self::createClient();
-
         $magazine = $this->getMagazineByName('test');
         $magazine->customCss = '.test {}';
         $entityManager = $this->getService(EntityManagerInterface::class);
@@ -22,10 +20,10 @@ class MagazineRetrieveThemeApiTest extends WebTestCase
         $entityManager->persist($magazine);
         $entityManager->flush();
 
-        $client->request('GET', '/api/magazine/'.(string) $magazine->getId().'/theme');
+        $this->client->request('GET', '/api/magazine/'.(string) $magazine->getId().'/theme');
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::MAGAZINE_THEME_RESPONSE_KEYS, $jsonData);
@@ -37,8 +35,7 @@ class MagazineRetrieveThemeApiTest extends WebTestCase
 
     public function testApiCanRetrieveMagazineThemeById(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test');
@@ -48,13 +45,13 @@ class MagazineRetrieveThemeApiTest extends WebTestCase
         $entityManager->persist($magazine);
         $entityManager->flush();
 
-        $codes = self::getAuthorizationCodeTokenResponse($client);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client);
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/magazine/'.(string) $magazine->getId().'/theme', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/magazine/'.(string) $magazine->getId().'/theme', server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::MAGAZINE_THEME_RESPONSE_KEYS, $jsonData);

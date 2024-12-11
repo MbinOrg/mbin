@@ -12,15 +12,14 @@ class DomainEntryRetrieveApiTest extends WebTestCase
 {
     public function testApiCanGetDomainEntriesAnonymous(): void
     {
-        $client = self::createClient();
         $this->getEntryByTitle('an entry', body: 'test');
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $entry = $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
         $domain = $entry->domain;
 
-        $client->request('GET', "/api/domain/{$domain->getId()}/entries");
+        $this->client->request('GET', "/api/domain/{$domain->getId()}/entries");
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -43,21 +42,20 @@ class DomainEntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetDomainEntries(): void
     {
-        $client = self::createClient();
         $this->getEntryByTitle('an entry', body: 'test');
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $entry = $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
         $domain = $entry->domain;
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/domain/{$domain->getId()}/entries", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/domain/{$domain->getId()}/entries", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -80,7 +78,6 @@ class DomainEntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetDomainEntriesNewest(): void
     {
-        $client = self::createClient();
         $first = $this->getEntryByTitle('first', url: 'https://google.com');
         $second = $this->getEntryByTitle('second', url: 'https://google.com');
         $third = $this->getEntryByTitle('third', url: 'https://google.com');
@@ -97,14 +94,14 @@ class DomainEntryRetrieveApiTest extends WebTestCase
         $entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/domain/{$domain->getId()}/entries?sort=newest", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/domain/{$domain->getId()}/entries?sort=newest", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -130,7 +127,6 @@ class DomainEntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetDomainEntriesOldest(): void
     {
-        $client = self::createClient();
         $first = $this->getEntryByTitle('first', url: 'https://google.com');
         $second = $this->getEntryByTitle('second', url: 'https://google.com');
         $third = $this->getEntryByTitle('third', url: 'https://google.com');
@@ -147,14 +143,14 @@ class DomainEntryRetrieveApiTest extends WebTestCase
         $entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/domain/{$domain->getId()}/entries?sort=oldest", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/domain/{$domain->getId()}/entries?sort=oldest", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -180,7 +176,6 @@ class DomainEntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetDomainEntriesCommented(): void
     {
-        $client = self::createClient();
         $first = $this->getEntryByTitle('first', url: 'https://google.com');
         $this->createEntryComment('comment 1', $first);
         $this->createEntryComment('comment 2', $first);
@@ -190,14 +185,14 @@ class DomainEntryRetrieveApiTest extends WebTestCase
         $domain = $first->domain;
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/domain/{$domain->getId()}/entries?sort=commented", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/domain/{$domain->getId()}/entries?sort=commented", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -226,7 +221,6 @@ class DomainEntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetDomainEntriesActive(): void
     {
-        $client = self::createClient();
         $first = $this->getEntryByTitle('first', url: 'https://google.com');
         $second = $this->getEntryByTitle('second', url: 'https://google.com');
         $third = $this->getEntryByTitle('third', url: 'https://google.com');
@@ -243,14 +237,14 @@ class DomainEntryRetrieveApiTest extends WebTestCase
         $entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/domain/{$domain->getId()}/entries?sort=active", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/domain/{$domain->getId()}/entries?sort=active", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -276,7 +270,6 @@ class DomainEntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetDomainEntriesTop(): void
     {
-        $client = self::createClient();
         $first = $this->getEntryByTitle('first', url: 'https://google.com');
         $second = $this->getEntryByTitle('second', url: 'https://google.com');
         $third = $this->getEntryByTitle('third', url: 'https://google.com');
@@ -288,14 +281,14 @@ class DomainEntryRetrieveApiTest extends WebTestCase
         $voteManager->vote(1, $second, $this->getUserByUsername('voter1'), rateLimit: false);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/domain/{$domain->getId()}/entries?sort=top", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/domain/{$domain->getId()}/entries?sort=top", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -324,21 +317,20 @@ class DomainEntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetDomainEntriesWithUserVoteStatus(): void
     {
-        $client = self::createClient();
         $this->getEntryByTitle('an entry', body: 'test');
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $entry = $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
         $domain = $entry->domain;
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read vote');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read vote');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/domain/{$domain->getId()}/entries", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/domain/{$domain->getId()}/entries", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -362,9 +354,11 @@ class DomainEntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['items'][0]['domain']);
         self::assertEquals('https://google.com', $jsonData['items'][0]['url']);
         self::assertNull($jsonData['items'][0]['body']);
-        self::assertNull($jsonData['items'][0]['image']);
+        if (null !== $jsonData['items'][0]['image']) {
+            self::assertStringContainsString('google.com', parse_url($jsonData['items'][0]['image']['sourceUrl'], PHP_URL_HOST));
+        }
         self::assertEquals('en', $jsonData['items'][0]['lang']);
-        self::assertNull($jsonData['items'][0]['tags']);
+        self::assertEmpty($jsonData['items'][0]['tags']);
         self::assertSame(0, $jsonData['items'][0]['numComments']);
         self::assertSame(0, $jsonData['items'][0]['uv']);
         self::assertSame(0, $jsonData['items'][0]['dv']);

@@ -11,14 +11,13 @@ class UserPurgeApiTest extends WebTestCase
 {
     public function testApiCannotPurgeUserWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout', isAdmin: true);
         $purgedUser = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
 
-        $client->request('DELETE', '/api/admin/users/'.(string) $purgedUser->getId().'/purge_account', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('DELETE', '/api/admin/users/'.(string) $purgedUser->getId().'/purge_account', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseStatusCodeSame(403);
 
         $repository = $this->getService(UserRepository::class);
@@ -28,14 +27,13 @@ class UserPurgeApiTest extends WebTestCase
 
     public function testApiCannotPurgeUserWithoutAdminAccount(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout', isAdmin: false);
         $purgedUser = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read admin:user:purge');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read admin:user:purge');
 
-        $client->request('DELETE', '/api/admin/users/'.(string) $purgedUser->getId().'/purge_account', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('DELETE', '/api/admin/users/'.(string) $purgedUser->getId().'/purge_account', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
 
         self::assertResponseStatusCodeSame(403);
 
@@ -46,14 +44,13 @@ class UserPurgeApiTest extends WebTestCase
 
     public function testApiCanPurgeUser(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout', isAdmin: true);
         $purgedUser = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read admin:user:purge');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read admin:user:purge');
 
-        $client->request('DELETE', '/api/admin/users/'.(string) $purgedUser->getId().'/purge_account', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('DELETE', '/api/admin/users/'.(string) $purgedUser->getId().'/purge_account', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseStatusCodeSame(204);
 
         $repository = $this->getService(UserRepository::class);
@@ -63,14 +60,13 @@ class UserPurgeApiTest extends WebTestCase
 
     public function testPurgeApiReturns404IfUserNotFound(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout', isAdmin: true);
         $purgedUser = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read admin:user:purge');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read admin:user:purge');
 
-        $client->request('DELETE', '/api/admin/users/'.(string) ($purgedUser->getId() * 10).'/purge_account', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('DELETE', '/api/admin/users/'.(string) ($purgedUser->getId() * 10).'/purge_account', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseStatusCodeSame(404);
 
         $repository = $this->getService(UserRepository::class);
@@ -80,10 +76,9 @@ class UserPurgeApiTest extends WebTestCase
 
     public function testPurgeApiReturns401IfTokenNotProvided(): void
     {
-        $client = self::createClient();
         $purgedUser = $this->getUserByUsername('JohnDoe');
 
-        $client->request('DELETE', '/api/admin/users/'.(string) $purgedUser->getId().'/purge_account');
+        $this->client->request('DELETE', '/api/admin/users/'.(string) $purgedUser->getId().'/purge_account');
         self::assertResponseStatusCodeSame(401);
     }
 }

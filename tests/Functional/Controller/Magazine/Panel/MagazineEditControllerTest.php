@@ -4,29 +4,37 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Magazine\Panel;
 
+use App\DTO\ModeratorDto;
+use App\Service\MagazineManager;
 use App\Tests\WebTestCase;
 
 class MagazineEditControllerTest extends WebTestCase
 {
-    public function testModCanSeePanelLink(): void
+    public function testModCannotSeePanelLink(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
-        $this->getMagazineByName('acme');
+        $mod = $this->getUserByUsername('JohnDoe');
+        $admin = $this->getUserByUsername('admin', isAdmin: true);
+        $this->client->loginUser($mod);
+        $magazine = $this->getMagazineByName('acme', $admin);
 
-        $client->request('GET', '/m/acme');
-        $this->assertSelectorTextContains('#sidebar .magazine', 'Magazine panel');
+        $manager = $this->getService(MagazineManager::class);
+        $dto = new ModeratorDto($magazine, $mod, $admin);
+        $manager->addModerator($dto);
+
+        $this->client->request('GET', '/m/acme');
+        $this->assertSelectorTextNotContains('#sidebar .magazine', 'Magazine panel');
     }
 
     public function testOwnerCanEditMagazine(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
-        $this->getMagazineByName('acme');
+        $owner = $this->getUserByUsername('JohnDoe');
+        $this->client->loginUser($owner);
+        $this->getMagazineByName('acme', $owner);
 
-        $crawler = $client->request('GET', '/m/acme/panel/general');
-        $this->assertSelectorTextContains('#main .options__main a.active', 'general');
-        $client->submit(
+        $crawler = $this->client->request('GET', '/m/acme/panel/general');
+        self::assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('#main .options__main a.active', 'General');
+        $this->client->submit(
             $crawler->filter('#main form[name=magazine]')->selectButton('Done')->form([
                 'magazine[description]' => 'test description edit',
                 'magazine[rules]' => 'test rules edit',
@@ -34,19 +42,18 @@ class MagazineEditControllerTest extends WebTestCase
             ])
         );
 
-        $client->followRedirect();
+        $this->client->followRedirect();
         $this->assertSelectorTextContains('#sidebar .magazine', 'test description edit');
         $this->assertSelectorTextContains('#sidebar .magazine', 'test rules edit');
     }
 
     public function testUnauthorizedUserCannotEditMagazine(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JaneDoe'));
+        $this->client->loginUser($this->getUserByUsername('JaneDoe'));
 
         $this->getMagazineByName('acme');
 
-        $client->request('GET', '/m/acme/panel/general');
+        $this->client->request('GET', '/m/acme/panel/general');
 
         $this->assertResponseStatusCodeSame(403);
     }

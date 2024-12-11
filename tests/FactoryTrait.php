@@ -46,6 +46,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -240,15 +241,19 @@ trait FactoryTrait
             }
         )->first();
 
-        $user = $user ?: $this->createUser($username, hideAdult: $hideAdult, about: $about, active: $active);
+        if ($user) {
+            return $user;
+        }
+
+        $user = $this->createUser($username, hideAdult: $hideAdult, about: $about, active: $active);
 
         if ($isAdmin) {
             $user->roles = ['ROLE_ADMIN'];
-            $manager = $this->getService(EntityManagerInterface::class);
-
-            $manager->persist($user);
-            $manager->flush();
         }
+
+        $manager = $this->getService(EntityManagerInterface::class);
+        $manager->persist($user);
+        $manager->flush();
 
         return $user;
     }
@@ -326,7 +331,7 @@ trait FactoryTrait
             }
         )->first();
 
-        return $magazine ?: $this->createMagazine($name, null, $user, $isAdult);
+        return $magazine ?: $this->createMagazine($name, $name, $user, $isAdult);
     }
 
     protected function getMagazineByNameNoRSAKey(string $name, ?User $user = null, bool $isAdult = false): Magazine
@@ -501,7 +506,10 @@ trait FactoryTrait
 
     public function createImage(string $fileName): Image
     {
-        return new Image(
+        $imageRepo = self::getService(ImageRepository::class);
+        $image = $imageRepo->findOneBy(['fileName' => $fileName]);
+
+        return $image ?? new Image(
             $fileName,
             '/dev/random',
             hash('sha256', $fileName),
@@ -574,6 +582,38 @@ trait FactoryTrait
         $postCommentManager->delete($moderator, $postComment);
         $postManager->delete($moderator, $post);
         $magazineManager->ban($magazine, $user, $moderator, MagazineBanDto::create('test ban', new \DateTimeImmutable('+12 hours')));
+    }
+
+    public function register($active = false): KernelBrowser
+    {
+        $crawler = $this->client->request('GET', '/register');
+
+        $this->client->submit(
+            $crawler->filter('form[name=user_register]')->selectButton('Register')->form(
+                [
+                    'user_register[username]' => 'JohnDoe',
+                    'user_register[email]' => 'johndoe@kbin.pub',
+                    'user_register[plainPassword][first]' => 'secret',
+                    'user_register[plainPassword][second]' => 'secret',
+                    'user_register[agreeTerms]' => true,
+                ]
+            )
+        );
+        if (302 === $this->client->getResponse()->getStatusCode()) {
+            $this->client->followRedirect();
+        }
+        self::assertResponseIsSuccessful();
+
+        if ($active) {
+            $user = self::getContainer()->get('doctrine')->getRepository(User::class)
+                ->findOneBy(['username' => 'JohnDoe']);
+            $user->isVerified = true;
+
+            self::getContainer()->get('doctrine')->getManager()->flush();
+            self::getContainer()->get('doctrine')->getManager()->refresh($user);
+        }
+
+        return $this->client;
     }
 
     public function getKibbyImageDto(): ImageDto

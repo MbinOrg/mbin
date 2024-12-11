@@ -13,21 +13,20 @@ class InstanceFederationApiTest extends WebTestCase
 
     public function testApiCanRetrieveEmptyInstanceDefederation(): void
     {
-        $client = self::createClient();
         $settings = $this->getService(SettingsManager::class);
         $settings->set('KBIN_BANNED_INSTANCES', []);
 
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/defederated', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/defederated', server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertArrayKeysMatch(self::INSTANCE_DEFEDERATED_RESPONSE_KEYS, $jsonData);
         self::assertSame([], $jsonData['instances']);
@@ -35,14 +34,13 @@ class InstanceFederationApiTest extends WebTestCase
 
     public function testApiCanRetrieveInstanceDefederationAnonymous(): void
     {
-        $client = self::createClient();
         $settings = $this->getService(SettingsManager::class);
         $settings->set('KBIN_BANNED_INSTANCES', ['defederated.social']);
 
-        $client->request('GET', '/api/defederated');
+        $this->client->request('GET', '/api/defederated');
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertArrayKeysMatch(self::INSTANCE_DEFEDERATED_RESPONSE_KEYS, $jsonData);
         self::assertSame(['defederated.social'], $jsonData['instances']);
@@ -50,21 +48,20 @@ class InstanceFederationApiTest extends WebTestCase
 
     public function testApiCanRetrieveInstanceDefederation(): void
     {
-        $client = self::createClient();
         $settings = $this->getService(SettingsManager::class);
         $settings->set('KBIN_BANNED_INSTANCES', ['defederated.social', 'evil.social']);
 
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/defederated', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/defederated', server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertArrayKeysMatch(self::INSTANCE_DEFEDERATED_RESPONSE_KEYS, $jsonData);
         self::assertSame(['defederated.social', 'evil.social'], $jsonData['instances']);
