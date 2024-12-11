@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    container_name: mbin-tests-db
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_DB=mbin_test
+      - POSTGRES_USER=mbin
+      - POSTGRES_PASSWORD=ChangeThisPostgresPass
+  redis:
+    image: redis:alpine
+    container_name: mbin-tests-redis
+    restart: unless-stopped
+    command: /bin/sh -c "redis-server --requirepass 123456789"
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]

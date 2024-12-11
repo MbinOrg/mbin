@@ -12,100 +12,99 @@ class PostSetLanguageApiTest extends WebTestCase
 {
     public function testApiCannotSetPostLanguageAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test post', magazine: $magazine);
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/de");
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/de");
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiNonModeratorCannotSetPostLanguage(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test post', user: $user, magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:post:language');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:post:language');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/de", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/de", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotSetPostLanguageWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $post = $this->createPost('test post', user: $user, magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/de", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/de", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotSetPostLanguageInvalid(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
+        $admin = $this->getUserByUsername('admin', isAdmin: true);
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test post', user: $user, magazine: $magazine);
 
         $magazineManager = $this->getService(MagazineManager::class);
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
+        $moderator->addedBy = $admin;
         $magazineManager->addModerator($moderator);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:post:language');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:post:language');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/fake", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/fake", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(400);
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/ac", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/ac", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(400);
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/aaa", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/aaa", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(400);
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/a", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/a", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(400);
     }
 
     public function testApiCanSetPostLanguage(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
+        $admin = $this->getUserByUsername('admin', isAdmin: true);
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test post', user: $user, magazine: $magazine);
 
         $magazineManager = $this->getService(MagazineManager::class);
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
+        $moderator->addedBy = $admin;
         $magazineManager->addModerator($moderator);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:post:language');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:post:language');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/de", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/de", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $jsonData);
@@ -119,7 +118,7 @@ class PostSetLanguageApiTest extends WebTestCase
         self::assertEquals($post->body, $jsonData['body']);
         self::assertNull($jsonData['image']);
         self::assertEquals('de', $jsonData['lang']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertNull($jsonData['mentions']);
         self::assertSame(0, $jsonData['comments']);
         self::assertSame(0, $jsonData['uv']);
@@ -140,25 +139,26 @@ class PostSetLanguageApiTest extends WebTestCase
 
     public function testApiCanSetPostLanguage3Letter(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
+        $admin = $this->getUserByUsername('admin', isAdmin: true);
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test post', user: $user, magazine: $magazine);
 
         $magazineManager = $this->getService(MagazineManager::class);
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
+        $moderator->addedBy = $admin;
         $magazineManager->addModerator($moderator);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:post:language');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:post:language');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/elx", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/elx", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $jsonData);
@@ -172,7 +172,7 @@ class PostSetLanguageApiTest extends WebTestCase
         self::assertEquals($post->body, $jsonData['body']);
         self::assertNull($jsonData['image']);
         self::assertEquals('elx', $jsonData['lang']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertNull($jsonData['mentions']);
         self::assertSame(0, $jsonData['comments']);
         self::assertSame(0, $jsonData['uv']);

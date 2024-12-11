@@ -13,48 +13,44 @@ class MagazineRetrieveTrashApiTest extends WebTestCase
 {
     public function testApiCannotRetrieveMagazineTrashAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByName('test');
-        $client->request('GET', "/api/moderate/magazine/{$magazine->getId()}/trash");
+        $this->client->request('GET', "/api/moderate/magazine/{$magazine->getId()}/trash");
 
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotRetrieveMagazineTrashWithoutScope(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
         self::createOAuth2AuthCodeClient();
         $magazine = $this->getMagazineByName('test');
 
-        $codes = self::getAuthorizationCodeTokenResponse($client);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client);
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/moderate/magazine/{$magazine->getId()}/trash", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/moderate/magazine/{$magazine->getId()}/trash", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotRetrieveMagazineTrashIfNotMod(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
         self::createOAuth2AuthCodeClient();
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read write moderate:magazine:trash:read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine:trash:read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
         $magazine = $this->getMagazineByName('test', $this->getUserByUsername('JaneDoe'));
-        $client->request('GET', "/api/moderate/magazine/{$magazine->getId()}/trash", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/moderate/magazine/{$magazine->getId()}/trash", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanRetrieveMagazineTrash(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
         self::createOAuth2AuthCodeClient();
         $magazine = $this->getMagazineByName('test');
 
@@ -64,13 +60,13 @@ class MagazineRetrieveTrashApiTest extends WebTestCase
         $entryManager = $this->getService(EntryManager::class);
         $entryManager->delete($user, $entry);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read write moderate:magazine:trash:read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine:trash:read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/moderate/magazine/{$magazine->getId()}/trash", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/moderate/magazine/{$magazine->getId()}/trash", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);

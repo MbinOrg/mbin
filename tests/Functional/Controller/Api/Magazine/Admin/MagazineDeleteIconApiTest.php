@@ -22,56 +22,54 @@ class MagazineDeleteIconApiTest extends WebTestCase
 
     public function testApiCannotDeleteMagazineIconAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByName('test');
-        $client->request('DELETE', "/api/moderate/magazine/{$magazine->getId()}/icon");
+        $this->client->request('DELETE', "/api/moderate/magazine/{$magazine->getId()}/icon");
 
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotDeleteMagazineIconWithoutScope(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test');
 
-        $codes = self::getAuthorizationCodeTokenResponse($client);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client);
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('DELETE', "/api/moderate/magazine/{$magazine->getId()}/icon", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/moderate/magazine/{$magazine->getId()}/icon", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiModCannotDeleteMagazineIcon(): void
     {
-        $client = self::createClient();
         $moderator = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($moderator);
+        $this->client->loginUser($moderator);
         $owner = $this->getUserByUsername('JaneDoe');
+        $admin = $this->getUserByUsername('admin', isAdmin: true);
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test', $owner);
         $magazineManager = $this->getService(MagazineManager::class);
         $dto = new ModeratorDto($magazine);
         $dto->user = $moderator;
+        $dto->addedBy = $admin;
         $magazineManager->addModerator($dto);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client);
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('DELETE', "/api/moderate/magazine/{$magazine->getId()}/icon", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/moderate/magazine/{$magazine->getId()}/icon", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanDeleteMagazineIcon(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test');
@@ -88,13 +86,13 @@ class MagazineDeleteIconApiTest extends WebTestCase
         $entityManager->persist($magazine);
         $entityManager->flush();
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read write moderate:magazine_admin:theme');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine_admin:theme');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/magazine/{$magazine->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/magazine/{$magazine->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
         self::assertArrayKeysMatch(MagazineRetrieveApiTest::MAGAZINE_RESPONSE_KEYS, $jsonData);
         self::assertIsArray($jsonData['icon']);
         self::assertArrayKeysMatch(self::IMAGE_KEYS, $jsonData['icon']);
@@ -102,10 +100,10 @@ class MagazineDeleteIconApiTest extends WebTestCase
         self::assertSame(96, $jsonData['icon']['height']);
         self::assertEquals('a8/1c/a81cc2fea35eeb232cd28fcb109b3eb5a4e52c71bce95af6650d71876c1bcbb7.png', $jsonData['icon']['filePath']);
 
-        $client->request('DELETE', "/api/moderate/magazine/{$magazine->getId()}/icon", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/moderate/magazine/{$magazine->getId()}/icon", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(MagazineUpdateThemeApiTest::MAGAZINE_THEME_RESPONSE_KEYS, $jsonData);

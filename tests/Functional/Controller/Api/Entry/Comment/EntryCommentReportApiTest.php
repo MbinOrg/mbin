@@ -11,7 +11,6 @@ class EntryCommentReportApiTest extends WebTestCase
 {
     public function testApiCannotReportCommentAnonymous(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $comment = $this->createEntryComment('test comment', $entry);
 
@@ -19,14 +18,13 @@ class EntryCommentReportApiTest extends WebTestCase
             'reason' => 'This comment breaks the rules!',
         ];
 
-        $client->jsonRequest('POST', "/api/comments/{$comment->getId()}/report", $report);
+        $this->client->jsonRequest('POST', "/api/comments/{$comment->getId()}/report", $report);
 
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotReportCommentWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $comment = $this->createEntryComment('test comment', $entry, $user);
@@ -36,19 +34,18 @@ class EntryCommentReportApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('POST', "/api/comments/{$comment->getId()}/report", $report, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/comments/{$comment->getId()}/report", $report, server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanReportOtherUsersComment(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $user2 = $this->getUserByUsername('other');
         $entry = $this->getEntryByTitle('an entry', body: 'test');
@@ -61,12 +58,12 @@ class EntryCommentReportApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read entry_comment:report');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry_comment:report');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('POST', "/api/comments/{$comment->getId()}/report", $report, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/comments/{$comment->getId()}/report", $report, server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(204);
         $report = $reportRepository->findBySubject($comment);
@@ -77,7 +74,6 @@ class EntryCommentReportApiTest extends WebTestCase
 
     public function testApiCanReportOwnComment(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $comment = $this->createEntryComment('test comment', $entry, $user);
@@ -89,12 +85,12 @@ class EntryCommentReportApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read entry_comment:report');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry_comment:report');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('POST', "/api/comments/{$comment->getId()}/report", $report, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/comments/{$comment->getId()}/report", $report, server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(204);
         $report = $reportRepository->findBySubject($comment);

@@ -22,6 +22,7 @@ use App\Service\MagazineManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -30,6 +31,7 @@ class AddHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly ActivityPubManager $activityPubManager,
         private readonly ApHttpClient $apHttpClient,
         private readonly ApActivityRepository $apActivityRepository,
@@ -41,7 +43,7 @@ class AddHandler extends MbinMessageHandler
         private readonly EntryManager $entryManager,
         private readonly SettingsManager $settingsManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(AddMessage $message): void

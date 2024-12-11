@@ -20,6 +20,7 @@ use App\Service\ReportManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -27,6 +28,7 @@ class FlagHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly ActivityPubManager $activityPubManager,
         private readonly ReportManager $reportManager,
         private readonly EntryRepository $entryRepository,
@@ -36,7 +38,7 @@ class FlagHandler extends MbinMessageHandler
         private readonly SettingsManager $settingsManager,
         private readonly LoggerInterface $logger,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(FlagMessage $message): void

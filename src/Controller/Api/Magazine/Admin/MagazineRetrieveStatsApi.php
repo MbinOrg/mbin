@@ -284,14 +284,14 @@ class MagazineRetrieveStatsApi extends MagazineBaseApi
             if (null === $startString) {
                 $start = null;
             } else {
-                $start = new \DateTime($startString);
+                $start = new \DateTimeImmutable($startString);
             }
 
             $endString = $request->get('end');
             if (null === $endString) {
                 $end = null;
             } else {
-                $end = new \DateTime($endString);
+                $end = new \DateTimeImmutable($endString);
             }
         } catch (\Exception $e) {
             throw new BadRequestHttpException('Failed to parse start or end time');

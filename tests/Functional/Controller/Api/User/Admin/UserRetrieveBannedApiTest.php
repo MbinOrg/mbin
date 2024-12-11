@@ -11,46 +11,43 @@ class UserRetrieveBannedApiTest extends WebTestCase
 {
     public function testApiCannotRetrieveBannedUsersWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout', isAdmin: true);
         $bannedUser = $this->getUserByUsername('JohnDoe');
         $this->getService(UserManager::class)->ban($bannedUser);
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
 
-        $client->request('GET', '/api/admin/users/banned', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/admin/users/banned', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotRetrieveBannedUsersWithoutAdminAccount(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout', isAdmin: false);
         $bannedUser = $this->getUserByUsername('JohnDoe');
         $this->getService(UserManager::class)->ban($bannedUser);
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read admin:user:ban');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read admin:user:ban');
 
-        $client->request('GET', '/api/admin/users/banned', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/admin/users/banned', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanRetrieveBannedUsers(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout', isAdmin: true);
         $bannedUser = $this->getUserByUsername('JohnDoe');
         $this->getService(UserManager::class)->ban($bannedUser);
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read admin:user:ban');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read admin:user:ban');
 
-        $client->request('GET', '/api/admin/users/banned', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/admin/users/banned', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
 

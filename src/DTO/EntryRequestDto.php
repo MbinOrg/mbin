@@ -71,6 +71,7 @@ class EntryRequestDto extends ContentRequestDto
         $dto->isOc = $this->isOc ?? $dto->isOc;
         $dto->lang = $this->lang ?? $dto->lang ?? SettingsManager::getValue('KBIN_DEFAULT_LANG');
         $dto->url = $this->url ?? $dto->url;
+        $dto->tags = $this->tags ?? $dto->tags;
 
         return $dto;
     }

@@ -12,8 +12,7 @@ class MagazineReportControllerTest extends WebTestCase
 {
     public function testModCanSeeEntryReports(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($user = $this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($user = $this->getUserByUsername('JohnDoe'));
         $user2 = $this->getUserByUsername('JaneDoe');
 
         $entryComment = $this->createEntryComment('Test comment 1');
@@ -26,10 +25,10 @@ class MagazineReportControllerTest extends WebTestCase
             );
         }
 
-        $client->request('GET', '/');
-        $crawler = $client->request('GET', '/m/acme/panel/reports');
+        $this->client->request('GET', '/');
+        $crawler = $this->client->request('GET', '/m/acme/panel/reports');
 
-        $this->assertSelectorTextContains('#main .options__main a.active', 'reports');
+        $this->assertSelectorTextContains('#main .options__main a.active', 'Reports');
         $this->assertEquals(
             4,
             $crawler->filter('#main .report')->count()
@@ -38,12 +37,11 @@ class MagazineReportControllerTest extends WebTestCase
 
     public function testUnauthorizedUserCannotSeeReports(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JaneDoe'));
+        $this->client->loginUser($this->getUserByUsername('JaneDoe'));
 
         $this->getMagazineByName('acme');
 
-        $client->request('GET', '/m/acme/panel/reports');
+        $this->client->request('GET', '/m/acme/panel/reports');
 
         $this->assertResponseStatusCodeSame(403);
     }

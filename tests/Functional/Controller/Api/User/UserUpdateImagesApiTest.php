@@ -19,17 +19,16 @@ class UserUpdateImagesApiTest extends WebTestCase
 
     public function testApiCannotUpdateCurrentUserAvatarWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:profile:read');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:profile:read');
 
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
         copy($this->kibbyPath, $this->kibbyPath.'.tmp');
         $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
 
-        $client->request(
+        $this->client->request(
             'POST', '/api/users/avatar',
             files: ['uploadImage' => $image],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
@@ -39,17 +38,16 @@ class UserUpdateImagesApiTest extends WebTestCase
 
     public function testApiCannotUpdateCurrentUserCoverWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:profile:read');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:profile:read');
 
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
         copy($this->kibbyPath, $this->kibbyPath.'.tmp');
         $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
 
-        $client->request(
+        $this->client->request(
             'POST', '/api/users/cover',
             files: ['uploadImage' => $image],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
@@ -59,48 +57,45 @@ class UserUpdateImagesApiTest extends WebTestCase
 
     public function testApiCannotDeleteCurrentUserAvatarWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:profile:read');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:profile:read');
 
-        $client->request('DELETE', '/api/users/avatar', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('DELETE', '/api/users/avatar', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotDeleteCurrentUserCoverWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:profile:read');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:profile:read');
 
-        $client->request('DELETE', '/api/users/cover', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('DELETE', '/api/users/cover', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanUpdateAndDeleteCurrentUserAvatar(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:profile:edit user:profile:read');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:profile:edit user:profile:read');
 
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
         copy($this->kibbyPath, $this->kibbyPath.'.tmp');
         $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
 
-        $client->request(
+        $this->client->request(
             'POST', '/api/users/avatar',
             files: ['uploadImage' => $image],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
@@ -115,10 +110,10 @@ class UserUpdateImagesApiTest extends WebTestCase
         //      This isn't great, but since people could have their media directory
         //      pretty much anywhere, its difficult to reliably clean up uploaded files
         //      otherwise. This is certainly something that could be improved.
-        $client->request('DELETE', '/api/users/avatar', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('DELETE', '/api/users/avatar', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
@@ -127,24 +122,23 @@ class UserUpdateImagesApiTest extends WebTestCase
 
     public function testApiCanUpdateAndDeleteCurrentUserCover(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:profile:edit user:profile:read');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:profile:edit user:profile:read');
 
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
         copy($this->kibbyPath, $this->kibbyPath.'.tmp');
         $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
 
-        $client->request(
+        $this->client->request(
             'POST', '/api/users/cover',
             files: ['uploadImage' => $image],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
@@ -159,10 +153,10 @@ class UserUpdateImagesApiTest extends WebTestCase
         //      This isn't great, but since people could have their media directory
         //      pretty much anywhere, its difficult to reliably clean up uploaded files
         //      otherwise. This is certainly something that could be improved.
-        $client->request('DELETE', '/api/users/cover', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('DELETE', '/api/users/cover', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);

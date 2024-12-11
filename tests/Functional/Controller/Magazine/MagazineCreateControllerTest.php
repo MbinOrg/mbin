@@ -10,12 +10,11 @@ class MagazineCreateControllerTest extends WebTestCase
 {
     public function testUserCanCreateMagazine(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
-        $crawler = $client->request('GET', '/newMagazine');
+        $crawler = $this->client->request('GET', '/newMagazine');
 
-        $client->submit(
+        $this->client->submit(
             $crawler->filter('form[name=magazine]')->selectButton('Create new magazine')->form(
                 [
                     'magazine[name]' => 'TestMagazine',
@@ -26,7 +25,7 @@ class MagazineCreateControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/m/TestMagazine');
 
-        $client->followRedirect();
+        $this->client->followRedirect();
 
         $this->assertSelectorTextContains('.head-title', '/m/TestMagazine');
         $this->assertSelectorTextContains('#content', 'Empty');
@@ -34,12 +33,11 @@ class MagazineCreateControllerTest extends WebTestCase
 
     public function testUserCantCreateInvalidMagazine(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
-        $crawler = $client->request('GET', '/newMagazine');
+        $crawler = $this->client->request('GET', '/newMagazine');
 
-        $client->submit(
+        $this->client->submit(
             $crawler->filter('form[name=magazine]')->selectButton('Create new magazine')->form(
                 [
                     'magazine[name]' => 't',
@@ -53,14 +51,13 @@ class MagazineCreateControllerTest extends WebTestCase
 
     public function testUserCantCreateTwoSameMagazines(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JaneDoe'));
+        $this->client->loginUser($this->getUserByUsername('JaneDoe'));
 
         $this->getMagazineByName('acme');
 
-        $crawler = $client->request('GET', '/newMagazine');
+        $crawler = $this->client->request('GET', '/newMagazine');
 
-        $client->submit(
+        $this->client->submit(
             $crawler->filter('form[name=magazine]')->selectButton('Create new magazine')->form(
                 [
                     'magazine[name]' => 'acme',

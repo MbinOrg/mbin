@@ -12,50 +12,47 @@ class PostCommentVoteApiTest extends WebTestCase
 {
     public function testApiCannotUpvoteCommentAnonymous(): void
     {
-        $client = self::createClient();
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post);
 
-        $client->request('PUT', "/api/post-comments/{$comment->getId()}/vote/1");
+        $this->client->request('PUT', "/api/post-comments/{$comment->getId()}/vote/1");
 
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotUpvoteCommentWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post, $user);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', "/api/post-comments/{$comment->getId()}/vote/1", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/post-comments/{$comment->getId()}/vote/1", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanUpvoteComment(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post, $user);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read post_comment:vote');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read post_comment:vote');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', "/api/post-comments/{$comment->getId()}/vote/1", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/post-comments/{$comment->getId()}/vote/1", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(200);
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::POST_COMMENT_RESPONSE_KEYS, $jsonData);
@@ -68,77 +65,63 @@ class PostCommentVoteApiTest extends WebTestCase
 
     public function testApiCannotDownvoteCommentAnonymous(): void
     {
-        $client = self::createClient();
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post);
 
-        $client->request('PUT', "/api/post-comments/{$comment->getId()}/vote/-1");
+        $this->client->request('PUT', "/api/post-comments/{$comment->getId()}/vote/-1");
 
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotDownvoteCommentWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post, $user);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', "/api/post-comments/{$comment->getId()}/vote/-1", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/post-comments/{$comment->getId()}/vote/-1", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
-    public function testApiCanDownvoteComment(): void
+    public function testApiCannotDownvoteComment(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post, $user);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read post_comment:vote');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read post_comment:vote');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', "/api/post-comments/{$comment->getId()}/vote/-1", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/post-comments/{$comment->getId()}/vote/-1", server: ['HTTP_AUTHORIZATION' => $token]);
 
-        self::assertResponseStatusCodeSame(200);
-        $jsonData = self::getJsonResponse($client);
-
-        self::assertIsArray($jsonData);
-        self::assertArrayKeysMatch(self::POST_COMMENT_RESPONSE_KEYS, $jsonData);
-        self::assertSame(0, $jsonData['uv']);
-        self::assertSame(1, $jsonData['dv']);
-        self::assertSame(0, $jsonData['favourites']);
-        self::assertSame(-1, $jsonData['userVote']);
-        self::assertFalse($jsonData['isFavourited']);
+        self::assertResponseStatusCodeSame(400);
     }
 
     public function testApiCannotRemoveVoteCommentAnonymous(): void
     {
-        $client = self::createClient();
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post);
 
         $voteManager = $this->getService(VoteManager::class);
         $voteManager->vote(1, $comment, $this->getUserByUsername('user'), rateLimit: false);
 
-        $client->request('PUT', "/api/post-comments/{$comment->getId()}/vote/0");
+        $this->client->request('PUT', "/api/post-comments/{$comment->getId()}/vote/0");
 
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotRemoveVoteCommentWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post, $user);
@@ -147,19 +130,18 @@ class PostCommentVoteApiTest extends WebTestCase
         $voteManager->vote(1, $comment, $user, rateLimit: false);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', "/api/post-comments/{$comment->getId()}/vote/0", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/post-comments/{$comment->getId()}/vote/0", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanRemoveVoteComment(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post, $user);
@@ -168,15 +150,15 @@ class PostCommentVoteApiTest extends WebTestCase
         $voteManager->vote(1, $comment, $user, rateLimit: false);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read post_comment:vote');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read post_comment:vote');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', "/api/post-comments/{$comment->getId()}/vote/0", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/post-comments/{$comment->getId()}/vote/0", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(200);
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::POST_COMMENT_RESPONSE_KEYS, $jsonData);
@@ -189,50 +171,47 @@ class PostCommentVoteApiTest extends WebTestCase
 
     public function testApiCannotFavouriteCommentAnonymous(): void
     {
-        $client = self::createClient();
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post);
 
-        $client->request('PUT', "/api/post-comments/{$comment->getId()}/favourite");
+        $this->client->request('PUT', "/api/post-comments/{$comment->getId()}/favourite");
 
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotFavouriteCommentWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post, $user);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', "/api/post-comments/{$comment->getId()}/favourite", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/post-comments/{$comment->getId()}/favourite", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanFavouriteComment(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post, $user);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read post_comment:vote');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read post_comment:vote');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', "/api/post-comments/{$comment->getId()}/favourite", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/post-comments/{$comment->getId()}/favourite", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(200);
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::POST_COMMENT_RESPONSE_KEYS, $jsonData);
@@ -245,7 +224,6 @@ class PostCommentVoteApiTest extends WebTestCase
 
     public function testApiCannotUnfavouriteCommentWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post, $user);
@@ -254,19 +232,18 @@ class PostCommentVoteApiTest extends WebTestCase
         $favouriteManager->toggle($user, $comment);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', "/api/post-comments/{$comment->getId()}/favourite", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/post-comments/{$comment->getId()}/favourite", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanUnfavouriteComment(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post, $user);
@@ -275,15 +252,15 @@ class PostCommentVoteApiTest extends WebTestCase
         $favouriteManager->toggle($user, $comment);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read post_comment:vote');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read post_comment:vote');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', "/api/post-comments/{$comment->getId()}/favourite", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/post-comments/{$comment->getId()}/favourite", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(200);
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::POST_COMMENT_RESPONSE_KEYS, $jsonData);

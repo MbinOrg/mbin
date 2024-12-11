@@ -12,31 +12,28 @@ class MessageReadApiTest extends WebTestCase
 {
     public function testApiCannotMarkMessagesReadAnonymous(): void
     {
-        $client = self::createClient();
         $message = $this->createMessage($this->getUserByUsername('JohnDoe'), $this->getUserByUsername('JaneDoe'), 'test message');
 
-        $client->request('PUT', "/api/messages/{$message->getId()}/read");
+        $this->client->request('PUT', "/api/messages/{$message->getId()}/read");
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotMarkMessagesReadWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
         $message = $this->createMessage($this->getUserByUsername('JohnDoe'), $this->getUserByUsername('JaneDoe'), 'test message');
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', "/api/messages/{$message->getId()}/read", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/messages/{$message->getId()}/read", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotMarkOtherUsersMessagesRead(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
         $messagingUser = $this->getUserByUsername('JaneDoe');
@@ -44,17 +41,16 @@ class MessageReadApiTest extends WebTestCase
 
         $message = $this->createMessage($messagedUser, $messagingUser, 'test message');
 
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:message:read');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:message:read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', "/api/messages/{$message->getId()}/read", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/messages/{$message->getId()}/read", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanMarkMessagesRead(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
         $messagingUser = $this->getUserByUsername('JaneDoe');
@@ -63,13 +59,13 @@ class MessageReadApiTest extends WebTestCase
         /** @var Message $message */
         $message = $thread->messages->get(0);
 
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:message:read');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:message:read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', "/api/messages/{$message->getId()}/read", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/messages/{$message->getId()}/read", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::MESSAGE_RESPONSE_KEYS, $jsonData);
@@ -84,31 +80,28 @@ class MessageReadApiTest extends WebTestCase
 
     public function testApiCannotMarkMessagesUnreadAnonymous(): void
     {
-        $client = self::createClient();
         $message = $this->createMessage($this->getUserByUsername('JohnDoe'), $this->getUserByUsername('JaneDoe'), 'test message');
 
-        $client->request('PUT', "/api/messages/{$message->getId()}/unread");
+        $this->client->request('PUT', "/api/messages/{$message->getId()}/unread");
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotMarkMessagesUnreadWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
         $message = $this->createMessage($this->getUserByUsername('JohnDoe'), $this->getUserByUsername('JaneDoe'), 'test message');
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', "/api/messages/{$message->getId()}/unread", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/messages/{$message->getId()}/unread", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotMarkOtherUsersMessagesUnread(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
         $messagingUser = $this->getUserByUsername('JaneDoe');
@@ -116,17 +109,16 @@ class MessageReadApiTest extends WebTestCase
 
         $message = $this->createMessage($messagedUser, $messagingUser, 'test message');
 
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:message:read');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:message:read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', "/api/messages/{$message->getId()}/unread", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/messages/{$message->getId()}/unread", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanMarkMessagesUnread(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
         $messagingUser = $this->getUserByUsername('JaneDoe');
@@ -137,13 +129,13 @@ class MessageReadApiTest extends WebTestCase
         $messageManager = $this->getService(MessageManager::class);
         $messageManager->readMessage($message, $user, flush: true);
 
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:message:read');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:message:read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('PUT', "/api/messages/{$message->getId()}/unread", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/messages/{$message->getId()}/unread", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::MESSAGE_RESPONSE_KEYS, $jsonData);
