@@ -1,12 +1,36 @@
 # CLI
 
+When you are the server administrator of the Mbin instance and you have access to the terminal / shell (via SSH for example), Mbin provides you several console commands.
+
+> [!WARNING]
+> We assume you are in the root directory of the Mbin instance (eg. `/var/www/mbin`),
+> this is the directory location where you want to execute console commands listed below. 
+
+> [!WARNING]
+> Run the commands as the correct user. In case you used the `mbin` user during setup,
+> switch to the mbin user fist via: `sudo -u mbin bash`
+> (or if you used the `www-data` user during setup: `sudo -u www-data bash`).
+> This prevent potential unwanted file permission issues.
+
+## Getting started
+
+List all available console commands, execute:
+
+```sh
+php bin/console
+```
+
+In the next chapters the focus is on the `mbin` section of the `bin/console` console commands and go into more detail.
+
 ## User Management
 
 ### User-Create
+
 This command allows you to create user, optionally granting administrator or global moderator privileges.
 
 Usage:
-```shell
+
+```sh
 php bin/console mbin:user:create [-r|--remove] [--admin] [--moderator] <username> <email> <password>
 ```
 
@@ -26,7 +50,8 @@ Options:
 This command allows you to grant administrator privileges to the user.
 
 Usage:
-```shell
+
+```sh
 php bin/console mbin:user:admin [-r|--remove] <username>
 ```
 
@@ -41,7 +66,8 @@ This command will delete the supplied user and notify the fediverse about it. Th
 so you will not see the change immediately.
 
 Usage:
-```shell
+
+```sh
 php bin/console mbin:user:delete <user>
 ```
 
@@ -52,7 +78,8 @@ Arguments:
 This command allows you to grant global moderator privileges to the user.
 
 Usage:
-```shell
+
+```sh
 php bin/console mbin:user:moderator [-r|--remove] <username>
 ```
 
@@ -66,7 +93,8 @@ Options:
 This command allows you to manually set or reset a users' password.
 
 Usage:
-```shell
+
+```sh
 php bin/console mbin:user:password <username> <password>
 ```
 
@@ -78,7 +106,8 @@ Arguments:
 This command allows you to manually activate or deactivate a user, bypassing email verification requirement.
 
 Usage:
-```shell
+
+```sh
 php bin/console mbin:user:verify [-a|--activate] [-d|--deactivate] <username>
 ```
 
@@ -100,7 +129,8 @@ Options:
 Removes all followers from a user.
 
 Usage:
-```shell
+
+```sh
 php bin/console mbin:user:unsub <username>
 ```
 
@@ -114,7 +144,8 @@ Arguments:
 This command allows you to create, delete and purge magazines.
 
 Usage:
-```shell
+
+```sh
 php bin/console mbin:magazine:create [-o|--owner OWNER] [-r|--remove] [--purge] [--restricted] [-t|--title TITLE] [-d|--description DESCRIPTION] <name>
 ```
 
@@ -136,7 +167,8 @@ Options:
 This command allows to subscribe a user to a magazine.
 
 Usage:
-```shell
+
+```sh
 php bin/console mbin:magazine:sub [-u|--unsub] <magazine> <username>
 ```
 
@@ -152,7 +184,8 @@ Options:
 Remove all the subscribers from a magazine.
 
 Usage:
-```shell
+
+```sh
 php bin/console mbin:magazine:unsub <magazine>
 ```
 
@@ -169,7 +202,8 @@ Arguments:
 This command allows you to move entries to a new magazine based on their tag.
 
 Usage:
-```shell
+
+```sh
 php bin/console mbin:entries:move <magazine> <tag>
 ```
 
@@ -185,7 +219,8 @@ Arguments:
 This command allows you to move posts to a new magazine based on their tag.
 
 Usage:
-```shell
+
+```sh
 php bin/console mbin:posts:move <magazine> <tag>
 ```
 
@@ -201,7 +236,8 @@ Arguments:
 This command will assign magazines to posts based on their tags.
 
 Usage:
-```shell
+
+```sh
 php bin/console mbin:posts:magazines
 ```
 
@@ -215,7 +251,8 @@ php bin/console mbin:posts:magazines
 This command will allow you to update remote actor (user/magazine) info.
 
 Usage:
-```shell
+
+```sh
 php bin/console mbin:actor:update [--users] [--magazines] [--force] [<user>]
 ```
 
@@ -234,7 +271,8 @@ Options:
 This command allows you to import an AP resource.
 
 Usage:
-```shell
+
+```sh
 php bin/console mbin:ap:import <url>
 ```
 
@@ -252,7 +290,8 @@ It executes the `liip:imagine:cache:resolve` command for every user- and magazin
 > This command will trigger **a lot** of processing if you execute it on a long-running server.
 
 Usage:
-```shell
+
+```sh
 php bin/console mbin:cache:build
 ```
 
@@ -264,7 +303,8 @@ php bin/console mbin:cache:build
 Removes all accounts that are marked for deletion today or in the past.
 
 Usage:
-```shell
+
+```sh
 php bin/console mbin:users:remove-marked-for-deletion
 ```
 
@@ -276,7 +316,8 @@ php bin/console mbin:users:remove-marked-for-deletion
 This command removes all failed messages from the failed queue (database).
 
 Usage:
-```shell
+
+```sh
 php bin/console mbin:messenger:failed:remove_all
 ```
 
@@ -288,7 +329,8 @@ php bin/console mbin:messenger:failed:remove_all
 This command removes all dead messages from the dead queue (database).
 
 Usage:
-```shell
+
+```sh
 php bin/console mbin:messenger:dead:remove_all
 ```
 
@@ -300,6 +342,7 @@ This command removes post and user duplicates by their ActivityPub ID.
 > We've had a unique index on the ActivityPub ID for a while, hence this command should not do anything
 
 Usage:
-```shell
+
+```sh
 php bin/console mbin:user:create [-r|--remove] [--admin] [--moderator] [--] <username> <email> <password>
 ```
