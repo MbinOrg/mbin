@@ -122,7 +122,7 @@
         "justinrainbow/json-schema": "^6.0.0",
         "phpstan/phpstan": "^2.0.2",
         "phpunit/phpunit": "^11.3.4",
-        "symfony/browser-kit": "7.1.*",
+        "symfony/browser-kit": "7.2.*",
         "symfony/debug-bundle": "7.1.*",
         "symfony/maker-bundle": "1.61.0",
         "symfony/phpunit-bridge": "7.1.*",
