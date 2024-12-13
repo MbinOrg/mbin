@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b0967838537fbbdecd9c8b4640569bfd",
+    "content-hash": "e3abb26e60ae97ffa098d704d87b5e92",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -7741,16 +7741,16 @@
         },
         {
             "name": "symfony/cache",
-            "version": "v7.2.0",
+            "version": "v7.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/cache.git",
-                "reference": "2c926bc348184b4b235f2200fcbe8fcf3c8c5b8a"
+                "reference": "e7e983596b744c4539f31e79b0350a6cf5878a20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/cache/zipball/2c926bc348184b4b235f2200fcbe8fcf3c8c5b8a",
-                "reference": "2c926bc348184b4b235f2200fcbe8fcf3c8c5b8a",
+                "url": "https://api.github.com/repos/symfony/cache/zipball/e7e983596b744c4539f31e79b0350a6cf5878a20",
+                "reference": "e7e983596b744c4539f31e79b0350a6cf5878a20",
                 "shasum": ""
             },
             "require": {
@@ -7819,7 +7819,7 @@
                 "psr6"
             ],
             "support": {
-                "source": "https://github.com/symfony/cache/tree/v7.2.0"
+                "source": "https://github.com/symfony/cache/tree/v7.2.1"
             },
             "funding": [
                 {
@@ -7835,7 +7835,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-25T15:21:05+00:00"
+            "time": "2024-12-07T08:08:50+00:00"
         },
         {
             "name": "symfony/cache-contracts",
@@ -8855,16 +8855,16 @@
         },
         {
             "name": "symfony/expression-language",
-            "version": "v7.1.6",
+            "version": "v7.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/expression-language.git",
-                "reference": "c3a1224bc144b36cd79149b42c1aecd5f81395a5"
+                "reference": "26f4884a455e755e630a5fc372df124a3578da2e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/expression-language/zipball/c3a1224bc144b36cd79149b42c1aecd5f81395a5",
-                "reference": "c3a1224bc144b36cd79149b42c1aecd5f81395a5",
+                "url": "https://api.github.com/repos/symfony/expression-language/zipball/26f4884a455e755e630a5fc372df124a3578da2e",
+                "reference": "26f4884a455e755e630a5fc372df124a3578da2e",
                 "shasum": ""
             },
             "require": {
@@ -8899,7 +8899,7 @@
             "description": "Provides an engine that can compile and evaluate expressions",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/expression-language/tree/v7.1.6"
+                "source": "https://github.com/symfony/expression-language/tree/v7.2.0"
             },
             "funding": [
                 {
@@ -8915,7 +8915,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-10-09T08:46:59+00:00"
+            "time": "2024-10-15T11:52:45+00:00"
         },
         {
             "name": "symfony/filesystem",
