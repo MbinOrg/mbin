@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f3fde4175d89dade6bd6d7e52e173f40",
+    "content-hash": "57ec99ba52a5038292fce73772157d64",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -7603,16 +7603,16 @@
         },
         {
             "name": "symfony/amqp-messenger",
-            "version": "v7.1.6",
+            "version": "v7.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/amqp-messenger.git",
-                "reference": "dcabd6116b8dbfab3cf5e98389fcbbd74715e19a"
+                "reference": "60a2a62f951dccf4bb9d29ed82abd66ef257cf87"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/amqp-messenger/zipball/dcabd6116b8dbfab3cf5e98389fcbbd74715e19a",
-                "reference": "dcabd6116b8dbfab3cf5e98389fcbbd74715e19a",
+                "url": "https://api.github.com/repos/symfony/amqp-messenger/zipball/60a2a62f951dccf4bb9d29ed82abd66ef257cf87",
+                "reference": "60a2a62f951dccf4bb9d29ed82abd66ef257cf87",
                 "shasum": ""
             },
             "require": {
@@ -7652,7 +7652,7 @@
             "description": "Symfony AMQP extension Messenger Bridge",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/amqp-messenger/tree/v7.1.6"
+                "source": "https://github.com/symfony/amqp-messenger/tree/v7.2.0"
             },
             "funding": [
                 {
@@ -7668,7 +7668,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-09-25T14:20:29+00:00"
+            "time": "2024-10-03T12:20:01+00:00"
         },
         {
             "name": "symfony/asset",
@@ -11254,8 +11254,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
                 }
             },
             "autoload": {
