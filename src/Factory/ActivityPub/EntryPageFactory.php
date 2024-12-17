@@ -123,7 +123,7 @@ class EntryPageFactory
         );
     }
 
-    private function getUrl(Entry $entry): string
+    private function getUrl(Entry $entry): ?string
     {
         $imageUrl = $this->imageManager->getUrl($entry->image);
 
@@ -131,6 +131,6 @@ class EntryPageFactory
             return $this->imageManager->getUrl($entry->image);
         }
 
-        return $entry->url ?? $this->getActivityPubId($entry);
+        return $entry->url;
     }
 }

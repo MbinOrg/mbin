@@ -2,7 +2,7 @@
   border-radius: 0.5rem;
 }
 
-.kbin-container.width--fixed {
+.mbin-container.width--fixed {
   .sidebar-subscriptions:not(.inline) .subscription-list .subscription a {
     max-width: calc(max(305px, 1360px / 6) - 3rem);
   }
@@ -12,7 +12,7 @@
   }
 }
 
-.kbin-container.width--auto {
+.mbin-container.width--auto {
   .sidebar-subscriptions:not(.inline) .subscription-list .subscription a {
     max-width: calc(max(305px, 85vw / 6) - 3rem);
   }
@@ -22,7 +22,7 @@
   }
 }
 
-.kbin-container.width--max {
+.mbin-container.width--max {
   .sidebar-subscriptions:not(.inline) .subscription-list .subscription a {
     max-width: calc(max(305px, 100vw / 6) - 3rem);
   }

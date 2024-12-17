@@ -877,8 +877,8 @@ show_related_posts: Toon willekeurige berichten
 show_active_users: Toon actieve gebruikers
 federation_page_dead_title: Dode instanties
 federation_page_dead_description: Instanties waarin we niet minimaal 10 activiteiten
-  achter elkaar konden leveren en waarbij de laatste succesvolle levering meer dan
-  een week geleden was
+  achter elkaar konden leveren en waarbij de laatste succesvolle aflevering en ontvangst
+  meer dan een week geleden was
 reporting_user: Rapporterende gebruiker
 reported: gerapporteerd
 report_subject: Onderwerp
@@ -933,3 +933,4 @@ hidden: Verborgen
 enabled: Ingeschakeld
 toolbar.spoiler: Spoiler
 comment_not_found: Commentaar niet gevonden
+table_of_contents: Inhoudsopgave

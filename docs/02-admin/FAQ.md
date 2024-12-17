@@ -37,7 +37,7 @@ As a part of our software development and discussions, Matrix is our primary pla
 
 Mercure is a _real-time communication protocol_ and server that facilitates server-sent _events_ for web applications. It enables _real-time updates_ by allowing clients to subscribe and receiving updates pushed by the server.
 
-Mbin uses Mercure (optionally), on very large instances you might want to consider disabling Mercure whenever it _degrates_ our server performance.
+Mbin uses Mercure (optionally), on very large instances you might want to consider disabling Mercure whenever it _degrades_ our server performance.
 
 ## What is Redis?
 

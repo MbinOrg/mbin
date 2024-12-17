@@ -587,3 +587,249 @@ federation_page_dead_description: Casos en los que no pudimos realizar al menos 
 account_deletion_description: Tu cuenta se eliminará en 30 días a menos que elijas
   eliminarla inmediatamente. Para recuperar tu cuenta en un plazo de 30 días, inicia
   sesión con las mismas credenciales de usuario o comunícate con un administrador.
+oauth2.grant.user.oauth_clients.read: Lea los permisos que ha concedido a otras aplicaciones
+  OAuth2.
+oauth2.grant.moderate.post.trash: Elimina o restaura publicaciones en las revistas
+  que moderas.
+moderation.report.ban_user_title: Usuario baneado
+oauth2.grant.user.oauth_clients.all: Lee y edita los permisos que has concedido a
+  otras aplicaciones OAuth2.
+oauth2.grant.moderate.entry.change_language: Cambia el idioma de los hilos en tus
+  revistas moderadas.
+oauth2.grant.moderate.entry.pin: Fija hilos en la parte superior de tus revistas moderadas.
+oauth2.grant.moderate.entry.set_adult: Marca los hilos como NSFW en tus revistas moderadas.
+oauth2.grant.admin.oauth_clients.read: Vea los clientes OAuth2 que existen en su instancia
+  y sus estadísticas de uso.
+last_active: Última actividad
+oauth2.grant.admin.federation.update: Añade o elimina instancias de la lista de instancias
+  defederadas.
+oauth2.grant.moderate.entry.all: Modera los hilos en tus revistas moderadas.
+oauth2.grant.admin.magazine.purge: Borra completamente las revistas de tu instancia.
+oauth2.grant.post_comment.vote: Vota a favor, en contra o potencia cualquier comentario
+  de una publicación .
+oauth2.grant.user.profile.all: Lee y modifica tu perfil.
+oauth2.grant.user.profile.read: Lee tu perfil.
+oauth2.grant.moderate.post_comment.all: Moderar los comentarios en las publicaciones
+  de las revistas que moderas.
+oauth2.grant.admin.magazine.move_entry: Mueva los hilos entre las revistas de su instancia.
+oauth2.grant.admin.user.ban: Banear o desbanear usuarios de su instancia.
+oauth2.grant.admin.user.delete: Elimine usuarios de su instancia.
+oauth2.grant.admin.instance.settings.read: Ver la configuración de su instancia.
+oauth2.grant.admin.instance.settings.edit: Actualice la configuración de su instancia.
+show_avatars_on_comments_help: Mostrar u ocultar los avatares de los usuarios al ver
+  comentarios en un solo hilo o publicación .
+comment_reply_position: Posición del comentario de respuesta
+magazine_theme_appearance_icon: Icono personalizado para la revista. Si no se selecciona
+  ninguno, se utilizará el icono predeterminado.
+moderation.report.approve_report_title: Aprobar informe
+moderation.report.ban_user_description: ¿Quieres banear al usuario (%username%) que
+  creó este contenido de esta revista?
+moderation.report.approve_report_confirmation: ¿Está seguro de que desea aprobar este
+  informe?
+subject_reported_exists: Este contenido ya ha sido reportado.
+oauth2.grant.admin.federation.read: Ver la lista de instancias defederadas.
+oauth2.grant.user.block: Bloquea o desbloquea usuarios, y lee una lista de los usuarios
+  que bloqueas.
+oauth2.grant.moderate.all: Realiza cualquier acción de moderación que tengas permiso
+  para realizar en tus revistas moderadas.
+oauth2.grant.admin.instance.all: Ver y actualizar la configuración o la información
+  de la instancia.
+single_settings: Soltero
+moderation.report.reject_report_title: Rechazar informe
+oauth2.grant.moderate.magazine.ban.create: Prohibir a los usuarios acceder a las revistas
+  que moderas.
+oauth2.grant.admin.user.purge: Elimine completamente los usuarios de su instancia.
+oauth2.grant.admin.oauth_clients.all: Ver o revocar clientes OAuth2 que existen en
+  su instancia.
+flash_post_pin_success: El tema se ha anclado correctamente.
+flash_post_unpin_success: La publicación se desancló correctamente.
+oauth2.grant.user.profile.edit: Modificar tu perfil.
+oauth2.grant.moderate.entry_comment.all: Modere los comentarios en los hilos de las
+  revistas que moderadas.
+oauth2.grant.moderate.entry.trash: Elimina o restaura hilos en tus revistas moderadas.
+oauth2.grant.admin.instance.information.edit: Actualice las páginas Acerca de, Preguntas
+  frecuentes, Contacto, Condiciones del servicio y Política de privacidad de su instancia.
+update_comment: Actualizar comentario
+oauth2.grant.admin.post.purge: Borra completamente cualquier mensaje de tu instancia.
+oauth2.grant.admin.post_comment.purge: Elimina completamente cualquier comentario
+  de una entrada de tu instancia.
+oauth2.grant.user.all: Leer y editar tu perfil, mensajes o notificaciones; leer y
+  editar los permisos que has concedido a otras apps; seguir o bloquear a otros usuarios;
+  ver listas de usuarios a los que sigues o bloqueas.
+oauth2.grant.user.follow: Sigue o deja de seguir usuarios, y lee la lista de usuarios
+  a los que sigues.
+oauth2.grant.moderate.post_comment.change_language: Cambia el idioma de los comentarios
+  en las publicaciones de las revistas que moderas.
+magazine_theme_appearance_custom_css: CSS personalizado que se aplicará al visualizar
+  el contenido dentro de su revista.
+oauth2.grant.admin.entry_comment.purge: Elimina por completo cualquier comentario
+  en un hilo de tu instancia.
+oauth2.grant.moderate.magazine.ban.all: Gestiona usuarios baneados en las revistas
+  que moderas.
+oauth2.grant.moderate.magazine.ban.read: Ver usuarios baneados en las revistas que
+  moderas.
+oauth2.grant.admin.federation.all: Ver y actualizar las instancias actualmente desfederadas.
+oauth2.grant.admin.instance.settings.all: Ver o actualizar la configuración de su
+  instancia.
+oauth2.grant.moderate.post.change_language: Cambia el idioma de las publicaciones
+  en las revistas que moderas.
+oauth2.grant.admin.instance.stats: Consulta las estadísticas de tu instancia.
+oauth2.grant.admin.user.all: Banear, verifique o elimine completamente usuarios de
+  su instancia.
+oauth2.grant.post_comment.report: Reportar cualquier comentario en una publicación
+  .
+magazine_theme_appearance_background_image: Imagen de fondo personalizada que se aplicará
+  al visualizar el contenido dentro de su revista.
+oauth2.grant.moderate.post_comment.set_adult: Marca los comentarios en las publicaciones
+  como NSFW en las revistas que moderas.
+oauth2.grant.user.notification.delete: Borra tus notificaciones.
+oauth2.grant.moderate.magazine.all: Administra prohibiciones, informes y visualiza
+  elementos eliminados en las revistas que moderas.
+oauth2.grant.admin.magazine.all: Mover hilos entre o eliminar completamente revistas
+  en su instancia.
+oauth2.grant.user.oauth_clients.edit: Edita los permisos que has concedido a otras
+  aplicaciones OAuth2.
+oauth2.grant.moderate.post.set_adult: Marca las publicaciones como NSFW en las revistas
+  que moderas.
+oauth2.grant.admin.oauth_clients.revoke: Revoque el acceso a clientes OAuth2 en su
+  instancia.
+comment_reply_position_help: Muestra el formulario de respuesta a los comentarios
+  en la parte superior o inferior de la página. Cuando está habilitado el "desplazamiento
+  infinito", la posición siempre aparecerá en la parte superior.
+oauth2.grant.moderate.entry_comment.set_adult: Marque los comentarios en los hilos
+  como NSFW en las revistas que moderas.
+oauth2.grant.moderate.entry_comment.trash: Elimina o restaura comentarios en hilos
+  de las revistas que moderas.
+oauth2.grant.moderate.post.all: Modera las publicaciones en las revistas que moderas.
+oauth2.grant.moderate.entry_comment.change_language: Cambia el idioma de los comentarios
+  en los hilos de las revistas que moderas.
+oauth2.grant.moderate.post_comment.trash: Elimina o restaura comentarios en publicaciones
+  de las revistas que moderas.
+oauth2.grant.admin.user.verify: Verifique los usuarios en su instancia.
+oauth2.grant.user.notification.all: Lee y borra tus notificaciones.
+oauth2.grant.user.notification.read: Lee tus notificaciones, incluidas las de mensajes.
+oauth2.grant.user.message.all: Lee tus mensajes y envía mensajes a otros usuarios.
+oauth2.grant.user.message.read: Lee tus mensajes.
+oauth2.grant.user.message.create: Envía mensajes a otros usuarios.
+flash_image_download_too_large_error: No se ha podido crear la imagen, es demasiado
+  grande (tamaño máximo %bytes%)
+pending: Pendiente
+announcement: Anuncio
+2fa.backup_codes.recommendation: Es recomendable que guardes una copia de los mismos
+  en un lugar seguro.
+2fa.available_apps: Usa una aplicación para el doble factor de autenticación como
+  %google_authenticator%, %aegis% (Android) o %raivo% (iOS) para escanear el código
+  QR.
+2fa.backup_codes.help: Puedes usar estos códigos cuando no tengas tu dispositivo o
+  aplicación de doble factor de autenticación. No se <strong>volverán a mostrar</strong>
+  y podrás utilizar cada uno de ellos <strong>solo una vez</strong>.
+show_subscriptions: Mostrar suscripciones
+subscription_sidebar_pop_out_right: Mover a una barra lateral separada a la derecha
+subscription_sidebar_pop_out_left: Mover a launa barra lateral separada a la izquierda
+subscription_sidebar_pop_in: Mover suscripciones al panel emergente
+subscriptions_in_own_sidebar: En una barra lateral separada
+flash_thread_tag_banned_error: No se pudo crear el hilo. El contenido no está permitido.
+flash_email_failed_to_sent: No se ha podido enviar el correo electrónico.
+flash_post_new_success: La publicación se ha creado correctamente.
+flash_post_new_error: No se pudo crear la publicación . Algo salió mal.
+flash_magazine_theme_changed_success: Se ha actualizado la apariencia de la revista.
+flash_user_edit_password_error: Error al cambiar la contraseña.
+ownership_requests: Solicitudes de titularidad
+flash_email_was_sent: El correo electrónico se ha enviado correctamente.
+purge_content: Purgar contenido
+purge_content_desc: Purgue completamente el contenido del usuario, incluidas las respuestas
+  de otros usuarios en conversaciones, publicaciones y comentarios creados.
+delete_account_desc: Eliminar la cuenta, incluidas las respuestas de otros usuarios
+  en hilos, publicaciones y comentarios creados.
+schedule_delete_account: Programar eliminación
+remove_schedule_delete_account: Eliminar la eliminación programada
+remove_schedule_delete_account_desc: Eliminar la eliminación programada. Todo el contenido
+  volverá a estar disponible y el usuario podrá iniciar sesión.
+two_factor_authentication: Doble factor de autenticación
+2fa.setup_error: Error al habilitar el doble factor de autenticación para la cuenta
+2fa.enable: Configurar el doble factor de autenticación
+2fa.code_invalid: El código de autenticación no es válido
+2fa.disable: Desactivar el doble factor de autenticación
+2fa.backup: Tus códigos de respaldo para el doble factor de autenticación
+2fa.backup-create.help: Puedes crear nuevos códigos de autenticación de respaldo;
+  al hacerlo, se invalidarán los códigos existentes.
+2fa.add: Añadir a mi cuenta
+2fa.qr_code_img.alt: Un código QR que permite configurar el doble factor de autenticación
+  para tu cuenta
+sidebars_same_side: Barras laterales en el mismo lado
+flash_user_settings_general_success: La configuración de usuario se guardó correctamente.
+account_is_suspended: Cuenta suspendida.
+account_unbanned: Cuenta desbloqueada.
+apply_for_moderator: Solicitar moderador
+cancel_request: Cancelar solicitud
+remove_subscriptions: Eliminar suscripciones
+abandoned: Abandonado
+moderator_requests: Solicitudes de moderación
+user_badge_global_moderator: Moderador global
+user_badge_admin: Administrador
+user_badge_moderator: Moderador
+user_badge_bot: Bot
+keywords: Palabras clave
+sensitive_warning: Contenido sensible
+sensitive_toggle: Alternar la visibilidad del contenido sensible
+deleted_by_author: El hilo, mensaje o comentario ha sido eliminado por el autor
+all_time: Todo el tiempo
+toolbar.spoiler: Spoiler
+alphabetically: Alfabéticamente
+subscription_panel_large: Panel grande
+close: Cerrar
+flash_magazine_theme_changed_error: No se pudo actualizar la apariencia de la revista.
+flash_comment_new_success: El comentario ha sido creado correctamente.
+flash_comment_new_error: No se pudo crear el comentario. Algo salió mal.
+flash_user_settings_general_error: No se pudo guardar la configuración del usuario.
+details: Detalles
+flash_user_edit_profile_error: No se pudo guardar la configuración del perfil.
+flash_thread_edit_error: No se pudo editar el hilo. Algo salió mal.
+2fa.remove: Eliminar el doble factor de autenticación
+2fa.backup-create.label: Crear nuevos códigos de autenticación de respaldo
+2fa.verify_authentication_code.label: Ingresa un código para el doble factor de autenticación
+  para verificar la configuración
+subscription_sort: Corta
+subscription_header: Revistas suscritas
+sensitive_hide: Pulse para ocultar
+2fa.verify: Comprobar
+2fa.user_active_tfa.title: El usuario tiene activo el doble factor de autenticación
+cancel: Cancelar
+oauth2.grant.moderate.post.pin: Fija publicaciones en la parte superior de las revistas
+  que moderas.
+moderation.report.reject_report_confirmation: ¿Está seguro de que desea rechazar este
+  informe?
+show_avatars_on_comments: Mostrar avatares en los comentarios
+2fa.qr_code_link.title: Al visitar este enlace, es posible que tu plataforma registre
+  este doble factor de autenticación
+delete_content_desc: Eliminar el contenido del usuario pero dejar las respuestas de
+  otros usuarios en las conversaciones, publicaciones y comentarios.
+schedule_delete_account_desc: Programe la eliminación de esta cuenta en 30 días. Esto
+  ocultará al usuario y su contenido, y evitará que el usuario inicie sesión.
+password_and_2fa: Contraseña y 2FA
+sensitive_show: Pulse para ver
+action: Acción
+user_badge_op: OP
+deleted_by_moderator: Tema, mensaje o comentario eliminado por el moderador
+spoiler: Spoiler
+show: Mostrar
+delete_content: Eliminar contenido
+flash_comment_edit_error: No se pudo editar el comentario. Algo salió mal.
+request_magazine_ownership: Solicitar titularidad de revista
+two_factor_backup: Códigos de respaldo del doble factor de autenticación
+flash_account_settings_changed: La configuración de tu cuenta se ha cambiado correctamente.
+  Tendrás que volver a iniciar sesión.
+position_bottom: Inferior
+position_top: Superior
+flash_thread_new_error: No se pudo crear el hilo. Algo salió mal.
+2fa.authentication_code.label: Código de autenticación
+flash_comment_edit_success: El comentario se ha actualizado correctamente.
+flash_user_edit_profile_success: La configuración del perfil de usuario se guardó
+  correctamente.
+flash_user_edit_email_error: Error al cambiar el correo electrónico.
+hide: Ocultar
+edited: editado
+sso_registrations_enabled: Registros SSO habilitados
+sso_registrations_enabled.error: Los registros de nuevas cuentas con administradores
+  de identidad de terceros están actualmente deshabilitados.
+accept: Aceptar

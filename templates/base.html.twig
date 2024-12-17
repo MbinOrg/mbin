@@ -61,7 +61,7 @@
         'subs-show': app.user is defined and app.user is not same as null and SUBSCRIPTIONS_SHOW is not same as V_FALSE and SUBSCRIPTIONS_SEPARATE is same as V_TRUE,
         'sidebars-same-side': app.user is defined and app.user is not same as null and SUBSCRIPTIONS_SEPARATE is same as V_TRUE and SUBSCRIPTIONS_SAME_SIDE is same as V_TRUE,
     }) }}"
-        data-controller="kbin notifications"
+        data-controller="mbin notifications"
         data-notifications-endpoint-value="{{ kbin_mercure_enabled() ? 'https://'~kbin_domain()~'/.well-known/mercure' : null }}"
         data-notifications-user-value="{{ app.user ? app.user.id : null }}"
         data-notifications-magazine-value="{{ magazine is defined and magazine ? magazine.id : null }}"
@@ -71,7 +71,7 @@
 {% include 'layout/_header.html.twig' with {header_nav: block('header_nav')} %}
 {{ component('announcement') }}
 <div id="middle" class="{%- block mainClass -%}page{%- endblock %}">
-    <div class="kbin-container {{ html_classes('width--'~PAGE_WIDTH) }}">
+    <div class="mbin-container {{ html_classes('width--'~PAGE_WIDTH) }}">
         <main id="main"
               data-controller="lightbox timeago confirmation"
               class="{{ html_classes({'view-compact': COMPACT is same as V_TRUE}) }}">
