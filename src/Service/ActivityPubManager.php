@@ -332,17 +332,13 @@ class ActivityPubManager
      *
      * @return ?User or null on error (e.g. actor not found)
      */
-    public function updateUser(string $actorUrl): ?User
+    private function updateUser(string $actorUrl): ?User
     {
         $this->logger->info('[ActivityPubManager::updateUser] Updating user {name}', ['name' => $actorUrl]);
         $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
 
         if ($user->isDeleted || $user->isTrashed() || $user->isSoftDeleted()) {
             return $user;
-        }
-
-        if ($this->settingsManager->isBannedInstance($actorUrl)) {
-            return null;
         }
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);
@@ -510,17 +506,13 @@ class ActivityPubManager
      *
      * @return ?Magazine or null on error
      */
-    public function updateMagazine(string $actorUrl): ?Magazine
+    private function updateMagazine(string $actorUrl): ?Magazine
     {
         $this->logger->info('[ActivityPubManager::updateMagazine] Updating magazine "{magName}"', ['magName' => $actorUrl]);
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
 
         if ($magazine->isTrashed() || $magazine->isSoftDeleted()) {
             return $magazine;
-        }
-
-        if ($this->settingsManager->isBannedInstance($actorUrl)) {
-            return null;
         }
 
         $actor = $this->apHttpClient->getActorObject($actorUrl);

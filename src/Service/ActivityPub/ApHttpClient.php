@@ -385,7 +385,7 @@ class ApHttpClient
 
         // Often 400, 404 errors just return the full HTML page, so we don't want to log the full content of them
         // We truncate the content to 200 characters max.
-        $this->logger->error('[ApHttpClient::updateUser] {type} failed: {address}, ex: {e}: {msg}. Truncated content: {content}', [
+        $this->logger->error('[ApHttpClient::logRequestException] {type} failed: {address}, ex: {e}: {msg}. Truncated content: {content}', [
             'type' => $requestType,
             'address' => $requestUrl,
             'e' => \get_class($e),
@@ -394,7 +394,7 @@ class ApHttpClient
         ]);
         // And only log the full content in debug log mode
         if ($content) {
-            $this->logger->debug('[ApHttpClient::updateUser] Full response body content: {content}', [
+            $this->logger->debug('[ApHttpClient::logRequestException] Full response body content: {content}', [
                 'content' => $content,
             ]);
         }
