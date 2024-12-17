@@ -160,11 +160,6 @@ class ActivityPubManager
             $actorUrl = $this->webfinger($actorUrl)->getProfileId();
         }
 
-        // Check if the instance is banned
-        if ($this->settingsManager->isBannedInstance($actorUrl)) {
-            return null;
-        }
-
         if (\in_array(
             parse_url($actorUrl, PHP_URL_HOST),
             [$this->settingsManager->get('KBIN_DOMAIN'), 'localhost', '127.0.0.1']
@@ -177,6 +172,11 @@ class ActivityPubManager
             return $this->userRepository->findOneBy(['username' => $name]);
         }
 
+        // Check if the instance is banned
+        if ($this->settingsManager->isBannedInstance($actorUrl)) {
+            return null;
+        }
+
         $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
         if ($user instanceof User) {
             $this->logger->debug('[ActivityPubManager::findActorOrCreate] Found remote user for url: "{url}" in db', ['url' => $actorUrl]);
@@ -186,6 +186,7 @@ class ActivityPubManager
 
             return $user;
         }
+
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
         if ($magazine instanceof Magazine) {
             $this->logger->debug('[ActivityPubManager::findActorOrCreate] Found remote user for url: "{url}" in db', ['url' => $actorUrl]);
