@@ -19,7 +19,7 @@ class SentEntryEditedNotificationHandler extends MbinMessageHandler
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly EntryRepository $repository,
-        private readonly NotificationManager $manager
+        private readonly NotificationManager $notificationManager
     ) {
         parent::__construct($this->entityManager);
     }
@@ -40,6 +40,6 @@ class SentEntryEditedNotificationHandler extends MbinMessageHandler
             throw new UnrecoverableMessageHandlingException('Entry not found');
         }
 
-        $this->manager->sendEdited($entry);
+        $this->notificationManager->sendEdited($entry);
     }
 }

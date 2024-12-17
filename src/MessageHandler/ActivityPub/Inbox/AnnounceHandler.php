@@ -24,7 +24,7 @@ class AnnounceHandler extends MbinMessageHandler
         private readonly ActivityPubManager $activityPubManager,
         private readonly EntityManagerInterface $entityManager,
         private readonly MessageBusInterface $bus,
-        private readonly VoteManager $manager,
+        private readonly VoteManager $voteManager,
         private readonly VoteHandleSubscriber $voteHandleSubscriber,
         private readonly LoggerInterface $logger,
     ) {
@@ -57,7 +57,7 @@ class AnnounceHandler extends MbinMessageHandler
             $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
 
             if ($actor instanceof User) {
-                $this->manager->upvote($entity, $actor);
+                $this->voteManager->upvote($entity, $actor);
                 $this->voteHandleSubscriber->clearCache($entity);
             } else {
                 $entity->lastActive = new \DateTime();
