@@ -42,7 +42,7 @@ class ActivityHandler extends MbinMessageHandler
         private readonly SignatureValidator $signatureValidator,
         private readonly SettingsManager $settingsManager,
         private readonly MessageBusInterface $bus,
-        private readonly ActivityPubManager $manager,
+        private readonly ActivityPubManager $activityPubManager,
         private readonly ApHttpClient $apHttpClient,
         private readonly InstanceRepository $instanceRepository,
         private readonly RemoteInstanceManager $remoteInstanceManager,
@@ -119,15 +119,15 @@ class ActivityHandler extends MbinMessageHandler
 
         try {
             if (isset($payload['actor']) || isset($payload['attributedTo'])) {
-                if (!$this->verifyInstanceDomain($payload['actor'] ?? $this->manager->getSingleActorFromAttributedTo($payload['attributedTo']))) {
+                if (!$this->verifyInstanceDomain($payload['actor'] ?? $this->activityPubManager->getSingleActorFromAttributedTo($payload['attributedTo']))) {
                     return;
                 }
-                $user = $this->manager->findActorOrCreate($payload['actor'] ?? $this->manager->getSingleActorFromAttributedTo($payload['attributedTo']));
+                $user = $this->activityPubManager->findActorOrCreate($payload['actor'] ?? $this->activityPubManager->getSingleActorFromAttributedTo($payload['attributedTo']));
             } else {
                 if (!$this->verifyInstanceDomain($payload['id'])) {
                     return;
                 }
-                $user = $this->manager->findActorOrCreate($payload['id']);
+                $user = $this->activityPubManager->findActorOrCreate($payload['id']);
             }
         } catch (\Exception $e) {
             $this->logger->error('[ActivityHandler::doWork] Payload: '.json_encode($payload));
@@ -157,7 +157,7 @@ class ActivityHandler extends MbinMessageHandler
         if ('Announce' === $payload['type']) {
             // we check for an array here, because boosts are announces with an url (string) as the object
             if (\is_array($payload['object'])) {
-                $actorObject = $this->manager->findActorOrCreate($payload['actor']);
+                $actorObject = $this->activityPubManager->findActorOrCreate($payload['actor']);
                 if ($actorObject instanceof Magazine && $actorObject->lastOriginUpdate < (new \DateTime())->modify('-3 hours')) {
                     if (isset($payload['object']['type']) && 'Create' === $payload['object']['type']) {
                         $actorObject->lastOriginUpdate = new \DateTime();
@@ -169,7 +169,7 @@ class ActivityHandler extends MbinMessageHandler
                 $payload = $payload['object'];
                 $actor = $payload['actor'] ?? $payload['attributedTo'] ?? null;
                 if ($actor) {
-                    $user = $this->manager->findActorOrCreate($actor);
+                    $user = $this->activityPubManager->findActorOrCreate($actor);
                     if ($user instanceof User && null === $user->apId) {
                         // don't do anything if we get an announce activity for something a local user did (unless it's a boost, see comment above)
                         $this->logger->warning('[ActivityHandler::handle] Ignoring this message because it announces an activity from a local user');
