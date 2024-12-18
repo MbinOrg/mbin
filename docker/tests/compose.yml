@@ -9,9 +9,9 @@ services:
       - POSTGRES_DB=mbin_test
       - POSTGRES_USER=mbin
       - POSTGRES_PASSWORD=ChangeThisPostgresPass
-  redis:
-    image: redis:alpine
-    container_name: mbin-tests-redis
+  valkey:
+    image: valkey/valkey:8-alpine
+    container_name: mbin-tests-valkey
     restart: unless-stopped
     ports:
       - "6380:6379"
