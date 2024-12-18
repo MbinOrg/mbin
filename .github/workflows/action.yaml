@@ -105,11 +105,15 @@ jobs:
         env:
           COMPOSER_CACHE_DIR: ${{ steps.composer-cache.outputs.dir }}
           SYMFONY_DEPRECATIONS_HELPER: disabled
+          DATABASE_HOST: postgres
+          DATABASE_PORT: 5432
+          REDIS_HOST: redis
+          REDIS_PORT: 6379
         run: php bin/phpunit tests/Functional
     services:
       postgres:
         # Docker Hub image
-        image: postgres
+        image: postgres:16
         # Provide the password for postgres
         env:
           POSTGRES_DB: mbin_test
@@ -130,9 +134,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        ports:
-          # Maps port 6379 on service container to the host
-          - 6380:6379
 
   audit-check:
     runs-on: ubuntu-latest
