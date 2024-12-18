@@ -103,7 +103,7 @@
         "symfony/validator": "7.1.*",
         "symfony/webpack-encore-bundle": "^2.1.1",
         "symfony/workflow": "7.1.*",
-        "symfony/yaml": "7.1.*",
+        "symfony/yaml": "7.2.*",
         "symfonycasts/reset-password-bundle": "^1.22.0",
         "symfonycasts/verify-email-bundle": "^1.17.0",
         "thenetworg/oauth2-azure": "^2.2.2",
