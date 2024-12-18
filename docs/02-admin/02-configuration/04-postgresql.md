@@ -60,7 +60,7 @@ commit_delay = 300
 checkpoint_timeout = 40min
 checkpoint_completion_target = 0.9
 # Write ahead log sizes (so the WAL file can contain around 1 hour of data)
-max_wal_size = 30GB
+max_wal_size = 10GB
 min_wal_size = 2GB
 
 # Query tuning
