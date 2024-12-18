@@ -19,7 +19,7 @@ class SentPostCommentDeletedNotificationHandler extends MbinMessageHandler
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly PostCommentRepository $repository,
-        private readonly NotificationManager $manager
+        private readonly NotificationManager $notificationManager
     ) {
         parent::__construct($this->entityManager);
     }
@@ -40,6 +40,6 @@ class SentPostCommentDeletedNotificationHandler extends MbinMessageHandler
             throw new UnrecoverableMessageHandlingException('Comment not found');
         }
 
-        $this->manager->sendDeleted($comment);
+        $this->notificationManager->sendDeleted($comment);
     }
 }

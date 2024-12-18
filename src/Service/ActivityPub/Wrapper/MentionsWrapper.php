@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class MentionsWrapper
 {
     public function __construct(
-        private readonly ActivityPubManager $manager,
+        private readonly ActivityPubManager $activityPubManager,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly MentionManager $mentionManager,
         private readonly SettingsManager $settingsManager
@@ -26,7 +26,7 @@ class MentionsWrapper
         $results = [];
         foreach ($mentions as $index => $mention) {
             try {
-                $actor = $this->manager->findActorOrCreate($mention);
+                $actor = $this->activityPubManager->findActorOrCreate($mention);
 
                 if (!$actor) {
                     continue;
