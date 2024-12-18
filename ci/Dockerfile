@@ -15,7 +15,7 @@ RUN curl -sSLf \
   https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions
 RUN chmod +x /usr/local/bin/install-php-extensions
 
-RUN install-php-extensions amqp intl redis gd zip bcmath xsl
+RUN install-php-extensions amqp intl redis gd zip bcmath xsl pdo_pgsql
 
 # Unlimited memory
 RUN echo "memory_limit = -1" >>/usr/local/etc/php/conf.d/docker-php-memlimit.ini
