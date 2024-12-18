@@ -16,7 +16,7 @@ However, the following settings are a good starting point when your serve is aro
 
 ```ini
 # Increase max connections
-max_connections = 100
+max_connections = 200
 
 # Increase shared buffers
 shared_buffers = 8GB
@@ -48,14 +48,20 @@ max_parallel_maintenance_workers = 4
 # You should *not* increase this value more than max_worker_processes
 max_parallel_workers = 16
 
-# Write ahead log sizes (unless you expect to write more than 1GB/hour of data in the DB)
-max_wal_size = 8GB
-min_wal_size = 2GB
+# Boost transaction speeds and reduce I/O wait for writes (with the risk of losing un-flushed data in case of a crash)
+# If you do not want to take that risk, keep it to: "on".
+synchronous_commit = off
 
 # Group write commits to combine multiple transactions by a single flush (this is a time delay in μs)
 commit_delay = 300
 
+# Increase the checkpoint timeout (time between two checkpoints) to reduce the disk I/O
+# This will significantly reduce the disk I/O and speed-up the write times to disk. The only downside is time needed for crash recovery.
+checkpoint_timeout = 40min
 checkpoint_completion_target = 0.9
+# Write ahead log sizes (so the WAL file can contain around 1 hour of data)
+max_wal_size = 30GB
+min_wal_size = 2GB
 
 # Query tuning
 # Set to 1.1 for SSDs.
@@ -67,7 +73,7 @@ random_page_cost = 1.1
 effective_cache_size = 24GB
 ```
 
-For reference check out [PGTune](https://pgtune.leopard.in.ua/)
+For reference check out [PGTune](https://pgtune.leopard.in.ua/) (this tool will **not** cover all the settings mentioned above, so be aware of that).
 
 > [!NOTE]
 > We try to set `huge_pages` to: `on` in PostgreSQL, in order to make this work you will need to [enable huge pages under Linux (click here)](https://www.enterprisedb.com/blog/tuning-debian-ubuntu-postgresql) as well! Please follow that guide. And play around with your kernel configurations.
