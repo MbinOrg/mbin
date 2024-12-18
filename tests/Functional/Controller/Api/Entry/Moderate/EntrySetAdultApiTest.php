@@ -13,69 +13,67 @@ class EntrySetAdultApiTest extends WebTestCase
 {
     public function testApiCannotSetEntryAdultAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', magazine: $magazine);
 
-        $client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/adult/true");
+        $this->client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/adult/true");
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiNonModeratorCannotSetEntryAdult(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:entry:set_adult');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:entry:set_adult');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/adult/true", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/adult/true", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotSetEntryAdultWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/adult/true", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/adult/true", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanSetEntryAdult(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
+        $admin = $this->getUserByUsername('admin', isAdmin: true);
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
         $magazineManager = $this->getService(MagazineManager::class);
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
+        $moderator->addedBy = $admin;
         $magazineManager->addModerator($moderator);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:entry:set_adult');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:entry:set_adult');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/adult/true", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/adult/true", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData);
@@ -93,7 +91,7 @@ class EntrySetAdultApiTest extends WebTestCase
         self::assertEquals($entry->body, $jsonData['body']);
         self::assertNull($jsonData['image']);
         self::assertEquals($entry->lang, $jsonData['lang']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertIsArray($jsonData['badges']);
         self::assertEmpty($jsonData['badges']);
         self::assertSame(0, $jsonData['numComments']);
@@ -117,7 +115,6 @@ class EntrySetAdultApiTest extends WebTestCase
 
     public function testApiCannotSetEntryNotAdultAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', magazine: $magazine);
 
@@ -126,13 +123,12 @@ class EntrySetAdultApiTest extends WebTestCase
         $entityManager->persist($entry);
         $entityManager->flush();
 
-        $client->request('PUT', "/api/moderate/entry/{$entry->getId()}/adult/false");
+        $this->client->request('PUT', "/api/moderate/entry/{$entry->getId()}/adult/false");
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiNonModeratorCannotSetEntryNotAdult(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
@@ -143,18 +139,17 @@ class EntrySetAdultApiTest extends WebTestCase
         $entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:entry:set_adult');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:entry:set_adult');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/adult/false", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/adult/false", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotSetEntryNotAdultWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
@@ -165,25 +160,26 @@ class EntrySetAdultApiTest extends WebTestCase
         $entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/adult/false", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/adult/false", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanSetEntryNotAdult(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
+        $admin = $this->getUserByUsername('admin', isAdmin: true);
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
         $magazineManager = $this->getService(MagazineManager::class);
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
+        $moderator->addedBy = $admin;
         $magazineManager->addModerator($moderator);
 
         $entityManager = $this->getService(EntityManagerInterface::class);
@@ -192,14 +188,14 @@ class EntrySetAdultApiTest extends WebTestCase
         $entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:entry:set_adult');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:entry:set_adult');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/adult/false", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/adult/false", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData);
@@ -217,7 +213,7 @@ class EntrySetAdultApiTest extends WebTestCase
         self::assertEquals($entry->body, $jsonData['body']);
         self::assertNull($jsonData['image']);
         self::assertEquals($entry->lang, $jsonData['lang']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertIsArray($jsonData['badges']);
         self::assertEmpty($jsonData['badges']);
         self::assertSame(0, $jsonData['numComments']);

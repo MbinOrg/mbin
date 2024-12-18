@@ -11,43 +11,40 @@ class MessageThreadCreateApiTest extends WebTestCase
 {
     public function testApiCannotCreateThreadAnonymous(): void
     {
-        $client = self::createClient();
         $messagedUser = $this->getUserByUsername('JohnDoe');
 
-        $client->jsonRequest('POST', "/api/users/{$messagedUser->getId()}/message", parameters: ['body' => 'test message']);
+        $this->client->jsonRequest('POST', "/api/users/{$messagedUser->getId()}/message", parameters: ['body' => 'test message']);
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotCreateThreadWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
         $messagedUser = $this->getUserByUsername('JaneDoe');
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('POST', "/api/users/{$messagedUser->getId()}/message", parameters: ['body' => 'test message'], server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/users/{$messagedUser->getId()}/message", parameters: ['body' => 'test message'], server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanCreateThread(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
         $messagedUser = $this->getUserByUsername('JaneDoe');
 
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:message:create');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:message:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('POST', "/api/users/{$messagedUser->getId()}/message", parameters: ['body' => 'test message'], server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/users/{$messagedUser->getId()}/message", parameters: ['body' => 'test message'], server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(MessageRetrieveApiTest::MESSAGE_THREAD_RESPONSE_KEYS, $jsonData);

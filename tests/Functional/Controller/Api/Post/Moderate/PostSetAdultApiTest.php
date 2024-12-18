@@ -13,69 +13,67 @@ class PostSetAdultApiTest extends WebTestCase
 {
     public function testApiCannotSetPostAdultAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', magazine: $magazine);
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/adult/true");
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/adult/true");
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiNonModeratorCannotSetPostAdult(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:post:set_adult');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:post:set_adult');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/adult/true", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/adult/true", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotSetPostAdultWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/adult/true", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/adult/true", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanSetPostAdult(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
+        $admin = $this->getUserByUsername('admin', isAdmin: true);
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
 
         $magazineManager = $this->getService(MagazineManager::class);
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
+        $moderator->addedBy = $admin;
         $magazineManager->addModerator($moderator);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:post:set_adult');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:post:set_adult');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/adult/true", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/adult/true", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $jsonData);
@@ -89,7 +87,7 @@ class PostSetAdultApiTest extends WebTestCase
         self::assertEquals($post->body, $jsonData['body']);
         self::assertNull($jsonData['image']);
         self::assertEquals($post->lang, $jsonData['lang']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertNull($jsonData['mentions']);
         self::assertSame(0, $jsonData['comments']);
         self::assertSame(0, $jsonData['uv']);
@@ -110,7 +108,6 @@ class PostSetAdultApiTest extends WebTestCase
 
     public function testApiCannotSetPostNotAdultAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', magazine: $magazine);
 
@@ -119,13 +116,12 @@ class PostSetAdultApiTest extends WebTestCase
         $entityManager->persist($post);
         $entityManager->flush();
 
-        $client->request('PUT', "/api/moderate/post/{$post->getId()}/adult/false");
+        $this->client->request('PUT', "/api/moderate/post/{$post->getId()}/adult/false");
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiNonModeratorCannotSetPostNotAdult(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
@@ -136,18 +132,17 @@ class PostSetAdultApiTest extends WebTestCase
         $entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:post:set_adult');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:post:set_adult');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/adult/false", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/adult/false", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotSetPostNotAdultWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
@@ -158,25 +153,26 @@ class PostSetAdultApiTest extends WebTestCase
         $entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/adult/false", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/adult/false", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanSetPostNotAdult(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
+        $admin = $this->getUserByUsername('admin', isAdmin: true);
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
 
         $magazineManager = $this->getService(MagazineManager::class);
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
+        $moderator->addedBy = $admin;
         $magazineManager->addModerator($moderator);
 
         $entityManager = $this->getService(EntityManagerInterface::class);
@@ -185,14 +181,14 @@ class PostSetAdultApiTest extends WebTestCase
         $entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:post:set_adult');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:post:set_adult');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/adult/false", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/adult/false", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $jsonData);
@@ -206,7 +202,7 @@ class PostSetAdultApiTest extends WebTestCase
         self::assertEquals($post->body, $jsonData['body']);
         self::assertNull($jsonData['image']);
         self::assertEquals($post->lang, $jsonData['lang']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertNull($jsonData['mentions']);
         self::assertSame(0, $jsonData['comments']);
         self::assertSame(0, $jsonData['uv']);

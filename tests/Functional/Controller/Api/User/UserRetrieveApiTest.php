@@ -32,17 +32,15 @@ class UserRetrieveApiTest extends WebTestCase
 
     public function testApiCanRetrieveUsersWithAboutAnonymous(): void
     {
-        $client = self::createClient();
-
         $users = [];
         for ($i = 0; $i < self::NUM_USERS; ++$i) {
             $users[] = $this->getUserByUsername('user'.(string) ($i + 1), about: 'Test user '.(string) ($i + 1));
         }
 
-        $client->request('GET', '/api/users');
+        $this->client->request('GET', '/api/users');
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -62,20 +60,19 @@ class UserRetrieveApiTest extends WebTestCase
 
     public function testApiCanRetrieveUsersWithAbout(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('UserWithoutAbout'));
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $this->client->loginUser($this->getUserByUsername('UserWithoutAbout'));
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
 
         $users = [];
         for ($i = 0; $i < self::NUM_USERS; ++$i) {
             $users[] = $this->getUserByUsername('user'.(string) ($i + 1), about: 'Test user '.(string) ($i + 1));
         }
 
-        $client->request('GET', '/api/users', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -85,13 +82,12 @@ class UserRetrieveApiTest extends WebTestCase
 
     public function testApiCanRetrieveUserByIdAnonymous(): void
     {
-        $client = self::createClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout');
 
-        $client->request('GET', '/api/users/'.(string) $testUser->getId());
+        $this->client->request('GET', '/api/users/'.(string) $testUser->getId());
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
@@ -110,16 +106,15 @@ class UserRetrieveApiTest extends WebTestCase
 
     public function testApiCanRetrieveUserById(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout');
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
 
-        $client->request('GET', '/api/users/'.(string) $testUser->getId(), server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/'.(string) $testUser->getId(), server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
@@ -138,13 +133,12 @@ class UserRetrieveApiTest extends WebTestCase
 
     public function testApiCanRetrieveUserByNameAnonymous(): void
     {
-        $client = self::createClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout');
 
-        $client->request('GET', '/api/users/name/'.$testUser->getUsername());
+        $this->client->request('GET', '/api/users/name/'.$testUser->getUsername());
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
@@ -163,16 +157,15 @@ class UserRetrieveApiTest extends WebTestCase
 
     public function testApiCanRetrieveUserByName(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout');
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
 
-        $client->request('GET', '/api/users/name/'.$testUser->getUsername(), server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/name/'.$testUser->getUsername(), server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
@@ -191,28 +184,26 @@ class UserRetrieveApiTest extends WebTestCase
 
     public function testApiCannotRetrieveCurrentUserWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout');
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
 
-        $client->request('GET', '/api/users/me', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/me', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanRetrieveCurrentUser(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout');
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:profile:read');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:profile:read');
 
-        $client->request('GET', '/api/users/me', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/me', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
@@ -231,7 +222,6 @@ class UserRetrieveApiTest extends WebTestCase
 
     public function testApiCanRetrieveUserFlagsWithScopes(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout');
         $follower = $this->getUserByUsername('follower');
@@ -243,13 +233,13 @@ class UserRetrieveApiTest extends WebTestCase
         $manager->persist($follower);
         $manager->flush();
 
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:follow user:block');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:follow user:block');
 
-        $client->request('GET', '/api/users/'.(string) $follower->getId(), server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/'.(string) $follower->getId(), server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
@@ -261,7 +251,6 @@ class UserRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetBlockedUsers(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout');
         $blockedUser = $this->getUserByUsername('JohnDoe');
@@ -273,13 +262,13 @@ class UserRetrieveApiTest extends WebTestCase
         $manager->persist($testUser);
         $manager->flush();
 
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:follow user:block');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:follow user:block');
 
-        $client->request('GET', '/api/users/blocked', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/blocked', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -295,33 +284,30 @@ class UserRetrieveApiTest extends WebTestCase
 
     public function testApiCannotGetFollowedUsersWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout');
 
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
 
-        $client->request('GET', '/api/users/followed', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/followed', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotGetFollowersWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout');
 
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
 
-        $client->request('GET', '/api/users/followers', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/followers', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanGetFollowedUsers(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout');
         $followedUser = $this->getUserByUsername('JohnDoe');
@@ -333,13 +319,13 @@ class UserRetrieveApiTest extends WebTestCase
         $manager->persist($testUser);
         $manager->flush();
 
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:follow user:block');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:follow user:block');
 
-        $client->request('GET', '/api/users/followed', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/followed', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -355,7 +341,6 @@ class UserRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetFollowers(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout');
         $followingUser = $this->getUserByUsername('JohnDoe');
@@ -367,13 +352,13 @@ class UserRetrieveApiTest extends WebTestCase
         $manager->persist($testUser);
         $manager->flush();
 
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:follow user:block');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:follow user:block');
 
-        $client->request('GET', '/api/users/followers', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/followers', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -389,7 +374,6 @@ class UserRetrieveApiTest extends WebTestCase
 
     public function testApiCannotGetFollowedUsersByIdIfNotShared(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout');
         $followedUser = $this->getUserByUsername('JohnDoe');
@@ -402,16 +386,15 @@ class UserRetrieveApiTest extends WebTestCase
         $manager->persist($testUser);
         $manager->flush();
 
-        $client->loginUser($followedUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:follow user:block');
+        $this->client->loginUser($followedUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:follow user:block');
 
-        $client->request('GET', '/api/users/'.(string) $testUser->getId().'/followed', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/'.(string) $testUser->getId().'/followed', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanGetFollowedUsersById(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout');
         $followedUser = $this->getUserByUsername('JohnDoe');
@@ -423,13 +406,13 @@ class UserRetrieveApiTest extends WebTestCase
         $manager->persist($testUser);
         $manager->flush();
 
-        $client->loginUser($followedUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:follow user:block');
+        $this->client->loginUser($followedUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:follow user:block');
 
-        $client->request('GET', '/api/users/'.(string) $testUser->getId().'/followed', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/'.(string) $testUser->getId().'/followed', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -445,7 +428,6 @@ class UserRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetFollowersById(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout');
         $followingUser = $this->getUserByUsername('JohnDoe');
@@ -457,13 +439,13 @@ class UserRetrieveApiTest extends WebTestCase
         $manager->persist($testUser);
         $manager->flush();
 
-        $client->loginUser($followingUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:follow user:block');
+        $this->client->loginUser($followingUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:follow user:block');
 
-        $client->request('GET', '/api/users/'.(string) $testUser->getId().'/followers', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/'.(string) $testUser->getId().'/followers', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -479,30 +461,28 @@ class UserRetrieveApiTest extends WebTestCase
 
     public function testApiCannotGetSettingsWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('JohnDoe');
 
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
 
-        $client->request('GET', '/api/users/settings', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/settings', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanGetSettings(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('JohnDoe');
 
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:profile:read');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:profile:read');
 
-        $client->request('GET', '/api/users/settings', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/settings', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::USER_SETTINGS_KEYS, $jsonData);

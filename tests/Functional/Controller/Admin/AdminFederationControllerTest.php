@@ -12,15 +12,13 @@ class AdminFederationControllerTest extends WebTestCase
 {
     public function testAdminCanClearBannedInstances(): void
     {
-        $client = $this->createClient();
-
         $this->getService(SettingsManager::class)->set('KBIN_BANNED_INSTANCES', ['www.example.com']);
 
-        $client->loginUser($this->getUserByUsername('admin', isAdmin: true));
+        $this->client->loginUser($this->getUserByUsername('admin', isAdmin: true));
 
-        $crawler = $client->request('GET', '/admin/federation');
+        $crawler = $this->client->request('GET', '/admin/federation');
 
-        $client->submit($crawler->filter('#content form[name=instances] button')->form(
+        $this->client->submit($crawler->filter('#content form[name=instances] button[type=submit]')->form(
             ['instances[instances]' => ''],
         ));
 

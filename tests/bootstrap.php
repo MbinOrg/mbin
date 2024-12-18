@@ -26,6 +26,12 @@ function bootstrapDatabase(): void
     $application->setAutoExit(false);
 
     $application->run(new ArrayInput([
+        'command' => 'cache:pool:clear',
+        '--all' => '1',
+        '--no-interaction' => true,
+    ]));
+
+    $application->run(new ArrayInput([
         'command' => 'doctrine:database:drop',
         '--if-exists' => '1',
         '--force' => '1',
@@ -37,6 +43,16 @@ function bootstrapDatabase(): void
 
     $application->run(new ArrayInput([
         'command' => 'doctrine:migrations:migrate',
+        '--no-interaction' => true,
+    ]));
+
+    $application->run(new ArrayInput([
+        'command' => 'mbin:ap:keys:update',
+        '--no-interaction' => true,
+    ]));
+
+    $application->run(new ArrayInput([
+        'command' => 'mbin:push:keys:update',
         '--no-interaction' => true,
     ]));
 

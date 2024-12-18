@@ -11,55 +11,51 @@ class EntryCommentDeleteApiTest extends WebTestCase
 {
     public function testApiCannotDeleteCommentAnonymous(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $comment = $this->createEntryComment('test comment', $entry);
 
-        $client->request('DELETE', "/api/comments/{$comment->getId()}");
+        $this->client->request('DELETE', "/api/comments/{$comment->getId()}");
 
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotDeleteCommentWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $comment = $this->createEntryComment('test comment', $entry, $user);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('DELETE', "/api/comments/{$comment->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/comments/{$comment->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotDeleteOtherUsersComment(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $user2 = $this->getUserByUsername('other');
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $comment = $this->createEntryComment('test comment', $entry, $user2);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read entry_comment:delete');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry_comment:delete');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('DELETE', "/api/comments/{$comment->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/comments/{$comment->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanDeleteComment(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $comment = $this->createEntryComment('test comment', $entry, $user);
@@ -67,12 +63,12 @@ class EntryCommentDeleteApiTest extends WebTestCase
         $commentRepository = $this->getService(EntryCommentRepository::class);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read entry_comment:delete');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry_comment:delete');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('DELETE', "/api/comments/{$comment->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/comments/{$comment->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(204);
         $comment = $commentRepository->find($comment->getId());
@@ -81,7 +77,6 @@ class EntryCommentDeleteApiTest extends WebTestCase
 
     public function testApiCanSoftDeleteComment(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $comment = $this->createEntryComment('test comment', $entry, $user);
@@ -90,12 +85,12 @@ class EntryCommentDeleteApiTest extends WebTestCase
         $commentRepository = $this->getService(EntryCommentRepository::class);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read entry_comment:delete');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry_comment:delete');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('DELETE', "/api/comments/{$comment->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/comments/{$comment->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(204);
         $comment = $commentRepository->find($comment->getId());

@@ -10,29 +10,30 @@ class EntryChangeAdultControllerTest extends WebTestCase
 {
     public function testModCanMarkAsAdultContent(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $entry = $this->getEntryByTitle(
             'test entry 1',
             'https://kbin.pub',
         );
 
-        $crawler = $client->request('GET', "/m/acme/t/{$entry->getId()}/-/moderate");
-        $client->submit(
-            $crawler->filter('.moderate-panel')->selectButton('18+ / nsfw')->form([
-                'adult' => true,
+        $crawler = $this->client->request('GET', "/m/acme/t/{$entry->getId()}/-/moderate");
+        $this->client->submit(
+            $crawler->filter('.moderate-panel')->selectButton('Mark NSFW')->form([
+                'adult' => 'on',
             ])
         );
-        $client->followRedirect();
+        $this->client->followRedirect();
         $this->assertSelectorTextContains('#main .entry .badge', '18+');
 
-        $client->submit(
-            $crawler->filter('.moderate-panel')->selectButton('18+ / nsfw')->form([
-                'adult' => false,
+        $crawler = $this->client->request('GET', "/m/acme/t/{$entry->getId()}/-/moderate");
+
+        $this->client->submit(
+            $crawler->filter('.moderate-panel')->selectButton('Unmark NSFW')->form([
+                'adult' => 'off',
             ])
         );
-        $client->followRedirect();
+        $this->client->followRedirect();
         $this->assertSelectorTextNotContains('#main .entry', '18+');
     }
 }

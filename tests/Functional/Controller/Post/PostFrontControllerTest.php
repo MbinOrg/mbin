@@ -14,12 +14,12 @@ class PostFrontControllerTest extends WebTestCase
 {
     public function testFrontPage(): void
     {
-        $client = $this->prepareEntries();
+        $this->client = $this->prepareEntries();
 
-        $client->request('GET', '/microblog');
+        $this->client->request('GET', '/microblog');
         $this->assertSelectorTextContains('h1', 'Hot');
 
-        $crawler = $client->request('GET', '/microblog/newest');
+        $crawler = $this->client->request('GET', '/microblog/newest');
 
         $this->assertSelectorTextContains('.post header', 'JohnDoe');
         $this->assertSelectorTextContains('.post header', 'to acme');
@@ -29,20 +29,20 @@ class PostFrontControllerTest extends WebTestCase
         $this->assertcount(2, $crawler->filter('.post'));
 
         foreach ($this->getSortOptions() as $sortOption) {
-            $crawler = $client->click($crawler->filter('.options__main')->selectLink($sortOption)->link());
-            $this->assertSelectorTextContains('.options__main', $sortOption);
+            $crawler = $this->client->click($crawler->filter('.options__filter')->selectLink($sortOption)->link());
+            $this->assertSelectorTextContains('.options__filter', $sortOption);
             $this->assertSelectorTextContains('h1', ucfirst($sortOption));
         }
     }
 
     public function testMagazinePage(): void
     {
-        $client = $this->prepareEntries();
+        $this->client = $this->prepareEntries();
 
-        $client->request('GET', '/m/acme/microblog');
+        $this->client->request('GET', '/m/acme/microblog');
         $this->assertSelectorTextContains('h2', 'Hot');
 
-        $crawler = $client->request('GET', '/m/acme/microblog/newest');
+        $crawler = $this->client->request('GET', '/m/acme/microblog/newest');
 
         $this->assertSelectorTextContains('.post header', 'JohnDoe');
         $this->assertSelectorTextNotContains('.post header', 'to acme');
@@ -55,26 +55,26 @@ class PostFrontControllerTest extends WebTestCase
         $this->assertcount(1, $crawler->filter('.post'));
 
         foreach ($this->getSortOptions() as $sortOption) {
-            $crawler = $client->click($crawler->filter('.options__main')->selectLink($sortOption)->link());
-            $this->assertSelectorTextContains('.options__main', $sortOption);
-            $this->assertSelectorTextContains('h1', 'Magazine title');
+            $crawler = $this->client->click($crawler->filter('.options__filter')->selectLink($sortOption)->link());
+            $this->assertSelectorTextContains('.options__filter', $sortOption);
+            $this->assertSelectorTextContains('h1', 'acme');
             $this->assertSelectorTextContains('h2', ucfirst($sortOption));
         }
     }
 
     public function testSubPage(): void
     {
-        $client = $this->prepareEntries();
+        $this->client = $this->prepareEntries();
 
         $magazineManager = $this->getService(MagazineManager::class);
         $magazineManager->subscribe($this->getMagazineByName('acme'), $this->getUserByUsername('Actor'));
 
-        $client->loginUser($this->getUserByUsername('Actor'));
+        $this->client->loginUser($this->getUserByUsername('Actor'));
 
-        $client->request('GET', '/sub/microblog');
+        $this->client->request('GET', '/sub/microblog');
         $this->assertSelectorTextContains('h1', 'Hot');
 
-        $crawler = $client->request('GET', '/sub/microblog/newest');
+        $crawler = $this->client->request('GET', '/sub/microblog/newest');
 
         $this->assertSelectorTextContains('.post header', 'JohnDoe');
         $this->assertSelectorTextContains('.post header', 'to acme');
@@ -86,27 +86,29 @@ class PostFrontControllerTest extends WebTestCase
         $this->assertcount(1, $crawler->filter('.post'));
 
         foreach ($this->getSortOptions() as $sortOption) {
-            $crawler = $client->click($crawler->filter('.options__main')->selectLink($sortOption)->link());
-            $this->assertSelectorTextContains('.options__main', $sortOption);
+            $crawler = $this->client->click($crawler->filter('.options__filter')->selectLink($sortOption)->link());
+            $this->assertSelectorTextContains('.options__filter', $sortOption);
             $this->assertSelectorTextContains('h1', ucfirst($sortOption));
         }
     }
 
     public function testModPage(): void
     {
-        $client = $this->prepareEntries();
+        $this->client = $this->prepareEntries();
+        $admin = $this->getUserByUsername('admin', isAdmin: true);
 
-        $magazineManager = $client->getContainer()->get(MagazineManager::class);
+        $magazineManager = $this->client->getContainer()->get(MagazineManager::class);
         $moderator = new ModeratorDto($this->getMagazineByName('acme'));
         $moderator->user = $this->getUserByUsername('Actor');
+        $moderator->addedBy = $admin;
         $magazineManager->addModerator($moderator);
 
-        $client->loginUser($this->getUserByUsername('Actor'));
+        $this->client->loginUser($this->getUserByUsername('Actor'));
 
-        $client->request('GET', '/mod/microblog');
+        $this->client->request('GET', '/mod/microblog');
         $this->assertSelectorTextContains('h1', 'Hot');
 
-        $crawler = $client->request('GET', '/mod/microblog/newest');
+        $crawler = $this->client->request('GET', '/mod/microblog/newest');
 
         $this->assertSelectorTextContains('.post header', 'JohnDoe');
         $this->assertSelectorTextContains('.post header', 'to acme');
@@ -118,25 +120,25 @@ class PostFrontControllerTest extends WebTestCase
         $this->assertcount(1, $crawler->filter('.post'));
 
         foreach ($this->getSortOptions() as $sortOption) {
-            $crawler = $client->click($crawler->filter('.options__main')->selectLink($sortOption)->link());
-            $this->assertSelectorTextContains('.options__main', $sortOption);
+            $crawler = $this->client->click($crawler->filter('.options__filter')->selectLink($sortOption)->link());
+            $this->assertSelectorTextContains('.options__filter', $sortOption);
             $this->assertSelectorTextContains('h1', ucfirst($sortOption));
         }
     }
 
     public function testFavPage(): void
     {
-        $client = $this->prepareEntries();
+        $this->client = $this->prepareEntries();
 
         $favouriteManager = $this->getService(FavouriteManager::class);
         $favouriteManager->toggle($this->getUserByUsername('Actor'), $this->createPost('test post 3'));
 
-        $client->loginUser($this->getUserByUsername('Actor'));
+        $this->client->loginUser($this->getUserByUsername('Actor'));
 
-        $client->request('GET', '/fav/microblog');
+        $this->client->request('GET', '/fav/microblog');
         $this->assertSelectorTextContains('h1', 'Hot');
 
-        $crawler = $client->request('GET', '/fav/microblog/newest');
+        $crawler = $this->client->request('GET', '/fav/microblog/newest');
 
         $this->assertSelectorTextContains('.post header', 'JohnDoe');
         $this->assertSelectorTextContains('.post header', 'to acme');
@@ -148,16 +150,14 @@ class PostFrontControllerTest extends WebTestCase
         $this->assertcount(1, $crawler->filter('.post'));
 
         foreach ($this->getSortOptions() as $sortOption) {
-            $crawler = $client->click($crawler->filter('.options__main')->selectLink($sortOption)->link());
-            $this->assertSelectorTextContains('.options__main', $sortOption);
+            $crawler = $this->client->click($crawler->filter('.options__filter')->selectLink($sortOption)->link());
+            $this->assertSelectorTextContains('.options__filter', $sortOption);
             $this->assertSelectorTextContains('h1', ucfirst($sortOption));
         }
     }
 
     private function prepareEntries(): KernelBrowser
     {
-        $client = $this->createClient();
-
         $this->createPost(
             'test post 1',
             $this->getMagazineByName('kbin', $this->getUserByUsername('JaneDoe')),
@@ -166,11 +166,11 @@ class PostFrontControllerTest extends WebTestCase
 
         $this->createPost('test post 2');
 
-        return $client;
+        return $this->client;
     }
 
     private function getSortOptions(): array
     {
-        return ['top', 'hot', 'newest', 'active', 'commented'];
+        return ['Top', 'Hot', 'Newest', 'Active', 'Commented'];
     }
 }

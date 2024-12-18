@@ -24,8 +24,6 @@ class OAuth2ClientApiTest extends WebTestCase
 
     public function testApiCanCreateWorkingClient(): void
     {
-        $client = self::createClient();
-
         $requestData = [
             'name' => '/kbin API Created Test Client',
             'description' => 'An OAuth2 client for testing purposes, created via the API',
@@ -44,34 +42,34 @@ class OAuth2ClientApiTest extends WebTestCase
             ],
         ];
 
-        $client->jsonRequest('POST', '/api/client', $requestData);
+        $this->client->jsonRequest('POST', '/api/client', $requestData);
 
         self::assertResponseIsSuccessful();
 
-        $clientData = self::getJsonResponse($client);
-        self::assertIsArray($clientData);
-        self::assertArrayKeysMatch(self::CLIENT_RESPONSE_KEYS, $clientData);
-        self::assertNotNull($clientData['identifier']);
-        self::assertNotNull($clientData['secret']);
-        self::assertEquals($requestData['name'], $clientData['name']);
-        self::assertEquals($requestData['contactEmail'], $clientData['contactEmail']);
-        self::assertEquals($requestData['description'], $clientData['description']);
-        self::assertNull($clientData['user']);
-        self::assertIsArray($clientData['redirectUris']);
-        self::assertEquals($requestData['redirectUris'], $clientData['redirectUris']);
-        self::assertIsArray($clientData['grants']);
-        self::assertEquals($requestData['grants'], $clientData['grants']);
-        self::assertIsArray($clientData['scopes']);
-        self::assertEquals($requestData['scopes'], $clientData['scopes']);
-        self::assertNull($clientData['image']);
+        $this->clientData = self::getJsonResponse($this->client);
+        self::assertIsArray($this->clientData);
+        self::assertArrayKeysMatch(self::CLIENT_RESPONSE_KEYS, $this->clientData);
+        self::assertNotNull($this->clientData['identifier']);
+        self::assertNotNull($this->clientData['secret']);
+        self::assertEquals($requestData['name'], $this->clientData['name']);
+        self::assertEquals($requestData['contactEmail'], $this->clientData['contactEmail']);
+        self::assertEquals($requestData['description'], $this->clientData['description']);
+        self::assertNull($this->clientData['user']);
+        self::assertIsArray($this->clientData['redirectUris']);
+        self::assertEquals($requestData['redirectUris'], $this->clientData['redirectUris']);
+        self::assertIsArray($this->clientData['grants']);
+        self::assertEquals($requestData['grants'], $this->clientData['grants']);
+        self::assertIsArray($this->clientData['scopes']);
+        self::assertEquals($requestData['scopes'], $this->clientData['scopes']);
+        self::assertNull($this->clientData['image']);
 
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $jsonData = self::getAuthorizationCodeTokenResponse(
-            $client,
-            clientId: $clientData['identifier'],
-            clientSecret: $clientData['secret'],
-            redirectUri: $clientData['redirectUris'][0],
+            $this->client,
+            clientId: $this->clientData['identifier'],
+            clientSecret: $this->clientData['secret'],
+            redirectUri: $this->clientData['redirectUris'][0],
         );
 
         self::assertResponseIsSuccessful();
@@ -80,15 +78,13 @@ class OAuth2ClientApiTest extends WebTestCase
 
     public function testApiCanCreateWorkingPublicClient(): void
     {
-        $client = self::createClient();
-
         $requestData = [
             'name' => '/kbin API Created Test Client',
             'description' => 'An OAuth2 client for testing purposes, created via the API',
             'contactEmail' => 'test@kbin.test',
-            'public' => 'true',
+            'public' => true,
             'redirectUris' => [
-                'https://localhost:3002',
+                'https://localhost:3001',
             ],
             'grants' => [
                 'authorization_code',
@@ -101,11 +97,11 @@ class OAuth2ClientApiTest extends WebTestCase
             ],
         ];
 
-        $client->jsonRequest('POST', '/api/client', $requestData);
+        $this->client->jsonRequest('POST', '/api/client', $requestData);
 
         self::assertResponseIsSuccessful();
 
-        $clientData = self::getJsonResponse($client);
+        $clientData = self::getJsonResponse($this->client);
         self::assertIsArray($clientData);
         self::assertArrayKeysMatch(self::CLIENT_RESPONSE_KEYS, $clientData);
         self::assertNotNull($clientData['identifier']);
@@ -122,10 +118,10 @@ class OAuth2ClientApiTest extends WebTestCase
         self::assertEquals($requestData['scopes'], $clientData['scopes']);
         self::assertNull($clientData['image']);
 
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $jsonData = self::getPublicAuthorizationCodeTokenResponse(
-            $client,
+            $this->client,
             clientId: $clientData['identifier'],
             redirectUri: $clientData['redirectUris'][0],
         );
@@ -136,8 +132,6 @@ class OAuth2ClientApiTest extends WebTestCase
 
     public function testApiCanCreateWorkingClientWithImage(): void
     {
-        $client = self::createClient();
-
         $requestData = [
             'name' => '/kbin API Created Test Client',
             'description' => 'An OAuth2 client for testing purposes, created via the API',
@@ -160,11 +154,11 @@ class OAuth2ClientApiTest extends WebTestCase
         copy($this->kibbyPath, $this->kibbyPath.'.tmp');
         $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
 
-        $client->request('POST', '/api/client-with-logo', $requestData, files: ['uploadImage' => $image]);
+        $this->client->request('POST', '/api/client-with-logo', $requestData, files: ['uploadImage' => $image]);
 
         self::assertResponseIsSuccessful();
 
-        $clientData = self::getJsonResponse($client);
+        $clientData = self::getJsonResponse($this->client);
         self::assertIsArray($clientData);
         self::assertArrayKeysMatch(self::CLIENT_RESPONSE_KEYS, $clientData);
         self::assertNotNull($clientData['identifier']);
@@ -182,17 +176,17 @@ class OAuth2ClientApiTest extends WebTestCase
         self::assertisArray($clientData['image']);
         self::assertArrayKeysMatch(self::IMAGE_KEYS, $clientData['image']);
 
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
-        self::runAuthorizationCodeFlowToConsentPage($client, 'read write', 'oauth2state', $clientData['identifier'], $clientData['redirectUris'][0]);
+        self::runAuthorizationCodeFlowToConsentPage($this->client, 'read write', 'oauth2state', $clientData['identifier'], $clientData['redirectUris'][0]);
 
         self::assertSelectorExists('img.oauth-client-logo');
-        $logo = $client->getCrawler()->filter('img.oauth-client-logo')->first();
+        $logo = $this->client->getCrawler()->filter('img.oauth-client-logo')->first();
         self::assertStringContainsString($clientData['image']['filePath'], $logo->attr('src'));
 
-        self::runAuthorizationCodeFlowToRedirectUri($client, 'read write', 'yes', 'oauth2state', $clientData['identifier'], $clientData['redirectUris'][0]);
+        self::runAuthorizationCodeFlowToRedirectUri($this->client, 'read write', 'yes', 'oauth2state', $clientData['identifier'], $clientData['redirectUris'][0]);
 
-        $jsonData = self::runAuthorizationCodeTokenFlow($client, $clientData['identifier'], $clientData['secret'], $clientData['redirectUris'][0]);
+        $jsonData = self::runAuthorizationCodeTokenFlow($this->client, $clientData['identifier'], $clientData['secret'], $clientData['redirectUris'][0]);
 
         self::assertResponseIsSuccessful();
         self::assertIsArray($jsonData);
@@ -200,8 +194,7 @@ class OAuth2ClientApiTest extends WebTestCase
 
     public function testApiCanDeletePrivateClient(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
         self::createOAuth2AuthCodeClient();
 
         $query = http_build_query([
@@ -209,11 +202,11 @@ class OAuth2ClientApiTest extends WebTestCase
             'client_secret' => 'testsecret',
         ]);
 
-        $client->request('DELETE', '/api/client?'.$query);
+        $this->client->request('DELETE', '/api/client?'.$query);
 
         self::assertResponseStatusCodeSame(204);
 
-        $jsonData = self::getAuthorizationCodeTokenResponse($client);
+        $jsonData = self::getAuthorizationCodeTokenResponse($this->client);
 
         self::assertResponseStatusCodeSame(401);
 
@@ -226,11 +219,10 @@ class OAuth2ClientApiTest extends WebTestCase
 
     public function testAdminApiCanAccessClientStats(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe', isAdmin: true));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe', isAdmin: true));
         self::createOAuth2AuthCodeClient();
 
-        $jsonData = self::getAuthorizationCodeTokenResponse($client, scopes: 'admin:oauth_clients:read');
+        $jsonData = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'admin:oauth_clients:read');
 
         self::assertResponseIsSuccessful();
         self::assertIsArray($jsonData);
@@ -242,11 +234,11 @@ class OAuth2ClientApiTest extends WebTestCase
             'resolution' => 'day',
         ]);
 
-        $client->request('GET', '/api/clients/stats?'.$query, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/clients/stats?'.$query, server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayHasKey('data', $jsonData);
@@ -268,11 +260,10 @@ class OAuth2ClientApiTest extends WebTestCase
 
     public function testAdminApiCannotAccessClientStatsWithoutScope(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe', isAdmin: true));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe', isAdmin: true));
         self::createOAuth2AuthCodeClient();
 
-        $jsonData = self::getAuthorizationCodeTokenResponse($client);
+        $jsonData = self::getAuthorizationCodeTokenResponse($this->client);
 
         self::assertResponseIsSuccessful();
         self::assertIsArray($jsonData);
@@ -284,11 +275,11 @@ class OAuth2ClientApiTest extends WebTestCase
             'resolution' => 'day',
         ]);
 
-        $client->request('GET', '/api/clients/stats?'.$query, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/clients/stats?'.$query, server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
         self::assertIsArray($jsonData);
         self::assertArrayHasKey('type', $jsonData);
         self::assertEquals('https://tools.ietf.org/html/rfc2616#section-10', $jsonData['type']);
@@ -301,11 +292,10 @@ class OAuth2ClientApiTest extends WebTestCase
 
     public function testAdminApiCanAccessClientList(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe', isAdmin: true));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe', isAdmin: true));
         self::createOAuth2AuthCodeClient();
 
-        $jsonData = self::getAuthorizationCodeTokenResponse($client, scopes: 'admin:oauth_clients:read');
+        $jsonData = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'admin:oauth_clients:read');
 
         self::assertResponseIsSuccessful();
         self::assertIsArray($jsonData);
@@ -313,11 +303,11 @@ class OAuth2ClientApiTest extends WebTestCase
 
         $token = 'Bearer '.$jsonData['access_token'];
 
-        $client->request('GET', '/api/clients', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/clients', server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayHasKey('items', $jsonData);
@@ -363,11 +353,10 @@ class OAuth2ClientApiTest extends WebTestCase
 
     public function testAdminApiCannotAccessClientListWithoutScope(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe', isAdmin: true));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe', isAdmin: true));
         self::createOAuth2AuthCodeClient();
 
-        $jsonData = self::getAuthorizationCodeTokenResponse($client);
+        $jsonData = self::getAuthorizationCodeTokenResponse($this->client);
 
         self::assertResponseIsSuccessful();
         self::assertIsArray($jsonData);
@@ -375,11 +364,11 @@ class OAuth2ClientApiTest extends WebTestCase
 
         $token = 'Bearer '.$jsonData['access_token'];
 
-        $client->request('GET', '/api/clients', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/clients', server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayHasKey('type', $jsonData);
@@ -393,11 +382,10 @@ class OAuth2ClientApiTest extends WebTestCase
 
     public function testAdminApiCanAccessClientByIdentifier(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe', isAdmin: true));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe', isAdmin: true));
         self::createOAuth2AuthCodeClient();
 
-        $jsonData = self::getAuthorizationCodeTokenResponse($client, scopes: 'admin:oauth_clients:read');
+        $jsonData = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'admin:oauth_clients:read');
 
         self::assertResponseIsSuccessful();
         self::assertIsArray($jsonData);
@@ -405,11 +393,11 @@ class OAuth2ClientApiTest extends WebTestCase
 
         $token = 'Bearer '.$jsonData['access_token'];
 
-        $client->request('GET', '/api/clients/testclient', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/clients/testclient', server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayHasKey('identifier', $jsonData);
@@ -439,11 +427,10 @@ class OAuth2ClientApiTest extends WebTestCase
 
     public function testApiCanRevokeTokens(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe', isAdmin: true));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe', isAdmin: true));
         self::createOAuth2AuthCodeClient();
 
-        $tokenData = self::getAuthorizationCodeTokenResponse($client, scopes: 'admin:oauth_clients:read');
+        $tokenData = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'admin:oauth_clients:read');
 
         self::assertResponseIsSuccessful();
         self::assertIsArray($tokenData);
@@ -452,18 +439,18 @@ class OAuth2ClientApiTest extends WebTestCase
 
         $token = 'Bearer '.$tokenData['access_token'];
 
-        $client->request('GET', '/api/clients/testclient', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/clients/testclient', server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseIsSuccessful();
 
-        $client->request('POST', '/api/revoke', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('POST', '/api/revoke', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(204);
 
-        $client->request('GET', '/api/clients/testclient', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/clients/testclient', server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(401);
 
-        $jsonData = self::getRefreshTokenResponse($client, $tokenData['refresh_token']);
+        $jsonData = self::getRefreshTokenResponse($this->client, $tokenData['refresh_token']);
 
         self::assertResponseStatusCodeSame(401);
 
@@ -480,11 +467,10 @@ class OAuth2ClientApiTest extends WebTestCase
 
     public function testAdminApiCannotAccessClientByIdentifierWithoutScope(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe', isAdmin: true));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe', isAdmin: true));
         self::createOAuth2AuthCodeClient();
 
-        $jsonData = self::getAuthorizationCodeTokenResponse($client);
+        $jsonData = self::getAuthorizationCodeTokenResponse($this->client);
 
         self::assertResponseIsSuccessful();
         self::assertIsArray($jsonData);
@@ -492,11 +478,11 @@ class OAuth2ClientApiTest extends WebTestCase
 
         $token = 'Bearer '.$jsonData['access_token'];
 
-        $client->request('GET', '/api/clients/testclient', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/clients/testclient', server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayHasKey('type', $jsonData);

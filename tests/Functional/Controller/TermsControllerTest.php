@@ -10,10 +10,8 @@ class TermsControllerTest extends WebTestCase
 {
     public function testTermsPage(): void
     {
-        $client = $this->createClient();
-
-        $crawler = $client->request('GET', '/');
-        $client->click($crawler->filter('#footer a[href="/terms"]')->link());
+        $crawler = $this->client->request('GET', '/');
+        $this->client->click($crawler->filter('.about.section a[href="/terms"]')->link());
 
         $this->assertSelectorTextContains('h1', 'Terms');
     }

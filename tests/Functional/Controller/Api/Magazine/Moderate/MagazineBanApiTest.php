@@ -13,63 +13,59 @@ class MagazineBanApiTest extends WebTestCase
 {
     public function testApiCannotCreateMagazineBanAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByName('test');
         $user = $this->getUserByUsername('testuser');
-        $client->request('POST', "/api/moderate/magazine/{$magazine->getId()}/ban/{$user->getId()}");
+        $this->client->request('POST', "/api/moderate/magazine/{$magazine->getId()}/ban/{$user->getId()}");
 
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotCreateMagazineBanWithoutScope(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
         self::createOAuth2AuthCodeClient();
         $magazine = $this->getMagazineByName('test');
         $user = $this->getUserByUsername('testuser');
 
-        $codes = self::getAuthorizationCodeTokenResponse($client);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client);
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('POST', "/api/moderate/magazine/{$magazine->getId()}/ban/{$user->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('POST', "/api/moderate/magazine/{$magazine->getId()}/ban/{$user->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotCreateMagazineBanIfNotMod(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
         self::createOAuth2AuthCodeClient();
         $magazine = $this->getMagazineByName('test', $this->getUserByUsername('JaneDoe'));
         $user = $this->getUserByUsername('testuser');
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read write moderate:magazine:ban:create');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine:ban:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('POST', "/api/moderate/magazine/{$magazine->getId()}/ban/{$user->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('POST', "/api/moderate/magazine/{$magazine->getId()}/ban/{$user->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanCreateMagazineBan(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
         self::createOAuth2AuthCodeClient();
         $magazine = $this->getMagazineByName('test');
 
         $bannedUser = $this->getUserByUsername('hapless_fool');
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read write moderate:magazine:ban:create');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine:ban:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
         $reason = 'you got banned through the API, how does that make you feel?';
         $expiredAt = (new \DateTimeImmutable('+1 hour'))->format(\DateTimeImmutable::ATOM);
 
-        $client->jsonRequest(
+        $this->client->jsonRequest(
             'POST', "/api/moderate/magazine/{$magazine->getId()}/ban/{$bannedUser->getId()}",
             parameters: [
                 'reason' => $reason,
@@ -79,7 +75,7 @@ class MagazineBanApiTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(MagazineRetrieveBansApiTest::BAN_RESPONSE_KEYS, $jsonData);
@@ -96,51 +92,47 @@ class MagazineBanApiTest extends WebTestCase
 
     public function testApiCannotDeleteMagazineBanAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByName('test');
         $user = $this->getUserByUsername('testuser');
-        $client->request('DELETE', "/api/moderate/magazine/{$magazine->getId()}/ban/{$user->getId()}");
+        $this->client->request('DELETE', "/api/moderate/magazine/{$magazine->getId()}/ban/{$user->getId()}");
 
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotDeleteMagazineBanWithoutScope(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
         self::createOAuth2AuthCodeClient();
         $magazine = $this->getMagazineByName('test');
         $user = $this->getUserByUsername('testuser');
 
-        $codes = self::getAuthorizationCodeTokenResponse($client);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client);
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('DELETE', "/api/moderate/magazine/{$magazine->getId()}/ban/{$user->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/moderate/magazine/{$magazine->getId()}/ban/{$user->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotDeleteMagazineBanIfNotMod(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
         self::createOAuth2AuthCodeClient();
         $magazine = $this->getMagazineByName('test', $this->getUserByUsername('JaneDoe'));
         $user = $this->getUserByUsername('testuser');
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read write moderate:magazine:ban:delete');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine:ban:delete');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('DELETE', "/api/moderate/magazine/{$magazine->getId()}/ban/{$user->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/moderate/magazine/{$magazine->getId()}/ban/{$user->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanDeleteMagazineBan(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
         self::createOAuth2AuthCodeClient();
         $magazine = $this->getMagazineByName('test');
         $bannedUser = $this->getUserByUsername('hapless_fool');
@@ -149,15 +141,15 @@ class MagazineBanApiTest extends WebTestCase
         $ban = MagazineBanDto::create('test ban <3');
         $magazineManager->ban($magazine, $bannedUser, $user, $ban);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read write moderate:magazine:ban:delete');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine:ban:delete');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
         $expiredAt = (new \DateTimeImmutable('+10 seconds'));
 
-        $client->request('DELETE', "/api/moderate/magazine/{$magazine->getId()}/ban/{$bannedUser->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/moderate/magazine/{$magazine->getId()}/ban/{$bannedUser->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(MagazineRetrieveBansApiTest::BAN_RESPONSE_KEYS, $jsonData);
