@@ -13,7 +13,6 @@ services:
     image: redis:alpine
     container_name: mbin-tests-redis
     restart: unless-stopped
-    command: /bin/sh -c "redis-server --requirepass 123456789"
     ports:
       - "6380:6379"
     healthcheck:
