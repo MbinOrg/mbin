@@ -98,14 +98,14 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('*/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - uses: actions/cache@v4
         id: npm-cache
         with:
           path: ${{ steps.npm-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('*/package-lock.json') }}
           restore-keys: ${{ runner.os }}-npm-
 
       - name: Composer install
@@ -127,7 +127,7 @@ jobs:
           SYMFONY_DEPRECATIONS_HELPER: disabled
           DATABASE_HOST: postgres
           DATABASE_PORT: 5432
-          REDIS_HOST: redis
+          REDIS_HOST: valkey
           REDIS_PORT: 6379
         run: php bin/phpunit tests/Functional
     services:
@@ -145,9 +145,9 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      redis:
+      valkey:
         # Docker Hub image
-        image: redis
+        image: valkey/valkey
         # Set health checks to wait until redis has started
         options: >-
           --health-cmd "redis-cli ping"
