@@ -8,10 +8,9 @@ use App\Tests\WebTestCase;
 
 class EntryCommentBoostControllerTest extends WebTestCase
 {
-    public function testLoggedUserCanAddToFavouritesEntryComment(): void
+    public function testLoggedUserCanAddToBoostsEntryComment(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $entry = $this->getEntryByTitle(
             'test entry 1',
@@ -22,19 +21,20 @@ class EntryCommentBoostControllerTest extends WebTestCase
         );
         $this->createEntryComment('test comment 1', $entry, $this->getUserByUsername('JaneDoe'));
 
-        $crawler = $client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
-
-        $client->submit(
-            $crawler->filter('#main .entry-comment')->selectButton('boost')->form([])
+        $crawler = $this->client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
+        $this->client->submit(
+            $crawler->filter('#main .entry-comment')->selectButton('Boost')->form()
         );
+        $this->client->followRedirect();
+        self::assertResponseIsSuccessful();
 
-        $crawler = $client->followRedirect();
+        $crawler = $this->client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
 
-        $this->assertSelectorTextContains('#main .entry-comment', 'boost (1)');
+        $this->assertSelectorTextContains('#main .entry-comment', 'Boost (1)');
 
-        $crawler = $client->click($crawler->filter('#main .entry-comment')->selectLink('activity')->link());
+        $crawler = $this->client->click($crawler->filter('#main .entry-comment')->selectLink('Activity')->link());
 
-        $client->click($crawler->filter('#main #activity')->selectLink('boosts (1)')->link());
+        $this->client->click($crawler->filter('#main #activity')->selectLink('Boosts (1)')->link());
 
         $this->assertSelectorTextContains('#main .users-columns', 'JohnDoe');
     }

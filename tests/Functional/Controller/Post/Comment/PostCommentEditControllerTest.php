@@ -10,20 +10,19 @@ class PostCommentEditControllerTest extends WebTestCase
 {
     public function testAuthorCanEditOwnPostComment(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $post = $this->createPost('test post 1');
         $this->createPostComment('test comment 1', $post);
 
-        $crawler = $client->request('GET', "/m/acme/p/{$post->getId()}/test-post-1");
+        $crawler = $this->client->request('GET', "/m/acme/p/{$post->getId()}/test-post-1");
 
-        $crawler = $client->click($crawler->filter('#main .post-comment')->selectLink('edit')->link());
+        $crawler = $this->client->click($crawler->filter('#main .post-comment')->selectLink('Edit')->link());
 
         $this->assertSelectorExists('#main .post-comment');
         $this->assertSelectorTextContains('textarea[name="post_comment[body]"]', 'test comment 1');
 
-        $client->submit(
+        $this->client->submit(
             $crawler->filter('form[name=post_comment]')->selectButton('Save changes')->form(
                 [
                     'post_comment[body]' => 'test comment 2 body',
@@ -31,31 +30,31 @@ class PostCommentEditControllerTest extends WebTestCase
             )
         );
 
-        $client->followRedirect();
+        $this->client->followRedirect();
 
         $this->assertSelectorTextContains('#main .post-comment', 'test comment 2 body');
     }
 
     public function testAuthorCanEditOwnPostCommentWithImage(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $post = $this->createPost('test post 1');
-        $this->createPostComment('test comment 1', $post, imageDto: $this->getKibbyImageDto());
+        $imageDto = $this->getKibbyImageDto();
+        $this->createPostComment('test comment 1', $post, imageDto: $imageDto);
 
-        $crawler = $client->request('GET', "/m/acme/p/{$post->getId()}/test-post-1");
+        $crawler = $this->client->request('GET', "/m/acme/p/{$post->getId()}/test-post-1");
 
-        $crawler = $client->click($crawler->filter('#main .post-comment')->selectLink('edit')->link());
+        $crawler = $this->client->click($crawler->filter('#main .post-comment')->selectLink('Edit')->link());
 
         $this->assertSelectorExists('#main .post-comment');
         $this->assertSelectorTextContains('textarea[name="post_comment[body]"]', 'test comment 1');
         $this->assertSelectorExists('#main .post-comment img');
         $node = $crawler->selectImage('kibby')->getNode(0);
         $this->assertNotNull($node);
-        $this->assertStringContainsString(self::KIBBY_PNG_URL_RESULT, $node->attributes->getNamedItem('src')->textContent);
+        $this->assertStringContainsString($imageDto->filePath, $node->attributes->getNamedItem('src')->textContent);
 
-        $client->submit(
+        $this->client->submit(
             $crawler->filter('form[name=post_comment]')->selectButton('Save changes')->form(
                 [
                     'post_comment[body]' => 'test comment 2 body',
@@ -63,12 +62,12 @@ class PostCommentEditControllerTest extends WebTestCase
             )
         );
 
-        $crawler = $client->followRedirect();
+        $crawler = $this->client->followRedirect();
 
         $this->assertSelectorTextContains('#main .post-comment', 'test comment 2 body');
         $this->assertSelectorExists('#main .post-comment img');
         $node = $crawler->selectImage('kibby')->getNode(0);
         $this->assertNotNull($node);
-        $this->assertStringContainsString(self::KIBBY_PNG_URL_RESULT, $node->attributes->getNamedItem('src')->textContent);
+        $this->assertStringContainsString($imageDto->filePath, $node->attributes->getNamedItem('src')->textContent);
     }
 }

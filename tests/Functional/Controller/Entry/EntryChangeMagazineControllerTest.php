@@ -10,11 +10,9 @@ class EntryChangeMagazineControllerTest extends WebTestCase
 {
     public function testAdminCanChangeMagazine(): void
     {
-        $client = $this->createClient();
-
         $user = $this->getUserByUsername('JohnDoe');
         $this->setAdmin($user);
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
         $this->getMagazineByName('kbin');
 
@@ -23,27 +21,25 @@ class EntryChangeMagazineControllerTest extends WebTestCase
             'https://kbin.pub',
         );
 
-        $crawler = $client->request('GET', "/m/acme/t/{$entry->getId()}/-/moderate");
+        $crawler = $this->client->request('GET', "/m/acme/t/{$entry->getId()}/-/moderate");
 
-        $client->submit(
-            $crawler->filter('form[name=change_magazine]')->selectButton('change magazine')->form(
+        $this->client->submit(
+            $crawler->filter('form[name=change_magazine]')->selectButton('Change magazine')->form(
                 [
                     'change_magazine[new_magazine]' => 'kbin',
                 ]
             )
         );
 
-        $client->followRedirect();
-        $client->followRedirect();
+        $this->client->followRedirect();
+        $this->client->followRedirect();
 
         $this->assertSelectorTextContains('.head-title', 'kbin');
     }
 
     public function testUnauthorizedUserCantChangeMagazine(): void
     {
-        $client = $this->createClient();
-
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $this->getMagazineByName('kbin');
 
@@ -52,8 +48,8 @@ class EntryChangeMagazineControllerTest extends WebTestCase
             'https://kbin.pub',
         );
 
-        $client->request('GET', "/m/acme/t/{$entry->getId()}/-/moderate");
+        $this->client->request('GET', "/m/acme/t/{$entry->getId()}/-/moderate");
 
-        $this->assertSelectorTextNotContains('.moderate-panel', 'change magazine');
+        $this->assertSelectorTextNotContains('.moderate-panel', 'Change magazine');
     }
 }

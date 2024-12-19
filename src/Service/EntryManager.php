@@ -101,6 +101,9 @@ class EntryManager implements ContentManagerInterface
         $entry->isAdult = $dto->isAdult || $entry->magazine->isAdult;
         $entry->slug = $this->slugger->slug($dto->title);
         $entry->image = $dto->image ? $this->imageRepository->find($dto->image->id) : null;
+        if ($dto->image) {
+            echo "set the image to id: {$entry->image?->getId()} and the path to: {$entry->image?->filePath}";
+        }
         $this->logger->debug('setting image to {imageId}, dto was {dtoImageId}', ['imageId' => $entry->image?->getId() ?? 'none', 'dtoImageId' => $dto->image?->id ?? 'none']);
         if ($entry->image && !$entry->image->altText) {
             $entry->image->altText = $dto->imageAlt;
@@ -131,7 +134,8 @@ class EntryManager implements ContentManagerInterface
         $this->entityManager->persist($entry);
         $this->entityManager->flush();
 
-        $this->tagManager->updateEntryTags($entry, $this->tagExtractor->extract($entry->body) ?? []);
+        $tags = array_unique(array_merge($this->tagExtractor->extract($entry->body) ?? [], $dto->tags ?? []));
+        $this->tagManager->updateEntryTags($entry, $tags);
 
         $this->dispatcher->dispatch(new EntryCreatedEvent($entry));
 

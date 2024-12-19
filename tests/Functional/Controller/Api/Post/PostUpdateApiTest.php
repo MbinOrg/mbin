@@ -10,7 +10,6 @@ class PostUpdateApiTest extends WebTestCase
 {
     public function testApiCannotUpdatePostAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', magazine: $magazine);
 
@@ -20,13 +19,12 @@ class PostUpdateApiTest extends WebTestCase
             'isAdult' => true,
         ];
 
-        $client->jsonRequest('PUT', "/api/post/{$post->getId()}", $updateRequest);
+        $this->client->jsonRequest('PUT', "/api/post/{$post->getId()}", $updateRequest);
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotUpdatePostWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
@@ -38,18 +36,17 @@ class PostUpdateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/post/{$post->getId()}", $updateRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/post/{$post->getId()}", $updateRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotUpdateOtherUsersPost(): void
     {
-        $client = self::createClient();
         $otherUser = $this->getUserByUsername('somebody');
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
@@ -62,18 +59,17 @@ class PostUpdateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read post:edit');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read post:edit');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/post/{$post->getId()}", $updateRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/post/{$post->getId()}", $updateRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanUpdatePost(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
@@ -85,14 +81,14 @@ class PostUpdateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read post:edit');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read post:edit');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/post/{$post->getId()}", $updateRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/post/{$post->getId()}", $updateRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $jsonData);
@@ -128,7 +124,6 @@ class PostUpdateApiTest extends WebTestCase
 
     public function testApiCannotUpdateImagePostAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
 
         $imageDto = $this->getKibbyImageDto();
@@ -140,13 +135,12 @@ class PostUpdateApiTest extends WebTestCase
             'isAdult' => true,
         ];
 
-        $client->jsonRequest('PUT', "/api/post/{$post->getId()}", $updateRequest);
+        $this->client->jsonRequest('PUT', "/api/post/{$post->getId()}", $updateRequest);
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotUpdateImagePostWithoutScope(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $user = $this->getUserByUsername('user');
 
@@ -160,18 +154,17 @@ class PostUpdateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/post/{$post->getId()}", $updateRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/post/{$post->getId()}", $updateRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotUpdateOtherUsersImagePost(): void
     {
-        $client = self::createClient();
         $otherUser = $this->getUserByUsername('somebody');
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
@@ -186,18 +179,17 @@ class PostUpdateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read post:edit');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read post:edit');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/post/{$post->getId()}", $updateRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/post/{$post->getId()}", $updateRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanUpdateImagePost(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
 
@@ -211,14 +203,14 @@ class PostUpdateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read post:edit');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read post:edit');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/post/{$post->getId()}", $updateRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/post/{$post->getId()}", $updateRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $jsonData);
@@ -232,7 +224,7 @@ class PostUpdateApiTest extends WebTestCase
         self::assertEquals($updateRequest['body'], $jsonData['body']);
         self::assertIsArray($jsonData['image']);
         self::assertArrayKeysMatch(self::IMAGE_KEYS, $jsonData['image']);
-        self::assertStringContainsString(self::KIBBY_PNG_URL_RESULT, $jsonData['image']['filePath']);
+        self::assertStringContainsString($imageDto->filePath, $jsonData['image']['filePath']);
         self::assertEquals($updateRequest['lang'], $jsonData['lang']);
         self::assertIsArray($jsonData['tags']);
         self::assertSame(['body'], $jsonData['tags']);

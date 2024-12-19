@@ -10,7 +10,6 @@ class PostCommentUpdateApiTest extends WebTestCase
 {
     public function testApiCannotUpdateCommentAnonymous(): void
     {
-        $client = self::createClient();
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post);
 
@@ -20,14 +19,13 @@ class PostCommentUpdateApiTest extends WebTestCase
             'isAdult' => true,
         ];
 
-        $client->jsonRequest('PUT', "/api/post-comments/{$comment->getId()}", $update);
+        $this->client->jsonRequest('PUT', "/api/post-comments/{$comment->getId()}", $update);
 
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotUpdateCommentWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post, $user);
@@ -39,19 +37,18 @@ class PostCommentUpdateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/post-comments/{$comment->getId()}", $update, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/post-comments/{$comment->getId()}", $update, server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotUpdateOtherUsersComment(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $user2 = $this->getUserByUsername('other');
         $post = $this->createPost('a post');
@@ -64,19 +61,18 @@ class PostCommentUpdateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read post_comment:edit');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read post_comment:edit');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/post-comments/{$comment->getId()}", $update, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/post-comments/{$comment->getId()}", $update, server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanUpdateComment(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post, $user);
@@ -92,15 +88,15 @@ class PostCommentUpdateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read post_comment:edit');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read post_comment:edit');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/post-comments/{$comment->getId()}?d=2", $update, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/post-comments/{$comment->getId()}?d=2", $update, server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(200);
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::POST_COMMENT_RESPONSE_KEYS, $jsonData);

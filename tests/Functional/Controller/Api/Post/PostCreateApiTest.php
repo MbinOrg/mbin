@@ -11,7 +11,6 @@ class PostCreateApiTest extends WebTestCase
 {
     public function testApiCannotCreatePostAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $postRequest = [
             'body' => 'This is a microblog',
@@ -19,13 +18,12 @@ class PostCreateApiTest extends WebTestCase
             'isAdult' => false,
         ];
 
-        $client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/posts", parameters: $postRequest);
+        $this->client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/posts", parameters: $postRequest);
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotCreatePostWithoutScope(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $postRequest = [
             'body' => 'No scope post',
@@ -34,18 +32,17 @@ class PostCreateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/posts", parameters: $postRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/posts", parameters: $postRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanCreatePost(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $postRequest = [
@@ -55,14 +52,14 @@ class PostCreateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read post:create');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read post:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/posts", parameters: $postRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/posts", parameters: $postRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(201);
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $jsonData);
@@ -98,7 +95,6 @@ class PostCreateApiTest extends WebTestCase
 
     public function testApiCannotCreateImagePostAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $postRequest = [
             'alt' => 'It\'s kibby!',
@@ -110,7 +106,7 @@ class PostCreateApiTest extends WebTestCase
         copy($this->kibbyPath, $this->kibbyPath.'.tmp');
         $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
 
-        $client->request(
+        $this->client->request(
             'POST', "/api/magazine/{$magazine->getId()}/posts/image",
             parameters: $postRequest, files: ['uploadImage' => $image],
         );
@@ -119,7 +115,6 @@ class PostCreateApiTest extends WebTestCase
 
     public function testApiCannotCreateImagePostWithoutScope(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $postRequest = [
             'alt' => 'It\'s kibby!',
@@ -128,16 +123,17 @@ class PostCreateApiTest extends WebTestCase
         ];
 
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        copy($this->kibbyPath, $this->kibbyPath.'.tmp');
-        $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.png');
+        $image = new UploadedFile($tmpPath.'.png', 'kibby_emoji.png', 'image/png');
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request(
+        $this->client->request(
             'POST', "/api/magazine/{$magazine->getId()}/posts/image",
             parameters: $postRequest, files: ['uploadImage' => $image],
             server: ['HTTP_AUTHORIZATION' => $token]
@@ -147,7 +143,6 @@ class PostCreateApiTest extends WebTestCase
 
     public function testApiCanCreateImagePost(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $postRequest = [
@@ -157,22 +152,26 @@ class PostCreateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        copy($this->kibbyPath, $this->kibbyPath.'.tmp');
-        $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.png');
+        $image = new UploadedFile($tmpPath.'.png', 'kibby_emoji.png', 'image/png');
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read post:create');
+        $imageManager = $this->imageManager;
+        $expectedPath = $imageManager->getFilePath($image->getFilename());
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read post:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request(
+        $this->client->request(
             'POST', "/api/magazine/{$magazine->getId()}/posts/image",
             parameters: $postRequest, files: ['uploadImage' => $image],
             server: ['HTTP_AUTHORIZATION' => $token]
         );
         self::assertResponseStatusCodeSame(201);
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $jsonData);
         self::assertNotNull($jsonData['postId']);
@@ -185,10 +184,10 @@ class PostCreateApiTest extends WebTestCase
         self::assertEquals('', $jsonData['body']);
         self::assertIsArray($jsonData['image']);
         self::assertArrayKeysMatch(self::IMAGE_KEYS, $jsonData['image']);
-        self::assertStringContainsString(self::KIBBY_PNG_URL_RESULT, $jsonData['image']['filePath']);
+        self::assertStringContainsString($expectedPath, $jsonData['image']['filePath']);
         self::assertEquals('It\'s kibby!', $jsonData['image']['altText']);
         self::assertEquals('en', $jsonData['lang']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertNull($jsonData['mentions']);
         self::assertSame(0, $jsonData['comments']);
         self::assertSame(0, $jsonData['uv']);
@@ -208,7 +207,6 @@ class PostCreateApiTest extends WebTestCase
 
     public function testApiCannotCreatePostWithoutMagazine(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $invalidId = $magazine->getId() + 1;
         $postRequest = [
@@ -217,21 +215,20 @@ class PostCreateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read post:create');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read post:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('POST', "/api/magazine/{$invalidId}/posts", parameters: $postRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/magazine/{$invalidId}/posts", parameters: $postRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(404);
 
-        $client->request('POST', "/api/magazine/{$invalidId}/posts/image", parameters: $postRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('POST', "/api/magazine/{$invalidId}/posts/image", parameters: $postRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(404);
     }
 
     public function testApiCannotCreatePostWithoutBodyOrImage(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $postRequest = [
             'lang' => 'en',
@@ -239,15 +236,15 @@ class PostCreateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read post:create');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read post:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/posts", parameters: $postRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/posts", parameters: $postRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(400);
 
-        $client->request('POST', "/api/magazine/{$magazine->getId()}/posts/image", parameters: $postRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('POST', "/api/magazine/{$magazine->getId()}/posts/image", parameters: $postRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(400);
     }
 }

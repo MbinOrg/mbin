@@ -5,107 +5,101 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Magazine\Admin;
 
 use App\DTO\ModeratorDto;
-use App\Service\MagazineManager;
 use App\Tests\WebTestCase;
 
 class MagazinePurgeApiTest extends WebTestCase
 {
     public function testApiCannotPurgeMagazineAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByName('test');
-        $client->request('DELETE', "/api/admin/magazine/{$magazine->getId()}/purge");
+        $this->client->request('DELETE', "/api/admin/magazine/{$magazine->getId()}/purge");
 
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotPurgeMagazineWithoutScope(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test');
 
-        $codes = self::getAuthorizationCodeTokenResponse($client);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client);
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('DELETE', "/api/admin/magazine/{$magazine->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/admin/magazine/{$magazine->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiNonAdminUserCannotPurgeMagazine(): void
     {
-        $client = self::createClient();
         $moderator = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($moderator);
+        $this->client->loginUser($moderator);
         $owner = $this->getUserByUsername('JaneDoe');
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test', $owner);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read write admin:magazine:purge');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write admin:magazine:purge');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('DELETE', "/api/admin/magazine/{$magazine->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/admin/magazine/{$magazine->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiModCannotPurgeMagazine(): void
     {
-        $client = self::createClient();
         $moderator = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($moderator);
+        $this->client->loginUser($moderator);
         $owner = $this->getUserByUsername('JaneDoe');
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test', $owner);
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $dto = new ModeratorDto($magazine);
         $dto->user = $moderator;
+        $dto->addedBy = $owner;
         $magazineManager->addModerator($dto);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read write admin:magazine:purge');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write admin:magazine:purge');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('DELETE', "/api/admin/magazine/{$magazine->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/admin/magazine/{$magazine->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiOwnerCannotPurgeMagazine(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test');
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read write admin:magazine:purge');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write admin:magazine:purge');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('DELETE', "/api/admin/magazine/{$magazine->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/admin/magazine/{$magazine->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiAdminCanPurgeMagazine(): void
     {
-        $client = self::createClient();
         $admin = $this->getUserByUsername('JohnDoe', isAdmin: true);
         $owner = $this->getUserByUsername('JaneDoe');
-        $client->loginUser($admin);
+        $this->client->loginUser($admin);
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test', $owner);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read write admin:magazine:purge');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write admin:magazine:purge');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('DELETE', "/api/admin/magazine/{$magazine->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('DELETE', "/api/admin/magazine/{$magazine->getId()}/purge", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(204);
     }

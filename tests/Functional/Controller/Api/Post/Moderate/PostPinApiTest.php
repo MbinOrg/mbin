@@ -4,71 +4,66 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Post\Moderate;
 
-use App\Service\PostManager;
 use App\Tests\WebTestCase;
 
 class PostPinApiTest extends WebTestCase
 {
     public function testApiCannotPinPostAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', magazine: $magazine);
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/pin");
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/pin");
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiNonModeratorCannotPinPost(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:post:pin');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:post:pin');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotPinPostWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanPinPost(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:post:pin');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:post:pin');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $jsonData);
@@ -82,7 +77,7 @@ class PostPinApiTest extends WebTestCase
         self::assertEquals($post->body, $jsonData['body']);
         self::assertNull($jsonData['image']);
         self::assertEquals($post->lang, $jsonData['lang']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertNull($jsonData['mentions']);
         self::assertSame(0, $jsonData['comments']);
         self::assertSame(0, $jsonData['uv']);
@@ -102,76 +97,72 @@ class PostPinApiTest extends WebTestCase
 
     public function testApiCannotUnpinPostAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', magazine: $magazine);
 
-        $postManager = $this->getService(PostManager::class);
+        $postManager = $this->postManager;
         $postManager->pin($post);
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/pin");
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/pin");
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiNonModeratorCannotUnpinPost(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
 
-        $postManager = $this->getService(PostManager::class);
+        $postManager = $this->postManager;
         $postManager->pin($post);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:post:pin');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:post:pin');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotUnpinPostWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
 
-        $postManager = $this->getService(PostManager::class);
+        $postManager = $this->postManager;
         $postManager->pin($post);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanUnpinPost(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
 
-        $postManager = $this->getService(PostManager::class);
+        $postManager = $this->postManager;
         $postManager->pin($post);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:post:pin');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:post:pin');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $jsonData);
@@ -185,7 +176,7 @@ class PostPinApiTest extends WebTestCase
         self::assertEquals($post->body, $jsonData['body']);
         self::assertNull($jsonData['image']);
         self::assertEquals($post->lang, $jsonData['lang']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertNull($jsonData['mentions']);
         self::assertSame(0, $jsonData['comments']);
         self::assertSame(0, $jsonData['uv']);

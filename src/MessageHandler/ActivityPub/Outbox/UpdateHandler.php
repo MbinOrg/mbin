@@ -23,6 +23,7 @@ use App\Service\ActivityPubManager;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -36,8 +37,9 @@ class UpdateHandler extends MbinMessageHandler
         private readonly SettingsManager $settingsManager,
         private readonly DeliverManager $deliverManager,
         private readonly UpdateWrapper $updateWrapper,
+        private readonly KernelInterface $kernel,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(UpdateMessage $message): void
