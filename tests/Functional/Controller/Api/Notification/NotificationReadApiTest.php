@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Notification;
 
 use App\Entity\Notification;
-use App\Repository\NotificationRepository;
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class NotificationReadApiTest extends WebTestCase
 {
@@ -120,7 +118,7 @@ class NotificationReadApiTest extends WebTestCase
         $user = $this->getUserByUsername('JohnDoe');
         $notification = $this->createMessageNotification();
         $notification->status = Notification::STATUS_READ;
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($notification);
         $entityManager->flush();
 
@@ -184,7 +182,7 @@ class NotificationReadApiTest extends WebTestCase
         $this->client->request('PUT', '/api/notifications/read', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(204);
 
-        $notificationRepository = $this->getService(NotificationRepository::class);
+        $notificationRepository = $this->notificationRepository;
         $notification = $notificationRepository->find($notification->getId());
         self::assertNotNull($notification);
         self::assertEquals('read', $notification->status);

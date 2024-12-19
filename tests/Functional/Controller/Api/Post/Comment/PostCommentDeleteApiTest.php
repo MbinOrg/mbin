@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Post\Comment;
 
-use App\Repository\PostCommentRepository;
 use App\Tests\WebTestCase;
 
 class PostCommentDeleteApiTest extends WebTestCase
@@ -60,7 +59,7 @@ class PostCommentDeleteApiTest extends WebTestCase
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post, $user);
 
-        $commentRepository = $this->getService(PostCommentRepository::class);
+        $commentRepository = $this->postCommentRepository;
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($user);
@@ -82,7 +81,7 @@ class PostCommentDeleteApiTest extends WebTestCase
         $comment = $this->createPostComment('test comment', $post, $user);
         $this->createPostComment('test comment', $post, $user, parent: $comment);
 
-        $commentRepository = $this->getService(PostCommentRepository::class);
+        $commentRepository = $this->postCommentRepository;
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($user);

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Entry;
 
-use App\Repository\EntryRepository;
 use App\Tests\WebTestCase;
 
 class EntryCreateControllerTest extends WebTestCase
@@ -96,7 +95,7 @@ class EntryCreateControllerTest extends WebTestCase
         $this->client->loginUser($this->getUserByUsername('user'));
 
         $this->getMagazineByName('acme');
-        $repository = $this->getService(EntryRepository::class);
+        $repository = $this->entryRepository;
 
         $crawler = $this->client->request('GET', '/m/acme/new/photo');
 

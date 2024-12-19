@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Magazine\Moderate;
 
 use App\DTO\MagazineBanDto;
-use App\Service\MagazineManager;
 use App\Tests\Functional\Controller\Api\Magazine\MagazineRetrieveApiTest;
 use App\Tests\WebTestCase;
 
@@ -137,7 +136,7 @@ class MagazineBanApiTest extends WebTestCase
         $magazine = $this->getMagazineByName('test');
         $bannedUser = $this->getUserByUsername('hapless_fool');
 
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $ban = MagazineBanDto::create('test ban <3');
         $magazineManager->ban($magazine, $bannedUser, $user, $ban);
 

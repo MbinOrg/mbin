@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Magazine\Admin;
 
 use App\DTO\ModeratorDto;
-use App\Service\MagazineManager;
 use App\Tests\WebTestCase;
 
 class MagazinePurgeApiTest extends WebTestCase
@@ -58,7 +57,7 @@ class MagazinePurgeApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test', $owner);
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $dto = new ModeratorDto($magazine);
         $dto->user = $moderator;
         $dto->addedBy = $owner;

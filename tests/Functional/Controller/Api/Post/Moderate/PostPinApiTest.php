@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Post\Moderate;
 
-use App\Service\PostManager;
 use App\Tests\WebTestCase;
 
 class PostPinApiTest extends WebTestCase
@@ -101,7 +100,7 @@ class PostPinApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', magazine: $magazine);
 
-        $postManager = $this->getService(PostManager::class);
+        $postManager = $this->postManager;
         $postManager->pin($post);
 
         $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/pin");
@@ -114,7 +113,7 @@ class PostPinApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
 
-        $postManager = $this->getService(PostManager::class);
+        $postManager = $this->postManager;
         $postManager->pin($post);
 
         self::createOAuth2AuthCodeClient();
@@ -133,7 +132,7 @@ class PostPinApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
 
-        $postManager = $this->getService(PostManager::class);
+        $postManager = $this->postManager;
         $postManager->pin($post);
 
         self::createOAuth2AuthCodeClient();
@@ -152,7 +151,7 @@ class PostPinApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
 
-        $postManager = $this->getService(PostManager::class);
+        $postManager = $this->postManager;
         $postManager->pin($post);
 
         self::createOAuth2AuthCodeClient();

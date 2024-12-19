@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Post;
 
-use App\Service\VoteManager;
 use App\Tests\WebTestCase;
 
 class PostVoteApiTest extends WebTestCase
@@ -136,7 +135,7 @@ class PostVoteApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test post', user: $user, magazine: $magazine);
 
-        $voteManager = $this->getService(VoteManager::class);
+        $voteManager = $this->voteManager;
         $voteManager->vote(1, $post, $user, rateLimit: false);
 
         self::createOAuth2AuthCodeClient();
@@ -155,7 +154,7 @@ class PostVoteApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test post', user: $user, magazine: $magazine);
 
-        $voteManager = $this->getService(VoteManager::class);
+        $voteManager = $this->voteManager;
         $voteManager->vote(1, $post, $user, rateLimit: false);
 
         self::createOAuth2AuthCodeClient();

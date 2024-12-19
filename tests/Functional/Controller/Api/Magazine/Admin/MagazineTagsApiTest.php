@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Magazine\Admin;
 
 use App\DTO\ModeratorDto;
-use App\Service\MagazineManager;
 use App\Tests\Functional\Controller\Api\Magazine\MagazineRetrieveApiTest;
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class MagazineTagsApiTest extends WebTestCase
 {
@@ -24,7 +22,7 @@ class MagazineTagsApiTest extends WebTestCase
     {
         $magazine = $this->getMagazineByName('test');
         $magazine->tags = ['test'];
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($magazine);
         $entityManager->flush();
 
@@ -55,7 +53,7 @@ class MagazineTagsApiTest extends WebTestCase
 
         $magazine = $this->getMagazineByName('test');
         $magazine->tags = ['test'];
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($magazine);
         $entityManager->flush();
 
@@ -75,7 +73,7 @@ class MagazineTagsApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test', $owner);
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $dto = new ModeratorDto($magazine);
         $dto->user = $moderator;
         $dto->addedBy = $owner;
@@ -97,14 +95,14 @@ class MagazineTagsApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test', $owner);
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $dto = new ModeratorDto($magazine);
         $dto->user = $moderator;
         $dto->addedBy = $owner;
         $magazineManager->addModerator($dto);
 
         $magazine->tags = ['test'];
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($magazine);
         $entityManager->flush();
 
@@ -163,7 +161,7 @@ class MagazineTagsApiTest extends WebTestCase
 
         $magazine = $this->getMagazineByName('test');
         $magazine->tags = ['test'];
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($magazine);
         $entityManager->flush();
 

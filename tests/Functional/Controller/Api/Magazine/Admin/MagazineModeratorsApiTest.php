@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Magazine\Admin;
 
 use App\DTO\ModeratorDto;
-use App\Service\MagazineManager;
 use App\Tests\Functional\Controller\Api\Magazine\MagazineRetrieveApiTest;
 use App\Tests\WebTestCase;
 
@@ -25,7 +24,7 @@ class MagazineModeratorsApiTest extends WebTestCase
         $magazine = $this->getMagazineByName('test');
         $user = $this->getUserByUsername('yesamod');
         $admin = $this->getUserByUsername('admin', isAdmin: true);
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $dto = new ModeratorDto($magazine);
         $dto->user = $user;
         $dto->addedBy = $admin;
@@ -60,7 +59,7 @@ class MagazineModeratorsApiTest extends WebTestCase
         $magazine = $this->getMagazineByName('test');
         $user = $this->getUserByUsername('yesamod');
         $admin = $this->getUserByUsername('admin', isAdmin: true);
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $dto = new ModeratorDto($magazine);
         $dto->user = $user;
         $dto->addedBy = $admin;
@@ -83,7 +82,7 @@ class MagazineModeratorsApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test', $owner);
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $dto = new ModeratorDto($magazine);
         $dto->user = $moderator;
         $dto->addedBy = $owner;
@@ -106,7 +105,7 @@ class MagazineModeratorsApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test', $owner);
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $dto = new ModeratorDto($magazine);
         $dto->user = $moderator;
         $dto->addedBy = $owner;
@@ -158,7 +157,7 @@ class MagazineModeratorsApiTest extends WebTestCase
         $magazine = $this->getMagazineByName('test');
         $moderator = $this->getUserByUsername('yesamod');
         $admin = $this->getUserByUsername('admin', isAdmin: true);
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $dto = new ModeratorDto($magazine);
         $dto->user = $moderator;
         $dto->addedBy = $admin;

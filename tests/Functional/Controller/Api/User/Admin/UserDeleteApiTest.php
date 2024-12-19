@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\User\Admin;
 
-use App\Repository\UserRepository;
-use App\Service\UserManager;
 use App\Tests\WebTestCase;
 
 class UserDeleteApiTest extends WebTestCase
@@ -25,7 +23,7 @@ class UserDeleteApiTest extends WebTestCase
         );
         self::assertResponseStatusCodeSame(403);
 
-        $repository = $this->getService(UserRepository::class);
+        $repository = $this->userRepository;
         $deletedUser = $repository->find($deletedUser->getId());
         self::assertFalse($deletedUser->isAccountDeleted());
     }
@@ -45,7 +43,7 @@ class UserDeleteApiTest extends WebTestCase
         );
         self::assertResponseStatusCodeSame(403);
 
-        $repository = $this->getService(UserRepository::class);
+        $repository = $this->userRepository;
         $deletedUser = $repository->find($deletedUser->getId());
         self::assertFalse($deletedUser->isAccountDeleted());
     }
@@ -69,7 +67,7 @@ class UserDeleteApiTest extends WebTestCase
 
         self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
 
-        $repository = $this->getService(UserRepository::class);
+        $repository = $this->userRepository;
         $deletedUser = $repository->find($deletedUser->getId());
         self::assertTrue($deletedUser->isAccountDeleted());
     }
@@ -89,7 +87,7 @@ class UserDeleteApiTest extends WebTestCase
         );
         self::assertResponseStatusCodeSame(404);
 
-        $repository = $this->getService(UserRepository::class);
+        $repository = $this->userRepository;
         $deletedUser = $repository->find($deletedUser->getId());
         self::assertFalse($deletedUser->isBanned);
     }
@@ -108,7 +106,7 @@ class UserDeleteApiTest extends WebTestCase
         $testUser = $this->getUserByUsername('UserWithoutAbout', isAdmin: true);
         $deletedUser = $this->getUserByUsername('JohnDoe');
         $deleteId = $deletedUser->getId();
-        $this->getService(UserManager::class)->delete($deletedUser);
+        $this->userManager->delete($deletedUser);
 
         $this->client->loginUser($testUser);
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read admin:user:delete');
@@ -121,7 +119,7 @@ class UserDeleteApiTest extends WebTestCase
         );
         self::assertResponseStatusCodeSame(404);
 
-        $repository = $this->getService(UserRepository::class);
+        $repository = $this->userRepository;
         $deletedUser = $repository->find($deleteId);
         self::assertNull($deletedUser);
     }

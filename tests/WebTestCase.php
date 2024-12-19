@@ -4,10 +4,51 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use App\Factory\ActivityPub\GroupFactory;
+use App\Factory\ActivityPub\PersonFactory;
+use App\Factory\ActivityPub\TombstoneFactory;
+use App\Factory\ImageFactory;
+use App\Factory\MagazineFactory;
+use App\Repository\EntryCommentRepository;
+use App\Repository\EntryRepository;
+use App\Repository\ImageRepository;
+use App\Repository\MagazineRepository;
+use App\Repository\MessageRepository;
+use App\Repository\NotificationRepository;
+use App\Repository\PostCommentRepository;
+use App\Repository\PostRepository;
+use App\Repository\ReportRepository;
+use App\Repository\SettingsRepository;
+use App\Repository\SiteRepository;
+use App\Repository\UserRepository;
+use App\Service\BadgeManager;
+use App\Service\DomainManager;
+use App\Service\EntryCommentManager;
+use App\Service\EntryManager;
+use App\Service\FavouriteManager;
+use App\Service\ImageManager;
+use App\Service\MagazineManager;
+use App\Service\MentionManager;
+use App\Service\MessageManager;
+use App\Service\NotificationManager;
+use App\Service\PostCommentManager;
+use App\Service\PostManager;
+use App\Service\ProjectInfoService;
+use App\Service\ReportManager;
+use App\Service\SettingsManager;
+use App\Service\UserManager;
+use App\Service\VoteManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
+use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class WebTestCase extends BaseWebTestCase
 {
@@ -40,6 +81,49 @@ abstract class WebTestCase extends BaseWebTestCase
     protected EntityManagerInterface $entityManager;
     protected KernelBrowser $client;
 
+    protected MagazineManager $magazineManager;
+    protected UserManager $userManager;
+    protected EntryManager $entryManager;
+    protected EntryCommentManager $entryCommentManager;
+    protected PostManager $postManager;
+    protected PostCommentManager $postCommentManager;
+    protected ImageManager $imageManager;
+    protected MessageManager $messageManager;
+    protected FavouriteManager $favouriteManager;
+    protected VoteManager $voteManager;
+    protected SettingsManager $settingsManager;
+    protected DomainManager $domainManager;
+    protected ReportManager $reportManager;
+    protected BadgeManager $badgeManager;
+    protected NotificationManager $notificationManager;
+    protected MentionManager $mentionManager;
+
+    protected MagazineRepository $magazineRepository;
+    protected EntryRepository $entryRepository;
+    protected EntryCommentRepository $entryCommentRepository;
+    protected PostRepository $postRepository;
+    protected PostCommentRepository $postCommentRepository;
+    protected ImageRepository $imageRepository;
+    protected MessageRepository $messageRepository;
+    protected SiteRepository $siteRepository;
+    protected NotificationRepository $notificationRepository;
+    protected ReportRepository $reportRepository;
+    protected SettingsRepository $settingsRepository;
+    protected UserRepository $userRepository;
+
+    protected ImageFactory $imageFactory;
+    protected MagazineFactory $magazineFactory;
+    protected TombstoneFactory $tombstoneFactory;
+    protected PersonFactory $personFactory;
+    protected GroupFactory $groupFactory;
+
+    protected UrlGeneratorInterface $urlGenerator;
+    protected TranslatorInterface $translator;
+    protected EventDispatcherInterface $eventDispatcher;
+    protected RequestStack $requestStack;
+    protected LoggerInterface $logger;
+    protected ProjectInfoService $projectInfoService;
+
     protected string $kibbyPath;
 
     public function setUp(): void
@@ -49,7 +133,50 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->entries = new ArrayCollection();
         $this->kibbyPath = \dirname(__FILE__).'/assets/kibby_emoji.png';
         $this->client = static::createClient();
+
         $this->entityManager = $this->getService(EntityManagerInterface::class);
+        $this->magazineManager = $this->getService(MagazineManager::class);
+        $this->userManager = $this->getService(UserManager::class);
+        $this->entryManager = $this->getService(EntryManager::class);
+        $this->entryCommentManager = $this->getService(EntryCommentManager::class);
+        $this->postManager = $this->getService(PostManager::class);
+        $this->postCommentManager = $this->getService(PostCommentManager::class);
+        $this->imageManager = $this->getService(ImageManager::class);
+        $this->messageManager = $this->getService(MessageManager::class);
+        $this->favouriteManager = $this->getService(FavouriteManager::class);
+        $this->voteManager = $this->getService(VoteManager::class);
+        $this->settingsManager = $this->getService(SettingsManager::class);
+        $this->domainManager = $this->getService(DomainManager::class);
+        $this->reportManager = $this->getService(ReportManager::class);
+        $this->badgeManager = $this->getService(BadgeManager::class);
+        $this->notificationManager = $this->getService(NotificationManager::class);
+
+        $this->magazineRepository = $this->getService(MagazineRepository::class);
+        $this->entryRepository = $this->getService(EntryRepository::class);
+        $this->entryCommentRepository = $this->getService(EntryCommentRepository::class);
+        $this->postRepository = $this->getService(PostRepository::class);
+        $this->postCommentRepository = $this->getService(PostCommentRepository::class);
+        $this->imageRepository = $this->getService(ImageRepository::class);
+        $this->messageRepository = $this->getService(MessageRepository::class);
+        $this->siteRepository = $this->getService(SiteRepository::class);
+        $this->notificationRepository = $this->getService(NotificationRepository::class);
+        $this->reportRepository = $this->getService(ReportRepository::class);
+        $this->settingsRepository = $this->getService(SettingsRepository::class);
+        $this->userRepository = $this->getService(UserRepository::class);
+
+        $this->imageFactory = $this->getService(ImageFactory::class);
+        $this->magazineFactory = $this->getService(MagazineFactory::class);
+
+        $this->urlGenerator = $this->getService(UrlGeneratorInterface::class);
+        $this->translator = $this->getService(TranslatorInterface::class);
+        $this->eventDispatcher = $this->getService(EventDispatcherInterface::class);
+        $this->requestStack = $this->getService(RequestStack::class);
+
+        // clear all cache before every test
+        $app = new Application($this->client->getKernel());
+        $command = $app->get('cache:pool:clear');
+        $tester = new CommandTester($command);
+        $tester->execute(['--all' => '1']);
     }
 
     /**
@@ -59,7 +186,7 @@ abstract class WebTestCase extends BaseWebTestCase
      *
      * @return T
      */
-    public function getService(string $className)
+    private function getService(string $className)
     {
         return $this->getContainer()->get($className);
     }

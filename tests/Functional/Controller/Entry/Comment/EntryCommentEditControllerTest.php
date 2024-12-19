@@ -40,8 +40,9 @@ class EntryCommentEditControllerTest extends WebTestCase
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
+        $imageDto = $this->getKibbyImageDto();
         $entry = $this->getEntryByTitle('test entry 1', 'https://kbin.pub');
-        $this->createEntryComment('test comment 1', $entry, imageDto: $this->getKibbyImageDto());
+        $this->createEntryComment('test comment 1', $entry, imageDto: $imageDto);
 
         $crawler = $this->client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
 
@@ -53,7 +54,7 @@ class EntryCommentEditControllerTest extends WebTestCase
         $this->assertSelectorExists('#main .entry-comment img');
         $node = $crawler->selectImage('kibby')->getNode(0);
         $this->assertNotNull($node);
-        $this->assertStringContainsString(self::KIBBY_PNG_URL_RESULT, $node->attributes->getNamedItem('src')->textContent);
+        $this->assertStringContainsString($imageDto->filePath, $node->attributes->getNamedItem('src')->textContent);
 
         $this->client->submit(
             $crawler->filter('form[name=entry_comment]')->selectButton('Update comment')->form(
@@ -69,6 +70,6 @@ class EntryCommentEditControllerTest extends WebTestCase
         $this->assertSelectorExists('#main .entry-comment img');
         $node = $crawler->selectImage('kibby')->getNode(0);
         $this->assertNotNull($node);
-        $this->assertStringContainsString(self::KIBBY_PNG_URL_RESULT, $node->attributes->getNamedItem('src')->textContent);
+        $this->assertStringContainsString($imageDto->filePath, $node->attributes->getNamedItem('src')->textContent);
     }
 }

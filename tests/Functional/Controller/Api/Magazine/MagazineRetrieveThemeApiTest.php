@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Magazine;
 
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class MagazineRetrieveThemeApiTest extends WebTestCase
 {
@@ -15,7 +14,7 @@ class MagazineRetrieveThemeApiTest extends WebTestCase
     {
         $magazine = $this->getMagazineByName('test');
         $magazine->customCss = '.test {}';
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
 
         $entityManager->persist($magazine);
         $entityManager->flush();
@@ -40,7 +39,7 @@ class MagazineRetrieveThemeApiTest extends WebTestCase
 
         $magazine = $this->getMagazineByName('test');
         $magazine->customCss = '.test {}';
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
 
         $entityManager->persist($magazine);
         $entityManager->flush();

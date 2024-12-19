@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Entry\Moderate;
 
 use App\DTO\ModeratorDto;
-use App\Service\EntryManager;
-use App\Service\MagazineManager;
 use App\Tests\WebTestCase;
 
 class EntryTrashApiTest extends WebTestCase
@@ -59,7 +57,7 @@ class EntryTrashApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
         $moderator->addedBy = $admin;
@@ -119,7 +117,7 @@ class EntryTrashApiTest extends WebTestCase
         $user = $this->getUserByUsername('user');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', magazine: $magazine);
 
-        $entryManager = $this->getService(EntryManager::class);
+        $entryManager = $this->entryManager;
         $entryManager->trash($user, $entry);
 
         $this->client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/restore");
@@ -132,7 +130,7 @@ class EntryTrashApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
-        $entryManager = $this->getService(EntryManager::class);
+        $entryManager = $this->entryManager;
         $entryManager->trash($user, $entry);
 
         self::createOAuth2AuthCodeClient();
@@ -151,7 +149,7 @@ class EntryTrashApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
-        $entryManager = $this->getService(EntryManager::class);
+        $entryManager = $this->entryManager;
         $entryManager->trash($user, $entry);
 
         self::createOAuth2AuthCodeClient();
@@ -171,13 +169,13 @@ class EntryTrashApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
         $moderator->addedBy = $admin;
         $magazineManager->addModerator($moderator);
 
-        $entryManager = $this->getService(EntryManager::class);
+        $entryManager = $this->entryManager;
         $entryManager->trash($user, $entry);
 
         self::createOAuth2AuthCodeClient();

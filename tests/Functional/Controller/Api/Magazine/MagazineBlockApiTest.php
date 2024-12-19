@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Magazine;
 
-use App\Service\MagazineManager;
 use App\Tests\WebTestCase;
 
 class MagazineBlockApiTest extends WebTestCase
@@ -102,7 +101,7 @@ class MagazineBlockApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test');
-        $manager = $this->getService(MagazineManager::class);
+        $manager = $this->magazineManager;
         $manager->block($magazine, $user);
 
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write magazine:block');

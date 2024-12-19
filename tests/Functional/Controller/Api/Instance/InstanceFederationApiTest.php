@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Instance;
 
-use App\Service\SettingsManager;
 use App\Tests\WebTestCase;
 
 class InstanceFederationApiTest extends WebTestCase
@@ -13,7 +12,7 @@ class InstanceFederationApiTest extends WebTestCase
 
     public function testApiCanRetrieveEmptyInstanceDefederation(): void
     {
-        $settings = $this->getService(SettingsManager::class);
+        $settings = $this->settingsManager;
         $settings->set('KBIN_BANNED_INSTANCES', []);
 
         self::createOAuth2AuthCodeClient();
@@ -34,7 +33,7 @@ class InstanceFederationApiTest extends WebTestCase
 
     public function testApiCanRetrieveInstanceDefederationAnonymous(): void
     {
-        $settings = $this->getService(SettingsManager::class);
+        $settings = $this->settingsManager;
         $settings->set('KBIN_BANNED_INSTANCES', ['defederated.social']);
 
         $this->client->request('GET', '/api/defederated');
@@ -48,7 +47,7 @@ class InstanceFederationApiTest extends WebTestCase
 
     public function testApiCanRetrieveInstanceDefederation(): void
     {
-        $settings = $this->getService(SettingsManager::class);
+        $settings = $this->settingsManager;
         $settings->set('KBIN_BANNED_INSTANCES', ['defederated.social', 'evil.social']);
 
         self::createOAuth2AuthCodeClient();

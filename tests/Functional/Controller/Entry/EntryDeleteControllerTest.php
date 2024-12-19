@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Entry;
 
 use App\Tests\WebTestCase;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EntryDeleteControllerTest extends WebTestCase
 {
@@ -44,7 +43,7 @@ class EntryDeleteControllerTest extends WebTestCase
         $this->assertResponseRedirects();
         $this->client->request('GET', "/m/acme/t/{$entry->getId()}/deletion-test");
 
-        $translator = $this->getService(TranslatorInterface::class);
+        $translator = $this->translator;
 
         $this->assertSelectorTextContains("#entry-{$entry->getId()} header", $translator->trans('deleted_by_author'));
     }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Notification;
 
-use App\Repository\NotificationRepository;
 use App\Tests\WebTestCase;
 
 class NotificationDeleteApiTest extends WebTestCase
@@ -59,7 +58,7 @@ class NotificationDeleteApiTest extends WebTestCase
         $this->client->request('DELETE', "/api/notifications/{$notification->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(204);
 
-        $notificationRepository = $this->getService(NotificationRepository::class);
+        $notificationRepository = $this->notificationRepository;
         $notification = $notificationRepository->find($notification->getId());
         self::assertNull($notification);
     }
@@ -101,7 +100,7 @@ class NotificationDeleteApiTest extends WebTestCase
         $this->client->request('DELETE', '/api/notifications', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(204);
 
-        $notificationRepository = $this->getService(NotificationRepository::class);
+        $notificationRepository = $this->notificationRepository;
         $notification = $notificationRepository->find($notification->getId());
         self::assertNull($notification);
     }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Magazine\Admin;
 
 use App\DTO\ModeratorDto;
-use App\Service\MagazineManager;
 use App\Tests\Functional\Controller\Api\Magazine\MagazineRetrieveApiTest;
 use App\Tests\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -36,7 +35,7 @@ class MagazineUpdateThemeApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test', $owner);
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $dto = new ModeratorDto($magazine);
         $dto->user = $moderator;
         $dto->addedBy = $owner;
@@ -118,8 +117,12 @@ class MagazineUpdateThemeApiTest extends WebTestCase
         $token = $codes['token_type'].' '.$codes['access_token'];
 
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        copy($this->kibbyPath, $this->kibbyPath.'.tmp');
-        $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.png');
+        $image = new UploadedFile($tmpPath.'.png', 'kibby_emoji.png', 'image/png');
+
+        $imageManager = $this->imageManager;
+        $expectedPath = $imageManager->getFilePath($image->getFilename());
 
         $backgroundImage = 'shape1';
 
@@ -144,6 +147,6 @@ class MagazineUpdateThemeApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::IMAGE_KEYS, $jsonData['icon']);
         self::assertSame(96, $jsonData['icon']['width']);
         self::assertSame(96, $jsonData['icon']['height']);
-        self::assertEquals(self::KIBBY_PNG_URL_RESULT, $jsonData['icon']['filePath']);
+        self::assertEquals($expectedPath, $jsonData['icon']['filePath']);
     }
 }

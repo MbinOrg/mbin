@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\User;
 
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class UserFollowApiTest extends WebTestCase
 {
@@ -76,7 +75,7 @@ class UserFollowApiTest extends WebTestCase
 
         $testUser->follow($followedUser);
 
-        $manager = $this->getService(EntityManagerInterface::class);
+        $manager = $this->entityManager;
 
         $manager->persist($testUser);
         $manager->flush();

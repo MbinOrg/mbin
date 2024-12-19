@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Entry\Moderate;
 
-use App\Service\EntryManager;
 use App\Tests\WebTestCase;
 
 class EntryPinApiTest extends WebTestCase
@@ -108,7 +107,7 @@ class EntryPinApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', magazine: $magazine);
 
-        $entryManager = $this->getService(EntryManager::class);
+        $entryManager = $this->entryManager;
         $entryManager->pin($entry, null);
 
         $this->client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/pin");
@@ -121,7 +120,7 @@ class EntryPinApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
-        $entryManager = $this->getService(EntryManager::class);
+        $entryManager = $this->entryManager;
         $entryManager->pin($entry, null);
 
         self::createOAuth2AuthCodeClient();
@@ -140,7 +139,7 @@ class EntryPinApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
-        $entryManager = $this->getService(EntryManager::class);
+        $entryManager = $this->entryManager;
         $entryManager->pin($entry, null);
 
         self::createOAuth2AuthCodeClient();
@@ -159,7 +158,7 @@ class EntryPinApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
-        $entryManager = $this->getService(EntryManager::class);
+        $entryManager = $this->entryManager;
         $entryManager->pin($entry, null);
 
         self::createOAuth2AuthCodeClient();

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\User\Profile;
 
-use App\Service\MagazineManager;
 use App\Tests\WebTestCase;
 
 class UserNotificationControllerTest extends WebTestCase
@@ -15,8 +14,8 @@ class UserNotificationControllerTest extends WebTestCase
 
         $actor = $this->getUserByUsername('actor');
 
-        $this->getService(MagazineManager::class)->subscribe($this->getMagazineByName('acme'), $owner);
-        $this->getService(MagazineManager::class)->subscribe($this->getMagazineByName('acme'), $actor);
+        $this->magazineManager->subscribe($this->getMagazineByName('acme'), $owner);
+        $this->magazineManager->subscribe($this->getMagazineByName('acme'), $actor);
 
         $this->loadNotificationsFixture();
 
@@ -40,11 +39,11 @@ class UserNotificationControllerTest extends WebTestCase
     {
         $this->client->loginUser($this->getUserByUsername('owner'));
 
-        $this->getService(MagazineManager::class)->subscribe(
+        $this->magazineManager->subscribe(
             $this->getMagazineByName('acme'),
             $this->getUserByUsername('owner')
         );
-        $this->getService(MagazineManager::class)->subscribe(
+        $this->magazineManager->subscribe(
             $this->getMagazineByName('acme'),
             $this->getUserByUsername('actor')
         );
@@ -69,11 +68,11 @@ class UserNotificationControllerTest extends WebTestCase
     {
         $this->client->loginUser($this->getUserByUsername('owner'));
 
-        $this->getService(MagazineManager::class)->subscribe(
+        $this->magazineManager->subscribe(
             $this->getMagazineByName('acme'),
             $this->getUserByUsername('owner')
         );
-        $this->getService(MagazineManager::class)->subscribe(
+        $this->magazineManager->subscribe(
             $this->getMagazineByName('acme'),
             $this->getUserByUsername('actor')
         );

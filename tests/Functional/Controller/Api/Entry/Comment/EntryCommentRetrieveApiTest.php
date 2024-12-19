@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Entry\Comment;
 
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class EntryCommentRetrieveApiTest extends WebTestCase
 {
@@ -86,7 +85,7 @@ class EntryCommentRetrieveApiTest extends WebTestCase
         $user = $this->getUserByUsername('user');
         $user->preferredLanguages = ['en', 'de'];
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($user);
         $entityManager->flush();
 

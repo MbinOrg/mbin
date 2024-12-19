@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\User\Admin;
 
-use App\Repository\UserRepository;
 use App\Tests\WebTestCase;
 
 class UserVerifyApiTest extends WebTestCase
@@ -20,7 +19,7 @@ class UserVerifyApiTest extends WebTestCase
         $this->client->request('PUT', '/api/admin/users/'.(string) $unverifiedUser->getId().'/verify', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseStatusCodeSame(403);
 
-        $repository = $this->getService(UserRepository::class);
+        $repository = $this->userRepository;
         $unverifiedUser = $repository->find($unverifiedUser->getId());
         self::assertFalse($unverifiedUser->isVerified);
     }
@@ -36,7 +35,7 @@ class UserVerifyApiTest extends WebTestCase
         $this->client->request('PUT', '/api/admin/users/'.(string) $unverifiedUser->getId().'/verify', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseStatusCodeSame(403);
 
-        $repository = $this->getService(UserRepository::class);
+        $repository = $this->userRepository;
         $unverifiedUser = $repository->find($unverifiedUser->getId());
         self::assertFalse($unverifiedUser->isVerified);
     }
@@ -57,7 +56,7 @@ class UserVerifyApiTest extends WebTestCase
         self::assertArrayKeysMatch(array_merge(self::USER_RESPONSE_KEYS, ['isVerified']), $jsonData);
         self::assertTrue($jsonData['isVerified']);
 
-        $repository = $this->getService(UserRepository::class);
+        $repository = $this->userRepository;
         $unverifiedUser = $repository->find($unverifiedUser->getId());
         self::assertTrue($unverifiedUser->isVerified);
     }

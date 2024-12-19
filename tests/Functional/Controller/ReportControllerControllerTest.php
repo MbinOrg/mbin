@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller;
 
-use App\Repository\ReportRepository;
 use App\Tests\WebTestCase;
 
 class ReportControllerControllerTest extends WebTestCase
@@ -34,7 +33,7 @@ class ReportControllerControllerTest extends WebTestCase
             )
         );
 
-        $repo = $this->getService(ReportRepository::class);
+        $repo = $this->reportRepository;
 
         $this->assertEquals(1, $repo->count([]));
     }
@@ -65,7 +64,7 @@ class ReportControllerControllerTest extends WebTestCase
             )
         );
 
-        $repo = $this->getService(ReportRepository::class);
+        $repo = $this->reportRepository;
 
         $this->assertEquals(1, $repo->count([]));
     }
@@ -89,7 +88,7 @@ class ReportControllerControllerTest extends WebTestCase
             )
         );
 
-        $repo = $this->getService(ReportRepository::class);
+        $repo = $this->reportRepository;
 
         $this->assertEquals(1, $repo->count([]));
     }
@@ -114,7 +113,7 @@ class ReportControllerControllerTest extends WebTestCase
             )
         );
 
-        $repo = $this->getService(ReportRepository::class);
+        $repo = $this->reportRepository;
 
         $this->assertEquals(1, $repo->count([]));
     }

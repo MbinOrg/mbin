@@ -376,8 +376,15 @@ class EntryUpdateApiTest extends WebTestCase
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
 
+        echo "User has image: {$user->avatar?->getId()} {$user->avatar?->filePath}";
         $imageDto = $this->getKibbyImageDto();
+        echo "Generated kibby image: {$imageDto->id} {$imageDto->filePath}";
         $entry = $this->getEntryByTitle('test image', image: $imageDto, user: $user, magazine: $magazine);
+        self::assertNotNull($imageDto->id);
+        self::assertNotNull($entry->image);
+        self::assertNotNull($entry->image->getId());
+        self::assertSame($imageDto->id, $entry->image->getId());
+        self::assertSame($imageDto->filePath, $entry->image->filePath);
 
         $updateRequest = [
             'title' => 'Updated title',
@@ -416,7 +423,7 @@ class EntryUpdateApiTest extends WebTestCase
         self::assertEquals($updateRequest['body'], $jsonData['body']);
         self::assertIsArray($jsonData['image']);
         self::assertArrayKeysMatch(self::IMAGE_KEYS, $jsonData['image']);
-        self::assertStringContainsString(self::KIBBY_PNG_URL_RESULT, $jsonData['image']['filePath']);
+        self::assertStringContainsString($imageDto->filePath, $jsonData['image']['filePath']);
         self::assertEquals($updateRequest['lang'], $jsonData['lang']);
         self::assertIsArray($jsonData['tags']);
         self::assertSame($updateRequest['tags'], $jsonData['tags']);

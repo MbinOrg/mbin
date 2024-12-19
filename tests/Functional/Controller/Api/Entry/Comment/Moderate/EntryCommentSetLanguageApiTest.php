@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Entry\Comment\Moderate;
 
 use App\DTO\ModeratorDto;
-use App\Service\MagazineManager;
 use App\Tests\WebTestCase;
 
 class EntryCommentSetLanguageApiTest extends WebTestCase
@@ -29,7 +28,7 @@ class EntryCommentSetLanguageApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('an entry', body: 'test', magazine: $magazine);
         $comment = $this->createEntryComment('test comment', $entry, $user2);
 
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
         $moderator->addedBy = $admin;
@@ -73,7 +72,7 @@ class EntryCommentSetLanguageApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('an entry', body: 'test', magazine: $magazine);
         $comment = $this->createEntryComment('test comment', $entry, $user2);
 
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
         $moderator->addedBy = $admin;

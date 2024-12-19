@@ -6,8 +6,6 @@ namespace App\Tests\Functional\Controller\Api\Magazine\Admin;
 
 use App\DTO\BadgeDto;
 use App\DTO\ModeratorDto;
-use App\Service\BadgeManager;
-use App\Service\MagazineManager;
 use App\Tests\Functional\Controller\Api\Magazine\MagazineRetrieveApiTest;
 use App\Tests\WebTestCase;
 
@@ -26,7 +24,7 @@ class MagazineBadgesApiTest extends WebTestCase
     public function testApiCannotRemoveBadgesFromMagazineAnonymous(): void
     {
         $magazine = $this->getMagazineByName('test');
-        $badgeManager = $this->getService(BadgeManager::class);
+        $badgeManager = $this->badgeManager;
         $badge = $badgeManager->create(BadgeDto::create($magazine, 'test'));
 
         $this->client->request('DELETE', "/api/moderate/magazine/{$magazine->getId()}/badge/{$badge->getId()}");
@@ -55,7 +53,7 @@ class MagazineBadgesApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test');
-        $badgeManager = $this->getService(BadgeManager::class);
+        $badgeManager = $this->badgeManager;
         $badge = $badgeManager->create(BadgeDto::create($magazine, 'test'));
 
         $codes = self::getAuthorizationCodeTokenResponse($this->client);
@@ -75,7 +73,7 @@ class MagazineBadgesApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test', $owner);
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $dto = new ModeratorDto($magazine);
         $dto->user = $moderator;
         $dto->addedBy = $admin;
@@ -98,13 +96,13 @@ class MagazineBadgesApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test', $owner);
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $dto = new ModeratorDto($magazine);
         $dto->user = $moderator;
         $dto->addedBy = $admin;
         $magazineManager->addModerator($dto);
 
-        $badgeManager = $this->getService(BadgeManager::class);
+        $badgeManager = $this->badgeManager;
         $badge = $badgeManager->create(BadgeDto::create($magazine, 'test'));
 
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine_admin:badges');
@@ -146,7 +144,7 @@ class MagazineBadgesApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test');
-        $badgeManager = $this->getService(BadgeManager::class);
+        $badgeManager = $this->badgeManager;
         $badge = $badgeManager->create(BadgeDto::create($magazine, 'test'));
 
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine_admin:badges');

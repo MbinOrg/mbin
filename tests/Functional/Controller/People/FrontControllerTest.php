@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\People;
 
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class FrontControllerTest extends WebTestCase
 {
@@ -14,7 +13,7 @@ class FrontControllerTest extends WebTestCase
         $user = $this->getUserByUsername('JohnDoe');
 
         $user->about = 'Loerm ipsum';
-        $this->getService(EntityManagerInterface::class)->flush();
+        $this->entityManager->flush();
 
         $crawler = $this->client->request('GET', '/people');
 

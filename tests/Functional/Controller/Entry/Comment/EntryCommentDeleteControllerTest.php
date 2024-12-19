@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Entry\Comment;
 
 use App\Tests\WebTestCase;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EntryCommentDeleteControllerTest extends WebTestCase
 {
@@ -46,7 +45,7 @@ class EntryCommentDeleteControllerTest extends WebTestCase
         $this->assertResponseRedirects();
         $crawler = $this->client->followRedirect();
 
-        $translator = $this->getService(TranslatorInterface::class);
+        $translator = $this->translator;
 
         $this->assertSelectorTextContains("#entry-comment-{$comment->getId()} .content", $translator->trans('deleted_by_author'));
     }

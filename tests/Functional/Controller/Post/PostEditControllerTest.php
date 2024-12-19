@@ -38,7 +38,8 @@ class PostEditControllerTest extends WebTestCase
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
-        $post = $this->createPost('test post 1', imageDto: $this->getKibbyImageDto());
+        $imageDto = $this->getKibbyImageDto();
+        $post = $this->createPost('test post 1', imageDto: $imageDto);
         $crawler = $this->client->request('GET', "/m/acme/p/{$post->getId()}/test-post-1");
 
         $crawler = $this->client->click($crawler->filter('#main .post')->selectLink('Edit')->link());
@@ -49,7 +50,7 @@ class PostEditControllerTest extends WebTestCase
         $this->assertSelectorExists('#main .post img');
         $node = $crawler->selectImage('kibby')->getNode(0);
         $this->assertNotNull($node);
-        $this->assertStringContainsString(self::KIBBY_PNG_URL_RESULT, $node->attributes->getNamedItem('src')->textContent);
+        $this->assertStringContainsString($imageDto->filePath, $node->attributes->getNamedItem('src')->textContent);
 
         $this->client->submit(
             $crawler->filter('form[name=post]')->selectButton('Edit post')->form(
@@ -65,7 +66,7 @@ class PostEditControllerTest extends WebTestCase
         $this->assertSelectorExists('#main .post img');
         $node = $crawler->selectImage('kibby')->getNode(0);
         $this->assertNotNull($node);
-        $this->assertStringContainsString(self::KIBBY_PNG_URL_RESULT, $node->attributes->getNamedItem('src')->textContent);
+        $this->assertStringContainsString($imageDto->filePath, $node->attributes->getNamedItem('src')->textContent);
     }
 
     public function testAuthorCanEditPostToMarkItIsForAdults(): void

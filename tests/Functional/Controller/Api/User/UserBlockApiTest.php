@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\User;
 
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class UserBlockApiTest extends WebTestCase
 {
@@ -76,7 +75,7 @@ class UserBlockApiTest extends WebTestCase
 
         $testUser->block($blockedUser);
 
-        $manager = $this->getService(EntityManagerInterface::class);
+        $manager = $this->entityManager;
 
         $manager->persist($testUser);
         $manager->flush();

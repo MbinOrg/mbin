@@ -24,7 +24,7 @@
 
     <coverage>
     </coverage>
-  
+
     <source>
         <include>
             <directory suffix=".php">src</directory>

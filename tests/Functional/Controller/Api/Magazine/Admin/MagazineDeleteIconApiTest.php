@@ -5,11 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Magazine\Admin;
 
 use App\DTO\ModeratorDto;
-use App\Repository\ImageRepository;
-use App\Service\MagazineManager;
 use App\Tests\Functional\Controller\Api\Magazine\MagazineRetrieveApiTest;
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class MagazineDeleteIconApiTest extends WebTestCase
@@ -52,7 +49,7 @@ class MagazineDeleteIconApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test', $owner);
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $dto = new ModeratorDto($magazine);
         $dto->user = $moderator;
         $dto->addedBy = $admin;
@@ -74,15 +71,16 @@ class MagazineDeleteIconApiTest extends WebTestCase
 
         $magazine = $this->getMagazineByName('test');
 
-        copy($this->kibbyPath, $this->kibbyPath.'.tmp');
-        $upload = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.png');
+        $upload = new UploadedFile($tmpPath.'.png', 'kibby_emoji.png', 'image/png');
 
-        $imageRepository = $this->getService(ImageRepository::class);
+        $imageRepository = $this->imageRepository;
         $image = $imageRepository->findOrCreateFromUpload($upload);
         self::assertNotNull($image);
         $magazine->icon = $image;
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($magazine);
         $entityManager->flush();
 

@@ -6,7 +6,6 @@ namespace App\Tests\Functional\Controller\Api\Message;
 
 use App\Entity\Message;
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class MessageThreadReplyApiTest extends WebTestCase
 {
@@ -45,7 +44,7 @@ class MessageThreadReplyApiTest extends WebTestCase
         $thread = $this->createMessageThread($user, $from, 'starting a thread');
         // Fake when the message was created at so that the newest to oldest order can be reliably determined
         $thread->messages->get(0)->createdAt = new \DateTimeImmutable('-5 seconds');
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($thread);
         $entityManager->flush();
 

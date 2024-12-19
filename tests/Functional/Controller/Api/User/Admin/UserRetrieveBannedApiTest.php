@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\User\Admin;
 
-use App\Service\UserManager;
 use App\Tests\WebTestCase;
 
 class UserRetrieveBannedApiTest extends WebTestCase
@@ -14,7 +13,7 @@ class UserRetrieveBannedApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout', isAdmin: true);
         $bannedUser = $this->getUserByUsername('JohnDoe');
-        $this->getService(UserManager::class)->ban($bannedUser);
+        $this->userManager->ban($bannedUser);
         $this->client->loginUser($testUser);
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
 
@@ -27,7 +26,7 @@ class UserRetrieveBannedApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout', isAdmin: false);
         $bannedUser = $this->getUserByUsername('JohnDoe');
-        $this->getService(UserManager::class)->ban($bannedUser);
+        $this->userManager->ban($bannedUser);
         $this->client->loginUser($testUser);
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read admin:user:ban');
 
@@ -40,7 +39,7 @@ class UserRetrieveBannedApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout', isAdmin: true);
         $bannedUser = $this->getUserByUsername('JohnDoe');
-        $this->getService(UserManager::class)->ban($bannedUser);
+        $this->userManager->ban($bannedUser);
         $this->client->loginUser($testUser);
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read admin:user:ban');
 

@@ -6,7 +6,6 @@ namespace App\Tests\Functional\Controller\Api\Message;
 
 use App\DTO\MessageDto;
 use App\Entity\Message;
-use App\Service\MessageManager;
 use App\Tests\WebTestCase;
 
 class MessageRetrieveApiTest extends WebTestCase
@@ -38,7 +37,7 @@ class MessageRetrieveApiTest extends WebTestCase
         $user = $this->getUserByUsername('JohnDoe');
         $messagingUser = $this->getUserByUsername('JaneDoe');
 
-        $messageManager = $this->getService(MessageManager::class);
+        $messageManager = $this->messageManager;
         $dto = new MessageDto();
         $dto->body = 'test message';
         $thread = $messageManager->toThread($dto, $messagingUser, $user);
@@ -102,7 +101,7 @@ class MessageRetrieveApiTest extends WebTestCase
         $messagingUser = $this->getUserByUsername('JaneDoe');
         $messagedUser = $this->getUserByUsername('JamesDoe');
 
-        $messageManager = $this->getService(MessageManager::class);
+        $messageManager = $this->messageManager;
         $dto = new MessageDto();
         $dto->body = 'test message';
         $thread = $messageManager->toThread($dto, $messagingUser, $messagedUser);
@@ -123,7 +122,7 @@ class MessageRetrieveApiTest extends WebTestCase
         $user = $this->getUserByUsername('JohnDoe');
         $messagingUser = $this->getUserByUsername('JaneDoe');
 
-        $messageManager = $this->getService(MessageManager::class);
+        $messageManager = $this->messageManager;
         $dto = new MessageDto();
         $dto->body = 'test message';
         $thread = $messageManager->toThread($dto, $messagingUser, $user);
@@ -154,7 +153,7 @@ class MessageRetrieveApiTest extends WebTestCase
         $messagingUser = $this->getUserByUsername('JaneDoe');
         $messagedUser = $this->getUserByUsername('JamesDoe');
 
-        $messageManager = $this->getService(MessageManager::class);
+        $messageManager = $this->messageManager;
         $dto = new MessageDto();
         $dto->body = 'test message';
         $thread = $messageManager->toThread($dto, $messagingUser, $messagedUser);
@@ -171,7 +170,7 @@ class MessageRetrieveApiTest extends WebTestCase
         $messagedUser = $this->getUserByUsername('JamesDoe');
         $this->client->loginUser($user);
 
-        $messageManager = $this->getService(MessageManager::class);
+        $messageManager = $this->messageManager;
         $dto = new MessageDto();
         $dto->body = 'test message';
         $thread = $messageManager->toThread($dto, $messagingUser, $messagedUser);
@@ -190,7 +189,7 @@ class MessageRetrieveApiTest extends WebTestCase
         $messagingUser = $this->getUserByUsername('JaneDoe');
         $messagedUser = $this->getUserByUsername('JamesDoe');
 
-        $messageManager = $this->getService(MessageManager::class);
+        $messageManager = $this->messageManager;
         $dto = new MessageDto();
         $dto->body = 'test message';
         $thread = $messageManager->toThread($dto, $messagingUser, $messagedUser);
@@ -209,7 +208,7 @@ class MessageRetrieveApiTest extends WebTestCase
         $user = $this->getUserByUsername('JohnDoe');
         $messagingUser = $this->getUserByUsername('JaneDoe');
 
-        $messageManager = $this->getService(MessageManager::class);
+        $messageManager = $this->messageManager;
         $dto = new MessageDto();
         $dto->body = 'test message';
         $thread = $messageManager->toThread($dto, $messagingUser, $user);

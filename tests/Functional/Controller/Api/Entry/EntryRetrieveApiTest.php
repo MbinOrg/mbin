@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Entry;
 
-use App\Service\EntryManager;
-use App\Service\FavouriteManager;
-use App\Service\VoteManager;
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class EntryRetrieveApiTest extends WebTestCase
 {
@@ -201,7 +197,7 @@ class EntryRetrieveApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
 
-        $favouriteManager = $this->getService(FavouriteManager::class);
+        $favouriteManager = $this->favouriteManager;
         $favouriteManager->toggle($user, $entry);
 
         self::createOAuth2AuthCodeClient();
@@ -267,7 +263,7 @@ class EntryRetrieveApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $second = $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
         // Check that pinned entries don't get pinned to the top of the instance, just the magazine
-        $entryManager = $this->getService(EntryManager::class);
+        $entryManager = $this->entryManager;
         $entryManager->pin($second, null);
 
         $this->client->request('GET', '/api/entries');
@@ -408,7 +404,7 @@ class EntryRetrieveApiTest extends WebTestCase
         $second = $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine, lang: 'de');
         $this->getEntryByTitle('a dutch entry', body: 'some body', magazine: $magazine, lang: 'nl');
         // Check that pinned entries don't get pinned to the top of the instance, just the magazine
-        $entryManager = $this->getService(EntryManager::class);
+        $entryManager = $this->entryManager;
         $entryManager->pin($second, null);
 
         $this->client->request('GET', '/api/entries?lang[]=en&lang[]=de');
@@ -551,7 +547,7 @@ class EntryRetrieveApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $second = $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
         // Check that pinned entries don't get pinned to the top of the instance, just the magazine
-        $entryManager = $this->getService(EntryManager::class);
+        $entryManager = $this->entryManager;
         $entryManager->pin($second, null);
 
         $this->client->request('GET', '/api/entries?usePreferredLangs=true');
@@ -568,7 +564,7 @@ class EntryRetrieveApiTest extends WebTestCase
 
         $user = $this->getUserByUsername('user');
         $user->preferredLanguages = ['en'];
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($user);
         $entityManager->flush();
 
@@ -648,7 +644,7 @@ class EntryRetrieveApiTest extends WebTestCase
         $second->createdAt = new \DateTimeImmutable('-1 second');
         $third->createdAt = new \DateTimeImmutable();
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($first);
         $entityManager->persist($second);
         $entityManager->persist($third);
@@ -696,7 +692,7 @@ class EntryRetrieveApiTest extends WebTestCase
         $second->createdAt = new \DateTimeImmutable('-1 second');
         $third->createdAt = new \DateTimeImmutable();
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($first);
         $entityManager->persist($second);
         $entityManager->persist($third);
@@ -788,7 +784,7 @@ class EntryRetrieveApiTest extends WebTestCase
         $second->lastActive = new \DateTime('-1 second');
         $third->lastActive = new \DateTime();
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($first);
         $entityManager->persist($second);
         $entityManager->persist($third);
@@ -832,7 +828,7 @@ class EntryRetrieveApiTest extends WebTestCase
         $second = $this->getEntryByTitle('second', url: 'https://google.com');
         $third = $this->getEntryByTitle('third', url: 'https://google.com');
 
-        $voteManager = $this->getService(VoteManager::class);
+        $voteManager = $this->voteManager;
         $voteManager->vote(1, $first, $this->getUserByUsername('voter1'), rateLimit: false);
         $voteManager->vote(1, $first, $this->getUserByUsername('voter2'), rateLimit: false);
         $voteManager->vote(1, $second, $this->getUserByUsername('voter1'), rateLimit: false);

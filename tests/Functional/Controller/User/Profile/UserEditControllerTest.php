@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\User\Profile;
 
-use App\Repository\UserRepository;
 use App\Tests\WebTestCase;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DomCrawler\Crawler;
@@ -54,7 +53,7 @@ class UserEditControllerTest extends WebTestCase
     {
         $user = $this->getUserByUsername('JohnDoe');
         $this->client->loginUser($user);
-        $repository = $this->getService(UserRepository::class);
+        $repository = $this->userRepository;
 
         $crawler = $this->client->request('GET', '/settings/profile');
         $this->assertSelectorTextContains('#main .options__main a.active', 'Profile');
@@ -72,7 +71,7 @@ class UserEditControllerTest extends WebTestCase
     {
         $user = $this->getUserByUsername('JohnDoe');
         $this->client->loginUser($user);
-        $repository = $this->getService(UserRepository::class);
+        $repository = $this->userRepository;
 
         $crawler = $this->client->request('GET', '/settings/profile');
         $this->assertSelectorTextContains('#main .options__main a.active', 'Profile');
@@ -90,7 +89,7 @@ class UserEditControllerTest extends WebTestCase
     {
         $this->client = $this->register(true);
 
-        $this->client->loginUser($this->getService(UserRepository::class)->findOneBy(['username' => 'JohnDoe']));
+        $this->client->loginUser($this->userRepository->findOneBy(['username' => 'JohnDoe']));
 
         $crawler = $this->client->request('GET', '/settings/password');
         $this->assertSelectorTextContains('#main .options__main a.active', 'Password');
@@ -123,7 +122,7 @@ class UserEditControllerTest extends WebTestCase
     {
         $this->client = $this->register(true);
 
-        $this->client->loginUser($this->getService(UserRepository::class)->findOneBy(['username' => 'JohnDoe']));
+        $this->client->loginUser($this->userRepository->findOneBy(['username' => 'JohnDoe']));
 
         $crawler = $this->client->request('GET', '/settings/email');
         $this->assertSelectorTextContains('#main .options__main a.active', 'Email');

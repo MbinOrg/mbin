@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Post\Comment\Moderate;
 
 use App\DTO\ModeratorDto;
-use App\Service\MagazineManager;
-use App\Service\PostCommentManager;
 use App\Tests\WebTestCase;
 
 class PostCommentTrashApiTest extends WebTestCase
@@ -31,7 +29,7 @@ class PostCommentTrashApiTest extends WebTestCase
         $post = $this->createPost('a post', magazine: $magazine);
         $comment = $this->createPostComment('test comment', $post, $user2);
 
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
         $moderator->addedBy = $admin;
@@ -76,7 +74,7 @@ class PostCommentTrashApiTest extends WebTestCase
         $post = $this->createPost('a post', magazine: $magazine);
         $comment = $this->createPostComment('test comment', $post, $user2);
 
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
         $moderator->addedBy = $admin;
@@ -106,7 +104,7 @@ class PostCommentTrashApiTest extends WebTestCase
         $post = $this->createPost('a post', $magazine);
         $comment = $this->createPostComment('test comment', $post);
 
-        $postCommentManager = $this->getService(PostCommentManager::class);
+        $postCommentManager = $this->postCommentManager;
         $postCommentManager->trash($this->getUserByUsername('user'), $comment);
 
         $this->client->jsonRequest('PUT', "/api/moderate/post-comment/{$comment->getId()}/restore");
@@ -122,7 +120,7 @@ class PostCommentTrashApiTest extends WebTestCase
         $post = $this->createPost('a post', $magazine);
         $comment = $this->createPostComment('test comment', $post, $user2);
 
-        $postCommentManager = $this->getService(PostCommentManager::class);
+        $postCommentManager = $this->postCommentManager;
         $postCommentManager->trash($user, $comment);
 
         self::createOAuth2AuthCodeClient();
@@ -144,7 +142,7 @@ class PostCommentTrashApiTest extends WebTestCase
         $post = $this->createPost('a post', $magazine);
         $comment = $this->createPostComment('test comment', $post, $user2);
 
-        $postCommentManager = $this->getService(PostCommentManager::class);
+        $postCommentManager = $this->postCommentManager;
         $postCommentManager->trash($user, $comment);
 
         self::createOAuth2AuthCodeClient();
@@ -167,13 +165,13 @@ class PostCommentTrashApiTest extends WebTestCase
         $post = $this->createPost('a post', magazine: $magazine);
         $comment = $this->createPostComment('test comment', $post, $user2);
 
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
         $moderator->addedBy = $admin;
         $magazineManager->addModerator($moderator);
 
-        $postCommentManager = $this->getService(PostCommentManager::class);
+        $postCommentManager = $this->postCommentManager;
         $postCommentManager->trash($user, $comment);
 
         self::createOAuth2AuthCodeClient();

@@ -6,8 +6,6 @@ namespace App\Tests\Functional\Controller\Api\Notification;
 
 use App\DTO\MessageDto;
 use App\Entity\Message;
-use App\Service\MessageManager;
-use App\Service\NotificationManager;
 use App\Tests\WebTestCase;
 
 class NotificationRetrieveApiTest extends WebTestCase
@@ -39,13 +37,13 @@ class NotificationRetrieveApiTest extends WebTestCase
         $user = $this->getUserByUsername('JohnDoe');
         $messagingUser = $this->getUserByUsername('JaneDoe');
 
-        $messageManager = $this->getService(MessageManager::class);
+        $messageManager = $this->messageManager;
         $dto = new MessageDto();
         $dto->body = 'test message';
         $thread = $messageManager->toThread($dto, $messagingUser, $user);
         /** @var Message $message */
         $message = $thread->messages->get(0);
-        $notificationManager = $this->getService(NotificationManager::class);
+        $notificationManager = $this->notificationManager;
         $notificationManager->readMessageNotification($message, $user);
         // Create unread notification
         $thread = $messageManager->toThread($dto, $messagingUser, $user);
@@ -88,7 +86,7 @@ class NotificationRetrieveApiTest extends WebTestCase
         $user = $this->getUserByUsername('JohnDoe');
         $messagingUser = $this->getUserByUsername('JaneDoe');
 
-        $messageManager = $this->getService(MessageManager::class);
+        $messageManager = $this->messageManager;
         $dto = new MessageDto();
         $dto->body = 'test message';
         $thread = $messageManager->toThread($dto, $messagingUser, $user);
@@ -244,13 +242,13 @@ class NotificationRetrieveApiTest extends WebTestCase
         $user = $this->getUserByUsername('JohnDoe');
         $messagingUser = $this->getUserByUsername('JaneDoe');
 
-        $messageManager = $this->getService(MessageManager::class);
+        $messageManager = $this->messageManager;
         $dto = new MessageDto();
         $dto->body = 'test message';
         $thread = $messageManager->toThread($dto, $messagingUser, $user);
         /** @var Message $message */
         $message = $thread->messages->get(0);
-        $notificationManager = $this->getService(NotificationManager::class);
+        $notificationManager = $this->notificationManager;
         $notificationManager->readMessageNotification($message, $user);
         // Create unread notification
         $thread = $messageManager->toThread($dto, $messagingUser, $user);
@@ -290,13 +288,13 @@ class NotificationRetrieveApiTest extends WebTestCase
         $user = $this->getUserByUsername('JohnDoe');
         $messagingUser = $this->getUserByUsername('JaneDoe');
 
-        $messageManager = $this->getService(MessageManager::class);
+        $messageManager = $this->messageManager;
         $dto = new MessageDto();
         $dto->body = 'test message';
         $thread = $messageManager->toThread($dto, $messagingUser, $user);
         /** @var Message $message */
         $message = $thread->messages->get(0);
-        $notificationManager = $this->getService(NotificationManager::class);
+        $notificationManager = $this->notificationManager;
         $notificationManager->readMessageNotification($message, $user);
         // Create unread notification
         $thread = $messageManager->toThread($dto, $messagingUser, $user);
@@ -336,13 +334,13 @@ class NotificationRetrieveApiTest extends WebTestCase
         $user = $this->getUserByUsername('JohnDoe');
         $messagingUser = $this->getUserByUsername('JaneDoe');
 
-        $messageManager = $this->getService(MessageManager::class);
+        $messageManager = $this->messageManager;
         $dto = new MessageDto();
         $dto->body = 'test message';
         $thread = $messageManager->toThread($dto, $messagingUser, $user);
         /** @var Message $message */
         $message = $thread->messages->get(0);
-        $notificationManager = $this->getService(NotificationManager::class);
+        $notificationManager = $this->notificationManager;
         $notificationManager->readMessageNotification($message, $user);
         // Create unread notification
         $thread = $messageManager->toThread($dto, $messagingUser, $user);
@@ -383,7 +381,7 @@ class NotificationRetrieveApiTest extends WebTestCase
         $this->getEntryByTitle('Test notification entry', body: 'Test body', magazine: $magazine, user: $messagingUser);
         $this->createPost('Test notification post body', magazine: $magazine, user: $messagingUser);
 
-        $messageManager = $this->getService(MessageManager::class);
+        $messageManager = $this->messageManager;
         $dto = new MessageDto();
         $dto->body = 'test message';
         $thread = $messageManager->toThread($dto, $messagingUser, $user);

@@ -77,6 +77,7 @@ class PostCreateControllerTest extends WebTestCase
             )
         );
 
+        self::assertResponseIsSuccessful();
         $this->assertSelectorTextContains('#content', 'This value should not be blank.');
     }
 
