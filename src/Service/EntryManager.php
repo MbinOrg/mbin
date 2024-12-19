@@ -75,6 +75,10 @@ class EntryManager implements ContentManagerInterface
      */
     public function create(EntryDto $dto, User $user, bool $rateLimit = true, bool $stickyIt = false): Entry
     {
+        if (!$user->apId) {
+            $user->ip = $dto->ip;
+        }
+
         if ($rateLimit) {
             $limiter = $this->entryLimiter->create($dto->ip);
             if (false === $limiter->consume()->isAccepted()) {
@@ -182,6 +186,10 @@ class EntryManager implements ContentManagerInterface
 
     public function edit(Entry $entry, EntryDto $dto, User $editedBy): Entry
     {
+        if (!$editedBy->apId) {
+            $editedBy->ip = $dto->ip;
+        }
+
         Assert::same($entry->magazine->getId(), $dto->magazine->getId());
 
         $entry->title = $dto->title;
