@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\User\Profile;
 
-use App\Service\DomainManager;
-use App\Service\MagazineManager;
-use App\Service\UserManager;
 use App\Tests\WebTestCase;
 
 class UserSubControllerTest extends WebTestCase
@@ -16,7 +13,7 @@ class UserSubControllerTest extends WebTestCase
         $this->client->loginUser($user = $this->getUserByUsername('JaneDoe'));
         $magazine = $this->getMagazineByName('acme');
 
-        $this->getService(MagazineManager::class)->subscribe($magazine, $user);
+        $this->magazineManager->subscribe($magazine, $user);
 
         $crawler = $this->client->request('GET', '/settings/subscriptions/magazines');
         $this->client->click($crawler->filter('#main .pills')->selectLink('Magazines')->link());
@@ -29,7 +26,7 @@ class UserSubControllerTest extends WebTestCase
     {
         $this->client->loginUser($user = $this->getUserByUsername('JaneDoe'));
 
-        $this->getService(UserManager::class)->follow($user, $this->getUserByUsername('JohnDoe'));
+        $this->userManager->follow($user, $this->getUserByUsername('JohnDoe'));
 
         $crawler = $this->client->request('GET', '/settings/subscriptions/people');
         $this->client->click($crawler->filter('#main .pills')->selectLink('People')->link());
@@ -44,7 +41,7 @@ class UserSubControllerTest extends WebTestCase
 
         $entry = $this->getEntryByTitle('test1', 'https://kbin.pub');
 
-        $this->getService(DomainManager::class)->subscribe($entry->domain, $user);
+        $this->domainManager->subscribe($entry->domain, $user);
 
         $crawler = $this->client->request('GET', '/settings/subscriptions/domains');
         $this->client->click($crawler->filter('#main .pills')->selectLink('Domains')->link());

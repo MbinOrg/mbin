@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Message;
 
 use App\Entity\Message;
-use App\Service\MessageManager;
 use App\Tests\WebTestCase;
 
 class MessageReadApiTest extends WebTestCase
@@ -126,7 +125,7 @@ class MessageReadApiTest extends WebTestCase
         $thread = $this->createMessageThread($user, $messagingUser, 'test message');
         /** @var Message $message */
         $message = $thread->messages->get(0);
-        $messageManager = $this->getService(MessageManager::class);
+        $messageManager = $this->messageManager;
         $messageManager->readMessage($message, $user, flush: true);
 
         $this->client->loginUser($user);

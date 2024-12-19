@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Post\Moderate;
 
 use App\DTO\ModeratorDto;
-use App\Service\MagazineManager;
-use App\Service\PostManager;
 use App\Tests\WebTestCase;
 
 class PostTrashApiTest extends WebTestCase
@@ -59,7 +57,7 @@ class PostTrashApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test post', user: $user, magazine: $magazine);
 
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
         $moderator->addedBy = $admin;
@@ -112,7 +110,7 @@ class PostTrashApiTest extends WebTestCase
         $user = $this->getUserByUsername('user');
         $post = $this->createPost('test post', magazine: $magazine);
 
-        $postManager = $this->getService(PostManager::class);
+        $postManager = $this->postManager;
         $postManager->trash($user, $post);
 
         $this->client->jsonRequest('PUT', "/api/moderate/post/{$post->getId()}/restore");
@@ -125,7 +123,7 @@ class PostTrashApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test post', user: $user, magazine: $magazine);
 
-        $postManager = $this->getService(PostManager::class);
+        $postManager = $this->postManager;
         $postManager->trash($user, $post);
 
         self::createOAuth2AuthCodeClient();
@@ -144,7 +142,7 @@ class PostTrashApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $post = $this->createPost('test post', user: $user, magazine: $magazine);
 
-        $postManager = $this->getService(PostManager::class);
+        $postManager = $this->postManager;
         $postManager->trash($user, $post);
 
         self::createOAuth2AuthCodeClient();
@@ -164,13 +162,13 @@ class PostTrashApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test post', user: $user, magazine: $magazine);
 
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
         $moderator->addedBy = $admin;
         $magazineManager->addModerator($moderator);
 
-        $postManager = $this->getService(PostManager::class);
+        $postManager = $this->postManager;
         $postManager->trash($user, $post);
 
         self::createOAuth2AuthCodeClient();

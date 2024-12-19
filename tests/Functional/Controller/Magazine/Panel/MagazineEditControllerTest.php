@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Magazine\Panel;
 
 use App\DTO\ModeratorDto;
-use App\Service\MagazineManager;
 use App\Tests\WebTestCase;
 
 class MagazineEditControllerTest extends WebTestCase
@@ -17,7 +16,7 @@ class MagazineEditControllerTest extends WebTestCase
         $this->client->loginUser($mod);
         $magazine = $this->getMagazineByName('acme', $admin);
 
-        $manager = $this->getService(MagazineManager::class);
+        $manager = $this->magazineManager;
         $dto = new ModeratorDto($magazine, $mod, $admin);
         $manager->addModerator($dto);
 

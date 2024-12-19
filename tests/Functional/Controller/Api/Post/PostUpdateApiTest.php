@@ -224,7 +224,7 @@ class PostUpdateApiTest extends WebTestCase
         self::assertEquals($updateRequest['body'], $jsonData['body']);
         self::assertIsArray($jsonData['image']);
         self::assertArrayKeysMatch(self::IMAGE_KEYS, $jsonData['image']);
-        self::assertStringContainsString(self::KIBBY_PNG_URL_RESULT, $jsonData['image']['filePath']);
+        self::assertStringContainsString($imageDto->filePath, $jsonData['image']['filePath']);
         self::assertEquals($updateRequest['lang'], $jsonData['lang']);
         self::assertIsArray($jsonData['tags']);
         self::assertSame(['body'], $jsonData['tags']);

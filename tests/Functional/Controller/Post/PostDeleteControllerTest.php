@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Post;
 
 use App\Tests\WebTestCase;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PostDeleteControllerTest extends WebTestCase
 {
@@ -43,7 +42,7 @@ class PostDeleteControllerTest extends WebTestCase
 
         $this->assertResponseRedirects();
         $this->client->request('GET', "/m/acme/p/{$post->getId()}/deletion-test");
-        $translator = $this->getService(TranslatorInterface::class);
+        $translator = $this->translator;
         $this->assertSelectorTextContains("#post-{$post->getId()} .content", $translator->trans('deleted_by_author'));
     }
 }

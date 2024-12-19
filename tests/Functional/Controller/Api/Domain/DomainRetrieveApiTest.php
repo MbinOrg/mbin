@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Domain;
 
-use App\Service\DomainManager;
 use App\Tests\WebTestCase;
 
 class DomainRetrieveApiTest extends WebTestCase
@@ -71,7 +70,7 @@ class DomainRetrieveApiTest extends WebTestCase
     {
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
         $user = $this->getUserByUsername('JohnDoe');
-        $manager = $this->getService(DomainManager::class);
+        $manager = $this->domainManager;
         $manager->subscribe($domain, $user);
 
         self::createOAuth2AuthCodeClient();
@@ -113,7 +112,7 @@ class DomainRetrieveApiTest extends WebTestCase
         $this->getEntryByTitle('Test link to a second domain', 'https://example.org');
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
         $user = $this->getUserByUsername('JohnDoe');
-        $manager = $this->getService(DomainManager::class);
+        $manager = $this->domainManager;
         $manager->subscribe($domain, $user);
 
         self::createOAuth2AuthCodeClient();
@@ -130,7 +129,7 @@ class DomainRetrieveApiTest extends WebTestCase
         $this->getEntryByTitle('Test link to a second domain', 'https://example.org');
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
         $user = $this->getUserByUsername('JohnDoe');
-        $manager = $this->getService(DomainManager::class);
+        $manager = $this->domainManager;
         $manager->subscribe($domain, $user);
 
         self::createOAuth2AuthCodeClient();
@@ -173,7 +172,7 @@ class DomainRetrieveApiTest extends WebTestCase
         $this->getEntryByTitle('Test link to a second domain', 'https://example.org');
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
         $user = $this->getUserByUsername('JohnDoe');
-        $manager = $this->getService(DomainManager::class);
+        $manager = $this->domainManager;
         $manager->block($domain, $user);
 
         self::createOAuth2AuthCodeClient();
@@ -190,7 +189,7 @@ class DomainRetrieveApiTest extends WebTestCase
         $this->getEntryByTitle('Test link to a second domain', 'https://example.org');
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
         $user = $this->getUserByUsername('JohnDoe');
-        $manager = $this->getService(DomainManager::class);
+        $manager = $this->domainManager;
         $manager->block($domain, $user);
 
         self::createOAuth2AuthCodeClient();
@@ -244,7 +243,7 @@ class DomainRetrieveApiTest extends WebTestCase
     {
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
         $user = $this->getUserByUsername('JohnDoe');
-        $manager = $this->getService(DomainManager::class);
+        $manager = $this->domainManager;
         $manager->subscribe($domain, $user);
 
         self::createOAuth2AuthCodeClient();
@@ -271,7 +270,7 @@ class DomainRetrieveApiTest extends WebTestCase
     {
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
         $user = $this->getUserByUsername('JohnDoe');
-        $manager = $this->getService(DomainManager::class);
+        $manager = $this->domainManager;
         $manager->subscribe($domain, $user);
 
         self::createOAuth2AuthCodeClient();

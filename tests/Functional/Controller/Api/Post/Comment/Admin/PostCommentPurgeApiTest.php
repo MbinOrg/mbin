@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Post\Comment\Admin;
 
-use App\Repository\PostCommentRepository;
 use App\Tests\WebTestCase;
 
 class PostCommentPurgeApiTest extends WebTestCase
@@ -15,7 +14,7 @@ class PostCommentPurgeApiTest extends WebTestCase
         $post = $this->createPost('test article', magazine: $magazine);
         $comment = $this->createPostComment('test comment', $post);
 
-        $commentRepository = $this->getService(PostCommentRepository::class);
+        $commentRepository = $this->postCommentRepository;
 
         $this->client->request('DELETE', "/api/admin/post-comment/{$comment->getId()}/purge");
         self::assertResponseStatusCodeSame(401);
@@ -31,7 +30,7 @@ class PostCommentPurgeApiTest extends WebTestCase
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
         $comment = $this->createPostComment('test comment', $post);
 
-        $commentRepository = $this->getService(PostCommentRepository::class);
+        $commentRepository = $this->postCommentRepository;
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($user);
@@ -54,7 +53,7 @@ class PostCommentPurgeApiTest extends WebTestCase
         $post = $this->createPost('test article', user: $otherUser, magazine: $magazine);
         $comment = $this->createPostComment('test comment', $post);
 
-        $commentRepository = $this->getService(PostCommentRepository::class);
+        $commentRepository = $this->postCommentRepository;
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($user);
@@ -77,7 +76,7 @@ class PostCommentPurgeApiTest extends WebTestCase
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
         $comment = $this->createPostComment('test comment', $post);
 
-        $commentRepository = $this->getService(PostCommentRepository::class);
+        $commentRepository = $this->postCommentRepository;
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($admin);
@@ -100,7 +99,7 @@ class PostCommentPurgeApiTest extends WebTestCase
         $post = $this->createPost('test image', magazine: $magazine);
         $comment = $this->createPostComment('test comment', $post, imageDto: $imageDto);
 
-        $commentRepository = $this->getService(PostCommentRepository::class);
+        $commentRepository = $this->postCommentRepository;
 
         $this->client->request('DELETE', "/api/admin/post-comment/{$comment->getId()}/purge");
         self::assertResponseStatusCodeSame(401);
@@ -118,7 +117,7 @@ class PostCommentPurgeApiTest extends WebTestCase
         $post = $this->createPost('test image', magazine: $magazine);
         $comment = $this->createPostComment('test comment', $post, imageDto: $imageDto);
 
-        $commentRepository = $this->getService(PostCommentRepository::class);
+        $commentRepository = $this->postCommentRepository;
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($user);
@@ -142,7 +141,7 @@ class PostCommentPurgeApiTest extends WebTestCase
         $post = $this->createPost('test image', magazine: $magazine);
         $comment = $this->createPostComment('test comment', $post, imageDto: $imageDto);
 
-        $commentRepository = $this->getService(PostCommentRepository::class);
+        $commentRepository = $this->postCommentRepository;
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($user);
@@ -166,7 +165,7 @@ class PostCommentPurgeApiTest extends WebTestCase
         $post = $this->createPost('test image', magazine: $magazine);
         $comment = $this->createPostComment('test comment', $post, imageDto: $imageDto);
 
-        $commentRepository = $this->getService(PostCommentRepository::class);
+        $commentRepository = $this->postCommentRepository;
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($admin);

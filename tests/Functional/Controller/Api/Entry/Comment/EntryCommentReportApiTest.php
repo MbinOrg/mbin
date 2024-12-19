@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Entry\Comment;
 
-use App\Repository\ReportRepository;
 use App\Tests\WebTestCase;
 
 class EntryCommentReportApiTest extends WebTestCase
@@ -51,7 +50,7 @@ class EntryCommentReportApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $comment = $this->createEntryComment('test comment', $entry, $user2);
 
-        $reportRepository = $this->getService(ReportRepository::class);
+        $reportRepository = $this->reportRepository;
 
         $report = [
             'reason' => 'This comment breaks the rules!',
@@ -78,7 +77,7 @@ class EntryCommentReportApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $comment = $this->createEntryComment('test comment', $entry, $user);
 
-        $reportRepository = $this->getService(ReportRepository::class);
+        $reportRepository = $this->reportRepository;
 
         $report = [
             'reason' => 'This comment breaks the rules!',

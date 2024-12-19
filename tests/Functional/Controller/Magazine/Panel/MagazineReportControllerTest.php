@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Magazine\Panel;
 
 use App\DTO\ReportDto;
-use App\Service\ReportManager;
 use App\Tests\WebTestCase;
 
 class MagazineReportControllerTest extends WebTestCase
@@ -19,7 +18,7 @@ class MagazineReportControllerTest extends WebTestCase
         $postComment = $this->createPostComment('Test post 1');
 
         foreach ([$entryComment, $postComment, $entryComment->entry, $postComment->post] as $subject) {
-            $this->getService(ReportManager::class)->report(
+            $this->reportManager->report(
                 ReportDto::create($subject, 'test reason'),
                 $user
             );

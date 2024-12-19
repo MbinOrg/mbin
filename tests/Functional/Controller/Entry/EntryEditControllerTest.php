@@ -68,8 +68,8 @@ class EntryEditControllerTest extends WebTestCase
     public function testAuthorCanEditOwnEntryImage(): void
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));
-
-        $entry = $this->getEntryByTitle('test entry 1', image: $this->getKibbyImageDto());
+        $imageDto = $this->getKibbyImageDto();
+        $entry = $this->getEntryByTitle('test entry 1', image: $imageDto);
         $crawler = $this->client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
         $this->assertResponseIsSuccessful();
 
@@ -80,7 +80,7 @@ class EntryEditControllerTest extends WebTestCase
         $this->assertSelectorExists('#main .entry img');
         $node = $crawler->selectImage('kibby')->getNode(0);
         $this->assertNotNull($node);
-        $this->assertStringContainsString(self::KIBBY_PNG_URL_RESULT, $node->attributes->getNamedItem('src')->textContent);
+        $this->assertStringContainsString($imageDto->filePath, $node->attributes->getNamedItem('src')->textContent);
 
         $this->assertEquals('disabled', $crawler->filter('#entry_edit_magazine')->attr('disabled'));
 
@@ -98,6 +98,6 @@ class EntryEditControllerTest extends WebTestCase
         $this->assertSelectorExists('#main .entry img');
         $node = $crawler->selectImage('kibby')->getNode(0);
         $this->assertNotNull($node);
-        $this->assertStringContainsString(self::KIBBY_PNG_URL_RESULT, $node->attributes->getNamedItem('src')->textContent);
+        $this->assertStringContainsString($imageDto->filePath, $node->attributes->getNamedItem('src')->textContent);
     }
 }

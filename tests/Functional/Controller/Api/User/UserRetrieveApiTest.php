@@ -6,7 +6,6 @@ namespace App\Tests\Functional\Controller\Api\User;
 
 use App\Repository\UserRepository;
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class UserRetrieveApiTest extends WebTestCase
 {
@@ -228,7 +227,7 @@ class UserRetrieveApiTest extends WebTestCase
 
         $follower->follow($testUser);
 
-        $manager = $this->getService(EntityManagerInterface::class);
+        $manager = $this->entityManager;
 
         $manager->persist($follower);
         $manager->flush();
@@ -257,7 +256,7 @@ class UserRetrieveApiTest extends WebTestCase
 
         $testUser->block($blockedUser);
 
-        $manager = $this->getService(EntityManagerInterface::class);
+        $manager = $this->entityManager;
 
         $manager->persist($testUser);
         $manager->flush();
@@ -314,7 +313,7 @@ class UserRetrieveApiTest extends WebTestCase
 
         $testUser->follow($followedUser);
 
-        $manager = $this->getService(EntityManagerInterface::class);
+        $manager = $this->entityManager;
 
         $manager->persist($testUser);
         $manager->flush();
@@ -347,7 +346,7 @@ class UserRetrieveApiTest extends WebTestCase
 
         $followingUser->follow($testUser);
 
-        $manager = $this->getService(EntityManagerInterface::class);
+        $manager = $this->entityManager;
 
         $manager->persist($testUser);
         $manager->flush();
@@ -381,7 +380,7 @@ class UserRetrieveApiTest extends WebTestCase
         $testUser->follow($followedUser);
         $testUser->showProfileFollowings = false;
 
-        $manager = $this->getService(EntityManagerInterface::class);
+        $manager = $this->entityManager;
 
         $manager->persist($testUser);
         $manager->flush();
@@ -401,7 +400,7 @@ class UserRetrieveApiTest extends WebTestCase
 
         $testUser->follow($followedUser);
 
-        $manager = $this->getService(EntityManagerInterface::class);
+        $manager = $this->entityManager;
 
         $manager->persist($testUser);
         $manager->flush();
@@ -434,7 +433,7 @@ class UserRetrieveApiTest extends WebTestCase
 
         $followingUser->follow($testUser);
 
-        $manager = $this->getService(EntityManagerInterface::class);
+        $manager = $this->entityManager;
 
         $manager->persist($testUser);
         $manager->flush();

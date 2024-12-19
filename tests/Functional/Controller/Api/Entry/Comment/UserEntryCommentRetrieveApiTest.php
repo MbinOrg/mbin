@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Entry\Comment;
 
-use App\Service\FavouriteManager;
-use App\Service\VoteManager;
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class UserEntryCommentRetrieveApiTest extends WebTestCase
 {
@@ -143,7 +140,7 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
         $second->createdAt = new \DateTimeImmutable('-1 second');
         $third->createdAt = new \DateTimeImmutable();
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($first);
         $entityManager->persist($second);
         $entityManager->persist($third);
@@ -193,7 +190,7 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
         $second->createdAt = new \DateTimeImmutable('-1 second');
         $third->createdAt = new \DateTimeImmutable();
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($first);
         $entityManager->persist($second);
         $entityManager->persist($third);
@@ -243,7 +240,7 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
         $second->lastActive = new \DateTime('-1 second');
         $third->lastActive = new \DateTime();
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($first);
         $entityManager->persist($second);
         $entityManager->persist($third);
@@ -289,7 +286,7 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
         $third = $this->createEntryComment('third', $entry);
         $user = $entry->user;
 
-        $favouriteManager = $this->getService(FavouriteManager::class);
+        $favouriteManager = $this->favouriteManager;
         $favouriteManager->toggle($this->getUserByUsername('voter1'), $first);
         $favouriteManager->toggle($this->getUserByUsername('voter2'), $first);
         $favouriteManager->toggle($this->getUserByUsername('voter1'), $second);
@@ -337,7 +334,7 @@ class UserEntryCommentRetrieveApiTest extends WebTestCase
         $third = $this->createEntryComment('third', $entry);
         $user = $entry->user;
 
-        $voteManager = $this->getService(VoteManager::class);
+        $voteManager = $this->voteManager;
         $voteManager->vote(1, $first, $this->getUserByUsername('voter1'), rateLimit: false);
         $voteManager->vote(1, $first, $this->getUserByUsername('voter2'), rateLimit: false);
         $voteManager->vote(1, $second, $this->getUserByUsername('voter1'), rateLimit: false);

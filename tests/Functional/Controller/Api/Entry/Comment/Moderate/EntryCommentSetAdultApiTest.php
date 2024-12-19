@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Entry\Comment\Moderate;
 
 use App\DTO\ModeratorDto;
-use App\Repository\EntryCommentRepository;
-use App\Service\MagazineManager;
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class EntryCommentSetAdultApiTest extends WebTestCase
 {
@@ -31,7 +28,7 @@ class EntryCommentSetAdultApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('an entry', body: 'test', magazine: $magazine);
         $comment = $this->createEntryComment('test comment', $entry, $user2);
 
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
         $moderator->addedBy = $admin;
@@ -75,7 +72,7 @@ class EntryCommentSetAdultApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('an entry', body: 'test', magazine: $magazine);
         $comment = $this->createEntryComment('test comment', $entry, $user2);
 
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
         $moderator->addedBy = $admin;
@@ -102,7 +99,7 @@ class EntryCommentSetAdultApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $comment = $this->createEntryComment('test comment', $entry);
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $comment->isAdult = true;
         $entityManager->persist($comment);
         $entityManager->flush();
@@ -121,13 +118,13 @@ class EntryCommentSetAdultApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('an entry', body: 'test', magazine: $magazine);
         $comment = $this->createEntryComment('test comment', $entry, $user2);
 
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
         $moderator->addedBy = $admin;
         $magazineManager->addModerator($moderator);
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $comment->isAdult = true;
         $entityManager->persist($comment);
         $entityManager->flush();
@@ -150,7 +147,7 @@ class EntryCommentSetAdultApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $comment = $this->createEntryComment('test comment', $entry, $user2);
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $comment->isAdult = true;
         $entityManager->persist($comment);
         $entityManager->flush();
@@ -175,18 +172,18 @@ class EntryCommentSetAdultApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('an entry', body: 'test', magazine: $magazine);
         $comment = $this->createEntryComment('test comment', $entry, $user2);
 
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
         $moderator->addedBy = $admin;
         $magazineManager->addModerator($moderator);
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $comment->isAdult = true;
         $entityManager->persist($comment);
         $entityManager->flush();
 
-        $commentRepository = $this->getService(EntryCommentRepository::class);
+        $commentRepository = $this->entryCommentRepository;
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($user);

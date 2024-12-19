@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Entry;
 
 use App\DTO\ModeratorDto;
-use App\Service\FavouriteManager;
 use App\Service\MagazineManager;
 use App\Tests\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -235,7 +234,7 @@ class EntryFrontControllerTest extends WebTestCase
     {
         $this->client = $this->prepareEntries();
 
-        $favouriteManager = $this->getService(FavouriteManager::class);
+        $favouriteManager = $this->favouriteManager;
         $favouriteManager->toggle(
             $this->getUserByUsername('Actor'),
             $this->getEntryByTitle('test entry 1', 'https://kbin.pub')
@@ -268,7 +267,7 @@ class EntryFrontControllerTest extends WebTestCase
     {
         $this->getEntryByTitle('test entry 1', 'https://kbin.pub');
 
-        $favouriteManager = $this->getService(FavouriteManager::class);
+        $favouriteManager = $this->favouriteManager;
         $favouriteManager->toggle(
             $this->getUserByUsername('Actor'),
             $this->getEntryByTitle('test entry 1', 'https://kbin.pub')

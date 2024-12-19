@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Magazine;
 
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class MagazineModlogApiTest extends WebTestCase
 {
@@ -51,7 +50,7 @@ class MagazineModlogApiTest extends WebTestCase
         $magazine = $this->getMagazineByName('acme');
         $moderator = $magazine->getOwner();
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->refresh($magazine);
 
         $this->client->request('GET', '/api/magazine/'.(string) $magazine->getId().'/log');

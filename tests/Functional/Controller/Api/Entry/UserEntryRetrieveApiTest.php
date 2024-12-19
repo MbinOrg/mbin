@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Entry;
 
-use App\Service\VoteManager;
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class UserEntryRetrieveApiTest extends WebTestCase
 {
@@ -95,7 +93,7 @@ class UserEntryRetrieveApiTest extends WebTestCase
         $second->createdAt = new \DateTimeImmutable('-1 second');
         $third->createdAt = new \DateTimeImmutable();
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($first);
         $entityManager->persist($second);
         $entityManager->persist($third);
@@ -144,7 +142,7 @@ class UserEntryRetrieveApiTest extends WebTestCase
         $second->createdAt = new \DateTimeImmutable('-1 second');
         $third->createdAt = new \DateTimeImmutable();
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($first);
         $entityManager->persist($second);
         $entityManager->persist($third);
@@ -238,7 +236,7 @@ class UserEntryRetrieveApiTest extends WebTestCase
         $second->lastActive = new \DateTime('-1 second');
         $third->lastActive = new \DateTime();
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($first);
         $entityManager->persist($second);
         $entityManager->persist($third);
@@ -283,7 +281,7 @@ class UserEntryRetrieveApiTest extends WebTestCase
         $third = $this->getEntryByTitle('third', url: 'https://google.com');
         $otherUser = $first->user;
 
-        $voteManager = $this->getService(VoteManager::class);
+        $voteManager = $this->voteManager;
         $voteManager->vote(1, $first, $this->getUserByUsername('voter1'), rateLimit: false);
         $voteManager->vote(1, $first, $this->getUserByUsername('voter2'), rateLimit: false);
         $voteManager->vote(1, $second, $this->getUserByUsername('voter1'), rateLimit: false);

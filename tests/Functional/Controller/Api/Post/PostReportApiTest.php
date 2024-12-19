@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Post;
 
 use App\Entity\Report;
-use App\Repository\MagazineRepository;
 use App\Tests\WebTestCase;
 
 class PostReportApiTest extends WebTestCase
@@ -54,7 +53,7 @@ class PostReportApiTest extends WebTestCase
             'reason' => 'Test reporting',
         ];
 
-        $magazineRepository = $this->getService(MagazineRepository::class);
+        $magazineRepository = $this->magazineRepository;
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($user);

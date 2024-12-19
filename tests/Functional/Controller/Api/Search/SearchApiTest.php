@@ -4,14 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Search;
 
-use App\Factory\ActivityPub\GroupFactory;
-use App\Factory\ActivityPub\PersonFactory;
-use App\Factory\ActivityPub\TombstoneFactory;
-use App\Repository\MagazineRepository;
-use App\Repository\SiteRepository;
-use App\Repository\UserRepository;
 use App\Service\ActivityPub\ApHttpClient;
-use App\Service\ProjectInfoService;
 use App\Service\SettingsManager;
 use App\Tests\WebTestCase;
 use phpseclib3\Crypt\RSA;
@@ -165,7 +158,7 @@ class SearchApiTest extends WebTestCase
 
     public function testApiCannotFindRemoteUserAnonymousWhenOptionSet(): void
     {
-        $settingsManager = $this->getService(SettingsManager::class);
+        $settingsManager = $this->settingsManager;
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', true);
 
@@ -191,7 +184,7 @@ class SearchApiTest extends WebTestCase
 
     public function testApiCannotFindRemoteMagazineAnonymousWhenOptionSet(): void
     {
-        $settingsManager = $this->getService(SettingsManager::class);
+        $settingsManager = $this->settingsManager;
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', true);
 
@@ -219,7 +212,7 @@ class SearchApiTest extends WebTestCase
      * These tests do work, but we should not do requests to a remote server when running tests
     public function testApiCanFindRemoteUserAnonymousWhenOptionUnset(): void
     {
-        $settingsManager = $this->getService(SettingsManager::class);
+        $settingsManager = $this->settingsManager;
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', false);
         $domain = $settingsManager->get('KBIN_DOMAIN');
@@ -257,11 +250,11 @@ class SearchApiTest extends WebTestCase
     {        // Admin user must exist to retrieve a remote magazine since remote mods aren't federated (yet)
         $this->getUserByUsername('admin', isAdmin: true);
 
-        $settingsManager = $this->getService(SettingsManager::class);
+        $settingsManager = $this->settingsManager;
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', false);
         $domain = $settingsManager->get('KBIN_DOMAIN');
-        $logger = $this->getService(LoggerInterface::class);
+        $logger = $this->loggerInterface;
         $this->setCacheKeysForApHttpClient($domain, $logger);
         $this->getMagazineByName('testMag');
 
@@ -294,7 +287,7 @@ class SearchApiTest extends WebTestCase
 
     public function testApiCanFindRemoteUser(): void
     {
-        $settingsManager = $this->getService(SettingsManager::class);
+        $settingsManager = $this->settingsManager;
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', true);
         $domain = $settingsManager->get('KBIN_DOMAIN');
@@ -334,7 +327,7 @@ class SearchApiTest extends WebTestCase
     {
         $this->getUserByUsername('admin', isAdmin: true);
 
-        $settingsManager = $this->getService(SettingsManager::class);
+        $settingsManager = $this->settingsManager;
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', true);
         $domain = $settingsManager->get('KBIN_DOMAIN');
@@ -392,15 +385,15 @@ class SearchApiTest extends WebTestCase
         // Inject fake keys into apHttpClient
         $apHttpClient = new ApHttpClient(
             $domain,
-            $this->getService(TombstoneFactory::class),
-            $this->getService(PersonFactory::class),
-            $this->getService(GroupFactory::class),
-            $logger ?? $this->getService(LoggerInterface::class),
+            $this->tombstoneFactory,
+            $this->personFactory,
+            $this->groupFactory,
+            $logger ?? $this->logger,
             $cache,
-            $this->getService(UserRepository::class),
-            $this->getService(MagazineRepository::class),
-            $this->getService(SiteRepository::class),
-            $this->getService(ProjectInfoService::class),
+            $this->userRepository,
+            $this->magazineRepository,
+            $this->siteRepository,
+            $this->projectInfoService,
         );
         self::getContainer()->set(ApHttpClient::class, $apHttpClient);
     }

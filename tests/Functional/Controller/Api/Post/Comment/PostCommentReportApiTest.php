@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Post\Comment;
 
-use App\Repository\ReportRepository;
 use App\Tests\WebTestCase;
 
 class PostCommentReportApiTest extends WebTestCase
@@ -51,7 +50,7 @@ class PostCommentReportApiTest extends WebTestCase
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post, $user2);
 
-        $reportRepository = $this->getService(ReportRepository::class);
+        $reportRepository = $this->reportRepository;
 
         $report = [
             'reason' => 'This comment breaks the rules!',
@@ -78,7 +77,7 @@ class PostCommentReportApiTest extends WebTestCase
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post, $user);
 
-        $reportRepository = $this->getService(ReportRepository::class);
+        $reportRepository = $this->reportRepository;
 
         $report = [
             'reason' => 'This comment breaks the rules!',

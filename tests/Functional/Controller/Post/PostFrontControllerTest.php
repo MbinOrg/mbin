@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Post;
 
 use App\DTO\ModeratorDto;
-use App\Service\FavouriteManager;
 use App\Service\MagazineManager;
 use App\Tests\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -66,7 +65,7 @@ class PostFrontControllerTest extends WebTestCase
     {
         $this->client = $this->prepareEntries();
 
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $magazineManager->subscribe($this->getMagazineByName('acme'), $this->getUserByUsername('Actor'));
 
         $this->client->loginUser($this->getUserByUsername('Actor'));
@@ -130,7 +129,7 @@ class PostFrontControllerTest extends WebTestCase
     {
         $this->client = $this->prepareEntries();
 
-        $favouriteManager = $this->getService(FavouriteManager::class);
+        $favouriteManager = $this->favouriteManager;
         $favouriteManager->toggle($this->getUserByUsername('Actor'), $this->createPost('test post 3'));
 
         $this->client->loginUser($this->getUserByUsername('Actor'));

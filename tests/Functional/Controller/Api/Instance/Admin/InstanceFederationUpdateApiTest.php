@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Instance\Admin;
 
-use App\Service\SettingsManager;
 use App\Tests\WebTestCase;
 
 class InstanceFederationUpdateApiTest extends WebTestCase
@@ -64,7 +63,7 @@ class InstanceFederationUpdateApiTest extends WebTestCase
 
     public function testApiCanClearInstanceFederation(): void
     {
-        $manager = $this->getService(SettingsManager::class);
+        $manager = $this->settingsManager;
         $manager->set('KBIN_BANNED_INSTANCES', ['defederated.social', 'evil.social']);
 
         self::createOAuth2AuthCodeClient();

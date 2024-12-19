@@ -6,14 +6,8 @@ namespace App\Tests\Functional\Controller\Api\Magazine\Admin;
 
 use App\DTO\ModeratorDto;
 use App\Event\Entry\EntryHasBeenSeenEvent;
-use App\Service\FavouriteManager;
-use App\Service\MagazineManager;
-use App\Service\VoteManager;
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class MagazineRetrieveStatsApiTest extends WebTestCase
 {
@@ -58,7 +52,7 @@ class MagazineRetrieveStatsApiTest extends WebTestCase
 
         $owner = $this->getUserByUsername('JaneDoe');
         $magazine = $this->getMagazineByName('test', $owner);
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $dto = new ModeratorDto($magazine);
         $dto->user = $this->getUserByUsername('JohnDoe');
         $dto->addedBy = $owner;
@@ -85,18 +79,18 @@ class MagazineRetrieveStatsApiTest extends WebTestCase
 
         $entry = $this->getEntryByTitle('Stats test', body: 'This is gonna be a statistic', magazine: $magazine, user: $user);
 
-        $requestStack = $this->getService(RequestStack::class);
+        $requestStack = $this->requestStack;
         $requestStack->push(Request::create('/'));
-        $dispatcher = $this->getService(EventDispatcherInterface::class);
+        $dispatcher = $this->eventDispatcher;
         $dispatcher->dispatch(new EntryHasBeenSeenEvent($entry));
 
-        $favouriteManager = $this->getService(FavouriteManager::class);
+        $favouriteManager = $this->favouriteManager;
         $favourite = $favouriteManager->toggle($user, $entry);
 
-        $voteManager = $this->getService(VoteManager::class);
+        $voteManager = $this->voteManager;
         $vote = $voteManager->upvote($entry, $user);
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($favourite);
         $entityManager->persist($vote);
         $entityManager->flush();

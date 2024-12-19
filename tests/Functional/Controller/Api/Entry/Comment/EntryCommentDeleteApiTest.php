@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Entry\Comment;
 
-use App\Repository\EntryCommentRepository;
 use App\Tests\WebTestCase;
 
 class EntryCommentDeleteApiTest extends WebTestCase
@@ -60,7 +59,7 @@ class EntryCommentDeleteApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $comment = $this->createEntryComment('test comment', $entry, $user);
 
-        $commentRepository = $this->getService(EntryCommentRepository::class);
+        $commentRepository = $this->entryCommentRepository;
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($user);
@@ -82,7 +81,7 @@ class EntryCommentDeleteApiTest extends WebTestCase
         $comment = $this->createEntryComment('test comment', $entry, $user);
         $this->createEntryComment('test comment', $entry, $user, $comment);
 
-        $commentRepository = $this->getService(EntryCommentRepository::class);
+        $commentRepository = $this->entryCommentRepository;
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($user);

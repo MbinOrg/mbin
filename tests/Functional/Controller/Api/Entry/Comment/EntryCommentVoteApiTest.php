@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Entry\Comment;
 
-use App\Service\FavouriteManager;
-use App\Service\VoteManager;
 use App\Tests\WebTestCase;
 
 class EntryCommentVoteApiTest extends WebTestCase
@@ -121,7 +119,7 @@ class EntryCommentVoteApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $comment = $this->createEntryComment('test comment', $entry);
 
-        $voteManager = $this->getService(VoteManager::class);
+        $voteManager = $this->voteManager;
         $voteManager->vote(1, $comment, $this->getUserByUsername('user'), rateLimit: false);
 
         $this->client->request('PUT', "/api/comments/{$comment->getId()}/vote/0");
@@ -135,7 +133,7 @@ class EntryCommentVoteApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $comment = $this->createEntryComment('test comment', $entry, $user);
 
-        $voteManager = $this->getService(VoteManager::class);
+        $voteManager = $this->voteManager;
         $voteManager->vote(1, $comment, $user, rateLimit: false);
 
         self::createOAuth2AuthCodeClient();
@@ -155,7 +153,7 @@ class EntryCommentVoteApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $comment = $this->createEntryComment('test comment', $entry, $user);
 
-        $voteManager = $this->getService(VoteManager::class);
+        $voteManager = $this->voteManager;
         $voteManager->vote(1, $comment, $user, rateLimit: false);
 
         self::createOAuth2AuthCodeClient();
@@ -237,7 +235,7 @@ class EntryCommentVoteApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $comment = $this->createEntryComment('test comment', $entry, $user);
 
-        $favouriteManager = $this->getService(FavouriteManager::class);
+        $favouriteManager = $this->favouriteManager;
         $favouriteManager->toggle($user, $comment);
 
         self::createOAuth2AuthCodeClient();
@@ -257,7 +255,7 @@ class EntryCommentVoteApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $comment = $this->createEntryComment('test comment', $entry, $user);
 
-        $favouriteManager = $this->getService(FavouriteManager::class);
+        $favouriteManager = $this->favouriteManager;
         $favouriteManager->toggle($user, $comment);
 
         self::createOAuth2AuthCodeClient();

@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Post\Moderate;
 
 use App\DTO\ModeratorDto;
-use App\Service\MagazineManager;
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class PostSetAdultApiTest extends WebTestCase
 {
@@ -59,7 +57,7 @@ class PostSetAdultApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
 
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
         $moderator->addedBy = $admin;
@@ -111,7 +109,7 @@ class PostSetAdultApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', magazine: $magazine);
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $post->isAdult = true;
         $entityManager->persist($post);
         $entityManager->flush();
@@ -126,7 +124,7 @@ class PostSetAdultApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $post->isAdult = true;
         $entityManager->persist($post);
         $entityManager->flush();
@@ -147,7 +145,7 @@ class PostSetAdultApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $post->isAdult = true;
         $entityManager->persist($post);
         $entityManager->flush();
@@ -169,13 +167,13 @@ class PostSetAdultApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test article', user: $user, magazine: $magazine);
 
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
         $moderator->addedBy = $admin;
         $magazineManager->addModerator($moderator);
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $post->isAdult = true;
         $entityManager->persist($post);
         $entityManager->flush();

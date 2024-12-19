@@ -213,8 +213,9 @@ class PostCommentCreateApiTest extends WebTestCase
         ];
 
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        copy($this->kibbyPath, $this->kibbyPath.'.tmp');
-        $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.png');
+        $image = new UploadedFile($tmpPath.'.png', 'kibby_emoji.png', 'image/png');
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($this->getUserByUsername('user'));
@@ -314,8 +315,9 @@ class PostCommentCreateApiTest extends WebTestCase
         ];
 
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        copy($this->kibbyPath, $this->kibbyPath.'.tmp');
-        $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.tmp');
+        $image = new UploadedFile($tmpPath.'.tmp', 'kibby_emoji.png', 'image/png');
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($this->getUserByUsername('user'));
@@ -345,8 +347,12 @@ class PostCommentCreateApiTest extends WebTestCase
         ];
 
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        copy($this->kibbyPath, $this->kibbyPath.'.tmp');
-        $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.png');
+        $image = new UploadedFile($tmpPath.'.png', 'kibby_emoji.png', 'image/png');
+
+        $imageManager = $this->imageManager;
+        $expectedPath = $imageManager->getFilePath($image->getFilename());
 
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('user');
@@ -380,6 +386,6 @@ class PostCommentCreateApiTest extends WebTestCase
         self::assertSame($postComment->getId(), $jsonData['parentId']);
         self::assertIsArray($jsonData['image']);
         self::assertArrayKeysMatch(self::IMAGE_KEYS, $jsonData['image']);
-        self::assertEquals(self::KIBBY_PNG_URL_RESULT, $jsonData['image']['filePath']);
+        self::assertEquals($expectedPath, $jsonData['image']['filePath']);
     }
 }

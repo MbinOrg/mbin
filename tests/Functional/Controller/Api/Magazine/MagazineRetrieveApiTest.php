@@ -6,7 +6,6 @@ namespace App\Tests\Functional\Controller\Api\Magazine;
 
 use App\Service\MagazineManager;
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class MagazineRetrieveApiTest extends WebTestCase
 {
@@ -190,7 +189,7 @@ class MagazineRetrieveApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test');
-        $manager = $this->getService(MagazineManager::class);
+        $manager = $this->magazineManager;
         $manager->subscribe($magazine, $user);
 
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write magazine:subscribe magazine:block');
@@ -216,9 +215,9 @@ class MagazineRetrieveApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test');
-        $manager = $this->getService(MagazineManager::class);
+        $manager = $this->magazineManager;
         $manager->block($magazine, $user);
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($user);
         $entityManager->flush();
 
@@ -399,7 +398,7 @@ class MagazineRetrieveApiTest extends WebTestCase
 
         $user = $this->getUserByUsername('testUser');
         $user->showProfileSubscriptions = true;
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($user);
         $entityManager->flush();
 
@@ -435,7 +434,7 @@ class MagazineRetrieveApiTest extends WebTestCase
 
         $user = $this->getUserByUsername('testUser');
         $user->showProfileSubscriptions = false;
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($user);
         $entityManager->flush();
 
@@ -525,7 +524,7 @@ class MagazineRetrieveApiTest extends WebTestCase
         $notBlockedMag = $this->getMagazineByName('someother', $this->getUserByUsername('JaneDoe'));
         $magazine = $this->getMagazineByName('test', $this->getUserByUsername('JaneDoe'));
 
-        $manager = $this->getService(MagazineManager::class);
+        $manager = $this->magazineManager;
         $manager->block($magazine, $this->getUserByUsername('JohnDoe'));
 
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write magazine:block');

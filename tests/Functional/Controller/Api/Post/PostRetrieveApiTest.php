@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Post;
 
-use App\Service\FavouriteManager;
-use App\Service\PostManager;
-use App\Service\VoteManager;
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class PostRetrieveApiTest extends WebTestCase
 {
@@ -183,7 +179,7 @@ class PostRetrieveApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $this->createPost('another post', magazine: $magazine);
 
-        $favouriteManager = $this->getService(FavouriteManager::class);
+        $favouriteManager = $this->favouriteManager;
         $favouriteManager->toggle($user, $post);
 
         self::createOAuth2AuthCodeClient();
@@ -240,7 +236,7 @@ class PostRetrieveApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $second = $this->createPost('another post', magazine: $magazine);
         // Check that pinned posts don't get pinned to the top of the instance, just the magazine
-        $postManager = $this->getService(PostManager::class);
+        $postManager = $this->postManager;
         $postManager->pin($second);
 
         $this->client->request('GET', '/api/posts');
@@ -361,7 +357,7 @@ class PostRetrieveApiTest extends WebTestCase
         $second = $this->createPost('another post', magazine: $magazine, lang: 'de');
         $this->createPost('a dutch post', magazine: $magazine, lang: 'nl');
         // Check that pinned posts don't get pinned to the top of the instance, just the magazine
-        $postManager = $this->getService(PostManager::class);
+        $postManager = $this->postManager;
         $postManager->pin($second);
 
         $this->client->request('GET', '/api/posts?lang[]=en&lang[]=de');
@@ -484,7 +480,7 @@ class PostRetrieveApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $second = $this->createPost('another post', magazine: $magazine);
         // Check that pinned posts don't get pinned to the top of the instance, just the magazine
-        $postManager = $this->getService(PostManager::class);
+        $postManager = $this->postManager;
         $postManager->pin($second);
 
         $this->client->request('GET', '/api/posts?usePreferredLangs=true');
@@ -501,7 +497,7 @@ class PostRetrieveApiTest extends WebTestCase
 
         $user = $this->getUserByUsername('user');
         $user->preferredLanguages = ['en'];
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($user);
         $entityManager->flush();
 
@@ -571,7 +567,7 @@ class PostRetrieveApiTest extends WebTestCase
         $second->createdAt = new \DateTimeImmutable('-1 second');
         $third->createdAt = new \DateTimeImmutable();
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($first);
         $entityManager->persist($second);
         $entityManager->persist($third);
@@ -619,7 +615,7 @@ class PostRetrieveApiTest extends WebTestCase
         $second->createdAt = new \DateTimeImmutable('-1 second');
         $third->createdAt = new \DateTimeImmutable();
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($first);
         $entityManager->persist($second);
         $entityManager->persist($third);
@@ -711,7 +707,7 @@ class PostRetrieveApiTest extends WebTestCase
         $second->lastActive = new \DateTime('-1 second');
         $third->lastActive = new \DateTime();
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($first);
         $entityManager->persist($second);
         $entityManager->persist($third);
@@ -755,7 +751,7 @@ class PostRetrieveApiTest extends WebTestCase
         $second = $this->createPost('second');
         $third = $this->createPost('third');
 
-        $voteManager = $this->getService(VoteManager::class);
+        $voteManager = $this->voteManager;
         $voteManager->vote(1, $first, $this->getUserByUsername('voter1'), rateLimit: false);
         $voteManager->vote(1, $first, $this->getUserByUsername('voter2'), rateLimit: false);
         $voteManager->vote(1, $second, $this->getUserByUsername('voter1'), rateLimit: false);

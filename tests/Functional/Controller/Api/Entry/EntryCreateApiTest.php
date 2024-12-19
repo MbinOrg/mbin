@@ -282,8 +282,12 @@ class EntryCreateApiTest extends WebTestCase
         $this->client->loginUser($user);
 
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        copy($this->kibbyPath, $this->kibbyPath.'.tmp');
-        $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.png');
+        $image = new UploadedFile($tmpPath.'.png', 'kibby_emoji.png', 'image/png');
+
+        $imageManager = $this->imageManager;
+        $expectedPath = $imageManager->getFilePath($image->getFilename());
 
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
@@ -312,7 +316,7 @@ class EntryCreateApiTest extends WebTestCase
         self::assertNull($jsonData['body']);
         self::assertIsArray($jsonData['image']);
         self::assertArrayKeysMatch(self::IMAGE_KEYS, $jsonData['image']);
-        self::assertStringContainsString(self::KIBBY_PNG_URL_RESULT, $jsonData['image']['filePath']);
+        self::assertStringContainsString($expectedPath, $jsonData['image']['filePath']);
         self::assertEquals('It\'s kibby!', $jsonData['image']['altText']);
         self::assertEquals('en', $jsonData['lang']);
         self::assertIsArray($jsonData['tags']);

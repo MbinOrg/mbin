@@ -85,8 +85,12 @@ class UserUpdateImagesApiTest extends WebTestCase
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:profile:edit user:profile:read');
 
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        copy($this->kibbyPath, $this->kibbyPath.'.tmp');
-        $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.png');
+        $image = new UploadedFile($tmpPath.'.png', 'kibby_emoji.png', 'image/png');
+
+        $imageManager = $this->imageManager;
+        $expectedPath = $imageManager->getFilePath($image->getFilename());
 
         $this->client->request(
             'POST', '/api/users/avatar',
@@ -104,7 +108,7 @@ class UserUpdateImagesApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::IMAGE_KEYS, $jsonData['avatar']);
         self::assertSame(96, $jsonData['avatar']['width']);
         self::assertSame(96, $jsonData['avatar']['height']);
-        self::assertEquals(self::KIBBY_PNG_URL_RESULT, $jsonData['avatar']['filePath']);
+        self::assertEquals($expectedPath, $jsonData['avatar']['filePath']);
 
         // Clean up test data as well as checking that DELETE works
         //      This isn't great, but since people could have their media directory
@@ -122,14 +126,17 @@ class UserUpdateImagesApiTest extends WebTestCase
 
     public function testApiCanUpdateAndDeleteCurrentUserCover(): void
     {
+        $imageManager = $this->imageManager;
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('JohnDoe');
         $this->client->loginUser($testUser);
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:profile:edit user:profile:read');
 
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        copy($this->kibbyPath, $this->kibbyPath.'.tmp');
-        $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.png');
+        $image = new UploadedFile($tmpPath.'.png', 'kibby_emoji.png', 'image/png');
+        $expectedPath = $imageManager->getFilePath($image->getFilename());
 
         $this->client->request(
             'POST', '/api/users/cover',
@@ -147,7 +154,7 @@ class UserUpdateImagesApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::IMAGE_KEYS, $jsonData['cover']);
         self::assertSame(96, $jsonData['cover']['width']);
         self::assertSame(96, $jsonData['cover']['height']);
-        self::assertEquals(self::KIBBY_PNG_URL_RESULT, $jsonData['cover']['filePath']);
+        self::assertEquals($expectedPath, $jsonData['cover']['filePath']);
 
         // Clean up test data as well as checking that DELETE works
         //      This isn't great, but since people could have their media directory

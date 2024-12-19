@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Domain;
 
-use App\Service\DomainManager;
 use App\Tests\WebTestCase;
 
 class DomainBlockApiTest extends WebTestCase
@@ -94,7 +93,7 @@ class DomainBlockApiTest extends WebTestCase
     {
         $user = $this->getUserByUsername('JohnDoe');
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
-        $manager = $this->getService(DomainManager::class);
+        $manager = $this->domainManager;
         $manager->block($domain, $user);
 
         self::createOAuth2AuthCodeClient();

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Post\Comment;
 
-use App\Service\FavouriteManager;
-use App\Service\VoteManager;
 use App\Tests\WebTestCase;
 
 class PostCommentVoteApiTest extends WebTestCase
@@ -112,7 +110,7 @@ class PostCommentVoteApiTest extends WebTestCase
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post);
 
-        $voteManager = $this->getService(VoteManager::class);
+        $voteManager = $this->voteManager;
         $voteManager->vote(1, $comment, $this->getUserByUsername('user'), rateLimit: false);
 
         $this->client->request('PUT', "/api/post-comments/{$comment->getId()}/vote/0");
@@ -126,7 +124,7 @@ class PostCommentVoteApiTest extends WebTestCase
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post, $user);
 
-        $voteManager = $this->getService(VoteManager::class);
+        $voteManager = $this->voteManager;
         $voteManager->vote(1, $comment, $user, rateLimit: false);
 
         self::createOAuth2AuthCodeClient();
@@ -146,7 +144,7 @@ class PostCommentVoteApiTest extends WebTestCase
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post, $user);
 
-        $voteManager = $this->getService(VoteManager::class);
+        $voteManager = $this->voteManager;
         $voteManager->vote(1, $comment, $user, rateLimit: false);
 
         self::createOAuth2AuthCodeClient();
@@ -228,7 +226,7 @@ class PostCommentVoteApiTest extends WebTestCase
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post, $user);
 
-        $favouriteManager = $this->getService(FavouriteManager::class);
+        $favouriteManager = $this->favouriteManager;
         $favouriteManager->toggle($user, $comment);
 
         self::createOAuth2AuthCodeClient();
@@ -248,7 +246,7 @@ class PostCommentVoteApiTest extends WebTestCase
         $post = $this->createPost('a post');
         $comment = $this->createPostComment('test comment', $post, $user);
 
-        $favouriteManager = $this->getService(FavouriteManager::class);
+        $favouriteManager = $this->favouriteManager;
         $favouriteManager->toggle($user, $comment);
 
         self::createOAuth2AuthCodeClient();

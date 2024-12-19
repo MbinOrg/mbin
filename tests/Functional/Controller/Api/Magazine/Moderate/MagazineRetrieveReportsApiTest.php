@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Magazine\Moderate;
 
 use App\DTO\ReportDto;
-use App\Service\ReportManager;
 use App\Tests\Functional\Controller\Api\Magazine\MagazineRetrieveApiTest;
 use App\Tests\WebTestCase;
 
@@ -20,7 +19,7 @@ class MagazineRetrieveReportsApiTest extends WebTestCase
         $reportedUser = $this->getUserByUsername('hapless_fool');
         $entry = $this->getEntryByTitle('Report test', body: 'This is gonna be reported', magazine: $magazine, user: $reportedUser);
 
-        $reportManager = $this->getService(ReportManager::class);
+        $reportManager = $this->reportManager;
         $report = $reportManager->report(ReportDto::create($entry, 'I don\'t like it'), $user);
         $this->client->request('GET', "/api/moderate/magazine/{$magazine->getId()}/reports/{$report->getId()}");
 
@@ -36,7 +35,7 @@ class MagazineRetrieveReportsApiTest extends WebTestCase
         $reportedUser = $this->getUserByUsername('hapless_fool');
         $entry = $this->getEntryByTitle('Report test', body: 'This is gonna be reported', magazine: $magazine, user: $reportedUser);
 
-        $reportManager = $this->getService(ReportManager::class);
+        $reportManager = $this->reportManager;
         $report = $reportManager->report(ReportDto::create($entry, 'I don\'t like it'), $user);
 
         $codes = self::getAuthorizationCodeTokenResponse($this->client);
@@ -56,7 +55,7 @@ class MagazineRetrieveReportsApiTest extends WebTestCase
         $reportedUser = $this->getUserByUsername('hapless_fool');
         $entry = $this->getEntryByTitle('Report test', body: 'This is gonna be reported', magazine: $magazine, user: $reportedUser);
 
-        $reportManager = $this->getService(ReportManager::class);
+        $reportManager = $this->reportManager;
         $report = $reportManager->report(ReportDto::create($entry, 'I don\'t like it'), $user);
 
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine:reports:read');
@@ -76,7 +75,7 @@ class MagazineRetrieveReportsApiTest extends WebTestCase
         $reportedUser = $this->getUserByUsername('hapless_fool');
         $entry = $this->getEntryByTitle('Report test', body: 'This is gonna be reported', magazine: $magazine, user: $reportedUser);
 
-        $reportManager = $this->getService(ReportManager::class);
+        $reportManager = $this->reportManager;
         $report = $reportManager->report(ReportDto::create($entry, 'I don\'t like it'), $user);
 
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine:reports:read');
@@ -152,7 +151,7 @@ class MagazineRetrieveReportsApiTest extends WebTestCase
         $reportedUser = $this->getUserByUsername('hapless_fool');
         $entry = $this->getEntryByTitle('Report test', body: 'This is gonna be reported', magazine: $magazine, user: $reportedUser);
 
-        $reportManager = $this->getService(ReportManager::class);
+        $reportManager = $this->reportManager;
         $report = $reportManager->report(ReportDto::create($entry, 'I don\'t like it'), $user);
 
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine:reports:read');

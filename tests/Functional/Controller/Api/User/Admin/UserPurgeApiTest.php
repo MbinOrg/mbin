@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\User\Admin;
 
-use App\Repository\UserRepository;
 use App\Tests\WebTestCase;
 
 class UserPurgeApiTest extends WebTestCase
@@ -20,7 +19,7 @@ class UserPurgeApiTest extends WebTestCase
         $this->client->request('DELETE', '/api/admin/users/'.(string) $purgedUser->getId().'/purge_account', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseStatusCodeSame(403);
 
-        $repository = $this->getService(UserRepository::class);
+        $repository = $this->userRepository;
         $purgedUser = $repository->find($purgedUser->getId());
         self::assertNotNull($purgedUser);
     }
@@ -37,7 +36,7 @@ class UserPurgeApiTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(403);
 
-        $repository = $this->getService(UserRepository::class);
+        $repository = $this->userRepository;
         $purgedUser = $repository->find($purgedUser->getId());
         self::assertNotNull($purgedUser);
     }
@@ -53,7 +52,7 @@ class UserPurgeApiTest extends WebTestCase
         $this->client->request('DELETE', '/api/admin/users/'.(string) $purgedUser->getId().'/purge_account', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseStatusCodeSame(204);
 
-        $repository = $this->getService(UserRepository::class);
+        $repository = $this->userRepository;
         $purgedUser = $repository->find($purgedUser->getId());
         self::assertNull($purgedUser);
     }
@@ -69,7 +68,7 @@ class UserPurgeApiTest extends WebTestCase
         $this->client->request('DELETE', '/api/admin/users/'.(string) ($purgedUser->getId() * 10).'/purge_account', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseStatusCodeSame(404);
 
-        $repository = $this->getService(UserRepository::class);
+        $repository = $this->userRepository;
         $purgedUser = $repository->find($purgedUser->getId());
         self::assertNotNull($purgedUser);
     }

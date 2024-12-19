@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Service\MentionManager;
 use App\Service\SettingsManager;
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class MentionManagerTest extends WebTestCase
 {
-    /**
-     * @dataProvider provider
-     */
+    #[DataProvider('provider')]
     public function testExtract(string $input, ?array $output): void
     {
         // Create a SettingsManager mock
@@ -29,7 +27,7 @@ class MentionManagerTest extends WebTestCase
         // Replace the actual setting service with the mock in the container
         $this->getContainer()->set(SettingsManager::class, $settingsManagerMock);
 
-        $manager = $this->getService(MentionManager::class);
+        $manager = $this->mentionManager;
         $this->assertEquals($output, $manager->extract($input));
     }
 

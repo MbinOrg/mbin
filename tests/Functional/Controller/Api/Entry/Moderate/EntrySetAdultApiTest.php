@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Entry\Moderate;
 
 use App\DTO\ModeratorDto;
-use App\Service\MagazineManager;
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class EntrySetAdultApiTest extends WebTestCase
 {
@@ -59,7 +57,7 @@ class EntrySetAdultApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
         $moderator->addedBy = $admin;
@@ -118,7 +116,7 @@ class EntrySetAdultApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', magazine: $magazine);
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entry->isAdult = true;
         $entityManager->persist($entry);
         $entityManager->flush();
@@ -133,7 +131,7 @@ class EntrySetAdultApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entry->isAdult = true;
         $entityManager->persist($entry);
         $entityManager->flush();
@@ -154,7 +152,7 @@ class EntrySetAdultApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entry->isAdult = true;
         $entityManager->persist($entry);
         $entityManager->flush();
@@ -176,13 +174,13 @@ class EntrySetAdultApiTest extends WebTestCase
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $moderator = new ModeratorDto($magazine);
         $moderator->user = $user;
         $moderator->addedBy = $admin;
         $magazineManager->addModerator($moderator);
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entry->isAdult = true;
         $entityManager->persist($entry);
         $entityManager->flush();

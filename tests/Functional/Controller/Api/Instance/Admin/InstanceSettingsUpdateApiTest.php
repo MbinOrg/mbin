@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Instance\Admin;
 
+use App\Service\SettingsManager;
 use App\Tests\WebTestCase;
 use App\Utils\DownvotesMode;
 
@@ -162,45 +163,11 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
         foreach ($jsonData as $key => $value) {
             self::assertEquals($settings[$key], $value, "$key did not match!");
         }
+    }
 
-        $settings = [
-            'KBIN_DOMAIN' => 'kbin.test',
-            'KBIN_TITLE' => 'updated title',
-            'KBIN_META_TITLE' => 'meta title',
-            'KBIN_META_KEYWORDS' => 'this, is, a, test',
-            'KBIN_META_DESCRIPTION' => 'Testing out the API',
-            'KBIN_DEFAULT_LANG' => 'de',
-            'KBIN_CONTACT_EMAIL' => 'test@kbinupdated.test',
-            'KBIN_SENDER_EMAIL' => 'noreply@kbinupdated.test',
-            'MBIN_DEFAULT_THEME' => 'dark',
-            'KBIN_JS_ENABLED' => true,
-            'KBIN_FEDERATION_ENABLED' => true,
-            'KBIN_REGISTRATIONS_ENABLED' => true,
-            'KBIN_BANNED_INSTANCES' => [],
-            'KBIN_HEADER_LOGO' => true,
-            'KBIN_CAPTCHA_ENABLED' => false,
-            'KBIN_MERCURE_ENABLED' => false,
-            'KBIN_FEDERATION_PAGE_ENABLED' => false,
-            'KBIN_ADMIN_ONLY_OAUTH_CLIENTS' => false,
-            'MBIN_PRIVATE_INSTANCE' => false,
-            'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN' => false,
-            'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY' => false,
-            'MBIN_SSO_REGISTRATIONS_ENABLED' => true,
-            'MBIN_RESTRICT_MAGAZINE_CREATION' => false,
-            'MBIN_DOWNVOTES_MODE' => DownvotesMode::Enabled->value,
-            'MBIN_SSO_ONLY_MODE' => false,
-            'MBIN_SSO_SHOW_FIRST' => false,
-            'MAX_IMAGE_BYTES' => 10000,
-        ];
-
-        $this->client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);
-
-        self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($this->client);
-
-        self::assertArrayKeysMatch(self::INSTANCE_SETTINGS_RESPONSE_KEYS, $jsonData);
-        foreach ($jsonData as $key => $value) {
-            self::assertEquals($settings[$key], $value, "$key did not match!");
-        }
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        SettingsManager::resetDto();
     }
 }

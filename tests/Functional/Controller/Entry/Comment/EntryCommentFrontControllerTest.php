@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Entry\Comment;
 
 use App\DTO\ModeratorDto;
-use App\Service\FavouriteManager;
 use App\Service\MagazineManager;
 use App\Tests\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -127,7 +126,7 @@ class EntryCommentFrontControllerTest extends WebTestCase
     {
         $this->client = $this->prepareEntries();
 
-        $favouriteManager = $this->getService(FavouriteManager::class);
+        $favouriteManager = $this->favouriteManager;
         $favouriteManager->toggle(
             $this->getUserByUsername('Actor'),
             $this->createEntryComment('test comment 1', $this->getEntryByTitle('test entry 1'))

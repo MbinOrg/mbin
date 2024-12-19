@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Entry\Comment\Admin;
 
-use App\Repository\EntryCommentRepository;
 use App\Tests\WebTestCase;
 
 class EntryCommentPurgeApiTest extends WebTestCase
@@ -15,7 +14,7 @@ class EntryCommentPurgeApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('test article', body: 'test for deletion', magazine: $magazine);
         $comment = $this->createEntryComment('test comment', $entry);
 
-        $commentRepository = $this->getService(EntryCommentRepository::class);
+        $commentRepository = $this->entryCommentRepository;
 
         $this->client->request('DELETE', "/api/admin/comment/{$comment->getId()}/purge");
         self::assertResponseStatusCodeSame(401);
@@ -31,7 +30,7 @@ class EntryCommentPurgeApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('test article', body: 'test for deletion', user: $user, magazine: $magazine);
         $comment = $this->createEntryComment('test comment', $entry);
 
-        $commentRepository = $this->getService(EntryCommentRepository::class);
+        $commentRepository = $this->entryCommentRepository;
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($user);
@@ -54,7 +53,7 @@ class EntryCommentPurgeApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('test article', body: 'test for deletion', user: $otherUser, magazine: $magazine);
         $comment = $this->createEntryComment('test comment', $entry);
 
-        $commentRepository = $this->getService(EntryCommentRepository::class);
+        $commentRepository = $this->entryCommentRepository;
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($user);
@@ -77,7 +76,7 @@ class EntryCommentPurgeApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('test article', body: 'test for deletion', user: $user, magazine: $magazine);
         $comment = $this->createEntryComment('test comment', $entry);
 
-        $commentRepository = $this->getService(EntryCommentRepository::class);
+        $commentRepository = $this->entryCommentRepository;
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($admin);
@@ -100,7 +99,7 @@ class EntryCommentPurgeApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('test image', body: 'test', magazine: $magazine);
         $comment = $this->createEntryComment('test comment', $entry, imageDto: $imageDto);
 
-        $commentRepository = $this->getService(EntryCommentRepository::class);
+        $commentRepository = $this->entryCommentRepository;
 
         $this->client->request('DELETE', "/api/admin/comment/{$comment->getId()}/purge");
         self::assertResponseStatusCodeSame(401);
@@ -118,7 +117,7 @@ class EntryCommentPurgeApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('test image', body: 'test', magazine: $magazine);
         $comment = $this->createEntryComment('test comment', $entry, imageDto: $imageDto);
 
-        $commentRepository = $this->getService(EntryCommentRepository::class);
+        $commentRepository = $this->entryCommentRepository;
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($user);
@@ -142,7 +141,7 @@ class EntryCommentPurgeApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('test image', body: 'test', magazine: $magazine);
         $comment = $this->createEntryComment('test comment', $entry, imageDto: $imageDto);
 
-        $commentRepository = $this->getService(EntryCommentRepository::class);
+        $commentRepository = $this->entryCommentRepository;
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($user);
@@ -166,7 +165,7 @@ class EntryCommentPurgeApiTest extends WebTestCase
         $entry = $this->getEntryByTitle('test image', body: 'test', magazine: $magazine);
         $comment = $this->createEntryComment('test comment', $entry, imageDto: $imageDto);
 
-        $commentRepository = $this->getService(EntryCommentRepository::class);
+        $commentRepository = $this->entryCommentRepository;
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($admin);
