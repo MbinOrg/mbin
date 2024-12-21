@@ -90,7 +90,7 @@
         "symfony/runtime": "7.1.*",
         "symfony/scheduler": "7.1.*",
         "symfony/security-bundle": "7.2.*",
-        "symfony/security-csrf": "7.1.*",
+        "symfony/security-csrf": "7.2.*",
         "symfony/serializer": "7.1.*",
         "symfony/string": "7.1.*",
         "symfony/translation": "7.1.*",
