@@ -45,13 +45,11 @@
     <link rel="manifest" href="{{ asset('manifest.json') }}"/>
 
     {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
         {{ encore_entry_link_tags('app') }}
         <link rel="stylesheet" href="{{ path('custom_style', {magazine: magazine.name|default(null)}) }}">
     {% endblock %}
 
     {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
         {{ encore_entry_script_tags('app') }}
     {% endblock %}
 </head>
