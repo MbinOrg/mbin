@@ -95,7 +95,7 @@ class PostCommentsCreateApi extends PostsBaseApi
         PostCommentManager $manager,
         PostCommentFactory $factory,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiCommentLimiter
+        RateLimiterFactory $apiCommentLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiCommentLimiter);
 
@@ -203,7 +203,7 @@ class PostCommentsCreateApi extends PostsBaseApi
         PostCommentManager $manager,
         PostCommentFactory $factory,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiImageLimiter
+        RateLimiterFactory $apiImageLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiImageLimiter);
 

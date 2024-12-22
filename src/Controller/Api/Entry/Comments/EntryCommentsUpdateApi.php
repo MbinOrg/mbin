@@ -91,7 +91,7 @@ class EntryCommentsUpdateApi extends EntriesBaseApi
         EntryCommentManager $manager,
         EntryCommentFactory $factory,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 

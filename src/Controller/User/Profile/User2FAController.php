@@ -181,7 +181,7 @@ class User2FAController extends AbstractController
     private function handleForm(
         FormInterface $form,
         UserDto $dto,
-        Request $request
+        Request $request,
     ): FormInterface|Response {
         $form->handleRequest($request);
 

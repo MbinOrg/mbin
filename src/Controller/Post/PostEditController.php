@@ -32,7 +32,7 @@ class PostEditController extends AbstractController
         #[MapEntity(id: 'post_id')]
         Post $post,
         Request $request,
-        PostCommentRepository $repository
+        PostCommentRepository $repository,
     ): Response {
         $dto = $this->manager->createDto($post);
 

@@ -15,7 +15,7 @@ final class ConvertMarkdownListener implements EventSubscriberInterface
     public function __construct(
         private readonly ConverterFactory $converterFactory,
         private readonly EnvironmentFactory $environmentFactory,
-        private readonly EventDispatcherInterface $dispatcher
+        private readonly EventDispatcherInterface $dispatcher,
     ) {
     }
 

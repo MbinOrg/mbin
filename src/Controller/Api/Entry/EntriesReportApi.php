@@ -67,7 +67,7 @@ class EntriesReportApi extends EntriesBaseApi
     public function __invoke(
         #[MapEntity(id: 'entry_id')]
         Entry $entry,
-        RateLimiterFactory $apiReportLimiter
+        RateLimiterFactory $apiReportLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReportLimiter);
 

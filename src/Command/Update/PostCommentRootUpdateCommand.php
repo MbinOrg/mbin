@@ -20,7 +20,7 @@ class PostCommentRootUpdateCommand extends Command
 {
     public function __construct(
         private readonly PostCommentRepository $repository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }

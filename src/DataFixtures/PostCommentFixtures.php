@@ -23,7 +23,7 @@ class PostCommentFixtures extends BaseFixture implements DependentFixtureInterfa
         PostCommentManager $postCommentManager,
         private readonly ImageManager $imageManager,
         private readonly ImageRepository $imageRepository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
         $this->postCommentManager = $postCommentManager;
     }

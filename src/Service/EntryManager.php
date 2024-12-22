@@ -62,7 +62,7 @@ class EntryManager implements ContentManagerInterface
         private readonly EntryRepository $entryRepository,
         private readonly ImageRepository $imageRepository,
         private readonly ApHttpClient $apHttpClient,
-        private readonly CacheInterface $cache
+        private readonly CacheInterface $cache,
     ) {
     }
 

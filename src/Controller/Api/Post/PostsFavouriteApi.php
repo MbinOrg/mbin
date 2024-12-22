@@ -62,7 +62,7 @@ class PostsFavouriteApi extends PostsBaseApi
         Post $post,
         FavouriteManager $manager,
         PostFactory $factory,
-        RateLimiterFactory $apiVoteLimiter
+        RateLimiterFactory $apiVoteLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiVoteLimiter);
 

@@ -75,7 +75,7 @@ class PostsSetAdultApi extends PostsBaseApi
         Post $post,
         EntityManagerInterface $manager,
         PostFactory $factory,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

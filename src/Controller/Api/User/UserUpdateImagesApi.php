@@ -75,7 +75,7 @@ class UserUpdateImagesApi extends UserBaseApi
     public function avatar(
         UserManager $manager,
         UserFactory $factory,
-        RateLimiterFactory $apiImageLimiter
+        RateLimiterFactory $apiImageLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiImageLimiter);
 
@@ -150,7 +150,7 @@ class UserUpdateImagesApi extends UserBaseApi
     public function cover(
         UserManager $manager,
         UserFactory $factory,
-        RateLimiterFactory $apiImageLimiter
+        RateLimiterFactory $apiImageLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiImageLimiter);
 

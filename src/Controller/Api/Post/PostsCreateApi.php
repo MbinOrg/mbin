@@ -79,7 +79,7 @@ class PostsCreateApi extends PostsBaseApi
         Magazine $magazine,
         PostManager $manager,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiPostLimiter
+        RateLimiterFactory $apiPostLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiPostLimiter);
 
@@ -172,7 +172,7 @@ class PostsCreateApi extends PostsBaseApi
         Magazine $magazine,
         PostManager $manager,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiImageLimiter
+        RateLimiterFactory $apiImageLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiImageLimiter);
 

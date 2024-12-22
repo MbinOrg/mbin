@@ -27,7 +27,7 @@ class DeleteUserHandler extends MbinMessageHandler
         private readonly UserManager $userManager,
         private readonly DeleteWrapper $deleteWrapper,
         private readonly MessageBusInterface $bus,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($this->entityManager);
     }

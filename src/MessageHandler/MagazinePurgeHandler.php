@@ -35,7 +35,7 @@ class MagazinePurgeHandler extends MbinMessageHandler
         private readonly PostCommentManager $postCommentManager,
         private readonly PostManager $postManager,
         private readonly MessageBusInterface $bus,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($this->entityManager);
     }

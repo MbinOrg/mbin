@@ -54,7 +54,7 @@ class MagazineCreateApi extends MagazineBaseApi
     #[Security(name: 'oauth2', scopes: ['moderate:magazine_admin:create'])]
     #[IsGranted('ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN:CREATE')]
     public function __invoke(
-        RateLimiterFactory $apiMagazineLimiter
+        RateLimiterFactory $apiMagazineLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiMagazineLimiter);
 

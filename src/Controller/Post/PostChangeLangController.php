@@ -25,7 +25,7 @@ class PostChangeLangController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'post_id')]
         Post $post,
-        Request $request
+        Request $request,
     ): Response {
         $post->lang = $request->get('lang')['lang'];
 

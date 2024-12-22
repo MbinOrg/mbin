@@ -86,7 +86,7 @@ class MessageThreadCreateApi extends MessageBaseApi
         User $receiver,
         MessageManager $manager,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiMessageLimiter
+        RateLimiterFactory $apiMessageLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiMessageLimiter);
 

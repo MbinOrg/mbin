@@ -21,7 +21,7 @@ class EntryCommentFavouriteController extends AbstractController
         Entry $entry,
         #[MapEntity(id: 'comment_id')]
         EntryComment $comment,
-        Request $request
+        Request $request,
     ): Response {
         return $this->render('entry/comment/favourites.html.twig', [
             'magazine' => $magazine,

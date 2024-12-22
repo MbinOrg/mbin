@@ -18,7 +18,7 @@ class PostFavouriteController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'post_id')]
         Post $post,
-        Request $request
+        Request $request,
     ): Response {
         return $this->render('post/favourites.html.twig', [
             'magazine' => $magazine,

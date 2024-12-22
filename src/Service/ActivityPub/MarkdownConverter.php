@@ -15,7 +15,7 @@ class MarkdownConverter
     public function __construct(
         private readonly TagExtractor $tagExtractor,
         private readonly MentionManager $mentionManager,
-        private readonly ActivityPubManager $activityPubManager
+        private readonly ActivityPubManager $activityPubManager,
     ) {
     }
 

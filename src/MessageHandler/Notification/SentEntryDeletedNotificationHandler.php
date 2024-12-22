@@ -19,7 +19,7 @@ class SentEntryDeletedNotificationHandler extends MbinMessageHandler
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly EntryRepository $repository,
-        private readonly NotificationManager $manager
+        private readonly NotificationManager $manager,
     ) {
         parent::__construct($this->entityManager);
     }

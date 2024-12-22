@@ -50,7 +50,7 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
         private readonly ImageManager $imageManager,
         private readonly GenerateHtmlClassService $classService,
         private readonly UserManager $userManager,
-        private readonly SettingsManager $settingsManager
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 

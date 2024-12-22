@@ -15,7 +15,7 @@ final class DetailsBlockRenderer implements NodeRendererInterface
     /** @param DetailsBlock $node */
     public function render(
         Node $node,
-        ChildNodeRendererInterface $childRenderer
+        ChildNodeRendererInterface $childRenderer,
     ): HtmlElement {
         DetailsBlock::assertInstanceOf($node);
 

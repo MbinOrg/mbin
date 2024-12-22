@@ -14,7 +14,7 @@ use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 class OAuthTokenRevoker
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 

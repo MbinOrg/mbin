@@ -15,7 +15,7 @@ class DomainCommentFrontController extends AbstractController
 {
     public function __construct(
         private readonly EntryCommentRepository $commentRepository,
-        private readonly DomainRepository $domainRepository
+        private readonly DomainRepository $domainRepository,
     ) {
     }
 

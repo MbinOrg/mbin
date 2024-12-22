@@ -25,7 +25,7 @@ class FavouriteHandleSubscriber implements EventSubscriberInterface
         private readonly MessageBusInterface $bus,
         private readonly CacheInterface $cache,
         private readonly CacheService $cacheService,
-        private readonly VoteManager $voteManager
+        private readonly VoteManager $voteManager,
     ) {
     }
 
@@ -57,7 +57,7 @@ class FavouriteHandleSubscriber implements EventSubscriberInterface
         match (\get_class($subject)) {
             EntryComment::class => $this->clearEntryCommentCache($subject),
             PostComment::class => $this->clearPostCommentCache($subject),
-            default => null
+            default => null,
         };
 
         if (!$event->user->apId) {

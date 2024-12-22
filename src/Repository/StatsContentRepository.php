@@ -24,7 +24,7 @@ class StatsContentRepository extends StatsRepository
     public function getOverallStats(
         ?User $user = null,
         ?Magazine $magazine = null,
-        ?bool $onlyLocal = null
+        ?bool $onlyLocal = null,
     ): array {
         $this->user = $user;
         $this->magazine = $magazine;
@@ -142,7 +142,7 @@ class StatsContentRepository extends StatsRepository
             'entry_comment' => 'entry_comment',
             'post' => 'post',
             'post_comment' => 'post_comment',
-            default => throw new \InvalidArgumentException("$tableName is not a valid countable")
+            default => throw new \InvalidArgumentException("$tableName is not a valid countable"),
         };
 
         $federatedCond = false === $federated ? ' AND e.ap_id IS NULL ' : '';

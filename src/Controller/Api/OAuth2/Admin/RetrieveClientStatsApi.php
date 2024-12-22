@@ -90,7 +90,7 @@ class RetrieveClientStatsApi extends BaseApi
     public function __invoke(
         Request $request,
         OAuth2ClientAccessRepository $repository,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
         $resolution = $request->get('resolution');

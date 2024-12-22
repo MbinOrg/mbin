@@ -31,7 +31,7 @@ class PostNoteFactory
         private readonly ActivityPubManager $activityPubManager,
         private readonly MentionManager $mentionManager,
         private readonly TagExtractor $tagExtractor,
-        private readonly MarkdownConverter $markdownConverter
+        private readonly MarkdownConverter $markdownConverter,
     ) {
     }
 

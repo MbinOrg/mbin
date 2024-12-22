@@ -95,7 +95,7 @@ class EntryCommentsCreateApi extends EntriesBaseApi
         EntryCommentManager $manager,
         EntryCommentFactory $factory,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiCommentLimiter
+        RateLimiterFactory $apiCommentLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiCommentLimiter);
 
@@ -205,7 +205,7 @@ class EntryCommentsCreateApi extends EntriesBaseApi
         EntryCommentManager $manager,
         EntryCommentFactory $factory,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiImageLimiter
+        RateLimiterFactory $apiImageLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiImageLimiter);
 

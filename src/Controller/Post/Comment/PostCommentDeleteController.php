@@ -26,7 +26,7 @@ class PostCommentDeleteController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'comment_id')]
         PostComment $comment,
-        Request $request
+        Request $request,
     ): Response {
         $this->validateCsrf('post_comment_delete', $request->getPayload()->get('token'));
 
@@ -42,7 +42,7 @@ class PostCommentDeleteController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'comment_id')]
         PostComment $comment,
-        Request $request
+        Request $request,
     ): Response {
         $this->validateCsrf('post_comment_restore', $request->getPayload()->get('token'));
 
@@ -58,7 +58,7 @@ class PostCommentDeleteController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'comment_id')]
         PostComment $comment,
-        Request $request
+        Request $request,
     ): Response {
         $this->validateCsrf('post_comment_purge', $request->getPayload()->get('token'));
 

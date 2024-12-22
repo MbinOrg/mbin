@@ -17,7 +17,7 @@ class TagCommentFrontController extends AbstractController
     public function __construct(
         private readonly EntryCommentRepository $repository,
         private readonly TagRepository $tagRepository,
-        private readonly TagExtractor $tagManager
+        private readonly TagExtractor $tagManager,
     ) {
     }
 

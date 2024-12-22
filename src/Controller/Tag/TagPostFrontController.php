@@ -25,7 +25,7 @@ class TagPostFrontController extends AbstractController
         ?string $sortBy,
         ?string $time,
         PostRepository $repository,
-        Request $request
+        Request $request,
     ): Response {
         $criteria = new PostPageView($this->getPageNb($request));
         $criteria->showSortOption($criteria->resolveSort($sortBy))

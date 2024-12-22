@@ -68,7 +68,7 @@ class UserBlockApi extends UserBaseApi
         User $user,
         UserManager $manager,
         UserFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 
@@ -133,7 +133,7 @@ class UserBlockApi extends UserBaseApi
         User $user,
         UserManager $manager,
         UserFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 

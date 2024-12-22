@@ -18,7 +18,7 @@ class MagazineBanDto
     public static function create(
         ?string $reason = null,
         ?\DateTimeInterface $expiredAt = null,
-        ?int $id = null
+        ?int $id = null,
     ): self {
         $dto = new MagazineBanDto();
         $dto->reason = $reason;

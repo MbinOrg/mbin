@@ -20,7 +20,7 @@ class NoteVisibilityUpdateCommand extends Command
 {
     public function __construct(
         private readonly UserRepository $repository,
-        private readonly MessageBusInterface $bus
+        private readonly MessageBusInterface $bus,
     ) {
         parent::__construct();
     }

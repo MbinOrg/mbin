@@ -49,7 +49,7 @@ class UserStatsController extends AbstractController
                 : $this->manager->drawMonthlyVotesChart($user, null, !$withFederated),
             default => $statsPeriod
                 ? $this->manager->drawDailyContentStatsByTime($start, $user, null, !$withFederated)
-                : $this->manager->drawMonthlyContentChart($user, null, !$withFederated)
+                : $this->manager->drawMonthlyContentChart($user, null, !$withFederated),
         };
 
         return $this->render(

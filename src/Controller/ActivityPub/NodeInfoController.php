@@ -15,7 +15,7 @@ class NodeInfoController
 
     public function __construct(
         private readonly NodeInfoFactory $nodeInfoFactory,
-        private readonly UrlGeneratorInterface $urlGenerator
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 

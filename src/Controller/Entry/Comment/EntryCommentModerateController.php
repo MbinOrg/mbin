@@ -25,7 +25,7 @@ class EntryCommentModerateController extends AbstractController
         Entry $entry,
         #[MapEntity(id: 'comment_id')]
         EntryComment $comment,
-        Request $request
+        Request $request,
     ): Response {
         if ($entry->magazine !== $magazine) {
             return $this->redirectToRoute(

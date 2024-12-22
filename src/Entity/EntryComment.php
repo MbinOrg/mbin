@@ -105,7 +105,7 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
         ?Entry $entry,
         User $user,
         ?EntryComment $parent = null,
-        ?string $ip = null
+        ?string $ip = null,
     ) {
         $this->body = $body;
         $this->entry = $entry;

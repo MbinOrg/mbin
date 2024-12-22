@@ -27,7 +27,7 @@ class EntryController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'entry_id')]
         Entry $entry,
-        Request $request
+        Request $request,
     ): Response {
         if ($entry->apId) {
             return $this->redirect($entry->apId);

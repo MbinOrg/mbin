@@ -82,7 +82,7 @@ class EntriesSetLanguageApi extends EntriesBaseApi
         Entry $entry,
         EntityManagerInterface $manager,
         EntryFactory $factory,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
