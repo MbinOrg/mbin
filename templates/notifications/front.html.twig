@@ -42,13 +42,23 @@
                 </button>
             </div>
         </div>
-
     </div>
 
     {% for notification in notifications %}
         <div class="{{ html_classes('section section--small notification', {'opacity-50': notification.status is not same as 'new' }) }}"
             {% if not notification.entry.magazine.apId and not notification.post.magazine.apId and (app.user.admin or app.user.moderator) %}
                 style="border-color:var(--kbin-upvoted-color);"
+                {% set titleString = 'notification_created_on_this_instance'|trans  %}
+                {% if notification.comment.user is not same as null %}
+                    {% set titleString = titleString ~ notification.comment.user.username %}
+                {% elseif notification.entry.user is not same as null %}
+                    {% set titleString = titleString ~ notification.entry.user.username %}
+                {% elseif notification.post.user is not same as null %}
+                    {% set titleString = titleString ~ notification.post.user.username %}
+                {% elseif notification.message.sender is not same as null %}
+                    {% set titleString = titleString ~ notification.message.sender.username %}
+                {% endif %}
+                title="{{ titleString }}"
             {% endif %}>
             <div>
                 {%- with {
