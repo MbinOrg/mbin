@@ -19,7 +19,7 @@ class TagEntryFrontController extends AbstractController
     public function __construct(
         private readonly EntryRepository $entryRepository,
         private readonly TagRepository $tagRepository,
-        private readonly TagExtractor $tagManager
+        private readonly TagExtractor $tagManager,
     ) {
     }
 

@@ -19,7 +19,7 @@ class VotableRepositoryResolver
         private readonly EntryRepository $entryRepository,
         private readonly EntryCommentRepository $entryCommentRepository,
         private readonly PostRepository $postRepository,
-        private readonly PostCommentRepository $postCommentRepository
+        private readonly PostCommentRepository $postCommentRepository,
     ) {
     }
 

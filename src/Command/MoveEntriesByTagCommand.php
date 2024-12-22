@@ -30,7 +30,7 @@ class MoveEntriesByTagCommand extends Command
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly MagazineRepository $magazineRepository,
-        private readonly EntryRepository $entryRepository
+        private readonly EntryRepository $entryRepository,
     ) {
         parent::__construct();
     }

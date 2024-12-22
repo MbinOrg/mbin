@@ -12,7 +12,7 @@ class LikeMessage implements ActivityPubOutboxInterface
         public int $userId,
         public int $objectId,
         public string $objectType,
-        public bool $removeLike = false
+        public bool $removeLike = false,
     ) {
     }
 }

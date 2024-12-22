@@ -22,7 +22,7 @@ class TagsUpdateCommand extends Command
 {
     public function __construct(
         private readonly TagExtractor $tagExtractor,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }

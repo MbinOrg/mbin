@@ -60,7 +60,7 @@ class DeleteClientApi extends BaseApi
         EntityManagerInterface $entityManager,
         CredentialsRevokerInterface $revoker,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiOauthClientDeleteLimiter
+        RateLimiterFactory $apiOauthClientDeleteLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit(anonLimiterFactory: $apiOauthClientDeleteLimiter);
 

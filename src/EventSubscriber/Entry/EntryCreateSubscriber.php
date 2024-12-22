@@ -21,7 +21,7 @@ class EntryCreateSubscriber implements EventSubscriberInterface
         private readonly MessageBusInterface $bus,
         private readonly DomainManager $manager,
         private readonly EntryRepository $entryRepository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 

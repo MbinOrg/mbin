@@ -13,7 +13,7 @@ class SubFixtures extends BaseFixture implements DependentFixtureInterface
 {
     public function __construct(
         private readonly MagazineManager $magazineManager,
-        private readonly UserManager $userManager
+        private readonly UserManager $userManager,
     ) {
     }
 

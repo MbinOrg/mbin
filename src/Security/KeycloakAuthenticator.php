@@ -37,7 +37,7 @@ class KeycloakAuthenticator extends OAuth2Authenticator
         private readonly IpResolver $ipResolver,
         private readonly Slugger $slugger,
         private readonly UserRepository $userRepository,
-        private readonly SettingsManager $settingsManager
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 

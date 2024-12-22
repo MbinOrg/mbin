@@ -19,7 +19,7 @@ class ReportHandleSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly ReportRepository $repository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 

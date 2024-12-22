@@ -54,7 +54,7 @@ class PostManager implements ContentManagerInterface
         private readonly ImageRepository $imageRepository,
         private readonly ApHttpClient $apHttpClient,
         private readonly SettingsManager $settingsManager,
-        private readonly CacheInterface $cache
+        private readonly CacheInterface $cache,
     ) {
     }
 

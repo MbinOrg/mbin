@@ -20,7 +20,7 @@ class ModeratorResponseDto implements \JsonSerializable
         ?int $userId = null,
         ?string $username = null,
         ?string $apId = null,
-        ?ImageDto $avatar = null
+        ?ImageDto $avatar = null,
     ): self {
         $dto = new ModeratorResponseDto();
         $dto->magazineId = $magazineId;

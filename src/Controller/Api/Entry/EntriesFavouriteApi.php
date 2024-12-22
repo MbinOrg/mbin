@@ -62,7 +62,7 @@ class EntriesFavouriteApi extends EntriesBaseApi
         Entry $entry,
         FavouriteManager $manager,
         EntryFactory $factory,
-        RateLimiterFactory $apiVoteLimiter
+        RateLimiterFactory $apiVoteLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiVoteLimiter);
 

@@ -17,7 +17,7 @@ class GroupFactory
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly MarkdownConverter $markdownConverter,
         private readonly ContextsProvider $contextProvider,
-        private readonly ImageManager $imageManager
+        private readonly ImageManager $imageManager,
     ) {
     }
 

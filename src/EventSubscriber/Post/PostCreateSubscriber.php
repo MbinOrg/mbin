@@ -25,7 +25,7 @@ class PostCreateSubscriber implements EventSubscriberInterface
         private readonly TagLinkRepository $tagLinkRepository,
         private readonly PostRepository $postRepository,
         private readonly PostManager $postManager,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 

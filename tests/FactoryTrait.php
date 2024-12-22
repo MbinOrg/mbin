@@ -269,7 +269,7 @@ trait FactoryTrait
         ?string $title = null,
         ?User $user = null,
         bool $isAdult = false,
-        ?string $description = null
+        ?string $description = null,
     ): Magazine {
         $manager = $this->getService(MagazineManager::class);
 

@@ -49,7 +49,7 @@ class EntryCommentNotificationManager implements ContentNotificationManagerInter
         private readonly EntityManagerInterface $entityManager,
         private readonly ImageManager $imageManager,
         private readonly GenerateHtmlClassService $classService,
-        private readonly SettingsManager $settingsManager
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 

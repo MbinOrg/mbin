@@ -24,7 +24,7 @@ class SubMagazineCommand extends Command
     public function __construct(
         private readonly MagazineManager $manager,
         private readonly MagazineRepository $magazineRepository,
-        private readonly UserRepository $userRepository
+        private readonly UserRepository $userRepository,
     ) {
         parent::__construct();
     }

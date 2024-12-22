@@ -215,7 +215,7 @@ class MagazineRetrieveApi extends MagazineBaseApi
         MagazineRepository $repository,
         MagazineFactory $factory,
         RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter
+        RateLimiterFactory $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 

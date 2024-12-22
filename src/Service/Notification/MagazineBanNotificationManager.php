@@ -18,7 +18,7 @@ class MagazineBanNotificationManager
     public function __construct(
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly MagazineBanRepository $repository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 

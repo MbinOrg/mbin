@@ -27,7 +27,7 @@ class EntryVotersController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'entry_id')]
         Entry $entry,
-        Request $request
+        Request $request,
     ): Response {
         if ('down' === $type && DownvotesMode::Enabled !== $this->settingsManager->getDownvotesMode()) {
             $votes = [];

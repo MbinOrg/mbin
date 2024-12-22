@@ -17,7 +17,7 @@ class PostComments extends AbstractController
     public function __construct(
         private readonly PostCommentRepository $repository,
         private readonly PostCommentFactory $factory,
-        private readonly RequestStack $request
+        private readonly RequestStack $request,
     ) {
     }
 

@@ -30,7 +30,7 @@ final class RelatedPostsComponent
         private readonly PostRepository $repository,
         private readonly CacheInterface $cache,
         private readonly SettingsManager $settingsManager,
-        private readonly MentionManager $mentionManager
+        private readonly MentionManager $mentionManager,
     ) {
     }
 

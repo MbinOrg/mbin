@@ -62,7 +62,7 @@ abstract class AbstractController extends BaseAbstractController
     protected function getJsonFormResponse(
         FormInterface $form,
         string $template,
-        ?array $variables = null
+        ?array $variables = null,
     ): JsonResponse {
         return new JsonResponse(
             [

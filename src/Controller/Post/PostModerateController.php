@@ -25,7 +25,7 @@ class PostModerateController extends AbstractController
         #[MapEntity(id: 'post_id')]
         Post $post,
         Request $request,
-        PostCommentRepository $repository
+        PostCommentRepository $repository,
     ): Response {
         if ($post->magazine !== $magazine) {
             return $this->redirectToRoute(

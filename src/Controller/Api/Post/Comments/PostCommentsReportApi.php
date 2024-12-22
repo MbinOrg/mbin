@@ -68,7 +68,7 @@ class PostCommentsReportApi extends PostsBaseApi
     public function __invoke(
         #[MapEntity(id: 'comment_id')]
         PostComment $comment,
-        RateLimiterFactory $apiReportLimiter
+        RateLimiterFactory $apiReportLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReportLimiter);
 

@@ -23,7 +23,7 @@ class MessageNotificationManager
         private readonly MagazineSubscriptionRepository $repository,
         private readonly MagazineFactory $magazineFactory,
         private readonly HubInterface $publisher,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 

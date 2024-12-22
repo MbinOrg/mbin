@@ -25,7 +25,7 @@ class EntryFrontController extends AbstractController
 {
     public function __construct(
         private readonly EntryRepository $entryRepository,
-        private readonly PostRepository $postRepository
+        private readonly PostRepository $postRepository,
     ) {
     }
 
@@ -37,7 +37,7 @@ class EntryFrontController extends AbstractController
         string $federation,
         #[MapQueryParameter]
         ?string $type,
-        Request $request
+        Request $request,
     ): Response {
         $user = $this->getUser();
 
@@ -84,7 +84,7 @@ class EntryFrontController extends AbstractController
         string $federation,
         #[MapQueryParameter]
         ?string $type,
-        Request $request
+        Request $request,
     ): Response {
         $user = $this->getUser();
         $subscription = $this->subscriptionFor($user);
@@ -108,7 +108,7 @@ class EntryFrontController extends AbstractController
         string $federation,
         #[MapQueryParameter]
         ?string $type,
-        Request $request
+        Request $request,
     ): Response {
         $user = $this->getUser();
         $response = new Response();
@@ -163,7 +163,7 @@ class EntryFrontController extends AbstractController
         string $federation,
         #[MapQueryParameter]
         ?string $type,
-        Request $request
+        Request $request,
     ): Response {
         $user = $this->getUser(); // Fetch the user
         $subscription = $this->subscriptionFor($user); // Determine the subscription filter based on the user

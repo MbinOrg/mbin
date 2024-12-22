@@ -82,7 +82,7 @@ class MagazineRemoveBadgesApi extends MagazineBaseApi
         Badge $badge,
         BadgeManager $manager,
         MagazineFactory $factory,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

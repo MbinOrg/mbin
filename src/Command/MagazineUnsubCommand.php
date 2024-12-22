@@ -21,7 +21,7 @@ class MagazineUnsubCommand extends Command
 {
     public function __construct(
         private readonly MagazineRepository $repository,
-        private readonly MagazineManager $manager
+        private readonly MagazineManager $manager,
     ) {
         parent::__construct();
     }

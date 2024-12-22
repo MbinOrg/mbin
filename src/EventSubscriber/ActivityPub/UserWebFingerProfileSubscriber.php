@@ -24,7 +24,7 @@ class UserWebFingerProfileSubscriber implements EventSubscriberInterface
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly SettingsManager $settingsManager,
         private readonly LoggerInterface $logger,
-        private readonly ImageManager $imageManager
+        private readonly ImageManager $imageManager,
     ) {
     }
 

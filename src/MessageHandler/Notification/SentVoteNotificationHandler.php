@@ -27,7 +27,7 @@ class SentVoteNotificationHandler extends MbinMessageHandler
         private readonly VotableRepositoryResolver $resolver,
         private readonly HubInterface $publisher,
         private readonly GenerateHtmlClassService $classService,
-        private readonly SettingsManager $settingsManager
+        private readonly SettingsManager $settingsManager,
     ) {
         parent::__construct($this->entityManager);
     }

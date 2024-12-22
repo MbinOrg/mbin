@@ -172,7 +172,7 @@ class PostsRetrieveApi extends PostsBaseApi
         PostFactory $factory,
         RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter
+        RateLimiterFactory $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -291,7 +291,7 @@ class PostsRetrieveApi extends PostsBaseApi
         PostFactory $factory,
         RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter
+        RateLimiterFactory $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -399,7 +399,7 @@ class PostsRetrieveApi extends PostsBaseApi
         PostFactory $factory,
         RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter
+        RateLimiterFactory $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -500,7 +500,7 @@ class PostsRetrieveApi extends PostsBaseApi
         PostFactory $factory,
         RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter
+        RateLimiterFactory $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -631,7 +631,7 @@ class PostsRetrieveApi extends PostsBaseApi
         PostFactory $factory,
         RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter
+        RateLimiterFactory $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 

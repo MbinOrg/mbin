@@ -30,7 +30,7 @@ class EntryCommentNoteFactory
         private readonly EntryPageFactory $pageFactory,
         private readonly ApHttpClient $client,
         private readonly ActivityPubManager $activityPubManager,
-        private readonly MarkdownConverter $markdownConverter
+        private readonly MarkdownConverter $markdownConverter,
     ) {
     }
 

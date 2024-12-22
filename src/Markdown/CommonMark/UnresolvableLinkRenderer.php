@@ -17,7 +17,7 @@ final class UnresolvableLinkRenderer implements NodeRendererInterface
      */
     public function render(
         Node $node,
-        ChildNodeRendererInterface $childRenderer
+        ChildNodeRendererInterface $childRenderer,
     ): HtmlElement {
         UnresolvableLink::assertInstanceOf($node);
 

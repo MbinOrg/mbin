@@ -142,7 +142,7 @@ class DomainRetrieveApi extends DomainBaseApi
         DomainRepository $repository,
         SearchManager $searchManager,
         RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter
+        RateLimiterFactory $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 

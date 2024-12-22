@@ -40,7 +40,7 @@ class EntryCreateController extends AbstractController
         private readonly EntryManager $manager,
         private readonly EntryCommentManager $commentManager,
         private readonly ValidatorInterface $validator,
-        private readonly IpResolver $ipResolver
+        private readonly IpResolver $ipResolver,
     ) {
     }
 
