@@ -34,13 +34,11 @@ jobs:
         with:
           path: ${{ steps.npm-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-npm-
 
       - uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-no-dev-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-no-dev-
 
       - run: cp .env.example .env
       - name: Composer install
