@@ -134,7 +134,7 @@ class UserEditController extends AbstractController
     private function handleForm(
         FormInterface $form,
         UserDto $dto,
-        Request $request
+        Request $request,
     ): FormInterface|Response|null {
         try {
             // Could thrown an error on event handlers (eg. onPostSubmit if a user upload an incorrect image)

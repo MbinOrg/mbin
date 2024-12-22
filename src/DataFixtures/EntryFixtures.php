@@ -20,7 +20,7 @@ class EntryFixtures extends BaseFixture implements DependentFixtureInterface
         private readonly EntryManager $entryManager,
         private readonly ImageManager $imageManager,
         private readonly ImageRepository $imageRepository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 

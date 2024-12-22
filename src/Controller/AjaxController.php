@@ -195,7 +195,7 @@ class AjaxController extends AbstractController
         string $mercurePublicUrl,
         string $mercureSubscriptionsToken,
         HttpClientInterface $httpClient,
-        CacheInterface $cache
+        CacheInterface $cache,
     ): JsonResponse {
         $resp = $httpClient->request('GET', $mercurePublicUrl.'/subscriptions/'.$topic, [
             'auth_bearer' => $mercureSubscriptionsToken,

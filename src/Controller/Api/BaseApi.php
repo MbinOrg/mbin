@@ -104,7 +104,7 @@ class BaseApi extends AbstractController
      */
     protected function rateLimit(
         ?RateLimiterFactory $limiterFactory = null,
-        ?RateLimiterFactory $anonLimiterFactory = null
+        ?RateLimiterFactory $anonLimiterFactory = null,
     ): array {
         $this->logAccess();
         if (null === $limiterFactory && null === $anonLimiterFactory) {

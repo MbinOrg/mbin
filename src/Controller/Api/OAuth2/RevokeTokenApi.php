@@ -49,7 +49,7 @@ class RevokeTokenApi extends BaseApi
     public function __invoke(
         EntityManagerInterface $entityManager,
         OAuthTokenRevoker $revoker,
-        RateLimiterFactory $apiOauthTokenRevokeLimiter
+        RateLimiterFactory $apiOauthTokenRevokeLimiter,
     ) {
         $headers = $this->rateLimit($apiOauthTokenRevokeLimiter);
 

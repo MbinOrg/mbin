@@ -63,7 +63,7 @@ class InstanceUpdateFederationApi extends InstanceBaseApi
         SettingsManager $settings,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

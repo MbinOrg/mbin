@@ -117,7 +117,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         ?string $rules,
         bool $isAdult,
         bool $postingRestrictedToMods,
-        ?Image $icon
+        ?Image $icon,
     ) {
         $this->name = $name;
         $this->title = $title;

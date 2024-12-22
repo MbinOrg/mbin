@@ -17,7 +17,7 @@ class AdminMagazineOwnershipRequestController extends AbstractController
 {
     public function __construct(
         private readonly MagazineOwnershipRequestRepository $repository,
-        private readonly MagazineManager $manager
+        private readonly MagazineManager $manager,
     ) {
     }
 

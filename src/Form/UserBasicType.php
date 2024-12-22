@@ -22,7 +22,7 @@ class UserBasicType extends AbstractType
         private readonly ImageListener $imageListener,
         private readonly AvatarListener $avatarListener,
         private readonly AddFieldsOnUserEdit $addAvatarFieldOnUserEdit,
-        private readonly DisableFieldsOnUserEdit $disableUsernameFieldOnUserEdit
+        private readonly DisableFieldsOnUserEdit $disableUsernameFieldOnUserEdit,
     ) {
     }
 

@@ -42,7 +42,7 @@ class FacebookAuthenticator extends OAuth2Authenticator
         private readonly ImageRepository $imageRepository,
         private readonly IpResolver $ipResolver,
         private readonly Slugger $slugger,
-        private readonly SettingsManager $settingsManager
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 

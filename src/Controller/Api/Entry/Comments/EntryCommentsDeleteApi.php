@@ -69,7 +69,7 @@ class EntryCommentsDeleteApi extends EntriesBaseApi
         #[MapEntity(id: 'comment_id')]
         EntryComment $comment,
         EntryCommentManager $manager,
-        RateLimiterFactory $apiDeleteLimiter
+        RateLimiterFactory $apiDeleteLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiDeleteLimiter);
 

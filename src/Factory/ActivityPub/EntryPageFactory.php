@@ -29,7 +29,7 @@ class EntryPageFactory
         private readonly MentionsWrapper $mentionsWrapper,
         private readonly ApHttpClient $client,
         private readonly ActivityPubManager $activityPubManager,
-        private readonly MarkdownConverter $markdownConverter
+        private readonly MarkdownConverter $markdownConverter,
     ) {
     }
 

@@ -36,7 +36,7 @@ class EntrySingleController extends AbstractController
         EntryCommentRepository $repository,
         EventDispatcherInterface $dispatcher,
         MentionManager $mentionManager,
-        Request $request
+        Request $request,
     ): Response {
         if ($entry->magazine !== $magazine) {
             return $this->redirectToRoute(

@@ -15,7 +15,7 @@ class UserController extends AbstractController
 {
     public function __construct(
         private readonly TombstoneFactory $tombstoneFactory,
-        private readonly PersonFactory $personFactory
+        private readonly PersonFactory $personFactory,
     ) {
     }
 

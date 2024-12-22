@@ -235,7 +235,7 @@ abstract class Criteria
             'link', 'links' => Entry::ENTRY_TYPE_LINK,
             'video', 'videos' => Entry::ENTRY_TYPE_VIDEO,
             'photo', 'photos', 'image', 'images' => Entry::ENTRY_TYPE_IMAGE,
-            default => 'all'
+            default => 'all',
         };
     }
 

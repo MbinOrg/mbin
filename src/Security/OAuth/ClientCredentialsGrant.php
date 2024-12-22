@@ -64,7 +64,7 @@ class ClientCredentialsGrant extends AbstractGrant
     public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        \DateInterval $accessTokenTTL
+        \DateInterval $accessTokenTTL,
     ): ResponseTypeInterface {
         list($clientId) = $this->getClientCredentials($request);
 

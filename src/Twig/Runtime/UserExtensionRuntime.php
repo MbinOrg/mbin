@@ -18,7 +18,7 @@ class UserExtensionRuntime implements RuntimeExtensionInterface
         private readonly Security $security,
         private readonly MentionManager $mentionManager,
         private readonly InstanceRepository $instanceRepository,
-        private readonly UserManager $userManager
+        private readonly UserManager $userManager,
     ) {
     }
 

@@ -50,7 +50,7 @@ class EntryCommentDto
     #[Assert\Callback]
     public function validate(
         ExecutionContextInterface $context,
-        $payload
+        $payload,
     ) {
         if (empty($this->image)) {
             $image = Request::createFromGlobals()->files->filter('entry_comment');
@@ -80,7 +80,7 @@ class EntryCommentDto
         Entry $entry,
         ?EntryComment $parent,
         ?Image $image = null,
-        ?string $body = null
+        ?string $body = null,
     ): self {
         $this->entry = $entry;
         $this->parent = $parent;

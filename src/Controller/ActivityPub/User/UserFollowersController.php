@@ -20,7 +20,7 @@ class UserFollowersController
         private readonly UserRepository $userRepository,
         private readonly ActivityPubManager $manager,
         private readonly CollectionInfoWrapper $collectionInfoWrapper,
-        private readonly CollectionItemsWrapper $collectionItemsWrapper
+        private readonly CollectionItemsWrapper $collectionItemsWrapper,
     ) {
     }
 

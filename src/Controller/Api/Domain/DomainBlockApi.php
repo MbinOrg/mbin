@@ -62,7 +62,7 @@ class DomainBlockApi extends DomainBaseApi
         Domain $domain,
         DomainManager $manager,
         DomainFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 
@@ -118,7 +118,7 @@ class DomainBlockApi extends DomainBaseApi
         Domain $domain,
         DomainManager $manager,
         DomainFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 

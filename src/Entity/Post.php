@@ -108,7 +108,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         Magazine $magazine,
         User $user,
         bool $isAdult,
-        ?string $ip = null
+        ?string $ip = null,
     ) {
         $this->body = $body;
         $this->magazine = $magazine;

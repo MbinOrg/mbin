@@ -15,7 +15,7 @@ class MentionsWrapper
         private readonly ActivityPubManager $activityPubManager,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly MentionManager $mentionManager,
-        private readonly SettingsManager $settingsManager
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 

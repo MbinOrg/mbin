@@ -63,7 +63,7 @@ class MagazineSubscribeApi extends MagazineBaseApi
         Magazine $magazine,
         MagazineManager $manager,
         MagazineFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 
@@ -120,7 +120,7 @@ class MagazineSubscribeApi extends MagazineBaseApi
         Magazine $magazine,
         MagazineManager $manager,
         MagazineFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 

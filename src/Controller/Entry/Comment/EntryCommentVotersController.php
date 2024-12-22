@@ -31,7 +31,7 @@ class EntryCommentVotersController extends AbstractController
         #[MapEntity(id: 'comment_id')]
         EntryComment $comment,
         Request $request,
-        string $type
+        string $type,
     ): Response {
         if ('down' === $type && DownvotesMode::Enabled !== $this->settingsManager->getDownvotesMode()) {
             $votes = [];

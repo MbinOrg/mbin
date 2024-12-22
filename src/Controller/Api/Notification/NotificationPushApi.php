@@ -71,7 +71,7 @@ class NotificationPushApi extends NotificationBaseApi
         SettingsManager $settingsManager,
         UserPushSubscriptionManager $pushSubscriptionManager,
         TranslatorInterface $translator,
-        #[MapRequestPayload] NotificationPushSubscriptionRequestDto $payload
+        #[MapRequestPayload] NotificationPushSubscriptionRequestDto $payload,
     ): JsonResponse {
         $headers = $this->rateLimit($apiNotificationLimiter);
         $user = $this->getUserOrThrow();

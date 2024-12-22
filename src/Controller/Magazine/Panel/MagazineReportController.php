@@ -20,7 +20,7 @@ class MagazineReportController extends AbstractController
     public function __construct(
         private readonly MagazineRepository $repository,
         private readonly NotificationRepository $notificationRepository,
-        private readonly ReportManager $reportManager
+        private readonly ReportManager $reportManager,
     ) {
     }
 
@@ -47,7 +47,7 @@ class MagazineReportController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'report_id')]
         Report $report,
-        Request $request
+        Request $request,
     ): Response {
         $this->validateCsrf('report_approve', $request->getPayload()->get('token'));
 
@@ -63,7 +63,7 @@ class MagazineReportController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'report_id')]
         Report $report,
-        Request $request
+        Request $request,
     ): Response {
         $this->validateCsrf('report_decline', $request->getPayload()->get('token'));
 

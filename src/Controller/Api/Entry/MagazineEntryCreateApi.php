@@ -89,7 +89,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
         EntryManager $manager,
-        RateLimiterFactory $apiEntryLimiter
+        RateLimiterFactory $apiEntryLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiEntryLimiter);
 
@@ -167,7 +167,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
         EntryManager $manager,
-        RateLimiterFactory $apiEntryLimiter
+        RateLimiterFactory $apiEntryLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiEntryLimiter);
 
@@ -240,7 +240,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
         EntryManager $manager,
-        RateLimiterFactory $apiEntryLimiter
+        RateLimiterFactory $apiEntryLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiEntryLimiter);
 
@@ -330,7 +330,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         Magazine $magazine,
         ValidatorInterface $validator,
         EntryManager $manager,
-        RateLimiterFactory $apiImageLimiter
+        RateLimiterFactory $apiImageLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiImageLimiter);
 

@@ -30,7 +30,7 @@ class EntryCommentCreateController extends AbstractController
         private readonly EntryCommentManager $manager,
         private readonly RequestStack $requestStack,
         private readonly IpResolver $ipResolver,
-        private readonly MentionManager $mentionManager
+        private readonly MentionManager $mentionManager,
     ) {
     }
 

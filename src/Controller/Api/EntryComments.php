@@ -17,7 +17,7 @@ class EntryComments extends AbstractController
     public function __construct(
         private readonly EntryCommentRepository $repository,
         private readonly EntryCommentFactory $factory,
-        private readonly RequestStack $request
+        private readonly RequestStack $request,
     ) {
     }
 

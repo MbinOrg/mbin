@@ -34,7 +34,7 @@ final class ExternalImagesRenderer implements NodeRendererInterface, Configurati
      */
     public function render(
         Node $node,
-        ChildNodeRendererInterface $childRenderer
+        ChildNodeRendererInterface $childRenderer,
     ): HtmlElement {
         Image::assertInstanceOf($node);
 

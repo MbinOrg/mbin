@@ -46,7 +46,7 @@ class ActivityHandler extends MbinMessageHandler
         private readonly ApHttpClient $apHttpClient,
         private readonly InstanceRepository $instanceRepository,
         private readonly RemoteInstanceManager $remoteInstanceManager,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
     ) {
         parent::__construct($this->entityManager);
     }

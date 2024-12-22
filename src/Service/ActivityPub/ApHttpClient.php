@@ -56,7 +56,7 @@ class ApHttpClient
         private readonly UserRepository $userRepository,
         private readonly MagazineRepository $magazineRepository,
         private readonly SiteRepository $siteRepository,
-        private readonly ProjectInfoService $projectInfo
+        private readonly ProjectInfoService $projectInfo,
     ) {
     }
 

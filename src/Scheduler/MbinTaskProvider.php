@@ -18,7 +18,7 @@ class MbinTaskProvider implements ScheduleProviderInterface
     private ?Schedule $schedule = null;
 
     public function __construct(
-        private readonly CacheInterface $cache
+        private readonly CacheInterface $cache,
     ) {
     }
 

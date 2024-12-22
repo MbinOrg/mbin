@@ -25,7 +25,7 @@ class PostChangeAdultController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'post_id')]
         Post $post,
-        Request $request
+        Request $request,
     ): Response {
         $this->validateCsrf('change_adult', $request->getPayload()->get('token'));
 

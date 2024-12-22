@@ -80,7 +80,7 @@ class MagazineUpdateApi extends MagazineBaseApi
         MagazineManager $manager,
         ValidatorInterface $validator,
         MagazineFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 

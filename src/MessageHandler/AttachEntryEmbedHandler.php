@@ -24,7 +24,7 @@ class AttachEntryEmbedHandler extends MbinMessageHandler
         private readonly Embed $embed,
         private readonly ImageManager $manager,
         private readonly ImageRepository $imageRepository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($this->entityManager);
     }

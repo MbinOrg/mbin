@@ -19,7 +19,7 @@ class SentPostEditedNotificationHandler extends MbinMessageHandler
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly PostRepository $repository,
-        private readonly NotificationManager $notificationManager
+        private readonly NotificationManager $notificationManager,
     ) {
         parent::__construct($this->entityManager);
     }

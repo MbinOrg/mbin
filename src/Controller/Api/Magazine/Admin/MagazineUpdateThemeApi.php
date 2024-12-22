@@ -101,7 +101,7 @@ class MagazineUpdateThemeApi extends MagazineBaseApi
         MagazineManager $manager,
         ImageFactory $imageFactory,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

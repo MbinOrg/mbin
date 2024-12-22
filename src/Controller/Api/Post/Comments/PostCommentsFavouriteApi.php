@@ -71,7 +71,7 @@ class PostCommentsFavouriteApi extends PostsBaseApi
         PostComment $comment,
         FavouriteManager $manager,
         PostCommentFactory $factory,
-        RateLimiterFactory $apiVoteLimiter
+        RateLimiterFactory $apiVoteLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiVoteLimiter);
 

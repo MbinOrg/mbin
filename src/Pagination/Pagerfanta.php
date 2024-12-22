@@ -69,7 +69,7 @@ class Pagerfanta implements PagerfantaInterface, \JsonSerializable
     public static function createForCurrentPageWithMaxPerPage(
         AdapterInterface $adapter,
         int $currentPage,
-        int $maxPerPage
+        int $maxPerPage,
     ): self {
         $pagerfanta = new self($adapter);
         $pagerfanta->setMaxPerPage($maxPerPage);

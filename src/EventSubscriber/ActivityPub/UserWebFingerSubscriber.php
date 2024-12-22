@@ -18,7 +18,7 @@ class UserWebFingerSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly WebFingerParameters $webfingerParameters,
         private readonly UserRepository $userRepository,
-        private readonly UrlGeneratorInterface $urlGenerator
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
