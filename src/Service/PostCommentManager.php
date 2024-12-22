@@ -54,6 +54,10 @@ class PostCommentManager implements ContentManagerInterface
      */
     public function create(PostCommentDto $dto, User $user, $rateLimit = true): PostComment
     {
+        if (!$user->apId) {
+            $user->ip = $dto->ip;
+        }
+
         if ($rateLimit) {
             $limiter = $this->postCommentLimiter->create($dto->ip);
             if ($limiter && false === $limiter->consume()->isAccepted()) {
@@ -122,6 +126,10 @@ class PostCommentManager implements ContentManagerInterface
      */
     public function edit(PostComment $comment, PostCommentDto $dto, ?User $editedBy = null): PostComment
     {
+        if (null !== $editedBy && !$editedBy->apId) {
+            $editedBy->ip = $dto->ip;
+        }
+
         Assert::same($comment->post->getId(), $dto->post->getId());
 
         $comment->body = $dto->body;
