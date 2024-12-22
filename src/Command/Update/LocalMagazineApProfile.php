@@ -20,7 +20,7 @@ class LocalMagazineApProfile extends Command
 {
     public function __construct(
         private readonly MagazineRepository $repository,
-        private readonly UrlGeneratorInterface $urlGenerator
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
         parent::__construct();
     }

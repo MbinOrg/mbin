@@ -18,7 +18,7 @@ class GroupWebFingerSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly WebFingerParameters $webfingerParameters,
         private readonly MagazineRepository $magazineRepository,
-        private readonly UrlGeneratorInterface $urlGenerator
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 

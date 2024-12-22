@@ -26,7 +26,7 @@ class PostCommentEditController extends AbstractController
 
     public function __construct(
         private readonly PostCommentManager $manager,
-        private readonly PostCommentRepository $repository
+        private readonly PostCommentRepository $repository,
     ) {
     }
 

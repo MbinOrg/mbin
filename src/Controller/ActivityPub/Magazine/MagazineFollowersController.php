@@ -20,7 +20,7 @@ class MagazineFollowersController extends AbstractController
         private readonly ActivityPubManager $manager,
         private readonly CollectionInfoWrapper $collectionInfoWrapper,
         private readonly CollectionItemsWrapper $collectionItemsWrapper,
-        private readonly MagazineSubscriptionRepository $magazineSubscriptionRepository
+        private readonly MagazineSubscriptionRepository $magazineSubscriptionRepository,
     ) {
     }
 

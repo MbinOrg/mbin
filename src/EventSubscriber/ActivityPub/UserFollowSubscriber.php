@@ -15,7 +15,7 @@ class UserFollowSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly MessageBusInterface $bus,
-        private readonly CacheInterface $cache
+        private readonly CacheInterface $cache,
     ) {
     }
 

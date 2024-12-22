@@ -88,7 +88,7 @@ class MagazineRemoveModeratorsApi extends MagazineBaseApi
         User $user,
         MagazineManager $manager,
         MagazineFactory $factory,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

@@ -28,7 +28,7 @@ class EntryDeleteImageController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'entry_id')]
         Entry $entry,
-        Request $request
+        Request $request,
     ): Response {
         $this->manager->detachImage($entry);
 

@@ -25,7 +25,7 @@ final class EntryCommentsNestedComponent
         private readonly Environment $twig,
         private readonly Security $security,
         private readonly CacheInterface $cache,
-        private readonly RequestStack $requestStack
+        private readonly RequestStack $requestStack,
     ) {
     }
 

@@ -36,7 +36,7 @@ class PrivacyPortalAuthenticator extends OAuth2Authenticator
         private readonly SettingsManager $settingsManager,
         private readonly UserRepository $userRepository,
         private readonly IpResolver $ipResolver,
-        private readonly Slugger $slugger
+        private readonly Slugger $slugger,
     ) {
     }
 

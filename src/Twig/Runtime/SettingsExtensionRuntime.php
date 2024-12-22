@@ -14,7 +14,7 @@ class SettingsExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         private readonly SettingsManager $settings,
-        private readonly ProjectInfoService $projectInfo
+        private readonly ProjectInfoService $projectInfo,
     ) {
     }
 

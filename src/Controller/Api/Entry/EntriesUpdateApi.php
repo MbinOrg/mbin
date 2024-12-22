@@ -77,7 +77,7 @@ class EntriesUpdateApi extends EntriesBaseApi
         Entry $entry,
         EntryManager $manager,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 

@@ -88,7 +88,7 @@ class UserRetrieveBannedApi extends UserBaseApi
     public function collection(
         UserRepository $userRepository,
         UserFactory $factory,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

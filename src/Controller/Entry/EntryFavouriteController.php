@@ -18,7 +18,7 @@ class EntryFavouriteController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'entry_id')]
         Entry $entry,
-        Request $request
+        Request $request,
     ): Response {
         return $this->render('entry/favourites.html.twig', [
             'magazine' => $magazine,

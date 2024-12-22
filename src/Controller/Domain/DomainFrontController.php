@@ -19,7 +19,7 @@ class DomainFrontController extends AbstractController
 {
     public function __construct(
         private readonly EntryRepository $entryRepository,
-        private readonly DomainRepository $domainRepository
+        private readonly DomainRepository $domainRepository,
     ) {
     }
 
@@ -29,7 +29,7 @@ class DomainFrontController extends AbstractController
         ?string $time,
         #[MapQueryParameter]
         ?string $type,
-        Request $request
+        Request $request,
     ): Response {
         if (!$domain = $this->domainRepository->findOneBy(['name' => $name])) {
             throw $this->createNotFoundException();

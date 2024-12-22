@@ -19,7 +19,7 @@ class LinkEmbedHandler extends MbinMessageHandler
         private readonly EntityManagerInterface $entityManager,
         private readonly EmbedRepository $embedRepository,
         private readonly Embed $embed,
-        private readonly CacheItemPoolInterface $markdownCache
+        private readonly CacheItemPoolInterface $markdownCache,
     ) {
         parent::__construct($this->entityManager);
     }

@@ -69,7 +69,7 @@ class PostsPinApi extends PostsBaseApi
         Post $post,
         PostManager $manager,
         PostFactory $factory,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

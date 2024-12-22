@@ -75,7 +75,7 @@ class EntryCommentsSetAdultApi extends EntriesBaseApi
         EntryComment $comment,
         EntryCommentFactory $factory,
         EntityManagerInterface $manager,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

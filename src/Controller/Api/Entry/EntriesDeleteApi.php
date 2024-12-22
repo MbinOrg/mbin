@@ -66,7 +66,7 @@ class EntriesDeleteApi extends EntriesBaseApi
         #[MapEntity(id: 'entry_id')]
         Entry $entry,
         EntryManager $manager,
-        RateLimiterFactory $apiDeleteLimiter
+        RateLimiterFactory $apiDeleteLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiDeleteLimiter);
 

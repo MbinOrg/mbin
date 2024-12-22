@@ -126,7 +126,7 @@ class MagazineRetrieveStatsApi extends MagazineBaseApi
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
         StatsVotesRepository $repository,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
         $request = $this->request->getCurrentRequest();
@@ -272,7 +272,7 @@ class MagazineRetrieveStatsApi extends MagazineBaseApi
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
         StatsContentRepository $repository,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
         $request = $this->request->getCurrentRequest();

@@ -18,7 +18,7 @@ class ContactManager
         private readonly SettingsManager $settings,
         private readonly MailerInterface $mailer,
         private readonly TranslatorInterface $translator,
-        private readonly RateLimiterFactory $contactLimiter
+        private readonly RateLimiterFactory $contactLimiter,
     ) {
     }
 

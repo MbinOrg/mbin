@@ -84,7 +84,7 @@ class MagazineAddBadgesApi extends MagazineBaseApi
         MagazineFactory $factory,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

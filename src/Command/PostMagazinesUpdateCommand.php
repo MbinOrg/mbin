@@ -24,7 +24,7 @@ class PostMagazinesUpdateCommand extends Command
         private readonly PostRepository $postRepository,
         private readonly PostManager $postManager,
         private readonly TagLinkRepository $tagLinkRepository,
-        private readonly MagazineRepository $magazineRepository
+        private readonly MagazineRepository $magazineRepository,
     ) {
         parent::__construct();
     }

@@ -14,7 +14,7 @@ class ImageBlurhashHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly ImageManager $manager
+        private readonly ImageManager $manager,
     ) {
     }
 

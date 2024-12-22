@@ -21,7 +21,7 @@ class UserUnsubCommand extends Command
 {
     public function __construct(
         private readonly UserRepository $repository,
-        private readonly UserManager $manager
+        private readonly UserManager $manager,
     ) {
         parent::__construct();
     }

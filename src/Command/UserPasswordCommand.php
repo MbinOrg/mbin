@@ -25,7 +25,7 @@ class UserPasswordCommand extends Command
         private readonly EntityManagerInterface $entityManager,
         private readonly UserPasswordHasherInterface $userPasswordHasher,
         private readonly UserRepository $repository,
-        private readonly UserManager $manager
+        private readonly UserManager $manager,
     ) {
         parent::__construct();
     }

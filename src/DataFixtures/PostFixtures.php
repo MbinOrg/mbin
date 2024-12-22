@@ -20,7 +20,7 @@ class PostFixtures extends BaseFixture implements DependentFixtureInterface
         private readonly PostManager $postManager,
         private readonly ImageManager $imageManager,
         private readonly ImageRepository $imageRepository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 

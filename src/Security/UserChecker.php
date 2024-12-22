@@ -18,7 +18,7 @@ class UserChecker implements UserCheckerInterface
     public function __construct(
         private readonly TranslatorInterface $translator,
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly UserManager $userManager
+        private readonly UserManager $userManager,
     ) {
     }
 

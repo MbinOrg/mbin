@@ -27,7 +27,7 @@ class SentUserConfirmationEmailHandler extends MbinMessageHandler
         private readonly EmailVerifier $emailVerifier,
         private readonly UserRepository $repository,
         private readonly ParameterBagInterface $params,
-        private readonly TranslatorInterface $translator
+        private readonly TranslatorInterface $translator,
     ) {
         parent::__construct($this->entityManager);
     }

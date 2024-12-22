@@ -21,7 +21,7 @@ class MagazineFixtures extends BaseFixture implements DependentFixtureInterface
         private readonly MagazineManager $magazineManager,
         private readonly ImageManager $imageManager,
         private readonly ImageRepository $imageRepository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 

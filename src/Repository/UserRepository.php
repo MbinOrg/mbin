@@ -480,7 +480,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     public function findWithAboutPaginated(
         int $page,
         string $group = self::USERS_ALL,
-        int $perPage = self::PER_PAGE
+        int $perPage = self::PER_PAGE,
     ): PagerfantaInterface {
         $query = $this->findWithAboutQueryBuilder($group)->getQuery();
 
@@ -545,7 +545,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     public function findBannedPaginated(
         int $page,
         string $group = self::USERS_ALL,
-        int $perPage = self::PER_PAGE
+        int $perPage = self::PER_PAGE,
     ): PagerfantaInterface {
         $query = $this->findBannedQueryBuilder($group)->getQuery();
 

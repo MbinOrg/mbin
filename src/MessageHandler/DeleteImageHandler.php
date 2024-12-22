@@ -19,7 +19,7 @@ class DeleteImageHandler extends MbinMessageHandler
         private readonly ImageRepository $imageRepository,
         private readonly ImageManager $imageManager,
         private readonly EntityManagerInterface $entityManager,
-        private readonly ManagerRegistry $managerRegistry
+        private readonly ManagerRegistry $managerRegistry,
     ) {
         parent::__construct($this->entityManager);
     }

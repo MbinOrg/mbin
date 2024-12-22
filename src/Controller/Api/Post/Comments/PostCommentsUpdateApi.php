@@ -91,7 +91,7 @@ class PostCommentsUpdateApi extends PostsBaseApi
         PostCommentManager $manager,
         PostCommentFactory $factory,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 

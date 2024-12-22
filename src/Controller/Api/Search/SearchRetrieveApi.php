@@ -110,7 +110,7 @@ class SearchRetrieveApi extends BaseApi
         MagazineFactory $magazineFactory,
         SettingsManager $settingsManager,
         RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter
+        RateLimiterFactory $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 

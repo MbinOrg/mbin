@@ -21,7 +21,7 @@ class MessageNotification extends Notification
 
     public function __construct(
         User $receiver,
-        Message $message
+        Message $message,
     ) {
         parent::__construct($receiver);
 

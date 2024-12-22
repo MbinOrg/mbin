@@ -47,7 +47,7 @@ class MagazineStatsController extends AbstractController
                 : $this->manager->drawMonthlyVotesChart(null, $magazine, !$withFederated),
             default => $statsPeriod
                 ? $this->manager->drawDailyContentStatsByTime($start, null, $magazine, !$withFederated)
-                : $this->manager->drawMonthlyContentChart(null, $magazine, !$withFederated)
+                : $this->manager->drawMonthlyContentChart(null, $magazine, !$withFederated),
         };
 
         return $this->render(

@@ -59,7 +59,7 @@ class EntryDto implements ContentVisibilityInterface
     #[Assert\Callback]
     public function validate(
         ExecutionContextInterface $context,
-        $payload
+        $payload,
     ) {
         if (empty($this->image)) {
             $image = Request::createFromGlobals()->files->filter('entry_image');

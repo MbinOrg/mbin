@@ -10,7 +10,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 class NotificationCreatedEvent extends Event
 {
     public function __construct(
-        public Notification $notification
+        public Notification $notification,
     ) {
     }
 }

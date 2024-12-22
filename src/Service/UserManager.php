@@ -58,7 +58,7 @@ readonly class UserManager
         private ImageRepository $imageRepository,
         private Security $security,
         private CacheInterface $cache,
-        private ReputationRepository $reputationRepository
+        private ReputationRepository $reputationRepository,
     ) {
     }
 

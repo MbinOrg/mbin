@@ -7,7 +7,7 @@ namespace App\Event\User;
 class UserEditedEvent
 {
     public function __construct(
-        public int $userId
+        public int $userId,
     ) {
     }
 }

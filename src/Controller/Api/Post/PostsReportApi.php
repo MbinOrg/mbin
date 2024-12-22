@@ -67,7 +67,7 @@ class PostsReportApi extends PostsBaseApi
     public function __invoke(
         #[MapEntity(id: 'post_id')]
         Post $post,
-        RateLimiterFactory $apiReportLimiter
+        RateLimiterFactory $apiReportLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReportLimiter);
 

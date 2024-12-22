@@ -19,7 +19,7 @@ class InstanceStatsManager
         private readonly MagazineRepository $magazineRepository,
         private readonly StatsContentRepository $statsContentRepository,
         private readonly VoteRepository $voteRepository,
-        private readonly CacheInterface $cache
+        private readonly CacheInterface $cache,
     ) {
     }
 

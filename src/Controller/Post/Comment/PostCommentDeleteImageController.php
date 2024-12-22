@@ -17,7 +17,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class PostCommentDeleteImageController extends AbstractController
 {
     public function __construct(
-        private readonly PostCommentManager $manager
+        private readonly PostCommentManager $manager,
     ) {
     }
 
@@ -30,7 +30,7 @@ class PostCommentDeleteImageController extends AbstractController
         Post $post,
         #[MapEntity(id: 'comment_id')]
         PostComment $comment,
-        Request $request
+        Request $request,
     ): Response {
         $this->manager->detachImage($comment);
 

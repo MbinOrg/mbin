@@ -32,7 +32,7 @@ class GithubAuthenticator extends OAuth2Authenticator
         private readonly EntityManagerInterface $entityManager,
         private readonly UserManager $userManager,
         private readonly Slugger $slugger,
-        private readonly SettingsManager $settingsManager
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 

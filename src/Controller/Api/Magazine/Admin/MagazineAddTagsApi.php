@@ -85,7 +85,7 @@ class MagazineAddTagsApi extends MagazineBaseApi
         string $tag,
         EntityManagerInterface $entityManager,
         MagazineFactory $factory,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

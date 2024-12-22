@@ -17,7 +17,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class PostCommentChangeAdultController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -29,7 +29,7 @@ class PostCommentChangeAdultController extends AbstractController
         Post $post,
         #[MapEntity(id: 'comment_id')]
         PostComment $comment,
-        Request $request
+        Request $request,
     ): Response {
         $this->validateCsrf('change_adult', $request->getPayload()->get('token'));
 

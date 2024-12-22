@@ -19,7 +19,7 @@ class RemoveMagazineNameFromTagsCommand extends Command
 {
     public function __construct(
         private readonly MagazineRepository $magazineRepository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }

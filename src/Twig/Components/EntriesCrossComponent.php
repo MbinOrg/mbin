@@ -23,7 +23,7 @@ final class EntriesCrossComponent
         private readonly CacheInterface $cache,
         private readonly Environment $twig,
         private readonly RequestStack $requestStack,
-        private readonly Security $security
+        private readonly Security $security,
     ) {
     }
 

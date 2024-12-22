@@ -19,7 +19,7 @@ class NotificationManager
     public function __construct(
         private readonly NotificationManagerTypeResolver $resolver,
         private readonly MessageNotificationManager $messageNotificationManager,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 

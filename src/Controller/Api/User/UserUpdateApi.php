@@ -54,7 +54,7 @@ class UserUpdateApi extends UserBaseApi
         UserManager $manager,
         ValidatorInterface $validator,
         UserFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 

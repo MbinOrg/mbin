@@ -181,7 +181,7 @@ class OAuth2ClientDto extends ImageUploadDto implements \JsonSerializable
     #[Assert\Callback]
     public function validate(
         ExecutionContextInterface $context,
-        $payload
+        $payload,
     ) {
         $validUris = array_filter($this->redirectUris, fn (string $uri) => filter_var($uri, FILTER_VALIDATE_URL) && !parse_url($uri, PHP_URL_QUERY));
         $invalidUris = array_diff($this->redirectUris, $validUris);

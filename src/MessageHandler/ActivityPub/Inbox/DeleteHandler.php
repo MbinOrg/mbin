@@ -36,7 +36,7 @@ class DeleteHandler extends MbinMessageHandler
         private readonly EntryManager $entryManager,
         private readonly EntryCommentManager $entryCommentManager,
         private readonly PostManager $postManager,
-        private readonly PostCommentManager $postCommentManager
+        private readonly PostCommentManager $postCommentManager,
     ) {
         parent::__construct($this->entityManager);
     }

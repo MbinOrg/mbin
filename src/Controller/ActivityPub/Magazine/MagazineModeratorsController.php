@@ -19,7 +19,7 @@ class MagazineModeratorsController
     public function __construct(
         private readonly ActivityPubManager $manager,
         private readonly MagazineRepository $magazineRepository,
-        private readonly UrlGeneratorInterface $urlGenerator
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 

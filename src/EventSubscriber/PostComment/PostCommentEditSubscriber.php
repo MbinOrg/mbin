@@ -16,7 +16,7 @@ class PostCommentEditSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly CacheInterface $cache,
-        private readonly MessageBusInterface $bus
+        private readonly MessageBusInterface $bus,
     ) {
     }
 
