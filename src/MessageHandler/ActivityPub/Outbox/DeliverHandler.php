@@ -31,7 +31,7 @@ class DeliverHandler extends MbinMessageHandler
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly ApHttpClient $client,
-        private readonly ActivityPubManager $manager,
+        private readonly ActivityPubManager $activityPubManager,
         private readonly SettingsManager $settingsManager,
         private readonly LoggerInterface $logger,
         private readonly InstanceRepository $instanceRepository,
@@ -120,7 +120,7 @@ class DeliverHandler extends MbinMessageHandler
             $url = $message->payload['actor'];
         }
         $this->logger->debug("Getting Actor for url: $url");
-        $actor = $this->manager->findActorOrCreate($url);
+        $actor = $this->activityPubManager->findActorOrCreate($url);
 
         if (!$actor) {
             $this->logger->debug('got no actor :(');

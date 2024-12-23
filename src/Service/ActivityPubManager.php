@@ -126,7 +126,6 @@ class ActivityPubManager
      *
      * @return User|Magazine|null or Magazine or null on error
      *
-     * @throws InstanceBannedException
      * @throws InvalidApPostException
      * @throws InvalidArgumentException
      * @throws InvalidWebfingerException
@@ -173,6 +172,11 @@ class ActivityPubManager
             return $this->userRepository->findOneBy(['username' => $name]);
         }
 
+        // Check if the instance is banned
+        if ($this->settingsManager->isBannedInstance($actorUrl)) {
+            return null;
+        }
+
         $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
         if ($user instanceof User) {
             $this->logger->debug('[ActivityPubManager::findActorOrCreate] Found remote user for url: "{url}" in db', ['url' => $actorUrl]);
@@ -182,6 +186,7 @@ class ActivityPubManager
 
             return $user;
         }
+
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
         if ($magazine instanceof Magazine) {
             $this->logger->debug('[ActivityPubManager::findActorOrCreate] Found remote user for url: "{url}" in db', ['url' => $actorUrl]);
@@ -279,7 +284,7 @@ class ActivityPubManager
         return $this->webFingerFactory->get($handle);
     }
 
-    public function buildHandle(string $id): string
+    private function buildHandle(string $id): string
     {
         $port = !\is_null(parse_url($id, PHP_URL_PORT))
             ? ':'.parse_url($id, PHP_URL_PORT)
@@ -328,7 +333,7 @@ class ActivityPubManager
      *
      * @return ?User or null on error (e.g. actor not found)
      */
-    public function updateUser(string $actorUrl): ?User
+    private function updateUser(string $actorUrl): ?User
     {
         $this->logger->info('[ActivityPubManager::updateUser] Updating user {name}', ['name' => $actorUrl]);
         $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
@@ -502,7 +507,7 @@ class ActivityPubManager
      *
      * @return ?Magazine or null on error
      */
-    public function updateMagazine(string $actorUrl): ?Magazine
+    private function updateMagazine(string $actorUrl): ?Magazine
     {
         $this->logger->info('[ActivityPubManager::updateMagazine] Updating magazine "{magName}"', ['magName' => $actorUrl]);
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
@@ -868,6 +873,10 @@ class ActivityPubManager
      */
     public function updateActor(string $actorUrl): Magazine|User|null
     {
+        if ($this->settingsManager->isBannedInstance($actorUrl)) {
+            return null;
+        }
+
         if ($this->userRepository->findOneBy(['apProfileId' => $actorUrl])) {
             return $this->updateUser($actorUrl);
         } elseif ($this->magazineRepository->findOneBy(['apProfileId' => $actorUrl])) {
