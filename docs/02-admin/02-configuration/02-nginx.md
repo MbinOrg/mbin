@@ -147,6 +147,14 @@ map "$instanceRequest$userRequest$magazineRequest$miscRequest" $regularRequest {
     default 0; # Other requests
 }
 
+map $regularRequest $mbin_limit_key {
+    0 "";
+    1 $binary_remote_addr;
+}
+
+# Two stage rate limit (10 MB zone): 2 requests/sec limit (=second stage)
+limit_req_zone $mbin_limit_key zone=mbin_limit:10m rate=2r/s;
+
 # Redirect HTTP to HTTPS
 server {
     server_name domain.tld;
@@ -182,6 +190,9 @@ server {
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
 
     client_max_body_size 20M; # Max size of a file that a user can upload
+
+    # Two stage rate limit
+    limit_req zone=mbin_limit burst=400 delay=200;
 
     # Error log
     error_log /var/log/nginx/mbin_error.log;
