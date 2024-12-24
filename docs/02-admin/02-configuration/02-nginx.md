@@ -152,8 +152,8 @@ map $regularRequest $mbin_limit_key {
     1 $binary_remote_addr;
 }
 
-# Two stage rate limit (10 MB zone): 2 requests/sec limit (=second stage)
-limit_req_zone $mbin_limit_key zone=mbin_limit:10m rate=2r/s;
+# Two stage rate limit (10 MB zone): 5 requests/second limit (=second stage)
+limit_req_zone $mbin_limit_key zone=mbin_limit:10m rate=5r/s;
 
 # Redirect HTTP to HTTPS
 server {
