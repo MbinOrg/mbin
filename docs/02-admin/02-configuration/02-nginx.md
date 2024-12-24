@@ -90,18 +90,61 @@ upstream mercure {
     keepalive 10;
 }
 
-# Map between POST requests on inbox vs the rest
-map $request $inboxRequest {
-    ~^POST\ \/f\/inbox      1;
-    ~^POST\ \/i\/inbox      1;
-    ~^POST\ \/m\/.+\/inbox  1;
-    ~^POST\ \/u\/.+\/inbox  1;
-    default                 0;
+# Map instance requests vs the rest
+map "$http_accept:$request" $instanceRequest {
+    ~^.*:GET\ \/.well-known\/.+                         1;
+    ~^.*:GET\ \/nodeinfo\/.+                            1;
+    ~^.*:GET\ \/i\/actor                                1;
+    ~^.*:POST\ \/i\/inbox                               1;
+    ~^.*:POST\ \/i\/outbox                              1;
+    ~^.*:POST\ \/f\/inbox                               1;
+    ~^application\/activity\+json:GET\ \/               1;
+    ~^application\/ld\+json:GET\ \/                     1;
+    ~^application\/json:GET\ \/                         1;
+    ~^application\/activity\+json:GET\ \/f\/object\/.+  1;
+    ~^application\/ld\+json:GET\ \/f\/object\/.+        1;
+    ~^application\/json:GET\ \/f\/object\/.+            1;
+    default                                             0;
 }
 
-map $inboxRequest $regularRequest {
-    1 0;
-    default 1;
+# Map user requests vs the rest
+map "$http_accept:$request" $userRequest {
+    ~^application\/activity\+json:GET\ \/u\/.+   1;
+    ~^application\/ld\+json:GET\ \/u\/.+         1;
+    ~^application\/json:GET\ \/u\/.+             1;
+    ~^application\/activity\+json:POST\ \/u\/.+  1;
+    ~^application\/ld\+json:POST\ \/u\/.+        1;
+    ~^application\/json:POST\ \/u\/.+            1;
+    default                                      0;
+}
+
+# Map magazine requests vs the rest
+map "$http_accept:$request" $magazineRequest {
+    ~^application\/activity\+json:GET\ \/m\/.+   1;
+    ~^application\/ld\+json:GET\ \/m\/.+         1;
+    ~^application\/json:GET\ \/m\/.+             1;
+    ~^application\/activity\+json:POST\ \/m\/.+  1;
+    ~^application\/ld\+json:POST\ \/m\/.+        1;
+    ~^application\/json:POST\ \/m\/.+            1;
+    default                                      0;
+}
+
+# Miscellaneous requests
+map "$http_accept:$request" $miscRequest {
+    ~^application\/activity\+json:GET\ \/reports\/.+  1;
+    ~^application\/ld\+json:GET\ \/reports\/.+        1;
+    ~^application\/json:GET\ \/reports\/.+            1;
+    ~^application\/activity\+json:GET\ \/message\/.+  1;
+    ~^application\/ld\+json:GET\ \/message\/.+        1;
+    ~^application\/json:GET\ \/message\/.+            1;
+    ~^.*:GET\ \/contexts\..+                          1;
+    default                                           0;
+}
+
+# Determine if a request should go into the regular log
+map "$instanceRequest$userRequest$magazineRequest$miscRequest" $regularRequest {
+    0000    1; # Regular requests
+    default 0; # Other requests
 }
 
 # Redirect HTTP to HTTPS
@@ -140,10 +183,15 @@ server {
 
     client_max_body_size 20M; # Max size of a file that a user can upload
 
-    # Logs
+    # Error log
     error_log /var/log/nginx/mbin_error.log;
+
+    # Access logs
     access_log /var/log/nginx/mbin_access.log combined if=$regularRequest;
-    access_log /var/log/nginx/mbin_inbox.log combined if=$inboxRequest buffer=32k flush=5m;
+    access_log /var/log/nginx/mbin_instance.log combined if=$instanceRequest buffer=32k flush=5m;
+    access_log /var/log/nginx/mbin_user.log combined if=$userRequest buffer=32k flush=5m;
+    access_log /var/log/nginx/mbin_magazine.log combined if=$magazineRequest buffer=32k flush=5m;
+    access_log /var/log/nginx/mbin_misc.log combined if=$miscRequest buffer=32k flush=5m;
 
     open_file_cache          max=1000 inactive=20s;
     open_file_cache_valid    60s;
