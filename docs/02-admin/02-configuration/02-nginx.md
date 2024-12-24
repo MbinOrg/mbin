@@ -192,7 +192,7 @@ server {
     client_max_body_size 20M; # Max size of a file that a user can upload
 
     # Two stage rate limit
-    limit_req zone=mbin_limit burst=400 delay=200;
+    limit_req zone=mbin_limit burst=300 delay=200;
 
     # Error log
     error_log /var/log/nginx/mbin_error.log;
