@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
+use App\Service\MentionManager;
 use App\Service\SettingsManager;
-use App\Tests\WebTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class MentionManagerTest extends WebTestCase
 {
@@ -26,8 +27,7 @@ class MentionManagerTest extends WebTestCase
 
         // Replace the actual setting service with the mock in the container
         $this->getContainer()->set(SettingsManager::class, $settingsManagerMock);
-
-        $manager = $this->mentionManager;
+        $manager = $this->getContainer()->get(MentionManager::class);
         $this->assertEquals($output, $manager->extract($input));
     }
 
