@@ -344,7 +344,7 @@ This command removes post and user duplicates by their ActivityPub ID.
 Usage:
 
 ```bash
-php bin/console mbin:user:create [-r|--remove] [--admin] [--moderator] [--] <username> <email> <password>
+php bin/console mbin:user:create [-r|--remove] [--admin] [--moderator] <username> <email> <password>
 ```
 
 ### Update-Local-Domain
@@ -354,5 +354,5 @@ created before v1.7.4 as the local domain was the fallback if no domain could be
 
 Usage:
 ```bash
-php bin/console mbin:update:local-domain [--]
+php bin/console mbin:update:local-domain
 ```
