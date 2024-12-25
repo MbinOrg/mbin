@@ -346,3 +346,13 @@ Usage:
 ```bash
 php bin/console mbin:user:create [-r|--remove] [--admin] [--moderator] [--] <username> <email> <password>
 ```
+
+### Update-Local-Domain
+
+This command will remove all remote posts from belonging to the local domain. This command is only relevant for instances
+created before v1.7.4 as the local domain was the fallback if no domain could be extracted from a post.
+
+Usage:
+```bash
+php bin/console mbin:update:local-domain [--]
+```
