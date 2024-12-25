@@ -53,7 +53,7 @@ class UserDto implements UserDtoInterface
     #[Assert\Callback]
     public function validate(
         ExecutionContextInterface $context,
-        $payload
+        $payload,
     ) {
         if (!Request::createFromGlobals()->request->has('user_register')) {
             return;

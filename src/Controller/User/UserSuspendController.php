@@ -15,7 +15,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UserSuspendController extends AbstractController
 {
     public function __construct(
-        private readonly UserManager $userManager
+        private readonly UserManager $userManager,
     ) {
     }
 

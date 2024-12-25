@@ -20,7 +20,7 @@ class ReportController extends AbstractController
 {
     public function __construct(
         private readonly ReportManager $manager,
-        private readonly TranslatorInterface $translator
+        private readonly TranslatorInterface $translator,
     ) {
     }
 

@@ -28,7 +28,7 @@ class MovePostsByTagCommand extends Command
         private readonly PostManager $postManager,
         private readonly EntityManagerInterface $entityManager,
         private readonly MagazineRepository $magazineRepository,
-        private readonly PostRepository $postRepository
+        private readonly PostRepository $postRepository,
     ) {
         parent::__construct();
     }

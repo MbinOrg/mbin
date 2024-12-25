@@ -66,7 +66,7 @@ class PostsDeleteApi extends PostsBaseApi
         #[MapEntity(id: 'post_id')]
         Post $post,
         PostManager $manager,
-        RateLimiterFactory $apiDeleteLimiter
+        RateLimiterFactory $apiDeleteLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiDeleteLimiter);
 

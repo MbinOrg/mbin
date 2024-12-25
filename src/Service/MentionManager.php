@@ -19,7 +19,7 @@ class MentionManager
 
     public function __construct(
         private readonly UserRepository $userRepository,
-        private readonly SettingsManager $settingsManager
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 
@@ -87,7 +87,7 @@ class MentionManager
         $result = match ($type) {
             self::ALL => array_merge($this->byApPrefix($val), $this->byPrefix($val)),
             self::LOCAL => $this->byPrefix($val),
-            self::REMOTE => $this->byApPrefix($val)
+            self::REMOTE => $this->byApPrefix($val),
         };
 
         $result = array_map(fn ($val) => trim($val), $result);

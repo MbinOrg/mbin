@@ -44,7 +44,7 @@ class NotificationRepository extends ServiceEntityRepository
         User $user,
         ?int $page,
         string $status = self::STATUS_ALL,
-        int $perPage = self::PER_PAGE
+        int $perPage = self::PER_PAGE,
     ): PagerfantaInterface {
         $qb = $this->createQueryBuilder('n')
             ->where('n.user = :user')

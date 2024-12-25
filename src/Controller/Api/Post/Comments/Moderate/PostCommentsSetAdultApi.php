@@ -75,7 +75,7 @@ class PostCommentsSetAdultApi extends PostsBaseApi
         PostComment $comment,
         PostCommentFactory $factory,
         EntityManagerInterface $manager,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

@@ -17,7 +17,7 @@ class TagPeopleFrontController extends AbstractController
     public function __construct(
         private readonly PeopleManager $manager,
         private readonly TagRepository $tagRepository,
-        private readonly MagazineRepository $magazineRepository
+        private readonly MagazineRepository $magazineRepository,
     ) {
     }
 
@@ -26,7 +26,7 @@ class TagPeopleFrontController extends AbstractController
         ?string $sortBy,
         ?string $time,
         PostRepository $repository,
-        Request $request
+        Request $request,
     ): Response {
         return $this->render(
             'tag/people.html.twig', [

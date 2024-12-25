@@ -16,7 +16,7 @@ class BoostController extends AbstractController
 {
     public function __construct(
         private readonly GenerateHtmlClassService $classService,
-        private readonly VoteManager $manager
+        private readonly VoteManager $manager,
     ) {
     }
 

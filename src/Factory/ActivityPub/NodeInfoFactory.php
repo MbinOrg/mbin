@@ -15,7 +15,7 @@ class NodeInfoFactory
     public function __construct(
         private readonly StatsContentRepository $repository,
         private readonly SettingsManager $settingsManager,
-        private readonly ProjectInfoService $projectInfo
+        private readonly ProjectInfoService $projectInfo,
     ) {
     }
 

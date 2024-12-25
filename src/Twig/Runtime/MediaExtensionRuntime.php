@@ -10,7 +10,7 @@ use Twig\Extension\RuntimeExtensionInterface;
 class MediaExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
-        private readonly string $storageUrl
+        private readonly string $storageUrl,
     ) {
     }
 

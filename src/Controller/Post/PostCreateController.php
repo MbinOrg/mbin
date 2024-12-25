@@ -20,7 +20,7 @@ class PostCreateController extends AbstractController
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly PostManager $manager,
-        private readonly IpResolver $ipResolver
+        private readonly IpResolver $ipResolver,
     ) {
     }
 

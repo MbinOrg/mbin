@@ -19,6 +19,7 @@ class DomainManager
         private readonly DomainRepository $repository,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly EntityManagerInterface $entityManager,
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 

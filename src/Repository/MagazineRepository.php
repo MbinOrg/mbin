@@ -198,7 +198,7 @@ class MagazineRepository extends ServiceEntityRepository
     public function findModerators(
         Magazine $magazine,
         ?int $page = 1,
-        int $perPage = self::PER_PAGE
+        int $perPage = self::PER_PAGE,
     ): PagerfantaInterface {
         $criteria = Criteria::create()
             ->orderBy(['isOwner' => 'DESC'])
@@ -253,7 +253,7 @@ class MagazineRepository extends ServiceEntityRepository
         Magazine $magazine,
         ?int $page = 1,
         int $perPage = self::PER_PAGE,
-        string $status = Report::STATUS_PENDING
+        string $status = Report::STATUS_PENDING,
     ): PagerfantaInterface {
         $dql = 'SELECT r FROM '.Report::class.' r WHERE r.magazine = :magazine';
 
@@ -292,7 +292,7 @@ class MagazineRepository extends ServiceEntityRepository
     public function findModeratedMagazines(
         User $user,
         ?int $page = 1,
-        int $perPage = self::PER_PAGE
+        int $perPage = self::PER_PAGE,
     ): PagerfantaInterface {
         $dql =
             'SELECT m FROM '.Magazine::class.' m WHERE m IN ('.

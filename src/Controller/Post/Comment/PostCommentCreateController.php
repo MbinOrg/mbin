@@ -30,7 +30,7 @@ class PostCommentCreateController extends AbstractController
         private readonly PostCommentManager $manager,
         private readonly PostCommentRepository $repository,
         private readonly IpResolver $ipResolver,
-        private readonly MentionManager $mentionManager
+        private readonly MentionManager $mentionManager,
     ) {
     }
 

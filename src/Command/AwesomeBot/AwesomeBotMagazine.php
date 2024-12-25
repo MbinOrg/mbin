@@ -28,7 +28,7 @@ class AwesomeBotMagazine extends Command
     public function __construct(
         private readonly UserRepository $repository,
         private readonly MagazineManager $magazineManager,
-        private readonly BadgeManager $badgeManager
+        private readonly BadgeManager $badgeManager,
     ) {
         parent::__construct();
     }

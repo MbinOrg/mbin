@@ -81,7 +81,7 @@ class PostsUpdateApi extends PostsBaseApi
         PostManager $manager,
         ValidatorInterface $validator,
         PostFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 

@@ -280,7 +280,7 @@ class UserRetrieveApi extends UserBaseApi
         UserRepository $userRepository,
         UserFactory $userFactory,
         RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter
+        RateLimiterFactory $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 

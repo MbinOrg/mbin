@@ -17,7 +17,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class EntryCommentChangeLangController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -29,7 +29,7 @@ class EntryCommentChangeLangController extends AbstractController
         Entry $entry,
         #[MapEntity(id: 'comment_id')]
         EntryComment $comment,
-        Request $request
+        Request $request,
     ): Response {
         $comment->lang = $request->get('lang')['lang'];
 

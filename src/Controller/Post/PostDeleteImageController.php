@@ -27,7 +27,7 @@ class PostDeleteImageController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'post_id')]
         Post $post,
-        Request $request
+        Request $request,
     ): Response {
         $this->manager->detachImage($post);
 

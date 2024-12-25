@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ResendActivationEmailController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 

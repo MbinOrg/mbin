@@ -31,7 +31,7 @@ class TagRepository extends ServiceEntityRepository
         ManagerRegistry $registry,
         private readonly EntityManagerInterface $entityManager,
         private readonly TagLinkRepository $tagLinkRepository,
-        private readonly ContentPopulationTransformer $populationTransformer
+        private readonly ContentPopulationTransformer $populationTransformer,
     ) {
         parent::__construct($registry, Hashtag::class);
     }

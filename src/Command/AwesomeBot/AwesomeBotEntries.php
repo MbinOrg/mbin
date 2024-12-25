@@ -31,7 +31,7 @@ class AwesomeBotEntries extends Command
         private readonly EntryManager $entryManager,
         private readonly UserRepository $userRepository,
         private readonly MagazineRepository $magazineRepository,
-        private readonly EntryRepository $entryRepository
+        private readonly EntryRepository $entryRepository,
     ) {
         parent::__construct();
     }

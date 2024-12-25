@@ -42,7 +42,7 @@ class PostCommentManager implements ContentManagerInterface
         private readonly RateLimiterFactory $postCommentLimiter,
         private readonly MessageBusInterface $bus,
         private readonly SettingsManager $settingsManager,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 

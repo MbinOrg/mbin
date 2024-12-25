@@ -28,7 +28,7 @@ class FollowHandler extends MbinMessageHandler
         private readonly MagazineManager $magazineManager,
         private readonly ApHttpClient $client,
         private readonly LoggerInterface $logger,
-        private readonly FollowResponseWrapper $followResponseWrapper
+        private readonly FollowResponseWrapper $followResponseWrapper,
     ) {
         parent::__construct($this->entityManager);
     }

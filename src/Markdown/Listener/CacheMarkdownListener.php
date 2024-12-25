@@ -26,7 +26,7 @@ final class CacheMarkdownListener implements EventSubscriberInterface
 
     public function __construct(
         private readonly CacheItemPoolInterface $pool,
-        private readonly EventDispatcherInterface $dispatcher
+        private readonly EventDispatcherInterface $dispatcher,
     ) {
     }
 

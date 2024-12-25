@@ -30,7 +30,7 @@ class EntryCommentDeleteController extends AbstractController
         Entry $entry,
         #[MapEntity(id: 'comment_id')]
         EntryComment $comment,
-        Request $request
+        Request $request,
     ): Response {
         $this->validateCsrf('entry_comment_delete', $request->getPayload()->get('token'));
 
@@ -48,7 +48,7 @@ class EntryCommentDeleteController extends AbstractController
         Entry $entry,
         #[MapEntity(id: 'comment_id')]
         EntryComment $comment,
-        Request $request
+        Request $request,
     ): Response {
         $this->validateCsrf('entry_comment_restore', $request->getPayload()->get('token'));
 
@@ -66,7 +66,7 @@ class EntryCommentDeleteController extends AbstractController
         Entry $entry,
         #[MapEntity(id: 'comment_id')]
         EntryComment $comment,
-        Request $request
+        Request $request,
     ): Response {
         $this->validateCsrf('entry_comment_purge', $request->getPayload()->get('token'));
 

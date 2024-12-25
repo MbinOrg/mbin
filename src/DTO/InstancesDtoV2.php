@@ -12,7 +12,7 @@ class InstancesDtoV2 implements \JsonSerializable
 {
     public function __construct(
         #[OA\Property(type: 'array', items: new OA\Items(ref: new Model(type: InstanceDto::class)))]
-        public ?array $instances
+        public ?array $instances,
     ) {
     }
 

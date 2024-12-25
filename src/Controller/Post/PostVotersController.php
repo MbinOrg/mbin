@@ -20,7 +20,7 @@ class PostVotersController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'post_id')]
         Post $post,
-        Request $request
+        Request $request,
     ): Response {
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([

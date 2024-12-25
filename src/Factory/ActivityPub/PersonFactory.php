@@ -17,7 +17,7 @@ class PersonFactory
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly ContextsProvider $contextProvider,
         private readonly ImageManager $imageManager,
-        private readonly MarkdownConverter $markdownConverter
+        private readonly MarkdownConverter $markdownConverter,
     ) {
     }
 

@@ -21,7 +21,7 @@ class EntryCommentFixtures extends BaseFixture implements DependentFixtureInterf
         private readonly EntryCommentManager $commentManager,
         private readonly ImageManager $imageManager,
         private readonly ImageRepository $imageRepository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 

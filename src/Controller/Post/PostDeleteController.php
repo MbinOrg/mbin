@@ -26,7 +26,7 @@ class PostDeleteController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'post_id')]
         Post $post,
-        Request $request
+        Request $request,
     ): Response {
         $this->manager->delete($this->getUserOrThrow(), $post);
 
@@ -40,7 +40,7 @@ class PostDeleteController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'post_id')]
         Post $post,
-        Request $request
+        Request $request,
     ): Response {
         $this->manager->restore($this->getUserOrThrow(), $post);
 
@@ -54,7 +54,7 @@ class PostDeleteController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'post_id')]
         Post $post,
-        Request $request
+        Request $request,
     ): Response {
         $this->manager->purge($this->getUserOrThrow(), $post);
 

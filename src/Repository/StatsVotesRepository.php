@@ -16,7 +16,7 @@ class StatsVotesRepository extends StatsRepository
 {
     public function __construct(
         private readonly SettingsManager $settingsManager,
-        ManagerRegistry $registry
+        ManagerRegistry $registry,
     ) {
         parent::__construct($registry);
     }
@@ -25,7 +25,7 @@ class StatsVotesRepository extends StatsRepository
     public function getOverallStats(
         ?User $user = null,
         ?Magazine $magazine = null,
-        ?bool $onlyLocal = null
+        ?bool $onlyLocal = null,
     ): array {
         $this->user = $user;
         $this->magazine = $magazine;

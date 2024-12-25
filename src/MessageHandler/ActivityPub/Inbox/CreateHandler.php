@@ -40,7 +40,7 @@ class CreateHandler extends MbinMessageHandler
         private readonly LoggerInterface $logger,
         private readonly MessageManager $messageManager,
         private readonly ActivityPubManager $activityPubManager,
-        private readonly ApActivityRepository $repository
+        private readonly ApActivityRepository $repository,
     ) {
         parent::__construct($this->entityManager);
     }

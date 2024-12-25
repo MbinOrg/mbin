@@ -16,7 +16,7 @@ final class PostCommentComponent
 {
     public function __construct(
         private readonly RequestStack $requestStack,
-        private readonly AuthorizationCheckerInterface $authorizationChecker
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
     ) {
     }
 

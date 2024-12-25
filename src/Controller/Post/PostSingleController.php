@@ -36,7 +36,7 @@ class PostSingleController extends AbstractController
         PostCommentRepository $repository,
         EventDispatcherInterface $dispatcher,
         MentionManager $mentionManager,
-        Request $request
+        Request $request,
     ): Response {
         if ($post->magazine !== $magazine) {
             return $this->redirectToRoute(

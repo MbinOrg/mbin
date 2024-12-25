@@ -21,7 +21,7 @@ class ApImportObject extends Command
 {
     public function __construct(
         private readonly MessageBusInterface $bus,
-        private readonly ApHttpClient $client
+        private readonly ApHttpClient $client,
     ) {
         parent::__construct();
     }

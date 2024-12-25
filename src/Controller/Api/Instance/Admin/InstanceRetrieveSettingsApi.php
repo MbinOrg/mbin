@@ -52,7 +52,7 @@ class InstanceRetrieveSettingsApi extends InstanceBaseApi
     #[IsGranted('ROLE_OAUTH2_ADMIN:INSTANCE:SETTINGS:READ')]
     public function __invoke(
         SettingsManager $settings,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

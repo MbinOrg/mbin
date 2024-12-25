@@ -48,7 +48,7 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
 
     public function render(
         Node $node,
-        ChildNodeRendererInterface $childRenderer
+        ChildNodeRendererInterface $childRenderer,
     ): HtmlElement {
         /* @var Link $node */
         Link::assertInstanceOf($node);
@@ -57,7 +57,7 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
 
         $url = $title = match ($node::class) {
             RoutedMentionLink::class => $this->generateUrlForRoute($node, $renderTarget),
-            default => $node->getUrl()
+            default => $node->getUrl(),
         };
 
         if (RegexHelper::isLinkPotentiallyUnsafe($url)) {

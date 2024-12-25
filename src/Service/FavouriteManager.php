@@ -26,7 +26,7 @@ class FavouriteManager
         private readonly FavouriteFactory $factory,
         private readonly FavouriteRepository $repository,
         private readonly EntityManagerInterface $entityManager,
-        private readonly EventDispatcherInterface $dispatcher
+        private readonly EventDispatcherInterface $dispatcher,
     ) {
     }
 
