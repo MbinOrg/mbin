@@ -19,6 +19,7 @@ use App\Service\EntryManager;
 use App\Service\PostCommentManager;
 use App\Service\PostManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -36,6 +37,7 @@ class MagazinePurgeHandler extends MbinMessageHandler
         private readonly PostManager $postManager,
         private readonly MessageBusInterface $bus,
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
