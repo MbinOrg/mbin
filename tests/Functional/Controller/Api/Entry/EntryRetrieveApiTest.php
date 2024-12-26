@@ -227,8 +227,7 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['magazine']);
         self::assertIsArray($jsonData['items'][0]['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['user']);
-        self::assertIsArray($jsonData['items'][0]['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['items'][0]['domain']);
+        self::assertNull($jsonData['items'][0]['domain']);
         self::assertNull($jsonData['items'][0]['url']);
         self::assertEquals('test', $jsonData['items'][0]['body']);
         if (null !== $jsonData['items'][0]['image']) {
@@ -287,8 +286,7 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['magazine']);
         self::assertIsArray($jsonData['items'][0]['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['user']);
-        self::assertIsArray($jsonData['items'][0]['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['items'][0]['domain']);
+        self::assertNull($jsonData['items'][0]['domain']);
         self::assertNull($jsonData['items'][0]['url']);
         self::assertEquals('test', $jsonData['items'][0]['body']);
         if (null !== $jsonData['items'][0]['image']) {
@@ -358,8 +356,7 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['magazine']);
         self::assertIsArray($jsonData['items'][0]['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['user']);
-        self::assertIsArray($jsonData['items'][0]['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['items'][0]['domain']);
+        self::assertNull($jsonData['items'][0]['domain']);
         self::assertNull($jsonData['items'][0]['url']);
         self::assertEquals('test', $jsonData['items'][0]['body']);
         if (null !== $jsonData['items'][0]['image']) {
@@ -428,8 +425,7 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['magazine']);
         self::assertIsArray($jsonData['items'][0]['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['user']);
-        self::assertIsArray($jsonData['items'][0]['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['items'][0]['domain']);
+        self::assertNull($jsonData['items'][0]['domain']);
         self::assertNull($jsonData['items'][0]['url']);
         self::assertEquals('test', $jsonData['items'][0]['body']);
         if (null !== $jsonData['items'][0]['image']) {
@@ -501,8 +497,7 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['magazine']);
         self::assertIsArray($jsonData['items'][0]['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['user']);
-        self::assertIsArray($jsonData['items'][0]['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['items'][0]['domain']);
+        self::assertNull($jsonData['items'][0]['domain']);
         self::assertNull($jsonData['items'][0]['url']);
         self::assertEquals('test', $jsonData['items'][0]['body']);
         if (null !== $jsonData['items'][0]['image']) {
@@ -595,8 +590,7 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['magazine']);
         self::assertIsArray($jsonData['items'][0]['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['user']);
-        self::assertIsArray($jsonData['items'][0]['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['items'][0]['domain']);
+        self::assertNull($jsonData['items'][0]['domain']);
         self::assertNull($jsonData['items'][0]['url']);
         self::assertEquals('test', $jsonData['items'][0]['body']);
         if (null !== $jsonData['items'][0]['image']) {
@@ -902,8 +896,7 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['magazine']);
         self::assertIsArray($jsonData['items'][0]['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['user']);
-        self::assertIsArray($jsonData['items'][0]['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['items'][0]['domain']);
+        self::assertNull($jsonData['items'][0]['domain']);
         self::assertNull($jsonData['items'][0]['url']);
         self::assertEquals('test', $jsonData['items'][0]['body']);
         if (null !== $jsonData['items'][0]['image']) {
@@ -953,8 +946,7 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['magazine']);
         self::assertIsArray($jsonData['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['user']);
-        self::assertIsArray($jsonData['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['domain']);
+        self::assertNull($jsonData['domain']);
         self::assertNull($jsonData['url']);
         self::assertEquals('test', $jsonData['body']);
         self::assertNull($jsonData['image']);
@@ -1001,8 +993,7 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['magazine']);
         self::assertIsArray($jsonData['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['user']);
-        self::assertIsArray($jsonData['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['domain']);
+        self::assertNull($jsonData['domain']);
         self::assertNull($jsonData['url']);
         self::assertEquals('test', $jsonData['body']);
         self::assertNull($jsonData['image']);
@@ -1048,8 +1039,7 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['magazine']);
         self::assertIsArray($jsonData['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['user']);
-        self::assertIsArray($jsonData['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['domain']);
+        self::assertNull($jsonData['domain']);
         self::assertNull($jsonData['url']);
         self::assertEquals('test', $jsonData['body']);
         self::assertNull($jsonData['image']);

@@ -80,8 +80,7 @@ class EntryCreateApiTest extends WebTestCase
         self::assertIsArray($jsonData['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['user']);
         self::assertSame($user->getId(), $jsonData['user']['userId']);
-        self::assertIsArray($jsonData['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['domain']);
+        self::assertNull($jsonData['domain']);
         self::assertNull($jsonData['url']);
         self::assertEquals('This is an article', $jsonData['body']);
         self::assertNull($jsonData['image']);
@@ -310,8 +309,7 @@ class EntryCreateApiTest extends WebTestCase
         self::assertIsArray($jsonData['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['user']);
         self::assertSame($user->getId(), $jsonData['user']['userId']);
-        self::assertIsArray($jsonData['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['domain']);
+        self::assertNull($jsonData['domain']);
         self::assertNull($jsonData['url']);
         self::assertNull($jsonData['body']);
         self::assertIsArray($jsonData['image']);

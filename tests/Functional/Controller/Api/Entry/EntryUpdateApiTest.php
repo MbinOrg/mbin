@@ -120,8 +120,7 @@ class EntryUpdateApiTest extends WebTestCase
         self::assertIsArray($jsonData['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['user']);
         self::assertSame($user->getId(), $jsonData['user']['userId']);
-        self::assertIsArray($jsonData['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['domain']);
+        self::assertNull($jsonData['domain']);
         self::assertNull($jsonData['url']);
         self::assertEquals($updateRequest['body'], $jsonData['body']);
         self::assertNull($jsonData['image']);
@@ -376,9 +375,9 @@ class EntryUpdateApiTest extends WebTestCase
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
 
-        echo "User has image: {$user->avatar?->getId()} {$user->avatar?->filePath}";
+        //echo "User has image: {$user->avatar?->getId()} {$user->avatar?->filePath}";
         $imageDto = $this->getKibbyImageDto();
-        echo "Generated kibby image: {$imageDto->id} {$imageDto->filePath}";
+        //echo "Generated kibby image: {$imageDto->id} {$imageDto->filePath}";
         $entry = $this->getEntryByTitle('test image', image: $imageDto, user: $user, magazine: $magazine);
         self::assertNotNull($imageDto->id);
         self::assertNotNull($entry->image);
@@ -417,8 +416,7 @@ class EntryUpdateApiTest extends WebTestCase
         self::assertIsArray($jsonData['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['user']);
         self::assertSame($user->getId(), $jsonData['user']['userId']);
-        self::assertIsArray($jsonData['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['domain']);
+        self::assertNull($jsonData['domain']);
         self::assertNull($jsonData['url']);
         self::assertEquals($updateRequest['body'], $jsonData['body']);
         self::assertIsArray($jsonData['image']);
