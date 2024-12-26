@@ -97,6 +97,10 @@ jobs:
         env:
           COMPOSER_CACHE_DIR: ${{ steps.composer-cache.outputs.dir }}
           SYMFONY_DEPRECATIONS_HELPER: disabled
+          DATABASE_HOST: postgres
+          DATABASE_PORT: 5432
+          REDIS_HOST: valkey
+          REDIS_PORT: 6379
         run: php bin/phpunit tests/Unit
 
       - name: Run integration tests
