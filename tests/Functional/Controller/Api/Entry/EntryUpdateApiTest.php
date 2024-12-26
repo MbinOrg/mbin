@@ -375,9 +375,7 @@ class EntryUpdateApiTest extends WebTestCase
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
 
-        //echo "User has image: {$user->avatar?->getId()} {$user->avatar?->filePath}";
         $imageDto = $this->getKibbyImageDto();
-        //echo "Generated kibby image: {$imageDto->id} {$imageDto->filePath}";
         $entry = $this->getEntryByTitle('test image', image: $imageDto, user: $user, magazine: $magazine);
         self::assertNotNull($imageDto->id);
         self::assertNotNull($entry->image);
