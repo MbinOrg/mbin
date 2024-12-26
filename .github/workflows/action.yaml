@@ -51,7 +51,7 @@ jobs:
       - name: Build frontend (production)
         run: npm run build
 
-  integration-test:
+  automated-tests:
     runs-on: ubuntu-latest
     container:
       image: danger89/mbin-pipeline:1.3.0
