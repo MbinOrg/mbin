@@ -30,6 +30,7 @@ use App\Service\RemoteInstanceManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -39,6 +40,7 @@ class ActivityHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly SignatureValidator $signatureValidator,
         private readonly SettingsManager $settingsManager,
         private readonly MessageBusInterface $bus,
@@ -48,7 +50,7 @@ class ActivityHandler extends MbinMessageHandler
         private readonly RemoteInstanceManager $remoteInstanceManager,
         private readonly LoggerInterface $logger,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(ActivityMessage $message): void

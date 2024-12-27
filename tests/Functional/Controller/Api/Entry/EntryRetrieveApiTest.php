@@ -4,53 +4,44 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Entry;
 
-use App\Service\EntryManager;
-use App\Service\FavouriteManager;
-use App\Service\VoteManager;
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class EntryRetrieveApiTest extends WebTestCase
 {
     public function testApiCannotGetSubscribedEntriesAnonymous(): void
     {
-        $client = self::createClient();
-
-        $client->request('GET', '/api/entries/subscribed');
+        $this->client->request('GET', '/api/entries/subscribed');
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotGetSubscribedEntriesWithoutScope(): void
     {
-        $client = self::createClient();
-
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'write');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'write');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/entries/subscribed', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/entries/subscribed', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanGetSubscribedEntries(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $this->getEntryByTitle('an entry', body: 'test');
         $magazine = $this->getMagazineByNameNoRSAKey('somemag', $user);
         $entry = $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/entries/subscribed', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/entries/subscribed', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -74,9 +65,11 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['items'][0]['domain']);
         self::assertEquals('https://google.com', $jsonData['items'][0]['url']);
         self::assertNull($jsonData['items'][0]['body']);
-        self::assertNull($jsonData['items'][0]['image']);
+        if (null !== $jsonData['items'][0]['image']) {
+            self::assertStringContainsString('google.com', parse_url($jsonData['items'][0]['image']['sourceUrl'], PHP_URL_HOST));
+        }
         self::assertEquals('en', $jsonData['items'][0]['lang']);
-        self::assertNull($jsonData['items'][0]['tags']);
+        self::assertEmpty($jsonData['items'][0]['tags']);
         self::assertIsArray($jsonData['items'][0]['badges']);
         self::assertEmpty($jsonData['items'][0]['badges']);
         self::assertSame(0, $jsonData['items'][0]['numComments']);
@@ -99,43 +92,38 @@ class EntryRetrieveApiTest extends WebTestCase
 
     public function testApiCannotGetModeratedEntriesAnonymous(): void
     {
-        $client = self::createClient();
-
-        $client->request('GET', '/api/entries/moderated');
+        $this->client->request('GET', '/api/entries/moderated');
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotGetModeratedEntriesWithoutScope(): void
     {
-        $client = self::createClient();
-
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/entries/moderated', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/entries/moderated', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanGetModeratedEntries(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $this->getEntryByTitle('an entry', body: 'test');
         $magazine = $this->getMagazineByNameNoRSAKey('somemag', $user);
         $entry = $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:entry');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:entry');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/entries/moderated', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/entries/moderated', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -159,9 +147,11 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['items'][0]['domain']);
         self::assertEquals('https://google.com', $jsonData['items'][0]['url']);
         self::assertNull($jsonData['items'][0]['body']);
-        self::assertNull($jsonData['items'][0]['image']);
+        if (null !== $jsonData['items'][0]['image']) {
+            self::assertStringContainsString('google.com', parse_url($jsonData['items'][0]['image']['sourceUrl'], PHP_URL_HOST));
+        }
         self::assertEquals('en', $jsonData['items'][0]['lang']);
-        self::assertNull($jsonData['items'][0]['tags']);
+        self::assertEmpty($jsonData['items'][0]['tags']);
         self::assertIsArray($jsonData['items'][0]['badges']);
         self::assertEmpty($jsonData['items'][0]['badges']);
         self::assertSame(0, $jsonData['items'][0]['numComments']);
@@ -184,46 +174,41 @@ class EntryRetrieveApiTest extends WebTestCase
 
     public function testApiCannotGetFavouritedEntriesAnonymous(): void
     {
-        $client = self::createClient();
-
-        $client->request('GET', '/api/entries/favourited');
+        $this->client->request('GET', '/api/entries/favourited');
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotGetFavouritedEntriesWithoutScope(): void
     {
-        $client = self::createClient();
-
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/entries/favourited', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/entries/favourited', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanGetFavouritedEntries(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
 
-        $favouriteManager = $this->getService(FavouriteManager::class);
+        $favouriteManager = $this->favouriteManager;
         $favouriteManager->toggle($user, $entry);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read entry:vote');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry:vote');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/entries/favourited', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/entries/favourited', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -242,13 +227,14 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['magazine']);
         self::assertIsArray($jsonData['items'][0]['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['user']);
-        self::assertIsArray($jsonData['items'][0]['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['items'][0]['domain']);
+        self::assertNull($jsonData['items'][0]['domain']);
         self::assertNull($jsonData['items'][0]['url']);
         self::assertEquals('test', $jsonData['items'][0]['body']);
-        self::assertNull($jsonData['items'][0]['image']);
+        if (null !== $jsonData['items'][0]['image']) {
+            self::assertStringContainsString('google.com', parse_url($jsonData['items'][0]['image']['sourceUrl'], PHP_URL_HOST));
+        }
         self::assertEquals('en', $jsonData['items'][0]['lang']);
-        self::assertNull($jsonData['items'][0]['tags']);
+        self::assertEmpty($jsonData['items'][0]['tags']);
         self::assertIsArray($jsonData['items'][0]['badges']);
         self::assertEmpty($jsonData['items'][0]['badges']);
         self::assertSame(0, $jsonData['items'][0]['numComments']);
@@ -271,18 +257,17 @@ class EntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntriesAnonymous(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $this->createEntryComment('up the ranking', $entry);
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $second = $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
         // Check that pinned entries don't get pinned to the top of the instance, just the magazine
-        $entryManager = $this->getService(EntryManager::class);
+        $entryManager = $this->entryManager;
         $entryManager->pin($second, null);
 
-        $client->request('GET', '/api/entries');
+        $this->client->request('GET', '/api/entries');
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -301,13 +286,14 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['magazine']);
         self::assertIsArray($jsonData['items'][0]['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['user']);
-        self::assertIsArray($jsonData['items'][0]['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['items'][0]['domain']);
+        self::assertNull($jsonData['items'][0]['domain']);
         self::assertNull($jsonData['items'][0]['url']);
         self::assertEquals('test', $jsonData['items'][0]['body']);
-        self::assertNull($jsonData['items'][0]['image']);
+        if (null !== $jsonData['items'][0]['image']) {
+            self::assertStringContainsString('google.com', parse_url($jsonData['items'][0]['image']['sourceUrl'], PHP_URL_HOST));
+        }
         self::assertEquals('en', $jsonData['items'][0]['lang']);
-        self::assertNull($jsonData['items'][0]['tags']);
+        self::assertEmpty($jsonData['items'][0]['tags']);
         self::assertIsArray($jsonData['items'][0]['badges']);
         self::assertEmpty($jsonData['items'][0]['badges']);
         self::assertSame(1, $jsonData['items'][0]['numComments']);
@@ -338,21 +324,20 @@ class EntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntries(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $this->createEntryComment('up the ranking', $entry);
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/entries', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/entries', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -371,13 +356,14 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['magazine']);
         self::assertIsArray($jsonData['items'][0]['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['user']);
-        self::assertIsArray($jsonData['items'][0]['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['items'][0]['domain']);
+        self::assertNull($jsonData['items'][0]['domain']);
         self::assertNull($jsonData['items'][0]['url']);
         self::assertEquals('test', $jsonData['items'][0]['body']);
-        self::assertNull($jsonData['items'][0]['image']);
+        if (null !== $jsonData['items'][0]['image']) {
+            self::assertStringContainsString('google.com', parse_url($jsonData['items'][0]['image']['sourceUrl'], PHP_URL_HOST));
+        }
         self::assertEquals('en', $jsonData['items'][0]['lang']);
-        self::assertNull($jsonData['items'][0]['tags']);
+        self::assertEmpty($jsonData['items'][0]['tags']);
         self::assertIsArray($jsonData['items'][0]['badges']);
         self::assertEmpty($jsonData['items'][0]['badges']);
         self::assertSame(1, $jsonData['items'][0]['numComments']);
@@ -409,19 +395,18 @@ class EntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntriesWithLanguageAnonymous(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $this->createEntryComment('up the ranking', $entry);
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $second = $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine, lang: 'de');
         $this->getEntryByTitle('a dutch entry', body: 'some body', magazine: $magazine, lang: 'nl');
         // Check that pinned entries don't get pinned to the top of the instance, just the magazine
-        $entryManager = $this->getService(EntryManager::class);
+        $entryManager = $this->entryManager;
         $entryManager->pin($second, null);
 
-        $client->request('GET', '/api/entries?lang[]=en&lang[]=de');
+        $this->client->request('GET', '/api/entries?lang[]=en&lang[]=de');
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -440,13 +425,14 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['magazine']);
         self::assertIsArray($jsonData['items'][0]['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['user']);
-        self::assertIsArray($jsonData['items'][0]['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['items'][0]['domain']);
+        self::assertNull($jsonData['items'][0]['domain']);
         self::assertNull($jsonData['items'][0]['url']);
         self::assertEquals('test', $jsonData['items'][0]['body']);
-        self::assertNull($jsonData['items'][0]['image']);
+        if (null !== $jsonData['items'][0]['image']) {
+            self::assertStringContainsString('google.com', parse_url($jsonData['items'][0]['image']['sourceUrl'], PHP_URL_HOST));
+        }
         self::assertEquals('en', $jsonData['items'][0]['lang']);
-        self::assertNull($jsonData['items'][0]['tags']);
+        self::assertEmpty($jsonData['items'][0]['tags']);
         self::assertIsArray($jsonData['items'][0]['badges']);
         self::assertEmpty($jsonData['items'][0]['badges']);
         self::assertSame(1, $jsonData['items'][0]['numComments']);
@@ -478,7 +464,6 @@ class EntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntriesWithLanguage(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $this->createEntryComment('up the ranking', $entry);
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
@@ -486,14 +471,14 @@ class EntryRetrieveApiTest extends WebTestCase
         $this->getEntryByTitle('a dutch entry', body: 'some body', magazine: $magazine, lang: 'nl');
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/entries?lang[]=en&lang[]=de', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/entries?lang[]=en&lang[]=de', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -512,13 +497,14 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['magazine']);
         self::assertIsArray($jsonData['items'][0]['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['user']);
-        self::assertIsArray($jsonData['items'][0]['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['items'][0]['domain']);
+        self::assertNull($jsonData['items'][0]['domain']);
         self::assertNull($jsonData['items'][0]['url']);
         self::assertEquals('test', $jsonData['items'][0]['body']);
-        self::assertNull($jsonData['items'][0]['image']);
+        if (null !== $jsonData['items'][0]['image']) {
+            self::assertStringContainsString('google.com', parse_url($jsonData['items'][0]['image']['sourceUrl'], PHP_URL_HOST));
+        }
         self::assertEquals('en', $jsonData['items'][0]['lang']);
-        self::assertNull($jsonData['items'][0]['tags']);
+        self::assertEmpty($jsonData['items'][0]['tags']);
         self::assertIsArray($jsonData['items'][0]['badges']);
         self::assertEmpty($jsonData['items'][0]['badges']);
         self::assertSame(1, $jsonData['items'][0]['numComments']);
@@ -551,22 +537,20 @@ class EntryRetrieveApiTest extends WebTestCase
 
     public function testApiCannotGetEntriesByPreferredLangAnonymous(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $this->createEntryComment('up the ranking', $entry);
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $second = $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
         // Check that pinned entries don't get pinned to the top of the instance, just the magazine
-        $entryManager = $this->getService(EntryManager::class);
+        $entryManager = $this->entryManager;
         $entryManager->pin($second, null);
 
-        $client->request('GET', '/api/entries?usePreferredLangs=true');
+        $this->client->request('GET', '/api/entries?usePreferredLangs=true');
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanGetEntriesByPreferredLang(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $this->createEntryComment('up the ranking', $entry);
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
@@ -575,19 +559,19 @@ class EntryRetrieveApiTest extends WebTestCase
 
         $user = $this->getUserByUsername('user');
         $user->preferredLanguages = ['en'];
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($user);
         $entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/entries?usePreferredLangs=true', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/entries?usePreferredLangs=true', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -606,13 +590,14 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['magazine']);
         self::assertIsArray($jsonData['items'][0]['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['user']);
-        self::assertIsArray($jsonData['items'][0]['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['items'][0]['domain']);
+        self::assertNull($jsonData['items'][0]['domain']);
         self::assertNull($jsonData['items'][0]['url']);
         self::assertEquals('test', $jsonData['items'][0]['body']);
-        self::assertNull($jsonData['items'][0]['image']);
+        if (null !== $jsonData['items'][0]['image']) {
+            self::assertStringContainsString('google.com', parse_url($jsonData['items'][0]['image']['sourceUrl'], PHP_URL_HOST));
+        }
         self::assertEquals('en', $jsonData['items'][0]['lang']);
-        self::assertNull($jsonData['items'][0]['tags']);
+        self::assertEmpty($jsonData['items'][0]['tags']);
         self::assertIsArray($jsonData['items'][0]['badges']);
         self::assertEmpty($jsonData['items'][0]['badges']);
         self::assertSame(1, $jsonData['items'][0]['numComments']);
@@ -645,7 +630,6 @@ class EntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntriesNewest(): void
     {
-        $client = self::createClient();
         $first = $this->getEntryByTitle('first', body: 'test');
         $second = $this->getEntryByTitle('second', url: 'https://google.com');
         $third = $this->getEntryByTitle('third', url: 'https://google.com');
@@ -654,21 +638,21 @@ class EntryRetrieveApiTest extends WebTestCase
         $second->createdAt = new \DateTimeImmutable('-1 second');
         $third->createdAt = new \DateTimeImmutable();
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($first);
         $entityManager->persist($second);
         $entityManager->persist($third);
         $entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/entries?sort=newest', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/entries?sort=newest', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -694,7 +678,6 @@ class EntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntriesOldest(): void
     {
-        $client = self::createClient();
         $first = $this->getEntryByTitle('first', body: 'test');
         $second = $this->getEntryByTitle('second', url: 'https://google.com');
         $third = $this->getEntryByTitle('third', url: 'https://google.com');
@@ -703,21 +686,21 @@ class EntryRetrieveApiTest extends WebTestCase
         $second->createdAt = new \DateTimeImmutable('-1 second');
         $third->createdAt = new \DateTimeImmutable();
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($first);
         $entityManager->persist($second);
         $entityManager->persist($third);
         $entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/entries?sort=oldest', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/entries?sort=oldest', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -743,7 +726,6 @@ class EntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntriesCommented(): void
     {
-        $client = self::createClient();
         $first = $this->getEntryByTitle('first', body: 'test');
         $this->createEntryComment('comment 1', $first);
         $this->createEntryComment('comment 2', $first);
@@ -752,14 +734,14 @@ class EntryRetrieveApiTest extends WebTestCase
         $third = $this->getEntryByTitle('third', url: 'https://google.com');
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/entries?sort=commented', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/entries?sort=commented', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -788,7 +770,6 @@ class EntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntriesActive(): void
     {
-        $client = self::createClient();
         $first = $this->getEntryByTitle('first', body: 'test');
         $second = $this->getEntryByTitle('second', url: 'https://google.com');
         $third = $this->getEntryByTitle('third', url: 'https://google.com');
@@ -797,21 +778,21 @@ class EntryRetrieveApiTest extends WebTestCase
         $second->lastActive = new \DateTime('-1 second');
         $third->lastActive = new \DateTime();
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($first);
         $entityManager->persist($second);
         $entityManager->persist($third);
         $entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/entries?sort=active', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/entries?sort=active', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -837,25 +818,24 @@ class EntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntriesTop(): void
     {
-        $client = self::createClient();
         $first = $this->getEntryByTitle('first', body: 'test');
         $second = $this->getEntryByTitle('second', url: 'https://google.com');
         $third = $this->getEntryByTitle('third', url: 'https://google.com');
 
-        $voteManager = $this->getService(VoteManager::class);
+        $voteManager = $this->voteManager;
         $voteManager->vote(1, $first, $this->getUserByUsername('voter1'), rateLimit: false);
         $voteManager->vote(1, $first, $this->getUserByUsername('voter2'), rateLimit: false);
         $voteManager->vote(1, $second, $this->getUserByUsername('voter1'), rateLimit: false);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/entries?sort=top', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/entries?sort=top', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -884,21 +864,20 @@ class EntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntriesWithUserVoteStatus(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $this->createEntryComment('up the ranking', $entry);
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read vote');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read vote');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/entries', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/entries', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -917,13 +896,14 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['magazine']);
         self::assertIsArray($jsonData['items'][0]['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['user']);
-        self::assertIsArray($jsonData['items'][0]['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['items'][0]['domain']);
+        self::assertNull($jsonData['items'][0]['domain']);
         self::assertNull($jsonData['items'][0]['url']);
         self::assertEquals('test', $jsonData['items'][0]['body']);
-        self::assertNull($jsonData['items'][0]['image']);
+        if (null !== $jsonData['items'][0]['image']) {
+            self::assertStringContainsString('google.com', parse_url($jsonData['items'][0]['image']['sourceUrl'], PHP_URL_HOST));
+        }
         self::assertEquals('en', $jsonData['items'][0]['lang']);
-        self::assertNull($jsonData['items'][0]['tags']);
+        self::assertEmpty($jsonData['items'][0]['tags']);
         self::assertSame(1, $jsonData['items'][0]['numComments']);
         self::assertSame(0, $jsonData['items'][0]['uv']);
         self::assertSame(0, $jsonData['items'][0]['dv']);
@@ -952,12 +932,11 @@ class EntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntryByIdAnonymous(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
 
-        $client->request('GET', "/api/entry/{$entry->getId()}");
+        $this->client->request('GET', "/api/entry/{$entry->getId()}");
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData);
@@ -967,13 +946,12 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['magazine']);
         self::assertIsArray($jsonData['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['user']);
-        self::assertIsArray($jsonData['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['domain']);
+        self::assertNull($jsonData['domain']);
         self::assertNull($jsonData['url']);
         self::assertEquals('test', $jsonData['body']);
         self::assertNull($jsonData['image']);
         self::assertEquals('en', $jsonData['lang']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertIsArray($jsonData['badges']);
         self::assertEmpty($jsonData['badges']);
         self::assertSame(0, $jsonData['numComments']);
@@ -995,18 +973,17 @@ class EntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntryById(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/entry/{$entry->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/entry/{$entry->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData);
@@ -1016,13 +993,12 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['magazine']);
         self::assertIsArray($jsonData['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['user']);
-        self::assertIsArray($jsonData['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['domain']);
+        self::assertNull($jsonData['domain']);
         self::assertNull($jsonData['url']);
         self::assertEquals('test', $jsonData['body']);
         self::assertNull($jsonData['image']);
         self::assertEquals('en', $jsonData['lang']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertSame(0, $jsonData['numComments']);
         self::assertSame(0, $jsonData['uv']);
         self::assertSame(0, $jsonData['dv']);
@@ -1043,18 +1019,17 @@ class EntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntryByIdWithUserVoteStatus(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read vote');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read vote');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/entry/{$entry->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/entry/{$entry->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData);
@@ -1064,13 +1039,12 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['magazine']);
         self::assertIsArray($jsonData['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['user']);
-        self::assertIsArray($jsonData['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['domain']);
+        self::assertNull($jsonData['domain']);
         self::assertNull($jsonData['url']);
         self::assertEquals('test', $jsonData['body']);
         self::assertNull($jsonData['image']);
         self::assertEquals('en', $jsonData['lang']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertSame(0, $jsonData['numComments']);
         self::assertSame(0, $jsonData['uv']);
         self::assertSame(0, $jsonData['dv']);

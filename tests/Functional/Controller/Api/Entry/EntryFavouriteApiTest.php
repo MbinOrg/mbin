@@ -10,47 +10,44 @@ class EntryFavouriteApiTest extends WebTestCase
 {
     public function testApiCannotFavouriteEntryAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', magazine: $magazine);
 
-        $client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/favourite");
+        $this->client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/favourite");
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotFavouriteEntryWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/favourite", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/favourite", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanFavouriteEntry(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read entry:vote');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry:vote');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/favourite", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/entry/{$entry->getId()}/favourite", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData);
@@ -62,13 +59,12 @@ class EntryFavouriteApiTest extends WebTestCase
         self::assertIsArray($jsonData['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['user']);
         self::assertSame($user->getId(), $jsonData['user']['userId']);
-        self::assertIsArray($jsonData['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['domain']);
+        self::assertNull($jsonData['domain']);
         self::assertNull($jsonData['url']);
         self::assertEquals($entry->body, $jsonData['body']);
         self::assertNull($jsonData['image']);
         self::assertEquals($entry->lang, $jsonData['lang']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertIsArray($jsonData['badges']);
         self::assertEmpty($jsonData['badges']);
         self::assertSame(0, $jsonData['numComments']);

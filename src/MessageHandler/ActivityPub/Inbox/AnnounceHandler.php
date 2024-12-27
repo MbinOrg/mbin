@@ -14,6 +14,7 @@ use App\Service\ActivityPubManager;
 use App\Service\VoteManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -24,11 +25,12 @@ class AnnounceHandler extends MbinMessageHandler
         private readonly ActivityPubManager $activityPubManager,
         private readonly EntityManagerInterface $entityManager,
         private readonly MessageBusInterface $bus,
+        private readonly KernelInterface $kernel,
         private readonly VoteManager $manager,
         private readonly VoteHandleSubscriber $voteHandleSubscriber,
         private readonly LoggerInterface $logger,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(AnnounceMessage $message): void

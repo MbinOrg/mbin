@@ -10,13 +10,12 @@ class InstanceModlogApiTest extends WebTestCase
 {
     public function testApiCanRetrieveModlogAnonymous(): void
     {
-        $client = self::createClient();
         $this->createModlogMessages();
 
-        $client->request('GET', '/api/modlog');
+        $this->client->request('GET', '/api/modlog');
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -34,20 +33,19 @@ class InstanceModlogApiTest extends WebTestCase
 
     public function testApiCanRetrieveModlog(): void
     {
-        $client = self::createClient();
         $this->createModlogMessages();
 
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/modlog', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/modlog', server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);

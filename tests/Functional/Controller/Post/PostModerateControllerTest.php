@@ -10,42 +10,39 @@ class PostModerateControllerTest extends WebTestCase
 {
     public function testModCanShowPanel(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $post = $this->createPost('test post 1');
 
-        $crawler = $client->request('get', '/microblog');
-        $client->click($crawler->filter('#post-'.$post->getId())->selectLink('moderate')->link());
+        $crawler = $this->client->request('get', '/microblog');
+        $this->client->click($crawler->filter('#post-'.$post->getId())->selectLink('Moderate')->link());
 
         $this->assertSelectorTextContains('.moderate-panel', 'ban');
     }
 
     public function testXmlModCanShowPanel(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $post = $this->createPost('test post 1');
 
-        $crawler = $client->request('get', '/microblog');
-        $client->setServerParameter('HTTP_X-Requested-With', 'XMLHttpRequest');
-        $client->click($crawler->filter('#post-'.$post->getId())->selectLink('moderate')->link());
+        $crawler = $this->client->request('get', '/microblog');
+        $this->client->setServerParameter('HTTP_X-Requested-With', 'XMLHttpRequest');
+        $this->client->click($crawler->filter('#post-'.$post->getId())->selectLink('Moderate')->link());
 
-        $this->assertStringContainsString('moderate-panel', $client->getResponse()->getContent());
+        $this->assertStringContainsString('moderate-panel', $this->client->getResponse()->getContent());
     }
 
     public function testUnauthorizedCanNotShowPanel(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JaneDoe'));
+        $this->client->loginUser($this->getUserByUsername('JaneDoe'));
 
         $post = $this->createPost('test post 1');
 
-        $client->request('get', "/m/{$post->magazine->name}/p/{$post->getId()}");
-        $this->assertSelectorTextNotContains('#post-'.$post->getId(), 'moderate');
+        $this->client->request('get', "/m/{$post->magazine->name}/p/{$post->getId()}");
+        $this->assertSelectorTextNotContains('#post-'.$post->getId(), 'Moderate');
 
-        $client->request(
+        $this->client->request(
             'get',
             "/m/{$post->magazine->name}/p/{$post->getId()}/-/moderate"
         );

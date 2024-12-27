@@ -13,6 +13,7 @@ use App\Repository\ImageRepository;
 use App\Service\ImageManager;
 use App\Utils\Embed;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
@@ -21,12 +22,13 @@ class AttachEntryEmbedHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntryRepository $entryRepository,
+        private readonly KernelInterface $kernel,
         private readonly Embed $embed,
         private readonly ImageManager $manager,
         private readonly ImageRepository $imageRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(EntryEmbedMessage $message): void

@@ -8,7 +8,7 @@ use App\Utils\RegPatterns;
 
 class TagExtractor
 {
-    public function joinTagsToBody(string $body, array $tags): string
+    public function joinTagsToBody(?string $body, array $tags): string
     {
         $current = $this->extract($body) ?? [];
 

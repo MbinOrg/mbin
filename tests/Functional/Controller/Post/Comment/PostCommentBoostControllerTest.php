@@ -10,25 +10,28 @@ class PostCommentBoostControllerTest extends WebTestCase
 {
     public function testLoggedUserBoostComment(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $post = $this->createPost('test post 1', null, $this->getUserByUsername('JaneDoe'));
-        $this->createPostComment('test comment 1', $post, $this->getUserByUsername('JaneDoe'));
+        $comment = $this->createPostComment('test comment 1', $post, $this->getUserByUsername('JaneDoe'));
 
-        $crawler = $client->request('GET', "/m/acme/p/{$post->getId()}/test-post-1");
+        $crawler = $this->client->request('GET', "/m/acme/p/{$post->getId()}/test-post-1");
 
-        $client->submit(
-            $crawler->filter('#main .post-comment')->selectButton('boost')->form([])
+        $crawler = $this->client->submit(
+            $crawler->filter("#post-comment-{$comment->getId()}")->selectButton('Boost')->form()
         );
 
-        $crawler = $client->followRedirect();
+        $crawler = $this->client->followRedirect();
+        self::assertResponseIsSuccessful();
 
-        $this->assertSelectorTextContains('#main .post-comment', 'boost (1)');
+        $crawler = $this->client->request('GET', "/m/acme/p/{$post->getId()}/test-post-1");
 
-        $crawler = $client->click($crawler->filter('#main .post-comment')->selectLink('activity')->link());
+        // $this->assertSelectorTextContains("#post-comment-{$comment->getId()}", 'Boost (1)');
 
-        $client->click($crawler->filter('#main #activity')->selectLink('boosts (1)')->link());
+        $crawler = $this->client->click($crawler->filter("#post-comment-{$comment->getId()}")->selectLink('Activity')->link());
+
+        $this->assertSelectorTextContains('#main #activity', 'Boosts (1)');
+        $this->client->click($crawler->filter('#main #activity')->selectLink('Boosts (1)')->link());
 
         $this->assertSelectorTextContains('#main .users-columns', 'JohnDoe');
     }
