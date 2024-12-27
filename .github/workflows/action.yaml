@@ -16,7 +16,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.2.0
+      image: danger89/mbin-pipeline:1.3.0
     steps:
       - uses: actions/checkout@v4
 
@@ -51,10 +51,10 @@ jobs:
       - name: Build frontend (production)
         run: npm run build
 
-  unit-test:
+  automated-tests:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.2.0
+      image: danger89/mbin-pipeline:1.3.0
     steps:
       - uses: actions/checkout@v4
 
@@ -63,26 +63,84 @@ jobs:
         run: |
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
+      - name: Get NPM cache directory path
+        id: npm-cache-dir-path
+        run: echo "dir=$(npm get cache)" >> $GITHUB_OUTPUT
+
       - uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('*/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
-      - run: cp .env.example .env
+      - uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: ${{ steps.npm-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('*/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-npm-
+
       - name: Composer install
         run: composer install --no-scripts --no-progress
+
+      - run: cp .env.example .env
+
+      - name: NPM install
+        run: npm ci --include=dev
+        env:
+          NODE_ENV: production
+
+      - name: Build frontend (production)
+        run: npm run build
 
       - name: Run unit tests
         env:
           COMPOSER_CACHE_DIR: ${{ steps.composer-cache.outputs.dir }}
           SYMFONY_DEPRECATIONS_HELPER: disabled
+          DATABASE_HOST: postgres
+          DATABASE_PORT: 5432
+          REDIS_HOST: valkey
+          REDIS_PORT: 6379
         run: php bin/phpunit tests/Unit
+
+      - name: Run integration tests
+        env:
+          COMPOSER_CACHE_DIR: ${{ steps.composer-cache.outputs.dir }}
+          SYMFONY_DEPRECATIONS_HELPER: disabled
+          DATABASE_HOST: postgres
+          DATABASE_PORT: 5432
+          REDIS_HOST: valkey
+          REDIS_PORT: 6379
+        run: php bin/phpunit tests/Functional
+    services:
+      postgres:
+        # Docker Hub image
+        image: postgres:16
+        # Provide the password for postgres
+        env:
+          POSTGRES_DB: mbin_test
+          POSTGRES_USER: mbin
+          POSTGRES_PASSWORD: ChangeThisPostgresPass
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      valkey:
+        # Docker Hub image
+        image: valkey/valkey
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
   audit-check:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.2.0
+      image: danger89/mbin-pipeline:1.3.0
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
@@ -114,7 +172,7 @@ jobs:
   fixer-dry-run:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.2.0
+      image: danger89/mbin-pipeline:1.3.0
     steps:
       - uses: actions/checkout@v4
 
@@ -168,4 +226,3 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-# TODO: Integration tests

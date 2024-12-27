@@ -10,18 +10,17 @@ class OAuth2ConsentControllerTest extends WebTestCase
 {
     public function testUserCanConsent(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
         self::createOAuth2AuthCodeClient();
 
-        self::runAuthorizationCodeFlowToConsentPage($client, 'read write', 'oauth2state');
+        self::runAuthorizationCodeFlowToConsentPage($this->client, 'read write', 'oauth2state');
 
         self::assertSelectorTextContains("li[id='oauth2.grant.read.general']", 'Read all content you have access to.');
         self::assertSelectorTextContains("li[id='oauth2.grant.write.general']", 'Create or edit any of your threads, posts, or comments.');
 
-        self::runAuthorizationCodeFlowToRedirectUri($client, 'read write', 'yes', 'oauth2state');
+        self::runAuthorizationCodeFlowToRedirectUri($this->client, 'read write', 'yes', 'oauth2state');
 
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
 
         $parsedUrl = parse_url($response->headers->get('Location'));
         self::assertEquals('https', $parsedUrl['scheme']);
@@ -32,18 +31,17 @@ class OAuth2ConsentControllerTest extends WebTestCase
 
     public function testUserCanDissent(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
         self::createOAuth2AuthCodeClient();
 
-        self::runAuthorizationCodeFlowToConsentPage($client, 'read write', 'oauth2state');
+        self::runAuthorizationCodeFlowToConsentPage($this->client, 'read write', 'oauth2state');
 
         self::assertSelectorTextContains("li[id='oauth2.grant.read.general']", 'Read all content you have access to.');
         self::assertSelectorTextContains("li[id='oauth2.grant.write.general']", 'Create or edit any of your threads, posts, or comments.');
 
-        self::runAuthorizationCodeFlowToRedirectUri($client, 'read write', 'no', 'oauth2state');
+        self::runAuthorizationCodeFlowToRedirectUri($this->client, 'read write', 'no', 'oauth2state');
 
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
 
         $parsedUrl = parse_url($response->headers->get('Location'));
         self::assertEquals('https', $parsedUrl['scheme']);

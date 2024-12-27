@@ -4,71 +4,66 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Entry\Moderate;
 
-use App\Service\EntryManager;
 use App\Tests\WebTestCase;
 
 class EntryPinApiTest extends WebTestCase
 {
     public function testApiCannotPinEntryAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', magazine: $magazine);
 
-        $client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/pin");
+        $this->client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/pin");
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiNonModeratorCannotPinEntry(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:entry:pin');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:entry:pin');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotPinEntryWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanPinEntry(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:entry:pin');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:entry:pin');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData);
@@ -80,13 +75,12 @@ class EntryPinApiTest extends WebTestCase
         self::assertIsArray($jsonData['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['user']);
         self::assertSame($user->getId(), $jsonData['user']['userId']);
-        self::assertIsArray($jsonData['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['domain']);
+        self::assertNull($jsonData['domain']);
         self::assertNull($jsonData['url']);
         self::assertEquals($entry->body, $jsonData['body']);
         self::assertNull($jsonData['image']);
         self::assertEquals($entry->lang, $jsonData['lang']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertIsArray($jsonData['badges']);
         self::assertEmpty($jsonData['badges']);
         self::assertSame(0, $jsonData['numComments']);
@@ -109,76 +103,72 @@ class EntryPinApiTest extends WebTestCase
 
     public function testApiCannotUnpinEntryAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', magazine: $magazine);
 
-        $entryManager = $this->getService(EntryManager::class);
+        $entryManager = $this->entryManager;
         $entryManager->pin($entry, null);
 
-        $client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/pin");
+        $this->client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/pin");
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiNonModeratorCannotUnpinEntry(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
-        $entryManager = $this->getService(EntryManager::class);
+        $entryManager = $this->entryManager;
         $entryManager->pin($entry, null);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:entry:pin');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:entry:pin');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotUnpinEntryWithoutScope(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
-        $entryManager = $this->getService(EntryManager::class);
+        $entryManager = $this->entryManager;
         $entryManager->pin($entry, null);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanUnpinEntry(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme', $user);
         $entry = $this->getEntryByTitle('test article', body: 'test for favourite', user: $user, magazine: $magazine);
 
-        $entryManager = $this->getService(EntryManager::class);
+        $entryManager = $this->entryManager;
         $entryManager->pin($entry, null);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read moderate:entry:pin');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read moderate:entry:pin');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('PUT', "/api/moderate/entry/{$entry->getId()}/pin", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData);
@@ -190,13 +180,12 @@ class EntryPinApiTest extends WebTestCase
         self::assertIsArray($jsonData['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['user']);
         self::assertSame($user->getId(), $jsonData['user']['userId']);
-        self::assertIsArray($jsonData['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['domain']);
+        self::assertNull($jsonData['domain']);
         self::assertNull($jsonData['url']);
         self::assertEquals($entry->body, $jsonData['body']);
         self::assertNull($jsonData['image']);
         self::assertEquals($entry->lang, $jsonData['lang']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertIsArray($jsonData['badges']);
         self::assertEmpty($jsonData['badges']);
         self::assertSame(0, $jsonData['numComments']);

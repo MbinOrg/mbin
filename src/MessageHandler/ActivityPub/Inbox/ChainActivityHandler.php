@@ -26,6 +26,7 @@ use App\Service\ActivityPub\Page;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -34,6 +35,7 @@ class ChainActivityHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly LoggerInterface $logger,
         private readonly ApHttpClient $client,
         private readonly MessageBusInterface $bus,
@@ -42,7 +44,7 @@ class ChainActivityHandler extends MbinMessageHandler
         private readonly Page $page,
         private readonly SettingsManager $settingsManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(ChainActivityMessage $message): void

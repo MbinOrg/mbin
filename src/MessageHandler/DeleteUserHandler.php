@@ -14,6 +14,7 @@ use App\Service\ImageManager;
 use App\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -24,12 +25,13 @@ class DeleteUserHandler extends MbinMessageHandler
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly ImageManager $imageManager,
+        private readonly KernelInterface $kernel,
         private readonly UserManager $userManager,
         private readonly DeleteWrapper $deleteWrapper,
         private readonly MessageBusInterface $bus,
         private readonly EntityManagerInterface $entityManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(DeleteUserMessage $message): void

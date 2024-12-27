@@ -5,21 +5,19 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Entry\Comment;
 
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class EntryCommentRetrieveApiTest extends WebTestCase
 {
     public function testApiCanGetEntryCommentsAnonymous(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('test entry', body: 'test');
         for ($i = 0; $i < 5; ++$i) {
             $this->createEntryComment("test parent comment {$i}", $entry);
         }
 
-        $client->request('GET', "/api/entry/{$entry->getId()}/comments");
+        $this->client->request('GET', "/api/entry/{$entry->getId()}/comments");
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -56,7 +54,7 @@ class EntryCommentRetrieveApiTest extends WebTestCase
             self::assertNull($comment['isFavourited']);
             self::assertNull($comment['userVote']);
             self::assertNull($comment['apId']);
-            self::assertNull($comment['tags']);
+            self::assertEmpty($comment['tags']);
             self::assertNull($comment['editedAt']);
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['createdAt'], 'createdAt date format invalid');
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['lastActive'], 'lastActive date format invalid');
@@ -65,19 +63,17 @@ class EntryCommentRetrieveApiTest extends WebTestCase
 
     public function testApiCannotGetEntryCommentsByPreferredLangAnonymous(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('test entry', body: 'test');
         for ($i = 0; $i < 5; ++$i) {
             $this->createEntryComment("test parent comment {$i}", $entry);
         }
 
-        $client->request('GET', "/api/entry/{$entry->getId()}/comments?usePreferredLangs=true");
+        $this->client->request('GET', "/api/entry/{$entry->getId()}/comments?usePreferredLangs=true");
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanGetEntryCommentsByPreferredLang(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('test entry', body: 'test');
         for ($i = 0; $i < 5; ++$i) {
             $this->createEntryComment("test parent comment {$i}", $entry);
@@ -89,18 +85,18 @@ class EntryCommentRetrieveApiTest extends WebTestCase
         $user = $this->getUserByUsername('user');
         $user->preferredLanguages = ['en', 'de'];
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($user);
         $entityManager->flush();
 
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/entry/{$entry->getId()}/comments?usePreferredLangs=true", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/entry/{$entry->getId()}/comments?usePreferredLangs=true", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -138,7 +134,7 @@ class EntryCommentRetrieveApiTest extends WebTestCase
             self::assertNull($comment['isFavourited']);
             self::assertNull($comment['userVote']);
             self::assertNull($comment['apId']);
-            self::assertNull($comment['tags']);
+            self::assertEmpty($comment['tags']);
             self::assertNull($comment['editedAt']);
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['createdAt'], 'createdAt date format invalid');
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['lastActive'], 'lastActive date format invalid');
@@ -147,7 +143,6 @@ class EntryCommentRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntryCommentsWithLanguageAnonymous(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('test entry', body: 'test');
         for ($i = 0; $i < 5; ++$i) {
             $this->createEntryComment("test parent comment {$i}", $entry);
@@ -155,9 +150,9 @@ class EntryCommentRetrieveApiTest extends WebTestCase
             $this->createEntryComment("test dutch comment {$i}", $entry, lang: 'nl');
         }
 
-        $client->request('GET', "/api/entry/{$entry->getId()}/comments?lang[]=en&lang[]=de");
+        $this->client->request('GET', "/api/entry/{$entry->getId()}/comments?lang[]=en&lang[]=de");
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -194,7 +189,7 @@ class EntryCommentRetrieveApiTest extends WebTestCase
             self::assertNull($comment['isFavourited']);
             self::assertNull($comment['userVote']);
             self::assertNull($comment['apId']);
-            self::assertNull($comment['tags']);
+            self::assertEmpty($comment['tags']);
             self::assertNull($comment['editedAt']);
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['createdAt'], 'createdAt date format invalid');
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['lastActive'], 'lastActive date format invalid');
@@ -203,7 +198,6 @@ class EntryCommentRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntryCommentsWithLanguage(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('test entry', body: 'test');
         for ($i = 0; $i < 5; ++$i) {
             $this->createEntryComment("test parent comment {$i}", $entry);
@@ -212,14 +206,14 @@ class EntryCommentRetrieveApiTest extends WebTestCase
         }
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/entry/{$entry->getId()}/comments?lang[]=en&lang[]=de", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/entry/{$entry->getId()}/comments?lang[]=en&lang[]=de", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -257,7 +251,7 @@ class EntryCommentRetrieveApiTest extends WebTestCase
             self::assertNull($comment['isFavourited']);
             self::assertNull($comment['userVote']);
             self::assertNull($comment['apId']);
-            self::assertNull($comment['tags']);
+            self::assertEmpty($comment['tags']);
             self::assertNull($comment['editedAt']);
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['createdAt'], 'createdAt date format invalid');
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['lastActive'], 'lastActive date format invalid');
@@ -266,21 +260,20 @@ class EntryCommentRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntryComments(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('test entry', body: 'test');
         for ($i = 0; $i < 5; ++$i) {
             $this->createEntryComment("test parent comment {$i}", $entry);
         }
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/entry/{$entry->getId()}/comments", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/entry/{$entry->getId()}/comments", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -318,7 +311,7 @@ class EntryCommentRetrieveApiTest extends WebTestCase
             self::assertNull($comment['isFavourited']);
             self::assertNull($comment['userVote']);
             self::assertNull($comment['apId']);
-            self::assertNull($comment['tags']);
+            self::assertEmpty($comment['tags']);
             self::assertNull($comment['editedAt']);
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['createdAt'], 'createdAt date format invalid');
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['lastActive'], 'lastActive date format invalid');
@@ -327,7 +320,6 @@ class EntryCommentRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntryCommentsWithChildren(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('test entry', body: 'test');
         for ($i = 0; $i < 5; ++$i) {
             $comment = $this->createEntryComment("test parent comment {$i}", $entry);
@@ -335,14 +327,14 @@ class EntryCommentRetrieveApiTest extends WebTestCase
         }
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/entry/{$entry->getId()}/comments", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/entry/{$entry->getId()}/comments", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -383,7 +375,7 @@ class EntryCommentRetrieveApiTest extends WebTestCase
             self::assertNull($comment['isFavourited']);
             self::assertNull($comment['userVote']);
             self::assertNull($comment['apId']);
-            self::assertNull($comment['tags']);
+            self::assertEmpty($comment['tags']);
             self::assertNull($comment['editedAt']);
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['createdAt'], 'createdAt date format invalid');
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['lastActive'], 'lastActive date format invalid');
@@ -392,7 +384,6 @@ class EntryCommentRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntryCommentsLimitedDepth(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('test entry', body: 'test');
         for ($i = 0; $i < 2; ++$i) {
             $comment = $this->createEntryComment("test parent comment {$i}", $entry);
@@ -403,14 +394,14 @@ class EntryCommentRetrieveApiTest extends WebTestCase
         }
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/entry/{$entry->getId()}/comments?d=3", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/entry/{$entry->getId()}/comments?d=3", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -459,7 +450,7 @@ class EntryCommentRetrieveApiTest extends WebTestCase
             self::assertNull($comment['isFavourited']);
             self::assertNull($comment['userVote']);
             self::assertNull($comment['apId']);
-            self::assertNull($comment['tags']);
+            self::assertEmpty($comment['tags']);
             self::assertNull($comment['editedAt']);
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['createdAt'], 'createdAt date format invalid');
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['lastActive'], 'lastActive date format invalid');
@@ -468,13 +459,12 @@ class EntryCommentRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntryCommentByIdAnonymous(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('test entry', body: 'test');
         $comment = $this->createEntryComment('test parent comment', $entry);
 
-        $client->request('GET', "/api/comments/{$comment->getId()}");
+        $this->client->request('GET', "/api/comments/{$comment->getId()}");
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_COMMENT_RESPONSE_KEYS, $jsonData);
@@ -501,7 +491,7 @@ class EntryCommentRetrieveApiTest extends WebTestCase
         self::assertNull($jsonData['isFavourited']);
         self::assertNull($jsonData['userVote']);
         self::assertNull($jsonData['apId']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertNull($jsonData['editedAt']);
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['createdAt'], 'createdAt date format invalid');
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['lastActive'], 'lastActive date format invalid');
@@ -509,19 +499,18 @@ class EntryCommentRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntryCommentById(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('test entry', body: 'test');
         $comment = $this->createEntryComment('test parent comment', $entry);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/comments/{$comment->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/comments/{$comment->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_COMMENT_RESPONSE_KEYS, $jsonData);
@@ -549,7 +538,7 @@ class EntryCommentRetrieveApiTest extends WebTestCase
         self::assertNull($jsonData['isFavourited']);
         self::assertNull($jsonData['userVote']);
         self::assertNull($jsonData['apId']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertNull($jsonData['editedAt']);
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['createdAt'], 'createdAt date format invalid');
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['lastActive'], 'lastActive date format invalid');
@@ -557,7 +546,6 @@ class EntryCommentRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetEntryCommentByIdWithDepth(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('test entry', body: 'test');
         $comment = $this->createEntryComment('test parent comment', $entry);
         $parent = $comment;
@@ -566,14 +554,14 @@ class EntryCommentRetrieveApiTest extends WebTestCase
         }
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/comments/{$comment->getId()}?d=2", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/comments/{$comment->getId()}?d=2", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_COMMENT_RESPONSE_KEYS, $jsonData);
@@ -601,7 +589,7 @@ class EntryCommentRetrieveApiTest extends WebTestCase
         self::assertNull($jsonData['isFavourited']);
         self::assertNull($jsonData['userVote']);
         self::assertNull($jsonData['apId']);
-        self::assertNull($jsonData['tags']);
+        self::assertEmpty($jsonData['tags']);
         self::assertNull($jsonData['editedAt']);
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['createdAt'], 'createdAt date format invalid');
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['lastActive'], 'lastActive date format invalid');

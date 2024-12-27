@@ -192,7 +192,7 @@ _Optionally:_ If you want to start federating, you will also need to messenger j
 
 More info: [Contributing guide](https://github.com/MbinOrg/mbin/blob/main/CONTRIBUTING.md), [Admin guide](../02-admin/README.md) and [Symfony Local Web Server](https://symfony.com/doc/current/setup/symfony_server.html)
 
-## Unit tests
+## Testing
 
 When fixing a bug or implementing a new feature or improvement, we expect that test code will also be included with every delivery of production code. There are three levels of tests that we distinguish between:
 
@@ -200,7 +200,9 @@ When fixing a bug or implementing a new feature or improvement, we expect that t
 - Integration Tests: test larger part of the code, combining multiple units together (classes, services or alike).
 - Application Tests: test high-level functionality, APIs or web calls.
 
-### Prepare for unit tests
+For more info read: [Symfony Testing guide](https://symfony.com/doc/current/testing.html).
+
+### Prepare testing
 
 1. First increase execution time in your PHP config file: `/etc/php/8.3/fpm/php.ini`:
 
@@ -226,7 +228,21 @@ Running the unit tests can be done by executing:
 SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Unit
 ```
 
-For more info read: [Symfony Testing guide](https://symfony.com/doc/current/testing.html).
+### Running integration tests
+
+Our integration tests depend on a database and a caching server (Valkey / KeyDB / Redis). 
+The database and cache are cleared / dumped every test run. 
+To start the services:
+
+```sh
+cd docker/tests && docker compose up -d
+```
+
+To run the integration tests:
+
+```sh
+SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Functional
+```
 
 ## Linting
 
