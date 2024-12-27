@@ -131,7 +131,8 @@ class EntryManager implements ContentManagerInterface
         $this->entityManager->persist($entry);
         $this->entityManager->flush();
 
-        $this->tagManager->updateEntryTags($entry, $this->tagExtractor->extract($entry->body) ?? []);
+        $tags = array_unique(array_merge($this->tagExtractor->extract($entry->body) ?? [], $dto->tags ?? []));
+        $this->tagManager->updateEntryTags($entry, $tags);
 
         $this->dispatcher->dispatch(new EntryCreatedEvent($entry));
 

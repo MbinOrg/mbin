@@ -134,6 +134,8 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         $this->reports = new ArrayCollection();
         $this->badges = new ArrayCollection();
         $this->logs = new ArrayCollection();
+        $this->moderatorRequests = new ArrayCollection();
+        $this->ownershipRequests = new ArrayCollection();
 
         if (null !== $user) {
             $this->addModerator(new Moderator($this, $user, null, true, true));

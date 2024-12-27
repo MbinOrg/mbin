@@ -10,17 +10,16 @@ class UserUpdateOAuthConsentsApiTest extends WebTestCase
 {
     public function testApiCannotUpdateConsentsWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('someuser');
 
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:oauth_clients:read');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:oauth_clients:read');
 
-        $client->request('GET', '/api/users/consents', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/consents', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -28,7 +27,7 @@ class UserUpdateOAuthConsentsApiTest extends WebTestCase
         self::assertCount(1, $jsonData['items']);
         self::assertArrayKeysMatch(UserRetrieveOAuthConsentsApiTest::CONSENT_RESPONSE_KEYS, $jsonData['items'][0]);
 
-        $client->jsonRequest(
+        $this->client->jsonRequest(
             'PUT', '/api/users/consents/'.(string) $jsonData['items'][0]['consentId'],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
@@ -37,17 +36,16 @@ class UserUpdateOAuthConsentsApiTest extends WebTestCase
 
     public function testApiCanUpdateConsents(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('someuser');
 
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:oauth_clients:read user:oauth_clients:edit user:follow');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:oauth_clients:read user:oauth_clients:edit user:follow');
 
-        $client->request('GET', '/api/users/consents', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/consents', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -62,7 +60,7 @@ class UserUpdateOAuthConsentsApiTest extends WebTestCase
             'user:follow',
         ], $jsonData['items'][0]['scopesGranted']);
 
-        $client->jsonRequest(
+        $this->client->jsonRequest(
             'PUT', '/api/users/consents/'.(string) $jsonData['items'][0]['consentId'],
             parameters: ['scopes' => [
                 'read',
@@ -73,7 +71,7 @@ class UserUpdateOAuthConsentsApiTest extends WebTestCase
         );
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(UserRetrieveOAuthConsentsApiTest::CONSENT_RESPONSE_KEYS, $jsonData);
         self::assertEquals([
@@ -85,18 +83,17 @@ class UserUpdateOAuthConsentsApiTest extends WebTestCase
 
     public function testApiUpdatingConsentsDoesNotAffectExistingKeys(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('someuser');
 
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:oauth_clients:read user:oauth_clients:edit user:follow');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:oauth_clients:read user:oauth_clients:edit user:follow');
 
-        $client->request('GET', '/api/users/consents', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/consents', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
-        $client->jsonRequest(
+        $jsonData = self::getJsonResponse($this->client);
+        $this->client->jsonRequest(
             'PUT', '/api/users/consents/'.(string) $jsonData['items'][0]['consentId'],
             parameters: ['scopes' => [
                 'read',
@@ -105,16 +102,16 @@ class UserUpdateOAuthConsentsApiTest extends WebTestCase
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         // Existing token still has permission to read oauth consents despite client consent being revoked.
-        $client->jsonRequest(
+        $this->client->jsonRequest(
             'GET', '/api/users/consents/'.(string) $jsonData['consentId'],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(UserRetrieveOAuthConsentsApiTest::CONSENT_RESPONSE_KEYS, $jsonData);
         self::assertEquals([
@@ -125,17 +122,16 @@ class UserUpdateOAuthConsentsApiTest extends WebTestCase
 
     public function testApiCannotAddConsents(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('someuser');
 
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:oauth_clients:read user:oauth_clients:edit user:follow');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:oauth_clients:read user:oauth_clients:edit user:follow');
 
-        $client->request('GET', '/api/users/consents', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users/consents', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -150,7 +146,7 @@ class UserUpdateOAuthConsentsApiTest extends WebTestCase
             'user:follow',
         ], $jsonData['items'][0]['scopesGranted']);
 
-        $client->jsonRequest(
+        $this->client->jsonRequest(
             'PUT', '/api/users/consents/'.(string) $jsonData['items'][0]['consentId'],
             parameters: ['scopes' => [
                 'read',

@@ -7,11 +7,13 @@ namespace App\MessageHandler;
 use App\Message\Contracts\MessageInterface;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 abstract class MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
     ) {
     }
 
@@ -21,14 +23,19 @@ abstract class MbinMessageHandler
      */
     public function workWrapper(MessageInterface $message): void
     {
-        $conn = $this->entityManager->getConnection();
-        if (!$conn->isConnected()) {
-            $conn->connect();
+        // when we are in the test environment this would throw: ConnectionException: There is no active transaction.
+        if ('test' !== $this->kernel->getEnvironment()) {
+            $conn = $this->entityManager->getConnection();
+            if (!$conn->isConnected()) {
+                $conn->connect();
+            }
+
+            $conn->transactional(fn () => $this->doWork($message));
+
+            $conn->close();
+        } else {
+            $this->doWork($message);
         }
-
-        $conn->transactional(fn () => $this->doWork($message));
-
-        $conn->close();
     }
 
     abstract public function doWork(MessageInterface $message): void;

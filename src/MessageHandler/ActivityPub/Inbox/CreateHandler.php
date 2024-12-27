@@ -26,6 +26,7 @@ use App\Service\ActivityPubManager;
 use App\Service\MessageManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -34,6 +35,7 @@ class CreateHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly Note $note,
         private readonly Page $page,
         private readonly MessageBusInterface $bus,
@@ -42,7 +44,7 @@ class CreateHandler extends MbinMessageHandler
         private readonly ActivityPubManager $activityPubManager,
         private readonly ApActivityRepository $repository,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     /**

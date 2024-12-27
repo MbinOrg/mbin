@@ -10,6 +10,7 @@ use App\Repository\EmbedRepository;
 use App\Utils\Embed;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -17,11 +18,12 @@ class LinkEmbedHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly EmbedRepository $embedRepository,
         private readonly Embed $embed,
         private readonly CacheItemPoolInterface $markdownCache,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(LinkEmbedMessage $message): void

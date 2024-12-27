@@ -20,6 +20,7 @@ use App\Service\ActivityPubManager;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -27,6 +28,7 @@ class LikeHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly UserRepository $userRepository,
+        private readonly KernelInterface $kernel,
         private readonly MagazineRepository $magazineRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly LikeWrapper $likeWrapper,
@@ -36,7 +38,7 @@ class LikeHandler extends MbinMessageHandler
         private readonly SettingsManager $settingsManager,
         private readonly DeliverManager $deliverManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(LikeMessage $message): void

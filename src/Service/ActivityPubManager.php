@@ -93,7 +93,7 @@ class ActivityPubManager
         return $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
     }
 
-    public function createCcFromBody(string $body): array
+    public function createCcFromBody(?string $body): array
     {
         $mentions = $this->mentionManager->extract($body) ?? [];
 

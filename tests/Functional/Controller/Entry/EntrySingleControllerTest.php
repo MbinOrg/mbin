@@ -13,16 +13,15 @@ class EntrySingleControllerTest extends WebTestCase
 {
     public function testUserCanGoToEntryFromFrontpage(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $this->getEntryByTitle('test entry 1', 'https://kbin.pub');
 
-        $crawler = $client->request('GET', '/');
+        $crawler = $this->client->request('GET', '/');
 
         $this->assertSelectorTextContains('#header nav .active', 'Threads');
 
-        $client->click($crawler->selectLink('test entry 1')->link());
+        $this->client->click($crawler->selectLink('test entry 1')->link());
 
         $this->assertSelectorTextContains('.head-title', '/m/acme');
         $this->assertSelectorTextContains('#header nav .active', 'Threads');
@@ -35,12 +34,11 @@ class EntrySingleControllerTest extends WebTestCase
 
     public function testUserCanSeeArticle(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $entry = $this->getEntryByTitle('test entry 1', null, 'Test entry content');
 
-        $client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
+        $this->client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
 
         $this->assertSelectorTextContains('article h1', 'test entry 1');
         $this->assertSelectorNotExists('article h1 > a');
@@ -49,52 +47,49 @@ class EntrySingleControllerTest extends WebTestCase
 
     public function testUserCanSeeLink(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $entry = $this->getEntryByTitle('test entry 1', 'https://kbin.pub');
 
-        $client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
+        $this->client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
         $this->assertSelectorExists('article h1 a[href="https://kbin.pub"]', 'test entry 1');
     }
 
     public function testPostActivityCounter(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $entry = $this->getEntryByTitle('test entry 1', 'https://kbin.pub');
 
-        $manager = $client->getContainer()->get(VoteManager::class);
+        $manager = $this->client->getContainer()->get(VoteManager::class);
         $manager->vote(VotableInterface::VOTE_DOWN, $entry, $this->getUserByUsername('JaneDoe'));
 
-        $manager = $client->getContainer()->get(FavouriteManager::class);
+        $manager = $this->client->getContainer()->get(FavouriteManager::class);
         $manager->toggle($this->getUserByUsername('JohnDoe'), $entry);
         $manager->toggle($this->getUserByUsername('JaneDoe'), $entry);
 
-        $client->request('GET', "/m/acme/t/{$entry->getId()}/-/test-entry-1");
+        $this->client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
 
         $this->assertSelectorTextContains('.options-activity', 'Activity (2)');
     }
 
     public function testCanSortComments()
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $entry = $this->getEntryByTitle('test entry 1', 'https://kbin.pub');
         $this->createEntryComment('test comment 1', $entry);
         $this->createEntryComment('test comment 2', $entry);
 
-        $crawler = $client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
+        $crawler = $this->client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
         foreach ($this->getSortOptions() as $sortOption) {
-            $crawler = $client->click($crawler->filter('.options__main')->selectLink($sortOption)->link());
+            $crawler = $this->client->click($crawler->filter('.options__main')->selectLink($sortOption)->link());
             $this->assertSelectorTextContains('.options__main', $sortOption);
         }
     }
 
     private function getSortOptions(): array
     {
-        return ['hot', 'newest', 'active', 'oldest'];
+        return ['Top', 'Hot', 'Newest', 'Active', 'Oldest'];
     }
 }

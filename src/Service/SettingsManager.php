@@ -194,4 +194,12 @@ class SettingsManager
 
         return $megaBytes.'MB';
     }
+
+    /**
+     * this should only be called in the test environment.
+     */
+    public static function resetDto(): void
+    {
+        self::$dto = null;
+    }
 }
