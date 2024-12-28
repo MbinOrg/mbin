@@ -8,7 +8,7 @@
     // Features to add to the dev container. More info: https://containers.dev/features.
     "features": {
         "ghcr.io/opencodeco/devcontainers/install-php-extensions:0": {
-            "extensions": "amqp apcu bcmath exif gd intl opcache pcntl pdo_pgsql pgsql redis"
+            "extensions": "amqp apcu bcmath exif gd intl opcache pcntl pdo_pgsql pgsql redis xsl"
         },
         "ghcr.io/devcontainers/features/github-cli:1": {},
         "ghcr.io/devcontainers/features/node:1": {
@@ -26,6 +26,8 @@
         // Configure properties specific to VS Code.
         "vscode": {
             "extensions": [
+                "christian-kohler.npm-intellisense",
+                "christian-kohler.path-intellisense",
                 "editorconfig.editorconfig",
                 "ikappas.composer",
                 "junstyle.php-cs-fixer",
@@ -33,11 +35,14 @@
                 "mblode.twig-language",
                 "mikestead.dotenv",
                 "ms-azuretools.vscode-docker",
+                "neilbrayfield.php-docblocker",
                 "recca0120.vscode-phpunit",
                 "redhat.vscode-yaml",
                 "sanderronde.phpstan-vscode"
             ],
             "settings": {
+                "javascript.suggest.paths": false,
+                "typescript.suggest.paths": false,
                 "pgsql.connections": [
                     {
                         "server": "127.0.0.1",
@@ -60,7 +65,8 @@
         "webdir": "sudo chmod a+x \"$(pwd)\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)\" /var/www/html",
         "deps": "if [ -f composer.json ]; then composer install; fi",
         "config": "cp .devcontainer/.env .env",
-        "apache": "sudo sed -i 's/Listen 80$//' /etc/apache2/ports.conf && sudo cp .devcontainer/apache-vhost.conf /etc/apache2/sites-enabled/000-default.conf"
+        "apache": "sudo sed -i 's/Listen 80$//' /etc/apache2/ports.conf && sudo cp .devcontainer/apache-vhost.conf /etc/apache2/sites-enabled/000-default.conf",
+        "symfony": "wget https://get.symfony.com/cli/installer -O - | bash && sudo mv ~/.symfony5/bin/symfony /usr/local/bin/symfony"
     }
 
     // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
