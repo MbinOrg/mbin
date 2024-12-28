@@ -7,8 +7,18 @@
 
     // Features to add to the dev container. More info: https://containers.dev/features.
     "features": {
+        "ghcr.io/opencodeco/devcontainers/install-php-extensions:0": {
+            "extensions": "amqp apcu bcmath exif gd intl opcache pcntl pdo_pgsql pgsql redis"
+        },
         "ghcr.io/devcontainers/features/github-cli:1": {},
-        "ghcr.io/devcontainers/features/node:1": {}
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "latest"
+        },
+        "ghcr.io/itsmechlark/features/postgresql:1": {
+            "version": "13"
+        },
+        "ghcr.io/itsmechlark/features/rabbitmq-server:1": {},
+        "ghcr.io/itsmechlark/features/redis-server:1": {}
     },
 
     // Configure tool-specific properties.
@@ -16,7 +26,6 @@
         // Configure properties specific to VS Code.
         "vscode": {
             "extensions": [
-                "dbaeumer.vscode-eslint",
                 "editorconfig.editorconfig",
                 "ikappas.composer",
                 "junstyle.php-cs-fixer",
@@ -27,7 +36,17 @@
                 "recca0120.vscode-phpunit",
                 "redhat.vscode-yaml",
                 "sanderronde.phpstan-vscode"
-            ]
+            ],
+            "settings": {
+                "pgsql.connections": [
+                    {
+                        "server": "127.0.0.1",
+                        "database": "postgres",
+                        "user": "postgres",
+                        "password": ""
+                    }
+                ]
+            }
         }
     },
 
@@ -37,7 +56,12 @@
     ],
 
     // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "sudo chmod a+x \"$(pwd)\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)\" /var/www/html; test -f composer.json && composer install"
+    "postCreateCommand": {
+        "webdir": "sudo chmod a+x \"$(pwd)\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)\" /var/www/html",
+        "deps": "if [ -f composer.json ]; then composer install; fi",
+        "config": "cp .devcontainer/.env .env",
+        "apache": "sudo sed -i 's/Listen 80$//' /etc/apache2/ports.conf && sudo cp .devcontainer/apache-vhost.conf /etc/apache2/sites-enabled/000-default.conf"
+    }
 
     // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
     // "remoteUser": "root"
