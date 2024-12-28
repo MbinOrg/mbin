@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\DTO\PostDto;
+use App\Entity\Magazine;
+use App\Entity\User;
 use App\Repository\ImageRepository;
 use App\Service\ImageManager;
 use App\Service\PostManager;
@@ -70,14 +72,17 @@ class PostFixtures extends BaseFixture implements DependentFixtureInterface
         $manager->flush();
     }
 
-    private function provideRandomPosts($count = 1): iterable
+    /**
+     * @return array<string, mixed>[]
+     */
+    private function provideRandomPosts(int $count = 1): iterable
     {
         for ($i = 0; $i <= $count; ++$i) {
             yield [
                 'body' => $this->faker->realText($this->faker->numberBetween(10, 1024)),
-                'magazine' => $this->getReference('magazine_'.rand(1, \intval(MagazineFixtures::MAGAZINES_COUNT))),
-                'user' => $this->getReference('user_'.rand(1, UserFixtures::USERS_COUNT)),
-                'ip' => $this->faker->ipv4,
+                'magazine' => $this->getReference('magazine_'.rand(1, \intval(MagazineFixtures::MAGAZINES_COUNT)), Magazine::class),
+                'user' => $this->getReference('user_'.rand(1, UserFixtures::USERS_COUNT), User::class),
+                'ip' => $this->faker->ipv4(),
             ];
         }
     }
