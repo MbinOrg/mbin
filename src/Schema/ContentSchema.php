@@ -8,7 +8,7 @@ use App\DTO\EntryCommentResponseDto;
 use App\DTO\EntryResponseDto;
 use App\DTO\PostCommentResponseDto;
 use App\DTO\PostResponseDto;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(

@@ -15,7 +15,7 @@ use App\Schema\PaginationSchema;
 use App\Schema\SearchActorSchema;
 use App\Service\SearchManager;
 use App\Service\SettingsManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;

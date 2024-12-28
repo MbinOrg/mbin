@@ -15,6 +15,7 @@ use App\Service\ActivityPub\ApHttpClient;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -357,7 +358,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         // Magazines
         $magazines = $tokens->map(fn ($token) => $token->magazine);
         $criteria = Criteria::create()
-            ->orderBy(['lastActive' => Criteria::DESC]);
+            ->orderBy(['lastActive' => Order::Descending]);
 
         return $magazines->matching($criteria);
     }
