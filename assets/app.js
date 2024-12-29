@@ -1,6 +1,6 @@
 import './bootstrap.js';
 import './styles/app.scss';
-import './utils/popover.js';
+import './utils/popover';
 import '@github/markdown-toolbar-element';
 import { Application } from '@hotwired/stimulus';
 
