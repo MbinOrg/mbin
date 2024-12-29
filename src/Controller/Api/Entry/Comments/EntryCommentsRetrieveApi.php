@@ -13,7 +13,7 @@ use App\PageView\EntryCommentPageView;
 use App\Repository\Criteria;
 use App\Repository\EntryCommentRepository;
 use App\Schema\PaginationSchema;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;

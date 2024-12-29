@@ -6,7 +6,7 @@ namespace App\Controller\Api\Instance;
 
 use App\Service\ProjectInfoService;
 use App\Service\SettingsManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\RateLimiter\RateLimiterFactory;

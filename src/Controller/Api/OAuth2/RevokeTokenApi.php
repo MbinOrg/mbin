@@ -8,7 +8,7 @@ use App\Controller\Api\BaseApi;
 use App\Entity\Client;
 use App\Service\OAuthTokenRevoker;
 use Doctrine\ORM\EntityManagerInterface;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
