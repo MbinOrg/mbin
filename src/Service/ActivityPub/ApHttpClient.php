@@ -205,7 +205,7 @@ class ApHttpClient
         return 'ap_'.hash('sha256', $apProfileId);
     }
 
-    private function getCollectinCacheKey(string $apAddress): string
+    private function getCollectionCacheKey(string $apAddress): string
     {
         return 'ap_collection'.hash('sha256', $apAddress);
     }
@@ -302,20 +302,20 @@ class ApHttpClient
      */
     public function invalidateCollectionObjectCache(string $apAddress): void
     {
-        $this->cache->delete($this->getCollectinCacheKey($apAddress));
+        $this->cache->delete($this->getCollectionCacheKey($apAddress));
     }
 
     /**
      * Retrieve AP collection object. First look in cache, then try to retrieve from AP server.
      * And finally, save the response to cache.
      *
-     * @return Response body
+     * @return JSON Response body (as PHP Object)
      *
      * @throws InvalidArgumentException
      */
     public function getCollectionObject(string $apAddress): ?array
     {
-        $key = $this->getCollectinCacheKey($apAddress);
+        $key = $this->getCollectionCacheKey($apAddress);
         if ($this->cache->hasItem($key)) {
             /** @var CacheItem $item */
             $item = $this->cache->getItem($key);
