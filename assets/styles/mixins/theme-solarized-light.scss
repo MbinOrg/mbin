@@ -17,7 +17,7 @@ $green: #859900;
 
 // loaded under .theme--solarized-light
 // or .theme--solarized with prefers-color-scheme: light
-@mixin theme-solarized-light {
+@mixin theme {
   --kbin-body-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   --kbin-body-font-size: 1rem;
   --kbin-body-font-weight: 400;

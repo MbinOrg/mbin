@@ -1,3 +1,6 @@
+@use '../layout/breakpoints' as b;
+@use '../mixins/mbin';
+
 #sidebar,
 .sidebar-subscriptions {
   font-size: .85rem;
@@ -68,7 +71,7 @@
         }
       }
 
-      @include media-breakpoint-down(lg) {
+      @include b.media-breakpoint-down(lg) {
         menu {
           justify-content: flex-start;
 
@@ -90,11 +93,11 @@
     color: var(--kbin-meta-text-color);
 
     .container {
-      @include media-breakpoint-down(lg) {
+      @include b.media-breakpoint-down(lg) {
         max-width: 100%;
       }
 
-      @include media-breakpoint-only(md) {
+      @include b.media-breakpoint-only(md) {
         display: grid;
         gap: 2rem;
         grid-template-columns: repeat(2, 1fr);
@@ -123,7 +126,7 @@
         padding: 0;
 
         a {
-          @include mbin-btn-link;
+          @include mbin.btn-link;
         }
 
         p:last-of-type {
@@ -467,7 +470,7 @@
       gap: 1px;
       align-items: center;
 
-      @include media-breakpoint-down(lg) {
+      @include b.media-breakpoint-down(lg) {
         & .width-setting {
           display: none;
         }
@@ -646,7 +649,7 @@
     display: none;
   }
 
-  @include media-breakpoint-down(lg) {
+  @include b.media-breakpoint-down(lg) {
     .mobile-nav {
       display: block;
       position: relative;
@@ -690,7 +693,7 @@
 }
 
 #sidebar {
-  @include media-breakpoint-down(lg) {
+  @include b.media-breakpoint-down(lg) {
     &.open {
       background: var(--kbin-bg);
       height: 100%;
