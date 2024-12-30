@@ -81,7 +81,7 @@
         "symfony/mailgun-mailer": "7.1.*",
         "symfony/mercure-bundle": "0.3.*",
         "symfony/messenger": "7.1.*",
-        "symfony/mime": "7.1.*",
+        "symfony/mime": "7.2.*",
         "symfony/monolog-bundle": "^3.10.0",
         "symfony/property-access": "7.1.*",
         "symfony/property-info": "7.1.*",
