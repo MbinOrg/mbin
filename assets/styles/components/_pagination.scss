@@ -1,3 +1,5 @@
+@use '../layout/breakpoints' as b;
+
 .pagination {
   color: var(--kbin-meta-text-color);
   display: flex;
@@ -21,7 +23,7 @@
     background-color: var(--kbin-bg);
   }
 
-  @include media-breakpoint-down(sm) {
+  @include b.media-breakpoint-down(sm) {
     justify-content: space-between;
     gap: 0rem;
 
