@@ -70,7 +70,7 @@
         "symfony/console": "7.1.*",
         "symfony/css-selector": "7.1.*",
         "symfony/doctrine-messenger": "7.2.*",
-        "symfony/dotenv": "7.1.*",
+        "symfony/dotenv": "7.2.*",
         "symfony/expression-language": "7.2.*",
         "symfony/flex": "^2.4.5",
         "symfony/form": "7.1.*",
