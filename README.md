@@ -179,6 +179,13 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/garrettw">
+                    <img src="https://avatars.githubusercontent.com/u/84885?v=4" width="100;" alt="garrettw"/>
+                    <br />
+                    <sub><b>Garrett W.</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/thepaperpilot">
                     <img src="https://avatars.githubusercontent.com/u/3683148?v=4" width="100;" alt="thepaperpilot"/>
                     <br />
@@ -192,20 +199,13 @@ Unofficial magazines:
                     <sub><b>Chris Hall</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/andrewmoise">
                     <img src="https://avatars.githubusercontent.com/u/8404538?v=4" width="100;" alt="andrewmoise"/>
                     <br />
                     <sub><b>andrewmoise</b></sub>
-                </a>
-            </td>
-		</tr>
-		<tr>
-            <td align="center">
-                <a href="https://github.com/garrettw">
-                    <img src="https://avatars.githubusercontent.com/u/84885?v=4" width="100;" alt="garrettw"/>
-                    <br />
-                    <sub><b>Garrett W.</b></sub>
                 </a>
             </td>
             <td align="center">
