@@ -35,7 +35,6 @@
     "name": "mbin",
     "license": "AGPL-3.0",
     "private": true,
-    "type": "module",
     "scripts": {
         "dev-server": "encore dev-server",
         "dev": "encore dev",
