@@ -7,6 +7,8 @@ namespace App\Command\Update\Async;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Repository\PostRepository;
+use App\Repository\PostCommentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -21,13 +23,10 @@ readonly class NoteVisibilityHandler
     ) {
     }
 
-    public function __invoke(NoteVisibilityMessage $message)
+    public function __invoke(NoteVisibilityMessage $message): void
     {
         $repo = $this->entityManager->getRepository($message->class);
 
-        /**
-         * @var $entity Post|PostComment
-         */
         $entity = $repo->find($message->id);
         $req = $this->client->request('GET', $entity->apId, [
             'headers' => [

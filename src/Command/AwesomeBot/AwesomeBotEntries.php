@@ -80,7 +80,7 @@ class AwesomeBotEntries extends Command
             if ('ul' === $elem->nodeName) {
                 foreach ($elem->childNodes as $li) {
                     /**
-                     * @var $li DOMElement
+                     * @var DOMElement $li
                      */
                     if ('li' !== $li->nodeName) {
                         continue;

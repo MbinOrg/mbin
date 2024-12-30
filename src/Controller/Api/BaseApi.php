@@ -6,6 +6,7 @@ namespace App\Controller\Api;
 
 use App\Controller\AbstractController;
 use App\DTO\MagazineDto;
+use App\DTO\MagazineResponseDto;
 use App\DTO\ReportDto;
 use App\DTO\ReportRequestDto;
 use App\DTO\UserDto;
@@ -55,6 +56,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Constraints\Image as BaseImageConstraint;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class BaseApi extends AbstractController
@@ -65,6 +67,7 @@ class BaseApi extends AbstractController
     public const MIN_DEPTH = 0;
     public const MAX_DEPTH = 25;
 
+    /** @var BaseImageConstraint $constraint */
     private static $constraint;
 
     public function __construct(
@@ -97,7 +100,7 @@ class BaseApi extends AbstractController
      * @param ?RateLimiterFactory $limiterFactory     A limiter factory to use when the user is authenticated
      * @param ?RateLimiterFactory $anonLimiterFactory A limiter factory to use when the user is anonymous
      *
-     * @return array An array of headers describing the current rate limit status to the client
+     * @return array<string, int> An array of headers describing the current rate limit status to the client
      *
      * @throws AccessDeniedHttpException    if the user is not authenticated and no anonymous rate limiter factory is provided, access to the resource will be denied
      * @throws TooManyRequestsHttpException If the limit is hit, rate limit the connection
@@ -143,7 +146,7 @@ class BaseApi extends AbstractController
      * This might be better to have as a cache entry, with an aggregate in the database
      * created periodically
      */
-    private function logAccess()
+    private function logAccess(): void
     {
         /** @var ?OAuth2Token $token */
         $token = $this->container->get('security.token_storage')->getToken();
@@ -254,7 +257,7 @@ class BaseApi extends AbstractController
      */
     protected function serializeLogItem(MagazineLog $log): array
     {
-        /** @var ContentVisibilityInterface $subject */
+        /** @var ?ContentVisibilityInterface $subject */
         $subject = $log->getSubject();
         $response = $this->magazineFactory->createLogDto($log);
         $response->setSubject(
@@ -287,7 +290,7 @@ class BaseApi extends AbstractController
      *
      * @param MagazineDto $dto The MagazineDto to serialize
      *
-     * @return array An associative array representation of the entry's safe fields, to be used as JSON
+     * @return MagazineResponseDto An associative array representation of the entry's safe fields, to be used as JSON
      */
     protected function serializeMagazine(MagazineDto $dto)
     {

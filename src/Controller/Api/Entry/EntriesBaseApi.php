@@ -27,7 +27,7 @@ class EntriesBaseApi extends BaseApi
     private EntryCommentFactory $commentsFactory;
 
     #[Required]
-    public function setCommentsFactory(EntryCommentFactory $commentsFactory)
+    public function setCommentsFactory(EntryCommentFactory $commentsFactory): void
     {
         $this->commentsFactory = $commentsFactory;
     }

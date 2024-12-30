@@ -79,6 +79,9 @@ class AwesomeBotMagazine extends Command
         return Command::SUCCESS;
     }
 
+    /**
+     * @param string[] $tags
+     */
     #[Pure]
     private function createBadges(Magazine $magazine, string $url, array $tags): Collection
     {

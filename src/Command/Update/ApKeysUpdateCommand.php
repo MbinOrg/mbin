@@ -55,11 +55,11 @@ class ApKeysUpdateCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function generate(array $actors)
+    /**
+     * @param ActivityPubActorInterface[] $actors
+     */
+    private function generate(array $actors): void
     {
-        /**
-         * @var $actor ActivityPubActorInterface
-         */
         foreach ($actors as $actor) {
             $actor = KeysGenerator::generate($actor);
             $this->entityManager->persist($actor);

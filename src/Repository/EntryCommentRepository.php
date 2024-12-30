@@ -54,7 +54,7 @@ class EntryCommentRepository extends ServiceEntityRepository
         parent::__construct($registry, EntryComment::class);
     }
 
-    public function findByCriteria(Criteria $criteria): PagerfantaInterface
+    public function findByCriteria(Criteria $criteria): Pagerfanta
     {
         $pagerfanta = new Pagerfanta(
             new QueryAdapter(

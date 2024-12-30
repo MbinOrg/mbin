@@ -42,7 +42,7 @@ class SearchManager
         return $this->magazineRepository->search($magazine, $page, $perPage);
     }
 
-    public function findDomainsPaginated(string $domain, int $page = 1, int $perPage = DomainRepository::PER_PAGE): PagerfantaInterface
+    public function findDomainsPaginated(string $domain, int $page = 1, int $perPage = DomainRepository::PER_PAGE): Pagerfanta
     {
         return $this->domainRepository->search($domain, $page, $perPage);
     }

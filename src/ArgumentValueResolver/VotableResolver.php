@@ -26,6 +26,7 @@ class VotableResolver implements ValueResolverInterface
         ) {
             ['id' => $id, 'entityClass' => $entityClass] = $request->attributes->all();
 
+            /** @var class-string<VotableInterface> $entityClass */
             yield $this->entityManager->find($entityClass, $id);
         }
     }

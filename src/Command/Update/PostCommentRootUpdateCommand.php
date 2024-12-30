@@ -44,7 +44,7 @@ class PostCommentRootUpdateCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function update(PostComment $comment)
+    private function update(PostComment $comment): void
     {
         if (null === $comment->parent->root) {
             $this->entityManager->getConnection()->executeQuery(

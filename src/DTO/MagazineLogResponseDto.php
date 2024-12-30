@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
+use App\Entity\Contracts\ContentInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Post;
@@ -71,7 +72,7 @@ class MagazineLogResponseDto implements \JsonSerializable
 
     #[Ignore]
     public function setSubject(
-        Entry|EntryComment|Post|PostComment|null $subject,
+        ?ContentInterface $subject,
         EntryFactory $entryFactory,
         EntryCommentFactory $entryCommentFactory,
         PostFactory $postFactory,

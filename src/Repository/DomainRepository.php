@@ -31,7 +31,7 @@ class DomainRepository extends ServiceEntityRepository
         parent::__construct($registry, Domain::class);
     }
 
-    public function findAllPaginated(?int $page): PagerfantaInterface
+    public function findAllPaginated(int $page, int $perPage = self::PER_PAGE): Pagerfanta
     {
         $qb = $this->createQueryBuilder('d');
 
@@ -42,7 +42,7 @@ class DomainRepository extends ServiceEntityRepository
         );
 
         try {
-            $pagerfanta->setMaxPerPage($criteria->perPage ?? self::PER_PAGE);
+            $pagerfanta->setMaxPerPage($perPage);
             $pagerfanta->setCurrentPage($page);
         } catch (NotValidCurrentPageException $e) {
             throw new NotFoundHttpException();
@@ -51,7 +51,7 @@ class DomainRepository extends ServiceEntityRepository
         return $pagerfanta;
     }
 
-    public function findSubscribedDomains(int $page, User $user): PagerfantaInterface
+    public function findSubscribedDomains(int $page, User $user, int $perPage = self::PER_PAGE): Pagerfanta
     {
         $pagerfanta = new Pagerfanta(
             new CollectionAdapter(
@@ -60,7 +60,7 @@ class DomainRepository extends ServiceEntityRepository
         );
 
         try {
-            $pagerfanta->setMaxPerPage(self::PER_PAGE);
+            $pagerfanta->setMaxPerPage($perPage);
             $pagerfanta->setCurrentPage($page);
         } catch (NotValidCurrentPageException $e) {
             throw new NotFoundHttpException();
@@ -69,7 +69,7 @@ class DomainRepository extends ServiceEntityRepository
         return $pagerfanta;
     }
 
-    public function findBlockedDomains(int $page, User $user): PagerfantaInterface
+    public function findBlockedDomains(int $page, User $user, int $perPage = self::PER_PAGE): Pagerfanta
     {
         $pagerfanta = new Pagerfanta(
             new CollectionAdapter(
@@ -78,7 +78,7 @@ class DomainRepository extends ServiceEntityRepository
         );
 
         try {
-            $pagerfanta->setMaxPerPage(self::PER_PAGE);
+            $pagerfanta->setMaxPerPage($perPage);
             $pagerfanta->setCurrentPage($page);
         } catch (NotValidCurrentPageException $e) {
             throw new NotFoundHttpException();
