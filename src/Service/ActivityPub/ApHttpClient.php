@@ -65,7 +65,7 @@ class ApHttpClient
      *
      * @param bool $decoded (optional)
      *
-     * @return array|string|null Response body
+     * @return array|string|null JSON Response body (as PHP Object)
      */
     public function getActivityObject(string $url, bool $decoded = true): array|string|null
     {
@@ -156,7 +156,7 @@ class ApHttpClient
      *
      * @param string $url the URL of the user/magazine to get the webfinger object for
      *
-     * @return array|null the webfinger object
+     * @return array|null The webfinger object (as PHP Object)
      *
      * @throws InvalidWebfingerException|InvalidArgumentException
      */
@@ -205,10 +205,15 @@ class ApHttpClient
         return 'ap_'.hash('sha256', $apProfileId);
     }
 
+    private function getCollectionCacheKey(string $apAddress): string
+    {
+        return 'ap_collection'.hash('sha256', $apAddress);
+    }
+
     /**
      * Retrieve AP actor object (could be a user or magazine).
      *
-     * @return array|null key/value array of actor response body
+     * @return array|null key/value array of actor response body (as PHP Object)
      *
      * @throws InvalidApPostException|InvalidArgumentException
      */
@@ -280,22 +285,37 @@ class ApHttpClient
         return $response->getContent(false);
     }
 
+    /**
+     * Remove actor object from cache.
+     *
+     * @param string $apProfileId AP profile ID to remove from cache
+     */
     public function invalidateActorObjectCache(string $apProfileId): void
     {
         $this->cache->delete($this->getActorCacheKey($apProfileId));
     }
 
+    /**
+     * Remove collection object from cache.
+     *
+     * @param string $apAddress AP address to remove from cache
+     */
     public function invalidateCollectionObjectCache(string $apAddress): void
     {
-        $this->cache->delete('ap_collection'.hash('sha256', $apAddress));
+        $this->cache->delete($this->getCollectionCacheKey($apAddress));
     }
 
     /**
+     * Retrieve AP collection object. First look in cache, then try to retrieve from AP server.
+     * And finally, save the response to cache.
+     *
+     * @return array|null JSON Response body (as PHP Object)
+     *
      * @throws InvalidArgumentException
      */
     public function getCollectionObject(string $apAddress): ?array
     {
-        $key = 'ap_collection'.hash('sha256', $apAddress);
+        $key = $this->getCollectionCacheKey($apAddress);
         if ($this->cache->hasItem($key)) {
             /** @var CacheItem $item */
             $item = $this->cache->getItem($key);
@@ -365,7 +385,7 @@ class ApHttpClient
 
         // Often 400, 404 errors just return the full HTML page, so we don't want to log the full content of them
         // We truncate the content to 200 characters max.
-        $this->logger->error('[ApHttpClient::updateUser] {type} failed: {address}, ex: {e}: {msg}. Truncated content: {content}', [
+        $this->logger->error('[ApHttpClient::logRequestException] {type} failed: {address}, ex: {e}: {msg}. Truncated content: {content}', [
             'type' => $requestType,
             'address' => $requestUrl,
             'e' => \get_class($e),
@@ -374,7 +394,7 @@ class ApHttpClient
         ]);
         // And only log the full content in debug log mode
         if ($content) {
-            $this->logger->debug('[ApHttpClient::updateUser] Full response body content: {content}', [
+            $this->logger->debug('[ApHttpClient::logRequestException] Full response body content: {content}', [
                 'content' => $content,
             ]);
         }

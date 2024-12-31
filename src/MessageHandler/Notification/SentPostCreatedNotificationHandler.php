@@ -21,7 +21,7 @@ class SentPostCreatedNotificationHandler extends MbinMessageHandler
         private readonly EntityManagerInterface $entityManager,
         private readonly KernelInterface $kernel,
         private readonly PostRepository $repository,
-        private readonly NotificationManager $manager,
+        private readonly NotificationManager $notificationManager,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
@@ -42,6 +42,6 @@ class SentPostCreatedNotificationHandler extends MbinMessageHandler
             throw new UnrecoverableMessageHandlingException('Post not found');
         }
 
-        $this->manager->sendCreated($post);
+        $this->notificationManager->sendCreated($post);
     }
 }

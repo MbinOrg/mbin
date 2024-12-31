@@ -31,7 +31,7 @@ class LikeHandler extends MbinMessageHandler
         private readonly ActivityPubManager $activityPubManager,
         private readonly VoteManager $voteManager,
         private readonly MessageBusInterface $bus,
-        private readonly FavouriteManager $manager,
+        private readonly FavouriteManager $favouriteManager,
         private readonly LoggerInterface $logger,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
@@ -68,7 +68,7 @@ class LikeHandler extends MbinMessageHandler
             $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
             // Check if actor and entity aren't empty
             if (!empty($actor) && !empty($entity)) {
-                $this->manager->toggle($actor, $entity, FavouriteManager::TYPE_LIKE);
+                $this->favouriteManager->toggle($actor, $entity, FavouriteManager::TYPE_LIKE);
             }
         } elseif ('Undo' === $message->payload['type']) {
             if ('Like' === $message->payload['object']['type']) {
@@ -80,7 +80,7 @@ class LikeHandler extends MbinMessageHandler
                 $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
                 // Check if actor and entity aren't empty
                 if (!empty($actor) && !empty($entity)) {
-                    $this->manager->toggle($actor, $entity, FavouriteManager::TYPE_UNLIKE);
+                    $this->favouriteManager->toggle($actor, $entity, FavouriteManager::TYPE_UNLIKE);
                     $this->voteManager->removeVote($entity, $actor);
                 }
             }
