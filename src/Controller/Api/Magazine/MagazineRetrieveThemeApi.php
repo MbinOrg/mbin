@@ -7,7 +7,7 @@ namespace App\Controller\Api\Magazine;
 use App\DTO\MagazineThemeResponseDto;
 use App\Entity\Magazine;
 use App\Factory\MagazineFactory;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;

@@ -1,3 +1,7 @@
+@use '../layout/breakpoints' as b;
+@use '../mixins/animations' as ani;
+@use '../mixins/mbin';
+
 .post-add {
   .ts-control {
     min-width: 18rem;
@@ -7,7 +11,7 @@
     flex-wrap: wrap-reverse;
     margin-bottom: 0;
 
-    @include media-breakpoint-down(sm) {
+    @include b.media-breakpoint-down(sm) {
       display: block;
 
       > div {
@@ -36,7 +40,7 @@
   position: relative;
   z-index: 2;
 
-  @include media-breakpoint-down(sm) {
+  @include b.media-breakpoint-down(sm) {
     grid-template-areas: "avatar header vote"
                          "body body body"
                          "meta meta meta"
@@ -139,7 +143,7 @@
       button,
       a {
         font-size: .8rem;
-        @include mbin-btn-link;
+        @include mbin.btn-link;
       }
 
       li:first-child a {
@@ -148,7 +152,7 @@
     }
 
     a {
-      @include mbin-btn-link;
+      @include mbin.btn-link;
     }
 
     figure {
@@ -170,7 +174,7 @@
   &:hover,
   &:focus-within {
     header, footer menu, footer .boosts {
-      @include fade-in(.5s, .75);
+      @include ani.fade-in(.5s, .75);
     }
   }
 

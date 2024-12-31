@@ -1,17 +1,20 @@
+@use '../mixins/theme-dark' as dark;
+@use '../mixins/theme-light' as light;
+
 .theme--default {
   @media (prefers-color-scheme: dark) {
-    @include theme-dark;
+    @include dark.theme;
   }
 
   @media (prefers-color-scheme: light) {
-    @include theme-light;
+    @include light.theme;
   }
 }
 
 .theme--dark {
-  @include theme-dark;
+  @include dark.theme;
 }
 
 .theme--light {
-  @include theme-light;
+  @include light.theme;
 }

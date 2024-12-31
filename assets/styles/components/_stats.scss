@@ -1,9 +1,11 @@
+@use '../layout/breakpoints' as b;
+
 .stats-count {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   row-gap: 2rem;
 
-  @include media-breakpoint-only(xs) {
+  @include b.media-breakpoint-only(xs) {
     grid-template-columns: repeat(1, 1fr);
   }
 

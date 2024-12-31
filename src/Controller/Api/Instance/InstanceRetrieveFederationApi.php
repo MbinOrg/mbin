@@ -11,7 +11,7 @@ use App\Entity\Instance;
 use App\Repository\InstanceRepository;
 use App\Schema\Errors\TooManyRequestsErrorSchema;
 use App\Service\SettingsManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\RateLimiter\RateLimiterFactory;

@@ -6,7 +6,7 @@ namespace App\Schema;
 
 use App\DTO\MagazineResponseDto;
 use App\DTO\UserResponseDto;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(

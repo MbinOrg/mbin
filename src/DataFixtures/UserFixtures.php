@@ -68,7 +68,10 @@ class UserFixtures extends BaseFixture
         }
     }
 
-    private function provideRandomUsers($count = 1): iterable
+    /**
+     * @return array<string, string>[]
+     */
+    private function provideRandomUsers(int $count = 1): iterable
     {
         if (!$this->userRepository->findOneByUsername('demo')) {
             yield [
@@ -81,8 +84,8 @@ class UserFixtures extends BaseFixture
 
         for ($i = 0; $i <= $count; ++$i) {
             yield [
-                'email' => $this->faker->email,
-                'username' => str_replace('.', '_', $this->faker->userName),
+                'email' => $this->faker->email(),
+                'username' => str_replace('.', '_', $this->faker->userName()),
                 'password' => 'secret',
                 'type' => 'Person',
             ];
