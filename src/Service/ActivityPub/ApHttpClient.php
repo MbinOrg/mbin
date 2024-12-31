@@ -65,7 +65,7 @@ class ApHttpClient
      *
      * @param bool $decoded (optional)
      *
-     * @return array|string|null Response body
+     * @return array|string|null JSON Response body (as PHP Object)
      */
     public function getActivityObject(string $url, bool $decoded = true): array|string|null
     {
@@ -156,7 +156,7 @@ class ApHttpClient
      *
      * @param string $url the URL of the user/magazine to get the webfinger object for
      *
-     * @return array|null the webfinger object
+     * @return array|null The webfinger object (as PHP Object)
      *
      * @throws InvalidWebfingerException|InvalidArgumentException
      */
@@ -213,7 +213,7 @@ class ApHttpClient
     /**
      * Retrieve AP actor object (could be a user or magazine).
      *
-     * @return array|null key/value array of actor response body
+     * @return array|null key/value array of actor response body (as PHP Object)
      *
      * @throws InvalidApPostException|InvalidArgumentException
      */
@@ -309,7 +309,7 @@ class ApHttpClient
      * Retrieve AP collection object. First look in cache, then try to retrieve from AP server.
      * And finally, save the response to cache.
      *
-     * @return JSON Response body (as PHP Object)
+     * @return array|null JSON Response body (as PHP Object)
      *
      * @throws InvalidArgumentException
      */
