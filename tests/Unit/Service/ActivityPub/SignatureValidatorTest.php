@@ -9,8 +9,8 @@ use App\Exception\InvalidApSignatureException;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\SignatureValidator;
 use App\Service\ActivityPubManager;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 class SignatureValidatorTest extends TestCase
