@@ -6,20 +6,17 @@ namespace App\Tests\Unit\ActivityPub;
 
 use App\ActivityPub\ActorHandle;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ActorHandleTest extends TestCase
 {
-    /**
-     * @dataProvider handleProvider()
-     */
+    #[DataProvider('handleProvider')]
     public function testHandleIsRecognized(string $input, array $output): void
     {
         $this->assertNotNull(ActorHandle::parse($input));
     }
 
-    /**
-     * @dataProvider handleProvider()
-     */
+    #[DataProvider('handleProvider')]
     public function testHandleIsParsedProperly(string $input, array $output): void
     {
         $handle = ActorHandle::parse($input);
