@@ -1,3 +1,6 @@
+@use 'breakpoints' as b;
+@use '../mixins/mbin';
+
 .btn {
   font-size: .85rem;
   height: 100%;
@@ -441,14 +444,14 @@ select {
   button {
     width: 50%;
 
-    @include media-breakpoint-down(lg) {
+    @include b.media-breakpoint-down(lg) {
       width: 100%;
     }
   }
 }
 
 .actions {
-  @include media-breakpoint-down(sm) {
+  @include b.media-breakpoint-down(sm) {
     text-align: right;
 
     > * {
@@ -493,8 +496,8 @@ select {
 markdown-toolbar {
 
   > * {
-    @include cursor-pointer;
-    @include simple-transition;
+    @include mbin.cursor-pointer;
+    @include mbin.simple-transition;
 
     &:focus,
     &:hover {

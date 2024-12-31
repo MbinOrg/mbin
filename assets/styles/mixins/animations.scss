@@ -1,8 +1,10 @@
+@use '../layout/breakpoints' as b;
+
 @mixin fade-in($waitTime, $from) {
   animation: fadein #{$waitTime} linear 1 normal forwards;
   -webkit-animation: fadein #{$waitTime} linear 1 normal forwards;
 
-  @include media-breakpoint-down(sm) {
+  @include b.media-breakpoint-down(sm) {
     animation: fadein 0s linear 1 normal forwards;
     -webkit-animation: fadein 0s linear 1 normal forwards;
   }

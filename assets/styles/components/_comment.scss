@@ -1,3 +1,9 @@
+@use "sass:list";
+@use "sass:string";
+@use '../layout/breakpoints' as b;
+@use '../mixins/animations' as ani;
+@use '../mixins/mbin';
+
 $levels: ('#ac5353', '#71ac53', '#ffa500', '#538eac', '#6253ac', '#ac53ac', '#ac5353', '#2b7070ff', '#b9ab52', '#808080ff');
 $comment-margin-xl: 1rem;
 $comment-margin-lg: .5rem;
@@ -8,7 +14,7 @@ $comment-margin-sm: .3rem;
     margin-bottom: 0;
   }
 
-  @include media-breakpoint-down(sm) {
+  @include b.media-breakpoint-down(sm) {
     .params {
       display: block;
 
@@ -37,7 +43,7 @@ $comment-margin-sm: .3rem;
   position: relative;
   z-index: 2;
 
-  @include media-breakpoint-down(sm) {
+  @include b.media-breakpoint-down(sm) {
     grid-template-areas: "avatar header aside"
                          "body body body"
                          "footer footer footer"
@@ -111,7 +117,7 @@ $comment-margin-sm: .3rem;
       height: 30px;
     }
 
-    @include media-breakpoint-up(sm) {
+    @include b.media-breakpoint-up(sm) {
       img {
         border: var(--kbin-avatar-border);
         width: 40px;
@@ -154,7 +160,7 @@ $comment-margin-sm: .3rem;
       button,
       a {
         font-size: .8rem;
-        @include mbin-btn-link;
+        @include mbin.btn-link;
       }
 
       > li {
@@ -171,7 +177,7 @@ $comment-margin-sm: .3rem;
     }
 
     a {
-      @include mbin-btn-link;
+      @include mbin.btn-link;
     }
 
     figure {
@@ -233,7 +239,7 @@ $comment-margin-sm: .3rem;
   &:hover,
   &:focus-within {
     header, footer menu, footer .boosts {
-      @include fade-in(.5s, .75);
+      @include ani.fade-in(.5s, .75);
     }
   }
 }
@@ -261,7 +267,7 @@ $comment-margin-sm: .3rem;
   .comment {
     @for $i from 2 to 11 {
       &-line--#{$i} {
-        border-left: 1px dashed unquote(nth($levels, $i));
+        border-left: 1px dashed string.unquote(list.nth($levels, $i));
         bottom: 0;
         height: 100%;
         left: $comment-margin-lg * ($i - 1);
@@ -270,11 +276,11 @@ $comment-margin-sm: .3rem;
         position: absolute;
         z-index: 1;
 
-        @include media-breakpoint-up(xl) {
+        @include b.media-breakpoint-up(xl) {
           left: $comment-margin-xl * ($i - 1);
         }
 
-        @include media-breakpoint-down(sm) {
+        @include b.media-breakpoint-down(sm) {
           left: $comment-margin-sm * ($i - 1);
         }
       }
@@ -282,14 +288,14 @@ $comment-margin-sm: .3rem;
 
     @for $i from 2 to 11 {
       &-level--#{$i} {
-        border-left: 1px solid unquote(nth($levels, $i));
+        border-left: 1px solid string.unquote(list.nth($levels, $i));
         margin-left: $comment-margin-lg * ($i - 1) !important;
 
-        @include media-breakpoint-up(xl) {
+        @include b.media-breakpoint-up(xl) {
           margin-left: $comment-margin-xl * ($i - 1) !important;
         }
 
-        @include media-breakpoint-down(sm) {
+        @include b.media-breakpoint-down(sm) {
           margin-left: $comment-margin-sm * ($i - 1) !important;
         }
       }

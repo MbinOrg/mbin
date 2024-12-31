@@ -1,3 +1,5 @@
+@use '../variables' as v;
+
 .preview {
   text-align:center;
   //display: inline-flex;
@@ -59,7 +61,7 @@ width: 100%;
 }
 }
 
-@each $key, $ratio in $aspect-ratios {
+@each $key, $ratio in v.$aspect-ratios {
 .ratio-#{$key} {
 aspect-ratio: #{$ratio};
 }

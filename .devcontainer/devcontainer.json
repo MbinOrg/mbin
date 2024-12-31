@@ -64,8 +64,8 @@
     "postCreateCommand": {
         "webdir": "sudo chmod a+x \"$(pwd)\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)\" /var/www/html",
         "deps": "if [ -f composer.json ]; then composer install; fi",
-        "config": "cp .devcontainer/.env .env",
-        "apache": "sudo sed -i 's/Listen 80$//' /etc/apache2/ports.conf && sudo cp .devcontainer/apache-vhost.conf /etc/apache2/sites-enabled/000-default.conf",
+        "config": "cp .devcontainer/.env.devcontainer .env",
+        "apache": "sudo sed -i 's/Listen 80$//' /etc/apache2/ports.conf && sudo cp .devcontainer/apache-vhost.conf /etc/apache2/sites-enabled/000-default.conf && sudo a2enmod rewrite",
         "symfony": "wget https://get.symfony.com/cli/installer -O - | bash && sudo mv ~/.symfony5/bin/symfony /usr/local/bin/symfony"
     }
 
