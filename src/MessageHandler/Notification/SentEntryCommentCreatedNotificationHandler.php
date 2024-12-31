@@ -21,7 +21,7 @@ class SentEntryCommentCreatedNotificationHandler extends MbinMessageHandler
         private readonly EntityManagerInterface $entityManager,
         private readonly KernelInterface $kernel,
         private readonly EntryCommentRepository $repository,
-        private readonly NotificationManager $manager,
+        private readonly NotificationManager $notificationManager,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
@@ -42,6 +42,6 @@ class SentEntryCommentCreatedNotificationHandler extends MbinMessageHandler
             throw new UnrecoverableMessageHandlingException('Comment not found');
         }
 
-        $this->manager->sendCreated($comment);
+        $this->notificationManager->sendCreated($comment);
     }
 }
