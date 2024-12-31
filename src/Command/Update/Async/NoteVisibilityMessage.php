@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Command\Update\Async;
 
-use App\Message\Contracts\AsyncMessageInterface;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Message\Contracts\AsyncMessageInterface;
 
 class NoteVisibilityMessage implements AsyncMessageInterface
 {

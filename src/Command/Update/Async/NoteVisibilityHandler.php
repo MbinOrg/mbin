@@ -5,10 +5,6 @@ declare(strict_types=1);
 namespace App\Command\Update\Async;
 
 use App\Entity\Contracts\VisibilityInterface;
-use App\Entity\Post;
-use App\Entity\PostComment;
-use App\Repository\PostRepository;
-use App\Repository\PostCommentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

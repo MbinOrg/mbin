@@ -32,7 +32,6 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Exception\NotValidCurrentPageException;
 use Pagerfanta\Pagerfanta;
-use Pagerfanta\PagerfantaInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -40,6 +39,7 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * @extends ServiceEntityRepository<Entry>
+ *
  * @method Entry|null find($id, $lockMode = null, $lockVersion = null)
  * @method Entry|null findOneBy(array $criteria, array $orderBy = null)
  * @method Entry|null findOneByUrl(string $url)

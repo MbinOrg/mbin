@@ -67,7 +67,7 @@ class BaseApi extends AbstractController
     public const MIN_DEPTH = 0;
     public const MAX_DEPTH = 25;
 
-    /** @var BaseImageConstraint $constraint */
+    /** @var BaseImageConstraint */
     private static $constraint;
 
     public function __construct(
