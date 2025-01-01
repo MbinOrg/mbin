@@ -111,7 +111,7 @@ jobs:
           DATABASE_PORT: 5432
           REDIS_HOST: valkey
           REDIS_PORT: 6379
-        run: php bin/phpunit tests/Functional
+        run: php vendor/bin/paratest --passthru-php="'-d' 'memory_limit=192M'" tests/Functional
     services:
       postgres:
         # Docker Hub image
