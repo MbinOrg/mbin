@@ -10,7 +10,6 @@ use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\EntryManager;
 use Doctrine\Common\Collections\ArrayCollection;
-use DOMElement;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -44,11 +43,12 @@ class AwesomeBotFixtures extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
+        /** @var array<string, mixed>[] */
         $result = [];
 
         foreach ($this->getEntries() as $entry) {
             if ($input->getOption('prepare')) {
-                $this->preapreMagazines($output, $entry);
+                $this->prepareMagazines($output, $entry);
                 continue;
             }
 
@@ -81,7 +81,7 @@ class AwesomeBotFixtures extends Command
                 if ('ul' === $elem->nodeName) {
                     foreach ($elem->childNodes as $li) {
                         /**
-                         * @var $li DOMElement
+                         * @var \DOMElement $li
                          */
                         if ('li' !== $li->nodeName) {
                             continue;
@@ -134,6 +134,9 @@ class AwesomeBotFixtures extends Command
         return Command::SUCCESS;
     }
 
+    /**
+     * @return array<string, string>[]
+     */
     private function getEntries(): array
     {
         return [
@@ -329,7 +332,10 @@ class AwesomeBotFixtures extends Command
         ];
     }
 
-    private function preapreMagazines(OutputInterface $output, array $entry)
+    /**
+     * @param array<string, string> $entry
+     */
+    private function prepareMagazines(OutputInterface $output, array $entry): void
     {
         try {
             $command = $this->getApplication()->find('mbin:user:create');

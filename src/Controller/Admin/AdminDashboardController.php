@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Controller\AbstractController;
 use App\Service\InstanceStatsManager;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class AdminDashboardController extends AbstractController
@@ -15,7 +16,7 @@ class AdminDashboardController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    public function __invoke(?int $statsPeriod, ?bool $withFederated)
+    public function __invoke(?int $statsPeriod, ?bool $withFederated): Response
     {
         if (!$statsPeriod or -1 === $statsPeriod) {
             $statsPeriod = null;

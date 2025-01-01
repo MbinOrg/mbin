@@ -39,7 +39,7 @@ class RemoveFailedMessagesCommand extends Command
     /**
      * Remove all failed messages from database.
      */
-    private function removeFailedMessages()
+    private function removeFailedMessages(): void
     {
         $this->entityManager->getConnection()->executeQuery(
             'DELETE FROM messenger_messages WHERE queue_name = ?',

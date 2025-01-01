@@ -31,7 +31,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Exception\NotValidCurrentPageException;
 use Pagerfanta\Pagerfanta;
-use Pagerfanta\PagerfantaInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -54,7 +53,7 @@ class EntryCommentRepository extends ServiceEntityRepository
         parent::__construct($registry, EntryComment::class);
     }
 
-    public function findByCriteria(Criteria $criteria): PagerfantaInterface
+    public function findByCriteria(Criteria $criteria): Pagerfanta
     {
         $pagerfanta = new Pagerfanta(
             new QueryAdapter(

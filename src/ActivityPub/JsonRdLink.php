@@ -208,7 +208,7 @@ class JsonRdLink
      *
      * The "titles" member is OPTIONAL in the link relation object.
      *
-     * @var array[string=>string]
+     * @var array<string, string>
      */
     protected $titles = [];
 
@@ -223,11 +223,11 @@ class JsonRdLink
      *
      * The "properties" member is OPTIONAL in the link relation object.
      *
-     * @var array[string=>string]
+     * @var array<string, string>
      */
     protected $properties = [];
 
-    public function addTitle(string $locale, string $value): JsonRdLink
+    public function addTitle(string $locale, string $value): static
     {
         if (!\array_key_exists($locale, $this->titles)) {
             $this->titles[$locale] = $value;
@@ -236,7 +236,7 @@ class JsonRdLink
         return $this;
     }
 
-    public function removeTitle(string $locale): JsonRdLink
+    public function removeTitle(string $locale): static
     {
         if (!\array_key_exists($locale, $this->titles)) {
             return $this;
@@ -246,14 +246,14 @@ class JsonRdLink
         return $this;
     }
 
-    public function addProperty(string $url, string $value): JsonRdLink
+    public function addProperty(string $url, string $value): static
     {
         $this->properties[$url] = $value;
 
         return $this;
     }
 
-    public function removeProperty(string $url): JsonRdLink
+    public function removeProperty(string $url): static
     {
         if (!\array_key_exists($url, $this->properties)) {
             return $this;
@@ -263,6 +263,9 @@ class JsonRdLink
         return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         $data = [];
@@ -284,7 +287,7 @@ class JsonRdLink
     /**
      * @throws \Exception
      */
-    public function setRel(string $relation): JsonRdLink
+    public function setRel(string $relation): static
     {
         if (\in_array($relation, self::REGISTERED_RELATION_TYPES)) {
             $this->rel = $relation;
@@ -308,7 +311,7 @@ class JsonRdLink
     /**
      * @todo we need to write for url validation for $href argument.
      */
-    public function setHref(string $href): JsonRdLink
+    public function setHref(string $href): static
     {
         $this->href = $href;
 
@@ -320,31 +323,43 @@ class JsonRdLink
         return $this->type;
     }
 
-    public function setType(string $type): JsonRdLink
+    public function setType(string $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getTitles(): array
     {
         return $this->titles;
     }
 
-    protected function setTitles(array $titles): JsonRdLink
+    /**
+     * @param array<string, string> $titles
+     */
+    protected function setTitles(array $titles): static
     {
         $this->titles = $titles;
 
         return $this;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getProperties(): array
     {
         return $this->properties;
     }
 
-    protected function setProperties(array $properties): JsonRdLink
+    /**
+     * @param array<string, string> $properties
+     */
+    protected function setProperties(array $properties): static
     {
         $this->properties = $properties;
 

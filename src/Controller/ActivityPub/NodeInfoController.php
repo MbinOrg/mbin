@@ -39,6 +39,8 @@ class NodeInfoController
 
     /**
      * Get list of links for well-known nodeinfo.
+     *
+     * @return array<string, array<string, string>[]>
      */
     private function getLinks(): array
     {
