@@ -39,7 +39,7 @@ class RemoveDeadMessagesCommand extends Command
     /**
      * Remove all dead messages from database.
      */
-    private function removeDeadMessages()
+    private function removeDeadMessages(): void
     {
         $this->entityManager->getConnection()->executeQuery(
             'DELETE FROM messenger_messages WHERE queue_name = ?',

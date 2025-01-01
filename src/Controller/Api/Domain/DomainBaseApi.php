@@ -15,7 +15,7 @@ class DomainBaseApi extends BaseApi
     private readonly DomainFactory $factory;
 
     #[Required]
-    public function setFactory(DomainFactory $factory)
+    public function setFactory(DomainFactory $factory): void
     {
         $this->factory = $factory;
     }
@@ -23,7 +23,7 @@ class DomainBaseApi extends BaseApi
     /**
      * Serialize a domain to JSON.
      */
-    protected function serializeDomain(DomainDto|Domain $dto)
+    protected function serializeDomain(DomainDto|Domain $dto): DomainDto
     {
         $response = $dto instanceof Domain ? $this->factory->createDto($dto) : $dto;
 
