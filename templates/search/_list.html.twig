@@ -1,0 +1,7 @@
+<div data-controller="subject-list">
+    {% if objects|length %}
+        {% include 'layout/_subject_list.html.twig' with {results: [object], entryCommentAttributes: {showMagazineName: true, showEntryTitle: true}, postCommentAttributes: {withPost: false}} %}
+    {% elseif q %}
+        {% include 'layout/_subject_list.html.twig' with {entryCommentAttributes: {showMagazineName: true, showEntryTitle: true}, postCommentAttributes: {withPost: false}} %}
+    {% endif %}
+</div>
