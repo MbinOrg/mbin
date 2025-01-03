@@ -12,11 +12,13 @@ use Symfony\Contracts\Service\Attribute\Required;
 
 class DomainBaseApi extends BaseApi
 {
+    // @phpstan-ignore property.uninitializedReadonly
     private readonly DomainFactory $factory;
 
     #[Required]
     public function setFactory(DomainFactory $factory): void
     {
+        // @phpstan-ignore property.readOnlyAssignNotInConstructor
         $this->factory = $factory;
     }
 

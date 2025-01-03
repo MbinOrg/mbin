@@ -17,8 +17,12 @@ class PostsBaseApi extends BaseApi
 {
     /**
      * Serialize a single post to JSON.
+     *
+     * @param string[] $tags
+     *
+     * @return PostResponseDto|mixed[]
      */
-    protected function serializePost(PostDto $dto, array $tags): PostResponseDto
+    protected function serializePost(?PostDto $dto, array $tags): PostResponseDto|array
     {
         if (null === $dto) {
             return [];
@@ -26,8 +30,8 @@ class PostsBaseApi extends BaseApi
         $response = $this->postFactory->createResponseDto($dto, $tags);
 
         if ($this->isGranted('ROLE_OAUTH2_POST:VOTE')) {
-            $response->isFavourited = $dto instanceof PostDto ? $dto->isFavourited : $dto->isFavored($this->getUserOrThrow());
-            $response->userVote = $dto instanceof PostDto ? $dto->userVote : $dto->getUserChoice($this->getUserOrThrow());
+            $response->isFavourited = $dto->isFavourited;
+            $response->userVote = $dto->userVote;
         }
 
         if ($user = $this->getUser()) {
@@ -54,6 +58,7 @@ class PostsBaseApi extends BaseApi
                 'no-upload',
             ],
         ]);
+        // @phpstan-ignore function.alreadyNarrowedType, instanceof.alwaysTrue
         \assert($deserialized instanceof PostRequestDto);
 
         $dto = $deserialized->mergeIntoDto($dto);
@@ -77,14 +82,16 @@ class PostsBaseApi extends BaseApi
 
     /**
      * Serialize a single comment to JSON.
+     *
+     * @param string[] $tags
      */
     protected function serializePostComment(PostCommentDto $comment, array $tags): PostCommentResponseDto
     {
         $response = $this->postCommentFactory->createResponseDto($comment, $tags);
 
         if ($this->isGranted('ROLE_OAUTH2_POST_COMMENT:VOTE')) {
-            $response->isFavourited = $comment instanceof PostCommentDto ? $comment->isFavourited : $comment->isFavored($this->getUserOrThrow());
-            $response->userVote = $comment instanceof PostCommentDto ? $comment->userVote : $comment->getUserChoice($this->getUserOrThrow());
+            $response->isFavourited = $comment->isFavourited;
+            $response->userVote = $comment->userVote;
         }
 
         if ($user = $this->getUser()) {
@@ -120,6 +127,7 @@ class PostsBaseApi extends BaseApi
             ],
         ]);
 
+        // @phpstan-ignore function.alreadyNarrowedType, instanceof.alwaysTrue
         \assert($deserialized instanceof PostCommentRequestDto);
 
         return $deserialized->mergeIntoDto($dto);
@@ -144,7 +152,7 @@ class PostsBaseApi extends BaseApi
      * @param ?PostComment $comment The root comment to base the tree on
      * @param ?int         $depth   how many levels of children to include. If null (default), retrieves depth from query parameter 'd'.
      *
-     * @return array An associative array representation of the comment's hierarchy, to be used as JSON
+     * @return mixed[] An associative array representation of the comment's hierarchy, to be used as JSON
      */
     protected function serializePostCommentTree(?PostComment $comment, ?int $depth = null): array
     {

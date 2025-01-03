@@ -14,7 +14,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Exception\NotValidCurrentPageException;
 use Pagerfanta\Pagerfanta;
-use Pagerfanta\PagerfantaInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -32,7 +31,7 @@ class MagazineLogRepository extends ServiceEntityRepository
         parent::__construct($registry, MagazineLog::class);
     }
 
-    public function listAll(int $page, int $perPage = self::PER_PAGE): PagerfantaInterface
+    public function listAll(int $page, int $perPage = self::PER_PAGE): Pagerfanta
     {
         $qb = $this->createQueryBuilder('ml')
             ->orderBy('ml.createdAt', 'DESC');

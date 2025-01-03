@@ -29,13 +29,13 @@ class NotificationBaseApi extends BaseApi
     private TranslatorInterface $translator;
 
     #[Required]
-    public function setMessageFactory(MessageFactory $messageFactory)
+    public function setMessageFactory(MessageFactory $messageFactory): void
     {
         $this->messageFactory = $messageFactory;
     }
 
     #[Required]
-    public function setTranslator(TranslatorInterface $translator)
+    public function setTranslator(TranslatorInterface $translator): void
     {
         $this->translator = $translator;
     }
@@ -45,9 +45,9 @@ class NotificationBaseApi extends BaseApi
      *
      * @param Notification $dto The Notification to serialize
      *
-     * @return array An associative array representation of the message's safe fields, to be used as JSON
+     * @return array<string, mixed> An associative array representation of the message's safe fields, to be used as JSON
      */
-    protected function serializeNotification(Notification $dto)
+    protected function serializeNotification(Notification $dto): array
     {
         $toReturn = [
             'notificationId' => $dto->getId(),

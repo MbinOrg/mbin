@@ -16,7 +16,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Exception\NotValidCurrentPageException;
 use Pagerfanta\Pagerfanta;
-use Pagerfanta\PagerfantaInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -45,7 +44,7 @@ class NotificationRepository extends ServiceEntityRepository
         ?int $page,
         string $status = self::STATUS_ALL,
         int $perPage = self::PER_PAGE,
-    ): PagerfantaInterface {
+    ): Pagerfanta {
         $qb = $this->createQueryBuilder('n')
             ->where('n.user = :user')
             ->setParameter('user', $user)

@@ -43,6 +43,9 @@ class UserOutboxController extends AbstractController
         return $response;
     }
 
+    /**
+     * @return array<string, string|int>
+     */
     #[ArrayShape([
         '@context' => 'string',
         'type' => 'string',
@@ -61,6 +64,9 @@ class UserOutboxController extends AbstractController
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[ArrayShape([
         '@context' => 'string',
         'type' => 'string',
