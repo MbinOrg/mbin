@@ -34,6 +34,8 @@ class EntriesBaseApi extends BaseApi
 
     /**
      * Serialize a single entry to JSON.
+     *
+     * @param string[] $tags
      */
     protected function serializeEntry(EntryDto|Entry $dto, array $tags): EntryResponseDto
     {
@@ -54,7 +56,8 @@ class EntriesBaseApi extends BaseApi
     /**
      * Deserialize an entry from JSON.
      *
-     * @param ?EntryDto $dto The EntryDto to modify with new values (default: null to create a new EntryDto)
+     * @param ?EntryDto            $dto     The EntryDto to modify with new values (default: null to create a new EntryDto)
+     * @param array<string, mixed> $context
      *
      * @return EntryDto An entry with only certain fields allowed to be modified by the user
      *
@@ -72,6 +75,7 @@ class EntriesBaseApi extends BaseApi
     {
         $dto = $dto ? $dto : new EntryDto();
         $deserialized = $this->serializer->deserialize($this->request->getCurrentRequest()->getContent(), EntryRequestDto::class, 'json', $context);
+        // @phpstan-ignore function.alreadyNarrowedType, instanceof.alwaysTrue
         \assert($deserialized instanceof EntryRequestDto);
 
         $dto = $deserialized->mergeIntoDto($dto);
@@ -98,6 +102,8 @@ class EntriesBaseApi extends BaseApi
 
     /**
      * Serialize a single comment to JSON.
+     *
+     * @param string[] $tags
      */
     protected function serializeComment(EntryCommentDto $comment, array $tags): EntryCommentResponseDto
     {
@@ -169,7 +175,7 @@ class EntriesBaseApi extends BaseApi
      * @param ?EntryComment $comment The root comment to base the tree on
      * @param ?int          $depth   how many levels of children to include. If null (default), retrieves depth from query parameter 'd'.
      *
-     * @return array An associative array representation of the comment's hierarchy, to be used as JSON
+     * @return mixed[] An associative array representation of the comment's hierarchy, to be used as JSON
      */
     protected function serializeCommentTree(?EntryComment $comment, ?int $depth = null): array
     {
@@ -191,7 +197,10 @@ class EntriesBaseApi extends BaseApi
         return $commentTree->jsonSerialize();
     }
 
-    public function createEntry(Magazine $magazine, EntryManager $manager, array $context, ?ImageDto $image = null): Entry
+    /**
+     * @param array<string, mixed> $context
+     */
+    public function createEntry(?Magazine $magazine, EntryManager $manager, array $context, ?ImageDto $image = null): Entry
     {
         $dto = new EntryDto();
         $dto->magazine = $magazine;

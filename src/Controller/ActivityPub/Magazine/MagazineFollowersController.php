@@ -42,6 +42,9 @@ class MagazineFollowersController extends AbstractController
         return $response;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[ArrayShape([
         '@context' => 'string',
         'type' => 'string',

@@ -95,6 +95,8 @@ class MagazineReportsAcceptApi extends MagazineBaseApi
 
         $manager = $managerFactory->createManager($report->getSubject());
 
+        // TODO: ContentManagerInterface doesn't have a delete() method signature, and it can't
+        // because all the managers returned by $managerFactory have a different signature for it.
         $manager->delete($this->getUserOrThrow(), $report->getSubject());
 
         return new JsonResponse(

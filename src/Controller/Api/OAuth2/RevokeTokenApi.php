@@ -50,7 +50,7 @@ class RevokeTokenApi extends BaseApi
         EntityManagerInterface $entityManager,
         OAuthTokenRevoker $revoker,
         RateLimiterFactory $apiOauthTokenRevokeLimiter,
-    ) {
+    ): JsonResponse {
         $headers = $this->rateLimit($apiOauthTokenRevokeLimiter);
 
         $token = $this->container->get('security.token_storage')->getToken();

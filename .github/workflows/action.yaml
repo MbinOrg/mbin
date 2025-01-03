@@ -93,6 +93,11 @@ jobs:
       - name: Build frontend (production)
         run: npm run build
 
+      - name: Dump event payload
+        env:
+          EVENT_PAYLOAD: ${{ tojson(github) }}
+        run: echo "EVENT_PAYLOAD is $EVENT_PAYLOAD"
+
       - name: Run unit tests
         env:
           COMPOSER_CACHE_DIR: ${{ steps.composer-cache.outputs.dir }}

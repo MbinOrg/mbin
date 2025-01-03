@@ -21,6 +21,9 @@ class EntryComments extends AbstractController
     ) {
     }
 
+    /**
+     * @todo DtoPaginator class does not seem to exist.
+     */
     public function __invoke(Entry $entry)
     {
         try {
