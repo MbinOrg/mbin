@@ -32,6 +32,9 @@ class MagazineModeratorsController
         return $response;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[ArrayShape([
         '@context' => 'array',
         'type' => 'string',

@@ -44,6 +44,9 @@ class UserFollowersController
         return $response;
     }
 
+    /**
+     * @return array<string, string|int>
+     */
     #[ArrayShape([
         '@context' => 'string',
         'type' => 'string',
@@ -64,6 +67,9 @@ class UserFollowersController
         return $this->collectionInfoWrapper->build($routeName, ['username' => $user->username], $count);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[ArrayShape([
         '@context' => 'string',
         'type' => 'string',

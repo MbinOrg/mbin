@@ -28,6 +28,7 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OrderBy;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Webmozart\Assert\Assert;
 
 #[Entity(repositoryClass: EntryCommentRepository::class)]
@@ -226,7 +227,7 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
         return $this;
     }
 
-    public function isFavored(User $user): bool
+    public function isFavored(?UserInterface $user): bool
     {
         $criteria = Criteria::create()
             ->where(Criteria::expr()->eq('user', $user));

@@ -15,6 +15,9 @@ class MagazineBadges extends AbstractController
     {
     }
 
+    /**
+     * @todo DtoPaginator class does not seem to exist.
+     */
     public function __invoke(Magazine $magazine)
     {
         $dtos = array_map(fn ($badge) => $this->factory->createDto($badge), $magazine->badges->toArray());

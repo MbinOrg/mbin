@@ -12,7 +12,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Exception\NotValidCurrentPageException;
 use Pagerfanta\Pagerfanta;
-use Pagerfanta\PagerfantaInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -31,7 +30,7 @@ class MessageRepository extends ServiceEntityRepository
         parent::__construct($registry, Message::class);
     }
 
-    public function findByCriteria(MessageThreadPageView|Criteria $criteria): PagerfantaInterface
+    public function findByCriteria(MessageThreadPageView|Criteria $criteria): Pagerfanta
     {
         $qb = $this->createQueryBuilder('m')
             ->where('m.thread = :m_thread_id')

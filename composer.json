@@ -120,8 +120,12 @@
         "dama/doctrine-test-bundle": "^8.2.0",
         "doctrine/doctrine-fixtures-bundle": "^3.6.1",
         "fakerphp/faker": "^1.23.1",
+        "jetbrains/phpstorm-attributes": "^1.2",
         "justinrainbow/json-schema": "^6.0.0",
+        "phpstan/extension-installer": "^1.4.3",
         "phpstan/phpstan": "^2.0.2",
+        "phpstan/phpstan-doctrine": "^2.0.1",
+        "phpstan/phpstan-phpunit": "^2.0.1",
         "phpunit/phpunit": "^11.3.4",
         "symfony/browser-kit": "7.2.*",
         "symfony/debug-bundle": "7.1.*",
@@ -151,9 +155,10 @@
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
+            "ergebnis/composer-normalize": true,
+            "phpstan/extension-installer": true,
             "symfony/flex": true,
-            "symfony/runtime": true,
-            "ergebnis/composer-normalize": true
+            "symfony/runtime": true
         },
         "optimize-autoloader": true,
         "preferred-install": {

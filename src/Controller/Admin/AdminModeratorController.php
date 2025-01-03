@@ -49,6 +49,7 @@ class AdminModeratorController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function removeModerator(User $user, Request $request): Response
     {
+        // @phpstan-ignore arguments.count
         $this->validateCsrf('remove_moderator', $request->getPayload()->get('token'));
 
         $this->manager->removeModerator($user);

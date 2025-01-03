@@ -13,7 +13,6 @@ use App\DTO\UserDto;
 use App\DTO\UserResponseDto;
 use App\Entity\Client;
 use App\Entity\Contracts\ContentInterface;
-use App\Entity\Contracts\ContentVisibilityInterface;
 use App\Entity\Contracts\ReportInterface;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
@@ -148,9 +147,9 @@ class BaseApi extends AbstractController
      */
     private function logAccess(): void
     {
-        /** @var ?OAuth2Token $token */
         $token = $this->container->get('security.token_storage')->getToken();
         if (null !== $token && $token instanceof OAuth2Token) {
+            /** @var OAuth2Token $token */
             $clientId = $token->getOAuthClientId();
             /** @var Client $client */
             $client = $this->entityManager->getReference(Client::class, $clientId);
@@ -192,6 +191,11 @@ class BaseApi extends AbstractController
             ->findOneBy(['identifier' => $oAuth2Token->getAttribute('access_token_id')]);
     }
 
+    /**
+     * @param mixed[] $serializedItems
+     *
+     * @return array<string, mixed>
+     */
     public function serializePaginated(array $serializedItems, Pagerfanta $pagerfanta): array
     {
         return [
@@ -254,10 +258,11 @@ class BaseApi extends AbstractController
 
     /**
      * Serialize a single log item to JSON.
+     *
+     * @return array<string, mixed>
      */
     protected function serializeLogItem(MagazineLog $log): array
     {
-        /** @var ?ContentVisibilityInterface $subject */
         $subject = $log->getSubject();
         $response = $this->magazineFactory->createLogDto($log);
         $response->setSubject(
@@ -270,6 +275,7 @@ class BaseApi extends AbstractController
         );
 
         if ($response->subject) {
+            // @phpstan-ignore property.notFound
             $response->subject->visibility = 'visible';
         }
 
@@ -279,6 +285,7 @@ class BaseApi extends AbstractController
                 $toReturn['subject'] = $toReturn['subject']->jsonSerialize();
             }
 
+            /** @var Entry|EntryComment|Post|PostComment $subject */
             $toReturn['subject']['visibility'] = $subject->getVisibility();
         }
 
@@ -349,7 +356,7 @@ class BaseApi extends AbstractController
     {
         try {
             /**
-             * @var UploadedFile $uploaded
+             * @var ?UploadedFile $uploaded
              */
             $uploaded = $this->request->getCurrentRequest()->files->get('uploadImage');
 

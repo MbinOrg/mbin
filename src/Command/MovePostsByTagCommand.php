@@ -73,6 +73,8 @@ class MovePostsByTagCommand extends Command
     }
 
     /**
+     * @todo unused -- delete?
+     *
      * @param ArrayCollection<int, EntryComment>|Collection<int, EntryComment> $comments
      */
     private function moveComments(ArrayCollection|Collection $comments, Magazine $magazine): void

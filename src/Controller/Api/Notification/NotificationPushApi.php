@@ -18,9 +18,9 @@ use App\Service\SettingsManager;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -123,7 +123,7 @@ class NotificationPushApi extends NotificationBaseApi
     )]
     #[OA\Response(
         response: 403,
-        description: 'You are not allowed to create push notifications',
+        description: 'You are not allowed to delete push subscriptions',
         content: new OA\JsonContent(ref: new Model(type: ForbiddenErrorSchema::class))
     )]
     #[OA\Response(
@@ -192,6 +192,11 @@ class NotificationPushApi extends NotificationBaseApi
         content: new OA\JsonContent(ref: new Model(type: ForbiddenErrorSchema::class))
     )]
     #[OA\Response(
+        response: 404,
+        description: 'Notification not found',
+        content: new OA\JsonContent(ref: new Model(type: NotFoundErrorSchema::class))
+    )]
+    #[OA\Response(
         response: 429,
         description: 'You are being rate limited',
         headers: [
@@ -235,7 +240,7 @@ class NotificationPushApi extends NotificationBaseApi
                 return new JsonResponse(status: 500, headers: $headers);
             }
         } else {
-            throw new BadRequestException(message: 'PushSubscription not found', statusCode: 404);
+            throw new NotFoundHttpException('PushSubscription not found');
         }
     }
 }

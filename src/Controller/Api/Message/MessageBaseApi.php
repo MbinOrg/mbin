@@ -6,6 +6,8 @@ namespace App\Controller\Api\Message;
 
 use App\Controller\Api\BaseApi;
 use App\DTO\MessageDto;
+use App\DTO\MessageResponseDto;
+use App\DTO\MessageThreadResponseDto;
 use App\Entity\Message;
 use App\Entity\MessageThread;
 use App\Factory\MessageFactory;
@@ -30,9 +32,9 @@ class MessageBaseApi extends BaseApi
      *
      * @param Message $message The Message to serialize
      *
-     * @return array An associative array representation of the message's safe fields, to be used as JSON
+     * @return MessageResponseDto A representation of the message's safe fields, to be used as JSON
      */
-    protected function serializeMessage(Message $message)
+    protected function serializeMessage(Message $message): MessageResponseDto
     {
         $response = $this->messageFactory->createResponseDto($message);
 
@@ -44,9 +46,9 @@ class MessageBaseApi extends BaseApi
      *
      * @param MessageThread $thread The thread to serialize
      *
-     * @return array An associative array representation of the message's safe fields, to be used as JSON
+     * @return MessageThreadResponseDto A representation of the message's safe fields, to be used as JSON
      */
-    protected function serializeMessageThread(MessageThread $thread)
+    protected function serializeMessageThread(MessageThread $thread): MessageThreadResponseDto
     {
         $depth = $this->constrainPerPage($this->request->getCurrentRequest()->get('d', self::REPLY_DEPTH), self::MIN_REPLY_DEPTH, self::MAX_REPLY_DEPTH);
         $response = $this->messageFactory->createThreadResponseDto($thread, $depth);

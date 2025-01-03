@@ -10,8 +10,6 @@ use App\Entity\Magazine;
 use App\Repository\UserRepository;
 use App\Service\BadgeManager;
 use App\Service\MagazineManager;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -83,7 +81,7 @@ class AwesomeBotMagazine extends Command
      * @param string[] $tags
      */
     #[Pure]
-    private function createBadges(Magazine $magazine, string $url, array $tags): Collection
+    private function createBadges(Magazine $magazine, string $url, array $tags): void
     {
         $browser = new HttpBrowser(HttpClient::create());
         $crawler = $browser->request('GET', $url);
@@ -97,13 +95,10 @@ class AwesomeBotMagazine extends Command
             }
         }
 
-        $badges = [];
         foreach ($labels as $label) {
             $this->badgeManager->create(
                 BadgeDto::create($magazine, $label)
             );
         }
-
-        return new ArrayCollection($badges);
     }
 }
