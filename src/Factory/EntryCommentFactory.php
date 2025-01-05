@@ -33,6 +33,9 @@ class EntryCommentFactory
         );
     }
 
+    /**
+     * @param string[] $tags
+     */
     public function createResponseDto(EntryCommentDto|EntryComment $comment, array $tags, int $childCount = 0): EntryCommentResponseDto
     {
         $dto = $comment instanceof EntryComment ? $this->createDto($comment) : $comment;

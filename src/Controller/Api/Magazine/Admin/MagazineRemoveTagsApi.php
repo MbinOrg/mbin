@@ -78,7 +78,7 @@ class MagazineRemoveTagsApi extends MagazineBaseApi
     public function __invoke(
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
-        string $tag,
+        ?string $tag,
         EntityManagerInterface $entityManager,
         MagazineFactory $factory,
         RateLimiterFactory $apiModerateLimiter,

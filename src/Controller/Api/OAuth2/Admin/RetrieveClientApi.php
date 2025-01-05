@@ -161,7 +161,7 @@ class RetrieveClientApi extends BaseApi
         $page = $this->getPageNb($request);
         $perPage = self::constrainPerPage($request->get('perPage', self::PER_PAGE));
 
-        /** @var EntityRepository $repository */
+        /** @var EntityRepository<Client> $repository */
         $repository = $manager->getRepository(Client::class);
 
         $qb = $repository->createQueryBuilder('c');

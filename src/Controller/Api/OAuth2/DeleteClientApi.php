@@ -64,7 +64,7 @@ class DeleteClientApi extends BaseApi
     ): JsonResponse {
         $headers = $this->rateLimit(anonLimiterFactory: $apiOauthClientDeleteLimiter);
 
-        $dto = new OAuth2ClientDto(null);
+        $dto = new OAuth2ClientDto();
         $dto->identifier = $request->get('client_id');
         $dto->secret = $request->get('client_secret');
 
@@ -84,6 +84,7 @@ class DeleteClientApi extends BaseApi
         }
 
         $client->setActive(false);
+        // @phpstan-ignore argument.type
         $revoker->revokeCredentialsForClient($client);
         $entityManager->flush();
 

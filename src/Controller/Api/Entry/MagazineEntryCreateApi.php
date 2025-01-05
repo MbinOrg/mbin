@@ -327,7 +327,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
     #[IsGranted('ROLE_OAUTH2_ENTRY:CREATE')]
     public function uploadImage(
         #[MapEntity(id: 'magazine_id')]
-        Magazine $magazine,
+        ?Magazine $magazine,
         ValidatorInterface $validator,
         EntryManager $manager,
         RateLimiterFactory $apiImageLimiter,
@@ -350,10 +350,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         }
 
         $image = $this->handleUploadedImage();
-
-        if (null !== $image) {
-            $dto->image = $this->imageFactory->createDto($image);
-        }
+        $dto->image = $this->imageFactory->createDto($image);
 
         $errors = $validator->validate($dto);
         if (0 < \count($errors)) {

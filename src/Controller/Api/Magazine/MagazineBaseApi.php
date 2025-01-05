@@ -10,6 +10,7 @@ use App\DTO\MagazineDto;
 use App\DTO\MagazineRequestDto;
 use App\DTO\MagazineThemeDto;
 use App\DTO\MagazineThemeRequestDto;
+use App\DTO\ReportResponseDto;
 use App\Entity\Magazine;
 use App\Entity\Report;
 use App\Factory\ReportFactory;
@@ -19,22 +20,26 @@ use Symfony\Contracts\Service\Attribute\Required;
 
 class MagazineBaseApi extends BaseApi
 {
+    // @phpstan-ignore property.uninitializedReadonly
     private readonly ReportFactory $reportFactory;
+    // @phpstan-ignore property.uninitializedReadonly
     protected readonly MagazineManager $manager;
 
     #[Required]
-    public function setReportFactory(ReportFactory $reportFactory)
+    public function setReportFactory(ReportFactory $reportFactory): void
     {
+        // @phpstan-ignore property.readOnlyAssignNotInConstructor
         $this->reportFactory = $reportFactory;
     }
 
     #[Required]
-    public function setManager(MagazineManager $manager)
+    public function setManager(MagazineManager $manager): void
     {
+        // @phpstan-ignore property.readOnlyAssignNotInConstructor
         $this->manager = $manager;
     }
 
-    protected function serializeReport(Report $report)
+    protected function serializeReport(Report $report): ReportResponseDto
     {
         $response = $this->reportFactory->createResponseDto($report);
 
@@ -52,6 +57,7 @@ class MagazineBaseApi extends BaseApi
     {
         $dto = $dto ?? new MagazineDto();
         $deserialized = $this->serializer->deserialize($this->request->getCurrentRequest()->getContent(), MagazineRequestDto::class, 'json');
+        // @phpstan-ignore function.alreadyNarrowedType, instanceof.alwaysTrue
         \assert($deserialized instanceof MagazineRequestDto);
 
         return $deserialized->mergeIntoDto($dto);

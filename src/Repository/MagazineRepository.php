@@ -72,7 +72,7 @@ class MagazineRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function findPaginated(MagazinePageView $criteria): PagerfantaInterface
+    public function findPaginated(MagazinePageView $criteria): Pagerfanta
     {
         $qb = $this->createQueryBuilder('m')
             ->andWhere('m.visibility = :visibility')
@@ -120,7 +120,7 @@ class MagazineRepository extends ServiceEntityRepository
         return $pagerfanta;
     }
 
-    public function findSubscribedMagazines(int $page, User $user, int $perPage = self::PER_PAGE): PagerfantaInterface
+    public function findSubscribedMagazines(int $page, User $user, int $perPage = self::PER_PAGE): Pagerfanta
     {
         $pagerfanta = new Pagerfanta(
             new CollectionAdapter(
@@ -177,7 +177,7 @@ class MagazineRepository extends ServiceEntityRepository
         return $goodResults;
     }
 
-    public function findBlockedMagazines(int $page, User $user, int $perPage = self::PER_PAGE): PagerfantaInterface
+    public function findBlockedMagazines(int $page, User $user, int $perPage = self::PER_PAGE): Pagerfanta
     {
         $pagerfanta = new Pagerfanta(
             new CollectionAdapter(
@@ -215,7 +215,7 @@ class MagazineRepository extends ServiceEntityRepository
         return $moderators;
     }
 
-    public function findModlog(Magazine $magazine, ?int $page = 1, int $perPage = self::PER_PAGE): PagerfantaInterface
+    public function findModlog(Magazine $magazine, ?int $page = 1, int $perPage = self::PER_PAGE): Pagerfanta
     {
         $criteria = Criteria::create()->orderBy(['createdAt' => 'DESC']);
 
@@ -231,7 +231,7 @@ class MagazineRepository extends ServiceEntityRepository
         return $logs;
     }
 
-    public function findBans(Magazine $magazine, ?int $page = 1, int $perPage = self::PER_PAGE): PagerfantaInterface
+    public function findBans(Magazine $magazine, ?int $page = 1, int $perPage = self::PER_PAGE): Pagerfanta
     {
         $criteria = Criteria::create()
             ->andWhere(Criteria::expr()->gt('expiredAt', new \DateTime()))
@@ -254,7 +254,7 @@ class MagazineRepository extends ServiceEntityRepository
         ?int $page = 1,
         int $perPage = self::PER_PAGE,
         string $status = Report::STATUS_PENDING,
-    ): PagerfantaInterface {
+    ): Pagerfanta {
         $dql = 'SELECT r FROM '.Report::class.' r WHERE r.magazine = :magazine';
 
         if (Report::STATUS_ANY !== $status) {
@@ -293,7 +293,7 @@ class MagazineRepository extends ServiceEntityRepository
         User $user,
         ?int $page = 1,
         int $perPage = self::PER_PAGE,
-    ): PagerfantaInterface {
+    ): Pagerfanta {
         $dql =
             'SELECT m FROM '.Magazine::class.' m WHERE m IN ('.
             'SELECT IDENTITY(md.magazine) FROM '.Moderator::class.' md WHERE md.user = :user) ORDER BY m.apId DESC, m.lastActive DESC';
@@ -317,7 +317,7 @@ class MagazineRepository extends ServiceEntityRepository
         return $pagerfanta;
     }
 
-    public function findTrashed(Magazine $magazine, int $page = 1, int $perPage = self::PER_PAGE): PagerfantaInterface
+    public function findTrashed(Magazine $magazine, int $page = 1, int $perPage = self::PER_PAGE): Pagerfanta
     {
         // @todo union adapter
         $conn = $this->_em->getConnection();
