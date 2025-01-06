@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0e7eba17787bc7cfb7a61b82bf1d5930",
+    "content-hash": "ccd9977ef025f390f5152a039a6f9f72",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -11991,16 +11991,16 @@
         },
         {
             "name": "symfony/scheduler",
-            "version": "v7.1.6",
+            "version": "v7.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/scheduler.git",
-                "reference": "26d10926d6b8a52897468e6e4fc5c447779af533"
+                "reference": "78add01da6cbbbdcc95494bcd30e4658441475e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/scheduler/zipball/26d10926d6b8a52897468e6e4fc5c447779af533",
-                "reference": "26d10926d6b8a52897468e6e4fc5c447779af533",
+                "url": "https://api.github.com/repos/symfony/scheduler/zipball/78add01da6cbbbdcc95494bcd30e4658441475e1",
+                "reference": "78add01da6cbbbdcc95494bcd30e4658441475e1",
                 "shasum": ""
             },
             "require": {
@@ -12051,7 +12051,7 @@
                 "scheduler"
             ],
             "support": {
-                "source": "https://github.com/symfony/scheduler/tree/v7.1.6"
+                "source": "https://github.com/symfony/scheduler/tree/v7.2.2"
             },
             "funding": [
                 {
@@ -12067,7 +12067,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-10-14T06:12:26+00:00"
+            "time": "2024-12-19T14:25:03+00:00"
         },
         {
             "name": "symfony/security-bundle",

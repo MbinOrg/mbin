@@ -88,7 +88,7 @@
         "symfony/rate-limiter": "7.2.*",
         "symfony/redis-messenger": "7.2.*",
         "symfony/runtime": "7.1.*",
-        "symfony/scheduler": "7.1.*",
+        "symfony/scheduler": "7.2.*",
         "symfony/security-bundle": "7.2.*",
         "symfony/security-csrf": "7.2.*",
         "symfony/serializer": "7.1.*",
