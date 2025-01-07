@@ -1,0 +1,31 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://kbin.test/contexts"
+    ],
+    "id": "SCRUBBED_ID",
+    "type": "Announce",
+    "actor": "https://kbin.test/m/test",
+    "object": {
+        "id": "SCRUBBED_ID",
+        "actor": "https://kbin.test/u/owner",
+        "to": [
+            "https://www.w3.org/ns/activitystreams#Public"
+        ],
+        "object": "SCRUBBED_ID",
+        "cc": [
+            "https://kbin.test/m/test"
+        ],
+        "type": "Add",
+        "target": "https://kbin.test/m/test/moderators",
+        "audience": "https://kbin.test/m/test"
+    },
+    "to": [
+        "https://www.w3.org/ns/activitystreams#Public"
+    ],
+    "cc": [
+        "https://kbin.test/m/test"
+    ],
+    "published": "SCRUBBED_DATE",
+    "audience": "https://kbin.test/m/test"
+}
