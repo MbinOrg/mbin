@@ -7,21 +7,17 @@ namespace App\Service\ActivityPub\Wrapper;
 use App\Entity\Activity;
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Contracts\ActivityPubActorInterface;
+use App\Entity\Entry;
+use App\Entity\EntryComment;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use App\Entity\User;
-use App\Factory\ActivityPub\ActivityFactory;
-use App\Factory\ActivityPub\GroupFactory;
-use App\Factory\ActivityPub\PersonFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\ArrayShape;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class UpdateWrapper
 {
     public function __construct(
-        private readonly ActivityFactory $factory,
-        private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly GroupFactory $groupFactory,
-        private readonly PersonFactory $personFactory,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
@@ -31,6 +27,10 @@ class UpdateWrapper
         $activity = new Activity('Update');
         $activity->setActor($editedBy ?? $content->getUser());
         $activity->setObject($content);
+
+        if ($content instanceof Entry || $content instanceof EntryComment || $content instanceof Post || $content instanceof PostComment) {
+            $activity->audience = $content->magazine;
+        }
 
         $this->entityManager->persist($activity);
         $this->entityManager->flush();

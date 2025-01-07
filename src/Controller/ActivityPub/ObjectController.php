@@ -21,7 +21,7 @@ class ObjectController
     public function __invoke(string $id, Request $request): JsonResponse
     {
         $uuid = Uuid::fromString($id);
-        $activity = $this->activityRepository->findOneBy(['uuid' => $uuid]);
+        $activity = $this->activityRepository->findOneBy(['uuid' => $uuid, 'isRemote' => false]);
         if (null === $activity) {
             return new JsonResponse(status: 404);
         }
