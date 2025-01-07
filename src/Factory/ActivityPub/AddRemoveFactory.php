@@ -8,12 +8,14 @@ use App\Entity\Activity;
 use App\Entity\Entry;
 use App\Entity\Magazine;
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class AddRemoveFactory
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -60,6 +62,9 @@ class AddRemoveFactory
         $activity->setActor($actor);
         $activity->setObject($targetObject);
         $activity->targetString = $collectionUrl;
+
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
 
         return $activity;
     }
