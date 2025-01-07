@@ -1,0 +1,36 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://kbin.test/contexts"
+    ],
+    "id": "SCRUBBED_ID",
+    "type": "Announce",
+    "actor": "https://kbin.test/m/test",
+    "object": {
+        "id": "SCRUBBED_ID",
+        "type": "Delete",
+        "actor": "https://kbin.test/u/owner",
+        "object": {
+            "id": "SCRUBBED_ID",
+            "type": "Tombstone"
+        },
+        "to": [
+            "https://www.w3.org/ns/activitystreams#Public",
+            "https://kbin.test/u/user"
+        ],
+        "cc": [
+            "https://kbin.test/m/test",
+            "https://kbin.test/u/user/followers"
+        ],
+        "summary": " "
+    },
+    "to": [
+        "https://www.w3.org/ns/activitystreams#Public"
+    ],
+    "cc": [
+        "https://kbin.test/m/test",
+        "https://kbin.test/u/user/followers"
+    ],
+    "published": "SCRUBBED_DATE",
+    "audience": "https://kbin.test/m/test"
+}

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Controller\ActivityPub\ObjectController;
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Contracts\ActivityPubActorInterface;
 use Doctrine\ORM\Mapping\Column;
@@ -24,6 +25,12 @@ class Activity
 
     #[Column]
     public string $type;
+
+    /**
+     * If the activity is a remote activity then we will not return it through the @see ObjectController.
+     */
+    #[Column(nullable: false, options: ['default' => false])]
+    public bool $isRemote = false;
 
     #[ManyToOne, JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?User $userActor;
@@ -81,7 +88,7 @@ class Activity
         $this->type = $type;
     }
 
-    public function setObject(ActivityPubActivityInterface|Entry|EntryComment|Post|PostComment|ActivityPubActorInterface|User|Magazine|array|string $object): void
+    public function setObject(ActivityPubActivityInterface|Entry|EntryComment|Post|PostComment|ActivityPubActorInterface|User|Magazine|Activity|array|string $object): void
     {
         if ($object instanceof Entry) {
             $this->objectEntry = $object;
@@ -97,6 +104,8 @@ class Activity
             $this->objectUser = $object;
         } elseif ($object instanceof Magazine) {
             $this->objectMagazine = $object;
+        } elseif ($object instanceof Activity) {
+            $this->innerActivity = $object;
         } elseif (\is_array($object)) {
             $this->objectGeneric = json_encode($object);
         } elseif (\is_string($object)) {

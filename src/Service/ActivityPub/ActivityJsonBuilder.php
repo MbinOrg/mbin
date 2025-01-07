@@ -22,12 +22,15 @@ use App\Factory\ActivityPub\GroupFactory;
 use App\Factory\ActivityPub\PersonFactory;
 use App\Factory\ActivityPub\PostCommentNoteFactory;
 use App\Factory\ActivityPub\PostNoteFactory;
+use App\Repository\ApActivityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ActivityJsonBuilder
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly PersonFactory $personFactory,
         private readonly GroupFactory $groupFactory,
@@ -39,6 +42,7 @@ class ActivityJsonBuilder
         private readonly PostCommentNoteFactory $postCommentNoteFactory,
         private readonly LoggerInterface $logger,
         private readonly ApHttpClient $apHttpClient,
+        private readonly ApActivityRepository $apActivityRepository,
     ) {
     }
 
@@ -77,7 +81,7 @@ class ActivityJsonBuilder
 
         unset($item['@context']);
 
-        return [
+        $activityJson = [
             '@context' => $this->contextsProvider->referencedContexts(),
             'id' => $this->urlGenerator->generate('ap_object', ['id' => $activity->uuid], UrlGeneratorInterface::ABSOLUTE_URL),
             'type' => 'Create',
@@ -87,6 +91,12 @@ class ActivityJsonBuilder
             'cc' => $item['cc'],
             'object' => $item,
         ];
+
+        if (isset($item['audience'])) {
+            $activityJson['audience'] = $item['audience'];
+        }
+
+        return $activityJson;
     }
 
     public function buildLikeFromActivity(Activity $activity): array
@@ -100,7 +110,7 @@ class ActivityJsonBuilder
             throw new \LogicException('object must be a string');
         }
 
-        return [
+        $activityJson = [
             '@context' => $this->contextsProvider->referencedContexts(),
             'id' => $this->urlGenerator->generate('ap_object', ['id' => $activity->uuid], UrlGeneratorInterface::ABSOLUTE_URL),
             'type' => 'Like',
@@ -111,6 +121,13 @@ class ActivityJsonBuilder
             ],
             'object' => $object,
         ];
+
+        if (null !== $activity->audience) {
+            $activityJson['cc'][] = $this->urlGenerator->generate('ap_magazine_followers', ['name' => $activity->audience->name], UrlGeneratorInterface::ABSOLUTE_URL);
+            $activityJson['audience'] = $this->groupFactory->getActivityPubId($activity->audience);
+        }
+
+        return $activityJson;
     }
 
     public function buildUndoFromActivity(Activity $activity): array
@@ -128,13 +145,21 @@ class ActivityJsonBuilder
 
         unset($object['@context']);
 
-        return [
+        $activityJson = [
             '@context' => $this->contextsProvider->referencedContexts(),
             'id' => $this->urlGenerator->generate('ap_object', ['id' => $activity->uuid], UrlGeneratorInterface::ABSOLUTE_URL),
             'type' => 'Undo',
             'actor' => $object['actor'],
             'object' => $object,
+            'to' => $object['to'],
+            'cc' => $object['cc'],
         ];
+
+        if (isset($object['audience'])) {
+            $activityJson['audience'] = $object['audience'];
+        }
+
+        return $activityJson;
     }
 
     public function buildAnnounceFromActivity(Activity $activity): array
@@ -152,12 +177,16 @@ class ActivityJsonBuilder
             $object = $this->activityFactory->create($object);
             if (isset($object['attributedTo'])) {
                 $to[] = $object['attributedTo'];
+            } elseif (isset($object['actor'])) {
+                $to[] = $object['actor'];
             }
+        }
 
+        if (isset($object['@context'])) {
             unset($object['@context']);
         }
 
-        return [
+        $activityJson = [
             '@context' => $this->contextsProvider->referencedContexts(),
             'id' => $this->urlGenerator->generate('ap_object', ['id' => $activity->uuid], UrlGeneratorInterface::ABSOLUTE_URL),
             'type' => 'Announce',
@@ -167,6 +196,12 @@ class ActivityJsonBuilder
             'cc' => $object['cc'] ?? [],
             'published' => (new \DateTime())->format(DATE_ATOM),
         ];
+
+        if ($actor instanceof Magazine) {
+            $activityJson['audience'] = $this->groupFactory->getActivityPubId($actor);
+        }
+
+        return $activityJson;
     }
 
     public function buildDeleteFromActivity(Activity $activity): array
@@ -185,7 +220,11 @@ class ActivityJsonBuilder
             throw new \LogicException();
         }
 
-        return [
+        if (isset($item->magazine)) {
+            $audience = $this->groupFactory->getActivityPubId($item->magazine);
+        }
+
+        $activityJson = [
             '@context' => $this->contextsProvider->referencedContexts(),
             'id' => $this->urlGenerator->generate('ap_object', ['id' => $activity->uuid], UrlGeneratorInterface::ABSOLUTE_URL),
             'type' => 'Delete',
@@ -197,16 +236,30 @@ class ActivityJsonBuilder
             'to' => $item['to'],
             'cc' => $item['cc'],
         ];
+
+        if (isset($audience)) {
+            $activityJson['audience'] = $audience;
+        }
+
+        return $activityJson;
     }
 
     public function buildAddRemoveFromActivity(Activity $activity): array
     {
+        if (null !== $activity->objectUser) {
+            $object = $this->personFactory->getActivityPubId($activity->objectUser);
+        } elseif (null !== $activity->objectEntry) {
+            $object = $this->entryPageFactory->getActivityPubId($activity->objectEntry);
+        } else {
+            throw new \LogicException('There is no object set for the add/remove activity');
+        }
+
         return [
             '@context' => $this->contextsProvider->referencedContexts(),
             'id' => $this->urlGenerator->generate('ap_object', ['id' => $activity->uuid], UrlGeneratorInterface::ABSOLUTE_URL),
             'actor' => $this->personFactory->getActivityPubId($activity->userActor),
             'to' => [ActivityPubActivityInterface::PUBLIC_URL],
-            'object' => $this->personFactory->getActivityPubId($activity->objectUser),
+            'object' => $object,
             'cc' => [$this->groupFactory->getActivityPubId($activity->audience)],
             'type' => $activity->type,
             'target' => $activity->targetString,
@@ -271,6 +324,9 @@ class ActivityJsonBuilder
             'type' => 'Follow',
             'actor' => $this->personFactory->getActivityPubId($activity->userActor),
             'object' => $activityObject,
+            'to' => [
+                $activityObject,
+            ],
         ];
     }
 
@@ -285,12 +341,26 @@ class ActivityJsonBuilder
             throw new \LogicException();
         }
 
+        if (null !== ($activityObject = $activity->getObject())) {
+            $object = $activityObject;
+        } elseif (null !== $activity->innerActivity) {
+            $object = $this->buildActivityJson($activity->innerActivity);
+            if (isset($object['@context'])) {
+                unset($object['@context']);
+            }
+        } else {
+            throw new \LogicException('There is no object set for the accept/reject activity');
+        }
+
         return [
             '@context' => $this->contextsProvider->referencedContexts(),
             'id' => $this->urlGenerator->generate('ap_object', ['id' => $activity->uuid], UrlGeneratorInterface::ABSOLUTE_URL),
             'type' => $activity->type,
             'actor' => $actor,
-            'object' => $activity->getObject(),
+            'object' => $object,
+            'to' => [
+                $object['actor'],
+            ],
         ];
     }
 
@@ -312,7 +382,7 @@ class ActivityJsonBuilder
 
         $entity['object']['updated'] = $content->editedAt ? $content->editedAt->format(DATE_ATOM) : (new \DateTime())->format(DATE_ATOM);
 
-        return [
+        $activityJson = [
             '@context' => $this->contextsProvider->referencedContexts(),
             'id' => $this->urlGenerator->generate('ap_object', ['id' => $activity->uuid], UrlGeneratorInterface::ABSOLUTE_URL),
             'type' => 'Update',
@@ -322,6 +392,12 @@ class ActivityJsonBuilder
             'cc' => $entity['cc'],
             'object' => $entity,
         ];
+
+        if (null !== $activity->audience) {
+            $activityJson['audience'] = $this->groupFactory->getActivityPubId($activity->audience);
+        }
+
+        return $activityJson;
     }
 
     public function buildUpdateForActorFromActivity(Activity $activity, ActivityPubActorInterface $object): array

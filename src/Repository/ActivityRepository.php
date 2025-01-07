@@ -15,6 +15,7 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -26,8 +27,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ActivityRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly EntityManagerInterface $entityManager,
+    ) {
         parent::__construct($registry, Activity::class);
     }
 
@@ -74,5 +77,20 @@ class ActivityRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function createForRemotePayload(array $payload): Activity
+    {
+        if (isset($payload['@context'])) {
+            unset($payload['@context']);
+        }
+        $activity = new Activity($payload['type']);
+        $activity->activityJson = json_encode($payload['object']);
+        $activity->isRemote = true;
+
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
+
+        return $activity;
     }
 }

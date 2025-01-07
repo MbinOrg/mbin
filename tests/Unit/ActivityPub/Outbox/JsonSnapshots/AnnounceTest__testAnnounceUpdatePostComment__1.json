@@ -1,0 +1,70 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://kbin.test/contexts"
+    ],
+    "id": "SCRUBBED_ID",
+    "type": "Announce",
+    "actor": "https://kbin.test/m/test",
+    "object": {
+        "id": "SCRUBBED_ID",
+        "type": "Update",
+        "actor": "https://kbin.test/u/user",
+        "published": "SCRUBBED_DATE",
+        "to": [
+            "https://www.w3.org/ns/activitystreams#Public",
+            "https://kbin.test/u/user"
+        ],
+        "cc": [
+            "https://kbin.test/m/test",
+            "https://kbin.test/u/user/followers"
+        ],
+        "object": {
+            "id": "SCRUBBED_ID",
+            "type": "Note",
+            "attributedTo": "https://kbin.test/u/user",
+            "inReplyTo": "SCRUBBED_ID",
+            "to": [
+                "https://www.w3.org/ns/activitystreams#Public",
+                "https://kbin.test/u/user"
+            ],
+            "cc": [
+                "https://kbin.test/m/test",
+                "https://kbin.test/u/user/followers"
+            ],
+            "audience": "https://kbin.test/m/test",
+            "sensitive": false,
+            "content": "<p>test</p>\n",
+            "mediaType": "text/html",
+            "source": {
+                "content": "test",
+                "mediaType": "text/markdown"
+            },
+            "url": "SCRUBBED_ID",
+            "tag": [
+                {
+                    "type": "Hashtag",
+                    "href": "https://kbin.test/tag/test",
+                    "name": "#test"
+                }
+            ],
+            "published": "SCRUBBED_DATE",
+            "contentMap": {
+                "en": "<p>test</p>\n"
+            },
+            "object": {
+                "updated": "SCRUBBED_DATE"
+            }
+        },
+        "audience": "https://kbin.test/m/test"
+    },
+    "to": [
+        "https://www.w3.org/ns/activitystreams#Public"
+    ],
+    "cc": [
+        "https://kbin.test/m/test",
+        "https://kbin.test/u/user/followers"
+    ],
+    "published": "SCRUBBED_DATE",
+    "audience": "https://kbin.test/m/test"
+}

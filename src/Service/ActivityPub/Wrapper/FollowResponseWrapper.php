@@ -16,7 +16,7 @@ class FollowResponseWrapper
     ) {
     }
 
-    public function build(User|Magazine $actor, array $request, bool $isReject = false): Activity
+    public function build(User|Magazine $actor, array|Activity $request, bool $isReject = false): Activity
     {
         $activity = new Activity($isReject ? 'Reject' : 'Accept');
         $activity->setActor($actor);
