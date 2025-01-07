@@ -38,6 +38,11 @@ class SentNewSignupNotificationHandler extends MbinMessageHandler
         if (!$user) {
             throw new UnrecoverableMessageHandlingException('user not found');
         }
-        $this->signupNotificationManager->sendNewSignupNotification($user);
+
+        if (!$user->isAccountDeleted() && !$user->isSoftDeleted() && null === $user->markedForDeletionAt) {
+            // only send notifications for new accounts if the account is not deleted,
+            // this is necessary because we create dummy accounts to block the username when an account is deleted
+            $this->signupNotificationManager->sendNewSignupNotification($user);
+        }
     }
 }
