@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\ActivityPub\Wrapper;
 
+use App\Entity\Activity;
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
@@ -11,9 +12,9 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
 use App\Factory\ActivityPub\ActivityFactory;
-use JetBrains\PhpStorm\ArrayShape;
+use App\Service\ActivityPub\ContextsProvider;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Uid\Uuid;
 
 class DeleteWrapper
 {
@@ -21,20 +22,14 @@ class DeleteWrapper
         private readonly ActivityFactory $factory,
         private readonly AnnounceWrapper $announceWrapper,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ContextsProvider $contextsProvider,
     ) {
     }
 
-    #[ArrayShape([
-        '@context' => 'string',
-        'id' => 'string',
-        'type' => 'string',
-        'object' => 'mixed',
-        'actor' => 'mixed',
-        'to' => 'mixed',
-        'cc' => 'mixed',
-    ])]
-    public function build(ActivityPubActivityInterface $item, string $id, ?User $deletingUser = null): array
+    public function build(ActivityPubActivityInterface $item, ?User $deletingUser = null): Activity
     {
+        $activity = new Activity('Delete');
         $item = $this->factory->create($item);
 
         $userUrl = $item['attributedTo'];
@@ -48,9 +43,12 @@ class DeleteWrapper
             }
         }
 
-        return [
-            '@context' => ActivityPubActivityInterface::CONTEXT_URL,
-            'id' => $this->urlGenerator->generate('ap_object', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL),
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
+
+        $activity->activityJson = json_encode([
+            '@context' => $this->contextsProvider->referencedContexts(),
+            'id' => $this->urlGenerator->generate('ap_object', ['id' => $activity->uuid], UrlGeneratorInterface::ABSOLUTE_URL),
             'type' => 'Delete',
             'actor' => $userUrl,
             'object' => [
@@ -59,17 +57,22 @@ class DeleteWrapper
             ],
             'to' => $item['to'],
             'cc' => $item['cc'],
-        ];
+        ]);
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
+
+        return $activity;
     }
 
-    public function buildForUser(User $user): array
+    public function buildForUser(User $user): Activity
     {
-        $id = Uuid::v4()->toRfc4122();
+        $activity = new Activity('Delete');
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
         $userId = $this->urlGenerator->generate('ap_user', ['username' => $user->username], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        return [
-            '@context' => ActivityPubActivityInterface::CONTEXT_URL,
-            'id' => $this->urlGenerator->generate('ap_object', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL),
+        $activity->activityJson = json_encode([
+            'id' => $this->urlGenerator->generate('ap_object', ['id' => $activity->uuid], UrlGeneratorInterface::ABSOLUTE_URL),
             'type' => 'Delete',
             'actor' => $userId,
             'object' => $userId,
@@ -77,23 +80,30 @@ class DeleteWrapper
             'cc' => [$this->urlGenerator->generate('ap_user_followers', ['username' => $user->username], UrlGeneratorInterface::ABSOLUTE_URL)],
             // this is a lemmy specific tag, that should cause the deletion of the data of a user (see this issue https://github.com/LemmyNet/lemmy/issues/4544)
             'removeData' => true,
-        ];
+        ]);
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
+
+        return $activity;
     }
 
-    public function adjustDeletePayload(?User $actor, Entry|EntryComment|Post|PostComment $content, string $id): array
+    public function adjustDeletePayload(?User $actor, Entry|EntryComment|Post|PostComment $content): Activity
     {
-        $payload = $this->build($content, $id, $actor);
+        $payload = $this->build($content, $actor);
+        $json = json_decode($payload->activityJson, true);
 
         if (null !== $actor && $content->user->getId() !== $actor->getId()) {
             // if the user is different, then this is a mod action. Lemmy requires a mod action to have a summary
-            $payload['summary'] = ' ';
+            $json['summary'] = ' ';
         }
 
         if (null !== $actor?->apId) {
-            // wrap the `Delete` in an `Announce` activity if the deleting user is not a local one
-            $magazineUrl = $this->urlGenerator->generate('ap_magazine', ['name' => $content->magazine->name], UrlGeneratorInterface::ABSOLUTE_URL);
-            $payload = $this->announceWrapper->build($magazineUrl, $payload);
+            $json = $this->announceWrapper->build($content->magazine, $payload);
         }
+
+        $payload->activityJson = json_encode($json);
+        $this->entityManager->persist($payload);
+        $this->entityManager->flush();
 
         return $payload;
     }
