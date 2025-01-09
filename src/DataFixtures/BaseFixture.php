@@ -30,9 +30,9 @@ abstract class BaseFixture extends Fixture implements FixtureGroupInterface
         $this->loadData($manager);
     }
 
-    abstract protected function loadData(ObjectManager $manager);
+    abstract protected function loadData(ObjectManager $manager): void;
 
-    protected function camelCase($value): string
+    protected function camelCase(string $value): string
     {
         return Slugger::camelCase($value);
     }

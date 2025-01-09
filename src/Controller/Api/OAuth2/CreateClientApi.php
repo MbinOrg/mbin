@@ -18,7 +18,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;

@@ -1,17 +1,20 @@
+@use '../mixins/theme-solarized-dark' as sol-dark;
+@use '../mixins/theme-solarized-light' as sol-light;
+
 .theme--solarized {
   @media (prefers-color-scheme: dark) {
-    @include theme-solarized-dark;
+    @include sol-dark.theme;
   }
 
   @media (prefers-color-scheme: light) {
-    @include theme-solarized-light;
+    @include sol-light.theme;
   }
 }
 
 .theme--solarized-dark {
-  @include theme-solarized-dark;
+  @include sol-dark.theme;
 }
 
 .theme--solarized-light {
-  @include theme-solarized-light;
+  @include sol-light.theme;
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
+use App\Entity\Contracts\ContentInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Post;
@@ -13,7 +14,7 @@ use App\Factory\EntryFactory;
 use App\Factory\PostCommentFactory;
 use App\Factory\PostFactory;
 use App\Repository\TagLinkRepository;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Serializer\Annotation\Ignore;
 
@@ -71,7 +72,7 @@ class MagazineLogResponseDto implements \JsonSerializable
 
     #[Ignore]
     public function setSubject(
-        Entry|EntryComment|Post|PostComment|null $subject,
+        ?ContentInterface $subject,
         EntryFactory $entryFactory,
         EntryCommentFactory $entryCommentFactory,
         PostFactory $postFactory,

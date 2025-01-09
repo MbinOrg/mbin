@@ -39,7 +39,7 @@ class RemoveDuplicatesCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function removePosts()
+    private function removePosts(): void
     {
         $conn = $this->entityManager->getConnection();
         $sql = '
@@ -67,7 +67,7 @@ class RemoveDuplicatesCommand extends Command
         }
     }
 
-    private function removeActors()
+    private function removeActors(): void
     {
         $conn = $this->entityManager->getConnection();
         $sql = '

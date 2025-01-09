@@ -28,3 +28,15 @@ updates:
         update-types:
           - "minor"
           - "patch"
+  - package-ecosystem: "devcontainers"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+      time: "14:00"
+    groups:
+      devcontainers:
+        applies-to: security-updates
+        update-types:
+          - "minor"
+          - "patch"

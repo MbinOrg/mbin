@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Entity\EntryComment;
+use App\Entity\Favourite;
 use App\Entity\Magazine;
+use App\Entity\Report;
 use App\Repository\MagazineRepository;
 use App\Repository\PostRepository;
 use App\Service\PostManager;
@@ -69,7 +72,10 @@ class MovePostsByTagCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function moveComments(ArrayCollection|Collection $comments, Magazine $magazine)
+    /**
+     * @param ArrayCollection<int, EntryComment>|Collection<int, EntryComment> $comments
+     */
+    private function moveComments(ArrayCollection|Collection $comments, Magazine $magazine): void
     {
         foreach ($comments as $comment) {
             /*
@@ -84,7 +90,10 @@ class MovePostsByTagCommand extends Command
         }
     }
 
-    private function moveReports(ArrayCollection|Collection $reports, Magazine $magazine)
+    /**
+     * @param ArrayCollection<int, Report>|Collection<int, Report> $reports
+     */
+    private function moveReports(ArrayCollection|Collection $reports, Magazine $magazine): void
     {
         foreach ($reports as $report) {
             /*
@@ -96,7 +105,10 @@ class MovePostsByTagCommand extends Command
         }
     }
 
-    private function moveFavourites(ArrayCollection|Collection $favourites, Magazine $magazine)
+    /**
+     * @param ArrayCollection<int, Favourite>|Collection<int, Favourite> $favourites
+     */
+    private function moveFavourites(ArrayCollection|Collection $favourites, Magazine $magazine): void
     {
         foreach ($favourites as $favourite) {
             /*

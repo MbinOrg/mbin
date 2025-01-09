@@ -1,6 +1,6 @@
 // loaded under .theme--dark
 // or .theme--default with prefers-color-scheme: dark
-@mixin theme-dark {
+@mixin theme {
   --kbin-body-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   --kbin-body-font-size: 1rem;
   --kbin-body-font-weight: 400;

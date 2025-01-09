@@ -37,7 +37,7 @@ class ActorHandle
         return null;
     }
 
-    public static function isHandle(string $handle)
+    public static function isHandle(string $handle): bool
     {
         if (preg_match(static::HANDLE_PATTERN, $handle, $matches)) {
             return !empty($matches['name']) && !empty($matches['host']);
@@ -58,7 +58,7 @@ class ActorHandle
     }
 
     /** @param int|string|null $port port as either plain int or string formatted like ':9000' */
-    public function setPort(int|string|null $port)
+    public function setPort(int|string|null $port): static
     {
         if (\is_string($port)) {
             $this->port = \intval(ltrim($port, ':'));
@@ -76,7 +76,7 @@ class ActorHandle
     }
 
     /** @param ?string $domain the domain in the format `host[:port]` to set both handle's host and port */
-    public function setDomain(?string $domain)
+    public function setDomain(?string $domain): static
     {
         $url = parse_url($domain ?? '');
 

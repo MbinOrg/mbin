@@ -7,6 +7,7 @@ namespace App\Controller\Admin;
 use App\Controller\AbstractController;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class AdminUsersController extends AbstractController
@@ -16,7 +17,7 @@ class AdminUsersController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    public function active(?bool $withFederated = null)
+    public function active(?bool $withFederated = null): Response
     {
         return $this->render(
             'admin/users.html.twig',
@@ -31,7 +32,7 @@ class AdminUsersController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    public function inactive()
+    public function inactive(): Response
     {
         return $this->render(
             'admin/users.html.twig',
@@ -44,7 +45,7 @@ class AdminUsersController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    public function suspended(?bool $withFederated = null)
+    public function suspended(?bool $withFederated = null): Response
     {
         return $this->render(
             'admin/users.html.twig',
@@ -59,7 +60,7 @@ class AdminUsersController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    public function banned(?bool $withFederated = null)
+    public function banned(?bool $withFederated = null): Response
     {
         return $this->render(
             'admin/users.html.twig',
