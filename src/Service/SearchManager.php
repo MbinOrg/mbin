@@ -10,7 +10,7 @@ use App\Message\ActivityPub\Inbox\ActivityMessage;
 use App\Repository\DomainRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\SearchRepository;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Utils\RegPatterns;
 use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Pagerfanta;
@@ -25,7 +25,7 @@ class SearchManager
         private readonly DomainRepository $domainRepository,
         private readonly ActivityPubManager $activityPubManager,
         private readonly MessageBusInterface $bus,
-        private readonly ApHttpClient $apHttpClient,
+        private readonly ApHttpClientInterface $apHttpClient,
     ) {
     }
 

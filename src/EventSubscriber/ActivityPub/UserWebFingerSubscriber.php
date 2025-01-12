@@ -16,7 +16,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class UserWebFingerSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly WebFingerParameters $webfingerParameters,
         private readonly UserRepository $userRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {
@@ -32,11 +31,10 @@ class UserWebFingerSubscriber implements EventSubscriberInterface
 
     public function buildResponse(WebfingerResponseEvent $event): void
     {
-        $request = $event->request;
-        $params = $this->webfingerParameters->getParams($request);
+        $params = $event->params;
         $jsonRd = $event->jsonRd;
 
-        $subject = $request->query->get('resource') ?: '';
+        $subject = $event->subject;
         if (!empty($subject)) {
             $jsonRd->setSubject($subject);
         }

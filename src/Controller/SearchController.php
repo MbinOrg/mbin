@@ -9,7 +9,7 @@ use App\Entity\Magazine;
 use App\Entity\User;
 use App\Message\ActivityPub\Inbox\CreateMessage;
 use App\MessageHandler\ActivityPub\Inbox\CreateHandler;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPubManager;
 use App\Service\SearchManager;
 use App\Service\SettingsManager;
@@ -23,7 +23,7 @@ class SearchController extends AbstractController
     public function __construct(
         private readonly SearchManager $manager,
         private readonly ActivityPubManager $activityPubManager,
-        private readonly ApHttpClient $apHttpClient,
+        private readonly ApHttpClientInterface $apHttpClient,
         private readonly SubjectOverviewManager $overviewManager,
         private readonly SettingsManager $settingsManager,
         private readonly LoggerInterface $logger,

@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use App\Factory\ActivityPub\EntryPageFactory;
 use App\Factory\ActivityPub\GroupFactory;
 use App\Factory\ActivityPub\PersonFactory;
 use App\Factory\ActivityPub\TombstoneFactory;
 use App\Factory\ImageFactory;
 use App\Factory\MagazineFactory;
+use App\MessageHandler\ActivityPub\Outbox\DeliverHandler;
 use App\Repository\EntryCommentRepository;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
@@ -20,7 +22,11 @@ use App\Repository\PostRepository;
 use App\Repository\ReportRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\SiteRepository;
+use App\Repository\TagLinkRepository;
 use App\Repository\UserRepository;
+use App\Service\ActivityPub\ApHttpClientInterface;
+use App\Service\ActivityPub\Wrapper\CreateWrapper;
+use App\Service\ActivityPubManager;
 use App\Service\BadgeManager;
 use App\Service\DomainManager;
 use App\Service\EntryCommentManager;
@@ -47,7 +53,9 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class WebTestCase extends BaseWebTestCase
@@ -97,6 +105,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected BadgeManager $badgeManager;
     protected NotificationManager $notificationManager;
     protected MentionManager $mentionManager;
+    protected ActivityPubManager $activityPubManager;
 
     protected MagazineRepository $magazineRepository;
     protected EntryRepository $entryRepository;
@@ -110,12 +119,17 @@ abstract class WebTestCase extends BaseWebTestCase
     protected ReportRepository $reportRepository;
     protected SettingsRepository $settingsRepository;
     protected UserRepository $userRepository;
+    protected TagLinkRepository $tagLinkRepository;
 
     protected ImageFactory $imageFactory;
     protected MagazineFactory $magazineFactory;
     protected TombstoneFactory $tombstoneFactory;
     protected PersonFactory $personFactory;
     protected GroupFactory $groupFactory;
+    protected EntryPageFactory $pageFactory;
+    protected TestingApHttpClient $testingApHttpClient;
+
+    protected CreateWrapper $createWrapper;
 
     protected UrlGeneratorInterface $urlGenerator;
     protected TranslatorInterface $translator;
@@ -123,6 +137,10 @@ abstract class WebTestCase extends BaseWebTestCase
     protected RequestStack $requestStack;
     protected LoggerInterface $logger;
     protected ProjectInfoService $projectInfoService;
+    protected RouterInterface $router;
+    protected MessageBusInterface $bus;
+
+    protected DeliverHandler $deliverHandler;
 
     protected string $kibbyPath;
 
@@ -133,6 +151,9 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->entries = new ArrayCollection();
         $this->kibbyPath = \dirname(__FILE__).'/assets/kibby_emoji.png';
         $this->client = static::createClient();
+
+        $this->testingApHttpClient = new TestingApHttpClient();
+        self::getContainer()->set(ApHttpClientInterface::class, $this->testingApHttpClient);
 
         $this->entityManager = $this->getService(EntityManagerInterface::class);
         $this->magazineManager = $this->getService(MagazineManager::class);
@@ -150,6 +171,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->reportManager = $this->getService(ReportManager::class);
         $this->badgeManager = $this->getService(BadgeManager::class);
         $this->notificationManager = $this->getService(NotificationManager::class);
+        $this->activityPubManager = $this->getService(ActivityPubManager::class);
 
         $this->magazineRepository = $this->getService(MagazineRepository::class);
         $this->entryRepository = $this->getService(EntryRepository::class);
@@ -163,14 +185,22 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->reportRepository = $this->getService(ReportRepository::class);
         $this->settingsRepository = $this->getService(SettingsRepository::class);
         $this->userRepository = $this->getService(UserRepository::class);
+        $this->tagLinkRepository = $this->getService(TagLinkRepository::class);
 
         $this->imageFactory = $this->getService(ImageFactory::class);
+        $this->personFactory = $this->getService(PersonFactory::class);
         $this->magazineFactory = $this->getService(MagazineFactory::class);
+        $this->groupFactory = $this->getService(GroupFactory::class);
+        $this->pageFactory = $this->getService(EntryPageFactory::class);
+
+        $this->createWrapper = $this->getService(CreateWrapper::class);
 
         $this->urlGenerator = $this->getService(UrlGeneratorInterface::class);
         $this->translator = $this->getService(TranslatorInterface::class);
         $this->eventDispatcher = $this->getService(EventDispatcherInterface::class);
         $this->requestStack = $this->getService(RequestStack::class);
+        $this->router = $this->getService(RouterInterface::class);
+        $this->bus = $this->getService(MessageBusInterface::class);
 
         // clear all cache before every test
         $app = new Application($this->client->getKernel());

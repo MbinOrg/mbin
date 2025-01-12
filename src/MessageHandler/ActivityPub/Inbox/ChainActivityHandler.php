@@ -20,7 +20,7 @@ use App\Message\ActivityPub\Inbox\LikeMessage;
 use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
 use App\Repository\ApActivityRepository;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
 use App\Service\SettingsManager;
@@ -37,7 +37,7 @@ class ChainActivityHandler extends MbinMessageHandler
         private readonly EntityManagerInterface $entityManager,
         private readonly KernelInterface $kernel,
         private readonly LoggerInterface $logger,
-        private readonly ApHttpClient $client,
+        private readonly ApHttpClientInterface $client,
         private readonly MessageBusInterface $bus,
         private readonly ApActivityRepository $repository,
         private readonly Note $note,

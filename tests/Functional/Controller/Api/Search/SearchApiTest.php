@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Search;
 
 use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\SettingsManager;
 use App\Tests\WebTestCase;
 use phpseclib3\Crypt\RSA;
@@ -395,6 +396,6 @@ class SearchApiTest extends WebTestCase
             $this->siteRepository,
             $this->projectInfoService,
         );
-        self::getContainer()->set(ApHttpClient::class, $apHttpClient);
+        self::getContainer()->set(ApHttpClientInterface::class, $apHttpClient);
     }
 }

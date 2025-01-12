@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Factory\ActivityPub;
 
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPub\ContextsProvider;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -12,7 +12,7 @@ class InstanceFactory
 {
     public function __construct(
         private string $kbinDomain,
-        private readonly ApHttpClient $client,
+        private readonly ApHttpClientInterface $client,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly ContextsProvider $contextProvider,
     ) {

@@ -9,7 +9,7 @@ use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPub\Wrapper\FollowWrapper;
 use App\Service\ActivityPub\Wrapper\UndoWrapper;
 use App\Service\ActivityPubManager;
@@ -30,7 +30,7 @@ class FollowHandler extends MbinMessageHandler
         private readonly ActivityPubManager $activityPubManager,
         private readonly FollowWrapper $followWrapper,
         private readonly UndoWrapper $undoWrapper,
-        private readonly ApHttpClient $apHttpClient,
+        private readonly ApHttpClientInterface $apHttpClient,
         private readonly SettingsManager $settingsManager,
         private readonly DeliverManager $deliverManager,
     ) {
