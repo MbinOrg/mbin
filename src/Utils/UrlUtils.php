@@ -8,8 +8,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 class UrlUtils
 {
-    public static function isActivityPubRequest(Request $request): bool
+    public static function isActivityPubRequest(?Request $request): bool
     {
+        if (null === $request) {
+            return true;
+        }
         $acceptValue = $request->headers->get('Accept', default: 'html');
 
         return str_contains($acceptValue, 'application/activity+json')

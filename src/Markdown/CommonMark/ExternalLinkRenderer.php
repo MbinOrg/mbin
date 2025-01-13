@@ -91,17 +91,20 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
             ]);
         }
 
-        $apActivity = $this->activityRepository->findByObjectId($node->getUrl());
-        if (!$isApRequest && null !== $apActivity && Message::class !== $apActivity['type']) {
-            $this->logger->debug('Found activity with url {u}: {t} - {id}', [
-                'u' => $node->getUrl(),
-                't' => $apActivity['type'],
-                'id' => $apActivity['id'],
-            ]);
-            /** @var Entry|EntryComment|Post|PostComment $entity */
-            $entity = $this->entityManager->getRepository($apActivity['type'])->find($apActivity['id']);
+        $url = $node->getUrl();
+        if (filter_var($url, FILTER_VALIDATE_URL)) {
+            $apActivity = $this->activityRepository->findByObjectId($url);
+            if (!$isApRequest && null !== $apActivity && Message::class !== $apActivity['type']) {
+                $this->logger->debug('Found activity with url {u}: {t} - {id}', [
+                    'u' => $node->getUrl(),
+                    't' => $apActivity['type'],
+                    'id' => $apActivity['id'],
+                ]);
+                /** @var Entry|EntryComment|Post|PostComment $entity */
+                $entity = $this->entityManager->getRepository($apActivity['type'])->find($apActivity['id']);
 
-            return new HtmlElement('div', contents: $this->renderInlineEntity($entity));
+                return new HtmlElement('div', contents: $this->renderInlineEntity($entity));
+            }
         }
 
         $renderTarget = $this->config->get('kbin')[MarkdownConverter::RENDER_TARGET];

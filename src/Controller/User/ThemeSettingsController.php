@@ -168,13 +168,21 @@ class ThemeSettingsController extends AbstractController
         );
     }
 
-    public static function getShowUserFullName(Request $request): bool
+    public static function getShowUserFullName(?Request $request): bool
     {
+        if (null === $request) {
+            return false;
+        }
+
         return self::TRUE === $request->cookies->get(self::MBIN_SHOW_USER_DOMAIN, 'false');
     }
 
-    public static function getShowMagazineFullName(Request $request): bool
+    public static function getShowMagazineFullName(?Request $request): bool
     {
+        if (null === $request) {
+            return false;
+        }
+
         return self::TRUE === $request->cookies->get(self::MBIN_SHOW_MAGAZINE_DOMAIN, 'false');
     }
 }
