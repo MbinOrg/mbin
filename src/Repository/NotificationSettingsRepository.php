@@ -81,6 +81,7 @@ class NotificationSettingsRepository extends ServiceEntityRepository
      */
     public function findNotificationSubscribersByTarget(Entry|EntryComment|Post|PostComment $target): array
     {
+        $nestedCommentPostAuthor = 'false';
         if ($target instanceof Entry || $target instanceof EntryComment) {
             $targetCol = 'entry_id';
             if ($target instanceof Entry) {
@@ -98,6 +99,10 @@ class NotificationSettingsRepository extends ServiceEntityRepository
                 } else {
                     $notifyCol = 'notify_on_new_entry_comment_reply';
                     $targetParentUserId = $target->parent->user->getId();
+
+                    $nestedCommentPostAuthor = 'u.notify_on_new_entry_reply = true
+                                AND u.id = :targetParent2UserId';
+                    $targetParent2UserId = $target->entry->user->getId();
                 }
                 $isMagazineLevel = false;
                 $dontNeedSubscription = true;
@@ -120,6 +125,10 @@ class NotificationSettingsRepository extends ServiceEntityRepository
                 } else {
                     $notifyCol = 'notify_on_new_post_comment_reply';
                     $targetParentUserId = $target->parent->user->getId();
+
+                    $nestedCommentPostAuthor = 'u.notify_on_new_post_reply = true
+                                AND u.id = :targetParent2UserId';
+                    $targetParent2UserId = $target->post->user->getId();
                 }
                 $isMagazineLevel = false;
                 $dontNeedSubscription = true;
@@ -160,16 +169,22 @@ class NotificationSettingsRepository extends ServiceEntityRepository
                             COALESCE(ns_mag.notification_status, :normal) = :normal
                             OR $isNotMagazineLevelString
                         )
-                        AND u.$notifyCol = true
                         AND (
-                            -- deactivate magazine subscription need for comments
-                            $dontNeedSubscriptionString
-                            OR EXISTS (SELECT * FROM magazine_subscription ms WHERE ms.user_id = u.id AND ms.magazine_id = :magId)
-                        )
-                        AND (
-                            -- deactivate the need to be the author of the parent to receive notifications
-                            $dontNeedToBeAuthorString
-                            OR u.id = :targetParentUserId
+                            (
+                                u.$notifyCol = true
+                                AND (
+                                    -- deactivate magazine subscription need for comments
+                                    $dontNeedSubscriptionString
+                                    OR EXISTS (SELECT * FROM magazine_subscription ms WHERE ms.user_id = u.id AND ms.magazine_id = :magId)
+                                )
+                                AND (
+                                    -- deactivate the need to be the author of the parent to receive notifications
+                                    $dontNeedToBeAuthorString
+                                    OR u.id = :targetParentUserId
+                                )
+                            ) OR (
+                                $nestedCommentPostAuthor
+                            )
                         )
                     )
                 )
@@ -177,16 +192,20 @@ class NotificationSettingsRepository extends ServiceEntityRepository
         ";
         $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($sql);
-        $result = $stmt->executeQuery([
-            'normal' => ENotificationStatus::Default->value,
-            'loud' => ENotificationStatus::Loud->value,
-            'targetUserId' => $target->user->getId(),
-            'targetId' => $targetId,
-            'magId' => $target->magazine->getId(),
-            'targetParentUserId' => $targetParentUserId,
-        ]);
+
+        $stmt->bindValue('normal', ENotificationStatus::Default->value);
+        $stmt->bindValue('loud', ENotificationStatus::Loud->value);
+        $stmt->bindValue('targetUserId', $target->user->getId());
+        $stmt->bindValue('targetId', $targetId);
+        $stmt->bindValue('magId', $target->magazine->getId());
+        $stmt->bindValue('targetParentUserId', $targetParentUserId);
+
+        if (isset($targetParent2UserId)) {
+            $stmt->bindValue('targetParent2UserId', $targetParent2UserId);
+        }
+        $result = $stmt->executeQuery();
         $rows = $result->fetchAllAssociative();
-        $this->logger->debug('got subscribers for target {c} id {id}: {subs}, (magLevel: {ml}, notMagLevel: {nml}, targetCol: {tc}, notifyCol: {nc}, dontNeedSubs: {dns}, doneNeedAuthor: {dna})', [
+        $this->logger->debug('got subscribers for target {c} id {id}: {subs}, (magLevel: {ml}, notMagLevel: {nml}, targetCol: {tc}, notifyCol: {nc}, dontNeedSubs: {dns}, doneNeedAuthor: {dna}, nestedComment extra condition: {nested})', [
             'c' => \get_class($target),
             'id' => $target->getId(),
             'subs' => $rows,
@@ -196,6 +215,7 @@ class NotificationSettingsRepository extends ServiceEntityRepository
             'nc' => $notifyCol,
             'dns' => $dontNeedSubscriptionString,
             'dna' => $dontNeedToBeAuthorString,
+            'nested' => $nestedCommentPostAuthor,
         ]);
 
         return array_map(fn (array $row) => $row['id'], $rows);
