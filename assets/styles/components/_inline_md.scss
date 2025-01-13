@@ -1,0 +1,14 @@
+.entry-inline,
+.post-inline {
+  font-weight: bold;
+  border: var(--kbin-section-border);
+  padding: .25em;
+  background: var(--kbin-bg);
+}
+
+.rounded-edges {
+  .entry-inline,
+  .post-inline {
+    border-radius: var(--kbin-rounded-edges-radius);
+  }
+}

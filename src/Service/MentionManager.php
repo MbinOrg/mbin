@@ -153,6 +153,19 @@ class MentionManager
         return explode('@', $value)[1];
     }
 
+    public function getDomain(string $value): string
+    {
+        if (str_starts_with($value, '@')) {
+            $value = substr($value, 1);
+        }
+        $parts = explode('@', $value);
+        if (\count($parts) < 2) {
+            return SettingsManager::getValue('KBIN_DOMAIN');
+        } else {
+            return $parts[1];
+        }
+    }
+
     public static function clearLocal(?array $mentions): array
     {
         if (null === $mentions) {

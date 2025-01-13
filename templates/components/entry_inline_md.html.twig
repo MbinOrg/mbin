@@ -1,0 +1,10 @@
+<div class="entry-inline">
+    {{ component('user_inline', {user: entry.user, fullName: userFullName}) }}:
+    <a href="{{ path('entry_single', {magazine_name: entry.magazine.name, entry_id: entry.id, slug: entry.slug|length ? entry.slug : '-'}) }}">
+        {{ entry.title }}
+    </a>
+    {% if entry.magazine.name is not same as 'random' %}
+        {{ 'in'|trans }}
+        {{ component('magazine_inline', {magazine: entry.magazine, fullName: magazineFullName}) }}
+    {% endif %}
+</div>
