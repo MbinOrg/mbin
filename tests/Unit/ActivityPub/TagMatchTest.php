@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\Unit\ActivityPub;
 
 use App\ActivityPub\JsonRd;
+use App\Entity\Magazine;
+use App\Entity\User;
 use App\Event\ActivityPub\WebfingerResponseEvent;
 use App\Message\ActivityPub\Inbox\CreateMessage;
+use App\Message\ActivityPub\Inbox\LikeMessage;
 use App\Service\ActivityPub\Webfinger\WebFingerFactory;
 use App\Tests\WebTestCase;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -26,8 +29,10 @@ class TagMatchTest extends WebTestCase
         'mbin10.tld',
     ];
 
+    /** @var User[] */
     private array $remoteUsers = [];
 
+    /** @var Magazine[] */
     private array $remoteMagazines = [];
 
     /**
@@ -123,19 +128,63 @@ class TagMatchTest extends WebTestCase
         self::assertEquals(\sizeof($this->domains), \sizeof(array_filter($this->remoteMagazines)));
         self::assertEquals(\sizeof($this->domains), \sizeof(array_filter($this->remoteUsers)));
 
-        // pull in the 10 prepared remote entries
-        foreach (array_filter($this->testingApHttpClient->activityObjects, fn ($item) => 'Page' === $item['type']) as $apObject) {
-            $this->bus->dispatch(new CreateMessage($apObject));
-            $entry = $this->entryRepository->findOneBy(['apId' => $apObject['id']]);
-            self::assertNotNull($entry);
-        }
+        $this->pullInRemoteEntries();
+        $this->pullInMastodonPost();
 
-        $this->bus->dispatch(new CreateMessage($this->mastodonPost));
         $postedObjects = $this->testingApHttpClient->getPostedObjects();
         $postedAnnounces = array_filter($postedObjects, fn ($item) => 'Announce' === $item['payload']['type']);
         $targetInboxes = array_map(fn ($item) => parse_url($item['inboxUrl'], PHP_URL_HOST), $postedAnnounces);
         sort($targetInboxes);
         self::assertArrayIsEqualToArrayIgnoringListOfKeys($this->domains, $targetInboxes, []);
+    }
+
+    public function testMatchingLikeAnnouncing(): void
+    {
+        self::assertEquals(\sizeof($this->domains), \sizeof(array_filter($this->remoteMagazines)));
+        self::assertEquals(\sizeof($this->domains), \sizeof(array_filter($this->remoteUsers)));
+
+        $this->pullInRemoteEntries();
+        $this->pullInMastodonPost();
+
+        $mastodonPost = $this->postRepository->findOneBy(['apId' => $this->mastodonPost['id']]);
+        $user = $this->getUserByUsername('user');
+        $this->favouriteManager->toggle($user, $mastodonPost);
+
+        $postedObjects = $this->testingApHttpClient->getPostedObjects();
+        $postedLikes = array_filter($postedObjects, fn ($item) => 'Like' === $item['payload']['type']);
+        $targetInboxes2 = array_map(fn ($item) => parse_url($item['inboxUrl'], PHP_URL_HOST), $postedLikes);
+        sort($targetInboxes2);
+
+        // the pure like activity is expected to be sent to the author of the post
+        $expectedInboxes = [...$this->domains, parse_url($mastodonPost->user->apInboxUrl, PHP_URL_HOST)];
+        sort($expectedInboxes);
+        self::assertArrayIsEqualToArrayIgnoringListOfKeys($expectedInboxes, $targetInboxes2, []);
+
+        // dispatch a remote like message, so we trigger the announcement of it
+        $this->bus->dispatch(new LikeMessage($this->likeWrapper->build($this->remoteUsers[0]->apProfileId, $this->mastodonPost)));
+
+        $postedObjects = $this->testingApHttpClient->getPostedObjects();
+        $postedLikeAnnounces = array_filter($postedObjects, fn ($item) => 'Announce' === $item['payload']['type'] && 'Like' === $item['payload']['object']['type']);
+        $targetInboxes3 = array_map(fn ($item) => parse_url($item['inboxUrl'], PHP_URL_HOST), $postedLikeAnnounces);
+        sort($targetInboxes3);
+
+        // the announcement of the like is expected to be delivered only to the subscribers of the magazine,
+        // because we expect the pure like activity to already be sent to the author of the post by the remote server
+        self::assertArrayIsEqualToArrayIgnoringListOfKeys($this->domains, $targetInboxes3, []);
+    }
+
+    private function pullInRemoteEntries(): void
+    {
+        foreach (array_filter($this->testingApHttpClient->activityObjects, fn ($item) => 'Page' === $item['type']) as $apObject) {
+            $this->bus->dispatch(new CreateMessage($apObject));
+            $entry = $this->entryRepository->findOneBy(['apId' => $apObject['id']]);
+            self::assertNotNull($entry);
+        }
+    }
+
+    private function pullInMastodonPost(): void
+    {
+        $this->bus->dispatch(new CreateMessage($this->mastodonPost));
     }
 
     private array $mastodonUser = [

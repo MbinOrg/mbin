@@ -85,11 +85,10 @@ class AnnounceLikeHandler extends MbinMessageHandler
             $likeActivity
         );
 
-        $inboxes = array_filter(array_unique(array_merge(
-            $this->magazineRepository->findAudience($object->magazine),
-            $this->userRepository->findAudience($user),
-            [$object->user->apInboxUrl]
-        )));
+        // send the announcement only to the subscribers of the magazine
+        $inboxes = array_filter(
+            $this->magazineRepository->findAudience($object->magazine)
+        );
         $this->deliverManager->deliver($inboxes, $activity);
     }
 }

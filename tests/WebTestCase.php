@@ -26,6 +26,7 @@ use App\Repository\TagLinkRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPub\Wrapper\CreateWrapper;
+use App\Service\ActivityPub\Wrapper\LikeWrapper;
 use App\Service\ActivityPubManager;
 use App\Service\BadgeManager;
 use App\Service\DomainManager;
@@ -130,6 +131,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected TestingApHttpClient $testingApHttpClient;
 
     protected CreateWrapper $createWrapper;
+    protected LikeWrapper $likeWrapper;
 
     protected UrlGeneratorInterface $urlGenerator;
     protected TranslatorInterface $translator;
@@ -194,6 +196,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->pageFactory = $this->getService(EntryPageFactory::class);
 
         $this->createWrapper = $this->getService(CreateWrapper::class);
+        $this->likeWrapper = $this->getService(LikeWrapper::class);
 
         $this->urlGenerator = $this->getService(UrlGeneratorInterface::class);
         $this->translator = $this->getService(TranslatorInterface::class);
