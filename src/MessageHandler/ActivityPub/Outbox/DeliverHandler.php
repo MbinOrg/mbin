@@ -12,7 +12,7 @@ use App\Message\ActivityPub\Outbox\DeliverMessage;
 use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
 use App\Repository\InstanceRepository;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPubManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -32,7 +32,7 @@ class DeliverHandler extends MbinMessageHandler
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly KernelInterface $kernel,
-        private readonly ApHttpClient $client,
+        private readonly ApHttpClientInterface $client,
         private readonly ActivityPubManager $activityPubManager,
         private readonly SettingsManager $settingsManager,
         private readonly LoggerInterface $logger,

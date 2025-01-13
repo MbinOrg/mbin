@@ -272,6 +272,7 @@ trait FactoryTrait
         $this->entityManager->persist($newMod);
 
         $magazine = $this->magazineManager->create($dto, $newMod);
+        $this->entityManager->persist($magazine);
 
         $this->magazines->add($magazine);
 

@@ -41,7 +41,7 @@ enum ApRequestType
     case NodeInfo;
 }
 
-class ApHttpClient
+class ApHttpClient implements ApHttpClientInterface
 {
     public const TIMEOUT = 8;
     public const MAX_DURATION = 15;

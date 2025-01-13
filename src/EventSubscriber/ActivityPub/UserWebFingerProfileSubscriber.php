@@ -19,7 +19,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class UserWebFingerProfileSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly WebFingerParameters $webfingerParameters,
         private readonly UserRepository $userRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly SettingsManager $settingsManager,
@@ -38,7 +37,7 @@ class UserWebFingerProfileSubscriber implements EventSubscriberInterface
 
     public function buildResponse(WebfingerResponseEvent $event): void
     {
-        $params = $this->webfingerParameters->getParams($event->request);
+        $params = $event->params;
         $jsonRd = $event->jsonRd;
 
         if (isset($params[WebFingerParameters::ACCOUNT_KEY_NAME])) {

@@ -15,7 +15,7 @@ use App\MessageHandler\MbinMessageHandler;
 use App\Repository\ApActivityRepository;
 use App\Repository\EntryRepository;
 use App\Repository\MagazineRepository;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPubManager;
 use App\Service\EntryManager;
 use App\Service\MagazineManager;
@@ -33,7 +33,7 @@ class AddHandler extends MbinMessageHandler
         private readonly EntityManagerInterface $entityManager,
         private readonly KernelInterface $kernel,
         private readonly ActivityPubManager $activityPubManager,
-        private readonly ApHttpClient $apHttpClient,
+        private readonly ApHttpClientInterface $apHttpClient,
         private readonly ApActivityRepository $apActivityRepository,
         private readonly MagazineRepository $magazineRepository,
         private readonly MagazineManager $magazineManager,

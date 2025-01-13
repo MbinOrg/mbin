@@ -8,7 +8,7 @@ use App\Controller\ActivityPub\NodeInfoController;
 use App\Entity\Instance;
 use App\Payloads\NodeInfo\NodeInfo;
 use App\Payloads\NodeInfo\WellKnownNodeInfo;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\PropertyInfo\Extractor\ConstructorExtractor;
@@ -24,7 +24,7 @@ class RemoteInstanceManager
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly ApHttpClient $client,
+        private readonly ApHttpClientInterface $client,
         private readonly LoggerInterface $logger,
     ) {
     }

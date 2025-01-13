@@ -11,7 +11,7 @@ use App\Entity\Traits\ActivityPubActorTrait;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\VisibilityTrait;
 use App\Repository\UserRepository;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -869,7 +869,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         return $this->magazineOwnershipRequests->matching($criteria)->count() > 0;
     }
 
-    public function getFollowerUrl(ApHttpClient $client, UrlGeneratorInterface $urlGenerator, bool $isRemote): ?string
+    public function getFollowerUrl(ApHttpClientInterface $client, UrlGeneratorInterface $urlGenerator, bool $isRemote): ?string
     {
         if ($isRemote) {
             $actorObject = $client->getActorObject($this->apProfileId);
