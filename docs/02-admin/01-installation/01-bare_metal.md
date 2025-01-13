@@ -127,7 +127,7 @@ git clone https://github.com/MbinOrg/mbin.git .
 
 > [!TIP]
 > You might now want to switch to the latest stable release tag instead of using the `main` branch.
-> Try: `git checkout v1.7.3` (v1.7.3 might **not** be the latest version: [lookup the latest version](https://github.com/MbinOrg/mbin/releases))
+> Try: `git checkout v1.7.4` (v1.7.4 might **not** be the latest version: [lookup the latest version](https://github.com/MbinOrg/mbin/releases))
 
 ### Create & configure media directory
 
