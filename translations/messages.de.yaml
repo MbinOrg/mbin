@@ -941,3 +941,8 @@ enabled: Aktiviert
 toolbar.spoiler: Spoiler
 comment_not_found: Kommentar nicht gefunden
 table_of_contents: Inhaltsverzeichnis
+notification_body_new_signup: Der Nutzer %u% hat sich registriert.
+notify_on_user_signup: Registrierungen
+notification_title_new_signup: Ein Nutzer hat sich registriert
+your_account_is_not_yet_approved: Dein Account wurde noch nicht freigegeben. Wir werden
+  dir eine E-Mail schicken, sobald die Administratoren deine Anfrage bearbeitet haben.
