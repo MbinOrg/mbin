@@ -980,3 +980,11 @@ email_application_pending: Dein Account muss von einem Admin freigegeben werden,
   du dich anmelden kannst.
 email_verification_pending: Du musst deine E-Mail-Adresse bestätigen, bevor du dich
   anmelden kannst.
+bookmark_add_to_list: Lesezeichen zu %list% hinzufügen
+search_type_entry: Themen
+notification_body2_new_signup_approval: Du musst die Anfrage freigeben bevor sich
+  der Nutzer anmelden kann
+bookmark_remove_all: All Lesezeichen entfernen
+search_type_post: Mikroblogs
+bookmark_remove_from_list: Lesezeichen von %list% entfernen
+search_type_all: Themen + Mikroblogs
