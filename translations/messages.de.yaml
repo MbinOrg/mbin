@@ -911,7 +911,7 @@ notification_title_new_report: Eine neue Meldung wurde erstellt
 federation_page_dead_title: Tote Instanzen
 federation_page_dead_description: Instanzen zu denen wir mindestens 10 Aktivitäten
   in folge nicht zustellen konnten und bei denen die letzte erfolgreiche Zustellung
-  mehr als eine Woche zurückliegt
+  und der letzte erfolgreiche Empfang mehr als eine Woche zurückliegt
 server_software: Server Software
 version: Version
 magazine_posting_restricted_to_mods_warning: Nur Mods können Themen in diesem Magazin
@@ -940,3 +940,4 @@ hidden: Versteckt
 enabled: Aktiviert
 toolbar.spoiler: Spoiler
 comment_not_found: Kommentar nicht gefunden
+table_of_contents: Inhaltsverzeichnis
