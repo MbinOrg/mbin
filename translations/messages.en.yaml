@@ -931,7 +931,7 @@ application_text: Application text
 signup_requests_header: Signup Requests
 signup_requests_paragraph: These users would like to join your server. They cannot log in until you've approved their signup request.
 flash_application_info: An admin needs to approve your account before you can log in.
-  You will receive an email your signup request is processed.
+  You will receive an email your signup request has been processed.
 email_application_approved_title: Your signup request has been approved
 email_application_approved_body: Your signup request was approved by the server admin. You can now log into the server at <a href="%link%">%siteName%</a>.
 email_application_rejected_title: Your signup request has been rejected
