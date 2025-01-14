@@ -23,7 +23,7 @@ use App\Message\ActivityPub\Inbox\UpdateMessage;
 use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
 use App\Repository\InstanceRepository;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPub\SignatureValidator;
 use App\Service\ActivityPubManager;
 use App\Service\RemoteInstanceManager;
@@ -45,7 +45,7 @@ class ActivityHandler extends MbinMessageHandler
         private readonly SettingsManager $settingsManager,
         private readonly MessageBusInterface $bus,
         private readonly ActivityPubManager $activityPubManager,
-        private readonly ApHttpClient $apHttpClient,
+        private readonly ApHttpClientInterface $apHttpClient,
         private readonly InstanceRepository $instanceRepository,
         private readonly RemoteInstanceManager $remoteInstanceManager,
         private readonly LoggerInterface $logger,

@@ -1,0 +1,19 @@
+{% extends '_email/email_base.html.twig' %}
+
+{%- block title -%}
+    {{- 'email_application_approved_title'|trans }}
+{%- endblock -%}
+
+{% block body %}
+    <p>
+        {{ 'email_application_approved_body'|trans({
+            '%link%': url('app_login'),
+            '%siteName%': kbin_domain(),
+        })|raw }}
+    </p>
+    {% if user.isVerified is same as false %}
+        <p>
+            {{ 'email_verification_pending'|trans }}
+        </p>
+    {% endif %}
+{% endblock %}

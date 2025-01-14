@@ -7,6 +7,7 @@ namespace App\Form;
 use App\DTO\UserSettingsDto;
 use App\Entity\User;
 use App\Form\DataTransformer\FeaturedMagazinesBarTransformer;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -19,8 +20,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserSettingsType extends AbstractType
 {
-    public function __construct(private readonly TranslatorInterface $translator)
-    {
+    public function __construct(
+        private readonly TranslatorInterface $translator,
+        private readonly Security $security,
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -108,6 +111,12 @@ class UserSettingsType extends AbstractType
                 ['required' => false]
             )
             ->add('submit', SubmitType::class);
+
+        /** @var User $user */
+        $user = $this->security->getUser();
+        if ($user->isAdmin()) {
+            $builder->add('notifyOnUserSignup', CheckboxType::class, ['required' => false]);
+        }
 
         $builder->get('featuredMagazines')->addModelTransformer(
             new FeaturedMagazinesBarTransformer()

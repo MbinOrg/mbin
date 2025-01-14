@@ -34,7 +34,7 @@ use App\Repository\ImageRepository;
 use App\Repository\InstanceRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPub\ApObjectExtractor;
 use App\Service\ActivityPub\Webfinger\WebFinger;
 use App\Service\ActivityPub\Webfinger\WebFingerFactory;
@@ -57,7 +57,7 @@ class ActivityPubManager
         private readonly MagazineManager $magazineManager,
         private readonly MagazineFactory $magazineFactory,
         private readonly MagazineRepository $magazineRepository,
-        private readonly ApHttpClient $apHttpClient,
+        private readonly ApHttpClientInterface $apHttpClient,
         private readonly ImageRepository $imageRepository,
         private readonly ImageManager $imageManager,
         private readonly EntityManagerInterface $entityManager,
@@ -320,7 +320,8 @@ class ActivityPubManager
         $this->userManager->create(
             $this->userFactory->createDtoFromAp($actorUrl, $webfinger->getHandle()),
             false,
-            false
+            false,
+            preApprove: true,
         );
 
         return $this->updateUser($actorUrl);

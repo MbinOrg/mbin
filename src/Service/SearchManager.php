@@ -10,7 +10,7 @@ use App\Message\ActivityPub\Inbox\ActivityMessage;
 use App\Repository\DomainRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\SearchRepository;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Utils\RegPatterns;
 use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Pagerfanta;
@@ -25,7 +25,7 @@ class SearchManager
         private readonly DomainRepository $domainRepository,
         private readonly ActivityPubManager $activityPubManager,
         private readonly MessageBusInterface $bus,
-        private readonly ApHttpClient $apHttpClient,
+        private readonly ApHttpClientInterface $apHttpClient,
     ) {
     }
 
@@ -47,9 +47,9 @@ class SearchManager
         return $this->domainRepository->search($domain, $page, $perPage);
     }
 
-    public function findPaginated(?User $queryingUser, string $val, int $page = 1, int $perPage = SearchRepository::PER_PAGE): PagerfantaInterface
+    public function findPaginated(?User $queryingUser, string $val, int $page = 1, int $perPage = SearchRepository::PER_PAGE, ?int $authorId = null, ?int $magazineId = null, ?string $specificType = null): PagerfantaInterface
     {
-        return $this->repository->search($queryingUser, $val, $page, $perPage);
+        return $this->repository->search($queryingUser, $val, $page, authorId: $authorId, magazineId: $magazineId, specificType: $specificType);
     }
 
     public function findByApId(string $url): array
