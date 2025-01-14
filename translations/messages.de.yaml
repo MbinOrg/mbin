@@ -971,3 +971,12 @@ flash_application_info: Ein Admin muss deinen Account freigeben bevor du dich an
 is_default: Ist Standard
 bookmark_list_create: Erstellen
 bookmarks_list_edit: Lesezeichenliste bearbeiten
+email_application_rejected_body: Vielen Dank für dein Interesse, aber wir müssen dir
+  leider mitteilen, dass deine Registrierungsanfrage abgelehnt wurde.
+email_application_approved_body: 'Deine Registrierungsanfrage wurde von den Admins
+  freigegeben. Hier kannst dich auf dem Server anmelden: <a href="%link%">%siteName%</a>.'
+email_application_rejected_title: Deine Registrierungsanfrage wurde abgelehnt
+email_application_pending: Dein Account muss von einem Admin freigegeben werden, bevor
+  du dich anmelden kannst.
+email_verification_pending: Du musst deine E-Mail-Adresse bestätigen, bevor du dich
+  anmelden kannst.
