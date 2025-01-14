@@ -929,11 +929,11 @@ new_users_need_approval: New users have to be approved by an admin before they c
 signup_requests: Signup requests
 application_text: Application text
 signup_requests_header: Signup Requests
-signup_requests_paragraph: These users would like to join your server. They cannot log in until you've approved their signup request.
+signup_requests_paragraph: These users would like to join your server. They cannot log in until you've approved their signup requests.
 flash_application_info: An admin needs to approve your account before you can log in.
-  You will receive an email when they processed your signup request.
+  You will receive an email your signup request is processed.
 email_application_approved_title: Your signup request was approved
-email_application_approved_body: Your signup request was approved by the admins. You can log into the server at <a href="%link%">%siteName%</a>.
+email_application_approved_body: Your signup request was approved by the admin. You can now log into the server at <a href="%link%">%siteName%</a>.
 email_application_rejected_title: Your signup request was declined
 email_application_rejected_body: Thank you for your interest, but we regret to inform you that your signup request has been declined.
 email_application_pending: Your account requires admin approval before you can log in.
