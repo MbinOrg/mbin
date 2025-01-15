@@ -911,7 +911,7 @@ notification_title_new_report: Eine neue Meldung wurde erstellt
 federation_page_dead_title: Tote Instanzen
 federation_page_dead_description: Instanzen zu denen wir mindestens 10 Aktivitäten
   in folge nicht zustellen konnten und bei denen die letzte erfolgreiche Zustellung
-  mehr als eine Woche zurückliegt
+  und der letzte erfolgreiche Empfang mehr als eine Woche zurückliegt
 server_software: Server Software
 version: Version
 magazine_posting_restricted_to_mods_warning: Nur Mods können Themen in diesem Magazin
@@ -940,3 +940,51 @@ hidden: Versteckt
 enabled: Aktiviert
 toolbar.spoiler: Spoiler
 comment_not_found: Kommentar nicht gefunden
+table_of_contents: Inhaltsverzeichnis
+notification_body_new_signup: Der Nutzer %u% hat sich registriert.
+notify_on_user_signup: Registrierungen
+notification_title_new_signup: Ein Nutzer hat sich registriert
+your_account_is_not_yet_approved: Dein Account wurde noch nicht freigegeben. Wir werden
+  dir eine E-Mail schicken, sobald die Administratoren deine Anfrage bearbeitet haben.
+bookmark_list_edit: Bearbeiten
+bookmarks: Lesezeichen
+bookmarks_list: Lesezeichen in %list%
+count: Anzahl
+bookmark_list_make_default: Zum Standard machen
+bookmark_list_create_placeholder: Namen eingeben...
+bookmark_list_create_label: Listenname
+select_user: Wähle einen Nutzer
+signup_requests: Registrierungsanfragen
+application_text: Bewerbungstext
+email_application_approved_title: Deine Registrierungsanfrage wurde freigegeben
+signup_requests_header: Registrierungsanfragen
+signup_requests_paragraph: Diese Nutzer möchten deinem Server beitreten. Sie können
+  sich nicht anmelden bevor du die Anfragen freigegeben hast.
+bookmark_list_is_default: Ist Standardliste
+bookmark_list_selected_list: Liste auswählen
+new_users_need_approval: Neue Nutzer müssen von einem Admin freigegeben werden bevor
+  sie sich anmelden können.
+bookmark_add_to_default_list: Lesezeichen zur Standardliste hinzufügen
+bookmark_lists: Lesezeichenlisten
+flash_application_info: Ein Admin muss deinen Account freigeben bevor du dich anmelden
+  kannst. Wir werden dir eine E-Mail schicken, sobald deine Anfrage bearbeitet wurde.
+is_default: Ist Standard
+bookmark_list_create: Erstellen
+bookmarks_list_edit: Lesezeichenliste bearbeiten
+email_application_rejected_body: Vielen Dank für dein Interesse, aber wir müssen dir
+  leider mitteilen, dass deine Registrierungsanfrage abgelehnt wurde.
+email_application_approved_body: 'Deine Registrierungsanfrage wurde von den Admins
+  freigegeben. Hier kannst dich auf dem Server anmelden: <a href="%link%">%siteName%</a>.'
+email_application_rejected_title: Deine Registrierungsanfrage wurde abgelehnt
+email_application_pending: Dein Account muss von einem Admin freigegeben werden, bevor
+  du dich anmelden kannst.
+email_verification_pending: Du musst deine E-Mail-Adresse bestätigen, bevor du dich
+  anmelden kannst.
+bookmark_add_to_list: Lesezeichen zu %list% hinzufügen
+search_type_entry: Themen
+notification_body2_new_signup_approval: Du musst die Anfrage freigeben bevor sich
+  der Nutzer anmelden kann
+bookmark_remove_all: All Lesezeichen entfernen
+search_type_post: Mikroblogs
+bookmark_remove_from_list: Lesezeichen von %list% entfernen
+search_type_all: Themen + Mikroblogs
