@@ -958,7 +958,7 @@ signup_requests: Aanmeldingsverzoeken
 application_text: Sollicitatietekst
 signup_requests_header: Aanmeldingsverzoeken
 flash_application_info: Een beheerder moet uw account goedkeuren voordat u kunt inloggen.
-  U ontvangt een e-mail wanneer uw registratieverzoek is verwerkt.
+  U ontvangt een e-mail zodra uw registratieverzoek is verwerkt.
 email_application_approved_title: Uw registratieverzoek is goedgekeurd
 email_application_rejected_title: Uw registratieverzoek is afgewezen
 email_application_rejected_body: Hartelijk dank voor uw interesse, maar helaas moeten
@@ -977,6 +977,6 @@ search_type_entry: Discussies
 signup_requests_paragraph: Deze gebruikers willen graag lid worden van uw server.
   Ze kunnen niet inloggen totdat je hun registratieverzoeken hebt goedgekeurd.
 email_application_approved_body: Uw registratieverzoek is goedgekeurd door de server
-  admin. U kunt nu inloggen op de server op <a href="%link%">%siteName%</a>.
+  admins. U kunt nu inloggen op de server op <a href="%link%">%siteName%</a>.
 notify_on_user_signup: Nieuwe aanmeldingen
 bookmark_list_make_default: Maak Standaard
