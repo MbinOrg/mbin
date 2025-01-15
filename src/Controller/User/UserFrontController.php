@@ -16,6 +16,7 @@ use App\Repository\Criteria;
 use App\Repository\EntryCommentRepository;
 use App\Repository\EntryRepository;
 use App\Repository\MagazineRepository;
+use App\Repository\NotificationRepository;
 use App\Repository\PostCommentRepository;
 use App\Repository\PostRepository;
 use App\Repository\SearchRepository;
@@ -27,8 +28,10 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class UserFrontController extends AbstractController
 {
-    public function __construct(private readonly SubjectOverviewManager $overviewManager)
-    {
+    public function __construct(
+        private readonly SubjectOverviewManager $overviewManager,
+        private readonly NotificationRepository $notificationRepository,
+    ) {
     }
 
     public function front(User $user, Request $request, UserRepository $repository): Response
@@ -47,6 +50,10 @@ class UserFrontController extends AbstractController
 
         if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
             throw $this->createNotFoundException();
+        }
+
+        if ($loggedInUser = $this->getUser()) {
+            $this->notificationRepository->markUserSignupNotificationsAsRead($loggedInUser, $user);
         }
 
         $activity = $repository->findPublicActivity($this->getPageNb($request), $user, $hideAdult);
