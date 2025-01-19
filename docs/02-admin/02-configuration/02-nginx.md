@@ -92,53 +92,37 @@ upstream mercure {
 
 # Map instance requests vs the rest
 map "$http_accept:$request" $instanceRequest {
-    ~^.*:GET\ \/.well-known\/.+                         1;
-    ~^.*:GET\ \/nodeinfo\/.+                            1;
-    ~^.*:GET\ \/i\/actor                                1;
-    ~^.*:POST\ \/i\/inbox                               1;
-    ~^.*:POST\ \/i\/outbox                              1;
-    ~^.*:POST\ \/f\/inbox                               1;
-    ~^application\/activity\+json:GET\ \/               1;
-    ~^application\/ld\+json:GET\ \/                     1;
-    ~^application\/json:GET\ \/                         1;
-    ~^application\/activity\+json:GET\ \/f\/object\/.+  1;
-    ~^application\/ld\+json:GET\ \/f\/object\/.+        1;
-    ~^application\/json:GET\ \/f\/object\/.+            1;
-    default                                             0;
+    ~^.*:GET\ \/.well-known\/.+                                                                       1;
+    ~^.*:GET\ \/nodeinfo\/.+                                                                          1;
+    ~^.*:GET\ \/i\/actor                                                                              1;
+    ~^.*:POST\ \/i\/inbox                                                                             1;
+    ~^.*:POST\ \/i\/outbox                                                                            1;
+    ~^.*:POST\ \/f\/inbox                                                                             1;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/               1;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/f\/object\/.+  1;
+    default                                                                                           0;
 }
 
 # Map user requests vs the rest
 map "$http_accept:$request" $userRequest {
-    ~^application\/activity\+json:GET\ \/u\/.+   1;
-    ~^application\/ld\+json:GET\ \/u\/.+         1;
-    ~^application\/json:GET\ \/u\/.+             1;
-    ~^application\/activity\+json:POST\ \/u\/.+  1;
-    ~^application\/ld\+json:POST\ \/u\/.+        1;
-    ~^application\/json:POST\ \/u\/.+            1;
-    default                                      0;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/u\/.+   1;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:POST\ \/u\/.+  1;
+    default                                                                                    0;
 }
 
 # Map magazine requests vs the rest
 map "$http_accept:$request" $magazineRequest {
-    ~^application\/activity\+json:GET\ \/m\/.+   1;
-    ~^application\/ld\+json:GET\ \/m\/.+         1;
-    ~^application\/json:GET\ \/m\/.+             1;
-    ~^application\/activity\+json:POST\ \/m\/.+  1;
-    ~^application\/ld\+json:POST\ \/m\/.+        1;
-    ~^application\/json:POST\ \/m\/.+            1;
-    default                                      0;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/m\/.+   1;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:POST\ \/m\/.+  1;
+    default                                                                                    0;
 }
 
 # Miscellaneous requests
 map "$http_accept:$request" $miscRequest {
-    ~^application\/activity\+json:GET\ \/reports\/.+  1;
-    ~^application\/ld\+json:GET\ \/reports\/.+        1;
-    ~^application\/json:GET\ \/reports\/.+            1;
-    ~^application\/activity\+json:GET\ \/message\/.+  1;
-    ~^application\/ld\+json:GET\ \/message\/.+        1;
-    ~^application\/json:GET\ \/message\/.+            1;
-    ~^.*:GET\ \/contexts\..+                          1;
-    default                                           0;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/reports\/.+  1;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/message\/.+  1;
+    ~^.*:GET\ \/contexts\..+                                                                        1;
+    default                                                                                         0;
 }
 
 # Determine if a request should go into the regular log
