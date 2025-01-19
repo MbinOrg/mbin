@@ -1,1 +1,50 @@
-{}
+add: Dezuefüege
+filter_by_subscription: Nach Abonnemänt filterä
+type.article: Thema
+type.smart_contract: Smart Contract
+type.magazine: Magazin
+thread: Thema
+threads: Themä
+microblog: Mikroblog
+people: Lüüt
+events: Ereignissä
+magazine: Magazin
+magazines: Magazinä
+search: Suechä
+select_channel: Wähl en Kanal
+login: Ahmeldä
+top: Top
+hot: Heiss
+active: Aktiv
+newest: Neu
+oldest: Alt
+commented: Kommentiert
+change_view: Ahsicht wächsle
+filter_by_time: Nach de Ziit filterä
+filter_by_type: Nach em Typ filterä
+filter_by_federation: Nach Föderierigsstatus filterä
+comments_count: '{0}Kommentär|{1}Kommentar|]1,Inf[ Kommentär'
+followers_count: '{0}Follower|{1}Follower|]1,Inf[ Follower'
+marked_for_deletion: Für Löschig markiert
+marked_for_deletion_at: Für Löschig am %date% markiert
+more: Meh
+avatar: Avatar
+added: Dezuegfüegt
+up_votes: Förderä
+favourite: Duume ufä
+register: Registrierä
+reset_password: Passwort zrüggsetzä
+in: i
+from: vo
+username: Bnutzername
+email: E-Mail
+repeat_password: Passwort wiederholä
+type.link: Link
+type.video: Video
+type.photo: Foti
+sort_by: Sortierä nach
+subscribers_count: '{0}Abonnänte|{1}Abonnänt|]1,Inf[ Abonnänte'
+favourites: Favoritä
+show_more: Meh zeige
+already_have_account: Hesch scho es Konto?
+to: ah
