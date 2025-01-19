@@ -14,7 +14,7 @@ A clear and concise description of what the bug is.
 [domain.tld]
 
 **Which Mbin version was running on the instance?**
-[e.g. 1.4.0]
+[e.g. 1.7.4]
 
 **To Reproduce**
 Steps to reproduce the behavior:
