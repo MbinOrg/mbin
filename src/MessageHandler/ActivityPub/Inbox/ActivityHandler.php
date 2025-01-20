@@ -67,8 +67,10 @@ class ActivityHandler extends MbinMessageHandler
         $payload = @json_decode($message->payload, true);
 
         if (null === $payload) {
-            $this->logger->warning('[ActivityHandler::doWork] Activity message from was empty: {json}, ignoring it', ['json' => json_encode($message->payload)]);
-            throw new UnrecoverableMessageHandlingException('activity message from was empty');
+            $this->logger->warning('[ActivityHandler::doWork] Activity message from was empty or invalid JSON. Truncated content: {content}, ignoring it', [
+                'content' => substr($message->payload ?? 'No payload provided', 0, 200),
+            ]);
+            throw new UnrecoverableMessageHandlingException('Activity message from was empty or invalid JSON');
         }
 
         if ($message->request && $message->headers) {
@@ -93,7 +95,7 @@ class ActivityHandler extends MbinMessageHandler
 
         if (null === $payload['id']) {
             $this->logger->warning('[ActivityHandler::doWork] Activity message has no id field which is required: {json}', ['json' => json_encode($message->payload)]);
-            throw new UnrecoverableMessageHandlingException('activity message has no id field');
+            throw new UnrecoverableMessageHandlingException('Activity message has no id field');
         }
 
         $idHost = parse_url($payload['id'], PHP_URL_HOST);
