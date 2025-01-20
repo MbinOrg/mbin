@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\DTO;
 
 use App\DTO\Contracts\VisibilityAwareDtoTrait;
+use App\Enums\ENotificationStatus;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema()]
@@ -37,6 +38,7 @@ class PostResponseDto implements \JsonSerializable
     public ?\DateTimeImmutable $editedAt = null;
     public ?\DateTime $lastActive = null;
     public ?bool $canAuthUserModerate = null;
+    public ?ENotificationStatus $notificationStatus = null;
 
     public static function create(
         int $id,
@@ -128,6 +130,7 @@ class PostResponseDto implements \JsonSerializable
             'lastActive' => $this->lastActive?->format(\DateTimeInterface::ATOM),
             'slug' => $this->slug,
             'canAuthUserModerate' => $this->canAuthUserModerate,
+            'notificationStatus' => $this->notificationStatus,
         ]);
     }
 }

@@ -247,7 +247,7 @@
       }
     }
 
-    a {
+    a:not(.notification-setting) {
       color: var(--kbin-meta-link-color);
     }
 
@@ -258,6 +258,10 @@
     figure {
       text-align: center;
     }
+  }
+
+  .entry-info ul.info {
+    margin-top: 2.5rem;
   }
 
   .settings {
