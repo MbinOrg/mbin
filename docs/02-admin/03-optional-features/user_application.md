@@ -2,7 +2,7 @@
 
 If you want to manually approve users before they can log into your server, 
 you can either tick the checkbox in the admin settings put this in the `.env` file:
-```dotenv
+```ini
 MBIN_NEW_USERS_NEED_APPROVAL=true
 ```
 
