@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Post\Comment;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class PostCommentEditControllerTest extends WebTestCase
 {
@@ -35,6 +36,7 @@ class PostCommentEditControllerTest extends WebTestCase
         $this->assertSelectorTextContains('#main .post-comment', 'test comment 2 body');
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testAuthorCanEditOwnPostCommentWithImage(): void
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));

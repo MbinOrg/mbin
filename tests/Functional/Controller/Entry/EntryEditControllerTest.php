@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Entry;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class EntryEditControllerTest extends WebTestCase
 {
@@ -65,6 +66,7 @@ class EntryEditControllerTest extends WebTestCase
         $this->assertSelectorTextContains('#main .entry .entry__body', 'test entry 2 body');
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testAuthorCanEditOwnEntryImage(): void
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));

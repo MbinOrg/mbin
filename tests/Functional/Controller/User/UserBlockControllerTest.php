@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\User;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class UserBlockControllerTest extends WebTestCase
 {
@@ -45,6 +46,7 @@ class UserBlockControllerTest extends WebTestCase
         $this->assertStringContainsString('active', $this->client->getResponse()->getContent());
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testXmlUserCanUnblock(): void
     {
         $this->client->loginUser($this->getUserByUsername('JaneDoe'));

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Entry\Comment;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class EntryCommentEditControllerTest extends WebTestCase
 {
@@ -36,6 +37,7 @@ class EntryCommentEditControllerTest extends WebTestCase
         $this->assertSelectorTextContains('#main .entry-comment', 'test comment 2 body');
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testAuthorCanEditOwnEntryCommentWithImage(): void
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));

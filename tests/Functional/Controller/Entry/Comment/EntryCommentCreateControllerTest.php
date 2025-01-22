@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Entry\Comment;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class EntryCommentCreateControllerTest extends WebTestCase
 {
@@ -36,6 +37,7 @@ class EntryCommentCreateControllerTest extends WebTestCase
         $this->assertSelectorTextContains('#main blockquote', 'test comment 1');
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCanCreateEntryCommentWithImage(): void
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));
@@ -61,6 +63,7 @@ class EntryCommentCreateControllerTest extends WebTestCase
         $_FILES = [];
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCanReplyEntryComment(): void
     {
         $comment = $this->createEntryComment(
@@ -90,6 +93,7 @@ class EntryCommentCreateControllerTest extends WebTestCase
         $this->assertEquals(2, $crawler->filter('#main blockquote')->count());
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCantCreateInvalidEntryComment(): void
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));

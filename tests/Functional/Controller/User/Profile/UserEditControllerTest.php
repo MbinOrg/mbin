@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\User\Profile;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -49,6 +50,7 @@ class UserEditControllerTest extends WebTestCase
         $this->assertSelectorTextContains('#main .user-box', 'JohnDoe');
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCanUploadAvatar(): void
     {
         $user = $this->getUserByUsername('JohnDoe');
@@ -67,6 +69,7 @@ class UserEditControllerTest extends WebTestCase
         $this->assertStringContainsString(self::KIBBY_PNG_URL_RESULT, $user->avatar->filePath);
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCanUploadCover(): void
     {
         $user = $this->getUserByUsername('JohnDoe');
