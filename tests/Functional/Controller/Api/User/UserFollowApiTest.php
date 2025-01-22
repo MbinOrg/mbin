@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\User;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class UserFollowApiTest extends WebTestCase
 {
@@ -32,6 +33,7 @@ class UserFollowApiTest extends WebTestCase
         self::assertResponseStatusCodeSame(403);
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testApiCanFollowUser(): void
     {
         self::createOAuth2AuthCodeClient();
