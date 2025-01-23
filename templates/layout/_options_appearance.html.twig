@@ -20,6 +20,9 @@
         {{ component('settings_row_switch', {label: 'show_related_entries'|trans, settingsKey: 'MBIN_GENERAL_SHOW_RELATED_ENTRIES', defaultValue: 'true'}) }}
         {{ component('settings_row_switch', {label: 'show_related_posts'|trans, settingsKey: 'MBIN_GENERAL_SHOW_RELATED_POSTS', defaultValue: 'true'}) }}
         {{ component('settings_row_switch', {label: 'show_active_users'|trans, settingsKey: 'MBIN_GENERAL_SHOW_ACTIVE_USERS', defaultValue: 'true'}) }}
+
+        {{ component('settings_row_switch', {label: 'show_user_domains'|trans, settingsKey: 'MBIN_SHOW_USER_DOMAIN', defaultValue: false}) }}
+        {{ component('settings_row_switch', {label: 'show_magazine_domains'|trans, settingsKey: 'MBIN_SHOW_MAGAZINE_DOMAIN', defaultValue: false}) }}
     </div>
     {% if app.user is defined and app.user is not same as null %}
         <strong>{{ 'subscriptions'|trans }}</strong>

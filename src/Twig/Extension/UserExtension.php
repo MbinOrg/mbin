@@ -25,6 +25,7 @@ class UserExtension extends AbstractExtension
     {
         return [
             new TwigFilter('username', [UserExtensionRuntime::class, 'username'], ['is_safe' => ['html']]),
+            new TwigFilter('apDomain', [UserExtensionRuntime::class, 'apDomain'], ['is_safe' => ['html']]),
         ];
     }
 }

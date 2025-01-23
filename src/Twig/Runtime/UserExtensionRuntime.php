@@ -45,6 +45,11 @@ class UserExtensionRuntime implements RuntimeExtensionInterface
         return $this->mentionManager->getUsername($value, $withApPostfix);
     }
 
+    public function apDomain(string $value): string
+    {
+        return $this->mentionManager->getDomain($value);
+    }
+
     public function getReputationTotal(User $user): int
     {
         return $this->userManager->getReputationTotal($user);

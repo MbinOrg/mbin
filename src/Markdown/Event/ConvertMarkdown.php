@@ -51,6 +51,20 @@ class ConvertMarkdown extends Event
         $this->attributes[$key] = $data;
     }
 
+    public function addTag(string $tag): void
+    {
+        $this->attributes['tags'] ??= [];
+        $this->attributes['tags'][] = $tag;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTags(): array
+    {
+        return $this->attributes['tags'] ?? [];
+    }
+
     public function mergeAttributes(array $attributes): void
     {
         $this->attributes = array_replace($this->attributes, $attributes);
