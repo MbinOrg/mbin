@@ -16,6 +16,7 @@ final class FrontExtension extends AbstractExtension
             new TwigFunction('front_options_url', [FrontExtensionRuntime::class, 'frontOptionsUrl']),
             new TwigFunction('get_class', [FrontExtensionRuntime::class, 'getClass']),
             new TwigFunction('get_subject_type', [FrontExtensionRuntime::class, 'getSubjectType']),
+            new TwigFunction('get_notification_settings_subject_type', [FrontExtensionRuntime::class, 'getNotificationSettingSubjectType']),
         ];
     }
 }

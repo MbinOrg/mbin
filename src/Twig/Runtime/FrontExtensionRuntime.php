@@ -6,8 +6,10 @@ namespace App\Twig\Runtime;
 
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\Magazine;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -83,6 +85,21 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
             return 'post';
         } elseif ($object instanceof PostComment) {
             return 'post_comment';
+        } else {
+            throw new \LogicException('unknown class '.\get_class($object));
+        }
+    }
+
+    public function getNotificationSettingSubjectType(mixed $object): string
+    {
+        if ($object instanceof Entry) {
+            return 'entry';
+        } elseif ($object instanceof Post) {
+            return 'post';
+        } elseif ($object instanceof User) {
+            return 'user';
+        } elseif ($object instanceof Magazine) {
+            return 'magazine';
         } else {
             throw new \LogicException('unknown class '.\get_class($object));
         }
