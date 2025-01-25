@@ -36,6 +36,19 @@ export default class extends Controller {
         }
 
         this.checkHeight();
+
+        // if in a list and the click is made via touch, open the post
+        if (!this.element.classList.contains('isSingle')) {
+            this.element.addEventListener('click', (e) => {
+                if (e.defaultPrevented) {
+                    return
+                }
+                if ("touch" === e.pointerType) {
+                    let link = this.element.querySelector("header a:not(.user-inline)")
+                    document.location.href = link.getAttribute('href')
+                }
+            })
+        }
     }
 
     async getForm(event) {
