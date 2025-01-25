@@ -134,9 +134,9 @@ class MagazineActionReportsApiTest extends WebTestCase
 
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine:reports:action');
         $token = $codes['token_type'].' '.$codes['access_token'];
+        $consideredAt = new \DateTimeImmutable();
 
         $this->client->jsonRequest('POST', "/api/moderate/magazine/{$magazine->getId()}/reports/{$report->getId()}/accept", server: ['HTTP_AUTHORIZATION' => $token]);
-        $consideredAt = new \DateTimeImmutable();
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);

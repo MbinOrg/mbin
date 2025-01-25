@@ -19,10 +19,11 @@
             class: html_classes('entry section subject', {
                 'no-image': SHOW_THUMBNAILS is same as V_FALSE,
                 'own': app.user and entry.isAuthor(app.user),
-                'show-preview': SHOW_PREVIEW is same as V_TRUE and not entry.isAdult
+                'show-preview': SHOW_PREVIEW is same as V_TRUE and not entry.isAdult,
+                'isSingle': isSingle is same as true
             })}).without('id') }}
                 id="entry-{{ entry.id }}"
-                data-controller="subject preview mentions"
+                data-controller="subject preview mentions html-refresh"
                 data-action="notifications:Notification@window->subject#notification">
             <header>
                 {% if entry.visibility in ['visible', 'private'] or (entry.visibility is same as 'trashed' and this.canSeeTrashed) %}
@@ -175,6 +176,11 @@
                             {{ component('bookmark_standard', { subject: entry }) }}
                         {% endif %}
                         {% include 'entry/_menu.html.twig' %}
+
+                        {% if app.user is defined and app.user is not same as null and not showShortSentence %}
+                            {{ component('notification_switch', {target: entry}) }}
+                        {% endif %}
+
                         <li data-subject-target="loader" style="display:none">
                             <div class="loader" role="status">
                                 <span class="visually-hidden">Loading...</span>

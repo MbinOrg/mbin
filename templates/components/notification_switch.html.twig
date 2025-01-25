@@ -1,0 +1,32 @@
+<aside class="notification-switch">
+    <a class="notification-setting {{ html_classes({
+        active: status is defined and status is same as enum("App\\Enums\\ENotificationStatus").Muted
+    }) }}"
+        {% if status is not defined or status is not same as enum("App\\Enums\\ENotificationStatus").Muted %}
+            data-html-refresh-cssclass-param="notification-switch" data-action="html-refresh#linkCallback"
+            href="{{ path('change_notification_setting', { 'subject_id': target.id, 'subject_type': get_notification_settings_subject_type(target), 'status': enum("App\\Enums\\ENotificationStatus").Muted.value }) }}"
+        {% endif %}
+    >
+        <i class="fa-solid fa-bell-slash"></i>
+    </a>
+    <a class="notification-setting {{ html_classes({
+        active: status is not defined or status is same as enum("App\\Enums\\ENotificationStatus").Default
+    }) }}"
+        {% if status is not defined or status is not same as enum("App\\Enums\\ENotificationStatus").Default %}
+            data-html-refresh-cssclass-param="notification-switch" data-action="html-refresh#linkCallback"
+            href="{{ path('change_notification_setting', { 'subject_id': target.id, 'subject_type': get_notification_settings_subject_type(target), 'status': enum("App\\Enums\\ENotificationStatus").Default.value }) }}"
+       {% endif %}
+    >
+        <i class="fa-solid fa-bell"></i>
+    </a>
+    <a class="notification-setting {{ html_classes({
+        active: status is defined and status is same as enum("App\\Enums\\ENotificationStatus").Loud
+    }) }}"
+       {% if status is not defined or status is not same as enum("App\\Enums\\ENotificationStatus").Loud %}
+            data-html-refresh-cssclass-param="notification-switch" data-action="html-refresh#linkCallback"
+            href="{{ path('change_notification_setting', { 'subject_id': target.id, 'subject_type': get_notification_settings_subject_type(target), 'status': enum("App\\Enums\\ENotificationStatus").Loud.value }) }}"
+       {% endif %}
+    >
+        <i class="fa-solid fa-bullhorn"></i>
+    </a>
+</aside>
