@@ -10,6 +10,7 @@ use App\MessageHandler\MbinMessageHandler;
 use App\Repository\UserRepository;
 use App\Service\Notification\SignupNotificationManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
@@ -18,10 +19,11 @@ class SentNewSignupNotificationHandler extends MbinMessageHandler
 {
     public function __construct(
         readonly EntityManagerInterface $entityManager,
+        readonly KernelInterface $kernel,
         private readonly UserRepository $userRepository,
         private readonly SignupNotificationManager $signupNotificationManager,
     ) {
-        parent::__construct($entityManager);
+        parent::__construct($entityManager, $kernel);
     }
 
     public function __invoke(SentNewSignupNotificationMessage $message)

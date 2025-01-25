@@ -24,7 +24,7 @@ in the `.env`|`.env.local` file
 
 https://developers.google.com/
 
-```dotenv
+```ini
 OAUTH_GOOGLE_ID=AS2easdioh912 # your client ID
 OAUTH_GOOGLE_SECRET=sdfpsajh329ura39ßseaoßjf30u # your client secret
 ```
@@ -33,7 +33,7 @@ OAUTH_GOOGLE_SECRET=sdfpsajh329ura39ßseaoßjf30u # your client secret
 
 https://developers.facebook.com
 
-```dotenv
+```ini
 OAUTH_FACEBOOK_ID=AS2easdioh912 # your client ID
 OAUTH_FACEBOOK_SECRET=sdfpsajh329ura39ßseaoßjf30u # your client secret
 ```
@@ -51,7 +51,7 @@ You need a GitHub account, if you do no have one, yet, go and create one: https:
 7. Click "Generate a new client secret"
 8. Insert the "Client ID" and the generated client secret into the `.env` file:
 
-```dotenv
+```ini
 OAUTH_GITHUB_ID=AS2easdioh912 # your client ID
 OAUTH_GITHUB_SECRET=sdfpsajh329ura39ßseaoßjf30u # your client secret
 ```
@@ -60,7 +60,7 @@ OAUTH_GITHUB_SECRET=sdfpsajh329ura39ßseaoßjf30u # your client secret
 
 Self-hosted, https://www.keycloak.org/
 
-```dotenv
+```ini
 OAUTH_KEYCLOAK_ID=AS2easdioh912 # your client ID
 OAUTH_KEYCLOAK_SECRET=sdfpsajh329ura39ßseaoßjf30u # your client secret
 OAUTH_KEYCLOAK_URI=
@@ -72,7 +72,7 @@ OAUTH_KEYCLOAK_VERSION=
 
 Self-hosted, https://zitadel.com/
 
-```dotenv
+```ini
 OAUTH_ZITADEL_ID=AS2easdioh912 # your client ID
 OAUTH_ZITADEL_SECRET=sdfpsajh329ura39ßseaoßjf30u # your client secret
 OAUTH_ZITADEL_BASE_URL=
@@ -89,7 +89,7 @@ You need a SimpleLogin account, if you do not have one, yet, go and create one: 
 5. Insert the client ID ("AppID / OAuth2 Client ID") and the client secret ("AppSecret / OAuth2 Client Secret")
    in your `.env` file
 
-```dotenv
+```ini
 OAUTH_SIMPLELOGIN_ID=gehirneimer.de-vycjfiaznc # your client ID
 OAUTH_SIMPLELOGIN_SECRET=fdiuasdfusdfsdfpsdagofweopf # your client secret
 ```
@@ -105,7 +105,7 @@ You need a Discord account, if you do not have one, yet, go and create one: http
 3. Under "Client information" click "Reset Secret"
 4. The newly generated secret and the "Client ID" need to go in our `.env` file:
 
-```dotenv
+```ini
 OAUTH_DISCORD_ID=3245498543 # your client ID
 OAUTH_DISCORD_SECRET=xJHGApsadOPUIAsdoih # your client secret
 ```
@@ -119,7 +119,7 @@ OAUTH_DISCORD_SECRET=xJHGApsadOPUIAsdoih # your client secret
 
 Self-hosted, https://goauthentik.io/
 
-```dotenv
+```ini
 OAUTH_AUTHENTIK_ID=3245498543 # your client ID
 OAUTH_AUTHENTIK_SECRET=xJHGApsadOPUIAsdoih # your client secret
 OAUTH_AUTHENTIK_BASE_URL=
@@ -129,7 +129,7 @@ OAUTH_AUTHENTIK_BASE_URL=
 
 https://privacyportal.org
 
-```dotenv
+```ini
 OAUTH_PRIVACYPORTAL_ID=3245498543 # your client ID
 OAUTH_PRIVACYPORTAL_SECRET=xJHGApsadOPUIAsdoih # your client secret
 ```
@@ -138,7 +138,7 @@ OAUTH_PRIVACYPORTAL_SECRET=xJHGApsadOPUIAsdoih # your client secret
 
 https://login.microsoftonline.com
 
-```dotenv
+```ini
 OAUTH_AZURE_ID=3245498543 # your client ID
 OAUTH_AZURE_SECRET=xJHGApsadOPUIAsdoih # your client secret
 OAUTH_AZURE_TENANT=
