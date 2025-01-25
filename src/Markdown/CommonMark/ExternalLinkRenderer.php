@@ -352,6 +352,11 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
                 'magazineFullName' => ThemeSettingsController::getShowMagazineFullName($this->requestStack->getCurrentRequest()),
             ]);
         } elseif ($entity instanceof EntryComment) {
+            return $this->twig->render('components/entry_comment_inline_md.html.twig', [
+                'comment' => $entity,
+                'userFullName' => ThemeSettingsController::getShowUserFullName($this->requestStack->getCurrentRequest()),
+                'magazineFullName' => ThemeSettingsController::getShowMagazineFullName($this->requestStack->getCurrentRequest()),
+            ]);
         } elseif ($entity instanceof Post) {
             return $this->twig->render('components/post_inline_md.html.twig', [
                 'post' => $entity,
@@ -359,6 +364,11 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
                 'magazineFullName' => ThemeSettingsController::getShowMagazineFullName($this->requestStack->getCurrentRequest()),
             ]);
         } elseif ($entity instanceof PostComment) {
+            return $this->twig->render('components/post_comment_inline_md.html.twig', [
+                'comment' => $entity,
+                'userFullName' => ThemeSettingsController::getShowUserFullName($this->requestStack->getCurrentRequest()),
+                'magazineFullName' => ThemeSettingsController::getShowMagazineFullName($this->requestStack->getCurrentRequest()),
+            ]);
         }
 
         return '';

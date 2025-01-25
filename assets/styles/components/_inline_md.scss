@@ -1,5 +1,7 @@
 .entry-inline,
-.post-inline {
+.entry-comment-inline,
+.post-inline,
+.post-comment-inline {
   font-weight: bold;
   border: var(--kbin-section-border);
   padding: .25em;
@@ -8,7 +10,9 @@
 
 .rounded-edges {
   .entry-inline,
-  .post-inline {
+  .entry-comment-inline,
+  .post-inline,
+  .post-comment-inline {
     border-radius: var(--kbin-rounded-edges-radius);
   }
 }
