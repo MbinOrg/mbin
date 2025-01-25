@@ -91,6 +91,8 @@ class RemoveOldImagesCommand extends Command
 
     /**
      * Call all delete methods below, _except_ for the delete users images.
+     * Since users on the instance can be several years old and not getting fetched,
+     * however we shouldn't remove their avatar/cover images just like that.
      */
     private function deleteAllImages($output): void
     {
@@ -251,7 +253,7 @@ class RemoveOldImagesCommand extends Command
     }
 
     /**
-     * Delete user avatar and user cover images.
+     * Delete user avatar and user cover images. Check ap_fetched_at column for the age.
      * Limit by batch size.
      */
     private function deleteUsersImages(OutputInterface $output)
