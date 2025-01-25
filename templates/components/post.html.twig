@@ -12,7 +12,8 @@
         <blockquote{{ attributes.defaults({
             class: html_classes('section post subject ', {
                 'own': app.user and post.isAuthor(app.user),
-                'show-preview': SHOW_PREVIEW is same as V_TRUE and not post.isAdult
+                'show-preview': SHOW_PREVIEW is same as V_TRUE and not post.isAdult,
+                'isSingle': isSingle is same as true
             })}).without('id') }}
                 id="post-{{ post.id }}"
                 data-controller="post subject mentions"

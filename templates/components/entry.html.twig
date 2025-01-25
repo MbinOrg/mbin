@@ -19,7 +19,8 @@
             class: html_classes('entry section subject', {
                 'no-image': SHOW_THUMBNAILS is same as V_FALSE,
                 'own': app.user and entry.isAuthor(app.user),
-                'show-preview': SHOW_PREVIEW is same as V_TRUE and not entry.isAdult
+                'show-preview': SHOW_PREVIEW is same as V_TRUE and not entry.isAdult,
+                'isSingle': isSingle is same as true
             })}).without('id') }}
                 id="entry-{{ entry.id }}"
                 data-controller="subject preview mentions"
