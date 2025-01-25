@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
+use App\Enums\ENotificationStatus;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema()]
@@ -26,6 +27,7 @@ class UserResponseDto implements \JsonSerializable
     public ?int $userId = null;
     public ?string $serverSoftware = null;
     public ?string $serverSoftwareVersion = null;
+    public ?ENotificationStatus $notificationStatus = null;
 
     public function __construct(UserDto $dto)
     {
@@ -68,6 +70,7 @@ class UserResponseDto implements \JsonSerializable
             'isBlockedByUser' => $this->isBlockedByUser,
             'serverSoftware' => $this->serverSoftware,
             'serverSoftwareVersion' => $this->serverSoftwareVersion,
+            'notificationStatus' => $this->notificationStatus,
         ];
     }
 }

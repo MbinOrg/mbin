@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
+use App\Enums\ENotificationStatus;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 
@@ -37,6 +38,7 @@ class MagazineResponseDto implements \JsonSerializable
     public ?string $serverSoftwareVersion = null;
     public bool $isPostingRestrictedToMods = false;
     public ?int $localSubscribers = null;
+    public ?ENotificationStatus $notificationStatus = null;
 
     public static function create(
         ?ModeratorResponseDto $owner = null,
@@ -120,6 +122,7 @@ class MagazineResponseDto implements \JsonSerializable
             'serverSoftwareVersion' => $this->serverSoftwareVersion,
             'isPostingRestrictedToMods' => $this->isPostingRestrictedToMods,
             'localSubscribers' => $this->localSubscribers,
+            'notificationStatus' => $this->notificationStatus,
         ];
     }
 }

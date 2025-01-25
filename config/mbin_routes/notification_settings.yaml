@@ -1,0 +1,6 @@
+change_notification_setting:
+    controller: App\Controller\NotificationSettingsController::changeSetting
+    path: /cns/{subject_type}/{subject_id}/{status}
+    requirements:
+        subject_type: user|magazine|entry|post
+        status: Default|Loud|Muted
