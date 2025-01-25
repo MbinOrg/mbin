@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\OAuth2;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class OAuth2ClientApiTest extends WebTestCase
@@ -130,6 +131,7 @@ class OAuth2ClientApiTest extends WebTestCase
         self::assertIsArray($jsonData);
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testApiCanCreateWorkingClientWithImage(): void
     {
         $requestData = [

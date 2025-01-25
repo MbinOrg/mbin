@@ -101,9 +101,9 @@ jobs:
           DATABASE_PORT: 5432
           REDIS_HOST: valkey
           REDIS_PORT: 6379
-        run: php bin/phpunit tests/Unit
+        run: php vendor/bin/paratest --passthru-php="'-d' 'memory_limit=192M'" tests/Unit
 
-      - name: Run integration tests
+      - name: Run non thread safe integration tests
         env:
           COMPOSER_CACHE_DIR: ${{ steps.composer-cache.outputs.dir }}
           SYMFONY_DEPRECATIONS_HELPER: disabled
@@ -111,7 +111,17 @@ jobs:
           DATABASE_PORT: 5432
           REDIS_HOST: valkey
           REDIS_PORT: 6379
-        run: php bin/phpunit tests/Functional
+        run: php vendor/bin/phpunit tests/Functional --group NonThreadSafe
+
+      - name: Run thread safe integration tests
+        env:
+          COMPOSER_CACHE_DIR: ${{ steps.composer-cache.outputs.dir }}
+          SYMFONY_DEPRECATIONS_HELPER: disabled
+          DATABASE_HOST: postgres
+          DATABASE_PORT: 5432
+          REDIS_HOST: valkey
+          REDIS_PORT: 6379
+        run: php vendor/bin/paratest --passthru-php="'-d' 'memory_limit=192M'" tests/Functional --exclude-group NonThreadSafe
     services:
       postgres:
         # Docker Hub image
