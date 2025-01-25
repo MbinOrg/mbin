@@ -45,7 +45,12 @@ export default class extends Controller {
                 }
                 if ("touch" === e.pointerType) {
                     let link = this.element.querySelector("header a:not(.user-inline)")
-                    document.location.href = link.getAttribute('href')
+                    if (link) {
+                        let href = link.getAttribute('href')
+                        if (href) {
+                            document.location.href = href
+                        }
+                    }
                 }
             })
         }
