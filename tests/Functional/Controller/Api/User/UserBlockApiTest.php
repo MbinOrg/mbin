@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\User;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class UserBlockApiTest extends WebTestCase
 {
@@ -32,6 +33,7 @@ class UserBlockApiTest extends WebTestCase
         self::assertResponseStatusCodeSame(403);
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testApiCanBlockUser(): void
     {
         self::createOAuth2AuthCodeClient();
@@ -67,6 +69,7 @@ class UserBlockApiTest extends WebTestCase
         self::assertTrue($jsonData['isBlockedByUser']);
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testApiCanUnblockUser(): void
     {
         self::createOAuth2AuthCodeClient();

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Post;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class PostCreateControllerTest extends WebTestCase
 {
@@ -36,6 +37,7 @@ class PostCreateControllerTest extends WebTestCase
         $this->assertSelectorTextContains('#content .post', 'test post 1');
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCanCreatePostWithImage(): void
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));
@@ -61,6 +63,7 @@ class PostCreateControllerTest extends WebTestCase
         $_FILES = [];
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCannotCreateInvalidPost(): void
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));
@@ -104,6 +107,7 @@ class PostCreateControllerTest extends WebTestCase
         $this->assertSelectorTextContains('blockquote header .danger', '18+');
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testPostCreatedInAdultMagazineIsAutomaticallyMarkedAsForAdults(): void
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe', hideAdult: false));

@@ -250,6 +250,13 @@ abstract class WebTestCase extends BaseWebTestCase
         self::assertFalse(true, $message);
     }
 
+    public static function removeTimeElements(string $content): string
+    {
+        $pattern = '/<time[ \w="\n-:]*>[\w \n]+<\/time>/m';
+
+        return preg_replace($pattern, '', $content);
+    }
+
     protected function tearDown(): void
     {
         parent::tearDown();
