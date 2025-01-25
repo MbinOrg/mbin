@@ -62,7 +62,7 @@ class SearchController extends AbstractController
                     $this->logger->debug('Query is a valid url');
                     $objects = $this->manager->findByApId($query);
                     if (0 === \sizeof($objects)) {
-                        $body = $this->apHttpClient->getActivityObject($query, false);
+                        $body = $this->apHttpClient->getActivityObject($query);
                         // the returned id could be different from the query url.
                         $postId = $body['id'];
                         $objects = $this->manager->findByApId($postId);

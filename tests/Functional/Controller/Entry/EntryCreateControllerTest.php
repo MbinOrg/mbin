@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Entry;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class EntryCreateControllerTest extends WebTestCase
 {
@@ -90,6 +91,7 @@ class EntryCreateControllerTest extends WebTestCase
         $this->assertSelectorExists('form[name=entry_image]');
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCanCreateEntryPhotoFromMagazinePage()
     {
         $this->client->loginUser($this->getUserByUsername('user'));

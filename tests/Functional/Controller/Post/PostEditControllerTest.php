@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Post;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class PostEditControllerTest extends WebTestCase
 {
@@ -34,6 +35,7 @@ class PostEditControllerTest extends WebTestCase
         $this->assertSelectorTextContains('#main .post .content', 'test post 2 body');
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testAuthorCanEditOwnPostWithImage(): void
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));

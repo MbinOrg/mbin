@@ -196,4 +196,17 @@ class NotificationRepository extends ServiceEntityRepository
         $stmt->bindValue('uId', $user->getId());
         $stmt->executeQuery();
     }
+
+    public function markUserSignupNotificationsAsRead(User $user, User $signedUpUser): void
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'UPDATE notification n SET status = :s
+                      WHERE n.user_id = :uId
+                        AND n.new_user_id = :newUserId';
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('s', Notification::STATUS_READ);
+        $stmt->bindValue('uId', $user->getId());
+        $stmt->bindValue('newUserId', $signedUpUser->getId());
+        $stmt->executeQuery();
+    }
 }

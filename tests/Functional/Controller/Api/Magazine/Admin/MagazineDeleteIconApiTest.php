@@ -7,6 +7,7 @@ namespace App\Tests\Functional\Controller\Api\Magazine\Admin;
 use App\DTO\ModeratorDto;
 use App\Tests\Functional\Controller\Api\Magazine\MagazineRetrieveApiTest;
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class MagazineDeleteIconApiTest extends WebTestCase
@@ -63,6 +64,7 @@ class MagazineDeleteIconApiTest extends WebTestCase
         self::assertResponseStatusCodeSame(403);
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testApiCanDeleteMagazineIcon(): void
     {
         $user = $this->getUserByUsername('JohnDoe');
