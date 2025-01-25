@@ -53,6 +53,9 @@ class RemoveOldImagesCommand extends Command
             ->addOption('batchSize', null, InputOption::VALUE_OPTIONAL, 'Number of images to delete at a time (for each type)', $this->batchSize);
     }
 
+    /**
+     * Starting point, switch what image will get deleted based on the type input arg.
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -87,7 +90,7 @@ class RemoveOldImagesCommand extends Command
     }
 
     /**
-     * Delete all delete methods below, _except_ for the delete users images.
+     * Call all delete methods below, _except_ for the delete users images.
      */
     private function deleteAllImages($output): void
     {
@@ -97,6 +100,10 @@ class RemoveOldImagesCommand extends Command
         $this->deletePostCommentsImages($output);
     }
 
+    /**
+     * Delete thread images, check on created_at database column for the age.
+     * Limit by batch size.
+     */
     private function deleteThreadsImages(OutputInterface $output): void
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
@@ -131,6 +138,10 @@ class RemoveOldImagesCommand extends Command
         }
     }
 
+    /**
+     * Delete thread comment images, check on created_at database column for the age.
+     * Limit by batch size.
+     */
     private function deleteThreadCommentsImages(OutputInterface $output): void
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
@@ -164,6 +175,10 @@ class RemoveOldImagesCommand extends Command
         }
     }
 
+    /**
+     * Delete post images, check on created_at database column for the age.
+     * Limit by batch size.
+     */
     private function deletePostsImages(OutputInterface $output): void
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
@@ -198,6 +213,10 @@ class RemoveOldImagesCommand extends Command
         }
     }
 
+    /**
+     * Delete post comment images, check on created_at database column for the age.
+     * Limit by batch size.
+     */
     private function deletePostCommentsImages(OutputInterface $output): void
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
@@ -231,6 +250,10 @@ class RemoveOldImagesCommand extends Command
         }
     }
 
+    /**
+     * Delete user avatar and user cover images.
+     * Limit by batch size.
+     */
     private function deleteUsersImages(OutputInterface $output)
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
