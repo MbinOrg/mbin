@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Security;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class LoginControllerTest extends WebTestCase
 {
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCanLogin(): void
     {
         $this->client = $this->register(true);
@@ -29,6 +31,7 @@ class LoginControllerTest extends WebTestCase
         $this->assertSelectorTextContains('#header', 'JohnDoe');
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCannotLoginWithoutActivation(): void
     {
         $this->client = $this->register();

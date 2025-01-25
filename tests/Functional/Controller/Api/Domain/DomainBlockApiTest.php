@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Domain;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class DomainBlockApiTest extends WebTestCase
 {
@@ -29,6 +30,7 @@ class DomainBlockApiTest extends WebTestCase
         self::assertResponseStatusCodeSame(403);
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testApiCanBlockDomain()
     {
         $domain = $this->getEntryByTitle('Test link to a domain', 'https://example.com')->domain;
@@ -89,6 +91,7 @@ class DomainBlockApiTest extends WebTestCase
         self::assertResponseStatusCodeSame(403);
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testApiCanUnblockDomain()
     {
         $user = $this->getUserByUsername('JohnDoe');
