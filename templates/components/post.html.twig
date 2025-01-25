@@ -114,7 +114,7 @@
                             {{ component('bookmark_standard', { subject: post }) }}
                         {% endif %}
                         {% include 'post/_menu.html.twig' %}
-                        {% if app.user is defined and app.user is not same as null %}
+                        {% if app.user is defined and app.user is not same as null and isSingle is defined and isSingle %}
                             {{ component('notification_switch', {target: post}) }}
                         {% endif %}
                         <li data-subject-target="loader" style="display:none">
