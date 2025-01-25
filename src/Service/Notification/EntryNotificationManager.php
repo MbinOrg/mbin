@@ -12,12 +12,13 @@ use App\Entity\EntryEditedNotification;
 use App\Entity\EntryMentionedNotification;
 use App\Entity\Magazine;
 use App\Entity\Notification;
-use App\Entity\User;
 use App\Event\NotificationCreatedEvent;
 use App\Factory\MagazineFactory;
 use App\Repository\MagazineLogRepository;
 use App\Repository\MagazineSubscriptionRepository;
 use App\Repository\NotificationRepository;
+use App\Repository\NotificationSettingsRepository;
+use App\Repository\UserRepository;
 use App\Service\Contracts\ContentNotificationManagerInterface;
 use App\Service\GenerateHtmlClassService;
 use App\Service\ImageManager;
@@ -51,6 +52,8 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
         private readonly GenerateHtmlClassService $classService,
         private readonly UserManager $userManager,
         private readonly SettingsManager $settingsManager,
+        private readonly NotificationSettingsRepository $notificationSettingsRepository,
+        private readonly UserRepository $userRepository,
     ) {
     }
 
@@ -80,20 +83,17 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
         }
 
         // Notify subscribers
-        /** @var User[] $subscribers */
-        $subscribers = $this->merge(
-            $this->getUsersToNotify($this->magazineRepository->findNewEntrySubscribers($subject)),
-            [] // @todo user followers
-        );
+        $subscriberIds = $this->notificationSettingsRepository->findNotificationSubscribersByTarget($subject);
+        $subscribers = $this->userRepository->findBy(['id' => $subscriberIds]);
 
-        $subscribers = array_filter($subscribers, fn ($s) => !\in_array($s->username, $mentions ?? []));
+        if (\count($mentions)) {
+            $subscribers = array_filter($subscribers, fn ($s) => !\in_array($s->username, $mentions ?? []));
+        }
 
         foreach ($subscribers as $subscriber) {
-            if (!$subscriber->isBlocked($subject->user)) {
-                $notification = new EntryCreatedNotification($subscriber, $subject);
-                $this->entityManager->persist($notification);
-                $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
-            }
+            $notification = new EntryCreatedNotification($subscriber, $subject);
+            $this->entityManager->persist($notification);
+            $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
         }
 
         $this->entityManager->flush();

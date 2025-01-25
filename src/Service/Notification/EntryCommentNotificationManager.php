@@ -18,6 +18,8 @@ use App\Factory\UserFactory;
 use App\Repository\MagazineLogRepository;
 use App\Repository\MagazineSubscriptionRepository;
 use App\Repository\NotificationRepository;
+use App\Repository\NotificationSettingsRepository;
+use App\Repository\UserRepository;
 use App\Service\Contracts\ContentNotificationManagerInterface;
 use App\Service\GenerateHtmlClassService;
 use App\Service\ImageManager;
@@ -50,10 +52,11 @@ class EntryCommentNotificationManager implements ContentNotificationManagerInter
         private readonly ImageManager $imageManager,
         private readonly GenerateHtmlClassService $classService,
         private readonly SettingsManager $settingsManager,
+        private readonly NotificationSettingsRepository $notificationSettingsRepository,
+        private readonly UserRepository $userRepository,
     ) {
     }
 
-    // @todo check if author is on the block list
     public function sendCreated(ContentInterface $subject): void
     {
         if ($subject->user->isBanned || $subject->user->isDeleted || $subject->user->isTrashed() || $subject->user->isSoftDeleted()) {
@@ -62,10 +65,30 @@ class EntryCommentNotificationManager implements ContentNotificationManagerInter
         if (!$subject instanceof EntryComment) {
             throw new \LogicException();
         }
+        $comment = $subject;
 
-        $users = $this->sendMentionedNotification($subject);
-        $users = $this->sendUserReplyNotification($subject, $users);
-        $this->sendMagazineSubscribersNotification($subject, $users);
+        $mentioned = $this->sendMentionedNotification($comment);
+
+        $this->notifyMagazine(new EntryCommentCreatedNotification($comment->user, $comment));
+
+        $userIdsToNotify = $this->notificationSettingsRepository->findNotificationSubscribersByTarget($comment);
+        $usersToNotify = $this->userRepository->findBy(['id' => $userIdsToNotify]);
+
+        if (\count($mentioned)) {
+            $usersToNotify = array_filter($usersToNotify, fn ($user) => !\in_array($user, $mentioned));
+        }
+
+        foreach ($usersToNotify as $subscriber) {
+            if (null !== $comment->parent && $comment->parent->isAuthor($subscriber)) {
+                $notification = new EntryCommentReplyNotification($subscriber, $comment);
+            } else {
+                $notification = new EntryCommentCreatedNotification($subscriber, $comment);
+            }
+            $this->entityManager->persist($notification);
+            $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
+        }
+
+        $this->entityManager->flush();
     }
 
     private function sendMentionedNotification(EntryComment $subject): array
@@ -84,41 +107,6 @@ class EntryCommentNotificationManager implements ContentNotificationManagerInter
         }
 
         return $users;
-    }
-
-    private function sendUserReplyNotification(EntryComment $comment, array $exclude): array
-    {
-        if (!$comment->parent || $comment->parent->isAuthor($comment->user)) {
-            return $exclude;
-        }
-
-        if (!$comment->parent->user->notifyOnNewEntryCommentReply) {
-            return $exclude;
-        }
-
-        if (\in_array($comment->parent->user, $exclude)) {
-            return $exclude;
-        }
-
-        if ($comment->parent->user->apId) {
-            // @todo activtypub
-            $exclude[] = $comment->parent->user;
-
-            return $exclude;
-        }
-
-        if (!$comment->parent->user->isBlocked($comment->user)) {
-            $notification = new EntryCommentReplyNotification($comment->parent->user, $comment);
-            $this->notifyUser($notification);
-
-            $this->entityManager->persist($notification);
-            $this->entityManager->flush();
-            $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
-
-            $exclude[] = $notification->user;
-        }
-
-        return $exclude;
     }
 
     private function notifyUser(EntryCommentReplyNotification $notification): void
@@ -175,31 +163,6 @@ class EntryCommentNotificationManager implements ContentNotificationManagerInter
                 //                'toast' => $this->twig->render('_layout/_toast.html.twig', ['notification' => $notification]),
             ]
         );
-    }
-
-    private function sendMagazineSubscribersNotification(EntryComment $comment, array $exclude): void
-    {
-        $this->notifyMagazine(new EntryCommentCreatedNotification($comment->user, $comment));
-
-        $usersToNotify = []; // @todo user followers
-        if ($comment->entry->user->notifyOnNewEntryReply && !$comment->isAuthor($comment->entry->user)) {
-            $usersToNotify = $this->merge(
-                $usersToNotify,
-                [$comment->entry->user]
-            );
-        }
-
-        if (\count($exclude)) {
-            $usersToNotify = array_filter($usersToNotify, fn ($user) => !\in_array($user, $exclude));
-        }
-
-        foreach ($usersToNotify as $subscriber) {
-            $notification = new EntryCommentCreatedNotification($subscriber, $comment);
-            $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
-            $this->entityManager->persist($notification);
-        }
-
-        $this->entityManager->flush();
     }
 
     private function notifyMagazine(Notification $notification): void
