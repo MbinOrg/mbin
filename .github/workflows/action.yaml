@@ -101,7 +101,7 @@ jobs:
           DATABASE_PORT: 5432
           REDIS_HOST: valkey
           REDIS_PORT: 6379
-        run: php vendor/bin/paratest --passthru-php="'-d' 'memory_limit=192M'" tests/Unit
+        run: php vendor/bin/paratest tests/Unit
 
       - name: Run non thread safe integration tests
         env:
@@ -121,7 +121,7 @@ jobs:
           DATABASE_PORT: 5432
           REDIS_HOST: valkey
           REDIS_PORT: 6379
-        run: php vendor/bin/paratest --passthru-php="'-d' 'memory_limit=192M'" tests/Functional --exclude-group NonThreadSafe
+        run: php vendor/bin/paratest tests/Functional --exclude-group NonThreadSafe
     services:
       postgres:
         # Docker Hub image
