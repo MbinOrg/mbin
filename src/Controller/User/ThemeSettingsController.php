@@ -19,7 +19,7 @@ class ThemeSettingsController extends AbstractController
     public const KBIN_THEME = 'kbin_theme';
     public const KBIN_FONT_SIZE = 'kbin_font_size';
     public const KBIN_PAGE_WIDTH = 'kbin_page_width';
-    public const MBIN_SHOW_USER_DOMAIN = 'kbin_show_users_domain';
+    public const MBIN_SHOW_USER_DOMAIN = 'mbin_show_users_domain';
     public const MBIN_SHOW_MAGAZINE_DOMAIN = 'kbin_show_magazine_domain';
     public const KBIN_ENTRIES_SHOW_USERS_AVATARS = 'kbin_entries_show_users_avatars';
     public const KBIN_ENTRIES_SHOW_MAGAZINES_ICONS = 'kbin_entries_show_magazines_icons';

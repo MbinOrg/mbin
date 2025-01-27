@@ -74,7 +74,7 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
 
         $isApRequest = UrlUtils::isActivityPubRequest($this->requestStack->getCurrentRequest());
         if (!$isApRequest && $node instanceof MentionLink && $this->isExistingMentionType($node)) {
-            $this->logger->debug("Got node of class {c}: kbinUsername: '{k}', title: '{t}', type: '{ty}', url: '{url}'", [
+            $this->logger->debug("Got node of class {c}: username: '{k}', title: '{t}', type: '{ty}', url: '{url}'", [
                 'c' => \get_class($node),
                 'k' => $node->getKbinUsername(),
                 't' => $node->getTitle(),
