@@ -243,7 +243,7 @@ php bin/console mbin:posts:magazines
 
 ## Activity Pub
 
-### Actor-Update
+### Actor update
 
 > [!NOTE]
 > This command will trigger **asynchronous** updates of remote users or magazines
@@ -263,7 +263,7 @@ Options:
 - `--users`: if this options is provided up to 10,000 remote users ordered by their last update time will be updated
 - `--magazines`: if this options is provided up to 10,000 remote magazines ordered by their last update time will be updated
 
-### AP-Import
+### ActivityPub resource import
 
 > [!NOTE]
 > This command will trigger an **asynchronous** import
@@ -279,9 +279,33 @@ php bin/console mbin:ap:import <url>
 Arguments:
 - `url`: the "id" of the ActivityPub object to import
 
-## Miscellaneous
+## Images
 
-### Cache-Build
+### Remove old federated images
+
+This command allows you to remove old federated images, without removing the content.  
+The image delete command works in batches, by default it will remove 800 images for each type.
+
+The image(s) will be removed from the database as well as from disk / storage.
+
+> [!WARNING]
+> This action cannot be undone!
+
+Usage:
+
+```bash
+php bin/console mbin:images:delete
+```
+
+Arguments:
+- `type`: type of images that will get deleted, either: `all` (except for user images), `threads`, `thread_comments`, `posts`, `post_comments` or `users`. (default: `all`)
+- `monthsAgo`: Delete images older than given months are getting deleted (default: `12`)
+
+Options:
+- `--noActivity`: delete images that doesn't have recorded activity. Like comments, updates and/or boosts. (default: `false`)
+- `--batchSize`: the number of images to delete for each type at a time. (default: `800`)
+
+### Rebuild image cache
 
 This command allows you to rebuild image thumbnail cache.
 It executes the `liip:imagine:cache:resolve` command for every user- and magazine-avatar and linked image in entries and posts.
@@ -294,6 +318,8 @@ Usage:
 ```bash
 php bin/console mbin:cache:build
 ```
+
+## Miscellaneous
 
 ### Users-Remove-Marked-For-Deletion
 
