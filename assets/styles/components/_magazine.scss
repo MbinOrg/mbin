@@ -53,11 +53,14 @@
     }
   }
 
+  &__description {
+    margin-top: 2.5rem;
+  }
+
   &__subscribe {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    margin-bottom: 2.5rem;
     flex-wrap: wrap;
 
     div {
