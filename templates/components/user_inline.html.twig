@@ -9,6 +9,34 @@
              loading="lazy"
              src="{{ user.avatar.filePath ? (asset(user.avatar.filePath) | imagine_filter('avatar_thumb')) : user.avatar.sourceUrl }}"
              alt="{{ user.username ~' '~ 'avatar'|trans|lower }}">
+    {% elseif showAvatar %}
+        {% set hexDigits = {'a': '2', 'b': '7', 'c': '0', 'd': '8', 'e': '4', 'f': '1', 'g': '3', 'h': '5', 'i': '6', 'j': '9', 'k': 'a',
+         'l': 'b', 'm': 'c', 'n': 'd', 'o': 'e', 'p': 'f', 'q': '0', 'r': '1', 's': '2', 't': '3', 'u': '4', 'v': '5', 'w': '6', 'x': '7', 'y': '8', 'z': '9', 
+        '_': 'a', '-': 'b', '0': 'e', '1': 'a', '2': 'f', '3': 'b', '4': 'c', '5': '9', '6': '3', '7': '5', '8': '6', '9': 'd',
+        'A': '4', 'B': '8', 'C': '1', 'D': '7', 'E': '2', 'F': '5', 'G': '9', 'H': '0', 'I': '3', 'J': '6', 'K': 'b', 'L': 'e', 'M': 'a', 'N': 'f', 'O': 'c',
+        'P': 'd', 'Q': '2', 'R': '4', 'S': '7', 'T': '1', 'U': '8', 'V': '5', 'W': '0', 'X': '3', 'Y': '6', 'Z': '9'} %}
+        {% set validChars = '' %}
+        {% for char in user.username|split('') %}
+            {% if char in hexDigits|keys %}
+                {% set validChars = validChars ~ hexDigits[char] %}
+            {% endif %}
+        {% endfor %}
+        {% set validChars = validChars ~ "012345" %}
+        {% set rgbChars = validChars|slice(0, 6) %}
+        {% set color = '#' ~ rgbChars %}
+        {% if app.user is defined and app.user is not same as null and app.user is same as user %}
+            {% set noAvatar = "you can set your avatar in your profile" %}
+        {% else %}
+            {% set noAvatar = user.username ~ " has no avatar" %}
+        {% endif %}
+        {# todo: set the actual server and create a default avatar #}
+        <img class="image-inline"
+            width="30" height="30"
+            loading="lazy"
+            src="[server]/public/default_avatar.png"
+            title="{{ noAvatar }}"
+            alt="{{ noAvatar }}"
+            style="background-color: {{ color }}; border-color: #0f0; border-width: 3px;">
     {% endif %}
     {{ user.apPreferredUsername ?? user.username|username -}}
     {% if user.isNew() %}
