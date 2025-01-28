@@ -1,3 +1,5 @@
+{%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
+{%- set SHOW_USER_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_USER_DOMAIN'), V_TRUE) -%}
 {% if actor is not defined %}
     {% set actor = 'user' %}
 {% endif %}
@@ -12,7 +14,12 @@
                     {% endif %}
                     <div>
                         <a href="{{ path('user_overview', {username: attribute(subject, actor).username}) }}"
-                           class="stretched-link">{{ attribute(subject, actor).username|username }}</a>
+                           class="stretched-link">
+                            {{ attribute(subject, actor).username|username }}
+                            {%- if SHOW_USER_FULLNAME is same as V_TRUE -%}
+                                @{{- user.username|apDomain -}}
+                            {%- endif -%}
+                        </a>
                         <small>{{ component('date', {date: subject.createdAt}) }}</small>
                     </div>
                 </li>

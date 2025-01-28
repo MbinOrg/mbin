@@ -10,9 +10,9 @@
              src="{{ magazine.icon.filePath ? (asset(magazine.icon.filePath)|imagine_filter('avatar_thumb')) : magazine.icon.sourceUrl }}"
              alt="{{ magazine.name ~ ' ' ~ 'icon'|trans|lower }}">
     {% endif %}
-    {{ magazine.title -}}
+    <span>{{ magazine.title -}}</span>
     {%- if fullName -%}
-        @{{- magazine.name|apDomain -}}
+        <span>@{{- magazine.name|apDomain -}}</span>
     {%- endif -%}
     {% if magazine.isAdult %} <small class="badge danger">18+</small>{% endif %}
     {% if magazine.postingRestrictedToMods %}

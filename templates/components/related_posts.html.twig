@@ -1,3 +1,5 @@
+{%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
+{%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_TRUE) -%}
 {% if posts|length %}
     <section{{ attributes.defaults({class: 'posts section'}) }}>
         <h3>{{ title|trans }}</h3>
@@ -18,7 +20,7 @@
                         <a href="{{ post_url(post) }}" class="stretched-link more">{{ 'show_more'|trans }}</a>
                     </div>
                     <figcaption>
-                        {{ component('date', {date: post.createdAt}) }} {{ 'to'|trans }} {{ component('magazine_inline', {magazine: post.magazine}) }}
+                        {{ component('date', {date: post.createdAt}) }} {{ 'to'|trans }} {{ component('magazine_inline', {magazine: post.magazine, fullName: SHOW_MAGAZINE_FULLNAME is same as V_TRUE}) }}
                     </figcaption>
                 </figure>
             {% endfor %}

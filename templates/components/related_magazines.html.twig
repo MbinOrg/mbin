@@ -1,3 +1,5 @@
+{%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
+{%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_TRUE) -%}
 {% if magazines|length %}
     <section{{ attributes.defaults({class: 'magazines section related-magazines'}) }}>
         <h3>{{ title|trans }}</h3>
@@ -5,7 +7,7 @@
             <ul class="meta">
                 {% for magazine in magazines %}
                     <li>
-                        {{ component('magazine_inline', {magazine: magazine, showAvatar: true, fullName:false, stretchedLink:true}) }}
+                        {{ component('magazine_inline', {magazine: magazine, showAvatar: true, fullName:false, stretchedLink:true, fullName: SHOW_MAGAZINE_FULLNAME is same as V_TRUE}) }}
                     </li>
                 {% endfor %}
             </ul>
