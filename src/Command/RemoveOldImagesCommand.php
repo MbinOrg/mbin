@@ -67,7 +67,7 @@ class RemoveOldImagesCommand extends Command
         $this->batchSize = (int) $input->getOption('batchSize');
 
         if ('all' === $type) {
-            $this->deleteAllImages($output); // Except for user images
+            $this->deleteAllImages($output); // Except for user avatars and covers
         } elseif ('threads' === $type) {
             $this->deleteThreadsImages($output);
         } elseif ('thread_comments' === $type) {
