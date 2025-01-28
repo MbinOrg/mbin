@@ -14,9 +14,7 @@ use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\ActivityJsonBuilder;
-use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\Wrapper\AnnounceWrapper;
-use App\Service\ActivityPub\Wrapper\LikeWrapper;
 use App\Service\ActivityPub\Wrapper\UndoWrapper;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
@@ -35,11 +33,9 @@ class AnnounceLikeHandler extends MbinMessageHandler
         private readonly EntityManagerInterface $entityManager,
         private readonly AnnounceWrapper $announceWrapper,
         private readonly UndoWrapper $undoWrapper,
-        private readonly LikeWrapper $likeWrapper,
         private readonly SettingsManager $settingsManager,
         private readonly DeliverManager $deliverManager,
         private readonly ActivityJsonBuilder $activityJsonBuilder,
-        private readonly ApHttpClient $apHttpClient,
         private readonly LoggerInterface $logger,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
