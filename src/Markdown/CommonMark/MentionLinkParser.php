@@ -66,7 +66,7 @@ class MentionLinkParser implements InlineParserInterface
             MentionType::RemoteMagazine => [$this->resolveRouteDetails($type), $fullUsername, '@'.$username, '@'.$fullUsername, $fullUsername],
             MentionType::Magazine => [$this->resolveRouteDetails($type), $username, '@'.$username, '@'.$username, $username],
             MentionType::Search => [$this->resolveRouteDetails($type), $fullUsername, '@'.$username, '@'.$fullUsername, $fullUsername],
-            MentionType::Unresolvable => [['route' => '', 'param' => ''], '', '@'.$username, '', ''],
+            MentionType::Unresolvable => [['route' => '', 'param' => ''], '', '@'.$username, '@'.$fullUsername, ''],
             MentionType::User => [$this->resolveRouteDetails($type), $username, '@'.$username, '@'.$fullUsername, $username],
         };
 

@@ -1,0 +1,24 @@
+<div class="entry-comment-inline">
+    {{ component('user_inline', {user: comment.user, fullName: userFullName}) }}:
+    <a href="{{ path('entry_comment_view', {magazine_name: comment.magazine.name, entry_id: comment.entry.id, comment_id: comment.id, slug: comment.entry.slug|length ? comment.entry.slug : '-'}) }}">
+        {{ comment.getShortTitle() }}
+    </a>
+    {{ 'answered'|trans }}
+    {% if comment.parent is not same as null %}
+        <a href="{{ path('entry_comment_view', {magazine_name: comment.magazine.name, entry_id: comment.entry.id, comment_id: comment.parent.id, slug: comment.entry.slug|length ? comment.entry.slug : '-'}) }}">
+            {{ comment.parent.getShortTitle() }}
+        </a>
+        {{ 'by'|trans }}
+        {{ component('user_inline', {user: comment.parent.user, fullName: userFullName}) }}
+    {% else %}
+        <a href="{{ path('entry_single', {magazine_name: comment.magazine.name, entry_id: comment.entry.id, slug: comment.entry.slug|length ? comment.entry.slug : '-'}) }}">
+            {{ comment.entry.getShortTitle() }}
+        </a>
+        {{ 'by'|trans }}
+        {{ component('user_inline', {user: comment.entry.user, fullName: userFullName}) }}
+    {% endif %}
+    {% if comment.magazine.name is not same as 'random' %}
+        {{ 'in'|trans }}
+        {{ component('magazine_inline', {magazine: comment.magazine, fullName: magazineFullName}) }}
+    {% endif %}
+</div>

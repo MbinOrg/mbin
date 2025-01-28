@@ -1,0 +1,24 @@
+<div class="post-comment-inline">
+    {{ component('user_inline', {user: comment.user, fullName: userFullName}) }}:
+    <a href="{{ path('post_single', {magazine_name: comment.magazine.name, post_id: comment.post.id, slug: comment.post.slug|length ? comment.post.slug : '-'}) }}#post-comment-{{ comment.id }}">
+        {{ comment.getShortTitle() }}
+    </a>
+    {{ 'answered'|trans }}
+    {% if comment.parent is not same as null %}
+        <a href="{{ path('post_single', {magazine_name: comment.magazine.name, post_id: comment.post.id, slug: comment.post.slug|length ? comment.post.slug : '-'}) }}#post-comment-{{ comment.parent.id }}">
+            {{ comment.parent.getShortTitle() }}
+        </a>
+        {{ 'by'|trans }}
+        {{ component('user_inline', {user: comment.parent.user, fullName: userFullName}) }}
+    {% else %}
+        <a href="{{ path('post_single', {magazine_name: comment.magazine.name, post_id: comment.post.id, slug: comment.post.slug|length ? comment.post.slug : '-'}) }}">
+            {{ comment.post.getShortTitle() }}
+        </a>
+        {{ 'by'|trans }}
+        {{ component('user_inline', {user: comment.post.user, fullName: userFullName}) }}
+    {% endif %}
+    {% if comment.magazine.name is not same as 'random' %}
+        {{ 'in'|trans }}
+        {{ component('magazine_inline', {magazine: comment.magazine, fullName: magazineFullName}) }}
+    {% endif %}
+</div>

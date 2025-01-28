@@ -1,13 +1,14 @@
 {% with %}
+{% set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') %}
+{% set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') %}
+{% set V_LEFT = constant('App\\Controller\\User\\ThemeSettingsController::LEFT') %}
 {% set KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR = constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR') %}
 {% set KBIN_SUBSCRIPTIONS_SIDEBARS_SAME_SIDE = constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SIDEBARS_SAME_SIDE') %}
 {% set KBIN_GENERAL_SIDEBAR_POSITION = constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_SIDEBAR_POSITION') %}
 {% set KBIN_SUBSCRIPTIONS_LARGE_PANEL = constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_LARGE_PANEL') %}
 {% set KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON = constant('App\\Controller\\User\\ThemeSettingsController::KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON') %}
+{% set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_FALSE) %}
 {# for whatever reason doing {% set TRUE = ... %} would crash #}
-{% set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') %}
-{% set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') %}
-{% set V_LEFT = constant('App\\Controller\\User\\ThemeSettingsController::LEFT') %}
 <aside class="{{ html_classes('sidebar-subscriptions', { 'inline': app.request.cookies.get(KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR) is not same as V_TRUE }) }}">
     <section
         class="{{ html_classes('section', app.request.cookies.get(KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR) is not same as V_TRUE ? 'inline' : 'section--top') }}"
@@ -68,7 +69,10 @@
                             {% endif %}
 
                             <span class="{{ html_classes('magazine-name', { 'has-image': magazine.icon, 'onlyMobile': app.request.cookies.get(KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON) is same as V_FALSE }) }}">
-                                {{ magazine.title ?? magazine.name }}
+                                <span>{{ magazine.title ?? magazine.name }}</span>
+                                {%- if SHOW_MAGAZINE_FULLNAME is same as V_TRUE -%}
+                                    <span>@{{- magazine.name|apDomain -}}</span>
+                                {%- endif -%}
                             </span>
                         </a>
                     </li>

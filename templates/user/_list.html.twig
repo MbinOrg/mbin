@@ -1,3 +1,6 @@
+{%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
+{%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
+{%- set SHOW_USER_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_USER_DOMAIN'), V_FALSE) -%}
 {% if users|length %}
     <div id="content" class="section">
         {% if view is same as 'cards'|trans|lower %}
@@ -21,8 +24,12 @@
                                 </figure>
                             {% endif %}
                             <div>
-                                <a href="{{ path('user_overview', {username: user.username}) }}"
-                                   class="stretched-link">{{ user.username }}</a>
+                                <a href="{{ path('user_overview', {username: user.username}) }}" class="stretched-link">
+                                    {{ user.username }}
+                                    {%- if SHOW_USER_FULLNAME is same as V_TRUE -%}
+                                        @{{- user.username|apDomain -}}
+                                    {%- endif -%}
+                                </a>
                                 <small>{{ component('date', {date: user.createdAt}) }}</small>
                             </div>
                         </li>
@@ -44,7 +51,7 @@
                     <tbody>
                     {% for u in users %}
                         <tr>
-                            <td>{{ component('user_inline', { user: u, stretchedLink: true, showAvatar: true}) }}</td>
+                            <td>{{ component('user_inline', { user: u, stretchedLink: true, showAvatar: true, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) }}</td>
                             <td>{{ u.entries|length }}</td>
                             <td>{{ u.entryComments|length }}</td>
                             <td>{{ u.posts|length + u.postComments|length }}</td>
