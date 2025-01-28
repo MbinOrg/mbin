@@ -87,7 +87,7 @@ class RemoveOldImagesCommand extends Command
         $this->entityManager->clear();
 
         $output->writeln(''); // New line
-        $output->writeln(\sprintf('\nTotal images deleted during this run: %d', $nrDeletedImages));
+        $output->writeln(\sprintf('Total images deleted during this run: %d', $nrDeletedImages));
 
         return Command::SUCCESS;
     }
