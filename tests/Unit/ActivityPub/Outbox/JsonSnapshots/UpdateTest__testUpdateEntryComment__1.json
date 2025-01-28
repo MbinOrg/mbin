@@ -28,6 +28,7 @@
             "https://kbin.test/m/test",
             "https://kbin.test/u/user/followers"
         ],
+        "audience": "https://kbin.test/m/test",
         "sensitive": false,
         "content": "<p>test</p>\n",
         "mediaType": "text/html",
@@ -50,5 +51,6 @@
         "object": {
             "updated": "SCRUBBED_DATE"
         }
-    }
+    },
+    "audience": "https://kbin.test/m/test"
 }

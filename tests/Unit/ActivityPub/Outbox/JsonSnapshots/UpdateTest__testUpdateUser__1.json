@@ -28,10 +28,6 @@
         "publicKey": "SCRUBBED_KEY",
         "endpoints": {
             "sharedInbox": "https://kbin.test/f/inbox"
-        },
-        "icon": {
-            "type": "Image",
-            "url": "https://mbin-test1.bentigorlich.ddns.net/media//dev/random"
         }
     }
 }

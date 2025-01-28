@@ -10,7 +10,6 @@ use App\Factory\ActivityPub\AddRemoveFactory;
 use App\Factory\ActivityPub\FlagFactory;
 use App\Factory\ActivityPub\GroupFactory;
 use App\Factory\ActivityPub\PersonFactory;
-use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\ActivityPub\Wrapper\AnnounceWrapper;
 use App\Service\ActivityPub\Wrapper\CreateWrapper;
 use App\Service\ActivityPub\Wrapper\DeleteWrapper;
@@ -44,19 +43,16 @@ class ActivityPubTestCase extends WebTestCase
     protected FollowResponseWrapper $followResponseWrapper;
     protected FlagFactory $flagFactory;
 
-    protected ActivityJsonBuilder $activityJsonBuilder;
-
     public function setUp(): void
     {
         parent::setUp();
-        $this->owner = $this->getUserByUsername('owner');
+        $this->owner = $this->getUserByUsername('owner', addImage: false);
         $this->magazine = $this->getMagazineByName('test', $this->owner);
-        $this->user = $this->getUserByUsername('user');
+        $this->user = $this->getUserByUsername('user', addImage: false);
 
         $this->personFactory = $this->getService(PersonFactory::class);
         $this->groupFactory = $this->getService(GroupFactory::class);
         $this->addRemoveFactory = $this->getService(AddRemoveFactory::class);
-        $this->activityJsonBuilder = $this->getService(ActivityJsonBuilder::class);
         $this->createWrapper = $this->getService(CreateWrapper::class);
         $this->updateWrapper = $this->getService(UpdateWrapper::class);
         $this->deleteWrapper = $this->getService(DeleteWrapper::class);

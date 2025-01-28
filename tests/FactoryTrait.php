@@ -84,7 +84,7 @@ trait FactoryTrait
         ];
     }
 
-    private function createUser(string $username, ?string $email = null, ?string $password = null, string $type = 'Person', $active = true, $hideAdult = true, $about = null): User
+    private function createUser(string $username, ?string $email = null, ?string $password = null, string $type = 'Person', $active = true, $hideAdult = true, $about = null, $addImage = true): User
     {
         $user = new User($email ?: $username.'@example.com', $username, $password ?: 'secret', $type);
 
@@ -99,7 +99,9 @@ trait FactoryTrait
         $user->showProfileSubscriptions = true;
         $user->hideAdult = $hideAdult;
         $user->about = $about;
-        $user->avatar = $this->createImage(bin2hex(random_bytes(20)).'.png');
+        if ($addImage) {
+            $user->avatar = $this->createImage(bin2hex(random_bytes(20)).'.png');
+        }
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -219,7 +221,7 @@ trait FactoryTrait
         ];
     }
 
-    protected function getUserByUsername(string $username, bool $isAdmin = false, bool $hideAdult = true, ?string $about = null, bool $active = true, bool $isModerator = false): User
+    protected function getUserByUsername(string $username, bool $isAdmin = false, bool $hideAdult = true, ?string $about = null, bool $active = true, bool $isModerator = false, bool $addImage = true): User
     {
         $user = $this->users->filter(fn (User $user) => $user->getUsername() === $username)->first();
 
@@ -227,7 +229,7 @@ trait FactoryTrait
             return $user;
         }
 
-        $user = $this->createUser($username, active: $active, hideAdult: $hideAdult, about: $about);
+        $user = $this->createUser($username, active: $active, hideAdult: $hideAdult, about: $about, addImage: $addImage);
 
         if ($isAdmin) {
             $user->roles = ['ROLE_ADMIN'];

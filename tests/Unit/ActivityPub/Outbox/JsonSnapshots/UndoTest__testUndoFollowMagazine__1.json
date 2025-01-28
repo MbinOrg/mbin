@@ -10,6 +10,13 @@
         "id": "SCRUBBED_ID",
         "type": "Follow",
         "actor": "https://kbin.test/u/user2",
-        "object": "SCRUBBED_ID"
-    }
+        "object": "SCRUBBED_ID",
+        "to": [
+            "https://kbin.test/m/test"
+        ]
+    },
+    "to": [
+        "https://kbin.test/m/test"
+    ],
+    "cc": null
 }

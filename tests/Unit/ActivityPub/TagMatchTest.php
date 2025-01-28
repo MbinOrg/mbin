@@ -72,12 +72,16 @@ class TagMatchTest extends WebTestCase
             $json = $this->pageFactory->create($entry, $this->tagLinkRepository->getTagsOfEntry($entry));
             $this->testingApHttpClient->activityObjects[$json['id']] = $json;
 
-            $create = $this->createWrapper->build($entry);
+            $activity = $this->createWrapper->build($entry);
+            $create = $this->activityJsonBuilder->buildActivityJson($activity);
             $this->testingApHttpClient->activityObjects[$create['id']] = $create;
 
-            $this->entryManager->purge($user, $entry);
-            $this->magazineManager->purge($magazine);
+            $this->entityManager->remove($activity);
+            $this->entityManager->remove($entry);
+            $this->entityManager->remove($magazine);
             $this->entityManager->remove($user);
+            $this->entityManager->flush();
+            $this->entityManager->clear();
 
             $this->entries = new ArrayCollection();
             $this->magazines = new ArrayCollection();
@@ -161,7 +165,10 @@ class TagMatchTest extends WebTestCase
         self::assertArrayIsEqualToArrayIgnoringListOfKeys($expectedInboxes, $targetInboxes2, []);
 
         // dispatch a remote like message, so we trigger the announcement of it
-        $this->bus->dispatch(new LikeMessage($this->likeWrapper->build($this->remoteUsers[0]->apProfileId, $this->mastodonPost)));
+        $activity = $this->likeWrapper->build($this->remoteUsers[0], $mastodonPost);
+        $json = $this->activityJsonBuilder->buildActivityJson($activity);
+        $this->testingApHttpClient->activityObjects[$json['id']] = $json;
+        $this->bus->dispatch(new LikeMessage($json));
 
         $postedObjects = $this->testingApHttpClient->getPostedObjects();
         $postedLikeAnnounces = array_filter($postedObjects, fn ($item) => 'Announce' === $item['payload']['type'] && 'Like' === $item['payload']['object']['type']);
