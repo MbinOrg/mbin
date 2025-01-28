@@ -67,17 +67,17 @@ class RemoveOldImagesCommand extends Command
         $this->batchSize = (int) $input->getOption('batchSize');
 
         if ('all' === $type) {
-            $this->deleteAllImages($output); // Except for user avatars and covers
+            $nrDeletedImages = $this->deleteAllImages($output); // Except for user avatars and covers
         } elseif ('threads' === $type) {
-            $this->deleteThreadsImages($output);
+            $nrDeletedImages = $this->deleteThreadsImages($output);
         } elseif ('thread_comments' === $type) {
-            $this->deleteThreadCommentsImages($output);
+            $nrDeletedImages = $this->deleteThreadCommentsImages($output);
         } elseif ('posts' === $type) {
-            $this->deletePostsImages($output);
+            $nrDeletedImages = $this->deletePostsImages($output);
         } elseif ('post_comments' === $type) {
-            $this->deletePostCommentsImages($output);
+            $nrDeletedImages = $this->deletePostCommentsImages($output);
         } elseif ('users' === $type) {
-            $this->deleteUsersImages($output);
+            $nrDeletedImages = $this->deleteUsersImages($output);
         } else {
             $io->error('Invalid type of images to delete. Try \'all\', \'threads\', \'thread_comments\', \'posts\', \'post_comments\' or \'users\'.');
 
@@ -86,6 +86,8 @@ class RemoveOldImagesCommand extends Command
 
         $this->entityManager->clear();
 
+        $output->writeln(\sprintf('Total images deleted during this run: %d', $nrDeletedImages));
+
         return Command::SUCCESS;
     }
 
@@ -93,20 +95,26 @@ class RemoveOldImagesCommand extends Command
      * Call all delete methods below, _except_ for the delete users images.
      * Since users on the instance can be several years old and not getting fetched,
      * however we shouldn't remove their avatar/cover images just like that.
+     *
+     * @return number Total number of removed records from database
      */
-    private function deleteAllImages($output): void
+    private function deleteAllImages($output): int
     {
-        $this->deleteThreadsImages($output);
-        $this->deleteThreadCommentsImages($output);
-        $this->deletePostsImages($output);
-        $this->deletePostCommentsImages($output);
+        $threadsImagesRemoved = $this->deleteThreadsImages($output);
+        $threadCommentsImagesRemoved = $this->deleteThreadCommentsImages($output);
+        $postsImagesRemoved = $this->deletePostsImages($output);
+        $postCommentsImagesRemoved = $this->deletePostCommentsImages($output);
+
+        return $threadsImagesRemoved + $threadCommentsImagesRemoved + $postsImagesRemoved + $postCommentsImagesRemoved;
     }
 
     /**
      * Delete thread images, check on created_at database column for the age.
      * Limit by batch size.
+     *
+     * @return number Number of removed records from database
      */
-    private function deleteThreadsImages(OutputInterface $output): void
+    private function deleteThreadsImages(OutputInterface $output): int
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
@@ -122,11 +130,10 @@ class RemoveOldImagesCommand extends Command
                     $queryBuilder->expr()->isNotNull('e.apId'),
                     $this->noActivity ? $queryBuilder->expr()->eq('e.upVotes', 0) : null,
                     $this->noActivity ? $queryBuilder->expr()->eq('e.commentCount', 0) : null,
-                    $this->noActivity ? $queryBuilder->expr()->eq('e.favouriteCount', 0) : null,
-                    $this->noActivity ? $queryBuilder->expr()->isNotNull('e.image') : null
+                    $this->noActivity ? $queryBuilder->expr()->eq('e.favouriteCount', 0) : null
                 )
             )
-            ->leftJoin('e.image', 'i')
+            ->innerJoin('e.image', 'i')
             ->orderBy('e.id', 'ASC')
             ->setParameter('timeAgo', $timeAgo)
             ->setMaxResults($this->batchSize)
@@ -138,13 +145,18 @@ class RemoveOldImagesCommand extends Command
             $output->writeln(\sprintf('Deleting image from thread ID: %d, with ApId: %s', $entry->getId(), $entry->getApId()));
             $this->entryManager->detachImage($entry);
         }
+
+        // Return total number of elements deleted
+        return \count($entries);
     }
 
     /**
      * Delete thread comment images, check on created_at database column for the age.
      * Limit by batch size.
+     *
+     * @return number Number of removed records from database
      */
-    private function deleteThreadCommentsImages(OutputInterface $output): void
+    private function deleteThreadCommentsImages(OutputInterface $output): int
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
@@ -159,29 +171,33 @@ class RemoveOldImagesCommand extends Command
                     $queryBuilder->expr()->neq('i.id', 1),
                     $queryBuilder->expr()->isNotNull('c.apId'),
                     $this->noActivity ? $queryBuilder->expr()->eq('c.upVotes', 0) : null,
-                    $this->noActivity ? $queryBuilder->expr()->eq('c.favouriteCount', 0) : null,
-                    $this->noActivity ? $queryBuilder->expr()->isNotNull('c.image') : null
+                    $this->noActivity ? $queryBuilder->expr()->eq('c.favouriteCount', 0) : null
                 )
             )
-            ->leftJoin('c.image', 'i')
+            ->innerJoin('c.image', 'i')
             ->orderBy('c.id', 'ASC')
             ->setParameter('timeAgo', $timeAgo)
             ->setMaxResults($this->batchSize)
             ->getQuery();
 
-        $entries = $query->getResult();
+        $comments = $query->getResult();
 
-        foreach ($entries as $entry) {
-            $output->writeln(\sprintf('Deleting image from thread comment ID: %d, with ApId: %s', $entry->getId(), $entry->getApId()));
-            $this->entryCommentManager->detachImage($entry);
+        foreach ($comments as $comment) {
+            $output->writeln(\sprintf('Deleting image from thread comment ID: %d, with ApId: %s', $comment->getId(), $comment->getApId()));
+            $this->entryCommentManager->detachImage($comment);
         }
+
+        // Return total number of elements deleted
+        return \count($comments);
     }
 
     /**
      * Delete post images, check on created_at database column for the age.
      * Limit by batch size.
+     *
+     * @return number Number of removed records from database
      */
-    private function deletePostsImages(OutputInterface $output): void
+    private function deletePostsImages(OutputInterface $output): int
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
@@ -197,11 +213,10 @@ class RemoveOldImagesCommand extends Command
                     $queryBuilder->expr()->isNotNull('p.apId'),
                     $this->noActivity ? $queryBuilder->expr()->eq('p.upVotes', 0) : null,
                     $this->noActivity ? $queryBuilder->expr()->eq('p.commentCount', 0) : null,
-                    $this->noActivity ? $queryBuilder->expr()->eq('p.favouriteCount', 0) : null,
-                    $this->noActivity ? $queryBuilder->expr()->isNotNull('p.image') : null
+                    $this->noActivity ? $queryBuilder->expr()->eq('p.favouriteCount', 0) : null
                 )
             )
-            ->leftJoin('p.image', 'i')
+            ->innerJoin('p.image', 'i')
             ->orderBy('p.id', 'ASC')
             ->setParameter('timeAgo', $timeAgo)
             ->setMaxResults($this->batchSize)
@@ -213,13 +228,18 @@ class RemoveOldImagesCommand extends Command
             $output->writeln(\sprintf('Deleting image from post ID: %d, with ApId: %s', $post->getId(), $post->getApId()));
             $this->postManager->detachImage($post);
         }
+
+        // Return total number of elements deleted
+        return \count($posts);
     }
 
     /**
      * Delete post comment images, check on created_at database column for the age.
      * Limit by batch size.
+     *
+     * @return number Number of removed records from database
      */
-    private function deletePostCommentsImages(OutputInterface $output): void
+    private function deletePostCommentsImages(OutputInterface $output): int
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
@@ -234,29 +254,33 @@ class RemoveOldImagesCommand extends Command
                     $queryBuilder->expr()->neq('i.id', 1),
                     $queryBuilder->expr()->isNotNull('c.apId'),
                     $this->noActivity ? $queryBuilder->expr()->eq('c.upVotes', 0) : null,
-                    $this->noActivity ? $queryBuilder->expr()->eq('c.favouriteCount', 0) : null,
-                    $this->noActivity ? $queryBuilder->expr()->isNotNull('c.image') : null
+                    $this->noActivity ? $queryBuilder->expr()->eq('c.favouriteCount', 0) : null
                 )
             )
-            ->leftJoin('c.image', 'i')
+            ->innerJoin('c.image', 'i')
             ->orderBy('c.id', 'ASC')
             ->setParameter('timeAgo', $timeAgo)
             ->setMaxResults($this->batchSize)
             ->getQuery();
 
-        $posts = $query->getResult();
+        $comments = $query->getResult();
 
-        foreach ($posts as $post) {
-            $output->writeln(\sprintf('Deleting image from post comment ID: %d, with ApId: %s', $post->getId(), $post->getApId()));
-            $this->postCommentManager->detachImage($post);
+        foreach ($comments as $comment) {
+            $output->writeln(\sprintf('Deleting image from post comment ID: %d, with ApId: %s', $comment->getId(), $comment->getApId()));
+            $this->postCommentManager->detachImage($comment);
         }
+
+        // Return total number of elements deleted
+        return \count($comments);
     }
 
     /**
      * Delete user avatar and user cover images. Check ap_fetched_at column for the age.
      * Limit by batch size.
+     *
+     * @return number Number of removed records from database
      */
-    private function deleteUsersImages(OutputInterface $output)
+    private function deleteUsersImages(OutputInterface $output): int
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
@@ -287,5 +311,8 @@ class RemoveOldImagesCommand extends Command
             $this->userManager->detachCover($user);
             $this->userManager->detachAvatar($user);
         }
+
+        // Return total number of elements deleted
+        return \count($users * 2);
     }
 }
