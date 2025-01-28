@@ -4,7 +4,7 @@
 
 {%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_PREVIEW'), V_FALSE) -%}
 {%- set VIEW_STYLE = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::POST_COMMENTS_VIEW'), V_TREE) -%}
-{%- set SHOW_USER_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_USER_DOMAIN'), V_TRUE)  -%}
+{%- set SHOW_USER_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_USER_DOMAIN'), V_FALSE) -%}
 
 {% if withPost %}
     {{ component('post', {post: comment.post}) }}

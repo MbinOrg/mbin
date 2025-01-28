@@ -2,8 +2,8 @@
 {%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
 
 {%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_PREVIEW'), V_FALSE) -%}
-{%- set SHOW_USER_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_USER_DOMAIN'), V_TRUE)  -%}
-{%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_TRUE)  -%}
+{%- set SHOW_USER_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_USER_DOMAIN'), V_FALSE) -%}
+{%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_FALSE) -%}
 
 {% if not app.user or (app.user and not app.user.isBlocked(post.user)) %}
     {% if post.visibility is same as 'private' and (not app.user or not app.user.isFollower(post.user)) %}

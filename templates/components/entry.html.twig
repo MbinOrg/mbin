@@ -5,8 +5,8 @@
 {%- set SHOW_THUMBNAILS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_THUMBNAILS'), V_TRUE) -%}
 {%- set SHOW_USER_AVATARS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_USERS_AVATARS'), V_TRUE) -%}
 {%- set SHOW_MAGAZINE_ICONS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_MAGAZINES_ICONS'), V_TRUE) -%}
-{%- set SHOW_USER_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_USER_DOMAIN'), V_TRUE)  -%}
-{%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_TRUE)  -%}
+{%- set SHOW_USER_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_USER_DOMAIN'), V_FALSE) -%}
+{%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_FALSE) -%}
 
 {% if not app.user or (app.user and not app.user.isBlocked(entry.user)) %}
     {% if entry.visibility is same as 'private' and (not app.user or not app.user.isFollower(entry.user)) %}

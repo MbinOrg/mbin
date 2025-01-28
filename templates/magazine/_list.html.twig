@@ -1,5 +1,6 @@
 {%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
-{%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_TRUE) -%}
+{%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
+{%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_FALSE) -%}
 {% if magazines|length %}
     <div class="section">
         {% if view is same as 'cards'|trans|lower %}

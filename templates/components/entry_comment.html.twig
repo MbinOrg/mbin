@@ -5,8 +5,8 @@
 {%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_PREVIEW'), V_FALSE) -%}
 {%- set DYNAMIC_LISTS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_DYNAMIC_LISTS'), V_FALSE) -%}
 {%- set VIEW_STYLE = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::ENTRY_COMMENTS_VIEW'), V_TREE) -%}
-{%- set SHOW_USER_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_USER_DOMAIN'), V_TRUE)  -%}
-{%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_TRUE)  -%}
+{%- set SHOW_USER_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_USER_DOMAIN'), V_FALSE)  -%}
+{%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_FALSE)  -%}
 
 {% if not app.user or (app.user and not app.user.isBlocked(comment.user)) %}
     {% if comment.visibility is same as 'private' and (not app.user or not app.user.isFollower(comment.user)) %}

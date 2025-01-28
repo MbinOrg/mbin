@@ -1,6 +1,7 @@
 {%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
-{%- set SHOW_USER_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_USER_DOMAIN'), V_TRUE)  -%}
-{%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_TRUE)  -%}
+{%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
+{%- set SHOW_USER_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_USER_DOMAIN'), V_FALSE) -%}
+{%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_FALSE) -%}
 <article{{ attributes.defaults({
     class: html_classes('entry entry-cross section section--small subject', {
         'own': app.user and entry.isAuthor(app.user),
