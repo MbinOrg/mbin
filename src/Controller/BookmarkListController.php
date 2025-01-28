@@ -15,6 +15,7 @@ use App\Service\BookmarkManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,6 +31,7 @@ class BookmarkListController extends AbstractController
         private readonly BookmarkManager $bookmarkManager,
         private readonly LoggerInterface $logger,
         private readonly EntityManagerInterface $entityManager,
+        private readonly Security $security,
     ) {
     }
 
@@ -44,7 +46,7 @@ class BookmarkListController extends AbstractController
     ): Response {
         $page = $this->getPageNb($request);
         $user = $this->getUserOrThrow();
-        $criteria = new EntryPageView($page);
+        $criteria = new EntryPageView($page, $this->security);
         $criteria->setTime($criteria->resolveTime($time));
         $criteria->setType($criteria->resolveType($type));
         $criteria->showSortOption($criteria->resolveSort($sortBy ?? Criteria::SORT_NEW));

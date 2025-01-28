@@ -22,6 +22,8 @@ class UserRetrieveApiTest extends WebTestCase
         'addMentionsEntries',
         'addMentionsPosts',
         'homepage',
+        'frontDefaultSort',
+        'commentDefaultSort',
         'featuredMagazines',
         'preferredLanguages',
         'customCss',

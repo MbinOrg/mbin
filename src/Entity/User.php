@@ -11,6 +11,7 @@ use App\Entity\Traits\ActivityPubActorTrait;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\VisibilityTrait;
 use App\Enums\EApplicationStatus;
+use App\Enums\ESortOptions;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\ApHttpClientInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -103,6 +104,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public int $followersCount = 0;
     #[Column(type: 'string', nullable: false, options: ['default' => self::HOMEPAGE_ALL])]
     public string $homepage = self::HOMEPAGE_ALL;
+    #[Column(type: 'enumSortOptions', nullable: false, options: ['default' => ESortOptions::Hot->value])]
+    public string $frontDefaultSort = ESortOptions::Hot->value;
+    #[Column(type: 'enumSortOptions', nullable: false, options: ['default' => ESortOptions::Hot->value])]
+    public string $commentDefaultSort = ESortOptions::Hot->value;
     #[Column(type: 'text', nullable: true)]
     public ?string $about = null;
     #[Column(type: 'datetimetz')]

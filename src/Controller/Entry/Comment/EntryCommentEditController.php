@@ -14,6 +14,7 @@ use App\PageView\EntryCommentPageView;
 use App\Repository\EntryCommentRepository;
 use App\Service\EntryCommentManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,6 +41,7 @@ class EntryCommentEditController extends AbstractController
         #[MapEntity(id: 'comment_id')]
         EntryComment $comment,
         Request $request,
+        Security $security,
     ): Response {
         $dto = $this->manager->createDto($comment);
 
@@ -69,7 +71,7 @@ class EntryCommentEditController extends AbstractController
         }
 
         $user = $this->getUserOrThrow();
-        $criteria = new EntryCommentPageView($this->getPageNb($request));
+        $criteria = new EntryCommentPageView($this->getPageNb($request), $security);
         $criteria->entry = $entry;
 
         return $this->getEntryCommentPageResponse('entry/comment/edit.html.twig', $user, $criteria, $form, $request, $comment);
