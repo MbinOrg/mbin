@@ -314,6 +314,6 @@ class RemoveOldImagesCommand extends Command
         }
 
         // Return total number of elements deleted
-        return \count($users * 2);
+        return \count($users) * 2;
     }
 }
