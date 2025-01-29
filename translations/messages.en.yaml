@@ -938,3 +938,9 @@ email_application_rejected_title: Your signup request has been rejected
 email_application_rejected_body: Thank you for your interest, but we regret to inform you that your signup request has been declined.
 email_application_pending: Your account requires admin approval before you can log in.
 email_verification_pending: You have to verify your email address before you can log in.
+show_magazine_domains: Show magazine domains
+show_user_domains: Show user domains
+answered: answered
+by: by
+front_default_sort: Frontpage default sort
+comment_default_sort: Comment default sort

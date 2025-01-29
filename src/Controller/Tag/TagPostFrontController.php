@@ -9,6 +9,7 @@ use App\PageView\PostPageView;
 use App\Repository\PostRepository;
 use App\Repository\TagRepository;
 use App\Service\TagExtractor;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,6 +18,7 @@ class TagPostFrontController extends AbstractController
     public function __construct(
         private readonly TagExtractor $tagManager,
         private readonly TagRepository $tagRepository,
+        private readonly Security $security,
     ) {
     }
 
@@ -27,7 +29,7 @@ class TagPostFrontController extends AbstractController
         PostRepository $repository,
         Request $request,
     ): Response {
-        $criteria = new PostPageView($this->getPageNb($request));
+        $criteria = new PostPageView($this->getPageNb($request), $this->security);
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setTime($criteria->resolveTime($time))
             ->setTag($this->tagManager->transliterate(strtolower($name)));

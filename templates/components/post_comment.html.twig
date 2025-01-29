@@ -4,6 +4,7 @@
 
 {%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_PREVIEW'), V_FALSE) -%}
 {%- set VIEW_STYLE = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::POST_COMMENTS_VIEW'), V_TREE) -%}
+{%- set SHOW_USER_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_USER_DOMAIN'), V_FALSE) -%}
 
 {% if withPost %}
     {{ component('post', {post: comment.post}) }}
@@ -27,7 +28,7 @@
                 data-action="notifications:Notification@window->subject#notification">
             <header>
                 {% if comment.isAdult %}<span class="badge danger">18+</span>{% endif %}
-                {{ component('user_inline', {user: comment.user, showAvatar: false}) }}
+                {{ component('user_inline', {user: comment.user, showAvatar: false, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) }}
 
                 {% if comment.post.user.id() is same as comment.user.id() %}
                     <span class="user-badge">{{ 'user_badge_op'|trans }}</span>

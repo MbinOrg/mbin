@@ -2,6 +2,8 @@
 {%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
 
 {%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_PREVIEW'), V_FALSE) -%}
+{%- set SHOW_USER_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_USER_DOMAIN'), V_FALSE) -%}
+{%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_FALSE) -%}
 
 {% if not app.user or (app.user and not app.user.isBlocked(post.user)) %}
     {% if post.visibility is same as 'private' and (not app.user or not app.user.isFollower(post.user)) %}
@@ -20,7 +22,7 @@
                 data-action="notifications:Notification@window->subject#notification">
             <header>
                 {% if post.isAdult %}<span class="badge danger">18+</span>{% endif %}
-                {{ component('user_inline', {user: post.user, showAvatar: false}) }}
+                {{ component('user_inline', {user: post.user, showAvatar: false, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) }}
 
                 {% if (post.user.type) == "Service" %}
                     <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
@@ -41,7 +43,7 @@
                     {{ component('date', {date: post.createdAt}) }}
                 {% endif %}
                 {{ component('date_edited', {createdAt: post.createdAt, editedAt: post.editedAt}) }}
-                {% if showMagazineName %}{{ 'to'|trans }} {{ component('magazine_inline', {magazine: post.magazine}) }}{% endif %}
+                {% if showMagazineName %}{{ 'to'|trans }} {{ component('magazine_inline', {magazine: post.magazine, fullName: SHOW_MAGAZINE_FULLNAME is same as V_TRUE}) }}{% endif %}
                 {% if post.lang is not same as app.request.locale and post.lang is not same as kbin_default_lang() %}
                     <small class="badge-lang kbin-bg">{{ post.lang|language_name }}</small>
                 {% endif %}

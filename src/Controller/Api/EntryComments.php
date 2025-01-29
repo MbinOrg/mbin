@@ -10,6 +10,7 @@ use App\Entity\Entry;
 use App\Factory\EntryCommentFactory;
 use App\PageView\EntryCommentPageView;
 use App\Repository\EntryCommentRepository;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class EntryComments extends AbstractController
@@ -18,13 +19,14 @@ class EntryComments extends AbstractController
         private readonly EntryCommentRepository $repository,
         private readonly EntryCommentFactory $factory,
         private readonly RequestStack $request,
+        private readonly Security $security,
     ) {
     }
 
     public function __invoke(Entry $entry)
     {
         try {
-            $criteria = new EntryCommentPageView((int) $this->request->getCurrentRequest()->get('p', 1));
+            $criteria = new EntryCommentPageView((int) $this->request->getCurrentRequest()->get('p', 1), $this->security);
             $criteria->entry = $entry;
             $criteria->onlyParents = false;
 

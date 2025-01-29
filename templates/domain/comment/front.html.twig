@@ -16,7 +16,7 @@
 
 {% block body %}
     <h1 hidden>{{ domain.name }}</h1>
-    <h2 hidden>{{ get_active_sort_option()|trans }}</h2>
+    <h2 hidden>{{ get_active_sort_option_for_comments()|trans }}</h2>
     {% include 'entry/comment/_options.html.twig' %}
     <div id="content" class="comments-tree">
         {% include 'entry/comment/_list.html.twig' %}

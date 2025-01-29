@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace App\Markdown\CommonMark;
 
+use App\Controller\User\ThemeSettingsController;
+use App\Entity\Entry;
+use App\Entity\EntryComment;
+use App\Entity\Message;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use App\Markdown\CommonMark\Node\ActivityPubMentionLink;
 use App\Markdown\CommonMark\Node\ActorSearchLink;
 use App\Markdown\CommonMark\Node\CommunityLink;
@@ -13,10 +19,15 @@ use App\Markdown\CommonMark\Node\TagLink;
 use App\Markdown\CommonMark\Node\UnresolvableLink;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
+use App\Repository\ApActivityRepository;
 use App\Repository\EmbedRepository;
+use App\Repository\MagazineRepository;
+use App\Repository\UserRepository;
 use App\Service\ImageManager;
 use App\Service\SettingsManager;
 use App\Utils\Embed;
+use App\Utils\UrlUtils;
+use Doctrine\ORM\EntityManagerInterface;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Link;
 use League\CommonMark\Node\Inline\Text;
 use League\CommonMark\Node\Node;
@@ -27,7 +38,10 @@ use League\CommonMark\Util\HtmlElement;
 use League\CommonMark\Util\RegexHelper;
 use League\Config\ConfigurationAwareInterface;
 use League\Config\ConfigurationInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Twig\Environment;
 
 final class ExternalLinkRenderer implements NodeRendererInterface, ConfigurationAwareInterface
 {
@@ -38,6 +52,13 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
         private readonly EmbedRepository $embedRepository,
         private readonly SettingsManager $settingsManager,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly Environment $twig,
+        private readonly UserRepository $userRepository,
+        private readonly MagazineRepository $magazineRepository,
+        private readonly LoggerInterface $logger,
+        private readonly RequestStack $requestStack,
+        private readonly ApActivityRepository $activityRepository,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -46,12 +67,49 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
         $this->config = $configuration;
     }
 
-    public function render(
-        Node $node,
-        ChildNodeRendererInterface $childRenderer,
-    ): HtmlElement {
+    public function render(Node $node, ChildNodeRendererInterface $childRenderer): HtmlElement
+    {
         /* @var Link $node */
         Link::assertInstanceOf($node);
+
+        $isApRequest = UrlUtils::isActivityPubRequest($this->requestStack->getCurrentRequest());
+        if (!$isApRequest && $node instanceof MentionLink && $this->isExistingMentionType($node)) {
+            $this->logger->debug("Got node of class {c}: username: '{k}', title: '{t}', type: '{ty}', url: '{url}'", [
+                'c' => \get_class($node),
+                'k' => $node->getKbinUsername(),
+                't' => $node->getTitle(),
+                'ty' => $node->getType(),
+                'url' => $node->getUrl(),
+            ]);
+
+            return new HtmlElement('span', contents: $this->renderMentionType($node, $childRenderer));
+        } else {
+            $this->logger->debug("Got node of class {c}: title: '{t}', url: '{url}'", [
+                'c' => \get_class($node),
+                't' => $node->getTitle(),
+                'url' => $node->getUrl(),
+            ]);
+        }
+
+        $url = $node->getUrl();
+        if (filter_var($url, FILTER_VALIDATE_URL)) {
+            try {
+                $apActivity = $this->activityRepository->findByObjectId($url);
+            } catch (\Error|\Exception $e) {
+                $this->logger->warning("There was an error finding the activity pub object for url '{q}': {e}", ['q' => $url, 'e' => \get_class($e).' - '.$e->getMessage()]);
+            }
+            if (!$isApRequest && null !== $apActivity && Message::class !== $apActivity['type']) {
+                $this->logger->debug('Found activity with url {u}: {t} - {id}', [
+                    'u' => $node->getUrl(),
+                    't' => $apActivity['type'],
+                    'id' => $apActivity['id'],
+                ]);
+                /** @var Entry|EntryComment|Post|PostComment $entity */
+                $entity = $this->entityManager->getRepository($apActivity['type'])->find($apActivity['id']);
+
+                return new HtmlElement('div', contents: $this->renderInlineEntity($entity));
+            }
+        }
 
         $renderTarget = $this->config->get('kbin')[MarkdownConverter::RENDER_TARGET];
 
@@ -230,5 +288,93 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
         }
 
         return false;
+    }
+
+    private function isExistingMentionType(Link $link): bool
+    {
+        if ($link instanceof CommunityLink || $link instanceof ActivityPubMentionLink || $link instanceof RoutedMentionLink) {
+            if (MentionType::Unresolvable !== $link->getType() && MentionType::Search !== $link->getType()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function renderMentionType(MentionLink $node, ChildNodeRendererInterface $childRenderer): string
+    {
+        if (MentionType::User === $node->getType() || MentionType::RemoteUser === $node->getType()) {
+            return $this->renderUser($node, $childRenderer);
+        } elseif (MentionType::Magazine === $node->getType() || MentionType::RemoteMagazine === $node->getType()) {
+            return $this->renderMagazine($node, $childRenderer);
+        } else {
+            throw new \LogicException('dont know type of '.\get_class($node));
+        }
+    }
+
+    private function renderUser(MentionLink $node, ChildNodeRendererInterface $childRenderer): string
+    {
+        $username = $node->getKbinUsername();
+        $user = $this->userRepository->findOneBy(['username' => $username]);
+        if (!$user) {
+            $this->logger->error('cannot render {o}, couldn\'t find user {u}', ['o' => $node, 'u' => $username]);
+
+            return '';
+        }
+
+        return $this->twig->render('components/user_inline.html.twig', [
+            'user' => $user,
+            'showAvatar' => true,
+            'fullName' => ThemeSettingsController::getShowUserFullName($this->requestStack->getCurrentRequest()),
+        ]);
+    }
+
+    private function renderMagazine(MentionLink $node, ChildNodeRendererInterface $childRenderer): string
+    {
+        $magName = $node->getKbinUsername();
+        $magazine = $this->magazineRepository->findOneByName($magName);
+        if (!$magazine) {
+            $this->logger->error('cannot render {o}, couldn\'t find magazine {m}', ['o' => $node, 'm' => $magName]);
+
+            return '';
+        }
+
+        return $this->twig->render('components/magazine_inline.html.twig', [
+            'magazine' => $magazine,
+            'stretchedLink' => false,
+            'fullName' => ThemeSettingsController::getShowMagazineFullName($this->requestStack->getCurrentRequest()),
+            'showAvatar' => true,
+        ]);
+    }
+
+    private function renderInlineEntity(Entry|EntryComment|Post|PostComment $entity): string
+    {
+        if ($entity instanceof Entry) {
+            return $this->twig->render('components/entry_inline_md.html.twig', [
+                'entry' => $entity,
+                'userFullName' => ThemeSettingsController::getShowUserFullName($this->requestStack->getCurrentRequest()),
+                'magazineFullName' => ThemeSettingsController::getShowMagazineFullName($this->requestStack->getCurrentRequest()),
+            ]);
+        } elseif ($entity instanceof EntryComment) {
+            return $this->twig->render('components/entry_comment_inline_md.html.twig', [
+                'comment' => $entity,
+                'userFullName' => ThemeSettingsController::getShowUserFullName($this->requestStack->getCurrentRequest()),
+                'magazineFullName' => ThemeSettingsController::getShowMagazineFullName($this->requestStack->getCurrentRequest()),
+            ]);
+        } elseif ($entity instanceof Post) {
+            return $this->twig->render('components/post_inline_md.html.twig', [
+                'post' => $entity,
+                'userFullName' => ThemeSettingsController::getShowUserFullName($this->requestStack->getCurrentRequest()),
+                'magazineFullName' => ThemeSettingsController::getShowMagazineFullName($this->requestStack->getCurrentRequest()),
+            ]);
+        } elseif ($entity instanceof PostComment) {
+            return $this->twig->render('components/post_comment_inline_md.html.twig', [
+                'comment' => $entity,
+                'userFullName' => ThemeSettingsController::getShowUserFullName($this->requestStack->getCurrentRequest()),
+                'magazineFullName' => ThemeSettingsController::getShowMagazineFullName($this->requestStack->getCurrentRequest()),
+            ]);
+        }
+
+        return '';
     }
 }

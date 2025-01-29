@@ -17,6 +17,7 @@ use FeedIo\Feed;
 use FeedIo\Feed\Item;
 use FeedIo\Feed\Node\Category;
 use FeedIo\FeedInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\RouterInterface;
@@ -31,6 +32,7 @@ class FeedManager
         private readonly TagLinkRepository $tagLinkRepository,
         private readonly RouterInterface $router,
         private readonly EntryFactory $entryFactory,
+        private readonly Security $security,
     ) {
     }
 
@@ -40,7 +42,7 @@ class FeedManager
 
         $feed = $this->createFeed();
 
-        $criteria = (new EntryPageView(1))->showSortOption(Criteria::SORT_NEW);
+        $criteria = (new EntryPageView(1, $this->security))->showSortOption(Criteria::SORT_NEW);
 
         if ($magazine = $request->get('magazine')) {
             $criteria->magazine = $this->magazineRepository->findOneBy(['name' => $magazine]);

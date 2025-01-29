@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Entry;
 
 use App\DTO\ModeratorDto;
+use App\Enums\ESortOptions;
 use App\Service\MagazineManager;
 use App\Tests\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -280,6 +281,55 @@ class EntryFrontControllerTest extends WebTestCase
         $this->client->request('GET', '/fav');
 
         $this->assertStringContainsString('{"html":', $this->client->getResponse()->getContent());
+    }
+
+    public function testCustomDefaultSort(): void
+    {
+        $older = $this->getEntryByTitle('Older entry');
+        $older->createdAt = new \DateTimeImmutable('now - 1 day');
+        $older->updateRanking();
+        $this->entityManager->flush();
+        $newer = $this->getEntryByTitle('Newer entry');
+        $comment = $this->createEntryComment('someone was here', entry: $older);
+        self::assertGreaterThan($older->getRanking(), $newer->getRanking());
+
+        $user = $this->getUserByUsername('user');
+        $user->frontDefaultSort = ESortOptions::Newest->value;
+        $this->entityManager->flush();
+
+        $this->client->loginUser($user);
+        $crawler = $this->client->request('GET', '/');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('.options__filter button', $this->translator->trans(ESortOptions::Newest->value));
+
+        $iterator = $crawler->filter('#content div')->children()->getIterator();
+        /** @var \DOMElement $firstNode */
+        $firstNode = $iterator->current();
+        $firstId = $firstNode->attributes->getNamedItem('id')->nodeValue;
+        self::assertEquals("entry-{$newer->getId()}", $firstId);
+        $iterator->next();
+        $secondNode = $iterator->current();
+        $secondId = $secondNode->attributes->getNamedItem('id')->nodeValue;
+        self::assertEquals("entry-{$older->getId()}", $secondId);
+
+        $user->frontDefaultSort = ESortOptions::Commented->value;
+        $this->entityManager->flush();
+
+        $crawler = $this->client->request('GET', '/');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('.options__filter button', $this->translator->trans(ESortOptions::Commented->value));
+
+        $iterator = $crawler->filter('#content div')->children()->getIterator();
+        /** @var \DOMElement $firstNode */
+        $firstNode = $iterator->current();
+        $firstId = $firstNode->attributes->getNamedItem('id')->nodeValue;
+        self::assertEquals("entry-{$older->getId()}", $firstId);
+        $iterator->next();
+        $secondNode = $iterator->current();
+        $secondId = $secondNode->attributes->getNamedItem('id')->nodeValue;
+        self::assertEquals("entry-{$newer->getId()}", $secondId);
     }
 
     private function prepareEntries(): KernelBrowser
