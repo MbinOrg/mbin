@@ -93,7 +93,11 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
 
         $url = $node->getUrl();
         if (filter_var($url, FILTER_VALIDATE_URL)) {
-            $apActivity = $this->activityRepository->findByObjectId($url);
+            try {
+                $apActivity = $this->activityRepository->findByObjectId($url);
+            } catch (\Error|\Exception $e) {
+                $this->logger->warning("There was an error finding the activity pub object for url '{q}': {e}", ['q' => $url, 'e' => \get_class($e).' - '.$e->getMessage()]);
+            }
             if (!$isApRequest && null !== $apActivity && Message::class !== $apActivity['type']) {
                 $this->logger->debug('Found activity with url {u}: {t} - {id}', [
                     'u' => $node->getUrl(),
