@@ -6,6 +6,10 @@
   border: var(--kbin-section-border);
   padding: .25em;
   background: var(--kbin-bg);
+
+  a .fa-photo-film {
+    margin-right: .25em;
+  }
 }
 
 .rounded-edges {
