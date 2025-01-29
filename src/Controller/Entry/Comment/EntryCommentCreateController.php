@@ -15,6 +15,7 @@ use App\Service\EntryCommentManager;
 use App\Service\IpResolver;
 use App\Service\MentionManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -44,6 +45,7 @@ class EntryCommentCreateController extends AbstractController
         #[MapEntity(id: 'parent_comment_id')]
         ?EntryComment $parent,
         Request $request,
+        Security $security,
     ): Response {
         $form = $this->getForm($entry, $parent);
         try {
@@ -77,7 +79,7 @@ class EntryCommentCreateController extends AbstractController
         }
 
         $user = $this->getUserOrThrow();
-        $criteria = new EntryCommentPageView($this->getPageNb($request));
+        $criteria = new EntryCommentPageView($this->getPageNb($request), $security);
         $criteria->entry = $entry;
 
         return $this->getEntryCommentPageResponse(

@@ -20,6 +20,7 @@ use App\Schema\PaginationSchema;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Attributes as OA;
+use Symfony\Bundle\SecurityBundle\Security as SymfonySecurity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -141,10 +142,11 @@ class BookmarkListApiController extends BaseApi
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?int $perPage,
         RateLimiterFactory $apiReadLimiter,
+        SymfonySecurity $security,
     ): JsonResponse {
         $user = $this->getUserOrThrow();
         $headers = $this->rateLimit($apiReadLimiter);
-        $criteria = new EntryPageView($p ?? 1);
+        $criteria = new EntryPageView($p ?? 1, $security);
         $criteria->setTime($criteria->resolveTime($time ?? Criteria::TIME_ALL));
         $criteria->setType($criteria->resolveType($type ?? 'all'));
         $criteria->showSortOption($criteria->resolveSort($sort ?? Criteria::SORT_NEW));

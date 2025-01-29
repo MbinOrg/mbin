@@ -30,7 +30,7 @@ magazine_purge_content:
 
 magazine_list_all:
     controller: App\Controller\Magazine\MagazineListController
-    defaults: { sortBy: hot, view: table }
+    defaults: { sortBy: default, view: table }
     path: /magazines/{sortBy}/{view}
     methods: [GET]
 
