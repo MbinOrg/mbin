@@ -19,6 +19,8 @@ class ThemeSettingsController extends AbstractController
     public const KBIN_THEME = 'kbin_theme';
     public const KBIN_FONT_SIZE = 'kbin_font_size';
     public const KBIN_PAGE_WIDTH = 'kbin_page_width';
+    public const MBIN_SHOW_USER_DOMAIN = 'mbin_show_users_domain';
+    public const MBIN_SHOW_MAGAZINE_DOMAIN = 'mbin_show_magazine_domain';
     public const KBIN_ENTRIES_SHOW_USERS_AVATARS = 'kbin_entries_show_users_avatars';
     public const KBIN_ENTRIES_SHOW_MAGAZINES_ICONS = 'kbin_entries_show_magazines_icons';
     public const KBIN_ENTRIES_SHOW_THUMBNAILS = 'kbin_entries_show_thumbnails';
@@ -108,6 +110,8 @@ class ThemeSettingsController extends AbstractController
         self::MBIN_GENERAL_SHOW_RELATED_ENTRIES,
         self::MBIN_GENERAL_SHOW_RELATED_MAGAZINES,
         self::MBIN_GENERAL_SHOW_ACTIVE_USERS,
+        self::MBIN_SHOW_MAGAZINE_DOMAIN,
+        self::MBIN_SHOW_USER_DOMAIN,
     ];
 
     public const VALUES = [
@@ -162,5 +166,23 @@ class ThemeSettingsController extends AbstractController
             302,
             $response->headers->all()
         );
+    }
+
+    public static function getShowUserFullName(?Request $request): bool
+    {
+        if (null === $request) {
+            return false;
+        }
+
+        return self::TRUE === $request->cookies->get(self::MBIN_SHOW_USER_DOMAIN, 'false');
+    }
+
+    public static function getShowMagazineFullName(?Request $request): bool
+    {
+        if (null === $request) {
+            return false;
+        }
+
+        return self::TRUE === $request->cookies->get(self::MBIN_SHOW_MAGAZINE_DOMAIN, 'false');
     }
 }
