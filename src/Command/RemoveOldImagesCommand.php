@@ -309,8 +309,12 @@ class RemoveOldImagesCommand extends Command
 
         foreach ($users as $user) {
             $output->writeln(\sprintf('Deleting image from username: %s', $user->getUsername()));
-            $this->userManager->detachCover($user);
-            $this->userManager->detachAvatar($user);
+            if (null !== $user->cover) {
+                $this->userManager->detachCover($user);
+            }
+            if (null !== $user->avatar) {
+                $this->userManager->detachAvatar($user);
+            }
         }
 
         // Return total number of elements deleted
