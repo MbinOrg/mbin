@@ -6,6 +6,7 @@ namespace App\Tests\Functional\Controller\Api\User;
 
 use App\DTO\UserSettingsDto;
 use App\Entity\User;
+use App\Repository\Criteria;
 use App\Tests\WebTestCase;
 
 class UserUpdateApiTest extends WebTestCase
@@ -91,6 +92,8 @@ class UserUpdateApiTest extends WebTestCase
             false,
             false,
             User::HOMEPAGE_MOD,
+            Criteria::SORT_HOT,
+            Criteria::SORT_HOT,
             ['test'],
             ['en']
         ))->jsonSerialize();
@@ -123,6 +126,8 @@ class UserUpdateApiTest extends WebTestCase
             false,
             false,
             User::HOMEPAGE_MOD,
+            Criteria::SORT_NEW,
+            Criteria::SORT_TOP,
             ['test'],
             ['en']
         ))->jsonSerialize();
@@ -151,6 +156,8 @@ class UserUpdateApiTest extends WebTestCase
         self::assertFalse($jsonData['addMentionsEntries']);
         self::assertFalse($jsonData['addMentionsPosts']);
         self::assertEquals(User::HOMEPAGE_MOD, $jsonData['homepage']);
+        self::assertEquals(Criteria::SORT_NEW, $jsonData['frontDefaultSort']);
+        self::assertEquals(Criteria::SORT_TOP, $jsonData['commentDefaultSort']);
         self::assertEquals(['test'], $jsonData['featuredMagazines']);
         self::assertEquals(['en'], $jsonData['preferredLanguages']);
 
@@ -174,6 +181,8 @@ class UserUpdateApiTest extends WebTestCase
         self::assertFalse($jsonData['addMentionsEntries']);
         self::assertFalse($jsonData['addMentionsPosts']);
         self::assertEquals(User::HOMEPAGE_MOD, $jsonData['homepage']);
+        self::assertEquals(Criteria::SORT_NEW, $jsonData['frontDefaultSort']);
+        self::assertEquals(Criteria::SORT_TOP, $jsonData['commentDefaultSort']);
         self::assertEquals(['test'], $jsonData['featuredMagazines']);
         self::assertEquals(['en'], $jsonData['preferredLanguages']);
     }

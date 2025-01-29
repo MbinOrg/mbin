@@ -29,6 +29,8 @@ class UserSettingsManager
             $user->addMentionsEntries,
             $user->addMentionsPosts,
             $user->homepage,
+            $user->frontDefaultSort,
+            $user->commentDefaultSort,
             $user->featuredMagazines,
             $user->preferredLanguages,
             $user->customCss,
@@ -46,6 +48,8 @@ class UserSettingsManager
         $user->notifyOnNewEntryReply = $dto->notifyOnNewEntryReply;
         $user->notifyOnNewPostCommentReply = $dto->notifyOnNewPostCommentReply;
         $user->homepage = $dto->homepage;
+        $user->frontDefaultSort = $dto->frontDefaultSort;
+        $user->commentDefaultSort = $dto->commentDefaultSort;
         $user->hideAdult = $dto->hideAdult;
         $user->showProfileSubscriptions = $dto->showProfileSubscriptions;
         $user->showProfileFollowings = $dto->showProfileFollowings;

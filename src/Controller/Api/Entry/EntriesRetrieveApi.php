@@ -18,6 +18,7 @@ use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\SecurityBundle\Security as SymfonySecurity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
@@ -179,10 +180,11 @@ class EntriesRetrieveApi extends EntriesBaseApi
         RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
+        SymfonySecurity $security,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
-        $criteria = new EntryPageView((int) $request->getCurrentRequest()->get('p', 1));
+        $criteria = new EntryPageView((int) $request->getCurrentRequest()->get('p', 1), $security);
         $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_HOT);
         $criteria->time = $criteria->resolveTime(
             $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
@@ -284,10 +286,11 @@ class EntriesRetrieveApi extends EntriesBaseApi
         EntryFactory $factory,
         RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
+        SymfonySecurity $security,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
-        $criteria = new EntryPageView((int) $request->getCurrentRequest()->get('p', 1));
+        $criteria = new EntryPageView((int) $request->getCurrentRequest()->get('p', 1), $security);
         $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_HOT);
         $criteria->time = $criteria->resolveTime(
             $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
@@ -390,10 +393,11 @@ class EntriesRetrieveApi extends EntriesBaseApi
         EntryFactory $factory,
         RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
+        SymfonySecurity $security,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
-        $criteria = new EntryPageView((int) $request->getCurrentRequest()->get('p', 1));
+        $criteria = new EntryPageView((int) $request->getCurrentRequest()->get('p', 1), $security);
         $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_NEW);
         $criteria->time = $criteria->resolveTime(
             $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
@@ -496,10 +500,11 @@ class EntriesRetrieveApi extends EntriesBaseApi
         EntryFactory $factory,
         RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
+        SymfonySecurity $security,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
-        $criteria = new EntryPageView((int) $request->getCurrentRequest()->get('p', 1));
+        $criteria = new EntryPageView((int) $request->getCurrentRequest()->get('p', 1), $security);
         $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_HOT);
         $criteria->time = $criteria->resolveTime(
             $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)

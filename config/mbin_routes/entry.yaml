@@ -109,7 +109,7 @@ entry_comment_moderate:
 
 entry_comments_front:
   controller: App\Controller\Entry\Comment\EntryCommentFrontController::front
-  defaults: { sortBy: hot, time: ~ }
+  defaults: { sortBy: default, time: ~ }
   path: /comments/{sortBy}/{time}
   methods: [ GET ]
   requirements:
@@ -118,7 +118,7 @@ entry_comments_front:
 
 entry_comments_subscribed:
   controller: App\Controller\Entry\Comment\EntryCommentFrontController::subscribed
-  defaults: { sortBy: hot, time: ~ }
+  defaults: { sortBy: default, time: ~ }
   path: /sub/comments/{sortBy}/{time}
   methods: [ GET ]
   requirements:
@@ -127,7 +127,7 @@ entry_comments_subscribed:
 
 entry_comments_moderated:
   controller: App\Controller\Entry\Comment\EntryCommentFrontController::moderated
-  defaults: { sortBy: hot, time: ~ }
+  defaults: { sortBy: default, time: ~ }
   path: /mod/comments/{sortBy}/{time}
   methods: [ GET ]
   requirements:
@@ -136,7 +136,7 @@ entry_comments_moderated:
 
 entry_comments_favourite:
   controller: App\Controller\Entry\Comment\EntryCommentFrontController::favourite
-  defaults: { sortBy: hot, time: ~ }
+  defaults: { sortBy: default, time: ~ }
   path: /fav/comments/{sortBy}/{time}
   methods: [ GET ]
   requirements:
@@ -145,7 +145,7 @@ entry_comments_favourite:
 
 magazine_entry_comments:
   controller: App\Controller\Entry\Comment\EntryCommentFrontController::front
-  defaults: { sortBy: hot, time: ~ }
+  defaults: { sortBy: default, time: ~ }
   path: /m/{name}/comments/{sortBy}/{time}
   methods: [ GET ]
   requirements:
@@ -198,7 +198,7 @@ magazine_entry_create:
 
 entry_edit:
   controller: App\Controller\Entry\EntryEditController
-  defaults: { slug: -, sortBy: hot }
+  defaults: { slug: -, sortBy: default }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/edit
   methods: [ GET, POST ]
   requirements:
@@ -206,7 +206,7 @@ entry_edit:
 
 entry_moderate:
   controller: App\Controller\Entry\EntryModerateController
-  defaults: { slug: -, sortBy: hot }
+  defaults: { slug: -, sortBy: default }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/moderate
   methods: [ GET ]
   requirements:
@@ -214,7 +214,7 @@ entry_moderate:
 
 entry_delete:
   controller: App\Controller\Entry\EntryDeleteController::delete
-  defaults: { slug: -, sortBy: hot }
+  defaults: { slug: -, sortBy: default }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/delete
   methods: [ POST ]
   requirements:
@@ -222,7 +222,7 @@ entry_delete:
 
 entry_restore:
   controller: App\Controller\Entry\EntryDeleteController::restore
-  defaults: { slug: -, sortBy: hot }
+  defaults: { slug: -, sortBy: default }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/restore
   methods: [ POST ]
   requirements:
@@ -230,7 +230,7 @@ entry_restore:
 
 entry_purge:
   controller: App\Controller\Entry\EntryDeleteController::purge
-  defaults: { slug: -, sortBy: hot }
+  defaults: { slug: -, sortBy: default }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/purge
   methods: [ POST ]
   requirements:
@@ -270,7 +270,7 @@ entry_change_adult:
 
 entry_pin:
   controller: App\Controller\Entry\EntryPinController
-  defaults: { slug: -, sortBy: hot }
+  defaults: { slug: -, sortBy: default }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/pin
   methods: [ POST ]
   requirements:
@@ -278,7 +278,7 @@ entry_pin:
 
 entry_voters:
   controller: App\Controller\Entry\EntryVotersController
-  defaults: { slug: -, sortBy: hot }
+  defaults: { slug: -, sortBy: default }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/votes/{type}
   methods: [ GET ]
   requirements:
@@ -287,7 +287,7 @@ entry_voters:
 
 entry_fav:
   controller: App\Controller\Entry\EntryFavouriteController
-  defaults: { slug: -, sortBy: hot }
+  defaults: { slug: -, sortBy: default }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/favourites
   methods: [ GET ]
   requirements:
@@ -295,7 +295,7 @@ entry_fav:
 
 entry_tips:
   controller: App\Controller\Entry\EntryTipController
-  defaults: { slug: -, sortBy: hot }
+  defaults: { slug: -, sortBy: default }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/tips
   methods: [ GET ]
   requirements:
@@ -303,7 +303,7 @@ entry_tips:
 
 entry_single:
   controller: App\Controller\Entry\EntrySingleController
-  defaults: { slug: -, sortBy: hot }
+  defaults: { slug: -, sortBy: default }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/{sortBy}
   methods: [ GET ]
   requirements:
@@ -312,7 +312,7 @@ entry_single:
 
 entry_single_comments:
   controller: App\Controller\Entry\EntrySingleController
-  defaults: { slug: -, sortBy: hot }
+  defaults: { slug: -, sortBy: default }
   path: /m/{magazine_name}/t/{entry_id}/{slug}/comments/{sortBy}
   methods: [ GET ]
   requirements:

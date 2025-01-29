@@ -942,3 +942,5 @@ show_magazine_domains: Show magazine domains
 show_user_domains: Show user domains
 answered: answered
 by: by
+front_default_sort: Frontpage default sort
+comment_default_sort: Comment default sort

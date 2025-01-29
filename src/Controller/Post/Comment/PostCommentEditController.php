@@ -14,6 +14,7 @@ use App\PageView\PostCommentPageView;
 use App\Repository\PostCommentRepository;
 use App\Service\PostCommentManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,6 +28,7 @@ class PostCommentEditController extends AbstractController
     public function __construct(
         private readonly PostCommentManager $manager,
         private readonly PostCommentRepository $repository,
+        private readonly Security $security,
     ) {
     }
 
@@ -60,7 +62,7 @@ class PostCommentEditController extends AbstractController
             $this->addFlash('error', 'flash_comment_edit_error');
         }
 
-        $criteria = new PostCommentPageView($this->getPageNb($request));
+        $criteria = new PostCommentPageView($this->getPageNb($request), $this->security);
         $criteria->post = $post;
 
         if ($request->isXmlHttpRequest()) {

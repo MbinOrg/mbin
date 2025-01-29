@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Post;
 
 use App\DTO\ModeratorDto;
+use App\Enums\ESortOptions;
 use App\Service\MagazineManager;
 use App\Tests\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -153,6 +154,58 @@ class PostFrontControllerTest extends WebTestCase
             $this->assertSelectorTextContains('.options__filter', $sortOption);
             $this->assertSelectorTextContains('h1', ucfirst($sortOption));
         }
+    }
+
+    public function testCustomDefaultSort(): void
+    {
+        $older = $this->createPost('Older entry');
+        $older->createdAt = new \DateTimeImmutable('now - 1 day');
+        $older->updateRanking();
+        $this->entityManager->flush();
+        $newer = $this->createPost('Newer entry');
+        $comment = $this->createPostComment('someone was here', post: $older);
+        self::assertGreaterThan($older->getRanking(), $newer->getRanking());
+
+        $user = $this->getUserByUsername('user');
+        $user->frontDefaultSort = ESortOptions::Newest->value;
+        $this->entityManager->flush();
+
+        $this->client->loginUser($user);
+        $crawler = $this->client->request('GET', '/microblog');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('.options__filter button', $this->translator->trans(ESortOptions::Newest->value));
+
+        $iterator = $crawler->filter('#content div')->children()->getIterator();
+        /** @var \DOMElement $firstNode */
+        $firstNode = $iterator->current();
+        $firstId = $firstNode->attributes->getNamedItem('id')->nodeValue;
+        self::assertEquals("post-{$newer->getId()}", $firstId);
+        $iterator->next();
+        $secondNode = $iterator->current();
+        $secondId = $secondNode->attributes->getNamedItem('id')->nodeValue;
+        self::assertEquals("post-{$older->getId()}", $secondId);
+
+        $user->frontDefaultSort = ESortOptions::Commented->value;
+        $this->entityManager->flush();
+
+        $crawler = $this->client->request('GET', '/microblog');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('.options__filter button', $this->translator->trans(ESortOptions::Commented->value));
+
+        $children = $crawler->filter('#content div')->children();
+        $iterator = $children->getIterator();
+        /** @var \DOMElement $firstNode */
+        $firstNode = $iterator->current();
+        $firstId = $firstNode->attributes->getNamedItem('id')->nodeValue;
+        self::assertEquals("post-{$older->getId()}", $firstId);
+        $iterator->next();
+        // jump over the comment that is previewed from the older post
+        $iterator->next();
+        $secondNode = $iterator->current();
+        $secondId = $secondNode->attributes->getNamedItem('id')->nodeValue;
+        self::assertEquals("post-{$newer->getId()}", $secondId);
     }
 
     private function prepareEntries(): KernelBrowser

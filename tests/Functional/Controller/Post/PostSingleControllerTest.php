@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Post;
 
 use App\Entity\Contracts\VotableInterface;
+use App\Enums\ESortOptions;
 use App\Service\FavouriteManager;
 use App\Service\VoteManager;
 use App\Tests\WebTestCase;
@@ -53,5 +54,49 @@ class PostSingleControllerTest extends WebTestCase
         $this->client->request('GET', "/m/acme/p/{$post->getId()}/test-post-1");
 
         $this->assertSelectorTextContains('.options-activity', 'Activity (2)');
+    }
+
+    public function testCommentsDefaultSortOption(): void
+    {
+        $user = $this->getUserByUsername('user');
+        $post = $this->createPost('entry');
+        $older = $this->createPostComment('older comment', post: $post);
+        $older->createdAt = new \DateTimeImmutable('now - 1 day');
+        $newer = $this->createPostComment('newer comment', post: $post);
+
+        $user->commentDefaultSort = ESortOptions::Oldest->value;
+        $this->entityManager->flush();
+
+        $this->client->loginUser($user);
+        $crawler = $this->client->request('GET', "/m/{$post->magazine->name}/p/{$post->getId()}/-");
+        self::assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('.options__main .active', $this->translator->trans(ESortOptions::Oldest->value));
+
+        $iterator = $crawler->filter('#comments div')->children()->getIterator();
+        /** @var \DOMElement $firstNode */
+        $firstNode = $iterator->current();
+        $firstId = $firstNode->attributes->getNamedItem('id')->nodeValue;
+        self::assertEquals("post-comment-{$older->getId()}", $firstId);
+        $iterator->next();
+        $secondNode = $iterator->current();
+        $secondId = $secondNode->attributes->getNamedItem('id')->nodeValue;
+        self::assertEquals("post-comment-{$newer->getId()}", $secondId);
+
+        $user->commentDefaultSort = ESortOptions::Newest->value;
+        $this->entityManager->flush();
+
+        $crawler = $this->client->request('GET', "/m/{$post->magazine->name}/p/{$post->getId()}/-");
+        self::assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('.options__main .active', $this->translator->trans(ESortOptions::Newest->value));
+
+        $iterator = $crawler->filter('#comments div')->children()->getIterator();
+        /** @var \DOMElement $firstNode */
+        $firstNode = $iterator->current();
+        $firstId = $firstNode->attributes->getNamedItem('id')->nodeValue;
+        self::assertEquals("post-comment-{$newer->getId()}", $firstId);
+        $iterator->next();
+        $secondNode = $iterator->current();
+        $secondId = $secondNode->attributes->getNamedItem('id')->nodeValue;
+        self::assertEquals("post-comment-{$older->getId()}", $secondId);
     }
 }

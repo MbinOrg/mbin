@@ -7,6 +7,8 @@ namespace App\Form;
 use App\DTO\UserSettingsDto;
 use App\Entity\User;
 use App\Form\DataTransformer\FeaturedMagazinesBarTransformer;
+use App\PageView\EntryCommentPageView;
+use App\PageView\EntryPageView;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -28,6 +30,14 @@ class UserSettingsType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $frontDefaultSortChoices = [];
+        foreach (EntryPageView::SORT_OPTIONS as $option) {
+            $frontDefaultSortChoices[$this->translator->trans($option)] = $option;
+        }
+        $commentDefaultSortChoices = [];
+        foreach (EntryCommentPageView::SORT_OPTIONS as $option) {
+            $commentDefaultSortChoices[$this->translator->trans($option)] = $option;
+        }
         $builder
             ->add(
                 'hideAdult',
@@ -44,6 +54,14 @@ class UserSettingsType extends AbstractType
                 ],
             ]
             )
+            ->add('frontDefaultSort', ChoiceType::class, [
+                'autocomplete' => true,
+                'choices' => $frontDefaultSortChoices,
+            ])
+            ->add('commentDefaultSort', ChoiceType::class, [
+                'autocomplete' => true,
+                'choices' => $commentDefaultSortChoices,
+            ])
             ->add('featuredMagazines', TextareaType::class, ['required' => false])
             ->add('preferredLanguages', LanguageType::class, [
                 'required' => false,
