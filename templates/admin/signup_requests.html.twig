@@ -18,6 +18,12 @@
         <h3>{{ 'signup_requests_header'|trans }}</h3>
         <p>{{ 'signup_requests_paragraph'|trans }}</p>
     </div>
+    {% if username is defined and username is not same as null %}
+        <div class="alert alert__info">
+            <p>{{ 'viewing_one_signup_request'|trans({'%username%': username}) }}</p>
+            <p><a href="{{ path('admin_signup_requests') }}"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> {{ 'return'|trans }}</a></p>
+        </div>
+    {% endif %}
     {% if requests|length %}
         {% for request in requests %}
             <div class="section">

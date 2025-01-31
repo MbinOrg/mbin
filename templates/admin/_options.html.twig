@@ -43,7 +43,7 @@
         </li>
         {% if do_new_users_need_approval() %}
             <li>
-                <a href="{{ path('admin_signup_requests', { page: 1 }) }}"
+                <a href="{{ path('admin_signup_requests') }}"
                    class="{{ html_classes({'active': is_route_name('admin_signup_requests') }) }}">
                     {{ 'signup_requests'|trans }}
                 </a>
