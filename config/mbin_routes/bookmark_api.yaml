@@ -13,11 +13,17 @@ api_bookmark_lists:
 api_bookmark_lists_make_default:
     controller: App\Controller\Api\Bookmark\BookmarkListApiController::makeDefault
     path: /api/bookmark-lists/{list_name}/makeDefault
-    methods: [GET]
+    methods: [PUT]
     format: json
 
 api_bookmark_lists_edit_list:
     controller: App\Controller\Api\Bookmark\BookmarkListApiController::editList
+    path: /api/bookmark-lists/{list_name}
+    methods: [PUT]
+    format: json
+
+api_bookmark_lists_add_list:
+    controller: App\Controller\Api\Bookmark\BookmarkListApiController::createList
     path: /api/bookmark-lists/{list_name}
     methods: [POST]
     format: json
@@ -33,7 +39,7 @@ api_subject_bookmark_standard:
     path: /api/bos/{subject_id}/{subject_type}
     requirements:
         subject_type: "%default_subject_type_options%"
-    methods: [ GET ]
+    methods: [ PUT ]
     format: json
 
 api_subject_bookmark_to_list:
@@ -41,7 +47,7 @@ api_subject_bookmark_to_list:
     path: /api/bol/{subject_id}/{subject_type}/{list_name}
     requirements:
         subject_type: "%default_subject_type_options%"
-    methods: [ GET ]
+    methods: [ PUT ]
     format: json
 
 api_subject_remove_bookmarks:
@@ -49,7 +55,7 @@ api_subject_remove_bookmarks:
     path: /api/rbo/{subject_id}/{subject_type}
     requirements:
         subject_type: "%default_subject_type_options%"
-    methods: [ GET ]
+    methods: [ PUT ]
     format: json
 
 api_subject_remove_bookmark_from_list:
@@ -57,5 +63,5 @@ api_subject_remove_bookmark_from_list:
     path: /api/rbol/{subject_id}/{subject_type}/{list_name}
     requirements:
         subject_type: "%default_subject_type_options%"
-    methods: [ GET ]
+    methods: [ PUT ]
     format: json
