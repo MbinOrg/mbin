@@ -13,6 +13,7 @@ use App\PageView\EntryPageView;
 use App\Repository\Criteria;
 use App\Repository\EntryRepository;
 use App\Schema\ContentSchema;
+use App\Schema\Errors\BadRequestErrorSchema;
 use App\Schema\Errors\NotFoundErrorSchema;
 use App\Schema\Errors\TooManyRequestsErrorSchema;
 use App\Schema\Errors\UnauthorizedErrorSchema;
@@ -21,6 +22,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\SecurityBundle\Security as SymfonySecurity;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -322,6 +324,58 @@ class BookmarkListApiController extends BaseApi
         }
         $this->bookmarkListRepository->editList($user, $list, $dto);
         $list = $this->bookmarkListRepository->findOneBy(['id' => $list->getId()]);
+
+        return new JsonResponse(BookmarkListDto::fromList($list), status: 200, headers: $headers);
+    }
+
+    #[OA\Response(
+        response: 200,
+        description: 'Creates a list with the supplied name',
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
+        ],
+        content: new Model(type: BookmarkListDto::class),
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'The requested list already exists',
+        content: new OA\JsonContent(ref: new Model(type: BadRequestErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Permission denied due to missing or expired token',
+        content: new OA\JsonContent(ref: new Model(type: UnauthorizedErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 429,
+        description: 'You are being rate limited',
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
+        ],
+        content: new OA\JsonContent(ref: new Model(type: TooManyRequestsErrorSchema::class))
+    )]
+    #[OA\Parameter(
+        name: 'list_name',
+        description: 'The name of the list to be created',
+        in: 'path',
+        schema: new OA\Schema(type: 'string')
+    )]
+    #[OA\Tag(name: 'bookmark:list')]
+    #[Security(name: 'oauth2', scopes: ['user:bookmark:list:edit'])]
+    #[IsGranted('ROLE_OAUTH2_USER:BOOKMARK_LIST:EDIT')]
+    public function createList(string $list_name, RateLimiterFactory $apiUpdateLimiter): JsonResponse
+    {
+        $user = $this->getUserOrThrow();
+        $headers = $this->rateLimit($apiUpdateLimiter);
+        $list = $this->bookmarkListRepository->findOneByUserAndName($user, $list_name);
+        if (null !== $list) {
+            throw new BadRequestException();
+        }
+        $list = $this->bookmarkManager->createList($user, $list_name);
 
         return new JsonResponse(BookmarkListDto::fromList($list), status: 200, headers: $headers);
     }
