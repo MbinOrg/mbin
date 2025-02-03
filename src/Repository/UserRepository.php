@@ -800,4 +800,18 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
         return $fanta;
     }
+
+    public function findSignupRequest(string $username): ?User
+    {
+        return $this->createQueryBuilder('u')
+            ->where('u.applicationStatus = :status')
+            ->andWhere('u.apId IS NULL')
+            ->andWhere('u.isDeleted = false')
+            ->andWhere('u.markedForDeletionAt IS NULL')
+            ->andWhere('u.username = :username')
+            ->setParameter('status', EApplicationStatus::Pending->value)
+            ->setParameter('username', $username)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
