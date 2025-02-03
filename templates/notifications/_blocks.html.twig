@@ -160,4 +160,11 @@
 {% block new_signup %}
     {{ 'notification_title_new_signup'|trans }}<br />
     {{ component('user_inline', { user: notification.newUser } ) }}
+    {% if do_new_users_need_approval() and notification.newUser.applicationStatus is not same as enum('App\\Enums\\EApplicationStatus').Approved %}
+        <div>
+            <a href="{{ path('admin_signup_requests') }}?username={{ notification.newUser.username }}">
+                {{ 'open_signup_request'|trans }}
+            </a>
+        </div>
+    {% endif %}
 {% endblock %}

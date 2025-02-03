@@ -22,13 +22,21 @@ class AdminSignupRequestsController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    public function requests(#[MapQueryParameter] int $page): Response
+    public function requests(#[MapQueryParameter] ?int $page = 1, #[MapQueryParameter] ?string $username = null): Response
     {
-        $requests = $this->repository->findAllSignupRequestsPaginated($page);
+        if (null === $username) {
+            $requests = $this->repository->findAllSignupRequestsPaginated($page);
+        } else {
+            $requests = [];
+            if ($signupRequest = $this->repository->findSignupRequest($username)) {
+                $requests[] = $signupRequest;
+            }
+        }
 
         return $this->render('admin/signup_requests.html.twig', [
             'requests' => $requests,
             'page' => $page,
+            'username' => $username,
         ]);
     }
 

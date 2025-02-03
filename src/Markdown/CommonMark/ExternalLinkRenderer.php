@@ -107,7 +107,13 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
                 /** @var Entry|EntryComment|Post|PostComment $entity */
                 $entity = $this->entityManager->getRepository($apActivity['type'])->find($apActivity['id']);
 
-                return new HtmlElement('div', contents: $this->renderInlineEntity($entity));
+                if (null !== $entity) {
+                    return new HtmlElement('div', contents: $this->renderInlineEntity($entity));
+                } else {
+                    $this->logger->warning('[ExternalLinkRenderer::render] Could not find an entity for type {t} with id {id} from url {url}', ['t' => $apActivity['type'], 'id' => $apActivity['id'], 'url' => $url]);
+
+                    return new HtmlElement('div');
+                }
             }
         }
 
