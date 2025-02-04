@@ -11,6 +11,8 @@ use App\Factory\ActivityPub\TombstoneFactory;
 use App\Factory\ImageFactory;
 use App\Factory\MagazineFactory;
 use App\MessageHandler\ActivityPub\Outbox\DeliverHandler;
+use App\Repository\BookmarkListRepository;
+use App\Repository\BookmarkRepository;
 use App\Repository\EntryCommentRepository;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
@@ -29,6 +31,7 @@ use App\Service\ActivityPub\Wrapper\CreateWrapper;
 use App\Service\ActivityPub\Wrapper\LikeWrapper;
 use App\Service\ActivityPubManager;
 use App\Service\BadgeManager;
+use App\Service\BookmarkManager;
 use App\Service\DomainManager;
 use App\Service\EntryCommentManager;
 use App\Service\EntryManager;
@@ -71,10 +74,10 @@ abstract class WebTestCase extends BaseWebTestCase
     protected const MESSAGE_RESPONSE_KEYS = ['messageId', 'threadId', 'sender', 'body', 'status', 'createdAt'];
     protected const USER_RESPONSE_KEYS = ['userId', 'username', 'about', 'avatar', 'cover', 'createdAt', 'followersCount', 'apId', 'apProfileId', 'isBot', 'isFollowedByUser', 'isFollowerOfUser', 'isBlockedByUser', 'isAdmin', 'isGlobalModerator', 'serverSoftware', 'serverSoftwareVersion', 'notificationStatus'];
     protected const USER_SMALL_RESPONSE_KEYS = ['userId', 'username', 'isBot', 'isFollowedByUser', 'isFollowerOfUser', 'isBlockedByUser', 'avatar', 'apId', 'apProfileId', 'createdAt', 'isAdmin', 'isGlobalModerator'];
-    protected const ENTRY_RESPONSE_KEYS = ['entryId', 'magazine', 'user', 'domain', 'title', 'url', 'image', 'body', 'lang', 'tags', 'badges', 'numComments', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'isOc', 'isAdult', 'isPinned', 'createdAt', 'editedAt', 'lastActive', 'visibility', 'type', 'slug', 'apId', 'canAuthUserModerate', 'notificationStatus'];
-    protected const ENTRY_COMMENT_RESPONSE_KEYS = ['commentId', 'magazine', 'user', 'entryId', 'parentId', 'rootId', 'image', 'body', 'lang', 'isAdult', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'mentions', 'tags', 'createdAt', 'editedAt', 'lastActive', 'childCount', 'children', 'canAuthUserModerate'];
-    protected const POST_RESPONSE_KEYS = ['postId', 'user', 'magazine', 'image', 'body', 'lang', 'isAdult', 'isPinned', 'comments', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'tags', 'mentions', 'createdAt', 'editedAt', 'lastActive', 'slug', 'canAuthUserModerate', 'notificationStatus'];
-    protected const POST_COMMENT_RESPONSE_KEYS = ['commentId', 'user', 'magazine', 'postId', 'parentId', 'rootId', 'image', 'body', 'lang', 'isAdult', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'mentions', 'tags', 'createdAt', 'editedAt', 'lastActive', 'childCount', 'children', 'canAuthUserModerate'];
+    protected const ENTRY_RESPONSE_KEYS = ['entryId', 'magazine', 'user', 'domain', 'title', 'url', 'image', 'body', 'lang', 'tags', 'badges', 'numComments', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'isOc', 'isAdult', 'isPinned', 'createdAt', 'editedAt', 'lastActive', 'visibility', 'type', 'slug', 'apId', 'canAuthUserModerate', 'notificationStatus', 'bookmarks'];
+    protected const ENTRY_COMMENT_RESPONSE_KEYS = ['commentId', 'magazine', 'user', 'entryId', 'parentId', 'rootId', 'image', 'body', 'lang', 'isAdult', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'mentions', 'tags', 'createdAt', 'editedAt', 'lastActive', 'childCount', 'children', 'canAuthUserModerate', 'bookmarks'];
+    protected const POST_RESPONSE_KEYS = ['postId', 'user', 'magazine', 'image', 'body', 'lang', 'isAdult', 'isPinned', 'comments', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'tags', 'mentions', 'createdAt', 'editedAt', 'lastActive', 'slug', 'canAuthUserModerate', 'notificationStatus', 'bookmarks'];
+    protected const POST_COMMENT_RESPONSE_KEYS = ['commentId', 'user', 'magazine', 'postId', 'parentId', 'rootId', 'image', 'body', 'lang', 'isAdult', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'mentions', 'tags', 'createdAt', 'editedAt', 'lastActive', 'childCount', 'children', 'canAuthUserModerate', 'bookmarks'];
     protected const BAN_RESPONSE_KEYS = ['banId', 'reason', 'expired', 'expiredAt', 'bannedUser', 'bannedBy', 'magazine'];
     protected const LOG_ENTRY_KEYS = ['type', 'createdAt', 'magazine', 'moderator', 'subject'];
     protected const MAGAZINE_RESPONSE_KEYS = ['magazineId', 'owner', 'icon', 'name', 'title', 'description', 'rules', 'subscriptionsCount', 'entryCount', 'entryCommentCount', 'postCount', 'postCommentCount', 'isAdult', 'isUserSubscribed', 'isBlockedByUser', 'tags', 'badges', 'moderators', 'apId', 'apProfileId', 'serverSoftware', 'serverSoftwareVersion', 'isPostingRestrictedToMods', 'localSubscribers', 'notificationStatus'];
@@ -107,6 +110,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected NotificationManager $notificationManager;
     protected MentionManager $mentionManager;
     protected ActivityPubManager $activityPubManager;
+    protected BookmarkManager $bookmarkManager;
 
     protected MagazineRepository $magazineRepository;
     protected EntryRepository $entryRepository;
@@ -121,6 +125,8 @@ abstract class WebTestCase extends BaseWebTestCase
     protected SettingsRepository $settingsRepository;
     protected UserRepository $userRepository;
     protected TagLinkRepository $tagLinkRepository;
+    protected BookmarkRepository $bookmarkRepository;
+    protected BookmarkListRepository $bookmarkListRepository;
 
     protected ImageFactory $imageFactory;
     protected MagazineFactory $magazineFactory;
@@ -174,6 +180,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->badgeManager = $this->getService(BadgeManager::class);
         $this->notificationManager = $this->getService(NotificationManager::class);
         $this->activityPubManager = $this->getService(ActivityPubManager::class);
+        $this->bookmarkManager = $this->getService(BookmarkManager::class);
 
         $this->magazineRepository = $this->getService(MagazineRepository::class);
         $this->entryRepository = $this->getService(EntryRepository::class);
@@ -188,6 +195,8 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->settingsRepository = $this->getService(SettingsRepository::class);
         $this->userRepository = $this->getService(UserRepository::class);
         $this->tagLinkRepository = $this->getService(TagLinkRepository::class);
+        $this->bookmarkRepository = $this->getService(BookmarkRepository::class);
+        $this->bookmarkListRepository = $this->getService(BookmarkListRepository::class);
 
         $this->imageFactory = $this->getService(ImageFactory::class);
         $this->personFactory = $this->getService(PersonFactory::class);

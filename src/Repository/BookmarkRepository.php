@@ -38,7 +38,10 @@ class BookmarkRepository extends ServiceEntityRepository
         parent::__construct($registry, Bookmark::class);
     }
 
-    public function findByList(User $user, BookmarkList $list)
+    /**
+     * @return Bookmark[]
+     */
+    public function findByList(User $user, BookmarkList $list): array
     {
         return $this->createQueryBuilder('b')
             ->where('b.user = :user')
@@ -66,7 +69,9 @@ class BookmarkRepository extends ServiceEntityRepository
         $sql = "DELETE FROM bookmark WHERE user_id = :u AND $contentWhere";
         $conn = $this->entityManager->getConnection();
         $stmt = $conn->prepare($sql);
-        $stmt->executeStatement(['u' => $user->getId(), 'id' => $content->getId()]);
+        $stmt->bindValue('u', $user->getId());
+        $stmt->bindValue('id', $content->getId());
+        $stmt->executeStatement();
     }
 
     public function removeBookmarkFromList(User $user, BookmarkList $list, Entry|EntryComment|Post|PostComment $content): void
@@ -86,7 +91,10 @@ class BookmarkRepository extends ServiceEntityRepository
         $sql = "DELETE FROM bookmark WHERE user_id = :u AND list_id = :l AND $contentWhere";
         $conn = $this->entityManager->getConnection();
         $stmt = $conn->prepare($sql);
-        $stmt->executeStatement(['u' => $user->getId(), 'l' => $list->getId(), 'id' => $content->getId()]);
+        $stmt->bindValue('u', $user->getId());
+        $stmt->bindValue('l', $list->getId());
+        $stmt->bindValue('id', $content->getId());
+        $stmt->executeStatement();
     }
 
     public function findPopulatedByList(BookmarkList $list, Criteria $criteria, ?int $perPage = null): PagerfantaInterface

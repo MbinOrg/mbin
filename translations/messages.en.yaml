@@ -583,6 +583,13 @@ oauth2.grant.post_comment.report: Report any comment on a post.
 oauth2.grant.user.all: Read and edit your profile, messages, or notifications; Read
   and edit permissions you've granted other apps; follow or block other users; view
   lists of users you follow or block.
+oauth2.grant.user.bookmark: Add and remove bookmarks
+oauth2.grant.user.bookmark.add: Add bookmarks
+oauth2.grant.user.bookmark.remove: Remove bookmarks
+oauth2.grant.user.bookmark_list: Read, edit and delete your bookmark lists
+oauth2.grant.user.bookmark_list.read: Read your bookmark lists
+oauth2.grant.user.bookmark_list.edit: Edit your bookmark lists
+oauth2.grant.user.bookmark_list.delete: Delete your bookmark lists
 oauth2.grant.user.profile.all: Read and edit your profile.
 oauth2.grant.user.profile.read: Read your profile.
 oauth2.grant.user.profile.edit: Edit your profile.
