@@ -5,7 +5,6 @@ doctrine:
             citext: App\DoctrineExtensions\DBAL\Types\Citext
             enumApplicationStatus: App\DoctrineExtensions\DBAL\Types\EnumApplicationStatus
             enumNotificationStatus: App\DoctrineExtensions\DBAL\Types\EnumNotificationStatus
-            EnumNotificationStatus: App\DoctrineExtensions\DBAL\Types\EnumNotificationStatus
             enumSortOptions: App\DoctrineExtensions\DBAL\Types\EnumSortOptions
         mapping_types:
             user_type: string
