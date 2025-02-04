@@ -1,18 +1,23 @@
-# Mbin
+<p align="center">
+    <img src="docs/images/mbin.png" alt="Mbin logo" width="400">
+</p>
+<p align="center">
+  <a href="https://github.com/MbinOrg/mbin/actions/workflows/action.yaml?query=branch%3Amain"><img src="https://github.com/MbinOrg/mbin/actions/workflows/action.yaml/badge.svg?branch=main" alt="GitHub Actions Workflow"></a>
+  <a href="https://github.com/MbinOrg/mbin/actions/workflows/psalm.yml?query=branch%3Amain"><img src="https://github.com/MbinOrg/mbin/actions/workflows/psalm.yml/badge.svg?branch=main" alt="Psalm Security Scan"></a>
+  <a href="https://hosted.weblate.org/engage/mbin/"><img src="https://hosted.weblate.org/widgets/mbin/-/svg-badge.svg" alt="Translation status"></a>
+  <a href="https://matrix.to/#/#mbin:melroy.org"><img src="https://img.shields.io/badge/chat-on%20matrix-brightgreen" alt="Matrix chat"></a>
+  <a href="https://github.com/MbinOrg/mbin/blob/main/LICENSE"><img src="https://img.shields.io/badge/AGPL%203.0-license-blue" alt="License"></a>
+</p>
 
-Mbin is a fork of [/kbin](https://codeberg.org/Kbin/kbin-core), community-focused. Feel free to discuss on [Matrix](https://matrix.to/#/#mbin:melroy.org) and to create Pull Requests.
+## Introduction
+
+Mbin is a decentralized content aggregator, voting, discussion, and microblogging platform running on the fediverse. It can
+communicate with various ActivityPub services, including but not limited to: Mastodon, Lemmy, Pixelfed, Pleroma, and PeerTube.
+
+Mbin is a fork and continuation of [/kbin](https://codeberg.org/Kbin/kbin-core), but community-focused. Feel free to chat on [Matrix](https://matrix.to/#/#mbin:melroy.org). Pull requests are always welcome.
 
 > [!Important]
-> Mbin is focused on what the community wants, pull requests can be merged by any repo maintainer (with merge rights in GitHub). Discussions take place on [Matrix](https://matrix.to/#/#mbin:melroy.org) then _consensus_ has to be reached by the community. If approved by the community, only one approval on the PR is required by one of the Mbin maintainers. It's built entirely on trust.
-
-Mbin is a decentralized content aggregator, voting, discussion and microblogging platform running on the fediverse network. It can
-communicate with many other ActivityPub services, including Kbin, Mastodon, Lemmy, Pleroma, Peertube. The initiative aims to
-promote a free and open internet.
-
-[![Mbin Workflow](https://github.com/MbinOrg/mbin/actions/workflows/action.yaml/badge.svg?branch=main)](https://github.com/MbinOrg/mbin/actions/workflows/action.yaml?query=branch%3Amain)
-[![Psalm Security Scan](https://github.com/MbinOrg/mbin/actions/workflows/psalm.yml/badge.svg?branch=main)](https://github.com/MbinOrg/mbin/actions/workflows/psalm.yml?query=branch%3Amain)
-[![Translation status](https://hosted.weblate.org/widgets/mbin/-/svg-badge.svg)](https://hosted.weblate.org/engage/mbin/)
-[![Matrix](https://img.shields.io/badge/chat-on%20matrix-brightgreen)](https://matrix.to/#/#mbin:melroy.org)
+> Mbin is focused on what the community wants. Pull requests can be merged by any repo maintainer with merge rights in GitHub. Discussions take place on [Matrix](https://matrix.to/#/#mbin:melroy.org) then _consensus_ has to be reached by the community.
 
 Unique Features of Mbin for server owners & users alike:
 
@@ -42,8 +47,6 @@ For developers:
 - [Alternative list of instances at fedidb.org](https://fedidb.org/software/mbin)
 - [Alternative list of instances at fediverse.observer](https://mbin.fediverse.observer/list)
 
-![Mbin logo](docs/images/mbin.png)
-
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=MbinOrg/mbin&type=Date)](https://star-history.com/#MbinOrg/mbin&Date)
@@ -53,7 +56,7 @@ For developers:
 - [Official repository on GitHub](https://github.com/MbinOrg/mbin)
 - [Matrix Space for discussions](https://matrix.to/#/#mbin:melroy.org)
 - [Translations](https://hosted.weblate.org/engage/mbin/)
-- [Contribution guidelines](CONTRIBUTING.md) - please read first, including before opening an issue!
+- [Contribution guidelines](docs/03-contributing) - please read first, including before opening an issue!
 
 ## Magazines
 
