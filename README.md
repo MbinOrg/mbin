@@ -14,7 +14,7 @@
 Mbin is a decentralized content aggregator, voting, discussion and microblogging platform running on the fediverse. It can
 communicate with various ActivityPub services, including but not limited to: Mastodon, Lemmy, Pixelfed, Pleroma and PeerTube.
 
-Mbin is a fork and continuation of [/kbin](https://codeberg.org/Kbin/kbin-core), community-focused. Feel free to discuss on [Matrix](https://matrix.to/#/#mbin:melroy.org) and pull requests are always welcome.
+Mbin is a fork and continuation of [/kbin](https://codeberg.org/Kbin/kbin-core), but community-focused. Feel free to chat on [Matrix](https://matrix.to/#/#mbin:melroy.org). Pull requests are always welcome.
 
 > [!Important]
 > Mbin is focused on what the community wants, pull requests can be merged by any repo maintainer with merge rights in GitHub. Discussions take place on [Matrix](https://matrix.to/#/#mbin:melroy.org) then _consensus_ has to be reached by the community.
