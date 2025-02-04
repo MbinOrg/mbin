@@ -4,5 +4,5 @@ api_notification_settings_update:
     requirements:
         targetType: entry|post|magazine|user
         setting: Default|Loud|Muted
-    methods: [ GET ]
+    methods: [ PUT ]
     format: json
