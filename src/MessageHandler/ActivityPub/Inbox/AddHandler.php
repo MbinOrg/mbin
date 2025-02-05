@@ -108,6 +108,11 @@ class AddHandler extends MbinMessageHandler
             throw new \LogicException("the user '$actor->username' ({$actor->getId()}) is not a moderator of $targetMag->name ({$targetMag->getId()}) and is not from the same instance. They can therefore not add pinned entries");
         }
 
+        if ('random' === $targetMag->name) {
+            // do not pin anything in the random magazine
+            return;
+        }
+
         $apId = null;
         if (\is_string($object)) {
             $apId = $object;
@@ -121,7 +126,9 @@ class AddHandler extends MbinMessageHandler
             $pair = $this->apActivityRepository->findLocalByApId($apId);
             if (Entry::class === $pair['type']) {
                 $existingEntry = $this->entryRepository->findOneBy(['id' => $pair['id']]);
-                if ($existingEntry && !$existingEntry->sticky) {
+                if ($existingEntry->magazine->getId() !== $targetMag->getId()) {
+                    $this->logger->warning('[AddHandler::handlePinnedAdd] entry {e} is not in the magazine that was targeted {m}. It was in {m2}', ['e' => $existingEntry->title, 'm' => $targetMag->name, 'm2' => $existingEntry->magazine->name]);
+                } elseif ($existingEntry && !$existingEntry->sticky) {
                     $this->logger->info('[AddHandler::handlePinnedAdd] Pinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
                     $this->entryManager->pin($existingEntry, $actor);
                 }

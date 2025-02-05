@@ -62,5 +62,5 @@ api_notification_push_unregister:
 api_notification_push_test:
     controller: App\Controller\Api\Notification\NotificationPushApi::testSubscription
     path: /api/notification/push/test
-    methods: [ GET ]
+    methods: [ POST ]
     format: json

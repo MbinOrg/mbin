@@ -22,7 +22,7 @@
         "regenerator-runtime": "^0.14.0",
         "sass": "^1.69.5",
         "sass-loader": "^16.0.0",
-        "simple-icons-font": "^13.21.0",
+        "simple-icons-font": "^14.5.0",
         "stimulus-textarea-autogrow": "^4.1.0",
         "stimulus-use": "^0.52.1",
         "timeago.js": "^4.0.2",
