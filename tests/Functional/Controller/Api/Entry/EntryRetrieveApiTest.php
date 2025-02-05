@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Entry;
 
 use App\Tests\WebTestCase;
-use function PHPUnit\Framework\assertSame;
 
 class EntryRetrieveApiTest extends WebTestCase
 {
