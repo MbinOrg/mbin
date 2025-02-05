@@ -48,7 +48,7 @@ class EntryResponseDto implements \JsonSerializable
     public ?bool $canAuthUserModerate = null;
     public ?ENotificationStatus $notificationStatus = null;
 
-    /** @var string[] */
+    /** @var string[]|null */
     #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
     public ?array $bookmarks = null;
 
