@@ -132,7 +132,7 @@ class BookmarkListApiController extends BaseApi
         in: 'query',
         schema: new OA\Schema(type: 'integer', default: EntryRepository::PER_PAGE, maximum: self::MAX_PER_PAGE, minimum: self::MIN_PER_PAGE)
     )]
-    #[OA\Tag(name: 'bookmark:list')]
+    #[OA\Tag(name: 'bookmark_list')]
     #[Security(name: 'oauth2', scopes: ['user:bookmark_list:read'])]
     #[IsGranted('ROLE_OAUTH2_USER:BOOKMARK_LIST:READ')]
     public function front(
@@ -204,7 +204,7 @@ class BookmarkListApiController extends BaseApi
         ],
         content: new OA\JsonContent(ref: new Model(type: TooManyRequestsErrorSchema::class))
     )]
-    #[OA\Tag(name: 'bookmark:list')]
+    #[OA\Tag(name: 'bookmark_list')]
     #[Security(name: 'oauth2', scopes: ['user:bookmark_list:read'])]
     #[IsGranted('ROLE_OAUTH2_USER:BOOKMARK_LIST:READ')]
     public function list(RateLimiterFactory $apiReadLimiter): JsonResponse
@@ -227,7 +227,7 @@ class BookmarkListApiController extends BaseApi
             new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
             new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
         ],
-        content: null
+        content: new Model(type: BookmarkListDto::class),
     )]
     #[OA\Response(
         response: 401,
@@ -255,7 +255,7 @@ class BookmarkListApiController extends BaseApi
         in: 'path',
         schema: new OA\Schema(type: 'string')
     )]
-    #[OA\Tag(name: 'bookmark:list')]
+    #[OA\Tag(name: 'bookmark_list')]
     #[Security(name: 'oauth2', scopes: ['user:bookmark_list:edit'])]
     #[IsGranted('ROLE_OAUTH2_USER:BOOKMARK_LIST:EDIT')]
     public function makeDefault(string $list_name, RateLimiterFactory $apiUpdateLimiter): JsonResponse
@@ -311,7 +311,7 @@ class BookmarkListApiController extends BaseApi
         type: BookmarkListDto::class,
         groups: ['common']
     ))]
-    #[OA\Tag(name: 'bookmark:list')]
+    #[OA\Tag(name: 'bookmark_list')]
     #[Security(name: 'oauth2', scopes: ['user:bookmark_list:edit'])]
     #[IsGranted('ROLE_OAUTH2_USER:BOOKMARK_LIST:EDIT')]
     public function editList(string $list_name, #[MapRequestPayload] BookmarkListDto $dto, RateLimiterFactory $apiUpdateLimiter): JsonResponse
@@ -363,7 +363,7 @@ class BookmarkListApiController extends BaseApi
         in: 'path',
         schema: new OA\Schema(type: 'string')
     )]
-    #[OA\Tag(name: 'bookmark:list')]
+    #[OA\Tag(name: 'bookmark_list')]
     #[Security(name: 'oauth2', scopes: ['user:bookmark_list:edit'])]
     #[IsGranted('ROLE_OAUTH2_USER:BOOKMARK_LIST:EDIT')]
     public function createList(string $list_name, RateLimiterFactory $apiUpdateLimiter): JsonResponse
@@ -415,7 +415,7 @@ class BookmarkListApiController extends BaseApi
         in: 'path',
         schema: new OA\Schema(type: 'string')
     )]
-    #[OA\Tag(name: 'bookmark:list')]
+    #[OA\Tag(name: 'bookmark_list')]
     #[Security(name: 'oauth2', scopes: ['user:bookmark_list:delete'])]
     #[IsGranted('ROLE_OAUTH2_USER:BOOKMARK_LIST:DELETE')]
     public function deleteList(string $list_name, RateLimiterFactory $apiDeleteLimiter): JsonResponse

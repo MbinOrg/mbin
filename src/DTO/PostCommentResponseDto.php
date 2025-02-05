@@ -82,8 +82,9 @@ class PostCommentResponseDto implements \JsonSerializable
     public array $children = [];
     public ?bool $canAuthUserModerate = null;
 
-    /** @var string[] */
-    private array $bookmarks;
+    /** @var string[]|null */
+    #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
+    public ?array $bookmarks = null;
 
     /**
      * @param string[] $bookmarks
@@ -110,7 +111,7 @@ class PostCommentResponseDto implements \JsonSerializable
         ?\DateTimeImmutable $editedAt = null,
         ?\DateTime $lastActive = null,
         ?bool $canAuthUserModerate = null,
-        array $bookmarks = [],
+        ?array $bookmarks = null,
     ): self {
         $dto = new PostCommentResponseDto();
         $dto->commentId = $id;

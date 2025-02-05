@@ -129,9 +129,9 @@ class BookmarkListRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
-    public function getBookmarksOfContentInterface(ContentInterface $content): array
+    public function getBookmarksOfContentInterface(ContentInterface $content): ?array
     {
         if ($user = $this->security->getUser()) {
             if ($user instanceof User && (
@@ -146,8 +146,10 @@ class BookmarkListRepository extends ServiceEntityRepository
             )) {
                 return array_map(fn ($list) => $list->name, $this->findListsBySubject($content, $user));
             }
+
+            return [];
         }
 
-        return [];
+        return null;
     }
 }

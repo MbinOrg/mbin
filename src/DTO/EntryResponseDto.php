@@ -49,10 +49,11 @@ class EntryResponseDto implements \JsonSerializable
     public ?ENotificationStatus $notificationStatus = null;
 
     /** @var string[] */
-    public array $bookmarks = [];
+    #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
+    public ?array $bookmarks = null;
 
     /**
-     * @param string[] $bookmarks
+     * @param string[]|null $bookmarks
      */
     public static function create(
         ?int $id = null,
@@ -81,7 +82,7 @@ class EntryResponseDto implements \JsonSerializable
         ?string $slug = null,
         ?string $apId = null,
         ?bool $canAuthUserModerate = null,
-        array $bookmarks = [],
+        ?array $bookmarks = null,
     ): self {
         $dto = new EntryResponseDto();
         $dto->entryId = $id;

@@ -40,8 +40,9 @@ class PostResponseDto implements \JsonSerializable
     public ?bool $canAuthUserModerate = null;
     public ?ENotificationStatus $notificationStatus = null;
 
-    /** @var string[] */
-    private array $bookmarks;
+    /** @var string[]|null */
+    #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
+    public ?array $bookmarks = null;
 
     /**
      * @param string[] $bookmarks
@@ -68,7 +69,7 @@ class PostResponseDto implements \JsonSerializable
         ?\DateTime $lastActive = null,
         ?string $slug = null,
         ?bool $canAuthUserModerate = null,
-        array $bookmarks = [],
+        ?array $bookmarks = null,
     ): self {
         $dto = new PostResponseDto();
         $dto->postId = $id;

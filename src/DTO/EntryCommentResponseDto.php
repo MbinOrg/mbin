@@ -90,8 +90,9 @@ class EntryCommentResponseDto implements \JsonSerializable
     public int $childCount = 0;
     public ?bool $canAuthUserModerate = null;
 
-    /** @var string[] */
-    private array $bookmarks;
+    /** @var string[]|null */
+    #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
+    public ?array $bookmarks = null;
 
     public static function create(
         ?int $id = null,
@@ -116,7 +117,7 @@ class EntryCommentResponseDto implements \JsonSerializable
         ?\DateTime $lastActive = null,
         int $childCount = 0,
         ?bool $canAuthUserModerate = null,
-        array $bookmarks = [],
+        ?array $bookmarks = null,
     ): self {
         $dto = new EntryCommentResponseDto();
         $dto->commentId = $id;
