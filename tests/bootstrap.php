@@ -56,6 +56,11 @@ function bootstrapDatabase(): void
         '--no-interaction' => true,
     ]));
 
+    $conn = $kernel->getContainer()->get('doctrine.orm.entity_manager')->getConnection();
+    if ($conn->isTransactionActive()) {
+        $conn->commit();
+    }
+
     $kernel->shutdown();
 }
 
