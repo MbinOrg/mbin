@@ -45,6 +45,7 @@ class NotificationSettings
 
     public function __construct(User $user, Entry|Post|User|Magazine $target, ENotificationStatus $status)
     {
+        // this is a dummy comment TODO remove
         $this->user = $user;
         $this->setStatus($status);
         if ($target instanceof User) {
