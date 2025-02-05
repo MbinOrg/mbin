@@ -60,6 +60,9 @@ function bootstrapDatabase(): void
     if ($conn->isTransactionActive()) {
         $conn->commit();
     }
+    if ($conn->isConnected()) {
+        $conn->close();
+    }
 
     $kernel->shutdown();
 }
