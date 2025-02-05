@@ -39,7 +39,7 @@ export default class extends Controller {
 
         // if in a list and the click is made via touch, open the post
         if (!this.element.classList.contains('isSingle')) {
-            this.element.querySelector('.content').addEventListener('click', (e) => {
+            this.element.querySelector('.content')?.addEventListener('click', (e) => {
                 if (e.defaultPrevented) {
                     return
                 }
