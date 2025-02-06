@@ -32,8 +32,8 @@ class AdminSignupRequestsController extends AbstractController
             $requests = [];
             if ($signupRequest = $this->repository->findSignupRequest($username)) {
                 $requests[] = $signupRequest;
-                $user = $this->repository->findOneBy(['username' => $username]);
             }
+            $user = $this->repository->findOneBy(['username' => $username]);
             // Always mark the notifications as read, even if the user does not have any signup requests anymore
             $this->notificationRepository->markUserSignupNotificationsAsRead($this->getUserOrThrow(), $user);
         }
