@@ -32,8 +32,9 @@ class AdminSignupRequestsController extends AbstractController
             $requests = [];
             if ($signupRequest = $this->repository->findSignupRequest($username)) {
                 $requests[] = $signupRequest;
+                $user = $this->repository->findOneBy(['username' => $username]);
+                $this->notificationRepository->markUserSignupNotificationsAsRead($this->getUserOrThrow(), $user);
             }
-            $this->notificationRepository->markUserSignupNotificationsAsRead($this->getUserOrThrow(), $username);
         }
 
         return $this->render('admin/signup_requests.html.twig', [
