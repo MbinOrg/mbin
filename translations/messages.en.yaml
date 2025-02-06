@@ -68,8 +68,8 @@ subscribe_for_updates: Subscribe to start receiving updates.
 federated_user_info: This profile is from a federated server and may be incomplete.
 go_to_original_instance: View on remote instance
 empty: Empty
-subscribe: Subscribe
-unsubscribe: Unsubscribe
+subscribe: Sub
+unsubscribe: Unsub
 follow: Follow
 unfollow: Unfollow
 reply: Reply
