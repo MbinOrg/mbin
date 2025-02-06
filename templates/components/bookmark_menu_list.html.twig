@@ -1,0 +1,5 @@
+<div class="bookmark-menu-list">
+    {% for list in bookmarkLists %}
+        {{ component('bookmark_list', { subject: subject, list: list }) }}
+    {% endfor %}
+</div>

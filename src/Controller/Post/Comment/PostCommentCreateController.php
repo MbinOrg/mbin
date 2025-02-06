@@ -16,6 +16,7 @@ use App\Service\IpResolver;
 use App\Service\MentionManager;
 use App\Service\PostCommentManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,6 +32,7 @@ class PostCommentCreateController extends AbstractController
         private readonly PostCommentRepository $repository,
         private readonly IpResolver $ipResolver,
         private readonly MentionManager $mentionManager,
+        private readonly Security $security,
     ) {
     }
 
@@ -77,7 +79,7 @@ class PostCommentCreateController extends AbstractController
         }
 
         $user = $this->getUserOrThrow();
-        $criteria = new PostCommentPageView($this->getPageNb($request));
+        $criteria = new PostCommentPageView($this->getPageNb($request), $this->security);
         $criteria->post = $post;
 
         $comments = $this->repository->findByCriteria($criteria);

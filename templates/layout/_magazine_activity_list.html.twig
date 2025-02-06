@@ -1,3 +1,6 @@
+{%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
+{%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
+{%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_FALSE) -%}
 {% if actor is not defined %}
     {% set actor = 'magazine' %}
 {% endif %}
@@ -19,7 +22,13 @@
                     {% endif %}
                     <div>
                         <a href="{{ path('front_magazine', {name: attribute(subject, actor).name}) }}"
-                           class="stretched-link">{{ attribute(subject, actor).name }} {% if attribute(subject, actor).isAdult %}<small class="badge danger">18+</small>{% endif %}</a>
+                           class="stretched-link">
+                            {{ attribute(subject, actor).name }}
+                            {%- if SHOW_MAGAZINE_FULLNAME is same as V_TRUE -%}
+                                @{{- attribute(subject, actor).name|apDomain -}}
+                            {%- endif -%}
+                            {% if attribute(subject, actor).isAdult %}<small class="badge danger">18+</small>{% endif %}
+                        </a>
                         <small>{{ component('date', {date: subject.createdAt}) }}</small>
                     </div>
                 </li>

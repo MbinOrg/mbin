@@ -43,6 +43,13 @@
         </header>
     </div>
     {{ component('magazine_sub', {magazine: magazine}) }}
+
+    {% if app.user is defined and app.user is not same as null %}
+        <div class="notification-switch-container" data-controller="html-refresh">
+            {{ component('notification_switch', {target: magazine}) }}
+        </div>
+    {% endif %}
+
     {% if computed.magazine.description and showDescription %}
         <div class="content magazine__description">{{ computed.magazine.description|markdown|raw }}</div>
     {% endif %}

@@ -111,7 +111,7 @@
         "twig/extra-bundle": "^3.10.0",
         "twig/html-extra": "^3.10.0",
         "twig/intl-extra": "^3.10.0",
-        "twig/twig": "^3.10.3",
+        "twig/twig": "^3.15.0",
         "webmozart/assert": "^1.11.0",
         "wohali/oauth2-discord-new": "^1.2.1"
     },
@@ -125,7 +125,7 @@
         "phpunit/phpunit": "^11.3.4",
         "symfony/browser-kit": "7.2.*",
         "symfony/debug-bundle": "7.2.*",
-        "symfony/maker-bundle": "1.61.0",
+        "symfony/maker-bundle": "1.62.1",
         "symfony/phpunit-bridge": "7.2.*",
         "symfony/stopwatch": "7.2.*",
         "symfony/web-profiler-bundle": "7.2.*"

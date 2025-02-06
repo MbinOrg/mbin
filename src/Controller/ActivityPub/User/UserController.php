@@ -6,6 +6,7 @@ namespace App\Controller\ActivityPub\User;
 
 use App\Controller\AbstractController;
 use App\Entity\User;
+use App\Enums\EApplicationStatus;
 use App\Factory\ActivityPub\PersonFactory;
 use App\Factory\ActivityPub\TombstoneFactory;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,6 +23,10 @@ class UserController extends AbstractController
     public function __invoke(User $user, Request $request): JsonResponse
     {
         if ($user->apId) {
+            throw $this->createNotFoundException();
+        }
+
+        if (EApplicationStatus::Approved !== $user->getApplicationStatus()) {
             throw $this->createNotFoundException();
         }
 

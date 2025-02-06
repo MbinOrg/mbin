@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\User;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class UserFollowControllerTest extends WebTestCase
 {
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCanFollowAndUnfollow(): void
     {
         $this->client->loginUser($this->getUserByUsername('JaneDoe'));
@@ -48,6 +50,7 @@ class UserFollowControllerTest extends WebTestCase
         $this->assertStringContainsString('Unfollow', $this->client->getResponse()->getContent());
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testXmlUserCanUnfollow(): void
     {
         $this->client->loginUser($this->getUserByUsername('JaneDoe'));

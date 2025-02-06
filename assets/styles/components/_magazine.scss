@@ -36,7 +36,7 @@
   &__description,
   &__rules {
     ul {
-      padding-left: .75rem;
+      padding-left: 1.5rem;
 
       li {
         margin-bottom: .5rem;
@@ -44,7 +44,7 @@
     }
 
     ol {
-      padding-left: 0.75rem;
+      padding-left: 1.5rem;
 
       li {
         margin-left: 2px;
@@ -53,11 +53,14 @@
     }
   }
 
+  &__description {
+    margin-top: 2.5rem;
+  }
+
   &__subscribe {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    margin-bottom: 2.5rem;
     flex-wrap: wrap;
 
     div {

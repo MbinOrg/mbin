@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Post\Comment;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class PostCommentCreateControllerTest extends WebTestCase
 {
@@ -36,6 +37,7 @@ class PostCommentCreateControllerTest extends WebTestCase
         $this->assertSelectorTextContains('#comments .content', 'test comment 1');
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCanCreatePostCommentWithImage(): void
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));
@@ -61,6 +63,7 @@ class PostCommentCreateControllerTest extends WebTestCase
         $_FILES = [];
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCannotCreateInvalidPostComment(): void
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));

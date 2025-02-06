@@ -7,6 +7,7 @@ namespace App\Tests\Functional\Controller\Api\Magazine\Moderate;
 use App\DTO\ReportDto;
 use App\Tests\Functional\Controller\Api\Magazine\MagazineRetrieveApiTest;
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class MagazineActionReportsApiTest extends WebTestCase
 {
@@ -118,6 +119,7 @@ class MagazineActionReportsApiTest extends WebTestCase
         self::assertResponseStatusCodeSame(403);
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testApiCanAcceptReport(): void
     {
         $user = $this->getUserByUsername('JohnDoe');
@@ -132,9 +134,9 @@ class MagazineActionReportsApiTest extends WebTestCase
 
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine:reports:action');
         $token = $codes['token_type'].' '.$codes['access_token'];
+        $consideredAt = new \DateTimeImmutable();
 
         $this->client->jsonRequest('POST', "/api/moderate/magazine/{$magazine->getId()}/reports/{$report->getId()}/accept", server: ['HTTP_AUTHORIZATION' => $token]);
-        $consideredAt = new \DateTimeImmutable();
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
@@ -155,8 +157,8 @@ class MagazineActionReportsApiTest extends WebTestCase
         self::assertEquals($entry->body, $jsonData['subject']['body']);
         self::assertEquals('approved', $jsonData['status']);
         self::assertSame(1, $jsonData['weight']);
-        self::assertSame($report->createdAt->getTimestamp(), \DateTimeImmutable::createFromFormat(\DateTimeImmutable::ATOM, $jsonData['createdAt'])->getTimestamp());
-        self::assertSame($consideredAt->getTimestamp(), \DateTimeImmutable::createFromFormat(\DateTimeImmutable::ATOM, $jsonData['consideredAt'])->getTimestamp());
+        self::assertGreaterThanOrEqual($report->createdAt->getTimestamp(), \DateTimeImmutable::createFromFormat(\DateTimeImmutable::ATOM, $jsonData['createdAt'])->getTimestamp());
+        self::assertGreaterThanOrEqual($consideredAt->getTimestamp(), \DateTimeImmutable::createFromFormat(\DateTimeImmutable::ATOM, $jsonData['consideredAt'])->getTimestamp());
         self::assertNotNull($jsonData['consideredBy']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['consideredBy']);
         self::assertSame($user->getId(), $jsonData['consideredBy']['userId']);

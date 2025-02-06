@@ -6,6 +6,7 @@ namespace App\Controller\User;
 
 use App\Controller\AbstractController;
 use App\Entity\User;
+use App\Enums\EApplicationStatus;
 use App\PageView\EntryCommentPageView;
 use App\PageView\EntryPageView;
 use App\PageView\MagazinePageView;
@@ -15,19 +16,24 @@ use App\Repository\Criteria;
 use App\Repository\EntryCommentRepository;
 use App\Repository\EntryRepository;
 use App\Repository\MagazineRepository;
+use App\Repository\NotificationRepository;
 use App\Repository\PostCommentRepository;
 use App\Repository\PostRepository;
 use App\Repository\SearchRepository;
 use App\Repository\UserRepository;
 use App\Service\SubjectOverviewManager;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class UserFrontController extends AbstractController
 {
-    public function __construct(private readonly SubjectOverviewManager $overviewManager)
-    {
+    public function __construct(
+        private readonly SubjectOverviewManager $overviewManager,
+        private readonly NotificationRepository $notificationRepository,
+        private readonly Security $security,
+    ) {
     }
 
     public function front(User $user, Request $request, UserRepository $repository): Response
@@ -40,8 +46,16 @@ class UserFrontController extends AbstractController
         $requestedByUser = $this->getUser();
         $hideAdult = (!$requestedByUser || $requestedByUser->hideAdult);
 
+        if (EApplicationStatus::Approved !== $user->getApplicationStatus()) {
+            throw $this->createNotFoundException();
+        }
+
         if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
             throw $this->createNotFoundException();
+        }
+
+        if ($loggedInUser = $this->getUser()) {
+            $this->notificationRepository->markUserSignupNotificationsAsRead($loggedInUser, $user);
         }
 
         $activity = $repository->findPublicActivity($this->getPageNb($request), $user, $hideAdult);
@@ -68,7 +82,7 @@ class UserFrontController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $criteria = new EntryPageView($this->getPageNb($request));
+        $criteria = new EntryPageView($this->getPageNb($request), $this->security);
         $criteria->sortOption = Criteria::SORT_NEW;
         $criteria->user = $user;
 
@@ -94,7 +108,7 @@ class UserFrontController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $criteria = new EntryCommentPageView($this->getPageNb($request));
+        $criteria = new EntryCommentPageView($this->getPageNb($request), $this->security);
         $criteria->sortOption = Criteria::SORT_NEW;
         $criteria->user = $user;
         $criteria->onlyParents = false;
@@ -122,7 +136,7 @@ class UserFrontController extends AbstractController
         if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
             throw $this->createNotFoundException();
         }
-        $criteria = new PostPageView($this->getPageNb($request));
+        $criteria = new PostPageView($this->getPageNb($request), $this->security);
         $criteria->sortOption = Criteria::SORT_NEW;
         $criteria->user = $user;
 
@@ -150,7 +164,7 @@ class UserFrontController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $criteria = new PostCommentPageView($this->getPageNb($request));
+        $criteria = new PostCommentPageView($this->getPageNb($request), $this->security);
         $criteria->sortOption = Criteria::SORT_NEW;
         $criteria->onlyParents = false;
         $criteria->user = $user;

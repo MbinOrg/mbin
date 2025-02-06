@@ -2,13 +2,13 @@
 
 {%- block title -%}
     {%- if magazine is defined and magazine -%}
-        {% if get_active_sort_option('sortBy') is not same as 'hot' %}
+        {% if get_active_sort_option('sortBy') is not same as get_default_sort_option() %}
             {{- magazine.title }} - {{ get_active_sort_option('sortBy')|trans|capitalize }} - {{ 'microblog'|trans }} - {{ parent() -}}
         {% else %}
             {{- magazine.title }} - {{ 'microblog'|trans }} - {{ parent() -}}
         {% endif %}
     {%- else -%}
-        {% if get_active_sort_option('sortBy') is not same as 'hot' %}
+        {% if get_active_sort_option('sortBy') is not same as get_default_sort_option() %}
             {{- get_active_sort_option('sortBy')|trans|capitalize }} - {{ 'microblog'|trans }} - {{ parent() }}
         {% else %}
             {{- 'microblog'|trans }} - {{ parent() -}}

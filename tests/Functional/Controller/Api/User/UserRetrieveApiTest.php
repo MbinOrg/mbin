@@ -22,10 +22,13 @@ class UserRetrieveApiTest extends WebTestCase
         'addMentionsEntries',
         'addMentionsPosts',
         'homepage',
+        'frontDefaultSort',
+        'commentDefaultSort',
         'featuredMagazines',
         'preferredLanguages',
         'customCss',
         'ignoreMagazinesCustomCss',
+        'notifyOnUserSignup',
     ];
     public const NUM_USERS = 10;
 
@@ -35,8 +38,9 @@ class UserRetrieveApiTest extends WebTestCase
         for ($i = 0; $i < self::NUM_USERS; ++$i) {
             $users[] = $this->getUserByUsername('user'.(string) ($i + 1), about: 'Test user '.(string) ($i + 1));
         }
+        $this->getUserByUsername('userWithoutAbout');
 
-        $this->client->request('GET', '/api/users');
+        $this->client->request('GET', '/api/users?withAbout=1');
         self::assertResponseIsSuccessful();
 
         $jsonData = self::getJsonResponse($this->client);
@@ -68,7 +72,7 @@ class UserRetrieveApiTest extends WebTestCase
             $users[] = $this->getUserByUsername('user'.(string) ($i + 1), about: 'Test user '.(string) ($i + 1));
         }
 
-        $this->client->request('GET', '/api/users', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('GET', '/api/users?withAbout=1', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
         $jsonData = self::getJsonResponse($this->client);

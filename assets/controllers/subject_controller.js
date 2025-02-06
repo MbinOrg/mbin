@@ -36,6 +36,24 @@ export default class extends Controller {
         }
 
         this.checkHeight();
+
+        // if in a list and the click is made via touch, open the post
+        if (!this.element.classList.contains('isSingle')) {
+            this.element.querySelector('.content').addEventListener('click', (e) => {
+                if (e.defaultPrevented) {
+                    return
+                }
+                if ("touch" === e.pointerType) {
+                    const link = this.element.querySelector("header a:not(.user-inline)")
+                    if (link) {
+                        const href = link.getAttribute('href')
+                        if (href) {
+                            document.location.href = href
+                        }
+                    }
+                }
+            })
+        }
     }
 
     async getForm(event) {
@@ -405,6 +423,7 @@ export default class extends Controller {
                 e.target.previousSibling.scrollIntoView();
                 this.isExpandedValue = false;
             }
+            e.preventDefault();
         });
     }
 

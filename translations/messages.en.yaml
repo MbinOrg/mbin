@@ -214,6 +214,7 @@ notify_on_new_post_comment_reply: Replies to my comments on any posts
 notify_on_new_entry: New threads (links or articles) in any magazine to which I'm
   subscribed
 notify_on_new_posts: New posts in any magazine to which I'm subscribed
+notify_on_user_signup: New signups
 save: Save
 about: About
 old_email: Current email
@@ -402,6 +403,7 @@ captcha_enabled: Captcha enabled
 header_logo: Header logo
 browsing_one_thread: You are only browsing one thread in the discussion! All comments
   are available on the post page.
+viewing_one_signup_request: You are only viewing one signup request by %username%
 return: Return
 boost: Boost
 mercure_enabled: Mercure enabled
@@ -437,6 +439,8 @@ your_account_is_not_active: Your account has not been activated. Please check yo
   email for account activation instructions or <a href="%link_target%">request a new
   account activation email.</a>
 your_account_has_been_banned: Your account has been banned
+your_account_is_not_yet_approved: Your account has not been approved yet.
+  We will send you an email as soon as the admins have processed your signup request.
 toolbar.bold: Bold
 toolbar.italic: Italic
 toolbar.strikethrough: Strikethrough
@@ -873,6 +877,9 @@ notification_title_message: New direct message
 notification_title_new_post: New Post
 notification_title_removed_post: A post was removed
 notification_title_edited_post: A post was edited
+notification_title_new_signup: A new user registered
+notification_body_new_signup: The user %u% registered.
+notification_body2_new_signup_approval: You need to approve the request before they can log in
 show_related_magazines: Show random magazines
 show_related_entries: Show random threads
 show_related_posts: Show random posts
@@ -897,4 +904,45 @@ admin_users_banned: Banned
 user_verify: Activate account
 max_image_size: Maximum file size
 comment_not_found: Comment not found
+bookmark_add_to_list: Add bookmark to %list%
+bookmark_remove_from_list: Remove bookmark from %list%
+bookmark_remove_all: Remove all bookmarks
+bookmark_add_to_default_list: Add bookmark to default list
+bookmark_lists: Bookmark Lists
+bookmarks: Bookmarks
+bookmarks_list: Bookmarks in %list%
+count: Count
+is_default: Is Default
+bookmark_list_is_default: Is default list
+bookmark_list_make_default: Make Default
+bookmark_list_create: Create
+bookmark_list_create_placeholder: type name...
+bookmark_list_create_label: List name
+bookmarks_list_edit: Edit bookmark list
+bookmark_list_edit: Edit
+bookmark_list_selected_list: Selected list
 table_of_contents: Table of contents
+search_type_all: Threads + Microblogs
+search_type_entry: Threads
+search_type_post: Microblogs
+select_user: Choose a user
+new_users_need_approval: New users have to be approved by an admin before they can log in.
+signup_requests: Signup requests
+application_text: Application text
+signup_requests_header: Signup Requests
+signup_requests_paragraph: These users would like to join your server. They cannot log in until you've approved their signup request.
+flash_application_info: An admin needs to approve your account before you can log in.
+  You will receive an email once your signup request has been processed.
+email_application_approved_title: Your signup request has been approved
+email_application_approved_body: Your signup request was approved by the server admin. You can now log into the server at <a href="%link%">%siteName%</a>.
+email_application_rejected_title: Your signup request has been rejected
+email_application_rejected_body: Thank you for your interest, but we regret to inform you that your signup request has been declined.
+email_application_pending: Your account requires admin approval before you can log in.
+email_verification_pending: You have to verify your email address before you can log in.
+show_magazine_domains: Show magazine domains
+show_user_domains: Show user domains
+answered: answered
+by: by
+front_default_sort: Frontpage default sort
+comment_default_sort: Comment default sort
+open_signup_request: Open signup request

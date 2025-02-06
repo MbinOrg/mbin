@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Entry;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class EntryUpdateApiTest extends WebTestCase
 {
@@ -370,6 +371,7 @@ class EntryUpdateApiTest extends WebTestCase
         self::assertResponseStatusCodeSame(403);
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testApiCanUpdateImageEntry(): void
     {
         $user = $this->getUserByUsername('user');

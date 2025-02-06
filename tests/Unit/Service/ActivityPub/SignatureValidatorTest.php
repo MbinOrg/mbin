@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Service\ActivityPub;
 
 use App\Entity\Magazine;
 use App\Exception\InvalidApSignatureException;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPub\SignatureValidator;
 use App\Service\ActivityPubManager;
 use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
@@ -97,7 +97,7 @@ class SignatureValidatorTest extends TestCase
         $apManager->method('findActorOrCreate')
             ->willReturn($stubMagazine);
 
-        $apHttpClient = $this->createStub(ApHttpClient::class);
+        $apHttpClient = $this->createStub(ApHttpClientInterface::class);
         $apHttpClient->method('getActorObject')
             ->willReturn(
                 [
@@ -128,7 +128,7 @@ class SignatureValidatorTest extends TestCase
         $apManager->method('findActorOrCreate')
             ->willReturn($stubMagazine);
 
-        $apHttpClient = $this->createStub(ApHttpClient::class);
+        $apHttpClient = $this->createStub(ApHttpClientInterface::class);
         $apHttpClient->method('getActorObject')
             ->willReturn(
                 [
@@ -158,7 +158,7 @@ class SignatureValidatorTest extends TestCase
         $apManager->method('findActorOrCreate')
             ->willReturn($stubMagazine);
 
-        $apHttpClient = $this->createStub(ApHttpClient::class);
+        $apHttpClient = $this->createStub(ApHttpClientInterface::class);
         $apHttpClient->method('getActorObject')
             ->willReturn(
                 [
@@ -192,7 +192,7 @@ class SignatureValidatorTest extends TestCase
         $this->headers['signature'][0] = \sprintf($this->headers['signature'][0], 'https://kbin.localhost/m/group');
 
         $apManager = $this->createStub(ActivityPubManager::class);
-        $apHttpClient = $this->createStub(ApHttpClient::class);
+        $apHttpClient = $this->createStub(ApHttpClientInterface::class);
 
         $logger = $this->createStub(LoggerInterface::class);
 
@@ -218,7 +218,7 @@ class SignatureValidatorTest extends TestCase
         $this->headers['signature'][0] = \sprintf($this->headers['signature'][0], 'http://kbin.localhost/m/group');
 
         $apManager = $this->createStub(ActivityPubManager::class);
-        $apHttpClient = $this->createStub(ApHttpClient::class);
+        $apHttpClient = $this->createStub(ApHttpClientInterface::class);
 
         $logger = $this->createStub(LoggerInterface::class);
 

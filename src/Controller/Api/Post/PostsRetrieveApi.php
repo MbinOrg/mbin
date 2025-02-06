@@ -19,6 +19,7 @@ use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\SecurityBundle\Security as SymfonySecurity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
@@ -173,10 +174,11 @@ class PostsRetrieveApi extends PostsBaseApi
         RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
+        SymfonySecurity $security,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
-        $criteria = new PostPageView((int) $request->getCurrentRequest()->get('p', 1));
+        $criteria = new PostPageView((int) $request->getCurrentRequest()->get('p', 1), $security);
         $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_HOT);
         $criteria->time = $criteria->resolveTime(
             $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
@@ -292,10 +294,11 @@ class PostsRetrieveApi extends PostsBaseApi
         RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
+        SymfonySecurity $security,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
-        $criteria = new PostPageView((int) $request->getCurrentRequest()->get('p', 1));
+        $criteria = new PostPageView((int) $request->getCurrentRequest()->get('p', 1), $security);
         $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_HOT);
         $criteria->time = $criteria->resolveTime(
             $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
@@ -400,10 +403,11 @@ class PostsRetrieveApi extends PostsBaseApi
         RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
+        SymfonySecurity $security,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
-        $criteria = new PostPageView((int) $request->getCurrentRequest()->get('p', 1));
+        $criteria = new PostPageView((int) $request->getCurrentRequest()->get('p', 1), $security);
         $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_NEW);
         $criteria->time = $criteria->resolveTime(
             $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
@@ -501,10 +505,11 @@ class PostsRetrieveApi extends PostsBaseApi
         RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
+        SymfonySecurity $security,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
-        $criteria = new PostPageView((int) $request->getCurrentRequest()->get('p', 1));
+        $criteria = new PostPageView((int) $request->getCurrentRequest()->get('p', 1), $security);
         $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_HOT);
         $criteria->time = $criteria->resolveTime(
             $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
@@ -632,10 +637,11 @@ class PostsRetrieveApi extends PostsBaseApi
         RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
+        SymfonySecurity $security,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
-        $criteria = new PostPageView((int) $request->getCurrentRequest()->get('p', 1));
+        $criteria = new PostPageView((int) $request->getCurrentRequest()->get('p', 1), $security);
         $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_HOT);
         $criteria->time = $criteria->resolveTime(
             $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
