@@ -5,7 +5,7 @@
         {% set titleString = titleString ~ notification.entry.user.username %}
         title="{{ titleString }}"
     {% endif %}><div>
-    {{ component('user_inline', {user: notification.entry.user}) }} {{ 'added_new_thread'|trans|lower }} - <a        
+    {{ component('user_inline', {user: notification.entry.user}) }} {{ 'added_new_thread'|trans|lower }} - <a
         href="{{ entry_url(notification.entry) }}">{{ notification.entry.shortTitle ~ modString }}</a>
 {% endblock entry_created_notification %}
 
@@ -205,3 +205,16 @@
         <a href="{{ path('magazine_panel_reports', { 'name': notification.report.magazine.name, 'status': 'approved' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
     {% endif %}
 {% endblock report_approved_notification %}
+
+{% block new_signup %}
+    ><div>
+    {{ 'notification_title_new_signup'|trans }}<br />
+    {{ component('user_inline', { user: notification.newUser } ) }}
+    {% if do_new_users_need_approval() and notification.newUser.applicationStatus is not same as enum('App\\Enums\\EApplicationStatus').Approved %}
+        <div>
+            <a href="{{ path('admin_signup_requests') }}?username={{ notification.newUser.username }}">
+                {{ 'open_signup_request'|trans }}
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}
