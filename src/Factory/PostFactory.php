@@ -8,6 +8,7 @@ use App\DTO\PostDto;
 use App\DTO\PostResponseDto;
 use App\Entity\Post;
 use App\Entity\User;
+use App\Repository\BookmarkListRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class PostFactory
@@ -17,6 +18,7 @@ class PostFactory
         private readonly UserFactory $userFactory,
         private readonly MagazineFactory $magazineFactory,
         private readonly ImageFactory $imageFactory,
+        private readonly BookmarkListRepository $bookmarkListRepository,
     ) {
     }
 
@@ -55,7 +57,8 @@ class PostFactory
             $dto->createdAt,
             $dto->editedAt,
             $dto->lastActive,
-            $dto->slug
+            $dto->slug,
+            bookmarks: $this->bookmarkListRepository->getBookmarksOfContentInterface($post),
         );
     }
 

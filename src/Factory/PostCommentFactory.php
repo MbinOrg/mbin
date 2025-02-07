@@ -8,6 +8,7 @@ use App\DTO\PostCommentDto;
 use App\DTO\PostCommentResponseDto;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\Repository\BookmarkListRepository;
 use App\Repository\PostRepository;
 use App\Repository\TagLinkRepository;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -21,6 +22,7 @@ class PostCommentFactory
         private readonly ImageFactory $imageFactory,
         private readonly PostRepository $postRepository,
         private readonly TagLinkRepository $tagLinkRepository,
+        private readonly BookmarkListRepository $bookmarkListRepository,
     ) {
     }
 
@@ -59,7 +61,8 @@ class PostCommentFactory
             $tags,
             $dto->createdAt,
             $dto->editedAt,
-            $dto->lastActive
+            $dto->lastActive,
+            bookmarks: $this->bookmarkListRepository->getBookmarksOfContentInterface($comment),
         );
     }
 
