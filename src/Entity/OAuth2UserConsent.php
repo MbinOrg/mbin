@@ -73,6 +73,13 @@ class OAuth2UserConsent
         // Various grants related to reading and writing information about the current user,
         //   messages they've sent and received, notifications they have, who they follow, and who they block
         'user' => 'oauth2.grant.user.all',
+        'bookmark' => 'oauth2.grant.bookmark',
+        'bookmark:add' => 'oauth2.grant.bookmark.add',
+        'bookmark:remove' => 'oauth2.grant.bookmark.remove',
+        'bookmark_list' => 'oauth2.grant.bookmark_list',
+        'bookmark_list:read' => 'oauth2.grant.bookmark_list.read',
+        'bookmark_list:edit' => 'oauth2.grant.bookmark_list.edit',
+        'bookmark_list:delete' => 'oauth2.grant.bookmark_list.delete',
         'user:profile' => 'oauth2.grant.user.profile.all',
         'user:profile:read' => 'oauth2.grant.user.profile.read',
         'user:profile:edit' => 'oauth2.grant.user.profile.edit',

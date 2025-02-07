@@ -40,6 +40,13 @@ class PostResponseDto implements \JsonSerializable
     public ?bool $canAuthUserModerate = null;
     public ?ENotificationStatus $notificationStatus = null;
 
+    /** @var string[]|null */
+    #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
+    public ?array $bookmarks = null;
+
+    /**
+     * @param string[] $bookmarks
+     */
     public static function create(
         int $id,
         UserSmallResponseDto $user,
@@ -62,6 +69,7 @@ class PostResponseDto implements \JsonSerializable
         ?\DateTime $lastActive = null,
         ?string $slug = null,
         ?bool $canAuthUserModerate = null,
+        ?array $bookmarks = null,
     ): self {
         $dto = new PostResponseDto();
         $dto->postId = $id;
@@ -85,6 +93,7 @@ class PostResponseDto implements \JsonSerializable
         $dto->lastActive = $lastActive;
         $dto->slug = $slug;
         $dto->canAuthUserModerate = $canAuthUserModerate;
+        $dto->bookmarks = $bookmarks;
 
         return $dto;
     }
@@ -131,6 +140,7 @@ class PostResponseDto implements \JsonSerializable
             'slug' => $this->slug,
             'canAuthUserModerate' => $this->canAuthUserModerate,
             'notificationStatus' => $this->notificationStatus,
+            'bookmarks' => $this->bookmarks,
         ]);
     }
 }
