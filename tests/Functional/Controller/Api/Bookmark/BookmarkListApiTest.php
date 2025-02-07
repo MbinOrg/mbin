@@ -19,7 +19,7 @@ class BookmarkListApiTest extends WebTestCase
         $this->user = $this->getUserByUsername('user');
         $this->client->loginUser($this->user);
         self::createOAuth2PublicAuthCodeClient();
-        $codes = self::getPublicAuthorizationCodeTokenResponse($this->client, scopes: 'user:bookmark_list');
+        $codes = self::getPublicAuthorizationCodeTokenResponse($this->client, scopes: 'bookmark_list');
         $this->token = $codes['token_type'].' '.$codes['access_token'];
     }
 

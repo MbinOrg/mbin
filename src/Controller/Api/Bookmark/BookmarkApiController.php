@@ -63,8 +63,8 @@ class BookmarkApiController extends BaseApi
         schema: new OA\Schema(type: 'string', enum: ['entry', 'entry_comment', 'post', 'post_comment'])
     )]
     #[OA\Tag(name: 'bookmark')]
-    #[Security(name: 'oauth2', scopes: ['user:bookmark:add'])]
-    #[IsGranted('ROLE_OAUTH2_USER:BOOKMARK:ADD')]
+    #[Security(name: 'oauth2', scopes: ['bookmark:add'])]
+    #[IsGranted('ROLE_OAUTH2_BOOKMARK:ADD')]
     public function subjectBookmarkStandard(int $subject_id, string $subject_type, RateLimiterFactory $apiUpdateLimiter): JsonResponse
     {
         $user = $this->getUserOrThrow();
@@ -125,8 +125,8 @@ class BookmarkApiController extends BaseApi
         schema: new OA\Schema(type: 'string', enum: ['entry', 'entry_comment', 'post', 'post_comment'])
     )]
     #[OA\Tag(name: 'bookmark')]
-    #[Security(name: 'oauth2', scopes: ['user:bookmark:add'])]
-    #[IsGranted('ROLE_OAUTH2_USER:BOOKMARK:ADD')]
+    #[Security(name: 'oauth2', scopes: ['bookmark:add'])]
+    #[IsGranted('ROLE_OAUTH2_BOOKMARK:ADD')]
     public function subjectBookmarkToList(string $list_name, int $subject_id, string $subject_type, RateLimiterFactory $apiUpdateLimiter): JsonResponse
     {
         $user = $this->getUserOrThrow();
@@ -191,8 +191,8 @@ class BookmarkApiController extends BaseApi
         schema: new OA\Schema(type: 'string', enum: ['entry', 'entry_comment', 'post', 'post_comment'])
     )]
     #[OA\Tag(name: 'bookmark')]
-    #[Security(name: 'oauth2', scopes: ['user:bookmark:remove'])]
-    #[IsGranted('ROLE_OAUTH2_USER:BOOKMARK:REMOVE')]
+    #[Security(name: 'oauth2', scopes: ['bookmark:remove'])]
+    #[IsGranted('ROLE_OAUTH2_BOOKMARK:REMOVE')]
     public function subjectRemoveBookmarkFromList(string $list_name, int $subject_id, string $subject_type, RateLimiterFactory $apiUpdateLimiter): JsonResponse
     {
         $user = $this->getUserOrThrow();
@@ -257,8 +257,8 @@ class BookmarkApiController extends BaseApi
         schema: new OA\Schema(type: 'string', enum: ['entry', 'entry_comment', 'post', 'post_comment'])
     )]
     #[OA\Tag(name: 'bookmark')]
-    #[Security(name: 'oauth2', scopes: ['user:bookmark:remove'])]
-    #[IsGranted('ROLE_OAUTH2_USER:BOOKMARK:REMOVE')]
+    #[Security(name: 'oauth2', scopes: ['bookmark:remove'])]
+    #[IsGranted('ROLE_OAUTH2_BOOKMARK:REMOVE')]
     public function subjectRemoveBookmarks(int $subject_id, string $subject_type, RateLimiterFactory $apiUpdateLimiter): JsonResponse
     {
         $user = $this->getUserOrThrow();

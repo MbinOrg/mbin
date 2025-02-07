@@ -21,7 +21,7 @@ class BookmarkApiTest extends WebTestCase
         $this->user = $this->getUserByUsername('user');
         $this->client->loginUser($this->user);
         self::createOAuth2PublicAuthCodeClient();
-        $codes = self::getPublicAuthorizationCodeTokenResponse($this->client, scopes: 'read user:bookmark user:bookmark_list');
+        $codes = self::getPublicAuthorizationCodeTokenResponse($this->client, scopes: 'read bookmark bookmark_list');
         $this->token = $codes['token_type'].' '.$codes['access_token'];
         // it seems that the oauth flow detaches the user object from the entity manager, so fetch it again
         $this->user = $this->userRepository->findOneByUsername('user');
@@ -79,7 +79,7 @@ class BookmarkApiTest extends WebTestCase
         self::assertIsArray($bookmarks);
         self::assertCount(1, $bookmarks);
 
-        $this->client->request('PUT', "/api/rbo/{$entry->getId()}/entry", server: ['HTTP_AUTHORIZATION' => $this->token]);
+        $this->client->request('DELETE', "/api/rbo/{$entry->getId()}/entry", server: ['HTTP_AUTHORIZATION' => $this->token]);
         self::assertResponseIsSuccessful();
         $bookmarks = $this->bookmarkRepository->findByList($this->user, $list);
         self::assertIsArray($bookmarks);
@@ -97,7 +97,7 @@ class BookmarkApiTest extends WebTestCase
         self::assertIsArray($bookmarks);
         self::assertCount(1, $bookmarks);
 
-        $this->client->request('PUT', "/api/rbo/{$comment->getId()}/entry_comment", server: ['HTTP_AUTHORIZATION' => $this->token]);
+        $this->client->request('DELETE', "/api/rbo/{$comment->getId()}/entry_comment", server: ['HTTP_AUTHORIZATION' => $this->token]);
         self::assertResponseIsSuccessful();
         $bookmarks = $this->bookmarkRepository->findByList($this->user, $list);
         self::assertIsArray($bookmarks);
@@ -114,7 +114,7 @@ class BookmarkApiTest extends WebTestCase
         self::assertIsArray($bookmarks);
         self::assertCount(1, $bookmarks);
 
-        $this->client->request('PUT', "/api/rbo/{$post->getId()}/post", server: ['HTTP_AUTHORIZATION' => $this->token]);
+        $this->client->request('DELETE', "/api/rbo/{$post->getId()}/post", server: ['HTTP_AUTHORIZATION' => $this->token]);
         self::assertResponseIsSuccessful();
         $bookmarks = $this->bookmarkRepository->findByList($this->user, $list);
         self::assertIsArray($bookmarks);
@@ -132,7 +132,7 @@ class BookmarkApiTest extends WebTestCase
         self::assertIsArray($bookmarks);
         self::assertCount(1, $bookmarks);
 
-        $this->client->request('PUT', "/api/rbo/{$comment->getId()}/post_comment", server: ['HTTP_AUTHORIZATION' => $this->token]);
+        $this->client->request('DELETE', "/api/rbo/{$comment->getId()}/post_comment", server: ['HTTP_AUTHORIZATION' => $this->token]);
         self::assertResponseIsSuccessful();
         $bookmarks = $this->bookmarkRepository->findByList($this->user, $list);
         self::assertIsArray($bookmarks);
@@ -197,7 +197,7 @@ class BookmarkApiTest extends WebTestCase
         self::assertIsArray($bookmarks);
         self::assertCount(1, $bookmarks);
 
-        $this->client->request('PUT', "/api/rbol/{$entry->getId()}/entry/$list->name", server: ['HTTP_AUTHORIZATION' => $this->token]);
+        $this->client->request('DELETE', "/api/rbol/{$entry->getId()}/entry/$list->name", server: ['HTTP_AUTHORIZATION' => $this->token]);
         self::assertResponseIsSuccessful();
         $bookmarks = $this->bookmarkRepository->findByList($this->user, $list);
         self::assertIsArray($bookmarks);
@@ -215,7 +215,7 @@ class BookmarkApiTest extends WebTestCase
         self::assertIsArray($bookmarks);
         self::assertCount(1, $bookmarks);
 
-        $this->client->request('PUT', "/api/rbol/{$comment->getId()}/entry_comment/$list->name", server: ['HTTP_AUTHORIZATION' => $this->token]);
+        $this->client->request('DELETE', "/api/rbol/{$comment->getId()}/entry_comment/$list->name", server: ['HTTP_AUTHORIZATION' => $this->token]);
         self::assertResponseIsSuccessful();
         $bookmarks = $this->bookmarkRepository->findByList($this->user, $list);
         self::assertIsArray($bookmarks);
@@ -232,7 +232,7 @@ class BookmarkApiTest extends WebTestCase
         self::assertIsArray($bookmarks);
         self::assertCount(1, $bookmarks);
 
-        $this->client->request('PUT', "/api/rbol/{$post->getId()}/post/$list->name", server: ['HTTP_AUTHORIZATION' => $this->token]);
+        $this->client->request('DELETE', "/api/rbol/{$post->getId()}/post/$list->name", server: ['HTTP_AUTHORIZATION' => $this->token]);
         self::assertResponseIsSuccessful();
         $bookmarks = $this->bookmarkRepository->findByList($this->user, $list);
         self::assertIsArray($bookmarks);
@@ -250,7 +250,7 @@ class BookmarkApiTest extends WebTestCase
         self::assertIsArray($bookmarks);
         self::assertCount(1, $bookmarks);
 
-        $this->client->request('PUT', "/api/rbol/{$comment->getId()}/post_comment/$list->name", server: ['HTTP_AUTHORIZATION' => $this->token]);
+        $this->client->request('DELETE', "/api/rbol/{$comment->getId()}/post_comment/$list->name", server: ['HTTP_AUTHORIZATION' => $this->token]);
         self::assertResponseIsSuccessful();
         $bookmarks = $this->bookmarkRepository->findByList($this->user, $list);
         self::assertIsArray($bookmarks);
