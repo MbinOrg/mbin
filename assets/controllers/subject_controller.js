@@ -43,7 +43,11 @@ export default class extends Controller {
                 if (e.defaultPrevented) {
                     return
                 }
-                if ("touch" === e.pointerType) {
+                if ('a' === e.target.nodeName?.toLowerCase() || 'a' === e.target.tagName?.toLowerCase()) {
+                    // ignore clicks on links
+                    return
+                }
+                if ('touch' === e.pointerType) {
                     const link = this.element.querySelector("header a:not(.user-inline)")
                     if (link) {
                         const href = link.getAttribute('href')

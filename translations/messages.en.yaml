@@ -439,8 +439,8 @@ your_account_is_not_active: Your account has not been activated. Please check yo
   email for account activation instructions or <a href="%link_target%">request a new
   account activation email.</a>
 your_account_has_been_banned: Your account has been banned
-your_account_is_not_yet_approved: Your account has not been approved yet.
-  We will send you an email as soon as the admins have processed your signup request.
+your_account_is_not_yet_approved: Your account has not been approved yet. We will
+  send you an email as soon as the admins have processed your signup request.
 toolbar.bold: Bold
 toolbar.italic: Italic
 toolbar.strikethrough: Strikethrough
@@ -458,14 +458,15 @@ federation_page_allowed_description: Known instances we federate with
 federation_page_disallowed_description: Instances we do not federate with
 federation_page_dead_title: Dead instances
 federation_page_dead_description: Instances that we could not deliver at least 10
-  activities in a row and where the last successful deliver and -receive were more than a week ago
+  activities in a row and where the last successful deliver and -receive were more
+  than a week ago
 federated_search_only_loggedin: Federated search limited if not logged in
 sidebar_sections_local_only: Restrict "Random X" and "Active People" sections to local
   only
 account_deletion_title: Account deletion
 account_deletion_description: Your account will be deleted in 30 days unless you choose
-  to delete the account immediately. To restore your account within 30 days, login with
-  the same user credentials or contact an administrator.
+  to delete the account immediately. To restore your account within 30 days, login
+  with the same user credentials or contact an administrator.
 account_deletion_button: Delete Account
 account_deletion_immediate: Delete immediately
 more_from_domain: More from domain
@@ -761,7 +762,8 @@ position_top: Top
 pending: Pending
 flash_thread_new_error: Thread could not be created. Something went wrong.
 flash_thread_tag_banned_error: Thread could not be created. The content is not allowed.
-flash_image_download_too_large_error: Image could not be created, it is too big (max size %bytes%)
+flash_image_download_too_large_error: Image could not be created, it is too big (max
+  size %bytes%)
 flash_email_was_sent: Email has been successfully sent.
 flash_email_failed_to_sent: Email could not be sent.
 flash_post_new_success: Post has been successfully created.
@@ -855,7 +857,7 @@ own_report_rejected: Your report was rejected
 own_report_accepted: Your report was accepted
 own_content_reported_accepted: A report of your content was accepted.
 report_accepted: A report was accepted
-open_report: open report
+open_report: Open report
 cake_day: Cake day
 someone: Someone
 back: Back
@@ -886,7 +888,8 @@ notification_title_removed_post: A post was removed
 notification_title_edited_post: A post was edited
 notification_title_new_signup: A new user registered
 notification_body_new_signup: The user %u% registered.
-notification_body2_new_signup_approval: You need to approve the request before they can log in
+notification_body2_new_signup_approval: You need to approve the request before they
+  can log in
 show_related_magazines: Show random magazines
 show_related_entries: Show random threads
 show_related_posts: Show random posts
@@ -933,19 +936,25 @@ search_type_all: Threads + Microblogs
 search_type_entry: Threads
 search_type_post: Microblogs
 select_user: Choose a user
-new_users_need_approval: New users have to be approved by an admin before they can log in.
+new_users_need_approval: New users have to be approved by an admin before they can
+  log in.
 signup_requests: Signup requests
 application_text: Application text
 signup_requests_header: Signup Requests
-signup_requests_paragraph: These users would like to join your server. They cannot log in until you've approved their signup request.
-flash_application_info: An admin needs to approve your account before you can log in.
-  You will receive an email once your signup request has been processed.
+signup_requests_paragraph: These users would like to join your server. They cannot
+  log in until you've approved their signup request.
+flash_application_info: An admin needs to approve your account before you can log
+  in. You will receive an email once your signup request has been processed.
 email_application_approved_title: Your signup request has been approved
-email_application_approved_body: Your signup request was approved by the server admin. You can now log into the server at <a href="%link%">%siteName%</a>.
+email_application_approved_body: Your signup request was approved by the server admin.
+  You can now log into the server at <a href="%link%">%siteName%</a>.
 email_application_rejected_title: Your signup request has been rejected
-email_application_rejected_body: Thank you for your interest, but we regret to inform you that your signup request has been declined.
-email_application_pending: Your account requires admin approval before you can log in.
-email_verification_pending: You have to verify your email address before you can log in.
+email_application_rejected_body: Thank you for your interest, but we regret to inform
+  you that your signup request has been declined.
+email_application_pending: Your account requires admin approval before you can log
+  in.
+email_verification_pending: You have to verify your email address before you can log
+  in.
 show_magazine_domains: Show magazine domains
 show_user_domains: Show user domains
 answered: answered
