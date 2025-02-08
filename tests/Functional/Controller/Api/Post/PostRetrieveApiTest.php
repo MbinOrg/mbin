@@ -79,6 +79,8 @@ class PostRetrieveApiTest extends WebTestCase
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['items'][0]['lastActive'], 'lastActive date format invalid');
         self::assertEquals('another-post', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
     }
 
     public function testApiCannotGetModeratedPostsAnonymous(): void
@@ -152,6 +154,8 @@ class PostRetrieveApiTest extends WebTestCase
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['items'][0]['lastActive'], 'lastActive date format invalid');
         self::assertEquals('another-post', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
     }
 
     public function testApiCannotGetFavouritedPostsAnonymous(): void
@@ -227,6 +231,8 @@ class PostRetrieveApiTest extends WebTestCase
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['items'][0]['lastActive'], 'lastActive date format invalid');
         self::assertEquals('a-post', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
     }
 
     public function testApiCanGetPostsAnonymous(): void
@@ -277,6 +283,7 @@ class PostRetrieveApiTest extends WebTestCase
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['items'][0]['lastActive'], 'lastActive date format invalid');
         self::assertEquals('a-post', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertNull($jsonData['items'][0]['bookmarks']);
 
         self::assertIsArray($jsonData['items'][1]);
         self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $jsonData['items'][1]);
@@ -339,6 +346,8 @@ class PostRetrieveApiTest extends WebTestCase
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['items'][0]['lastActive'], 'lastActive date format invalid');
         self::assertEquals('a-post', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
 
         self::assertIsArray($jsonData['items'][1]);
         self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $jsonData['items'][1]);
@@ -398,6 +407,7 @@ class PostRetrieveApiTest extends WebTestCase
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['items'][0]['lastActive'], 'lastActive date format invalid');
         self::assertEquals('a-post', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertNull($jsonData['items'][0]['bookmarks']);
 
         self::assertIsArray($jsonData['items'][1]);
         self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $jsonData['items'][1]);
@@ -462,6 +472,8 @@ class PostRetrieveApiTest extends WebTestCase
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['items'][0]['lastActive'], 'lastActive date format invalid');
         self::assertEquals('a-post', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
 
         self::assertIsArray($jsonData['items'][1]);
         self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $jsonData['items'][1]);
@@ -546,6 +558,8 @@ class PostRetrieveApiTest extends WebTestCase
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['items'][0]['lastActive'], 'lastActive date format invalid');
         self::assertEquals('a-post', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
 
         self::assertIsArray($jsonData['items'][1]);
         self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $jsonData['items'][1]);
@@ -841,6 +855,8 @@ class PostRetrieveApiTest extends WebTestCase
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['items'][0]['lastActive'], 'lastActive date format invalid');
         self::assertEquals('a-post', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
 
         self::assertIsArray($jsonData['items'][1]);
         self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $jsonData['items'][1]);
@@ -884,6 +900,7 @@ class PostRetrieveApiTest extends WebTestCase
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['lastActive'], 'lastActive date format invalid');
         self::assertEquals('a-post', $jsonData['slug']);
         self::assertNull($jsonData['apId']);
+        self::assertNull($jsonData['bookmarks']);
     }
 
     public function testApiCanGetPostById(): void
@@ -925,6 +942,8 @@ class PostRetrieveApiTest extends WebTestCase
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['lastActive'], 'lastActive date format invalid');
         self::assertEquals('a-post', $jsonData['slug']);
         self::assertNull($jsonData['apId']);
+        self::assertIsArray($jsonData['bookmarks']);
+        self::assertEmpty($jsonData['bookmarks']);
     }
 
     public function testApiCanGetPostByIdWithUserVoteStatus(): void
@@ -966,5 +985,7 @@ class PostRetrieveApiTest extends WebTestCase
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['lastActive'], 'lastActive date format invalid');
         self::assertEquals('a-post', $jsonData['slug']);
         self::assertNull($jsonData['apId']);
+        self::assertIsArray($jsonData['bookmarks']);
+        self::assertEmpty($jsonData['bookmarks']);
     }
 }

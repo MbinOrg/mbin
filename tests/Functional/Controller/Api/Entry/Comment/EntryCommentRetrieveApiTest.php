@@ -58,6 +58,7 @@ class EntryCommentRetrieveApiTest extends WebTestCase
             self::assertNull($comment['editedAt']);
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['createdAt'], 'createdAt date format invalid');
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['lastActive'], 'lastActive date format invalid');
+            self::assertNull($comment['bookmarks']);
         }
     }
 
@@ -138,6 +139,8 @@ class EntryCommentRetrieveApiTest extends WebTestCase
             self::assertNull($comment['editedAt']);
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['createdAt'], 'createdAt date format invalid');
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['lastActive'], 'lastActive date format invalid');
+            self::assertIsArray($comment['bookmarks']);
+            self::assertEmpty($comment['bookmarks']);
         }
     }
 
@@ -193,6 +196,7 @@ class EntryCommentRetrieveApiTest extends WebTestCase
             self::assertNull($comment['editedAt']);
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['createdAt'], 'createdAt date format invalid');
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['lastActive'], 'lastActive date format invalid');
+            self::assertNull($comment['bookmarks']);
         }
     }
 
@@ -255,6 +259,8 @@ class EntryCommentRetrieveApiTest extends WebTestCase
             self::assertNull($comment['editedAt']);
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['createdAt'], 'createdAt date format invalid');
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['lastActive'], 'lastActive date format invalid');
+            self::assertIsArray($comment['bookmarks']);
+            self::assertEmpty($comment['bookmarks']);
         }
     }
 
@@ -315,6 +321,8 @@ class EntryCommentRetrieveApiTest extends WebTestCase
             self::assertNull($comment['editedAt']);
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['createdAt'], 'createdAt date format invalid');
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['lastActive'], 'lastActive date format invalid');
+            self::assertIsArray($comment['bookmarks']);
+            self::assertEmpty($comment['bookmarks']);
         }
     }
 
@@ -379,6 +387,8 @@ class EntryCommentRetrieveApiTest extends WebTestCase
             self::assertNull($comment['editedAt']);
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['createdAt'], 'createdAt date format invalid');
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['lastActive'], 'lastActive date format invalid');
+            self::assertIsArray($comment['bookmarks']);
+            self::assertEmpty($comment['bookmarks']);
         }
     }
 
@@ -454,6 +464,8 @@ class EntryCommentRetrieveApiTest extends WebTestCase
             self::assertNull($comment['editedAt']);
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['createdAt'], 'createdAt date format invalid');
             self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $comment['lastActive'], 'lastActive date format invalid');
+            self::assertIsArray($comment['bookmarks']);
+            self::assertEmpty($comment['bookmarks']);
         }
     }
 
@@ -495,6 +507,7 @@ class EntryCommentRetrieveApiTest extends WebTestCase
         self::assertNull($jsonData['editedAt']);
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['createdAt'], 'createdAt date format invalid');
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['lastActive'], 'lastActive date format invalid');
+        self::assertNull($jsonData['bookmarks']);
     }
 
     public function testApiCanGetEntryCommentById(): void
@@ -542,6 +555,8 @@ class EntryCommentRetrieveApiTest extends WebTestCase
         self::assertNull($jsonData['editedAt']);
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['createdAt'], 'createdAt date format invalid');
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['lastActive'], 'lastActive date format invalid');
+        self::assertIsArray($jsonData['bookmarks']);
+        self::assertEmpty($jsonData['bookmarks']);
     }
 
     public function testApiCanGetEntryCommentByIdWithDepth(): void
@@ -593,6 +608,8 @@ class EntryCommentRetrieveApiTest extends WebTestCase
         self::assertNull($jsonData['editedAt']);
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['createdAt'], 'createdAt date format invalid');
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['lastActive'], 'lastActive date format invalid');
+        self::assertIsArray($jsonData['bookmarks']);
+        self::assertEmpty($jsonData['bookmarks']);
 
         $depth = 0;
         $current = $jsonData;

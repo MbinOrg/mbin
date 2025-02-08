@@ -8,6 +8,7 @@ use App\DTO\EntryCommentDto;
 use App\DTO\EntryCommentResponseDto;
 use App\Entity\EntryComment;
 use App\Entity\User;
+use App\Repository\BookmarkListRepository;
 use App\Repository\TagLinkRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -19,6 +20,7 @@ class EntryCommentFactory
         private readonly UserFactory $userFactory,
         private readonly MagazineFactory $magazineFactory,
         private readonly TagLinkRepository $tagLinkRepository,
+        private readonly BookmarkListRepository $bookmarkListRepository,
     ) {
     }
 
@@ -58,7 +60,8 @@ class EntryCommentFactory
             $dto->createdAt,
             $dto->editedAt,
             $dto->lastActive,
-            $childCount
+            $childCount,
+            bookmarks: $this->bookmarkListRepository->getBookmarksOfContentInterface($comment),
         );
     }
 

@@ -48,6 +48,13 @@ class EntryResponseDto implements \JsonSerializable
     public ?bool $canAuthUserModerate = null;
     public ?ENotificationStatus $notificationStatus = null;
 
+    /** @var string[]|null */
+    #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
+    public ?array $bookmarks = null;
+
+    /**
+     * @param string[]|null $bookmarks
+     */
     public static function create(
         ?int $id = null,
         ?MagazineSmallResponseDto $magazine = null,
@@ -75,6 +82,7 @@ class EntryResponseDto implements \JsonSerializable
         ?string $slug = null,
         ?string $apId = null,
         ?bool $canAuthUserModerate = null,
+        ?array $bookmarks = null,
     ): self {
         $dto = new EntryResponseDto();
         $dto->entryId = $id;
@@ -103,6 +111,7 @@ class EntryResponseDto implements \JsonSerializable
         $dto->slug = $slug;
         $dto->apId = $apId;
         $dto->canAuthUserModerate = $canAuthUserModerate;
+        $dto->bookmarks = $bookmarks;
 
         return $dto;
     }
@@ -157,6 +166,7 @@ class EntryResponseDto implements \JsonSerializable
             'apId' => $this->apId,
             'canAuthUserModerate' => $this->canAuthUserModerate,
             'notificationStatus' => $this->notificationStatus,
+            'bookmarks' => $this->bookmarks,
         ]);
     }
 }

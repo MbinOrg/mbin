@@ -1,0 +1,38 @@
+name: Build and publish Mbin GitHub pipeline image
+
+# Trigger either manually or when ci/Dockerfile changes (on the main branch)
+on:
+  push:
+    branches: ['main']
+    paths:
+      - 'ci/Dockerfile'
+  workflow_dispatch:
+
+jobs:
+  build-and-publish-workflow-docker-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Login to ghcr
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build image
+        working-directory: ./ci
+        run: |
+          docker build -t ghcr.io/mbinorg/mbin-pipeline-image:latest .
+
+      - name: Publish
+        run: |
+          docker push ghcr.io/mbinorg/mbin-pipeline-image:latest

@@ -21,23 +21,23 @@ class NotificationSettings
     private int $id;
 
     #[ManyToOne(targetEntity: User::class, cascade: ['remove'])]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $user;
 
     #[ManyToOne(targetEntity: Entry::class, cascade: ['remove'])]
-    #[JoinColumn(nullable: true)]
+    #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?Entry $entry = null;
 
     #[ManyToOne(targetEntity: Post::class, cascade: ['remove'])]
-    #[JoinColumn(nullable: true)]
+    #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?Post $post = null;
 
     #[ManyToOne(targetEntity: Magazine::class, cascade: ['remove'])]
-    #[JoinColumn(nullable: true)]
+    #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?Magazine $magazine = null;
 
     #[ManyToOne(targetEntity: User::class, cascade: ['remove'])]
-    #[JoinColumn(nullable: true)]
+    #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?User $targetUser = null;
 
     #[Column(type: 'enumNotificationStatus', nullable: false, options: ['default' => ENotificationStatus::Default->value])]

@@ -9,6 +9,7 @@ use App\DTO\EntryResponseDto;
 use App\Entity\Badge;
 use App\Entity\Entry;
 use App\Entity\User;
+use App\Repository\BookmarkListRepository;
 use App\Repository\TagLinkRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -22,6 +23,7 @@ class EntryFactory
         private readonly UserFactory $userFactory,
         private readonly BadgeFactory $badgeFactory,
         private readonly TagLinkRepository $tagLinkRepository,
+        private readonly BookmarkListRepository $bookmarkListRepository,
     ) {
     }
 
@@ -70,7 +72,8 @@ class EntryFactory
             $dto->lastActive,
             $dto->type,
             $dto->slug,
-            $dto->apId
+            $dto->apId,
+            bookmarks: $this->bookmarkListRepository->getBookmarksOfContentInterface($entry),
         );
     }
 

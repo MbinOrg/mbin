@@ -82,6 +82,13 @@ class PostCommentResponseDto implements \JsonSerializable
     public array $children = [];
     public ?bool $canAuthUserModerate = null;
 
+    /** @var string[]|null */
+    #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
+    public ?array $bookmarks = null;
+
+    /**
+     * @param string[] $bookmarks
+     */
     public static function create(
         int $id,
         ?UserSmallResponseDto $user = null,
@@ -104,6 +111,7 @@ class PostCommentResponseDto implements \JsonSerializable
         ?\DateTimeImmutable $editedAt = null,
         ?\DateTime $lastActive = null,
         ?bool $canAuthUserModerate = null,
+        ?array $bookmarks = null,
     ): self {
         $dto = new PostCommentResponseDto();
         $dto->commentId = $id;
@@ -128,6 +136,7 @@ class PostCommentResponseDto implements \JsonSerializable
         $dto->lastActive = $lastActive;
         $dto->childCount = $childCount;
         $dto->canAuthUserModerate = $canAuthUserModerate;
+        $dto->bookmarks = $bookmarks;
 
         return $dto;
     }
@@ -175,6 +184,7 @@ class PostCommentResponseDto implements \JsonSerializable
             'childCount' => $this->childCount,
             'children' => $this->children,
             'canAuthUserModerate' => $this->canAuthUserModerate,
+            'bookmarks' => $this->bookmarks,
         ]);
     }
 
