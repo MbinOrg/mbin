@@ -20,7 +20,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.3.0
+      image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     steps:
       - uses: actions/checkout@v4
 
@@ -58,7 +58,7 @@ jobs:
   automated-tests:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.3.0
+      image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     steps:
       - uses: actions/checkout@v4
 
@@ -154,7 +154,7 @@ jobs:
   audit-check:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.3.0
+      image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
@@ -186,7 +186,7 @@ jobs:
   fixer-dry-run:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.3.0
+      image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     steps:
       - uses: actions/checkout@v4
 

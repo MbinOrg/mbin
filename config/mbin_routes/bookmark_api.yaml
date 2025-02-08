@@ -55,7 +55,7 @@ api_subject_remove_bookmarks:
     path: /api/rbo/{subject_id}/{subject_type}
     requirements:
         subject_type: "%default_subject_type_options%"
-    methods: [ PUT ]
+    methods: [ DELETE ]
     format: json
 
 api_subject_remove_bookmark_from_list:
@@ -63,5 +63,5 @@ api_subject_remove_bookmark_from_list:
     path: /api/rbol/{subject_id}/{subject_type}/{list_name}
     requirements:
         subject_type: "%default_subject_type_options%"
-    methods: [ PUT ]
+    methods: [ DELETE ]
     format: json

@@ -88,6 +88,8 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('link', $jsonData['items'][0]['type']);
         self::assertEquals('another-entry', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
     }
 
     public function testApiCannotGetModeratedEntriesAnonymous(): void
@@ -170,6 +172,8 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('link', $jsonData['items'][0]['type']);
         self::assertEquals('another-entry', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
     }
 
     public function testApiCannotGetFavouritedEntriesAnonymous(): void
@@ -253,6 +257,8 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['items'][0]['type']);
         self::assertEquals('an-entry', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
     }
 
     public function testApiCanGetEntriesAnonymous(): void
@@ -311,6 +317,7 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['items'][0]['type']);
         self::assertEquals('an-entry', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertNull($jsonData['items'][0]['bookmarks']);
 
         self::assertIsArray($jsonData['items'][1]);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][1]);
@@ -320,6 +327,7 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertSame($magazine->getId(), $jsonData['items'][1]['magazine']['magazineId']);
         self::assertEquals('link', $jsonData['items'][1]['type']);
         self::assertSame(0, $jsonData['items'][1]['numComments']);
+        self::assertNull($jsonData['items'][0]['bookmarks']);
     }
 
     public function testApiCanGetEntries(): void
@@ -382,6 +390,8 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['items'][0]['type']);
         self::assertEquals('an-entry', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
 
         self::assertIsArray($jsonData['items'][1]);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][1]);
@@ -450,6 +460,7 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['items'][0]['type']);
         self::assertEquals('an-entry', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertNull($jsonData['items'][0]['bookmarks']);
 
         self::assertIsArray($jsonData['items'][1]);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][1]);
@@ -523,6 +534,8 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['items'][0]['type']);
         self::assertEquals('an-entry', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
 
         self::assertIsArray($jsonData['items'][1]);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][1]);
@@ -616,6 +629,8 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['items'][0]['type']);
         self::assertEquals('an-entry', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
 
         self::assertIsArray($jsonData['items'][1]);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][1]);
@@ -919,6 +934,8 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['items'][0]['type']);
         self::assertEquals('an-entry', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
 
         self::assertIsArray($jsonData['items'][1]);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][1]);
@@ -969,6 +986,7 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['type']);
         self::assertEquals('an-entry', $jsonData['slug']);
         self::assertNull($jsonData['apId']);
+        self::assertNull($jsonData['items'][0]['bookmarks']);
     }
 
     public function testApiCanGetEntryById(): void
@@ -1015,6 +1033,8 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['type']);
         self::assertEquals('an-entry', $jsonData['slug']);
         self::assertNull($jsonData['apId']);
+        self::assertIsArray($jsonData['bookmarks']);
+        self::assertEmpty($jsonData['bookmarks']);
     }
 
     public function testApiCanGetEntryByIdWithUserVoteStatus(): void
@@ -1060,5 +1080,7 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['type']);
         self::assertEquals('an-entry', $jsonData['slug']);
         self::assertNull($jsonData['apId']);
+        self::assertIsArray($jsonData['bookmarks']);
+        self::assertEmpty($jsonData['bookmarks']);
     }
 }
