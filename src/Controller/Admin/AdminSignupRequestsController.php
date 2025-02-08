@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Controller\AbstractController;
 use App\Entity\User;
+use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
 use App\Service\UserManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -18,6 +19,7 @@ class AdminSignupRequestsController extends AbstractController
     public function __construct(
         private readonly UserRepository $repository,
         private readonly UserManager $userManager,
+        private readonly NotificationRepository $notificationRepository,
     ) {
     }
 
@@ -31,6 +33,9 @@ class AdminSignupRequestsController extends AbstractController
             if ($signupRequest = $this->repository->findSignupRequest($username)) {
                 $requests[] = $signupRequest;
             }
+            $user = $this->repository->findOneBy(['username' => $username]);
+            // Always mark the notifications as read, even if the user does not have any signup requests anymore
+            $this->notificationRepository->markUserSignupNotificationsAsRead($this->getUserOrThrow(), $user);
         }
 
         return $this->render('admin/signup_requests.html.twig', [
