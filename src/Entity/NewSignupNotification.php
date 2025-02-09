@@ -14,7 +14,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Entity]
 class NewSignupNotification extends Notification
 {
-    #[ManyToOne(targetEntity: User::class, cascade: ['remove'])]
+    #[ManyToOne(targetEntity: User::class)]
     #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?User $newUser;
 
