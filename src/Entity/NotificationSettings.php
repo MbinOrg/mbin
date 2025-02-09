@@ -20,23 +20,23 @@ class NotificationSettings
     #[Id, GeneratedValue, Column(type: 'integer')]
     private int $id;
 
-    #[ManyToOne(targetEntity: User::class, cascade: ['remove'])]
+    #[ManyToOne(targetEntity: User::class)]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $user;
 
-    #[ManyToOne(targetEntity: Entry::class, cascade: ['remove'])]
+    #[ManyToOne(targetEntity: Entry::class)]
     #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?Entry $entry = null;
 
-    #[ManyToOne(targetEntity: Post::class, cascade: ['remove'])]
+    #[ManyToOne(targetEntity: Post::class)]
     #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?Post $post = null;
 
-    #[ManyToOne(targetEntity: Magazine::class, cascade: ['remove'])]
+    #[ManyToOne(targetEntity: Magazine::class)]
     #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?Magazine $magazine = null;
 
-    #[ManyToOne(targetEntity: User::class, cascade: ['remove'])]
+    #[ManyToOne(targetEntity: User::class)]
     #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?User $targetUser = null;
 
