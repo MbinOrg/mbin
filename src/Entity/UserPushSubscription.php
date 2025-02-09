@@ -18,7 +18,7 @@ class UserPushSubscription
     #[Id, GeneratedValue, Column(type: 'integer')]
     public int $id;
 
-    #[ManyToOne(targetEntity: User::class, cascade: ['persist', 'remove'], inversedBy: 'pushSubscriptions')]
+    #[ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy: 'pushSubscriptions')]
     public User $user;
 
     #[Column(type: 'text')]
@@ -30,7 +30,7 @@ class UserPushSubscription
     /**
      * @var AccessToken|null this is only null for the web interface push messages
      */
-    #[ManyToOne(targetEntity: AccessToken::class, cascade: ['persist', 'remove'])]
+    #[ManyToOne(targetEntity: AccessToken::class, cascade: ['persist'])]
     #[JoinColumn(name: 'api_token', referencedColumnName: 'identifier', unique: true, nullable: true, onDelete: 'CASCADE')]
     public ?AccessToken $apiToken = null;
 
