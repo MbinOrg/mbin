@@ -21,8 +21,22 @@ class UrlUtils
 
     public static function getCacheKeyForMarkdownUrl(string $url): string
     {
-        $key = preg_replace('/[(){}\/:]/', '_', $url);
+        $key = preg_replace('/[(){}\/:@]/', '_', $url);
 
         return "markdown_url_$key";
+    }
+
+    public static function getCacheKeyForMarkdownUserMention(string $url): string
+    {
+        $key = preg_replace('/[(){}\/:@]/', '_', $url);
+
+        return "markdown_user_mention_$key";
+    }
+
+    public static function getCacheKeyForMarkdownMagazineMention(string $url): string
+    {
+        $key = preg_replace('/[(){}\/:@]/', '_', $url);
+
+        return "markdown_magazine_mention_$key";
     }
 }

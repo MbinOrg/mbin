@@ -16,6 +16,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CommunityLinkParser implements InlineParserInterface
 {
+    public const COMMUNITY_REGEX = '\B!(\w{1,30})(?:@)?((?:[\pL\pN\pS\pM\-\_]++\.)+[\pL\pN\pM]++|[a-z0-9\-\_]++)?';
+
     public function __construct(
         private readonly MagazineRepository $magazineRepository,
         private readonly SettingsManager $settingsManager,
@@ -25,7 +27,7 @@ class CommunityLinkParser implements InlineParserInterface
 
     public function getMatchDefinition(): InlineParserMatch
     {
-        return InlineParserMatch::regex('\B!(\w{1,30})(?:@)?((?:[\pL\pN\pS\pM\-\_]++\.)+[\pL\pN\pM]++|[a-z0-9\-\_]++)?');
+        return InlineParserMatch::regex(self::COMMUNITY_REGEX);
     }
 
     public function parse(InlineParserContext $ctx): bool
