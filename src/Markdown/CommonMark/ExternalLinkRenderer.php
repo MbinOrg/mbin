@@ -91,7 +91,25 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
             ]);
         }
 
+        // skip rendering links inside the label (not allowed)
+        $childContent = null;
+        if ($node->hasChildren()) {
+            $cnodes = [];
+            foreach ($node->children() as $n) {
+                if (
+                    ($n instanceof Link && $n instanceof StringContainerInterface)
+                    || $n instanceof UnresolvableLink
+                ) {
+                    $cnodes[] = new Text($n->getLiteral());
+                } else {
+                    $cnodes[] = $n;
+                }
+            }
+            $childContent = $childRenderer->renderNodes($cnodes);
+        }
+
         $url = $node->getUrl();
+        $apLink = null;
         if (filter_var($url, FILTER_VALIDATE_URL)) {
             try {
                 $apActivity = $this->activityRepository->findByObjectId($url);
@@ -108,7 +126,11 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
                 $entity = $this->entityManager->getRepository($apActivity['type'])->find($apActivity['id']);
 
                 if (null !== $entity) {
-                    return new HtmlElement('div', contents: $this->renderInlineEntity($entity));
+                    if (null === $node->getTitle() && (null === $childContent || $url === $childContent)) {
+                        return new HtmlElement('div', contents: $this->renderInlineEntity($entity));
+                    } else {
+                        $apLink = $this->activityRepository->getLocalUrlOfEntity($entity);
+                    }
                 } else {
                     $this->logger->warning('[ExternalLinkRenderer::render] Could not find an entity for type {t} with id {id} from url {url}', ['t' => $apActivity['type'], 'id' => $apActivity['id'], 'url' => $url]);
 
@@ -119,10 +141,11 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
 
         $renderTarget = $this->config->get('kbin')[MarkdownConverter::RENDER_TARGET];
 
-        $url = $title = match ($node::class) {
+        $url = match ($node::class) {
             RoutedMentionLink::class => $this->generateUrlForRoute($node, $renderTarget),
-            default => $node->getUrl(),
+            default => $apLink ?? $node->getUrl(),
         };
+        $title = $childContent ?? $url;
 
         if (RegexHelper::isLinkPotentiallyUnsafe($url)) {
             return new HtmlElement(
@@ -130,22 +153,6 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
                 ['class' => 'unsafe-link'],
                 $title
             );
-        }
-
-        // skip rendering links inside the label (not allowed)
-        if ($node->hasChildren()) {
-            $cnodes = [];
-            foreach ($node->children() as $n) {
-                if (
-                    ($n instanceof Link && $n instanceof StringContainerInterface)
-                    || $n instanceof UnresolvableLink
-                ) {
-                    $cnodes[] = new Text($n->getLiteral());
-                } else {
-                    $cnodes[] = $n;
-                }
-            }
-            $title = $childRenderer->renderNodes($cnodes);
         }
 
         if (
