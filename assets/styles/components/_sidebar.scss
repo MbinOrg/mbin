@@ -696,6 +696,16 @@
   }
 }
 
+// Use white background for light themes
+.theme--light #sidebar .intro .container, 
+.theme--solarized-light #sidebar .intro .container {
+  background: url('/assets/images/intro-bg-white.png') no-repeat center 20%;
+  color: rgb(41, 41, 41) !important;
+  h3 {
+    color: #2c2c2c;
+  }
+}
+
 #sidebar {
   @include b.media-breakpoint-down(lg) {
     &.open {
