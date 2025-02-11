@@ -699,10 +699,11 @@
 // Use white background for light themes
 .theme--light #sidebar .intro .container, 
 .theme--solarized-light #sidebar .intro .container {
-  background: url('/assets/images/intro-bg-white.png') no-repeat center 20%;
-  color: rgb(41, 41, 41) !important;
+  background: url('/assets/images/intro-bg-white.png') no-repeat center 50%;
+  color: rgb(0, 0, 0) !important;
+  font-weight: 400;
   h3 {
-    color: #2c2c2c;
+    color: #000000;
   }
 }
 
