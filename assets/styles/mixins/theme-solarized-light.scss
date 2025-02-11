@@ -118,13 +118,14 @@ $green: #859900;
 
   //vote
   --kbin-vote-bg: #fff5db;
+  --kbin-vote-bg-hover-bg: #f3e8cd;
   --kbin-vote-text-color: #{$base01};
   --kbin-vote-text-hover-color: #{$base1};
   --kbin-upvoted-color: #{$green};
   --kbin-downvoted-color: #{$red};
 
-   //boost
-   --kbin-boosted-color: var(--kbin-upvoted-color);
+  //boost
+  --kbin-boosted-color: var(--kbin-upvoted-color);
 
   // alerts
   --kbin-alert-info-bg: #fff3cd;
