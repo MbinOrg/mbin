@@ -46,6 +46,6 @@ class PostMentionedNotification extends Notification
             'slug' => empty($this->postComment->post->slug) ? '-' : $this->postComment->post->slug,
         ]);
 
-        return new PushNotification($message, $trans->trans('notification_title_mention', locale: $locale), actionUrl: $url, avatarUrl: $avatarUrl);
+        return new PushNotification($this->getId(), $message, $trans->trans('notification_title_mention', locale: $locale), actionUrl: $url, avatarUrl: $avatarUrl);
     }
 }

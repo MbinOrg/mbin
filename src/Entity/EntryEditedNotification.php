@@ -46,6 +46,6 @@ class EntryEditedNotification extends Notification
             'slug' => $this->entry->slug ?? '-',
         ]);
 
-        return new PushNotification($message, $trans->trans('notification_title_edited_thread', locale: $locale), actionUrl: $url, avatarUrl: $avatarUrl);
+        return new PushNotification($this->getId(), $message, $trans->trans('notification_title_edited_thread', locale: $locale), actionUrl: $url, avatarUrl: $avatarUrl);
     }
 }

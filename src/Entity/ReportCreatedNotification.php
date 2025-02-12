@@ -38,6 +38,6 @@ class ReportCreatedNotification extends Notification
         $message = \sprintf('%s %s %s\n%s: %s', $this->report->reporting->username, $trans->trans('reported', locale: $locale), $this->report->reported->username,
             $trans->trans('report_subject', locale: $locale), $subject->getShortTitle());
 
-        return new PushNotification($message, $trans->trans('notification_title_new_report'), actionUrl: $reportLink);
+        return new PushNotification($this->getId(), $message, $trans->trans('notification_title_new_report'), actionUrl: $reportLink);
     }
 }

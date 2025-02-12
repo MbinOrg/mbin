@@ -273,7 +273,7 @@ class AjaxController extends AbstractController
         $this->entityManager->flush();
 
         try {
-            $testNotification = new PushNotification('', $this->translator->trans('test_push_message', locale: $pushSubscription->locale));
+            $testNotification = new PushNotification(null, '', $this->translator->trans('test_push_message', locale: $pushSubscription->locale));
             $this->pushSubscriptionManager->sendTextToUser($user, $testNotification, specificDeviceKey: $payload->deviceKey);
 
             return new JsonResponse();
@@ -311,7 +311,7 @@ class AjaxController extends AbstractController
     {
         $user = $this->getUserOrThrow();
         try {
-            $this->pushSubscriptionManager->sendTextToUser($user, new PushNotification('', $this->translator->trans('test_push_message')), specificDeviceKey: $payload->deviceKey);
+            $this->pushSubscriptionManager->sendTextToUser($user, new PushNotification(null, '', $this->translator->trans('test_push_message')), specificDeviceKey: $payload->deviceKey);
 
             return new JsonResponse();
         } catch (\ErrorException $e) {

@@ -9,6 +9,8 @@ use App\Enums\EPushNotificationType;
 class PushNotification
 {
     public function __construct(
+        // The id of the notification entity
+        public ?int $id,
         public string $message,
         public string $title,
         public ?string $actionUrl = null,
