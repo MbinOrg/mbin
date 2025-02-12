@@ -23,6 +23,7 @@ use App\Entity\MagazineLog;
 use App\Entity\OAuth2ClientAccess;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Enums\ENotificationStatus;
 use App\Exception\SubjectHasBeenReportedException;
 use App\Factory\EntryCommentFactory;
 use App\Factory\EntryFactory;
@@ -309,7 +310,7 @@ class BaseApi extends AbstractController
         $response = $this->magazineFactory->createResponseDto($dto);
 
         if ($user = $this->getUser()) {
-            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto);
+            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto)?->getStatus() ?? ENotificationStatus::Default;
         }
 
         return $response;
@@ -327,7 +328,7 @@ class BaseApi extends AbstractController
         $response = new UserResponseDto($dto);
 
         if ($user = $this->getUser()) {
-            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto);
+            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto)?->getStatus() ?? ENotificationStatus::Default;
         }
 
         return $response;

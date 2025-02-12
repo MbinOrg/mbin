@@ -15,6 +15,7 @@ use App\DTO\ImageDto;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Magazine;
+use App\Enums\ENotificationStatus;
 use App\Factory\EntryCommentFactory;
 use App\Service\EntryManager;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -46,7 +47,7 @@ class EntriesBaseApi extends BaseApi
 
         if ($user = $this->getUser()) {
             $response->canAuthUserModerate = $dto->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
-            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto);
+            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto)?->getStatus() ?? ENotificationStatus::Default;
         }
 
         return $response;
