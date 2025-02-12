@@ -239,6 +239,7 @@ security:
             [
                 'ROLE_OAUTH2_USER:NOTIFICATION:READ',
                 'ROLE_OAUTH2_USER:NOTIFICATION:DELETE',
+                'ROLE_OAUTH2_USER:NOTIFICATION:EDIT',
             ]
         'ROLE_OAUTH2_USER:OAUTH_CLIENTS':
             [
