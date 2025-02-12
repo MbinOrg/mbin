@@ -51,6 +51,6 @@ class PostCommentCreatedNotification extends Notification
             'slug' => empty($this->postComment->post->slug) ? '-' : $this->postComment->post->slug,
         ]).'#post-comment-'.$this->postComment->getId();
 
-        return new PushNotification($message, $trans->trans('notification_title_new_comment', locale: $locale), actionUrl: $url, avatarUrl: $avatarUrl);
+        return new PushNotification($this->getId(), $message, $trans->trans('notification_title_new_comment', locale: $locale), actionUrl: $url, avatarUrl: $avatarUrl);
     }
 }

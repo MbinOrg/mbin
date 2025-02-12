@@ -52,6 +52,6 @@ class EntryCommentCreatedNotification extends Notification
             'comment_id' => $this->entryComment->getId(),
         ]);
 
-        return new PushNotification($message, $trans->trans('notification_title_new_comment', locale: $locale), actionUrl: $url, avatarUrl: $avatarUrl);
+        return new PushNotification($this->getId(), $message, $trans->trans('notification_title_new_comment', locale: $locale), actionUrl: $url, avatarUrl: $avatarUrl);
     }
 }
