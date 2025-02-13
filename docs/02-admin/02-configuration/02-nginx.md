@@ -91,7 +91,7 @@ upstream mercure {
 }
 
 # Map instance requests vs the rest
-map "$http_accept:$request" $instanceRequest {
+map "$http_accept:$request" $mbinInstanceRequest {
     ~^.*:GET\ \/.well-known\/.+                                                                       1;
     ~^.*:GET\ \/nodeinfo\/.+                                                                          1;
     ~^.*:GET\ \/i\/actor                                                                              1;
@@ -104,21 +104,21 @@ map "$http_accept:$request" $instanceRequest {
 }
 
 # Map user requests vs the rest
-map "$http_accept:$request" $userRequest {
+map "$http_accept:$request" $mbinUserRequest {
     ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/u\/.+   1;
     ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:POST\ \/u\/.+  1;
     default                                                                                    0;
 }
 
 # Map magazine requests vs the rest
-map "$http_accept:$request" $magazineRequest {
+map "$http_accept:$request" $mbinMagazineRequest {
     ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/m\/.+   1;
     ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:POST\ \/m\/.+  1;
     default                                                                                    0;
 }
 
 # Miscellaneous requests
-map "$http_accept:$request" $miscRequest {
+map "$http_accept:$request" $mbinMiscRequest {
     ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/reports\/.+  1;
     ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/message\/.+  1;
     ~^.*:GET\ \/contexts\..+                                                                        1;
@@ -126,12 +126,12 @@ map "$http_accept:$request" $miscRequest {
 }
 
 # Determine if a request should go into the regular log
-map "$instanceRequest$userRequest$magazineRequest$miscRequest" $regularRequest {
+map "$mbinInstanceRequest$mbinUserRequest$mbinMagazineRequest$mbinMiscRequest" $mbinRegularRequest {
     0000    1; # Regular requests
     default 0; # Other requests
 }
 
-map $regularRequest $mbin_limit_key {
+map $mbinRegularRequest $mbin_limit_key {
     0 "";
     1 $binary_remote_addr;
 }
@@ -182,11 +182,11 @@ server {
     error_log /var/log/nginx/mbin_error.log;
 
     # Access logs
-    access_log /var/log/nginx/mbin_access.log combined if=$regularRequest;
-    access_log /var/log/nginx/mbin_instance.log combined if=$instanceRequest buffer=32k flush=5m;
-    access_log /var/log/nginx/mbin_user.log combined if=$userRequest buffer=32k flush=5m;
-    access_log /var/log/nginx/mbin_magazine.log combined if=$magazineRequest buffer=32k flush=5m;
-    access_log /var/log/nginx/mbin_misc.log combined if=$miscRequest buffer=32k flush=5m;
+    access_log /var/log/nginx/mbin_access.log combined if=$mbinRegularRequest;
+    access_log /var/log/nginx/mbin_instance.log combined if=$mbinInstanceRequest buffer=32k flush=5m;
+    access_log /var/log/nginx/mbin_user.log combined if=$mbinUserRequest buffer=32k flush=5m;
+    access_log /var/log/nginx/mbin_magazine.log combined if=$mbinMagazineRequest buffer=32k flush=5m;
+    access_log /var/log/nginx/mbin_misc.log combined if=$mbinMiscRequest buffer=32k flush=5m;
 
     open_file_cache          max=1000 inactive=20s;
     open_file_cache_valid    60s;
