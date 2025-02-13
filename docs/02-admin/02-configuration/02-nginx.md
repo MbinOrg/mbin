@@ -178,8 +178,8 @@ server {
     # Two stage rate limit
     limit_req zone=mbin_limit burst=300 delay=200;
 
-    # Error log
-    error_log /var/log/nginx/mbin_error.log warn;
+    # Error log (if you want you can also add warn at the end of error_log to also log warnings)
+    error_log /var/log/nginx/mbin_error.log;
 
     # Access logs
     access_log /var/log/nginx/mbin_access.log combined if=$mbinRegularRequest;
