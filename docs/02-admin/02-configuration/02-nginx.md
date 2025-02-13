@@ -179,7 +179,7 @@ server {
     limit_req zone=mbin_limit burst=300 delay=200;
 
     # Error log
-    error_log /var/log/nginx/mbin_error.log;
+    error_log /var/log/nginx/mbin_error.log warn;
 
     # Access logs
     access_log /var/log/nginx/mbin_access.log combined if=$mbinRegularRequest;
