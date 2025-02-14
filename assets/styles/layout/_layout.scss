@@ -192,6 +192,11 @@ figure {
   margin: 0;
 }
 
+.options--top,
+.section--top {
+  margin-top: 0.5rem !important;
+}
+
 .rounded-edges {
   .section,
   .options,

@@ -24,6 +24,7 @@
 
     &:hover,
     &:focus-visible {
+      background-color: var(--kbin-vote-bg-hover-bg);
       color: var(--kbin-vote-text-hover-color);
     }
 
