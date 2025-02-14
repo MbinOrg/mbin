@@ -89,6 +89,7 @@ class OAuth2UserConsent
         'user:notification' => 'oauth2.grant.user.notification.all',
         'user:notification:read' => 'oauth2.grant.user.notification.read',
         'user:notification:delete' => 'oauth2.grant.user.notification.delete',
+        'user:notification:edit' => 'oauth2.grant.user.notification.edit',
         'user:oauth_clients' => 'oauth2.grant.user.oauth_clients.all',
         'user:oauth_clients:read' => 'oauth2.grant.user.oauth_clients.read',
         'user:oauth_clients:edit' => 'oauth2.grant.user.oauth_clients.edit',
