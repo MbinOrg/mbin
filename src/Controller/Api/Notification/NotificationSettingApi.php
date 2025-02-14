@@ -73,9 +73,8 @@ class NotificationSettingApi extends NotificationBaseApi
         schema: new OA\Schema(enum: ENotificationStatus::Values),
     )]
     #[OA\Tag(name: 'notification')]
-    #[Security(name: 'oauth2', scopes: ['user:notification:update'])]
-    #[IsGranted('ROLE_OAUTH2_USER:NOTIFICATION:UPDATE')]
-    #[IsGranted('update', subject: 'notification')]
+    #[Security(name: 'oauth2', scopes: ['user:notification:edit'])]
+    #[IsGranted('ROLE_OAUTH2_USER:NOTIFICATION:EDIT')]
     public function update(
         string $targetType,
         int $targetId,
@@ -85,6 +84,10 @@ class NotificationSettingApi extends NotificationBaseApi
         $this->rateLimit($apiUpdateLimiter);
         $user = $this->getUserOrThrow();
         $notificationSetting = ENotificationStatus::getFromString($setting);
+        if (null === $notificationSetting) {
+            throw $this->createNotFoundException('setting does not exist');
+        }
+
         if ('entry' === $targetType) {
             $repo = $this->entityManager->getRepository(Entry::class);
         } elseif ('post' === $targetType) {

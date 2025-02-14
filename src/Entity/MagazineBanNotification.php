@@ -52,6 +52,6 @@ class MagazineBanNotification extends Notification
         $slash = $this->ban->bannedBy->avatar && !str_starts_with('/', $this->ban->bannedBy->avatar->filePath) ? '/' : '';
         $avatarUrl = $this->ban->bannedBy->avatar ? '/media/cache/resolve/avatar_thumb'.$slash.$this->ban->bannedBy->avatar->filePath : null;
 
-        return new PushNotification($message, $trans->trans('notification_title_ban', locale: $locale), avatarUrl: $avatarUrl);
+        return new PushNotification($this->getId(), $message, $trans->trans('notification_title_ban', locale: $locale), avatarUrl: $avatarUrl);
     }
 }

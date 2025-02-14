@@ -92,7 +92,7 @@ class NotificationPushApi extends NotificationBaseApi
         $this->entityManager->flush();
 
         try {
-            $testNotification = new PushNotification('', $translator->trans('test_push_message', locale: $pushSubscription->locale));
+            $testNotification = new PushNotification(null, '', $translator->trans('test_push_message', locale: $pushSubscription->locale));
             $pushSubscriptionManager->sendTextToUser($user, $testNotification, specificToken: $apiToken);
 
             return new JsonResponse(headers: $headers);
@@ -220,7 +220,7 @@ class NotificationPushApi extends NotificationBaseApi
 
         $sub = $repository->findOneBy(['user' => $user, 'apiToken' => $apiToken]);
         if ($sub) {
-            $testNotification = new PushNotification('', $translator->trans('test_push_message', locale: $sub->locale));
+            $testNotification = new PushNotification(null, '', $translator->trans('test_push_message', locale: $sub->locale));
             try {
                 $pushSubscriptionManager->sendTextToUser($user, $testNotification, specificToken: $apiToken);
 
