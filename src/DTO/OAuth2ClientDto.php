@@ -75,6 +75,7 @@ class OAuth2ClientDto extends ImageUploadDto implements \JsonSerializable
         'user:notification',
         'user:notification:read',
         'user:notification:delete',
+        'user:notification:edit',
         'user:oauth_clients',
         'user:oauth_clients:read',
         'user:oauth_clients:edit',

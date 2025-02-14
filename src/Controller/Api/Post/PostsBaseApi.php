@@ -12,6 +12,7 @@ use App\DTO\PostDto;
 use App\DTO\PostRequestDto;
 use App\DTO\PostResponseDto;
 use App\Entity\PostComment;
+use App\Enums\ENotificationStatus;
 
 class PostsBaseApi extends BaseApi
 {
@@ -32,7 +33,7 @@ class PostsBaseApi extends BaseApi
 
         if ($user = $this->getUser()) {
             $response->canAuthUserModerate = $dto->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
-            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto);
+            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto)?->getStatus() ?? ENotificationStatus::Default;
         }
 
         return $response;
