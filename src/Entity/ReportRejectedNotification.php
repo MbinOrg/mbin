@@ -40,7 +40,7 @@ class ReportRejectedNotification extends Notification
             $trans->trans('report_subject', locale: $locale), $subject->getShortTitle()
         );
 
-        return new PushNotification($message, $trans->trans('own_report_rejected', locale: $locale), actionUrl: $this->getSubjectLink($subject, $urlGenerator));
+        return new PushNotification($this->getId(), $message, $trans->trans('own_report_rejected', locale: $locale), actionUrl: $this->getSubjectLink($subject, $urlGenerator));
     }
 
     private function getSubjectLink(ReportInterface $subject, UrlGeneratorInterface $urlGenerator): string
