@@ -265,18 +265,19 @@ realpath_cache_size = 4096K
 realpath_cache_ttl = 600
 ```
 
-Optionally also enable OPCache for improved performances with PHP:
+Optionally also enable OPCache for improved performances with PHP (recommended for both fpm and cli ini files):
 
 ```ini
-opcache.enable=1
-opcache.enable_cli=1
+opcache.enable = 1
+opcache.enable_cli = 1
 ; Memory consumption (in MBs), personal preference
-opcache.memory_consumption=512
+opcache.memory_consumption = 512
 ; Internal string buffer (in MBs), personal preference
-opcache.interned_strings_buffer=128
-opcache.max_accelerated_files=100000
-; Enable PHP JIT
-opcache.jit_buffer_size=500M
+opcache.interned_strings_buffer = 128
+opcache.max_accelerated_files = 100000
+; Enable PHP JIT with all optimizations
+opcache.jit = 1255
+opcache.jit_buffer_size = 500M
 ```
 
 More info: [Symfony Performance docs](https://symfony.com/doc/current/performance.html)
