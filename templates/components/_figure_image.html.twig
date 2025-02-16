@@ -14,6 +14,7 @@
                 <a
                     href="{{ uploaded_asset(image) }}"
                     class="thumb"
+                    data-gallery="{{ gallery_name }}"
                     data-description="{{ image.altText ? '.'~lightbox_alt_id : ''}}">
                     <img loading="lazy"
                          src="{{ image_path }}"
