@@ -270,15 +270,23 @@ Optionally also enable OPCache for improved performances with PHP (recommended f
 ```ini
 opcache.enable = 1
 opcache.enable_cli = 1
+; replace `/var/www/mbin` with `/var/www/kbin` if needed
+opcache.preload = /var/www/mbin/config/preload.php
+opcache.preload_user = www-data
 ; Memory consumption (in MBs), personal preference
 opcache.memory_consumption = 512
 ; Internal string buffer (in MBs), personal preference
 opcache.interned_strings_buffer = 128
 opcache.max_accelerated_files = 100000
+opcache.validate_timestamps = 0
 ; Enable PHP JIT with all optimizations
 opcache.jit = 1255
 opcache.jit_buffer_size = 500M
 ```
+
+> [!CAUTION]
+> Be aware that activating `opcache.preload` can lead to errors if you run multiple sites
+> (because of re-declaring classes).
 
 More info: [Symfony Performance docs](https://symfony.com/doc/current/performance.html)
 
