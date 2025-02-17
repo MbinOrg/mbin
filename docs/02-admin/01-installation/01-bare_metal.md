@@ -265,11 +265,12 @@ realpath_cache_size = 4096K
 realpath_cache_ttl = 600
 ```
 
-Optionally also enable OPCache for improved performances with PHP (recommended for both fpm and cli ini files) (replace `/var/www/mbin` with `/var/www/kbin` if needed):
+Optionally also enable OPCache for improved performances with PHP (recommended for both fpm and cli ini files):
 
 ```ini
 opcache.enable = 1
 opcache.enable_cli = 1
+;replace `/var/www/mbin` with `/var/www/kbin` if needed
 opcache.preload = /var/www/mbin/config/preload.php
 opcache.preload_user = www-data
 ; Memory consumption (in MBs), personal preference
