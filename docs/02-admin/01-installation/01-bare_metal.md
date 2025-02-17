@@ -284,7 +284,8 @@ opcache.jit = 1255
 opcache.jit_buffer_size = 500M
 ```
 
-> [!CAUTION] be aware that activating `opcache.preload` can lead to errors if you run multiple sites
+> [!CAUTION]
+> Be aware that activating `opcache.preload` can lead to errors if you run multiple sites.
 > (because of re-declaring classes)
 
 More info: [Symfony Performance docs](https://symfony.com/doc/current/performance.html)
