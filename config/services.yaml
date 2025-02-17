@@ -216,13 +216,13 @@ services:
                   priority: -5,
               }
 
-    App\EventListener\UserActivityListener:
-        tags:
-            - {
-                  name: kernel.event_listener,
-                  event: kernel.controller,
-                  priority: -5,
-              }
+    # App\EventListener\UserActivityListener:
+    #     tags:
+    #         - {
+    #               name: kernel.event_listener,
+    #               event: kernel.controller,
+    #               priority: -5,
+    #           }
 
     # Notifications
     App\EventListener\ContentNotificationPurgeListener:

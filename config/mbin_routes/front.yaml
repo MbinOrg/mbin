@@ -1,14 +1,14 @@
-front:
-  controller: App\Controller\Entry\EntryFrontController::front
-  defaults: &front_defaults { subscription: home, content: threads, sortBy: default, time: '∞', federation: all }
-  path: /{subscription}/{content}/{sortBy}/{time}/{federation}
-  methods: [GET]
-  requirements: &front_requirement
-    subscription: "%default_subscription_options%"
-    sortBy: "%default_sort_options%"
-    time: "%default_time_options%"
-    federation: "%default_federation_options%"
-    content: "%default_content_options%"
+# front:
+#   controller: App\Controller\Entry\EntryFrontController::front
+#   defaults: &front_defaults { subscription: home, content: threads, sortBy: default, time: '∞', federation: all }
+#   path: /{subscription}/{content}/{sortBy}/{time}/{federation}
+#   methods: [GET]
+#   requirements: &front_requirement
+#     subscription: "%default_subscription_options%"
+#     sortBy: "%default_sort_options%"
+#     time: "%default_time_options%"
+#     federation: "%default_federation_options%"
+#     content: "%default_content_options%"
 
 front_sub:
   controller: App\Controller\Entry\EntryFrontController::front

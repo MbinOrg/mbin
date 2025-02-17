@@ -1,2 +1,8 @@
 _liip_imagine:
   resource: "@LiipImagineBundle/Resources/config/routing.yaml"
+
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute

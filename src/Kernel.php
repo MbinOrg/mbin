@@ -18,19 +18,19 @@ class Kernel extends BaseKernel
 
     // Kernel can be empty according to: https://github.com/symfony/recipes/pull/1006
     // But this will break your routing, so we keep configureRoutes()
-    protected function configureRoutes(RoutingConfigurator $routes): void
-    {
-        $projectDir = $this->getProjectDir();
-        $routes->import($projectDir.'/config/{routes}/'.$this->environment.'/*.yaml');
-        $routes->import($projectDir.'/config/{mbin_routes}/*.yaml');
-        $routes->import($projectDir.'/config/{routes}/*.yaml');
+    // protected function configureRoutes(RoutingConfigurator $routes): void
+    // {
+    //     $projectDir = $this->getProjectDir();
+    //     $routes->import($projectDir.'/config/{routes}/'.$this->environment.'/*.yaml');
+    //     $routes->import($projectDir.'/config/{mbin_routes}/*.yaml');
+    //     $routes->import($projectDir.'/config/{routes}/*.yaml');
 
-        if (is_file($projectDir.'/config/routes.yaml')) {
-            $routes->import($projectDir.'/config/routes.yaml');
-        } else {
-            $routes->import($projectDir.'/config/{routes}.php');
-        }
-    }
+    //     if (is_file($projectDir.'/config/routes.yaml')) {
+    //         $routes->import($projectDir.'/config/routes.yaml');
+    //     } else {
+    //         $routes->import($projectDir.'/config/{routes}.php');
+    //     }
+    // }
 
     #[Override]
     protected function build(ContainerBuilder $container): void
