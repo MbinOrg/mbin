@@ -7,9 +7,11 @@ namespace App\Markdown\CommonMark;
 use App\Controller\User\ThemeSettingsController;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\Magazine;
 use App\Entity\Message;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Entity\User;
 use App\Markdown\CommonMark\Node\ActivityPubMentionLink;
 use App\Markdown\CommonMark\Node\ActorSearchLink;
 use App\Markdown\CommonMark\Node\CommunityLink;
@@ -136,7 +138,21 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
 
                     return new HtmlElement('div');
                 }
+            } elseif (!$isApRequest && null === $apActivity) {
+                if ($user = $this->userRepository->findOneBy(['apProfileId' => $url])) {
+                    $this->logger->debug('found user for URL {u}', ['u' => $url]);
+
+                    return new HtmlElement('span', contents: $this->renderUser($user));
+                } elseif ($magazine = $this->magazineRepository->findOneBy(['apProfileId' => $url])) {
+                    $this->logger->debug('found magazine for URL {u}', ['u' => $url]);
+
+                    return new HtmlElement('span', contents: $this->renderMagazine($magazine));
+                } else {
+                    $this->logger->debug("Didn't find any AP object for url {u}", ['u' => $url]);
+                }
             }
+        } else {
+            $this->logger->debug('Got an invalid url {u}', ['u' => $url]);
         }
 
         $renderTarget = $this->config->get('kbin')[MarkdownConverter::RENDER_TARGET];
@@ -317,15 +333,15 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
     private function renderMentionType(MentionLink $node, ChildNodeRendererInterface $childRenderer): string
     {
         if (MentionType::User === $node->getType() || MentionType::RemoteUser === $node->getType()) {
-            return $this->renderUser($node, $childRenderer);
+            return $this->renderUserNode($node, $childRenderer);
         } elseif (MentionType::Magazine === $node->getType() || MentionType::RemoteMagazine === $node->getType()) {
-            return $this->renderMagazine($node, $childRenderer);
+            return $this->renderMagazineNode($node, $childRenderer);
         } else {
             throw new \LogicException('dont know type of '.\get_class($node));
         }
     }
 
-    private function renderUser(MentionLink $node, ChildNodeRendererInterface $childRenderer): string
+    private function renderUserNode(MentionLink $node, ChildNodeRendererInterface $childRenderer): string
     {
         $username = $node->getKbinUsername();
         $user = $this->userRepository->findOneBy(['username' => $username]);
@@ -335,6 +351,11 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
             return '';
         }
 
+        return $this->renderUser($user);
+    }
+
+    private function renderUser(?User $user): string
+    {
         return $this->twig->render('components/user_inline.html.twig', [
             'user' => $user,
             'showAvatar' => true,
@@ -342,7 +363,7 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
         ]);
     }
 
-    private function renderMagazine(MentionLink $node, ChildNodeRendererInterface $childRenderer): string
+    private function renderMagazineNode(MentionLink $node, ChildNodeRendererInterface $childRenderer): string
     {
         $magName = $node->getKbinUsername();
         $magazine = $this->magazineRepository->findOneByName($magName);
@@ -352,6 +373,11 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
             return '';
         }
 
+        return $this->renderMagazine($magazine);
+    }
+
+    private function renderMagazine(Magazine $magazine)
+    {
         return $this->twig->render('components/magazine_inline.html.twig', [
             'magazine' => $magazine,
             'stretchedLink' => false,
@@ -387,7 +413,6 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
                 'magazineFullName' => ThemeSettingsController::getShowMagazineFullName($this->requestStack->getCurrentRequest()),
             ]);
         }
-
-        return '';
+        throw new \LogicException('This code should be unreachable');
     }
 }
