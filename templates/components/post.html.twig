@@ -75,7 +75,8 @@
                         image: post.image,
                         parent_id: post.id,
                         is_adult: post.isAdult,
-                        thumb_filter: 'post_thumb'
+                        thumb_filter: 'post_thumb',
+                        gallery_name: 'post-%d'|format(post.id),
                     }) }}
                 {% endif %}
                 {% if post.visibility in ['visible', 'private'] %}

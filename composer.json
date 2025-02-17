@@ -156,6 +156,7 @@
             "ergebnis/composer-normalize": true
         },
         "optimize-autoloader": true,
+        "classmap-authoritative": true,
         "preferred-install": {
             "*": "dist"
         },

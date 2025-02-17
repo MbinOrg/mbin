@@ -91,7 +91,8 @@
                         image: comment.image,
                         parent_id: comment.id,
                         is_adult: comment.isAdult,
-                        thumb_filter: 'post_thumb'
+                        thumb_filter: 'post_thumb',
+                        gallery_name: 'ec-%d'|format(comment.id),
                     }) }}
                 {% endif %}
                 {% if comment.visibility in ['visible', 'private'] %}

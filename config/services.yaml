@@ -114,6 +114,7 @@ parameters:
     mbin_downvotes_mode: '%env(enum:\App\Utils\DownvotesMode:default:mbin_downvotes_mode_default:MBIN_DOWNVOTES_MODE)%'
 
     mbin_new_users_need_approval: '%env(bool:default::MBIN_NEW_USERS_NEED_APPROVAL)%'
+    .container.dumper.inline_factories: true
 
 services:
     # default configuration for services in *this* file
