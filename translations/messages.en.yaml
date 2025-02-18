@@ -413,7 +413,7 @@ preferred_languages: Filter languages of threads and posts
 infinite_scroll_help: Automatically load more content when you reach the bottom of
   the page.
 sticky_navbar_help: The navbar will stick to the top of the page when you scroll down.
-auto_preview_help: Automatically expand media previews.
+auto_preview_help: Show the media (photo, video) previews in a larger size below the content.
 reload_to_apply: Reload page to apply changes
 filter.origin.label: Choose origin
 filter.fields.label: Choose which fields to search
