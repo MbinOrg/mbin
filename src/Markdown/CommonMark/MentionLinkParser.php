@@ -45,6 +45,8 @@ class MentionLinkParser implements InlineParserInterface
 
         $fullUsername = $username.'@'.$domain;
 
+        CommunityLinkParser::removeSurroundingLink($ctx, $username, $domain);
+
         [$type, $data] = $this->resolveType($username, $domain);
 
         if ($data instanceof User && $data->apPublicUrl) {

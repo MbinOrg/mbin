@@ -10,6 +10,7 @@ use App\Factory\ActivityPub\PersonFactory;
 use App\Factory\ActivityPub\TombstoneFactory;
 use App\Factory\ImageFactory;
 use App\Factory\MagazineFactory;
+use App\Markdown\MarkdownConverter;
 use App\MessageHandler\ActivityPub\Outbox\DeliverHandler;
 use App\Repository\BookmarkListRepository;
 use App\Repository\BookmarkRepository;
@@ -111,6 +112,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected MentionManager $mentionManager;
     protected ActivityPubManager $activityPubManager;
     protected BookmarkManager $bookmarkManager;
+    protected MarkdownConverter $markdownConverter;
 
     protected MagazineRepository $magazineRepository;
     protected EntryRepository $entryRepository;
@@ -181,6 +183,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->notificationManager = $this->getService(NotificationManager::class);
         $this->activityPubManager = $this->getService(ActivityPubManager::class);
         $this->bookmarkManager = $this->getService(BookmarkManager::class);
+        $this->markdownConverter = $this->getService(MarkdownConverter::class);
 
         $this->magazineRepository = $this->getService(MagazineRepository::class);
         $this->entryRepository = $this->getService(EntryRepository::class);

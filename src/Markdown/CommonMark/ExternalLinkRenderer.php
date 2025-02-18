@@ -26,7 +26,6 @@ use App\Repository\EmbedRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\ImageManager;
-use App\Service\MentionManager;
 use App\Service\SettingsManager;
 use App\Utils\Embed;
 use App\Utils\UrlUtils;
@@ -62,7 +61,6 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
         private readonly RequestStack $requestStack,
         private readonly ApActivityRepository $activityRepository,
         private readonly EntityManagerInterface $entityManager,
-        private readonly MentionManager $mentionManager,
     ) {
     }
 
@@ -140,44 +138,6 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
                     $this->logger->warning('[ExternalLinkRenderer::render] Could not find an entity for type {t} with id {id} from url {url}', ['t' => $apActivity['type'], 'id' => $apActivity['id'], 'url' => $url]);
 
                     return new HtmlElement('div');
-                }
-            } elseif (!$isApRequest && null === $apActivity) {
-                if ($user = $this->userRepository->findOneBy(['apProfileId' => $url])) {
-                    $this->logger->debug('found user for URL {u}', ['u' => $url]);
-                    // @admin@mbin.tld
-                    $name = $user->username;
-                    // admin
-                    $name2 = $this->mentionManager->getUsername($user->username);
-                    // @admin
-                    $name3 = '@'.$this->mentionManager->getUsername($user->username);
-                    // we need that whole checking here because we do not just get the raw text of the link, but instead only the first half
-                    // so if the raw text is [@admin@mbin.tld](https://mbin.tld/u/admin) we get "admin"
-                    if ($childContent === $name || $childContent === $name2 || $childContent === $name3) {
-                        return new HtmlElement('span', contents: $this->renderUser($user));
-                    } else {
-                        $this->logger->debug('found user for URL {u}, but the link text "{t}" is not the same as the username "{name}" or "{name2}" or "{name3}"', ['u' => $url, 't' => $childContent, 'name' => $name, 'name2' => $name2, 'name3' => $name3]);
-                    }
-                } elseif ($magazine = $this->magazineRepository->findOneBy(['apProfileId' => $url])) {
-                    $this->logger->debug('found magazine for URL {u}', ['u' => $url]);
-                    // technology@lemmy.world
-                    $name = $magazine->name;
-                    if (!str_starts_with($name, '@') && !str_starts_with($name, '!')) {
-                        // @technology@lemmy.world
-                        $name = "@$name";
-                    }
-                    // technology
-                    $name2 = $this->mentionManager->getUsername($name);
-                    // !technology
-                    $name3 = '!'.$this->mentionManager->getUsername($name);
-                    // we need that whole checking here because we do not just get the raw text of the link, but instead only the first half
-                    // so if the raw text is [!technology@lemmy.world](https://lemmy.world/c/technology) we get "technology"
-                    if ($childContent === $magazine->name || $childContent === $name2 || $childContent === $name3) {
-                        return new HtmlElement('span', contents: $this->renderMagazine($magazine));
-                    } else {
-                        $this->logger->debug('found magazine for URL {u}, but the link text "{t}" is not the same as the name "{name}" or "{name2}" or "{name3}"', ['u' => $url, 't' => $childContent, 'name' => $name, 'name2' => $name2, 'name3' => $name3]);
-                    }
-                } else {
-                    $this->logger->debug("Didn't find any AP object for url {u}", ['u' => $url]);
                 }
             }
         } else {
