@@ -97,7 +97,7 @@ class CommunityLinkParser implements InlineParserInterface
         if ('[' === $prev && ']' === $next && '(' === $nextNext) {
             $closing = null;
             $link = '';
-            for ($i = 2; $char = $cursor->peek($i); ++$i) {
+            for ($i = 2; null !== ($char = $cursor->peek($i)); ++$i) {
                 if (')' === $char) {
                     $closing = $i;
                     break;

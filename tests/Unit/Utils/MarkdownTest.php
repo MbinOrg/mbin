@@ -23,6 +23,19 @@ class MarkdownTest extends WebTestCase
         self::assertStringNotContainsString('https://kbin.test2', $markdown);
     }
 
+    public function testMagazineLinks2(): void
+    {
+        $text = 'Lots of activity on [!fedibridge@lemmy.dbzer0.com](https://lemmy.dbzer0.com/c/fedibridge) following Reddit paywall announcements';
+        $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
+        // assert that this community does not exist, and we get a search link for it that does not link to the external instance
+        self::assertStringContainsString('search', $markdown);
+        self::assertStringNotContainsString('(', $markdown);
+        self::assertStringNotContainsString(')', $markdown);
+        self::assertStringNotContainsString('[', $markdown);
+        self::assertStringNotContainsString(']', $markdown);
+        self::assertStringNotContainsString('https://lemmy.dbzer0.com', $markdown);
+    }
+
     public function testLemmyMagazineLinks(): void
     {
         $text = 'This should belong to [!magazine@kbin.test2](https://kbin.test2/m/magazine)';
