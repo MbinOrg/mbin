@@ -962,4 +962,10 @@ by: by
 front_default_sort: Frontpage default sort
 comment_default_sort: Comment default sort
 open_signup_request: Open signup request
-image_lightbox_in_list: List thumbs opens full screen
+image_lightbox_in_list: Thread thumbnails opens full screen
+auto_preview_help: Show the media (photo, video) in a larger size below the content.
+compact_view_help: A compact view with less margins, where the media is moved to the right side.
+show_users_avatars_help: Display the user avatar image.
+show_magazines_icons_help: Display the magazine icon.
+show_thumbnails_help: Show the thumbnail images.
+image_lightbox_in_list_help: When checked, clicking the thumbnail shows a modal image box window. When unchecked, clicking the thumbnail will open the thread.
