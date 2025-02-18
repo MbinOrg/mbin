@@ -22,7 +22,6 @@
         {{ component('settings_row_switch', {label: 'show_active_users'|trans, settingsKey: 'MBIN_GENERAL_SHOW_ACTIVE_USERS', defaultValue: 'true'}) }}
         {{ component('settings_row_switch', {label: 'show_user_domains'|trans, settingsKey: 'MBIN_SHOW_USER_DOMAIN', defaultValue: false}) }}
         {{ component('settings_row_switch', {label: 'show_magazine_domains'|trans, settingsKey: 'MBIN_SHOW_MAGAZINE_DOMAIN', defaultValue: false}) }}
-        {{ component('settings_row_switch', {label: 'image_lightbox_in_list'|trans, settingsKey: 'MBIN_LIST_IMAGE_LIGHTBOX', defaultValue: true}) }}
     </div>
     {% if app.user is defined and app.user is not same as null %}
         <strong>{{ 'subscriptions'|trans }}</strong>
@@ -47,6 +46,7 @@
         {{ component('settings_row_switch', {label: 'show_users_avatars'|trans, settingsKey: 'KBIN_ENTRIES_SHOW_USERS_AVATARS', defaultValue: true}) }}
         {{ component('settings_row_switch', {label: 'show_magazines_icons'|trans, settingsKey: 'KBIN_ENTRIES_SHOW_MAGAZINES_ICONS', defaultValue: true}) }}
         {{ component('settings_row_switch', {label: 'show_thumbnails'|trans, settingsKey: 'KBIN_ENTRIES_SHOW_THUMBNAILS', defaultValue: true}) }}
+        {{ component('settings_row_switch', {label: 'image_lightbox_in_list'|trans, settingsKey: 'MBIN_LIST_IMAGE_LIGHTBOX', defaultValue: true}) }}
     </div>
     <strong>{{ 'microblog'|trans }}</strong>
     <div class="settings-section">
