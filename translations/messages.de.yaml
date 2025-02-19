@@ -189,7 +189,7 @@ content: Inhalt
 change_language: Sprache wechseln
 type.smart_contract: Smart Contract
 hot: Heiß
-unfollow: Nicht mehr folgen
+unfollow: Entfolgen
 subscribed: Abonniert
 subscriptions: Abonnements
 chat_view: Chat-Ansicht
@@ -973,8 +973,9 @@ bookmark_list_create: Erstellen
 bookmarks_list_edit: Lesezeichenliste bearbeiten
 email_application_rejected_body: Vielen Dank für dein Interesse, aber wir müssen dir
   leider mitteilen, dass deine Registrierungsanfrage abgelehnt wurde.
-email_application_approved_body: 'Deine Registrierungsanfrage wurde von den Admins
-  freigegeben. Hier kannst dich auf dem Server anmelden: <a href="%link%">%siteName%</a>.'
+email_application_approved_body: 'Deine Registrierungsanfrage wurde von den Server-Administratoren
+  freigegeben. Du kannst dich jetzt unter <a href="%link%">%siteName%</a> auf dem
+  Server anmelden.'
 email_application_rejected_title: Deine Registrierungsanfrage wurde abgelehnt
 email_application_pending: Dein Account muss von einem Admin freigegeben werden, bevor
   du dich anmelden kannst.
@@ -988,3 +989,20 @@ bookmark_remove_all: All Lesezeichen entfernen
 search_type_post: Mikroblogs
 bookmark_remove_from_list: Lesezeichen von %list% entfernen
 search_type_all: Themen + Mikroblogs
+viewing_one_signup_request: Du schaust dir eine einzelne Registrierungsanfrage von
+  %username% an
+show_magazine_domains: Zeige Magazin-Domains
+oauth2.grant.user.bookmark: Hinzufügen und Löschen von Lesezeichen
+oauth2.grant.user.bookmark.add: Lesezeichen hinzufügen
+oauth2.grant.user.bookmark.remove: Lesezeichen löschen
+oauth2.grant.user.bookmark_list: Deine Lesezeichenlisten lesen, bearbeiten und löschen
+oauth2.grant.user.bookmark_list.read: Deine Lesezeichenlisten lesen
+oauth2.grant.user.bookmark_list.edit: Deine Lesezeichenlisten bearbeiten
+oauth2.grant.user.bookmark_list.delete: Deine Lesezeichenlisten löschen
+show_user_domains: Zeige Nutzer-Domains
+answered: antwortete
+by: von
+front_default_sort: Standardsortierung Startseite
+comment_default_sort: Standardsortierung Kommentare
+open_signup_request: Registrierungsanfrage öffnen
+image_lightbox_in_list: Vorschaubild öffnet Vollbild
