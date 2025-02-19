@@ -38,7 +38,10 @@ sudo add-apt-repository ppa:ondrej/php -y
 On **Debian 12** or later, you can install the latest PHP package repository (this step is optional for Debian 13 or later) via:
 
 ```bash
-sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+sudo apt-get -y install lsb-release ca-certificates curl
+sudo curl -sSLo /tmp/debsuryorg-archive-keyring.deb https://packages.sury.org/debsuryorg-archive-keyring.deb
+sudo dpkg -i /tmp/debsuryorg-archive-keyring.deb
+sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
 ```
 
 Install _PHP 8.3_ with PHP extensions:
