@@ -233,13 +233,14 @@ SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Unit
 
 Our integration tests depend on a database and a caching server (Valkey / KeyDB / Redis). 
 The database and cache are cleared / dumped every test run. 
-To start the services:
+
+To start the services in the background:
 
 ```sh
-cd docker/tests && docker compose up -d
+docker compose -f docker/tests/compose.yml up -d
 ```
 
-To run the integration tests:
+Then run the integration test(s):
 
 ```sh
 SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Functional
