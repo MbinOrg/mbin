@@ -1,6 +1,5 @@
 <div class="settings-row {{ class }}" data-controller="settings-row-enum">
-    <span class="label" id="settings-row-label-{{ settingsKey }}">{{ label }}</span>
-    <span class="help" id="settings-row-help-{{ settingsKey }}">{{ help }}</span>
+    <span class="label" title="{{ help }}" id="settings-row-label-{{ settingsKey }}">{{ label }}</span>
     <div class="value-container">
         <div class="enum" role="radiogroup" aria-labelledby="settings-row-label-{{ settingsKey }}"
              aria-describedby="settings-row-help-{{ settingsKey }}">
