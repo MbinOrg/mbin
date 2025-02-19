@@ -45,7 +45,7 @@
 
 {% block log_moderator_add %}
     {% if log.actingUser is not same as null %}
-        {{ component('user_inline', {user: log.actingUser}) }}
+        {{ component('user_inline', {user: log.actingUser, showAvatar: showAvatars}) }}
     {% else %}
         {{ 'someone'|trans }}
     {% endif %}
@@ -55,7 +55,7 @@
 
 {% block log_moderator_remove %}
     {% if log.actingUser is not same as null %}
-        {{ component('user_inline', {user: log.actingUser}) }}
+        {{ component('user_inline', {user: log.actingUser, showAvatar: showAvatars}) }}
     {% else %}
         {{ 'someone'|trans }}
     {% endif %}
@@ -65,7 +65,7 @@
 
 {% block log_entry_pinned %}
     {% if log.actingUser is not same as null %}
-        {{ component('user_inline', {user: log.actingUser}) }}
+        {{ component('user_inline', {user: log.actingUser, showAvatar: showAvatars}) }}
     {% else %}
         {{ 'someone'|trans }}
     {% endif %}
@@ -76,7 +76,7 @@
 
 {% block log_entry_unpinned %}
     {% if log.actingUser is not same as null %}
-        {{ component('user_inline', {user: log.actingUser}) }}
+        {{ component('user_inline', {user: log.actingUser, showAvatar: showAvatars}) }}
     {% else %}
         {{ 'someone'|trans }}
     {% endif %}
