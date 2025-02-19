@@ -44,7 +44,7 @@ sudo dpkg -i /tmp/debsuryorg-archive-keyring.deb
 sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
 ```
 
-Install _PHP 8.3_ with PHP extensions:
+Install _PHP 8.3_ (or install _PHP 8.4_ if you wish) with PHP extensions:
 
 ```bash
 sudo apt-get update
@@ -53,6 +53,9 @@ sudo apt-get install php8.3 php8.3-common php8.3-fpm php8.3-cli php8.3-amqp php8
 
 > [!NOTE]
 > If you are upgrading to PHP 8.3 from an older version, please re-review the [PHP configuration](#php) section of this guide as existing `ini` settings are NOT automatically copied to new versions. Additionally review which php-fpm version is configured in your nginx site.
+
+> [!IMPORTANT]
+> **Never** even install `xdebug` PHP extension in production environments. Even if you didn't enabled it but only installed `xdebug` can give massive performance issues.
 
 Install Composer:
 
@@ -317,9 +320,7 @@ sudo systemctl restart php8.3-fpm.service
 
 ### Composer
 
-Choose either production or developer (not both).
-
-#### Composer Production
+Setup composer in production mode:
 
 ```bash
 composer install --no-dev
@@ -328,21 +329,10 @@ APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear
 composer clear-cache
 ```
 
-#### Composer Development
-
-If you run production already then _skip the steps below_.
-
 > [!CAUTION]
-> When running in development mode your instance will make _sensitive information_ available,
-> such as database credentials, via the debug toolbar and/or stack traces.
-> **DO NOT** expose your development instance to the Internet or you will have a bad time.
-
-```bash
-composer install
-composer dump-env dev
-APP_ENV=dev APP_DEBUG=1 php bin/console cache:clear
-composer clear-cache
-```
+> When running Symfony in _development mode_, your instance may _expose sensitive information_ to the public,
+> including database credentials, through the debug toolbar and stack traces.
+> **NEVER** expose your development instance to the Internet — doing so can lead to serious security risks.
 
 ### Caching
 
