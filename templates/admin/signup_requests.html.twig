@@ -28,7 +28,7 @@
         {% for request in requests %}
             <div class="section">
                 <div>
-                    <small class="meta">{{ component('user_inline', {user: request}) }},
+                    <small class="meta">{{ component('user_inline', {user: request, showNewIcon: true}) }},
                         {{ component('date', {date: request.createdAt}) }}</small>
                 </div>
                 <div>

@@ -21,7 +21,7 @@
                         <a href="{{ post_url(post) }}" class="stretched-link more">{{ 'show_more'|trans }}</a>
                     </div>
                     <figcaption>
-                        {{ component('date', {date: post.createdAt}) }} {{ 'to'|trans }} {{ component('magazine_inline', {magazine: post.magazine, fullName: SHOW_MAGAZINE_FULLNAME is same as V_TRUE}) }}
+                        {{ component('date', {date: post.createdAt}) }} {{ 'to'|trans }} {{ component('magazine_inline', {magazine: post.magazine, fullName: SHOW_MAGAZINE_FULLNAME is same as V_TRUE, showNewIcon: true}) }}
                     </figcaption>
                 </figure>
             {% endfor %}
