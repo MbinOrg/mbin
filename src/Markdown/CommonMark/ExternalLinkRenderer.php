@@ -348,6 +348,7 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
         return $this->twig->render('components/user_inline.html.twig', [
             'user' => $user,
             'showAvatar' => true,
+            'showNewIcon' => true,
             'fullName' => ThemeSettingsController::getShowUserFullName($this->requestStack->getCurrentRequest()),
         ]);
     }
