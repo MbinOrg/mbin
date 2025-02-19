@@ -14,7 +14,7 @@
     {%- if fullName is defined and fullName is same as true -%}
         @{{- user.username|apDomain -}}
     {%- endif -%}
-    {% if user.isNew() %}
+    {% if user.isNew() and showAvatar %}
         {% set days = constant('App\\Entity\\User::NEW_FOR_DAYS') %}
         <i class="fa-solid fa-leaf new-user-icon" title="{{ 'new_user_description'|trans({ '%days%': days }) }}" aria-description="{{ 'new_user_description'|trans({ '%days%': days }) }}"></i>
     {% endif %}
