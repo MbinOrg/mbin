@@ -28,7 +28,7 @@
                 data-action="notifications:Notification@window->subject#notification">
             <header>
                 {% if comment.isAdult %}<span class="badge danger">18+</span>{% endif %}
-                {{ component('user_inline', {user: comment.user, showAvatar: false, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) }}
+                {{ component('user_inline', {user: comment.user, showAvatar: false, showNewIcon: true, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) }}
 
                 {% if comment.post.user.id() is same as comment.user.id() %}
                     <span class="user-badge">{{ 'user_badge_op'|trans }}</span>

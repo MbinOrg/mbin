@@ -4,6 +4,8 @@
 {% set showAvatars = app.request.cookies.get(MBIN_MODERATION_LOG_SHOW_USER_AVATARS) is same as V_TRUE %}
 {% set MBIN_MODERATION_LOG_SHOW_MAGAZINE_ICONS = constant('App\\Controller\\User\\ThemeSettingsController::MBIN_MODERATION_LOG_SHOW_MAGAZINE_ICONS') %}
 {% set showIcons = app.request.cookies.get(MBIN_MODERATION_LOG_SHOW_MAGAZINE_ICONS) is same as V_TRUE %}
+{% set MBIN_MODERATION_LOG_SHOW_NEW_ICONS = constant('App\\Controller\\User\\ThemeSettingsController::MBIN_MODERATION_LOG_SHOW_NEW_ICONS') %}
+{% set showNewIcons = app.request.cookies.get(MBIN_MODERATION_LOG_SHOW_NEW_ICONS) is same as V_TRUE %}
 {% use 'modlog/_blocks.html.twig' %}
 
 {%- block title -%}
@@ -35,6 +37,7 @@
                     showMagazine: true,
                     showAvatars: showAvatars,
                     showIcons: showIcons,
+                    showNewIcons: showNewIcons,
                 } only -%}
                     {{ block(log.type) }}
                 {%- endwith -%}

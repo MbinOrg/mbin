@@ -32,7 +32,7 @@
                 <tbody>
                 {% for ban in bans %}
                     <tr>
-                        <td>{{ component('user_inline', {user: ban.user}) }}</td>
+                        <td>{{ component('user_inline', {user: ban.user, showNewIcon: true}) }}</td>
                         <td>{{ ban.reason }}</td>
                         <td>{{ component('date', {date: ban.createdAt}) }}</td>
                         <td>

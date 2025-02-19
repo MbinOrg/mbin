@@ -21,11 +21,11 @@
             <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
         {% endif %}
         <div>
-            {{ component('user_inline', {user: entry.user, showAvatar: false, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) -}}
+            {{ component('user_inline', {user: entry.user, showAvatar: false, showNewIcon: true, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) -}}
             ,
             {{ component('date', {date: entry.createdAt}) }}
             {{ component('date_edited', {createdAt: entry.createdAt, editedAt: entry.editedAt}) }}
-            {{ 'to'|trans }} {{ component('magazine_inline', {magazine: entry.magazine, showAvatar: false, fullName: SHOW_MAGAZINE_FULLNAME is same as V_TRUE}) }}
+            {{ 'to'|trans }} {{ component('magazine_inline', {magazine: entry.magazine, showAvatar: false, showNewIcon: true, fullName: SHOW_MAGAZINE_FULLNAME is same as V_TRUE}) }}
         </div>
         <footer>
             {% if entry.visibility in ['visible', 'private'] %}

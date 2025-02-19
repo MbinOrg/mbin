@@ -21,7 +21,7 @@
            title="{{ 'magazine_posting_restricted_to_mods_warning'|trans }}"
            aria-describedby="{{ 'magazine_posting_restricted_to_mods_warning'|trans }}"></i>
     {% endif %}
-    {% if magazine.isNew() and showAvatar %}
+    {% if magazine.isNew() and showNewIcon %}
         {% set days = constant('App\\Entity\\Magazine::NEW_FOR_DAYS') %}
         <i class="fa-solid fa-leaf new-magazine-icon" title="{{ 'new_magazine_description'|trans({ '%days%': days }) }}" aria-description="{{ 'new_magazine_description'|trans({ '%days%': days }) }}"></i>
     {% endif %}

@@ -31,8 +31,8 @@
                 <tbody>
                 {% for request in requests %}
                     <tr>
-                        <td>{{ component('magazine_inline', {magazine: request.magazine}) }}</td>
-                        <td>{{ component('user_inline', {user: request.user}) }}</td>
+                        <td>{{ component('magazine_inline', {magazine: request.magazine, showNewIcon: true}) }}</td>
+                        <td>{{ component('user_inline', {user: request.user, showNewIcon: true}) }}</td>
                         <td>{{ get_reputation_total(request.user) }}</td>
                         <td>
                             <aside class="magazine__subscribe">
