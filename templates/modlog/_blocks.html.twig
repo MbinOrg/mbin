@@ -50,7 +50,7 @@
         {{ 'someone'|trans }}
     {% endif %}
     {{ 'magazine_log_mod_added'|trans -}}
-    {% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.magazine, showAvatar: showIcons, showNewIcon: showNewIcons}) -}}{%- endif -%}: {{ component('user_inline', {user: log.user, showAvatar: showAvatars}) }}
+    {% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.magazine, showAvatar: showIcons, showNewIcon: showNewIcons}) -}}{%- endif -%}: {{ component('user_inline', {user: log.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }}
 {% endblock %}
 
 {% block log_moderator_remove %}
@@ -60,7 +60,7 @@
         {{ 'someone'|trans }}
     {% endif %}
     {{ 'magazine_log_mod_removed'|trans -}}
-    {% if showMagazine %} {{ 'from'|trans|lower }} {{ component('magazine_inline', {magazine: log.magazine, showAvatar: showIcons, showNewIcon: showNewIcons}) -}}{%- endif -%}: {{ component('user_inline', {user: log.user, showAvatar: showAvatars}) }}
+    {% if showMagazine %} {{ 'from'|trans|lower }} {{ component('magazine_inline', {magazine: log.magazine, showAvatar: showIcons, showNewIcon: showNewIcons}) -}}{%- endif -%}: {{ component('user_inline', {user: log.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }}
 {% endblock %}
 
 {% block log_entry_pinned %}
