@@ -27,6 +27,7 @@ use App\Repository\SettingsRepository;
 use App\Repository\SiteRepository;
 use App\Repository\TagLinkRepository;
 use App\Repository\UserRepository;
+use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPub\Wrapper\CreateWrapper;
 use App\Service\ActivityPub\Wrapper\LikeWrapper;
@@ -149,6 +150,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected ProjectInfoService $projectInfoService;
     protected RouterInterface $router;
     protected MessageBusInterface $bus;
+    protected ActivityJsonBuilder $activityJsonBuilder;
 
     protected DeliverHandler $deliverHandler;
 
@@ -182,6 +184,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->badgeManager = $this->getService(BadgeManager::class);
         $this->notificationManager = $this->getService(NotificationManager::class);
         $this->activityPubManager = $this->getService(ActivityPubManager::class);
+        $this->activityJsonBuilder = $this->getService(ActivityJsonBuilder::class);
         $this->bookmarkManager = $this->getService(BookmarkManager::class);
         $this->markdownConverter = $this->getService(MarkdownConverter::class);
 
