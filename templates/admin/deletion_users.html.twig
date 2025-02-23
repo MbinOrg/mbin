@@ -44,7 +44,7 @@
                 <tbody>
                 {% for user in users %}
                     <tr>
-                        <td>{{ component('user_inline', {user: user}) }}</td>
+                        <td>{{ component('user_inline', {user: user, showNewIcon: true}) }}</td>
                         <td>{{ user.email }}</td>
                         <td>{{ component('date', {date: user.createdAt}) }}</td>
                         <td>{{ component('date', {date: user.markedForDeletionAt}) }}</td>

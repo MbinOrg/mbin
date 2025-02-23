@@ -49,6 +49,7 @@ class ThemeSettingsController extends AbstractController
     public const KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON = 'kbin_subscriptions_show_magazine_icon';
     public const MBIN_MODERATION_LOG_SHOW_USER_AVATARS = 'mbin_moderation_log_show_user_avatars';
     public const MBIN_MODERATION_LOG_SHOW_MAGAZINE_ICONS = 'mbin_moderation_log_show_magazine_icons';
+    public const MBIN_MODERATION_LOG_SHOW_NEW_ICONS = 'mbin_moderation_log_show_new_icons';
     public const MBIN_LIST_IMAGE_LIGHTBOX = 'mbin_list_image_lightbox';
 
     public const CLASSIC = 'classic';
@@ -107,6 +108,7 @@ class ThemeSettingsController extends AbstractController
         self::KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON,
         self::MBIN_MODERATION_LOG_SHOW_USER_AVATARS,
         self::MBIN_MODERATION_LOG_SHOW_MAGAZINE_ICONS,
+        self::MBIN_MODERATION_LOG_SHOW_NEW_ICONS,
         self::MBIN_GENERAL_SHOW_RELATED_POSTS,
         self::MBIN_GENERAL_SHOW_RELATED_ENTRIES,
         self::MBIN_GENERAL_SHOW_RELATED_MAGAZINES,
