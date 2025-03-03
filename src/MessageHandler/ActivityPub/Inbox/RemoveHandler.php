@@ -111,7 +111,7 @@ class RemoveHandler extends MbinMessageHandler
         if (null === $targetMag->apId) {
             $activityToAnnounce = $messagePayload;
             unset($activityToAnnounce['@context']);
-            $activity = $this->activityRepository->createForRemotePayload($activityToAnnounce);
+            $activity = $this->activityRepository->createForRemoteActivity($activityToAnnounce);
             $this->bus->dispatch(new GenericAnnounceMessage($targetMag->getId(), null, parse_url($actor->apDomain, PHP_URL_HOST), $activity->uuid->toString(), null));
         }
     }
@@ -156,7 +156,7 @@ class RemoveHandler extends MbinMessageHandler
 
     private function announceRemovePin(User $actor, Magazine $targetMag, array $object): void
     {
-        $activity = $this->activityRepository->createForRemotePayload($object);
+        $activity = $this->activityRepository->createForRemoteActivity($object);
         $this->bus->dispatch(new GenericAnnounceMessage($targetMag->getId(), null, parse_url($actor->apDomain, PHP_URL_HOST), $activity->uuid->toString(), null));
     }
 }

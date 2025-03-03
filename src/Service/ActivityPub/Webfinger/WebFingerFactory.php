@@ -47,7 +47,7 @@ class WebFingerFactory
         $content = $this->client->getWebfingerObject($url);
 
         if (!\is_array($content) || !\count($content)) {
-            throw new \Exception('WebFinger fetching has failed, no contents returned');
+            throw new \Exception('WebFinger fetching has failed, no contents returned for '.$handle);
         }
 
         return new WebFinger($content);

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\ActivityPub;
+namespace App\Tests;
 
 use PHPUnit\Framework\Assert;
 use Spatie\Snapshots\Drivers\JsonDriver;

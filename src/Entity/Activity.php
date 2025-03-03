@@ -107,6 +107,9 @@ class Activity
         } elseif ($object instanceof Activity) {
             $this->innerActivity = $object;
         } elseif (\is_array($object)) {
+            if (isset($object['@context'])) {
+                unset($object['@context']);
+            }
             $this->objectGeneric = json_encode($object);
         } elseif (\is_string($object)) {
             $this->objectGeneric = $object;
@@ -121,7 +124,7 @@ class Activity
         if (null !== $o) {
             return $o;
         }
-        $o = json_decode($this->objectGeneric ?? '');
+        $o = json_decode($this->objectGeneric ?? '', associative: true);
         if (JSON_ERROR_NONE === json_last_error()) {
             return $o;
         }

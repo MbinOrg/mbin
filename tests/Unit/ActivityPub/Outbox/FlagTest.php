@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\ActivityPub\Outbox;
 
-use App\Tests\Unit\ActivityPub\ActivityPubJsonDriver;
-use App\Tests\Unit\ActivityPub\ActivityPubTestCase;
+use App\Tests\ActivityPubJsonDriver;
+use App\Tests\ActivityPubTestCase;
 use App\Tests\Unit\ActivityPub\Traits\FlagActivityGeneratorTrait;
 
 class FlagTest extends ActivityPubTestCase

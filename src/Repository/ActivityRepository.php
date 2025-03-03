@@ -79,7 +79,7 @@ class ActivityRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function createForRemotePayload(array $payload): Activity
+    public function createForRemotePayload(array $payload, ActivityPubActivityInterface|Entry|EntryComment|Post|PostComment|ActivityPubActorInterface|User|Magazine|Activity|array|string|null $object = null): Activity
     {
         if (isset($payload['@context'])) {
             unset($payload['@context']);
@@ -87,6 +87,27 @@ class ActivityRepository extends ServiceEntityRepository
         $activity = new Activity($payload['type']);
         $activity->activityJson = json_encode($payload['object']);
         $activity->isRemote = true;
+        if (null !== $object) {
+            $activity->setObject($object);
+        }
+
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
+
+        return $activity;
+    }
+
+    public function createForRemoteActivity(array $payload, ActivityPubActivityInterface|Entry|EntryComment|Post|PostComment|ActivityPubActorInterface|User|Magazine|Activity|array|string|null $object = null): Activity
+    {
+        if (isset($payload['@context'])) {
+            unset($payload['@context']);
+        }
+        $activity = new Activity($payload['type']);
+        $activity->activityJson = json_encode($payload);
+        $activity->isRemote = true;
+        if (null !== $object) {
+            $activity->setObject($object);
+        }
 
         $this->entityManager->persist($activity);
         $this->entityManager->flush();

@@ -79,7 +79,7 @@ class AddHandler extends MbinMessageHandler
     public function handleModeratorAdd(Magazine $targetMag, Magazine|User $actor, $object1, array $messagePayload): void
     {
         if (!$targetMag->userIsModerator($actor) and !$targetMag->hasSameHostAsUser($actor)) {
-            throw new \LogicException("the user '$actor->username' ({$actor->getId()}) is not a moderator of $targetMag->name ({$targetMag->getId()}) and is not from the same instance. He can therefore not add moderators");
+            throw new \LogicException("the user '$actor->username' ({$actor->getId()}) is not a moderator of '$targetMag->name' ({$targetMag->getId()}) and is not from the same instance. They can therefore not add moderators");
         }
 
         $object = $this->activityPubManager->findUserActorOrCreateOrThrow($object1);
@@ -107,7 +107,7 @@ class AddHandler extends MbinMessageHandler
         if (null === $targetMag->apId) {
             $activityToAnnounce = $messagePayload;
             unset($activityToAnnounce['@context']);
-            $activity = $this->activityRepository->createForRemotePayload($activityToAnnounce);
+            $activity = $this->activityRepository->createForRemoteActivity($activityToAnnounce);
             $this->bus->dispatch(new GenericAnnounceMessage($targetMag->getId(), null, parse_url($actor->apDomain, PHP_URL_HOST), $activity->uuid->toString(), null));
         }
     }
@@ -178,7 +178,7 @@ class AddHandler extends MbinMessageHandler
     {
         $activityToAnnounce = $object;
         unset($activityToAnnounce['@context']);
-        $activity = $this->activityRepository->createForRemotePayload($activityToAnnounce);
+        $activity = $this->activityRepository->createForRemoteActivity($activityToAnnounce);
         $this->bus->dispatch(new GenericAnnounceMessage($targetMag->getId(), null, parse_url($actor->apDomain, PHP_URL_HOST), $activity->uuid->toString(), null));
     }
 }

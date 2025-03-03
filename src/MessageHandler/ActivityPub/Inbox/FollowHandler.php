@@ -108,7 +108,7 @@ class FollowHandler extends MbinMessageHandler
 
     private function handleFollowRequest(array $payload, User|Magazine $object, bool $isReject = false): void
     {
-        $activity = $this->followResponseWrapper->build($object, $payload['object'], $isReject);
+        $activity = $this->followResponseWrapper->build($object, $payload, $isReject);
         $response = $this->activityJsonBuilder->buildActivityJson($activity);
         $this->client->post($this->client->getInboxUrl($payload['actor']), $object, $response);
     }
