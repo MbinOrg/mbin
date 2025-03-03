@@ -8,9 +8,15 @@ use App\DTO\MessageDto;
 use App\Entity\Message;
 use App\Entity\MessageThread;
 use App\Entity\User;
+use App\Exception\InvalidApPostException;
+use App\Exception\InvalidWebfingerException;
+use App\Exception\UserBlockedException;
+use App\Exception\UserDeletedException;
 use App\Message\ActivityPub\Outbox\CreateMessage;
 use App\Repository\MessageThreadRepository;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -39,7 +45,18 @@ class MessageManager
 
     public function toMessage(MessageDto $dto, MessageThread $thread, User $sender): Message
     {
+        if ($sender->isDeleted || $sender->isTrashed() || $sender->isSoftDeleted()) {
+            throw new UserDeletedException();
+        }
         $message = new Message($thread, $sender, $dto->body, $dto->apId);
+
+        foreach ($thread->participants as /** @var User $participant */ $participant) {
+            if ($sender->getId() !== $participant->getId()) {
+                if ($participant->isBlocked($sender)) {
+                    throw new UserBlockedException();
+                }
+            }
+        }
 
         $thread->setUpdatedAt();
 
@@ -91,12 +108,31 @@ class MessageManager
         return $message->sender->apId === $user->apId || $message->sender->apDomain === $user->apDomain;
     }
 
+    /**
+     * @throws InvalidApPostException
+     * @throws UserBlockedException
+     * @throws InvalidArgumentException
+     * @throws InvalidWebfingerException
+     * @throws Exception
+     * @throws UserDeletedException
+     */
     public function createMessage(array $object): Message|MessageThread
     {
         $this->logger->debug('creating message from {o}', ['o' => $object]);
         $participantIds = array_merge($object['to'] ?? [], $object['cc'] ?? []);
         $participants = array_map(fn ($participant) => $this->activityPubManager->findActorOrCreate(\is_string($participant) ? $participant : $participant['id']), $participantIds);
         $author = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
+
+        if ($author->isDeleted || $author->isTrashed() || $author->isSoftDeleted()) {
+            throw new UserDeletedException();
+        }
+
+        foreach ($participants as $participant) {
+            if ($participant->isBlocked($author)) {
+                throw new UserBlockedException();
+            }
+        }
+
         $participants[] = $author;
         $message = new MessageDto();
         $message->body = $this->activityPubManager->extractMarkdownContent($object);
