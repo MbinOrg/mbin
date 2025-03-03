@@ -126,7 +126,7 @@ security:
         - { path: ^/api/client, roles: PUBLIC_ACCESS }
         - { path: ^/api/info, roles: PUBLIC_ACCESS }
         - { path: ^/api/instance, roles: PUBLIC_ACCESS }
-        - { path: ^/api/defederate, roles: PUBLIC_ACCESS }
+        - { path: ^/api/defederated, roles: PUBLIC_ACCESS }
         - { path: ^/, roles: PUBLIC_ACCESS_UNLESS_PRIVATE_INSTANCE }
 
     role_hierarchy:
