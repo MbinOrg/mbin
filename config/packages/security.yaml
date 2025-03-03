@@ -123,7 +123,9 @@ security:
         - { path: ^/authorize, roles: PUBLIC_ACCESS }
         - { path: ^/token, roles: PUBLIC_ACCESS }
         - { path: ^/api/doc, roles: PUBLIC_ACCESS }
-        - { path: ^/api/client, roles: PUBLIC_ACCESS }
+        - { path: ^/api/info, roles: PUBLIC_ACCESS }
+        - { path: ^/api/instance, roles: PUBLIC_ACCESS }
+        - { path: ^/api/defederate, roles: PUBLIC_ACCESS }
         - { path: ^/, roles: PUBLIC_ACCESS_UNLESS_PRIVATE_INSTANCE }
 
     role_hierarchy:
