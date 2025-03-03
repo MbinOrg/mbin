@@ -383,7 +383,8 @@ infinite_scroll_help: Laad automatisch meer content zodra je de onderkant van de
   hebt bereikt.
 sticky_navbar_help: De navigatiebalk blijft bovenaan de pagina staan wanneer u naar
   beneden scrolt.
-auto_preview_help: Vouw mediavoorbeelden automatisch uit.
+auto_preview_help: Geef de mediavoorbeelden (foto's, video's) in een groter formaat
+  weer onder de inhoud.
 reload_to_apply: Laad de pagina opnieuw om wijzigingen toe te passen
 filter.origin.label: Kies herkomst
 filter.fields.label: Kies in welke velden u wilt zoeken
@@ -869,7 +870,7 @@ continue_with: Daargaan met
 magazine_log_entry_pinned: vastgezette gesprek
 magazine_log_entry_unpinned: verwijderde vastgezette gesprek
 own_content_reported_accepted: Een melding over uw inhoud was geaccepteerd.
-open_report: open melding
+open_report: Open melding
 report_accepted: Een melding was geaccepteerd
 show_related_entries: Toon willekeurige gesprekken
 show_related_magazines: Toon willekeurige tijdschriften
@@ -980,3 +981,27 @@ email_application_approved_body: Uw registratieverzoek is goedgekeurd door de se
   admins. U kunt nu inloggen op de server op <a href="%link%">%siteName%</a>.
 notify_on_user_signup: Nieuwe aanmeldingen
 bookmark_list_make_default: Maak Standaard
+oauth2.grant.user.bookmark_list.delete: Verwijder jouw bladwijzerlijsten
+compact_view_help: Een compacte weergave met minder marges, waarbij de media naar
+  de rechterkant is verplaatst.
+show_thumbnails_help: Toon de miniatuurafbeeldingen.
+show_magazines_icons_help: Geef het tijdschrifticoon weer.
+image_lightbox_in_list_help: Als het is aangevinkt, wordt door te klikken op de miniatuur
+  een dialoogvenster met een afbeeldingsvak weergegeven. Als het niet is aangevinkt,
+  wordt door te klikken op de miniatuur de thread geopend.
+viewing_one_signup_request: Je bekijkt slechts één registratieverzoek van %username%
+front_default_sort: Standaard sortering op voorpagina
+by: op
+show_users_avatars_help: Geef de avatarafbeelding van de gebruiker weer.
+oauth2.grant.user.bookmark: Bladwijzers toevoegen en verwijderen
+oauth2.grant.user.bookmark.add: Bladwijzers toevoegen
+oauth2.grant.user.bookmark.remove: Bladwijzers verwijderen
+oauth2.grant.user.bookmark_list: Lees, bewerk en verwijder jouw bladwijzerlijsten
+oauth2.grant.user.bookmark_list.read: Lees jouw bladwijzerlijsten
+oauth2.grant.user.bookmark_list.edit: Bewerk jouw bladwijzerlijsten
+show_magazine_domains: Toon domeinen tijdschrift
+answered: beantwoord
+comment_default_sort: Standaard sortering op opmerkingen
+open_signup_request: Open inschrijvingsverzoek
+image_lightbox_in_list: Thread-miniaturen openen volledig scherm
+show_user_domains: Gebruikersdomeinen weergeven
