@@ -155,7 +155,7 @@ class MentionManager
         );
 
         return array_map(
-            fn ($val) => substr_count($val, '@') < 2 ? $val.'@'.SettingsManager::getValue('KBIN_DOMAIN') : $val,
+            fn ($val) => substr_count($val, '@') < 2 ? $val.'@'.$this->settingsManager->get('KBIN_DOMAIN') : $val,
             $res
         );
     }
@@ -178,19 +178,19 @@ class MentionManager
         }
         $parts = explode('@', $value);
         if (\count($parts) < 2) {
-            return SettingsManager::getValue('KBIN_DOMAIN');
+            return $this->settingsManager->get('KBIN_DOMAIN');
         } else {
             return $parts[1];
         }
     }
 
-    public static function clearLocal(?array $mentions): array
+    public function clearLocal(?array $mentions): array
     {
         if (null === $mentions) {
             return [];
         }
 
-        $domain = '@'.SettingsManager::getValue('KBIN_DOMAIN');
+        $domain = '@'.$this->settingsManager->get('KBIN_DOMAIN');
 
         $mentions = array_map(fn ($val) => preg_replace('/'.preg_quote($domain, '/').'$/', '', $val), $mentions);
 
@@ -199,13 +199,13 @@ class MentionManager
         return array_filter($mentions, fn ($val) => !str_contains($val, '@'));
     }
 
-    public static function getRoute(?array $mentions): array
+    public function getRoute(?array $mentions): array
     {
         if (null === $mentions) {
             return [];
         }
 
-        $domain = '@'.SettingsManager::getValue('KBIN_DOMAIN');
+        $domain = '@'.$this->settingsManager->get('KBIN_DOMAIN');
 
         $mentions = array_map(fn ($val) => preg_replace('/'.preg_quote($domain, '/').'$/', '', $val), $mentions);
 

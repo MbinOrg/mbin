@@ -53,7 +53,7 @@ class TagMatchTest extends WebTestCase
             $json = $this->personFactory->create($user);
             $this->testingApHttpClient->actorObjects[$json['id']] = $json;
 
-            $userEvent = new WebfingerResponseEvent(new JsonRd(), "$username@$domain", ['account' => $username]);
+            $userEvent = new WebfingerResponseEvent(new JsonRd(), "acct:$username@$domain", ['account' => $username]);
             $this->eventDispatcher->dispatch($userEvent);
             $realDomain = \sprintf(WebFingerFactory::WEBFINGER_URL, 'https', $domain, '', "$username@$domain");
             $this->testingApHttpClient->webfingerObjects[$realDomain] = $userEvent->jsonRd->toArray();
@@ -63,7 +63,7 @@ class TagMatchTest extends WebTestCase
             $json = $this->groupFactory->create($magazine);
             $this->testingApHttpClient->actorObjects[$json['id']] = $json;
 
-            $magazineEvent = new WebfingerResponseEvent(new JsonRd(), "$magazineName@$domain", ['account' => $magazineName]);
+            $magazineEvent = new WebfingerResponseEvent(new JsonRd(), "acct:$magazineName@$domain", ['account' => $magazineName]);
             $this->eventDispatcher->dispatch($magazineEvent);
             $realDomain = \sprintf(WebFingerFactory::WEBFINGER_URL, 'https', $domain, '', "$magazineName@$domain");
             $this->testingApHttpClient->webfingerObjects[$realDomain] = $magazineEvent->jsonRd->toArray();

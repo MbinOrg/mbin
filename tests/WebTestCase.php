@@ -18,6 +18,7 @@ use App\Repository\EntryCommentRepository;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
 use App\Repository\MagazineRepository;
+use App\Repository\MagazineSubscriptionRepository;
 use App\Repository\MessageRepository;
 use App\Repository\NotificationRepository;
 use App\Repository\PostCommentRepository;
@@ -26,6 +27,7 @@ use App\Repository\ReportRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\SiteRepository;
 use App\Repository\TagLinkRepository;
+use App\Repository\UserFollowRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\ActivityPub\ApHttpClientInterface;
@@ -130,6 +132,8 @@ abstract class WebTestCase extends BaseWebTestCase
     protected TagLinkRepository $tagLinkRepository;
     protected BookmarkRepository $bookmarkRepository;
     protected BookmarkListRepository $bookmarkListRepository;
+    protected UserFollowRepository $userFollowRepository;
+    protected MagazineSubscriptionRepository $magazineSubscriptionRepository;
 
     protected ImageFactory $imageFactory;
     protected MagazineFactory $magazineFactory;
@@ -203,6 +207,8 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->tagLinkRepository = $this->getService(TagLinkRepository::class);
         $this->bookmarkRepository = $this->getService(BookmarkRepository::class);
         $this->bookmarkListRepository = $this->getService(BookmarkListRepository::class);
+        $this->userFollowRepository = $this->getService(UserFollowRepository::class);
+        $this->magazineSubscriptionRepository = $this->getService(MagazineSubscriptionRepository::class);
 
         $this->imageFactory = $this->getService(ImageFactory::class);
         $this->personFactory = $this->getService(PersonFactory::class);
