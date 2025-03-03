@@ -76,7 +76,7 @@ class EntriesBaseApi extends BaseApi
         $deserialized = $this->serializer->deserialize($this->request->getCurrentRequest()->getContent(), EntryRequestDto::class, 'json', $context);
         \assert($deserialized instanceof EntryRequestDto);
 
-        $dto = $deserialized->mergeIntoDto($dto);
+        $dto = $deserialized->mergeIntoDto($dto, $this->settingsManager);
 
         $dto->ip = $this->ipResolver->resolve();
 
@@ -148,7 +148,7 @@ class EntriesBaseApi extends BaseApi
 
         $dto->ip = $this->ipResolver->resolve();
 
-        return $deserialized->mergeIntoDto($dto);
+        return $deserialized->mergeIntoDto($dto, $this->settingsManager);
     }
 
     protected function deserializeCommentFromForm(?EntryCommentDto $dto = null): EntryCommentDto
@@ -162,7 +162,7 @@ class EntriesBaseApi extends BaseApi
 
         $dto->ip = $this->ipResolver->resolve();
 
-        return $deserialized->mergeIntoDto($dto);
+        return $deserialized->mergeIntoDto($dto, $this->settingsManager);
     }
 
     /**

@@ -75,7 +75,11 @@ class AnnounceHandler extends MbinMessageHandler
         if ($actor instanceof Magazine && ($object instanceof Entry || $object instanceof Post || $object instanceof EntryComment || $object instanceof PostComment)) {
             $createActivity = $this->activityRepository->findFirstActivitiesByTypeAndObject('Create', $object);
             if (null === $createActivity) {
-                $createActivity = $this->createWrapper->build($object);
+                if (null === $object->apId) {
+                    $createActivity = $this->createWrapper->build($object);
+                } else {
+                    throw new UnrecoverableMessageHandlingException('We need a create activity to announce objects, but none was found and the object is from a remote instance, so we cannot build a create activity');
+                }
             }
             $activity = $this->announceWrapper->build($actor, $createActivity, true);
         } else {

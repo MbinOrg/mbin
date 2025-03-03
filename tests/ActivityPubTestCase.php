@@ -2,14 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\ActivityPub;
+namespace App\Tests;
 
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Factory\ActivityPub\AddRemoveFactory;
+use App\Factory\ActivityPub\EntryCommentNoteFactory;
 use App\Factory\ActivityPub\FlagFactory;
 use App\Factory\ActivityPub\GroupFactory;
 use App\Factory\ActivityPub\PersonFactory;
+use App\Factory\ActivityPub\PostCommentNoteFactory;
+use App\Factory\ActivityPub\PostNoteFactory;
 use App\Service\ActivityPub\Wrapper\AnnounceWrapper;
 use App\Service\ActivityPub\Wrapper\CreateWrapper;
 use App\Service\ActivityPub\Wrapper\DeleteWrapper;
@@ -18,7 +21,6 @@ use App\Service\ActivityPub\Wrapper\FollowWrapper;
 use App\Service\ActivityPub\Wrapper\LikeWrapper;
 use App\Service\ActivityPub\Wrapper\UndoWrapper;
 use App\Service\ActivityPub\Wrapper\UpdateWrapper;
-use App\Tests\WebTestCase;
 use Spatie\Snapshots\MatchesSnapshots;
 use Symfony\Component\Uid\Uuid;
 
@@ -32,6 +34,9 @@ class ActivityPubTestCase extends WebTestCase
 
     protected PersonFactory $personFactory;
     protected GroupFactory $groupFactory;
+    protected EntryCommentNoteFactory $entryCommentNoteFactory;
+    protected PostNoteFactory $postNoteFactory;
+    protected PostCommentNoteFactory $postCommentNoteFactory;
     protected AddRemoveFactory $addRemoveFactory;
     protected CreateWrapper $createWrapper;
     protected UpdateWrapper $updateWrapper;
@@ -52,6 +57,9 @@ class ActivityPubTestCase extends WebTestCase
 
         $this->personFactory = $this->getService(PersonFactory::class);
         $this->groupFactory = $this->getService(GroupFactory::class);
+        $this->entryCommentNoteFactory = $this->getService(EntryCommentNoteFactory::class);
+        $this->postNoteFactory = $this->getService(PostNoteFactory::class);
+        $this->postCommentNoteFactory = $this->getService(PostCommentNoteFactory::class);
         $this->addRemoveFactory = $this->getService(AddRemoveFactory::class);
         $this->createWrapper = $this->getService(CreateWrapper::class);
         $this->updateWrapper = $this->getService(UpdateWrapper::class);
