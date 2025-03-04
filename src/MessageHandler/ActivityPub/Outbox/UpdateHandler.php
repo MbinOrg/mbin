@@ -23,6 +23,7 @@ use App\Service\ActivityPubManager;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -38,6 +39,7 @@ class UpdateHandler extends MbinMessageHandler
         private readonly DeliverManager $deliverManager,
         private readonly UpdateWrapper $updateWrapper,
         private readonly KernelInterface $kernel,
+        private readonly LoggerInterface $logger,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
@@ -88,6 +90,7 @@ class UpdateHandler extends MbinMessageHandler
             $activity = $this->updateWrapper->buildForActor($entity, $editedByUser);
             if ($entity instanceof User) {
                 $inboxes = $this->userRepository->findAudience($entity);
+                $this->logger->debug('[UpdateHandler::doWork] sending update user activity for user {u} to {i}', ['u' => $entity->username, 'i' => join(', ', $inboxes)]);
             } elseif ($entity instanceof Magazine) {
                 if ('random' === $entity->name) {
                     // do not federate the random magazine

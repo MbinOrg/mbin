@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Api\User;
 
 use App\DTO\UserResponseDto;
+use App\Event\User\UserEditedEvent;
 use App\Factory\UserFactory;
 use App\Service\UserManager;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -51,7 +52,12 @@ class UserDeleteImagesApi extends UserBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiImageLimiter);
 
-        $manager->detachAvatar($this->getUserOrThrow());
+        $user = $this->getUserOrThrow();
+        $manager->detachAvatar($user);
+        /*
+         * Call edit so the @see UserEditedEvent is triggered and the changes are federated
+         */
+        $manager->edit($user, $manager->createDto($user));
 
         return new JsonResponse(
             $this->serializeUser($factory->createDto($this->getUserOrThrow())),
@@ -94,7 +100,12 @@ class UserDeleteImagesApi extends UserBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiImageLimiter);
 
-        $manager->detachCover($this->getUserOrThrow());
+        $user = $this->getUserOrThrow();
+        $manager->detachCover($user);
+        /*
+         * Call edit so the @see UserEditedEvent is triggered and the changes are federated
+         */
+        $manager->edit($user, $manager->createDto($user));
 
         return new JsonResponse(
             $this->serializeUser($factory->createDto($this->getUserOrThrow())),
