@@ -13,7 +13,7 @@
     <ul>
         {% for moderator in magazine.moderators|slice(0, 5) %}
             <li class="moderator-item">
-                {{ component('user_inline', { user: moderator.user }) }}
+                {{ component('user_inline', { user: moderator.user, showNewIcon: true }) }}
             </li>
         {% endfor %}
     </ul>

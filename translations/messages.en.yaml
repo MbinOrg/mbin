@@ -970,3 +970,5 @@ show_users_avatars_help: Display the user avatar image.
 show_magazines_icons_help: Display the magazine icon.
 show_thumbnails_help: Show the thumbnail images.
 image_lightbox_in_list_help: When checked, clicking the thumbnail shows a modal image box window. When unchecked, clicking the thumbnail will open the thread.
+show_new_icons: Show new icons
+show_new_icons_help: Show icon for new magazine/user (30 days old or newer)
