@@ -409,6 +409,9 @@ class ActivityPubManager
                     $this->bus->dispatch(new DeleteImageMessage($user->avatar->getId()));
                 }
                 $user->avatar = $newImage;
+            } elseif (null !== $user->avatar) {
+                $this->bus->dispatch(new DeleteImageMessage($user->avatar->getId()));
+                $user->avatar = null;
             }
 
             // Only update cover if image is set
@@ -421,6 +424,9 @@ class ActivityPubManager
                     $this->bus->dispatch(new DeleteImageMessage($user->cover->getId()));
                 }
                 $user->cover = $newImage;
+            } elseif (null !== $user->cover) {
+                $this->bus->dispatch(new DeleteImageMessage($user->cover->getId()));
+                $user->cover = null;
             }
 
             if (null !== $user->apFollowersUrl) {
@@ -565,6 +571,9 @@ class ActivityPubManager
                     $this->bus->dispatch(new DeleteImageMessage($magazine->icon->getId()));
                 }
                 $magazine->icon = $newImage;
+            } elseif (null !== $magazine->icon) {
+                $this->bus->dispatch(new DeleteImageMessage($magazine->icon->getId()));
+                $magazine->icon = null;
             }
 
             if ($actor['name']) {
