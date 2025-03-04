@@ -92,7 +92,7 @@
                 {% endif %}
             {% endif %}
             <aside class="meta entry__meta">
-                <span>{{ component('user_inline', {user: entry.user, showAvatar: SHOW_USER_AVATARS is same as V_TRUE, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) -}}</span>
+                <span>{{ component('user_inline', {user: entry.user, showAvatar: SHOW_USER_AVATARS is same as V_TRUE, showNewIcon: true, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) -}}</span>
 
                 {% if (entry.user.type) == "Service" %}
                     <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
@@ -109,7 +109,7 @@
                 <span>{{ component('date', {date: entry.createdAt}) }}</span>
                 <span>{{ component('date_edited', {createdAt: entry.createdAt, editedAt: entry.editedAt}) }}</span>
                 {% if showMagazineName %}
-                    <span>{{ 'to'|trans }} {{ component('magazine_inline', {magazine: entry.magazine, showAvatar: SHOW_MAGAZINE_ICONS is same as V_TRUE, fullName: SHOW_MAGAZINE_FULLNAME is same as V_TRUE}) }}</span>
+                    <span>{{ 'to'|trans }} {{ component('magazine_inline', {magazine: entry.magazine, showAvatar: SHOW_MAGAZINE_ICONS is same as V_TRUE, showNewIcon: true, fullName: SHOW_MAGAZINE_FULLNAME is same as V_TRUE}) }}</span>
                 {% endif %}
             </aside>
             {% if SHOW_THUMBNAILS is same as V_TRUE %}

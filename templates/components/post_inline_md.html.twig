@@ -1,5 +1,5 @@
 <div class="post-inline">
-    {{ component('user_inline', {user: post.user, fullName: userFullName}) }}:
+    {{ component('user_inline', {user: post.user, fullName: userFullName, showNewIcon: true}) }}:
     <a href="{{ path('post_single', {magazine_name: post.magazine.name, post_id: post.id, slug: post.slug|length ? post.slug : '-'}) }}">
         {% if post.image is not same as null %}
             <i class="fa-solid fa-photo-film"></i>

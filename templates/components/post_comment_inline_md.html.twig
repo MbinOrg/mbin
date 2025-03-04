@@ -1,5 +1,5 @@
 <div class="post-comment-inline">
-    {{ component('user_inline', {user: comment.user, fullName: userFullName}) }}:
+    {{ component('user_inline', {user: comment.user, fullName: userFullName, showNewIcon: true}) }}:
     <a href="{{ path('post_single', {magazine_name: comment.magazine.name, post_id: comment.post.id, slug: comment.post.slug|length ? comment.post.slug : '-'}) }}#post-comment-{{ comment.id }}">
         {% if comment.image is not same as null %}
             <i class="fa-solid fa-photo-film"></i>
@@ -12,7 +12,7 @@
             {{ comment.parent.getShortTitle() }}
         </a>
         {{ 'by'|trans }}
-        {{ component('user_inline', {user: comment.parent.user, fullName: userFullName}) }}
+        {{ component('user_inline', {user: comment.parent.user, fullName: userFullName, showNewIcon: true}) }}
     {% else %}
         <a href="{{ path('post_single', {magazine_name: comment.magazine.name, post_id: comment.post.id, slug: comment.post.slug|length ? comment.post.slug : '-'}) }}">
             {% if comment.post.image is not same as null %}
@@ -21,10 +21,10 @@
             {{ comment.post.getShortTitle() }}
         </a>
         {{ 'by'|trans }}
-        {{ component('user_inline', {user: comment.post.user, fullName: userFullName}) }}
+        {{ component('user_inline', {user: comment.post.user, fullName: userFullName, showNewIcon: true}) }}
     {% endif %}
     {% if comment.magazine.name is not same as 'random' %}
         {{ 'in'|trans }}
-        {{ component('magazine_inline', {magazine: comment.magazine, fullName: magazineFullName}) }}
+        {{ component('magazine_inline', {magazine: comment.magazine, fullName: magazineFullName, showNewIcon: true}) }}
     {% endif %}
 </div>
