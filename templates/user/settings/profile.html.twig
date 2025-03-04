@@ -29,20 +29,54 @@
             {{ form_start(form) }}
             {{ component('editor_toolbar', {id: 'user_basic_about'}) }}
             {{ form_row(form.about, {label: false, attr: {
-                placeholder: 'about', 
-                'data-controller': 'input-length rich-textarea autogrow', 
+                placeholder: 'about',
+                'data-controller': 'input-length rich-textarea autogrow',
                 'data-entry-link-create-target': 'user_about',
                 'data-action' : 'input-length#updateDisplay',
                 'data-input-length-max-value' : constant('App\\DTO\\UserDto::MAX_ABOUT_LENGTH')
                 }}) }}
             {{ form_row(form.username, {label: 'username', attr: {
-                'data-controller': 'input-length autogrow', 
+                'data-controller': 'input-length autogrow',
                 'data-entry-link-create-target': 'user_about',
                 'data-action' : 'input-length#updateDisplay',
                 'data-input-length-max-value' : constant('App\\DTO\\UserDto::MAX_USERNAME_LENGTH')
             }}) }}
             {{ form_row(form.avatar, {label: 'avatar'}) }}
+            {% if app.user.avatar is not same as null %}
+                <div class="actions">
+                    <ul style="width: 100%">
+                        <img width="40"
+                             height="40"
+                             src="{{ asset(app.user.avatar.filePath)|imagine_filter('entry_thumb') }}"
+                             alt="{{ app.user.avatar.altText }}" />
+                        <button formaction="{{ path('user_settings_avatar_delete') }}"
+                                class="btn-link"
+                                aria-label="{{ 'remove_user_avatar'|trans }}"
+                                title="{{ 'remove_user_avatar'|trans }}"
+                                data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
+                            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                        </button>
+                    </ul>
+                </div>
+            {% endif %}
             {{ form_row(form.cover, {label: 'cover'}) }}
+            {% if app.user.cover is not same as null %}
+                <div class="actions">
+                    <ul style="width: 100%">
+                        <img width="40"
+                             height="40"
+                             src="{{ asset(app.user.cover.filePath)|imagine_filter('entry_thumb') }}"
+                             alt="{{ app.user.cover.altText }}" />
+                        <button formaction="{{ path('user_settings_cover_delete') }}"
+                                class="btn-link"
+                                aria-label="{{ 'remove_user_cover'|trans }}"
+                                title="{{ 'remove_user_cover'|trans }}"
+                                data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
+                            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                        </button>
+                    </ul>
+                </div>
+            {% endif %}
             <div class="row actions">
                 {{ form_row(form.submit, {label: 'save', attr: {class: 'btn btn__primary'}}) }}
             </div>

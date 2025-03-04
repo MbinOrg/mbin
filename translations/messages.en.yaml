@@ -53,6 +53,8 @@ add_comment: Add comment
 add_post: Add post
 add_media: Add media
 remove_media: Remove media
+remove_user_avatar: Remove avatar
+remove_user_cover: Remove cover
 markdown_howto: How does the editor work?
 enter_your_comment: Enter your comment
 enter_your_post: Enter your post
