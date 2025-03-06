@@ -234,7 +234,7 @@ approved: Одобрени
 check_email: Провери своята ел. поща
 already_have_account: Вече имате акаунт?
 votes: Гласувания
-send_message: Изпращане на директно съобщение
+send_message: Изпращане на лично съобщение
 message: Съобщение
 filter.fields.only_names: Само имена
 local_and_federated: Локални и федерирани
@@ -541,3 +541,100 @@ disconnected_magazine_info: Тази общност не получава обн
 always_disconnected_magazine_info: Тази общност не получава обновления.
 subscribe_for_updates: Абонирай се, за да започнеш да получаваш обновления.
 moderation.report.reject_report_title: Отхвърляне на доклада
+account_settings_changed: Настройките на акаунта ти са променени успешно. Ще трябва
+  да влезеш отново.
+show_related_magazines: Показване на случайни общности
+show_related_posts: Показване на случайни публикации
+admin_users_inactive: Неактивни
+table_of_contents: Съдържание
+search_type_all: Нишки + Микроблогове
+show_new_icons: Показване на нови иконки
+flash_email_was_sent: Имейлът е изпратен успешно.
+flash_email_failed_to_sent: Имейлът не можа да бъде изпратен.
+magazine_is_deleted: Общността е изтрита. Можеш да я <a href="%link_target%">възстановиш</a>
+  в рамките на 30 дни.
+magazine_log_mod_added: добави модератор
+magazine_log_mod_removed: премахна модератор
+flash_thread_tag_banned_error: Нишката не можа да бъде създадена. Съдържанието не
+  е позволено.
+show_new_icons_help: Показване на иконка за нова общност/потребител (на 30 дни или
+  по-нова)
+notification_title_removed_thread: Нишка беше премахната
+notification_title_mention: Беше споменат
+notification_title_new_thread: Нова нишка
+flash_image_download_too_large_error: Изображението не можа да бъде създадено, твърде
+  голямо е (макс. размер %bytes%)
+direct_message: Лично съобщение
+notification_title_new_post: Нова публикация
+2fa.setup_error: Грешка при включване на 2FA за акаунта
+flash_account_settings_changed: Настройките на акаунта ти бяха променени успешно.
+  Ще трябва да влезеш отново.
+flash_comment_edit_success: Коментарът е обновен успешно.
+reported_user: Докладван потребител
+cake_day: Тортен ден
+notification_title_message: Ново лично съобщение
+magazine_posting_restricted_to_mods_warning: Само модераторите могат да създават нишки
+  в тази общност
+2fa.backup_codes.recommendation: Препоръчително е да запазиш копие от тях на сигурно
+  място.
+sensitive_toggle: Превключване на видимостта на деликатно съдържание
+continue_with: Продължаване със
+own_content_reported_accepted: Доклад за твое съдържание беше приет.
+notification_title_new_comment: Нов коментар
+notification_title_removed_comment: Коментар беше премахнат
+notification_title_edited_comment: Коментар беше редактиран
+notification_title_edited_thread: Нишка беше редактирана
+notification_title_removed_post: Публикация беше премахната
+notification_title_edited_post: Публикация беше редактирана
+notification_title_new_signup: Нов потребител се регистрира
+notification_body_new_signup: Потребителят %u% се регистрира.
+notification_body2_new_signup_approval: Трябва да одобрите заявката, преди да могат
+  да влязат
+show_related_entries: Показване на случайни нишки
+last_failed_contact: Последен неуспешен контакт
+flash_posting_restricted_error: Създаването на нишки е ограничено до модератори в
+  тази общност, а ти не си такъв
+admin_users_active: Активни
+max_image_size: Максимален размер на файла
+bookmark_add_to_list: Добавяне на отметка към %list%
+bookmark_add_to_default_list: Добавяне на отметка към списъка по подразбиране
+bookmark_remove_from_list: Премахване на отметка от %list%
+bookmark_lists: Списъци с отметки
+bookmark_remove_all: Премахване на всички отметки
+bookmarks: Отметки
+bookmarks_list: Отметки в %list%
+bookmark_list_create: Създаване
+bookmark_list_create_placeholder: въведи име...
+bookmark_list_create_label: Име на списъка
+bookmarks_list_edit: Редактиране на списъка с отметки
+bookmark_list_edit: Редактиране
+new_users_need_approval: Новите потребители трябва да бъдат одобрени от администратор,
+  преди да могат да влязат.
+search_type_post: Микроблогове
+search_type_entry: Нишки
+select_user: Избери потребител
+signup_requests: Заявки за регистрация
+application_text: Текст на заявката
+signup_requests_header: Заявки за регистрация
+signup_requests_paragraph: Тези потребители биха искали да се присъединят към вашия
+  сървър. Те не могат да влязат, докато не одобрите заявката им за регистрация.
+comment_not_found: Коментарът не е намерен
+notification_title_new_reply: Нов отговор
+flash_thread_new_error: Нишката не можа да бъде създадена. Нещо се обърка.
+deleted_by_moderator: Нишката, публикацията или коментарът е изтрит от модератор
+show_active_users: Показване на активни потребители
+notification_title_new_report: Създаден е нов доклад
+server_software: Сървърен софтуер
+last_successful_receive: Последно успешно получаване
+version: Версия
+last_successful_deliver: Последна успешна доставка
+deleted_by_author: Нишката, публикацията или коментарът е изтрит от автора
+auto: Автоматично
+last_updated: Последно обновено
+back: Назад
+reporting_user: Докладващ потребител
+own_report_rejected: Твоят доклад беше отхвърлен
+own_report_accepted: Твоят доклад беше приет
+someone: Някой
+and: и
+test_push_message: Здравей, свят!
