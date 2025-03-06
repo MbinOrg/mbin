@@ -47,7 +47,7 @@ body: Тяло
 user_badge_bot: Бот
 threads: Нишки
 about: Относно
-owner: Собственик
+owner: Притежател
 privacy_policy: Политика за поверителност
 toolbar.link: Връзка
 stats: Статистика
@@ -136,7 +136,7 @@ add_new_link: Добавяне на нова връзка
 added: Добавено
 new_password_repeat: Потвърди новата парола
 related_magazines: Подобни общности
-appearance: Външен вид
+appearance: Изглед
 remember_me: Запомни ме
 description: Описание
 current_password: Текуща парола
@@ -305,7 +305,7 @@ removed_comment_by: премахна коментар от
 left: Отляво
 restored_comment_by: възстанови коментар от
 flash_user_edit_profile_success: Настройките на профила са запазени успешно.
-subscription_sort: Сортиране
+subscription_sort: Подреждане
 flash_user_settings_general_success: Потребителските настройки са запазени успешно.
 flash_thread_delete_success: Нишката е изтрита успешно.
 restored_thread_by: възстанови нишка от
@@ -327,7 +327,7 @@ toolbar.ordered_list: Подреден списък
 email_confirm_content: 'Готов ли си да активираш своя Mbin акаунт? Щракни върху връзката
   по-долу:'
 sidebar_position: Позиция на страничната лента
-image_alt: Алтернативен текст на изображение
+image_alt: Алтернативен текст на изображението
 filter.adult.show: Показване на деликатно съдържание
 filter.adult.only: Само деликатно съдържание
 email_confirm_header: Здравей! Потвърди своя адрес на ел. поща.
@@ -638,3 +638,26 @@ own_report_accepted: Твоят доклад беше приет
 someone: Някой
 and: и
 test_push_message: Здравей, свят!
+comment_default_sort: Подреждане по подразбиране на коментарите
+magazine_log_entry_pinned: закачи запис
+magazine_log_entry_unpinned: премахна закачен запис
+compact_view_help: Компактен изглед с по-малки полета, където мултимедията е преместена
+  отдясно.
+show_thumbnails_help: Показване на миниатюрните изображения.
+show_users_avatars_help: Показване на изображението на потребителския лик.
+image_lightbox_in_list_help: Когато е отметнато, щракването върху миниатюрата показва
+  модален прозорец с изображение. Когато не е отметнато, щракването върху миниатюрата
+  ще отвори нишката.
+show_magazines_icons_help: Показване на иконката на общността.
+front_default_sort: Подреждане по подразбиране на началната страница
+2fa.backup-create.help: Можеш да създадеш нови резервни кодове за удостоверяване;
+  това ще направи съществуващите кодове невалидни.
+image_lightbox_in_list: Миниатюрите на нишките се отварят на цял екран
+2fa.backup-create.label: Създаване на нови резервни кодове за удостоверяване
+test_push_notifications_button: Тестване на известията
+register_push_notifications_button: Регистриране за известия
+bookmark_list_make_default: Задаване по подразбиране
+ownership_requests: Заявки за притежание
+request_magazine_ownership: Заявете притежание на общността
+unregister_push_notifications_button: Премахване на насочени известия
+manually_approves_followers: Ръчно одобрява последователи
