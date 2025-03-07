@@ -110,7 +110,7 @@ cards_view: Картиен изглед
 change_password: Промяна на паролата
 email_verify: Потвърди адреса на ел. поща
 copy_url_to_fediverse: Копиране на оригиналния адрес
-favourites: Фаворизирания
+favourites: Любими
 blocked: Блокирани
 delete_account: Изтрий акаунта
 all: Всички
@@ -211,7 +211,7 @@ useful: Полезно
 chat_view: Чат изглед
 all_magazines: Всички общности
 enter_your_comment: Въведи своя коментар
-favourite: Фаворизиране
+favourite: Любимо
 oauth2.grant.user.notification.delete: Изчистване на известията.
 show_users_avatars: Показване на ликовете на потребителите
 magazine: Общност
@@ -237,14 +237,14 @@ votes: Гласувания
 send_message: Изпращане на лично съобщение
 message: Съобщение
 filter.fields.only_names: Само имена
-local_and_federated: Локални и федерирани
+local_and_federated: Местни и федерирани
 firstname: Собствено име
 tags: Тагове
 reason: Причина
 edit: Редактиране
 oc: ОС
 position_bottom: Отдолу
-people_local: Локални
+people_local: Тукашни
 in: в
 rejected: Отхвърлени
 filters: Филтри
@@ -255,7 +255,7 @@ dont_have_account: Нямате акаунт?
 federated: Федерирани
 moderated: Модерирани
 collapse: Свиване
-local: Локални
+local: Местни
 go_to_search: Към търсене
 go_to_filters: Към филтрите
 general: Общи
@@ -629,7 +629,7 @@ last_successful_receive: Последно успешно получаване
 version: Версия
 last_successful_deliver: Последна успешна доставка
 deleted_by_author: Нишката, публикацията или коментарът е изтрит от автора
-auto: Автоматично
+auto: Авто.
 last_updated: Последно обновено
 back: Назад
 reporting_user: Докладващ потребител
@@ -661,3 +661,22 @@ ownership_requests: Заявки за притежание
 request_magazine_ownership: Заявете притежание на общността
 unregister_push_notifications_button: Премахване на насочени известия
 manually_approves_followers: Ръчно одобрява последователи
+created: Създаден
+mark_as_adult: Отбелязване като деликатно
+unmark_as_adult: Демаркиране като деликатно
+show_magazine_domains: Показване на домейните на общностите
+show_user_domains: Показване на домейните на потребителите
+show_top_bar: Показване на горната лента
+sticky_navbar: Залепена навигационна лента
+magazine_panel: Панел на общността
+admin_panel: Административен панел
+registrations_enabled: Регистрирането е включено
+registration_disabled: Регистрирането е изключено
+pinned: Закачено
+federation_enabled: Федерирането е включено
+flash_magazine_theme_changed_success: Изгледът на общността е обновен успешно.
+flash_magazine_theme_changed_error: Неуспешно обновяване на изгледа на общността.
+new_user_description: Този потребител е нов (активен от по-малко от %days% дни)
+new_magazine_description: Тази общност е нова (активна от по-малко от %days% дни)
+magazine_posting_restricted_to_mods: Ограничаване на създаването на нишки до модератори
+sidebars_same_side: Страничните ленти от една и съща страна
