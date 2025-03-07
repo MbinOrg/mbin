@@ -47,7 +47,7 @@ body: Тяло
 user_badge_bot: Бот
 threads: Нишки
 about: Относно
-owner: Собственик
+owner: Притежател
 privacy_policy: Политика за поверителност
 toolbar.link: Връзка
 stats: Статистика
@@ -110,7 +110,7 @@ cards_view: Картиен изглед
 change_password: Промяна на паролата
 email_verify: Потвърди адреса на ел. поща
 copy_url_to_fediverse: Копиране на оригиналния адрес
-favourites: Фаворизирания
+favourites: Любими
 blocked: Блокирани
 delete_account: Изтрий акаунта
 all: Всички
@@ -136,7 +136,7 @@ add_new_link: Добавяне на нова връзка
 added: Добавено
 new_password_repeat: Потвърди новата парола
 related_magazines: Подобни общности
-appearance: Външен вид
+appearance: Изглед
 remember_me: Запомни ме
 description: Описание
 current_password: Текуща парола
@@ -211,7 +211,7 @@ useful: Полезно
 chat_view: Чат изглед
 all_magazines: Всички общности
 enter_your_comment: Въведи своя коментар
-favourite: Фаворизиране
+favourite: Любимо
 oauth2.grant.user.notification.delete: Изчистване на известията.
 show_users_avatars: Показване на ликовете на потребителите
 magazine: Общност
@@ -234,17 +234,17 @@ approved: Одобрени
 check_email: Провери своята ел. поща
 already_have_account: Вече имате акаунт?
 votes: Гласувания
-send_message: Изпращане на съобщение
+send_message: Изпращане на лично съобщение
 message: Съобщение
 filter.fields.only_names: Само имена
-local_and_federated: Локални и федерирани
+local_and_federated: Местни и федерирани
 firstname: Собствено име
 tags: Тагове
 reason: Причина
 edit: Редактиране
 oc: ОС
 position_bottom: Отдолу
-people_local: Локални
+people_local: Тукашни
 in: в
 rejected: Отхвърлени
 filters: Филтри
@@ -255,7 +255,7 @@ dont_have_account: Нямате акаунт?
 federated: Федерирани
 moderated: Модерирани
 collapse: Свиване
-local: Локални
+local: Местни
 go_to_search: Към търсене
 go_to_filters: Към филтрите
 general: Общи
@@ -305,7 +305,7 @@ removed_comment_by: премахна коментар от
 left: Отляво
 restored_comment_by: възстанови коментар от
 flash_user_edit_profile_success: Настройките на профила са запазени успешно.
-subscription_sort: Сортиране
+subscription_sort: Подреждане
 flash_user_settings_general_success: Потребителските настройки са запазени успешно.
 flash_thread_delete_success: Нишката е изтрита успешно.
 restored_thread_by: възстанови нишка от
@@ -327,7 +327,7 @@ toolbar.ordered_list: Подреден списък
 email_confirm_content: 'Готов ли си да активираш своя Mbin акаунт? Щракни върху връзката
   по-долу:'
 sidebar_position: Позиция на страничната лента
-image_alt: Алтернативен текст на изображение
+image_alt: Алтернативен текст на изображението
 filter.adult.show: Показване на деликатно съдържание
 filter.adult.only: Само деликатно съдържание
 email_confirm_header: Здравей! Потвърди своя адрес на ел. поща.
@@ -424,3 +424,259 @@ account_deletion_title: Изтриване на акаунта
 edited: редактирано
 kbin_promo_title: Създай своя собствена инстанция
 kbin_promo_desc: '%link_start%Клонирай хранилището%link_end% и разработвай федивселената'
+remove_user_cover: Премахване на корицата
+remove_user_avatar: Премахване на лика
+hidden: Скрито
+edit_entry: Редактиране на нишката
+add_badge: Добавяне на значка
+moderation.report.approve_report_title: Одобряване на доклада
+moderate: Модериране
+viewing_one_signup_request: Разглеждаш само една заявка за регистрация от %username%
+federated_search_only_loggedin: Федеративното търсене е ограничено, ако не сте влезли
+federation_page_dead_description: Инстанции, до които не можахме да доставим поне
+  10 дейности подред и където последната успешна доставка и получаване са били преди
+  повече от седмица
+account_deletion_button: Изтриване на акаунта
+email.delete.description: Следният потребител е поискал акаунтът му да бъде изтрит
+resend_account_activation_email: Изпращане отново на имейл за активиране на акаунта
+email_confirm_button_text: Потвърдете заявката си за промяна на паролата
+email_confirm_link_help: Алтернативно, можеш да копираш и поставиш следното в браузъра
+  си
+email.delete.title: Заявка за изтриване на потребителски акаунт
+resend_account_activation_email_error: Възникна проблем при изпращането на тази заявка.
+  Може да няма акаунт, свързан с този имейл, или може би вече е активиран.
+show_avatars_on_comments_help: Показване/скриване на потребителски ликове при преглед
+  на коментари към единична нишка или публикация.
+magazine_theme_appearance_background_image: Персонализирано фоново изображение, което
+  ще се прилага при преглед на съдържание в твоята общност.
+magazine_theme_appearance_icon: Персонализирана иконка за общността. Ако не е избрана,
+  ще се използва иконката по подразбиране.
+filter_by_federation: Филтриране по статут на федерирането
+flash_thread_new_success: Нишката е създадена успешно и вече е видима за другите потребители.
+mod_log_alert: ПРЕДУПРЕЖДЕНИЕ - Дневникът на модерирането може да съдържа неприятно
+  или стресиращо съдържание, което е било премахнато от модераторите. Моля, бъди внимателен.
+from: от
+reset_check_email_desc: Ако вече съществува акаунт, свързан с твоя адрес на ел. поща,
+  скоро трябва да получиш писмо, съдържащо връзка, която можеш да използваш за нулиране
+  на паролата си. Тази връзка ще изтече след %expire%.
+enabled: Включено
+disabled: Изключено
+oauth.consent.title: OAuth2 формуляр за съгласие
+errors.server500.description: Съжаляваме, нещо се обърка от наша страна. Ако продължаваш
+  да виждаш тази грешка, опитай да се свържеш с притежателя на инстанцията. Ако тази
+  инстанция изобщо не работи, разгледай %link_start%други Mbin инстанции%link_end%
+  междувременно, докато проблемът бъде разрешен.
+oauth.consent.app_has_permissions: вече може да извършва следните действия
+comment_reply_position_help: Показване на формата за отговор на коментар в горната
+  или долната част на страницата. Когато е активирано „безкрайно превъртане“, позицията
+  винаги ще се показва в горната част.
+flash_post_pin_success: Публикацията е закачена успешно.
+moderation.report.approve_report_confirmation: Сигурни ли сте, че искате да одобрите
+  този доклад?
+subject_reported_exists: Това съдържание вече е докладвано.
+moderation.report.reject_report_confirmation: Сигурни ли сте, че искате да отхвърлите
+  този доклад?
+purge_content: Изчистване на съдържанието
+reset_check_email_desc2: Ако не получиш писмо, провери папката си за спам.
+flash_thread_unpin_success: Нишката е откачена успешно.
+flash_thread_pin_success: Нишката е закачена успешно.
+too_many_requests: Ограничението е превишено, моля, опитай отново по-късно.
+banned: Блокира те
+kbin_intro_desc: е децентрализирана платформа за агрегиране на съдържание и микроблогинг,
+  която работи в мрежата на Федивселената.
+browsing_one_thread: Разглеждаш само една нишка в дискусията! Всички коментари са
+  достъпни на страницата на публикацията.
+infinite_scroll_help: Автоматично зареждане на още съдържание при достигане на дъното
+  на страницата.
+reload_to_apply: Презареди страницата, за да приложиш промените
+password_confirm_header: Потвърдете заявката си за промяна на паролата.
+oauth.consent.grant_permissions: Предоставяне на разрешения
+magazine_theme_appearance_custom_css: Персонализиран CSS, който ще се прилага при
+  преглед на съдържание в твоята общност.
+delete_content: Изтриване на съдържанието
+remove_media: Премахване на мултимедията
+account_deletion_description: Акаунтът ти ще бъде изтрит след 30 дни, освен ако не
+  избереш да го изтриеш незабавно. За да възстановиш акаунта си в рамките на 30 дни,
+  влез със същите потребителски данни или се свържи с администратор.
+notify_on_user_signup: Нови регистрации
+solarized_dark: Слънчево тъмна
+solarized_light: Слънчево светла
+default_theme_auto: Светла/Тъмна (Автоматично)
+solarized_auto: Слънчева (Автоматично)
+show_all: Покажи всичко
+flash_register_success: Добре дошъл! Твоят акаунт вече е регистриран. Още една стъпка
+  - провери входящата си кутия за връзка за активиране, която ще оживи акаунта ти.
+flash_magazine_new_success: Общността е създадена успешно. Вече можеш да добавяш ново
+  съдържание или да разгледаш административния панел на общността.
+flash_mark_as_adult_success: Публикацията е отбелязана успешно като деликатна.
+flash_unmark_as_adult_success: Публикацията е демаркирана успешно като деликатна.
+set_magazines_bar: Лента с общности
+mentioned_you: Спомена те
+filter.fields.label: Избери кои полета да се търсят
+your_account_is_not_yet_approved: Твоят акаунт все още не е одобрен. Ще ти изпратим
+  имейл веднага щом администраторите обработят заявката ти за регистрация.
+your_account_is_not_active: Твоят акаунт не е активиран. Моля, провери имейла си за
+  инструкции за активиране на акаунта или <a href="%link_target%">поискай нов имейл
+  за активиране на акаунта.</a>
+toolbar.spoiler: Спойлер
+federation_page_allowed_description: Известни инстанции, с които се федерираме
+federation_page_disallowed_description: Инстанции, с които не се федерираме
+resend_account_activation_email_success: Ако съществува акаунт, свързан с този имейл,
+  ще изпратим нов имейл за активиране.
+resend_account_activation_email_description: Въведете адреса на ел. поща свързан с
+  вашия акаунт. Ще ви изпратим друг имейл за активиране.
+oauth.consent.to_allow_access: За да разрешиш този достъп, щракни върху бутона 'Разрешаване'
+  по-долу
+flash_post_unpin_success: Публикацията е откачена успешно.
+federation_page_dead_title: Мъртви инстанции
+filter.adult.label: Избери дали да се показва деликатно съдържание
+account_deletion_immediate: Незабавно изтриване
+read_all: Прочети всичко
+oauth.consent.app_requesting_permissions: иска да извърши следните действия от твое
+  име
+sort_by: Подреждане по
+filter_by_subscription: Филтриране по абонамент
+disconnected_magazine_info: Тази общност не получава обновления (последна активност
+  преди %days% дни).
+always_disconnected_magazine_info: Тази общност не получава обновления.
+subscribe_for_updates: Абонирай се, за да започнеш да получаваш обновления.
+moderation.report.reject_report_title: Отхвърляне на доклада
+account_settings_changed: Настройките на акаунта ти са променени успешно. Ще трябва
+  да влезеш отново.
+show_related_magazines: Показване на случайни общности
+show_related_posts: Показване на случайни публикации
+admin_users_inactive: Неактивни
+table_of_contents: Съдържание
+search_type_all: Нишки + Микроблогове
+show_new_icons: Показване на нови иконки
+flash_email_was_sent: Имейлът е изпратен успешно.
+flash_email_failed_to_sent: Имейлът не можа да бъде изпратен.
+magazine_is_deleted: Общността е изтрита. Можеш да я <a href="%link_target%">възстановиш</a>
+  в рамките на 30 дни.
+magazine_log_mod_added: добави модератор
+magazine_log_mod_removed: премахна модератор
+flash_thread_tag_banned_error: Нишката не можа да бъде създадена. Съдържанието не
+  е позволено.
+show_new_icons_help: Показване на иконка за нова общност/потребител (на 30 дни или
+  по-нова)
+notification_title_removed_thread: Нишка беше премахната
+notification_title_mention: Беше споменат
+notification_title_new_thread: Нова нишка
+flash_image_download_too_large_error: Изображението не можа да бъде създадено, твърде
+  голямо е (макс. размер %bytes%)
+direct_message: Лично съобщение
+notification_title_new_post: Нова публикация
+2fa.setup_error: Грешка при включване на 2FA за акаунта
+flash_account_settings_changed: Настройките на акаунта ти бяха променени успешно.
+  Ще трябва да влезеш отново.
+flash_comment_edit_success: Коментарът е обновен успешно.
+reported_user: Докладван потребител
+cake_day: Тортен ден
+notification_title_message: Ново лично съобщение
+magazine_posting_restricted_to_mods_warning: Само модераторите могат да създават нишки
+  в тази общност
+2fa.backup_codes.recommendation: Препоръчително е да запазиш копие от тях на сигурно
+  място.
+sensitive_toggle: Превключване на видимостта на деликатно съдържание
+continue_with: Продължаване със
+own_content_reported_accepted: Доклад за твое съдържание беше приет.
+notification_title_new_comment: Нов коментар
+notification_title_removed_comment: Коментар беше премахнат
+notification_title_edited_comment: Коментар беше редактиран
+notification_title_edited_thread: Нишка беше редактирана
+notification_title_removed_post: Публикация беше премахната
+notification_title_edited_post: Публикация беше редактирана
+notification_title_new_signup: Нов потребител се регистрира
+notification_body_new_signup: Потребителят %u% се регистрира.
+notification_body2_new_signup_approval: Трябва да одобрите заявката, преди да могат
+  да влязат
+show_related_entries: Показване на случайни нишки
+last_failed_contact: Последен неуспешен контакт
+flash_posting_restricted_error: Създаването на нишки е ограничено до модератори в
+  тази общност, а ти не си такъв
+admin_users_active: Активни
+max_image_size: Максимален размер на файла
+bookmark_add_to_list: Добавяне на отметка към %list%
+bookmark_add_to_default_list: Добавяне на отметка към списъка по подразбиране
+bookmark_remove_from_list: Премахване на отметка от %list%
+bookmark_lists: Списъци с отметки
+bookmark_remove_all: Премахване на всички отметки
+bookmarks: Отметки
+bookmarks_list: Отметки в %list%
+bookmark_list_create: Създаване
+bookmark_list_create_placeholder: въведи име...
+bookmark_list_create_label: Име на списъка
+bookmarks_list_edit: Редактиране на списъка с отметки
+bookmark_list_edit: Редактиране
+new_users_need_approval: Новите потребители трябва да бъдат одобрени от администратор,
+  преди да могат да влязат.
+search_type_post: Микроблогове
+search_type_entry: Нишки
+select_user: Избери потребител
+signup_requests: Заявки за регистрация
+application_text: Текст на заявката
+signup_requests_header: Заявки за регистрация
+signup_requests_paragraph: Тези потребители биха искали да се присъединят към вашия
+  сървър. Те не могат да влязат, докато не одобрите заявката им за регистрация.
+comment_not_found: Коментарът не е намерен
+notification_title_new_reply: Нов отговор
+flash_thread_new_error: Нишката не можа да бъде създадена. Нещо се обърка.
+deleted_by_moderator: Нишката, публикацията или коментарът е изтрит от модератор
+show_active_users: Показване на активни потребители
+notification_title_new_report: Създаден е нов доклад
+server_software: Сървърен софтуер
+last_successful_receive: Последно успешно получаване
+version: Версия
+last_successful_deliver: Последна успешна доставка
+deleted_by_author: Нишката, публикацията или коментарът е изтрит от автора
+auto: Авто.
+last_updated: Последно обновено
+back: Назад
+reporting_user: Докладващ потребител
+own_report_rejected: Твоят доклад беше отхвърлен
+own_report_accepted: Твоят доклад беше приет
+someone: Някой
+and: и
+test_push_message: Здравей, свят!
+comment_default_sort: Подреждане по подразбиране на коментарите
+magazine_log_entry_pinned: закачи запис
+magazine_log_entry_unpinned: премахна закачен запис
+compact_view_help: Компактен изглед с по-малки полета, където мултимедията е преместена
+  отдясно.
+show_thumbnails_help: Показване на миниатюрните изображения.
+show_users_avatars_help: Показване на изображението на потребителския лик.
+image_lightbox_in_list_help: Когато е отметнато, щракването върху миниатюрата показва
+  модален прозорец с изображение. Когато не е отметнато, щракването върху миниатюрата
+  ще отвори нишката.
+show_magazines_icons_help: Показване на иконката на общността.
+front_default_sort: Подреждане по подразбиране на началната страница
+2fa.backup-create.help: Можеш да създадеш нови резервни кодове за удостоверяване;
+  това ще направи съществуващите кодове невалидни.
+image_lightbox_in_list: Миниатюрите на нишките се отварят на цял екран
+2fa.backup-create.label: Създаване на нови резервни кодове за удостоверяване
+test_push_notifications_button: Тестване на известията
+register_push_notifications_button: Регистриране за известия
+bookmark_list_make_default: Задаване по подразбиране
+ownership_requests: Заявки за притежание
+request_magazine_ownership: Заявете притежание на общността
+unregister_push_notifications_button: Премахване на насочени известия
+manually_approves_followers: Ръчно одобрява последователи
+created: Създаден
+mark_as_adult: Отбелязване като деликатно
+unmark_as_adult: Демаркиране като деликатно
+show_magazine_domains: Показване на домейните на общностите
+show_user_domains: Показване на домейните на потребителите
+show_top_bar: Показване на горната лента
+sticky_navbar: Залепена навигационна лента
+magazine_panel: Панел на общността
+admin_panel: Административен панел
+registrations_enabled: Регистрирането е включено
+registration_disabled: Регистрирането е изключено
+pinned: Закачено
+federation_enabled: Федерирането е включено
+flash_magazine_theme_changed_success: Изгледът на общността е обновен успешно.
+flash_magazine_theme_changed_error: Неуспешно обновяване на изгледа на общността.
+new_user_description: Този потребител е нов (активен от по-малко от %days% дни)
+new_magazine_description: Тази общност е нова (активна от по-малко от %days% дни)
+magazine_posting_restricted_to_mods: Ограничаване на създаването на нишки до модератори
+sidebars_same_side: Страничните ленти от една и съща страна
