@@ -1,1 +1,24 @@
-{}
+type.link: Enllaç
+type.article: Fil
+type.video: Vídeo
+type.smart_contract: Contracte intel·ligent
+type.magazine: Revista
+thread: Fil
+threads: Fils
+microblog: Microblog
+people: Gent
+events: Esdeveniments
+magazine: Revista
+search: Buscar
+add: Afegir
+select_channel: Trieu un canal
+login: Iniciar sessió
+sort_by: Ordenar per
+top: Destacat
+hot: Popular
+active: Actiu
+newest: Més nou
+oldest: Més vell
+commented: Comentat
+magazines: Revistes
+type.photo: Foto
