@@ -60,7 +60,7 @@
     margin-bottom: 0;
     opacity: .75;
 
-    a {
+    a:not(.notification-setting) {
       color: var(--kbin-meta-link-color);
       font-weight: bold;
 
@@ -76,7 +76,7 @@
     }
   }
 
-  aside {
+  aside:not(.notification-switch) {
     grid-area: vote;
   }
 
@@ -135,13 +135,13 @@
         line-height: 1rem;
       }
 
-      & > a.active,
+      & > a:not(.notification-setting).active,
       & > li button.active {
         text-decoration: underline;
       }
 
       button,
-      a {
+      a:not(.notification-setting) {
         font-size: .8rem;
         @include mbin.btn-link;
       }
@@ -151,7 +151,7 @@
       }
     }
 
-    a {
+    a:not(.notification-setting) {
       @include mbin.btn-link;
     }
 

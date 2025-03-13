@@ -232,7 +232,7 @@ post_change_adult:
 
 post_single:
   controller: App\Controller\Post\PostSingleController
-  defaults: { slug: -, sortBy: hot }
+  defaults: { slug: -, sortBy: default }
   path: /m/{magazine_name}/p/{post_id}/{slug}/{sortBy}
   methods: [ GET ]
   requirements:

@@ -12,11 +12,15 @@ on:
     tags:
       - 'v*'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.3.0
+      image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     steps:
       - uses: actions/checkout@v4
 
@@ -54,7 +58,7 @@ jobs:
   automated-tests:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.3.0
+      image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     steps:
       - uses: actions/checkout@v4
 
@@ -101,9 +105,9 @@ jobs:
           DATABASE_PORT: 5432
           REDIS_HOST: valkey
           REDIS_PORT: 6379
-        run: php bin/phpunit tests/Unit
+        run: php vendor/bin/paratest tests/Unit
 
-      - name: Run integration tests
+      - name: Run non thread safe integration tests
         env:
           COMPOSER_CACHE_DIR: ${{ steps.composer-cache.outputs.dir }}
           SYMFONY_DEPRECATIONS_HELPER: disabled
@@ -111,7 +115,17 @@ jobs:
           DATABASE_PORT: 5432
           REDIS_HOST: valkey
           REDIS_PORT: 6379
-        run: php bin/phpunit tests/Functional
+        run: php vendor/bin/phpunit tests/Functional --group NonThreadSafe
+
+      - name: Run thread safe integration tests
+        env:
+          COMPOSER_CACHE_DIR: ${{ steps.composer-cache.outputs.dir }}
+          SYMFONY_DEPRECATIONS_HELPER: disabled
+          DATABASE_HOST: postgres
+          DATABASE_PORT: 5432
+          REDIS_HOST: valkey
+          REDIS_PORT: 6379
+        run: php vendor/bin/paratest tests/Functional --exclude-group NonThreadSafe
     services:
       postgres:
         # Docker Hub image
@@ -140,7 +154,7 @@ jobs:
   audit-check:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.3.0
+      image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
@@ -172,7 +186,7 @@ jobs:
   fixer-dry-run:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.3.0
+      image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     steps:
       - uses: actions/checkout@v4
 

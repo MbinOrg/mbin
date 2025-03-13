@@ -1,3 +1,6 @@
+{%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
+{%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
+{%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_FALSE) -%}
 {% if magazines|length %}
     <div class="section">
         {% if view is same as 'cards'|trans|lower %}
@@ -22,7 +25,13 @@
                             {% endif %}
                             <div>
                                 <a href="{{ path('front_magazine', {name: magazine.name}) }}"
-                                   class="stretched-link">{{ magazine.name }} {% if magazine.isAdult %}<small class="badge danger">18+</small>{% endif %}</a>
+                                   class="stretched-link">
+                                    {{ magazine.name }}
+                                    {%- if SHOW_MAGAZINE_FULLNAME is same as V_TRUE -%}
+                                        @{{- magazine.name|apDomain -}}
+                                    {%- endif -%}
+                                    {% if magazine.isAdult %}<small class="badge danger">18+</small>{% endif %}
+                                </a>
                                 <small>{{ component('date', {date: magazine.createdAt}) }}</small>
                             </div>
                         </li>
@@ -63,7 +72,10 @@
                     <tbody>
                     {% for magazine in magazines %}
                         <tr>
-                            <td>{{ component('magazine_inline', { magazine: magazine, stretchedLink: true, showAvatar: true}) }} {% if magazine.isAdult %}<small class="badge danger">18+</small>{% endif %}</td>
+                            <td>
+                                {{ component('magazine_inline', { magazine: magazine, stretchedLink: true, showAvatar: true, showNewIcon: true, fullName: SHOW_MAGAZINE_FULLNAME is same as V_TRUE}) }}
+                                {% if magazine.isAdult %}<small class="badge danger">18+</small>{% endif %}
+                            </td>
                             <td>{{ magazine.entryCount }}</td>
                             <td>{{ magazine.entryCommentCount }}</td>
                             <td>{{ magazine.postCount + magazine.postCommentCount }}</td>
@@ -96,7 +108,7 @@
                 {% for magazine in magazines %}
                         <div class="magazine">
                             <div class="magazine__top">
-                                <div class="magazine__inline">{{ component('magazine_inline', { magazine: magazine, stretchedLink: true, showAvatar: true}) }} {% if magazine.isAdult %}<small class="badge danger">18+</small>{% endif %}</div>
+                                <div class="magazine__inline">{{ component('magazine_inline', { magazine: magazine, stretchedLink: true, showAvatar: true, showNewIcon: true, fullName: SHOW_MAGAZINE_FULLNAME is same as V_TRUE}) }} {% if magazine.isAdult %}<small class="badge danger">18+</small>{% endif %}</div>
                                 <div class="magazine__information">
                                     <span class="magazine__info"><span class="value">{{ magazine.entryCount }}</span><span class="label">{{ 'threads'|trans }}</span></span>
                                     <span class="magazine__info"><span class="value">{{ magazine.entryCommentCount }}</span><span class="label">{{ 'comments'|trans }}</span></span>

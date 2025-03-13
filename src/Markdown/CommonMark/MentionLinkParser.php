@@ -45,6 +45,8 @@ class MentionLinkParser implements InlineParserInterface
 
         $fullUsername = $username.'@'.$domain;
 
+        CommunityLinkParser::removeSurroundingLink($ctx, $username, $domain);
+
         [$type, $data] = $this->resolveType($username, $domain);
 
         if ($data instanceof User && $data->apPublicUrl) {
@@ -66,7 +68,7 @@ class MentionLinkParser implements InlineParserInterface
             MentionType::RemoteMagazine => [$this->resolveRouteDetails($type), $fullUsername, '@'.$username, '@'.$fullUsername, $fullUsername],
             MentionType::Magazine => [$this->resolveRouteDetails($type), $username, '@'.$username, '@'.$username, $username],
             MentionType::Search => [$this->resolveRouteDetails($type), $fullUsername, '@'.$username, '@'.$fullUsername, $fullUsername],
-            MentionType::Unresolvable => [['route' => '', 'param' => ''], '', '@'.$username, '', ''],
+            MentionType::Unresolvable => [['route' => '', 'param' => ''], '', '@'.$username, '@'.$fullUsername, ''],
             MentionType::User => [$this->resolveRouteDetails($type), $username, '@'.$username, '@'.$fullUsername, $username],
         };
 
@@ -148,7 +150,7 @@ class MentionLinkParser implements InlineParserInterface
             MentionType::Magazine => ['route' => 'front_magazine', 'param' => 'name'],
             MentionType::RemoteMagazine => ['route' => 'front_magazine', 'param' => 'name'],
             MentionType::RemoteUser => ['route' => 'user_overview',  'param' => 'username'],
-            MentionType::Search => ['route' => 'search',         'param' => 'q'],
+            MentionType::Search => ['route' => 'search',         'param' => 'search[q]'],
             MentionType::User => ['route' => 'user_overview',  'param' => 'username'],
         };
     }

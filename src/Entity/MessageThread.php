@@ -34,7 +34,7 @@ class MessageThread
             new JoinColumn(name: 'user_id', referencedColumnName: 'id', onDelete: 'CASCADE'),
         ]
     )]
-    #[ManyToMany(targetEntity: User::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ManyToMany(targetEntity: User::class, cascade: ['persist'], orphanRemoval: true)]
     public Collection $participants;
     #[OneToMany(mappedBy: 'thread', targetEntity: Message::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'ASC'])]

@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Domain;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class DomainBlockControllerTest extends WebTestCase
 {
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCanBlockAndUnblockDomain(): void
     {
         $entry = $this->createEntry(
@@ -34,6 +36,7 @@ class DomainBlockControllerTest extends WebTestCase
         $this->assertSelectorNotExists('#sidebar form[name=domain_block] .active');
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testXmlUserCanBlockDomain(): void
     {
         $entry = $this->createEntry(
@@ -54,6 +57,7 @@ class DomainBlockControllerTest extends WebTestCase
         $this->assertStringContainsString('active', $this->client->getResponse()->getContent());
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testXmlUserCanUnblockDomain(): void
     {
         $entry = $this->createEntry(

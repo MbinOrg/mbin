@@ -247,7 +247,7 @@
       }
     }
 
-    a {
+    a:not(.notification-setting) {
       color: var(--kbin-meta-link-color);
     }
 
@@ -258,6 +258,10 @@
     figure {
       text-align: center;
     }
+  }
+
+  .entry-info ul.info {
+    margin-top: 2.5rem;
   }
 
   .settings {
@@ -689,6 +693,17 @@
         display: none;
       }
     }
+  }
+}
+
+// Use white background for light themes
+.theme--light #sidebar .intro .container, 
+.theme--solarized-light #sidebar .intro .container {
+  background: url('/assets/images/intro-bg-white.png') no-repeat center 50%;
+  color: rgb(39, 39, 39) !important;
+  font-weight: 400;
+  h3 {
+    color: #202020;
   }
 }
 

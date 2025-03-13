@@ -1,7 +1,6 @@
 import { fetch, ok } from '../utils/http';
 import getIntIdFromElement, { getDepth, getLevel, getTypeFromNotification } from '../utils/mbin';
 import { Controller } from '@hotwired/stimulus';
-import GLightbox from 'glightbox';
 import router from '../utils/routing';
 import { useIntersection } from 'stimulus-use';
 
@@ -16,9 +15,6 @@ export default class extends Controller {
     static sendBtnLabel = null;
 
     connect() {
-        const params = { selector: '.thumb', openEffect: 'none', closeEffect: 'none', slideEffect: 'none' };
-        GLightbox(params);
-
         const self = this;
         if (this.hasMoreTarget) {
             this.moreTarget.addEventListener('focusin', () => {
@@ -36,6 +32,28 @@ export default class extends Controller {
         }
 
         this.checkHeight();
+
+        // if in a list and the click is made via touch, open the post
+        if (!this.element.classList.contains('isSingle')) {
+            this.element.querySelector('.content')?.addEventListener('click', (e) => {
+                if (e.defaultPrevented) {
+                    return
+                }
+                if ('a' === e.target.nodeName?.toLowerCase() || 'a' === e.target.tagName?.toLowerCase()) {
+                    // ignore clicks on links
+                    return
+                }
+                if ('touch' === e.pointerType) {
+                    const link = this.element.querySelector("header a:not(.user-inline)")
+                    if (link) {
+                        const href = link.getAttribute('href')
+                        if (href) {
+                            document.location.href = href
+                        }
+                    }
+                }
+            })
+        }
     }
 
     async getForm(event) {
@@ -405,6 +423,7 @@ export default class extends Controller {
                 e.target.previousSibling.scrollIntoView();
                 this.isExpandedValue = false;
             }
+            e.preventDefault();
         });
     }
 

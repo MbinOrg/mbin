@@ -10,10 +10,11 @@
 
   --kbin-bg: #ecf0f1;
   --kbin-bg-nth: #fafafa;
+  
 
-  --kbin-text-color: #212529;
-  --kbin-link-color: #37769e;
-  --kbin-link-hover-color: #275878;
+  --kbin-text-color: #1c1e20;
+  --kbin-link-color: #245e83;
+  --kbin-link-hover-color: #153b57;
   --kbin-outline: #ff8c00 solid 4px;
 
   --kbin-primary-color: #61366b;
@@ -37,8 +38,8 @@
 
   // meta
   --kbin-meta-bg: none;
-  --kbin-meta-text-color: #606060;
-  --kbin-meta-link-color: #606060;
+  --kbin-meta-text-color: #222;
+  --kbin-meta-link-color: #222;
   --kbin-meta-link-hover-color: var(--kbin-link-hover-color);
   --kbin-meta-border: 1px dashed #e5eaec;
   --kbin-avatar-border: 3px solid #ecf0f1;
@@ -47,24 +48,24 @@
 
   // options
   --kbin-options-bg: #fff;
-  --kbin-options-text-color: #95a5a6;
-  --kbin-options-link-color: #95a5a6;
+  --kbin-options-text-color: #6f7575;
+  --kbin-options-link-color: #6f7575;
   --kbin-options-link-hover-color: #32465b;
   --kbin-options-border: 1px solid #e5eaec;
   --kbin-options-link-hover-border: 3px solid #32465b;
 
   // forms
-  --kbin-input-bg: #fff;
+  --kbin-input-bg: #f3f3f3;
   --kbin-input-text-color: var(--kbin-text-color);
-  --kbin-input-border: 1px solid #e5eaec;
+  --kbin-input-border: 1px solid #c9cecf;
   --kbin-input-placeholder-text-color: #929497;
 
   // buttons
-  --kbin-button-primary-bg: #4e3a8c;
-  --kbin-button-primary-hover-bg: #3f2e77;
+  --kbin-button-primary-bg: #7951a7;
+  --kbin-button-primary-hover-bg: #66438f;
   --kbin-button-primary-text-color: #fff;
   --kbin-button-primary-text-hover-color: #fff;
-  --kbin-button-primary-border: 1px solid #3f2e77;
+  --kbin-button-primary-border: 1px solid #66438f;
 
   --kbin-button-secondary-bg: #fff;
   --kbin-button-secondary-hover-bg: #f5f5f5;
@@ -73,7 +74,7 @@
   --kbin-button-secondary-border: 1px dashed #e5eaec;
 
   // header
-  --kbin-header-bg: #110045;
+  --kbin-header-bg: #2c074b;
   --kbin-header-text-color: #fff;
   --kbin-header-link-color: #fff;
   --kbin-header-link-hover-color: #e8e8e8;
@@ -89,7 +90,7 @@
   --kbin-topbar-border: 1px solid  #150a37;
 
   //sidebar
-  --kbin-sidebar-header-text-color: #909ea2;
+  --kbin-sidebar-header-text-color: #595d5e;
   --kbin-sidebar-header-border: 1px solid #e5eaec;
   --kbin-sidebar-settings-row-bg: #E5EAEC;
   --kbin-sidebar-settings-switch-on-color: #fff ;
@@ -99,11 +100,12 @@
   --kbin-sidebar-settings-switch-hover-bg: #9992BC;
 
   //vote
-  --kbin-vote-bg: #f3f3f3;
-  --kbin-vote-text-color: #b6b6b6;
-  --kbin-vote-text-hover-color: #000;
-  --kbin-upvoted-color: #0f5132;
-  --kbin-downvoted-color: #842029;
+  --kbin-vote-bg: #e7e7e7;
+  --kbin-vote-bg-hover-bg: #dfdfdf;
+  --kbin-vote-text-color: #222222;
+  --kbin-vote-text-hover-color: #0d0014;
+  --kbin-upvoted-color: #0f663d;
+  --kbin-downvoted-color: #961822;
 
   //boost
   --kbin-boosted-color: var(--kbin-upvoted-color);
@@ -120,7 +122,7 @@
   --kbin-alert-danger-link-color: var(--kbin-danger-color);
 
   //entry
-  --kbin-entry-link-visited-color: #7e8f99;
+  --kbin-entry-link-visited-color: #60707a;
 
   // details
   --mbin-details-border: var(--kbin-section-border);

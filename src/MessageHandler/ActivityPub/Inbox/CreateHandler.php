@@ -10,9 +10,12 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
 use App\Exception\InstanceBannedException;
+use App\Exception\InvalidApPostException;
+use App\Exception\InvalidWebfingerException;
 use App\Exception\PostingRestrictedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
+use App\Exception\UserBlockedException;
 use App\Exception\UserDeletedException;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\CreateMessage;
@@ -24,11 +27,15 @@ use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
 use App\Service\ActivityPubManager;
 use App\Service\MessageManager;
+use App\Utils\UrlUtils;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 #[AsMessageHandler]
 class CreateHandler extends MbinMessageHandler
@@ -43,6 +50,7 @@ class CreateHandler extends MbinMessageHandler
         private readonly MessageManager $messageManager,
         private readonly ActivityPubManager $activityPubManager,
         private readonly ApActivityRepository $repository,
+        private readonly CacheInterface $cache,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
@@ -71,24 +79,38 @@ class CreateHandler extends MbinMessageHandler
                 $this->handlePrivateMessage($object);
             } elseif (\in_array($object['type'], $postTypes)) {
                 $this->handleChain($object, $stickyIt);
+                if (method_exists($this->cache, 'invalidateTags')) {
+                    // clear markdown renders that are tagged with the id of the post
+                    $tag = UrlUtils::getCacheKeyForMarkdownUrl($object['id']);
+                    $this->cache->invalidateTags([$tag]);
+                    $this->logger->debug('cleared cached items with tag {t}', ['t' => $tag]);
+                }
             } elseif (\in_array($object['type'], $entryTypes)) {
                 $this->handlePage($object, $stickyIt);
+                if (method_exists($this->cache, 'invalidateTags')) {
+                    // clear markdown renders that are tagged with the id of the entry
+                    $tag = UrlUtils::getCacheKeyForMarkdownUrl($object['id']);
+                    $this->cache->invalidateTags([$tag]);
+                    $this->logger->debug('cleared cached items with tag {t}', ['t' => $tag]);
+                }
             }
         } catch (UserBannedException) {
-            $this->logger->info('[CreateHandler::handleModeratorAdd] Did not create the post, because the user is banned');
+            $this->logger->info('[CreateHandler::doWork] Did not create the post, because the user is banned');
         } catch (UserDeletedException) {
-            $this->logger->info('[CreateHandler::handleModeratorAdd] Did not create the post, because the user is deleted');
+            $this->logger->info('[CreateHandler::doWork] Did not create the post, because the user is deleted');
         } catch (TagBannedException) {
-            $this->logger->info('[CreateHandler::handleModeratorAdd] Did not create the post, because one of the used tags is banned');
+            $this->logger->info('[CreateHandler::doWork] Did not create the post, because one of the used tags is banned');
         } catch (PostingRestrictedException $e) {
             if ($e->actor instanceof User) {
                 $username = $e->actor->getUsername();
             } else {
                 $username = $e->actor->name;
             }
-            $this->logger->info('[CreateHandler::handleModeratorAdd] Did not create the post, because the magazine {m} restricts posting to mods and {u} is not a mod', ['m' => $e->magazine, 'u' => $username]);
+            $this->logger->info('[CreateHandler::doWork] Did not create the post, because the magazine {m} restricts posting to mods and {u} is not a mod', ['m' => $e->magazine, 'u' => $username]);
         } catch (InstanceBannedException $e) {
-            $this->logger->info('[CreateHandler::handleModeratorAdd] Did not create the post, because the user\'s instance is banned');
+            $this->logger->info('[CreateHandler::doWork] Did not create the post, because the user\'s instance is banned');
+        } catch (UserBlockedException $e) {
+            $this->logger->info('[CreateHandler::doWork] Did not create the message, because the user is blocked by one of the receivers');
         }
     }
 
@@ -137,6 +159,13 @@ class CreateHandler extends MbinMessageHandler
         }
     }
 
+    /**
+     * @throws InvalidApPostException
+     * @throws InvalidArgumentException
+     * @throws UserDeletedException
+     * @throws InvalidWebfingerException
+     * @throws Exception
+     */
     private function handlePrivateMessage(array $object): void
     {
         $this->messageManager->createMessage($object);

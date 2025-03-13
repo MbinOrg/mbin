@@ -55,7 +55,7 @@ class ReportApprovedNotification extends Notification
             $actionUrl = $linkToReport;
         }
 
-        return new PushNotification($message, $title, actionUrl: $actionUrl);
+        return new PushNotification($this->getId(), $message, $title, actionUrl: $actionUrl);
     }
 
     private function getSubjectLink(ReportInterface $subject, UrlGeneratorInterface $urlGenerator): string

@@ -36,6 +36,7 @@ class InstanceSettingsRetrieveApiTest extends WebTestCase
         'MBIN_SSO_ONLY_MODE',
         'MBIN_SSO_SHOW_FIRST',
         'MAX_IMAGE_BYTES',
+        'MBIN_NEW_USERS_NEED_APPROVAL',
     ];
 
     public function testApiCannotRetrieveInstanceSettingsAnonymous(): void

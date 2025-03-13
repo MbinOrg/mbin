@@ -18,7 +18,7 @@ readonly class SignatureValidator
 {
     public function __construct(
         private ActivityPubManager $activityPubManager,
-        private ApHttpClient $client,
+        private ApHttpClientInterface $client,
         private LoggerInterface $logger,
     ) {
     }

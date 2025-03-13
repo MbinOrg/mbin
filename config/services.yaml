@@ -76,12 +76,13 @@ parameters:
     html5_validation: true
 
     front_sort_options: top|hot|active|newest|oldest|commented # TODO remove fallback after tag rework
-    default_sort_options: top|hot|active|newest|oldest|commented
+    default_sort_options: default|top|hot|active|newest|oldest|commented
     default_time_options: 3h|6h|12h|1d|1w|1m|1y|all|∞
     default_type_options: article|articles|link|links|video|videos|photo|photos|image|images|all
     default_subscription_options: sub|fav|mod|all|home
     default_federation_options: local|all
     default_content_options: threads|microblog
+    default_subject_type_options: entry|entry_comment|post|post_comment
 
     comment_sort_options: top|hot|active|newest|oldest
 
@@ -111,6 +112,8 @@ parameters:
 
     mbin_downvotes_mode_default: 'enabled'
     mbin_downvotes_mode: '%env(enum:\App\Utils\DownvotesMode:default:mbin_downvotes_mode_default:MBIN_DOWNVOTES_MODE)%'
+
+    mbin_new_users_need_approval: '%env(bool:default::MBIN_NEW_USERS_NEED_APPROVAL)%'
 
 services:
     # default configuration for services in *this* file
@@ -181,6 +184,7 @@ services:
             $mbinSsoOnlyMode: '%sso_only_mode%'
             $maxImageBytes: '%max_image_bytes%'
             $mbinDownvotesMode: '%mbin_downvotes_mode%'
+            $mbinNewUsersNeedApproval: '%mbin_new_users_need_approval%'
 
     # Markdown
     App\Markdown\Factory\EnvironmentFactory:

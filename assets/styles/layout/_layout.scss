@@ -192,6 +192,11 @@ figure {
   margin: 0;
 }
 
+.options--top,
+.section--top {
+  margin-top: 0.5rem !important;
+}
+
 .rounded-edges {
   .section,
   .options,
@@ -216,7 +221,9 @@ figure {
   code,
   .ts-control > [data-value].item,
   .image-preview-container {
-    border-radius: var(--kbin-rounded-edges-radius) !important;
+    &:not(.ignore-edges) {
+      border-radius: var(--kbin-rounded-edges-radius) !important;
+    }
   }
 
   .ts-wrapper {
@@ -361,6 +368,12 @@ figure {
 .flex {
   display: flex;
   gap: .25rem;
+}
+
+@include b.media-breakpoint-down(lg) {
+  .flex.mobile {
+    display: block;
+  }
 }
 
 .flex-wrap {

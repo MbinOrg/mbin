@@ -10,24 +10,18 @@
              src="{{ magazine.icon.filePath ? (asset(magazine.icon.filePath)|imagine_filter('avatar_thumb')) : magazine.icon.sourceUrl }}"
              alt="{{ magazine.name ~ ' ' ~ 'icon'|trans|lower }}">
     {% endif %}
-    {% if fullName %}
-        {{ magazine.name }} {% if magazine.isAdult %}<small class="badge danger">18+</small>{% endif %}
-        {% if magazine.postingRestrictedToMods %}
-            <i class="fa-solid fa-lock"
-               aria-description="{{ 'magazine_posting_restricted_to_mods_warning'|trans }}"
-               title="{{ 'magazine_posting_restricted_to_mods_warning'|trans }}"
-               aria-describedby="{{ 'magazine_posting_restricted_to_mods_warning'|trans }}"></i>
-        {% endif %}
-    {% else %}
-        {{ magazine.title }}
-        {% if magazine.postingRestrictedToMods %}
-            <i class="fa-solid fa-lock"
-               aria-description="{{ 'magazine_posting_restricted_to_mods_warning'|trans }}"
-               title="{{ 'magazine_posting_restricted_to_mods_warning'|trans }}"
-               aria-describedby="{{ 'magazine_posting_restricted_to_mods_warning'|trans }}"></i>
-        {% endif %}
+    <span>{{ magazine.title -}}</span>
+    {%- if fullName -%}
+        <span>@{{- magazine.name|apDomain -}}</span>
+    {%- endif -%}
+    {% if magazine.isAdult %} <small class="badge danger">18+</small>{% endif %}
+    {% if magazine.postingRestrictedToMods %}
+        <i class="fa-solid fa-lock"
+           aria-description="{{ 'magazine_posting_restricted_to_mods_warning'|trans }}"
+           title="{{ 'magazine_posting_restricted_to_mods_warning'|trans }}"
+           aria-describedby="{{ 'magazine_posting_restricted_to_mods_warning'|trans }}"></i>
     {% endif %}
-    {% if magazine.isNew() %}
+    {% if magazine.isNew() and showNewIcon %}
         {% set days = constant('App\\Entity\\Magazine::NEW_FOR_DAYS') %}
         <i class="fa-solid fa-leaf new-magazine-icon" title="{{ 'new_magazine_description'|trans({ '%days%': days }) }}" aria-description="{{ 'new_magazine_description'|trans({ '%days%': days }) }}"></i>
     {% endif %}

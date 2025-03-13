@@ -57,7 +57,7 @@ sudo apt install php8.3 php8.3-common php8.3-fpm php8.3-cli php8.3-amqp php8.3-b
 max_execution_time = 120
 ```
 
-- Increase/set max_nesting_level in `/etc/php/8.3/fpm/conf.d/20-xdebug.ini`:
+- _Optional:_ Increase/set max_nesting_level in `/etc/php/8.3/fpm/conf.d/20-xdebug.ini` (in case you have the `xdebug` extension installed):
 
 ```ini
 xdebug.max_nesting_level=512
@@ -177,7 +177,8 @@ Prepare the server:
 2. Install dependencies: `composer install`
 3. Dump `.env` into `.env.local.php` via: `composer dump-env dev`
 4. _Optionally:_ Increase verbosity log level in: `config/packages/monolog.yaml` in the `when@dev` section: `level: debug` (instead of `level: info`),
-5. Clear cache: `APP_ENV=dev APP_DEBUG=1 php bin/console cache:clear -n`
+5. **Important:** clear Symfony cache: `APP_ENV=dev APP_DEBUG=1 php bin/console cache:clear -n`
+6. _Optionally:_ clear the Composer cache: `composer clear-cache`
 
 Start the development server:
 
@@ -188,7 +189,7 @@ You might want to also follow the [Mbin first setup](../02-admin/04-running-mbin
 
 This will give you a minimal working frontend with PostgreSQL setup. Keep in mind: this will _not_ start federating.
 
-_Optionally:_ If you want to start federating, you will also need to messenger jobs + RabbitMQ and host your server behind a reverse proxy with valid SSL certificate.
+_Optionally:_ If you want to start federating, you will also need to messenger jobs + RabbitMQ and host your server behind a reverse proxy with valid SSL certificate. Generally speaking, it's **not** required to setup federation for development purposes.
 
 More info: [Contributing guide](https://github.com/MbinOrg/mbin/blob/main/CONTRIBUTING.md), [Admin guide](../02-admin/README.md) and [Symfony Local Web Server](https://symfony.com/doc/current/setup/symfony_server.html)
 
@@ -210,7 +211,7 @@ For more info read: [Symfony Testing guide](https://symfony.com/doc/current/test
 max_execution_time = 120
 ```
 
-2. Increase/set max_nesting_level in `/etc/php/8.3/fpm/conf.d/20-xdebug.ini`:
+2. _Optional:_ Increase/set max_nesting_level in `/etc/php/8.3/fpm/conf.d/20-xdebug.ini` (in case you have the `xdebug` extension installed):
 
 ```ini
 xdebug.max_nesting_level=512
@@ -232,13 +233,14 @@ SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Unit
 
 Our integration tests depend on a database and a caching server (Valkey / KeyDB / Redis). 
 The database and cache are cleared / dumped every test run. 
-To start the services:
+
+To start the services in the background:
 
 ```sh
-cd docker/tests && docker compose up -d
+docker compose -f docker/tests/compose.yml up -d
 ```
 
-To run the integration tests:
+Then run the integration test(s):
 
 ```sh
 SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Functional

@@ -91,63 +91,47 @@ upstream mercure {
 }
 
 # Map instance requests vs the rest
-map "$http_accept:$request" $instanceRequest {
-    ~^.*:GET\ \/.well-known\/.+                         1;
-    ~^.*:GET\ \/nodeinfo\/.+                            1;
-    ~^.*:GET\ \/i\/actor                                1;
-    ~^.*:POST\ \/i\/inbox                               1;
-    ~^.*:POST\ \/i\/outbox                              1;
-    ~^.*:POST\ \/f\/inbox                               1;
-    ~^application\/activity\+json:GET\ \/               1;
-    ~^application\/ld\+json:GET\ \/                     1;
-    ~^application\/json:GET\ \/                         1;
-    ~^application\/activity\+json:GET\ \/f\/object\/.+  1;
-    ~^application\/ld\+json:GET\ \/f\/object\/.+        1;
-    ~^application\/json:GET\ \/f\/object\/.+            1;
-    default                                             0;
+map "$http_accept:$request" $mbinInstanceRequest {
+    ~^.*:GET\ \/.well-known\/.+                                                                       1;
+    ~^.*:GET\ \/nodeinfo\/.+                                                                          1;
+    ~^.*:GET\ \/i\/actor                                                                              1;
+    ~^.*:POST\ \/i\/inbox                                                                             1;
+    ~^.*:POST\ \/i\/outbox                                                                            1;
+    ~^.*:POST\ \/f\/inbox                                                                             1;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/               1;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/f\/object\/.+  1;
+    default                                                                                           0;
 }
 
 # Map user requests vs the rest
-map "$http_accept:$request" $userRequest {
-    ~^application\/activity\+json:GET\ \/u\/.+   1;
-    ~^application\/ld\+json:GET\ \/u\/.+         1;
-    ~^application\/json:GET\ \/u\/.+             1;
-    ~^application\/activity\+json:POST\ \/u\/.+  1;
-    ~^application\/ld\+json:POST\ \/u\/.+        1;
-    ~^application\/json:POST\ \/u\/.+            1;
-    default                                      0;
+map "$http_accept:$request" $mbinUserRequest {
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/u\/.+   1;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:POST\ \/u\/.+  1;
+    default                                                                                    0;
 }
 
 # Map magazine requests vs the rest
-map "$http_accept:$request" $magazineRequest {
-    ~^application\/activity\+json:GET\ \/m\/.+   1;
-    ~^application\/ld\+json:GET\ \/m\/.+         1;
-    ~^application\/json:GET\ \/m\/.+             1;
-    ~^application\/activity\+json:POST\ \/m\/.+  1;
-    ~^application\/ld\+json:POST\ \/m\/.+        1;
-    ~^application\/json:POST\ \/m\/.+            1;
-    default                                      0;
+map "$http_accept:$request" $mbinMagazineRequest {
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/m\/.+   1;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:POST\ \/m\/.+  1;
+    default                                                                                    0;
 }
 
 # Miscellaneous requests
-map "$http_accept:$request" $miscRequest {
-    ~^application\/activity\+json:GET\ \/reports\/.+  1;
-    ~^application\/ld\+json:GET\ \/reports\/.+        1;
-    ~^application\/json:GET\ \/reports\/.+            1;
-    ~^application\/activity\+json:GET\ \/message\/.+  1;
-    ~^application\/ld\+json:GET\ \/message\/.+        1;
-    ~^application\/json:GET\ \/message\/.+            1;
-    ~^.*:GET\ \/contexts\..+                          1;
-    default                                           0;
+map "$http_accept:$request" $mbinMiscRequest {
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/reports\/.+  1;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/message\/.+  1;
+    ~^.*:GET\ \/contexts\..+                                                                        1;
+    default                                                                                         0;
 }
 
 # Determine if a request should go into the regular log
-map "$instanceRequest$userRequest$magazineRequest$miscRequest" $regularRequest {
+map "$mbinInstanceRequest$mbinUserRequest$mbinMagazineRequest$mbinMiscRequest" $mbinRegularRequest {
     0000    1; # Regular requests
     default 0; # Other requests
 }
 
-map $regularRequest $mbin_limit_key {
+map $mbinRegularRequest $mbin_limit_key {
     0 "";
     1 $binary_remote_addr;
 }
@@ -194,15 +178,15 @@ server {
     # Two stage rate limit
     limit_req zone=mbin_limit burst=300 delay=200;
 
-    # Error log
+    # Error log (if you want you can add "warn" at the end of error_log to also log warnings)
     error_log /var/log/nginx/mbin_error.log;
 
     # Access logs
-    access_log /var/log/nginx/mbin_access.log combined if=$regularRequest;
-    access_log /var/log/nginx/mbin_instance.log combined if=$instanceRequest buffer=32k flush=5m;
-    access_log /var/log/nginx/mbin_user.log combined if=$userRequest buffer=32k flush=5m;
-    access_log /var/log/nginx/mbin_magazine.log combined if=$magazineRequest buffer=32k flush=5m;
-    access_log /var/log/nginx/mbin_misc.log combined if=$miscRequest buffer=32k flush=5m;
+    access_log /var/log/nginx/mbin_access.log combined if=$mbinRegularRequest;
+    access_log /var/log/nginx/mbin_instance.log combined if=$mbinInstanceRequest buffer=32k flush=5m;
+    access_log /var/log/nginx/mbin_user.log combined if=$mbinUserRequest buffer=32k flush=5m;
+    access_log /var/log/nginx/mbin_magazine.log combined if=$mbinMagazineRequest buffer=32k flush=5m;
+    access_log /var/log/nginx/mbin_misc.log combined if=$mbinMiscRequest buffer=32k flush=5m;
 
     open_file_cache          max=1000 inactive=20s;
     open_file_cache_valid    60s;
@@ -332,14 +316,14 @@ nano /var/www/mbin/.env
 
 You can configure a single IP address and/or a range of IP addresses (this configuration should be sufficient if you are running Nginx yourself):
 
-```dotenv
+```ini
 # Change the IP range if needed, this is just an example
 TRUSTED_PROXIES=127.0.0.1,192.168.1.0/24
 ```
 
 Or if the IP address is dynamic, you can set the `REMOTE_ADDR` string which will be replaced at runtime by `$_SERVER['REMOTE_ADDR']`:
 
-```dotenv
+```ini
 TRUSTED_PROXIES=127.0.0.1,REMOTE_ADDR
 ```
 
@@ -360,13 +344,13 @@ More detailed info can be found at: [Symfony Trusted Proxies docs](https://symfo
 
 we suggest that you do not use this configuration:
 
-```dotenv
+```ini
 KBIN_STORAGE_URL=https://mbin.domain.tld/media
 ```
 
 Instead we suggest to use a subdomain for serving your media files:
 
-```dotenv
+```ini
 KBIN_STORAGE_URL=https://media.mbin.domain.tld
 ```
 

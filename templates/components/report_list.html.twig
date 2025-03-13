@@ -36,7 +36,7 @@
 {% for report in reports %}
     <div class="{{ html_classes('section section--small report') }}" id="report-id-{{ report.id }}">
         <div>
-            <small class="meta">{{ component('user_inline', {user: report.reporting}) }},
+            <small class="meta">{{ component('user_inline', {user: report.reporting, showNewIcon: true}) }},
                 {{ component('date', {date: report.createdAt}) }}</small>
         </div>
         <div>

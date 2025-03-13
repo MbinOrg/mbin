@@ -22,7 +22,12 @@ class UserAvatarDeleteController extends AbstractController
     {
         $this->denyAccessUnlessGranted('edit_profile', $this->getUserOrThrow());
 
-        $this->userManager->detachAvatar($this->getUserOrThrow());
+        $user = $this->getUserOrThrow();
+        $this->userManager->detachAvatar($user);
+        /*
+         * Call edit so the @see UserEditedEvent is triggered and the changes are federated
+         */
+        $this->userManager->edit($user, $this->userManager->createDto($user));
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse(

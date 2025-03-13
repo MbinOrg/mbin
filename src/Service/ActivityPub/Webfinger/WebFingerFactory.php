@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace App\Service\ActivityPub\Webfinger;
 
 use App\ActivityPub\ActorHandle;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 
 /**
  * A simple WebFinger discoverer tool.
@@ -23,7 +23,7 @@ class WebFingerFactory
 {
     public const WEBFINGER_URL = '%s://%s%s/.well-known/webfinger?resource=acct:%s';
 
-    public function __construct(private readonly ApHttpClient $client)
+    public function __construct(private readonly ApHttpClientInterface $client)
     {
     }
 

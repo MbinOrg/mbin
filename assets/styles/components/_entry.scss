@@ -335,7 +335,7 @@
         text-decoration: underline;
       }
 
-      button, input[type='submit'], a {
+      button, input[type='submit'], a:not(.notification-setting) {
         @include mbin.btn-link;
       }
     }

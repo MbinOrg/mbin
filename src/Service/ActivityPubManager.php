@@ -34,18 +34,21 @@ use App\Repository\ImageRepository;
 use App\Repository\InstanceRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPub\ApObjectExtractor;
 use App\Service\ActivityPub\Webfinger\WebFinger;
 use App\Service\ActivityPub\Webfinger\WebFingerFactory;
+use App\Utils\UrlUtils;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use League\HTMLToMarkdown\HtmlConverter;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Exception\CacheException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class ActivityPubManager
 {
@@ -57,7 +60,7 @@ class ActivityPubManager
         private readonly MagazineManager $magazineManager,
         private readonly MagazineFactory $magazineFactory,
         private readonly MagazineRepository $magazineRepository,
-        private readonly ApHttpClient $apHttpClient,
+        private readonly ApHttpClientInterface $apHttpClient,
         private readonly ImageRepository $imageRepository,
         private readonly ImageManager $imageManager,
         private readonly EntityManagerInterface $entityManager,
@@ -73,6 +76,7 @@ class ActivityPubManager
         private readonly EntryManager $entryManager,
         private readonly RemoteInstanceManager $remoteInstanceManager,
         private readonly InstanceRepository $instanceRepository,
+        private readonly CacheInterface $cache,
     ) {
     }
 
@@ -317,11 +321,20 @@ class ActivityPubManager
             throw new InstanceBannedException();
         }
         $webfinger = $this->webfinger($actorUrl);
+        $dto = $this->userFactory->createDtoFromAp($actorUrl, $webfinger->getHandle());
         $this->userManager->create(
-            $this->userFactory->createDtoFromAp($actorUrl, $webfinger->getHandle()),
+            $dto,
             false,
-            false
+            false,
+            preApprove: true,
         );
+
+        if (method_exists($this->cache, 'invalidateTags')) {
+            // clear markdown renders that are tagged with the handle of the user
+            $tag = UrlUtils::getCacheKeyForMarkdownUserMention($dto->apId);
+            $this->cache->invalidateTags([$tag]);
+            $this->logger->debug('cleared cached items with tag {t}', ['t' => $tag]);
+        }
 
         return $this->updateUser($actorUrl);
     }
@@ -396,6 +409,9 @@ class ActivityPubManager
                     $this->bus->dispatch(new DeleteImageMessage($user->avatar->getId()));
                 }
                 $user->avatar = $newImage;
+            } elseif (null !== $user->avatar) {
+                $this->bus->dispatch(new DeleteImageMessage($user->avatar->getId()));
+                $user->avatar = null;
             }
 
             // Only update cover if image is set
@@ -408,6 +424,9 @@ class ActivityPubManager
                     $this->bus->dispatch(new DeleteImageMessage($user->cover->getId()));
                 }
                 $user->cover = $newImage;
+            } elseif (null !== $user->cover) {
+                $this->bus->dispatch(new DeleteImageMessage($user->cover->getId()));
+                $user->cover = null;
             }
 
             if (null !== $user->apFollowersUrl) {
@@ -491,11 +510,23 @@ class ActivityPubManager
         if ($this->settingsManager->isBannedInstance($actorUrl)) {
             throw new InstanceBannedException();
         }
+        $dto = $this->magazineFactory->createDtoFromAp($actorUrl, $this->buildHandle($actorUrl));
         $this->magazineManager->create(
-            $this->magazineFactory->createDtoFromAp($actorUrl, $this->buildHandle($actorUrl)),
+            $dto,
             null,
             false
         );
+
+        try {
+            if (method_exists($this->cache, 'invalidateTags')) {
+                // clear markdown renders that are tagged with the handle of the magazine
+                $tag = UrlUtils::getCacheKeyForMarkdownMagazineMention($dto->apId);
+                $this->cache->invalidateTags([$tag]);
+                $this->logger->debug('cleared cached items with tag {t}', ['t' => $tag]);
+            }
+        } catch (CacheException $ex) {
+            $this->logger->error('An error occurred during cache clearing: {e} - {m}', ['e' => \get_class($ex), 'm' => $ex->getMessage()]);
+        }
 
         return $this->updateMagazine($actorUrl);
     }
@@ -540,6 +571,9 @@ class ActivityPubManager
                     $this->bus->dispatch(new DeleteImageMessage($magazine->icon->getId()));
                 }
                 $magazine->icon = $newImage;
+            } elseif (null !== $magazine->icon) {
+                $this->bus->dispatch(new DeleteImageMessage($magazine->icon->getId()));
+                $magazine->icon = null;
             }
 
             if ($actor['name']) {

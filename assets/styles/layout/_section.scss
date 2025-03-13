@@ -5,7 +5,7 @@
   margin-bottom: .5rem;
   padding: 2rem 1rem;
 
-  a {
+  a:not(.notification-setting) {
     color: var(--kbin-section-title-link-color);
     overflow-wrap: anywhere;
 
@@ -66,13 +66,5 @@
     border: var(--kbin-alert-danger-border);
     background-color: var(--kbin-alert-danger-bg);
     color: var(--kbin-alert-danger-text-color);
-  }
-}
-
-.page-search {
-  .section--top {
-    button {
-      padding: 1rem 1.5rem;
-    }
   }
 }

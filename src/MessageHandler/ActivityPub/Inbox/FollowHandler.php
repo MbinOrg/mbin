@@ -9,7 +9,7 @@ use App\Entity\User;
 use App\Message\ActivityPub\Inbox\FollowMessage;
 use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPub\Wrapper\FollowResponseWrapper;
 use App\Service\ActivityPubManager;
 use App\Service\MagazineManager;
@@ -28,7 +28,7 @@ class FollowHandler extends MbinMessageHandler
         private readonly ActivityPubManager $activityPubManager,
         private readonly UserManager $userManager,
         private readonly MagazineManager $magazineManager,
-        private readonly ApHttpClient $client,
+        private readonly ApHttpClientInterface $client,
         private readonly LoggerInterface $logger,
         private readonly FollowResponseWrapper $followResponseWrapper,
     ) {

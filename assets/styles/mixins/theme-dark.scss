@@ -100,13 +100,14 @@
 
   //vote
   --kbin-vote-bg: #1c1c1c;
+  --kbin-vote-bg-hover-bg: #161616;
   --kbin-vote-text-color: #b6b6b6;
   --kbin-vote-text-hover-color: #fafafa;
   --kbin-upvoted-color: #24b270;
   --kbin-downvoted-color: #dc2f3f;
 
-   //boost
-   --kbin-boosted-color: var(--kbin-upvoted-color);
+  //boost
+  --kbin-boosted-color: var(--kbin-upvoted-color);
 
   // alerts
   --kbin-alert-info-bg: rgba(153,116,4,0.15);

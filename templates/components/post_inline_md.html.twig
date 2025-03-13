@@ -1,0 +1,13 @@
+<div class="post-inline">
+    {{ component('user_inline', {user: post.user, fullName: userFullName, showNewIcon: true}) }}:
+    <a href="{{ path('post_single', {magazine_name: post.magazine.name, post_id: post.id, slug: post.slug|length ? post.slug : '-'}) }}">
+        {% if post.image is not same as null %}
+            <i class="fa-solid fa-photo-film"></i>
+        {% endif %}
+        {{ post.getShortTitle() }}
+    </a>
+    {% if post.magazine.name is not same as 'random' %}
+        {{ 'in'|trans }}
+        {{ component('magazine_inline', {magazine: post.magazine, fullName: magazineFullName}) }}
+    {% endif %}
+</div>
