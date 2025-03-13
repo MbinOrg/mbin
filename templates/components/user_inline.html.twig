@@ -29,11 +29,10 @@
         {% else %}
             {% set noAvatar = user.username ~ " has no avatar" %}
         {% endif %}
-        {# todo: set the actual server and create a default avatar #}
         <img class="image-inline"
             width="30" height="30"
             loading="lazy"
-            src="[server]/public/default_avatar.png"
+            src="/default_avatar.png"
             title="{{ noAvatar }}"
             alt="{{ noAvatar }}"
             style="background-color: {{ color }}; border-color: #0f0; border-width: 3px;">
