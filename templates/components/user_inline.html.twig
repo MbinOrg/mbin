@@ -35,7 +35,7 @@
             src="https://media.rimworld.gallery/eye_of_the_raider_simplified_bw.png"
             title="{{ noAvatar }}"
             alt="{{ noAvatar }}"
-            style="filter: brightness(0) saturate(100%) invert(1) sepia(1) saturate(10000%) hue-rotate({{ color|slice(1)|convert_encoding('UTF-8', 'ASCII')|number_format / 1000000 * 360 }}deg);">
+            style="filter: brightness(0) saturate(100%) invert(1) sepia(1) saturate(10000%) hue-rotate({{ (color|slice(1)|crc32 % 360) }}deg);">
     {% endif %}
     {{ user.apPreferredUsername ?? user.username|username -}}
     {%- if fullName is defined and fullName is same as true -%}
