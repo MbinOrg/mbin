@@ -35,7 +35,7 @@
             src="/default_avatar.png"
             title="{{ noAvatar }}"
             alt="{{ noAvatar }}"
-            style="background-color: {{ color }}; border-color: #0f0; border-width: 3px;">
+            style=" filter: drop-shadow(0 0 0 {{color}}); background-color: transparent;">
     {% endif %}
     {{ user.apPreferredUsername ?? user.username|username -}}
     {%- if fullName is defined and fullName is same as true -%}
