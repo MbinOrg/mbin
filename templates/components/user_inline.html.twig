@@ -29,13 +29,16 @@
         {% else %}
             {% set noAvatar = user.username ~ " has no avatar" %}
         {% endif %}
-        <img class="image-inline"
-            width="30" height="30"
-            loading="lazy"
-            src="/default_avatar.png"
-            title="{{ noAvatar }}"
-            alt="{{ noAvatar }}"
-            style=" filter: drop-shadow(0 0 0 {{color}}); background-color: transparent;">
+         <div class="avatar-container" style="display: inline-block; position: relative;">       
+            <img class="image-inline"
+                width="30" height="30"
+                loading="lazy"
+                src="/default_avatar.png"
+                title="{{ noAvatar }}"
+                alt="{{ noAvatar }}"
+                style="background-color: transparent;">
+                <div class="avatar-color-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: {{ color }}; mix-blend-mode: multiply;"></div>
+            </div>
     {% endif %}
     {{ user.apPreferredUsername ?? user.username|username -}}
     {%- if fullName is defined and fullName is same as true -%}
