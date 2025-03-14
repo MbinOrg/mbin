@@ -66,3 +66,4 @@ clover.xml
 ###> phpstan/phpstan ###
 phpstan.neon
 ###< phpstan/phpstan ###
+*.vsidx
