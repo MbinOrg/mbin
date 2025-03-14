@@ -4,50 +4,56 @@
    class="user-inline"
    title="{{ user.username|username(true) }}">
     {% if user.avatar and showAvatar %}
-        <img class="image-inline"
-             width="30" height="30"
-             loading="lazy"
-             src="{{ user.avatar.filePath ? (asset(user.avatar.filePath) | imagine_filter('avatar_thumb')) : user.avatar.sourceUrl }}"
-             alt="{{ user.username ~' '~ 'avatar'|trans|lower }}">
+        <img class="image-inline"width="30" height="30" loading="lazy"
+         src="{{ user.avatar.filePath ? (asset(user.avatar.filePath) | imagine_filter('avatar_thumb')) : user.avatar.sourceUrl }}"
+         alt="{{ user.username ~' '~ 'avatar'|trans|lower }}">
     {% elseif showAvatar %}
-        {% set hexDigits = {'a': '2', 'b': '7', 'c': '0', 'd': '8', 'e': '4', 'f': '1', 'g': '3', 'h': '5', 'i': '6', 'j': '9', 'k': 'a',
-         'l': 'b', 'm': 'c', 'n': 'd', 'o': 'e', 'p': 'f', 'q': '0', 'r': '1', 's': '2', 't': '3', 'u': '4', 'v': '5', 'w': '6', 'x': '7', 'y': '8', 'z': '9', 
-        '_': 'a', '-': 'b', '0': 'e', '1': 'a', '2': 'f', '3': 'b', '4': 'c', '5': '9', '6': '3', '7': '5', '8': '6', '9': 'd',
-        'A': '4', 'B': '8', 'C': '1', 'D': '7', 'E': '2', 'F': '5', 'G': '9', 'H': '0', 'I': '3', 'J': '6', 'K': 'b', 'L': 'e', 'M': 'a', 'N': 'f', 'O': 'c',
-        'P': 'd', 'Q': '2', 'R': '4', 'S': '7', 'T': '1', 'U': '8', 'V': '5', 'W': '0', 'X': '3', 'Y': '6', 'Z': '9'} %}
+        {% set numericDigits = {
+        'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8, 'i': 9, 'j': 10, 'k': 11, 'l': 12, 'm': 13, 'n': 14, 'o': 15, 'p': 16,
+        'q': 17, 'r': 18, 's': 19, 't': 20, 'u': 21, 'v': 22, 'w': 23, 'x': 24, 'y': 25, 'z': 26, 'A': 27, 'B': 28, 'C': 29, 'D': 30, 'E': 31,
+        'F': 32, 'G': 33, 'H': 34, 'I': 35, 'J': 36, 'K': 37, 'L': 38, 'M': 39, 'N': 40, 'O': 41, 'P': 42, 'Q': 43, 'R': 44, 'S': 45, 'T': 46,
+        'U': 47, 'V': 48, 'W': 49, 'X': 50, 'Y': 51, 'Z': 52, '0': 53, '1': 54, '2': 55, '3': 56, '4': 57, '5': 58, '6': 59, '7': 60, '8': 61,
+        '9': 62, '_': 63, '-': 64 } %}
+
         {% set validChars = '' %}
         {% for char in user.username|split('') %}
-            {% if char in hexDigits|keys %}
-                {% set validChars = validChars ~ hexDigits[char] %}
-            {% endif %}
+        {% if char in numericDigits|keys %}
+        {% set validChars = validChars ~ char %}
+        {% endif %}
         {% endfor %}
         {% set validChars = validChars ~ "012345" %}
-        {% set rgbChars = validChars|slice(0, 6) %}
-        {% set color = '#' ~ rgbChars %}
-        {% set hueRotation = 0 %}
-        {% for char in user.username|split('') %}
-            {% set mappedValue = hexDigits[char]|default('0') %}
-            {% set hueRotation = (hueRotation + (mappedValue == 'a' ? 10 : mappedValue == 'b' ? 11 : mappedValue == 'c' ? 12 : mappedValue == 'd' ? 13 : mappedValue == 'e' ? 14 : mappedValue == 'f' ? 15 : mappedValue)) %}
+
+        {# Calculate hue rotation #}
+        {% set hueChars = validChars|slice(0, 4) %}
+        {% set sum = 0 %}
+        {% for char in hueChars|split('') %}
+            {% set sum = sum + numericDigits[char] %}
         {% endfor %}
-        {% set hueRotation = (hueRotation % 360) %}
+        {% set hueRotation = (sum / 256) * 360 %}
+
+        {# Calculate saturation #}
+        {% set satChars = validChars|slice(4, 2) %}
+        {% set sum = 0 %}
+        {% for char in satChars|split('') %}
+            {% set sum = sum + numericDigits[char] %}
+        {% endfor %}
+        {% set saturation = 0.3 + (sum / 128) * 0.7 %}
+
         {% if app.user is defined and app.user is not same as null and app.user is same as user %}
             {% set noAvatar = "you can set your avatar in your profile" %}
         {% else %}
             {% set noAvatar = user.username ~ " has no avatar" %}
         {% endif %}
+
         <img class="image-inline"
-            width="30" height="30"
-            loading="lazy"
-            src="/default_avatar.png"
-            title="{{ noAvatar }}"
-            alt="{{ noAvatar }}"
-            style="filter: brightness(0) saturate(100%) invert(1) sepia(1) saturate(10000%) hue-rotate({{ hueRotation }}deg);">
+        width="30" height="30" loading="lazy" src="/default_avatar.png" title="{{ noAvatar }}" alt="{{ noAvatar }}"  style="filter: saturate({{ saturation }}) hue-rotate({{ hueRotation }}deg) contrast(0.9999);">
     {% endif %}
+
     {{ user.apPreferredUsername ?? user.username|username -}}
     {%- if fullName is defined and fullName is same as true -%}
         @{{- user.username|apDomain -}}
     {%- endif -%}
-    {% if user.isNew() and showNewIcon %}
+    {% if user.isNew() %}
         {% set days = constant('App\\Entity\\User::NEW_FOR_DAYS') %}
         <i class="fa-solid fa-leaf new-user-icon" title="{{ 'new_user_description'|trans({ '%days%': days }) }}" aria-description="{{ 'new_user_description'|trans({ '%days%': days }) }}"></i>
     {% endif %}
