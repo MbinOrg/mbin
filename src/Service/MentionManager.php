@@ -108,7 +108,7 @@ class MentionManager
 
     private function byPrefix(string $value): array
     {
-        preg_match_all('/(?<!\/)\B@([a-zA-Z0-9._-]{1,30}@?)/u', $value, $matches);
+        preg_match_all('/(?<!\/)\B@([a-zA-Z0-9._-]+@?)/u', $value, $matches);
         $results = array_filter($matches[0], fn ($val) => !str_ends_with($val, '@'));
 
         return \count($results) ? array_unique(array_values($results)) : [];
