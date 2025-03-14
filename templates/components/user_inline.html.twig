@@ -24,11 +24,12 @@
         {% set validChars = validChars ~ "012345" %}
         {% set rgbChars = validChars|slice(0, 6) %}
         {% set color = '#' ~ rgbChars %}
-       {% set hueValue = 0 %}
-        {% for char in color|slice(1)|split('') %}
-            {% set hueValue = hueValue + char|ascii %}
+        {% set hueRotation = 0 %}
+        {% for char in user.username|split('') %}
+            {% set mappedValue = hexDigits[char]|default('0') %}
+            {% set hueRotation = (hueRotation + (mappedValue == 'a' ? 10 : mappedValue == 'b' ? 11 : mappedValue == 'c' ? 12 : mappedValue == 'd' ? 13 : mappedValue == 'e' ? 14 : mappedValue == 'f' ? 15 : mappedValue)) %}
         {% endfor %}
-        {% set hueRotation = (hueValue % 360) %}
+        {% set hueRotation = (hueRotation % 360) %}
         {% if app.user is defined and app.user is not same as null and app.user is same as user %}
             {% set noAvatar = "you can set your avatar in your profile" %}
         {% else %}
