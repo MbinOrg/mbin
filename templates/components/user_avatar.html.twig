@@ -10,21 +10,30 @@
                  style="max-width: {{ width }}px; max-height: {{ height }}px;"
                  src="{{ user.avatar.filePath ? (asset(user.avatar.filePath)|imagine_filter('avatar_thumb')) : user.avatar.sourceUrl }}"
                  alt="{{ user.username ~' '~ 'avatar'|trans|lower }}">
-        {% else %} 
-            {% set hexDigits = {'a': '2', 'b': '7', 'c': '0', 'd': '8', 'e': '4', 'f': '1', 'g': '3', 'h': '5', 'i': '6', 'j': '9', 'k': 'a',
-            'l': 'b', 'm': 'c', 'n': 'd', 'o': 'e', 'p': 'f', 'q': '0', 'r': '1', 's': '2', 't': '3', 'u': '4', 'v': '5', 'w': '6', 'x': '7', 'y': '8', 'z': '9', 
-            '_': 'a', '-': 'b', '0': 'e', '1': 'a', '2': 'f', '3': 'b', '4': 'c', '5': '9', '6': '3', '7': '5', '8': '6', '9': 'd',
-            'A': '4', 'B': '8', 'C': '1', 'D': '7', 'E': '2', 'F': '5', 'G': '9', 'H': '0', 'I': '3', 'J': '6', 'K': 'b', 'L': 'e', 'M': 'a', 'N': 'f', 'O': 'c',
-            'P': 'd', 'Q': '2', 'R': '4', 'S': '7', 'T': '1', 'U': '8', 'V': '5', 'W': '0', 'X': '3', 'Y': '6', 'Z': '9'} %}
+        {% else %}
+            {% set numericDigits = {
+                'a': 15, 'b': 85, 'c': 42, 'd': 93, 'e': 27, 'f': 68, 'g': 11, 'h': 76, 'i': 33, 'j': 99, 'k': 54, 'l': 3, 'm': 60, 'n': 17, 'o': 81, 'p': 9,
+                'q': 102, 'r': 48, 's': 21, 't': 72, 'u': 39, 'v': 6, 'w': 87, 'x': 30, 'y': 63, 'z': 12, 'A': 24, 'B': 90, 'C': 51, 'D': 105, 'E': 18, 'F': 66,
+                'G': 0, 'H': 78, 'I': 45, 'J': 96, 'K': 57, 'L': 9, 'M': 69, 'N': 14, 'O': 84, 'P': 3, 'Q': 108, 'R': 36, 'S': 15, 'T': 75, 'U': 42, 'V': 12,
+                'W': 93, 'X': 27, 'Y': 60, 'Z': 21, '0': 111, '1': 6, '2': 45, '3': 90, '4': 24, '5': 78, '6': 33, '7': 99, '8': 18, '9': 57, '_': 126, '-': 63 } %}
+
             {% set validChars = '' %}
             {% for char in user.username|split('') %}
-                {% if char in hexDigits|keys %}
-                    {% set validChars = validChars ~ hexDigits[char] %}
+                {% if char in numericDigits|keys %}
+                    {% set validChars = validChars ~ char %}
                 {% endif %}
             {% endfor %}
             {% set validChars = validChars ~ "012345" %}
-            {% set rgbChars = validChars|slice(0, 6) %}
-            {% set color = '#' ~ rgbChars %}
+
+            {% set chars = validChars|slice(0, 6) %}
+            {% set sum = 0 %}
+            {% for char in chars|split('') %}
+                {% set sum = sum + numericDigits[char] %}
+            {% endfor %}
+
+            {% set hueRotation = (sum % 360) %}
+            {% set saturation = 0.4 + (sum % 60) / 100 %}  {# Range: 0.4 to 1.0 #}
+
             {% if app.user is defined and app.user is not same as null and app.user is same as user %}
                 {% set noAvatar = "you can set your avatar in your profile" %}
             {% else %}
@@ -36,7 +45,7 @@
                 src="/default_avatar.png"
                 title="{{ noAvatar }}"
                 alt="{{ noAvatar }}"
-                style="max-width: {{ width }}px; max-height: {{ height }}px; background-color: {{ color }}">
+                style="max-width: {{ width }}px; max-height: {{ height }}px; filter: saturate({{ saturation }}) hue-rotate({{ hueRotation }}deg) contrast(0.9999);">
         {% endif %}
     {% if asLink %}
         </a>
