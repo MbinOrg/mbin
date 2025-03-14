@@ -24,6 +24,11 @@
         {% set validChars = validChars ~ "012345" %}
         {% set rgbChars = validChars|slice(0, 6) %}
         {% set color = '#' ~ rgbChars %}
+       {% set hueValue = 0 %}
+        {% for char in color|slice(1)|split('') %}
+            {% set hueValue = hueValue + char|ascii %}
+        {% endfor %}
+        {% set hueRotation = (hueValue % 360) %}
         {% if app.user is defined and app.user is not same as null and app.user is same as user %}
             {% set noAvatar = "you can set your avatar in your profile" %}
         {% else %}
@@ -35,7 +40,7 @@
             src="https://media.rimworld.gallery/eye_of_the_raider_simplified_bw.png"
             title="{{ noAvatar }}"
             alt="{{ noAvatar }}"
-            style="filter: brightness(0) saturate(100%) invert(1) sepia(1) saturate(10000%) hue-rotate({{ (color|slice(1)|crc32 % 360) }}deg);">
+            style="filter: brightness(0) saturate(100%) invert(1) sepia(1) saturate(10000%) hue-rotate({{ hueRotation }}deg);">
     {% endif %}
     {{ user.apPreferredUsername ?? user.username|username -}}
     {%- if fullName is defined and fullName is same as true -%}
