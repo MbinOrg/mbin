@@ -79,8 +79,8 @@ class UserSettingsDto implements \JsonSerializable
         $dto->addMentionsEntries = $this->addMentionsEntries ?? $dto->addMentionsEntries;
         $dto->addMentionsPosts = $this->addMentionsPosts ?? $dto->addMentionsPosts;
         $dto->homepage = $this->homepage ?? $dto->homepage;
-        $dto->frontDefaultSort = $this->frontDefaultSort;
-        $dto->commentDefaultSort = $this->commentDefaultSort;
+        $dto->frontDefaultSort = $this->frontDefaultSort ?? $dto->frontDefaultSort;
+        $dto->commentDefaultSort = $this->commentDefaultSort ?? $dto->commentDefaultSort;
         $dto->featuredMagazines = $this->featuredMagazines ?? $dto->featuredMagazines;
         $dto->preferredLanguages = $this->preferredLanguages ?? $dto->preferredLanguages;
         $dto->customCss = $this->customCss ?? $dto->customCss;
