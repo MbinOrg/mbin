@@ -54,10 +54,10 @@
     {% endif %}
 
     <img class="image-inline"
-        width="30" height="30" loading="lazy" src="/default_avatar.png" title="{{ noAvatar }}" alt="{{ noAvatar }}"  style ="filter: url('#colorize')">
+        width="30" height="30" loading="lazy" src="/default_avatar.png" title="{{ noAvatar }}" alt="{{ noAvatar }}"  style ="filter: url('#{{ validName }}')">
 
     <svg width="0" height="0" style="position: absolute;">
-        <filter id="colorize" color-interpolation-filters="sRGB">
+        <filter id="{{ validName }}" color-interpolation-filters="sRGB">
             <feColorMatrix type="matrix"
                 values="{{ R }} 0 0 0 0
         {{ G }} 0 0 0 0

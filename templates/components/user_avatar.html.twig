@@ -61,10 +61,10 @@
             src="/default_avatar.png"
             title="{{ noAvatar }}"
             alt="{{ noAvatar }}"
-           style="max-width: {{ width }}px; max-height: {{ height }}px; filter: url('#colorize')">
+           style="max-width: {{ width }}px; max-height: {{ height }}px; filter: url('#{{ validName }}')">
 
         <svg width="0" height="0" style="position: absolute;">
-            <filter id="colorize" color-interpolation-filters="sRGB">
+            <filter id="{{ validName }}" color-interpolation-filters="sRGB">
             <feColorMatrix type="matrix"
               values="{{ R }} 0 0 0 0
               {{ G }} 0 0 0 0
