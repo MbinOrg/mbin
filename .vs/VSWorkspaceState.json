@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\templates\\components"
+    "\\templates",
+    "\\templates\\user"
   ],
-  "SelectedNode": "\\templates",
+  "SelectedNode": "\\templates\\user\\_user_popover.html.twig",
   "PreviewInSolutionExplorer": false
 }
