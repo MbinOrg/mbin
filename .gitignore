@@ -9,6 +9,7 @@ reports/
 tools/vendor/
 # VSCode
 .vscode/
+.vs/
 *.session.sql
 
 # Keys
