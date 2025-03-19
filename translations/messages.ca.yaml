@@ -66,3 +66,5 @@ related_posts: Publicacions relacionades
 random_posts: Publicacions aleatòries
 federated_magazine_info: Aquesta revista és d'un servidor federat i pot estar incompleta.
 always_disconnected_magazine_info: Aquesta revista no està rebent actualitzacions.
+federated_user_info: Aquest perfil és d'un servidor federat i pot ser incomplet.
+subscribe_for_updates: Subscriviu-vos per començar a rebre actualitzacions.
