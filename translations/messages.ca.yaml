@@ -54,3 +54,15 @@ add_media: Afegir mitjà
 remove_user_avatar: Eliminar avatar
 mod_log: Registre de moderació
 remove_media: Eliminar mitjà
+disconnected_magazine_info: 'Aquesta revista no està rebent actualitzacions: darrera
+  activitat fa %days% dia(es).'
+activity: Activitat
+markdown_howto: Com funciona l'editor?
+enter_your_comment: Escriviu el comentari
+enter_your_post: Escriviu la publicació
+cover: Portada
+remove_user_cover: Eliminar portada
+related_posts: Publicacions relacionades
+random_posts: Publicacions aleatòries
+federated_magazine_info: Aquesta revista és d'un servidor federat i pot estar incompleta.
+always_disconnected_magazine_info: Aquesta revista no està rebent actualitzacions.
