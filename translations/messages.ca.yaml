@@ -25,8 +25,8 @@ filter_by_type: Filtrar per tipus
 filter_by_subscription: Filtrar per subscripció
 filter_by_federation: Filtrar per estat de federació
 comments_count: '{0}Comentaris|{1}Comentari|]1,Inf[ Comentaris'
-subscribers_count: '{0}Subscriptors|{1}Subscriptor|]1,Inf[ Subscriptors'
-followers_count: '{0}Seguidors|{1}Seguidor|]1,Inf[ Seguidors'
+subscribers_count: '{0}Subscriptores|{1}Subscriptora|]1,Inf[ Subscriptores'
+followers_count: '{0}Seguidores|{1}Seguidora|]1,Inf[ Seguidores'
 marked_for_deletion: Marcat per a supressió
 marked_for_deletion_at: Marcat per suprimir-se el %date%
 favourites: Preferits
@@ -42,3 +42,15 @@ top: Destacat
 active: Actiu
 more: Més
 login: Iniciar sessió
+subscribers: Subscritors(es)
+online: En línia
+comments: Comentaris
+posts: Publicacions
+replies: Respostes
+moderators: Moderació
+add_comment: Afegir comentari
+add_post: Afegir publicació
+add_media: Afegir mitjà
+remove_user_avatar: Eliminar avatar
+mod_log: Registre de moderació
+remove_media: Eliminar mitjà
