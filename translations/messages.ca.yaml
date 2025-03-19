@@ -68,3 +68,156 @@ federated_magazine_info: Aquesta revista és d'un servidor federat i pot estar i
 always_disconnected_magazine_info: Aquesta revista no està rebent actualitzacions.
 federated_user_info: Aquest perfil és d'un servidor federat i pot ser incomplet.
 subscribe_for_updates: Subscriviu-vos per començar a rebre actualitzacions.
+contact: Contacte
+already_have_account: Ja teniu un compte?
+from: des de
+links: Enllaços
+you_cant_login: Heu oblidat la contrasenya?
+enabled: Habilitat
+followers: Seguidor(e)s
+reset_check_email_desc: Si ja hi ha un compte associat a la vostra adreça electrònica,
+  rebreu un correu electrònic en breu amb un enllaç que podeu utilitzar per restablir
+  la vostra contrasenya. Aquest enllaç caducarà a %expire%.
+email_confirm_expire: Tingueu en compte que l'enllaç caducarà d'aquí a una hora.
+moderated: Moderat
+tag: Etiqueta
+eng: ENG
+columns: Columnes
+chat_view: Vista de xat
+photos: Fotos
+are_you_sure: De veritat?
+go_to_search: Anar a la cerca
+menu: Menú
+blocked: Blocat
+domain: Domini
+subscriptions: Subscripcions
+overview: Visió general
+people_local: Local
+people_federated: Federat
+subscribed: Subscrit(a)
+reason: Motiu
+homepage: Pàgina d'inici
+copy_url_to_fediverse: Copiar URL original
+edit_entry: Editar fil
+delete: Eliminar
+edit_post: Editar publicació
+show_profile_followings: Mostrar els comptes seguits
+appearance: Aparença
+6h: 6h
+3h: 3h
+go_to_filters: Anar a filtres
+tree_view: Vista d'arbre
+12h: 12h
+articles: Fils
+report: Denunciar
+all: Tot
+1d: 1 dia
+show_profile_subscriptions: Mostrar subscripcions a revistes
+notify_on_new_entry: Fils nous (enllaços o articles) a qualsevol revista a què estic
+  subscrit
+table_view: Vista de taula
+general: General
+profile: Perfil
+cards_view: Vista de targetes
+email_verify: Confirmeu l'adreça electrònica
+following: Seguint
+rss: RSS
+1y: 1 any
+videos: Vídeos
+share_on_fediverse: Compartir al Fedivers
+edit_comment: Desar canvis
+messages: Missatges
+edit: Editar
+moderate: Moderar
+1m: 1 mes
+notify_on_new_post_reply: Qualsevol nivell de respostes a les publicacions que he
+  escrit
+copy_url: Copiar URL de Mbin
+settings: Configuració
+notify_on_new_posts: Noves publicacions a qualsevol revista a què estic subscrit
+reports: Denúncies
+notifications: Notificacions
+agree_terms: Accepteu els %terms_link_start%Termes i condicions%terms_link_end% i
+  la %policy_link_start%Política de privadesa%policy_link_end%
+go_to_original_instance: Veure en instància remota
+empty: Buit
+subscribe: Subscriure's
+unsubscribe: Cancel·lar subscripció
+follow: Seguir
+unfollow: Deixar de seguir
+reply: Resposta
+login_or_email: Identificador o adreça electrònica
+password: Contrasenya
+dont_have_account: No teniu un compte?
+remember_me: Recordar-me
+register: Crear compte
+reset_password: Restablir contrasenya
+show_more: Mostrar més
+to: a
+in: en
+username: Identificador
+email: Adreça electrònica
+repeat_password: Repetiu la contrasenya
+terms: Condicions del servei
+privacy_policy: Política de privadesa
+about_instance: Quant a
+all_magazines: Totes les revistes
+stats: Estadístiques
+fediverse: Fedivers
+create_new_magazine: Crear revista nova
+add_new_article: Afegir fil nou
+add_new_link: Afegir enllaç nou
+add_new_photo: Afegir foto nova
+add_new_post: Afegir publicació nova
+add_new_video: Afegir vídeo nou
+change_theme: Canviar tema
+downvotes_mode: Mode de vots negatius
+change_downvotes_mode: Canviar el mode de vots negatius
+disabled: Deshabilitat
+hidden: Amagat
+faq: Preguntes més freqüents (PMF)
+useful: Útil
+help: Ajut
+check_email: Comproveu la vostra bústia electrònica
+reset_check_email_desc2: Si no rebeu cap correu electrònic, comproveu la vostra carpeta
+  de correu brossa.
+try_again: Torneu-ho a provar
+up_vote: Impulsar
+down_vote: Votar negatiu
+email_confirm_header: Hola! Confirmeu la vostra adreça electrònica.
+email_confirm_content: "Per activar el compte de Mbin feu clic a l'enllaç següent:"
+email_confirm_title: Confirmeu la vostra adreça electrònica.
+select_magazine: Trieu una revista
+add_new: Afegir nou
+url: URL
+title: Títol
+body: Cos
+tags: Etiquetes
+badges: Insígnies
+is_adult: +18 / Explícit
+oc: CO
+image: Imatge
+image_alt: Text alternatiu de la imatge
+name: Nom
+description: Descripció
+rules: Normes
+cards: Targetes
+user: Usuari(a)
+joined: Inscripció
+reputation_points: Punts de reputació
+related_tags: Etiquetes relacionades
+go_to_content: Anar al contingut
+logout: Tancar sessió
+classic_view: Vista clàssica
+compact_view: Vista compacta
+1w: 1 setm.
+share: Compartir
+hide_adult: Amagar contingut explícit
+featured_magazines: Revistes destacades
+privacy: Privadesa
+notify_on_new_entry_reply: Qualsevol nivell de comentaris als fils que he escrit
+notify_on_new_entry_comment_reply: Respostes als meus comentaris en qualsevol fil
+notify_on_new_post_comment_reply: Respostes als meus comentaris a qualsevol publicació
+notify_on_user_signup: Noves inscripcions
+save: Desar
+about: Quant a
