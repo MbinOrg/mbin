@@ -22,3 +22,36 @@ oldest: Més vell
 commented: Comentat
 magazines: Revistes
 type.photo: Foto
+change_view: Canviar vista
+filter_by_time: Filtrar per temps
+filter_by_subscription: Filtrar per subscripció
+filter_by_federation: Filtrar per estat de federació
+comments_count: '{0}Comentaris|{1}Comentari|]1,Inf[ Comentaris'
+subscribers_count: '{0}Subscriptores|{1}Subscriptora|]1,Inf[ Subscriptores'
+marked_for_deletion: Marcat per a supressió
+marked_for_deletion_at: Marcat per suprimir-se el %date%
+favourites: Preferits
+favourite: Preferit
+more: Més
+avatar: Avatar
+added: Afegit
+up_votes: Positius
+down_votes: Negatius
+no_comments: Sense comentaris
+created_at: Creat
+owner: Propietari(a)
+subscribers: Subscritors(es)
+online: En línia
+comments: Comentaris
+posts: Publicacions
+replies: Respostes
+moderators: Moderació
+mod_log: Registre de moderació
+add_comment: Afegir comentari
+add_post: Afegir publicació
+add_media: Afegir mitjà
+remove_media: Eliminar mitjà
+remove_user_avatar: Eliminar avatar
+remove_user_cover: Eliminar portada
+followers_count: '{0}Seguidores|{1}Seguidora|]1,Inf[ Seguidores'
+filter_by_type: Filtrar per tipus
