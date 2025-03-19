@@ -1,1 +1,44 @@
-{}
+type.link: Enllaç
+type.article: Fil
+type.photo: Foto
+type.video: Vídeo
+type.smart_contract: Contracte intel·ligent
+type.magazine: Revista
+thread: Fil
+threads: Fils
+microblog: Microblog
+people: Gent
+events: Esdeveniments
+magazine: Revista
+magazines: Revistes
+search: Cercar
+add: Afegir
+select_channel: Trieu un canal
+sort_by: Ordenar per
+hot: Popular
+newest: Més nou
+oldest: Més vell
+commented: Comentat
+change_view: Canviar vista
+filter_by_time: Filtrar per temps
+filter_by_type: Filtrar per tipus
+filter_by_subscription: Filtrar per subscripció
+filter_by_federation: Filtrar per estat de federació
+comments_count: '{0}Comentaris|{1}Comentari|]1,Inf[ Comentaris'
+subscribers_count: '{0}Subscriptors|{1}Subscriptor|]1,Inf[ Subscriptors'
+followers_count: '{0}Seguidors|{1}Seguidor|]1,Inf[ Seguidors'
+marked_for_deletion: Marcat per a supressió
+marked_for_deletion_at: Marcat per suprimir-se el %date%
+favourites: Preferits
+favourite: Preferit
+avatar: Avatar
+added: Afegit
+down_votes: Negatius
+up_votes: Positius
+no_comments: Sense comentaris
+created_at: Creat
+owner: Propietari(a)
+top: Destacat
+active: Actiu
+more: Més
+login: Iniciar sessió
