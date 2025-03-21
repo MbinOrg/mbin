@@ -221,3 +221,75 @@ notify_on_new_post_comment_reply: Respostes als meus comentaris a qualsevol publ
 notify_on_user_signup: Noves inscripcions
 save: Desar
 about: Quant a
+old_email: Adreça electrònica actual
+new_email: Nova adreça electrònica
+new_email_repeat: Confirmar l'adreça electrònica nova
+current_password: Contrasenya actual
+new_password: Contrasenya nova
+new_password_repeat: Confirmar la nova contrasenya
+change_email: Canviar l'adreça electrònica
+change_password: Canviar la contrasenya
+expand: Desplegar
+domains: Dominis
+votes: Vots
+theme: Tema
+dark: Fosc
+light: Clar
+solarized_light: Clar solaritzat
+solarized_dark: Fosc solaritzat
+default_theme: Tema predeterminat
+default_theme_auto: Clar/fosc (detecció automàtica)
+solarized_auto: Solaritzat (detecció automàtica)
+font_size: Mida de la lletra
+boosts: Impulsos
+show_users_avatars: Mostrar avatars d'usuari(e)s
+show_thumbnails: Mostrar miniatures
+show_magazines_icons: Mostrar icones de les revistes
+rounded_edges: Vores arrodonides
+removed_thread_by: ha eliminat un fil de
+restored_thread_by: ha restaurat un fil de
+restored_comment_by: ha restaurat el comentari de
+removed_post_by: ha eliminat una publicació de
+restored_post_by: ha restaurat una publicació de
+he_banned: bandejar
+he_unbanned: desbandejar
+read_all: Llegir-ho tot
+show_all: Mostrar-ho tot
+flash_thread_edit_success: El fil s'ha editat correctament.
+flash_magazine_edit_success: La revista ha estat editada amb èxit.
+flash_unmark_as_adult_success: La publicació s'ha desmarcat correctament com a explícita.
+flash_mark_as_adult_success: La publicació s'ha marcat correctament com a explícita.
+too_many_requests: S'ha superat el límit; torneu-ho a provar més tard.
+set_magazines_bar: Barra de revistes
+set_magazines_bar_desc: afegiu els noms de les revistes després de la coma
+set_magazines_bar_empty_desc: si el camp està buit, les revistes actives es mostren
+  a la barra.
+added_new_thread: S'ha afegit un fil nou
+edited_thread: Ha editat un fil
+mod_log_alert: 'ADVERTÈNCIA: En el registre de moderació podreu trobar contingut desagradable
+  o ofensiu eliminat per la moderació. Assegureu-vos de saber el que esteu fent.'
+replied_to_your_comment: Ha respost al vostre comentari
+added_new_post: Ha afegit una publicació nova
+edited_post: Ha editat una publicació
+edited_comment: Ha editat un comentari
+added_new_reply: Ha afegit una nova resposta
+mod_deleted_your_comment: La moderació ha suprimit el vostre comentari
+mod_remove_your_post: La moderació ha eliminat la vostra publicació
+no: No
+error: Error
+collapse: Plegar
+flash_register_success: Benvinguda a bord! El vostre compte ja està registrat. Un
+  últim pas - consulteu la vostra safata d'entrada per a rebre un enllaç d'activació
+  que donarà vida al vostre compte.
+flash_thread_new_success: El fil s'ha creat correctament i ara és visible per a altres
+  usuari(e)s.
+flash_thread_unpin_success: El fil s'ha desfixat correctament.
+yes: Sí
+size: Mida
+removed_comment_by: ha eliminat un comentari de
+flash_thread_delete_success: El fil s'ha suprimit correctament.
+flash_thread_pin_success: El fil s'ha fixat correctament.
+flash_magazine_new_success: La revista ha estat creada amb èxit. Ara podeu afegir
+  contingut nou o explorar el tauler d'administració de la revista.
+mod_remove_your_thread: La moderació ha eliminat el vostre fil
+added_new_comment: Ha afegit un comentari nou
