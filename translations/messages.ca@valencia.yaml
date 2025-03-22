@@ -22,3 +22,282 @@ oldest: Més vell
 commented: Comentat
 magazines: Revistes
 type.photo: Foto
+change_view: Canviar vista
+filter_by_time: Filtrar per temps
+filter_by_subscription: Filtrar per subscripció
+filter_by_federation: Filtrar per estat de federació
+comments_count: '{0}Comentaris|{1}Comentari|]1,Inf[ Comentaris'
+subscribers_count: '{0}Subscriptores|{1}Subscriptora|]1,Inf[ Subscriptores'
+marked_for_deletion: Marcat per a supressió
+marked_for_deletion_at: Marcat per suprimir-se el %date%
+favourites: Preferits
+favourite: Preferit
+more: Més
+avatar: Avatar
+added: Afegit
+up_votes: Positius
+down_votes: Negatius
+no_comments: Sense comentaris
+created_at: Creat
+owner: Propietari(a)
+subscribers: Subscritors(es)
+online: En línia
+comments: Comentaris
+posts: Publicacions
+replies: Respostes
+moderators: Moderació
+mod_log: Registre de moderació
+add_comment: Afegir comentari
+add_post: Afegir publicació
+add_media: Afegir mitjà
+remove_media: Eliminar mitjà
+remove_user_avatar: Eliminar avatar
+remove_user_cover: Eliminar portada
+followers_count: '{0}Seguidores|{1}Seguidora|]1,Inf[ Seguidores'
+filter_by_type: Filtrar per tipus
+follow: Seguir
+show_profile_followings: Mostrar els comptes seguits
+blocked: Bloquejat
+reports: Denúncies
+overview: Visió general
+edit_comment: Guardar canvis
+go_to_filters: Anar a filtres
+hide_adult: Amagar contingut explícit
+featured_magazines: Revistes destacades
+notify_on_new_entry_comment_reply: Respostes als meus comentaris en qualsevol fil
+notify_on_new_post_reply: Qualsevol nivell de respostes a les publicacions que he
+  escrit
+notify_on_new_posts: Noves publicacions a qualsevol revista a què estic subscrit
+videos: Vídeos
+messages: Missatges
+try_again: Torneu-ho a provar
+homepage: Pàgina d'inici
+badges: Insígnies
+settings: Configuració
+notifications: Notificacions
+notify_on_new_post_comment_reply: Respostes als meus comentaris a qualsevol publicació
+appearance: Aparença
+privacy: Privadesa
+are_you_sure: De veritat?
+repeat_password: Repetiu la contrasenya
+add_new: Afegir nou
+agree_terms: Accepteu els %terms_link_start%Termes i condicions%terms_link_end% i
+  la %policy_link_start%Política de privadesa%policy_link_end%
+share: Compartir
+select_magazine: Trieu una revista
+reset_check_email_desc2: Si no rebeu cap correu electrònic, comproveu la vostra carpeta
+  de correu brossa.
+tags: Etiquetes
+is_adult: +18 / Explícit
+domain: Domini
+image_alt: Text alternatiu de la imatge
+following: Seguint
+subscriptions: Subscripcions
+compact_view: Vista compacta
+share_on_fediverse: Compartir al Fedivers
+chat_view: Vista de xat
+profile: Perfil
+photos: Fotos
+report: Denunciar
+copy_url: Copiar URL de Mbin
+copy_url_to_fediverse: Copiar URL original
+notify_on_new_entry: Fils nous (enllaços o articles) a qualsevol revista a què estic
+  subscrit
+edit: Editar
+moderate: Moderar
+reason: Motiu
+edit_entry: Editar fil
+show_profile_subscriptions: Mostrar subscripcions a revistes
+delete: Eliminar
+edit_post: Editar publicació
+menu: Menú
+general: General
+notify_on_new_entry_reply: Qualsevol nivell de comentaris als fils que he escrit
+markdown_howto: Com funciona l'editor?
+enter_your_comment: Escriviu el comentari
+enter_your_post: Escriviu la publicació
+activity: Activitat
+cover: Portada
+related_posts: Publicacions relacionades
+random_posts: Publicacions aleatòries
+federated_magazine_info: Esta revista és d'un servidor federat i pot estar incompleta.
+disconnected_magazine_info: 'Esta revista no està rebent actualitzacions: última activitat
+  fa %days% dia(es).'
+always_disconnected_magazine_info: Esta revista no està rebent actualitzacions.
+subscribe_for_updates: Subscriviu-vos per començar a rebre actualitzacions.
+federated_user_info: Este perfil és d'un servidor federat i pot ser incomplet.
+go_to_original_instance: Vore en instància remota
+empty: Buit
+subscribe: Subscriure's
+unsubscribe: Cancel·lar subscripció
+unfollow: Deixar de seguir
+reply: Resposta
+login_or_email: Identificador o adreça electrònica
+password: Contrasenya
+remember_me: Recordar-me
+dont_have_account: No teniu un compte?
+you_cant_login: Heu oblidat la contrasenya?
+already_have_account: Ja teniu un compte?
+register: Crear compte
+reset_password: Restablir contrasenya
+show_more: Mostrar més
+to: a
+in: en
+from: des de
+username: Identificador
+email: Adreça electrònica
+terms: Condicions del servici
+privacy_policy: Política de privadesa
+about_instance: Quant a
+all_magazines: Totes les revistes
+stats: Estadístiques
+fediverse: Fedivers
+create_new_magazine: Crear revista nova
+add_new_article: Afegir fil nou
+add_new_link: Afegir enllaç nou
+add_new_photo: Afegir foto nova
+add_new_post: Afegir publicació nova
+add_new_video: Afegir vídeo nou
+contact: Contacte
+faq: Preguntes més freqüents (PMF)
+rss: RSS
+change_theme: Canviar tema
+downvotes_mode: Mode de vots negatius
+change_downvotes_mode: Canviar el mode de vots negatius
+disabled: Deshabilitat
+hidden: Amagat
+enabled: Habilitat
+useful: Útil
+help: Ajuda
+check_email: Comproveu la vostra bústia electrònica
+reset_check_email_desc: Si ja hi ha un compte associat a la vostra adreça electrònica,
+  rebreu un correu electrònic en breu amb un enllaç que podeu utilitzar per restablir
+  la vostra contrasenya. Este enllaç caducarà a %expire%.
+up_vote: Impulsar
+down_vote: Votar negatiu
+email_confirm_header: Hola! Confirmeu la vostra adreça electrònica.
+email_confirm_content: "Per activar el compte de Mbin feu clic a l'enllaç següent:"
+email_verify: Confirmeu l'adreça electrònica
+email_confirm_expire: Tingueu en compte que l'enllaç caducarà en una hora.
+email_confirm_title: Confirmeu la vostra adreça electrònica.
+url: URL
+title: Títol
+body: Cos
+tag: Etiqueta
+eng: ENG
+oc: CO
+image: Imatge
+name: Nom
+description: Descripció
+rules: Normes
+followers: Seguidor(e)s
+cards: Targetes
+columns: Columnes
+user: Usuari(a)
+joined: Inscripció
+moderated: Moderat
+people_local: Local
+people_federated: Federat
+reputation_points: Punts de reputació
+related_tags: Etiquetes relacionades
+go_to_content: Anar al contingut
+go_to_search: Anar a la cerca
+subscribed: Subscrit(a)
+all: Tot
+logout: Tancar sessió
+classic_view: Vista clàssica
+tree_view: Vista d'arbre
+table_view: Vista de taula
+cards_view: Vista de targetes
+3h: 3h
+6h: 6h
+12h: 12h
+1w: 1 setm.
+1m: 1 mes
+1d: 1 dia
+1y: 1 any
+links: Enllaços
+articles: Fils
+notify_on_user_signup: Noves inscripcions
+save: Guardar
+about: Quant a
+restored_post_by: ha restaurat una publicació de
+size: Grandària
+flash_magazine_new_success: La revista s'ha creat correctament. Ara podeu afegir contingut
+  nou o explorar el tauler d'administració de la revista.
+edited_post: Ha editat una publicació
+show_magazines_icons: Mostrar icones de les revistes
+flash_thread_pin_success: El fil s'ha fixat correctament.
+mod_remove_your_post: La moderació ha eliminat la vostra publicació
+old_email: Adreça electrònica actual
+new_email: Nova adreça electrònica
+new_email_repeat: Confirmar l'adreça electrònica nova
+current_password: Contrasenya actual
+new_password: Contrasenya nova
+new_password_repeat: Confirmar la nova contrasenya
+change_email: Canviar l'adreça electrònica
+change_password: Canviar la contrasenya
+expand: Desplegar
+collapse: Plegar
+domains: Dominis
+error: Error
+votes: Vots
+theme: Tema
+dark: Fosc
+light: Clar
+solarized_light: Clar solaritzat
+solarized_dark: Fosc solaritzat
+default_theme: Tema predeterminat
+default_theme_auto: Clar/fosc (detecció automàtica)
+solarized_auto: Solaritzat (detecció automàtica)
+font_size: Grandària de la lletra
+boosts: Impulsos
+show_users_avatars: Mostrar avatars d'usuari(e)s
+yes: Sí
+no: No
+show_thumbnails: Mostrar miniatures
+rounded_edges: Vores arredonides
+removed_thread_by: ha eliminat un fil de
+restored_thread_by: ha restaurat un fil de
+removed_comment_by: ha eliminat un comentari de
+restored_comment_by: ha restaurat el comentari de
+removed_post_by: ha eliminat una publicació de
+he_banned: suspendre
+he_unbanned: cancel·lar la suspensió
+read_all: Llegir-ho tot
+show_all: Mostrar-ho tot
+flash_register_success: Benvinguda a bord! El vostre compte ja està registrat. Un
+  últim pas - consulteu la vostra safata d'entrada per a rebre un enllaç d'activació
+  que donarà vida al vostre compte.
+flash_thread_new_success: El fil s'ha creat correctament i ara és visible per a altres
+  usuari(e)s.
+flash_thread_edit_success: El fil s'ha editat correctament.
+flash_thread_delete_success: El fil s'ha suprimit correctament.
+flash_thread_unpin_success: El fil s'ha desfixat correctament.
+flash_magazine_edit_success: La revista s'ha editat correctament.
+flash_mark_as_adult_success: La publicació s'ha marcat correctament com a explícita.
+flash_unmark_as_adult_success: La publicació s'ha desmarcat correctament com a explícita.
+too_many_requests: S'ha superat el límit; torneu-ho a provar més tard.
+set_magazines_bar: Barra de revistes
+set_magazines_bar_desc: afegiu els noms de les revistes després de la coma
+set_magazines_bar_empty_desc: si el camp està buit, les revistes actives es mostren
+  a la barra.
+mod_log_alert: 'ADVERTÈNCIA: En el registre de moderació podreu trobar contingut desagradable
+  o ofensiu eliminat per la moderació. Assegureu-vos de saber el que esteu fent.'
+added_new_thread: S'ha afegit un fil nou
+edited_thread: Ha editat un fil
+mod_remove_your_thread: La moderació ha eliminat el vostre fil
+added_new_comment: Ha afegit un comentari nou
+edited_comment: Ha editat un comentari
+replied_to_your_comment: Ha respost al vostre comentari
+mod_deleted_your_comment: La moderació ha suprimit el vostre comentari
+added_new_post: Ha afegit una publicació nova
+added_new_reply: Ha afegit una nova resposta
+post: Publicació
+comment: Comentari
+mentioned_you: Vos ha esmentat
+ban_expired: La suspensió ha caducat
+wrote_message: Ha escrit un missatge
+banned: Vos ha suspés
+removed: Eliminat per la moderació
+deleted: Esborrat per l'autor
