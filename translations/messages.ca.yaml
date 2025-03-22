@@ -293,3 +293,11 @@ flash_magazine_new_success: La revista ha estat creada amb èxit. Ara podeu afeg
   contingut nou o explorar el tauler d'administració de la revista.
 mod_remove_your_thread: La moderació ha eliminat el vostre fil
 added_new_comment: Ha afegit un comentari nou
+wrote_message: Ha escrit un missatge
+banned: Us ha bandejat
+removed: Eliminat per la moderació
+deleted: Esborrat per l'autor
+mentioned_you: Us ha esmentat
+comment: Comentari
+post: Publicació
+ban_expired: El bandeig ha caducat
