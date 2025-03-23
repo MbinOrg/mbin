@@ -192,6 +192,26 @@ php bin/console mbin:magazine:unsub <magazine>
 Arguments:
 - `magazine`: the magazine name from which to remove all the subscribers.
 
+## Direct Messages
+
+### Remove-and-Ban
+
+Search for direct messages using the body input parameter. List all the found matches, and ask for permission to continue.
+
+If you agree to continue, *all* the sender users will be **banned** and *all* the direct messages will be **removed**!
+
+> [!WARNING]
+> This action cannot be undone (once you confirmed with `yes`)!
+
+Usage:
+
+```bash
+php bin/console mbin:messages:remove_and_ban "<body>"
+```
+
+Arguments:
+- `body`: the direct message body to search for.
+
 ## Post Management
 
 ### Entries-Move
