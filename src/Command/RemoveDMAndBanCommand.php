@@ -96,7 +96,7 @@ class RemoveDMAndBanCommand extends Command
             ->setRows(array_map(fn ($item) => [
                 $item['id'],
                 $item['username'],
-                wordwrap(str_replace(["\r\n", "\r", "\n"], " ", $item['body']), 60, PHP_EOL, true),
+                wordwrap(str_replace(["\r\n", "\r", "\n"], ' ', $item['body']), 60, PHP_EOL, true),
             ], $results));
         $table->render();
     }
