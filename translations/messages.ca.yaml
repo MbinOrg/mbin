@@ -301,3 +301,163 @@ mentioned_you: Us ha esmentat
 comment: Comentari
 post: Publicació
 ban_expired: El bandeig ha caducat
+purge: Purgar
+send_message: Enviar missatge directe
+sticky_navbar: Barra de navegació fixa
+subject_reported: S'ha denunciat el contingut.
+sidebar_position: Posició de la barra lateral
+left: Esquerra
+right: Dreta
+federation: Federació
+status: Estat
+on: Encès
+off: Apagat
+instances: Instàncies
+from_url: Des de l'URL
+magazine_panel: Panell de la revista
+reject: Rebutjar
+approve: Aprovar
+ban: Bandejar
+unban: Desbandejar
+unban_hashtag_btn: Desbandejar hashtag
+ban_hashtag_btn: Bandejar hashtag
+filters: Filtres
+approved: Aprovat
+rejected: Rebutjat
+add_moderator: Afegir moderador(a)
+add_badge: Afegir insígnia
+bans: Bandejos
+created: Creat
+expires: Caduca
+perm: Permanent
+expired_at: Caducà el
+add_ban: Afegir bandeig
+trash: Paperera
+icon: Icona
+done: Fet
+pin: Ancorar
+unpin: Desancorar
+change_language: Canviar idioma
+mark_as_adult: Marcar com a explícit
+unmark_as_adult: Desmarcar com a explícit
+change: Canviar
+pinned: Ancorat
+preview: Previsualitzar
+article: Fil
+reputation: Reputació
+note: Nota
+writing: Escriptura
+users: Usuari(e)s
+content: Contingut
+week: Setmana
+weeks: Setmanes
+month: Mes
+months: Mesos
+federated: Federat
+local: Local
+admin_panel: Panell d'administració
+dashboard: Panell de control
+contact_email: Adreça electrònica de contacte
+instance: Instància
+pages: Pàgines
+FAQ: Preguntes més freqüents (PMF)
+type_search_term: Escriviu el terme de cerca
+registration_disabled: Registre desactivat
+restore: Restaurar
+add_mentions_entries: Afegir etiquetes de menció als fils
+add_mentions_posts: Afegir etiquetes de menció a les publicacions
+Password is invalid: La contrasenya no és vàlida.
+Your account is not active: El vostre compte no està actiu.
+Your account has been banned: El vostre compte ha estat bandejat.
+firstname: Nom
+send: Enviar
+active_users: Persones actives
+related_entries: Fils relacionats
+purge_account: Purgar el compte
+ban_account: Bandejar el compte
+unban_account: Desbandejar el compte
+related_magazines: Revistes relacionades
+random_magazines: Revistes aleatòries
+sidebar: Barra lateral
+auto_preview: Vista prèvia automàtica dels mitjans
+dynamic_lists: Llistes dinàmiques
+banned_instances: .Instàncies bandejades
+kbin_intro_title: Explorar el fedivers
+kbin_promo_title: Creeu la vostra pròpia instància
+kbin_promo_desc: '%link_start%Cloneu el repositori%link_end% i desenvolupeu fedivers'
+captcha_enabled: Captcha activat
+header_logo: Logotip de la capçalera
+browsing_one_thread: Només esteu navegant per un fil de la discussió! Tots els comentaris
+  estan disponibles a la pàgina de publicació.
+viewing_one_signup_request: Només esteu veient una sol·licitud de registre de %username%
+return: Tornar
+boost: Impulsar
+mercure_enabled: Mercure activat
+report_issue: Denunciar problema
+tokyo_night: Nit de Tòquio
+preferred_languages: Filtrar els idiomes de fils i publicacions
+infinite_scroll_help: Carregar automàticament més contingut en arribar a la part inferior
+  de la pàgina.
+auto_preview_help: Mostrar les previsualitzacions multimèdia (foto, vídeo) en una
+  mida més gran a sota del contingut.
+reload_to_apply: Torneu a carregar la pàgina per aplicar els canvis
+filter.origin.label: Trieu l'origen
+filter.fields.label: Trieu quins camps voleu cercar
+filter.adult.label: Trieu si voleu mostrar contingut explícit
+filter.adult.hide: Amagar contingut explícit
+filter.adult.only: Només el contingut explícit
+local_and_federated: Local i federat
+filter.fields.only_names: Només noms
+filter.fields.names_and_descriptions: Noms i descripcions
+kbin_bot: Agent Mbin
+password_confirm_header: Confirmeu la vostra sol·licitud de canvi de contrasenya.
+your_account_is_not_active: El vostre compte no s'ha activat. Comproveu la vostra
+  bústia electrònica per obtenir instruccions d'activació del compte o <a href="%link_target%">sol·liciteu
+  un correu electrònic d'activació del compte nou.</a>
+your_account_has_been_banned: El vostre compte ha estat bandejat
+your_account_is_not_yet_approved: El vostre compte encara no s'ha aprovat. Enviarem
+  un correu electrònic tan bon punt l'administració hagi processat la vostra sol·licitud
+  de registre.
+toolbar.bold: Negreta
+toolbar.italic: Itàlica
+toolbar.strikethrough: Ratllat
+toolbar.header: Capçalera
+toolbar.quote: Cita
+toolbar.code: Codi
+toolbar.link: Enllaç
+toolbar.image: Imatge
+toolbar.ordered_list: Llista ordenada
+toolbar.mention: Esment
+toolbar.spoiler: Spoiler
+year: Any
+upload_file: Pujar arxiu
+magazine_panel_tags_info: Indiqueu-ho només si voleu que el contingut del fedivers
+  s'inclogui en aquesta revista segons les etiquetes
+registrations_enabled: Registre activat
+message: Missatge
+toolbar.unordered_list: Llista no ordenada
+infinite_scroll: Desplaçament infinit
+filter.adult.show: Mostrar el contingut explícit
+show_top_bar: Mostrar barra superior
+ban_hashtag_description: Bandejar un hashtag impedirà que es creïn publicacions amb
+  aquest hashtag, a més d'amagar les publicacions existents amb aquest hashtag.
+unban_hashtag_description: Desbandejar un hashtag permetrà tornar a crear publicacions
+  amb aquest hashtag. Les publicacions existents amb aquest hashtag ja no s'amaguen.
+change_magazine: Canviar revista
+federation_enabled: Federació activada
+sticky_navbar_help: La barra de navegació s'ancorarà a la part superior de la pàgina
+  quan us desplaceu cap avall.
+meta: Meta
+random_entries: Fils aleatoris
+kbin_intro_desc: és una plataforma descentralitzada per a l'agregació de continguts
+  i microblogging que opera dins de la xarxa fedivers.
+bot_body_content: "Benvinguda a l'agent Mbin! Aquest agent té un paper crucial per
+  habilitar la funcionalitat d'ActivityPub dins de Mbin. Assegura que Mbin es pugui
+  comunicar i federar amb altres instàncies del fedivers.\n\nActivityPub és un protocol
+  estàndard obert que permet que les plataformes de xarxes socials descentralitzades
+  es comuniquin i interactuïn entre elles. Permet als usuaris de diferents instàncies
+  (servidors) seguir, interactuar i compartir contingut a través de la xarxa social
+  federada coneguda com a fedivers. Proporciona una manera estandarditzada per publicar
+  contingut, seguir altres usuari(e)s i participar en interaccions socials, com ara
+  fer m'agrada, compartir i comentar fils o publicacions."
+delete_account: Suprimir el compte
