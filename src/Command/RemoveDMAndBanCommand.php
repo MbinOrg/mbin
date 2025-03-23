@@ -59,6 +59,8 @@ class RemoveDMAndBanCommand extends Command
             // Remove messages
             $io->note('Removing direct messages...');
             $this->removeMessages();
+
+            $io->success('Done!');
             // Ban sender user
         } catch (\Exception $e) {
             $io->error($e->getMessage());
