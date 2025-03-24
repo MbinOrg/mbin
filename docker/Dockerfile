@@ -1,4 +1,4 @@
-FROM php:8.3-fpm-alpine as base
+FROM php:8.4-fpm-alpine as base
 
 # Install php extensions, by docker-php-extension-installer
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
