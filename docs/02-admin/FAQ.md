@@ -176,7 +176,7 @@ Followed by restarting the services that are depending on the (new) configuratio
 
 ```bash
 # Clear PHP Opcache by restarting the PHP FPM service
-sudo systemctl restart php8.2-fpm.service
+sudo systemctl restart php8.4-fpm.service
 
 # Restarting the PHP messenger jobs and Mercure service (also reread the latest configuration)
 sudo supervisorctl reread && sudo supervisorctl update && sudo supervisorctl restart all

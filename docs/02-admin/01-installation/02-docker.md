@@ -3,7 +3,15 @@
 > [!NOTE]
 > Docker installation is currently not advised for production use. Try the [Bare Metal installation](01-bare_metal.md) instead.
 
-## System Requirements
+## Minimum hardware requirements
+
+- **CPU:** 6 cores (>= 2GHz)
+- **RAM:** 6GB (more is recommended for large instances)  
+- **Storage:** 40GB (more is recommended, especially if you have a lot of remote/local magazines and/or have a lot of (local) users)
+
+You can start with a smaller server and add more resources later if you are using a VPS for example.
+
+## System Prerequisites
 
 - Docker Engine
 - Docker Compose V2

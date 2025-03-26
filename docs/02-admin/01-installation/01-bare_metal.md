@@ -11,9 +11,28 @@ This guide is aimed for Debian / Ubuntu distribution servers, but it could run o
 
 ## Minimum hardware requirements
 
-**CPU:** 2 cores (>2.5 GHz)  
-**RAM:** 4GB (more is recommended for large instances)  
-**Storage:** 20GB (more is recommended, especially if you have a lot of remote/local magazines and/or have a lot of (local) users)
+- **CPU:** 6 cores (>= 2GHz)
+- **RAM:** 6GB (more is recommended for large instances)  
+- **Storage:** 40GB (more is recommended, especially if you have a lot of remote/local magazines and/or have a lot of (local) users)
+
+You can start with a smaller server and add more resources later if you are using a VPS for example.
+
+## Software Requirements
+
+- Debian 12 or Ubuntu 22.04 LTS or later
+- PHP v8.3 or higher
+- NodeJS v20 or higher
+- Valkey / KeyDB / Redis (pick one)
+- PostgreSQL
+- Supervisor
+- RabbitMQ
+- Nginx / OpenResty (pick one)
+- _Optionally:_ Mercure
+
+This guide will show you how-to install and configure all of the above. Except for Mercure and Nginx, for Mercure see the [optional features page](../03-optional-features/README.md).
+
+> [!TIP]
+> Once the installation is completed, also check out the [additional configuration guides](../02-configuration/README.md) (including the Nginx setup).
 
 ## System Prerequisites
 
@@ -29,7 +48,7 @@ Install prequirements:
 sudo apt-get install lsb-release ca-certificates curl wget unzip gnupg apt-transport-https software-properties-common python3-launchpadlib git redis-server postgresql postgresql-contrib nginx acl -y
 ```
 
-On **Ubuntu 22.04 LTS** or older, prepare latest PHP package repositoy (8.3) by using a Ubuntu PPA (this step is optional for Ubuntu 23.10 or later) via:
+On **Ubuntu 22.04 LTS** or older, prepare latest PHP package repositoy (8.4) by using a Ubuntu PPA (this step is optional for Ubuntu 23.10 or later) via:
 
 ```bash
 sudo add-apt-repository ppa:ondrej/php -y
@@ -44,18 +63,18 @@ sudo dpkg -i /tmp/debsuryorg-archive-keyring.deb
 sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
 ```
 
-Install _PHP 8.3_ (or install _PHP 8.4_ if you wish) with PHP extensions:
+Install _PHP 8.4_ with the required additional PHP extensions:
 
 ```bash
 sudo apt-get update
-sudo apt-get install php8.3 php8.3-common php8.3-fpm php8.3-cli php8.3-amqp php8.3-bcmath php8.3-pgsql php8.3-gd php8.3-curl php8.3-xml php8.3-redis php8.3-mbstring php8.3-zip php8.3-bz2 php8.3-intl php8.3-bcmath -y
+sudo apt-get install php8.4 php8.4-common php8.4-fpm php8.4-cli php8.4-amqp php8.4-bcmath php8.4-pgsql php8.4-gd php8.4-curl php8.4-xml php8.4-redis php8.4-mbstring php8.4-zip php8.4-bz2 php8.4-intl php8.4-bcmath -y
 ```
 
 > [!NOTE]
-> If you are upgrading to PHP 8.3 from an older version, please re-review the [PHP configuration](#php) section of this guide as existing `ini` settings are NOT automatically copied to new versions. Additionally review which php-fpm version is configured in your nginx site.
+> If you are upgrading to PHP 8.3 from an older version, please re-review the [PHP configuration](#php) section of this guide as existing `ini` settings are NOT automatically copied to new versions. Additionally review which php-fpm version is configured in your Nginx site.
 
 > [!IMPORTANT]
-> **Never** even install `xdebug` PHP extension in production environments. Even if you didn't enabled it but only installed `xdebug` can give massive performance issues.
+> **Never** even install `xdebug` PHP extension in production environments. Even if you don't enabled it but only installed `xdebug` can give massive performance issues.
 
 Install Composer:
 
@@ -64,35 +83,32 @@ sudo curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
 sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
 ```
 
+## Nginx / OpenResty
+
+Mbin bare metal setup requires a reverse proxy called Nginx (or OpenResty) to be installed and configured correctly. This is a requirement for Mbin to work safe, properly and to scale well.
+
+For Nginx/OpenResty setup see the [Nginx configuration](../02-configuration/02-nginx.md).
+
 ## Firewall
 
-If you have a firewall installed (or you're behind a NAT), be sure to open port `443` for the web server. Mbin should run behind a reverse proxy like Nginx.
+If you have a firewall installed (or you're behind a NAT), be sure to open port `443` for the web server. As said above, Mbin should run behind a reverse proxy like Nginx or OpenResty.
 
-For Nginx see: [Nginx configuration](../02-configuration/02-nginx.md).
-
-## Install NodeJS (frontend tools)
+## Install Node.JS (frontend tools)
 
 1. Prepare & download keyring:
 
 > [!NOTE]
 > This assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
 
+1. Setup the Nodesource repository:
+
 ```bash
-sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo bash - 
 ```
 
-2. Setup deb repository:
+3. Install Node.JS:
 
 ```bash
-NODE_MAJOR=20
-echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
-```
-
-3. Update and install NodeJS:
-
-```bash
-sudo apt-get update
 sudo apt-get install nodejs -y
 ```
 
@@ -254,7 +270,7 @@ See also: [Mbin config files](../02-configuration/01-mbin_config_files.md) for m
 Edit some PHP settings within your `php.ini` file:
 
 ```bash
-sudo nano /etc/php/8.3/fpm/php.ini
+sudo nano /etc/php/8.4/fpm/php.ini
 ```
 
 ```ini
@@ -299,7 +315,7 @@ More info: [Symfony Performance docs](https://symfony.com/doc/current/performanc
 Edit your PHP `www.conf` file as well, to increase the amount of PHP child processes (optional):
 
 ```bash
-sudo nano /etc/php/8.3/fpm/pool.d/www.conf
+sudo nano /etc/php/8.4/fpm/pool.d/www.conf
 ```
 
 With the content (these are personal preferences, adjust to your needs):
@@ -315,7 +331,7 @@ pm.max_spare_servers = 10
 Be sure to restart (or reload) the PHP-FPM service after you applied any changing to the `php.ini` file:
 
 ```bash
-sudo systemctl restart php8.3-fpm.service
+sudo systemctl restart php8.4-fpm.service
 ```
 
 ### Composer
