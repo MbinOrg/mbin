@@ -409,7 +409,8 @@ infinite_scroll_help: Cargue automáticamente más contenido cuando llegue al fi
   de la página.
 sticky_navbar_help: La barra de navegación se pegará a la parte superior de la página
   cuando se desplace hacia abajo.
-auto_preview_help: Ampliar automáticamente las previsualizaciones multimedia.
+auto_preview_help: Muestra la previsualización (foto, video) en tamaño grande bajo
+  el contenido.
 filter.origin.label: Elegir origen
 filter.fields.label: Elija los campos que desea buscar
 filter.adult.label: Elija si desea mostrar NSFW
@@ -583,7 +584,8 @@ oauth2.grant.post_comment.all: Crea, edita o elimina tus comentarios en las publ
   y vota, impulsa o denuncia cualquier comentario en una publicación.
 oauth2.grant.entry_comment.report: Reportar cualquier comentario en un hilo.
 federation_page_dead_description: Casos en los que no pudimos realizar al menos 10
-  actividades seguidas y donde la última entrega exitosa fue hace más de una semana
+  actividades seguidas y donde la última entrega y recepción exitosas fueron hace
+  más de una semana
 account_deletion_description: Tu cuenta se eliminará en 30 días a menos que elijas
   eliminarla inmediatamente. Para recuperar tu cuenta en un plazo de 30 días, inicia
   sesión con las mismas credenciales de usuario o comunícate con un administrador.
@@ -833,3 +835,41 @@ sso_registrations_enabled: Registros SSO habilitados
 sso_registrations_enabled.error: Los registros de nuevas cuentas con administradores
   de identidad de terceros están actualmente deshabilitados.
 accept: Aceptar
+oauth2.grant.user.bookmark_list.delete: Borra tus listas de marcadores
+page_width_auto: Automático
+auto: Automático
+open_url_to_fediverse: Abrir URL original
+change_my_avatar: Cambiar mi foto de perfil
+change_my_cover: Cambiar mi cubierta
+account_settings_changed: Los ajustes de tu cuenta se han cambiado correctamente.
+  Necesitarás conectarte de nuevo.
+magazine_deletion: Borrado de revista
+suspend_account: Suspender cuenta
+viewing_one_signup_request: Sólo estás viendo una solicitud de registro de %username%
+account_suspended: La cuenta ha sido suspendida.
+oauth2.grant.user.bookmark.add: Añade marcadores
+oauth2.grant.user.bookmark: Añade y elimina marcadores
+oauth2.grant.user.bookmark_list: Lee, edita y borra tus listas de marcadores
+oauth2.grant.user.bookmark_list.edit: Edita tus listas de marcadores
+restore_magazine: Recuperar revista
+unsuspend_account: Reactivar cuenta
+deletion: Borrado
+user_suspend_desc: Suspender tu cuenta oculta tu contenido en la instancia, pero no
+  lo borra permanentemente, y puedes restaurarlo en cualquier momento.
+notify_on_user_signup: Nuevos registros
+your_account_is_not_yet_approved: Tu cuenta no ha sido aprobada todavía. Te enviaremos
+  un email tan pronto como los administradores hayan procesado tu solicitud de registro.
+account_unsuspended: La cuenta ha sido reactivada.
+edit_my_profile: Editar mi perfil
+page_width_max: Máximo
+page_width: Ancho de página
+page_width_fixed: Fijo
+flash_post_edit_error: Error al editar el post. Algo fue mal.
+oauth2.grant.user.bookmark.remove: Elimina marcadores
+oauth2.grant.user.bookmark_list.read: Lee tus listas de marcadores
+delete_magazine: Borrar revista
+magazine_is_deleted: La revista ha sido borrada. Puedes <a href="%link_target%">restaurarla</a>
+  durante los próximos 30 días.
+federation_page_dead_title: Instancias muertas
+flash_post_edit_success: El post se ha editado correctamente.
+filter_labels: Filtrar etiquetas
