@@ -1,1 +1,1021 @@
-{}
+type.link: Enllaç
+type.article: Fil
+type.photo: Foto
+type.video: Vídeo
+type.smart_contract: Contracte intel·ligent
+type.magazine: Revista
+thread: Fil
+threads: Fils
+microblog: Microblog
+people: Gent
+events: Esdeveniments
+magazine: Revista
+magazines: Revistes
+search: Cercar
+add: Afegir
+select_channel: Trieu un canal
+sort_by: Ordenar per
+hot: Popular
+newest: Més nou
+oldest: Més vell
+commented: Comentat
+change_view: Canviar vista
+filter_by_time: Filtrar per temps
+filter_by_type: Filtrar per tipus
+filter_by_subscription: Filtrar per subscripció
+filter_by_federation: Filtrar per estat de federació
+comments_count: '{0}Comentaris|{1}Comentari|]1,Inf[ Comentaris'
+subscribers_count: '{0}Subscriptores|{1}Subscriptora|]1,Inf[ Subscriptores'
+followers_count: '{0}Seguidores|{1}Seguidora|]1,Inf[ Seguidores'
+marked_for_deletion: Marcat per a supressió
+marked_for_deletion_at: Marcat per suprimir-se el %date%
+favourites: Preferits
+favourite: Preferit
+avatar: Avatar
+added: Afegit
+down_votes: Vots en contra
+up_votes: Vots a favor
+no_comments: Sense comentaris
+created_at: Creat
+owner: Propietari(a)
+top: Destacat
+active: Actiu
+more: Més
+login: Iniciar sessió
+subscribers: Subscritors(es)
+online: En línia
+comments: Comentaris
+posts: Publicacions
+replies: Respostes
+moderators: Moderació
+add_comment: Afegir comentari
+add_post: Afegir publicació
+add_media: Afegir mitjà
+remove_user_avatar: Eliminar avatar
+mod_log: Registre de moderació
+remove_media: Eliminar mitjà
+disconnected_magazine_info: 'Aquesta revista no està rebent actualitzacions: darrera
+  activitat fa %days% dia(es).'
+activity: Activitat
+markdown_howto: Com funciona l'editor?
+enter_your_comment: Escriviu el comentari
+enter_your_post: Escriviu la publicació
+cover: Portada
+remove_user_cover: Eliminar portada
+related_posts: Publicacions relacionades
+random_posts: Publicacions aleatòries
+federated_magazine_info: Aquesta revista és d'un servidor federat i pot estar incompleta.
+always_disconnected_magazine_info: Aquesta revista no està rebent actualitzacions.
+federated_user_info: Aquest perfil és d'un servidor federat i pot ser incomplet.
+subscribe_for_updates: Subscriviu-vos per començar a rebre actualitzacions.
+contact: Contacte
+already_have_account: Ja teniu un compte?
+from: des de
+links: Enllaços
+you_cant_login: Heu oblidat la contrasenya?
+enabled: Habilitat
+followers: Seguidor(e)s
+reset_check_email_desc: Si ja hi ha un compte associat a la vostra adreça electrònica,
+  rebreu un correu electrònic en breu amb un enllaç que podeu utilitzar per restablir
+  la vostra contrasenya. Aquest enllaç caducarà a %expire%.
+email_confirm_expire: Tingueu en compte que l'enllaç caducarà d'aquí a una hora.
+moderated: Moderat(da)
+tag: Etiqueta
+eng: ENG
+columns: Columnes
+chat_view: Vista de xat
+photos: Fotos
+are_you_sure: De veritat?
+go_to_search: Anar a la cerca
+menu: Menú
+blocked: Blocats
+domain: Domini
+subscriptions: Subscripcions
+overview: Vista general
+people_local: Local
+people_federated: Federat
+subscribed: Subscrit(a)
+reason: Motiu
+homepage: Pàgina d'inici
+copy_url_to_fediverse: Copiar URL original
+edit_entry: Editar fil
+delete: Eliminar
+edit_post: Editar publicació
+show_profile_followings: Mostrar els comptes seguits
+appearance: Aparença
+6h: 6h
+3h: 3h
+go_to_filters: Anar a filtres
+tree_view: Vista d'arbre
+12h: 12h
+articles: Fils
+report: Denunciar
+all: Tot
+1d: 1 dia
+show_profile_subscriptions: Mostrar subscripcions a revistes
+notify_on_new_entry: Fils nous (enllaços o articles) a qualsevol revista a què estic
+  subscrit
+table_view: Vista de taula
+general: General
+profile: Perfil
+cards_view: Vista de targetes
+email_verify: Confirmeu l'adreça electrònica
+following: Seguint
+rss: RSS
+1y: 1 any
+videos: Vídeos
+share_on_fediverse: Compartir al Fedivers
+edit_comment: Desar canvis
+messages: Missatges
+edit: Editar
+moderate: Moderar
+1m: 1 mes
+notify_on_new_post_reply: Qualsevol nivell de respostes a les publicacions que he
+  escrit
+copy_url: Copiar URL de Mbin
+settings: Configuració
+notify_on_new_posts: Noves publicacions a qualsevol revista a què estic subscrit
+reports: Denúncies
+notifications: Notificacions
+agree_terms: Accepteu els %terms_link_start%Termes i condicions%terms_link_end% i
+  la %policy_link_start%Política de privadesa%policy_link_end%
+go_to_original_instance: Veure en instància remota
+empty: Buit
+subscribe: Subscriure's
+unsubscribe: Cancel·lar subscripció
+follow: Seguir
+unfollow: Deixar de seguir
+reply: Resposta
+login_or_email: Identificador o adreça electrònica
+password: Contrasenya
+dont_have_account: No teniu un compte?
+remember_me: Recordar-me
+register: Crear compte
+reset_password: Restablir contrasenya
+show_more: Mostrar més
+to: a
+in: en
+username: Identificador
+email: Adreça electrònica
+repeat_password: Repetiu la contrasenya
+terms: Condicions del servei
+privacy_policy: Política de privadesa
+about_instance: Quant a
+all_magazines: Totes les revistes
+stats: Estadístiques
+fediverse: Fedivers
+create_new_magazine: Crear revista nova
+add_new_article: Afegir fil nou
+add_new_link: Afegir enllaç nou
+add_new_photo: Afegir foto nova
+add_new_post: Afegir publicació nova
+add_new_video: Afegir vídeo nou
+change_theme: Canviar tema
+downvotes_mode: Mode de vots negatius
+change_downvotes_mode: Canviar el mode de vots en contra
+disabled: Deshabilitat
+hidden: Amagat
+faq: Preguntes més freqüents (PMF)
+useful: Útil
+help: Ajuda
+check_email: Comproveu la vostra bústia electrònica
+reset_check_email_desc2: Si no rebeu cap correu electrònic, comproveu la vostra carpeta
+  de correu brossa.
+try_again: Torneu-ho a provar
+up_vote: Impulsar
+down_vote: Votar en contra
+email_confirm_header: Hola! Confirmeu la vostra adreça electrònica.
+email_confirm_content: "Per activar el compte de Mbin feu clic a l'enllaç següent:"
+email_confirm_title: Confirmeu la vostra adreça electrònica.
+select_magazine: Trieu una revista
+add_new: Afegir nou
+url: URL
+title: Títol
+body: Cos
+tags: Etiquetes
+badges: Insígnies
+is_adult: +18 / Explícit
+oc: Cont. Orig.
+image: Imatge
+image_alt: Text alternatiu de la imatge
+name: Nom
+description: Descripció
+rules: Normes
+cards: Targetes
+user: Usuari(a)
+joined: Inscrit(a)
+reputation_points: Punts de reputació
+related_tags: Etiquetes relacionades
+go_to_content: Anar al contingut
+logout: Tancar sessió
+classic_view: Vista clàssica
+compact_view: Vista compacta
+1w: 1 setm.
+share: Compartir
+hide_adult: Amagar contingut explícit
+featured_magazines: Revistes destacades
+privacy: Privadesa
+notify_on_new_entry_reply: Qualsevol nivell de comentaris als fils que he escrit
+notify_on_new_entry_comment_reply: Respostes als meus comentaris en qualsevol fil
+notify_on_new_post_comment_reply: Respostes als meus comentaris a qualsevol publicació
+notify_on_user_signup: Nous registres
+save: Desar
+about: Quant a
+old_email: Adreça electrònica actual
+new_email: Nova adreça electrònica
+new_email_repeat: Confirmar l'adreça electrònica nova
+current_password: Contrasenya actual
+new_password: Contrasenya nova
+new_password_repeat: Confirmar la nova contrasenya
+change_email: Canviar l'adreça electrònica
+change_password: Canviar la contrasenya
+expand: Desplegar
+domains: Dominis
+votes: Vots
+theme: Tema
+dark: Fosc
+light: Clar
+solarized_light: Clar solaritzat
+solarized_dark: Fosc solaritzat
+default_theme: Tema predeterminat
+default_theme_auto: Clar/fosc (detecció automàtica)
+solarized_auto: Solaritzat (detecció automàtica)
+font_size: Mida de la lletra
+boosts: Impulsos
+show_users_avatars: Mostrar avatars d'usuaris(es)
+show_thumbnails: Mostrar miniatures
+show_magazines_icons: Mostrar icones de les revistes
+rounded_edges: Vores arrodonides
+removed_thread_by: ha eliminat un fil de
+restored_thread_by: ha restaurat un fil de
+restored_comment_by: ha restaurat el comentari de
+removed_post_by: ha eliminat una publicació de
+restored_post_by: ha restaurat una publicació de
+he_banned: bandejar
+he_unbanned: desbandejar
+read_all: Llegir-ho tot
+show_all: Mostrar-ho tot
+flash_thread_edit_success: El fil s'ha editat correctament.
+flash_magazine_edit_success: La revista ha estat editada amb èxit.
+flash_unmark_as_adult_success: La publicació s'ha desmarcat correctament com a explícita.
+flash_mark_as_adult_success: La publicació s'ha marcat correctament com a explícita.
+too_many_requests: S'ha superat el límit; torneu-ho a provar més tard.
+set_magazines_bar: Barra de revistes
+set_magazines_bar_desc: afegiu els noms de les revistes després de la coma
+set_magazines_bar_empty_desc: si el camp està buit, les revistes actives es mostren
+  a la barra.
+added_new_thread: S'ha afegit un fil nou
+edited_thread: Ha editat un fil
+mod_log_alert: 'ADVERTÈNCIA: En el registre de moderació podreu trobar contingut desagradable
+  o ofensiu eliminat per la moderació. Assegureu-vos de saber el que esteu fent.'
+replied_to_your_comment: Ha respost al vostre comentari
+added_new_post: Ha afegit una publicació nova
+edited_post: Ha editat una publicació
+edited_comment: Ha editat un comentari
+added_new_reply: Ha afegit una nova resposta
+mod_deleted_your_comment: La moderació ha suprimit el vostre comentari
+mod_remove_your_post: La moderació ha eliminat la vostra publicació
+no: No
+error: Error
+collapse: Plegar
+flash_register_success: Benvinguda a bord! El vostre compte ja està registrat. Un
+  últim pas - consulteu la vostra safata d'entrada per a rebre un enllaç d'activació
+  que donarà vida al vostre compte.
+flash_thread_new_success: El fil s'ha creat correctament i ara és visible per a altres
+  usuaris(es).
+flash_thread_unpin_success: El fil s'ha desfixat correctament.
+yes: Sí
+size: Mida
+removed_comment_by: ha eliminat un comentari de
+flash_thread_delete_success: El fil s'ha suprimit correctament.
+flash_thread_pin_success: El fil s'ha fixat correctament.
+flash_magazine_new_success: La revista ha estat creada amb èxit. Ara podeu afegir
+  contingut nou o explorar el tauler d'administració de la revista.
+mod_remove_your_thread: La moderació ha eliminat el vostre fil
+added_new_comment: Ha afegit un comentari nou
+wrote_message: Ha escrit un missatge
+banned: Us ha bandejat
+removed: Eliminat per la moderació
+deleted: Esborrat per l'autor
+mentioned_you: Us ha esmentat
+comment: Comentari
+post: Publicació
+ban_expired: El bandeig ha expirat
+purge: Purgar
+send_message: Enviar missatge directe
+sticky_navbar: Barra de navegació fixa
+subject_reported: S'ha denunciat el contingut.
+sidebar_position: Posició de la barra lateral
+left: Esquerra
+right: Dreta
+federation: Federació
+status: Estat
+on: Encès
+off: Apagat
+instances: Instàncies
+from_url: Des de l'URL
+magazine_panel: Panell de la revista
+reject: Rebutjar
+approve: Aprovar
+ban: Bandejar
+unban: Desbandejar
+unban_hashtag_btn: Desbandejar hashtag
+ban_hashtag_btn: Bandejar hashtag
+filters: Filtres
+approved: Aprovat
+rejected: Rebutjat
+add_moderator: Afegir moderador(a)
+add_badge: Afegir insígnia
+bans: Bandejos
+created: Creat
+expires: Caduca
+perm: Permanent
+expired_at: Caducà el
+add_ban: Afegir bandeig
+trash: Paperera
+icon: Icona
+done: Fet
+pin: Fixar
+unpin: Desfixar
+change_language: Canviar idioma
+mark_as_adult: Marcar com a explícit
+unmark_as_adult: Desmarcar com a explícit
+change: Canviar
+pinned: Fixat
+preview: Previsualitzar
+article: Fil
+reputation: Reputació
+note: Nota
+writing: Escriptura
+users: Usuaris(es)
+content: Contingut
+week: Setmana
+weeks: Setmanes
+month: Mes
+months: Mesos
+federated: Federat
+local: Local
+admin_panel: Tauler d'administració
+dashboard: Tauler de control
+contact_email: Adreça electrònica de contacte
+instance: Instància
+pages: Pàgines
+FAQ: Preguntes més freqüents (PMF)
+type_search_term: Escriviu el terme de cerca
+registration_disabled: Registre desactivat
+restore: Restaurar
+add_mentions_entries: Afegir etiquetes de menció als fils
+add_mentions_posts: Afegir etiquetes de menció a les publicacions
+Password is invalid: La contrasenya no és vàlida.
+Your account is not active: El vostre compte no està actiu.
+Your account has been banned: El vostre compte ha estat bandejat.
+firstname: Nom
+send: Enviar
+active_users: Persones actives
+related_entries: Fils relacionats
+purge_account: Purgar el compte
+ban_account: Bandejar el compte
+unban_account: Desbandejar el compte
+related_magazines: Revistes relacionades
+random_magazines: Revistes aleatòries
+sidebar: Barra lateral
+auto_preview: Vista prèvia automàtica dels mitjans
+dynamic_lists: Llistes dinàmiques
+banned_instances: Instàncies bandejades
+kbin_intro_title: Explorar el fedivers
+kbin_promo_title: Creeu la vostra pròpia instància
+kbin_promo_desc: '%link_start%Cloneu el repositori%link_end% i desenvolupeu fedivers'
+captcha_enabled: Captcha activat
+header_logo: Logotip de la capçalera
+browsing_one_thread: Només esteu navegant per un fil de la discussió! Tots els comentaris
+  estan disponibles a la pàgina de publicació.
+viewing_one_signup_request: Només esteu veient una sol·licitud de registre de %username%
+return: Tornar
+boost: Impulsar
+mercure_enabled: Mercure activat
+report_issue: Denunciar problema
+tokyo_night: Nit de Tòquio
+preferred_languages: Filtrar els idiomes de fils i publicacions
+infinite_scroll_help: Carregar automàticament més contingut en arribar a la part inferior
+  de la pàgina.
+auto_preview_help: Mostrar les previsualitzacions multimèdia (foto, vídeo) en una
+  mida més gran a sota del contingut.
+reload_to_apply: Torneu a carregar la pàgina per aplicar els canvis
+filter.origin.label: Trieu l'origen
+filter.fields.label: Trieu quins camps voleu cercar
+filter.adult.label: Trieu si voleu mostrar contingut explícit
+filter.adult.hide: Amagar contingut explícit
+filter.adult.only: Només el contingut explícit
+local_and_federated: Local i federat
+filter.fields.only_names: Només noms
+filter.fields.names_and_descriptions: Noms i descripcions
+kbin_bot: Agent Mbin
+password_confirm_header: Confirmeu la vostra sol·licitud de canvi de contrasenya.
+your_account_is_not_active: El vostre compte no s'ha activat. Comproveu la vostra
+  bústia electrònica per obtenir instruccions d'activació del compte o <a href="%link_target%">sol·liciteu
+  un correu electrònic d'activació del compte nou.</a>
+your_account_has_been_banned: El vostre compte ha estat bandejat
+your_account_is_not_yet_approved: El vostre compte encara no s'ha aprovat. Enviarem
+  un correu electrònic tan bon punt l'administració hagi processat la vostra sol·licitud
+  de registre.
+toolbar.bold: Negreta
+toolbar.italic: Itàlica
+toolbar.strikethrough: Ratllat
+toolbar.header: Capçalera
+toolbar.quote: Cita
+toolbar.code: Codi
+toolbar.link: Enllaç
+toolbar.image: Imatge
+toolbar.ordered_list: Llista ordenada
+toolbar.mention: Esment
+toolbar.spoiler: Spoiler
+year: Any
+upload_file: Pujar arxiu
+magazine_panel_tags_info: Indiqueu-ho només si voleu que el contingut del fedivers
+  s'inclogui en aquesta revista segons les etiquetes
+registrations_enabled: Registre activat
+message: Missatge
+toolbar.unordered_list: Llista no ordenada
+infinite_scroll: Desplaçament infinit
+filter.adult.show: Mostrar el contingut explícit
+show_top_bar: Mostrar barra superior
+ban_hashtag_description: Bandejar un hashtag impedirà que es creïn publicacions amb
+  aquest hashtag, a més d'amagar les publicacions existents amb aquest hashtag.
+unban_hashtag_description: Desbandejar un hashtag permetrà tornar a crear publicacions
+  amb aquest hashtag. Les publicacions existents amb aquest hashtag ja no s'amaguen.
+change_magazine: Canviar revista
+federation_enabled: Federació activada
+sticky_navbar_help: La barra de navegació es fixarà a la part superior de la pàgina
+  quan us desplaceu cap avall.
+meta: Meta
+random_entries: Fils aleatoris
+kbin_intro_desc: és una plataforma descentralitzada per a l'agregació de continguts
+  i microblogging que opera dins de la xarxa fedivers.
+bot_body_content: "Benvinguda a l'agent Mbin! Aquest agent té un paper crucial per
+  habilitar la funcionalitat d'ActivityPub dins de Mbin. Assegura que Mbin es pugui
+  comunicar i federar amb altres instàncies del fedivers.\n\nActivityPub és un protocol
+  estàndard obert que permet que les plataformes de xarxes socials descentralitzades
+  es comuniquin i interactuïn entre elles. Permet a usuari(e)s de diferents instàncies
+  (servidors) seguir, interactuar i compartir contingut a través de la xarxa social
+  federada coneguda com a fedivers. Proporciona una manera estandarditzada per publicar
+  contingut, seguir altres usuaris(es) i participar en interaccions socials, com ara
+  fer m'agrada, compartir i comentar fils o publicacions."
+delete_account: Suprimir el compte
+federation_page_enabled: Pàgina de federació activada
+federation_page_allowed_description: Instàncies conegudes amb què ens federem
+federation_page_disallowed_description: Instàncies amb què no ens federem
+federation_page_dead_title: Instàncies mortes
+federated_search_only_loggedin: Cerca federada limitada si no s'ha iniciat sessió
+sidebar_sections_local_only: Restringir les seccions «Aleatoris» i «Persones actives»
+  només a locals
+account_deletion_title: Supressió del compte
+account_deletion_button: Suprimir el compte
+account_deletion_immediate: Suprimir immediatament
+errors.server500.title: 500 Error intern del servidor
+errors.server429.title: 429 Massa sol·licituds
+errors.server404.title: 404 No trobat
+email.delete.description: L'usuari(a) següent ha sol·licitat que s'elimini el seu
+  compte
+resend_account_activation_email_question: Compte inactiu?
+resend_account_activation_email_success: Si existeix un compte associat amb l'adreça
+  electrònica, hi enviarem un nou correu d'activació.
+resend_account_activation_email_description: Introduïu l'adreça electrònica associada
+  al vostre compte. Us hi enviarem un altre correu d'activació.
+custom_css: CSS personalitzat
+ignore_magazines_custom_css: Ignorar el CSS personalitzat de les revistes
+oauth.consent.title: Formulari de consentiment OAuth2
+oauth.consent.grant_permissions: Concedir permisos
+oauth.consent.app_requesting_permissions: voldria realitzar les accions següents en
+  nom vostre
+oauth.consent.app_has_permissions: ja pot realitzar les accions següents
+oauth.consent.allow: Permetre
+oauth.consent.deny: Denegar
+oauth.client_identifier.invalid: Identificador de client OAuth no vàlid!
+oauth.client_not_granted_message_read_permission: Aquesta aplicació no ha rebut permís
+  per llegir els vostres missatges.
+restrict_oauth_clients: Restringir la creació de clients OAuth2 a l'administració
+block: Blocar
+unblock: Desblocar
+oauth2.grant.moderate.magazine.list: Mostrar la llista de les revistes que modereu.
+oauth2.grant.moderate.magazine.reports.read: Mostrar les denúncies a les revistes
+  que modereu.
+oauth2.grant.moderate.magazine.reports.action: Acceptar o rebutjar denúncies a les
+  revistes que modereu.
+oauth2.grant.moderate.magazine.trash.read: Veure el contingut a la paperera de les
+  revistes que modereu.
+oauth2.grant.moderate.magazine_admin.create: Crear noves revistes.
+oauth2.grant.moderate.magazine_admin.delete: Suprimir qualsevol de les vostres revistes.
+oauth2.grant.moderate.magazine_admin.update: Editar les regles, la descripció, el
+  mode explícit o la icona de les vostres revistes.
+oauth2.grant.moderate.magazine_admin.moderators: Afegir o eliminar moderador(e)s de
+  qualsevol de les vostres revistes.
+oauth2.grant.moderate.magazine_admin.badges: Crear o eliminar insígnies de les vostres
+  revistes.
+oauth2.grant.moderate.magazine_admin.tags: Crear o eliminar etiquetes de les vostres
+  revistes.
+oauth2.grant.moderate.magazine_admin.stats: Veure el contingut, votar i consultar
+  les estadístiques de les vostres revistes.
+oauth2.grant.admin.all: Realitzar qualsevol acció administrativa sobre la vostra instància.
+oauth2.grant.read.general: Llegir tot el contingut a què tingueu accés.
+oauth2.grant.write.general: Crear o editar qualsevol dels vostres fils, publicacions
+  o comentaris.
+oauth2.grant.delete.general: Suprimir qualsevol dels vostres fils, publicacions o
+  comentaris.
+oauth2.grant.report.general: Denunciar fils, publicacions o comentaris.
+oauth2.grant.block.general: Blocar o desblocar qualsevol revista, domini o compte
+  i veure les revistes, dominis i comptes que heu blocat.
+oauth2.grant.domain.subscribe: Subscriure-vos o cancel·lar la subscripció als dominis
+  i veure els dominis a què us subscriviu.
+oauth2.grant.domain.block: Blocar o desblocar dominis i veure els dominis que heu
+  blocat.
+oauth2.grant.entry.all: Crear, editar o suprimir els vostres fils i votar, impulsar
+  o denunciar qualsevol fil.
+oauth2.grant.entry.create: Crear fils nous.
+oauth2.grant.entry.edit: Editar els vostres fils existents.
+oauth2.grant.entry.delete: Suprimir els vostres fils existents.
+oauth2.grant.entry.vote: Votar a favor, impulsar o votar en contra de qualsevol fil.
+oauth2.grant.entry.report: Denunciar qualsevol fil.
+oauth2.grant.entry_comment.create: Crear comentaris nous en fils.
+oauth2.grant.entry_comment.edit: Editar els vostres comentaris existents als fils.
+oauth2.grant.entry_comment.delete: Suprimir els vostres comentaris existents als fils.
+oauth2.grant.entry_comment.report: Denunciar qualsevol comentari en un fil.
+oauth2.grant.magazine.subscribe: Subscriure-vos o cancel·lar la subscripció a revistes
+  i veure les revistes a què us subscriviu.
+oauth2.grant.magazine.block: Blocar o desblocar revistes i veure les revistes que
+  heu blocat.
+oauth2.grant.post.all: Crear, editar o suprimir els vostres microblogs i votar, impulsar
+  o denunciar qualsevol microblog.
+oauth2.grant.post.edit: Editar les vostres publicacions existents.
+oauth2.grant.post.delete: Suprimir les vostres publicacions existents.
+oauth2.grant.post.vote: Votar a favor, impulsar o votar en contra de qualsevol publicació.
+oauth2.grant.post_comment.all: Crear, editar o suprimir els vostres comentaris a les
+  publicacions i votar, impulsar o denunciar qualsevol comentari en una publicació.
+oauth2.grant.post_comment.edit: Editar els vostres comentaris existents a les publicacions.
+oauth2.grant.post_comment.delete: Suprimir els vostres comentaris existents a les
+  publicacions.
+oauth2.grant.post_comment.report: Denunciar qualsevol comentari en una publicació.
+oauth2.grant.user.bookmark: Afegir i eliminar marcadors
+oauth2.grant.user.bookmark.add: Afegir marcadors
+oauth2.grant.user.bookmark.remove: Eliminar marcadors
+oauth2.grant.user.bookmark_list: Veure, editar i suprimir les vostres llistes de marcadors
+oauth2.grant.user.bookmark_list.read: Veure les vostres llistes de marcadors
+oauth2.grant.user.bookmark_list.edit: Editar les vostres llistes de marcadors
+oauth2.grant.user.bookmark_list.delete: Esborrar les vostres llistes de marcadors
+oauth2.grant.user.profile.all: Llegir i editar el vostre perfil.
+oauth2.grant.user.message.all: Llegir els vostres missatges i enviar missatges a altres
+  usuaris(es).
+oauth2.grant.user.message.read: Llegir els vostres missatges.
+oauth2.grant.user.message.create: Enviar missatges a altres usuaris(es).
+oauth2.grant.user.notification.read: Llegir les vostres notificacions, incloses les
+  notificacions de missatges.
+oauth2.grant.user.oauth_clients.read: Veure els permisos que heu concedit a altres
+  aplicacions OAuth2.
+oauth2.grant.user.oauth_clients.edit: Editar els permisos que heu concedit a altres
+  aplicacions OAuth2.
+oauth2.grant.user.block: Blocar o desblocar comptes i veure una llista de comptes
+  que bloqueu.
+oauth2.grant.moderate.all: Realitzar qualsevol acció de moderació que tingueu permís
+  per dur a terme a les revistes que modereu.
+oauth2.grant.moderate.entry.pin: Fixar els fils a la part superior de les revistes
+  que modereu.
+oauth2.grant.moderate.entry.set_adult: Marcar els fils com a explícits a les revistes
+  que modereu.
+oauth2.grant.moderate.entry.trash: Ficar a la paperera o restaurar fils a les revistes
+  que modereu.
+oauth2.grant.moderate.entry_comment.all: Moderar els comentaris als fils de les revistes
+  que modereu.
+oauth2.grant.moderate.entry_comment.change_language: Canviar l'idioma dels comentaris
+  als fils de les revistes que modereu.
+oauth2.grant.moderate.entry_comment.set_adult: Marcar els comentaris als fils com
+  a explícits a les revistes que modereu.
+oauth2.grant.moderate.entry_comment.trash: Ficar a la paperera o restaurar els comentaris
+  dels fils de les revistes que modereu.
+oauth2.grant.moderate.post.change_language: Canviar l'idioma de les publicacions a
+  les revistes que modereu.
+oauth2.grant.moderate.post.trash: Ficar a la paperera o restaurar les publicacions
+  de les revistes que modereu.
+oauth2.grant.moderate.post_comment.all: Moderar els comentaris a les publicacions
+  de les revistes que modereu.
+oauth2.grant.moderate.post_comment.set_adult: Marcar com a explícits els comentaris
+  de les revistes que modereu.
+oauth2.grant.moderate.post_comment.trash: Ficar a la paperera o restaurar els comentaris
+  a les publicacions de les revistes que modereu.
+oauth2.grant.moderate.magazine.all: Gestionar els bandejos, les denúncies i veure
+  els articles a la paperera a les revistes que modereu.
+oauth2.grant.moderate.magazine.ban.read: Veure els comptes bandejats a les revistes
+  que modereu.
+oauth2.grant.moderate.magazine.ban.create: Bandejar comptes a les revistes que modereu.
+oauth2.grant.admin.entry_comment.purge: Suprimir completament qualsevol comentari
+  d'un fil de la vostra instància.
+oauth2.grant.admin.post_comment.purge: Suprimir completament qualsevol comentari d'una
+  publicació de la vostra instància.
+oauth2.grant.admin.magazine.move_entry: Moure fils entre revistes a la vostra instància.
+oauth2.grant.admin.magazine.purge: Suprimir completament les revistes de la vostra
+  instància.
+oauth2.grant.admin.user.verify: Verificar usuaris(es) a la vostra instància.
+oauth2.grant.admin.user.delete: Eliminar comptes de la vostra instància.
+oauth2.grant.admin.user.purge: Eliminar completament comptes de la vostra instància.
+oauth2.grant.admin.instance.all: Veure i actualitzar la configuració o la informació
+  de la instància.
+oauth2.grant.admin.instance.stats: Veure les estadístiques de la vostra instància.
+oauth2.grant.admin.instance.settings.read: Veure la configuració de la vostra instància.
+oauth2.grant.admin.instance.settings.edit: Actualitzar la configuració de la vostra
+  instància.
+oauth2.grant.admin.federation.all: Veure i actualitzar les instàncies desfederades
+  actualment.
+oauth2.grant.admin.federation.read: Veure la llista d'instàncies desfederades.
+oauth2.grant.admin.federation.update: Afegir o eliminar instàncies de la llista d'instàncies
+  desfederades.
+oauth2.grant.admin.oauth_clients.all: Veure o revocar els clients OAuth2 que existeixen
+  a la vostra instància.
+oauth2.grant.admin.oauth_clients.read: Veure els clients OAuth2 que existeixen a la
+  vostra instància i les seves estadístiques d'ús.
+oauth2.grant.admin.oauth_clients.revoke: Revocar l'accés als clients OAuth2 a la vostra
+  instància.
+last_active: Última activitat
+flash_post_pin_success: La publicació s'ha fixat correctament.
+flash_post_unpin_success: La publicació s'ha desfixat correctament.
+show_avatars_on_comments: Mostrar avatars als comentaris
+single_settings: Únic
+update_comment: Actualitzar comentari
+show_avatars_on_comments_help: Mostrar/amagar els avatars quan es veuen comentaris
+  en un sol fil o publicació.
+comment_reply_position: Posició del comentari de resposta
+magazine_theme_appearance_icon: Icona personalitzada per a la revista. Si no se'n
+  selecciona cap, s'utilitzarà la icona predeterminada.
+magazine_theme_appearance_background_image: Imatge de fons personalitzada que s'aplicarà
+  quan visualitzeu contingut a la vostra revista.
+moderation.report.approve_report_title: Aprovar la denúncia
+moderation.report.reject_report_title: Rebutjar la denúncia
+subject_reported_exists: Aquest contingut ja s'ha denunciat.
+moderation.report.ban_user_title: Bandejar compte
+moderation.report.reject_report_confirmation: De veritat voleu rebutjar aquesta denúncia?
+delete_content: Suprimir contingut
+purge_content: Purgar contingut
+delete_content_desc: Suprimir el contingut de l'usuari(a) deixant les respostes d'altres
+  usuaris(es) als fils, publicacions i comentaris creats.
+schedule_delete_account: Programar eliminació
+schedule_delete_account_desc: Programar la supressió d'aquest compte en 30 dies. Això
+  amagarà l'usuari(a) i el seu contingut, i també impedirà que iniciï sessió.
+remove_schedule_delete_account: Cancel·lar la supressió programada
+remove_schedule_delete_account_desc: Cancel·lar la programació de l'eliminació. Tot
+  el contingut tornarà a estar disponible i el compte podrà iniciar sessió.
+two_factor_backup: Codis de recolzament d'autenticació de dos factors
+2fa.authentication_code.label: Codi d'autenticació
+2fa.verify: Verificar
+2fa.code_invalid: El codi d'autenticació no és vàlid
+2fa.enable: Configurar l'autenticació de dos factors
+2fa.backup-create.label: Crear codis d'autenticació de recolzament nous
+2fa.remove: Eliminar l'autenticació de dos factors
+2fa.add: Afegir al meu compte
+2fa.verify_authentication_code.label: Introduïu un codi de dos factors per verificar
+  la configuració
+2fa.qr_code_img.alt: Un codi QR que permet configurar l'autenticació de dos factors
+  per al vostre compte
+2fa.qr_code_link.title: En visitar aquest enllaç permetreu a la vostra plataforma
+  registrar aquesta autenticació de dos factors
+2fa.user_active_tfa.title: L'usuari(a) té actiu el doble factor d'autenticació
+cancel: Cancel·lar
+2fa.backup_codes.recommendation: Guardeu-ne una còpia en un lloc segur.
+password_and_2fa: Contrasenya i A2F
+show_subscriptions: Mostrar subscripcions
+subscription_sort: Ordenar
+alphabetically: Alfabèticament
+subscriptions_in_own_sidebar: A una barra lateral separada
+sidebars_same_side: Barres laterals al mateix costat
+subscription_sidebar_pop_out_right: Moure a la barra lateral separada de la dreta
+subscription_sidebar_pop_out_left: Moure a la barra lateral separada de l'esquerra
+subscription_panel_large: Panell gran
+close: Tancar
+position_bottom: Inferior
+position_top: Superior
+pending: Pendent
+flash_thread_new_error: No s'ha pogut crear el fil. Alguna cosa ha fallat.
+flash_thread_tag_banned_error: No s'ha pogut crear el fil. El contingut no està permès.
+flash_image_download_too_large_error: La imatge no s'ha pogut crear, és massa gran
+  (mida màxima %bytes%)
+flash_email_was_sent: El correu electrònic s'ha enviat correctament.
+flash_email_failed_to_sent: No s'ha pogut enviar el correu electrònic.
+flash_post_new_success: La publicació s'ha creat correctament.
+flash_magazine_theme_changed_success: S'ha actualitzat correctament l'aparença de
+  la revista.
+flash_magazine_theme_changed_error: No s'ha pogut actualitzar l'aparença de la revista.
+flash_comment_edit_success: El comentari s'ha actualitzat correctament.
+flash_comment_edit_error: No s'ha pogut editar el comentari. Alguna cosa ha fallat.
+flash_user_settings_general_error: No s'ha pogut desar la configuració d'usuari(a).
+flash_user_edit_profile_error: No s'ha pogut desar la configuració del perfil.
+flash_user_edit_password_error: No s'ha pogut canviar la contrasenya.
+flash_thread_edit_error: No s'ha pogut editar el fil. Alguna cosa ha fallat.
+flash_post_edit_error: No s'ha pogut editar la publicació. Alguna cosa ha fallat.
+flash_post_edit_success: La publicació s'ha editat correctament.
+page_width: Amplada de pàgina
+page_width_max: Màxim
+page_width_auto: Automàtic
+page_width_fixed: Fix
+filter_labels: Filtrar etiquetes
+auto: Automàtic
+change_my_avatar: Canviar el meu avatar
+change_my_cover: Canviar la meva portada
+edit_my_profile: Editar el meu perfil
+account_settings_changed: La configuració del vostre compte s'ha canviat correctament.
+  Haureu de tornar a iniciar sessió.
+magazine_deletion: Eliminació de la revista
+delete_magazine: Suprimir revista
+restore_magazine: Recuperar revista
+purge_magazine: Purgar revista
+magazine_is_deleted: S'ha suprimit la revista. Podeu <a href="%link_target%">recuperar-la</a>
+  en un termini de 30 dies.
+user_suspend_desc: En suspendre el compte s'amaga el contingut a la instància, però
+  no l'elimina permanentment i el podeu restaurar en qualsevol moment.
+account_banned: El compte ha estat bandejat.
+remove_subscriptions: Eliminar subscripcions
+apply_for_moderator: Sol·licitar ser moderador(a)
+request_magazine_ownership: Demanar la propietat de la revista
+cancel_request: Cancel·lar sol·licitud
+abandoned: Abandonat
+ownership_requests: Sol·licituds de propietat
+accept: Acceptar
+moderator_requests: Sol·licituds de moderació
+action: Acció
+user_badge_op: OP
+user_badge_admin: Administrador(a)
+user_badge_global_moderator: Moderador(a) global
+user_badge_moderator: Moderador(a)
+user_badge_bot: Bot
+announcement: Anunci
+keywords: Paraules clau
+deleted_by_author: L'autor(a) ha eliminat el fil, la publicació o el comentari
+sensitive_warning: Contingut sensible
+sensitive_toggle: Commutar la visibilitat del contingut sensible
+sensitive_show: Feu clic per mostrar
+sensitive_hide: Feu clic per amagar
+details: Detalls
+spoiler: Spoiler
+all_time: Tot el temps
+show: Mostrar
+hide: Amagar
+edited: editat
+sso_registrations_enabled: Registres SSO activats
+continue_with: Continuar amb
+own_report_accepted: La vostra denúncia ha estat acceptada
+report_accepted: S'ha acceptat una denúncia
+magazine_log_mod_added: ha afegit un(a) moderador(a)
+magazine_log_mod_removed: ha llevat un(a) moderador(a)
+magazine_log_entry_pinned: entrada fixada
+magazine_log_entry_unpinned: s'ha eliminat l'entrada fixada
+last_updated: Última actualització
+and: i
+direct_message: Missatge directe
+manually_approves_followers: Aprova seguidors(es) manualment
+register_push_notifications_button: Registreu-vos per a les notificacions «push»
+unregister_push_notifications_button: Eliminar el registre de «push»
+test_push_notifications_button: Provar les notificacions «push»
+test_push_message: Hola món!
+notification_title_new_comment: Nou comentari
+notification_title_removed_comment: S'ha eliminat un comentari
+notification_title_edited_comment: S'ha editat un comentari
+notification_title_new_reply: Nova resposta
+notification_title_new_thread: Nou fil
+notification_title_removed_thread: S'ha eliminat un fil
+notification_title_edited_thread: S'ha editat un fil
+notification_title_ban: Us han bandejat
+notification_title_message: Nou missatge directe
+notification_title_new_post: Publicació nova
+notification_title_removed_post: S'ha eliminat una publicació
+notification_title_edited_post: S'ha editat una publicació
+notification_title_new_signup: S'ha registrat un nou compte
+notification_body_new_signup: S'ha registrat el compte %u%.
+notification_body2_new_signup_approval: Heu d'aprovar la sol·licitud abans que puguin
+  iniciar sessió
+show_related_magazines: Mostrar revistes aleatòries
+show_related_entries: Mostrar fils aleatoris
+show_related_posts: Mostrar publicacions aleatòries
+show_active_users: Mostrar comptes actius
+notification_title_new_report: S'ha creat una nova denúncia
+magazine_posting_restricted_to_mods_warning: Només la moderació pot crear fils en
+  aquesta revista
+flash_posting_restricted_error: La creació de fils està restringida a la moderació
+  d'aquesta revista i no en sou part
+server_software: Programari del servidor
+version: Versió
+last_successful_deliver: Darrera entrega correcta
+last_successful_receive: Darrera rebuda correcta
+last_failed_contact: Últim contacte fallit
+new_user_description: Aquest compte és nou (actiu durant menys de %days% dies)
+new_magazine_description: Aquesta revista és nova (activa durant menys de %days% dies)
+admin_users_suspended: Suspès(a)
+admin_users_active: Actiu(va)
+admin_users_banned: Bandejat(da)
+user_verify: Activar compte
+max_image_size: Mida màxima del fitxer
+comment_not_found: No s'ha trobat el comentari
+bookmark_remove_from_list: Eliminar el marcador de %list%
+bookmark_add_to_list: Afegir marcador a %list%
+bookmark_remove_all: Eliminar tots els marcadors
+bookmark_add_to_default_list: Afegir marcador a la llista predeterminada
+bookmark_lists: Llistes de marcadors
+bookmarks: Marcadors
+bookmarks_list: Marcadors en %list%
+count: Recompte
+is_default: És predeterminada
+bookmark_list_make_default: Fer predeterminada
+bookmark_list_is_default: És la llista predeterminada
+bookmark_list_create: Crear
+bookmark_list_create_placeholder: escriviu el nom…
+bookmark_list_create_label: Nom de la llista
+bookmarks_list_edit: Editar la llista de marcadors
+errors.server403.title: 403 Prohibit
+resend_account_activation_email: Tornar a enviar el correu electrònic d'activació
+  del compte
+federation_page_dead_description: Instàncies en què no vam poder lliurar almenys 10
+  activitats seguides i on l'última entrega i recepció amb èxit van ser fa més d'una
+  setmana
+oauth2.grant.moderate.magazine.ban.delete: Desblocar usuaris(es) de les revistes que
+  modereu.
+oauth2.grant.domain.all: Subscriure-vos o blocar dominis i veure els dominis a què
+  us subscriviu o que bloqueu.
+account_deletion_description: El vostre compte se suprimirà d'aquí a 30 dies tret
+  que decidiu suprimir-lo immediatament. Per restaurar el vostre compte en un termini
+  de 30 dies, inicieu sessió amb les mateixes credencials o poseu-vos en contacte
+  amb l'equip d'administració.
+oauth2.grant.moderate.magazine_admin.edit_theme: Editar el CSS personalitzat de qualsevol
+  de les vostres revistes.
+more_from_domain: Més del domini
+email_confirm_button_text: Confirmeu la vostra sol·licitud de canvi de contrasenya
+errors.server500.description: Ho sentim, hi ha hagut un error al nostre costat. Si
+  continueu veient aquest error, proveu de contactar amb l'administració de la instància.
+  Si aquesta instància no funciona en absolut, aneu a %link_start%altres instàncies
+  de Mbin%link_end% mentrestant fins que es resolgui el problema.
+resend_account_activation_email_error: Hi ha hagut un problema en enviar la sol·licitud.
+  Potser no hi ha cap compte associat amb l'adreça electrònica o potser ja està activat.
+email_confirm_link_help: Alternativament, podeu copiar i enganxar el següent al vostre
+  navegador
+email.delete.title: Sol·licitud d'eliminació del compte
+oauth2.grant.moderate.magazine.reports.all: Gestionar les denúncies a les revistes
+  que modereu.
+oauth.consent.to_allow_access: Per permetre aquest accés feu clic al botó «Permetre”
+  a continuació
+private_instance: Forçar a iniciar sessió abans de poder accedir a qualsevol contingut
+oauth2.grant.moderate.magazine_admin.all: Crear, editar o suprimir les vostres revistes.
+oauth2.grant.subscribe.general: Subscriure-vos o seguir qualsevol revista, domini
+  o compte, i veure les revistes, dominis i comptes a què esteu subscrit(e)s.
+oauth2.grant.admin.entry.purge: Suprimir completament qualsevol fil de la vostra instància.
+oauth2.grant.vote.general: Votar a favor, en contra o impulsar els fils, publicacions
+  o comentaris.
+oauth2.grant.entry_comment.all: Crear, editar o suprimir els vostres comentaris en
+  fils i votar, millorar o denunciar qualsevol comentari d'un fil.
+oauth2.grant.entry_comment.vote: Votar a favor, impulsar o votar en contra de qualsevol
+  comentari d'un fil.
+oauth2.grant.user.profile.edit: Editar el vostre perfil.
+oauth2.grant.magazine.all: Subscriure-vos o bloquejar les revistes i veure les revistes
+  a què us subscriviu o heu blocat.
+oauth2.grant.user.profile.read: Veure el vostre perfil.
+oauth2.grant.post.report: Denunciar qualsevol publicació.
+oauth2.grant.post_comment.create: Crear comentaris nous a les publicacions.
+oauth2.grant.post.create: Crear publicacions noves.
+oauth2.grant.moderate.entry.change_language: Canviar l'idioma dels fils a les revistes
+  que modereu.
+oauth2.grant.user.notification.all: Llegir i esborrar les vostres notificacions.
+oauth2.grant.user.oauth_clients.all: Veure i editar els permisos que heu concedit
+  a altres aplicacions OAuth2.
+oauth2.grant.user.follow: Seguir o deixar de seguir comptes i veure una llista de
+  comptes que seguiu.
+oauth2.grant.moderate.entry.all: Moderar els fils a les revistes que modereu.
+oauth2.grant.post_comment.vote: Votar a favor, impulsar o votar en contra de qualsevol
+  comentari d'una publicació.
+oauth2.grant.user.notification.delete: Esborrar les vostres notificacions.
+oauth2.grant.user.all: Veure i editar el vostre perfil, missatges o notificacions;
+  veure i editar els permisos que heu concedit a altres aplicacions; seguir o blocar
+  altres comptes; veure les llistes de comptes que seguiu o bloqueu.
+oauth2.grant.admin.user.ban: Bandejar o desbandejar comptes de la vostra instància.
+oauth2.grant.moderate.post_comment.change_language: Canviar l'idioma dels comentaris
+  a les publicacions de les revistes que modereu.
+oauth2.grant.admin.user.all: Bandejar, verificar o suprimir completament comptes de
+  la vostra instància.
+oauth2.grant.moderate.post.all: Moderar les publicacions a les revistes que modereu.
+oauth2.grant.moderate.post.set_adult: Marcar com a explícites les publicacions a les
+  revistes que modereu.
+oauth2.grant.moderate.magazine.ban.all: Gestionar els comptes bandejats a les revistes
+  que modereu.
+oauth2.grant.admin.post.purge: Suprimir completament qualsevol publicació de la vostra
+  instància.
+oauth2.grant.admin.instance.settings.all: Veure o actualitzar la configuració de la
+  vostra instància.
+oauth2.grant.admin.instance.information.edit: Actualitzar les pàgines Quant a, Preguntes
+  freqüents, Contacte, Condicions del servei i Política de privadesa a la vostra instància.
+oauth2.grant.admin.magazine.all: Moure fils entre les revistes o suprimir-les completament
+  a la vostra instància.
+2fa.backup: Els vostres codis de recolzament de dos factors
+moderation.report.ban_user_description: Voleu bandejar el compte (%username%) que
+  ha creat aquest contingut d'aquesta revista?
+moderation.report.approve_report_confirmation: De veritat voleu aprovar aquest informe?
+purge_content_desc: Purgar completament el contingut de l'usuari(a), incloent la supressió
+  de les respostes d'altres usuaris(es) en fils, publicacions i comentaris creats.
+2fa.backup-create.help: Podeu crear nous codis d'autenticació de recolzament; fer-ho
+  invalidarà els codis existents.
+subscription_header: Revistes subscrites
+comment_reply_position_help: Mostrar el formulari de resposta de comentaris a la part
+  superior o inferior de la pàgina. Quan el «desplaçament infinit» està habilitat,
+  la posició sempre apareixerà a la part superior.
+delete_account_desc: Suprimir el compte, incloses les respostes d'altres usuaris(es)
+  en fils, publicacions i comentaris creats.
+oauth2.grant.moderate.post.pin: Fixar les publicacions a la part superior de les revistes
+  que modereu.
+magazine_theme_appearance_custom_css: CSS personalitzat que s'aplicarà quan visualitzeu
+  contingut a la vostra revista.
+two_factor_authentication: Autenticació de dos factors
+2fa.disable: Desactivar l'autenticació de dos factors
+2fa.setup_error: Error en activar A2F per al compte
+flash_post_new_error: No s'ha pogut crear la publicació. Alguna cosa ha fallat.
+account_suspended: El compte s'ha suspès.
+flash_account_settings_changed: La configuració del vostre compte s'ha canviat correctament.
+  Haureu de tornar a iniciar sessió.
+2fa.backup_codes.help: Podeu utilitzar aquests codis quan no teniu el vostre dispositiu
+  o aplicació d'autenticació de dos factors. <strong>No se us tornaran a mostrar</strong>
+  i els podreu fer servir <strong>només una vegada</strong>.
+2fa.available_apps: Utilitzar una aplicació d'autenticació de dos factors com ara
+  %google_authenticator%, %aegis% (Android) o %raivo% (iOS) per escanejar el codi
+  QR.
+account_unsuspended: El compte s'ha reactivat.
+deletion: Eliminació
+subscription_sidebar_pop_in: Moure subscripcions al panell emergent
+flash_user_edit_profile_success: La configuració del perfil s'ha desat correctament.
+flash_comment_new_success: El comentari s'ha creat correctament.
+suspend_account: Suspendre el compte
+flash_user_edit_email_error: No s'ha pogut canviar l'adreça electrònica.
+flash_comment_new_error: No s'ha pogut crear el comentari. Alguna cosa ha fallat.
+flash_user_settings_general_success: La configuració d'usuari(a) s'ha desat correctament.
+account_is_suspended: El compte està suspès.
+open_url_to_fediverse: Obrir URL original
+remove_following: Eliminar el seguiment
+unsuspend_account: Reactivar el compte
+account_unbanned: S'ha desbandejat el compte.
+deleted_by_moderator: El fil, la publicació o el comentari ha estat suprimit per l'equip
+  de moderació
+cake_day: Dia del pastís
+reported: denunciat(da)
+notification_title_mention: Us han esmentat
+someone: Algú
+sso_only_mode: Restringir l'inici de sessió i el registre només als mètodes SSO
+reporting_user: Denunciant
+back: Tornar
+admin_users_inactive: Inactiu(va)
+restrict_magazine_creation: Restringir la creació de revistes locals a l'administració
+  i moderació global
+report_subject: Assumpte
+sso_show_first: Mostrar primer SSO a les pàgines d'inici de sessió i de registre
+magazine_posting_restricted_to_mods: Restringir la creació de fils a la moderació
+sso_registrations_enabled.error: Els registres de comptes nous amb gestors d'identitats
+  de tercers estan actualment desactivats.
+reported_user: Compte denunciat
+related_entry: Relacionat
+open_report: Obrir denúncia
+own_report_rejected: La vostra denúncia ha estat rebutjada
+own_content_reported_accepted: S'ha acceptat una denúncia del vostre contingut.
+bookmark_list_edit: Editar
+bookmark_list_selected_list: Llista seleccionada
+table_of_contents: Taula de continguts
+search_type_all: Fils + Microblogs
+search_type_entry: Fils
+search_type_post: Microblogs
+select_user: Trieu un(a) usuari(a)
+new_users_need_approval: Els comptes nous han de ser aprovats per l'administració
+  abans que puguin iniciar sessió.
+application_text: Text de la sol·licitud
+signup_requests: Sol·licituds de registre
+signup_requests_header: Sol·licituds de registre
+email_application_approved_title: La vostra sol·licitud de registre s'ha aprovat
+email_application_approved_body: L'administració del servidor ha aprovat la vostra
+  sol·licitud de registre. Ara podeu iniciar sessió al servidor a <a href="%link%">%siteName%</a>.
+email_application_rejected_title: La vostra sol·licitud de registre ha estat rebutjada
+email_application_pending: El vostre compte requereix l'aprovació de l'administració
+  abans de poder iniciar sessió.
+email_verification_pending: Heu de verificar la vostra adreça electrònica abans de
+  poder iniciar sessió.
+signup_requests_paragraph: A aquests(es) usuaris(es) els agradaria unir-se al vostre
+  servidor. No poden iniciar sessió fins que no hàgiu aprovat llurs sol·licituds de
+  registre.
+show_magazine_domains: Mostrar els dominis de les revistes
+show_user_domains: Mostrar els dominis dels comptes
+answered: respost
+by: per
+front_default_sort: Ordenació predeterminada de la portada
+comment_default_sort: Ordenació predeterminada dels comentaris
+open_signup_request: Obrir la sol·licitud de registre
+image_lightbox_in_list: Les miniatures dels fils obren pantalla completa
+show_users_avatars_help: Mostrar la imatge de l'avatar de l'usuari(a).
+compact_view_help: Una vista compacta amb marges menors, on la miniatura passa al
+  costat dret.
+show_magazines_icons_help: Mostrar la icona de la revista.
+show_thumbnails_help: Mostrar les miniatures de les imatges.
+show_new_icons: Mostrar noves icones
+show_new_icons_help: Mostrar la icona per a la revista o el compte nou (30 dies d'antiguitat
+  o més recent)
+flash_application_info: L'administració ha d'aprovar el vostre compte abans de poder
+  iniciar sessió. Rebreu un correu electrònic un cop s'hagi processat la vostra sol·licitud
+  de registre.
+email_application_rejected_body: Gràcies pel vostre interès, però lamentem informar-vos
+  que la vostra sol·licitud de registre ha estat rebutjada.
+image_lightbox_in_list_help: Quan està marcat, en fer clic a la miniatura es mostra
+  una finestra modal amb la imatge. Quan no estigui marcat, fer clic a la miniatura
+  obrirà el fil.
