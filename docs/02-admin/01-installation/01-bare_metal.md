@@ -11,9 +11,9 @@ This guide is aimed for Debian / Ubuntu distribution servers, but it could run o
 
 ## Minimum hardware requirements
 
-- **CPU:** 6 cores (>= 2GHz)
-- **RAM:** 6GB (more is recommended for large instances)  
-- **Storage:** 40GB (more is recommended, especially if you have a lot of remote/local magazines and/or have a lot of (local) users)
+- **vCPU:** 4 virtual cores (>= 2GHz, _more is recommended_ on larger instances)
+- **RAM:** 6GB (_more is recommended_ for large instances)  
+- **Storage:** 40GB (_more is recommended_, especially if you have a lot of remote/local magazines and/or have a lot of (local) users)
 
 You can start with a smaller server and add more resources later if you are using a VPS for example.
 
