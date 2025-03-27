@@ -2,15 +2,15 @@
 
 There are several ways to get started. Like using the Docker setup or use the development server, which is explained in detail below.
 
-The code is mainly written in PHP using the Symfony framework with Twig templating and a bit of JavaScript & CSS.
+The code is mainly written in PHP using the Symfony framework with Twig templating and a bit of JavaScript & CSS and of course HTML.
 
 ## Initial setup
 
 Requirements:
 
 - PHP v8.3 or higher
-- NodeJS
-- Valkey / KeyDB / Redis
+- NodeJS v20 or higher
+- Valkey / KeyDB / Redis (pick one)
 - PostgreSQL
 - _Optionally:_ Mercure
 - _Optionally:_ Symfony CLI
@@ -46,18 +46,18 @@ git clone git@github.com:MbinOrg/mbin.git
 1. Install PHP + additional PHP extensions:
 
 ```sh
-sudo apt install php8.3 php8.3-common php8.3-fpm php8.3-cli php8.3-amqp php8.3-bcmath php8.3-pgsql php8.3-gd php8.3-curl php8.3-xml php8.3-redis php8.3-mbstring php8.3-zip php8.3-bz2 php8.3-intl php8.3-bcmath -y
+sudo apt install php8.4 php8.4-common php8.4-fpm php8.4-cli php8.4-amqp php8.4-bcmath php8.4-pgsql php8.4-gd php8.4-curl php8.4-xml php8.4-redis php8.4-mbstring php8.4-zip php8.4-bz2 php8.4-intl php8.4-bcmath -y
 ```
 
 2. Fine-tune PHP settings:
 
-- Increase execution time in PHP config file: `/etc/php/8.3/fpm/php.ini`:
+- Increase execution time in PHP config file: `/etc/php/8.4/fpm/php.ini`:
 
 ```ini
 max_execution_time = 120
 ```
 
-- _Optional:_ Increase/set max_nesting_level in `/etc/php/8.3/fpm/conf.d/20-xdebug.ini` (in case you have the `xdebug` extension installed):
+- _Optional:_ Increase/set max_nesting_level in `/etc/php/8.4/fpm/conf.d/20-xdebug.ini` (in case you have the `xdebug` extension installed):
 
 ```ini
 xdebug.max_nesting_level=512
@@ -66,7 +66,7 @@ xdebug.max_nesting_level=512
 3. Restart the PHP-FPM service:
 
 ```sh
-sudo systemctl restart php8.3-fpm.service
+sudo systemctl restart php8.4-fpm.service
 ```
 
 ## Prepare PostgreSQL DB
@@ -205,19 +205,19 @@ For more info read: [Symfony Testing guide](https://symfony.com/doc/current/test
 
 ### Prepare testing
 
-1. First increase execution time in your PHP config file: `/etc/php/8.3/fpm/php.ini`:
+1. First increase execution time in your PHP config file: `/etc/php/8.4/fpm/php.ini`:
 
 ```ini
 max_execution_time = 120
 ```
 
-2. _Optional:_ Increase/set max_nesting_level in `/etc/php/8.3/fpm/conf.d/20-xdebug.ini` (in case you have the `xdebug` extension installed):
+2. _Optional:_ Increase/set max_nesting_level in `/etc/php/8.4/fpm/conf.d/20-xdebug.ini` (in case you have the `xdebug` extension installed):
 
 ```ini
 xdebug.max_nesting_level=512
 ```
 
-3. Restart the PHP-FPM service: `sudo systemctl restart php8.3-fpm.service`
+3. Restart the PHP-FPM service: `sudo systemctl restart php8.4-fpm.service`
 4. Copy the dot env file (if you haven't already): `cp .env.example .env`
 5. Install composer packages: `composer install --no-scripts`
 
