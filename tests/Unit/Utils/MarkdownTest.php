@@ -122,4 +122,19 @@ class MarkdownTest extends WebTestCase
         $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
         assertStringContainsString("https://kbin.test/m/test@kbin.test2/t/{$entry->getId()}/some-slug/votes", $markdown);
     }
+
+    public function testBracketsInLinkTitle(): void
+    {
+        $m = new Magazine('test@kbin.test2', 'test', null, null, null, false, false, null);
+        $m->apId = 'test@kbin.test2';
+        $m->apInboxUrl = 'https://kbin.test2/inbox';
+        $m->apPublicUrl = 'https://kbin.test2/m/test';
+        $m->apProfileId = 'https://kbin.test2/m/test';
+        $this->entityManager->persist($m);
+        $entry = $this->getEntryByTitle('test', magazine: $m);
+        $this->entityManager->flush();
+        $text = "[Look at my post (or not, your choice)](https://kbin.test/m/test@kbin.test2/t/{$entry->getId()}/some-slug/favourites)";
+        $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
+        assertStringContainsString("https://kbin.test/m/test@kbin.test2/t/{$entry->getId()}/some-slug/favourites", $markdown);
+    }
 }
