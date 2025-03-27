@@ -327,6 +327,7 @@ See [docs.joinmbin.org](https://docs.joinmbin.org)
 Following languages are currently supported/translated:
 
 - Bulgarian
+- Catalan
 - Chinese
 - Danish
 - Dutch
