@@ -95,6 +95,10 @@ class ApActivityRepository extends ServiceEntityRepository
                         'type' => Post::class,
                     ];
                 } else {
+                    if (0 === $id) {
+                        return null;
+                    }
+
                     return [
                         'id' => $id,
                         'type' => PostComment::class,
@@ -108,7 +112,17 @@ class ApActivityRepository extends ServiceEntityRepository
                         'id' => $id,
                         'type' => Entry::class,
                     ];
+                } elseif (5 === \count($exploded)) {
+                    // entry url with slug (non-ap route)
+                    return [
+                        'id' => \intval($exploded[4]),
+                        'type' => Entry::class,
+                    ];
                 } else {
+                    if (0 === $id) {
+                        return null;
+                    }
+
                     return [
                         'id' => $id,
                         'type' => EntryComment::class,

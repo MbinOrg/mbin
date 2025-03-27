@@ -28,7 +28,6 @@ use App\Repository\UserRepository;
 use App\Service\ImageManager;
 use App\Service\SettingsManager;
 use App\Utils\Embed;
-use App\Utils\UrlUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Link;
 use League\CommonMark\Node\Inline\Text;
@@ -69,12 +68,27 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
         $this->config = $configuration;
     }
 
-    public function render(Node $node, ChildNodeRendererInterface $childRenderer): HtmlElement
+    private function getRenderTarget(): RenderTarget
+    {
+        try {
+            $kbinConfig = $this->config->get('kbin');
+            $renderTarget = $kbinConfig[MarkdownConverter::RENDER_TARGET];
+            if ($renderTarget instanceof RenderTarget) {
+                return $renderTarget;
+            }
+        } catch (\Throwable $e) {
+        }
+
+        return RenderTarget::ActivityPub;
+    }
+
+    public function render(Node $node, ChildNodeRendererInterface $childRenderer): HtmlElement|string
     {
         /* @var Link $node */
         Link::assertInstanceOf($node);
 
-        $isApRequest = UrlUtils::isActivityPubRequest($this->requestStack->getCurrentRequest());
+        $renderTarget = $this->getRenderTarget();
+        $isApRequest = RenderTarget::ActivityPub === $renderTarget;
         if (!$isApRequest && $node instanceof MentionLink && $this->isExistingMentionType($node)) {
             $this->logger->debug("Got node of class {c}: username: '{k}', title: '{t}', type: '{ty}', url: '{url}'", [
                 'c' => \get_class($node),
@@ -119,7 +133,7 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
             } catch (\Error|\Exception $e) {
                 $this->logger->warning("There was an error finding the activity pub object for url '{q}': {e}", ['q' => $url, 'e' => \get_class($e).' - '.$e->getMessage()]);
             }
-            if (!$isApRequest && null !== $apActivity && Message::class !== $apActivity['type']) {
+            if (!$isApRequest && null !== $apActivity && 0 !== $apActivity['id'] && Message::class !== $apActivity['type']) {
                 $this->logger->debug('Found activity with url {u}: {t} - {id}', [
                     'u' => $node->getUrl(),
                     't' => $apActivity['type'],
@@ -130,7 +144,7 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
 
                 if (null !== $entity) {
                     if (null === $node->getTitle() && (null === $childContent || $url === $childContent)) {
-                        return new HtmlElement('div', contents: $this->renderInlineEntity($entity));
+                        return $this->renderInlineEntity($entity);
                     } else {
                         $apLink = $this->activityRepository->getLocalUrlOfEntity($entity);
                     }
@@ -143,8 +157,6 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
         } else {
             $this->logger->debug('Got an invalid url {u}', ['u' => $url]);
         }
-
-        $renderTarget = $this->config->get('kbin')[MarkdownConverter::RENDER_TARGET];
 
         $url = match ($node::class) {
             RoutedMentionLink::class => $this->generateUrlForRoute($node, $renderTarget),
