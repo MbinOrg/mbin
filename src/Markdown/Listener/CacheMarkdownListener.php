@@ -150,6 +150,7 @@ final class CacheMarkdownListener implements EventSubscriberInterface
         $missingCommunityMentions = [];
         foreach ($words as $word) {
             $matches = null;
+            // Remove newline (\n), tab (\t), carriage return (\r), etc.
             $word2 = preg_replace('/[[:cntrl:]]/', '', $word);
             if (preg_match('/'.CommunityLinkParser::COMMUNITY_REGEX.'/', $word2, $matches)) {
                 $apId = "$matches[1]@$matches[2]";
