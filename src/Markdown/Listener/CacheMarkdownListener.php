@@ -146,6 +146,7 @@ final class CacheMarkdownListener implements EventSubscriberInterface
     /** @return string[] */
     private function getMissingMagazineMentions(string $markdown): array
     {
+        // No-break space is causing issues with word splitting. So replace a no-break (0xc2 0xa0) by a normal space first.
         $words = preg_split('/[ \n\[\]()]/', str_replace(\chr(194).\chr(160), '&nbsp;', $markdown));
         $missingCommunityMentions = [];
         foreach ($words as $word) {
