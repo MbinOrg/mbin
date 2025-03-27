@@ -146,7 +146,7 @@ final class CacheMarkdownListener implements EventSubscriberInterface
     /** @return string[] */
     private function getMissingMagazineMentions(string $markdown): array
     {
-        $words = preg_split('/[ \n\[\]()]/', str_replace(chr(194).chr(160), "&nbsp;", $markdown));
+        $words = preg_split('/[ \n\[\]()]/', str_replace(\chr(194).\chr(160), '&nbsp;', $markdown));
         $missingCommunityMentions = [];
         foreach ($words as $word) {
             $matches = null;
@@ -161,7 +161,7 @@ final class CacheMarkdownListener implements EventSubscriberInterface
                         $missingCommunityMentions[] = $apId;
                     }
                 } catch (\Exception $e) {
-                    $this->logger->error('An error occurred while looking for magazine "{m}": {t} - {msg}', ['m' => $apId, 't'=> get_class($e), 'msg' => $e->getMessage()]);
+                    $this->logger->error('An error occurred while looking for magazine "{m}": {t} - {msg}', ['m' => $apId, 't' => \get_class($e), 'msg' => $e->getMessage()]);
                 }
             }
         }
