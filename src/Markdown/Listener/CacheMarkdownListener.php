@@ -146,15 +146,21 @@ final class CacheMarkdownListener implements EventSubscriberInterface
     /** @return string[] */
     private function getMissingMagazineMentions(string $markdown): array
     {
-        $words = preg_split('/[ \n\[\]()]/', $markdown);
+        $words = preg_split('/[ \n\[\]()]/', str_replace(chr(194).chr(160), "&nbsp;", $markdown));
         $missingCommunityMentions = [];
         foreach ($words as $word) {
             $matches = null;
-            if (preg_match('/'.CommunityLinkParser::COMMUNITY_REGEX.'/', $word, $matches)) {
+            $word2 = preg_replace('/[[:cntrl:]]/', '', $word);
+            if (preg_match('/'.CommunityLinkParser::COMMUNITY_REGEX.'/', $word2, $matches)) {
                 $apId = "$matches[1]@$matches[2]";
-                $magazine = $this->magazineRepository->findOneBy(['apId' => $apId]);
-                if (!$magazine) {
-                    $missingCommunityMentions[] = $apId;
+                $this->logger->debug("searching for magazine '{m}', original word: '{w}', word without cntrl: '{w2}'", ['m' => $apId, 'w' => $word, 'w2' => $word2]);
+                try {
+                    $magazine = $this->magazineRepository->findOneBy(['apId' => $apId]);
+                    if (!$magazine) {
+                        $missingCommunityMentions[] = $apId;
+                    }
+                } catch (\Exception $e) {
+                    $this->logger->error('An error occurred while looking for magazine "{m}": {t} - {msg}', ['m' => $apId, 't'=> get_class($e), 'msg' => $e->getMessage()]);
                 }
             }
         }
