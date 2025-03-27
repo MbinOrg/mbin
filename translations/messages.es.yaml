@@ -6,12 +6,12 @@ type.smart_contract: Contrato inteligente
 type.magazine: Revista
 thread: Hilo
 threads: Hilos
-microblog: Nanoblogueo
+microblog: Microblog
 people: Gente
 events: Eventos
 magazine: Revista
 magazines: Revistas
-search: Búsqueda
+search: Buscar
 add: Añadir
 select_channel: Elegir un canal
 login: Iniciar sesión
