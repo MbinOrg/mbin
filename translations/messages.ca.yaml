@@ -79,7 +79,7 @@ reset_check_email_desc: Si ja hi ha un compte associat a la vostra adreça elect
   rebreu un correu electrònic en breu amb un enllaç que podeu utilitzar per restablir
   la vostra contrasenya. Aquest enllaç caducarà a %expire%.
 email_confirm_expire: Tingueu en compte que l'enllaç caducarà d'aquí a una hora.
-moderated: Moderat
+moderated: Moderat(da)
 tag: Etiqueta
 eng: ENG
 columns: Columnes
@@ -88,7 +88,7 @@ photos: Fotos
 are_you_sure: De veritat?
 go_to_search: Anar a la cerca
 menu: Menú
-blocked: Blocat
+blocked: Blocats
 domain: Domini
 subscriptions: Subscripcions
 overview: Vista general
@@ -171,13 +171,13 @@ add_new_photo: Afegir foto nova
 add_new_post: Afegir publicació nova
 add_new_video: Afegir vídeo nou
 change_theme: Canviar tema
-downvotes_mode: Mode de vots en contra
+downvotes_mode: Mode de vots negatius
 change_downvotes_mode: Canviar el mode de vots en contra
 disabled: Deshabilitat
 hidden: Amagat
 faq: Preguntes més freqüents (PMF)
 useful: Útil
-help: Ajut
+help: Ajuda
 check_email: Comproveu la vostra bústia electrònica
 reset_check_email_desc2: Si no rebeu cap correu electrònic, comproveu la vostra carpeta
   de correu brossa.
@@ -195,7 +195,7 @@ body: Cos
 tags: Etiquetes
 badges: Insígnies
 is_adult: +18 / Explícit
-oc: CO
+oc: Cont. Orig.
 image: Imatge
 image_alt: Text alternatiu de la imatge
 name: Nom
@@ -203,7 +203,7 @@ description: Descripció
 rules: Normes
 cards: Targetes
 user: Usuari(a)
-joined: Inscripció
+joined: Inscrit(a)
 reputation_points: Punts de reputació
 related_tags: Etiquetes relacionades
 go_to_content: Anar al contingut
@@ -218,7 +218,7 @@ privacy: Privadesa
 notify_on_new_entry_reply: Qualsevol nivell de comentaris als fils que he escrit
 notify_on_new_entry_comment_reply: Respostes als meus comentaris en qualsevol fil
 notify_on_new_post_comment_reply: Respostes als meus comentaris a qualsevol publicació
-notify_on_user_signup: Noves inscripcions
+notify_on_user_signup: Nous registres
 save: Desar
 about: Quant a
 old_email: Adreça electrònica actual
@@ -496,13 +496,13 @@ oauth.client_not_granted_message_read_permission: Aquesta aplicació no ha rebut
 restrict_oauth_clients: Restringir la creació de clients OAuth2 a l'administració
 block: Blocar
 unblock: Desblocar
-oauth2.grant.moderate.magazine.list: Mostrar la llista de les vostres revistes moderades.
-oauth2.grant.moderate.magazine.reports.read: Mostrar les denúncies a les vostres revistes
-  moderades.
+oauth2.grant.moderate.magazine.list: Mostrar la llista de les revistes que modereu.
+oauth2.grant.moderate.magazine.reports.read: Mostrar les denúncies a les revistes
+  que modereu.
 oauth2.grant.moderate.magazine.reports.action: Acceptar o rebutjar denúncies a les
-  vostres revistes moderades.
+  revistes que modereu.
 oauth2.grant.moderate.magazine.trash.read: Veure el contingut a la paperera de les
-  vostres revistes moderades.
+  revistes que modereu.
 oauth2.grant.moderate.magazine_admin.create: Crear noves revistes.
 oauth2.grant.moderate.magazine_admin.delete: Suprimir qualsevol de les vostres revistes.
 oauth2.grant.moderate.magazine_admin.update: Editar les regles, la descripció, el
@@ -575,37 +575,36 @@ oauth2.grant.user.oauth_clients.edit: Editar els permisos que heu concedit a alt
 oauth2.grant.user.block: Blocar o desblocar comptes i veure una llista de comptes
   que bloqueu.
 oauth2.grant.moderate.all: Realitzar qualsevol acció de moderació que tingueu permís
-  per dur a terme a les vostres revistes moderades.
-oauth2.grant.moderate.entry.pin: Fixar els fils a la part superior de les vostres
-  revistes moderades.
-oauth2.grant.moderate.entry.set_adult: Marcar els fils com a explícits a les vostres
-  revistes moderades.
-oauth2.grant.moderate.entry.trash: Ficar a la paperera o restaurar fils a les vostres
-  revistes moderades.
-oauth2.grant.moderate.entry_comment.all: Moderar els comentaris als fils de les vostres
-  revistes moderades.
+  per dur a terme a les revistes que modereu.
+oauth2.grant.moderate.entry.pin: Fixar els fils a la part superior de les revistes
+  que modereu.
+oauth2.grant.moderate.entry.set_adult: Marcar els fils com a explícits a les revistes
+  que modereu.
+oauth2.grant.moderate.entry.trash: Ficar a la paperera o restaurar fils a les revistes
+  que modereu.
+oauth2.grant.moderate.entry_comment.all: Moderar els comentaris als fils de les revistes
+  que modereu.
 oauth2.grant.moderate.entry_comment.change_language: Canviar l'idioma dels comentaris
-  als fils de les vostres revistes moderades.
+  als fils de les revistes que modereu.
 oauth2.grant.moderate.entry_comment.set_adult: Marcar els comentaris als fils com
-  a explícits a les vostres revistes moderades.
+  a explícits a les revistes que modereu.
 oauth2.grant.moderate.entry_comment.trash: Ficar a la paperera o restaurar els comentaris
-  dels fils de les vostres revistes moderades.
+  dels fils de les revistes que modereu.
 oauth2.grant.moderate.post.change_language: Canviar l'idioma de les publicacions a
-  les vostres revistes moderades.
+  les revistes que modereu.
 oauth2.grant.moderate.post.trash: Ficar a la paperera o restaurar les publicacions
-  de les vostres revistes moderades.
+  de les revistes que modereu.
 oauth2.grant.moderate.post_comment.all: Moderar els comentaris a les publicacions
-  de les vostres revistes moderades.
+  de les revistes que modereu.
 oauth2.grant.moderate.post_comment.set_adult: Marcar com a explícits els comentaris
-  de les publicacions a les vostres revistes moderades.
+  de les revistes que modereu.
 oauth2.grant.moderate.post_comment.trash: Ficar a la paperera o restaurar els comentaris
-  a les publicacions de les vostres revistes moderades.
+  a les publicacions de les revistes que modereu.
 oauth2.grant.moderate.magazine.all: Gestionar els bandejos, les denúncies i veure
-  els articles a la paperera a les vostres revistes moderades.
-oauth2.grant.moderate.magazine.ban.read: Veure els comptes bandejats a les vostres
-  revistes moderades.
-oauth2.grant.moderate.magazine.ban.create: Bandejar comptes a les vostres revistes
-  moderades.
+  els articles a la paperera a les revistes que modereu.
+oauth2.grant.moderate.magazine.ban.read: Veure els comptes bandejats a les revistes
+  que modereu.
+oauth2.grant.moderate.magazine.ban.create: Bandejar comptes a les revistes que modereu.
 oauth2.grant.admin.entry_comment.purge: Suprimir completament qualsevol comentari
   d'un fil de la vostra instància.
 oauth2.grant.admin.post_comment.purge: Suprimir completament qualsevol comentari d'una
@@ -716,7 +715,7 @@ page_width_fixed: Fix
 filter_labels: Filtrar etiquetes
 auto: Automàtic
 change_my_avatar: Canviar el meu avatar
-change_my_cover: Canviar la meva capçalera
+change_my_cover: Canviar la meva portada
 edit_my_profile: Editar el meu perfil
 account_settings_changed: La configuració del vostre compte s'ha canviat correctament.
   Haureu de tornar a iniciar sessió.
@@ -767,7 +766,7 @@ magazine_log_entry_unpinned: s'ha eliminat l'entrada fixada
 last_updated: Última actualització
 and: i
 direct_message: Missatge directe
-manually_approves_followers: Aprovar manualment seguidor(e)s
+manually_approves_followers: Aprova seguidors(es) manualment
 register_push_notifications_button: Registreu-vos per a les notificacions «push»
 unregister_push_notifications_button: Eliminar el registre de «push»
 test_push_notifications_button: Provar les notificacions «push»
@@ -831,8 +830,8 @@ resend_account_activation_email: Tornar a enviar el correu electrònic d'activac
 federation_page_dead_description: Instàncies en què no vam poder lliurar almenys 10
   activitats seguides i on l'última entrega i recepció amb èxit van ser fa més d'una
   setmana
-oauth2.grant.moderate.magazine.ban.delete: Desblocar usuaris(es) de les vostres revistes
-  moderades.
+oauth2.grant.moderate.magazine.ban.delete: Desblocar usuaris(es) de les revistes que
+  modereu.
 oauth2.grant.domain.all: Subscriure-vos o blocar dominis i veure els dominis a què
   us subscriviu o que bloqueu.
 account_deletion_description: El vostre compte se suprimirà d'aquí a 30 dies tret
@@ -845,15 +844,15 @@ more_from_domain: Més del domini
 email_confirm_button_text: Confirmeu la vostra sol·licitud de canvi de contrasenya
 errors.server500.description: Ho sentim, hi ha hagut un error al nostre costat. Si
   continueu veient aquest error, proveu de contactar amb l'administració de la instància.
-  Si aquesta instància no funciona en absolut, comproveu %link_start%altres instàncies
+  Si aquesta instància no funciona en absolut, aneu a %link_start%altres instàncies
   de Mbin%link_end% mentrestant fins que es resolgui el problema.
 resend_account_activation_email_error: Hi ha hagut un problema en enviar la sol·licitud.
   Potser no hi ha cap compte associat amb l'adreça electrònica o potser ja està activat.
 email_confirm_link_help: Alternativament, podeu copiar i enganxar el següent al vostre
   navegador
 email.delete.title: Sol·licitud d'eliminació del compte
-oauth2.grant.moderate.magazine.reports.all: Gestionar les denúncies a les vostres
-  revistes moderades.
+oauth2.grant.moderate.magazine.reports.all: Gestionar les denúncies a les revistes
+  que modereu.
 oauth.consent.to_allow_access: Per permetre aquest accés feu clic al botó «Permetre”
   a continuació
 private_instance: Forçar a iniciar sessió abans de poder accedir a qualsevol contingut
@@ -869,19 +868,19 @@ oauth2.grant.entry_comment.vote: Votar a favor, impulsar o votar en contra de qu
   comentari d'un fil.
 oauth2.grant.user.profile.edit: Editar el vostre perfil.
 oauth2.grant.magazine.all: Subscriure-vos o bloquejar les revistes i veure les revistes
-  a què us subscriviu o bloquegeu.
+  a què us subscriviu o heu blocat.
 oauth2.grant.user.profile.read: Veure el vostre perfil.
 oauth2.grant.post.report: Denunciar qualsevol publicació.
 oauth2.grant.post_comment.create: Crear comentaris nous a les publicacions.
 oauth2.grant.post.create: Crear publicacions noves.
-oauth2.grant.moderate.entry.change_language: Canviar l'idioma dels fils a les vostres
-  revistes moderades.
+oauth2.grant.moderate.entry.change_language: Canviar l'idioma dels fils a les revistes
+  que modereu.
 oauth2.grant.user.notification.all: Llegir i esborrar les vostres notificacions.
 oauth2.grant.user.oauth_clients.all: Veure i editar els permisos que heu concedit
   a altres aplicacions OAuth2.
 oauth2.grant.user.follow: Seguir o deixar de seguir comptes i veure una llista de
   comptes que seguiu.
-oauth2.grant.moderate.entry.all: Moderar els fils a les vostres revistes moderades.
+oauth2.grant.moderate.entry.all: Moderar els fils a les revistes que modereu.
 oauth2.grant.post_comment.vote: Votar a favor, impulsar o votar en contra de qualsevol
   comentari d'una publicació.
 oauth2.grant.user.notification.delete: Esborrar les vostres notificacions.
@@ -890,14 +889,14 @@ oauth2.grant.user.all: Veure i editar el vostre perfil, missatges o notificacion
   altres comptes; veure les llistes de comptes que seguiu o bloqueu.
 oauth2.grant.admin.user.ban: Bandejar o desbandejar comptes de la vostra instància.
 oauth2.grant.moderate.post_comment.change_language: Canviar l'idioma dels comentaris
-  a les publicacions de les vostres revistes moderades.
+  a les publicacions de les revistes que modereu.
 oauth2.grant.admin.user.all: Bandejar, verificar o suprimir completament comptes de
   la vostra instància.
-oauth2.grant.moderate.post.all: Moderar les publicacions a les vostres revistes moderades.
+oauth2.grant.moderate.post.all: Moderar les publicacions a les revistes que modereu.
 oauth2.grant.moderate.post.set_adult: Marcar com a explícites les publicacions a les
-  vostres revistes moderades.
-oauth2.grant.moderate.magazine.ban.all: Gestionar els comptes bandejats a les vostres
-  revistes moderades.
+  revistes que modereu.
+oauth2.grant.moderate.magazine.ban.all: Gestionar els comptes bandejats a les revistes
+  que modereu.
 oauth2.grant.admin.post.purge: Suprimir completament qualsevol publicació de la vostra
   instància.
 oauth2.grant.admin.instance.settings.all: Veure o actualitzar la configuració de la
@@ -920,8 +919,8 @@ comment_reply_position_help: Mostrar el formulari de resposta de comentaris a la
   la posició sempre apareixerà a la part superior.
 delete_account_desc: Suprimir el compte, incloses les respostes d'altres usuaris(es)
   en fils, publicacions i comentaris creats.
-oauth2.grant.moderate.post.pin: Fixar les publicacions a la part superior de les vostres
-  revistes moderades.
+oauth2.grant.moderate.post.pin: Fixar les publicacions a la part superior de les revistes
+  que modereu.
 magazine_theme_appearance_custom_css: CSS personalitzat que s'aplicarà quan visualitzeu
   contingut a la vostra revista.
 two_factor_authentication: Autenticació de dos factors
@@ -1016,7 +1015,7 @@ flash_application_info: L'administració ha d'aprovar el vostre compte abans de 
   iniciar sessió. Rebreu un correu electrònic un cop s'hagi processat la vostra sol·licitud
   de registre.
 email_application_rejected_body: Gràcies pel vostre interès, però lamentem informar-vos
-  que la vostra sol·licitud d'inscripció ha estat rebutjada.
+  que la vostra sol·licitud de registre ha estat rebutjada.
 image_lightbox_in_list_help: Quan està marcat, en fer clic a la miniatura es mostra
   una finestra modal amb la imatge. Quan no estigui marcat, fer clic a la miniatura
   obrirà el fil.
