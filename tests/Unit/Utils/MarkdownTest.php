@@ -93,7 +93,7 @@ class MarkdownTest extends WebTestCase
         self::assertStringContainsString('https://kbin.test2', $markdown);
     }
 
-    public function testExternalMagazineLocalPostLink(): void
+    public function testExternalMagazineLocalEntryLink(): void
     {
         $m = new Magazine('test@kbin.test2', 'test', null, null, null, false, false, null);
         $m->apId = 'test@kbin.test2';
@@ -106,6 +106,21 @@ class MarkdownTest extends WebTestCase
         $text = "Look at my post at https://kbin.test/m/test@kbin.test2/t/{$entry->getId()}/some-slug";
         $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
         assertStringContainsString('entry-inline', $markdown);
+    }
+
+    public function testExternalMagazineLocalPostLink(): void
+    {
+        $m = new Magazine('test@kbin.test2', 'test', null, null, null, false, false, null);
+        $m->apId = 'test@kbin.test2';
+        $m->apInboxUrl = 'https://kbin.test2/inbox';
+        $m->apPublicUrl = 'https://kbin.test2/m/test';
+        $m->apProfileId = 'https://kbin.test2/m/test';
+        $this->entityManager->persist($m);
+        $post = $this->createPost('test', magazine: $m);
+        $this->entityManager->flush();
+        $text = "Look at my post at https://kbin.test/m/test@kbin.test2/p/{$post->getId()}/some-slug";
+        $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
+        assertStringContainsString('post-inline', $markdown);
     }
 
     public function testLocalNotMatchingUrl(): void
