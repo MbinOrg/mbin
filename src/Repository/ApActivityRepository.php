@@ -95,6 +95,7 @@ class ApActivityRepository extends ServiceEntityRepository
                         'type' => Post::class,
                     ];
                 } else {
+                    // since the id is just the intval of the last part in the url it will be 0 if that was not a number
                     if (0 === $id) {
                         return null;
                     }
@@ -119,6 +120,7 @@ class ApActivityRepository extends ServiceEntityRepository
                         'type' => Entry::class,
                     ];
                 } else {
+                    // since the id is just the intval of the last part in the url it will be 0 if that was not a number
                     if (0 === $id) {
                         return null;
                     }
