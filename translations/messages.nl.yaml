@@ -1005,3 +1005,8 @@ comment_default_sort: Standaard sortering op opmerkingen
 open_signup_request: Open inschrijvingsverzoek
 image_lightbox_in_list: Thread-miniaturen openen volledig scherm
 show_user_domains: Gebruikersdomeinen weergeven
+remove_user_avatar: Avatar verwijderen
+remove_user_cover: Cover verwijderen
+show_new_icons: Laat "nieuw" pictogrammen zien
+show_new_icons_help: Toon pictogram voor nieuw tijdschrift/gebruiker (30 dagen oud
+  of nieuwer)

@@ -1,4 +1,4 @@
-<div class="entry-comment-inline">
+<span class="entry-comment-inline">
     {{ component('user_inline', {user: comment.user, fullName: userFullName, showNewIcon: true}) }}:
     <a href="{{ path('entry_comment_view', {magazine_name: comment.magazine.name, entry_id: comment.entry.id, comment_id: comment.id, slug: comment.entry.slug|length ? comment.entry.slug : '-'}) }}">
         {% if comment.image is not same as null %}
@@ -27,4 +27,4 @@
         {{ 'in'|trans }}
         {{ component('magazine_inline', {magazine: comment.magazine, fullName: magazineFullName, showNewIcon: true}) }}
     {% endif %}
-</div>
+</span>

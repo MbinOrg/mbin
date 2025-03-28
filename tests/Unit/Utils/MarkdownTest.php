@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Utils;
 
+use App\Entity\Magazine;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
 use App\Tests\WebTestCase;
+
+use function PHPUnit\Framework\assertStringContainsString;
 
 class MarkdownTest extends WebTestCase
 {
@@ -88,5 +91,65 @@ class MarkdownTest extends WebTestCase
         $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
         // assert that this community does not exist, and we get a search link for it that does not link to the external instance
         self::assertStringContainsString('https://kbin.test2', $markdown);
+    }
+
+    public function testExternalMagazineLocalEntryLink(): void
+    {
+        $m = new Magazine('test@kbin.test2', 'test', null, null, null, false, false, null);
+        $m->apId = 'test@kbin.test2';
+        $m->apInboxUrl = 'https://kbin.test2/inbox';
+        $m->apPublicUrl = 'https://kbin.test2/m/test';
+        $m->apProfileId = 'https://kbin.test2/m/test';
+        $this->entityManager->persist($m);
+        $entry = $this->getEntryByTitle('test', magazine: $m);
+        $this->entityManager->flush();
+        $text = "Look at my post at https://kbin.test/m/test@kbin.test2/t/{$entry->getId()}/some-slug";
+        $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
+        assertStringContainsString('entry-inline', $markdown);
+    }
+
+    public function testExternalMagazineLocalPostLink(): void
+    {
+        $m = new Magazine('test@kbin.test2', 'test', null, null, null, false, false, null);
+        $m->apId = 'test@kbin.test2';
+        $m->apInboxUrl = 'https://kbin.test2/inbox';
+        $m->apPublicUrl = 'https://kbin.test2/m/test';
+        $m->apProfileId = 'https://kbin.test2/m/test';
+        $this->entityManager->persist($m);
+        $post = $this->createPost('test', magazine: $m);
+        $this->entityManager->flush();
+        $text = "Look at my post at https://kbin.test/m/test@kbin.test2/p/{$post->getId()}/some-slug";
+        $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
+        assertStringContainsString('post-inline', $markdown);
+    }
+
+    public function testLocalNotMatchingUrl(): void
+    {
+        $m = new Magazine('test@kbin.test2', 'test', null, null, null, false, false, null);
+        $m->apId = 'test@kbin.test2';
+        $m->apInboxUrl = 'https://kbin.test2/inbox';
+        $m->apPublicUrl = 'https://kbin.test2/m/test';
+        $m->apProfileId = 'https://kbin.test2/m/test';
+        $this->entityManager->persist($m);
+        $entry = $this->getEntryByTitle('test', magazine: $m);
+        $this->entityManager->flush();
+        $text = "Look at my post at https://kbin.test/m/test@kbin.test2/t/{$entry->getId()}/some-slug/votes";
+        $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
+        assertStringContainsString("https://kbin.test/m/test@kbin.test2/t/{$entry->getId()}/some-slug/votes", $markdown);
+    }
+
+    public function testBracketsInLinkTitle(): void
+    {
+        $m = new Magazine('test@kbin.test2', 'test', null, null, null, false, false, null);
+        $m->apId = 'test@kbin.test2';
+        $m->apInboxUrl = 'https://kbin.test2/inbox';
+        $m->apPublicUrl = 'https://kbin.test2/m/test';
+        $m->apProfileId = 'https://kbin.test2/m/test';
+        $this->entityManager->persist($m);
+        $entry = $this->getEntryByTitle('test', magazine: $m);
+        $this->entityManager->flush();
+        $text = "[Look at my post (or not, your choice)](https://kbin.test/m/test@kbin.test2/t/{$entry->getId()}/some-slug/favourites)";
+        $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
+        assertStringContainsString("https://kbin.test/m/test@kbin.test2/t/{$entry->getId()}/some-slug/favourites", $markdown);
     }
 }

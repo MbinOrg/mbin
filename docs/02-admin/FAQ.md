@@ -152,6 +152,8 @@ _Hint:_ Most messages that are stored in the database are most likely in the `fa
 
 You can find the Mbin logging in the `var/log/` directory from the root folder of the Mbin installation. When running production the file is called `prod-{YYYY-MM-DD}.log`, when running development the log file is called `dev-{YYYY-MM-DD}.log`.
 
+See also [troubleshooting (bare metal)](./05-troubleshooting/01-bare_metal.md).
+
 ## Should I run development mode?
 
 **NO!** Try to avoid running development mode when you are hosting our own _public_ instance. Running in development mode can cause sensitive data to be leaked, such as secret keys or passwords (eg. via development console). Development mode will log a lot of messages to disk (incl. stacktraces).
@@ -174,7 +176,7 @@ Followed by restarting the services that are depending on the (new) configuratio
 
 ```bash
 # Clear PHP Opcache by restarting the PHP FPM service
-sudo systemctl restart php8.2-fpm.service
+sudo systemctl restart php8.4-fpm.service
 
 # Restarting the PHP messenger jobs and Mercure service (also reread the latest configuration)
 sudo supervisorctl reread && sudo supervisorctl update && sudo supervisorctl restart all

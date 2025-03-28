@@ -94,7 +94,18 @@ class ApActivityRepository extends ServiceEntityRepository
                         'id' => $id,
                         'type' => Post::class,
                     ];
+                } elseif (5 === \count($exploded)) {
+                    // post url with slug (non-ap route)
+                    return [
+                        'id' => \intval($exploded[4]),
+                        'type' => Post::class,
+                    ];
                 } else {
+                    // since the id is just the intval of the last part in the url it will be 0 if that was not a number
+                    if (0 === $id) {
+                        return null;
+                    }
+
                     return [
                         'id' => $id,
                         'type' => PostComment::class,
@@ -108,7 +119,18 @@ class ApActivityRepository extends ServiceEntityRepository
                         'id' => $id,
                         'type' => Entry::class,
                     ];
+                } elseif (5 === \count($exploded)) {
+                    // entry url with slug (non-ap route)
+                    return [
+                        'id' => \intval($exploded[4]),
+                        'type' => Entry::class,
+                    ];
                 } else {
+                    // since the id is just the intval of the last part in the url it will be 0 if that was not a number
+                    if (0 === $id) {
+                        return null;
+                    }
+
                     return [
                         'id' => $id,
                         'type' => EntryComment::class,
