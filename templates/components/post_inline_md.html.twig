@@ -1,4 +1,4 @@
-<div class="post-inline">
+<span class="post-inline">
     {{ component('user_inline', {user: post.user, fullName: userFullName, showNewIcon: true}) }}:
     <a href="{{ path('post_single', {magazine_name: post.magazine.name, post_id: post.id, slug: post.slug|length ? post.slug : '-'}) }}">
         {% if post.image is not same as null %}
@@ -10,4 +10,4 @@
         {{ 'in'|trans }}
         {{ component('magazine_inline', {magazine: post.magazine, fullName: magazineFullName}) }}
     {% endif %}
-</div>
+</span>

@@ -2,6 +2,7 @@
 .entry-comment-inline,
 .post-inline,
 .post-comment-inline {
+  display: inline-block;
   font-weight: bold;
   border: var(--kbin-section-border);
   padding: .25em;
