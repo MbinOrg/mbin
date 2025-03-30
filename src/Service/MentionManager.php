@@ -83,6 +83,7 @@ class MentionManager
      *
      * @param val Body input string
      * @param type Type of mentions to extract (ALL, LOCAL only or REMOTE only)
+     *
      * @return string[]
      */
     public function extract(?string $body, $type = self::ALL): ?array
@@ -106,6 +107,7 @@ class MentionManager
      * Remote activitypub prefix, like @username@domain.tld.
      *
      * @param value Input string
+     *
      * @return string[]
      */
     private function byApPrefix(string $value): array
@@ -123,6 +125,7 @@ class MentionManager
      * Local username prefix, like @username.
      *
      * @param value Input string
+     *
      * @return string[]
      */
     private function byPrefix(string $value): array
