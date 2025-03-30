@@ -9,7 +9,7 @@ services:
     volumes:
       - ./docker/storage/caddy_config:/config
       - ./docker/storage/caddy_data:/data
-      - ./docker/storage/mbin/public:${MBIN_HOME}/public:ro  # Shared volume for php container to write into
+      - ./docker/storage/mbin/public:${MBIN_HOME}/public:ro # Shared volume for php container to write into
     environment:
       - SERVER_NAME=:80 # the address that the web server binds
       - PHP_FASTCGI_HOST=php:9000 # caddy forward traffic to this host via fastcgi
@@ -41,7 +41,7 @@ services:
     command: bin/console -vvvv messenger:consume --all --time-limit=3600
     deploy:
       mode: replicated
-      replicas: 1  # Increase this for better parallelism
+      replicas: 1 # Increase this for better parallelism
     healthcheck:
       test: ["CMD-SHELL", "ps aux | grep 'messenger[:]consume' || exit 1"]
     networks:
@@ -68,7 +68,7 @@ services:
       test: ["CMD", "redis-cli", "ping"]
 
   db:
-    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    image: postgres:${POSTGRES_VERSION:-17}-alpine
     container_name: mbin-db
     restart: unless-stopped
     networks:

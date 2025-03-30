@@ -9,7 +9,11 @@ services:
       - mbin_external_network
     command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
     healthcheck:
-      test: ["CMD-SHELL", "wget -O /dev/null http://localhost:2019/metrics || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget -O /dev/null http://localhost:2019/metrics || exit 1",
+        ]
     env_file:
       - .env
     depends_on:
@@ -75,7 +79,7 @@ services:
       test: ["CMD", "redis-cli", "ping"]
 
   db:
-    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    image: postgres:${POSTGRES_VERSION:-17}-alpine
     container_name: mbin-db
     restart: unless-stopped
     networks:
@@ -83,7 +87,7 @@ services:
     env_file:
       - .env
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U $POSTGRES_USER" ]
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -104,4 +108,3 @@ services:
 
 networks:
   mbin_external_network:
-
