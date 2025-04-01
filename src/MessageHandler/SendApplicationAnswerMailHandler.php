@@ -12,6 +12,7 @@ use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
@@ -28,8 +29,9 @@ class SendApplicationAnswerMailHandler extends MbinMessageHandler
         private readonly ParameterBagInterface $params,
         private readonly TranslatorInterface $translator,
         private readonly MailerInterface $mailer,
+        private readonly KernelInterface $kernel,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(UserApplicationAnswerMessage $message): void
