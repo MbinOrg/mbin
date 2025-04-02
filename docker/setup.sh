@@ -83,8 +83,11 @@ while IFS= read -r line; do
   echo "$line" >> .env
 done < .env.example_docker_$mode
 
-echo Copying compose.override.yml file...
-cp compose.$mode.yml compose.override.yml
+echo Creating compose.override.yml file...
+cat > compose.override.yml << EOF
+include:
+  - compose.$mode.yml
+EOF
 
 echo Setting up storage directories...
 mkdir -p docker/storage/media docker/storage/caddy_config docker/storage/caddy_data docker/storage/logs
