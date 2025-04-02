@@ -54,7 +54,7 @@ cd mbin
 For a test "production" instance, all you have to do is
 
 - [Copy example configuration](#copy-the-example-configuration)
-  - Replace `mbin.domain.tdl` with localhost in the `.env` file
+  - Replace `mbin.domain.tld` with localhost in the `.env` file
 - [Make compose override files](#make-override-files)
 - [Start the instance](#start-the-instance)
 

@@ -18,18 +18,6 @@ if [ "$1" == "php-fpm" ] || [ "$1" == "php" ] || [ "$1" == "bin/console" ]; then
       composer dump-env dev
     fi
 
-    if [ "$APP_ENV" == "prod" ] ; then
-      # Parts of mbin are served directly by the webserver without calling php-fpm (public/ folder)
-      # User uploads and other dynamically created content are inserted into public/ by this container
-      # The webserver needs access to those newly uploaded files
-      echo "Syncing mbin src"
-      rsync \
-        --links \
-        --recursive \
-        --chown $MBIN_USER:$MBIN_GROUP \
-        $MBIN_SRC/ $MBIN_HOME
-    fi
-
     echo "Waiting for db to be ready..."
     ATTEMPTS_LEFT_TO_REACH_DATABASE=60
     until [ $ATTEMPTS_LEFT_TO_REACH_DATABASE -eq 0 ] || DATABASE_ERROR=$(bin/console dbal:run-sql "SELECT 1" 2>&1); do
