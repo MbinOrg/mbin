@@ -27,9 +27,9 @@ class MagazineDto
     #[Assert\NotBlank]
     #[Assert\Length(min: 3, max: self::MAX_TITLE_LENGTH)]
     public ?string $title = null;
-    #[Assert\Length(min: 3, max: Magazine::MAX_DESCRIPTION_LENGTH)]
+    #[Assert\Length(min: 0, max: Magazine::MAX_DESCRIPTION_LENGTH)]
     public ?string $description = null;
-    #[Assert\Length(min: 3, max: Magazine::MAX_RULES_LENGTH)]
+    #[Assert\Length(min: 0, max: Magazine::MAX_RULES_LENGTH)]
     public ?string $rules = null;
     public ?string $visibility = null;
     public int $subscriptionsCount = 0;
@@ -41,6 +41,7 @@ class MagazineDto
     public bool $isPostingRestrictedToMods = false;
     public ?bool $isUserSubscribed = null;
     public ?bool $isBlockedByUser = null;
+    public ?int $localSubscribers = null;
     public ?array $tags = null;
     public ?Collection $badges = null;
     public ?Collection $moderators = null;

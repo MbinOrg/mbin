@@ -7,8 +7,8 @@ namespace App\Controller\Api\Magazine\Admin;
 use App\Controller\Api\Magazine\MagazineBaseApi;
 use App\Entity\Magazine;
 use App\Service\MagazineManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -66,7 +66,7 @@ class MagazineDeleteApi extends MagazineBaseApi
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
         MagazineManager $manager,
-        RateLimiterFactory $apiDeleteLimiter
+        RateLimiterFactory $apiDeleteLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiDeleteLimiter);
 

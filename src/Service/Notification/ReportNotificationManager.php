@@ -8,14 +8,17 @@ use App\Entity\Moderator;
 use App\Entity\Report;
 use App\Entity\ReportApprovedNotification;
 use App\Entity\ReportCreatedNotification;
+use App\Event\NotificationCreatedEvent;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ReportNotificationManager
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
+        private readonly EventDispatcherInterface $dispatcher,
     ) {
     }
 
@@ -46,6 +49,7 @@ class ReportNotificationManager
                 $map[$receiver->getId()] = true;
                 $n = new ReportCreatedNotification($receiver, $report);
                 $this->entityManager->persist($n);
+                $this->dispatcher->dispatch(new NotificationCreatedEvent($n));
             }
         }
 
@@ -62,6 +66,7 @@ class ReportNotificationManager
             $notification = new ReportApprovedNotification($report->reported, $report);
             $this->entityManager->persist($notification);
             $this->entityManager->flush();
+            $this->dispatcher->dispatch(new NotificationCreatedEvent($notification));
         }
     }
 }

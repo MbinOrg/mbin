@@ -10,6 +10,7 @@ use App\MessageHandler\MbinMessageHandler;
 use App\Repository\PostRepository;
 use App\Service\NotificationManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
@@ -18,10 +19,11 @@ class SentPostCreatedNotificationHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly PostRepository $repository,
-        private readonly NotificationManager $manager
+        private readonly NotificationManager $notificationManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(PostCreatedNotificationMessage $message): void
@@ -40,6 +42,6 @@ class SentPostCreatedNotificationHandler extends MbinMessageHandler
             throw new UnrecoverableMessageHandlingException('Post not found');
         }
 
-        $this->manager->sendCreated($post);
+        $this->notificationManager->sendCreated($post);
     }
 }

@@ -1,3 +1,5 @@
+@use 'breakpoints' as b;
+
 body {
   background: var(--kbin-bg);
   position: relative;
@@ -7,7 +9,7 @@ body {
   fill: red
 }
 
-.kbin-container {
+.mbin-container {
   margin: 0 auto;
   max-width: 1360px;
 
@@ -15,7 +17,7 @@ body {
     max-width: 100%;
   }
 
-  @include media-breakpoint-up(lg) {
+  @include b.media-breakpoint-up(lg) {
     &.width--auto {
       max-width: 85%;
     }
@@ -27,12 +29,12 @@ body {
   z-index: 5;
   position: relative;
 
-  .kbin-container {
+  .mbin-container {
     display: grid;
     grid-template-areas: 'main sidebar';
     grid-template-columns: 3fr 1fr;
 
-    @include media-breakpoint-up(lg) {
+    @include b.media-breakpoint-up(lg) {
       .subs-show & {
         grid-template-areas: 'subs main sidebar';
         grid-template-columns: minmax(305px, 1fr) 4fr minmax(305px, 1fr);
@@ -60,7 +62,7 @@ body {
       }
     }
 
-    @include media-breakpoint-down(lg) {
+    @include b.media-breakpoint-down(lg) {
       grid-template-areas: 'subs subs'
                           'main main'
                           'sidebar sidebar';
@@ -81,7 +83,7 @@ body {
     padding: 0 .5rem;
     position: relative;
 
-    @include media-breakpoint-down(md) {
+    @include b.media-breakpoint-down(md) {
       overflow-x: clip;
     }
   }
@@ -190,6 +192,11 @@ figure {
   margin: 0;
 }
 
+.options--top,
+.section--top {
+  margin-top: 0.5rem !important;
+}
+
 .rounded-edges {
   .section,
   .options,
@@ -214,7 +221,9 @@ figure {
   code,
   .ts-control > [data-value].item,
   .image-preview-container {
-    border-radius: var(--kbin-rounded-edges-radius) !important;
+    &:not(.ignore-edges) {
+      border-radius: var(--kbin-rounded-edges-radius) !important;
+    }
   }
 
   .ts-wrapper {
@@ -361,6 +370,12 @@ figure {
   gap: .25rem;
 }
 
+@include b.media-breakpoint-down(lg) {
+  .flex.mobile {
+    display: block;
+  }
+}
+
 .flex-wrap {
   flex-wrap: wrap;
 }
@@ -424,7 +439,7 @@ details {
     border-top: var(--mbin-details-separator-border);
   }
 
-  @include media-breakpoint-down(sm) {
+  @include b.media-breakpoint-down(sm) {
     summary,
     > .content {
       padding-left: .25rem;
@@ -474,7 +489,7 @@ details {
   height: 30px;
   border: var(--kbin-avatar-border);
 
-  @include media-breakpoint-up(sm) {
+  @include b.media-breakpoint-up(sm) {
     width: 40px;
     height: 40px;
   }

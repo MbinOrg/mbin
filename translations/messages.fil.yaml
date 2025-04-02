@@ -196,7 +196,7 @@ position_top: Itaas
 pending: Nakabinbin
 close: Isara
 direct_message: Direktang mensahe
-top: Pinakamahusay
+top: Nangunguna
 edited_post: Binago ang post
 edited_comment: Binago ang puna
 last_active: Huling Aktibo
@@ -244,3 +244,23 @@ open_report: nakabukas na ulat
 already_have_account: Mayroon ka na bang account?
 eng: ENG
 comment_not_found: Hindi nakita ang puna
+subscription_header: Mga naka-subscribe na mga magasin
+flash_user_settings_general_success: Matagumpay na nakaimbak ang mga setting ng tagagamit.
+subscribed: Naka-subscribe
+old_email: Kasalukuyang email
+restored_comment_by: binalik ang puna ni
+show_related_magazines: Ipakita ang mga pasadyang magasin
+hot: Patok
+reset_check_email_desc2: Kapag hindi ka nakatanggap ng "e-mail" mangyaring tingnan
+  ang folder ng spam.
+settings: Mga setting
+hide_adult: Itago ang nilalaman na NSFW
+notify_on_new_posts: Bagong mga post sa anumang magasin sa saan ako naka-subscribe
+writing: Pagsusulat
+firstname: Unang pangalan
+active_users: Mga aktibong tao
+boost: Palakasin
+all_time: Lahat ng oras
+random_magazines: Mga pasadyang magasin
+restore: Ibalik
+flash_user_settings_general_error: Nabigong iimbak ang mga setting ng tagagamit.

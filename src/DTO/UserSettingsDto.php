@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\DTO;
 
 use App\Entity\User;
+use App\PageView\EntryCommentPageView;
+use App\PageView\EntryPageView;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema()]
@@ -24,12 +26,17 @@ class UserSettingsDto implements \JsonSerializable
         public ?bool $addMentionsPosts = null,
         #[OA\Property(type: 'string', enum: User::HOMEPAGE_OPTIONS)]
         public ?string $homepage = null,
+        #[OA\Property(type: 'string', enum: EntryPageView::SORT_OPTIONS)]
+        public ?string $frontDefaultSort = null,
+        #[OA\Property(type: 'string', enum: EntryCommentPageView::SORT_OPTIONS)]
+        public ?string $commentDefaultSort = null,
         #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
         public ?array $featuredMagazines = null,
         #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
         public ?array $preferredLanguages = null,
         public ?string $customCss = null,
-        public ?bool $ignoreMagazinesCustomCss = null
+        public ?bool $ignoreMagazinesCustomCss = null,
+        public ?bool $notifyOnUserSignup = null,
     ) {
     }
 
@@ -48,10 +55,13 @@ class UserSettingsDto implements \JsonSerializable
             'addMentionsEntries' => $this->addMentionsEntries,
             'addMentionsPosts' => $this->addMentionsPosts,
             'homepage' => $this->homepage,
+            'frontDefaultSort' => $this->frontDefaultSort,
+            'commentDefaultSort' => $this->commentDefaultSort,
             'featuredMagazines' => $this->featuredMagazines,
             'preferredLanguages' => $this->preferredLanguages,
             'customCss' => $this->customCss,
             'ignoreMagazinesCustomCss' => $this->ignoreMagazinesCustomCss,
+            'notifyOnUserSignup' => $this->notifyOnUserSignup,
         ];
     }
 
@@ -69,6 +79,8 @@ class UserSettingsDto implements \JsonSerializable
         $dto->addMentionsEntries = $this->addMentionsEntries ?? $dto->addMentionsEntries;
         $dto->addMentionsPosts = $this->addMentionsPosts ?? $dto->addMentionsPosts;
         $dto->homepage = $this->homepage ?? $dto->homepage;
+        $dto->frontDefaultSort = $this->frontDefaultSort ?? $dto->frontDefaultSort;
+        $dto->commentDefaultSort = $this->commentDefaultSort ?? $dto->commentDefaultSort;
         $dto->featuredMagazines = $this->featuredMagazines ?? $dto->featuredMagazines;
         $dto->preferredLanguages = $this->preferredLanguages ?? $dto->preferredLanguages;
         $dto->customCss = $this->customCss ?? $dto->customCss;

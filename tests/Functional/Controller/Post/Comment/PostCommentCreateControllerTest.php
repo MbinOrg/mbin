@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Post\Comment;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class PostCommentCreateControllerTest extends WebTestCase
 {
@@ -16,14 +17,13 @@ class PostCommentCreateControllerTest extends WebTestCase
 
     public function testUserCanCreatePostComment(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $post = $this->createPost('test post 1');
 
-        $crawler = $client->request('GET', '/m/acme/p/'.$post->getId().'/test-post-1');
+        $crawler = $this->client->request('GET', '/m/acme/p/'.$post->getId().'/test-post-1/reply');
 
-        $client->submit(
+        $this->client->submit(
             $crawler->filter('form[name=post_comment]')->selectButton('Add comment')->form(
                 [
                     'post_comment[body]' => 'test comment 1',
@@ -32,29 +32,29 @@ class PostCommentCreateControllerTest extends WebTestCase
         );
 
         $this->assertResponseRedirects('/m/acme/p/'.$post->getId().'/test-post-1');
-        $client->followRedirect();
+        $this->client->followRedirect();
 
         $this->assertSelectorTextContains('#comments .content', 'test comment 1');
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCanCreatePostCommentWithImage(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $post = $this->createPost('test post 1');
 
-        $crawler = $client->request('GET', "/m/acme/p/{$post->getId()}/test-post-1");
+        $crawler = $this->client->request('GET', "/m/acme/p/{$post->getId()}/test-post-1/reply");
 
         $form = $crawler->filter('form[name=post_comment]')->selectButton('Add comment')->form();
         $form->get('post_comment[body]')->setValue('Test comment 1');
         $form->get('post_comment[image]')->upload($this->kibbyPath);
         // Needed since we require this global to be set when validating entries but the client doesn't actually set it
         $_FILES = $form->getPhpFiles();
-        $client->submit($form);
+        $this->client->submit($form);
 
         $this->assertResponseRedirects("/m/acme/p/{$post->getId()}/test-post-1");
-        $crawler = $client->followRedirect();
+        $crawler = $this->client->followRedirect();
 
         $this->assertSelectorTextContains('#comments .content', 'Test comment 1');
         $this->assertSelectorExists('#comments footer figure img');
@@ -63,16 +63,16 @@ class PostCommentCreateControllerTest extends WebTestCase
         $_FILES = [];
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCannotCreateInvalidPostComment(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $post = $this->createPost('test post 1');
 
-        $crawler = $client->request('GET', '/m/acme/p/'.$post->getId().'/test-post-1');
+        $crawler = $this->client->request('GET', '/m/acme/p/'.$post->getId().'/test-post-1/reply');
 
-        $crawler = $client->submit(
+        $crawler = $this->client->submit(
             $crawler->filter('form[name=post_comment]')->selectButton('Add comment')->form(
                 [
                     'post_comment[body]' => '',

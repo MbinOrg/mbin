@@ -15,13 +15,14 @@ use App\MessageHandler\MbinMessageHandler;
 use App\Repository\ApActivityRepository;
 use App\Repository\EntryRepository;
 use App\Repository\MagazineRepository;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPubManager;
 use App\Service\EntryManager;
 use App\Service\MagazineManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -30,8 +31,9 @@ class AddHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly ActivityPubManager $activityPubManager,
-        private readonly ApHttpClient $apHttpClient,
+        private readonly ApHttpClientInterface $apHttpClient,
         private readonly ApActivityRepository $apActivityRepository,
         private readonly MagazineRepository $magazineRepository,
         private readonly MagazineManager $magazineManager,
@@ -41,7 +43,7 @@ class AddHandler extends MbinMessageHandler
         private readonly EntryManager $entryManager,
         private readonly SettingsManager $settingsManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(AddMessage $message): void
@@ -89,7 +91,7 @@ class AddHandler extends MbinMessageHandler
 
             return;
         }
-        $this->logger->info('"{actor}" ({actorId}) added "{added}" ({addedId}) as moderator to "{magName}" ({magId})', [
+        $this->logger->info('[AddHandler::handleModeratorAdd] "{actor}" ({actorId}) added "{added}" ({addedId}) as moderator to "{magName}" ({magId})', [
             'actor' => $actor->username,
             'actorId' => $actor->getId(),
             'added' => $object->username,
@@ -106,6 +108,11 @@ class AddHandler extends MbinMessageHandler
             throw new \LogicException("the user '$actor->username' ({$actor->getId()}) is not a moderator of $targetMag->name ({$targetMag->getId()}) and is not from the same instance. They can therefore not add pinned entries");
         }
 
+        if ('random' === $targetMag->name) {
+            // do not pin anything in the random magazine
+            return;
+        }
+
         $apId = null;
         if (\is_string($object)) {
             $apId = $object;
@@ -119,8 +126,10 @@ class AddHandler extends MbinMessageHandler
             $pair = $this->apActivityRepository->findLocalByApId($apId);
             if (Entry::class === $pair['type']) {
                 $existingEntry = $this->entryRepository->findOneBy(['id' => $pair['id']]);
-                if ($existingEntry && !$existingEntry->sticky) {
-                    $this->logger->info('pinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
+                if ($existingEntry->magazine->getId() !== $targetMag->getId()) {
+                    $this->logger->warning('[AddHandler::handlePinnedAdd] entry {e} is not in the magazine that was targeted {m}. It was in {m2}', ['e' => $existingEntry->title, 'm' => $targetMag->name, 'm2' => $existingEntry->magazine->name]);
+                } elseif ($existingEntry && !$existingEntry->sticky) {
+                    $this->logger->info('[AddHandler::handlePinnedAdd] Pinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
                     $this->entryManager->pin($existingEntry, $actor);
                 }
             }
@@ -131,12 +140,18 @@ class AddHandler extends MbinMessageHandler
                     $this->apHttpClient->invalidateCollectionObjectCache($existingEntry->magazine->apFeaturedUrl);
                 }
                 if (!$existingEntry->sticky) {
-                    $this->logger->info('pinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
+                    $this->logger->info('[AddHandler::handlePinnedAdd] Pinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
                     $this->entryManager->pin($existingEntry, $actor);
                 }
             } else {
                 if (!\is_array($object)) {
-                    $object = $this->apHttpClient->getActivityObject($apId);
+                    if (!$this->settingsManager->isBannedInstance($apId)) {
+                        $object = $this->apHttpClient->getActivityObject($apId);
+
+                        return;
+                    } else {
+                        $this->logger->info('[AddHandler::handlePinnedAdd] The instance is banned, url: {url}', ['url' => $apId]);
+                    }
                 }
                 $this->bus->dispatch(new CreateMessage($object, true));
             }

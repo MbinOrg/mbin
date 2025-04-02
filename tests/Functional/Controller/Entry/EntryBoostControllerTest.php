@@ -10,8 +10,7 @@ class EntryBoostControllerTest extends WebTestCase
 {
     public function testLoggedUserCanBoostEntry(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $entry = $this->getEntryByTitle(
             'test entry 1',
@@ -21,17 +20,17 @@ class EntryBoostControllerTest extends WebTestCase
             $this->getUserByUsername('JaneDoe')
         );
 
-        $crawler = $client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
+        $crawler = $this->client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
 
-        $client->submit(
-            $crawler->filter('#main .entry')->selectButton('boost')->form([])
+        $this->client->submit(
+            $crawler->filter('#main .entry')->selectButton('Boost')->form([])
         );
 
-        $crawler = $client->followRedirect();
+        $crawler = $this->client->followRedirect();
 
-        $this->assertSelectorTextContains('#main .entry', 'boost (1)');
+        $this->assertSelectorTextContains('#main .entry', 'Boost (1)');
 
-        $client->click($crawler->filter('#activity')->selectLink('boosts (1)')->link());
+        $this->client->click($crawler->filter('#activity')->selectLink('Boosts (1)')->link());
 
         $this->assertSelectorTextContains('#main .users-columns', 'JohnDoe');
     }

@@ -10,7 +10,6 @@ use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\EntryManager;
 use Doctrine\Common\Collections\ArrayCollection;
-use DOMElement;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -31,7 +30,7 @@ class AwesomeBotEntries extends Command
         private readonly EntryManager $entryManager,
         private readonly UserRepository $userRepository,
         private readonly MagazineRepository $magazineRepository,
-        private readonly EntryRepository $entryRepository
+        private readonly EntryRepository $entryRepository,
     ) {
         parent::__construct();
     }
@@ -80,7 +79,7 @@ class AwesomeBotEntries extends Command
             if ('ul' === $elem->nodeName) {
                 foreach ($elem->childNodes as $li) {
                     /**
-                     * @var $li DOMElement
+                     * @var \DOMElement $li
                      */
                     if ('li' !== $li->nodeName) {
                         continue;

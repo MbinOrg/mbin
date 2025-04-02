@@ -2,7 +2,7 @@
 
 We split up the documentation for:
 
-- [Users](01-user/user_guide.md)
-- [Admins](02-admin/README.md)
-- [Developers](04-contributing/README.md)
-- and [3rd party developers](03-3rd_party_developer/oauth2_guide.md), meaning API documentation.
+- [End users](01-user/README.md) - End user guide
+- [Admins](02-admin/README.md) - How-to guides for admins
+- [Contributing](03-contributing/README.md) - How-to contribute to the Mbin project
+- [App developers](04-app_developers/README.md) - How-to use the Mbin API

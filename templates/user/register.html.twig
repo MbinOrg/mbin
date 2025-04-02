@@ -27,6 +27,11 @@
                 {{ form_row(form.username, {
                     label: 'username',
                 }) }}
+                {% if do_new_users_need_approval() %}
+                    {{ form_row(form.applicationText, {
+                        label: 'application_text',
+                    }) }}
+                {% endif %}
                 {{ form_row(form.email, {
                     label: 'email'
                 }) }}

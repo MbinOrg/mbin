@@ -13,6 +13,7 @@ use App\Repository\UserRepository;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -20,13 +21,14 @@ class RemoveHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly UserRepository $userRepository,
         private readonly MagazineRepository $magazineRepository,
         private readonly SettingsManager $settingsManager,
         private readonly AddRemoveFactory $factory,
         private readonly DeliverManager $deliverManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(RemoveMessage $message): void
@@ -46,6 +48,12 @@ class RemoveHandler extends MbinMessageHandler
         $actor = $this->userRepository->find($message->userActorId);
         $removed = $this->userRepository->find($message->removedUserId);
         $magazine = $this->magazineRepository->find($message->magazineId);
+
+        if ('random' === $magazine->name) {
+            // do not federate the random magazine
+            return;
+        }
+
         if ($magazine->apId) {
             $audience = [$magazine->apInboxUrl];
         } else {

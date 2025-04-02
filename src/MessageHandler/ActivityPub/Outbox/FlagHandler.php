@@ -15,6 +15,7 @@ use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -22,13 +23,14 @@ class FlagHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly SettingsManager $settingsManager,
         private readonly ReportRepository $reportRepository,
         private readonly FlagFactory $factory,
         private readonly LoggerInterface $logger,
         private readonly DeliverManager $deliverManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(FlagMessage $message): void
@@ -44,12 +46,12 @@ class FlagHandler extends MbinMessageHandler
         if (!($message instanceof FlagMessage)) {
             throw new \LogicException();
         }
-        $this->logger->debug('got a FlagMessage');
+        $this->logger->debug('[FlagHandler::doWork] Got a FlagMessage');
         $report = $this->reportRepository->find($message->reportId);
-        $this->logger->debug('found the report: '.json_encode($report));
+        $this->logger->debug('[FlagHandler::doWork] Found the report: '.json_encode($report));
         $inboxes = $this->getInboxUrls($report);
         if (0 === \sizeof($inboxes)) {
-            $this->logger->info("couldn't find any inboxes to send the FlagMessage to");
+            $this->logger->info("[FlagHandler::doWork] couldn't find any inboxes to send the FlagMessage to");
 
             return;
         }

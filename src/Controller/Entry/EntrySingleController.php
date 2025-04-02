@@ -19,6 +19,7 @@ use App\Service\MentionManager;
 use Pagerfanta\PagerfantaInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,7 +37,8 @@ class EntrySingleController extends AbstractController
         EntryCommentRepository $repository,
         EventDispatcherInterface $dispatcher,
         MentionManager $mentionManager,
-        Request $request
+        Request $request,
+        Security $security,
     ): Response {
         if ($entry->magazine !== $magazine) {
             return $this->redirectToRoute(
@@ -53,7 +55,7 @@ class EntrySingleController extends AbstractController
 
         $this->handlePrivateContent($entry);
 
-        $criteria = new EntryCommentPageView($this->getPageNb($request));
+        $criteria = new EntryCommentPageView($this->getPageNb($request), $security);
         $criteria->showSortOption($criteria->resolveSort($sortBy));
         $criteria->entry = $entry;
 
@@ -87,6 +89,7 @@ class EntrySingleController extends AbstractController
                 'magazine' => $magazine,
                 'comments' => $comments,
                 'entry' => $entry,
+                'criteria' => $criteria,
                 'form' => $this->createForm(EntryCommentType::class, $dto, [
                     'action' => $this->generateUrl(
                         'entry_comment_create',

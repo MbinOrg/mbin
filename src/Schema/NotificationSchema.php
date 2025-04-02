@@ -7,7 +7,7 @@ namespace App\Schema;
 use App\DTO\MagazineBanResponseDto;
 use App\Entity\Notification;
 use App\Repository\NotificationRepository;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema()]

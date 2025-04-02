@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Message\ActivityPub\Inbox\ActivityMessage;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -15,13 +15,13 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(
     name: 'mbin:ap:import',
-    description: 'This command allows you import AP resource.'
+    description: 'This command allows you to import an AP resource.'
 )]
 class ApImportObject extends Command
 {
     public function __construct(
         private readonly MessageBusInterface $bus,
-        private readonly ApHttpClient $client
+        private readonly ApHttpClientInterface $client,
     ) {
         parent::__construct();
     }

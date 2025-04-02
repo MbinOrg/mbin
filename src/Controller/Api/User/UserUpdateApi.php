@@ -10,8 +10,8 @@ use App\DTO\UserSettingsDto;
 use App\Factory\UserFactory;
 use App\Service\UserManager;
 use App\Service\UserSettingsManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -54,7 +54,7 @@ class UserUpdateApi extends UserBaseApi
         UserManager $manager,
         ValidatorInterface $validator,
         UserFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 

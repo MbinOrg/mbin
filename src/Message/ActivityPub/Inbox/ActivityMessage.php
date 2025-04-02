@@ -7,7 +7,7 @@ namespace App\Message\ActivityPub\Inbox;
 use App\Message\Contracts\ActivityPubInboxReceiveInterface;
 
 /**
- * @phpstan-type RequestData array{host: string, method: string, uri: string, client: string}
+ * @phpstan-type RequestData array{host: string, method: string, uri: string, client_ip: string}
  */
 class ActivityMessage implements ActivityPubInboxReceiveInterface
 {

@@ -1,6 +1,6 @@
 import { fetch, ok } from '../utils/http';
 import { Controller } from '@hotwired/stimulus';
-import getIntIdFromElement from '../utils/kbin';
+import getIntIdFromElement from '../utils/mbin';
 import router from '../utils/routing';
 
 /* stimulusFetch: 'lazy' */

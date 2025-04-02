@@ -12,6 +12,7 @@ use App\Service\ActivityPub\Wrapper\AnnounceWrapper;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -20,13 +21,14 @@ class GenericAnnounceHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly SettingsManager $settingsManager,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly MagazineRepository $magazineRepository,
         private readonly AnnounceWrapper $announceWrapper,
         private readonly DeliverManager $deliverManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(GenericAnnounceMessage $message): void
@@ -44,6 +46,11 @@ class GenericAnnounceHandler extends MbinMessageHandler
         }
         $magazine = $this->magazineRepository->find($message->announcingMagazineId);
         if (null !== $magazine->apId) {
+            return;
+        }
+
+        if ('random' === $magazine->name) {
+            // do not federate the random magazine
             return;
         }
         $magazineUrl = $this->urlGenerator->generate('ap_magazine', ['name' => $magazine->name], UrlGeneratorInterface::ABSOLUTE_URL);

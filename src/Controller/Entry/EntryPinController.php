@@ -27,7 +27,7 @@ class EntryPinController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'entry_id')]
         Entry $entry,
-        Request $request
+        Request $request,
     ): Response {
         $this->validateCsrf('entry_pin', $request->getPayload()->get('token'));
 

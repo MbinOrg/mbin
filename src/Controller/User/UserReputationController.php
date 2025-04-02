@@ -19,7 +19,7 @@ class UserReputationController extends AbstractController
 {
     public function __construct(
         private readonly ReputationRepository $repository,
-        private readonly ReputationManager $manager
+        private readonly ReputationManager $manager,
     ) {
     }
 

@@ -40,7 +40,7 @@
                 {% elseif i > 0 %}
                     ,
                 {% endif %}
-                {{ component('user_inline', {user: user}) }}
+                {{ component('user_inline', {user: user, showNewIcon: true}) }}
                 {% set i = i + 1 %}
             {% endfor %}
         </div>
@@ -48,7 +48,7 @@
         <div class="message-view">
             {% for message in thread.messages %}
                 <div id="message-{{ message.id }}" class="{{ html_classes('message section content section--small', message.sender is same as app.user ? 'message-self' : 'message-other') }}">
-                    <div class="meta">{{ component('user_inline', {user: message.sender}) }}</div>
+                    <div class="meta">{{ component('user_inline', {user: message.sender, showNewIcon: true}) }}</div>
                     {{ message.body|markdown|raw }}
                     <div class="text-right">
                         <small>

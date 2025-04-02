@@ -4,8 +4,12 @@
     {% set lightbox_alt_id = 'thumb-alt-%s-%s'|format(entry.id, image.id) %}
     {% set image_path = image.filePath ? asset(image.filePath)|imagine_filter('entry_thumb') : image.sourceUrl %}
 
+    {%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
+    {%- set LIST_LIGHTBOX = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_LIST_IMAGE_LIGHTBOX'), V_TRUE) -%}
 
-    {% if type is same as 'image' %}
+    {% if LIST_LIGHTBOX is same as V_TRUE %}
+        {% set route = uploaded_asset(image) %}
+    {% elseif type is same as 'image' %}
         {% set route = is_single ? uploaded_asset(image) : entry_url(entry) %}
     {% elseif type is same as 'link' %}
         {% set route = is_single ? entry.url : entry_url(entry) %}
@@ -31,8 +35,9 @@
                    aria-label="{{ 'sensitive_toggle'|trans }}">
         {% endif %}
         <a href="{{ route }}"
-           class="{{ html_classes('sensitive-checked--show', {'thumb': is_single_image}) }}"
+           class="{{ html_classes('sensitive-checked--show', {'thumb': is_single_image or LIST_LIGHTBOX is same as V_TRUE}) }}"
            rel="{{ (type is same as 'link') ? get_rel(route) : '' }}"
+           data-gallery="entry-{{ entry.id }}"
            data-description="{{ is_single_image and image.altText ? '.'~lightbox_alt_id : '' }}">
             <img class="thumb-subject"
                  loading="lazy"

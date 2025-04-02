@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\MessageHandler\Notification;
 
 use App\Entity\Contracts\VotableInterface;
-use App\Factory\MagazineFactory;
 use App\Message\Contracts\MessageInterface;
 use App\Message\Notification\VoteNotificationMessage;
 use App\MessageHandler\MbinMessageHandler;
@@ -14,6 +13,7 @@ use App\Service\SettingsManager;
 use App\Service\VotableRepositoryResolver;
 use App\Utils\IriGenerator;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -23,13 +23,13 @@ class SentVoteNotificationHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly MagazineFactory $magazineFactory,
+        private readonly KernelInterface $kernel,
         private readonly VotableRepositoryResolver $resolver,
         private readonly HubInterface $publisher,
         private readonly GenerateHtmlClassService $classService,
-        private readonly SettingsManager $settingsManager
+        private readonly SettingsManager $settingsManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(VoteNotificationMessage $message): void

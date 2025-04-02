@@ -33,7 +33,7 @@ class PostCommentController extends AbstractController
         Post $post,
         #[MapEntity(id: 'comment_id')]
         PostComment $comment,
-        Request $request
+        Request $request,
     ): Response {
         if ($comment->apId) {
             return $this->redirect($comment->apId);

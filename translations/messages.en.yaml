@@ -53,6 +53,8 @@ add_comment: Add comment
 add_post: Add post
 add_media: Add media
 remove_media: Remove media
+remove_user_avatar: Remove avatar
+remove_user_cover: Remove cover
 markdown_howto: How does the editor work?
 enter_your_comment: Enter your comment
 enter_your_post: Enter your post
@@ -214,6 +216,7 @@ notify_on_new_post_comment_reply: Replies to my comments on any posts
 notify_on_new_entry: New threads (links or articles) in any magazine to which I'm
   subscribed
 notify_on_new_posts: New posts in any magazine to which I'm subscribed
+notify_on_user_signup: New signups
 save: Save
 about: About
 old_email: Current email
@@ -402,6 +405,7 @@ captcha_enabled: Captcha enabled
 header_logo: Header logo
 browsing_one_thread: You are only browsing one thread in the discussion! All comments
   are available on the post page.
+viewing_one_signup_request: You are only viewing one signup request by %username%
 return: Return
 boost: Boost
 mercure_enabled: Mercure enabled
@@ -411,7 +415,7 @@ preferred_languages: Filter languages of threads and posts
 infinite_scroll_help: Automatically load more content when you reach the bottom of
   the page.
 sticky_navbar_help: The navbar will stick to the top of the page when you scroll down.
-auto_preview_help: Automatically expand media previews.
+auto_preview_help: Show the media (photo, video) previews in a larger size below the content.
 reload_to_apply: Reload page to apply changes
 filter.origin.label: Choose origin
 filter.fields.label: Choose which fields to search
@@ -437,6 +441,8 @@ your_account_is_not_active: Your account has not been activated. Please check yo
   email for account activation instructions or <a href="%link_target%">request a new
   account activation email.</a>
 your_account_has_been_banned: Your account has been banned
+your_account_is_not_yet_approved: Your account has not been approved yet. We will
+  send you an email as soon as the admins have processed your signup request.
 toolbar.bold: Bold
 toolbar.italic: Italic
 toolbar.strikethrough: Strikethrough
@@ -454,14 +460,15 @@ federation_page_allowed_description: Known instances we federate with
 federation_page_disallowed_description: Instances we do not federate with
 federation_page_dead_title: Dead instances
 federation_page_dead_description: Instances that we could not deliver at least 10
-  activities in a row and where the last successful deliver was more than a week ago
+  activities in a row and where the last successful deliver and -receive were more
+  than a week ago
 federated_search_only_loggedin: Federated search limited if not logged in
 sidebar_sections_local_only: Restrict "Random X" and "Active People" sections to local
   only
 account_deletion_title: Account deletion
 account_deletion_description: Your account will be deleted in 30 days unless you choose
-  to delete the account immediately. To restore your account within 30 days, login with
-  the same user credentials or contact an administrator.
+  to delete the account immediately. To restore your account within 30 days, login
+  with the same user credentials or contact an administrator.
 account_deletion_button: Delete Account
 account_deletion_immediate: Delete immediately
 more_from_domain: More from domain
@@ -579,6 +586,13 @@ oauth2.grant.post_comment.report: Report any comment on a post.
 oauth2.grant.user.all: Read and edit your profile, messages, or notifications; Read
   and edit permissions you've granted other apps; follow or block other users; view
   lists of users you follow or block.
+oauth2.grant.user.bookmark: Add and remove bookmarks
+oauth2.grant.user.bookmark.add: Add bookmarks
+oauth2.grant.user.bookmark.remove: Remove bookmarks
+oauth2.grant.user.bookmark_list: Read, edit and delete your bookmark lists
+oauth2.grant.user.bookmark_list.read: Read your bookmark lists
+oauth2.grant.user.bookmark_list.edit: Edit your bookmark lists
+oauth2.grant.user.bookmark_list.delete: Delete your bookmark lists
 oauth2.grant.user.profile.all: Read and edit your profile.
 oauth2.grant.user.profile.read: Read your profile.
 oauth2.grant.user.profile.edit: Edit your profile.
@@ -750,7 +764,8 @@ position_top: Top
 pending: Pending
 flash_thread_new_error: Thread could not be created. Something went wrong.
 flash_thread_tag_banned_error: Thread could not be created. The content is not allowed.
-flash_image_download_too_large_error: Image could not be created, it is too big (max size %bytes%)
+flash_image_download_too_large_error: Image could not be created, it is too big (max
+  size %bytes%)
 flash_email_was_sent: Email has been successfully sent.
 flash_email_failed_to_sent: Email could not be sent.
 flash_post_new_success: Post has been successfully created.
@@ -844,7 +859,7 @@ own_report_rejected: Your report was rejected
 own_report_accepted: Your report was accepted
 own_content_reported_accepted: A report of your content was accepted.
 report_accepted: A report was accepted
-open_report: open report
+open_report: Open report
 cake_day: Cake day
 someone: Someone
 back: Back
@@ -873,6 +888,10 @@ notification_title_message: New direct message
 notification_title_new_post: New Post
 notification_title_removed_post: A post was removed
 notification_title_edited_post: A post was edited
+notification_title_new_signup: A new user registered
+notification_body_new_signup: The user %u% registered.
+notification_body2_new_signup_approval: You need to approve the request before they
+  can log in
 show_related_magazines: Show random magazines
 show_related_entries: Show random threads
 show_related_posts: Show random posts
@@ -897,4 +916,59 @@ admin_users_banned: Banned
 user_verify: Activate account
 max_image_size: Maximum file size
 comment_not_found: Comment not found
+bookmark_add_to_list: Add bookmark to %list%
+bookmark_remove_from_list: Remove bookmark from %list%
+bookmark_remove_all: Remove all bookmarks
+bookmark_add_to_default_list: Add bookmark to default list
+bookmark_lists: Bookmark Lists
+bookmarks: Bookmarks
+bookmarks_list: Bookmarks in %list%
+count: Count
+is_default: Is Default
+bookmark_list_is_default: Is default list
+bookmark_list_make_default: Make Default
+bookmark_list_create: Create
+bookmark_list_create_placeholder: type name...
+bookmark_list_create_label: List name
+bookmarks_list_edit: Edit bookmark list
+bookmark_list_edit: Edit
+bookmark_list_selected_list: Selected list
 table_of_contents: Table of contents
+search_type_all: Threads + Microblogs
+search_type_entry: Threads
+search_type_post: Microblogs
+select_user: Choose a user
+new_users_need_approval: New users have to be approved by an admin before they can
+  log in.
+signup_requests: Signup requests
+application_text: Application text
+signup_requests_header: Signup Requests
+signup_requests_paragraph: These users would like to join your server. They cannot
+  log in until you've approved their signup request.
+flash_application_info: An admin needs to approve your account before you can log
+  in. You will receive an email once your signup request has been processed.
+email_application_approved_title: Your signup request has been approved
+email_application_approved_body: Your signup request was approved by the server admin.
+  You can now log into the server at <a href="%link%">%siteName%</a>.
+email_application_rejected_title: Your signup request has been rejected
+email_application_rejected_body: Thank you for your interest, but we regret to inform
+  you that your signup request has been declined.
+email_application_pending: Your account requires admin approval before you can log
+  in.
+email_verification_pending: You have to verify your email address before you can log
+  in.
+show_magazine_domains: Show magazine domains
+show_user_domains: Show user domains
+answered: answered
+by: by
+front_default_sort: Frontpage default sort
+comment_default_sort: Comment default sort
+open_signup_request: Open signup request
+image_lightbox_in_list: Thread thumbnails opens full screen
+compact_view_help: A compact view with less margins, where the media is moved to the right side.
+show_users_avatars_help: Display the user avatar image.
+show_magazines_icons_help: Display the magazine icon.
+show_thumbnails_help: Show the thumbnail images.
+image_lightbox_in_list_help: When checked, clicking the thumbnail shows a modal image box window. When unchecked, clicking the thumbnail will open the thread.
+show_new_icons: Show new icons
+show_new_icons_help: Show icon for new magazine/user (30 days old or newer)

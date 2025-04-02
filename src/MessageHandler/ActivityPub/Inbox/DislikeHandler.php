@@ -20,6 +20,7 @@ use App\Service\VoteManager;
 use App\Utils\DownvotesMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -28,13 +29,14 @@ class DislikeHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly ActivityPubManager $activityPubManager,
         private readonly MessageBusInterface $bus,
         private readonly VoteManager $voteManager,
         private readonly LoggerInterface $logger,
         private readonly SettingsManager $settingsManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(DislikeMessage $message): void
@@ -56,7 +58,7 @@ class DislikeHandler extends MbinMessageHandler
 
         $chainDispatchCallback = function (array $object, ?string $adjustedUrl) use ($message) {
             if ($adjustedUrl) {
-                $this->logger->info('got an adjusted url: {url}, using that instead of {old}', ['url' => $adjustedUrl, 'old' => $message->payload['object']['id'] ?? $message->payload['object']]);
+                $this->logger->info('[DislikeHandler::doWork] got an adjusted url: {url}, using that instead of {old}', ['url' => $adjustedUrl, 'old' => $message->payload['object']['id'] ?? $message->payload['object']]);
                 $message->payload['object'] = $adjustedUrl;
             }
             $this->bus->dispatch(new ChainActivityMessage([$object], dislike: $message->payload));

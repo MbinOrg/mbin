@@ -15,6 +15,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * @method ApActivity|null find($id, $lockMode = null, $lockVersion = null)
@@ -25,8 +26,11 @@ use JetBrains\PhpStorm\ArrayShape;
  */
 class ApActivityRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, private SettingsManager $settingsManager)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly SettingsManager $settingsManager,
+        private readonly UrlGeneratorInterface $urlGenerator,
+    ) {
         parent::__construct($registry, ApActivity::class);
     }
 
@@ -77,7 +81,7 @@ class ApActivityRepository extends ServiceEntityRepository
     public function findLocalByApId(string $apId): ?array
     {
         $parsed = parse_url($apId);
-        if ($parsed['host'] === $this->settingsManager->get('KBIN_DOMAIN')) {
+        if ($parsed['host'] === $this->settingsManager->get('KBIN_DOMAIN') && null !== $parsed['path'] && '' !== $parsed['path']) {
             $exploded = array_filter(explode('/', $parsed['path']));
             $id = \intval(end($exploded));
             if (\sizeof($exploded) < 3) {
@@ -90,7 +94,18 @@ class ApActivityRepository extends ServiceEntityRepository
                         'id' => $id,
                         'type' => Post::class,
                     ];
+                } elseif (5 === \count($exploded)) {
+                    // post url with slug (non-ap route)
+                    return [
+                        'id' => \intval($exploded[4]),
+                        'type' => Post::class,
+                    ];
                 } else {
+                    // since the id is just the intval of the last part in the url it will be 0 if that was not a number
+                    if (0 === $id) {
+                        return null;
+                    }
+
                     return [
                         'id' => $id,
                         'type' => PostComment::class,
@@ -104,7 +119,18 @@ class ApActivityRepository extends ServiceEntityRepository
                         'id' => $id,
                         'type' => Entry::class,
                     ];
+                } elseif (5 === \count($exploded)) {
+                    // entry url with slug (non-ap route)
+                    return [
+                        'id' => \intval($exploded[4]),
+                        'type' => Entry::class,
+                    ];
                 } else {
+                    // since the id is just the intval of the last part in the url it will be 0 if that was not a number
+                    if (0 === $id) {
+                        return null;
+                    }
+
                     return [
                         'id' => $id,
                         'type' => EntryComment::class,
@@ -120,6 +146,29 @@ class ApActivityRepository extends ServiceEntityRepository
                     ];
                 }
             }
+        }
+
+        return null;
+    }
+
+    public function getLocalUrlOfActivity(string $type, int $id): ?string
+    {
+        $repo = $this->_em->getRepository($type);
+        $entity = $repo->find($id);
+
+        return $this->getLocalUrlOfEntity($entity);
+    }
+
+    public function getLocalUrlOfEntity(Entry|EntryComment|Post|PostComment $entity): ?string
+    {
+        if ($entity instanceof Entry) {
+            return $this->urlGenerator->generate('entry_single', ['entry_id' => $entity->getId(), 'magazine_name' => $entity->magazine->name]);
+        } elseif ($entity instanceof EntryComment) {
+            return $this->urlGenerator->generate('entry_comment_view', ['comment_id' => $entity->getId(), 'entry_id' => $entity->entry->getId(), 'magazine_name' => $entity->magazine->name]);
+        } elseif ($entity instanceof Post) {
+            return $this->urlGenerator->generate('post_single', ['post_id' => $entity->getId(), 'magazine_name' => $entity->magazine->name]);
+        } elseif ($entity instanceof PostComment) {
+            return $this->urlGenerator->generate('post_single', ['post_id' => $entity->post->getId(), 'magazine_name' => $entity->magazine->name])."#post-comment-{$entity->getId()}";
         }
 
         return null;

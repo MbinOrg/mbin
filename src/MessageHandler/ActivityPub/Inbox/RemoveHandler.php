@@ -19,6 +19,7 @@ use App\Service\MagazineManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -26,6 +27,7 @@ class RemoveHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly ApActivityRepository $apActivityRepository,
         private readonly ActivityPubManager $activityPubManager,
         private readonly MagazineRepository $magazineRepository,
@@ -35,7 +37,7 @@ class RemoveHandler extends MbinMessageHandler
         private readonly EntryManager $entryManager,
         private readonly SettingsManager $settingsManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(RemoveMessage $message): void
@@ -91,7 +93,7 @@ class RemoveHandler extends MbinMessageHandler
             return;
         }
 
-        $this->logger->info(' "{actor}" ({actorId}) removed "{removed}" ({removedId}) as moderator from "{magName}" ({magId})', [
+        $this->logger->info('[RemoveHandler::handleModeratorRemove] "{actor}" ({actorId}) removed "{removed}" ({removedId}) as moderator from "{magName}" ({magId})', [
             'actor' => $actor->username,
             'actorId' => $actor->getId(),
             'removed' => $object->username,
@@ -121,14 +123,14 @@ class RemoveHandler extends MbinMessageHandler
             if (Entry::class === $pair['type']) {
                 $existingEntry = $this->entryRepository->findOneBy(['id' => $pair['id']]);
                 if ($existingEntry && $existingEntry->sticky) {
-                    $this->logger->info('unpinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
+                    $this->logger->info('[RemoveHandler::handlePinnedRemove] Unpinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
                     $this->entryManager->pin($existingEntry, $actor);
                 }
             }
         } else {
             $existingEntry = $this->entryRepository->findOneBy(['apId' => $apId]);
             if ($existingEntry && $existingEntry->sticky) {
-                $this->logger->info('unpinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
+                $this->logger->info('[RemoveHandler::handlePinnedRemove] Unpinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
                 $this->entryManager->pin($existingEntry, $actor);
             }
         }

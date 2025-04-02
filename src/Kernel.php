@@ -22,7 +22,7 @@ class Kernel extends BaseKernel
     {
         $projectDir = $this->getProjectDir();
         $routes->import($projectDir.'/config/{routes}/'.$this->environment.'/*.yaml');
-        $routes->import($projectDir.'/config/{kbin_routes}/*.yaml');
+        $routes->import($projectDir.'/config/{mbin_routes}/*.yaml');
         $routes->import($projectDir.'/config/{routes}/*.yaml');
 
         if (is_file($projectDir.'/config/routes.yaml')) {
@@ -35,7 +35,7 @@ class Kernel extends BaseKernel
     #[Override]
     protected function build(ContainerBuilder $container): void
     {
-        $container->addCompilerPass(new class() implements CompilerPassInterface {
+        $container->addCompilerPass(new class implements CompilerPassInterface {
             public function process(ContainerBuilder $container): void
             {
                 $container->getDefinition('doctrine.orm.default_configuration')

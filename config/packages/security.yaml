@@ -124,6 +124,11 @@ security:
         - { path: ^/token, roles: PUBLIC_ACCESS }
         - { path: ^/api/doc, roles: PUBLIC_ACCESS }
         - { path: ^/api/client, roles: PUBLIC_ACCESS }
+        - { path: ^/api/info, roles: PUBLIC_ACCESS }
+        - { path: ^/api/instance, roles: PUBLIC_ACCESS }
+        - { path: ^/api/federated, roles: PUBLIC_ACCESS }
+        - { path: ^/api/defederated, roles: PUBLIC_ACCESS }
+        - { path: ^/api/dead, roles: PUBLIC_ACCESS }
         - { path: ^/, roles: PUBLIC_ACCESS_UNLESS_PRIVATE_INSTANCE }
 
     role_hierarchy:
@@ -137,6 +142,9 @@ security:
                 'ROLE_OAUTH2_POST:EDIT',
                 'ROLE_OAUTH2_POST_COMMENT:CREATE',
                 'ROLE_OAUTH2_POST_COMMENT:EDIT',
+                'ROLE_OAUTH2_BOOKMARK:ADD',
+                'ROLE_OAUTH2_BOOKMARK:REMOVE',
+                'ROLE_OAUTH2_BOOKMARK_LIST:EDIT',
             ]
         ROLE_OAUTH2_DELETE:
             [
@@ -144,6 +152,7 @@ security:
                 'ROLE_OAUTH2_ENTRY_COMMENT:DELETE',
                 'ROLE_OAUTH2_POST:DELETE',
                 'ROLE_OAUTH2_POST_COMMENT:DELETE',
+                'ROLE_OAUTH2_BOOKMARK_LIST:DELETE',
             ]
         ROLE_OAUTH2_REPORT:
             [
@@ -164,6 +173,17 @@ security:
                 'ROLE_OAUTH2_DOMAIN:SUBSCRIBE',
                 'ROLE_OAUTH2_MAGAZINE:SUBSCRIBE',
                 'ROLE_OAUTH2_USER:FOLLOW',
+            ]
+        'ROLE_OAUTH2_BOOKMARK':
+            [
+              'ROLE_OAUTH2_BOOKMARK:ADD',
+              'ROLE_OAUTH2_BOOKMARK:REMOVE',
+            ]
+        'ROLE_OAUTH2_BOOKMARK_LIST':
+            [
+              'ROLE_OAUTH2_BOOKMARK_LIST:READ',
+              'ROLE_OAUTH2_BOOKMARK_LIST:EDIT',
+              'ROLE_OAUTH2_BOOKMARK_LIST:DELETE',
             ]
         ROLE_OAUTH2_BLOCK:
             [
@@ -224,6 +244,7 @@ security:
             [
                 'ROLE_OAUTH2_USER:NOTIFICATION:READ',
                 'ROLE_OAUTH2_USER:NOTIFICATION:DELETE',
+                'ROLE_OAUTH2_USER:NOTIFICATION:EDIT',
             ]
         'ROLE_OAUTH2_USER:OAUTH_CLIENTS':
             [

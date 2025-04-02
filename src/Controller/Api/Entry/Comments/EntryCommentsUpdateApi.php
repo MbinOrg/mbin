@@ -11,8 +11,8 @@ use App\DTO\EntryCommentResponseDto;
 use App\Entity\EntryComment;
 use App\Factory\EntryCommentFactory;
 use App\Service\EntryCommentManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -91,7 +91,7 @@ class EntryCommentsUpdateApi extends EntriesBaseApi
         EntryCommentManager $manager,
         EntryCommentFactory $factory,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 

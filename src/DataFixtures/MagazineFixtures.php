@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\DTO\MagazineDto;
+use App\Entity\User;
 use App\Repository\ImageRepository;
 use App\Service\ImageManager;
 use App\Service\MagazineManager;
@@ -21,7 +22,7 @@ class MagazineFixtures extends BaseFixture implements DependentFixtureInterface
         private readonly MagazineManager $magazineManager,
         private readonly ImageManager $imageManager,
         private readonly ImageRepository $imageRepository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -58,7 +59,10 @@ class MagazineFixtures extends BaseFixture implements DependentFixtureInterface
         $manager->flush();
     }
 
-    private function provideRandomMagazines($count = 1): iterable
+    /**
+     * @return array<string, mixed>[]
+     */
+    private function provideRandomMagazines(int $count = 1): iterable
     {
         $titles = [];
         for ($i = 0; $i <= $count; ++$i) {
@@ -73,7 +77,7 @@ class MagazineFixtures extends BaseFixture implements DependentFixtureInterface
             yield [
                 'name' => substr($this->camelCase($title), 0, 24),
                 'title' => $title,
-                'user' => $this->getReference('user_'.rand(1, UserFixtures::USERS_COUNT)),
+                'user' => $this->getReference('user_'.rand(1, UserFixtures::USERS_COUNT), User::class),
                 'description' => rand(0, 3) ? null : $this->faker->realText($this->faker->numberBetween(10, 550)),
                 'rules' => rand(0, 3) ? null : $this->faker->realText($this->faker->numberBetween(10, 550)),
                 'badges' => new ArrayCollection(),

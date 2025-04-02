@@ -1,3 +1,7 @@
+@use '../layout/breakpoints' as b;
+@use '../mixins/animations' as ani;
+@use '../mixins/mbin';
+
 :root {
   --kbin-entry-element-spacing: 10px;
 }
@@ -38,7 +42,7 @@
     margin-left: var(--kbin-entry-element-spacing);
   }
 
-  @include media-breakpoint-down(sm) {
+  @include b.media-breakpoint-down(sm) {
     grid-template-areas: "image image"
                          "vote title"
                          "shortDesc shortDesc"
@@ -100,7 +104,7 @@
     }
   }
 
-  @include media-breakpoint-up(sm) {
+  @include b.media-breakpoint-up(sm) {
     .view-compact & {
       grid-template-areas: "vote title image"
                        "vote meta image"
@@ -184,12 +188,12 @@
       line-height: 1rem;
     }
 
-    @include media-breakpoint-down(lg) {
+    @include b.media-breakpoint-down(lg) {
       width: 140px;
       height: calc(140px / 1.5); // 3:2 ratio
     }
 
-    @include media-breakpoint-down(sm) {
+    @include b.media-breakpoint-down(sm) {
       margin: 0;
       height: 110px;
       width: 100%;
@@ -239,7 +243,7 @@
       display: none;
     }
 
-    @include media-breakpoint-down(sm) {
+    @include b.media-breakpoint-down(sm) {
       display: none;
     }
   }
@@ -331,8 +335,8 @@
         text-decoration: underline;
       }
 
-      button, input[type='submit'], a {
-        @include kbin-btn-link;
+      button, input[type='submit'], a:not(.notification-setting) {
+        @include mbin.btn-link;
       }
     }
 
@@ -365,7 +369,7 @@
   &:focus-within {
     footer menu,
     .entry__meta {
-      @include fade-in(.5s, .75);
+      @include ani.fade-in(.5s, .75);
     }
   }
 
@@ -427,7 +431,7 @@
       border-bottom-right-radius: 0;
     }
 
-    @include media-breakpoint-down(sm) {
+    @include b.media-breakpoint-down(sm) {
       .rounded-edges .view-compact & figure {
         border-bottom-right-radius: var(--kbin-rounded-edges-radius);
       }
@@ -451,7 +455,7 @@
   margin: 0;
   padding: 0;
 
-  @include media-breakpoint-down(lg) {
+  @include b.media-breakpoint-down(lg) {
     display: block;
   }
 }
@@ -489,7 +493,7 @@
     margin-right: 0 !important;
   }
 
-  @include media-breakpoint-down(sm) {
+  @include b.media-breakpoint-down(sm) {
     .vote {
       margin-left: var(--kbin-entry-element-spacing) !important;
     }
@@ -502,7 +506,7 @@
   .meta {
     align-self: center;
 
-    @include media-breakpoint-down(lg) {
+    @include b.media-breakpoint-down(lg) {
       & div {
         white-space: nowrap;
         overflow: hidden;
@@ -511,7 +515,7 @@
       }
     }
 
-    @include media-breakpoint-up(lg) {
+    @include b.media-breakpoint-up(lg) {
       .entries-cross-2 & div, .entries-cross-3 & div {
         white-space: nowrap;
         overflow: hidden;

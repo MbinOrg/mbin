@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
+use App\Entity\Magazine;
+use App\Entity\User;
 use App\Service\MagazineManager;
 use App\Service\UserManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -13,7 +15,7 @@ class SubFixtures extends BaseFixture implements DependentFixtureInterface
 {
     public function __construct(
         private readonly MagazineManager $magazineManager,
-        private readonly UserManager $userManager
+        private readonly UserManager $userManager,
     ) {
     }
 
@@ -25,7 +27,7 @@ class SubFixtures extends BaseFixture implements DependentFixtureInterface
         }
     }
 
-    private function magazines(int $u)
+    private function magazines(int $u): void
     {
         $randomNb = $this->getUniqueNb(
             MagazineFixtures::MAGAZINES_COUNT,
@@ -37,19 +39,22 @@ class SubFixtures extends BaseFixture implements DependentFixtureInterface
 
             if (0 === $roll) {
                 $this->magazineManager->block(
-                    $this->getReference('magazine_'.$m),
-                    $this->getReference('user_'.$u)
+                    $this->getReference('magazine_'.$m, Magazine::class),
+                    $this->getReference('user_'.$u, User::class)
                 );
                 continue;
             }
 
             $this->magazineManager->subscribe(
-                $this->getReference('magazine_'.$m),
-                $this->getReference('user_'.$u)
+                $this->getReference('magazine_'.$m, Magazine::class),
+                $this->getReference('user_'.$u, User::class)
             );
         }
     }
 
+    /**
+     * @return int[]
+     */
     private function getUniqueNb(int $max, int $quantity): array
     {
         $numbers = range(1, $max);
@@ -58,7 +63,7 @@ class SubFixtures extends BaseFixture implements DependentFixtureInterface
         return \array_slice($numbers, 0, $quantity);
     }
 
-    private function users(int $u)
+    private function users(int $u): void
     {
         $randomNb = $this->getUniqueNb(
             UserFixtures::USERS_COUNT,
@@ -70,15 +75,15 @@ class SubFixtures extends BaseFixture implements DependentFixtureInterface
 
             if (0 === $roll) {
                 $this->userManager->block(
-                    $this->getReference('user_'.$f),
-                    $this->getReference('user_'.$u)
+                    $this->getReference('user_'.$f, User::class),
+                    $this->getReference('user_'.$u, User::class)
                 );
                 continue;
             }
 
             $this->userManager->follow(
-                $this->getReference('user_'.$f),
-                $this->getReference('user_'.$u)
+                $this->getReference('user_'.$f, User::class),
+                $this->getReference('user_'.$u, User::class)
             );
         }
     }

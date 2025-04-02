@@ -21,7 +21,7 @@ class MessageNotification extends Notification
 
     public function __construct(
         User $receiver,
-        Message $message
+        Message $message,
     ) {
         parent::__construct($receiver);
 
@@ -45,6 +45,6 @@ class MessageNotification extends Notification
         $avatarUrl = $this->message->sender->avatar ? '/media/cache/resolve/avatar_thumb'.$slash.$this->message->sender->avatar->filePath : null;
         $url = $urlGenerator->generate('messages_single', ['id' => $this->message->thread->getId()]);
 
-        return new PushNotification($message, $trans->trans('notification_title_message', locale: $locale), actionUrl: $url, avatarUrl: $avatarUrl, category: EPushNotificationType::Message);
+        return new PushNotification($this->getId(), $message, $trans->trans('notification_title_message', locale: $locale), actionUrl: $url, avatarUrl: $avatarUrl, category: EPushNotificationType::Message);
     }
 }

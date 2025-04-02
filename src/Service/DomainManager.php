@@ -19,13 +19,16 @@ class DomainManager
         private readonly DomainRepository $repository,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly EntityManagerInterface $entityManager,
-        private readonly SettingsManager $settingsManager
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 
-    public function extract(DomainInterface $subject): DomainInterface
+    public function extract(DomainInterface $subject): void
     {
-        $domainName = $subject->getUrl() ?? 'https://'.$this->settingsManager->get('KBIN_DOMAIN');
+        $domainName = $subject->getUrl();
+        if (!$domainName) {
+            return;
+        }
 
         $domainName = preg_replace('/^www\./i', '', parse_url($domainName)['host']);
 
@@ -41,8 +44,6 @@ class DomainManager
         $domain->updateCounts();
 
         $this->entityManager->flush();
-
-        return $subject;
     }
 
     public function subscribe(Domain $domain, User $user): void

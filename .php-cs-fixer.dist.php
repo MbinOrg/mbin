@@ -13,6 +13,7 @@ $finder = (new PhpCsFixer\Finder())
 ;
 
 return (new PhpCsFixer\Config())
+    ->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
     ->setRules([
         '@Symfony' => true,
 
@@ -20,6 +21,9 @@ return (new PhpCsFixer\Config())
         'declare_strict_types' => true,
         'strict_comparison' => true,
         'native_function_invocation' => true,
+        'phpdoc_to_comment' => [
+            'ignored_tags' => ['var']
+        ]
     ])
     ->setRiskyAllowed(true)
     ->setFinder($finder)

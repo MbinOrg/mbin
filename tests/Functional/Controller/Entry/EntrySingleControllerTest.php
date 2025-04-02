@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Entry;
 
 use App\Entity\Contracts\VotableInterface;
+use App\Enums\ESortOptions;
 use App\Service\FavouriteManager;
 use App\Service\VoteManager;
 use App\Tests\WebTestCase;
@@ -13,16 +14,15 @@ class EntrySingleControllerTest extends WebTestCase
 {
     public function testUserCanGoToEntryFromFrontpage(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $this->getEntryByTitle('test entry 1', 'https://kbin.pub');
 
-        $crawler = $client->request('GET', '/');
+        $crawler = $this->client->request('GET', '/');
 
         $this->assertSelectorTextContains('#header nav .active', 'Threads');
 
-        $client->click($crawler->selectLink('test entry 1')->link());
+        $this->client->click($crawler->selectLink('test entry 1')->link());
 
         $this->assertSelectorTextContains('.head-title', '/m/acme');
         $this->assertSelectorTextContains('#header nav .active', 'Threads');
@@ -35,12 +35,11 @@ class EntrySingleControllerTest extends WebTestCase
 
     public function testUserCanSeeArticle(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $entry = $this->getEntryByTitle('test entry 1', null, 'Test entry content');
 
-        $client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
+        $this->client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
 
         $this->assertSelectorTextContains('article h1', 'test entry 1');
         $this->assertSelectorNotExists('article h1 > a');
@@ -49,52 +48,93 @@ class EntrySingleControllerTest extends WebTestCase
 
     public function testUserCanSeeLink(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $entry = $this->getEntryByTitle('test entry 1', 'https://kbin.pub');
 
-        $client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
+        $this->client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
         $this->assertSelectorExists('article h1 a[href="https://kbin.pub"]', 'test entry 1');
     }
 
     public function testPostActivityCounter(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $entry = $this->getEntryByTitle('test entry 1', 'https://kbin.pub');
 
-        $manager = $client->getContainer()->get(VoteManager::class);
+        $manager = $this->client->getContainer()->get(VoteManager::class);
         $manager->vote(VotableInterface::VOTE_DOWN, $entry, $this->getUserByUsername('JaneDoe'));
 
-        $manager = $client->getContainer()->get(FavouriteManager::class);
+        $manager = $this->client->getContainer()->get(FavouriteManager::class);
         $manager->toggle($this->getUserByUsername('JohnDoe'), $entry);
         $manager->toggle($this->getUserByUsername('JaneDoe'), $entry);
 
-        $client->request('GET', "/m/acme/t/{$entry->getId()}/-/test-entry-1");
+        $this->client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
 
         $this->assertSelectorTextContains('.options-activity', 'Activity (2)');
     }
 
     public function testCanSortComments()
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $entry = $this->getEntryByTitle('test entry 1', 'https://kbin.pub');
         $this->createEntryComment('test comment 1', $entry);
         $this->createEntryComment('test comment 2', $entry);
 
-        $crawler = $client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
+        $crawler = $this->client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
         foreach ($this->getSortOptions() as $sortOption) {
-            $crawler = $client->click($crawler->filter('.options__main')->selectLink($sortOption)->link());
+            $crawler = $this->client->click($crawler->filter('.options__main')->selectLink($sortOption)->link());
             $this->assertSelectorTextContains('.options__main', $sortOption);
         }
     }
 
+    public function testCommentsDefaultSortOption(): void
+    {
+        $user = $this->getUserByUsername('user');
+        $entry = $this->getEntryByTitle('entry');
+        $older = $this->createEntryComment('older comment', entry: $entry);
+        $older->createdAt = new \DateTimeImmutable('now - 1 day');
+        $newer = $this->createEntryComment('newer comment', entry: $entry);
+
+        $user->commentDefaultSort = ESortOptions::Oldest->value;
+        $this->entityManager->flush();
+
+        $this->client->loginUser($user);
+        $crawler = $this->client->request('GET', "/m/{$entry->magazine->name}/t/{$entry->getId()}/-");
+        self::assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('.options__main .active', $this->translator->trans(ESortOptions::Oldest->value));
+
+        $iterator = $crawler->filter('#comments div')->children()->getIterator();
+        /** @var \DOMElement $firstNode */
+        $firstNode = $iterator->current();
+        $firstId = $firstNode->attributes->getNamedItem('id')->nodeValue;
+        self::assertEquals("entry-comment-{$older->getId()}", $firstId);
+        $iterator->next();
+        $secondNode = $iterator->current();
+        $secondId = $secondNode->attributes->getNamedItem('id')->nodeValue;
+        self::assertEquals("entry-comment-{$newer->getId()}", $secondId);
+
+        $user->commentDefaultSort = ESortOptions::Newest->value;
+        $this->entityManager->flush();
+
+        $crawler = $this->client->request('GET', "/m/{$entry->magazine->name}/t/{$entry->getId()}/-");
+        self::assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('.options__main .active', $this->translator->trans(ESortOptions::Newest->value));
+
+        $iterator = $crawler->filter('#comments div')->children()->getIterator();
+        /** @var \DOMElement $firstNode */
+        $firstNode = $iterator->current();
+        $firstId = $firstNode->attributes->getNamedItem('id')->nodeValue;
+        self::assertEquals("entry-comment-{$newer->getId()}", $firstId);
+        $iterator->next();
+        $secondNode = $iterator->current();
+        $secondId = $secondNode->attributes->getNamedItem('id')->nodeValue;
+        self::assertEquals("entry-comment-{$older->getId()}", $secondId);
+    }
+
     private function getSortOptions(): array
     {
-        return ['hot', 'newest', 'active', 'oldest'];
+        return ['Top', 'Hot', 'Newest', 'Active', 'Oldest'];
     }
 }

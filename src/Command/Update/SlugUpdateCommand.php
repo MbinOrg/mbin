@@ -21,7 +21,7 @@ class SlugUpdateCommand extends Command
 {
     public function __construct(
         private readonly Slugger $slugger,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }

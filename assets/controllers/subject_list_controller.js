@@ -1,5 +1,5 @@
 import { fetch, ok } from '../utils/http';
-import { getDepth, getLevel, getTypeFromNotification } from '../utils/kbin';
+import { getDepth, getLevel, getTypeFromNotification } from '../utils/mbin';
 import { Controller } from '@hotwired/stimulus';
 import router from '../utils/routing';
 

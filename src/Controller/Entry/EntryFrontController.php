@@ -16,6 +16,7 @@ use App\Repository\EntryRepository;
 use App\Repository\PostRepository;
 use Pagerfanta\PagerfantaInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +26,8 @@ class EntryFrontController extends AbstractController
 {
     public function __construct(
         private readonly EntryRepository $entryRepository,
-        private readonly PostRepository $postRepository
+        private readonly PostRepository $postRepository,
+        private readonly Security $security,
     ) {
     }
 
@@ -37,7 +39,7 @@ class EntryFrontController extends AbstractController
         string $federation,
         #[MapQueryParameter]
         ?string $type,
-        Request $request
+        Request $request,
     ): Response {
         $user = $this->getUser();
 
@@ -84,7 +86,7 @@ class EntryFrontController extends AbstractController
         string $federation,
         #[MapQueryParameter]
         ?string $type,
-        Request $request
+        Request $request,
     ): Response {
         $user = $this->getUser();
         $subscription = $this->subscriptionFor($user);
@@ -108,7 +110,7 @@ class EntryFrontController extends AbstractController
         string $federation,
         #[MapQueryParameter]
         ?string $type,
-        Request $request
+        Request $request,
     ): Response {
         $user = $this->getUser();
         $response = new Response();
@@ -163,7 +165,7 @@ class EntryFrontController extends AbstractController
         string $federation,
         #[MapQueryParameter]
         ?string $type,
-        Request $request
+        Request $request,
     ): Response {
         $user = $this->getUser(); // Fetch the user
         $subscription = $this->subscriptionFor($user); // Determine the subscription filter based on the user
@@ -182,9 +184,9 @@ class EntryFrontController extends AbstractController
     private function createCriteria(string $content, Request $request)
     {
         if ('threads' === $content) {
-            $criteria = new EntryPageView($this->getPageNb($request));
+            $criteria = new EntryPageView($this->getPageNb($request), $this->security);
         } elseif ('microblog' === $content) {
-            $criteria = new PostPageView($this->getPageNb($request));
+            $criteria = new PostPageView($this->getPageNb($request), $this->security);
         } else {
             throw new \LogicException('Invalid content '.$content);
         }

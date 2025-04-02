@@ -8,8 +8,8 @@ use App\Controller\Api\Magazine\MagazineBaseApi;
 use App\Controller\Traits\PrivateContentTrait;
 use App\DTO\MagazineRequestDto;
 use App\DTO\MagazineResponseDto;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
@@ -54,7 +54,7 @@ class MagazineCreateApi extends MagazineBaseApi
     #[Security(name: 'oauth2', scopes: ['moderate:magazine_admin:create'])]
     #[IsGranted('ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN:CREATE')]
     public function __invoke(
-        RateLimiterFactory $apiMagazineLimiter
+        RateLimiterFactory $apiMagazineLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiMagazineLimiter);
 

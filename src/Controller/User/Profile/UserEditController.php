@@ -6,9 +6,11 @@ namespace App\Controller\User\Profile;
 
 use App\Controller\AbstractController;
 use App\DTO\UserDto;
+use App\Exception\ImageDownloadTooLargeException;
 use App\Form\UserBasicType;
 use App\Form\UserEmailType;
 use App\Form\UserPasswordType;
+use App\Service\SettingsManager;
 use App\Service\UserManager;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
@@ -27,6 +29,7 @@ class UserEditController extends AbstractController
         private readonly UserPasswordHasherInterface $userPasswordHasher,
         private readonly TranslatorInterface $translator,
         private readonly Security $security,
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 
@@ -134,7 +137,7 @@ class UserEditController extends AbstractController
     private function handleForm(
         FormInterface $form,
         UserDto $dto,
-        Request $request
+        Request $request,
     ): FormInterface|Response|null {
         try {
             // Could thrown an error on event handlers (eg. onPostSubmit if a user upload an incorrect image)
@@ -176,6 +179,10 @@ class UserEditController extends AbstractController
             }
 
             return $form;
+        } catch (ImageDownloadTooLargeException $e) {
+            $this->addFlash('error', $this->translator->trans('flash_image_download_too_large_error', ['%bytes%' => $this->settingsManager->getMaxImageByteString()]));
+
+            return null;
         } catch (\Exception $e) {
             return null;
         }

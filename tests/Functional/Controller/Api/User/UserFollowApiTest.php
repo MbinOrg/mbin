@@ -5,49 +5,47 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\User;
 
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Group;
 
 class UserFollowApiTest extends WebTestCase
 {
     public function testApiCannotFollowUserWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout');
         $followedUser = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
 
-        $client->request('PUT', '/api/users/'.(string) $followedUser->getId().'/follow', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('PUT', '/api/users/'.(string) $followedUser->getId().'/follow', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotUnfollowUserWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout');
         $followedUser = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
 
-        $client->request('PUT', '/api/users/'.(string) $followedUser->getId().'/unfollow', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('PUT', '/api/users/'.(string) $followedUser->getId().'/unfollow', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseStatusCodeSame(403);
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testApiCanFollowUser(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout');
         $followedUser = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:follow user:block');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:follow user:block');
 
-        $client->request('PUT', '/api/users/'.(string) $followedUser->getId().'/follow', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('PUT', '/api/users/'.(string) $followedUser->getId().'/follow', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayHasKey('userId', $jsonData);
@@ -73,25 +71,24 @@ class UserFollowApiTest extends WebTestCase
 
     public function testApiCanUnfollowUser(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('UserWithoutAbout');
         $followedUser = $this->getUserByUsername('JohnDoe');
 
         $testUser->follow($followedUser);
 
-        $manager = $this->getService(EntityManagerInterface::class);
+        $manager = $this->entityManager;
 
         $manager->persist($testUser);
         $manager->flush();
 
-        $client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:follow user:block');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:follow user:block');
 
-        $client->request('PUT', '/api/users/'.(string) $followedUser->getId().'/unfollow', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        $this->client->request('PUT', '/api/users/'.(string) $followedUser->getId().'/unfollow', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
 
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayHasKey('userId', $jsonData);

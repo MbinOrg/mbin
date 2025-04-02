@@ -20,7 +20,7 @@ class ImageBlurhashUpdateCommand extends Command
 {
     public function __construct(
         private readonly ImageRepository $repository,
-        private readonly MessageBusInterface $bus
+        private readonly MessageBusInterface $bus,
     ) {
         parent::__construct();
     }

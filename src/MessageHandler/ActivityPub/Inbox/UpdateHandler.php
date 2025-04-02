@@ -39,6 +39,7 @@ use App\Service\PostCommentManager;
 use App\Service\PostManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -48,6 +49,7 @@ class UpdateHandler extends MbinMessageHandler
     public function __construct(
         private readonly ActivityPubManager $activityPubManager,
         private readonly ApActivityRepository $apActivityRepository,
+        private readonly KernelInterface $kernel,
         private readonly EntityManagerInterface $entityManager,
         private readonly EntryManager $entryManager,
         private readonly EntryCommentManager $entryCommentManager,
@@ -65,7 +67,7 @@ class UpdateHandler extends MbinMessageHandler
         private readonly MagazineFactory $magazineFactory,
         private readonly ImageFactory $imageFactory,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(UpdateMessage $message): void

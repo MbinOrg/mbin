@@ -62,12 +62,20 @@ class OAuth2ClientDto extends ImageUploadDto implements \JsonSerializable
         'user:profile',
         'user:profile:read',
         'user:profile:edit',
+        'bookmark',
+        'bookmark:add',
+        'bookmark:remove',
+        'bookmark_list',
+        'bookmark_list:read',
+        'bookmark_list:edit',
+        'bookmark_list:delete',
         'user:message',
         'user:message:read',
         'user:message:create',
         'user:notification',
         'user:notification:read',
         'user:notification:delete',
+        'user:notification:edit',
         'user:oauth_clients',
         'user:oauth_clients:read',
         'user:oauth_clients:edit',
@@ -181,7 +189,7 @@ class OAuth2ClientDto extends ImageUploadDto implements \JsonSerializable
     #[Assert\Callback]
     public function validate(
         ExecutionContextInterface $context,
-        $payload
+        $payload,
     ) {
         $validUris = array_filter($this->redirectUris, fn (string $uri) => filter_var($uri, FILTER_VALIDATE_URL) && !parse_url($uri, PHP_URL_QUERY));
         $invalidUris = array_diff($this->redirectUris, $validUris);

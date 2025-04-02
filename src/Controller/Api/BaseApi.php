@@ -6,6 +6,7 @@ namespace App\Controller\Api;
 
 use App\Controller\AbstractController;
 use App\DTO\MagazineDto;
+use App\DTO\MagazineResponseDto;
 use App\DTO\ReportDto;
 use App\DTO\ReportRequestDto;
 use App\DTO\UserDto;
@@ -22,6 +23,7 @@ use App\Entity\MagazineLog;
 use App\Entity\OAuth2ClientAccess;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Enums\ENotificationStatus;
 use App\Exception\SubjectHasBeenReportedException;
 use App\Factory\EntryCommentFactory;
 use App\Factory\EntryFactory;
@@ -30,21 +32,27 @@ use App\Factory\MagazineFactory;
 use App\Factory\PostCommentFactory;
 use App\Factory\PostFactory;
 use App\Form\Constraint\ImageConstraint;
+use App\Repository\BookmarkListRepository;
+use App\Repository\BookmarkRepository;
 use App\Repository\Criteria;
 use App\Repository\EntryCommentRepository;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
+use App\Repository\NotificationSettingsRepository;
 use App\Repository\OAuth2ClientAccessRepository;
 use App\Repository\PostCommentRepository;
 use App\Repository\PostRepository;
 use App\Repository\TagLinkRepository;
+use App\Repository\UserRepository;
 use App\Schema\PaginationSchema;
+use App\Service\BookmarkManager;
 use App\Service\IpResolver;
 use App\Service\ReportManager;
+use App\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
-use Pagerfanta\Pagerfanta;
+use Pagerfanta\PagerfantaInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
@@ -55,6 +63,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Constraints\Image as BaseImageConstraint;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class BaseApi extends AbstractController
@@ -65,6 +74,7 @@ class BaseApi extends AbstractController
     public const MIN_DEPTH = 0;
     public const MAX_DEPTH = 25;
 
+    /** @var BaseImageConstraint */
     private static $constraint;
 
     public function __construct(
@@ -85,9 +95,15 @@ class BaseApi extends AbstractController
         protected readonly EntryCommentRepository $entryCommentRepository,
         protected readonly PostRepository $postRepository,
         protected readonly PostCommentRepository $postCommentRepository,
+        protected readonly BookmarkListRepository $bookmarkListRepository,
+        protected readonly BookmarkRepository $bookmarkRepository,
+        protected readonly BookmarkManager $bookmarkManager,
+        protected readonly UserManager $userManager,
+        protected readonly UserRepository $userRepository,
         private readonly ImageRepository $imageRepository,
         private readonly ReportManager $reportManager,
         private readonly OAuth2ClientAccessRepository $clientAccessRepository,
+        protected readonly NotificationSettingsRepository $notificationSettingsRepository,
     ) {
     }
 
@@ -97,14 +113,14 @@ class BaseApi extends AbstractController
      * @param ?RateLimiterFactory $limiterFactory     A limiter factory to use when the user is authenticated
      * @param ?RateLimiterFactory $anonLimiterFactory A limiter factory to use when the user is anonymous
      *
-     * @return array An array of headers describing the current rate limit status to the client
+     * @return array<string, int> An array of headers describing the current rate limit status to the client
      *
      * @throws AccessDeniedHttpException    if the user is not authenticated and no anonymous rate limiter factory is provided, access to the resource will be denied
      * @throws TooManyRequestsHttpException If the limit is hit, rate limit the connection
      */
     protected function rateLimit(
         ?RateLimiterFactory $limiterFactory = null,
-        ?RateLimiterFactory $anonLimiterFactory = null
+        ?RateLimiterFactory $anonLimiterFactory = null,
     ): array {
         $this->logAccess();
         if (null === $limiterFactory && null === $anonLimiterFactory) {
@@ -143,7 +159,7 @@ class BaseApi extends AbstractController
      * This might be better to have as a cache entry, with an aggregate in the database
      * created periodically
      */
-    private function logAccess()
+    private function logAccess(): void
     {
         /** @var ?OAuth2Token $token */
         $token = $this->container->get('security.token_storage')->getToken();
@@ -189,7 +205,7 @@ class BaseApi extends AbstractController
             ->findOneBy(['identifier' => $oAuth2Token->getAttribute('access_token_id')]);
     }
 
-    public function serializePaginated(array $serializedItems, Pagerfanta $pagerfanta): array
+    public function serializePaginated(array $serializedItems, PagerfantaInterface $pagerfanta): array
     {
         return [
             'items' => $serializedItems,
@@ -254,7 +270,7 @@ class BaseApi extends AbstractController
      */
     protected function serializeLogItem(MagazineLog $log): array
     {
-        /** @var ContentVisibilityInterface $subject */
+        /** @var ?ContentVisibilityInterface $subject */
         $subject = $log->getSubject();
         $response = $this->magazineFactory->createLogDto($log);
         $response->setSubject(
@@ -287,11 +303,15 @@ class BaseApi extends AbstractController
      *
      * @param MagazineDto $dto The MagazineDto to serialize
      *
-     * @return array An associative array representation of the entry's safe fields, to be used as JSON
+     * @return MagazineResponseDto An associative array representation of the entry's safe fields, to be used as JSON
      */
-    protected function serializeMagazine(MagazineDto $dto)
+    protected function serializeMagazine(MagazineDto $dto): MagazineResponseDto
     {
         $response = $this->magazineFactory->createResponseDto($dto);
+
+        if ($user = $this->getUser()) {
+            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto)?->getStatus() ?? ENotificationStatus::Default;
+        }
 
         return $response;
     }
@@ -306,6 +326,10 @@ class BaseApi extends AbstractController
     protected function serializeUser(UserDto $dto): UserResponseDto
     {
         $response = new UserResponseDto($dto);
+
+        if ($user = $this->getUser()) {
+            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto)?->getStatus() ?? ENotificationStatus::Default;
+        }
 
         return $response;
     }

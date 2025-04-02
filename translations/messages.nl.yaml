@@ -383,7 +383,8 @@ infinite_scroll_help: Laad automatisch meer content zodra je de onderkant van de
   hebt bereikt.
 sticky_navbar_help: De navigatiebalk blijft bovenaan de pagina staan wanneer u naar
   beneden scrolt.
-auto_preview_help: Vouw mediavoorbeelden automatisch uit.
+auto_preview_help: Geef de mediavoorbeelden (foto's, video's) in een groter formaat
+  weer onder de inhoud.
 reload_to_apply: Laad de pagina opnieuw om wijzigingen toe te passen
 filter.origin.label: Kies herkomst
 filter.fields.label: Kies in welke velden u wilt zoeken
@@ -869,7 +870,7 @@ continue_with: Daargaan met
 magazine_log_entry_pinned: vastgezette gesprek
 magazine_log_entry_unpinned: verwijderde vastgezette gesprek
 own_content_reported_accepted: Een melding over uw inhoud was geaccepteerd.
-open_report: open melding
+open_report: Open melding
 report_accepted: Een melding was geaccepteerd
 show_related_entries: Toon willekeurige gesprekken
 show_related_magazines: Toon willekeurige tijdschriften
@@ -877,8 +878,8 @@ show_related_posts: Toon willekeurige berichten
 show_active_users: Toon actieve gebruikers
 federation_page_dead_title: Dode instanties
 federation_page_dead_description: Instanties waarin we niet minimaal 10 activiteiten
-  achter elkaar konden leveren en waarbij de laatste succesvolle levering meer dan
-  een week geleden was
+  achter elkaar konden leveren en waarbij de laatste succesvolle aflevering en ontvangst
+  meer dan een week geleden was
 reporting_user: Rapporterende gebruiker
 reported: gerapporteerd
 report_subject: Onderwerp
@@ -933,3 +934,79 @@ hidden: Verborgen
 enabled: Ingeschakeld
 toolbar.spoiler: Spoiler
 comment_not_found: Commentaar niet gevonden
+table_of_contents: Inhoudsopgave
+notification_body2_new_signup_approval: Je moet het verzoek goedkeuren voordat ze
+  kunnen inloggen
+bookmark_remove_from_list: Bladwijzer verwijderen uit %list%
+bookmark_remove_all: Verwijder alle bladwijzers
+bookmark_add_to_default_list: Bladwijzer toevoegen aan standaardlijst
+bookmark_lists: Bladwijzerlijst
+bookmarks_list: Bladwijzers in %list%
+count: Aantal
+is_default: Is Standaard
+bookmark_list_create: Aanmaken
+bookmark_list_create_placeholder: type naam...
+bookmark_list_create_label: Lijstnaam
+bookmarks_list_edit: Bladwijzerlijst bewerken
+bookmark_list_edit: Bewerken
+bookmark_list_selected_list: Geselecteerde lijst
+search_type_all: Discussies + Microblogs
+search_type_post: Microblogs
+select_user: Kies een gebruiker
+new_users_need_approval: Nieuwe gebruikers moeten door een beheerder worden goedgekeurd
+  voordat ze kunnen inloggen.
+signup_requests: Aanmeldingsverzoeken
+application_text: Sollicitatietekst
+signup_requests_header: Aanmeldingsverzoeken
+flash_application_info: Een beheerder moet uw account goedkeuren voordat u kunt inloggen.
+  U ontvangt een e-mail zodra uw registratieverzoek is verwerkt.
+email_application_approved_title: Uw registratieverzoek is goedgekeurd
+email_application_rejected_title: Uw registratieverzoek is afgewezen
+email_application_rejected_body: Hartelijk dank voor uw interesse, maar helaas moeten
+  wij u mededelen dat uw aanmeldingsverzoek is afgewezen.
+email_application_pending: Voordat u kunt inloggen, is goedkeuring van de beheerder
+  nodig.
+email_verification_pending: U moet uw e-mailadres verifiëren voordat u kunt inloggen.
+your_account_is_not_yet_approved: Uw account is nog niet goedgekeurd. We sturen u
+  een e-mail zodra de beheerders uw registratieverzoek hebben verwerkt.
+notification_title_new_signup: Een nieuwe gebruiker heeft zich geregistreerd
+bookmark_add_to_list: Bladwijzer toevoegen aan %list%
+notification_body_new_signup: De gebruiker %u% heeft zich geregistreerd.
+bookmarks: Bladwijzers
+bookmark_list_is_default: Is standaard lijst
+search_type_entry: Discussies
+signup_requests_paragraph: Deze gebruikers willen graag lid worden van uw server.
+  Ze kunnen niet inloggen totdat je hun registratieverzoeken hebt goedgekeurd.
+email_application_approved_body: Uw registratieverzoek is goedgekeurd door de server
+  admins. U kunt nu inloggen op de server op <a href="%link%">%siteName%</a>.
+notify_on_user_signup: Nieuwe aanmeldingen
+bookmark_list_make_default: Maak Standaard
+oauth2.grant.user.bookmark_list.delete: Verwijder jouw bladwijzerlijsten
+compact_view_help: Een compacte weergave met minder marges, waarbij de media naar
+  de rechterkant is verplaatst.
+show_thumbnails_help: Toon de miniatuurafbeeldingen.
+show_magazines_icons_help: Geef het tijdschrifticoon weer.
+image_lightbox_in_list_help: Als het is aangevinkt, wordt door te klikken op de miniatuur
+  een dialoogvenster met een afbeeldingsvak weergegeven. Als het niet is aangevinkt,
+  wordt door te klikken op de miniatuur de thread geopend.
+viewing_one_signup_request: Je bekijkt slechts één registratieverzoek van %username%
+front_default_sort: Standaard sortering op voorpagina
+by: op
+show_users_avatars_help: Geef de avatarafbeelding van de gebruiker weer.
+oauth2.grant.user.bookmark: Bladwijzers toevoegen en verwijderen
+oauth2.grant.user.bookmark.add: Bladwijzers toevoegen
+oauth2.grant.user.bookmark.remove: Bladwijzers verwijderen
+oauth2.grant.user.bookmark_list: Lees, bewerk en verwijder jouw bladwijzerlijsten
+oauth2.grant.user.bookmark_list.read: Lees jouw bladwijzerlijsten
+oauth2.grant.user.bookmark_list.edit: Bewerk jouw bladwijzerlijsten
+show_magazine_domains: Toon domeinen tijdschrift
+answered: beantwoord
+comment_default_sort: Standaard sortering op opmerkingen
+open_signup_request: Open inschrijvingsverzoek
+image_lightbox_in_list: Thread-miniaturen openen volledig scherm
+show_user_domains: Gebruikersdomeinen weergeven
+remove_user_avatar: Avatar verwijderen
+remove_user_cover: Cover verwijderen
+show_new_icons: Laat "nieuw" pictogrammen zien
+show_new_icons_help: Toon pictogram voor nieuw tijdschrift/gebruiker (30 dagen oud
+  of nieuwer)

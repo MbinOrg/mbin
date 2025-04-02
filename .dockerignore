@@ -29,6 +29,7 @@ tools/
 var/
 vendor/
 .idea/
+.vs/
 .editorconfig
 .env.*.local
 .env.local

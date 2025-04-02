@@ -4,24 +4,20 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Entry;
 
-use App\Service\EntryManager;
-use App\Service\VoteManager;
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class MagazineEntryRetrieveApiTest extends WebTestCase
 {
     public function testApiCanGetMagazineEntriesAnonymous(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $this->createEntryComment('up the ranking', $entry);
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
 
-        $client->request('GET', "/api/magazine/{$magazine->getId()}/entries");
+        $this->client->request('GET', "/api/magazine/{$magazine->getId()}/entries");
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -44,21 +40,20 @@ class MagazineEntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetMagazineEntries(): void
     {
-        $client = self::createClient();
         $entry = $this->getEntryByTitle('an entry', body: 'test');
         $this->createEntryComment('up the ranking', $entry);
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/magazine/{$magazine->getId()}/entries", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/magazine/{$magazine->getId()}/entries", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -81,9 +76,8 @@ class MagazineEntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetMagazineEntriesPinnedFirst(): void
     {
-        $client = self::createClient();
-        $voteManager = $this->getService(VoteManager::class);
-        $entryManager = $this->getService(EntryManager::class);
+        $voteManager = $this->voteManager;
+        $entryManager = $this->entryManager;
         $voter = $this->getUserByUsername('voter');
         $first = $this->getEntryByTitle('an entry', body: 'test');
         $this->createEntryComment('up the ranking', $first);
@@ -96,14 +90,14 @@ class MagazineEntryRetrieveApiTest extends WebTestCase
         $entryManager->pin($third, null);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/magazine/{$magazine->getId()}/entries", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/magazine/{$magazine->getId()}/entries", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -139,7 +133,6 @@ class MagazineEntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetMagazineEntriesNewest(): void
     {
-        $client = self::createClient();
         $first = $this->getEntryByTitle('first', body: 'test');
         $second = $this->getEntryByTitle('second', url: 'https://google.com');
         $third = $this->getEntryByTitle('third', url: 'https://google.com');
@@ -149,21 +142,21 @@ class MagazineEntryRetrieveApiTest extends WebTestCase
         $second->createdAt = new \DateTimeImmutable('-1 second');
         $third->createdAt = new \DateTimeImmutable();
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($first);
         $entityManager->persist($second);
         $entityManager->persist($third);
         $entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/magazine/{$magazine->getId()}/entries?sort=newest", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/magazine/{$magazine->getId()}/entries?sort=newest", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -189,7 +182,6 @@ class MagazineEntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetMagazineEntriesOldest(): void
     {
-        $client = self::createClient();
         $first = $this->getEntryByTitle('first', body: 'test');
         $second = $this->getEntryByTitle('second', url: 'https://google.com');
         $third = $this->getEntryByTitle('third', url: 'https://google.com');
@@ -199,21 +191,21 @@ class MagazineEntryRetrieveApiTest extends WebTestCase
         $second->createdAt = new \DateTimeImmutable('-1 second');
         $third->createdAt = new \DateTimeImmutable();
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($first);
         $entityManager->persist($second);
         $entityManager->persist($third);
         $entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/magazine/{$magazine->getId()}/entries?sort=oldest", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/magazine/{$magazine->getId()}/entries?sort=oldest", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -239,7 +231,6 @@ class MagazineEntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetMagazineEntriesCommented(): void
     {
-        $client = self::createClient();
         $first = $this->getEntryByTitle('first', body: 'test');
         $this->createEntryComment('comment 1', $first);
         $this->createEntryComment('comment 2', $first);
@@ -249,14 +240,14 @@ class MagazineEntryRetrieveApiTest extends WebTestCase
         $magazine = $first->magazine;
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/magazine/{$magazine->getId()}/entries?sort=commented", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/magazine/{$magazine->getId()}/entries?sort=commented", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -285,7 +276,6 @@ class MagazineEntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetMagazineEntriesActive(): void
     {
-        $client = self::createClient();
         $first = $this->getEntryByTitle('first', body: 'test');
         $second = $this->getEntryByTitle('second', url: 'https://google.com');
         $third = $this->getEntryByTitle('third', url: 'https://google.com');
@@ -295,21 +285,21 @@ class MagazineEntryRetrieveApiTest extends WebTestCase
         $second->lastActive = new \DateTime('-1 second');
         $third->lastActive = new \DateTime();
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($first);
         $entityManager->persist($second);
         $entityManager->persist($third);
         $entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/magazine/{$magazine->getId()}/entries?sort=active", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/magazine/{$magazine->getId()}/entries?sort=active", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -335,26 +325,25 @@ class MagazineEntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetMagazineEntriesTop(): void
     {
-        $client = self::createClient();
         $first = $this->getEntryByTitle('first', body: 'test');
         $second = $this->getEntryByTitle('second', url: 'https://google.com');
         $third = $this->getEntryByTitle('third', url: 'https://google.com');
         $magazine = $first->magazine;
 
-        $voteManager = $this->getService(VoteManager::class);
+        $voteManager = $this->voteManager;
         $voteManager->vote(1, $first, $this->getUserByUsername('voter1'), rateLimit: false);
         $voteManager->vote(1, $first, $this->getUserByUsername('voter2'), rateLimit: false);
         $voteManager->vote(1, $second, $this->getUserByUsername('voter1'), rateLimit: false);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/magazine/{$magazine->getId()}/entries?sort=top", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/magazine/{$magazine->getId()}/entries?sort=top", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -383,21 +372,20 @@ class MagazineEntryRetrieveApiTest extends WebTestCase
 
     public function testApiCanGetMagazineEntriesWithUserVoteStatus(): void
     {
-        $client = self::createClient();
         $first = $this->getEntryByTitle('an entry', body: 'test');
         $this->createEntryComment('up the ranking', $first);
         $magazine = $this->getMagazineByNameNoRSAKey('somemag');
         $entry = $this->getEntryByTitle('another entry', url: 'https://google.com', magazine: $magazine);
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read vote');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read vote');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', "/api/magazine/{$magazine->getId()}/entries", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', "/api/magazine/{$magazine->getId()}/entries", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
@@ -421,9 +409,11 @@ class MagazineEntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['items'][0]['domain']);
         self::assertEquals('https://google.com', $jsonData['items'][0]['url']);
         self::assertNull($jsonData['items'][0]['body']);
-        self::assertNull($jsonData['items'][0]['image']);
+        if (null !== $jsonData['items'][0]['image']) {
+            self::assertStringContainsString('google.com', parse_url($jsonData['items'][0]['image']['sourceUrl'], PHP_URL_HOST));
+        }
         self::assertEquals('en', $jsonData['items'][0]['lang']);
-        self::assertNull($jsonData['items'][0]['tags']);
+        self::assertEmpty($jsonData['items'][0]['tags']);
         self::assertSame(0, $jsonData['items'][0]['numComments']);
         self::assertSame(0, $jsonData['items'][0]['uv']);
         self::assertSame(0, $jsonData['items'][0]['dv']);

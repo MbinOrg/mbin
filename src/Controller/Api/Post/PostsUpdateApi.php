@@ -9,8 +9,8 @@ use App\DTO\PostResponseDto;
 use App\Entity\Post;
 use App\Factory\PostFactory;
 use App\Service\PostManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -81,7 +81,7 @@ class PostsUpdateApi extends PostsBaseApi
         PostManager $manager,
         ValidatorInterface $validator,
         PostFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 

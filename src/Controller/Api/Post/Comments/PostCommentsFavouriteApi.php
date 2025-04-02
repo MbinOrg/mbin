@@ -9,8 +9,8 @@ use App\DTO\PostCommentResponseDto;
 use App\Entity\PostComment;
 use App\Factory\PostCommentFactory;
 use App\Service\FavouriteManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -71,7 +71,7 @@ class PostCommentsFavouriteApi extends PostsBaseApi
         PostComment $comment,
         FavouriteManager $manager,
         PostCommentFactory $factory,
-        RateLimiterFactory $apiVoteLimiter
+        RateLimiterFactory $apiVoteLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiVoteLimiter);
 

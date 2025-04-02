@@ -41,7 +41,7 @@ enum ApRequestType
     case NodeInfo;
 }
 
-class ApHttpClient
+class ApHttpClient implements ApHttpClientInterface
 {
     public const TIMEOUT = 8;
     public const MAX_DURATION = 15;
@@ -56,10 +56,17 @@ class ApHttpClient
         private readonly UserRepository $userRepository,
         private readonly MagazineRepository $magazineRepository,
         private readonly SiteRepository $siteRepository,
-        private readonly ProjectInfoService $projectInfo
+        private readonly ProjectInfoService $projectInfo,
     ) {
     }
 
+    /**
+     * Retrieve a remote activity object from an URL. And cache the result.
+     *
+     * @param bool $decoded (optional)
+     *
+     * @return array|string|null JSON Response body (as PHP Object)
+     */
     public function getActivityObject(string $url, bool $decoded = true): array|string|null
     {
         $key = $this->getActivityObjectCacheKey($url);
@@ -86,9 +93,16 @@ class ApHttpClient
         return $decoded ? json_decode($resp, true) : $resp;
     }
 
+    /**
+     * Do a GET request for an ActivityPub object and return the response content.
+     *
+     * @return string|null returns the response content or null if the request failed
+     *
+     * @throws InvalidApPostException
+     */
     private function getActivityObjectImpl(string $url): ?string
     {
-        $this->logger->debug("ApHttpClient:getActivityObject:url: $url");
+        $this->logger->debug("[ApHttpClient::getActivityObjectImpl] URL: $url");
         $content = null;
         try {
             $client = new CurlHttpClient();
@@ -102,12 +116,12 @@ class ApHttpClient
             // Accepted status code are 2xx or 410 (used Tombstone types)
             if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
                 // Do NOT include the response content in the error message, this will be often a full HTML page
-                throw new InvalidApPostException("Invalid status code while getting: $url, status code: $statusCode");
+                throw new InvalidApPostException('Invalid status code while getting', $url, $statusCode);
             }
 
             // Read also non-OK responses (like 410) by passing 'false'
             $content = $response->getContent(false);
-            $this->logger->debug('ApHttpClient:getActivityObject:url: {url} - content: {content}', ['url' => $url, 'content' => $content]);
+            $this->logger->debug('[ApHttpClient::getActivityObjectImpl] URL: {url} - content: {content}', ['url' => $url, 'content' => $content]);
         } catch (\Exception $e) {
             $this->logRequestException($response, $url, 'ApHttpClient:getActivityObject', $e);
         }
@@ -142,7 +156,7 @@ class ApHttpClient
      *
      * @param string $url the URL of the user/magazine to get the webfinger object for
      *
-     * @return array|null the webfinger object
+     * @return array|null The webfinger object (as PHP Object)
      *
      * @throws InvalidWebfingerException|InvalidArgumentException
      */
@@ -170,7 +184,7 @@ class ApHttpClient
 
     private function getWebfingerObjectImpl(string $url): ?string
     {
-        $this->logger->debug("ApHttpClient:getWebfingerObject:url: $url");
+        $this->logger->debug("[ApHttpClient::getWebfingerObjectImpl] URL: $url");
         $response = null;
         try {
             $client = new CurlHttpClient();
@@ -191,10 +205,15 @@ class ApHttpClient
         return 'ap_'.hash('sha256', $apProfileId);
     }
 
+    private function getCollectionCacheKey(string $apAddress): string
+    {
+        return 'ap_collection'.hash('sha256', $apAddress);
+    }
+
     /**
      * Retrieve AP actor object (could be a user or magazine).
      *
-     * @return array|null key/value array of actor response body
+     * @return array|null key/value array of actor response body (as PHP Object)
      *
      * @throws InvalidApPostException|InvalidArgumentException
      */
@@ -222,7 +241,7 @@ class ApHttpClient
 
     private function getActorObjectImpl(string $apProfileId): ?string
     {
-        $this->logger->debug("ApHttpClient:getActorObject:url: $apProfileId");
+        $this->logger->debug("[ApHttpClient::getActorObjectImpl] URL: $apProfileId");
         $response = null;
         try {
             // Set-up request
@@ -266,22 +285,37 @@ class ApHttpClient
         return $response->getContent(false);
     }
 
+    /**
+     * Remove actor object from cache.
+     *
+     * @param string $apProfileId AP profile ID to remove from cache
+     */
     public function invalidateActorObjectCache(string $apProfileId): void
     {
         $this->cache->delete($this->getActorCacheKey($apProfileId));
     }
 
+    /**
+     * Remove collection object from cache.
+     *
+     * @param string $apAddress AP address to remove from cache
+     */
     public function invalidateCollectionObjectCache(string $apAddress): void
     {
-        $this->cache->delete('ap_collection'.hash('sha256', $apAddress));
+        $this->cache->delete($this->getCollectionCacheKey($apAddress));
     }
 
     /**
+     * Retrieve AP collection object. First look in cache, then try to retrieve from AP server.
+     * And finally, save the response to cache.
+     *
+     * @return array|null JSON Response body (as PHP Object)
+     *
      * @throws InvalidArgumentException
      */
     public function getCollectionObject(string $apAddress): ?array
     {
-        $key = 'ap_collection'.hash('sha256', $apAddress);
+        $key = $this->getCollectionCacheKey($apAddress);
         if ($this->cache->hasItem($key)) {
             /** @var CacheItem $item */
             $item = $this->cache->getItem($key);
@@ -303,7 +337,7 @@ class ApHttpClient
 
     private function getCollectionObjectImpl(string $apAddress): ?string
     {
-        $this->logger->debug("ApHttpClient:getCollectionObject:url: $apAddress");
+        $this->logger->debug("[ApHttpClient::getCollectionObjectImpl] URL: $apAddress");
         $response = null;
         try {
             // Set-up request
@@ -318,7 +352,7 @@ class ApHttpClient
             // Accepted status code are 2xx or 410 (used Tombstone types)
             if (!str_starts_with((string) $statusCode, '2') && 410 !== $statusCode) {
                 // Do NOT include the response content in the error message, this will be often a full HTML page
-                throw new InvalidApPostException("Invalid status code while getting: $apAddress, status code: $statusCode");
+                throw new InvalidApPostException('Invalid status code while getting', $apAddress, $statusCode);
             }
         } catch (\Exception $e) {
             $this->logRequestException($response, $apAddress, 'ApHttpClient:getCollectionObject', $e);
@@ -351,7 +385,7 @@ class ApHttpClient
 
         // Often 400, 404 errors just return the full HTML page, so we don't want to log the full content of them
         // We truncate the content to 200 characters max.
-        $this->logger->error('{type} failed: {address}, ex: {e}: {msg}. Truncated content: {content}', [
+        $this->logger->error('[ApHttpClient::logRequestException] {type} failed: {address}, ex: {e}: {msg}. Truncated content: {content}', [
             'type' => $requestType,
             'address' => $requestUrl,
             'e' => \get_class($e),
@@ -360,7 +394,7 @@ class ApHttpClient
         ]);
         // And only log the full content in debug log mode
         if ($content) {
-            $this->logger->debug('Full response body content: {content}', [
+            $this->logger->debug('[ApHttpClient::logRequestException] Full response body content: {content}', [
                 'content' => $content,
             ]);
         }
@@ -374,14 +408,15 @@ class ApHttpClient
      * @param User|Magazine $actor The actor initiating the request, either a User or Magazine object
      * @param array|null    $body  (Optional) The body of the POST request. Defaults to null.
      *
-     * @throws InvalidApPostException if the POST request fails with a non-2xx response status code
+     * @throws InvalidApPostException      if the POST request fails with a non-2xx response status code
+     * @throws TransportExceptionInterface
      */
     public function post(string $url, User|Magazine $actor, ?array $body = null): void
     {
         $cacheKey = 'ap_'.hash('sha256', $url.':'.$body['id']);
 
         if ($this->cache->hasItem($cacheKey)) {
-            $this->logger->warning('not posting activity with id {id} to {inbox} again, as we already did that sometime in the last 45 minutes', [
+            $this->logger->warning('[ApHttpClient::post] Not posting activity with id {id} to {inbox} again, as we already did that sometime in the last 45 minutes', [
                 'id' => $body['id'],
                 'inbox' => $url,
             ]);
@@ -391,8 +426,8 @@ class ApHttpClient
 
         $jsonBody = json_encode($body ?? []);
 
-        $this->logger->debug("ApHttpClient:post:url: $url");
-        $this->logger->debug("ApHttpClient:post:body $jsonBody");
+        $this->logger->debug("[ApHttpClient::post] URL: $url");
+        $this->logger->debug("[ApHttpClient::post] Body: $jsonBody");
 
         // Set-up request
         try {
@@ -407,7 +442,7 @@ class ApHttpClient
             $statusCode = $response->getStatusCode();
             if (!str_starts_with((string) $statusCode, '2')) {
                 // Do NOT include the response content in the error message, this will be often a full HTML page
-                throw new InvalidApPostException("Post failed: $url, status code: $statusCode, request body: $jsonBody");
+                throw new InvalidApPostException('Post failed', $url, $statusCode, $body);
             }
         } catch (\Exception $e) {
             $this->logRequestException($response, $url, 'ApHttpClient:post', $e);
@@ -453,7 +488,7 @@ class ApHttpClient
     private function generalFetch(string $url, ApRequestType $requestType = ApRequestType::ActivityPub): string
     {
         $client = new CurlHttpClient();
-        $this->logger->debug("ApHttpClient:generalFetch:url: $url");
+        $this->logger->debug("[ApHttpClient::generalFetch] URL: $url");
         $r = $client->request('GET', $url, [
             'max_duration' => self::MAX_DURATION,
             'timeout' => self::TIMEOUT,
@@ -477,7 +512,7 @@ class ApHttpClient
         try {
             $resp = $this->generalFetch($url, $requestType);
         } catch (\Exception $e) {
-            $this->logger->warning('There was an exception fetching {type} from {url}: {e} - {msg}', [
+            $this->logger->warning('[ApHttpClient::generalFetchCached] There was an exception fetching {type} from {url}: {e} - {msg}', [
                 'type' => $fetchType,
                 'url' => $url,
                 'e' => \get_class($e),
@@ -540,7 +575,7 @@ class ApHttpClient
                 : $this->groupFactory->getActivityPubId($actor).'#main-key';
             $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
         } else {
-            $this->logger->error('Failed to sign headers for {url}: {headers}', [
+            $this->logger->error('[ApHttpClient::getHeaders] Failed to sign headers for {url}: {headers}', [
                 'url' => $url,
                 'headers' => $headers,
             ]);
@@ -573,7 +608,7 @@ class ApHttpClient
             $signature = base64_encode($signature);
             $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
         } else {
-            $this->logger->error('Failed to sign headers for {url}: {headers}', [
+            $this->logger->error('[ApHttpClient::getInstanceHeaders] Failed to sign headers for {url}: {headers}', [
                 'url' => $url,
                 'headers' => $headers,
             ]);

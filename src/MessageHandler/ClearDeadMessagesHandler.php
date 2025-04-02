@@ -21,7 +21,7 @@ class ClearDeadMessagesHandler
 
     public function __invoke(ClearDeadMessagesMessage $message): void
     {
-        $this->logger->info('Clearing dead messages');
+        $this->logger->info('[ClearDeadMessagesHandler::__invoke] Clearing dead messages');
         $sql = 'DELETE FROM messenger_messages WHERE queue_name = :queue_name';
         $this->entityManager->createNativeQuery($sql, new ResultSetMapping())
             ->setParameter('queue_name', 'dead')

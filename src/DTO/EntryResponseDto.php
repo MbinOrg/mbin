@@ -6,7 +6,8 @@ namespace App\DTO;
 
 use App\DTO\Contracts\VisibilityAwareDtoTrait;
 use App\Entity\Entry;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use App\Enums\ENotificationStatus;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema()]
@@ -45,7 +46,15 @@ class EntryResponseDto implements \JsonSerializable
     public ?string $slug = null;
     public ?string $apId = null;
     public ?bool $canAuthUserModerate = null;
+    public ?ENotificationStatus $notificationStatus = null;
 
+    /** @var string[]|null */
+    #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
+    public ?array $bookmarks = null;
+
+    /**
+     * @param string[]|null $bookmarks
+     */
     public static function create(
         ?int $id = null,
         ?MagazineSmallResponseDto $magazine = null,
@@ -73,6 +82,7 @@ class EntryResponseDto implements \JsonSerializable
         ?string $slug = null,
         ?string $apId = null,
         ?bool $canAuthUserModerate = null,
+        ?array $bookmarks = null,
     ): self {
         $dto = new EntryResponseDto();
         $dto->entryId = $id;
@@ -101,6 +111,7 @@ class EntryResponseDto implements \JsonSerializable
         $dto->slug = $slug;
         $dto->apId = $apId;
         $dto->canAuthUserModerate = $canAuthUserModerate;
+        $dto->bookmarks = $bookmarks;
 
         return $dto;
     }
@@ -154,6 +165,8 @@ class EntryResponseDto implements \JsonSerializable
             'slug' => $this->slug,
             'apId' => $this->apId,
             'canAuthUserModerate' => $this->canAuthUserModerate,
+            'notificationStatus' => $this->notificationStatus,
+            'bookmarks' => $this->bookmarks,
         ]);
     }
 }

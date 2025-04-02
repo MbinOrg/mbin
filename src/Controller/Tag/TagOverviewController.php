@@ -17,7 +17,7 @@ class TagOverviewController extends AbstractController
     public function __construct(
         private readonly TagExtractor $tagManager,
         private readonly TagRepository $tagRepository,
-        private readonly SubjectOverviewManager $overviewManager
+        private readonly SubjectOverviewManager $overviewManager,
     ) {
     }
 

@@ -20,7 +20,7 @@ class DeleteWrapper
     public function __construct(
         private readonly ActivityFactory $factory,
         private readonly AnnounceWrapper $announceWrapper,
-        private readonly UrlGeneratorInterface $urlGenerator
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 

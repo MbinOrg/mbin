@@ -24,7 +24,7 @@ class FactoryResolver
         private readonly EntryCommentFactory $entryCommentFactory,
         private readonly PostFactory $postFactory,
         private readonly PostCommentFactory $postCommentFactory,
-        private readonly MagazineFactory $magazineFactory
+        private readonly MagazineFactory $magazineFactory,
     ) {
     }
 

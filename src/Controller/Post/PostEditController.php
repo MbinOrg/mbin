@@ -12,6 +12,7 @@ use App\PageView\PostCommentPageView;
 use App\Repository\PostCommentRepository;
 use App\Service\PostManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,8 +21,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class PostEditController extends AbstractController
 {
-    public function __construct(private readonly PostManager $manager)
-    {
+    public function __construct(
+        private readonly PostManager $manager,
+        private readonly Security $security,
+    ) {
     }
 
     #[IsGranted('ROLE_USER')]
@@ -32,7 +35,7 @@ class PostEditController extends AbstractController
         #[MapEntity(id: 'post_id')]
         Post $post,
         Request $request,
-        PostCommentRepository $repository
+        PostCommentRepository $repository,
     ): Response {
         $dto = $this->manager->createDto($post);
 
@@ -75,7 +78,7 @@ class PostEditController extends AbstractController
             $this->addFlash('error', 'flash_post_edit_error');
         }
 
-        $criteria = new PostCommentPageView($this->getPageNb($request));
+        $criteria = new PostCommentPageView($this->getPageNb($request), $this->security);
         $criteria->post = $post;
 
         if ($request->isXmlHttpRequest()) {
@@ -93,6 +96,7 @@ class PostEditController extends AbstractController
                 'post' => $post,
                 'comments' => $repository->findByCriteria($criteria),
                 'form' => $form->createView(),
+                'criteria' => $criteria,
             ],
             new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200)
         );

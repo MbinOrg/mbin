@@ -71,7 +71,7 @@ class UserOutboxController extends AbstractController
     ])]
     private function getCollectionItems(
         User $user,
-        int $page
+        int $page,
     ): array {
         $hideAdult = false;
         $activity = $this->userRepository->findPublicActivity($page, $user, $hideAdult);

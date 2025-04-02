@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
+use App\Entity\Entry;
+use App\Entity\EntryComment;
+use App\Entity\Post;
+use App\Entity\PostComment;
+use App\Entity\User;
 use App\Service\VoteManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -40,12 +45,15 @@ class VoteFixtures extends BaseFixture implements DependentFixtureInterface
 
             $this->voteManager->vote(
                 rand(0, 4) > 0 ? 1 : -1,
-                $this->getReference('entry_'.$e),
-                $this->getReference('user_'.$u)
+                $this->getReference('entry_'.$e, Entry::class),
+                $this->getReference('user_'.$u, User::class)
             );
         }
     }
 
+    /**
+     * @return int[]
+     */
     private function getUniqueNb(int $max, int $quantity): array
     {
         $numbers = range(1, $max);
@@ -70,8 +78,8 @@ class VoteFixtures extends BaseFixture implements DependentFixtureInterface
 
             $this->voteManager->vote(
                 rand(0, 4) > 0 ? 1 : -1,
-                $this->getReference('entry_comment_'.$c),
-                $this->getReference('user_'.$u)
+                $this->getReference('entry_comment_'.$c, EntryComment::class),
+                $this->getReference('user_'.$u, User::class)
             );
         }
     }
@@ -92,8 +100,8 @@ class VoteFixtures extends BaseFixture implements DependentFixtureInterface
 
             $this->voteManager->vote(
                 rand(0, 4) > 0 ? 1 : -1,
-                $this->getReference('post_'.$e),
-                $this->getReference('user_'.$u)
+                $this->getReference('post_'.$e, Post::class),
+                $this->getReference('user_'.$u, User::class)
             );
         }
     }
@@ -114,8 +122,8 @@ class VoteFixtures extends BaseFixture implements DependentFixtureInterface
 
             $this->voteManager->vote(
                 rand(0, 4) > 0 ? 1 : -1,
-                $this->getReference('post_comment_'.$c),
-                $this->getReference('user_'.$u)
+                $this->getReference('post_comment_'.$c, PostComment::class),
+                $this->getReference('user_'.$u, User::class)
             );
         }
     }

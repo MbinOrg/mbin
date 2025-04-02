@@ -9,8 +9,8 @@ use App\DTO\EntryResponseDto;
 use App\Entity\Entry;
 use App\Factory\EntryFactory;
 use App\Service\EntryManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -69,7 +69,7 @@ class EntriesPinApi extends EntriesBaseApi
         Entry $entry,
         EntryManager $manager,
         EntryFactory $factory,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

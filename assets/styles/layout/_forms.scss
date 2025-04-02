@@ -1,3 +1,9 @@
+@use 'breakpoints' as b;
+@use '../mixins/mbin';
+@use '@fortawesome/fontawesome-free/scss/fontawesome' as fa;
+// needed for the checkmark do render correctly even though it is not directly used
+@use '@fortawesome/fontawesome-free/scss/solid' as faS;
+
 .btn {
   font-size: .85rem;
   height: 100%;
@@ -122,9 +128,9 @@ input[type=radio] {
   align-content: center;
   cursor: pointer;
 
+  @include fa.fa-icon-solid(fa.$fa-var-check);
+
   &::before {
-    font-family: var(--kbin-font-awesome-font-family);
-    content: "\f00c";
     transform: scale(0);
     transition: 100ms transform ease-in;
   }
@@ -441,14 +447,14 @@ select {
   button {
     width: 50%;
 
-    @include media-breakpoint-down(lg) {
+    @include b.media-breakpoint-down(lg) {
       width: 100%;
     }
   }
 }
 
 .actions {
-  @include media-breakpoint-down(sm) {
+  @include b.media-breakpoint-down(sm) {
     text-align: right;
 
     > * {
@@ -493,8 +499,8 @@ select {
 markdown-toolbar {
 
   > * {
-    @include cursor-pointer;
-    @include simple-transition;
+    @include mbin.cursor-pointer;
+    @include mbin.simple-transition;
 
     &:focus,
     &:hover {
@@ -524,4 +530,10 @@ div.input-box {
   .rounded-edges & {
     border-radius: var(--kbin-rounded-edges-radius) !important;
   }
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+
 }

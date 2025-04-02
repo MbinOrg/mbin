@@ -6,41 +6,37 @@ namespace App\Tests\Functional\Controller\Api\Message;
 
 use App\Entity\Message;
 use App\Tests\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 
 class MessageThreadReplyApiTest extends WebTestCase
 {
     public function testApiCannotReplyToThreadAnonymous(): void
     {
-        $client = self::createClient();
         $to = $this->getUserByUsername('JohnDoe');
         $from = $this->getUserByUsername('JaneDoe');
         $thread = $this->createMessageThread($to, $from, 'starting a thread');
 
-        $client->jsonRequest('POST', "/api/messages/thread/{$thread->getId()}/reply", parameters: ['body' => 'test message']);
+        $this->client->jsonRequest('POST', "/api/messages/thread/{$thread->getId()}/reply", parameters: ['body' => 'test message']);
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotReplyToThreadWithoutScope(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
         $from = $this->getUserByUsername('JaneDoe');
         $thread = $this->createMessageThread($user, $from, 'starting a thread');
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('POST', "/api/messages/thread/{$thread->getId()}/reply", parameters: ['body' => 'test message'], server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/messages/thread/{$thread->getId()}/reply", parameters: ['body' => 'test message'], server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanReplyToThread(): void
     {
-        $client = self::createClient();
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
 
@@ -48,17 +44,17 @@ class MessageThreadReplyApiTest extends WebTestCase
         $thread = $this->createMessageThread($user, $from, 'starting a thread');
         // Fake when the message was created at so that the newest to oldest order can be reliably determined
         $thread->messages->get(0)->createdAt = new \DateTimeImmutable('-5 seconds');
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($thread);
         $entityManager->flush();
 
-        $client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read user:message:create');
+        $this->client->loginUser($user);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:message:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('POST', "/api/messages/thread/{$thread->getId()}/reply", parameters: ['body' => 'test message'], server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/messages/thread/{$thread->getId()}/reply", parameters: ['body' => 'test message'], server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(MessageRetrieveApiTest::MESSAGE_THREAD_RESPONSE_KEYS, $jsonData);

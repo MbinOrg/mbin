@@ -9,13 +9,14 @@ use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPub\Wrapper\FollowWrapper;
 use App\Service\ActivityPub\Wrapper\UndoWrapper;
 use App\Service\ActivityPubManager;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -23,16 +24,17 @@ class FollowHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly UserRepository $userRepository,
         private readonly MagazineRepository $magazineRepository,
         private readonly ActivityPubManager $activityPubManager,
         private readonly FollowWrapper $followWrapper,
         private readonly UndoWrapper $undoWrapper,
-        private readonly ApHttpClient $apHttpClient,
+        private readonly ApHttpClientInterface $apHttpClient,
         private readonly SettingsManager $settingsManager,
         private readonly DeliverManager $deliverManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(FollowMessage $message): void

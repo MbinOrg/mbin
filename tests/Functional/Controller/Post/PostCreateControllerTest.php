@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Post;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class PostCreateControllerTest extends WebTestCase
 {
@@ -16,14 +17,13 @@ class PostCreateControllerTest extends WebTestCase
 
     public function testUserCanCreatePost(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $this->getMagazineByName('acme');
 
-        $crawler = $client->request('GET', '/m/acme/microblog');
+        $crawler = $this->client->request('GET', '/m/acme/microblog');
 
-        $client->submit(
+        $this->client->submit(
             $crawler->filter('form[name=post]')->selectButton('Add post')->form(
                 [
                     'post[body]' => 'test post 1',
@@ -32,29 +32,29 @@ class PostCreateControllerTest extends WebTestCase
         );
 
         $this->assertResponseRedirects('/m/acme/microblog/newest');
-        $client->followRedirect();
+        $this->client->followRedirect();
 
         $this->assertSelectorTextContains('#content .post', 'test post 1');
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCanCreatePostWithImage(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $this->getMagazineByName('acme');
 
-        $crawler = $client->request('GET', '/m/acme/microblog');
+        $crawler = $this->client->request('GET', '/m/acme/microblog');
 
         $form = $crawler->filter('form[name=post]')->selectButton('Add post')->form();
         $form->get('post[body]')->setValue('test post 1');
         $form->get('post[image]')->upload($this->kibbyPath);
         // Needed since we require this global to be set when validating entries but the client doesn't actually set it
         $_FILES = $form->getPhpFiles();
-        $client->submit($form);
+        $this->client->submit($form);
 
         $this->assertResponseRedirects('/m/acme/microblog/newest');
-        $crawler = $client->followRedirect();
+        $crawler = $this->client->followRedirect();
 
         $this->assertSelectorTextContains('#content .post', 'test post 1');
         $this->assertSelectorExists('#content .post footer figure img');
@@ -63,16 +63,16 @@ class PostCreateControllerTest extends WebTestCase
         $_FILES = [];
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCannotCreateInvalidPost(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $this->getMagazineByName('acme');
 
-        $crawler = $client->request('GET', '/m/acme/microblog');
+        $crawler = $this->client->request('GET', '/m/acme/microblog');
 
-        $crawler = $client->submit(
+        $crawler = $this->client->submit(
             $crawler->filter('form[name=post]')->selectButton('Add post')->form(
                 [
                     'post[body]' => '',
@@ -80,19 +80,19 @@ class PostCreateControllerTest extends WebTestCase
             )
         );
 
+        self::assertResponseIsSuccessful();
         $this->assertSelectorTextContains('#content', 'This value should not be blank.');
     }
 
     public function testCreatedPostIsMarkedAsForAdults(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe', hideAdult: false));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe', hideAdult: false));
 
         $this->getMagazineByName('acme');
 
-        $crawler = $client->request('GET', '/m/acme/microblog');
+        $crawler = $this->client->request('GET', '/m/acme/microblog');
 
-        $client->submit(
+        $this->client->submit(
             $crawler->filter('form[name=post]')->selectButton('Add post')->form(
                 [
                     'post[body]' => 'test nsfw 1',
@@ -102,21 +102,21 @@ class PostCreateControllerTest extends WebTestCase
         );
 
         $this->assertResponseRedirects('/m/acme/microblog/newest');
-        $client->followRedirect();
+        $this->client->followRedirect();
 
         $this->assertSelectorTextContains('blockquote header .danger', '18+');
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testPostCreatedInAdultMagazineIsAutomaticallyMarkedAsForAdults(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe', hideAdult: false));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe', hideAdult: false));
 
         $this->getMagazineByName('adult', isAdult: true);
 
-        $crawler = $client->request('GET', '/m/adult/microblog');
+        $crawler = $this->client->request('GET', '/m/adult/microblog');
 
-        $client->submit(
+        $this->client->submit(
             $crawler->filter('form[name=post]')->selectButton('Add post')->form(
                 [
                     'post[body]' => 'test nsfw 1',
@@ -125,7 +125,7 @@ class PostCreateControllerTest extends WebTestCase
         );
 
         $this->assertResponseRedirects('/m/adult/microblog/newest');
-        $client->followRedirect();
+        $this->client->followRedirect();
 
         $this->assertSelectorTextContains('blockquote header .danger', '18+');
     }

@@ -39,6 +39,7 @@ class SettingsManager
         private readonly bool $mbinSsoOnlyMode,
         private readonly int $maxImageBytes,
         private readonly DownvotesMode $mbinDownvotesMode,
+        private readonly bool $mbinNewUsersNeedApproval,
     ) {
         if (!self::$dto) {
             $results = $this->repository->findAll();
@@ -46,6 +47,15 @@ class SettingsManager
             $maxImageBytesEdited = $this->find($results, 'MAX_IMAGE_BYTES', FILTER_VALIDATE_INT);
             if (null === $maxImageBytesEdited || 0 === $maxImageBytesEdited) {
                 $maxImageBytesEdited = $this->maxImageBytes;
+            }
+
+            $newUsersNeedApprovalDb = $this->find($results, 'MBIN_NEW_USERS_NEED_APPROVAL');
+            if ('true' === $newUsersNeedApprovalDb) {
+                $newUsersNeedApprovalEdited = true;
+            } elseif ('false' === $newUsersNeedApprovalDb) {
+                $newUsersNeedApprovalEdited = false;
+            } else {
+                $newUsersNeedApprovalEdited = $this->mbinNewUsersNeedApproval;
             }
 
             self::$dto = new SettingsDto(
@@ -84,6 +94,7 @@ class SettingsManager
                 $this->find($results, 'MBIN_SSO_SHOW_FIRST', FILTER_VALIDATE_BOOLEAN) ?? false,
                 $maxImageBytesEdited,
                 $this->find($results, 'MBIN_DOWNVOTES_MODE') ?? $this->mbinDownvotesMode->value,
+                $newUsersNeedApprovalEdited,
             );
         }
     }
@@ -145,6 +156,12 @@ class SettingsManager
         return parse_url($url, PHP_URL_HOST) === $this->get('KBIN_DOMAIN');
     }
 
+    /**
+     * Check if an instance is banned by
+     * checking if the instance URL has a match with the banned instances list.
+     *
+     * @param string $inboxUrl the inbox URL to check
+     */
     public function isBannedInstance(string $inboxUrl): bool
     {
         return \in_array(
@@ -163,6 +180,11 @@ class SettingsManager
         return DownvotesMode::from($this->get('MBIN_DOWNVOTES_MODE'));
     }
 
+    public function getNewUsersNeedApproval(): bool
+    {
+        return $this->get('MBIN_NEW_USERS_NEED_APPROVAL');
+    }
+
     public function set(string $name, $value): void
     {
         self::$dto->{$name} = $value;
@@ -179,7 +201,7 @@ class SettingsManager
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        return $request->cookies->get('kbin_lang') ?? $request->getLocale() ?? $this->get('KBIN_DEFAULT_LANG');
+        return $request->cookies->get('mbin_lang') ?? $request->getLocale() ?? $this->get('KBIN_DEFAULT_LANG');
     }
 
     public function getMaxImageByteString(): string
@@ -187,5 +209,13 @@ class SettingsManager
         $megaBytes = round($this->maxImageBytes / 1024 / 1024, 2);
 
         return $megaBytes.'MB';
+    }
+
+    /**
+     * this should only be called in the test environment.
+     */
+    public static function resetDto(): void
+    {
+        self::$dto = null;
     }
 }

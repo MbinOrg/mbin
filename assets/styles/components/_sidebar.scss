@@ -1,3 +1,6 @@
+@use '../layout/breakpoints' as b;
+@use '../mixins/mbin';
+
 #sidebar,
 .sidebar-subscriptions {
   font-size: .85rem;
@@ -68,7 +71,7 @@
         }
       }
 
-      @include media-breakpoint-down(lg) {
+      @include b.media-breakpoint-down(lg) {
         menu {
           justify-content: flex-start;
 
@@ -90,11 +93,11 @@
     color: var(--kbin-meta-text-color);
 
     .container {
-      @include media-breakpoint-down(lg) {
+      @include b.media-breakpoint-down(lg) {
         max-width: 100%;
       }
 
-      @include media-breakpoint-only(md) {
+      @include b.media-breakpoint-only(md) {
         display: grid;
         gap: 2rem;
         grid-template-columns: repeat(2, 1fr);
@@ -123,7 +126,7 @@
         padding: 0;
 
         a {
-          @include kbin-btn-link;
+          @include mbin.btn-link;
         }
 
         p:last-of-type {
@@ -244,7 +247,7 @@
       }
     }
 
-    a {
+    a:not(.notification-setting) {
       color: var(--kbin-meta-link-color);
     }
 
@@ -255,6 +258,10 @@
     figure {
       text-align: center;
     }
+  }
+
+  .entry-info ul.info {
+    margin-top: 2.5rem;
   }
 
   .settings {
@@ -467,7 +474,7 @@
       gap: 1px;
       align-items: center;
 
-      @include media-breakpoint-down(lg) {
+      @include b.media-breakpoint-down(lg) {
         & .width-setting {
           display: none;
         }
@@ -646,7 +653,7 @@
     display: none;
   }
 
-  @include media-breakpoint-down(lg) {
+  @include b.media-breakpoint-down(lg) {
     .mobile-nav {
       display: block;
       position: relative;
@@ -689,8 +696,19 @@
   }
 }
 
+// Use white background for light themes
+.theme--light #sidebar .intro .container, 
+.theme--solarized-light #sidebar .intro .container {
+  background: url('/assets/images/intro-bg-white.png') no-repeat center 50%;
+  color: rgb(39, 39, 39) !important;
+  font-weight: 400;
+  h3 {
+    color: #202020;
+  }
+}
+
 #sidebar {
-  @include media-breakpoint-down(lg) {
+  @include b.media-breakpoint-down(lg) {
     &.open {
       background: var(--kbin-bg);
       height: 100%;

@@ -10,6 +10,7 @@ use App\Repository\Criteria;
 use App\Repository\DomainRepository;
 use App\Repository\EntryRepository;
 use Pagerfanta\PagerfantaInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,7 +20,7 @@ class DomainFrontController extends AbstractController
 {
     public function __construct(
         private readonly EntryRepository $entryRepository,
-        private readonly DomainRepository $domainRepository
+        private readonly DomainRepository $domainRepository,
     ) {
     }
 
@@ -29,13 +30,14 @@ class DomainFrontController extends AbstractController
         ?string $time,
         #[MapQueryParameter]
         ?string $type,
-        Request $request
+        Request $request,
+        Security $security,
     ): Response {
         if (!$domain = $this->domainRepository->findOneBy(['name' => $name])) {
             throw $this->createNotFoundException();
         }
 
-        $criteria = new EntryPageView($this->getPageNb($request));
+        $criteria = new EntryPageView($this->getPageNb($request), $security);
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setTime($criteria->resolveTime($time))
             ->setType($criteria->resolveType($type))

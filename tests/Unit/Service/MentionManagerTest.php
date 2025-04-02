@@ -6,17 +6,14 @@ namespace App\Tests\Unit\Service;
 
 use App\Service\MentionManager;
 use App\Service\SettingsManager;
-use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class MentionManagerTest extends WebTestCase
 {
-    /**
-     * @dataProvider provider
-     */
+    #[DataProvider('provider')]
     public function testExtract(string $input, ?array $output): void
     {
-        $this->createClient();
-
         // Create a SettingsManager mock
         $settingsManagerMock = $this->createMock(SettingsManager::class);
 
@@ -30,8 +27,7 @@ class MentionManagerTest extends WebTestCase
 
         // Replace the actual setting service with the mock in the container
         $this->getContainer()->set(SettingsManager::class, $settingsManagerMock);
-
-        $manager = $this->getService(MentionManager::class);
+        $manager = $this->getContainer()->get(MentionManager::class);
         $this->assertEquals($output, $manager->extract($input));
     }
 

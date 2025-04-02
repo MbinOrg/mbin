@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
     name: 'mbin:posts:magazines',
-    description: 'This command allows assing post to magazine.'
+    description: 'This command allows to assign a magazine to a post.',
 )]
 class PostMagazinesUpdateCommand extends Command
 {
@@ -24,7 +24,7 @@ class PostMagazinesUpdateCommand extends Command
         private readonly PostRepository $postRepository,
         private readonly PostManager $postManager,
         private readonly TagLinkRepository $tagLinkRepository,
-        private readonly MagazineRepository $magazineRepository
+        private readonly MagazineRepository $magazineRepository,
     ) {
         parent::__construct();
     }

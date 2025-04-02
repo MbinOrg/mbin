@@ -7,8 +7,8 @@ namespace App\Controller\Api\Instance\Admin;
 use App\Controller\Api\Instance\InstanceBaseApi;
 use App\DTO\InstancesDto;
 use App\Service\SettingsManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -63,7 +63,7 @@ class InstanceUpdateFederationApi extends InstanceBaseApi
         SettingsManager $settings,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

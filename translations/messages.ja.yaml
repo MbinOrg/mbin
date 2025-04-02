@@ -9,8 +9,8 @@ threads: スレッド
 microblog: ミニブログ
 people: ユーザー
 events: イベント
-magazine: 雑誌
-magazines: 雑誌
+magazine: マガジン
+magazines: マガジン
 search: 検索
 add: 追加
 select_channel: チャンネルを選択
@@ -60,11 +60,11 @@ reply: 返信
 login_or_email: ユーザー名またはメールアドレス
 password: パスワード
 dont_have_account: アカウントを持っていませんか？
-you_cant_login: パスワードを忘れていますか？
+you_cant_login: パスワードを忘れましたか？
 already_have_account: すでにアカウントを持っていますか？
 register: 新規登録する
 show_more: もっと見る
-to: 雑誌
+to: マガジン
 in: 中に
 username: ユーザー名
 email: メールアドレス
@@ -88,7 +88,7 @@ try_again: もう一度
 up_vote: ブースト
 down_vote: 「よくない」
 email_confirm_header: こんにちは！メールアドレスを検証してください。
-email_confirm_content: Mbinのアカウントアクティブ化をレディ？アカウントを有効にする場合は下のリンクをクリックしてください。
+email_confirm_content: 準備はいいですか？ あなたのMbinアカウントを有効にするには下のリンクをクリックしてください。
 email_verify: メールアドレスの検証
 email_confirm_title: メールアドレスを検証してください。
 select_magazine: マガジンを選択
@@ -155,7 +155,7 @@ blocked: ブロック
 reports: 通報
 notifications: 通知
 messages: メッセージ
-appearance: テーマ
+appearance: 外観
 homepage: ホーム
 comments_count: '{0} コメント | {1} コメント | ]1,Inf[ コメント'
 agree_terms: '%terms_link_start% 利用規約 %terms_link_end% と %policy_link_start% プライバシーポリシー
@@ -164,10 +164,10 @@ email_confirm_expire: リンクの有効期限は１時間です。
 enter_your_comment: コメントを入力してください
 fediverse: フェディバース
 create_new_magazine: 新しいマガジンを作成
-federated_magazine_info: この雑誌は連合サーバからのもので、不完全な可能性があります。
+federated_magazine_info: このマガジンは連合サーバからのもので、不完全な可能性があります。
 add_new_photo: 新しい画像を追加
 image_alt: 画像の代替テキスト
-moderated: モデレートしている雑誌
+moderated: モデレートしているマガジン
 check_email: メールを確認してください
 unfollow: フォローを解除
 reset_check_email_desc: あなたのアカウントに紐づくメールアドレスが存在する場合、パスワードをリセットするためのメールが送信されます。このリンクの有効期限は
@@ -180,7 +180,7 @@ table_view: テーブル表示
 copy_url: MbinのURLをコピー
 edit_comment: 上書き保存
 general: 全般
-hide_adult: R-18・NSFWを非表示する
+hide_adult: NSFWのコンテンツを非表示にする
 featured_magazines: おすすめのマガジン
 privacy: プライバシー
 show_profile_subscriptions: 購読しているマガジンを表示
@@ -237,20 +237,19 @@ set_magazines_bar_desc: マガジン名はカンマで区切って入力して�
 set_magazines_bar_empty_desc: 空欄にするとアクティブなマガジンが表示されます。
 font_size: 文字サイズ
 rounded_edges: 丸角
-flash_register_success: 
-  ようこそ！アカウント登録ができました。まだ一段残ります！メールアドレスにアカウント検証リンクを送信しました。アカウントを確認するためにメールボックスを見て下さい。
+flash_register_success: ようこそ！アカウント登録ができました。最後の手順として、メールアドレスにアカウント検証リンクを送信しました。メールボックスを確認して下さい。
 restored_thread_by: はこのアカウントが作成したスレッドを復旧しました：
 removed_post_by: はこのアカウントが作成した投稿を削除しました：
 flash_thread_unpin_success: スレッドの固定を外しました。
 flash_magazine_new_success: マガジンを作成しました。新しいコンテンツを追加したりマガジンパネルから検索することができます。
-added_new_thread: 新スレッドを追加しました
+added_new_thread: 新しいスレッドを追加しました
 edited_thread: スレッドを編集しました
-added_new_comment: 新コメントを追加しました
+added_new_comment: 新しいコメントを追加しました
 edited_comment: コメントを編集しました
 replied_to_your_comment: あなたのコメントにリプライしました
-added_new_post: 新投稿を追加しました
+added_new_post: 新しい投稿を追加しました
 edited_post: 投稿を編集しました
-added_new_reply: 新リプライを追加しました
+added_new_reply: 新しいリプライを追加しました
 wrote_message: メッセージを書きました
 banned: あなたをバンしました
 removed: モデレーターに削除されました
@@ -301,7 +300,7 @@ done: 完了
 pin: 固定する
 unpin: 固定を外す
 change_magazine: マガジンを変更
-change_language: 言語変更
+change_language: 言語を変更
 change: 変更する
 pinned: 固定された
 preview: プレビュー表示
@@ -365,7 +364,7 @@ report_issue: バグを報告
 tokyo_night: 東京ナイト
 oauth2.grant.post.edit: 既存ポストを編集 。
 oauth2.grant.user.message.all: メッセージを読んで、 他ユーザーにメッセージを飛ばす。
-oauth2.grant.moderate.magazine_admin.create: 新しい雑誌を作る。
+oauth2.grant.moderate.magazine_admin.create: 新しいマガジンを作る。
 filter.adult.hide: R18/NSFWを見せない
 toolbar.bold: ボールド
 toolbar.header: ヘッダー
@@ -375,7 +374,7 @@ oauth2.grant.entry.create: 新しいスレッドを作る。
 filter.adult.show: R18/NSFWを見せる
 oauth.consent.allow: 許す
 filter.adult.only: R18/NSFWだけ
-filter.fields.names_and_descriptions: 名前と記述
+filter.fields.names_and_descriptions: 名前と詳細
 oauth2.grant.user.profile.all: プロフィールを読んで、 エディットする。
 oauth2.grant.entry_comment.create: スレッドに新しいコメントを作る。
 oauth.consent.deny: 打ち消す
@@ -408,17 +407,35 @@ errors.server404.title: 404 Not found
 resend_account_activation_email: もう一度アカウントアクティブ化メールを飛ばす
 errors.server500.title: 500 Internal Server Error
 toolbar.mention: メンション
-oauth2.grant.write.general: スレッドとポストとコメントを作ってか、 エディットする。
+oauth2.grant.write.general: スレッド、投稿もしくはコメントを作るか、編集する。
 single_settings: 単一
 resend_account_activation_email_question: 非活動アカウント？
 your_account_has_been_banned: あなたのアカウントはバンされました
-oauth2.grant.delete.general: スレッドとポストとコメントを消す。
+oauth2.grant.delete.general: スレッド、投稿もしくはコメントを消す。
 oauth2.grant.user.notification.delete: 通知を消去する。
 email.delete.title: ユーザーのアカウント削除を要望する
 comment_reply_position: コメントのレスの位置
 kbin_bot: Mbinのボット
-federation_page_enabled: 連合は使用可能をしました
+federation_page_enabled: 連合ページは有効化されました
 show_avatars_on_comments: コメントでアバターを見せる
 tag: タグ
 remove_media: メディアを削除
 edit_entry: スレッドを編集
+show_related_magazines: ランダムなマガジンを表示
+default_theme: デフォルトのテーマ
+solarized_auto: Solarized(自動検出)
+default_theme_auto: ライト/ダーク(自動検出)
+menu: メニュー
+federation_page_allowed_description: 連合している既知のインスタンス
+federation_page_disallowed_description: 連合していないインスタンス
+toolbar.spoiler: スポイラー
+errors.server403.title: 403 Forbidden
+subscription_header: 購読中のマガジン
+federation_page_dead_title: 消息不明インスタンス
+toolbar.strikethrough: 取り消し線
+federation_page_dead_description: 10回のアクティビティが連続で配送に失敗したか、一週間以上配送に成功していないインスタンス
+federated_search_only_loggedin: ログインしていない場合は連合検索が制限されます
+ignore_magazines_custom_css: マガジンのカスタムCSSを無視する
+show_related_entries: ランダムなスレッドを表示
+show_related_posts: ランダムな投稿を表示
+show_active_users: アクティブなユーザーを表示

@@ -54,6 +54,7 @@ class Note
      */
     public function create(array $object, ?array $root = null, bool $stickyIt = false): EntryComment|PostComment|Post
     {
+        // First try to find the activity object in the database
         $current = $this->repository->findByObjectId($object['id']);
         if ($current) {
             return $this->entityManager->getRepository($current['type'])->find((int) $current['id']);

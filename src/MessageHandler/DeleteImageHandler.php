@@ -10,6 +10,7 @@ use App\Repository\ImageRepository;
 use App\Service\ImageManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -17,11 +18,12 @@ class DeleteImageHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly ImageRepository $imageRepository,
+        private readonly KernelInterface $kernel,
         private readonly ImageManager $imageManager,
         private readonly EntityManagerInterface $entityManager,
-        private readonly ManagerRegistry $managerRegistry
+        private readonly ManagerRegistry $managerRegistry,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(DeleteImageMessage $message): void
@@ -34,7 +36,7 @@ class DeleteImageHandler extends MbinMessageHandler
         if (!($message instanceof DeleteImageMessage)) {
             throw new \LogicException();
         }
-        $image = $this->imageRepository->find($message->id);
+        $image = $this->imageRepository->findOneBy(['id' => $message->id]);
 
         if ($image) {
             $this->entityManager->beginTransaction();

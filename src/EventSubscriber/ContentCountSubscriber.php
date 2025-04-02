@@ -21,7 +21,7 @@ class ContentCountSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly EntryRepository $entryRepository,
         private readonly PostRepository $postRepository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 

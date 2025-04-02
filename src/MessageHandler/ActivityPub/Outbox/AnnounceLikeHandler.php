@@ -21,6 +21,7 @@ use App\Service\ActivityPub\Wrapper\UndoWrapper;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -30,6 +31,7 @@ class AnnounceLikeHandler extends MbinMessageHandler
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly MagazineRepository $magazineRepository,
+        private readonly KernelInterface $kernel,
         private readonly EntityManagerInterface $entityManager,
         private readonly AnnounceWrapper $announceWrapper,
         private readonly UndoWrapper $undoWrapper,
@@ -40,7 +42,7 @@ class AnnounceLikeHandler extends MbinMessageHandler
         private readonly PersonFactory $personFactory,
         private readonly DeliverManager $deliverManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(AnnounceLikeMessage $message): void
@@ -83,11 +85,10 @@ class AnnounceLikeHandler extends MbinMessageHandler
             $likeActivity
         );
 
-        $inboxes = array_filter(array_unique(array_merge(
-            $this->magazineRepository->findAudience($object->magazine),
-            $this->userRepository->findAudience($user),
-            [$object->user->apInboxUrl]
-        )));
+        // send the announcement only to the subscribers of the magazine
+        $inboxes = array_filter(
+            $this->magazineRepository->findAudience($object->magazine)
+        );
         $this->deliverManager->deliver($inboxes, $activity);
     }
 }

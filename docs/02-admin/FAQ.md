@@ -16,14 +16,14 @@ Have a look at our guides. A bare metal/VM setup is **recommended** at this time
 
 You can [join our Matrix community](https://matrix.to/#/#mbin:melroy.org) and ask for help, and/or make an [issue ticket](https://github.com/MbinOrg/mbin/issues) in GitHub if that adds value (always check for duplicates).
 
-See also our [contributing page](https://github.com/MbinOrg/mbin/blob/main/CONTRIBUTING.md).
+See also our [contributing page](../03-contributing/README.md).
 
 ## How can I contribute?
 
 New contributors are always _warmly welcomed_ to join us. The most valuable contributions come from helping with bug fixes and features through Pull Requests.
 As well as helping out with [translations](https://hosted.weblate.org/engage/mbin/) and documentation.
 
-Read more on our [contributing page](https://github.com/MbinOrg/mbin/blob/main/CONTRIBUTING.md).
+Read more on our [contributing page](../03-contributing/README.md).
 
 Do _not_ forget to [join our Matrix community](https://matrix.to/#/#mbin:melroy.org).
 
@@ -37,7 +37,7 @@ As a part of our software development and discussions, Matrix is our primary pla
 
 Mercure is a _real-time communication protocol_ and server that facilitates server-sent _events_ for web applications. It enables _real-time updates_ by allowing clients to subscribe and receiving updates pushed by the server.
 
-Mbin uses Mercure (optionally), on very large instances you might want to consider disabling Mercure whenever it _degrates_ our server performance.
+Mbin uses Mercure (optionally), on very large instances you might want to consider disabling Mercure whenever it _degrades_ our server performance.
 
 ## What is Redis?
 
@@ -152,6 +152,8 @@ _Hint:_ Most messages that are stored in the database are most likely in the `fa
 
 You can find the Mbin logging in the `var/log/` directory from the root folder of the Mbin installation. When running production the file is called `prod-{YYYY-MM-DD}.log`, when running development the log file is called `dev-{YYYY-MM-DD}.log`.
 
+See also [troubleshooting (bare metal)](./05-troubleshooting/01-bare_metal.md).
+
 ## Should I run development mode?
 
 **NO!** Try to avoid running development mode when you are hosting our own _public_ instance. Running in development mode can cause sensitive data to be leaked, such as secret keys or passwords (eg. via development console). Development mode will log a lot of messages to disk (incl. stacktraces).
@@ -174,7 +176,7 @@ Followed by restarting the services that are depending on the (new) configuratio
 
 ```bash
 # Clear PHP Opcache by restarting the PHP FPM service
-sudo systemctl restart php8.2-fpm.service
+sudo systemctl restart php8.4-fpm.service
 
 # Restarting the PHP messenger jobs and Mercure service (also reread the latest configuration)
 sudo supervisorctl reread && sudo supervisorctl update && sudo supervisorctl restart all
@@ -197,7 +199,7 @@ If you're seeing this error in logs:
 > getInstancePrivateKey(): Return value must be of type string, null returned
 
 At time of writing, `getInstancePrivateKey()` [calls out to the Redis cache](https://github.com/MbinOrg/mbin/blob/main/src/Service/ActivityPub/ApHttpClient.php#L348)
-first, so any updates to the keys requires a `DEL instance_private_key instance_public_key` (or `FLUSHDB` to be certain, as documented here: [bare metal](04-running-mbin/upgrades.md#clear-cache) and [docker](04-running-mbin/upgrades.md#clear-cache-1))
+first, so any updates to the keys requires a `DEL instance_private_key instance_public_key` (or `FLUSHDB` to be certain, as documented here: [bare metal](04-running-mbin/03-upgrades.md#clear-cache) and [docker](04-running-mbin/03-upgrades.md#clear-cache-1))
 
 ## RabbitMQ shows a really high publishing rate
 

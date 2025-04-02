@@ -33,7 +33,7 @@ class EntryCommentController extends AbstractController
         Entry $entry,
         #[MapEntity(id: 'comment_id')]
         EntryComment $comment,
-        Request $request
+        Request $request,
     ): Response {
         if ($comment->apId) {
             return $this->redirect($comment->apId);

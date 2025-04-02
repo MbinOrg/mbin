@@ -18,7 +18,7 @@ class UserExtensionRuntime implements RuntimeExtensionInterface
         private readonly Security $security,
         private readonly MentionManager $mentionManager,
         private readonly InstanceRepository $instanceRepository,
-        private readonly UserManager $userManager
+        private readonly UserManager $userManager,
     ) {
     }
 
@@ -43,6 +43,11 @@ class UserExtensionRuntime implements RuntimeExtensionInterface
     public function username(string $value, ?bool $withApPostfix = false): string
     {
         return $this->mentionManager->getUsername($value, $withApPostfix);
+    }
+
+    public function apDomain(string $value): string
+    {
+        return $this->mentionManager->getDomain($value);
     }
 
     public function getReputationTotal(User $user): int

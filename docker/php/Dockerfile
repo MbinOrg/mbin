@@ -1,4 +1,4 @@
-FROM php:8.3-fpm-alpine as base
+FROM php:8.4-fpm-alpine as base
 ARG UID=1000
 ARG MBIN_HOME=/var/www/mbin
 ENV MBIN_HOME=${MBIN_HOME}

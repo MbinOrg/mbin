@@ -10,8 +10,8 @@ use App\DTO\VoteStatsResponseDto;
 use App\Entity\Magazine;
 use App\Repository\StatsContentRepository;
 use App\Repository\StatsVotesRepository;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -126,7 +126,7 @@ class MagazineRetrieveStatsApi extends MagazineBaseApi
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
         StatsVotesRepository $repository,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
         $request = $this->request->getCurrentRequest();
@@ -272,7 +272,7 @@ class MagazineRetrieveStatsApi extends MagazineBaseApi
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
         StatsContentRepository $repository,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
         $request = $this->request->getCurrentRequest();
@@ -284,14 +284,14 @@ class MagazineRetrieveStatsApi extends MagazineBaseApi
             if (null === $startString) {
                 $start = null;
             } else {
-                $start = new \DateTime($startString);
+                $start = new \DateTimeImmutable($startString);
             }
 
             $endString = $request->get('end');
             if (null === $endString) {
                 $end = null;
             } else {
-                $end = new \DateTime($endString);
+                $end = new \DateTimeImmutable($endString);
             }
         } catch (\Exception $e) {
             throw new BadRequestHttpException('Failed to parse start or end time');

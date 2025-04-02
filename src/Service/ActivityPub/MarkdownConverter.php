@@ -15,7 +15,7 @@ class MarkdownConverter
     public function __construct(
         private readonly TagExtractor $tagExtractor,
         private readonly MentionManager $mentionManager,
-        private readonly ActivityPubManager $activityPubManager
+        private readonly ActivityPubManager $activityPubManager,
     ) {
     }
 
@@ -23,6 +23,7 @@ class MarkdownConverter
     {
         $converter = new HtmlConverter(['strip_tags' => true]);
         $converter->getEnvironment()->addConverter(new TableConverter());
+        $converter->getEnvironment()->addConverter(new StrikethroughConverter());
         $value = stripslashes($converter->convert($value));
 
         preg_match_all('/\[([^]]*)\] *\(([^)]*)\)/i', $value, $matches, PREG_SET_ORDER);

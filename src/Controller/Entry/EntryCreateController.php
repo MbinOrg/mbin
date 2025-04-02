@@ -19,6 +19,7 @@ use App\Service\EntryManager;
 use App\Service\IpResolver;
 use App\Service\SettingsManager;
 use Psr\Log\LoggerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -40,7 +41,8 @@ class EntryCreateController extends AbstractController
         private readonly EntryManager $manager,
         private readonly EntryCommentManager $commentManager,
         private readonly ValidatorInterface $validator,
-        private readonly IpResolver $ipResolver
+        private readonly IpResolver $ipResolver,
+        private readonly Security $security,
     ) {
     }
 
@@ -52,7 +54,7 @@ class EntryCreateController extends AbstractController
         $user = $this->getUserOrThrow();
         $maxBytes = $this->settingsManager->getMaxImageByteString();
 
-        $form = $this->createFormByType((new EntryPageView(1))->resolveType($type), $dto);
+        $form = $this->createFormByType((new EntryPageView(1, $this->security))->resolveType($type), $dto);
         try {
             // Could thrown an error on event handlers (eg. onPostSubmit if a user upload an incorrect image)
             $form->handleRequest($request);
@@ -86,7 +88,7 @@ class EntryCreateController extends AbstractController
             }
 
             return $this->render(
-                $this->getTemplateName((new EntryPageView(1))->resolveType($type)),
+                $this->getTemplateName((new EntryPageView(1, $this->security))->resolveType($type)),
                 [
                     'magazine' => $magazine,
                     'user' => $user,
@@ -115,7 +117,7 @@ class EntryCreateController extends AbstractController
             $this->logger->error($e);
 
             return $this->render(
-                $this->getTemplateName((new EntryPageView(1))->resolveType($type)),
+                $this->getTemplateName((new EntryPageView(1, $this->security))->resolveType($type)),
                 [
                     'magazine' => $magazine,
                     'user' => $user,
@@ -129,7 +131,7 @@ class EntryCreateController extends AbstractController
             $this->logger->error($e);
 
             return $this->render(
-                $this->getTemplateName((new EntryPageView(1))->resolveType($type)),
+                $this->getTemplateName((new EntryPageView(1, $this->security))->resolveType($type)),
                 [
                     'magazine' => $magazine,
                     'user' => $user,
@@ -144,7 +146,7 @@ class EntryCreateController extends AbstractController
             $this->logger->error($e);
 
             return $this->render(
-                $this->getTemplateName((new EntryPageView(1))->resolveType($type)),
+                $this->getTemplateName((new EntryPageView(1, $this->security))->resolveType($type)),
                 [
                     'magazine' => $magazine,
                     'user' => $user,

@@ -29,13 +29,13 @@
                                 {% elseif i > 0 %}
                                     ,
                                 {% endif %}
-                                {{ component('user_inline', {user: user, showAvatar: false}) }}
+                                {{ component('user_inline', {user: user, showAvatar: false, showNewIcon: true}) }}
                                 {% set i = i + 1 %}
                             {% endfor %}
                         </small>
                     </div>
                     <div>
-                        {{ component('user_inline', {user: lastMessage.sender, showAvatar: true}) -}}<span>:</span>
+                        {{ component('user_inline', {user: lastMessage.sender, showAvatar: true, showNewIcon: true}) -}}<span>:</span>
                         <a href="{{path('messages_single', {'id': thread.id}) }}">
                             {{ lastMessage.getTitle() }}
                         </a>

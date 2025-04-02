@@ -10,6 +10,7 @@ use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineBanRepository;
 use App\Service\NotificationManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
@@ -18,10 +19,11 @@ class SentMagazineBanNotificationHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly MagazineBanRepository $repository,
-        private readonly NotificationManager $manager
+        private readonly NotificationManager $notificationManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(MagazineBanNotificationMessage $message): void
@@ -40,6 +42,6 @@ class SentMagazineBanNotificationHandler extends MbinMessageHandler
             throw new UnrecoverableMessageHandlingException('Ban not found');
         }
 
-        $this->manager->sendMagazineBanNotification($ban);
+        $this->notificationManager->sendMagazineBanNotification($ban);
     }
 }

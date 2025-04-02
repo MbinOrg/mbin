@@ -21,7 +21,7 @@ use App\Factory\PostFactory;
 use App\Message\DeleteImageMessage;
 use App\Repository\ImageRepository;
 use App\Repository\PostRepository;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\Contracts\ContentManagerInterface;
 use App\Utils\Slugger;
 use Doctrine\Common\Collections\Criteria;
@@ -52,9 +52,9 @@ class PostManager implements ContentManagerInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly PostRepository $postRepository,
         private readonly ImageRepository $imageRepository,
-        private readonly ApHttpClient $apHttpClient,
+        private readonly ApHttpClientInterface $apHttpClient,
         private readonly SettingsManager $settingsManager,
-        private readonly CacheInterface $cache
+        private readonly CacheInterface $cache,
     ) {
     }
 

@@ -33,64 +33,60 @@ class InstanceSettingsRetrieveApiTest extends WebTestCase
         'MBIN_SSO_REGISTRATIONS_ENABLED',
         'MBIN_RESTRICT_MAGAZINE_CREATION',
         'MBIN_DOWNVOTES_MODE',
+        'MBIN_SSO_ONLY_MODE',
+        'MBIN_SSO_SHOW_FIRST',
+        'MAX_IMAGE_BYTES',
+        'MBIN_NEW_USERS_NEED_APPROVAL',
     ];
 
     public function testApiCannotRetrieveInstanceSettingsAnonymous(): void
     {
-        $client = self::createClient();
-
-        $client->request('GET', '/api/instance/settings');
+        $this->client->request('GET', '/api/instance/settings');
 
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotRetrieveInstanceSettingsWithoutAdmin(): void
     {
-        $client = self::createClient();
-
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/instance/settings', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/instance/settings', server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotRetrieveInstanceSettingsWithoutScope(): void
     {
-        $client = self::createClient();
-
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe', isAdmin: true);
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/instance/settings', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/instance/settings', server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanRetrieveInstanceSettings(): void
     {
-        $client = self::createClient();
-
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe', isAdmin: true);
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read admin:instance:settings:read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read admin:instance:settings:read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('GET', '/api/instance/settings', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/instance/settings', server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertArrayKeysMatch(self::INSTANCE_SETTINGS_RESPONSE_KEYS, $jsonData);
         foreach ($jsonData as $key => $value) {

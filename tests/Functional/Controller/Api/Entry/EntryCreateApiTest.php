@@ -11,7 +11,6 @@ class EntryCreateApiTest extends WebTestCase
 {
     public function testApiCannotCreateArticleEntryAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entryRequest = [
             'title' => 'Anonymous Thread',
@@ -22,13 +21,12 @@ class EntryCreateApiTest extends WebTestCase
             'isAdult' => false,
         ];
 
-        $client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/article", parameters: $entryRequest);
+        $this->client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/article", parameters: $entryRequest);
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotCreateArticleEntryWithoutScope(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entryRequest = [
             'title' => 'No Scope Thread',
@@ -40,18 +38,17 @@ class EntryCreateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/article", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/article", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanCreateArticleEntry(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entryRequest = [
@@ -64,14 +61,14 @@ class EntryCreateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read entry:create');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/article", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/article", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(201);
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData);
@@ -83,8 +80,7 @@ class EntryCreateApiTest extends WebTestCase
         self::assertIsArray($jsonData['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['user']);
         self::assertSame($user->getId(), $jsonData['user']['userId']);
-        self::assertIsArray($jsonData['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['domain']);
+        self::assertNull($jsonData['domain']);
         self::assertNull($jsonData['url']);
         self::assertEquals('This is an article', $jsonData['body']);
         self::assertNull($jsonData['image']);
@@ -113,7 +109,6 @@ class EntryCreateApiTest extends WebTestCase
 
     public function testApiCannotCreateLinkEntryAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entryRequest = [
             'title' => 'Anonymous Thread',
@@ -125,13 +120,12 @@ class EntryCreateApiTest extends WebTestCase
             'isAdult' => false,
         ];
 
-        $client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/link", parameters: $entryRequest);
+        $this->client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/link", parameters: $entryRequest);
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotCreateLinkEntryWithoutScope(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entryRequest = [
             'title' => 'No Scope Thread',
@@ -144,18 +138,17 @@ class EntryCreateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/link", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/link", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanCreateLinkEntry(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entryRequest = [
@@ -169,14 +162,14 @@ class EntryCreateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read entry:create');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/link", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/link", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(201);
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData);
@@ -192,7 +185,9 @@ class EntryCreateApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['domain']);
         self::assertEquals('https://google.com', $jsonData['url']);
         self::assertEquals('This is a link', $jsonData['body']);
-        self::assertNull($jsonData['image']);
+        if (null !== $jsonData['image']) {
+            self::assertStringContainsString('google.com', parse_url($jsonData['image']['sourceUrl'], PHP_URL_HOST));
+        }
         self::assertEquals('en', $jsonData['lang']);
         self::assertIsArray($jsonData['tags']);
         self::assertSame(['test'], $jsonData['tags']);
@@ -218,7 +213,6 @@ class EntryCreateApiTest extends WebTestCase
 
     public function testApiCannotCreateImageEntryAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entryRequest = [
             'title' => 'Anonymous Thread',
@@ -233,7 +227,7 @@ class EntryCreateApiTest extends WebTestCase
         copy($this->kibbyPath, $this->kibbyPath.'.tmp');
         $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
 
-        $client->request(
+        $this->client->request(
             'POST', "/api/magazine/{$magazine->getId()}/image",
             parameters: $entryRequest, files: ['uploadImage' => $image],
         );
@@ -242,7 +236,6 @@ class EntryCreateApiTest extends WebTestCase
 
     public function testApiCannotCreateImageEntryWithoutScope(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entryRequest = [
             'title' => 'No Scope Thread',
@@ -258,12 +251,12 @@ class EntryCreateApiTest extends WebTestCase
         $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request(
+        $this->client->request(
             'POST', "/api/magazine/{$magazine->getId()}/image",
             parameters: $entryRequest, files: ['uploadImage' => $image],
             server: ['HTTP_AUTHORIZATION' => $token]
@@ -273,7 +266,6 @@ class EntryCreateApiTest extends WebTestCase
 
     public function testApiCanCreateImageEntry(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entryRequest = [
@@ -286,22 +278,26 @@ class EntryCreateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($user);
+        $this->client->loginUser($user);
 
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        copy($this->kibbyPath, $this->kibbyPath.'.tmp');
-        $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.png');
+        $image = new UploadedFile($tmpPath.'.png', 'kibby_emoji.png', 'image/png');
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read entry:create');
+        $imageManager = $this->imageManager;
+        $expectedPath = $imageManager->getFilePath($image->getFilename());
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request(
+        $this->client->request(
             'POST', "/api/magazine/{$magazine->getId()}/image",
             parameters: $entryRequest, files: ['uploadImage' => $image],
             server: ['HTTP_AUTHORIZATION' => $token]
         );
         self::assertResponseStatusCodeSame(201);
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData);
@@ -313,13 +309,12 @@ class EntryCreateApiTest extends WebTestCase
         self::assertIsArray($jsonData['user']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['user']);
         self::assertSame($user->getId(), $jsonData['user']['userId']);
-        self::assertIsArray($jsonData['domain']);
-        self::assertArrayKeysMatch(self::DOMAIN_RESPONSE_KEYS, $jsonData['domain']);
+        self::assertNull($jsonData['domain']);
         self::assertNull($jsonData['url']);
         self::assertNull($jsonData['body']);
         self::assertIsArray($jsonData['image']);
         self::assertArrayKeysMatch(self::IMAGE_KEYS, $jsonData['image']);
-        self::assertStringContainsString(self::KIBBY_PNG_URL_RESULT, $jsonData['image']['filePath']);
+        self::assertStringContainsString($expectedPath, $jsonData['image']['filePath']);
         self::assertEquals('It\'s kibby!', $jsonData['image']['altText']);
         self::assertEquals('en', $jsonData['lang']);
         self::assertIsArray($jsonData['tags']);
@@ -346,7 +341,6 @@ class EntryCreateApiTest extends WebTestCase
 
     public function testApiCannotCreateEntryWithoutMagazine(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $invalidId = $magazine->getId() + 1;
         $entryRequest = [
@@ -358,24 +352,23 @@ class EntryCreateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read entry:create');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('POST', "/api/magazine/{$invalidId}/article", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/magazine/{$invalidId}/article", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(404);
 
-        $client->jsonRequest('POST', "/api/magazine/{$invalidId}/link", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/magazine/{$invalidId}/link", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(404);
 
-        $client->request('POST', "/api/magazine/{$invalidId}/image", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('POST', "/api/magazine/{$invalidId}/image", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(404);
     }
 
     public function testApiCannotCreateEntryWithoutUrlBodyOrImage(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $entryRequest = [
             'title' => 'No Url/Body Thread',
@@ -386,18 +379,18 @@ class EntryCreateApiTest extends WebTestCase
         ];
 
         self::createOAuth2AuthCodeClient();
-        $client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->getUserByUsername('user'));
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read entry:create');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/article", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/article", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(400);
 
-        $client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/link", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('POST', "/api/magazine/{$magazine->getId()}/link", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(400);
 
-        $client->request('POST', "/api/magazine/{$magazine->getId()}/image", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('POST', "/api/magazine/{$magazine->getId()}/image", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(400);
     }
 }

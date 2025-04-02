@@ -7,8 +7,8 @@ namespace App\Controller\Api\Instance\Admin;
 use App\Controller\Api\Instance\InstanceBaseApi;
 use App\DTO\SettingsDto;
 use App\Service\SettingsManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
@@ -52,7 +52,7 @@ class InstanceRetrieveSettingsApi extends InstanceBaseApi
     #[IsGranted('ROLE_OAUTH2_ADMIN:INSTANCE:SETTINGS:READ')]
     public function __invoke(
         SettingsManager $settings,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

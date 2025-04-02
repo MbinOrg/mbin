@@ -11,6 +11,7 @@ use App\Repository\EntryRepository;
 use App\Repository\TagRepository;
 use App\Service\TagExtractor;
 use Pagerfanta\PagerfantaInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -19,13 +20,14 @@ class TagEntryFrontController extends AbstractController
     public function __construct(
         private readonly EntryRepository $entryRepository,
         private readonly TagRepository $tagRepository,
-        private readonly TagExtractor $tagManager
+        private readonly TagExtractor $tagManager,
+        private readonly Security $security,
     ) {
     }
 
     public function __invoke(?string $name, ?string $sortBy, ?string $time, ?string $type, Request $request): Response
     {
-        $criteria = new EntryPageView($this->getPageNb($request));
+        $criteria = new EntryPageView($this->getPageNb($request), $this->security);
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setTime($criteria->resolveTime($time))
             ->setType($criteria->resolveType($type))

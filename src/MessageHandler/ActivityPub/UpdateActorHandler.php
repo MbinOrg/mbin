@@ -9,10 +9,11 @@ use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPubManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -21,14 +22,15 @@ class UpdateActorHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly ActivityPubManager $manager,
-        private readonly ApHttpClient $apHttpClient,
+        private readonly KernelInterface $kernel,
+        private readonly ActivityPubManager $activityPubManager,
+        private readonly ApHttpClientInterface $apHttpClient,
         private readonly LockFactory $lockFactory,
         private readonly UserRepository $userRepository,
         private readonly MagazineRepository $magazineRepository,
         private readonly LoggerInterface $logger,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(UpdateActorMessage $message): void
@@ -61,7 +63,7 @@ class UpdateActorHandler extends MbinMessageHandler
                 $this->apHttpClient->invalidateActorObjectCache($actorUrl);
             }
             if ($message->force || $actor->apFetchedAt < (new \DateTime())->modify('-1 hour')) {
-                $this->manager->updateActor($actorUrl);
+                $this->activityPubManager->updateActor($actorUrl);
             } else {
                 $this->logger->debug('not updating actor {url}: last updated is recent: {fetched}', [
                     'url' => $actorUrl,

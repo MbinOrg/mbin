@@ -14,7 +14,7 @@ final class AnnouncementComponent
 {
     public function __construct(
         private readonly Environment $twig,
-        private readonly SiteRepository $repository
+        private readonly SiteRepository $repository,
     ) {
     }
 

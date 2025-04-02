@@ -23,6 +23,7 @@ use App\Service\ActivityPubManager;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
@@ -31,6 +32,7 @@ class AnnounceHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly UserRepository $userRepository,
+        private readonly KernelInterface $kernel,
         private readonly MagazineRepository $magazineRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly AnnounceWrapper $announceWrapper,
@@ -41,7 +43,7 @@ class AnnounceHandler extends MbinMessageHandler
         private readonly DeliverManager $deliverManager,
         private readonly SettingsManager $settingsManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(AnnounceMessage $message): void
@@ -96,6 +98,10 @@ class AnnounceHandler extends MbinMessageHandler
                 $this->activityPubManager->createInboxesFromCC($activity, $actor),
             );
         } elseif ($actor instanceof Magazine) {
+            if ('random' === $actor->name) {
+                // do not federate the random magazine
+                return;
+            }
             $createHost = parse_url($object->apId, PHP_URL_HOST);
             $inboxes = array_filter(array_merge(
                 $inboxes,

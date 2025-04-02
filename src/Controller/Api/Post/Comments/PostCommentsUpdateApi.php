@@ -11,8 +11,8 @@ use App\DTO\PostCommentResponseDto;
 use App\Entity\PostComment;
 use App\Factory\PostCommentFactory;
 use App\Service\PostCommentManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -91,7 +91,7 @@ class PostCommentsUpdateApi extends PostsBaseApi
         PostCommentManager $manager,
         PostCommentFactory $factory,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 

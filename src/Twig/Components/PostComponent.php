@@ -22,7 +22,7 @@ final class PostComponent
     public bool $canSeeTrash = false;
 
     public function __construct(
-        private readonly AuthorizationCheckerInterface $authorizationChecker
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
     ) {
     }
 

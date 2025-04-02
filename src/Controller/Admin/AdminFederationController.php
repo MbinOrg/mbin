@@ -9,6 +9,7 @@ use App\DTO\InstancesDto;
 use App\Form\InstancesType;
 use App\Service\SettingsManager;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class AdminFederationController extends AbstractController
@@ -18,7 +19,7 @@ class AdminFederationController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): Response
     {
         $dto = new InstancesDto($this->settingsManager->get('KBIN_BANNED_INSTANCES'));
 

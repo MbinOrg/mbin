@@ -13,9 +13,10 @@ use App\PageView\PostPageView;
 use App\Repository\Criteria;
 use App\Repository\PostRepository;
 use App\Schema\PaginationSchema;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
@@ -122,11 +123,12 @@ class UserPostsRetrieveApi extends PostsBaseApi
         PostFactory $factory,
         RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter
+        RateLimiterFactory $anonymousApiReadLimiter,
+        Security $security,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
-        $criteria = new PostPageView((int) $request->getCurrentRequest()->get('p', 1));
+        $criteria = new PostPageView((int) $request->getCurrentRequest()->get('p', 1), $security);
         $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_HOT);
         $criteria->time = $criteria->resolveTime(
             $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)

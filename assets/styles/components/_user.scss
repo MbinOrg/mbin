@@ -1,9 +1,10 @@
+@use '../layout/breakpoints' as b;
+
 .user {
   &__actions {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    margin-bottom: 2.5rem;
     opacity: .75;
 
     div {
@@ -52,7 +53,7 @@
     vertical-align: middle;
     margin-right: 0.25rem;
 
-    @include media-breakpoint-down(sm) {
+    @include b.media-breakpoint-down(sm) {
       width: 25px;
       height: 25px;
     }
@@ -87,7 +88,7 @@
     padding-top: 2rem;
     text-align: center;
 
-    @include media-breakpoint-down(lg) {
+    @include b.media-breakpoint-down(lg) {
       justify-content: space-around;
       margin-left: 0;
     }
@@ -121,7 +122,7 @@
     margin-bottom: 2.5rem;
     padding: 0 1.5rem;
 
-    @include media-breakpoint-down(sm) {
+    @include b.media-breakpoint-down(sm) {
       padding: 0 .5rem;
     }
   }
@@ -151,7 +152,7 @@
   gap: 1rem;
   grid-template-columns: repeat(2, 1fr);
 
-  @include media-breakpoint-down(sm) {
+  @include b.media-breakpoint-down(sm) {
     grid-template-columns: repeat(1, 1fr);
   }
 
@@ -174,11 +175,11 @@
     margin: 0;
     padding: 0;
 
-    @include media-breakpoint-down(lg) {
+    @include b.media-breakpoint-down(lg) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @include media-breakpoint-down(sm) {
+    @include b.media-breakpoint-down(sm) {
       grid-template-columns: repeat(1, 1fr);
     }
   }

@@ -15,6 +15,7 @@ use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -22,6 +23,7 @@ class EntryPinMessageHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly SettingsManager $settingsManager,
         private readonly EntryRepository $entryRepository,
         private readonly UserRepository $userRepository,
@@ -30,7 +32,7 @@ class EntryPinMessageHandler extends MbinMessageHandler
         private readonly DeliverManager $deliverManager,
         private readonly LoggerInterface $logger,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(EntryPinMessage $message): void
@@ -52,6 +54,11 @@ class EntryPinMessageHandler extends MbinMessageHandler
         if (null !== $entry->magazine->apId && null !== $user->apId) {
             $this->logger->warning('got an EntryPinMessage for remote magazine {m} by remote user {u}. That does not need to be propagated, as this instance is not the source', ['m' => $entry->magazine->apId, 'u' => $user->apId]);
 
+            return;
+        }
+
+        if ('random' === $entry->magazine->name) {
+            // do not federate the random magazine
             return;
         }
 

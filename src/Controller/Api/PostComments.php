@@ -10,6 +10,7 @@ use App\Entity\Post;
 use App\Factory\PostCommentFactory;
 use App\PageView\PostCommentPageView;
 use App\Repository\PostCommentRepository;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class PostComments extends AbstractController
@@ -17,14 +18,15 @@ class PostComments extends AbstractController
     public function __construct(
         private readonly PostCommentRepository $repository,
         private readonly PostCommentFactory $factory,
-        private readonly RequestStack $request
+        private readonly RequestStack $request,
+        private readonly Security $security,
     ) {
     }
 
     public function __invoke(Post $post)
     {
         try {
-            $criteria = new PostCommentPageView((int) $this->request->getCurrentRequest()->get('p', 1));
+            $criteria = new PostCommentPageView((int) $this->request->getCurrentRequest()->get('p', 1), $this->security);
             $criteria->post = $post;
             $criteria->onlyParents = false;
 

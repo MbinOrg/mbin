@@ -20,12 +20,13 @@ use App\Message\ActivityPub\Inbox\LikeMessage;
 use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
 use App\Repository\ApActivityRepository;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -34,15 +35,16 @@ class ChainActivityHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly LoggerInterface $logger,
-        private readonly ApHttpClient $client,
+        private readonly ApHttpClientInterface $client,
         private readonly MessageBusInterface $bus,
         private readonly ApActivityRepository $repository,
         private readonly Note $note,
         private readonly Page $page,
         private readonly SettingsManager $settingsManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(ChainActivityMessage $message): void
@@ -62,20 +64,20 @@ class ChainActivityHandler extends MbinMessageHandler
         $validObjectTypes = ['Page', 'Note', 'Article', 'Question', 'Video'];
         $object = $message->chain[0];
         if (!\in_array($object['type'], $validObjectTypes)) {
-            $this->logger->error('cannot get the dependencies of the object, its type {t} is not one we can handle. {m]', ['t' => $object['type'], 'm' => $message]);
+            $this->logger->error('[ChainActivityHandler::doWork] Cannot get the dependencies of the object, its type {t} is not one we can handle. {m]', ['t' => $object['type'], 'm' => $message]);
 
             return;
         }
         try {
             $entity = $this->retrieveObject($object['id']);
         } catch (InstanceBannedException) {
-            $this->logger->info('the instance is banned, url: {url}', ['url' => $object['id']]);
+            $this->logger->info('[ChainActivityHandler::doWork] The instance is banned, url: {url}', ['url' => $object['id']]);
 
             return;
         }
 
         if (!$entity) {
-            $this->logger->error('could not retrieve all the dependencies of {o}', ['o' => $object['id']]);
+            $this->logger->error('[ChainActivityHandler::doWork] Could not retrieve all the dependencies of {o}', ['o' => $object['id']]);
 
             return;
         }
@@ -104,12 +106,12 @@ class ChainActivityHandler extends MbinMessageHandler
         try {
             $object = $this->client->getActivityObject($apUrl);
             if (!$object) {
-                $this->logger->warning('Got an empty object for {url}', ['url' => $apUrl]);
+                $this->logger->warning('[ChainActivityHandler::retrieveObject] Got an empty object for {url}', ['url' => $apUrl]);
 
                 return null;
             }
             if (!\is_array($object)) {
-                $this->logger->warning("Didn't get an array for {url}. Got '{val}' instead, exiting", ['url' => $apUrl, 'val' => $object]);
+                $this->logger->warning("[ChainActivityHandler::retrieveObject] Didn't get an array for {url}. Got '{val}' instead, exiting", ['url' => $apUrl, 'val' => $object]);
 
                 return null;
             }
@@ -122,7 +124,7 @@ class ChainActivityHandler extends MbinMessageHandler
                 }
                 $meta = $this->repository->findByObjectId($parentUrl);
                 if (!$meta) {
-                    $this->logger->warning('fetching the parent object ({parent}) did not work for {url}, aborting', ['parent' => $parentUrl, 'url' => $apUrl]);
+                    $this->logger->warning('[ChainActivityHandler::retrieveObject] Fetching the parent object ({parent}) did not work for {url}, aborting', ['parent' => $parentUrl, 'url' => $apUrl]);
 
                     return null;
                 }
@@ -131,28 +133,28 @@ class ChainActivityHandler extends MbinMessageHandler
             switch ($object['type']) {
                 case 'Question':
                 case 'Note':
-                    $this->logger->debug('creating note {o}', ['o' => $object]);
+                    $this->logger->debug('[ChainActivityHandler::retrieveObject] Creating note {o}', ['o' => $object]);
 
                     return $this->note->create($object);
                 case 'Page':
                 case 'Article':
                 case 'Video':
-                    $this->logger->debug('creating page {o}', ['o' => $object]);
+                    $this->logger->debug('[ChainActivityHandler::retrieveObject] Creating page {o}', ['o' => $object]);
 
                     return $this->page->create($object);
                 default:
-                    $this->logger->warning('Could not create an object from type {t} on {url}: {o}', ['t' => $object['type'], 'url' => $apUrl, 'o' => $object]);
+                    $this->logger->warning('[ChainActivityHandler::retrieveObject] Could not create an object from type {t} on {url}: {o}', ['t' => $object['type'], 'url' => $apUrl, 'o' => $object]);
             }
         } catch (UserBannedException) {
-            $this->logger->info('the user is banned, url: {url}', ['url' => $apUrl]);
+            $this->logger->info('[ChainActivityHandler::retrieveObject] The user is banned, url: {url}', ['url' => $apUrl]);
         } catch (UserDeletedException) {
-            $this->logger->info('the user is deleted, url: {url}', ['url' => $apUrl]);
+            $this->logger->info('[ChainActivityHandler::retrieveObject] The user is deleted, url: {url}', ['url' => $apUrl]);
         } catch (TagBannedException) {
-            $this->logger->info('one of the used tags is banned, url: {url}', ['url' => $apUrl]);
-        } catch (EntityNotFoundException $e) {
-            $this->logger->error('There was an exception while getting {url}: {ex} - {m}. {o}', ['url' => $apUrl, 'ex' => \get_class($e), 'm' => $e->getMessage(), 'o' => $e]);
+            $this->logger->info('[ChainActivityHandler::retrieveObject] One of the used tags is banned, url: {url}', ['url' => $apUrl]);
         } catch (InstanceBannedException) {
-            $this->logger->info('the instance is banned, url: {url}', ['url' => $apUrl]);
+            $this->logger->info('[ChainActivityHandler::retrieveObject] The instance is banned, url: {url}', ['url' => $apUrl]);
+        } catch (EntityNotFoundException $e) {
+            $this->logger->error('[ChainActivityHandler::retrieveObject] There was an exception while getting {url}: {ex} - {m}. {o}', ['url' => $apUrl, 'ex' => \get_class($e), 'm' => $e->getMessage(), 'o' => $e]);
         }
 
         return null;

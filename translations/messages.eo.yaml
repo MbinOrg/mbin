@@ -68,7 +68,7 @@ moderators: Moderigantoj
 federated_magazine_info: Ĉi tiu revuo estas el federaciita servilo kaj povas esti
   nekompleta.
 federated_user_info: Ĉi tiu profilo estas el federaciita servilo kaj povas esti nekompleta.
-go_to_original_instance: Foliumi pli en la originala nodo.
+go_to_original_instance: Rigardi ĝin sur la fora nodo
 reset_check_email_desc: Se jam estas konto asociita kun via retpoŝtadreso, vi baldaŭ
   ricevu retpoŝton enhavantan ligilon, kiun vi povas uzi por reagordi vian pasvorton.
   Ĉi tiu ligilo eksvalidiĝos en %expire%.
@@ -255,7 +255,7 @@ he_unbanned: malforbari
 banned: Forbaris vin
 deleted: Forigita de la aŭtoro
 mentioned_you: Menciis vin
-send_message: Sendi mesaĝon
+send_message: Sendi rektan mesaĝon
 message: Mesaĝo
 from_url: El URL
 users: Uzantoj
@@ -387,23 +387,23 @@ filter.adult.hide: Kaŝi NSPL
 filter.adult.only: Nur NSPL
 filter.fields.only_names: Nur nomoj
 filter.fields.names_and_descriptions: Nomoj kaj priskriboj
-kbin_bot: Mbin Roboto
+kbin_bot: Mbin Agento
 filter.adult.show: Montri NSPL
-local_and_federated: Loka kaj federaciata
-bot_body_content: "Bonvenon al la Mbin Roboto! Ĉi tiu roboto ludas decidan rolon en
+local_and_federated: Loka kaj federaciita
+bot_body_content: "Bonvenon al la Mbin Agento! Ĉi tiu agento ludas decidan rolon en
   ebligado de ActivityPub-funkcio ene de Mbin. Ĝi certigas, ke Mbin povas komuniki
   kaj federacii kun aliaj nodoj en la fediverso.\n\nActivityPub estas malferma norma
   protokolo, kiu permesas al malcentraj sociaj retaj platformoj komuniki kaj interagi
   unu kun la alia. Ĝi ebligas al uzantoj en malsamaj nodoj (serviloj) sekvi, interagi
-  kun, kaj dividi enhavon tra la federacia socia reto konata kiel la fediverso. Ĝi
-  provizas normigitan manieron por uzantoj publikigi enhavon, sekvi aliajn uzantojn,
+  kun, kaj kundividi enhavon tra la federacia socia reto konata kiel la fediverso.
+  Ĝi provizas normigitan manieron por uzantoj publikigi enhavon, sekvi aliajn uzantojn,
   kaj okupiĝi pri sociaj interagoj kiel ŝatado, kundivido kaj komentado pri fadenoj
   aŭ afiŝoj."
 password_confirm_header: Konfirmu vian peton de ŝanĝo de pasvorto.
 oauth2.grant.moderate.magazine.reports.all: Administri raportojn en la revuoj, kiujn
   vi moderigas.
 resend_account_activation_email_error: Estis problemo dum ĉi tiu peto. Eble ne ekzistas
-  konto asociita kun tiu retpoŝto aŭ eble ĝi jam estas aktivigita.
+  konto asociita kun tiu retpoŝtadreso aŭ eble ĝi jam estas aktivigita.
 federation_page_enabled: Federada paĝo ebligita
 email_confirm_button_text: Konfirmu vian peton de ŝanĝo de pasvorto
 toolbar.bold: Grasa
@@ -418,10 +418,10 @@ federated_search_only_loggedin: Federacia serĉo limigita se ne ensalutinta
 oauth2.grant.moderate.magazine.reports.action: Akcepti aŭ malakcepti raportojn en
   la revuoj, kiujn vi moderigas.
 your_account_is_not_active: Via konto ne estas aktivigita. Bonvolu kontroli vian retpoŝton
-  por instrukcioj pri aktivigo de konto aŭ <a href="%link_target%">peti novan retpoŝton
+  por instrukcioj pri aktivigo de konto aŭ <a href="%link_target%">peti novan retmesaĝon
   pri aktivigo de konto.</a>
 oauth.consent.allow: Permesi
-custom_css: Kutima CSS
+custom_css: Adaptita CSS
 block: Bloki
 toolbar.quote: Citaĵo
 oauth2.grant.moderate.magazine.list: Legi liston de la revuoj, kiujn vi moderigas.
@@ -432,12 +432,12 @@ resend_account_activation_email_success: Se konto asociita kun tiu retpoŝtadres
 errors.server403.title: 403 Malpermesita
 oauth2.grant.moderate.magazine.reports.read: Legi raportojn en la revuoj, kiujn vi
   moderigas.
-ignore_magazines_custom_css: Ignori kutimajn CSS-ojn de revuoj
+ignore_magazines_custom_css: Ignori la adaptitan CSS-on de revuoj
 oauth.consent.deny: Nei
 oauth.consent.title: OAuth2 konsentformularo
 federation_page_allowed_description: Konataj nodoj kun kiuj ni federacias
 resend_account_activation_email: Resendi retpoŝton pri aktivigo de konto
-errors.server500.title: 500 Servila eraro
+errors.server500.title: 500 Interna Servila Eraro
 toolbar.link: Ligilo
 toolbar.mention: Mencio
 resend_account_activation_email_question: Neaktiva konto?
@@ -445,8 +445,10 @@ resend_account_activation_email_description: Enigu la retpoŝtadreson asociitan 
   via konto. Ni sendos alian aktivigan retmesaĝon por vi.
 your_account_has_been_banned: Via konto forbaris
 toolbar.code: Kodo
-errors.server500.description: Pardonu, io misfunkciis ĉe nia flanko. Ni laboras por
-  solvi ĉi tiun problemon, bonvolu kontroli baldaŭ.
+errors.server500.description: Pardonu, io misfunkciis ĉe nia flanko. Se vi daŭre vidas
+  ĉi tiun eraron, provu kontakti la posedanton de la nodo. Se ĉi tiu nodo tute ne
+  funkcias, kontrolu %link_start%aliajn Mbin-nodojn%link_end% dume ĝis la problemo
+  estos solvita.
 oauth.client_not_granted_message_read_permission: Ĉi tiu programo ne ricevis permeson
   legi viajn mesaĝojn.
 restrict_oauth_clients: Limigi kreadon de Kliento OAuth2 al Administrantoj
@@ -463,11 +465,11 @@ toolbar.strikethrough: Trastreki
 toolbar.image: Bildo
 toolbar.italic: Kursiva
 more_from_domain: Pli de domajno
-oauth2.grant.moderate.magazine.trash.read: Rigardi rubujon enhavon en revuoj, kiujn
-  vi moderigas.
+oauth2.grant.moderate.magazine.trash.read: Rigardi rubujigatan enhavon en revuoj,
+  kiujn vi moderigas.
 oauth2.grant.moderate.magazine_admin.create: Krei novajn revuojn.
-oauth2.grant.moderate.magazine_admin.edit_theme: Redakti la kutiman CSS de iu ajn
-  el viaj posedataj revuoj.
+oauth2.grant.moderate.magazine_admin.edit_theme: Redakti la adaptitan CSS-on de iu
+  ajn el viaj posedataj revuoj.
 oauth2.grant.moderate.magazine_admin.tags: Krei aŭ forigi etikedojn de viaj posedataj
   revuoj.
 oauth2.grant.admin.entry.purge: Tute forigu ajnan fadenon de via nodo.
@@ -487,3 +489,287 @@ oauth2.grant.moderate.magazine_admin.moderators: Aldoni aŭ forigi moderigantojn
   iu ajn el viaj posedataj revuoj.
 oauth2.grant.moderate.magazine_admin.badges: Krei aŭ forigi insignojn de viaj posedataj
   revuoj.
+flash_image_download_too_large_error: La bildo ne povis esti kreita, ĝi estas tro
+  granda (maksimuma grandeco %bytes%)
+show_subscriptions: Montri abonojn
+flash_thread_new_error: La fadeno ne povis esti kreita. Io misfunkciis.
+oauth2.grant.moderate.post_comment.change_language: Ŝanĝi la lingvon de komentoj pri
+  afiŝoj en la revuoj, kiujn vi moderigas.
+downvotes_mode: Reĝimo kontraŭvoĉdonoj
+disabled: Malebligita
+hidden: Kaŝita
+enabled: Ebligita
+change_downvotes_mode: Ŝanĝi reĝimon de kontraŭvoĉdonoj
+tag: Etikedo
+edit_entry: Redakti fadenon
+default_theme: Defaŭlta etoso
+default_theme_auto: Hela/Malhela (Aŭtomatrekoni)
+flash_mark_as_adult_success: La afiŝo estis sukcese markita kiel NSPL.
+flash_unmark_as_adult_success: La afiŝo estis sukcese malmarkita kiel NSPL.
+unban: Malforbari
+ban_hashtag_btn: Forbari haŝetikedon
+account_deletion_title: Forigo de konto
+oauth2.grant.subscribe.general: Aboni aŭ sekvi ajnan revuon, domajnon aŭ uzanton,
+  kaj rigardi la revuojn, domajnojn kaj uzantojn, al kiuj vi abonas.
+oauth2.grant.moderate.post.all: Kontroli afiŝojn en la revuoj, kiujn vi moderigas.
+oauth2.grant.moderate.post_comment.all: Kontroli komentojn pri afiŝoj en la revuoj,
+  kiujn vi moderigas.
+single_settings: Unuopa
+oauth2.grant.moderate.magazine.all: Administri forbarojn, raportojn kaj rigardi rubujigataj
+  eroj en la revuoj, kiujn vi moderigas.
+oauth2.grant.moderate.magazine.ban.all: Administri forbaritajn uzantojn en la revuoj,
+  kiujn vi moderigas.
+account_deletion_immediate: Forigi tuj
+from: de
+subscription_sidebar_pop_out_right: Movi al aparta flanka kolumno dekstre
+menu: Menuo
+unban_hashtag_btn: Malforbari Haŝetikedon
+ban_hashtag_description: Forbaro de haŝetikedo malhelpos kreadon de afiŝoj kun ĉi
+  tiu haŝetikedo, kaj ankaŭ kaŝos ekzistantajn afiŝojn kun ĉi tiu haŝetikedo.
+unmark_as_adult: Malmarki NSPL
+account_deletion_button: Forigi Konton
+oauth2.grant.domain.all: Aboni aŭ bloki domajnojn, kaj rigardi la domajnojn, kiujn
+  vi abonas aŭ blokas.
+oauth2.grant.entry_comment.all: Krei, redakti aŭ forigi viajn komentojn en fadenoj,
+  kaj voĉdoni, akceli aŭ raporti ajnan komenton en fadeno.
+oauth2.grant.entry.vote: Porvoĉdoni, akceli aŭ kontraŭvoĉdoni ajnan fadenon.
+oauth2.grant.user.message.create: Sendi mesaĝojn al aliaj uzantoj.
+oauth2.grant.user.notification.all: Legi kaj malplenigi viajn sciigojn.
+oauth2.grant.user.message.read: Legi viajn mesaĝojn.
+oauth2.grant.moderate.entry.all: Kontroli fadenojn en la revuoj, kiujn vi moderigas.
+oauth2.grant.user.oauth_clients.edit: Redakti la permesojn, kiujn vi donis al aliaj
+  OAuth2-aplikaĵoj.
+oauth2.grant.user.block: Bloki aŭ malbloki uzantojn, kaj legi liston de uzantoj, kiujn
+  vi blokas.
+oauth2.grant.moderate.entry.change_language: Ŝanĝi la lingvon de fadenoj en la revuoj,
+  kiujn vi moderigas.
+oauth2.grant.moderate.entry.trash: Rubuji aŭ restarigi fadenojn en la revuoj, kiujn
+  vi moderigas.
+oauth2.grant.moderate.entry_comment.trash: Rubuji aŭ restarigi komentojn en fadenoj
+  de la revuoj, kiujn vi moderigas.
+oauth2.grant.moderate.entry_comment.change_language: Ŝanĝi la lingvon de komentoj
+  en fadenoj de la revuoj, kiujn vi moderigas.
+oauth2.grant.admin.magazine.move_entry: Movi fadenojn inter revuojn sur via nodo.
+oauth2.grant.admin.user.verify: Konfirmi uzantojn sur via nodo.
+oauth2.grant.admin.user.delete: Forigi uzantojn de via nodo.
+oauth2.grant.admin.federation.read: Rigardi la liston de defederitaj nodoj.
+oauth2.grant.admin.federation.update: Aldoni aŭ forigi nodojn al aŭ de la listo de
+  defederitaj nodoj.
+oauth2.grant.admin.instance.settings.all: Rigardi aŭ ĝisdatigi agordojn sur via nodo.
+oauth2.grant.admin.oauth_clients.revoke: Revoki aliron al OAuth2-klientoj en via nodo.
+show_avatars_on_comments: Montri Komentajn Avatarojn
+moderation.report.reject_report_title: Malakcepti La Raporton
+moderation.report.approve_report_confirmation: Ĉu vi certas, ke vi volas aprobi ĉi
+  tiun raporton?
+purge_content_desc: Tute viŝi la enhavon de la uzanto, inkluzive de forigi la respondoj
+  de aliaj uzantoj en kreitaj fadenoj, afiŝoj kaj komentoj.
+schedule_delete_account: Plani Forigon
+remove_schedule_delete_account: Forigi Planitan Forigon
+two_factor_authentication: Dupaŝa aŭtentigo
+2fa.disable: Malebligi dupaŝan aŭtentigon
+2fa.backup: Viaj dupaŝaj rezervaj kodoj
+2fa.enable: Agordi dupaŝan aŭtentigon
+2fa.verify_authentication_code.label: Enigi dupaŝan kodon por konfirmi agordon
+2fa.qr_code_link.title: Vizitante ĉi tiun ligon povas permesi al via platformo registri
+  ĉi tiun dupaŝan aŭtentigon
+2fa.backup_codes.help: Vi povas uzi ĉi tiujn kodojn kiam vi ne havas vian dupaŝan
+  aŭtentikan aparaton aŭ aplikaĵon. <strong>Oni ne plu montros ilin</strong> al vi
+  kaj vi povos uzi ĉiun el ili <strong>nur unufoje</strong>.
+subscriptions_in_own_sidebar: En aparta flanka kolumno
+sidebars_same_side: Flankaj kolumnoj al la sama flanko
+subscription_sidebar_pop_in: Movi abonojn al la enlinia panelo
+pending: Pritraktata
+position_top: Supro
+solarized_auto: Sunigita (Aŭtomatrekoni)
+unban_hashtag_description: Malforbaro de haŝetikedo permesos krei afiŝojn kun ĉi tiu
+  haŝetikedo denove. Ekzistantaj afiŝoj kun ĉi tiu hashetikedo ne plu estas kaŝitaj.
+oauth2.grant.admin.instance.all: Rigardi kaj ĝisdatigi agordojn aŭ informojn de nodo.
+oauth2.grant.admin.instance.settings.read: Rigradi agordojn sur via nodo.
+oauth2.grant.moderate.post.trash: Rubuji aŭ restarigi afiŝojn en la revuoj, kiujn
+  vi moderigas.
+oauth2.grant.admin.magazine.purge: Tute forigi revuojn sur via nodo.
+moderation.report.reject_report_confirmation: Ĉu vi certas, ke vi volas malakcepti
+  ĉi tiun raporton?
+password_and_2fa: Pasvorto & 2PA
+subscription_sort: Ordigi
+subscription_panel_large: Granda panelo
+oauth2.grant.entry.create: Krei novajn fadenojn.
+oauth2.grant.moderate.magazine.ban.create: Forbari uzantojn en la revuoj, kiujn vi
+  moderigas.
+oauth2.grant.block.general: Bloki aŭ malbloki ajnan revuon, domajnon aŭ uzanton, kaj
+  rigardi la revuojn, domajnojn kaj uzantojn, kiujn vi blokis.
+toolbar.spoiler: Malkaŝo de intrigo
+sidebar_sections_local_only: Limigi sekciojn "Hazarda X" kaj "Aktivaj Homoj" nur al
+  lokaj
+account_deletion_description: Via konto estos forigita post 30 tagoj krom se vi elektas
+  forigi la konton tuj. Por restarigi vian konton ene de 30 tagoj, ensalutu kun la
+  samaj uzantkreditaĵoj aŭ kontaktu administranton.
+oauth2.grant.post_comment.delete: Forigi viajn ekzistantajn komentojn pri afiŝoj.
+oauth2.grant.vote.general: Porvoĉdoni, kontraŭvoĉdoni, aŭ akceli fadenon, afiŝojn
+  aŭ komentojn.
+oauth2.grant.post.edit: Redakti viajn ekzistantajn afiŝojn.
+oauth2.grant.post_comment.all: Krei, redakti aŭ forigi viajn komentojn pri afiŝoj,
+  kaj voĉdoni, akceli aŭ raporti ajnan komenton pri afiŝo.
+oauth2.grant.user.oauth_clients.all: Legi kaj redakti la permesojn, kiujn vi donis
+  al aliaj OAuth2-aplikaĵoj.
+oauth2.grant.user.oauth_clients.read: Legi la permesojn, kiujn vi donis al aliaj OAuth2-aplikaĵoj.
+oauth2.grant.moderate.entry_comment.all: Kontroli komentojn en fadenoj en la revuoj,
+  kiujn vi moderigas.
+oauth2.grant.moderate.entry.set_adult: Marki fadenojn kiel NSPL en la revuoj, kiujn
+  vi moderigas.
+oauth2.grant.post.delete: Forigi viajn ekzistantajn afiŝojn.
+oauth2.grant.moderate.entry.pin: Alpingli fadenojn al la supro de la revuoj, kiujn
+  vi moderigas.
+oauth2.grant.post.report: Raporti ajnan afiŝon.
+oauth2.grant.moderate.post_comment.set_adult: Marki komentojn pri afiŝoj kiel NSPL
+  en la revuoj, kiujn vi moderigas.
+oauth2.grant.moderate.post_comment.trash: Rubuji aŭ restarigi komentojn pri afiŝoj
+  en la revuoj, kiujn vi moderigas.
+moderation.report.approve_report_title: Aprobi La Raporton
+oauth2.grant.admin.oauth_clients.all: Rigardi aŭ revoki OAuth2-klientojn, kiuj ekzistas
+  sur via nodo.
+oauth2.grant.admin.oauth_clients.read: Rigardi OAuth2-klientojn, kiuj ekzistas sur
+  via nodo, kaj iliajn uzstatistikojn.
+comment_reply_position_help: Montri la komentan respondformularon aŭ supre aŭ malsupre
+  de la paĝo. Kiam 'senfina movo' estas ebligita la pozicio ĉiam aperos supre.
+update_comment: Ĝisdatigi komenton
+remove_schedule_delete_account_desc: Forigi la planitan forigon. La tuta enhavo estos
+  disponebla denove kaj la uzanto povos ensaluti.
+oauth2.grant.domain.block: Bloki aŭ malbloki domajnojn kaj rigardi la domajnojn, kiujn
+  vi blokis.
+oauth2.grant.entry.all: Krei, redakti aŭ forigi viajn fadenojn, kaj voĉdoni, akceli
+  aŭ raporti ajnan fadenon.
+oauth2.grant.entry_comment.delete: Forigi viajn ekzistantajn komentojn en fadenoj.
+oauth2.grant.entry_comment.vote: Porvoĉdoni, akceli aŭ kontraŭvoĉdoni ajnan komenton
+  en fadeno.
+oauth2.grant.entry_comment.report: Raporti ajnan komenton en fadeno.
+oauth2.grant.post.create: Krei novajn afiŝojn.
+oauth2.grant.magazine.block: Bloki aŭ malbloki revuojn kaj rigardi la revuojn, kiujn
+  vi blokis.
+oauth2.grant.post.vote: Porvoĉdoni, akceli aŭ kontraŭvoĉdoni iun ajn afiŝon.
+oauth2.grant.post_comment.vote: Porvoĉdoni, akceli aŭ kontraŭvoĉdoni ajnan komenton
+  pri afiŝo.
+oauth2.grant.post_comment.report: Raporti ajnan komenton pri afiŝo.
+oauth2.grant.user.notification.read: Legi viajn sciigojn, inkluzive de mesaĝaj sciigoj.
+oauth2.grant.moderate.all: Fari ajnan moderigan agon, kiun vi rajtas fari en la revuoj,
+  kiujn vi moderigas.
+oauth2.grant.admin.post_comment.purge: Tute forigi ajnan komenton pri afiŝo de via
+  nodo.
+oauth2.grant.admin.user.ban: Forbari aŭ malforbari uzantojn de via nodo.
+oauth2.grant.admin.instance.settings.edit: Ĝisdatigi agordojn sur via nodo.
+oauth2.grant.admin.instance.information.edit: Ĝisdatigi la paĝojn Pri, Oftaj Demandoj,
+  Kontakto, Servadokondiĉoj kaj Privateca Politiko sur via nodo.
+last_active: Laste Aktiva
+flash_post_unpin_success: La afiŝo estis sukcese malpinglita.
+subject_reported_exists: Ĉi tiu enhavo jam estis raportita.
+moderation.report.ban_user_title: Forbari Uzanton
+purge_content: Viŝi enhavon
+delete_content_desc: Forigi la enhavon de la uzanto lasante la respondojn de aliaj
+  uzantoj en la kreitaj fadenoj, afiŝoj kaj komentoj.
+2fa.authentication_code.label: Aŭtentikiga Kodo
+2fa.verify: Konfirmi
+2fa.qr_code_img.alt: QR-kodo, kiu permesas la agordon de dupaŝa aŭtentigo por via
+  konto
+2fa.backup_codes.recommendation: Oni rekomendas, ke vi konservu kopion de ili en sekura
+  loko.
+cancel: Nuligi
+schedule_delete_account_desc: Plani la forigon de ĉi tiu konto post 30 tagoj. Ĉi tio
+  kaŝos la uzanton kaj ilian enhavon kaj ankaŭ preventos la uzanton ensaluti.
+2fa.code_invalid: La aŭtentikigkodo ne validas
+moderation.report.ban_user_description: Ĉu vi volas forbari la uzanton (%username%)
+  kiu kreis ĉi tiun enhavon de ĉi tiu revuo?
+flash_thread_tag_banned_error: La fadeno ne povis esti kreita. La enhavo ne estas
+  permesita.
+delete_account_desc: Forigi la konton, inkluzive de la respondoj de aliaj uzantoj
+  en kreitaj fadenoj, afiŝoj kaj komentoj.
+alphabetically: Alfabete
+close: Fermi
+mark_as_adult: Marki NSPL
+oauth2.grant.domain.subscribe: Aboni aŭ malaboni domajnojn kaj rigardi la domajnojn
+  al kiuj vi abonas.
+oauth2.grant.entry.edit: Redakti viajn ekzistantajn fadenojn.
+oauth2.grant.magazine.all: Aboni aŭ bloki revuojn, kaj rigardi la revuojn, kiujn vi
+  abonas aŭ blokas.
+oauth2.grant.magazine.subscribe: Aboni aŭ malaboni revuojn kaj rigardi la revuojn,
+  kiujn vi abonas.
+oauth2.grant.user.profile.all: Legi kaj redakti vian profilon.
+oauth2.grant.admin.magazine.all: Movi fadenojn inter aŭ tute forigi revuojn sur via
+  nodo.
+flash_post_pin_success: La afiŝo estis sukcese alpinglita.
+comment_reply_position: Komenta respondpozicio
+flash_account_settings_changed: Viaj kontaj agordoj estis sukcese ŝanĝitaj. Vi devos
+  denove ensaluti.
+subscription_sidebar_pop_out_left: Movi al aparta flanka kolumno maldekstre
+flash_email_was_sent: Retmesaĝo estas sukcese sendita.
+oauth2.grant.post.all: Krei, redakti aŭ forigi viajn mikroblogojn, kaj voĉdoni, akceli
+  aŭ raporti ajnan mikroblogon.
+2fa.remove: Forigi 2PA
+oauth2.grant.user.follow: Sekvi aŭ malsekvi uzantojn, kaj legi liston de uzantoj,
+  kiujn vi sekvas.
+subscribers_count: '{0}Abonantoj|{1}Abonanto|]1,Inf[ Abonantoj'
+followers_count: '{0}Sekvantoj|{1}Sekvanto|]1,Inf[ Sekvantoj'
+marked_for_deletion: Markita por forigo
+marked_for_deletion_at: Markita por forigo je %date%
+sort_by: Ordigi laŭ
+filter_by_subscription: Filtri laŭ abono
+filter_by_federation: Filtri laŭ federada stato
+two_factor_backup: Dupaŝaj aŭtentigaj rezervaj kodoj
+position_bottom: Malsupro
+subscribe_for_updates: Abonu por komenci ricevi ĝisdatigojn.
+remove_media: Forigi aŭdvidaĵon
+always_disconnected_magazine_info: Ĉi tiu revuo ne ricevas ĝisdatigojn.
+disconnected_magazine_info: Ĉi tiu revuo ne ricevas ĝisdatigojn (lasta aktiveco antaŭ
+  %days% tagoj).
+oauth2.grant.post_comment.create: Krei novajn komentojn pri afiŝoj.
+oauth2.grant.entry_comment.create: Krei novajn komentojn en fadenoj.
+oauth2.grant.entry_comment.edit: Redakti viajn ekzistantajn komentojn en fadenoj.
+oauth2.grant.admin.instance.stats: Rigardi la statistikojn de via nodo.
+2fa.available_apps: Uzu dupaŝan aŭtentikigaplikaĵon kiel %google_authenticator%, %aegis%
+  (Android) aŭ %raivo% (iOS) por skani la QR-kodon.
+2fa.user_active_tfa.title: Uzanto havas aktivan 2PA-on
+federation_page_dead_title: Mortintaj nodoj
+federation_page_dead_description: Nodoj, kie ni ne povis liveri almenaŭ 10 agadojn
+  sinsekve kaj kie la lastaj sukcesaj liverado kaj ricevado estis antaŭ pli ol unu
+  semajno
+private_instance: Devigi uzantojn ensaluti antaŭ ol ili povas aliri ajnan enhavon
+oauth2.grant.entry.delete: Forigi viajn ekzistantajn fadenojn.
+oauth2.grant.entry.report: Raporti ajnan fadenon.
+oauth2.grant.post_comment.edit: Redakti viajn ekzistantajn komentojn pri afiŝoj.
+oauth2.grant.user.all: Legi kaj redakti vian profilon, mesaĝojn aŭ sciigojn; Legi
+  kaj redakti permesojn, kiujn vi donis al aliaj aplikaĵoj; sekvi aŭ bloki aliajn
+  uzantojn; rigardi listojn de uzantoj, kiujn vi sekvas aŭ blokas.
+oauth2.grant.user.profile.edit: Redakti vian profilon.
+oauth2.grant.user.message.all: Legi viajn mesaĝojn kaj sendi mesaĝojn al aliaj uzantoj.
+oauth2.grant.user.notification.delete: Malplenigi viajn sciigojn.
+oauth2.grant.user.profile.read: Legi vian profilon.
+oauth2.grant.moderate.entry_comment.set_adult: Marki komentojn en fadenoj kiel NSPL
+  en la revuoj, kiujn vi moderigas.
+oauth2.grant.moderate.post.change_language: Ŝanĝi la lingvon de afiŝoj en la revuoj,
+  kiujn vi moderigas.
+oauth2.grant.moderate.post.set_adult: Marki afiŝojn kiel NSPL en la revuoj, kiujn
+  vi moderigas.
+oauth2.grant.moderate.magazine.ban.read: Rigardi forbaritajn uzantojn en la revuoj,
+  kiujn vi moderigas.
+oauth2.grant.admin.entry_comment.purge: Tute forigi ajnan komenton en fadeno de via
+  nodo.
+oauth2.grant.admin.post.purge: Tute forigu ajnan afiŝon de via nodo.
+oauth2.grant.admin.user.all: Forbari, konfirmi aŭ tute forigi uzantojn sur via nodo.
+oauth2.grant.admin.user.purge: Tute forigi uzantojn de via nodo.
+oauth2.grant.admin.federation.all: Rigardi kaj ĝisdatigi nuntempe defederitajn nodojn.
+show_avatars_on_comments_help: Montri/kaŝi uzantajn avatarojn kiam rigardado komentojn
+  pri ununura fadeno aŭ afiŝo.
+magazine_theme_appearance_custom_css: Adaptita CSS-o kiu aplikiĝos kiam vidante enhavon
+  ene de via revuo.
+magazine_theme_appearance_icon: Adaptita ikono por la revuo. Se neniu estas elektita,
+  la defaŭlta ikono estos uzata.
+magazine_theme_appearance_background_image: Adaptita fonbildo kiu estos aplikata dum
+  vidado de enhavo en via revuo.
+oauth2.grant.moderate.post.pin: Alpingli afiŝojn al la supro de la revuoj, kiujn vi
+  moderigas.
+delete_content: Forigi enhavon
+2fa.setup_error: Eraro ebligante 2PA por konto
+2fa.backup-create.label: Krei novajn rezervajn aŭtentigajn kodojn
+2fa.add: Aldoni al mia konto
+subscription_header: Abonitaj Revuoj
+2fa.backup-create.help: Vi povas krei novajn rezervajn aŭtentigajn kodojn; fari tion
+  nevalidigos ekzistantajn kodojn.

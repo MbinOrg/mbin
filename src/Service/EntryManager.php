@@ -26,7 +26,7 @@ use App\Message\DeleteImageMessage;
 use App\Message\EntryEmbedMessage;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\Contracts\ContentManagerInterface;
 use App\Utils\Slugger;
 use App\Utils\UrlCleaner;
@@ -61,8 +61,8 @@ class EntryManager implements ContentManagerInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly EntryRepository $entryRepository,
         private readonly ImageRepository $imageRepository,
-        private readonly ApHttpClient $apHttpClient,
-        private readonly CacheInterface $cache
+        private readonly ApHttpClientInterface $apHttpClient,
+        private readonly CacheInterface $cache,
     ) {
     }
 
@@ -131,7 +131,8 @@ class EntryManager implements ContentManagerInterface
         $this->entityManager->persist($entry);
         $this->entityManager->flush();
 
-        $this->tagManager->updateEntryTags($entry, $this->tagExtractor->extract($entry->body) ?? []);
+        $tags = array_unique(array_merge($this->tagExtractor->extract($entry->body) ?? [], $dto->tags ?? []));
+        $this->tagManager->updateEntryTags($entry, $tags);
 
         $this->dispatcher->dispatch(new EntryCreatedEvent($entry));
 

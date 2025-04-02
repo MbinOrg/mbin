@@ -5,17 +5,19 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Security;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class LoginControllerTest extends WebTestCase
 {
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCanLogin(): void
     {
-        $client = RegisterControllerTest::register(true);
+        $this->client = $this->register(true);
 
-        $crawler = $client->request('get', '/');
-        $crawler = $client->click($crawler->filter('header')->selectLink('Log in')->link());
+        $crawler = $this->client->request('get', '/');
+        $crawler = $this->client->click($crawler->filter('header')->selectLink('Log in')->link());
 
-        $client->submit(
+        $this->client->submit(
             $crawler->selectButton('Log in')->form(
                 [
                     'email' => 'JohnDoe',
@@ -24,19 +26,20 @@ class LoginControllerTest extends WebTestCase
             )
         );
 
-        $crawler = $client->followRedirect();
+        $crawler = $this->client->followRedirect();
 
         $this->assertSelectorTextContains('#header', 'JohnDoe');
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCannotLoginWithoutActivation(): void
     {
-        $client = RegisterControllerTest::register();
+        $this->client = $this->register();
 
-        $crawler = $client->request('get', '/');
-        $crawler = $client->click($crawler->filter('header')->selectLink('Log in')->link());
+        $crawler = $this->client->request('get', '/');
+        $crawler = $this->client->click($crawler->filter('header')->selectLink('Log in')->link());
 
-        $client->submit(
+        $this->client->submit(
             $crawler->selectButton('Log in')->form(
                 [
                     'email' => 'JohnDoe',
@@ -45,20 +48,19 @@ class LoginControllerTest extends WebTestCase
             )
         );
 
-        $client->followRedirect();
+        $this->client->followRedirect();
 
         $this->assertSelectorTextContains('#main', 'Please check your email for account activation instructions or request a new account activation email');
     }
 
     public function testUserCantLoginWithWrongPassword(): void
     {
-        $client = $this->createClient();
         $this->getUserByUsername('JohnDoe');
 
-        $crawler = $client->request('GET', '/');
-        $crawler = $client->click($crawler->filter('header')->selectLink('Log in')->link());
+        $crawler = $this->client->request('GET', '/');
+        $crawler = $this->client->click($crawler->filter('header')->selectLink('Log in')->link());
 
-        $client->submit(
+        $this->client->submit(
             $crawler->selectButton('Log in')->form(
                 [
                     'email' => 'JohnDoe',
@@ -67,7 +69,7 @@ class LoginControllerTest extends WebTestCase
             )
         );
 
-        $client->followRedirect();
+        $this->client->followRedirect();
 
         $this->assertSelectorTextContains('.alert__danger', 'Invalid credentials.'); // @todo
     }

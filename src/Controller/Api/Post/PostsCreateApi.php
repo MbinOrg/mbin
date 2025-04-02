@@ -12,8 +12,8 @@ use App\DTO\PostResponseDto;
 use App\Entity\Magazine;
 use App\Service\ImageManager;
 use App\Service\PostManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -79,7 +79,7 @@ class PostsCreateApi extends PostsBaseApi
         Magazine $magazine,
         PostManager $manager,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiPostLimiter
+        RateLimiterFactory $apiPostLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiPostLimiter);
 
@@ -172,7 +172,7 @@ class PostsCreateApi extends PostsBaseApi
         Magazine $magazine,
         PostManager $manager,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiImageLimiter
+        RateLimiterFactory $apiImageLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiImageLimiter);
 

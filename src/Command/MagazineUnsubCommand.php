@@ -13,12 +13,15 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'mbin:magazine:unsub')]
+#[AsCommand(
+    name: 'mbin:magazine:unsub',
+    description: 'Remove all the subscribers from a magazine',
+)]
 class MagazineUnsubCommand extends Command
 {
     public function __construct(
         private readonly MagazineRepository $repository,
-        private readonly MagazineManager $manager
+        private readonly MagazineManager $manager,
     ) {
         parent::__construct();
     }

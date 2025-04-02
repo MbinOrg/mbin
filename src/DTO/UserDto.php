@@ -49,11 +49,12 @@ class UserDto implements UserDtoInterface
     public ?string $totpSecret = null;
     public ?string $serverSoftware = null;
     public ?string $serverSoftwareVersion = null;
+    public ?string $applicationText = null;
 
     #[Assert\Callback]
     public function validate(
         ExecutionContextInterface $context,
-        $payload
+        $payload,
     ) {
         if (!Request::createFromGlobals()->request->has('user_register')) {
             return;
@@ -91,6 +92,7 @@ class UserDto implements UserDtoInterface
         ?bool $isBot = null,
         ?bool $isAdmin = null,
         ?bool $isGlobalModerator = null,
+        ?string $applicationText = null,
     ): self {
         $dto = new UserDto();
         $dto->id = $id;
@@ -107,6 +109,7 @@ class UserDto implements UserDtoInterface
         $dto->isBot = $isBot;
         $dto->isAdmin = $isAdmin;
         $dto->isGlobalModerator = $isGlobalModerator;
+        $dto->applicationText = $applicationText;
 
         return $dto;
     }

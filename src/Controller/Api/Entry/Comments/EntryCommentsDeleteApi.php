@@ -8,8 +8,8 @@ use App\Controller\Api\Entry\EntriesBaseApi;
 use App\Controller\Traits\PrivateContentTrait;
 use App\Entity\EntryComment;
 use App\Service\EntryCommentManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -69,7 +69,7 @@ class EntryCommentsDeleteApi extends EntriesBaseApi
         #[MapEntity(id: 'comment_id')]
         EntryComment $comment,
         EntryCommentManager $manager,
-        RateLimiterFactory $apiDeleteLimiter
+        RateLimiterFactory $apiDeleteLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiDeleteLimiter);
 

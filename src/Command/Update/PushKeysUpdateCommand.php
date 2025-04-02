@@ -21,7 +21,7 @@ class PushKeysUpdateCommand extends Command
 {
     public function __construct(
         private readonly SiteRepository $siteRepository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }

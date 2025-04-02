@@ -14,6 +14,7 @@ use App\Service\ImageManager;
 use App\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -24,12 +25,13 @@ class DeleteUserHandler extends MbinMessageHandler
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly ImageManager $imageManager,
+        private readonly KernelInterface $kernel,
         private readonly UserManager $userManager,
         private readonly DeleteWrapper $deleteWrapper,
         private readonly MessageBusInterface $bus,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(DeleteUserMessage $message): void
@@ -71,19 +73,19 @@ class DeleteUserHandler extends MbinMessageHandler
         try {
             $this->userManager->detachAvatar($user);
         } catch (\Exception|\Error $e) {
-            $this->logger->error("couldn't delete the avatar of {user} at '{path}': {message}", ['user' => $user->username, 'path' => $user->avatar?->filePath, 'message' => \get_class($e).': '.$e->getMessage()]);
+            $this->logger->error("[ClearDeletedUserHandler::__invoke] Couldn't delete the avatar of {user} at '{path}': {message}", ['user' => $user->username, 'path' => $user->avatar?->filePath, 'message' => \get_class($e).': '.$e->getMessage()]);
         }
         try {
             $this->userManager->detachCover($user);
         } catch (\Exception|\Error $e) {
-            $this->logger->error("couldn't delete the cover of {user} at '{path}': {message}", ['user' => $user->username, 'path' => $user->cover?->filePath, 'message' => \get_class($e).': '.$e->getMessage()]);
+            $this->logger->error("[ClearDeletedUserHandler::__invoke] Couldn't delete the cover of {user} at '{path}': {message}", ['user' => $user->username, 'path' => $user->cover?->filePath, 'message' => \get_class($e).': '.$e->getMessage()]);
         }
         $filePathsOfUser = $this->userManager->getAllImageFilePathsOfUser($user);
         foreach ($filePathsOfUser as $path) {
             try {
                 $this->imageManager->remove($path);
             } catch (\Exception|\Error $e) {
-                $this->logger->error("couldn't delete image of {user} at '{path}': {message}", ['user' => $user->username, 'path' => $path, 'message' => \get_class($e).': '.$e->getMessage()]);
+                $this->logger->error("[ClearDeletedUserHandler::__invoke] Couldn't delete image of {user} at '{path}': {message}", ['user' => $user->username, 'path' => $path, 'message' => \get_class($e).': '.$e->getMessage()]);
             }
         }
 
@@ -94,7 +96,7 @@ class DeleteUserHandler extends MbinMessageHandler
         $this->entityManager->flush();
 
         // recreate a user with the same name, so this handle is blocked
-        $user = $this->userManager->create($userDto, verifyUserEmail: false, rateLimit: false);
+        $user = $this->userManager->create($userDto, verifyUserEmail: false, rateLimit: false, preApprove: true);
         $user->isDeleted = true;
         $user->markedForDeletionAt = null;
         $user->isVerified = false;
