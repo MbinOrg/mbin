@@ -204,19 +204,54 @@ upstream backend {
     keepalive 12;
 }
 
-# Map between POST requests on inbox vs the rest
-map $request $inboxRequest {
-    ~^POST\ \/f\/inbox      1;
-    ~^POST\ \/i\/inbox      1;
-    ~^POST\ \/m\/.+\/inbox  1;
-    ~^POST\ \/u\/.+\/inbox  1;
-    default                 0;
+# Map instance requests vs the rest
+map "$http_accept:$request" $mbinInstanceRequest {
+    ~^.*:GET\ \/.well-known\/.+                                                                       1;
+    ~^.*:GET\ \/nodeinfo\/.+                                                                          1;
+    ~^.*:GET\ \/i\/actor                                                                              1;
+    ~^.*:POST\ \/i\/inbox                                                                             1;
+    ~^.*:POST\ \/i\/outbox                                                                            1;
+    ~^.*:POST\ \/f\/inbox                                                                             1;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/               1;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/f\/object\/.+  1;
+    default                                                                                           0;
 }
 
-map $inboxRequest $regularRequest {
-    1 0;
-    default 1;
+# Map user requests vs the rest
+map "$http_accept:$request" $mbinUserRequest {
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/u\/.+   1;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:POST\ \/u\/.+  1;
+    default                                                                                    0;
 }
+
+# Map magazine requests vs the rest
+map "$http_accept:$request" $mbinMagazineRequest {
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/m\/.+   1;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:POST\ \/m\/.+  1;
+    default                                                                                    0;
+}
+
+# Miscellaneous requests
+map "$http_accept:$request" $mbinMiscRequest {
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/reports\/.+  1;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/message\/.+  1;
+    ~^.*:GET\ \/contexts\..+                                                                        1;
+    default                                                                                         0;
+}
+
+# Determine if a request should go into the regular log
+map "$mbinInstanceRequest$mbinUserRequest$mbinMagazineRequest$mbinMiscRequest" $mbinRegularRequest {
+    0000    1; # Regular requests
+    default 0; # Other requests
+}
+
+map $mbinRegularRequest $mbin_limit_key {
+    0 "";
+    1 $binary_remote_addr;
+}
+
+# Two stage rate limit (10 MB zone): 5 requests/second limit (=second stage)
+limit_req_zone $mbin_limit_key zone=mbin_limit:10m rate=5r/s;
 
 # Redirect HTTP to HTTPS
 server {
@@ -251,10 +286,18 @@ server {
 
     client_max_body_size 20M; # Max size of a file that a user can upload
 
-    # Logs
+    # Two stage rate limit
+    limit_req zone=mbin_limit burst=300 delay=200;
+
+    # Error log (if you want you can add "warn" at the end of error_log to also log warnings)
     error_log /var/log/nginx/mbin_error.log;
-    access_log /var/log/nginx/mbin_access.log if=$regularRequest;
-    access_log /var/log/nginx/mbin_inbox.log if=$inboxRequest buffer=32k flush=5m;
+
+    # Access logs
+    access_log /var/log/nginx/mbin_access.log combined if=$mbinRegularRequest;
+    access_log /var/log/nginx/mbin_instance.log combined if=$mbinInstanceRequest buffer=32k flush=5m;
+    access_log /var/log/nginx/mbin_user.log combined if=$mbinUserRequest buffer=32k flush=5m;
+    access_log /var/log/nginx/mbin_magazine.log combined if=$mbinMagazineRequest buffer=32k flush=5m;
+    access_log /var/log/nginx/mbin_misc.log combined if=$mbinMiscRequest buffer=32k flush=5m;
 
     open_file_cache          max=1000 inactive=20s;
     open_file_cache_valid    60s;
@@ -271,6 +314,9 @@ server {
         proxy_set_header Connection "";
         proxy_pass http://backend;
     }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { allow all; access_log off; log_not_found off; }
 
     location /.well-known/mercure {
         proxy_pass http://backend$request_uri;
