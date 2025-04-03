@@ -18,15 +18,11 @@
 **/Dockerfile
 **/Thumbs.db
 .github/
-docker/compose.override.yml
-docker/storage/
 docs/
 public/bundles/
 tests/
-tools/
 var/
 vendor/
-.vs/
 .editorconfig
 .env.*.local
 .env.local
