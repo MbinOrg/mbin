@@ -103,3 +103,26 @@ bookmark_list_edit: Editatu
 bookmarks: Markatzaileak
 answered: erantzuta
 show_new_icons: Erakutsi ikono berriak
+show_users_avatars_help: Erabiltzailearen abatarraren irudia erakutsi.
+show_magazines_icons_help: Aldizkariaren ikonoa erakutsi.
+type.smart_contract: Kontratu adimendun
+delete_content: Ezabatu edukia
+subject_reported_exists: Eduki honen berri eman da.
+2fa.remove: Kendu 2FA
+show_subscriptions: Erakutsi harpidetzak
+change_my_avatar: Aldatu nire abatarra
+edit_my_profile: Editatu nire profila
+delete_magazine: Ezabatu aldizkaria
+restore_magazine: Berrezarri aldizkaria
+page_width: Orrialdearen zabalera
+action: Ekintza
+abandoned: Abandonatuta
+spoiler: Spoilerra
+report_subject: Gaia
+notification_title_new_signup: Erabiltzaile berri bat erregistratuta
+test_push_message: Kaixo mundua!
+table_of_contents: Edukien taula
+bookmark_lists: Markatzaile zerrendak
+email_verification_pending: Zure helbide elektronikoa egiaztatu behar duzu saioa hasi
+  aurretik.
+show_thumbnails_help: Miniaturen irudiak erakutsi.
