@@ -14,3 +14,92 @@ login: Hasi saioa
 oldest: Zaharrena
 more: Gehiago
 added: Gehituta
+instances: Instantziak
+newest: Berriena
+favourites: Faboritoak
+moderators: Moderatzaileak
+owner: Jabe
+password: Pasahitza
+stats: Estatistikak
+fediverse: Fedibertsoa
+email: Posta elektronikoa
+reply: Erantzun
+follow: Jarraitu
+unfollow: Ez jarraitu
+subscribe: Harpidetu
+remember_me: Gogora nazazu
+privacy_policy: Pribatutasun politika
+hidden: Ezkututa
+help: Laguntza
+try_again: Saiatu berriro
+title: Izenburua
+tag: Etiketa
+tags: Etiketak
+badges: Intsigniak
+body: Gorputza
+name: Izena
+columns: Zutabeak
+user: Erabiltzailea
+description: Deskribapena
+domain: Domeinua
+followers: Jarraitzaileak
+following: Jarraitzen
+subscriptions: Harpidetzak
+rules: Arauak
+people_federated: Federatuta
+overview: ikuspegi orokorra
+articles: Hariak
+links: Estekak
+photos: Argazkiak
+videos: Bideoak
+share: Partekatu
+reason: Arrazoia
+edit: Editatu
+notifications: Jakinarazpenak
+profile: Profila
+messages: Mezuak
+save: Gorde
+domains: Domeinuak
+votes: Botoak
+new_password: Pasahitz berria
+dark: Iluna
+light: Argia
+font_size: Letra tamaina
+yes: Bai
+no: Ez
+left: Ezkerra
+right: Eskuina
+filters: Iragazkiak
+message: Mezua
+approve: Onartu
+month: Hilabetea
+months: Hilabeteak
+week: Astea
+weeks: Asteak
+pages: Orrialdeak
+toolbar.bold: Lodia
+toolbar.italic: Etzana
+toolbar.header: Izenburua
+toolbar.link: Esteka
+errors.server404.title: 404 Ez aurkitua
+errors.server403.title: 403 Debekatuta
+errors.server429.title: 429 Eskaera gehiegi
+custom_css: CSS egokituta
+2fa.verify: Egiaztatu
+alphabetically: Alfabetikoki
+announcement: Iragarkia
+keywords: Hitz gakoak
+details: Xehetasunak
+hide: Ezkutatu
+show: Erakutsi
+and: eta
+last_updated: Azken eguneraketa
+notification_title_new_reply: Erantzun berria
+notification_title_new_thread: Hari berria
+version: Bertsioa
+show_active_users: Erakutsi erabiltzaile aktiboak
+search_type_entry: Hariak
+bookmark_list_edit: Editatu
+bookmarks: Markatzaileak
+answered: erantzuta
+show_new_icons: Erakutsi ikono berriak
