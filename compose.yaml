@@ -47,7 +47,7 @@ services:
         restart: unless-stopped
         env_file: .env
         volumes:
-            - ./storage/postgres_data:/var/lib/postgresql/data
+            - ./storage/postgres:/var/lib/postgresql/data
 
     rabbitmq:
         image: rabbitmq:3-management-alpine

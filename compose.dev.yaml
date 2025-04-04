@@ -7,8 +7,8 @@ services:
             target: dev
         volumes:
             - ./:/app
-            - ./frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro
-            - ./frankenphp/conf.d/20-app.dev.ini:/usr/local/etc/php/app.conf.d/20-app.dev.ini:ro
+            - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
+            - ./docker/conf.d/20-app.dev.ini:/usr/local/etc/php/app.conf.d/20-app.dev.ini:ro
             # If you develop on Mac or Windows you can remove the vendor/ directory
             #  from the bind-mount for better performance by enabling the next line:
             #- /app/vendor
