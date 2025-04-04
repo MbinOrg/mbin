@@ -1,15 +1,8 @@
 #syntax=docker/dockerfile:1
 
-# Versions
-FROM dunglas/frankenphp:1-php8.4 AS frankenphp_upstream
-
-# The different stages of this Dockerfile are meant to be built into separate images
-# https://docs.docker.com/develop/develop-images/multistage-build/#stop-at-a-specific-build-stage
-# https://docs.docker.com/compose/compose-file/#target
-
 
 # Base FrankenPHP image
-FROM frankenphp_upstream AS frankenphp_base
+FROM dunglas/frankenphp:1-php8.4 AS base
 
 WORKDIR /app
 
@@ -53,9 +46,9 @@ ENV MERCURE_TRANSPORT_URL=bolt:///data/mercure.db
 
 ENV PHP_INI_SCAN_DIR=":$PHP_INI_DIR/app.conf.d"
 
-COPY --link frankenphp/conf.d/10-app.ini $PHP_INI_DIR/app.conf.d/
-COPY --link --chmod=755 frankenphp/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
-COPY --link frankenphp/Caddyfile /etc/caddy/Caddyfile
+COPY --link docker/conf.d/10-app.ini $PHP_INI_DIR/app.conf.d/
+COPY --link --chmod=755 docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
+COPY --link docker/Caddyfile /etc/caddy/Caddyfile
 
 ENTRYPOINT ["docker-entrypoint"]
 
@@ -64,7 +57,7 @@ CMD [ "frankenphp", "run", "--config", "/etc/caddy/Caddyfile" ]
 
 
 # Dev FrankenPHP image
-FROM frankenphp_base AS frankenphp_dev
+FROM base AS dev
 
 ENV APP_ENV=dev
 ENV XDEBUG_MODE=off
@@ -77,19 +70,19 @@ RUN set -eux; \
 		xdebug \
 	;
 
-COPY --link frankenphp/conf.d/20-app.dev.ini $PHP_INI_DIR/app.conf.d/
+COPY --link docker/conf.d/20-app.dev.ini $PHP_INI_DIR/app.conf.d/
 
 CMD [ "frankenphp", "run", "--config", "/etc/caddy/Caddyfile", "--watch" ]
 
 
 # Prod FrankenPHP image
-FROM frankenphp_base AS frankenphp_prod_deps
+FROM base AS prod_deps
 
 ENV APP_ENV=prod
 
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-COPY --link frankenphp/conf.d/20-app.prod.ini $PHP_INI_DIR/app.conf.d/
+COPY --link docker/conf.d/20-app.prod.ini $PHP_INI_DIR/app.conf.d/
 
 # prevent the reinstallation of vendors at every changes in the source code
 COPY --link composer.* symfony.* ./
@@ -98,7 +91,7 @@ RUN set -eux; \
 
 
 # Node assets builder
-FROM node:22-alpine as frankenphp_node
+FROM node:22-alpine as node
 
 RUN mkdir /app
 WORKDIR /app
@@ -110,16 +103,16 @@ RUN npm ci
 COPY --link ./webpack.config.js ./
 COPY --link ./assets ./assets
 COPY --link ./public/js ./public/js
-COPY --link --from=frankenphp_prod_deps /app/vendor ./vendor
+COPY --link --from=prod_deps /app/vendor ./vendor
 
 RUN npm run build
 
 
-FROM frankenphp_prod_deps AS frankenphp_prod
+FROM prod_deps AS prod
 
 # copy sources
 COPY --link . ./
-RUN rm -Rf frankenphp/
+RUN rm -Rf docker/
 RUN cp .env.example_docker .env
 
 RUN set -eux; \
@@ -129,4 +122,4 @@ RUN set -eux; \
 	composer run-script --no-dev post-install-cmd; \
 	chmod +x bin/console; sync;
 
-COPY --link --from=frankenphp_node /app/public/build /app/public/build
+COPY --link --from=node /app/public/build /app/public/build

@@ -3,7 +3,7 @@ services:
   php:
     build:
       context: .
-      target: frankenphp_dev
+      target: dev
     volumes:
       - ./:/app
       - ./frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro
