@@ -6,7 +6,6 @@ services:
         environment:
             MERCURE_PUBLISHER_JWT_KEY: ${MERCURE_JWT_SECRET}
             MERCURE_SUBSCRIBER_JWT_KEY: ${MERCURE_JWT_SECRET}
-            MERCURE_JWT_SECRET: ${MERCURE_JWT_SECRET}
         volumes:
             - ./storage/caddy_data:/data
             - ./storage/caddy_config:/config
@@ -35,9 +34,6 @@ services:
             - postgres
             - rabbitmq
             - redis
-        deploy:
-            mode: replicated
-            replicas: 6
 
     postgres:
         image: postgres:${POSTGRES_VERSION}-alpine
