@@ -5,3 +5,9 @@ services:
             dockerfile: docker/Dockerfile
             context: .
             target: prod
+
+    messenger:
+        build:
+            dockerfile: docker/Dockerfile
+            context: .
+            target: prod
