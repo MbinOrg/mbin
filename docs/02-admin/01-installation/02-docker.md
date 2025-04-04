@@ -116,8 +116,15 @@ mkdir -p storage/caddy_data storage/caddy_config storage/media storage/php_logs 
 1. Choose your Redis password, PostgreSQL password, RabbitMQ password, and Mercure password.
 2. Place the passwords in the corresponding variables in `.env`.
 3. Update the `SERVER_NAME`, `KBIN_DOMAIN` and `KBIN_STORAGE_URL` in `.env`.
-4. Update `APP_SECRET` in `.env`, generate a new one via: `node -e  "console.log(require('crypto').randomBytes(16).toString('hex'))"`
+4. Update `APP_SECRET` in `.env`, see the note below to generate one.
 5. _Optionally_: Use a newer PostgreSQL version. Update/set the `POSTGRES_VERSION` variable in your `.env`.
+
+> [!NOTE]
+> To generate a random password or secret, use the following command:
+>
+> ```bash
+> tr -dc A-Za-z0-9 < /dev/urandom | head -c 32 && echo
+> ```
 
 ##### Configure OAuth2 keys
 
