@@ -1,44 +1,44 @@
 services:
-  php:
-    image: ${IMAGES_PREFIX:-}app-php
-    restart: unless-stopped
-    env_file: .env
-    environment:
-      MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
-      MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
-      # Run "composer require symfony/mercure-bundle" to install and configure the Mercure integration
-      MERCURE_URL: ${CADDY_MERCURE_URL:-http://php/.well-known/mercure}
-      MERCURE_PUBLIC_URL: ${CADDY_MERCURE_PUBLIC_URL:-https://${SERVER_NAME:-localhost}:${HTTPS_PORT:-443}/.well-known/mercure}
-      MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
-    volumes:
-      - caddy_data:/data
-      - caddy_config:/config
-    ports:
-      - 80:80
-      - 443:443
-      - 443:443/udp
-    depends_on:
-      - db
-      - redis
+    php:
+        image: ${IMAGES_PREFIX:-}app-php
+        restart: unless-stopped
+        env_file: .env
+        environment:
+            MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
+            MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
+            # Run "composer require symfony/mercure-bundle" to install and configure the Mercure integration
+            MERCURE_URL: ${CADDY_MERCURE_URL:-http://php/.well-known/mercure}
+            MERCURE_PUBLIC_URL: ${CADDY_MERCURE_PUBLIC_URL:-https://${SERVER_NAME:-localhost}:${HTTPS_PORT:-443}/.well-known/mercure}
+            MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
+        volumes:
+            - caddy_data:/data
+            - caddy_config:/config
+        ports:
+            - 80:80
+            - 443:443
+            - 443:443/udp
+        depends_on:
+            - db
+            - redis
 
-  db:
-    image: postgres:${POSTGRES_VERSION}-alpine
-    restart: unless-stopped
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    env_file: .env
+    db:
+        image: postgres:${POSTGRES_VERSION}-alpine
+        restart: unless-stopped
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        env_file: .env
 
-  redis:
-    image: redis:alpine
-    restart: unless-stopped
-    command: redis-server --requirepass ${REDIS_PASSWORD}
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+    redis:
+        image: redis:alpine
+        restart: unless-stopped
+        command: redis-server --requirepass ${REDIS_PASSWORD}
+        volumes:
+            - redis_data:/data
+        healthcheck:
+            test: ['CMD', 'redis-cli', 'ping']
 
 volumes:
-  caddy_data:
-  caddy_config:
-  postgres_data:
-  redis_data:
+    caddy_data:
+    caddy_config:
+    postgres_data:
+    redis_data:

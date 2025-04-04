@@ -1,6 +1,7 @@
 # Production environment override
 services:
-  php:
-    build:
-      context: .
-      target: prod
+    php:
+        build:
+            dockerfile: docker/Dockerfile
+            context: .
+            target: prod
