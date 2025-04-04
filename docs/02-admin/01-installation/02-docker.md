@@ -1,12 +1,9 @@
 # Docker Installation
 
-> [!NOTE]
-> Docker installation is currently not advised for production use. Try the [Bare Metal installation](01-bare_metal.md) instead.
-
 ## Minimum hardware requirements
 
 - **vCPU:** 4 virtual cores (>= 2GHz, _more is recommended_ on larger instances)
-- **RAM:** 6GB (_more is recommended_ for large instances)  
+- **RAM:** 6GB (_more is recommended_ for large instances)
 - **Storage:** 40GB (_more is recommended_, especially if you have a lot of remote/local magazines and/or have a lot of (local) users)
 
 You can start with a smaller server and add more resources later if you are using a VPS for example.
@@ -53,17 +50,11 @@ cd mbin
 > [!NOTE]
 > If you're using a version of Docker Engine earlier than 23.0, run `export DOCKER_BUILDKIT=1`, prior to building the image. This does not apply to users running Docker Desktop. More info can be found [here](https://docs.docker.com/build/buildkit/#getting-started)
 
-1. First go to the _docker directory_:
-
-```bash
-cd docker
-```
-
-2. Use the existing Docker image _OR_ build the docker image. Select one of the two options.
+Use the existing Docker image _OR_ build the docker image. Select one of the two options.
 
 #### Build our own Docker image
 
-If you want to build our own image, run (_no_ need to update the `compose.yml` file):
+If you want to build our own image, run (_no_ need to update the `compose.prod.yaml` file):
 
 ```bash
 docker build --no-cache -t mbin -f Dockerfile  ..
@@ -71,56 +62,68 @@ docker build --no-cache -t mbin -f Dockerfile  ..
 
 #### Use Mbin pre-build image
 
-_OR_ use our pre-build images from [ghcr.io](https://ghcr.io). In this case you need to update the `compose.yml` file:
+_OR_ use our pre-build images from [ghcr.io](https://ghcr.io). In this case you need to update the `compose.prod.yaml` file:
 
 ```bash
-nano compose.yml
+nano compose.prod.yaml
 ```
 
 Find and replace or comment-out the following 4 lines:
 
-```yml
+```yaml
 build:
-  context: ../
   dockerfile: docker/Dockerfile
-image: mbin
+  context: .
+  target: prod
 ```
 
-And instead use the following line on all places (`www`, `php`, and `messenger` services):
+And instead use the following line on both places (`php`, and `messenger` services):
 
-```yml
+```yaml
 image: "ghcr.io/mbinorg/mbin:latest"
 ```
 
-**Important:** Do _NOT_ forget to change **ALL LINES** in that matches `image: mbin` to: `image: "ghcr.io/mbinorg/mbin:latest"` in the `compose.yml` file (should be 4 matches in total).
+**Important:** Do _NOT_ forget to change **ALL LINES** in that match to: `image: "ghcr.io/mbinorg/mbin:latest"` in the `compose.prod.yaml` file (should be 2 matches in total).
 
-3. Create config files and storage directories:
+### Environment configuration
+
+Use either the automatic environment setup script _OR_ manually configure the `.env`, `compose.override.yaml`, and OAuth2 keys. Select one of the two options.
+
+#### Automatic setup
+
+Run the setup script and pass in a mode (either `prod` or `dev`) and your domain (which can be `localhost` if you plan to just test locally):
 
 ```bash
-cp ../.env.example_docker .env
-cp compose.prod.yml compose.override.yml
-mkdir -p storage/media storage/caddy_config storage/caddy_data storage/logs
-sudo chown $USER:$USER storage/media storage/caddy_config storage/caddy_data storage/logs
+./docker/setup.sh prod mbin.domain.tld
 ```
 
-### Configure `.env` and `compose.override.yml`
+> [!NOTE]
+> Once the script has been run, you will not be able to run it again in order to prevent data loss. You can always edit the `.env` and `compose.override.yaml` files manually if you'd like to make changes.
+
+#### Manually configure `.env` and `compose.override.yaml`
+
+Create config files and storage directories:
+
+```bash
+cp .env.example_docker .env
+cat > compose.override.yaml << EOF
+include:
+  - compose.$mode.yaml
+EOF
+mkdir -p storage/caddy_data storage/caddy_config storage/media storage/php_logs storage/messenger_logs storage/rabbitmq_data storage/rabbitmq_logs
+```
 
 1. Choose your Redis password, PostgreSQL password, RabbitMQ password, and Mercure password.
-2. Place the passwords in the corresponding variables in both `.env` and `compose.override.yml`.
+2. Place the passwords in the corresponding variables in `.env`.
 3. Update the `SERVER_NAME`, `KBIN_DOMAIN` and `KBIN_STORAGE_URL` in `.env`.
 4. Update `APP_SECRET` in `.env`, generate a new one via: `node -e  "console.log(require('crypto').randomBytes(16).toString('hex'))"`
-5. _Optionally_: Use a newer PostgreSQL version (current fallback is v13). Update/set the `POSTGRES_VERSION` variable in your `.env` and `compose.override.yml` under `db`.
+5. _Optionally_: Use a newer PostgreSQL version. Update/set the `POSTGRES_VERSION` variable in your `.env`.
 
-> [!NOTE]
-> Ensure the `HTTPS` environmental variable is set to `TRUE` in `compose.override.yml` for the `php`, `messenger`, and `messenger_ap` containers **if your environment is using a valid certificate behind a reverse proxy**. This is likely true for most production environments and is required for proper federation, that is, this will ensure the webfinger responses include `https:` in the URLs generated.
-
-### Configure OAuth2 keys
+##### Configure OAuth2 keys
 
 1. Create an RSA key pair using OpenSSL:
 
 ```bash
-# Replace <mbin_dir> with Mbin's root directory
-mkdir <mbin_dir>/config/oauth2/
 # If you protect the key with a passphrase, make sure to remember it!
 # You will need it later
 openssl genrsa -des3 -out ./config/oauth2/private.pem 4096
@@ -138,35 +141,24 @@ openssl rand -hex 16
 ```env
 OAUTH_PRIVATE_KEY=%kernel.project_dir%/config/oauth2/private.pem
 OAUTH_PUBLIC_KEY=%kernel.project_dir%/config/oauth2/public.pem
-OAUTH_PASSPHRASE=<Your (optional) passphrase from above here>
+OAUTH_PASSPHRASE=<Your passphrase from above here>
 OAUTH_ENCRYPTION_KEY=<Hex string generated in previous step>
 ```
 
 ### Running the containers
 
-By default `docker compose` will execute the `compose.yml` and `compose.override.yml` files.
+By default `docker compose` will execute the `compose.yaml` and `compose.override.yaml` files.
 
 Run the container in the background (`-d` means detach, but this can also be omitted for testing or debugging purposes):
 
 ```bash
-# Go to the docker directory within the git repo
-cd docker
-
-# Starts the containers
 docker compose up -d
 ```
 
 See your running containers via: `docker ps`.
 
-Then, you should be able to access the new instance via [http://localhost:8008](http://localhost:8008).
+Then, you should be able to access the new instance via [https://localhost](https://localhost).
 You can also access RabbitMQ management UI via [http://localhost:15672](http://localhost:15672).
-
-### Add auxiliary containers to `compose.yml`
-
-Add any auxiliary container as you want. For example, add a Nginx container as reverse proxy to provide HTTPS encryption.
-
-> [!NOTE]
-> If you are building the docker images yourself, you might get merge conflicts when changing the `compose.yml`
 
 ### Uploaded media files
 
@@ -182,7 +174,7 @@ The filesystem ACL is disabled by default, in the `mbin` image. You can set the 
 
 ## Run Production
 
-If you created the file `compose.override.yml` with your configs (`cp compose.prod.yml compose.override.yml`), running production would be the same command:
+If you created the file `compose.override.yaml` with your configs, running production would be the same command:
 
 ```bash
 docker compose up -d
@@ -193,140 +185,3 @@ docker compose up -d
 If you want to deploy your app on a cluster of machines, you can
 use [Docker Swarm](https://docs.docker.com/engine/swarm/stack-deploy/), which is compatible with the provided Compose
 files.
-
-### Mbin NGINX Server Block
-
-NGINX reverse proxy example for the Mbin Docker instance:
-
-```nginx
-upstream backend {
-    server 127.0.0.1:8008;
-    keepalive 12;
-}
-
-# Map instance requests vs the rest
-map "$http_accept:$request" $mbinInstanceRequest {
-    ~^.*:GET\ \/.well-known\/.+                                                                       1;
-    ~^.*:GET\ \/nodeinfo\/.+                                                                          1;
-    ~^.*:GET\ \/i\/actor                                                                              1;
-    ~^.*:POST\ \/i\/inbox                                                                             1;
-    ~^.*:POST\ \/i\/outbox                                                                            1;
-    ~^.*:POST\ \/f\/inbox                                                                             1;
-    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/               1;
-    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/f\/object\/.+  1;
-    default                                                                                           0;
-}
-
-# Map user requests vs the rest
-map "$http_accept:$request" $mbinUserRequest {
-    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/u\/.+   1;
-    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:POST\ \/u\/.+  1;
-    default                                                                                    0;
-}
-
-# Map magazine requests vs the rest
-map "$http_accept:$request" $mbinMagazineRequest {
-    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/m\/.+   1;
-    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:POST\ \/m\/.+  1;
-    default                                                                                    0;
-}
-
-# Miscellaneous requests
-map "$http_accept:$request" $mbinMiscRequest {
-    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/reports\/.+  1;
-    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/message\/.+  1;
-    ~^.*:GET\ \/contexts\..+                                                                        1;
-    default                                                                                         0;
-}
-
-# Determine if a request should go into the regular log
-map "$mbinInstanceRequest$mbinUserRequest$mbinMagazineRequest$mbinMiscRequest" $mbinRegularRequest {
-    0000    1; # Regular requests
-    default 0; # Other requests
-}
-
-map $mbinRegularRequest $mbin_limit_key {
-    0 "";
-    1 $binary_remote_addr;
-}
-
-# Two stage rate limit (10 MB zone): 5 requests/second limit (=second stage)
-limit_req_zone $mbin_limit_key zone=mbin_limit:10m rate=5r/s;
-
-# Redirect HTTP to HTTPS
-server {
-    server_name domain.tld;
-    listen 80;
-
-    return 301 https://$host$request_uri;
-}
-
-server {
-    listen 443 ssl;
-    http2 on;
-    server_name domain.tld;
-
-    charset utf-8;
-
-    # TLS
-    ssl_certificate /etc/letsencrypt/live/domain.tld/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/domain.tld/privkey.pem;
-
-    # Don't leak powered-by
-    fastcgi_hide_header X-Powered-By;
-
-    # Security headers
-    add_header X-Frame-Options "DENY" always;
-    add_header X-XSS-Protection "1; mode=block" always;
-    add_header X-Content-Type-Options "nosniff" always;
-    add_header Referrer-Policy "same-origin" always;
-    add_header X-Download-Options "noopen" always;
-    add_header X-Permitted-Cross-Domain-Policies "none" always;
-    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
-
-    client_max_body_size 20M; # Max size of a file that a user can upload
-
-    # Two stage rate limit
-    limit_req zone=mbin_limit burst=300 delay=200;
-
-    # Error log (if you want you can add "warn" at the end of error_log to also log warnings)
-    error_log /var/log/nginx/mbin_error.log;
-
-    # Access logs
-    access_log /var/log/nginx/mbin_access.log combined if=$mbinRegularRequest;
-    access_log /var/log/nginx/mbin_instance.log combined if=$mbinInstanceRequest buffer=32k flush=5m;
-    access_log /var/log/nginx/mbin_user.log combined if=$mbinUserRequest buffer=32k flush=5m;
-    access_log /var/log/nginx/mbin_magazine.log combined if=$mbinMagazineRequest buffer=32k flush=5m;
-    access_log /var/log/nginx/mbin_misc.log combined if=$mbinMiscRequest buffer=32k flush=5m;
-
-    open_file_cache          max=1000 inactive=20s;
-    open_file_cache_valid    60s;
-    open_file_cache_min_uses 2;
-    open_file_cache_errors   on;
-
-    location / {
-        proxy_http_version 1.1;
-        proxy_set_header HOST $host;
-        proxy_set_header X-Forwarded-Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header Connection "";
-        proxy_pass http://backend;
-    }
-
-    location = /favicon.ico { access_log off; log_not_found off; }
-    location = /robots.txt  { allow all; access_log off; log_not_found off; }
-
-    location /.well-known/mercure {
-        proxy_pass http://backend$request_uri;
-        proxy_read_timeout 24h;
-        proxy_http_version 1.1;
-        proxy_set_header Connection "";
-
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Host $host;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-```
