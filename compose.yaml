@@ -18,15 +18,25 @@ services:
             - 443:443
             - 443:443/udp
         depends_on:
-            - db
+            - postgres
             - redis
+            - rabbitmq
 
-    db:
+    postgres:
         image: postgres:${POSTGRES_VERSION}-alpine
         restart: unless-stopped
+        env_file: .env
         volumes:
             - postgres_data:/var/lib/postgresql/data
+
+    rabbitmq:
+        image: rabbitmq:3-management-alpine
+        restart: unless-stopped
         env_file: .env
+        volumes:
+            - rabbitmq_data:/var/lib/rabbitmq
+        ports:
+            - 15672:15672
 
     redis:
         image: redis:alpine
@@ -41,4 +51,5 @@ volumes:
     caddy_data:
     caddy_config:
     postgres_data:
+    rabbitmq_data:
     redis_data:
