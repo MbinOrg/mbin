@@ -22,7 +22,7 @@ owner: Jabe
 password: Pasahitza
 stats: Estatistikak
 fediverse: Fedibertsoa
-email: Posta elektronikoa
+email: Helbide elektronikoa
 reply: Erantzun
 follow: Jarraitu
 unfollow: Ez jarraitu
@@ -126,3 +126,50 @@ bookmark_lists: Markatzaile zerrendak
 email_verification_pending: Zure helbide elektronikoa egiaztatu behar duzu saioa hasi
   aurretik.
 show_thumbnails_help: Miniaturen irudiak erakutsi.
+commented: Komentatua
+followers_count: '{0}Jarratzaileak|{1}Jarratzaile|]1,Inf[ Jarratzaileak'
+avatar: Abatarra
+favourite: Faborito
+subscribers: Harpidedunak
+replies: Erantzunak
+unsubscribe: Harpidetza kendu
+username: Erabiltzaile-izena
+create_new_magazine: Aldizkari berria sortu
+all_magazines: Aldizkari guztiak
+reset_password: Pasahitza berridatzi
+empty: Hutsik
+show_more: Erakutsi gehiago
+repeat_password: Pasahitza berridatzi
+email_confirm_title: Baieztatu zure helbide elektronikoa.
+email_confirm_header: Kaixo! Baieztatu zure helbide elektronikoa.
+select_magazine: Aukeratu aldizkari bat
+image: Irudia
+people_local: Lokala
+moderated: Moderatua
+image_alt: Irudi alternatiboaren testua
+oauth2.grant.user.bookmark.add: Gehitu laster-markak
+oauth2.grant.user.bookmark.remove: Kendu laster-markak
+oauth2.grant.user.bookmark_list.edit: Editatu zure laster-marken zerrendak
+oauth2.grant.user.bookmark_list.read: Irakurri zure laster-marken zerrendak
+oauth2.grant.user.profile.edit: Editatu zure profila.
+oauth2.grant.user.profile.read: Irakurri zure profila.
+oauth2.grant.user.bookmark_list.delete: Ezabatu zure laster-marken zerrendak
+oauth2.grant.user.profile.all: Irakurri eta editatu zure profila.
+oauth2.grant.user.message.read: Irakurri zure mezuak.
+2fa.code_invalid: Autentifikazio-kodeak ez du balio
+two_factor_authentication: Autentifikazio-faktore bikoitza
+two_factor_backup: Autentifikazio-faktore bikoitzako babeskopien kodeak
+2fa.authentication_code.label: Autentifikazio-kodea
+2fa.disable: Autentifikazio-faktore bikoitza desaktibatu
+2fa.backup: Zure autentifikazio-faktore bikoitzako babeskopien kodeak
+close: Itxi
+page_width_fixed: Finkatua
+user_badge_bot: Bot
+sensitive_show: Klikatu erakusteko
+sensitive_warning: Eduki sentikorra
+sensitive_hide: Klikatu ezkutatzeko
+reported_user: Jakinarazitako erabiltzailea
+edited: editatua
+related_entry: Erlazionatua
+notification_title_new_post: Post berria
+select_user: Aukeratu erabiltzaile bat
