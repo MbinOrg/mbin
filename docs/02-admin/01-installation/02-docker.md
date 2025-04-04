@@ -83,7 +83,7 @@ And instead use the following line on both places (`php` and `messenger` service
 image: "ghcr.io/mbinorg/mbin:latest"
 ```
 
-**Important:** Do _NOT_ forget to change **ALL LINES** in that match to: `image: "ghcr.io/mbinorg/mbin:latest"` in the `compose.prod.yaml` file (should be 2 matches in total).
+**Important:** Do _NOT_ forget to change **ALL LINES** that match to: `image: "ghcr.io/mbinorg/mbin:latest"` in the `compose.prod.yaml` file (should be 2 matches in total).
 
 ### Environment configuration
 
@@ -157,12 +157,12 @@ docker compose up -d
 
 See your running containers via: `docker ps`.
 
-This docker setup comes with built in automatic HTTPS support. Assuming you have set up your DNS and port forwarding correctly, then you should be able to access the new instance via your domain.
+This docker setup comes with automatic HTTPS support. Assuming you have set up your DNS and port forwarding correctly, then you should be able to access the new instance via your domain.
 
 > [!NOTE]
 > If you specified `localhost` as your domain, then a self signed HTTPS certificate is provided and you should be able to access your instance here: [https://localhost](https://localhost).
 
-You can also access RabbitMQ management UI via [http://localhost:15672](http://localhost:15672).
+You can also access the RabbitMQ management UI via [http://localhost:15672](http://localhost:15672).
 
 ### Uploaded media files
 
