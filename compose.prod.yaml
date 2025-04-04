@@ -3,4 +3,4 @@ services:
   php:
     build:
       context: .
-      target: frankenphp_prod
+      target: prod
