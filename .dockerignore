@@ -12,9 +12,7 @@
 **/.gitignore
 **/.gitmodules
 **/compose.*.yaml
-**/compose.*.yml
 **/compose.yaml
-**/compose.yml
 **/Dockerfile
 **/Thumbs.db
 .github/
