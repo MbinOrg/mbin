@@ -18,11 +18,14 @@
 **/Dockerfile
 **/Thumbs.db
 .github/
+storage/
 docs/
 public/bundles/
 tests/
+tools/
 var/
 vendor/
+.vs/
 .editorconfig
 .env.*.local
 .env.local
