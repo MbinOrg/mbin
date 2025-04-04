@@ -114,6 +114,8 @@ FROM prod_deps AS prod
 COPY --link . ./
 RUN rm -Rf docker/
 RUN cp .env.example_docker .env
+# Use 301 response for image redirects to reduce server load
+RUN sed -i 's/redirect_response_code: 302/redirect_response_code: 301/' config/packages/liip_imagine.yaml
 
 RUN set -eux; \
 	mkdir -p var/cache var/log; \
