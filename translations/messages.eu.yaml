@@ -195,3 +195,11 @@ moderate: Moderatu
 are_you_sure: Ziur zaude?
 menu: Menua
 hide_adult: Ezkutatu NSFW edukia
+filter_by_type: Iragazi motaren arabera
+comments: Iruzkinak
+random_posts: Ausazko postak
+add_comment: Gehitu iruzkina
+up_votes: Aldeko botoak
+down_votes: Aurkako botoak
+marked_for_deletion: Ezabatzeko markatuta
+marked_for_deletion_at: '%date%an ezabatzeko markatuta'
