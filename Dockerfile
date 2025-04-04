@@ -62,6 +62,7 @@ ENTRYPOINT ["docker-entrypoint"]
 HEALTHCHECK --start-period=60s CMD curl -f http://localhost:2019/metrics || exit 1
 CMD [ "frankenphp", "run", "--config", "/etc/caddy/Caddyfile" ]
 
+
 # Dev FrankenPHP image
 FROM frankenphp_base AS frankenphp_dev
 
@@ -80,8 +81,9 @@ COPY --link frankenphp/conf.d/20-app.dev.ini $PHP_INI_DIR/app.conf.d/
 
 CMD [ "frankenphp", "run", "--config", "/etc/caddy/Caddyfile", "--watch" ]
 
+
 # Prod FrankenPHP image
-FROM frankenphp_base AS frankenphp_prod
+FROM frankenphp_base AS frankenphp_prod_deps
 
 ENV APP_ENV=prod
 
@@ -94,6 +96,27 @@ COPY --link composer.* symfony.* ./
 RUN set -eux; \
 	composer install --no-cache --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
 
+
+# Node assets builder
+FROM node:22-alpine as frankenphp_node
+
+RUN mkdir /app
+WORKDIR /app
+
+COPY --link ./package.json package-lock.json ./
+
+RUN npm ci
+
+COPY --link ./webpack.config.js ./
+COPY --link ./assets ./assets
+COPY --link ./public/js ./public/js
+COPY --link --from=frankenphp_prod_deps /app/vendor ./vendor
+
+RUN npm run build
+
+
+FROM frankenphp_prod_deps AS frankenphp_prod
+
 # copy sources
 COPY --link . ./
 RUN rm -Rf frankenphp/
@@ -105,3 +128,5 @@ RUN set -eux; \
 	composer dump-env prod; \
 	composer run-script --no-dev post-install-cmd; \
 	chmod +x bin/console; sync;
+
+COPY --link --from=frankenphp_node /app/public/build /app/public/build
