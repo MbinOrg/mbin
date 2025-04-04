@@ -77,7 +77,7 @@ build:
   target: prod
 ```
 
-And instead use the following line on both places (`php`, and `messenger` services):
+And instead use the following line on both places (`php` and `messenger` services):
 
 ```yaml
 image: "ghcr.io/mbinorg/mbin:latest"
@@ -98,7 +98,7 @@ Run the setup script and pass in a mode (either `prod` or `dev`) and your domain
 ```
 
 > [!NOTE]
-> Once the script has been run, you will not be able to run it again in order to prevent data loss. You can always edit the `.env` and `compose.override.yaml` files manually if you'd like to make changes.
+> Once the script has been run, you will not be able to run it again, in order to prevent data loss. You can always edit the `.env` and `compose.override.yaml` files manually if you'd like to make changes.
 
 #### Manually configure `.env` and `compose.override.yaml`
 
@@ -108,7 +108,7 @@ Create config files and storage directories:
 cp .env.example_docker .env
 cat > compose.override.yaml << EOF
 include:
-  - compose.$mode.yaml
+  - compose.prod.yaml
 EOF
 mkdir -p storage/caddy_data storage/caddy_config storage/media storage/php_logs storage/messenger_logs storage/rabbitmq_data storage/rabbitmq_logs
 ```
@@ -157,14 +157,18 @@ docker compose up -d
 
 See your running containers via: `docker ps`.
 
-Then, you should be able to access the new instance via [https://localhost](https://localhost).
+This docker setup comes with built in automatic HTTPS support. Assuming you have set up your DNS and port forwarding correctly, then you should be able to access the new instance via your domain.
+
+> [!NOTE]
+> If you specified `localhost` as your domain, then a self signed HTTPS certificate is provided and you should be able to access your instance here: [https://localhost](https://localhost).
+
 You can also access RabbitMQ management UI via [http://localhost:15672](http://localhost:15672).
 
 ### Uploaded media files
 
-Uploaded media files (e.g. photos uploaded by users) will be stored on the host directory `storage/media`. They will be served by the Caddy web server in the `www` container as static files.
+Uploaded media files (e.g. photos uploaded by users) will be stored on the host directory `storage/media`. They will be served by the web server in the `php` container as static files.
 
-Make sure `KBIN_STORAGE_URL` in your `.env` configuration file is set to be `https://yourdomain.tld/media` (assuming you setup Nginx with SSL certificate by now).
+Make sure `KBIN_STORAGE_URL` in your `.env` configuration file is set to be `https://yourdomain.tld/media`.
 
 You can also serve those media files on another server by mirroring the files at `storage/media` and changing `KBIN_STORAGE_URL` correspondingly.
 
@@ -179,8 +183,6 @@ If you created the file `compose.override.yaml` with your configs, running produ
 ```bash
 docker compose up -d
 ```
-
-**Important:** The docker instance is can be reached at [http://127.0.0.1:8008](http://127.0.0.1:8008), we strongly advise you to put a reverse proxy (like Nginx) in front of the docker instance. Nginx can could listen on ports 80 and 443 and Nginx should handle SSL/TLS offloading. See also Nginx example below.
 
 If you want to deploy your app on a cluster of machines, you can
 use [Docker Swarm](https://docs.docker.com/engine/swarm/stack-deploy/), which is compatible with the provided Compose
