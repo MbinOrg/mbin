@@ -154,6 +154,13 @@ final class CacheMarkdownListener implements EventSubscriberInterface
             // Remove newline (\n), tab (\t), carriage return (\r), etc.
             $word2 = preg_replace('/[[:cntrl:]]/', '', $word);
             if (preg_match('/'.CommunityLinkParser::COMMUNITY_REGEX.'/', $word2, $matches)) {
+                // Check if the required matched array keys exist
+                if (!isset($matches[1]) || !isset($matches[2])) {
+                    $this->logger->warning("Invalid community mention format: {word}", ['word' => $word2]);
+                    // Just skip and continue
+                    continue;
+                }
+
                 $apId = "$matches[1]@$matches[2]";
                 $this->logger->debug("searching for magazine '{m}', original word: '{w}', word without cntrl: '{w2}'", ['m' => $apId, 'w' => $word, 'w2' => $word2]);
                 try {
