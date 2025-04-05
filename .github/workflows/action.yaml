@@ -204,8 +204,8 @@ jobs:
       - name: Composer tools install
         run: composer -d tools install --no-scripts --no-progress
 
-      - name: php-cs-fixer dry-run
-        run: tools/vendor/bin/php-cs-fixer fix --dry-run -v --show-progress=none #--format=checkstyle #would be nice if codeberg did something with this like github does.
+      - name: php-cs-fixer dry-run with diff
+        run: tools/vendor/bin/php-cs-fixer fix --dry-run --diff --show-progress=none
 
   build-and-publish-docker-image:
     runs-on: ubuntu-latest

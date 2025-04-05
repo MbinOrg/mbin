@@ -156,7 +156,7 @@ final class CacheMarkdownListener implements EventSubscriberInterface
             if (preg_match('/'.CommunityLinkParser::COMMUNITY_REGEX.'/', $word2, $matches)) {
                 // Check if the required matched array keys exist
                 if (!isset($matches[1]) || !isset($matches[2])) {
-                    $this->logger->warning("Invalid community mention format: {word}", ['word' => $word2]);
+                    $this->logger->warning('Invalid community mention format: {word}', ['word' => $word2]);
                     // Just skip and continue
                     continue;
                 }
