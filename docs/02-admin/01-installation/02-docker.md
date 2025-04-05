@@ -117,7 +117,7 @@ mkdir -p storage/caddy_data storage/caddy_config storage/media storage/php_logs 
 2. Place the passwords in the corresponding variables in `.env`.
 3. Update the `SERVER_NAME`, `KBIN_DOMAIN` and `KBIN_STORAGE_URL` in `.env`.
 4. Update `APP_SECRET` in `.env`, see the note below to generate one.
-5. Update `MBIN_USER` in `.env` to match your user id (`id -u`) and group (`id -g`) id.
+5. Update `MBIN_USER` in `.env` to match your user and group id (`id -u` & `id -g`).
 6. _Optionally_: Use a newer PostgreSQL version. Update/set the `POSTGRES_VERSION` variable in your `.env`.
 
 > [!NOTE]
@@ -179,10 +179,6 @@ Uploaded media files (e.g. photos uploaded by users) will be stored on the host 
 Make sure `KBIN_STORAGE_URL` in your `.env` configuration file is set to be `https://yourdomain.tld/media`.
 
 You can also serve those media files on another server by mirroring the files at `storage/media` and changing `KBIN_STORAGE_URL` correspondingly.
-
-### Filesystem ACL support
-
-The filesystem ACL is disabled by default, in the `mbin` image. You can set the environment variable `ENABLE_ACL=1` to enable it. Remember that not all filesystems support ACL. This will cause an error if you enable filesystem ACL for such filesystems.
 
 ## Run Production
 
