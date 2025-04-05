@@ -94,7 +94,7 @@ include:
 EOF
 
 echo Setting up storage directories...
-mkdir -p storage/caddy_data storage/caddy_config storage/media storage/php_logs storage/messenger_logs storage/rabbitmq_data storage/rabbitmq_logs
+mkdir -p storage/caddy_data storage/caddy_config storage/media storage/php_logs storage/messenger_logs storage/postgres storage/rabbitmq_data storage/rabbitmq_logs
 
 echo Configuring OAuth2 keys...
 openssl genrsa -des3 -out ./config/oauth2/private.pem -passout "pass:$OAUTH_PASS" 4096

@@ -57,7 +57,7 @@ Use the existing Docker image _OR_ build the docker image. Select one of the two
 If you want to build your own image, run (_no_ need to update the `compose.prod.yaml` file):
 
 ```bash
-docker build --no-cache -t mbin -f docker/Dockerfile  .
+docker build --no-cache -t mbin -f docker/Dockerfile .
 ```
 
 #### Use Mbin pre-build image
@@ -110,7 +110,7 @@ cat > compose.override.yaml << EOF
 include:
   - compose.prod.yaml
 EOF
-mkdir -p storage/caddy_data storage/caddy_config storage/media storage/php_logs storage/messenger_logs storage/rabbitmq_data storage/rabbitmq_logs
+mkdir -p storage/caddy_data storage/caddy_config storage/media storage/php_logs storage/messenger_logs storage/postgres storage/rabbitmq_data storage/rabbitmq_logs
 ```
 
 1. Choose your Redis password, PostgreSQL password, RabbitMQ password, and Mercure password.
