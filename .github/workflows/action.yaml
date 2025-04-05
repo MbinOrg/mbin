@@ -207,6 +207,9 @@ jobs:
       - name: php-cs-fixer dry-run
         run: tools/vendor/bin/php-cs-fixer fix --dry-run -v --show-progress=none #--format=checkstyle #would be nice if codeberg did something with this like github does.
 
+      - name: PHP CS Fixer to PR Annotations
+        run: tools/vendor/bin/php-cs-fixer fix --dry-run --format=checkstyle --show-progress=none | cs2pr
+
   build-and-publish-docker-image:
     runs-on: ubuntu-latest
     # Let's only run this on branches and tagged releases only
