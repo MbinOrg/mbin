@@ -16,7 +16,7 @@ login: Iniciar sessió
 sort_by: Ordenar per
 top: Destacat
 hot: Popular
-active: Actiu
+active: Actiu(va)
 newest: Més nou
 oldest: Més vell
 commented: Comentat
@@ -618,7 +618,7 @@ reporting_user: Denunciant
 reported: denunciat(da)
 own_content_reported_accepted: S'ha acceptat una denúncia del vostre contingut.
 open_report: Obrir denúncia
-cake_day: Dia del pastís
+cake_day: Des del dia
 someone: Algú
 magazine_log_mod_added: ha afegit un(a) moderador(a)
 magazine_log_entry_unpinned: s'ha eliminat l'entrada fixada
@@ -646,9 +646,9 @@ last_successful_deliver: Última entrega correcta
 last_successful_receive: Última rebuda correcta
 last_failed_contact: Últim contacte fallit
 magazine_posting_restricted_to_mods: Restringir la creació de fils a la moderació
-admin_users_banned: Vetat(da)
-admin_users_active: Actiu(va)
-admin_users_suspended: Suspés(a)
+admin_users_banned: Vetats(des)
+admin_users_active: Actius(ves)
+admin_users_suspended: Suspesos(es)
 user_verify: Activar compte
 max_image_size: Grandària màxima del fitxer
 comment_not_found: No s'ha trobat el comentari
@@ -1007,7 +1007,7 @@ new_user_description: Aquest compte és nou (actiu durant menys de %days% dies)
 new_users_need_approval: Els comptes nous han de ser aprovats per l'administració
   abans que puguen iniciar sessió.
 new_magazine_description: Aquesta revista és nova (activa durant menys de %days% dies)
-admin_users_inactive: Inactiu(va)
+admin_users_inactive: Inactius(ves)
 bookmarks_list: Marcadors en %list%
 table_of_contents: Taula de continguts
 email_verification_pending: Heu de verificar la vostra adreça electrònica abans de

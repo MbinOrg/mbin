@@ -200,7 +200,7 @@ settings: Einstellungen
 notifications: Benachrichtigungen
 messages: Nachrichten
 privacy: Datenschutz
-notify_on_new_entry_reply: Kommentare aller Ebenen in Themen die ich verfasst habe
+notify_on_new_entry_reply: Alle Kommentare in meinen erstellten Themen
 notify_on_new_entry_comment_reply: Antworten zu meinen Kommentaren in allen Themen
 notify_on_new_post_comment_reply: Antworten zu meinen Kommentaren in Beiträgen
 notify_on_new_entry: Neue Themen (Links und Artikel) in sämtlichen Magazinen die ich
@@ -260,7 +260,7 @@ solarized_dark: Sonniges Dunkel
 boosts: Boosts
 show_users_avatars: Nutzeravatare anzeigen
 show_magazines_icons: Magazin-Icons anzeigen
-rounded_edges: Gerundete Ecken
+rounded_edges: Abgerundete Ecken
 removed_post_by: hat den Beitrag entfernt, erstellt von
 restored_post_by: hat den Beitrag wiederhergestellt, erstellt von
 he_banned: sperren
@@ -269,7 +269,7 @@ domains: Domänen
 dark: Dunkel
 light: Hell
 size: Größe
-show_thumbnails: Miniaturansicht anzeigen
+show_thumbnails: Vorschaubilder anzeigen
 read_all: Alle als gelesen markieren
 flash_register_success: Willkommen an Bord! Dein Konto wurde registriert. Ein letzter
   Schritt — überprüfe deinen Posteingang nach einem Aktivierungslink der dein Konto
@@ -381,7 +381,7 @@ preferred_languages: Sprachen von Themen und Beiträgen filtern
 infinite_scroll_help: Automatisch mehr Inhalte laden, wenn du das Ende der Seite erreichst.
 sticky_navbar_help: Die Navigationsleiste wird oben an der Seite angeheftet bleiben
   während du nach unten scrollst.
-auto_preview_help: Medien-Vorschau automatisch aufklappen.
+auto_preview_help: Zeige die Medien-Vorschau (Bild, Video) vergrößert unter dem Inhalt.
 reload_to_apply: Seite neu laden, um Änderungen anzuwenden
 filter.origin.label: Ursprung auswählen
 filter.adult.label: Wähle ob NSFW soll gezeigt werden
@@ -1005,4 +1005,17 @@ by: von
 front_default_sort: Standardsortierung Startseite
 comment_default_sort: Standardsortierung Kommentare
 open_signup_request: Registrierungsanfrage öffnen
-image_lightbox_in_list: Vorschaubild öffnet Vollbild
+image_lightbox_in_list: Themen-Vorschaubild öffnet Vollbild
+compact_view_help: Eine kompakte Ansicht mit geringeren Abständen, bei der die Bilder
+  auf der rechten Seite angezeigt werden.
+remove_user_avatar: Profilbild entfernen
+image_lightbox_in_list_help: Wenn aktiviert werden Bilder in einem Pop-Up Dialog vergrößert
+  dargestellt nachdem man auf ein Vorschaubild geklickt hat. Andernfalls wird das
+  Thema geöffnet.
+remove_user_cover: Banner entfernen
+show_thumbnails_help: Zeige Vorschaubilder.
+show_new_icons: Zeige das Neu-Icon
+show_new_icons_help: Zeige ein Icon neben neuen Magazinen/Nutzern an (30 Tage alt
+  oder jünger)
+show_users_avatars_help: Zeige Profilbilder von Nutzern.
+show_magazines_icons_help: Zeige Profilbilder von Magazinen.

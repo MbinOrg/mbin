@@ -706,8 +706,8 @@ last_successful_deliver: Última entrega bem-sucedida
 version: Versão
 last_successful_receive: Última recepção bem-sucedida
 last_failed_contact: Último contato que não deu certo
-admin_users_inactive: Inativo
-admin_users_active: Ativo
+admin_users_inactive: Inativos
+admin_users_active: Ativos
 user_verify: Ativar conta
 oauth2.grant.moderate.magazine.ban.create: Banir usuários nas suas revistas moderadas.
 oauth2.grant.admin.entry_comment.purge: Exclua completamente um comentário em fios
@@ -847,8 +847,8 @@ sso_registrations_enabled.error: Novos registros de conta com gerenciadores de i
 sso_only_mode: Restringir o login e o registro apenas aos métodos de SSO
 magazine_posting_restricted_to_mods: Restringir a criação de fios aos moderadores
 new_user_description: Este usuário é novo (ativo há menos de %days% dias)
-admin_users_suspended: Suspenso
-admin_users_banned: Banido
+admin_users_suspended: Suspensos
+admin_users_banned: Banidos
 max_image_size: Tamanho máximo do arquivo
 cards: Cartões
 oauth2.grant.moderate.post_comment.trash: Remover ou restaurar comentários de publicações
