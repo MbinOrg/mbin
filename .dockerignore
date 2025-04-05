@@ -30,3 +30,4 @@ vendor/
 .env.local.php
 .env.test
 .env
+Dockerfile

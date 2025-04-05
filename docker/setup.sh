@@ -79,6 +79,11 @@ while IFS= read -r line; do
     line=${line/mbin.domain.tld/$domain}
   fi
 
+  # Populate MBIN_USER field
+  if [[ $line == 'MBIN_USER=1000:1000' ]]; then
+    line="MBIN_USER=$(id -u):$(id -g)"
+  fi
+
   # Populate OAUTH_ENCRYPTION_KEY field
   if [[ $line == 'OAUTH_ENCRYPTION_KEY=' ]]; then
     line="$line$(openssl rand -hex 16)"

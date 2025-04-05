@@ -33,10 +33,10 @@ if [ "$1" = 'frankenphp' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
 		fi
 	fi
 
-	setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX var
-	setfacl -dR -m u:www-data:rwX -m u:"$(whoami)":rwX var
+	# Solution to allow non-root users, given here: https://github.com/dunglas/symfony-docker/issues/679#issuecomment-2501369223
+	chown -R $MBIN_USER var /data /config
 
 	echo 'PHP app ready!'
 fi
 
-exec docker-php-entrypoint "$@"
+exec /usr/sbin/gosu $MBIN_USER "$@"

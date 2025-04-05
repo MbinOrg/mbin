@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	file \
 	gettext \
 	git \
+	gosu \
 	&& rm -rf /var/lib/apt/lists/*
 
 RUN set -eux; \
@@ -91,7 +92,7 @@ RUN set -eux; \
 
 
 # Node assets builder
-FROM node:22-alpine as node
+FROM node:22-alpine AS node
 
 RUN mkdir /app
 WORKDIR /app

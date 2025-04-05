@@ -41,6 +41,7 @@ services:
         env_file: .env
         volumes:
             - ./storage/postgres:/var/lib/postgresql/data
+        user: ${MBIN_USER}
 
     rabbitmq:
         image: rabbitmq:3-management-alpine
@@ -51,6 +52,7 @@ services:
             - ./storage/rabbitmq_logs:/var/log/rabbitmq
         ports:
             - 15672:15672
+        user: ${MBIN_USER}
 
     redis:
         image: redis:alpine
@@ -60,3 +62,4 @@ services:
             test: ['CMD', 'redis-cli', 'ping']
         volumes:
             - ./docker/redis.conf:/redis.conf
+        user: ${MBIN_USER}
