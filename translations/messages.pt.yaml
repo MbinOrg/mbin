@@ -906,7 +906,7 @@ notification_title_message: Nova mensagem direta
 notification_title_new_post: Nova publicação
 new_user_description: Este utilizador é novo (ativo há menos que %days% dias)
 new_magazine_description: Esta revista é nova (ativa há menos que %days% dias)
-admin_users_active: Ativo
-admin_users_inactive: Inativo
-admin_users_suspended: Suspenso
-admin_users_banned: Banido
+admin_users_active: Ativos
+admin_users_inactive: Inativos
+admin_users_suspended: Suspensos
+admin_users_banned: Banidos
