@@ -832,7 +832,7 @@ server_software: Software do servidor
 version: Versión
 last_successful_deliver: Última entrega correcta
 bookmark_remove_from_list: Retirar marcador de %list%
-admin_users_active: Activa
+admin_users_active: Activas
 max_image_size: Tamaño máximo do ficheiro
 bookmark_remove_all: Retirar todos os marcadores
 bookmark_lists: Listas de marcadores
@@ -995,6 +995,6 @@ sensitive_warning: Contido sensible
 sensitive_toggle: Cambiar a visibilidade do contido sensible
 deleted_by_author: A persoa autora eliminou o tema, publicación ou comentario
 notification_title_new_reply: Nova resposta
-admin_users_inactive: Inactiva
-admin_users_suspended: Suspendida
-admin_users_banned: Vetada
+admin_users_inactive: Inactivas
+admin_users_suspended: Suspendidas
+admin_users_banned: Vetadas
