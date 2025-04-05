@@ -10,3 +10,7 @@ RUN apt install lsb-release ca-certificates curl wget unzip gnupg apt-transport-
 # Unlimited memory
 RUN echo "memory_limit = -1" >>/etc/php/8.3/cli/conf.d/docker-php-memlimit.ini
 RUN echo "memory_limit = -1" >>/etc/php/8.3/fpm/conf.d/docker-php-memlimit.ini
+
+# Add cs2pr binary using wget
+RUN wget https://raw.githubusercontent.com/staabm/annotate-pull-request-from-checkstyle/refs/heads/master/cs2pr -O /usr/local/bin/cs2pr
+RUN chmod +x /usr/local/bin/cs2pr
