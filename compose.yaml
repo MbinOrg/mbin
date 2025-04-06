@@ -18,7 +18,7 @@ services:
         depends_on:
             - postgres
             - rabbitmq
-            - redis
+            - valkey
 
     messenger:
         image: mbin
@@ -33,7 +33,7 @@ services:
         depends_on:
             - postgres
             - rabbitmq
-            - redis
+            - valkey
 
     postgres:
         image: postgres:${POSTGRES_VERSION}-bookworm
@@ -54,12 +54,12 @@ services:
             - 15672:15672
         user: ${MBIN_USER}
 
-    redis:
-        image: redis:bookworm
+    valkey:
+        image: valkey/valkey:bookworm
         restart: unless-stopped
-        command: redis-server /redis.conf --requirepass ${REDIS_PASSWORD}
+        command: valkey-server /valkey.conf --requirepass ${VALKEY_PASSWORD}
         healthcheck:
-            test: ['CMD', 'redis-cli', 'ping']
+            test: ['CMD', 'valkey-cli', 'ping']
         volumes:
-            - ./docker/redis.conf:/redis.conf
+            - ./docker/valkey.conf:/valkey.conf
         user: ${MBIN_USER}
