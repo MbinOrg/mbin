@@ -24,10 +24,10 @@ services:
     messenger:
         image: mbin
         restart: unless-stopped
-        env_file: .env
         command: bin/console messenger:consume scheduler_default old async outbox deliver inbox resolve receive failed --time-limit=3600
         healthcheck:
             test: ['CMD-SHELL', "ps aux | grep 'messenger[:]consume' || exit 1"]
+        env_file: .env
         volumes:
             - ./storage/media:/app/public/media
             - ./storage/messenger_logs:/app/var/log
@@ -39,28 +39,32 @@ services:
     postgres:
         image: postgres:${POSTGRES_VERSION}-bookworm
         restart: unless-stopped
+        user: ${MBIN_USER}
+        healthcheck:
+            test: ['CMD', 'pg_isready']
         env_file: .env
         volumes:
             - ./storage/postgres:/var/lib/postgresql/data
-        user: ${MBIN_USER}
 
     rabbitmq:
         image: rabbitmq:3-management-alpine
         restart: unless-stopped
+        user: ${MBIN_USER}
+        healthcheck:
+            test: ['CMD', 'rabbitmq-diagnostics', '-q', 'ping']
         env_file: .env
         volumes:
             - ./storage/rabbitmq_data:/var/lib/rabbitmq
             - ./storage/rabbitmq_logs:/var/log/rabbitmq
         ports:
             - 15672:15672
-        user: ${MBIN_USER}
 
     valkey:
         image: valkey/valkey:bookworm
         restart: unless-stopped
+        user: ${MBIN_USER}
         command: valkey-server /valkey.conf --requirepass ${VALKEY_PASSWORD}
         healthcheck:
             test: ['CMD', 'valkey-cli', 'ping']
         volumes:
             - ./docker/valkey.conf:/valkey.conf
-        user: ${MBIN_USER}
