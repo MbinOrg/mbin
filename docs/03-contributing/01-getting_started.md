@@ -234,7 +234,7 @@ The database and cache are cleared / dumped every test run.
 To start the services in the background:
 
 ```sh
-docker compose -f docker/tests/compose.yml up -d
+docker compose -f docker/tests/compose.yaml up -d
 ```
 
 Then run the integration test(s):
