@@ -1,6 +1,21 @@
 #!/bin/sh
 set -e
 
+
+# Additional Mbin docker configurations
+
+# Use 301 response for image redirects to reduce server load
+sed -i 's|redirect_response_code: 302|redirect_response_code: 301|' config/packages/liip_imagine.yaml
+
+# Use S3 file system adapter when S3_KEY env var is not empty
+if [ -n "$S3_KEY" ]; then
+	sed -i 's|adapter: default_adapter|adapter: kbin.s3_adapter|' config/packages/oneup_flysystem.yaml
+fi
+
+# Needed to apply the above config changes
+composer run-script --no-dev post-install-cmd
+
+
 if [ "$1" = 'frankenphp' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
 	# Display information about the current project
 	# Or about an error in project initialization
