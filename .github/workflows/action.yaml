@@ -204,7 +204,7 @@ jobs:
       - name: Composer tools install
         run: composer -d tools install --no-scripts --no-progress
 
-      - name: php-cs-fixer dry-run with diff
+      - name: PHP CS Fixer dry-run with diff
         run: tools/vendor/bin/php-cs-fixer fix --dry-run --diff --show-progress=none
 
       - name: PHP CS Fixer to PR Annotations
