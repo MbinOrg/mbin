@@ -99,11 +99,10 @@ include:
 EOF
 
 echo Setting up storage directories...
-mkdir -p storage/caddy_data storage/caddy_config storage/media storage/php_logs storage/messenger_logs storage/postgres storage/rabbitmq_data storage/rabbitmq_logs
-
+mkdir -p storage/{caddy_config,caddy_data,media,messenger_logs,oauth,php_logs,postgres,rabbitmq_data,rabbitmq_logs}
 echo Configuring OAuth2 keys...
-openssl genrsa -des3 -out ./config/oauth2/private.pem -passout "pass:$OAUTH_PASS" 4096
-openssl rsa -in ./config/oauth2/private.pem --outform PEM -pubout -out ./config/oauth2/public.pem -passin "pass:$OAUTH_PASS"
+openssl genrsa -des3 -out ./storage/oauth/private.pem -passout "pass:$OAUTH_PASS" 4096
+openssl rsa -in ./storage/oauth/private.pem --outform PEM -pubout -out ./storage/oauth/public.pem -passin "pass:$OAUTH_PASS"
 
 echo
 echo Mbin environment complete!

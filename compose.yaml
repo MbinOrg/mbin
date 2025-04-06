@@ -7,9 +7,10 @@ services:
             MERCURE_PUBLISHER_JWT_KEY: ${MERCURE_JWT_SECRET}
             MERCURE_SUBSCRIBER_JWT_KEY: ${MERCURE_JWT_SECRET}
         volumes:
-            - ./storage/caddy_data:/data
             - ./storage/caddy_config:/config
+            - ./storage/caddy_data:/data
             - ./storage/media:/app/public/media
+            - ./storage/oauth:/app/config/oauth2
             - ./storage/php_logs:/app/var/log
         ports:
             - 80:80

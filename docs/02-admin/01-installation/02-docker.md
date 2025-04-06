@@ -110,7 +110,7 @@ cat > compose.override.yaml << EOF
 include:
   - compose.prod.yaml
 EOF
-mkdir -p storage/caddy_data storage/caddy_config storage/media storage/php_logs storage/messenger_logs storage/postgres storage/rabbitmq_data storage/rabbitmq_logs
+mkdir -p storage/{caddy_config,caddy_data,media,messenger_logs,oauth,php_logs,postgres,rabbitmq_data,rabbitmq_logs}
 ```
 
 1. Choose your Redis password, PostgreSQL password, RabbitMQ password, and Mercure password.
@@ -134,8 +134,8 @@ mkdir -p storage/caddy_data storage/caddy_config storage/media storage/php_logs 
 ```bash
 # If you protect the key with a passphrase, make sure to remember it!
 # You will need it later
-openssl genrsa -des3 -out ./config/oauth2/private.pem 4096
-openssl rsa -in ./config/oauth2/private.pem --outform PEM -pubout -out ./config/oauth2/public.pem
+openssl genrsa -des3 -out ./storage/oauth/private.pem 4096
+openssl rsa -in ./storage/oauth/private.pem --outform PEM -pubout -out ./storage/oauth/public.pem
 ```
 
 2. Generate a random hex string for the OAuth2 encryption key:
