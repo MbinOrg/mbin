@@ -207,6 +207,9 @@ jobs:
       - name: php-cs-fixer dry-run with diff
         run: tools/vendor/bin/php-cs-fixer fix --dry-run --diff --show-progress=none
 
+      - name: PHP CS Fixer to PR Annotations
+        run: tools/vendor/bin/php-cs-fixer fix --dry-run --format=checkstyle --show-progress=none | cs2pr
+
   build-and-publish-docker-image:
     runs-on: ubuntu-latest
     # Let's only run this on branches and tagged releases only
