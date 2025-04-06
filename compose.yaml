@@ -36,7 +36,7 @@ services:
             - redis
 
     postgres:
-        image: postgres:${POSTGRES_VERSION}-alpine
+        image: postgres:${POSTGRES_VERSION}-bookworm
         restart: unless-stopped
         env_file: .env
         volumes:
@@ -55,7 +55,7 @@ services:
         user: ${MBIN_USER}
 
     redis:
-        image: redis:alpine
+        image: redis:bookworm
         restart: unless-stopped
         command: redis-server /redis.conf --requirepass ${REDIS_PASSWORD}
         healthcheck:
