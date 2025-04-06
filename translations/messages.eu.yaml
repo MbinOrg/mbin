@@ -203,3 +203,42 @@ up_votes: Aldeko botoak
 down_votes: Aurkako botoak
 marked_for_deletion: Ezabatzeko markatuta
 marked_for_deletion_at: '%date%an ezabatzeko markatuta'
+flash_thread_edit_success: Haria arrakastaz editatu da.
+related_entries: Hari erlazionatuak
+delete_account: Ezabatu kontua
+random_entries: Ausazko hariak
+flash_thread_delete_success: Haria arrakastaz ezabatu da.
+flash_mark_as_adult_success: Posta arrakastaz NSFW bezala markatu da.
+new_password_repeat: Baieztatu pasahitz berria
+change_email: Helbide elektronikoa aldatu
+change_password: Pasahitza aldatu
+read_all: Irakurri dena
+show_all: Erakutsi dena
+flash_thread_pin_success: Haria arrakastaz finkatu da.
+too_many_requests: Muga gaindituta, mesedez, saiatu beranduago.
+deleted: Egileak ezabatua
+sidebar_position: Albo-barraren posizioa
+status: Egoera
+add_moderator: Gehitu moderatzailea
+upload_file: Artxiboa igo
+send_message: Bidali mezu zuzena
+approved: Onartua
+rejected: Errefusatua
+pin: Finkatu
+done: Egina
+change_language: Hizkuntza aldatu
+change: Aldatu
+pinned: Finkatuta
+users: Erabiltzaileak
+article: Haria
+year: Urtea
+federated: Federatua
+restore: Berrezarri
+send: Bidali
+sidebar: Albo-barra
+dynamic_lists: Zerrenda dinamikoak
+toolbar.strikethrough: Marratua
+block: Blokeatu
+unblock: Desblokeatu
+oauth2.grant.moderate.magazine_admin.create: Aldizkari berriak sortu.
+oauth2.grant.entry.create: Hari berriak sortu.
