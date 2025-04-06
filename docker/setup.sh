@@ -54,8 +54,6 @@ verify_no_dir () {
 verify_no_file .env
 verify_no_file compose.override.yaml
 verify_no_dir storage
-verify_no_file config/oauth2/private.pem
-verify_no_file config/oauth2/public.pem
 
 echo Starting Mbin $mode setup...
 echo
