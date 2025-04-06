@@ -159,10 +159,7 @@ If you have messenger jobs configured, be sure to stop them:
 - Docker: `docker compose stop messenger`
 - Bare Metal: `supervisorctl stop messenger:*`
 
-If you are using the Docker setup and want to load the fixture.
-
-1. Go to the `docker` directory.
-2. Execute: `docker compose exec php bin/console doctrine:fixtures:load --append --no-debug`
+If you are using the Docker setup and want to load the fixture, execute: `docker compose exec php bin/console doctrine:fixtures:load --append --no-debug`
 
 Please note, that the command may take some time and data will not be visible during the process, but only after the finish.
 
@@ -231,8 +228,8 @@ SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Unit
 
 ### Running integration tests
 
-Our integration tests depend on a database and a caching server (Valkey / KeyDB / Redis). 
-The database and cache are cleared / dumped every test run. 
+Our integration tests depend on a database and a caching server (Valkey / KeyDB / Redis).
+The database and cache are cleared / dumped every test run.
 
 To start the services in the background:
 

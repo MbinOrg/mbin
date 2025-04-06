@@ -89,7 +89,7 @@ image: "ghcr.io/mbinorg/mbin:latest"
 
 Use either the automatic environment setup script _OR_ manually configure the `.env`, `compose.override.yaml`, and OAuth2 keys. Select one of the two options.
 
-> [!NOTE]
+> [!TIP]
 > Everything configured for your specific instance is in `.env`, `compose.override.yaml`, and `storage/` (assuming you haven't modified anything else). If you'd like to backup, or even completely reset/delete your instance, then these are the files to do so with.
 
 #### Automatic setup
@@ -156,7 +156,18 @@ OAUTH_PASSPHRASE=<Your passphrase from above here>
 OAUTH_ENCRYPTION_KEY=<Hex string generated in previous step>
 ```
 
-### Running the containers
+### Uploaded media files
+
+Uploaded media files (e.g. photos uploaded by users) will be stored on the host directory `storage/media`. They will be served by the web server in the `php` container as static files.
+
+Make sure `KBIN_STORAGE_URL` in your `.env` configuration file is set to be `https://yourdomain.tld/media`.
+
+You can also serve those media files on another server by mirroring the files at `storage/media` and changing `KBIN_STORAGE_URL` correspondingly.
+
+> [!TIP]
+> S3 can also be utilized to store images in the cloud. Just fill in the `S3_` fields in `.env` and Mbin will take care of the rest. See [this page](../03-optional-features/06-s3_storage.md) for more info.
+
+## Running the containers
 
 By default `docker compose` will execute the `compose.yaml` and `compose.override.yaml` files.
 
@@ -175,22 +186,5 @@ This docker setup comes with automatic HTTPS support. Assuming you have set up y
 
 You can also access the RabbitMQ management UI via [http://localhost:15672](http://localhost:15672).
 
-### Uploaded media files
-
-Uploaded media files (e.g. photos uploaded by users) will be stored on the host directory `storage/media`. They will be served by the web server in the `php` container as static files.
-
-Make sure `KBIN_STORAGE_URL` in your `.env` configuration file is set to be `https://yourdomain.tld/media`.
-
-You can also serve those media files on another server by mirroring the files at `storage/media` and changing `KBIN_STORAGE_URL` correspondingly.
-
-## Run Production
-
-If you created the file `compose.override.yaml` with your configs, running production would be the same command:
-
-```bash
-docker compose up -d
-```
-
-If you want to deploy your app on a cluster of machines, you can
-use [Docker Swarm](https://docs.docker.com/engine/swarm/stack-deploy/), which is compatible with the provided Compose
-files.
+> [!WARNING]
+> Be sure not to forget the [Mbin first setup](../04-running-mbin/01-first_setup.md) instructions in order to create your admin user, `random` magazine, and AP & Push Notification keys.
