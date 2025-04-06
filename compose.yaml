@@ -58,6 +58,8 @@ services:
             - ./storage/rabbitmq_logs:/var/log/rabbitmq
         ports:
             - 15672:15672
+        # Hostname specified to ensure persistent data: https://stackoverflow.com/questions/41330514
+        hostname: rabbitmq
 
     valkey:
         image: valkey/valkey:bookworm
