@@ -81,6 +81,13 @@ class ApActivityRepository extends ServiceEntityRepository
     public function findLocalByApId(string $apId): ?array
     {
         $parsed = parse_url($apId);
+        if (!isset($parsed['host'])) {
+            // Log the error about missing the host on this apId
+            $this->logger->error('Missing host key on AP ID: {apId}', ['apId' => $apId]);
+
+            return null;
+        }
+
         if ($parsed['host'] === $this->settingsManager->get('KBIN_DOMAIN') && null !== $parsed['path'] && '' !== $parsed['path']) {
             $exploded = array_filter(explode('/', $parsed['path']));
             $id = \intval(end($exploded));
