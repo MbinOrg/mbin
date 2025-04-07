@@ -83,7 +83,6 @@ class ApActivityRepository extends ServiceEntityRepository
         $parsed = parse_url($apId);
         if (!isset($parsed['host'])) {
             // Log the error about missing the host on this apId
-            // Should we do something else here?
             $this->logger->error('Missing host key on AP ID: {apId}', ['apId' => $apId]);
 
             return null;
