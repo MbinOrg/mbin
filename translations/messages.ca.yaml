@@ -39,7 +39,7 @@ no_comments: Sense comentaris
 created_at: Creat
 owner: Propietari(a)
 top: Destacat
-active: Actiu
+active: Actiu(va)
 more: Més
 login: Iniciar sessió
 subscribers: Subscritors(es)
@@ -803,9 +803,9 @@ last_successful_receive: Darrera rebuda correcta
 last_failed_contact: Últim contacte fallit
 new_user_description: Aquest compte és nou (actiu durant menys de %days% dies)
 new_magazine_description: Aquesta revista és nova (activa durant menys de %days% dies)
-admin_users_suspended: Suspès(a)
-admin_users_active: Actiu(va)
-admin_users_banned: Bandejat(da)
+admin_users_suspended: Suspesos(es)
+admin_users_active: Actius(ves)
+admin_users_banned: Bandejats(des)
 user_verify: Activar compte
 max_image_size: Mida màxima del fitxer
 comment_not_found: No s'ha trobat el comentari
@@ -952,14 +952,14 @@ unsuspend_account: Reactivar el compte
 account_unbanned: S'ha desbandejat el compte.
 deleted_by_moderator: El fil, la publicació o el comentari ha estat suprimit per l'equip
   de moderació
-cake_day: Dia del pastís
+cake_day: Des del dia
 reported: denunciat(da)
 notification_title_mention: Us han esmentat
 someone: Algú
 sso_only_mode: Restringir l'inici de sessió i el registre només als mètodes SSO
 reporting_user: Denunciant
 back: Tornar
-admin_users_inactive: Inactiu(va)
+admin_users_inactive: Inactius(ves)
 restrict_magazine_creation: Restringir la creació de revistes locals a l'administració
   i moderació global
 report_subject: Assumpte

@@ -1,1 +1,244 @@
-{}
+thread: Haria
+people: Jendea
+search: Bilatu
+type.link: Esteka
+type.article: Haria
+type.photo: Argazkia
+type.video: Bideoa
+type.magazine: Aldizkaria
+threads: Hariak
+magazine: Aldizkaria
+magazines: Aldizkariak
+add: Gehitu
+login: Hasi saioa
+oldest: Zaharrena
+more: Gehiago
+added: Gehituta
+instances: Instantziak
+newest: Berriena
+favourites: Faboritoak
+moderators: Moderatzaileak
+owner: Jabe
+password: Pasahitza
+stats: Estatistikak
+fediverse: Fedibertsoa
+email: Helbide elektronikoa
+reply: Erantzun
+follow: Jarraitu
+unfollow: Ez jarraitu
+subscribe: Harpidetu
+remember_me: Gogora nazazu
+privacy_policy: Pribatutasun politika
+hidden: Ezkututa
+help: Laguntza
+try_again: Saiatu berriro
+title: Izenburua
+tag: Etiketa
+tags: Etiketak
+badges: Intsigniak
+body: Gorputza
+name: Izena
+columns: Zutabeak
+user: Erabiltzailea
+description: Deskribapena
+domain: Domeinua
+followers: Jarraitzaileak
+following: Jarraitzen
+subscriptions: Harpidetzak
+rules: Arauak
+people_federated: Federatuta
+overview: ikuspegi orokorra
+articles: Hariak
+links: Estekak
+photos: Argazkiak
+videos: Bideoak
+share: Partekatu
+reason: Arrazoia
+edit: Editatu
+notifications: Jakinarazpenak
+profile: Profila
+messages: Mezuak
+save: Gorde
+domains: Domeinuak
+votes: Botoak
+new_password: Pasahitz berria
+dark: Iluna
+light: Argia
+font_size: Letra tamaina
+yes: Bai
+no: Ez
+left: Ezkerra
+right: Eskuina
+filters: Iragazkiak
+message: Mezua
+approve: Onartu
+month: Hilabetea
+months: Hilabeteak
+week: Astea
+weeks: Asteak
+pages: Orrialdeak
+toolbar.bold: Lodia
+toolbar.italic: Etzana
+toolbar.header: Izenburua
+toolbar.link: Esteka
+errors.server404.title: 404 Ez aurkitua
+errors.server403.title: 403 Debekatuta
+errors.server429.title: 429 Eskaera gehiegi
+custom_css: CSS egokituta
+2fa.verify: Egiaztatu
+alphabetically: Alfabetikoki
+announcement: Iragarkia
+keywords: Hitz gakoak
+details: Xehetasunak
+hide: Ezkutatu
+show: Erakutsi
+and: eta
+last_updated: Azken eguneraketa
+notification_title_new_reply: Erantzun berria
+notification_title_new_thread: Hari berria
+version: Bertsioa
+show_active_users: Erakutsi erabiltzaile aktiboak
+search_type_entry: Hariak
+bookmark_list_edit: Editatu
+bookmarks: Markatzaileak
+answered: erantzuta
+show_new_icons: Erakutsi ikono berriak
+show_users_avatars_help: Erabiltzailearen abatarraren irudia erakutsi.
+show_magazines_icons_help: Aldizkariaren ikonoa erakutsi.
+type.smart_contract: Kontratu adimendun
+delete_content: Ezabatu edukia
+subject_reported_exists: Eduki honen berri eman da.
+2fa.remove: Kendu 2FA
+show_subscriptions: Erakutsi harpidetzak
+change_my_avatar: Aldatu nire abatarra
+edit_my_profile: Editatu nire profila
+delete_magazine: Ezabatu aldizkaria
+restore_magazine: Berrezarri aldizkaria
+page_width: Orrialdearen zabalera
+action: Ekintza
+abandoned: Abandonatuta
+spoiler: Spoilerra
+report_subject: Gaia
+notification_title_new_signup: Erabiltzaile berri bat erregistratuta
+test_push_message: Kaixo mundua!
+table_of_contents: Edukien taula
+bookmark_lists: Markatzaile zerrendak
+email_verification_pending: Zure helbide elektronikoa egiaztatu behar duzu saioa hasi
+  aurretik.
+show_thumbnails_help: Miniaturen irudiak erakutsi.
+commented: Komentatua
+followers_count: '{0}Jarratzaileak|{1}Jarratzaile|]1,Inf[ Jarratzaileak'
+avatar: Abatarra
+favourite: Faborito
+subscribers: Harpidedunak
+replies: Erantzunak
+unsubscribe: Harpidetza kendu
+username: Erabiltzaile-izena
+create_new_magazine: Aldizkari berria sortu
+all_magazines: Aldizkari guztiak
+reset_password: Pasahitza berridatzi
+empty: Hutsik
+show_more: Erakutsi gehiago
+repeat_password: Pasahitza berridatzi
+email_confirm_title: Baieztatu zure helbide elektronikoa.
+email_confirm_header: Kaixo! Baieztatu zure helbide elektronikoa.
+select_magazine: Aukeratu aldizkari bat
+image: Irudia
+people_local: Lokala
+moderated: Moderatua
+image_alt: Irudi alternatiboaren testua
+oauth2.grant.user.bookmark.add: Gehitu laster-markak
+oauth2.grant.user.bookmark.remove: Kendu laster-markak
+oauth2.grant.user.bookmark_list.edit: Editatu zure laster-marken zerrendak
+oauth2.grant.user.bookmark_list.read: Irakurri zure laster-marken zerrendak
+oauth2.grant.user.profile.edit: Editatu zure profila.
+oauth2.grant.user.profile.read: Irakurri zure profila.
+oauth2.grant.user.bookmark_list.delete: Ezabatu zure laster-marken zerrendak
+oauth2.grant.user.profile.all: Irakurri eta editatu zure profila.
+oauth2.grant.user.message.read: Irakurri zure mezuak.
+2fa.code_invalid: Autentifikazio-kodeak ez du balio
+two_factor_authentication: Autentifikazio-faktore bikoitza
+two_factor_backup: Autentifikazio-faktore bikoitzako babeskopien kodeak
+2fa.authentication_code.label: Autentifikazio-kodea
+2fa.disable: Autentifikazio-faktore bikoitza desaktibatu
+2fa.backup: Zure autentifikazio-faktore bikoitzako babeskopien kodeak
+close: Itxi
+page_width_fixed: Finkatua
+user_badge_bot: Bot
+sensitive_show: Klikatu erakusteko
+sensitive_warning: Eduki sentikorra
+sensitive_hide: Klikatu ezkutatzeko
+reported_user: Jakinarazitako erabiltzailea
+edited: editatua
+related_entry: Erlazionatua
+notification_title_new_post: Post berria
+select_user: Aukeratu erabiltzaile bat
+online: Linean
+related_posts: Erlazionatutako postak
+add_post: Gehitu posta
+posts: Postak
+add_new_link: Esteka berria gehitu
+add_new_photo: Argazki berria gehitu
+add_new_post: Post berria gehitu
+add_new_video: Bideo berria gehitu
+faq: FAQ
+add_new_article: Hari berria gehitu
+is_adult: 18+ / NSFW
+related_tags: Erlazionatutako etiketak
+tree_view: Arbola-bista
+classic_view: Bista-klasikoa
+compact_view: Bista-trinkoa
+subscribed: Harpidetuta
+logout: Saioa itxi
+table_view: Taula-bista
+moderate: Moderatu
+are_you_sure: Ziur zaude?
+menu: Menua
+hide_adult: Ezkutatu NSFW edukia
+filter_by_type: Iragazi motaren arabera
+comments: Iruzkinak
+random_posts: Ausazko postak
+add_comment: Gehitu iruzkina
+up_votes: Aldeko botoak
+down_votes: Aurkako botoak
+marked_for_deletion: Ezabatzeko markatuta
+marked_for_deletion_at: '%date%an ezabatzeko markatuta'
+flash_thread_edit_success: Haria arrakastaz editatu da.
+related_entries: Hari erlazionatuak
+delete_account: Ezabatu kontua
+random_entries: Ausazko hariak
+flash_thread_delete_success: Haria arrakastaz ezabatu da.
+flash_mark_as_adult_success: Posta arrakastaz NSFW bezala markatu da.
+new_password_repeat: Baieztatu pasahitz berria
+change_email: Helbide elektronikoa aldatu
+change_password: Pasahitza aldatu
+read_all: Irakurri dena
+show_all: Erakutsi dena
+flash_thread_pin_success: Haria arrakastaz finkatu da.
+too_many_requests: Muga gaindituta, mesedez, saiatu beranduago.
+deleted: Egileak ezabatua
+sidebar_position: Albo-barraren posizioa
+status: Egoera
+add_moderator: Gehitu moderatzailea
+upload_file: Artxiboa igo
+send_message: Bidali mezu zuzena
+approved: Onartua
+rejected: Errefusatua
+pin: Finkatu
+done: Egina
+change_language: Hizkuntza aldatu
+change: Aldatu
+pinned: Finkatuta
+users: Erabiltzaileak
+article: Haria
+year: Urtea
+federated: Federatua
+restore: Berrezarri
+send: Bidali
+sidebar: Albo-barra
+dynamic_lists: Zerrenda dinamikoak
+toolbar.strikethrough: Marratua
+block: Blokeatu
+unblock: Desblokeatu
+oauth2.grant.moderate.magazine_admin.create: Aldizkari berriak sortu.
+oauth2.grant.entry.create: Hari berriak sortu.
