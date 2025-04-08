@@ -13,7 +13,7 @@ if [ -n "$S3_KEY" ]; then
 fi
 
 # Needed to apply the above config changes
-composer run-script --no-dev post-install-cmd
+php bin/console cache:clear
 
 
 if [ "$1" = 'frankenphp' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
