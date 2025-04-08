@@ -186,7 +186,7 @@ services:
       CADDY_GLOBAL_OPTIONS: auto_https off
 ```
 
-3. Also in `compose.override.yaml`, add `!override` to php `ports` to override the current configuration and add your own based on what your reverse proxy needs:
+3. Also in `compose.override.yaml`, add `!override` to your php `ports` to override the current configuration and add your own based on what your reverse proxy needs:
 
 ```yaml
 services:
@@ -197,7 +197,7 @@ services:
 
 In this example, port `8080` will connect to your Mbin server.
 
-4. Make sure your reverse proxy correctly sets the common `X-Forwarded` headers (especially `X-Forwarded-Proto`). This is needed so that both rate limiting works correctly, but especially so that the server can detect the correct outward facing protocol (HTTP vs HTTPS).
+4. Make sure your reverse proxy correctly sets the common `X-Forwarded` headers (especially `X-Forwarded-Proto`). This is needed so that both rate limiting works correctly, but especially so that your server can detect its correct outward facing protocol (HTTP vs HTTPS).
 
 > [!WARNING]
 > `TRUSTED_PROXIES` in `.env` needs to be a valid value (which is the default) in order for your server to work correctly behind a reverse proxy.
