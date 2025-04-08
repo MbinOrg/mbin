@@ -91,10 +91,16 @@ while IFS= read -r line; do
 done < .env.example_docker
 
 echo Creating compose.override.yaml file... Any additional customizations to the compose setup should be added here.
-cat > compose.override.yaml << EOF
+if [[ $mode == "dev" ]]; then
+   cat > compose.override.yaml << EOF
 include:
-  - compose.$mode.yaml
+  - compose.dev.yaml
 EOF
+else
+   cat > compose.override.yaml << EOF
+# Customizations to the docker compose should be added here.
+EOF
+fi
 
 echo Setting up storage directories...
 mkdir -p storage/{caddy_config,caddy_data,media,messenger_logs,oauth,php_logs,postgres,rabbitmq_data,rabbitmq_logs}

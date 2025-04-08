@@ -167,6 +167,44 @@ You can also serve those media files on another server by mirroring the files at
 > [!TIP]
 > S3 can also be utilized to store images in the cloud. Just fill in the `S3_` fields in `.env` and Mbin will take care of the rest. See [this page](../03-optional-features/06-s3_storage.md) for more info.
 
+### Running behind a reverse proxy
+
+A reverse proxy is unneeded with this Docker setup, as HTTPS is automatically applied through the built in Caddy server. If you'd like to use a reverse proxy regardless, then you'll need to make a few changes:
+
+1. In `.env`, change your `SERVER_NAME` to `":80"`:
+
+```env
+SERVER_NAME=":80"
+```
+
+2. In `compose.override.yaml`, add `CADDY_GLOBAL_OPTIONS: auto_https off` to your php service environment:
+
+```yaml
+services:
+  php:
+    environment:
+      CADDY_GLOBAL_OPTIONS: auto_https off
+```
+
+3. Also in `compose.override.yaml`, add `!override` to php `ports` to override the current configuration and add your own based on what your reverse proxy needs:
+
+```yaml
+services:
+  php:
+    ports: !override
+      - 8080:80
+```
+
+In this example, port `8080` will connect to your Mbin server.
+
+4. Make sure your reverse proxy correctly sets the common `X-Forwarded` headers (especially `X-Forwarded-Proto`). This is needed so that both rate limiting works correctly, but especially so that the server can detect the correct outward facing protocol (HTTP vs HTTPS).
+
+> [!WARNING]
+> `TRUSTED_PROXIES` in `.env` needs to be a valid value (which is the default) in order for your server to work correctly behind a reverse proxy.
+
+> [!TIP]
+> In order to verify your server is correctly detecting it's public protocol (HTTP vs HTTPS), visit `/.well-known/nodeinfo` and look at which protocol is being used in the `href` fields. A public server should always be using HTTPS and not contain port numbers (i.e., `https://DOMAINHERE/`).
+
 ## Running the containers
 
 By default `docker compose` will execute the `compose.yaml` and `compose.override.yaml` files.
@@ -179,7 +217,7 @@ docker compose up -d
 
 See your running containers via: `docker ps`.
 
-This docker setup comes with automatic HTTPS support. Assuming you have set up your DNS and port forwarding correctly, then you should be able to access the new instance via your domain.
+This docker setup comes with automatic HTTPS support. Assuming you have set up your DNS and firewall (allow ports `80` & `443`) configured correctly, then you should be able to access the new instance via your domain.
 
 > [!NOTE]
 > If you specified `localhost` as your domain, then a self signed HTTPS certificate is provided and you should be able to access your instance here: [https://localhost](https://localhost).
