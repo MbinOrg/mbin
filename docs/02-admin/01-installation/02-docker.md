@@ -45,46 +45,6 @@ git clone https://github.com/MbinOrg/mbin.git
 cd mbin
 ```
 
-### Docker image preparation
-
-> [!NOTE]
-> If you're using a version of Docker Engine earlier than 23.0, run `export DOCKER_BUILDKIT=1`, prior to building the image. This does not apply to users running Docker Desktop. More info can be found [here](https://docs.docker.com/build/buildkit/#getting-started)
-
-Use the existing Docker image _OR_ build the docker image. Select one of the two options.
-
-#### Build your own Docker image
-
-If you want to build your own image, run (_no_ need to update the `compose.prod.yaml` file):
-
-```bash
-docker build --no-cache -t mbin -f docker/Dockerfile .
-```
-
-#### Use Mbin pre-build image
-
-_OR_ use our pre-build images from [ghcr.io](https://ghcr.io). In this case you need to update the `compose.prod.yaml` file:
-
-```bash
-nano compose.prod.yaml
-```
-
-Find and replace or comment-out the following 4 lines:
-
-```yaml
-build:
-  dockerfile: docker/Dockerfile
-  context: .
-  target: prod
-```
-
-And instead use the following line on both places (`php` and `messenger` services):
-
-```yaml
-image: "ghcr.io/mbinorg/mbin:latest"
-```
-
-**Important:** Do _NOT_ forget to change **ALL LINES** that match to: `image: "ghcr.io/mbinorg/mbin:latest"` in the `compose.prod.yaml` file (should be 2 matches in total).
-
 ### Environment configuration
 
 Use either the automatic environment setup script _OR_ manually configure the `.env`, `compose.override.yaml`, and OAuth2 keys. Select one of the two options.
@@ -109,10 +69,7 @@ Create config files and storage directories:
 
 ```bash
 cp .env.example_docker .env
-cat > compose.override.yaml << EOF
-include:
-  - compose.prod.yaml
-EOF
+touch compose.override.yaml
 mkdir -p storage/{caddy_config,caddy_data,media,messenger_logs,oauth,php_logs,postgres,rabbitmq_data,rabbitmq_logs}
 ```
 
@@ -154,6 +111,39 @@ OAUTH_PRIVATE_KEY=%kernel.project_dir%/config/oauth2/private.pem
 OAUTH_PUBLIC_KEY=%kernel.project_dir%/config/oauth2/public.pem
 OAUTH_PASSPHRASE=<Your passphrase from above here>
 OAUTH_ENCRYPTION_KEY=<Hex string generated in previous step>
+```
+
+### Docker image preparation
+
+> [!NOTE]
+> If you're using a version of Docker Engine earlier than 23.0, run `export DOCKER_BUILDKIT=1`, prior to building the image. This does not apply to users running Docker Desktop. More info can be found [here](https://docs.docker.com/build/buildkit/#getting-started)
+
+Use the existing Docker image _OR_ build the docker image. Select one of the two options.
+
+#### Build your own Docker image
+
+If you want to build your own image, run (_no_ need to update the `compose.override.yaml` file):
+
+```bash
+docker build --no-cache -t mbin -f docker/Dockerfile .
+```
+
+#### Use Mbin pre-build image
+
+_OR_ use our pre-build images from [ghcr.io](https://ghcr.io). In this case you need to update the `compose.override.yaml` file:
+
+```bash
+nano compose.override.yaml
+```
+
+Add the `image` field and set it to `ghcr.io/mbinorg/mbin:latest` for _both_ the `php` and `messenger` services:
+
+```yaml
+services:
+  php:
+    image: ghcr.io/mbinorg/mbin:latest
+  messenger:
+    image: ghcr.io/mbinorg/mbin:latest
 ```
 
 ### Uploaded media files
