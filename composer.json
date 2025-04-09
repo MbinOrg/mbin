@@ -59,7 +59,7 @@
         "phpstan/phpdoc-parser": "^2.0.0",
         "predis/predis": "^2.2.2",
         "privacyportal/oauth2-privacyportal": "^0.1.1",
-        "runtime/frankenphp-symfony": "*",
+        "runtime/frankenphp-symfony": "^0.2.0",
         "scheb/2fa-backup-code": "^7.5.0",
         "scheb/2fa-bundle": "^7.5.0",
         "scheb/2fa-totp": "^7.5.0",
