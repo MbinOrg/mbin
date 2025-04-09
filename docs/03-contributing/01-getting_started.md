@@ -4,6 +4,27 @@ There are several ways to get started. Like using the Docker setup or use the de
 
 The code is mainly written in PHP using the Symfony framework with Twig templating and a bit of JavaScript & CSS and of course HTML.
 
+## Docker as a dev server
+
+To save yourself much time setting up a development server, you can use our Docker setup instead of a manual configuration:
+
+1. Make sure you are currently in your Mbin directory.
+2. Run the auto setup script with `./docker/setup.sh dev localhost` to configure `.env`, `compose.override.yaml`, and `storage/`.
+3. Use `docker build -t mbin -f docker/Dockerfile --target dev .` to build the dev Docker image.
+4. Run `docker compose up` to start the Docker containers.
+5. From here, you should be able to access your server at [https://localhost/](https://localhost/). Any edits to the source files will automatically rebuild your server.
+6. Optionally, follow the [Mbin first setup](../02-admin/04-running-mbin/01-first_setup.md) instructions.
+
+> [!NOTE]
+> If you'd prefer to manually configure your Docker environment (instead of using the setup script) then follow the manual environment setup steps in the [Docker install guide](../02-admin/01-installation/02-docker.md), but while you're creating `compose.override.yaml`, use the following:
+>
+> ```yaml
+> include:
+>   - compose.dev.yaml
+> ```
+
+If you'd prefer a development setup without using Docker, then continue on to the next sections.
+
 ## Initial setup
 
 Requirements:
