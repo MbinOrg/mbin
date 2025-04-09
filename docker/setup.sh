@@ -34,7 +34,7 @@ esac
 
 domain=$2
 if [[ -z $domain ]]; then
-  echo "DOMAIN must be provided. Use "localhost" if you are just testing locally."
+  echo "DOMAIN must be provided. Use \"localhost\" if you are just testing locally."
   exit 1
 fi
 
@@ -99,6 +99,21 @@ EOF
 else
    cat > compose.override.yaml << EOF
 # Customizations to the docker compose should be added here.
+
+# Uncomment the following to use Mbin's prebuilt docker image.
+# services:
+#   php:
+#     image: ghcr.io/mbinorg/mbin:latest
+#   messenger:
+#     image: ghcr.io/mbinorg/mbin:latest
+
+# Uncomment the following to use Mbin behind a reverse proxy.
+# services:
+#   php:
+#     environment:
+#       CADDY_GLOBAL_OPTIONS: auto_https off
+#     ports: !override
+#       - 8080:80
 EOF
 fi
 
