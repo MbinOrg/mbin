@@ -47,9 +47,7 @@ if [ "$1" = 'frankenphp' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
 			echo 'The database is now ready and reachable'
 		fi
 
-		if [ "$( find ./migrations -iname '*.php' -print -quit )" ]; then
-			php bin/console doctrine:migrations:migrate --no-interaction --all-or-nothing
-		fi
+		php bin/console doctrine:migrations:migrate --no-interaction --all-or-nothing
 	fi
 
 	# Solution to allow non-root users, given here: https://github.com/dunglas/symfony-docker/issues/679#issuecomment-2501369223
