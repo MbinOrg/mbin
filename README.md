@@ -212,17 +212,17 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/piotr-sikora-v">
-                    <img src="https://avatars.githubusercontent.com/u/1295000?v=4" width="100;" alt="piotr-sikora-v"/>
-                    <br />
-                    <sub><b>Piotr Sikora</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/jwr1">
                     <img src="https://avatars.githubusercontent.com/u/47087725?v=4" width="100;" alt="jwr1"/>
                     <br />
                     <sub><b>John Wesley</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/piotr-sikora-v">
+                    <img src="https://avatars.githubusercontent.com/u/1295000?v=4" width="100;" alt="piotr-sikora-v"/>
+                    <br />
+                    <sub><b>Piotr Sikora</b></sub>
                 </a>
             </td>
             <td align="center">
