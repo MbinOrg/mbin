@@ -34,7 +34,7 @@ esac
 
 domain=$2
 if [[ -z $domain ]]; then
-  echo DOMAIN must be provided. Use "localhost" if you are just testing locally.
+  echo "DOMAIN must be provided. Use "localhost" if you are just testing locally."
   exit 1
 fi
 
@@ -55,10 +55,10 @@ verify_no_file .env
 verify_no_file compose.override.yaml
 verify_no_dir storage
 
-echo Starting Mbin $mode setup...
+echo "Starting Mbin $mode setup..."
 echo
 
-echo Generating .env file with passwords...
+echo "Generating .env file with passwords..."
 GEN_PASSWORD_LENGTH=32
 GEN_PASSWORD_REGEX='!Change\w*!'
 while IFS= read -r line; do
@@ -90,7 +90,7 @@ while IFS= read -r line; do
   echo "$line" >> .env
 done < .env.example_docker
 
-echo Creating compose.override.yaml file... Any additional customizations to the compose setup should be added here.
+echo "Creating compose.override.yaml file... Any additional customizations to the compose setup should be added here."
 if [[ $mode == "dev" ]]; then
    cat > compose.override.yaml << EOF
 include:
@@ -102,12 +102,12 @@ else
 EOF
 fi
 
-echo Setting up storage directories...
+echo "Setting up storage directories..."
 mkdir -p storage/{caddy_config,caddy_data,media,messenger_logs,oauth,php_logs,postgres,rabbitmq_data,rabbitmq_logs}
-echo Configuring OAuth2 keys...
+echo "Configuring OAuth2 keys..."
 openssl genrsa -des3 -out ./storage/oauth/private.pem -passout "pass:$OAUTH_PASS" 4096
 openssl rsa -in ./storage/oauth/private.pem --outform PEM -pubout -out ./storage/oauth/public.pem -passin "pass:$OAUTH_PASS"
 
 echo
-echo Mbin environment complete!
-echo Please refer back to the documentation for the finishing touches.
+echo "Mbin environment setup complete!"
+echo "Please refer back to the documentation for finishing touches."
