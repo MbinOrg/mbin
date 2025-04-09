@@ -23,6 +23,9 @@ To save yourself much time setting up a development server, you can use our Dock
 >   - compose.dev.yaml
 > ```
 
+> [!TIP]
+> Once you are done with your development server and would like to shutdown the Docker containers, hit `Ctrl+C` in your terminal.
+
 If you'd prefer a development setup without using Docker, then continue on to the next sections.
 
 ## Initial setup
@@ -206,6 +209,9 @@ Start the development server:
 
 6. Start Mbin: `symfony server:start`
 7. Go to: [http://127.0.0.1:8000](http://127.0.0.1:8000/)
+
+> [!TIP]
+> Once you are done with your development server and would like to shut it down, hit `Ctrl+C` in your terminal.
 
 You might want to also follow the [Mbin first setup](../02-admin/04-running-mbin/01-first_setup.md). This explains how to create a user.
 
