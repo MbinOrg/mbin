@@ -8,7 +8,7 @@ The code is mainly written in PHP using the Symfony framework with Twig templati
 
 To save yourself much time setting up a development server, you can use our Docker setup instead of a manual configuration:
 
-1. Make sure you are currently in your Mbin directory.
+1. Make sure you are currently in the root of your Mbin directory.
 2. Run the auto setup script with `./docker/setup.sh dev localhost` to configure `.env`, `compose.override.yaml`, and `storage/`.
 3. Use `docker build -t mbin -f docker/Dockerfile --target dev .` to build the dev Docker image.
 4. Run `docker compose up` to start the Docker containers.
@@ -180,7 +180,11 @@ If you have messenger jobs configured, be sure to stop them:
 - Docker: `docker compose stop messenger`
 - Bare Metal: `supervisorctl stop messenger:*`
 
-If you are using the Docker setup and want to load the fixture, execute: `docker compose exec php bin/console doctrine:fixtures:load --append --no-debug`
+If you are using the Docker setup and want to load the fixture, execute:
+
+```sh
+docker compose exec php bin/console doctrine:fixtures:load --append --no-debug
+```
 
 Please note, that the command may take some time and data will not be visible during the process, but only after the finish.
 
