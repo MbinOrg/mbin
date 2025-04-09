@@ -46,6 +46,9 @@ services:
             - postgres
             - rabbitmq
             - valkey
+        deploy:
+            mode: replicated
+            replicas: 6
 
     postgres:
         image: postgres:${POSTGRES_VERSION}-bookworm

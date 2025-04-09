@@ -13,11 +13,11 @@ services:
             #  from the bind-mount for better performance by enabling the next line:
             #- /app/vendor
         environment:
-            FRANKENPHP_WORKER_CONFIG: watch
-            MERCURE_EXTRA_DIRECTIVES: demo
+            APP_ENV: dev
             # See https://xdebug.org/docs/all_settings#mode
             XDEBUG_MODE: '${XDEBUG_MODE:-off}'
-            APP_ENV: dev
+            FRANKENPHP_WORKER_CONFIG: watch
+            MERCURE_EXTRA_DIRECTIVES: demo
         extra_hosts:
             # Ensure that host.docker.internal is correctly defined on Linux
             - host.docker.internal:host-gateway
@@ -35,10 +35,21 @@ services:
             #  from the bind-mount for better performance by enabling the next line:
             #- /app/vendor
         environment:
+            APP_ENV: dev
             # See https://xdebug.org/docs/all_settings#mode
             XDEBUG_MODE: '${XDEBUG_MODE:-off}'
-            APP_ENV: dev
         extra_hosts:
             # Ensure that host.docker.internal is correctly defined on Linux
             - host.docker.internal:host-gateway
         tty: true
+        deploy:
+            mode: replicated
+            replicas: 1
+
+    node:
+        image: node:22-bookworm-slim
+        user: ${MBIN_USER}
+        volumes:
+            - ./:/app
+        working_dir: /app
+        command: ['sh', '-c', 'npm install && npm run watch']
