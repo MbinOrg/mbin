@@ -882,8 +882,8 @@ notification_title_new_report: Se creó un nuevo informe
 version: Versión
 new_user_description: Esta cuenta es nueva (activa durante menos de %days% días)
 new_magazine_description: Esta revista es nueva (activa durante menos de %days% días)
-admin_users_inactive: Inctivo/a
-admin_users_active: Activo/a
+admin_users_inactive: Inctivos/as
+admin_users_active: Activos/as
 remove_user_avatar: Eliminar avatar
 account_banned: Se ha baneado la cuenta.
 sso_only_mode: Restringir el inicio de sesión y el registro únicamente a métodos SSO
@@ -892,7 +892,7 @@ reporting_user: Denunciante
 reported: denunciado
 own_content_reported_accepted: Se aceptó un informe de tu contenido.
 report_accepted: Se ha aceptado un informe
-cake_day: Día del pastel
+cake_day: Desde el día
 magazine_log_entry_unpinned: se eliminó la entrada fijada
 unregister_push_notifications_button: Eliminar registro "push"
 test_push_notifications_button: Probar notificaciones "push"
@@ -1010,6 +1010,6 @@ sso_show_first: Mostrar SSO primero en las páginas de inicio de sesión y regis
 continue_with: Continuar con
 notification_title_removed_post: Se eliminó una publicación
 show_related_magazines: Mostrar revistas al azar
-admin_users_suspended: Suspendido/a
-admin_users_banned: Baneado/a
+admin_users_suspended: Suspendidos/as
+admin_users_banned: Baneados/as
 open_report: Abrir informe

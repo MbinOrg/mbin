@@ -67,7 +67,9 @@ class Note
             $object['to'] = [$object['to']];
         }
 
-        if (\is_string($object['cc'])) {
+        if (!isset($object['cc'])) {
+            $object['cc'] = [];
+        } elseif (\is_string($object['cc'])) {
             $object['cc'] = [$object['cc']];
         }
 
