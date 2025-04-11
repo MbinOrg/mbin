@@ -12,6 +12,7 @@ use App\Markdown\CommonMark\Node\UnresolvableLink;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\SettingsManager;
+use App\Utils\RegPatterns;
 use League\CommonMark\Node\Node;
 use League\CommonMark\Parser\Inline\InlineParserInterface;
 use League\CommonMark\Parser\Inline\InlineParserMatch;
@@ -31,7 +32,7 @@ class MentionLinkParser implements InlineParserInterface
     public function getMatchDefinition(): InlineParserMatch
     {
         // support for unicode international domains
-        return InlineParserMatch::regex('\B@([a-zA-Z0-9\-\_]{1,30})(?:@)?((?:[\pL\pN\pS\pM\-\_]++\.)+[\pL\pN\pM]++|[a-z0-9\-\_]++)?');
+        return InlineParserMatch::regex(RegPatterns::MENTION_REGEX);
     }
 
     public function parse(InlineParserContext $ctx): bool

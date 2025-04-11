@@ -8,13 +8,13 @@ declare(strict_types=1);
 
 namespace App\Markdown\Listener;
 
-use App\Markdown\CommonMark\CommunityLinkParser;
 use App\Markdown\Event\BuildCacheContext;
 use App\Markdown\Event\ConvertMarkdown;
 use App\Repository\ApActivityRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\MentionManager;
+use App\Utils\RegPatterns;
 use App\Utils\UrlUtils;
 use League\CommonMark\Output\RenderedContentInterface;
 use Psr\Cache\CacheException;
@@ -153,7 +153,7 @@ final class CacheMarkdownListener implements EventSubscriberInterface
             $matches = null;
             // Remove newline (\n), tab (\t), carriage return (\r), etc.
             $word2 = preg_replace('/[[:cntrl:]]/', '', $word);
-            if (preg_match('/'.CommunityLinkParser::COMMUNITY_REGEX.'/', $word2, $matches)) {
+            if (preg_match('/'.RegPatterns::COMMUNITY_REGEX.'/', $word2, $matches)) {
                 // Check if the required matched array keys exist
                 if (!isset($matches[1]) || !isset($matches[2])) {
                     $this->logger->warning('Invalid community mention format: {word}', ['word' => $word2]);

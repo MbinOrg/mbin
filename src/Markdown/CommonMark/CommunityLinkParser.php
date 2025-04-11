@@ -9,6 +9,7 @@ use App\Markdown\CommonMark\Node\CommunityLink;
 use App\Markdown\CommonMark\Node\UnresolvableLink;
 use App\Repository\MagazineRepository;
 use App\Service\SettingsManager;
+use App\Utils\RegPatterns;
 use League\CommonMark\Parser\Inline\InlineParserInterface;
 use League\CommonMark\Parser\Inline\InlineParserMatch;
 use League\CommonMark\Parser\InlineParserContext;
@@ -16,8 +17,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CommunityLinkParser implements InlineParserInterface
 {
-    public const COMMUNITY_REGEX = '\B!(\w{1,30})(?:@)?((?:[\pL\pN\pS\pM\-\_]++\.)+[\pL\pN\pM]++|[a-z0-9\-\_]++)?';
-
     public function __construct(
         private readonly MagazineRepository $magazineRepository,
         private readonly SettingsManager $settingsManager,
@@ -27,7 +26,7 @@ class CommunityLinkParser implements InlineParserInterface
 
     public function getMatchDefinition(): InlineParserMatch
     {
-        return InlineParserMatch::regex(self::COMMUNITY_REGEX);
+        return InlineParserMatch::regex(RegPatterns::COMMUNITY_REGEX);
     }
 
     public function parse(InlineParserContext $ctx): bool
