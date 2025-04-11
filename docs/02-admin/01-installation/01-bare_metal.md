@@ -12,7 +12,7 @@ This guide is aimed for Debian / Ubuntu distribution servers, but it could run o
 ## Minimum hardware requirements
 
 - **vCPU:** 4 virtual cores (>= 2GHz, _more is recommended_ on larger instances)
-- **RAM:** 6GB (_more is recommended_ for large instances)  
+- **RAM:** 6GB (_more is recommended_ for large instances)
 - **Storage:** 40GB (_more is recommended_, especially if you have a lot of remote/local magazines and/or have a lot of (local) users)
 
 You can start with a smaller server and add more resources later if you are using a VPS for example.
@@ -103,7 +103,7 @@ If you have a firewall installed (or you're behind a NAT), be sure to open port 
 1. Setup the Nodesource repository:
 
 ```bash
-curl -fsSL https://deb.nodesource.com/setup_22.x | sudo bash - 
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo bash -
 ```
 
 3. Install Node.JS:
@@ -292,7 +292,6 @@ Optionally also enable OPCache for improved performances with PHP (recommended f
 ```ini
 opcache.enable = 1
 opcache.enable_cli = 1
-; replace `/var/www/mbin` with `/var/www/kbin` if needed
 opcache.preload = /var/www/mbin/config/preload.php
 opcache.preload_user = www-data
 ; Memory consumption (in MBs), personal preference
@@ -439,10 +438,10 @@ requirepass "{!SECRET!!KEY!-32_1-!}"
 
 ### PostgreSQL (Database)
 
-Create new `kbin` database user (or `mbin` user if you know what you are doing), using the password, `{!SECRET!!KEY!-32_2-!}`, you generated earlier:
+Create new `mbin` database user, using the password, `{!SECRET!!KEY!-32_2-!}`, you generated earlier:
 
 ```bash
-sudo -u postgres createuser --createdb --createrole --pwprompt kbin
+sudo -u postgres createuser --createdb --createrole --pwprompt mbin
 ```
 
 Create tables and database structure:
@@ -506,11 +505,11 @@ sudo apt-get install -y erlang-base \
 sudo apt-get install rabbitmq-server -y --fix-missing
 ```
 
-Now, we will add a new `kbin` user with the correct permissions:
+Now, we will add a new `mbin` user with the correct permissions:
 
 ```bash
-sudo rabbitmqctl add_user 'kbin' '{!SECRET!!KEY!-16_2-!}'
-sudo rabbitmqctl set_permissions -p '/' 'kbin' '.' '.' '.*'
+sudo rabbitmqctl add_user 'mbin' '{!SECRET!!KEY!-16_2-!}'
+sudo rabbitmqctl set_permissions -p '/' 'mbin' '.' '.' '.*'
 ```
 
 Remove the `guest` account:
@@ -529,7 +528,7 @@ nano .env
 ```ini
 # Use RabbitMQ (recommended for production):
 RABBITMQ_PASSWORD=!ChangeThisRabbitPass!
-MESSENGER_TRANSPORT_DSN=amqp://kbin:${RABBITMQ_PASSWORD}@127.0.0.1:5672/%2f/messages
+MESSENGER_TRANSPORT_DSN=amqp://mbin:${RABBITMQ_PASSWORD}@127.0.0.1:5672/%2f/messages
 
 # or Redis/KeyDB:
 #MESSENGER_TRANSPORT_DSN=redis://${REDIS_PASSWORD}@127.0.0.1:6379/messages

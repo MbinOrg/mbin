@@ -1,4 +1,3 @@
-
 # Backup and restore
 
 ## Bare Metal
@@ -6,13 +5,13 @@
 ### Backup
 
 ```bash
-PGPASSWORD="YOUR_PASSWORD" pg_dump -U kbin kbin > dump.sql
+PGPASSWORD="YOUR_PASSWORD" pg_dump -U mbin mbin > dump.sql
 ```
 
 ### Restore
 
 ```bash
-psql -U kbin kbin < dump.sql
+psql -U mbin mbin < dump.sql
 ```
 
 ## Docker
@@ -20,11 +19,11 @@ psql -U kbin kbin < dump.sql
 ### Backup:
 
 ```bash
-docker compose exec -it db pg_dump -U kbin kbin > dump.sql
+docker compose exec -it db pg_dump -U mbin mbin > dump.sql
 ```
 
 ### Restore:
 
 ```bash
-docker compose exec -T db psql -U kbin kbin < dump.sql
+docker compose exec -T db psql -U mbin mbin < dump.sql
 ```

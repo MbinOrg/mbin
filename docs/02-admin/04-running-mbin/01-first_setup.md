@@ -1,7 +1,7 @@
 # Mbin first setup
 
 > [!TIP]
-> If you are running docker, then you have to be in the `docker` folder and prefix the following commands with
+> If you are running docker, then you have to prefix the following commands with
 > `docker compose exec php`.
 
 Create new admin user (without email verification), please change the `username`, `email` and `password` below:
@@ -45,6 +45,7 @@ Make sure you have substituted all the passwords and configured the basic servic
 ### Push Notification setup
 
 The push notification system needs encryption keys to work. They have to be generated only once, by running
+
 ```bash
 php bin/console mbin:push:keys:update
 ```

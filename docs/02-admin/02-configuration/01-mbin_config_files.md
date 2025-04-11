@@ -4,6 +4,9 @@ These are additional configuration YAML file changes in the `config` directory.
 
 ## Image redirect response code
 
+> [!NOTE]
+> The Docker setup already utilizes permanent image redirects, so you can safely ignore the following.
+
 Assuming you **are using Nginx** (as described above, with the correct configs), you can reduce the server load by changing the image redirect response code from `302` to `301`, which allows the client to cache the complete response. Edit the following file (from the root directory of Mbin):
 
 ```bash

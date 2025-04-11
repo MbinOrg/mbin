@@ -26,7 +26,7 @@ S3_ENDPOINT=https://endpoint.domain.tld
 S3_VERSION=latest
 ```
 
-Then edit the: `config/packages/oneup_flysystem.yaml` file:
+Then edit the: `config/packages/oneup_flysystem.yaml` file (only needed on bare metal/VM, not Docker):
 
 ```yaml
 oneup_flysystem:
