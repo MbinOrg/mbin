@@ -16,7 +16,12 @@ if [ "$1" = 'frankenphp' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
 		# Use 301 response for image redirects to reduce server load
 		sed -i 's|redirect_response_code: 302|redirect_response_code: 301|' config/packages/liip_imagine.yaml
 
-		# Use S3 file system adapter when S3_KEY env var is not empty
+		# Override log level when PHP_LOG_LEVEL is not empty
+		if [ -n "$PHP_LOG_LEVEL" ]; then
+			sed -i "s|action_level: error|action_level: $PHP_LOG_LEVEL|" config/packages/monolog.yaml
+		fi
+
+		# Use S3 file system adapter when S3_KEY is not empty
 		if [ -n "$S3_KEY" ]; then
 			sed -i 's|adapter: default_adapter|adapter: kbin.s3_adapter|' config/packages/oneup_flysystem.yaml
 		fi
