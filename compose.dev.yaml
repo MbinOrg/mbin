@@ -23,6 +23,14 @@ services:
             - host.docker.internal:host-gateway
         tty: true
 
+    node:
+        image: node:22-bookworm-slim
+        user: ${MBIN_USER}
+        volumes:
+            - ./:/app
+        working_dir: /app
+        command: ['sh', '-c', 'npm install && npm run watch']
+
     messenger:
         build:
             dockerfile: docker/Dockerfile
@@ -44,12 +52,11 @@ services:
         tty: true
         deploy:
             mode: replicated
-            replicas: 1
+            # Change to 1 to enable federation
+            replicas: 0
 
-    node:
-        image: node:22-bookworm-slim
-        user: ${MBIN_USER}
-        volumes:
-            - ./:/app
-        working_dir: /app
-        command: ['sh', '-c', 'npm install && npm run watch']
+    rabbitmq:
+        deploy:
+            mode: replicated
+            # Change to 1 to enable federation
+            replicas: 0
