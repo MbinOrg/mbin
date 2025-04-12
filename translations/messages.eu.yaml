@@ -242,3 +242,29 @@ block: Blokeatu
 unblock: Desblokeatu
 oauth2.grant.moderate.magazine_admin.create: Aldizkari berriak sortu.
 oauth2.grant.entry.create: Hari berriak sortu.
+size: Tamaina
+show_thumbnails: Miniaturak erakutsi
+flash_magazine_edit_success: Aldizkaria arrakastaz editatu da.
+ban: Debekatu
+unban: Debekua kendu
+ban_hashtag_btn: Hashtag debekatu
+bans: Debekuak
+icon: Ikono
+preview: Aurrebista
+contact_email: Harremanetarako helbide elektronikoa
+admin_panel: Administrazio-panela
+instance: Instantzia
+type_search_term: Bilaketa-termino bat idatzi
+active_users: Pertsona aktiboak
+related_magazines: Aldizkari erlazionatuak
+banned_instances: Instantzia debekatuak
+kbin_intro_title: Esploratu Fedibertsoa
+kbin_promo_title: Sortu zure instantzia
+random_magazines: Ausazko aldizkariak
+header_logo: Goiburuko logotipoa
+filter.adult.hide: Ezkutatu NSFW
+filter.adult.show: Erakutsi NSFW
+filter.adult.only: NSFW bakarrik
+local_and_federated: Bertakoa eta federatua
+toolbar.image: Irudia
+account_deletion_button: Ezabatu kontua
