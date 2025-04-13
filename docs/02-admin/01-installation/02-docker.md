@@ -63,6 +63,8 @@ Run the setup script and pass in a mode (either `prod` or `dev`) and your domain
 > [!NOTE]
 > Once the script has been run, you will not be able to run it again, in order to prevent data loss. You can always edit the `.env` and `compose.override.yaml` files manually if you'd like to make changes.
 
+Continue on to the [_Docker image preparation_](#docker-image-preparation) section for the next steps.
+
 #### Manually configure `.env` and `compose.override.yaml`
 
 Create config files and storage directories:
@@ -189,8 +191,7 @@ In this example, port `8080` will connect to your Mbin server.
 
 4. Make sure your reverse proxy correctly sets the common `X-Forwarded` headers (especially `X-Forwarded-Proto`). This is needed so that both rate limiting works correctly, but especially so that your server can detect its correct outward facing protocol (HTTP vs HTTPS).
 
-> [!WARNING]
-> `TRUSTED_PROXIES` in `.env` needs to be a valid value (which is the default) in order for your server to work correctly behind a reverse proxy.
+> [!WARNING] > `TRUSTED_PROXIES` in `.env` needs to be a valid value (which is the default) in order for your server to work correctly behind a reverse proxy.
 
 > [!TIP]
 > In order to verify your server is correctly detecting it's public protocol (HTTP vs HTTPS), visit `/.well-known/nodeinfo` and look at which protocol is being used in the `href` fields. A public server should always be using HTTPS and not contain port numbers (i.e., `https://DOMAINHERE/`).
