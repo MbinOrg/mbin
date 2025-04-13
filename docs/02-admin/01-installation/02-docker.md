@@ -52,7 +52,7 @@ Use either the automatic environment setup script _OR_ manually configure the `.
 > [!TIP]
 > Everything configured for your specific instance is in `.env`, `compose.override.yaml`, and `storage/` (assuming you haven't modified anything else). If you'd like to backup, or even completely reset/delete your instance, then these are the files to do so with.
 
-#### Automatic setup
+#### Automatic setup script
 
 Run the setup script and pass in a mode (either `prod` or `dev`) and your domain (which can be `localhost` if you plan to just test locally):
 
