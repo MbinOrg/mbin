@@ -28,7 +28,7 @@ follow: Jarraitu
 unfollow: Ez jarraitu
 subscribe: Harpidetu
 remember_me: Gogora nazazu
-privacy_policy: Pribatutasun politika
+privacy_policy: Pribatutasun-politika
 hidden: Ezkututa
 help: Laguntza
 try_again: Saiatu berriro
@@ -268,3 +268,26 @@ filter.adult.only: NSFW bakarrik
 local_and_federated: Bertakoa eta federatua
 toolbar.image: Irudia
 account_deletion_button: Ezabatu kontua
+federated_magazine_info: ''
+mod_log: Moderazio-erregistroa
+contact: Kontaktua
+email_verify: Baieztatu helbide elektronikoa
+share_on_fediverse: Partekatu Fedibertsoan
+edit_entry: Haria editatu
+copy_url_to_fediverse: Kopiatu URL originala
+edit_comment: Aldaketak gorde
+delete: Ezabatu
+edit_post: Posta editatu
+appearance: Itxura
+privacy: Pribatutasuna
+new_email_repeat: Baieztatu posta elektroniko berria
+error: Errorea
+back: Atzera
+server_software: Zerbitzariaren softwarea
+search_type_all: Hariak + Mikroblogak
+show_new_icons_help: Erakutsi ikonoa aldizkari/erabiltzaile berriarentzat (30 egun
+  edo berriagoak)
+settings: Doikuntzak
+blocked: Blokeatuta
+subscribers_count: '{0}Harpidedunak|{1}Harpidedun|]1,Inf[ Harpidedunak'
+microblog: Mikrobloga
