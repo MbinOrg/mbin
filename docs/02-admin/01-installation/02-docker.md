@@ -122,9 +122,7 @@ OAUTH_ENCRYPTION_KEY=<Hex string generated in previous step>
 
 Use the existing Docker image _OR_ build the docker image. Select one of the two options.
 
-#### Use the prebuilt image
-
-Use our prebuilt images from [ghcr.io](https://ghcr.io). You will not need to make any changes to use our prebuilt image, as the compose files are already setup to do so.
+The default is to use our prebuilt images from [ghcr.io](https://ghcr.io). Reference the next section if you'd like to build the Docker image locally instead.
 
 #### Build your own image
 
