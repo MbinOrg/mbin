@@ -10,6 +10,15 @@ To save yourself much time setting up a development server, you can use our Dock
 
 1. Make sure you are currently in the root of your Mbin directory.
 2. Run the auto setup script with `./docker/setup.sh dev localhost` to configure `.env`, `compose.override.yaml`, and `storage/`.
+
+> [!NOTE]
+> The Docker setup uses ports `80` and `443` by default. If you'd prefer to use a different port for development on your device, then in `.env` you'll need to update `KBIN_DOMAIN` and `KBIN_STORAGE_URL` to include the port number (e.g., `localhost:8443`). Additionally, add the following to `compose.dev.yaml` under the `php` service:
+>
+> ```yaml
+> ports: !override
+>   - 8443:443
+> ```
+
 3. Use `docker build -t mbin -f docker/Dockerfile --target dev .` to build the dev Docker image.
 4. Run `docker compose up` to start the Docker containers. Please note that the first time you start the containers, they will need an extra minute or so to install dependencies before becoming available.
 5. From here, you should be able to access your server at [https://localhost/](https://localhost/). Any edits to the source files will automatically rebuild your server.
