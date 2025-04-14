@@ -19,11 +19,10 @@ To save yourself much time setting up a development server, you can use our Dock
 >   - 8443:443
 > ```
 
-3. Use `docker build -t mbin -f docker/Dockerfile --target dev .` to build the dev Docker image.
-4. Run `docker compose up` to start the Docker containers. Please note that the first time you start the containers, they will need an extra minute or so to install dependencies before becoming available.
-5. From here, you should be able to access your server at [https://localhost/](https://localhost/). Any edits to the source files will automatically rebuild your server.
-6. Optionally, follow the [Mbin first setup](../02-admin/04-running-mbin/01-first_setup.md) instructions.
-7. If you'd like to enable federation capabilities, then in `compose.dev.yaml`, change the two lines from `replicas: 0` to `replicas: 1` (under the `messenger` and `rabbitmq` services). Make sure you've ran the containers at least once before doing this, to give the `php` service a chance to install dependencies without overlap.
+3. Run `docker compose up` to build and start the Docker containers. Please note that the first time you start the containers, they will need an extra minute or so to install dependencies before becoming available.
+4. From here, you should be able to access your server at [https://localhost/](https://localhost/). Any edits to the source files will automatically rebuild your server.
+5. Optionally, follow the [Mbin first setup](../02-admin/04-running-mbin/01-first_setup.md) instructions.
+6. If you'd like to enable federation capabilities, then in `compose.dev.yaml`, change the two lines from `replicas: 0` to `replicas: 1` (under the `messenger` and `rabbitmq` services). Make sure you've ran the containers at least once before doing this, to give the `php` service a chance to install dependencies without overlap.
 
 > [!NOTE]
 > If you'd prefer to manually configure your Docker environment (instead of using the setup script) then follow the manual environment setup steps in the [Docker install guide](../02-admin/01-installation/02-docker.md), but while you're creating `compose.override.yaml`, use the following:

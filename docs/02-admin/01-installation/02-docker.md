@@ -122,31 +122,23 @@ OAUTH_ENCRYPTION_KEY=<Hex string generated in previous step>
 
 Use the existing Docker image _OR_ build the docker image. Select one of the two options.
 
-#### Build your own Docker image
+#### Use the prebuilt image
 
-If you want to build your own image, run (_no_ need to update the `compose.override.yaml` file):
+Use our prebuilt images from [ghcr.io](https://ghcr.io). You will not need to make any changes to use our prebuilt image, as the compose files are already setup to do so.
 
-```bash
-docker build --no-cache -t mbin -f docker/Dockerfile .
-```
+#### Build your own image
 
-#### Use Mbin pre-build image
-
-_OR_ use our pre-build images from [ghcr.io](https://ghcr.io). In this case you need to update the `compose.override.yaml` file:
-
-```bash
-nano compose.override.yaml
-```
-
-Add the `image` field and set it to `ghcr.io/mbinorg/mbin:latest` for _both_ the `php` and `messenger` services:
+If you want to build your own image, add `pull_policy: build` to both the `php` and `messenger` services in `compose.override.yaml`:
 
 ```yaml
 services:
   php:
-    image: ghcr.io/mbinorg/mbin:latest
+    pull_policy: build
   messenger:
-    image: ghcr.io/mbinorg/mbin:latest
+    pull_policy: build
 ```
+
+Once that's done, run `docker compose build --no-cache` in order to build the Mbin Docker image.
 
 ### Uploaded media files
 

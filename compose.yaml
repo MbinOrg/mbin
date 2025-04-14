@@ -1,6 +1,6 @@
 services:
     php:
-        image: mbin
+        image: ghcr.io/mbinorg/mbin:latest
         build:
             dockerfile: docker/Dockerfile
             context: .
@@ -26,7 +26,7 @@ services:
             - valkey
 
     messenger:
-        image: mbin
+        image: ghcr.io/mbinorg/mbin:latest
         build:
             dockerfile: docker/Dockerfile
             context: .

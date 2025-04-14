@@ -100,12 +100,12 @@ else
    cat > compose.override.yaml << EOF
 # Customizations to the docker compose should be added here.
 
-# Uncomment the following to use Mbin's prebuilt docker image.
+# Uncomment the following to build Mbin locally.
 # services:
 #   php:
-#     image: ghcr.io/mbinorg/mbin:latest
+#     pull_policy: build
 #   messenger:
-#     image: ghcr.io/mbinorg/mbin:latest
+#     pull_policy: build
 
 # Uncomment the following to use Mbin behind a reverse proxy.
 # services:
