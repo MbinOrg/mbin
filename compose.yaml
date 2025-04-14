@@ -8,7 +8,6 @@ services:
         restart: unless-stopped
         env_file: .env
         environment:
-            APP_ENV: prod
             MERCURE_PUBLISHER_JWT_KEY: ${MERCURE_JWT_SECRET}
             MERCURE_SUBSCRIBER_JWT_KEY: ${MERCURE_JWT_SECRET}
         volumes:
@@ -37,8 +36,6 @@ services:
         healthcheck:
             test: ['CMD-SHELL', "ps aux | grep 'messenger[:]consume' || exit 1"]
         env_file: .env
-        environment:
-            APP_ENV: prod
         volumes:
             - ./storage/media:/app/public/media
             - ./storage/messenger_logs:/app/var/log
