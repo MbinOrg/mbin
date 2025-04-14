@@ -268,7 +268,6 @@ filter.adult.only: NSFW bakarrik
 local_and_federated: Bertakoa eta federatua
 toolbar.image: Irudia
 account_deletion_button: Ezabatu kontua
-federated_magazine_info: ''
 mod_log: Moderazio-erregistroa
 contact: Kontaktua
 email_verify: Baieztatu helbide elektronikoa
