@@ -189,12 +189,21 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/jwr1">
+                    <img src="https://avatars.githubusercontent.com/u/47087725?v=4" width="100;" alt="jwr1"/>
+                    <br />
+                    <sub><b>John Wesley</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/thepaperpilot">
                     <img src="https://avatars.githubusercontent.com/u/3683148?v=4" width="100;" alt="thepaperpilot"/>
                     <br />
                     <sub><b>Anthony Lawn</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/chall8908">
                     <img src="https://avatars.githubusercontent.com/u/315948?v=4" width="100;" alt="chall8908"/>
@@ -202,20 +211,11 @@ Unofficial magazines:
                     <sub><b>Chris Hall</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/andrewmoise">
                     <img src="https://avatars.githubusercontent.com/u/8404538?v=4" width="100;" alt="andrewmoise"/>
                     <br />
                     <sub><b>andrewmoise</b></sub>
-                </a>
-            </td>
-            <td align="center">
-                <a href="https://github.com/jwr1">
-                    <img src="https://avatars.githubusercontent.com/u/47087725?v=4" width="100;" alt="jwr1"/>
-                    <br />
-                    <sub><b>John Wesley</b></sub>
                 </a>
             </td>
             <td align="center">
