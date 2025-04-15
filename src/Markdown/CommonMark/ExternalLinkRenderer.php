@@ -128,6 +128,7 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
         $url = $node->getUrl();
         $apLink = null;
         if (filter_var($url, FILTER_VALIDATE_URL)) {
+            $apActivity = null;
             try {
                 $apActivity = $this->activityRepository->findByObjectId($url);
             } catch (\Error|\Exception $e) {
