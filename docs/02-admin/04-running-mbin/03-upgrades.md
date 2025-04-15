@@ -14,35 +14,21 @@ And when needed also execute: `sudo redis-cli FLUSHDB` to get rid of Redis/KeyDB
 
 ## Docker
 
-
-1. Go to the `docker` directory:
-
-```bash
-cd docker
-```
-
-2. (Re)build a new Mbin docker image (without using cached layers):
+1. Pull the latest Docker image:
 
 ```bash
-docker build --no-cache -t mbin -f Dockerfile  ..
+docker compose pull
 ```
 
-3. Bring down the containers and up again (with `-d` for detach):
+Or, if you are building locally, then you'll need to rebuild the Mbin docker image (without using cached layers):
+
+```bash
+docker compose build --no-cache
+```
+
+2. Bring down the containers and up again (with `-d` for detach):
 
 ```bash
 docker compose down
 docker compose up -d
-```
-
-4. Clear the caches, see section below "Clear caches".
-
-### Clear cache
-
-Clear caches on **running** containers:
-
-```bash
-docker compose exec php bin/console cache:clear -n
-docker compose exec redis redis-cli
-> auth <your_redis_password>
-> FLUSHDB
 ```

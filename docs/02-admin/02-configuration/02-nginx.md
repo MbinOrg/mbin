@@ -371,7 +371,7 @@ server {
 }
 ```
 
-Be sure that the `root /path` is correct (maybe you use `/var/www/kbin/public`).
+Be sure that the `root /path` is correct (maybe you use `/var/www/mbin/public`).
 
 Enable the NGINX site, using a symlink:
 

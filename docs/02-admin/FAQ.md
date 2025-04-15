@@ -10,7 +10,7 @@ There is also a **very good** [forum post on activitypub.rocks](https://socialhu
 
 ## How to setup my own Mbin instance?
 
-Have a look at our guides. A bare metal/VM setup is **recommended** at this time, however we do provide a Docker setup as well.
+Have a look at our guides. Both a bare metal/VM setup and a Docker setup is provided.
 
 ## I have an issue!
 
@@ -209,7 +209,7 @@ To verify that assumption:
 
 1. stop all messengers
    - if you're on bare metal, as root: `supervisorctl stop messenger:*`
-   - if you're on docker, inside the `docker` folder : `docker compose down messenger*`
+   - if you're on docker: `docker compose down messenger`
 2. look again at the publishing rate. If it has gone down, then it definitely is a circulating message
 
 To fix the problem:
