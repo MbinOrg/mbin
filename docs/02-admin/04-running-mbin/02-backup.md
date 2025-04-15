@@ -19,11 +19,11 @@ psql -U mbin mbin < dump.sql
 ### Backup:
 
 ```bash
-docker compose exec -it db pg_dump -U mbin mbin > dump.sql
+docker compose exec -it postgres pg_dump -U mbin mbin > dump.sql
 ```
 
 ### Restore:
 
 ```bash
-docker compose exec -T db psql -U mbin mbin < dump.sql
+docker compose exec -T postgres psql -U mbin mbin < dump.sql
 ```
