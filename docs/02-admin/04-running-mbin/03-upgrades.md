@@ -14,7 +14,13 @@ And when needed also execute: `sudo redis-cli FLUSHDB` to get rid of Redis/KeyDB
 
 ## Docker
 
-1. (Re)build a new Mbin docker image (without using cached layers):
+1. Pull the latest Docker image:
+
+```bash
+docker compose pull
+```
+
+Or, if you are building locally, then you'll need to rebuild the Mbin docker image (without using cached layers):
 
 ```bash
 docker compose build --no-cache
