@@ -12,14 +12,11 @@
 **/.gitignore
 **/.gitmodules
 **/compose.*.yaml
-**/compose.*.yml
 **/compose.yaml
-**/compose.yml
 **/Dockerfile
 **/Thumbs.db
 .github/
-docker/compose.override.yml
-docker/storage/
+storage/
 docs/
 public/bundles/
 tests/
@@ -33,3 +30,4 @@ vendor/
 .env.local.php
 .env.test
 .env
+Dockerfile

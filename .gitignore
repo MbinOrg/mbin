@@ -7,6 +7,7 @@ supervisord.pid
 reports/
 .php-cs-fixer.cache
 tools/vendor/
+
 # VSCode
 .vscode/
 .vs/
@@ -19,9 +20,12 @@ tools/vendor/
 .env
 /public/media/*
 /public/media
-docker/compose.override.yml
 yarn.lock
 /metal/
+
+# Docker specific
+/storage/
+/compose.override.yaml
 
 ###> symfony/framework-bundle ###
 /.env.local

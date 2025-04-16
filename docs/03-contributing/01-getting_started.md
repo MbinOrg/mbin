@@ -4,6 +4,39 @@ There are several ways to get started. Like using the Docker setup or use the de
 
 The code is mainly written in PHP using the Symfony framework with Twig templating and a bit of JavaScript & CSS and of course HTML.
 
+## Docker as a dev server
+
+To save yourself much time setting up a development server, you can use our Docker setup instead of a manual configuration:
+
+1. Make sure you are currently in the root of your Mbin directory.
+2. Run the auto setup script with `./docker/setup.sh dev localhost` to configure `.env`, `compose.override.yaml`, and `storage/`.
+
+> [!NOTE]
+> The Docker setup uses ports `80` and `443` by default. If you'd prefer to use a different port for development on your device, then in `.env` you'll need to update `KBIN_DOMAIN` and `KBIN_STORAGE_URL` to include the port number (e.g., `localhost:8443`). Additionally, add the following to `compose.dev.yaml` under the `php` service:
+>
+> ```yaml
+> ports: !override
+>   - 8443:443
+> ```
+
+3. Run `docker compose up` to build and start the Docker containers. Please note that the first time you start the containers, they will need an extra minute or so to install dependencies before becoming available.
+4. From here, you should be able to access your server at [https://localhost/](https://localhost/). Any edits to the source files will automatically rebuild your server.
+5. Optionally, follow the [Mbin first setup](../02-admin/04-running-mbin/01-first_setup.md) instructions.
+6. If you'd like to enable federation capabilities, then in `compose.dev.yaml`, change the two lines from `replicas: 0` to `replicas: 1` (under the `messenger` and `rabbitmq` services). Make sure you've ran the containers at least once before doing this, to give the `php` service a chance to install dependencies without overlap.
+
+> [!NOTE]
+> If you'd prefer to manually configure your Docker environment (instead of using the setup script) then follow the manual environment setup steps in the [Docker install guide](../02-admin/01-installation/02-docker.md), but while you're creating `compose.override.yaml`, use the following:
+>
+> ```yaml
+> include:
+>   - compose.dev.yaml
+> ```
+
+> [!TIP]
+> Once you are done with your development server and would like to shutdown the Docker containers, hit `Ctrl+C` in your terminal.
+
+If you'd prefer a development setup without using Docker, then continue on to the next sections.
+
 ## Initial setup
 
 Requirements:
@@ -159,10 +192,11 @@ If you have messenger jobs configured, be sure to stop them:
 - Docker: `docker compose stop messenger`
 - Bare Metal: `supervisorctl stop messenger:*`
 
-If you are using the Docker setup and want to load the fixture.
+If you are using the Docker setup and want to load the fixture, execute:
 
-1. Go to the `docker` directory.
-2. Execute: `docker compose exec php bin/console doctrine:fixtures:load --append --no-debug`
+```sh
+docker compose exec php bin/console doctrine:fixtures:load --append --no-debug
+```
 
 Please note, that the command may take some time and data will not be visible during the process, but only after the finish.
 
@@ -184,6 +218,9 @@ Start the development server:
 
 6. Start Mbin: `symfony server:start`
 7. Go to: [http://127.0.0.1:8000](http://127.0.0.1:8000/)
+
+> [!TIP]
+> Once you are done with your development server and would like to shut it down, hit `Ctrl+C` in your terminal.
 
 You might want to also follow the [Mbin first setup](../02-admin/04-running-mbin/01-first_setup.md). This explains how to create a user.
 
@@ -231,13 +268,13 @@ SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Unit
 
 ### Running integration tests
 
-Our integration tests depend on a database and a caching server (Valkey / KeyDB / Redis). 
-The database and cache are cleared / dumped every test run. 
+Our integration tests depend on a database and a caching server (Valkey / KeyDB / Redis).
+The database and cache are cleared / dumped every test run.
 
 To start the services in the background:
 
 ```sh
-docker compose -f docker/tests/compose.yml up -d
+docker compose -f docker/tests/compose.yaml up -d
 ```
 
 Then run the integration test(s):
