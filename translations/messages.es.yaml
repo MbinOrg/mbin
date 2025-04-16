@@ -882,7 +882,7 @@ notification_title_new_report: Se creó un nuevo informe
 version: Versión
 new_user_description: Esta cuenta es nueva (activa durante menos de %days% días)
 new_magazine_description: Esta revista es nueva (activa durante menos de %days% días)
-admin_users_inactive: Inctivos/as
+admin_users_inactive: Inactivos/as
 admin_users_active: Activos/as
 remove_user_avatar: Eliminar avatar
 account_banned: Se ha baneado la cuenta.
