@@ -15,10 +15,12 @@ use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\EditedAtTrait;
 use App\Entity\Traits\VisibilityTrait;
 use App\Entity\Traits\VotableTrait;
+use App\Repository\Criteria as MbinCriteria;
 use App\Repository\PostCommentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -248,5 +250,57 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
     public function getParentSubject(): ?ContentInterface
     {
         return $this->post;
+    }
+
+    public function containsBannedHashtags(): bool
+    {
+        foreach ($this->hashtags as /** @var $hashtag HashtagLink */ $hashtag) {
+            if ($hashtag->hashtag->banned) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getChildrenByCriteria(MbinCriteria $postCommentCriteria): Collection
+    {
+        $criteria = Criteria::create();
+
+        if ($postCommentCriteria->languages) {
+            $criteria->andwhere(Criteria::expr()->in('lang', $postCommentCriteria->languages));
+        }
+
+        if (MbinCriteria::AP_LOCAL === $postCommentCriteria->federation) {
+            $criteria->andWhere(Criteria::expr()->isNull('apId'));
+        } elseif (MbinCriteria::AP_FEDERATED === $postCommentCriteria->federation) {
+            $criteria->andWhere(Criteria::expr()->isNotNull('apId'));
+        }
+
+        if (MbinCriteria::TIME_ALL !== $postCommentCriteria->time) {
+            $criteria->andWhere(Criteria::expr()->gte('createdAt', $postCommentCriteria->getSince()));
+        }
+
+        $orderings = [];
+        switch ($postCommentCriteria->sortOption) {
+            case MbinCriteria::SORT_TOP:
+            case MbinCriteria::SORT_HOT:
+                $orderings['favouriteCount'] = Order::Descending;
+                break;
+            case MbinCriteria::SORT_ACTIVE:
+                $orderings['lastActive'] = Order::Descending;
+                break;
+            default:
+        }
+
+        $criteria->orderBy([
+            ...$orderings,
+            'createdAt' => MbinCriteria::SORT_OLD === $postCommentCriteria->sortOption ? Order::Ascending : Order::Descending,
+            'id' => Order::Descending,
+        ]);
+
+        return $this->children
+            ->matching($criteria)
+            ->filter(fn (PostComment $comment) => !$comment->containsBannedHashtags());
     }
 }

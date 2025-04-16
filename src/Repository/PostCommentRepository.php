@@ -191,37 +191,6 @@ class PostCommentRepository extends ServiceEntityRepository
         $qb->addOrderBy('c.id', 'DESC');
     }
 
-    public function hydrate(PostComment ...$comment): void
-    {
-        $this->_em->createQueryBuilder()
-            ->select('PARTIAL c.{id}')
-            ->addSelect('u')
-            ->addSelect('m')
-            ->addSelect('i')
-            ->from(PostComment::class, 'c')
-            ->join('c.user', 'u')
-            ->join('c.magazine', 'm')
-            ->leftJoin('c.image', 'i')
-            ->where('c IN (?1)')
-            ->setParameter(1, $comment)
-            ->getQuery()
-            ->getResult();
-
-        if ($this->security->getUser()) {
-            $this->_em->createQueryBuilder()
-                ->select('PARTIAL c.{id}')
-                ->addSelect('cv')
-                ->addSelect('cf')
-                ->from(PostComment::class, 'c')
-                ->leftJoin('c.votes', 'cv')
-                ->leftJoin('c.favourites', 'cf')
-                ->where('c IN (?1)')
-                ->setParameter(1, $comment)
-                ->getQuery()
-                ->getResult();
-        }
-    }
-
     public function findToDelete(User $user, int $limit): array
     {
         return $this->createQueryBuilder('c')
