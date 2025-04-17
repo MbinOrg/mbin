@@ -29,12 +29,12 @@ subscribers_count: '{0}Subscriptores|{1}Subscriptora|]1,Inf[ Subscriptores'
 followers_count: '{0}Seguidores|{1}Seguidora|]1,Inf[ Seguidores'
 marked_for_deletion: Marcat per a supressió
 marked_for_deletion_at: Marcat per suprimir-se el %date%
-favourites: Preferits
+favourites: Vots a favor
 favourite: Preferit
 avatar: Avatar
 added: Afegit
 down_votes: Vots en contra
-up_votes: Vots a favor
+up_votes: Impulsos
 no_comments: Sense comentaris
 created_at: Creat
 owner: Propietari(a)
