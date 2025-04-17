@@ -75,7 +75,7 @@ touch compose.override.yaml
 mkdir -p storage/{caddy_config,caddy_data,media,messenger_logs,oauth,php_logs,postgres,rabbitmq_data,rabbitmq_logs}
 ```
 
-1. Choose your Redis password, PostgreSQL password, RabbitMQ password, and Mercure password.
+1. Choose your Valkey password, PostgreSQL password, RabbitMQ password, and Mercure password.
 2. Place the passwords in the corresponding variables in `.env`.
 3. Update the `SERVER_NAME`, `KBIN_DOMAIN` and `KBIN_STORAGE_URL` in `.env`.
 4. Update `APP_SECRET` in `.env`, see the note below to generate one.
