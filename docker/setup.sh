@@ -101,12 +101,12 @@ else
 # Customizations to the docker compose should be added here.
 # Hint: If you want to combine multiple configurations, be sure to only define the services once (php & messenger).
 
-# Uncomment the following to pin Mbin image docker tag to a specific release (example: 1.8.2).
+# Uncomment the following to pin Mbin image docker tag to a specific release (example: v1.8.2).
 # services:
 #   php:
-#     image: ghcr.io/mbinorg/mbin:1.8.2
+#     image: ghcr.io/mbinorg/mbin:v1.8.2
 #   messenger:
-#     image: ghcr.io/mbinorg/mbin:1.8.2
+#     image: ghcr.io/mbinorg/mbin:v1.8.2
 
 # Uncomment the following to build the Mbin image locally.
 # services:
