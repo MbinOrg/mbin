@@ -120,9 +120,24 @@ OAUTH_ENCRYPTION_KEY=<Hex string generated in previous step>
 > [!NOTE]
 > If you're using a version of Docker Engine earlier than 23.0, run `export DOCKER_BUILDKIT=1`, prior to building the image. This does not apply to users running Docker Desktop. More info can be found [here](https://docs.docker.com/build/buildkit/#getting-started)
 
-Use the existing Docker image _OR_ build the docker image. Select one of the two options.
+Use the Mbin provided Docker image (default) _OR_ build the docker image locally. Select one of the two options.
 
-The default is to use our prebuilt images from [ghcr.io](https://ghcr.io). Reference the next section if you'd like to build the Docker image locally instead.
+The default is to use our prebuilt images from [ghcr.io](https://github.com/MbinOrg/mbin/pkgs/container/mbin). Reference the next section if you'd like to build the Docker image locally instead.
+
+> [!IMPORTANT]
+> In **production** a recommended practice is to pin the image tag to a specific release (example: 1.8.2) _instead_ of using `latest`.
+>
+
+Pinning the docker image version can be done by editing the `compose.override.yaml` file and uncommenting the following lines
+(update the version number to one you want to pin to and is available on [ghcr.io](https://github.com/MbinOrg/mbin/pkgs/container/mbin)):
+
+```yaml
+services:
+  php:
+    image: ghcr.io/mbinorg/mbin:1.8.2
+  messenger:
+    image: ghcr.io/mbinorg/mbin:1.8.2
+```
 
 #### Build your own image
 
