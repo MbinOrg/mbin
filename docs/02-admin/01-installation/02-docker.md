@@ -125,7 +125,7 @@ Use the Mbin provided Docker image (default) _OR_ build the docker image locally
 The default is to use our prebuilt images from [ghcr.io](https://github.com/MbinOrg/mbin/pkgs/container/mbin). Reference the next section if you'd like to build the Docker image locally instead.
 
 > [!IMPORTANT]
-> In **production** a recommended practice is to pin the image tag to a specific release (example: 1.8.2) _instead_ of using `latest`.
+> In **production** a recommended practice is to pin the image tag to a specific release (example: v1.8.2) _instead_ of using `latest`.
 >
 
 Pinning the docker image version can be done by editing the `compose.override.yaml` file and uncommenting the following lines
@@ -134,9 +134,9 @@ Pinning the docker image version can be done by editing the `compose.override.ya
 ```yaml
 services:
   php:
-    image: ghcr.io/mbinorg/mbin:1.8.2
+    image: ghcr.io/mbinorg/mbin:v1.8.2
   messenger:
-    image: ghcr.io/mbinorg/mbin:1.8.2
+    image: ghcr.io/mbinorg/mbin:v1.8.2
 ```
 
 #### Build your own image
