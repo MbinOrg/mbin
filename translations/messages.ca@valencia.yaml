@@ -30,12 +30,12 @@ comments_count: '{0}Comentaris|{1}Comentari|]1,Inf[ Comentaris'
 subscribers_count: '{0}Subscriptores|{1}Subscriptora|]1,Inf[ Subscriptores'
 marked_for_deletion: Marcat per a supressió
 marked_for_deletion_at: Marcat per suprimir-se el %date%
-favourites: Preferits
+favourites: Vots a favor
 favourite: Preferit
 more: Més
 avatar: Avatar
 added: Afegit
-up_votes: Positius
+up_votes: Impulsos
 down_votes: Vots en contra
 no_comments: Sense comentaris
 created_at: Creat
