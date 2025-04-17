@@ -4,17 +4,75 @@
    class="user-inline"
    title="{{ user.username|username(true) }}">
     {% if user.avatar and showAvatar %}
-        <img class="image-inline"
-             width="30" height="30"
-             loading="lazy"
-             src="{{ user.avatar.filePath ? (asset(user.avatar.filePath) | imagine_filter('avatar_thumb')) : user.avatar.sourceUrl }}"
-             alt="{{ user.username ~' '~ 'avatar'|trans|lower }}">
+    <img class="image-inline"width="30" height="30" loading="lazy"
+         src="{{ user.avatar.filePath ? (asset(user.avatar.filePath) | imagine_filter('avatar_thumb')) : user.avatar.sourceUrl }}"
+         alt="{{ user.username ~' '~ 'avatar'|trans|lower }}">
+    {% elseif showAvatar %}
+        {% set characterMap = {
+        'a': 2, 'b': 7, 'c': 0, 'd': 8, 'e': 4, 'f': 1, 'g': 3, 'h': 5, 'i': 6, 'j': 9, 'k': 10,
+        'l': 11, 'm': 12, 'n': 13, 'o': 14, 'p': 15, 'q': 0, 'r': 1, 's': 2, 't': 3, 'u': 4, 'v': 5,
+        'w': 6, 'x': 7, 'y': 8, 'z': 9, '_': 10, '-': 11, '0': 14, '1': 10, '2': 15, '3': 11, '4': 12,
+        '5': 9, '6': 3, '7': 5, '8': 6, '9': 13, 'A': 4, 'B': 8, 'C': 1, 'D': 7, 'E': 2, 'F': 5,
+        'G': 9, 'H': 0, 'I': 3, 'J': 6, 'K': 11, 'L': 14, 'M': 10, 'N': 15, 'O': 12, 'P': 13, 'Q': 2,
+        'R': 4, 'S': 7, 'T': 1, 'U': 8, 'V': 5, 'W': 0, 'X': 3, 'Y': 6, 'Z': 9} %}
+
+        {% set R = 0 %}
+        {% set G = 0 %}
+        {% set B = 0 %}
+        {% set index = 0 %}
+        {% set break = false %}
+        {% set validName = user.username|slice(0,6) ~ "012345" %}
+
+        {% for char in validName|split('') %}
+            {% if char in characterMap|keys and index < 6%}
+                {% set value = characterMap[char] %}
+                {% if index == 0 %}
+                    {% set R = value * 16 %}
+                {% elseif index == 1 %}
+                    {% set R = R + value %}
+                {% elseif index == 2 %}
+                    {% set G = value * 16 %}
+                {% elseif index == 3 %}
+                    {% set G = G + value %}
+                {% elseif index == 4 %}
+                    {% set B = value * 16 %}
+                {% elseif index == 5 %}
+                    {% set B = B + value %}
+                {% endif %}
+                {% set index = index + 1 %}
+            {% endif %}
+        {% endfor %}
+
+        {% set R = R / 255 %}
+        {% set G = G / 255 %}
+        {% set B = B / 255 %}
+
+    {% if app.user is defined and app.user is not same as null and app.user is same as user %}
+        {% set noAvatar = "you can set your avatar in your profile" %}
+    {% else %}
+        {% set noAvatar = user.username ~ " has no avatar" %}
     {% endif %}
+
+    <img class="image-inline"
+        width="30" height="30" loading="lazy" src="/default_avatar.png" title="{{ noAvatar }}" alt="{{ noAvatar }}"  style ="filter: url('#{{ validName }}')">
+
+    <svg width="0" height="0" style="position: absolute;">
+        <filter id="{{ validName }}" color-interpolation-filters="sRGB">
+            <feColorMatrix type="matrix"
+                values="{{ R }} 0 0 0 0
+        {{ G }} 0 0 0 0
+        {{ B }} 0 0 0 0
+        0 0 0 1 0" />
+        </filter>
+    </svg>
+
+    {% endif %}
+
     {{ user.apPreferredUsername ?? user.username|username -}}
     {%- if fullName is defined and fullName is same as true -%}
         @{{- user.username|apDomain -}}
     {%- endif -%}
-    {% if user.isNew() and showNewIcon %}
+    {% if user.isNew() %}
         {% set days = constant('App\\Entity\\User::NEW_FOR_DAYS') %}
         <i class="fa-solid fa-leaf new-user-icon" title="{{ 'new_user_description'|trans({ '%days%': days }) }}" aria-description="{{ 'new_user_description'|trans({ '%days%': days }) }}"></i>
     {% endif %}
