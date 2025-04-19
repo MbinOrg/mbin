@@ -120,6 +120,7 @@ class UserFrontController extends AbstractController
             [
                 'user' => $user,
                 'comments' => $comments,
+                'criteria' => new EntryCommentPageView(0, $this->security),
             ],
             $response
         );

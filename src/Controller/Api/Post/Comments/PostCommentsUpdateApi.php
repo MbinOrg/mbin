@@ -10,11 +10,13 @@ use App\DTO\PostCommentRequestDto;
 use App\DTO\PostCommentResponseDto;
 use App\Entity\PostComment;
 use App\Factory\PostCommentFactory;
+use App\PageView\PostCommentPageView;
 use App\Service\PostCommentManager;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\SecurityBundle\Security as SymfonySecurity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -92,6 +94,7 @@ class PostCommentsUpdateApi extends PostsBaseApi
         PostCommentFactory $factory,
         ValidatorInterface $validator,
         RateLimiterFactory $apiUpdateLimiter,
+        SymfonySecurity $security,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 
@@ -106,9 +109,10 @@ class PostCommentsUpdateApi extends PostsBaseApi
         }
 
         $comment = $manager->edit($comment, $dto, $this->getUserOrThrow());
+        $criteria = new PostCommentPageView(0, $security);
 
         return new JsonResponse(
-            $this->serializePostCommentTree($comment),
+            $this->serializePostCommentTree($comment, $criteria),
             headers: $headers
         );
     }

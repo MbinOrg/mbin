@@ -32,7 +32,8 @@
             comment: comment,
             showNested: showNested,
             dateAsUrl: dateAsUrl is defined ? dateAsUrl : true,
-            level: level
+            level: level,
+            criteria: criteria,
         }) }}
     {% endfor %}
     {% if(comments.haveToPaginate is defined and comments.haveToPaginate) %}

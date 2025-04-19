@@ -10,11 +10,13 @@ use App\DTO\EntryCommentRequestDto;
 use App\DTO\EntryCommentResponseDto;
 use App\Entity\EntryComment;
 use App\Factory\EntryCommentFactory;
+use App\PageView\EntryCommentPageView;
 use App\Service\EntryCommentManager;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\SecurityBundle\Security as SymfonySecurity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -92,6 +94,7 @@ class EntryCommentsUpdateApi extends EntriesBaseApi
         EntryCommentFactory $factory,
         ValidatorInterface $validator,
         RateLimiterFactory $apiUpdateLimiter,
+        SymfonySecurity $security,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 
@@ -108,7 +111,7 @@ class EntryCommentsUpdateApi extends EntriesBaseApi
         $comment = $manager->edit($comment, $dto, $this->getUserOrThrow());
 
         return new JsonResponse(
-            $this->serializeCommentTree($comment),
+            $this->serializeCommentTree($comment, new EntryCommentPageView(0, $security)),
             headers: $headers
         );
     }

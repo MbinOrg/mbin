@@ -7,6 +7,7 @@ namespace App\Twig\Components;
 use App\Controller\User\ThemeSettingsController;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\PostComment;
+use App\Repository\Criteria;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -26,6 +27,7 @@ final class PostCommentComponent
     public bool $withPost = false;
     public int $level = 1;
     public bool $canSeeTrash = false;
+    public Criteria $criteria;
 
     public function postMount(array $attr): array
     {

@@ -8,6 +8,7 @@ use App\DTO\EntryCommentDto;
 use App\DTO\EntryCommentResponseDto;
 use App\Entity\EntryComment;
 use App\Entity\User;
+use App\PageView\EntryCommentPageView;
 use App\Repository\BookmarkListRepository;
 use App\Repository\TagLinkRepository;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -65,7 +66,7 @@ class EntryCommentFactory
         );
     }
 
-    public function createResponseTree(EntryComment $comment, int $depth = -1, ?bool $canModerate = null): EntryCommentResponseDto
+    public function createResponseTree(EntryComment $comment, EntryCommentPageView $commentPageView, int $depth = -1, ?bool $canModerate = null): EntryCommentResponseDto
     {
         $commentDto = $this->createDto($comment);
         $toReturn = $this->createResponseDto($commentDto, $this->tagLinkRepository->getTagsOfEntryComment($comment), array_reduce($comment->children->toArray(), EntryCommentResponseDto::class.'::recursiveChildCount', 0));
@@ -77,10 +78,15 @@ class EntryCommentFactory
             return $toReturn;
         }
 
-        foreach ($comment->children as $childComment) {
+        foreach ($comment->getChildrenByCriteria($commentPageView) as $childComment) {
             \assert($childComment instanceof EntryComment);
-            $child = $this->createResponseTree($childComment, $depth > 0 ? $depth - 1 : -1, $canModerate);
-            array_push($toReturn->children, $child);
+            if (($user = $this->security->getUser()) && $user instanceof User) {
+                if ($user->isBlocked($childComment->user)) {
+                    continue;
+                }
+            }
+            $child = $this->createResponseTree($childComment, $commentPageView, $depth > 0 ? $depth - 1 : -1, $canModerate);
+            $toReturn->children[] = $child;
         }
 
         return $toReturn;
