@@ -3,10 +3,11 @@
 # Using: https://github.com/mitchellkrogza/nginx-ultimate-bad-bot-blocker/blob/master/robots.txt/robots.txt
 ### Version Information for nginx-ultimate-bad-bot-blocker #
 ###################################################
-### Version: V4.2025.01.4984
-### Updated: Sun Jan 19 10:06:56 UTC 2025
+### Version: V4.2025.04.5164
+### Updated: Sat Apr 19 10:07:26 UTC 2025
 ### Bad Bot Count: 675
 ###################################################
+### Version Information ##
 User-agent: 01h4x.com
 Disallow:/
 User-agent: 360Spider
