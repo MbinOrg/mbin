@@ -32,7 +32,7 @@ subscribers_count: '{0}Subscribers|{1}Subscriber|]1,Inf[ Subscribers'
 followers_count: '{0}Followers|{1}Follower|]1,Inf[ Followers'
 marked_for_deletion: Marked for deletion
 marked_for_deletion_at: Marked for deletion at %date%
-favourites: Favorites
+favourites: Upvotes
 favourite: Favorite
 more: More
 avatar: Avatar
@@ -415,7 +415,8 @@ preferred_languages: Filter languages of threads and posts
 infinite_scroll_help: Automatically load more content when you reach the bottom of
   the page.
 sticky_navbar_help: The navbar will stick to the top of the page when you scroll down.
-auto_preview_help: Show the media (photo, video) previews in a larger size below the content.
+auto_preview_help: Show the media (photo, video) previews in a larger size below the
+  content.
 reload_to_apply: Reload page to apply changes
 filter.origin.label: Choose origin
 filter.fields.label: Choose which fields to search
@@ -965,10 +966,12 @@ front_default_sort: Frontpage default sort
 comment_default_sort: Comment default sort
 open_signup_request: Open signup request
 image_lightbox_in_list: Thread thumbnails opens full screen
-compact_view_help: A compact view with less margins, where the media is moved to the right side.
+compact_view_help: A compact view with less margins, where the media is moved to the
+  right side.
 show_users_avatars_help: Display the user avatar image.
 show_magazines_icons_help: Display the magazine icon.
 show_thumbnails_help: Show the thumbnail images.
-image_lightbox_in_list_help: When checked, clicking the thumbnail shows a modal image box window. When unchecked, clicking the thumbnail will open the thread.
+image_lightbox_in_list_help: When checked, clicking the thumbnail shows a modal image
+  box window. When unchecked, clicking the thumbnail will open the thread.
 show_new_icons: Show new icons
 show_new_icons_help: Show icon for new magazine/user (30 days old or newer)
