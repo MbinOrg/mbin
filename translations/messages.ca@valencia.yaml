@@ -78,7 +78,7 @@ notifications: Notificacions
 notify_on_new_post_comment_reply: Respostes als meus comentaris a qualsevol publicació
 appearance: Aparença
 privacy: Privadesa
-are_you_sure: De veritat?
+are_you_sure: Ho confirmeu?
 repeat_password: Repetiu la contrasenya
 add_new: Afegir nou
 agree_terms: Accepteu els %terms_link_start%Termes i condicions%terms_link_end% i
@@ -514,9 +514,10 @@ magazine_theme_appearance_custom_css: CSS personalitzat que s'aplicarà quan vis
 magazine_theme_appearance_icon: Icona personalitzada per a la revista. Si no se'n
   selecciona cap, s'utilitzarà la icona predeterminada.
 moderation.report.ban_user_title: Vetar compte
-moderation.report.approve_report_confirmation: De veritat voleu aprovar aquest informe?
+moderation.report.approve_report_confirmation: Confirmeu l'aprovació d'aquest informe?
 subject_reported_exists: Aquest contingut ja s'ha denunciat.
-moderation.report.reject_report_confirmation: De veritat voleu rebutjar aquesta denúncia?
+moderation.report.reject_report_confirmation: Confirmeu que voleu rebutjar aquesta
+  denúncia?
 delete_content: Suprimir contingut
 purge_content: Purgar contingut
 schedule_delete_account_desc: Programar la supressió d'aquest compte en 30 dies. Açò
