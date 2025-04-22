@@ -131,7 +131,7 @@ class Note
         }
 
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
-        if (!empty($actor)) {
+        if ($actor instanceof User) {
             if ($actor->isBanned) {
                 throw new UserBannedException();
             }
@@ -213,7 +213,7 @@ class Note
         $dto->apId = $object['id'];
 
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
-        if (!empty($actor)) {
+        if ($actor instanceof User) {
             if ($actor->isBanned) {
                 throw new UserBannedException();
             }
@@ -277,7 +277,7 @@ class Note
         }
 
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
-        if (!empty($actor)) {
+        if ($actor instanceof User) {
             if ($actor->isBanned) {
                 throw new UserBannedException();
             }
