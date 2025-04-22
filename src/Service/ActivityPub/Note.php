@@ -28,6 +28,7 @@ use App\Service\PostManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
 class Note
 {
@@ -163,7 +164,7 @@ class Note
 
             return $this->entryCommentManager->create($dto, $actor, false);
         } else {
-            throw new \Exception('Actor could not be found for entry comment.');
+            throw new UnrecoverableMessageHandlingException('Actor could not be found for entry comment.');
         }
     }
 
@@ -250,7 +251,7 @@ class Note
 
             return $this->postManager->create($dto, $actor, false, $stickyIt);
         } else {
-            throw new \Exception('Actor could not be found for post.');
+            throw new UnrecoverableMessageHandlingException('Actor could not be found for post.');
         }
     }
 
@@ -308,7 +309,7 @@ class Note
 
             return $this->postCommentManager->create($dto, $actor, false);
         } else {
-            throw new \Exception('Actor could not be found for post comment.');
+            throw new UnrecoverableMessageHandlingException('Actor could not be found for post comment.');
         }
     }
 }
