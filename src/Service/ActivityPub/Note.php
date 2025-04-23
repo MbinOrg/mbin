@@ -12,6 +12,7 @@ use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\Magazine;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
@@ -28,6 +29,7 @@ use App\Service\PostManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
 class Note
 {
@@ -131,7 +133,7 @@ class Note
         }
 
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
-        if (!empty($actor)) {
+        if ($actor instanceof User) {
             if ($actor->isBanned) {
                 throw new UserBannedException();
             }
@@ -162,8 +164,10 @@ class Note
             $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($object);
 
             return $this->entryCommentManager->create($dto, $actor, false);
+        } elseif ($actor instanceof Magazine) {
+            throw new UnrecoverableMessageHandlingException('Actor "'.$object['attributedTo'].'" is not a user, but a magazine for post "'.$dto->apId.'".');
         } else {
-            throw new \Exception('Actor could not be found for entry comment.');
+            throw new UnrecoverableMessageHandlingException('Actor "'.$object['attributedTo'].'"could not be found for post "'.$dto->apId.'".');
         }
     }
 
@@ -213,7 +217,7 @@ class Note
         $dto->apId = $object['id'];
 
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
-        if (!empty($actor)) {
+        if ($actor instanceof User) {
             if ($actor->isBanned) {
                 throw new UserBannedException();
             }
@@ -249,8 +253,10 @@ class Note
             $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($object);
 
             return $this->postManager->create($dto, $actor, false, $stickyIt);
+        } elseif ($actor instanceof Magazine) {
+            throw new UnrecoverableMessageHandlingException('Actor "'.$object['attributedTo'].'" is not a user, but a magazine for post "'.$dto->apId.'".');
         } else {
-            throw new \Exception('Actor could not be found for post.');
+            throw new UnrecoverableMessageHandlingException('Actor "'.$object['attributedTo'].'"could not be found for post "'.$dto->apId.'".');
         }
     }
 
@@ -277,7 +283,7 @@ class Note
         }
 
         $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
-        if (!empty($actor)) {
+        if ($actor instanceof User) {
             if ($actor->isBanned) {
                 throw new UserBannedException();
             }
@@ -307,8 +313,10 @@ class Note
             $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($object);
 
             return $this->postCommentManager->create($dto, $actor, false);
+        } elseif ($actor instanceof Magazine) {
+            throw new UnrecoverableMessageHandlingException('Actor "'.$object['attributedTo'].'" is not a user, but a magazine for post "'.$dto->apId.'".');
         } else {
-            throw new \Exception('Actor could not be found for post comment.');
+            throw new UnrecoverableMessageHandlingException('Actor "'.$object['attributedTo'].'"could not be found for post "'.$dto->apId.'".');
         }
     }
 }
