@@ -19,7 +19,7 @@ oldest: Παλαιότερα
 commented: Με σχόλια
 filter_by_time: Φιλτράρισμα βάσει χρόνου
 filter_by_type: φιλτράρισμα βάσει τύπου
-favourites: Αγαπημένα
+favourites: Θετικοί ψήφοι
 favourite: Αγαπημένο
 avatar: Άβαταρ
 added: Προστέθηκε
@@ -382,7 +382,8 @@ infinite_scroll_help: Φόρτωσε αυτόματα περισσότερο π�
   της σελίδας.
 sticky_navbar_help: Η γραμμή πλοήγησης θα καρφιτσωθεί στην κορυφή της σελίδας όταν
   κάνεις κύλιση προς τα κάτω.
-auto_preview_help: Αυτόματη επέκταση των προεπισκοπήσεων πολυμέσων.
+auto_preview_help: Εμφάνιση των προεπισκοπήσεων πολυμέσων (φωτό, βίντεο) σε μεγαλύτερο
+  μέγεθος κάτω απ' το περιεχόμενο.
 reload_to_apply: Ανανέωση σελίδας για να εφαρμοστούν οι αλλαγές
 filter.fields.label: Επιλογή πεδίων για αναζήτηση
 filter.fields.only_names: Μόνο ονόματα
@@ -798,3 +799,23 @@ position_bottom: Κάτω μέρος
 position_top: Επάνω
 pending: Σε αναμονή
 flash_thread_new_error: Δεν μπόρεσε να δημιουργηθεί νήμα. Κάτι πήγε στραβά.
+remove_user_avatar: Αφαίρεση άβαταρ
+remove_user_cover: Αφαίρεση εξωφύλλου
+oauth2.grant.user.bookmark_list: Διάβασε, επεξεργάσου και διέγραψε τις λίστες σελιδοδεικτών
+  σου
+oauth2.grant.user.bookmark_list.read: Διάβασε τις λίστες σελιδοδεικτών σου
+oauth2.grant.user.bookmark_list.delete: Διέγραψε τις λίστες σελιδοδεικτών σου
+flash_image_download_too_large_error: Η εικόνα δεν ήταν δυνατό να δημιουργηθεί, είναι
+  πολύ μεγάλη (μέγιστο μέγεθος %bytes%)
+flash_email_was_sent: Το email εστάλη με επιτυχία.
+flash_email_failed_to_sent: Το email δεν μπόρεσε να αποσταλεί.
+viewing_one_signup_request: Βλέπεις μόνο ένα αίτημα εγγραφής από %username%
+flash_post_new_success: Η ανάρτηση δημιουργήθηκε με επιτυχία.
+oauth2.grant.user.bookmark: Προσθήκη και αφαίρεση σελιδοδεικτών
+oauth2.grant.user.bookmark.remove: Αφαίρεση σελιδοδεικτών
+oauth2.grant.user.bookmark.add: Προσθήκη σελιδοδεικτών
+oauth2.grant.user.bookmark_list.edit: Επεξεργάσου τις λίστες σελιδοδεικτών σου
+flash_magazine_theme_changed_success: Η εμφάνιση του περιοδικού ενημερώθηκε με επιτυχία.
+flash_post_new_error: Η ανάρτηση δεν μπόρεσε να δημιουργηθεί. Κάτι πήγε στραβά.
+flash_thread_tag_banned_error: Δε μπόρεσε να δημιουργηθεί νήμα. Το περιεχόμενο δεν
+  επιτρέπεται.
