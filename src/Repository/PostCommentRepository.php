@@ -190,6 +190,16 @@ class PostCommentRepository extends ServiceEntityRepository
         $qb->addOrderBy('c.id', 'DESC');
     }
 
+    public function hydrateChildren(PostComment ...$comments): void
+    {
+        $children = $this->createQueryBuilder('c')
+            ->andWhere('c.root IN (:ids)')
+            ->setParameter('ids', $comments)
+            ->getQuery()->getResult();
+
+        $this->hydrate(...$children);
+    }
+
     public function hydrate(PostComment ...$comment): void
     {
         $this->_em->createQueryBuilder()

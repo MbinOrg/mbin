@@ -70,7 +70,10 @@ class PostSingleController extends AbstractController
         }
 
         $comments = $repository->findByCriteria($criteria);
-        $repository->hydrate(...$comments->getCurrentPageResults());
+
+        $commentObjects = [...$comments->getCurrentPageResults()];
+        $repository->hydrate(...$commentObjects);
+        $repository->hydrateChildren(...$commentObjects);
 
         $dispatcher->dispatch(new PostHasBeenSeenEvent($post));
 
