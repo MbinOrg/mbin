@@ -125,6 +125,9 @@
                                 <button type="submit">{{ 'restore'|trans }}</button>
                             </form>
                         </li>
+                        {% if app.user is defined and app.user is not same as null and is_bookmarked(app.user, comment) %}
+                            {{ component('bookmark_standard', { subject: comment }) }}
+                        {% endif %}
                         <li data-subject-target="loader" style="display:none">
                             <div class="loader" role="status">
                                 <span class="visually-hidden">Loading...</span>
@@ -133,6 +136,9 @@
                     </menu>
                 {% else %}
                     <menu>
+                        {% if app.user is defined and app.user is not same as null and is_bookmarked(app.user, comment) %}
+                            {{ component('bookmark_standard', { subject: comment }) }}
+                        {% endif %}
                         <li data-subject-target="loader" style="display:none">
                             <div class="loader" role="status">
                                 <span class="visually-hidden">Loading...</span>
