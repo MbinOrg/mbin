@@ -32,6 +32,11 @@
                 }) | raw }}
             </p>
 
+            <p>
+                {{ '2fa.manual_code_hint'|trans }}:<br />
+                {% include 'user/settings/2fa_secret.html.twig' with {'secret': secret} %}
+            </p>
+
             <h3>{{ '2fa.backup'|trans }}</h3>
 
             {% include 'user/settings/_2fa_backup.html.twig' %}

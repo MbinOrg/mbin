@@ -744,6 +744,7 @@ two_factor_backup: Two-factor authentication backup codes
   and will be able to use each of them <strong>only once</strong>.
 2fa.backup_codes.recommendation: It is recommended that you keep a copy of them in
   a safe place.
+2fa.manual_code_hint: If you cannot scan the QR code, enter the secret manually
 cancel: Cancel
 password_and_2fa: Password & 2FA
 flash_account_settings_changed: Your account settings have been successfully changed.

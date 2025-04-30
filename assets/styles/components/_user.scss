@@ -310,7 +310,8 @@ td .user__actions {
     }
   }
 
-  .twofa-backup-codes {
+  .twofa-backup-codes,
+  .twofa-secret{
     display: flex;
     gap: 0.2rem 1rem;
     flex-wrap: wrap;
