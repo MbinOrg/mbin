@@ -191,7 +191,9 @@ class TagMatchTest extends WebTestCase
 
     private function pullInMastodonPost(): void
     {
-        $this->bus->dispatch(new CreateMessage($this->mastodonPost));
+        $createActivity = $this->mastodonCreatePost;
+        $createActivity['object'] = $this->mastodonPost;
+        $this->bus->dispatch(new CreateMessage($this->mastodonPost, fullCreatePayload: $createActivity));
     }
 
     private array $mastodonUser = [
@@ -221,6 +223,18 @@ class TagMatchTest extends WebTestCase
         'attachment' => [],
         'endpoints' => [
             'sharedInbox' => 'https://masto.don/inbox',
+        ],
+    ];
+
+    private array $mastodonCreatePost = [
+        'id' => 'https://masto.don/users/User/activities/create/110226274955756643',
+        'type' => 'Create',
+        'actor' => 'https://masto.don/users/User',
+        'to' => [
+            'https://www.w3.org/ns/activitystreams#Public',
+        ],
+        'cc' => [
+            'https://masto.don/users/User/followers',
         ],
     ];
 

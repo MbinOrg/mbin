@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
-use App\Service\MentionManager;
 use App\Service\SettingsManager;
 use OpenApi\Attributes as OA;
 

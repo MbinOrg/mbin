@@ -57,7 +57,6 @@ class LikeHandlerTest extends ActivityPubFunctionalTestCase
     public function testUndoLikeRemoteEntryInRemoteMagazine(): void
     {
         $this->testLikeRemoteEntryInRemoteMagazine();
-        
     }
 
     public function testLikeRemoteEntryCommentInRemoteMagazine(): void
@@ -76,7 +75,6 @@ class LikeHandlerTest extends ActivityPubFunctionalTestCase
     public function testUndoLikeRemoteEntryCommentInRemoteMagazine(): void
     {
         $this->testLikeRemoteEntryCommentInRemoteMagazine();
-
     }
 
     public function testLikeRemotePostInRemoteMagazine(): void
@@ -94,7 +92,6 @@ class LikeHandlerTest extends ActivityPubFunctionalTestCase
     public function testUndoLikeRemotePostInRemoteMagazine(): void
     {
         $this->testLikeRemotePostInRemoteMagazine();
-
     }
 
     public function testLikeRemotePostCommentInRemoteMagazine(): void
@@ -113,7 +110,6 @@ class LikeHandlerTest extends ActivityPubFunctionalTestCase
     public function testUndoLikeRemotePostCommentInRemoteMagazine(): void
     {
         $this->testLikeRemotePostCommentInRemoteMagazine();
-
     }
 
     public function testLikeEntryInLocalMagazine(): void
@@ -140,7 +136,6 @@ class LikeHandlerTest extends ActivityPubFunctionalTestCase
     public function testUndoLikeEntryInLocalMagazine(): void
     {
         $this->testLikeEntryInLocalMagazine();
-
     }
 
     public function testLikeEntryCommentInLocalMagazine(): void
@@ -169,7 +164,6 @@ class LikeHandlerTest extends ActivityPubFunctionalTestCase
     public function testUndoLikeEntryCommentInLocalMagazine(): void
     {
         $this->testLikeEntryCommentInLocalMagazine();
-
     }
 
     public function testLikePostInLocalMagazine(): void
@@ -197,7 +191,6 @@ class LikeHandlerTest extends ActivityPubFunctionalTestCase
     public function testUndoLikePostInLocalMagazine(): void
     {
         $this->testLikePostInLocalMagazine();
-
     }
 
     public function testLikePostCommentInLocalMagazine(): void
@@ -226,7 +219,6 @@ class LikeHandlerTest extends ActivityPubFunctionalTestCase
     public function testUndoLikePostCommentInLocalMagazine(): void
     {
         $this->testLikePostCommentInLocalMagazine();
-
     }
 
     public function setUpRemoteEntities(): void
