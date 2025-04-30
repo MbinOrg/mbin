@@ -138,7 +138,11 @@ class CreateHandler extends MbinMessageHandler
             if (null !== $note->apId and null === $note->magazine->apId and 'random' !== $note->magazine->name) {
                 $createActivity = $this->activityRepository->findFirstActivitiesByTypeAndObject('Create', $note);
                 if (null === $createActivity) {
-                    $this->activityRepository->createForRemoteActivity($fullCreatePayload, $note);
+                    if (null !== $fullCreatePayload) {
+                        $this->activityRepository->createForRemoteActivity($fullCreatePayload, $note);
+                    } else {
+                        $this->logger->warning('[CreateHandler::handleChain] Could not create the activity with the full create payload because it was just missing...');
+                    }
                 }
                 // local magazine, but remote post. Random magazine is ignored, as it should not be federated at all
                 $this->bus->dispatch(new AnnounceMessage(null, $note->magazine->getId(), $note->getId(), \get_class($note)));
