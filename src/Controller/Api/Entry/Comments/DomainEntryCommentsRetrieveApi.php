@@ -158,7 +158,7 @@ class DomainEntryCommentsRetrieveApi extends EntriesBaseApi
         foreach ($comments->getCurrentPageResults() as $value) {
             try {
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializeCommentTree($value));
+                $dtos[] = $this->serializeCommentTree($value, $criteria);
             } catch (\Exception $e) {
                 continue;
             }

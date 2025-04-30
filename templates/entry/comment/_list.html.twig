@@ -28,7 +28,8 @@
             showNested: showNested,
             dateAsUrl: dateAsUrl is defined ? dateAsUrl : true,
             showMagazineName: magazine is not defined or not magazine,
-            showEntryTitle: entry is not defined or not entry
+            showEntryTitle: entry is not defined or not entry,
+            criteria: criteria,
         }) }}
     {% endfor %}
     {% if(comments.haveToPaginate is defined and comments.haveToPaginate) %}
