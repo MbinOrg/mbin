@@ -17,10 +17,10 @@ use App\Entity\Traits\VisibilityTrait;
 use App\Entity\Traits\VotableTrait;
 use App\Repository\Criteria as MbinCriteria;
 use App\Repository\PostCommentRepository;
+use App\Utils\ArrayUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -263,7 +263,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
         return false;
     }
 
-    public function getChildrenByCriteria(MbinCriteria $postCommentCriteria): Collection
+    public function getChildrenByCriteria(MbinCriteria $postCommentCriteria): array
     {
         $criteria = Criteria::create();
 
@@ -281,26 +281,35 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
             $criteria->andWhere(Criteria::expr()->gte('createdAt', $postCommentCriteria->getSince()));
         }
 
-        $orderings = [];
+        $children = $this->children
+            ->matching($criteria)
+            ->filter(fn (PostComment $comment) => !$comment->containsBannedHashtags())
+            ->toArray();
+
+        // id sort
+        uasort($children, fn ($a, $b) => ArrayUtils::numCompareAscending($a->id, $b->id));
+
         switch ($postCommentCriteria->sortOption) {
             case MbinCriteria::SORT_TOP:
             case MbinCriteria::SORT_HOT:
-                $orderings['favouriteCount'] = Order::Descending;
+                uasort($children, fn (PostComment $a, PostComment $b) => ArrayUtils::numCompareDescending($a->upVotes + $a->favouriteCount, $b->upVotes + $b->favouriteCount));
+
                 break;
             case MbinCriteria::SORT_ACTIVE:
-                $orderings['lastActive'] = Order::Descending;
+                uasort($children, fn (PostComment $a, PostComment $b) => ArrayUtils::numCompareDescending($a->lastActive->getTimestamp(), $b->lastActive->getTimestamp()));
+
+                break;
+            case MbinCriteria::SORT_OLD:
+                uasort($children, fn (PostComment $a, PostComment $b) => ArrayUtils::numCompareDescending($a->createdAt->getTimestamp(), $b->createdAt->getTimestamp()));
+
+                break;
+            case MbinCriteria::SORT_NEW:
+                uasort($children, fn (PostComment $a, PostComment $b) => ArrayUtils::numCompareAscending($a->createdAt->getTimestamp(), $b->createdAt->getTimestamp()));
+
                 break;
             default:
         }
 
-        $criteria->orderBy([
-            ...$orderings,
-            'createdAt' => MbinCriteria::SORT_OLD === $postCommentCriteria->sortOption ? Order::Ascending : Order::Descending,
-            'id' => Order::Descending,
-        ]);
-
-        return $this->children
-            ->matching($criteria)
-            ->filter(fn (PostComment $comment) => !$comment->containsBannedHashtags());
+        return $children;
     }
 }

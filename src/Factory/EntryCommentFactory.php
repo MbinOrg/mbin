@@ -11,6 +11,7 @@ use App\Entity\User;
 use App\PageView\EntryCommentPageView;
 use App\Repository\BookmarkListRepository;
 use App\Repository\TagLinkRepository;
+use App\Service\SettingsManager;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class EntryCommentFactory
@@ -22,6 +23,7 @@ class EntryCommentFactory
         private readonly MagazineFactory $magazineFactory,
         private readonly TagLinkRepository $tagLinkRepository,
         private readonly BookmarkListRepository $bookmarkListRepository,
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 
@@ -78,7 +80,7 @@ class EntryCommentFactory
             return $toReturn;
         }
 
-        foreach ($comment->getChildrenByCriteria($commentPageView) as $childComment) {
+        foreach ($comment->getChildrenByCriteria($commentPageView, $this->settingsManager->getDownvotesMode()) as $childComment) {
             \assert($childComment instanceof EntryComment);
             if (($user = $this->security->getUser()) && $user instanceof User) {
                 if ($user->isBlocked($childComment->user)) {

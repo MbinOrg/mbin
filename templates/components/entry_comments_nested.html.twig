@@ -9,7 +9,7 @@
         }) }}
     {% endfor %}
 {% else %}
-    {% for reply in comment.getChildrenByCriteria(criteria) %}
+    {% for reply in comment.getChildrenByCriteria(criteria, mbin_downvotes_mode()) %}
         {{ component('entry_comment', {
             comment: reply,
             showNested: true,
