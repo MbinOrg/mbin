@@ -39,4 +39,17 @@ class UrlUtils
 
         return "markdown_magazine_mention_$key";
     }
+
+    public static function extractUrlsFromString(string $text): array
+    {
+        $words = preg_split('/[ \n\[\]()]/', $text);
+        $urls = [];
+        foreach ($words as $word) {
+            if (filter_var($word, FILTER_VALIDATE_URL)) {
+                $urls[] = $word;
+            }
+        }
+
+        return $urls;
+    }
 }

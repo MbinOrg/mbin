@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Utils\RegPatterns;
+use App\Utils\UrlUtils;
 
 class TagExtractor
 {
@@ -45,6 +46,11 @@ class TagExtractor
 
         if ($magazineName) {
             $result = array_diff($result, [$magazineName]);
+        }
+
+        if ($urls = UrlUtils::extractUrlsFromString($val)) {
+            $htmlIds = array_map(fn ($url) => parse_url($url, PHP_URL_FRAGMENT), $urls);
+            $result = array_diff($result, $htmlIds);
         }
 
         return \count($result) ? array_unique(array_values($result)) : null;
