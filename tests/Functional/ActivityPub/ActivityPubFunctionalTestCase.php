@@ -66,11 +66,11 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         $this->users = new ArrayCollection();
         $this->switchToLocalDomain();
 
-        //foreach ($this->entitiesToRemoveAfterSetup as $entity) {
-            //$this->entityManager->remove($entity);
-        //}
+        // foreach ($this->entitiesToRemoveAfterSetup as $entity) {
+        // $this->entityManager->remove($entity);
+        // }
 
-        for ($i = sizeof($this->entitiesToRemoveAfterSetup) - 1; $i >= 0; $i--) {
+        for ($i = \sizeof($this->entitiesToRemoveAfterSetup) - 1; $i >= 0; --$i) {
             $this->entityManager->remove($this->entitiesToRemoveAfterSetup[$i]);
         }
 

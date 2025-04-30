@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Functional\ActivityPub\Inbox;
 
 use App\Tests\Functional\ActivityPub\ActivityPubFunctionalTestCase;
