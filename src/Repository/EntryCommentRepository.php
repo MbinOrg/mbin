@@ -266,4 +266,51 @@ class EntryCommentRepository extends ServiceEntityRepository
 
         return $qb;
     }
+
+    public function hydrateChildren(EntryComment ...$comments): void
+    {
+        $children = $this->createQueryBuilder('c')
+            ->andWhere('c.root IN (:ids)')
+            ->setParameter('ids', $comments)
+            ->getQuery()->getResult();
+
+        $this->hydrate(...$children);
+    }
+
+    public function hydrate(EntryComment ...$comments): void
+    {
+        $this->createQueryBuilder('c')
+            ->select('PARTIAL c.{id}')
+            ->addSelect('u')
+            ->addSelect('e')
+            ->addSelect('v')
+            ->addSelect('em')
+            ->addSelect('f')
+            ->join('c.user', 'u')
+            ->join('c.entry', 'e')
+            ->join('c.votes', 'v')
+            ->leftJoin('c.favourites', 'f')
+            ->join('e.magazine', 'em')
+            ->where('c IN (?1)')
+            ->setParameter(1, $comments)
+            ->getQuery()
+            ->execute();
+
+        $this->createQueryBuilder('c')
+            ->select('PARTIAL c.{id}')
+            ->addSelect('cc')
+            ->addSelect('ccu')
+            ->addSelect('ccua')
+            ->addSelect('ccv')
+            ->addSelect('ccf')
+            ->leftJoin('c.children', 'cc')
+            ->join('cc.user', 'ccu')
+            ->leftJoin('ccu.avatar', 'ccua')
+            ->leftJoin('cc.votes', 'ccv')
+            ->leftJoin('cc.favourites', 'ccf')
+            ->where('c IN (?1)')
+            ->setParameter(1, $comments)
+            ->getQuery()
+            ->execute();
+    }
 }

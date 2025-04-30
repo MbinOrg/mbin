@@ -153,6 +153,9 @@ class EntryCommentsRetrieveApi extends EntriesBaseApi
 
         $comments = $commentsRepository->findByCriteria($criteria);
 
+        $commentsRepository->hydrate(...$comments);
+        $commentsRepository->hydrateChildren(...$comments);
+
         $dtos = [];
         foreach ($comments->getCurrentPageResults() as $value) {
             try {

@@ -80,6 +80,8 @@ class PostCommentsRetrieveApi extends PostsBaseApi
         $this->handlePrivateContent($comment);
         $criteria = new PostCommentPageView(0, $security);
 
+        $repository->hydrate($comment);
+
         return new JsonResponse(
             $this->serializePostCommentTree($comment, $criteria),
             headers: $headers

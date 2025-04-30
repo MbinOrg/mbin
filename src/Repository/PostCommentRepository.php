@@ -11,7 +11,6 @@ namespace App\Repository;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\HashtagLink;
 use App\Entity\PostComment;
-use App\Entity\User;
 use App\Entity\UserBlock;
 use App\Entity\UserFollow;
 use App\PageView\PostCommentPageView;
@@ -191,26 +190,34 @@ class PostCommentRepository extends ServiceEntityRepository
         $qb->addOrderBy('c.id', 'DESC');
     }
 
-    public function findToDelete(User $user, int $limit): array
+    public function hydrate(PostComment ...$comment): void
     {
-        return $this->createQueryBuilder('c')
-            ->where('c.visibility != :visibility')
-            ->andWhere('c.user = :user')
-            ->setParameters(['visibility' => PostComment::VISIBILITY_SOFT_DELETED, 'user' => $user])
-            ->orderBy('c.id', 'DESC')
-            ->setMaxResults($limit)
+        $this->_em->createQueryBuilder()
+            ->select('PARTIAL c.{id}')
+            ->addSelect('u')
+            ->addSelect('m')
+            ->addSelect('i')
+            ->from(PostComment::class, 'c')
+            ->join('c.user', 'u')
+            ->join('c.magazine', 'm')
+            ->leftJoin('c.image', 'i')
+            ->where('c IN (?1)')
+            ->setParameter(1, $comment)
             ->getQuery()
             ->getResult();
-    }
 
-    public function findFederated()
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.apId IS NOT NULL')
-            ->andWhere('c.visibility = :visibility')
-            ->orderBy('c.createdAt', 'DESC')
-            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
-            ->getQuery()
-            ->getResult();
+        if ($this->security->getUser()) {
+            $this->_em->createQueryBuilder()
+                ->select('PARTIAL c.{id}')
+                ->addSelect('cv')
+                ->addSelect('cf')
+                ->from(PostComment::class, 'c')
+                ->leftJoin('c.votes', 'cv')
+                ->leftJoin('c.favourites', 'cf')
+                ->where('c IN (?1)')
+                ->setParameter(1, $comment)
+                ->getQuery()
+                ->getResult();
+        }
     }
 }
