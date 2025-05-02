@@ -132,9 +132,10 @@ You need a Discord account, if you do not have one, yet, go and create one: http
 1. Go to https://app.privacyportal.org/settings/developers and create a new application. If you want, add an image and a description.
    - Insert `https://YOURINSTANCE` as the "Homepage URL" (replace `YOURINSTANCE` with the URL of your instance).
    - Insert `https://YOURINSTANCE/oauth/privacyportal/verify` as the "Callback URL" (replace `YOURINSTANCE` with the URL of your instance).
-2. You may change icon, homepage URL and callback URL in the "App info" tab.
-3. Enable "Public access" in the "Access management" tab, so other Privacy Portal users can log into your instance.
-4. In the "Credentials" tab, generate a new secret. This secret and the client ID from the same tab will go into your `.env` file:
+2. Click "Register" to register your instance.
+3. You may change icon, homepage URL and callback URL in the "App info" tab.
+4. Enable "Public access" in the "Access management" tab, so other Privacy Portal users can log into your instance.
+5. In the "Credentials" tab, generate a new secret. This secret and the client ID from the same tab will go into your `.env` file:
 
 ```ini
 OAUTH_PRIVACYPORTAL_ID=3245498543 # your client ID
