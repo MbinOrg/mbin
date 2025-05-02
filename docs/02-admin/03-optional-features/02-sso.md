@@ -129,7 +129,7 @@ OAUTH_AUTHENTIK_BASE_URL=
 
 You need a Privacy Portal account, if you do not have one, yet, go and create one: https://app.privacyportal.org/
 
-1. Go to https://app.privacyportal.org/settings/developers and create a new application. If you want, add an image and a description.
+1. Go to https://app.privacyportal.org/settings/developers and create a new application. Add a meaningful name.
    - Insert `https://YOURINSTANCE` as the "Homepage URL" (replace `YOURINSTANCE` with the URL of your instance).
    - Insert `https://YOURINSTANCE/oauth/privacyportal/verify` as the "Callback URL" (replace `YOURINSTANCE` with the URL of your instance).
 2. Click "Register" to save the application.
