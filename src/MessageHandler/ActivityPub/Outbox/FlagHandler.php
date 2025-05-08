@@ -11,6 +11,7 @@ use App\Message\ActivityPub\Outbox\FlagMessage;
 use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
 use App\Repository\ReportRepository;
+use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,6 +30,7 @@ class FlagHandler extends MbinMessageHandler
         private readonly FlagFactory $factory,
         private readonly LoggerInterface $logger,
         private readonly DeliverManager $deliverManager,
+        private readonly ActivityJsonBuilder $activityJsonBuilder,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
@@ -48,6 +50,11 @@ class FlagHandler extends MbinMessageHandler
         }
         $this->logger->debug('[FlagHandler::doWork] Got a FlagMessage');
         $report = $this->reportRepository->find($message->reportId);
+        if (!$report) {
+            $this->logger->info("[FlagHandler::doWork] Couldn't find report with id {id}", ['id' => $message->reportId]);
+
+            return;
+        }
         $this->logger->debug('[FlagHandler::doWork] Found the report: '.json_encode($report));
         $inboxes = $this->getInboxUrls($report);
         if (0 === \sizeof($inboxes)) {
@@ -56,8 +63,9 @@ class FlagHandler extends MbinMessageHandler
             return;
         }
 
-        $activity = $this->factory->build($report, $this->factory->getPublicUrl($report->getSubject()));
-        $this->deliverManager->deliver($inboxes, $activity);
+        $activity = $this->factory->build($report);
+        $json = $this->activityJsonBuilder->buildActivityJson($activity);
+        $this->deliverManager->deliver($inboxes, $json);
     }
 
     /**

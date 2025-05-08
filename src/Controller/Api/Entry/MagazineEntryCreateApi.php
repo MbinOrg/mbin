@@ -343,7 +343,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
 
         $deserialized = $this->deserializeEntryFromForm();
 
-        $dto = $deserialized->mergeIntoDto($dto);
+        $dto = $deserialized->mergeIntoDto($dto, $this->settingsManager);
 
         if (!$this->isGranted('create_content', $dto->magazine)) {
             throw new AccessDeniedHttpException();

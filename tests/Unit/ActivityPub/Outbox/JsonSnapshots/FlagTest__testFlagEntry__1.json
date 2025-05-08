@@ -1,0 +1,13 @@
+{
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "id": "SCRUBBED_ID",
+    "type": "Flag",
+    "actor": "https://kbin.test/u/reportingUser",
+    "object": "SCRUBBED_ID",
+    "audience": "https://kbin.test/m/test",
+    "summary": null,
+    "content": null,
+    "to": [
+        "https://kbin.test/m/test"
+    ]
+}

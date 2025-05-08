@@ -53,7 +53,7 @@ class TagMatchTest extends WebTestCase
             $json = $this->personFactory->create($user);
             $this->testingApHttpClient->actorObjects[$json['id']] = $json;
 
-            $userEvent = new WebfingerResponseEvent(new JsonRd(), "$username@$domain", ['account' => $username]);
+            $userEvent = new WebfingerResponseEvent(new JsonRd(), "acct:$username@$domain", ['account' => $username]);
             $this->eventDispatcher->dispatch($userEvent);
             $realDomain = \sprintf(WebFingerFactory::WEBFINGER_URL, 'https', $domain, '', "$username@$domain");
             $this->testingApHttpClient->webfingerObjects[$realDomain] = $userEvent->jsonRd->toArray();
@@ -63,7 +63,7 @@ class TagMatchTest extends WebTestCase
             $json = $this->groupFactory->create($magazine);
             $this->testingApHttpClient->actorObjects[$json['id']] = $json;
 
-            $magazineEvent = new WebfingerResponseEvent(new JsonRd(), "$magazineName@$domain", ['account' => $magazineName]);
+            $magazineEvent = new WebfingerResponseEvent(new JsonRd(), "acct:$magazineName@$domain", ['account' => $magazineName]);
             $this->eventDispatcher->dispatch($magazineEvent);
             $realDomain = \sprintf(WebFingerFactory::WEBFINGER_URL, 'https', $domain, '', "$magazineName@$domain");
             $this->testingApHttpClient->webfingerObjects[$realDomain] = $magazineEvent->jsonRd->toArray();
@@ -72,12 +72,16 @@ class TagMatchTest extends WebTestCase
             $json = $this->pageFactory->create($entry, $this->tagLinkRepository->getTagsOfEntry($entry));
             $this->testingApHttpClient->activityObjects[$json['id']] = $json;
 
-            $create = $this->createWrapper->build($entry);
+            $activity = $this->createWrapper->build($entry);
+            $create = $this->activityJsonBuilder->buildActivityJson($activity);
             $this->testingApHttpClient->activityObjects[$create['id']] = $create;
 
-            $this->entryManager->purge($user, $entry);
-            $this->magazineManager->purge($magazine);
+            $this->entityManager->remove($activity);
+            $this->entityManager->remove($entry);
+            $this->entityManager->remove($magazine);
             $this->entityManager->remove($user);
+            $this->entityManager->flush();
+            $this->entityManager->clear();
 
             $this->entries = new ArrayCollection();
             $this->magazines = new ArrayCollection();
@@ -161,7 +165,10 @@ class TagMatchTest extends WebTestCase
         self::assertArrayIsEqualToArrayIgnoringListOfKeys($expectedInboxes, $targetInboxes2, []);
 
         // dispatch a remote like message, so we trigger the announcement of it
-        $this->bus->dispatch(new LikeMessage($this->likeWrapper->build($this->remoteUsers[0]->apProfileId, $this->mastodonPost)));
+        $activity = $this->likeWrapper->build($this->remoteUsers[0], $mastodonPost);
+        $json = $this->activityJsonBuilder->buildActivityJson($activity);
+        $this->testingApHttpClient->activityObjects[$json['id']] = $json;
+        $this->bus->dispatch(new LikeMessage($json));
 
         $postedObjects = $this->testingApHttpClient->getPostedObjects();
         $postedLikeAnnounces = array_filter($postedObjects, fn ($item) => 'Announce' === $item['payload']['type'] && 'Like' === $item['payload']['object']['type']);
@@ -184,7 +191,9 @@ class TagMatchTest extends WebTestCase
 
     private function pullInMastodonPost(): void
     {
-        $this->bus->dispatch(new CreateMessage($this->mastodonPost));
+        $createActivity = $this->mastodonCreatePost;
+        $createActivity['object'] = $this->mastodonPost;
+        $this->bus->dispatch(new CreateMessage($this->mastodonPost, fullCreatePayload: $createActivity));
     }
 
     private array $mastodonUser = [
@@ -214,6 +223,18 @@ class TagMatchTest extends WebTestCase
         'attachment' => [],
         'endpoints' => [
             'sharedInbox' => 'https://masto.don/inbox',
+        ],
+    ];
+
+    private array $mastodonCreatePost = [
+        'id' => 'https://masto.don/users/User/activities/create/110226274955756643',
+        'type' => 'Create',
+        'actor' => 'https://masto.don/users/User',
+        'to' => [
+            'https://www.w3.org/ns/activitystreams#Public',
+        ],
+        'cc' => [
+            'https://masto.don/users/User/followers',
         ],
     ];
 
