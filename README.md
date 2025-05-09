@@ -168,17 +168,17 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/GauthierPLM">
-                    <img src="https://avatars.githubusercontent.com/u/2579741?v=4" width="100;" alt="GauthierPLM"/>
-                    <br />
-                    <sub><b>Gauthier POGAM--LE MONTAGNER</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/Ahrotahn">
                     <img src="https://avatars.githubusercontent.com/u/40727284?v=4" width="100;" alt="Ahrotahn"/>
                     <br />
                     <sub><b>Ahrotahn</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/GauthierPLM">
+                    <img src="https://avatars.githubusercontent.com/u/2579741?v=4" width="100;" alt="GauthierPLM"/>
+                    <br />
+                    <sub><b>Gauthier POGAM--LE MONTAGNER</b></sub>
                 </a>
             </td>
             <td align="center">
@@ -292,6 +292,13 @@ Unofficial magazines:
             </td>
 		</tr>
 		<tr>
+            <td align="center">
+                <a href="https://github.com/robertolopezlopez">
+                    <img src="https://avatars.githubusercontent.com/u/1519467?v=4" width="100;" alt="robertolopezlopez"/>
+                    <br />
+                    <sub><b>Roberto López López</b></sub>
+                </a>
+            </td>
             <td align="center">
                 <a href="https://github.com/privacyguard">
                     <img src="https://avatars.githubusercontent.com/u/92675882?v=4" width="100;" alt="privacyguard"/>
