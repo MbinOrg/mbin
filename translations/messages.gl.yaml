@@ -998,3 +998,4 @@ notification_title_new_reply: Nova resposta
 admin_users_inactive: Inactivas
 admin_users_suspended: Suspendidas
 admin_users_banned: Vetadas
+2fa.manual_code_hint: Se non podes escanear o código QR escribe a chave secreta manualmente
