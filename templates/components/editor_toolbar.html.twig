@@ -38,5 +38,15 @@
     <button data-md-button data-action="click->markdown-toolbar#toggleEmojiPicker" title="{{ 'toolbar.emoji'|trans }}">
         <i class="fa-solid fa-face-smile"></i>
     </button>
-    <emoji-picker id="emoji-picker" style="display: none;"></emoji-picker>
 </markdown-toolbar>
+<style>
+    .tooltip {
+        z-index: 9999;
+    }
+    .tooltip:not(.shown) {
+        display: none;
+    }
+</style>
+<div class="tooltip" role="tooltip">
+    <emoji-picker id="emoji-picker"></emoji-picker>
+</div>

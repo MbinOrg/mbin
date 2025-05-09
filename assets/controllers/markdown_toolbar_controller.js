@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { Controller } from '@hotwired/stimulus';
+import { createPopper } from '@popperjs/core';
 import 'emoji-picker-element';
 
 /* stimulusFetch: 'lazy' */
@@ -40,12 +41,22 @@ ${spoilerBody}
 
     toggleEmojiPicker(event) {
         event.preventDefault();
+        const button = event.currentTarget;
+        const tooltip = document.querySelector('.tooltip');
         const emojiPicker = document.getElementById('emoji-picker');
         const input = document.getElementById(this.element.getAttribute('for'));
 
-        if (emojiPicker.style.display === 'none') {
-            emojiPicker.style.display = 'block';
-            emojiPicker.addEventListener('emoji-click', (event) => {
+        // Create Popper instance if it doesn't exist
+        if (!this.popperInstance) {
+            this.popperInstance = createPopper(button, tooltip, {
+                placement: 'bottom-end',
+            });
+        }
+
+        tooltip.classList.toggle('shown');
+
+        if (tooltip.classList.contains('shown')) {
+            const emojiClickHandler = (event) => {
                 const emoji = event.detail.emoji.unicode;
                 const start = input.selectionStart;
                 const end = input.selectionEnd;
@@ -54,10 +65,11 @@ ${spoilerBody}
                 input.focus();
                 input.setSelectionRange(start + emoji.length, start + emoji.length);
 
-                emojiPicker.style.display = 'none';
-            }, { once: true });
-        } else {
-            emojiPicker.style.display = 'none';
+                tooltip.classList.remove('shown');
+                emojiPicker.removeEventListener('emoji-click', emojiClickHandler);
+            };
+
+            emojiPicker.addEventListener('emoji-click', emojiClickHandler);
         }
     }
 }
