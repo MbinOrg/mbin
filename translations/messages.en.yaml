@@ -456,6 +456,7 @@ toolbar.unordered_list: Unordered List
 toolbar.ordered_list: Ordered List
 toolbar.mention: Mention
 toolbar.spoiler: Spoiler
+toolbar.emoji: Emoji
 federation_page_enabled: Federation page enabled
 federation_page_allowed_description: Known instances we federate with
 federation_page_disallowed_description: Instances we do not federate with
