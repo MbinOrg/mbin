@@ -37,6 +37,7 @@ class TagExtractorTest extends TestCase
             ['#Ｓｙｎｔｈｗａｖｅ', ['synthwave']],
             ['#ｼｰｻｲﾄﾞﾗｲﾅｰ', ['シーサイドライナー']],
             ['#ぼっち・ざ・ろっく', ['ぼっち・ざ・ろっく']],
+            ['https://www.site.tld/somepath/#heading', null],
         ];
     }
 }

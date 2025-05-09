@@ -18,4 +18,6 @@ class RegPatterns
     public const MENTION_REGEX = '\B@([a-zA-Z0-9\-\_]{1,30})(?:@)?((?:[\pL\pN\pS\pM\-\_]++\.)+[\pL\pN\pM]++|[a-z0-9\-\_]++)?';
     public const LOCAL_USER_REGEX = '/(?<!\/)\B@([a-zA-Z0-9_-]{1,30}@?)/u';
     public const REMOTE_USER_REGEX = '/(?<!\/)\B@([a-zA-Z0-9._-]+@?)(@)(([\pL\pN\pS\pM\-\_]++\.)+[\pL\pN\pM]++|[a-z0-9\-\_]++)/u';
+    public const INVALID_TAG_CHARACTERS = '/[(){}\/:@]/';
+    public const URL_SEPARATOR_REGEX = '/[ \n\[\]()]/';
 }

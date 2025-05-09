@@ -114,14 +114,11 @@ final class CacheMarkdownListener implements EventSubscriberInterface
     /** @return string[] */
     private function getMissingUrlsFromMarkdown(string $markdown): array
     {
-        $words = preg_split('/[ \n\[\]()]/', $markdown);
         $urls = [];
-        foreach ($words as $word) {
-            if (filter_var($word, FILTER_VALIDATE_URL)) {
-                $entity = $this->activityRepository->findByObjectId($word);
-                if (null === $entity) {
-                    $urls[] = $word;
-                }
+        foreach (UrlUtils::extractUrlsFromString($markdown) as $url) {
+            $entity = $this->activityRepository->findByObjectId($url);
+            if (null === $entity) {
+                $urls[] = $url;
             }
         }
 
