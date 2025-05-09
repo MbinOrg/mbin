@@ -11,7 +11,6 @@ namespace App\Repository;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\HashtagLink;
 use App\Entity\PostComment;
-use App\Entity\User;
 use App\Entity\UserBlock;
 use App\Entity\UserFollow;
 use App\PageView\PostCommentPageView;
@@ -191,6 +190,16 @@ class PostCommentRepository extends ServiceEntityRepository
         $qb->addOrderBy('c.id', 'DESC');
     }
 
+    public function hydrateChildren(PostComment ...$comments): void
+    {
+        $children = $this->createQueryBuilder('c')
+            ->andWhere('c.root IN (:ids)')
+            ->setParameter('ids', $comments)
+            ->getQuery()->getResult();
+
+        $this->hydrate(...$children);
+    }
+
     public function hydrate(PostComment ...$comment): void
     {
         $this->_em->createQueryBuilder()
@@ -220,28 +229,5 @@ class PostCommentRepository extends ServiceEntityRepository
                 ->getQuery()
                 ->getResult();
         }
-    }
-
-    public function findToDelete(User $user, int $limit): array
-    {
-        return $this->createQueryBuilder('c')
-            ->where('c.visibility != :visibility')
-            ->andWhere('c.user = :user')
-            ->setParameters(['visibility' => PostComment::VISIBILITY_SOFT_DELETED, 'user' => $user])
-            ->orderBy('c.id', 'DESC')
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
-    }
-
-    public function findFederated()
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.apId IS NOT NULL')
-            ->andWhere('c.visibility = :visibility')
-            ->orderBy('c.createdAt', 'DESC')
-            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
-            ->getQuery()
-            ->getResult();
     }
 }

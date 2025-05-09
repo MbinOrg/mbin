@@ -25,7 +25,7 @@ change_view: Cambiar vista
 filter_by_time: Ordenar por orden cronológico
 filter_by_type: Ordenar por tipo
 comments_count: '{0}Comentarios|{1}Comentario|]1,Inf[ Comentarios'
-favourites: Favoritos
+favourites: Votos a favor
 favourite: Favorito
 more: Más
 avatar: Avatar
@@ -205,7 +205,7 @@ set_magazines_bar: Barra de revistas
 set_magazines_bar_desc: añade el nombre de la revista tras la coma
 set_magazines_bar_empty_desc: si el campo está vacío, las revistas activas se mostrarán
   en la barra.
-up_votes: Votos a favor
+up_votes: Impulsos
 edit_comment: Guardar cambios
 settings: Configuración
 profile: Perfil
