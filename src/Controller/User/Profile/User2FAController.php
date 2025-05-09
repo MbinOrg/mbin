@@ -90,6 +90,7 @@ class User2FAController extends AbstractController
                 'form' => $form->createView(),
                 'two_fa_url' => $qrCodeContent,
                 'codes' => $backupCodes,
+                'secret' => $totpSecret,
             ],
             new Response(
                 null,
