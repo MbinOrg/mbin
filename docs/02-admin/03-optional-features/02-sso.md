@@ -127,7 +127,15 @@ OAUTH_AUTHENTIK_BASE_URL=
 
 ### Privacy Portal
 
-https://privacyportal.org
+You need a Privacy Portal account, if you do not have one, yet, go and create one: https://app.privacyportal.org/
+
+1. Go to https://app.privacyportal.org/settings/developers and create a new application. Add a meaningful name.
+   - Insert `https://YOURINSTANCE` as the "Homepage URL" (replace `YOURINSTANCE` with the URL of your instance).
+   - Insert `https://YOURINSTANCE/oauth/privacyportal/verify` as the "Callback URL" (replace `YOURINSTANCE` with the URL of your instance).
+2. Click "Register" to save the application.
+3. You may change icon, homepage URL and callback URL in the "App info" tab.
+4. Enable "Public access" in the "Access management" tab, so other Privacy Portal users can log into your instance.
+5. In the "Credentials" tab, generate a new secret. This secret and the client ID from the same tab will go into your `.env` file:
 
 ```ini
 OAUTH_PRIVACYPORTAL_ID=3245498543 # your client ID

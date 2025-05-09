@@ -29,12 +29,12 @@ subscribers_count: '{0}Subscriptores|{1}Subscriptora|]1,Inf[ Subscriptores'
 followers_count: '{0}Seguidores|{1}Seguidora|]1,Inf[ Seguidores'
 marked_for_deletion: Marcat per a supressió
 marked_for_deletion_at: Marcat per suprimir-se el %date%
-favourites: Preferits
+favourites: Vots a favor
 favourite: Preferit
 avatar: Avatar
 added: Afegit
 down_votes: Vots en contra
-up_votes: Vots a favor
+up_votes: Impulsos
 no_comments: Sense comentaris
 created_at: Creat
 owner: Propietari(a)
@@ -85,7 +85,7 @@ eng: ENG
 columns: Columnes
 chat_view: Vista de xat
 photos: Fotos
-are_you_sure: De veritat?
+are_you_sure: Ho confirmeu?
 go_to_search: Anar a la cerca
 menu: Menú
 blocked: Blocats
@@ -649,7 +649,8 @@ moderation.report.approve_report_title: Aprovar la denúncia
 moderation.report.reject_report_title: Rebutjar la denúncia
 subject_reported_exists: Aquest contingut ja s'ha denunciat.
 moderation.report.ban_user_title: Bandejar compte
-moderation.report.reject_report_confirmation: De veritat voleu rebutjar aquesta denúncia?
+moderation.report.reject_report_confirmation: Confirmeu que voleu rebutjar aquesta
+  denúncia?
 delete_content: Suprimir contingut
 purge_content: Purgar contingut
 delete_content_desc: Suprimir el contingut de l'usuari(a) deixant les respostes d'altres
@@ -908,7 +909,7 @@ oauth2.grant.admin.magazine.all: Moure fils entre les revistes o suprimir-les co
 2fa.backup: Els vostres codis de recolzament de dos factors
 moderation.report.ban_user_description: Voleu bandejar el compte (%username%) que
   ha creat aquest contingut d'aquesta revista?
-moderation.report.approve_report_confirmation: De veritat voleu aprovar aquest informe?
+moderation.report.approve_report_confirmation: Confirmeu l'aprovació d'aquest informe?
 purge_content_desc: Purgar completament el contingut de l'usuari(a), incloent la supressió
   de les respostes d'altres usuaris(es) en fils, publicacions i comentaris creats.
 2fa.backup-create.help: Podeu crear nous codis d'autenticació de recolzament; fer-ho
