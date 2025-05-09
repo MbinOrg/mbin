@@ -17,7 +17,6 @@ use App\Entity\HashtagLink;
 use App\Entity\MagazineBlock;
 use App\Entity\MagazineSubscription;
 use App\Entity\Moderator;
-use App\Entity\User;
 use App\Entity\UserBlock;
 use App\Entity\UserFollow;
 use App\Service\SettingsManager;
@@ -313,38 +312,5 @@ class EntryCommentRepository extends ServiceEntityRepository
             ->setParameter(1, $comments)
             ->getQuery()
             ->execute();
-    }
-
-    public function hydrateParents(EntryComment ...$comments): void
-    {
-        $this->createQueryBuilder('c')
-            ->select('PARTIAL c.{id}')
-            ->addSelect('cp')
-            ->addSelect('cpu')
-            ->addSelect('cpe')
-            ->leftJoin('c.parent', 'cp')
-            ->leftJoin('cp.user', 'cpu')
-            ->leftJoin('cp.entry', 'cpe')
-            ->where('c IN (?1)')
-            ->setParameter(1, $comments)
-            ->getQuery()
-            ->execute();
-    }
-
-    public function findToDelete(User $user, int $limit): array
-    {
-        $query = $this->createQueryBuilder('c')
-            ->where('c.visibility != :visibility')
-            ->andWhere('c.user = :user')
-            ->setParameters(['visibility' => VisibilityInterface::VISIBILITY_SOFT_DELETED, 'user' => $user])
-            ->orderBy('c.id', 'DESC');
-
-        if ($limit) {
-            $query->setMaxResults($limit);
-        }
-
-        return $query
-            ->getQuery()
-            ->getResult();
     }
 }

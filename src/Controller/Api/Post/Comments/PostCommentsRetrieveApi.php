@@ -73,15 +73,17 @@ class PostCommentsRetrieveApi extends PostsBaseApi
         PostCommentRepository $repository,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
+        Security $security,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
         $this->handlePrivateContent($comment);
+        $criteria = new PostCommentPageView(0, $security);
 
         $repository->hydrate($comment);
 
         return new JsonResponse(
-            $this->serializePostCommentTree($comment),
+            $this->serializePostCommentTree($comment, $criteria),
             headers: $headers
         );
     }
@@ -204,7 +206,7 @@ class PostCommentsRetrieveApi extends PostsBaseApi
             \assert($value instanceof PostComment);
             try {
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializePostCommentTree($value));
+                $dtos[] = $this->serializePostCommentTree($value, $criteria);
             } catch (\Exception $e) {
                 continue;
             }

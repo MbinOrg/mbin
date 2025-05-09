@@ -148,7 +148,7 @@ class UserPostCommentsRetrieveApi extends PostsBaseApi
             \assert($value instanceof PostComment);
             try {
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializePostCommentTree($value));
+                $dtos[] = $this->serializePostCommentTree($value, $criteria);
             } catch (\Exception $e) {
                 continue;
             }
