@@ -510,6 +510,14 @@ markdown-toolbar {
 
 }
 
+.tooltip {
+  z-index: 9999;
+}
+
+.tooltip:not(.shown) {
+  display: none;
+}
+
 div.input-box {
   background: var(--kbin-input-bg);
   border: var(--kbin-input-border);

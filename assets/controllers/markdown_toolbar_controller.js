@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { Controller } from '@hotwired/stimulus';
+import { createPopper } from '@popperjs/core';
+import 'emoji-picker-element';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -35,5 +37,46 @@ ${spoilerBody}
         const spoilerTitlePosition = contentBeforeCursor.length + '::: spoiler '.length + 1;
         input.setSelectionRange(spoilerTitlePosition, spoilerTitlePosition);
         input.focus();
+    }
+
+    toggleEmojiPicker(event) {
+        event.preventDefault();
+        const button = event.currentTarget;
+        const tooltip = document.querySelector('.tooltip');
+        const emojiPicker = document.getElementById('emoji-picker');
+        const input = document.getElementById(this.element.getAttribute('for'));
+
+        // Remove any existing event listener
+        if (this.emojiClickHandler) {
+            emojiPicker.removeEventListener('emoji-click', this.emojiClickHandler);
+        }
+
+        // Create Popper instance if it doesn't exist
+        if (!this.popperInstance) {
+            this.popperInstance = createPopper(button, tooltip, {
+                placement: 'bottom-end',
+            });
+        }
+
+        tooltip.classList.toggle('shown');
+
+        if (tooltip.classList.contains('shown')) {
+            this.emojiClickHandler = (event) => {
+                const emoji = event.detail.emoji.unicode;
+                const start = input.selectionStart;
+                const end = input.selectionEnd;
+
+                input.value = input.value.slice(0, start) + emoji + input.value.slice(end);
+                const emojiPosition = start + emoji.length;
+                input.setSelectionRange(emojiPosition, emojiPosition);
+                input.focus();
+
+                tooltip.classList.remove('shown');
+                emojiPicker.removeEventListener('emoji-click', this.emojiClickHandler);
+                this.emojiClickHandler = null;
+            };
+
+            emojiPicker.addEventListener('emoji-click', this.emojiClickHandler);
+        }
     }
 }
