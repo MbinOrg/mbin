@@ -46,6 +46,11 @@ ${spoilerBody}
         const emojiPicker = document.getElementById('emoji-picker');
         const input = document.getElementById(this.element.getAttribute('for'));
 
+        // Remove any existing event listener
+        if (this.emojiClickHandler) {
+            emojiPicker.removeEventListener('emoji-click', this.emojiClickHandler);
+        }
+
         // Create Popper instance if it doesn't exist
         if (!this.popperInstance) {
             this.popperInstance = createPopper(button, tooltip, {
@@ -56,20 +61,22 @@ ${spoilerBody}
         tooltip.classList.toggle('shown');
 
         if (tooltip.classList.contains('shown')) {
-            const emojiClickHandler = (event) => {
+            this.emojiClickHandler = (event) => {
                 const emoji = event.detail.emoji.unicode;
                 const start = input.selectionStart;
                 const end = input.selectionEnd;
 
                 input.value = input.value.slice(0, start) + emoji + input.value.slice(end);
+                const emojiPosition = start + emoji.length;
+                input.setSelectionRange(emojiPosition, emojiPosition);
                 input.focus();
-                input.setSelectionRange(start + emoji.length, start + emoji.length);
 
                 tooltip.classList.remove('shown');
-                emojiPicker.removeEventListener('emoji-click', emojiClickHandler);
+                emojiPicker.removeEventListener('emoji-click', this.emojiClickHandler);
+                this.emojiClickHandler = null;
             };
 
-            emojiPicker.addEventListener('emoji-click', emojiClickHandler);
+            emojiPicker.addEventListener('emoji-click', this.emojiClickHandler);
         }
     }
 }
