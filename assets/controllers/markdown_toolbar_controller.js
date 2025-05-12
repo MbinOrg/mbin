@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { Controller } from '@hotwired/stimulus';
-import { createPopper } from '@popperjs/core';
+import {computePosition, flip, shift, limitShift, autoUpdate} from '@floating-ui/dom';
 import 'emoji-picker-element';
 
 /* stimulusFetch: 'lazy' */
@@ -41,20 +41,28 @@ ${spoilerBody}
 
     toggleEmojiPicker(event) {
         event.preventDefault();
+
         const button = event.currentTarget;
-        const tooltip = document.querySelector('.tooltip');
-        const emojiPicker = document.getElementById('emoji-picker');
         const input = document.getElementById(this.element.getAttribute('for'));
+        const tooltip = document.querySelector('#tooltip');
+        const emojiPicker = document.querySelector('#emoji-picker');
 
         // Remove any existing event listener
         if (this.emojiClickHandler) {
             emojiPicker.removeEventListener('emoji-click', this.emojiClickHandler);
         }
 
-        // Create Popper instance if it doesn't exist
-        if (!this.popperInstance) {
-            this.popperInstance = createPopper(button, tooltip, {
-                placement: 'bottom-end',
+        if(!this.cleanupTooltip) {
+            this.cleanupTooltip = autoUpdate(button, tooltip, () => {
+                computePosition(button, tooltip, {
+                    placement: 'bottom',
+                    middleware: [flip(), shift({limiter: limitShift()})],
+                }).then(({x, y}) => {
+                    Object.assign(tooltip.style, {
+                        left: `${x}px`,
+                        top: `${y}px`,
+                    });
+                });
             });
         }
 
@@ -72,6 +80,7 @@ ${spoilerBody}
                 input.focus();
 
                 tooltip.classList.remove('shown');
+                this.cleanupTooltip();
                 emojiPicker.removeEventListener('emoji-click', this.emojiClickHandler);
                 this.emojiClickHandler = null;
             };

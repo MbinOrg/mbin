@@ -511,6 +511,10 @@ markdown-toolbar {
 }
 
 .tooltip {
+  width: max-content;
+  position: absolute;
+  top: 0;
+  left: 0;
   z-index: 9999;
 }
 
