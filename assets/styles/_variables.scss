@@ -103,7 +103,8 @@ $aspect-ratios: (
   // forms
   --kbin-input-bg: #fff;
   --kbin-input-text-color: var(--kbin-text-color);
-  --kbin-input-border: 1px solid #e5eaec;
+  --kbin-input-border-color: #e5eaec;
+  --kbin-input-border: 1px solid var(--kbin-input-border-color);
   --kbin-input-placeholder-text-color: #929497;
 
   // buttons
