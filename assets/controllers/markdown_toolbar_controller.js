@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { Controller } from '@hotwired/stimulus';
-import {computePosition, flip, shift, limitShift, autoUpdate} from '@floating-ui/dom';
+import { computePosition, flip, shift, limitShift, autoUpdate } from '@floating-ui/dom';
 import 'emoji-picker-element';
 
 /* stimulusFetch: 'lazy' */
