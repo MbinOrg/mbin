@@ -48,7 +48,8 @@ $green: #859900;
   --kbin-section-title-link-color: var(--kbin-link-color);
   --kbin-section-link-color: #{$blue};
   --kbin-section-link-hover-color: var(--kbin-link-hover-color);
-  --kbin-section-border: 1px solid #c8cac0;
+  --kbin-section-border-color: #c8cac0;
+  --kbin-section-border: 1px solid var(--kbin-section-border-color);
   --kbin-author-border: 1px dashed var(--kbin-author-color);
   --kbin-own-border: 1px dashed var(--kbin-own-color);
 
@@ -73,7 +74,8 @@ $green: #859900;
   // forms
   --kbin-input-bg: #f6edd4;
   --kbin-input-text-color: var(--kbin-text-color);
-  --kbin-input-border: var(--kbin-section-border);
+  --kbin-input-border-color: var(--kbin-section-border-color);
+  --kbin-input-border: 1px solid var(--kbin-input-border-color);
   --kbin-input-placeholder-text-color: #4f6166;
 
   // buttons

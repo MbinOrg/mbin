@@ -72,6 +72,25 @@
       color: var(--kbin-button-secondary-text-hover-color) !important;
     }
   }
+
+  &__emoji {
+    cursor: pointer;
+    float: right;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    height: fit-content;
+    background-color: transparent;
+    border: 0;
+
+    &:hover {
+      background-color: var(--kbin-button-primary-bg);
+    }
+
+    &.active {
+      background-color: var(--kbin-button-primary-hover-bg);
+    }
+  }
 }
 
 select {

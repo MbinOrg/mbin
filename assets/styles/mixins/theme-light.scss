@@ -10,7 +10,7 @@
 
   --kbin-bg: #ecf0f1;
   --kbin-bg-nth: #fafafa;
-  
+
 
   --kbin-text-color: #1c1e20;
   --kbin-link-color: #245e83;
@@ -57,7 +57,8 @@
   // forms
   --kbin-input-bg: #f3f3f3;
   --kbin-input-text-color: var(--kbin-text-color);
-  --kbin-input-border: 1px solid #c9cecf;
+  --kbin-input-border-color: #c9cecf;
+  --kbin-input-border: 1px solid var(--kbin-input-border-color);
   --kbin-input-placeholder-text-color: #929497;
 
   // buttons
