@@ -14,7 +14,10 @@ use App\Entity\PostComment;
 use App\Entity\User;
 use App\Message\ActivityPub\Inbox\ActivityMessage;
 use App\Tests\Functional\ActivityPub\ActivityPubFunctionalTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
+#[Group(name: 'ActivityPub')]
+#[Group(name: 'NonThreadSafe')]
 class FlagHandlerTest extends ActivityPubFunctionalTestCase
 {
     public const REASON = 'Some reason';
