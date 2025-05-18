@@ -15,7 +15,6 @@ use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\ActivityPub\Wrapper\AnnounceWrapper;
-use App\Service\ActivityPub\Wrapper\UndoWrapper;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -32,7 +31,6 @@ class AnnounceLikeHandler extends MbinMessageHandler
         private readonly KernelInterface $kernel,
         private readonly EntityManagerInterface $entityManager,
         private readonly AnnounceWrapper $announceWrapper,
-        private readonly UndoWrapper $undoWrapper,
         private readonly SettingsManager $settingsManager,
         private readonly DeliverManager $deliverManager,
         private readonly ActivityJsonBuilder $activityJsonBuilder,
@@ -86,7 +84,8 @@ class AnnounceLikeHandler extends MbinMessageHandler
         if (!$message->undo) {
             $likeActivity = $message->likeMessageId;
         } else {
-            $likeActivity = $this->undoWrapper->build($message->likeMessageId, $user);
+            // we no longer have to wrap anything, as the incoming message will already be the undo one
+            $likeActivity = $message->likeMessageId;
         }
 
         $activity = $this->announceWrapper->build($object->magazine, $likeActivity);
