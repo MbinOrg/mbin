@@ -13,6 +13,7 @@ use App\Factory\ActivityPub\GroupFactory;
 use App\Factory\ActivityPub\PersonFactory;
 use App\Factory\ActivityPub\PostCommentNoteFactory;
 use App\Factory\ActivityPub\PostNoteFactory;
+use App\Repository\UserFollowRequestRepository;
 use App\Service\ActivityPub\Wrapper\AnnounceWrapper;
 use App\Service\ActivityPub\Wrapper\CreateWrapper;
 use App\Service\ActivityPub\Wrapper\DeleteWrapper;
@@ -47,6 +48,7 @@ class ActivityPubTestCase extends WebTestCase
     protected UndoWrapper $undoWrapper;
     protected FollowResponseWrapper $followResponseWrapper;
     protected FlagFactory $flagFactory;
+    protected UserFollowRequestRepository $userFollowRequestRepository;
 
     public function setUp(): void
     {
@@ -70,6 +72,7 @@ class ActivityPubTestCase extends WebTestCase
         $this->undoWrapper = $this->getService(UndoWrapper::class);
         $this->followResponseWrapper = $this->getService(FollowResponseWrapper::class);
         $this->flagFactory = $this->getService(FlagFactory::class);
+        $this->userFollowRequestRepository = $this->getService(UserFollowRequestRepository::class);
     }
 
     /**
