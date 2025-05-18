@@ -29,11 +29,13 @@ class AcceptHandlerTest extends ActivityPubFunctionalTestCase
         $followActivity = $this->followWrapper->build($this->localUser, $this->remoteUser);
         $this->followRemoteUser = $this->activityJsonBuilder->buildActivityJson($followActivity);
         $this->testingApHttpClient->activityObjects[$this->followRemoteUser['id']] = $this->followRemoteUser;
+        $this->entitiesToRemoveAfterSetup[] = $followActivity;
 
         $this->magazineManager->subscribe($this->remoteMagazine, $this->localUser);
         $followActivity = $this->followWrapper->build($this->localUser, $this->remoteMagazine);
         $this->followRemoteMagazine = $this->activityJsonBuilder->buildActivityJson($followActivity);
         $this->testingApHttpClient->activityObjects[$this->followRemoteMagazine['id']] = $this->followRemoteMagazine;
+        $this->entitiesToRemoveAfterSetup[] = $followActivity;
     }
 
     public function setUpRemoteEntities(): void
@@ -45,10 +47,12 @@ class AcceptHandlerTest extends ActivityPubFunctionalTestCase
         $acceptActivity = $this->followResponseWrapper->build($this->remoteUser, $this->followRemoteUser);
         $this->acceptFollowRemoteUser = $this->activityJsonBuilder->buildActivityJson($acceptActivity);
         $this->testingApHttpClient->activityObjects[$this->acceptFollowRemoteUser['id']] = $this->acceptFollowRemoteUser;
+        $this->entitiesToRemoveAfterSetup[] = $acceptActivity;
 
         $acceptActivity = $this->followResponseWrapper->build($this->remoteMagazine, $this->followRemoteMagazine);
         $this->acceptFollowRemoteMagazine = $this->activityJsonBuilder->buildActivityJson($acceptActivity);
         $this->testingApHttpClient->activityObjects[$this->acceptFollowRemoteMagazine['id']] = $this->acceptFollowRemoteMagazine;
+        $this->entitiesToRemoveAfterSetup[] = $acceptActivity;
     }
 
     public function testAcceptFollowMagazine(): void

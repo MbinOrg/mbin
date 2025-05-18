@@ -57,6 +57,12 @@ class LikeHandlerTest extends ActivityPubFunctionalTestCase
     public function testUndoLikeRemoteEntryInRemoteMagazine(): void
     {
         $this->testLikeRemoteEntryInRemoteMagazine();
+        $entry = $this->entryRepository->findOneBy(['apId' => $this->announceEntry['object']['object']['id']]);
+        self::assertSame(1, $entry->favouriteCount);
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->undoLikeAnnounceEntry)));
+        $this->entityManager->refresh($entry);
+        self::assertNotNull($entry);
+        self::assertSame(0, $entry->favouriteCount);
     }
 
     public function testLikeRemoteEntryCommentInRemoteMagazine(): void
@@ -75,6 +81,12 @@ class LikeHandlerTest extends ActivityPubFunctionalTestCase
     public function testUndoLikeRemoteEntryCommentInRemoteMagazine(): void
     {
         $this->testLikeRemoteEntryCommentInRemoteMagazine();
+        $comment = $this->entryCommentRepository->findOneBy(['apId' => $this->announceEntryComment['object']['object']['id']]);
+        self::assertSame(1, $comment->favouriteCount);
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->undoLikeAnnounceEntryComment)));
+        $this->entityManager->refresh($comment);
+        self::assertNotNull($comment);
+        self::assertSame(0, $comment->favouriteCount);
     }
 
     public function testLikeRemotePostInRemoteMagazine(): void
@@ -92,6 +104,12 @@ class LikeHandlerTest extends ActivityPubFunctionalTestCase
     public function testUndoLikeRemotePostInRemoteMagazine(): void
     {
         $this->testLikeRemotePostInRemoteMagazine();
+        $post = $this->postRepository->findOneBy(['apId' => $this->announcePost['object']['object']['id']]);
+        self::assertSame(1, $post->favouriteCount);
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->undoLikeAnnouncePost)));
+        $this->entityManager->refresh($post);
+        self::assertNotNull($post);
+        self::assertSame(0, $post->favouriteCount);
     }
 
     public function testLikeRemotePostCommentInRemoteMagazine(): void
@@ -110,6 +128,12 @@ class LikeHandlerTest extends ActivityPubFunctionalTestCase
     public function testUndoLikeRemotePostCommentInRemoteMagazine(): void
     {
         $this->testLikeRemotePostCommentInRemoteMagazine();
+        $postComment = $this->postCommentRepository->findOneBy(['apId' => $this->announcePostComment['object']['object']['id']]);
+        self::assertSame(1, $postComment->favouriteCount);
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->undoLikeAnnouncePostComment)));
+        $this->entityManager->refresh($postComment);
+        self::assertNotNull($postComment);
+        self::assertSame(0, $postComment->favouriteCount);
     }
 
     public function testLikeEntryInLocalMagazine(): void
@@ -136,6 +160,23 @@ class LikeHandlerTest extends ActivityPubFunctionalTestCase
     public function testUndoLikeEntryInLocalMagazine(): void
     {
         $this->testLikeEntryInLocalMagazine();
+        $entry = $this->entryRepository->findOneBy(['apId' => $this->createEntry['object']['id']]);
+        self::assertSame(1, $entry->favouriteCount);
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->undoLikeCreateEntry)));
+        $this->entityManager->refresh($entry);
+        self::assertSame(0, $entry->favouriteCount);
+
+        $postedObjects = $this->testingApHttpClient->getPostedObjects();
+        self::assertNotEmpty($postedObjects);
+        $postedUndoLikeAnnounces = array_filter($postedObjects, fn ($arr) => 'Announce' === $arr['payload']['type'] && 'Undo' === $arr['payload']['object']['type'] && 'Like' === $arr['payload']['object']['object']['type']);
+        $postedUndoLikeAnnounce = $postedUndoLikeAnnounces[array_key_first($postedUndoLikeAnnounces)];
+        // the id of the 'Undo' activity should be wrapped in an 'Announce' activity
+        self::assertEquals($this->undoLikeCreateEntry['id'], $postedUndoLikeAnnounce['payload']['object']['id']);
+        // the 'Undo' activity has the 'Like' activity as the object
+        self::assertEquals($this->undoLikeCreateEntry['object'], $postedUndoLikeAnnounce['payload']['object']['object']);
+        // the 'Like' activity has the url as the object
+        self::assertEquals($this->undoLikeCreateEntry['object']['object'], $postedUndoLikeAnnounce['payload']['object']['object']['object']);
+        self::assertEquals($this->remoteSubscriber->apInboxUrl, $postedUndoLikeAnnounce['inboxUrl']);
     }
 
     public function testLikeEntryCommentInLocalMagazine(): void
@@ -164,6 +205,23 @@ class LikeHandlerTest extends ActivityPubFunctionalTestCase
     public function testUndoLikeEntryCommentInLocalMagazine(): void
     {
         $this->testLikeEntryCommentInLocalMagazine();
+        $entryComment = $this->entryCommentRepository->findOneBy(['apId' => $this->createEntryComment['object']['id']]);
+        self::assertNotNull($entryComment);
+        self::assertSame(1, $entryComment->favouriteCount);
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->undoLikeCreateEntryComment)));
+        $this->entityManager->refresh($entryComment);
+        self::assertSame(0, $entryComment->favouriteCount);
+
+        $postedObjects = $this->testingApHttpClient->getPostedObjects();
+        $postedUndoLikeAnnounces = array_filter($postedObjects, fn ($arr) => 'Announce' === $arr['payload']['type'] && 'Undo' === $arr['payload']['object']['type'] && 'Like' === $arr['payload']['object']['object']['type']);
+        $postedUndoLikeAnnounce = $postedUndoLikeAnnounces[array_key_first($postedUndoLikeAnnounces)];
+        // the id of the 'Undo' activity should be wrapped in an 'Announce' activity
+        self::assertEquals($this->undoLikeCreateEntryComment['id'], $postedUndoLikeAnnounce['payload']['object']['id']);
+        // the 'Undo' activity has the 'Like' activity as the object
+        self::assertEquals($this->undoLikeCreateEntryComment['object'], $postedUndoLikeAnnounce['payload']['object']['object']);
+        // the 'Like' activity has the url as the object
+        self::assertEquals($this->undoLikeCreateEntryComment['object']['object'], $postedUndoLikeAnnounce['payload']['object']['object']['object']);
+        self::assertEquals($this->remoteSubscriber->apInboxUrl, $postedUndoLikeAnnounce['inboxUrl']);
     }
 
     public function testLikePostInLocalMagazine(): void
@@ -191,6 +249,23 @@ class LikeHandlerTest extends ActivityPubFunctionalTestCase
     public function testUndoLikePostInLocalMagazine(): void
     {
         $this->testLikePostInLocalMagazine();
+        $post = $this->postRepository->findOneBy(['apId' => $this->createPost['object']['id']]);
+        self::assertNotNull($post);
+        self::assertSame(1, $post->favouriteCount);
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->undoLikeCreatePost)));
+        $this->entityManager->refresh($post);
+        self::assertSame(0, $post->favouriteCount);
+
+        $postedObjects = $this->testingApHttpClient->getPostedObjects();
+        $postedUndoLikeAnnounces = array_filter($postedObjects, fn ($arr) => 'Announce' === $arr['payload']['type'] && 'Undo' === $arr['payload']['object']['type'] && 'Like' === $arr['payload']['object']['object']['type']);
+        $postedUndoLikeAnnounce = $postedUndoLikeAnnounces[array_key_first($postedUndoLikeAnnounces)];
+        // the id of the 'Undo' activity should be wrapped in an 'Announce' activity
+        self::assertEquals($this->undoLikeCreatePost['id'], $postedUndoLikeAnnounce['payload']['object']['id']);
+        // the 'Undo' activity has the 'Like' activity as the object
+        self::assertEquals($this->undoLikeCreatePost['object'], $postedUndoLikeAnnounce['payload']['object']['object']);
+        // the 'Like' activity has the url as the object
+        self::assertEquals($this->undoLikeCreatePost['object']['object'], $postedUndoLikeAnnounce['payload']['object']['object']['object']);
+        self::assertEquals($this->remoteSubscriber->apInboxUrl, $postedUndoLikeAnnounce['inboxUrl']);
     }
 
     public function testLikePostCommentInLocalMagazine(): void
@@ -219,6 +294,23 @@ class LikeHandlerTest extends ActivityPubFunctionalTestCase
     public function testUndoLikePostCommentInLocalMagazine(): void
     {
         $this->testLikePostCommentInLocalMagazine();
+        $postComment = $this->postCommentRepository->findOneBy(['apId' => $this->createPostComment['object']['id']]);
+        self::assertNotNull($postComment);
+        self::assertSame(1, $postComment->favouriteCount);
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->undoLikeCreatePostComment)));
+        $this->entityManager->refresh($postComment);
+        self::assertSame(0, $postComment->favouriteCount);
+
+        $postedObjects = $this->testingApHttpClient->getPostedObjects();
+        $postedUndoLikeAnnounces = array_filter($postedObjects, fn ($arr) => 'Announce' === $arr['payload']['type'] && 'Undo' === $arr['payload']['object']['type'] && 'Like' === $arr['payload']['object']['object']['type']);
+        $postedUndoLikeAnnounce = $postedUndoLikeAnnounces[array_key_first($postedUndoLikeAnnounces)];
+        // the id of the 'Undo' activity should be wrapped in an 'Announce' activity
+        self::assertEquals($this->undoLikeCreatePostComment['id'], $postedUndoLikeAnnounce['payload']['object']['id']);
+        // the 'Undo' activity has the 'Like' activity as the object
+        self::assertEquals($this->undoLikeCreatePostComment['object'], $postedUndoLikeAnnounce['payload']['object']['object']);
+        // the 'Like' activity has the url as the object
+        self::assertEquals($this->undoLikeCreatePostComment['object']['object'], $postedUndoLikeAnnounce['payload']['object']['object']['object']);
+        self::assertEquals($this->remoteSubscriber->apInboxUrl, $postedUndoLikeAnnounce['inboxUrl']);
     }
 
     public function setUpRemoteEntities(): void
