@@ -66,6 +66,13 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         $this->users = new ArrayCollection();
         $this->switchToLocalDomain();
 
+        $this->setUpLocalEntities();
+
+        $this->switchToRemoteDomain($this->remoteDomain);
+        $this->setUpLateRemoteEntities();
+
+        $this->switchToLocalDomain();
+
         // foreach ($this->entitiesToRemoveAfterSetup as $entity) {
         // $this->entityManager->remove($entity);
         // }
@@ -95,6 +102,20 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
     }
 
     abstract public function setUpRemoteEntities(): void;
+
+    /**
+     * Override this method if you want to set up remote objects depending on you local entities.
+     */
+    public function setUpLateRemoteEntities(): void
+    {
+    }
+
+    /**
+     * Override this method if you want to set up additional local entities.
+     */
+    public function setUpLocalEntities(): void
+    {
+    }
 
     protected function setUpRemoteActors(): void
     {
