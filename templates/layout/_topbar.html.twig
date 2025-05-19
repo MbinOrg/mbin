@@ -1,24 +1,28 @@
-<div id="topbar">
-    <menu>
-        <li class="{{ html_classes({'active': (is_route_name('front') and not criteria.subscribed and not criteria.moderated and not criteria.favourite) or (is_route_name('root') and not criteria.subscribed and not criteria.moderated and not criteria.favourite) or is_route_name('posts_front') or is_route_name('people_front')}) }}">
-            <a class="stretched-link" href="/all">{{ 'all'|trans }}</a>
-        </li>
-        <li class="{{ html_classes({'active': (is_route_name('front') and criteria.subscribed) or (is_route_name('root') and criteria.subscribed) }) }}">
-            <a class="stretched-link" href="/sub/">{{ 'subscribed'|trans }}</a>
-        </li>
-        <li class="{{ html_classes({'active': (is_route_name('front') and criteria.moderated) or (is_route_name('root') and criteria.moderated) }) }}">
-            <a class="stretched-link" href="/mod/">{{ 'moderated'|trans }}</a>
-        </li>
-        <li class="{{ html_classes({'active': (is_route_name('front') and criteria.favourite) or (is_route_name('root') and criteria.favourite) }) }}">
-            <a class="stretched-link" href="/fav/">{{ 'favourites'|trans }}</a>
-        </li>
-        <li>
-            <a class="stretched-link" href="#">•</a>
-        </li>
-    </menu>
-    {{ component('featured_magazines', {magazine: magazine is defined and magazine ? magazine : null}) }}
-    <menu>
-        <li class="{{ html_classes({'active': is_route_name('magazine_list_all')}) }}">
-            <a class="stretched-link" href="{{ path('magazine_list_all') }}">{{ 'all_magazines'|trans }}</a></li>
-    </menu>
-</div>
+{% set show_topbar = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_TOPBAR')) %}
+{% set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') %}
+{% if show_topbar is same as V_TRUE %}
+    <div id="topbar">
+        <menu>
+            <li class="{{ html_classes({'active': (is_route_name('front') and not criteria.subscribed and not criteria.moderated and not criteria.favourite) or (is_route_name('root') and not criteria.subscribed and not criteria.moderated and not criteria.favourite) or is_route_name('posts_front') or is_route_name('people_front')}) }}">
+                <a class="stretched-link" href="/all">{{ 'all'|trans }}</a>
+            </li>
+            <li class="{{ html_classes({'active': (is_route_name('front') and criteria.subscribed) or (is_route_name('root') and criteria.subscribed) }) }}">
+                <a class="stretched-link" href="/sub/">{{ 'subscribed'|trans }}</a>
+            </li>
+            <li class="{{ html_classes({'active': (is_route_name('front') and criteria.moderated) or (is_route_name('root') and criteria.moderated) }) }}">
+                <a class="stretched-link" href="/mod/">{{ 'moderated'|trans }}</a>
+            </li>
+            <li class="{{ html_classes({'active': (is_route_name('front') and criteria.favourite) or (is_route_name('root') and criteria.favourite) }) }}">
+                <a class="stretched-link" href="/fav/">{{ 'favourites'|trans }}</a>
+            </li>
+            <li>
+                <a class="stretched-link" href="#">•</a>
+            </li>
+        </menu>
+        {{ component('featured_magazines', {magazine: magazine is defined and magazine ? magazine : null}) }}
+        <menu>
+            <li class="{{ html_classes({'active': is_route_name('magazine_list_all')}) }}">
+                <a class="stretched-link" href="{{ path('magazine_list_all') }}">{{ 'all_magazines'|trans }}</a></li>
+        </menu>
+    </div>
+{% endif %}
