@@ -819,3 +819,26 @@ flash_magazine_theme_changed_success: Η εμφάνιση του περιοδι�
 flash_post_new_error: Η ανάρτηση δεν μπόρεσε να δημιουργηθεί. Κάτι πήγε στραβά.
 flash_thread_tag_banned_error: Δε μπόρεσε να δημιουργηθεί νήμα. Το περιεχόμενο δεν
   επιτρέπεται.
+page_width_auto: Αυτόματο
+filter_labels: Φιλτράρισμα Ετικετών
+2fa.manual_code_hint: Εάν δεν μπορείς να σαρώσεις τον κωδικό QR, εισήγαγε το μυστικό
+  χειροκίνητα
+flash_magazine_theme_changed_error: Αποτυχία ενημέρωσης εμφάνισης του περιοδικού.
+flash_comment_new_success: Το σχόλιο δημιουργήθηκε επιτυχώς.
+flash_user_settings_general_success: Οι ρυθμίσεις χρήστη αποθηκεύτηκαν με επιτυχία.
+flash_user_settings_general_error: Αποτυχία αποθήκευσης ρυθμίσεων χρήστη.
+flash_user_edit_profile_success: Οι ρυθμίσεις προφίλ χρήστη αποθηκεύτηκαν με επιτυχία.
+flash_comment_edit_success: Το σχόλιο ενημερώθηκε επιτυχώς.
+flash_comment_new_error: Αποτυχία δημιουργίας σχολίου. Κάτι πήγε στραβά.
+flash_user_edit_email_error: Αποτυχία αλλαγής email.
+flash_user_edit_password_error: Αποτυχία αλλαγής κωδικού πρόσβασης.
+flash_thread_edit_error: Αποτυχία επεξεργασίας νήματος. Κάτι πήγε στραβά.
+flash_post_edit_error: Αποτυχία επεξεργασίας ανάρτησης. Κάτι πήγε στραβά.
+flash_post_edit_success: Η ανάρτηση επεξεργάστηκε με επιτυχία.
+page_width: Πλάτος σελίδας
+page_width_fixed: Σταθερό
+auto: Αυτόματο
+open_url_to_fediverse: Άνοιγμα πρωτότυπου URL
+page_width_max: Μεγ
+flash_comment_edit_error: Αποτυχία επεξεργασίας σχολίου. Κάτι πήγε στραβά.
+flash_user_edit_profile_error: Αποτυχία αποθήκευσης ρυθμίσεων προφίλ.
