@@ -849,7 +849,7 @@ search_type_all: Temas + Microblogs
 search_type_entry: Temas
 search_type_post: Microblogs
 signup_requests: Solicitudes de novas contas
-application_text: Texto da solicitude
+application_text: Explica porq que queres unirte
 flash_application_info: A administración ten que aprobar a túa conta para que poidas
   iniciar sesión. Vas recibir un correo cando a solicitude se tramite.
 email_application_approved_title: Aprobouse a túa solicitude dunha nova conta
@@ -999,3 +999,4 @@ admin_users_inactive: Inactivas
 admin_users_suspended: Suspendidas
 admin_users_banned: Vetadas
 2fa.manual_code_hint: Se non podes escanear o código QR escribe a chave secreta manualmente
+toolbar.emoji: Emoji
