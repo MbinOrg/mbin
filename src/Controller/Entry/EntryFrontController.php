@@ -234,7 +234,7 @@ class EntryFrontController extends AbstractController
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([
-                'html' => $this->renderView($templatePath.'_list.html.twig', $data),
+                'html' => $this->renderView($templatePath.'_list.html.twig', $baseData),
             ]);
         }
 
