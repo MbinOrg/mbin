@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5357e43614d48f2c4511952c71531b20",
+    "content-hash": "22ca54c5baf53232653553b27f5b1b89",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -17565,6 +17565,83 @@
             "time": "2024-10-09T05:16:32+00:00"
         },
         {
+            "name": "spatie/phpunit-snapshot-assertions",
+            "version": "5.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/phpunit-snapshot-assertions.git",
+                "reference": "1b1825c8c7023249454a6a94b0d0c7801b7f62a5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/phpunit-snapshot-assertions/zipball/1b1825c8c7023249454a6a94b0d0c7801b7f62a5",
+                "reference": "1b1825c8c7023249454a6a94b0d0c7801b7f62a5",
+                "shasum": ""
+            },
+            "require": {
+                "composer-runtime-api": "^2.0",
+                "ext-dom": "*",
+                "ext-json": "*",
+                "ext-libxml": "*",
+                "php": "^8.1",
+                "phpunit/phpunit": "^10.0|^11.0|^12.0",
+                "symfony/property-access": "^5.2|^6.2|^7.0",
+                "symfony/serializer": "^5.2|^6.2|^7.0",
+                "symfony/yaml": "^5.2|^6.2|^7.0"
+            },
+            "require-dev": {
+                "spatie/pixelmatch-php": "dev-main",
+                "spatie/ray": "^1.37"
+            },
+            "suggest": {
+                "spatie/pixelmatch-php": "Required to use the image snapshot assertions"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-v5": "5.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\Snapshots\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian De Deyne",
+                    "email": "sebastian@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Snapshot testing with PHPUnit",
+            "homepage": "https://github.com/spatie/phpunit-snapshot-assertions",
+            "keywords": [
+                "assert",
+                "phpunit",
+                "phpunit-snapshot-assertions",
+                "snapshot",
+                "spatie",
+                "testing"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/phpunit-snapshot-assertions/issues",
+                "source": "https://github.com/spatie/phpunit-snapshot-assertions/tree/5.2.0"
+            },
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                }
+            ],
+            "time": "2025-05-08T15:44:02+00:00"
+        },
+        {
             "name": "staabm/side-effects-detector",
             "version": "1.0.5",
             "source": {
@@ -18134,7 +18211,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -18150,6 +18227,6 @@
         "ext-openssl": "*",
         "ext-redis": "*"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
 }
