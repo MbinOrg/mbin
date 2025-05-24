@@ -12,6 +12,7 @@ use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\ComponentAttributes;
 use Twig\Environment;
+use Twig\Runtime\EscaperRuntime;
 
 #[AsTwigComponent('post_comments_preview', template: 'components/_cached.html.twig')]
 final class PostCommentsPreviewComponent
@@ -41,7 +42,7 @@ final class PostCommentsPreviewComponent
                 return $this->twig->render(
                     'components/post_comments_preview.html.twig',
                     [
-                        'attributes' => new ComponentAttributes($attributes->all()),
+                        'attributes' => new ComponentAttributes($attributes->all(), new EscaperRuntime()),
                         'post' => $this->post,
                         'comments' => $this->post->lastActive < (new \DateTime('-4 hours'))
                             ? $this->post->getBestComments($this->security->getUser())
