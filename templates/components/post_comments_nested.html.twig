@@ -3,7 +3,8 @@
         {{ component('post_comment', {
             comment: reply,
             showNested: false,
-            level: 3
+            level: 3,
+            criteria: criteria,
         }) }}
     {% endfor %}
 {% else %}
