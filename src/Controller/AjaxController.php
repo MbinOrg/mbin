@@ -186,7 +186,7 @@ class AjaxController extends AbstractController
             [
                 'html' => $this->renderView(
                     'post/comment/_preview.html.twig',
-                    ['comments' => $comments, 'post' => $post]
+                    ['comments' => $comments, 'post' => $post, 'criteria' => $criteria]
                 ),
             ]
         );
