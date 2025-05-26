@@ -702,16 +702,17 @@
         "version": "v2.4.0"
     },
     "symfony/stimulus-bundle": {
-        "version": "2.14",
+        "version": "2.24",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
-            "version": "2.13",
-            "ref": "6acd9ff4f7fd5626d2962109bd4ebab351d43c43"
+            "version": "2.20",
+            "ref": "3acc494b566816514a6873a89023a35440b6386d"
         },
         "files": [
             "assets/bootstrap.js",
             "assets/controllers.json",
+            "assets/controllers/csrf_protection_controller.js",
             "assets/controllers/hello_controller.js"
         ]
     },
@@ -779,12 +780,12 @@
         "version": "v2.7.1"
     },
     "symfony/ux-twig-component": {
-        "version": "2.13",
+        "version": "2.24",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "2.13",
-            "ref": "67814b5f9794798b885cec9d3f48631424449a01"
+            "ref": "9b627037a510e20eddb559e06050a34854ce51d6"
         },
         "files": [
             "config/packages/twig_component.yaml"
