@@ -277,12 +277,21 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/MakaryGo">
+                    <img src="https://avatars.githubusercontent.com/u/24472656?v=4" width="100;" alt="MakaryGo"/>
+                    <br />
+                    <sub><b>Makary</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/MHLoppy">
                     <img src="https://avatars.githubusercontent.com/u/12670674?v=4" width="100;" alt="MHLoppy"/>
                     <br />
                     <sub><b>Mark Heath</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/DismalShadowX">
                     <img src="https://avatars.githubusercontent.com/u/24910097?v=4" width="100;" alt="DismalShadowX"/>
@@ -290,8 +299,6 @@ Unofficial magazines:
                     <sub><b>Nathan Sparrow</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/robertolopezlopez">
                     <img src="https://avatars.githubusercontent.com/u/1519467?v=4" width="100;" alt="robertolopezlopez"/>
