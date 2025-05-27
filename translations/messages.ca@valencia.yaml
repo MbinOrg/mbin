@@ -664,7 +664,7 @@ search_type_entry: Fils
 search_type_post: Microblogs
 select_user: Trieu un(a) usuari(a)
 signup_requests: Sol·licituds de registre
-application_text: Text de la sol·licitud
+application_text: Expliqueu per què voleu unir-vos
 signup_requests_header: Sol·licituds de registre
 signup_requests_paragraph: A estos(es) usuaris(es) els agradaria unir-se al vostre
   servidor. No poden iniciar sessió fins que no hàgeu aprovat llurs sol·licituds de
@@ -1021,3 +1021,4 @@ account_banned: El compte ha sigut vetat.
 answered: respost
 own_report_rejected: La vostra denúncia ha sigut rebutjada
 2fa.manual_code_hint: Si no podeu escanejar el codi QR, introduïu el secret manualment
+toolbar.emoji: Emoji

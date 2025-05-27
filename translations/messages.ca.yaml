@@ -982,7 +982,7 @@ search_type_post: Microblogs
 select_user: Trieu un(a) usuari(a)
 new_users_need_approval: Els comptes nous han de ser aprovats per l'administració
   abans que puguin iniciar sessió.
-application_text: Text de la sol·licitud
+application_text: Expliqueu per què voleu unir-vos
 signup_requests: Sol·licituds de registre
 signup_requests_header: Sol·licituds de registre
 email_application_approved_title: La vostra sol·licitud de registre s'ha aprovat
@@ -1021,3 +1021,4 @@ image_lightbox_in_list_help: Quan està marcat, en fer clic a la miniatura es mo
   una finestra modal amb la imatge. Quan no estigui marcat, fer clic a la miniatura
   obrirà el fil.
 2fa.manual_code_hint: Si no podeu escanejar el codi QR, introduïu el secret manualment
+toolbar.emoji: Emoji
