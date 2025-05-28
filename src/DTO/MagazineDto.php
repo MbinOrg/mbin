@@ -21,15 +21,15 @@ class MagazineDto
     private User|UserDto|null $owner = null;
     public Image|ImageDto|null $icon = null;
     #[Assert\NotBlank]
-    #[Assert\Length(min: 2, max: self::MAX_NAME_LENGTH)]
+    #[Assert\Length(min: 2, max: self::MAX_NAME_LENGTH, countUnit: Assert\Length::COUNT_GRAPHEMES)]
     #[Assert\Regex(pattern: RegPatterns::MAGAZINE_NAME, match: true)]
     public ?string $name = null;
     #[Assert\NotBlank]
-    #[Assert\Length(min: 3, max: self::MAX_TITLE_LENGTH)]
+    #[Assert\Length(min: 3, max: self::MAX_TITLE_LENGTH, countUnit: Assert\Length::COUNT_GRAPHEMES)]
     public ?string $title = null;
-    #[Assert\Length(min: 0, max: Magazine::MAX_DESCRIPTION_LENGTH)]
+    #[Assert\Length(min: 0, max: Magazine::MAX_DESCRIPTION_LENGTH, countUnit: Assert\Length::COUNT_GRAPHEMES)]
     public ?string $description = null;
-    #[Assert\Length(min: 0, max: Magazine::MAX_RULES_LENGTH)]
+    #[Assert\Length(min: 0, max: Magazine::MAX_RULES_LENGTH, countUnit: Assert\Length::COUNT_GRAPHEMES)]
     public ?string $rules = null;
     public ?string $visibility = null;
     public int $subscriptionsCount = 0;
