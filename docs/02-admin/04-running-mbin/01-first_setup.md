@@ -20,6 +20,10 @@ Next, log in and create a magazine named `random` to which unclassified content 
 > [!IMPORTANT]
 > Creating a `random` magazine is a requirement to getting microblog posts that don't fall under an existing magazine.
 
+```bash
+php bin/console mbin:magazine create random
+```
+
 ### Manual user activation
 
 Activate a user account (bypassing email verification), please change the `username` below:

@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\UX\TwigComponent\ComponentAttributes;
+use Twig\Runtime\EscaperRuntime;
 
 class PostVotersController extends AbstractController
 {
@@ -26,7 +27,7 @@ class PostVotersController extends AbstractController
             return new JsonResponse([
                 'html' => $this->renderView('components/voters_inline.html.twig', [
                     'voters' => $post->getUpVotes()->map(fn ($vote) => $vote->user->username),
-                    'attributes' => new ComponentAttributes([]),
+                    'attributes' => new ComponentAttributes([], new EscaperRuntime()),
                     'count' => 0,
                 ]),
             ]);

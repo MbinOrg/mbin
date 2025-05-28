@@ -944,7 +944,7 @@ select_user: Choose a user
 new_users_need_approval: New users have to be approved by an admin before they can
   log in.
 signup_requests: Signup requests
-application_text: Application text
+application_text: Explain why you want to join
 signup_requests_header: Signup Requests
 signup_requests_paragraph: These users would like to join your server. They cannot
   log in until you've approved their signup request.
