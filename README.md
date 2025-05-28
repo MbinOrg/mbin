@@ -293,13 +293,6 @@ Unofficial magazines:
 		</tr>
 		<tr>
             <td align="center">
-                <a href="https://github.com/DismalShadowX">
-                    <img src="https://avatars.githubusercontent.com/u/24910097?v=4" width="100;" alt="DismalShadowX"/>
-                    <br />
-                    <sub><b>Nathan Sparrow</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/robertolopezlopez">
                     <img src="https://avatars.githubusercontent.com/u/1519467?v=4" width="100;" alt="robertolopezlopez"/>
                     <br />
