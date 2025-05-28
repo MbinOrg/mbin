@@ -1,0 +1,15 @@
+{% if rich is same as true %}
+    {{ component('user_inline', {
+        user: user,
+        showAvatar: showAvatar,
+        showNewIcon: showNewIcon,
+        fullName: fullName,
+    }) }}
+{% else %}
+    <a href="{{ path('user_overview', {username: user.username}) }}" title="{{ user.username|username(true) }}">
+        @{{- user.username|username -}}
+        {%- if fullName -%}
+            @{{- user.username|apDomain -}}
+        {%- endif -%}
+    </a>
+{% endif %}

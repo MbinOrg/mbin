@@ -56,7 +56,7 @@
             }) }}
             <div class="content">
                 {% if post.visibility in ['visible', 'private'] or (post.visibility is same as 'trashed' and this.canSeeTrashed) %}
-                    {{ post.body|markdown|raw }}
+                    {{ post.body|markdown("post")|raw }}
                 {% elseif(post.visibility is same as 'trashed') %}
                     <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
                 {% elseif(post.visibility is same as 'soft_deleted') %}
