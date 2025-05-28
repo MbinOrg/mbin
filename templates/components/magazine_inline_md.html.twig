@@ -1,0 +1,15 @@
+{% if rich is same as true %}
+    {{ component('magazine_inline', {
+        magazine: magazine,
+        stretchedLink: stretchedLink,
+        fullName: fullName,
+        showAvatar: showAvatar,
+    }) }}
+{% else %}
+    <a href="{{ path('front_magazine', {name: magazine.name}) }}" title="{{ magazine.name|username(true) }}">
+        !{{- magazine.name|username -}}
+        {%- if fullName -%}
+            @{{- magazine.name|apDomain -}}
+        {%- endif -%}
+    </a>
+{% endif %}

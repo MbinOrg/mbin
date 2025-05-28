@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Markdown;
 
+use App\Controller\User\ThemeSettingsController;
 use App\Markdown\CommonMark\CommunityLinkParser;
 use App\Markdown\CommonMark\DetailsBlockRenderer;
 use App\Markdown\CommonMark\DetailsBlockStartParser;
@@ -20,6 +21,7 @@ use League\CommonMark\Extension\CommonMark\Node\Inline\Link;
 use League\CommonMark\Extension\ConfigurableExtensionInterface;
 use League\Config\ConfigurationBuilderInterface;
 use Nette\Schema\Expect;
+use Symfony\Component\HttpFoundation\Request;
 
 final class MarkdownExtension implements ConfigurableExtensionInterface
 {
@@ -39,6 +41,9 @@ final class MarkdownExtension implements ConfigurableExtensionInterface
     {
         $builder->addSchema('kbin', Expect::structure([
             'render_target' => Expect::type(RenderTarget::class),
+            'richMention' => Expect::bool(true),
+            'richMagazineMention' => Expect::bool(true),
+            'richAPLink' => Expect::bool(true),
         ]));
     }
 
@@ -54,5 +59,31 @@ final class MarkdownExtension implements ConfigurableExtensionInterface
         $environment->addRenderer(Image::class, $this->imagesRenderer, 1);
         $environment->addRenderer(UnresolvableLink::class, $this->unresolvableLinkRenderer, 1);
         $environment->addRenderer(DetailsBlock::class, $this->detailsBlockRenderer, 1);
+    }
+
+    /**
+     * @return array{richMention: bool, richMagazineMention: bool, richAPLink: bool}
+     */
+    public static function getMdRichConfig(?Request $request, string $sourceType = ''): array
+    {
+        if ('entry' === $sourceType) {
+            return [
+                'richMention' => ThemeSettingsController::getShowRichMentionEntry($request),
+                'richMagazineMention' => ThemeSettingsController::getShowRichMagazineMentionEntry($request),
+                'richAPLink' => ThemeSettingsController::getShowRichAPLinkEntries($request),
+            ];
+        } elseif ('post' === $sourceType) {
+            return [
+                'richMention' => ThemeSettingsController::getShowRichMentionPosts($request),
+                'richMagazineMention' => ThemeSettingsController::getShowRichMagazineMentionPosts($request),
+                'richAPLink' => ThemeSettingsController::getShowRichAPLinkPosts($request),
+            ];
+        } else {
+            return [
+                'richMention' => true,
+                'richMagazineMention' => true,
+                'richAPLink' => true,
+            ];
+        }
     }
 }

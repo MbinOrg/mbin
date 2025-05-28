@@ -58,10 +58,14 @@ final class CacheMarkdownListener implements EventSubscriberInterface
     public function preConvertMarkdown(ConvertMarkdown $event): void
     {
         $request = $this->requestStack->getCurrentRequest();
+        if (null === $request) {
+            $this->logger->debug('[ConvertMarkdown] request is null]');
+        }
         $cacheEvent = new BuildCacheContext($event, $request);
         $this->dispatcher->dispatch($cacheEvent);
 
-        $item = $this->pool->getItem($cacheEvent->getCacheKey());
+        $key = $cacheEvent->getCacheKey();
+        $item = $this->pool->getItem($key);
 
         if ($item->isHit()) {
             $content = $item->get();
@@ -99,7 +103,7 @@ final class CacheMarkdownListener implements EventSubscriberInterface
 
                 $tags = array_unique(array_merge($urls, $mentions, $magazineMentions));
 
-                $this->logger->debug('added tags {t} to markdown "{m}"', ['t' => $tags, 'm' => $md]);
+                $this->logger->debug('added tags {t} to markdown "{m}"', ['t' => join(', ', $tags), 'm' => $md]);
 
                 $item->tag($tags);
             }

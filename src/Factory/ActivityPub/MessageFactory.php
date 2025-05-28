@@ -7,6 +7,7 @@ namespace App\Factory\ActivityPub;
 use App\Entity\Message;
 use App\Entity\User;
 use App\Markdown\MarkdownConverter;
+use App\Markdown\RenderTarget;
 use App\Service\ActivityPub\ContextsProvider;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -33,7 +34,7 @@ class MessageFactory
             'cc' => [],
             'type' => 'ChatMessage',
             'published' => $message->createdAt->format(DATE_ATOM),
-            'content' => $this->markdownConverter->convertToHtml($message->body),
+            'content' => $this->markdownConverter->convertToHtml($message->body, context: [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub]),
             'mediaType' => 'text/html',
             'source' => [
                 'mediaType' => 'text/markdown',
