@@ -21,6 +21,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\SecurityBundle\Security as SymfonySecurity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -173,6 +174,12 @@ class EntriesRetrieveApi extends EntriesBaseApi
         in: 'query',
         schema: new OA\Schema(type: 'boolean', default: false),
     )]
+    #[OA\Parameter(
+        name: 'federation',
+        description: 'What type of federated entries to retrieve',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
+    )]
     #[OA\Tag(name: 'entry')]
     public function collection(
         EntryRepository $repository,
@@ -181,6 +188,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
         SymfonySecurity $security,
+        #[MapQueryParameter] ?string $federation,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -189,6 +197,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
         $criteria->time = $criteria->resolveTime(
             $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
         );
+        $criteria->setFederation($federation ?? Criteria::AP_ALL);
         $this->handleLanguageCriteria($criteria);
 
         $entries = $repository->findByCriteria($criteria);
@@ -278,6 +287,12 @@ class EntriesRetrieveApi extends EntriesBaseApi
         in: 'query',
         schema: new OA\Schema(type: 'integer', default: EntryRepository::PER_PAGE, minimum: self::MIN_PER_PAGE, maximum: self::MAX_PER_PAGE)
     )]
+    #[OA\Parameter(
+        name: 'federation',
+        description: 'What type of federated entries to retrieve',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
+    )]
     #[OA\Tag(name: 'entry')]
     #[Security(name: 'oauth2', scopes: ['read'])]
     #[IsGranted('ROLE_OAUTH2_READ')]
@@ -287,6 +302,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
         RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
         SymfonySecurity $security,
+        #[MapQueryParameter] ?string $federation,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
@@ -295,6 +311,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
         $criteria->time = $criteria->resolveTime(
             $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
         );
+        $criteria->setFederation($federation ?? Criteria::AP_ALL);
 
         $criteria->subscribed = true;
 
@@ -385,6 +402,12 @@ class EntriesRetrieveApi extends EntriesBaseApi
         in: 'query',
         schema: new OA\Schema(type: 'integer', default: EntryRepository::PER_PAGE, minimum: self::MIN_PER_PAGE, maximum: self::MAX_PER_PAGE)
     )]
+    #[OA\Parameter(
+        name: 'federation',
+        description: 'What type of federated entries to retrieve',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
+    )]
     #[OA\Tag(name: 'entry')]
     #[Security(name: 'oauth2', scopes: ['moderate:entry'])]
     #[IsGranted('ROLE_OAUTH2_MODERATE:ENTRY')]
@@ -394,6 +417,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
         RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
         SymfonySecurity $security,
+        #[MapQueryParameter] ?string $federation,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
@@ -402,6 +426,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
         $criteria->time = $criteria->resolveTime(
             $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
         );
+        $criteria->setFederation($federation ?? Criteria::AP_ALL);
 
         $criteria->moderated = true;
 
@@ -492,6 +517,12 @@ class EntriesRetrieveApi extends EntriesBaseApi
         in: 'query',
         schema: new OA\Schema(type: 'integer', default: EntryRepository::PER_PAGE, minimum: self::MIN_PER_PAGE, maximum: self::MAX_PER_PAGE)
     )]
+    #[OA\Parameter(
+        name: 'federation',
+        description: 'What type of federated entries to retrieve',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
+    )]
     #[OA\Tag(name: 'entry')]
     #[Security(name: 'oauth2', scopes: ['entry:vote'])]
     #[IsGranted('ROLE_OAUTH2_ENTRY:VOTE')]
@@ -501,6 +532,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
         RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
         SymfonySecurity $security,
+        #[MapQueryParameter] ?string $federation,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
@@ -509,6 +541,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
         $criteria->time = $criteria->resolveTime(
             $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
         );
+        $criteria->setFederation($federation ?? Criteria::AP_ALL);
 
         $criteria->favourite = true;
 
