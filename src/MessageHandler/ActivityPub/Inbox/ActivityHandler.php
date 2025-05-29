@@ -188,7 +188,7 @@ class ActivityHandler extends MbinMessageHandler
 
         switch ($payload['type']) {
             case 'Create':
-                $this->bus->dispatch(new CreateMessage($payload['object']));
+                $this->bus->dispatch(new CreateMessage($payload['object'], fullCreatePayload: $payload));
                 break;
             case 'Note':
             case 'Page':

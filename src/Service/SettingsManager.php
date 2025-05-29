@@ -11,15 +11,19 @@ use App\Utils\DownvotesMode;
 use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class SettingsManager
 {
     private static ?SettingsDto $dto = null;
 
+    private SettingsDto $instanceDto;
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly SettingsRepository $repository,
         private readonly RequestStack $requestStack,
+        private readonly KernelInterface $kernel,
         private readonly string $kbinDomain,
         private readonly string $kbinTitle,
         private readonly string $kbinMetaTitle,
@@ -41,7 +45,7 @@ class SettingsManager
         private readonly DownvotesMode $mbinDownvotesMode,
         private readonly bool $mbinNewUsersNeedApproval,
     ) {
-        if (!self::$dto) {
+        if (!self::$dto || 'test' === $this->kernel->getEnvironment()) {
             $results = $this->repository->findAll();
 
             $maxImageBytesEdited = $this->find($results, 'MAX_IMAGE_BYTES', FILTER_VALIDATE_INT);
@@ -58,7 +62,7 @@ class SettingsManager
                 $newUsersNeedApprovalEdited = $this->mbinNewUsersNeedApproval;
             }
 
-            self::$dto = new SettingsDto(
+            $dto = new SettingsDto(
                 $this->kbinDomain,
                 $this->find($results, 'KBIN_TITLE') ?? $this->kbinTitle,
                 $this->find($results, 'KBIN_META_TITLE') ?? $this->kbinMetaTitle,
@@ -96,6 +100,9 @@ class SettingsManager
                 $this->find($results, 'MBIN_DOWNVOTES_MODE') ?? $this->mbinDownvotesMode->value,
                 $newUsersNeedApprovalEdited,
             );
+            $this->instanceDto = $dto;
+        } else {
+            $this->instanceDto = self::$dto;
         }
     }
 
@@ -118,7 +125,7 @@ class SettingsManager
 
     public function getDto(): SettingsDto
     {
-        return self::$dto;
+        return $this->instanceDto;
     }
 
     public function save(SettingsDto $dto): void
@@ -172,7 +179,7 @@ class SettingsManager
 
     public function get(string $name)
     {
-        return self::$dto->{$name};
+        return $this->instanceDto->{$name};
     }
 
     public function getDownvotesMode(): DownvotesMode
@@ -187,14 +194,14 @@ class SettingsManager
 
     public function set(string $name, $value): void
     {
-        self::$dto->{$name} = $value;
+        $this->instanceDto->{$name} = $value;
 
-        $this->save(self::$dto);
+        $this->save($this->instanceDto);
     }
 
-    public static function getValue(string $name): string
+    public function getValue(string $name): string
     {
-        return self::$dto->{$name};
+        return $this->instanceDto->{$name};
     }
 
     public function getLocale(): string
