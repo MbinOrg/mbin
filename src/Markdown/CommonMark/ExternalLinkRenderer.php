@@ -66,20 +66,52 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
     public function setConfiguration(ConfigurationInterface $configuration): void
     {
         $this->config = $configuration;
+        $this->logger->debug('[ExternalLinkRenderer] config initialized with: {v}', ['v' => $configuration->get('kbin')]);
     }
 
     private function getRenderTarget(): RenderTarget
     {
+        $val = $this->getFromConfig(MarkdownConverter::RENDER_TARGET);
+        if ($val instanceof RenderTarget) {
+            return $val;
+        }
+
+        return RenderTarget::ActivityPub;
+    }
+
+    private function showRichMentions(): bool
+    {
+        return $this->getBoolFromConfig('richMention', true);
+    }
+
+    private function showRichMagazineMentions(): bool
+    {
+        return $this->getBoolFromConfig('richMagazineMention', true);
+    }
+
+    private function showRichAPLinks(): bool
+    {
+        return $this->getBoolFromConfig('richAPLink', true);
+    }
+
+    private function getBoolFromConfig(string $key, bool $default): bool
+    {
+        $value = $this->getFromConfig($key);
+
+        return null !== $value ? \boolval($value) : $default;
+    }
+
+    private function getFromConfig(string $key): mixed
+    {
         try {
             $kbinConfig = $this->config->get('kbin');
-            $renderTarget = $kbinConfig[MarkdownConverter::RENDER_TARGET];
-            if ($renderTarget instanceof RenderTarget) {
-                return $renderTarget;
+            if (\array_key_exists($key, $kbinConfig)) {
+                return $kbinConfig[$key];
             }
         } catch (\Throwable $e) {
         }
 
-        return RenderTarget::ActivityPub;
+        return null;
     }
 
     public function render(Node $node, ChildNodeRendererInterface $childRenderer): HtmlElement|string
@@ -358,11 +390,12 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
 
     private function renderUser(?User $user): string
     {
-        return $this->twig->render('components/user_inline.html.twig', [
+        return $this->twig->render('components/user_inline_md.html.twig', [
             'user' => $user,
             'showAvatar' => true,
             'showNewIcon' => true,
             'fullName' => ThemeSettingsController::getShowUserFullName($this->requestStack->getCurrentRequest()),
+            'rich' => $this->showRichMentions(),
         ]);
     }
 
@@ -381,11 +414,12 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
 
     private function renderMagazine(Magazine $magazine)
     {
-        return $this->twig->render('components/magazine_inline.html.twig', [
+        return $this->twig->render('components/magazine_inline_md.html.twig', [
             'magazine' => $magazine,
             'stretchedLink' => false,
             'fullName' => ThemeSettingsController::getShowMagazineFullName($this->requestStack->getCurrentRequest()),
             'showAvatar' => true,
+            'rich' => $this->showRichMagazineMentions(),
         ]);
     }
 
@@ -396,24 +430,28 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
                 'entry' => $entity,
                 'userFullName' => ThemeSettingsController::getShowUserFullName($this->requestStack->getCurrentRequest()),
                 'magazineFullName' => ThemeSettingsController::getShowMagazineFullName($this->requestStack->getCurrentRequest()),
+                'rich' => $this->showRichAPLinks(),
             ]);
         } elseif ($entity instanceof EntryComment) {
             return $this->twig->render('components/entry_comment_inline_md.html.twig', [
                 'comment' => $entity,
                 'userFullName' => ThemeSettingsController::getShowUserFullName($this->requestStack->getCurrentRequest()),
                 'magazineFullName' => ThemeSettingsController::getShowMagazineFullName($this->requestStack->getCurrentRequest()),
+                'rich' => $this->showRichAPLinks(),
             ]);
         } elseif ($entity instanceof Post) {
             return $this->twig->render('components/post_inline_md.html.twig', [
                 'post' => $entity,
                 'userFullName' => ThemeSettingsController::getShowUserFullName($this->requestStack->getCurrentRequest()),
                 'magazineFullName' => ThemeSettingsController::getShowMagazineFullName($this->requestStack->getCurrentRequest()),
+                'rich' => $this->showRichAPLinks(),
             ]);
         } elseif ($entity instanceof PostComment) {
             return $this->twig->render('components/post_comment_inline_md.html.twig', [
                 'comment' => $entity,
                 'userFullName' => ThemeSettingsController::getShowUserFullName($this->requestStack->getCurrentRequest()),
                 'magazineFullName' => ThemeSettingsController::getShowMagazineFullName($this->requestStack->getCurrentRequest()),
+                'rich' => $this->showRichAPLinks(),
             ]);
         }
         throw new \LogicException('This code should be unreachable');

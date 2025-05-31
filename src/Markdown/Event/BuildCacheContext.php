@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Markdown\Event;
 
 use App\Controller\User\ThemeSettingsController;
+use App\Markdown\MarkdownExtension;
 use App\Utils\UrlUtils;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -19,10 +20,14 @@ class BuildCacheContext
         private readonly ConvertMarkdown $convertMarkdownEvent,
         private readonly ?Request $request,
     ) {
+        $richMdConfig = MarkdownExtension::getMdRichConfig($this->request, $this->convertMarkdownEvent->getSourceType());
         $this->addToContext('content', $convertMarkdownEvent->getMarkdown());
         $this->addToContext('target', $convertMarkdownEvent->getRenderTarget()->name);
         $this->addToContext('userFullName', ThemeSettingsController::getShowUserFullName($this->request) ? '1' : '0');
         $this->addToContext('magazineFullName', ThemeSettingsController::getShowMagazineFullName($this->request) ? '1' : '0');
+        $this->addToContext('richMention', $richMdConfig['richMention'] ? '1' : '0');
+        $this->addToContext('richMagazineMention', $richMdConfig['richMagazineMention'] ? '1' : '0');
+        $this->addToContext('richAPLink', $richMdConfig['richAPLink'] ? '1' : '0');
         $this->addToContext('apRequest', UrlUtils::isActivityPubRequest($this->request) ? '1' : '0');
     }
 
