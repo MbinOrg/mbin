@@ -18,10 +18,10 @@ class EntryCommentRequestDto extends ContentRequestDto
      *
      * @return EntryCommentDto The newly merged entry
      */
-    public function mergeIntoDto(EntryCommentDto $dto): EntryCommentDto
+    public function mergeIntoDto(EntryCommentDto $dto, SettingsManager $settingsManager): EntryCommentDto
     {
         $dto->body = $this->body ?? $dto->body;
-        $dto->lang = $this->lang ?? $dto->lang ?? SettingsManager::getValue('KBIN_DEFAULT_LANG');
+        $dto->lang = $this->lang ?? $dto->lang ?? $settingsManager->getValue('KBIN_DEFAULT_LANG');
         $dto->isAdult = $this->isAdult ?? $dto->isAdult;
 
         return $dto;

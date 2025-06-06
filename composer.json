@@ -124,6 +124,7 @@
         "justinrainbow/json-schema": "^6.0.0",
         "phpstan/phpstan": "^2.0.2",
         "phpunit/phpunit": "^11.3.4",
+        "spatie/phpunit-snapshot-assertions": "*",
         "symfony/browser-kit": "7.2.*",
         "symfony/debug-bundle": "7.2.*",
         "symfony/maker-bundle": "1.63.0",

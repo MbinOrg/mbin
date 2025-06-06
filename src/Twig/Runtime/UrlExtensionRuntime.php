@@ -18,6 +18,7 @@ class UrlExtensionRuntime implements RuntimeExtensionInterface
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RequestStack $requestStack,
+        private readonly MentionManager $mentionManager,
     ) {
     }
 
@@ -293,6 +294,6 @@ class UrlExtensionRuntime implements RuntimeExtensionInterface
 
     public function mentionUrl(string $username): string
     {
-        return MentionManager::getRoute([$username])[0];
+        return $this->mentionManager->getRoute([$username])[0];
     }
 }
