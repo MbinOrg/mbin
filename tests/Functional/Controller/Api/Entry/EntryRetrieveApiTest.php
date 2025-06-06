@@ -1083,4 +1083,76 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertIsArray($jsonData['bookmarks']);
         self::assertEmpty($jsonData['bookmarks']);
     }
+
+    public function testApiCanGetEntriesLocal(): void
+    {
+        $first = $this->getEntryByTitle('first', body: 'test');
+        $second = $this->getEntryByTitle('second', body: 'test2');
+
+        $second->apId = 'https://some.url';
+
+        $entityManager = $this->entityManager;
+        $entityManager->persist($first);
+        $entityManager->persist($second);
+        $entityManager->flush();
+
+        self::createOAuth2AuthCodeClient();
+        $this->client->loginUser($this->getUserByUsername('user'));
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+
+        $this->client->request('GET', '/api/entries?federation=local', server: ['HTTP_AUTHORIZATION' => $token]);
+        self::assertResponseIsSuccessful();
+
+        $jsonData = self::getJsonResponse($this->client);
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
+
+        self::assertIsArray($jsonData['items']);
+        self::assertCount(1, $jsonData['items']);
+        self::assertIsArray($jsonData['pagination']);
+        self::assertArrayKeysMatch(self::PAGINATION_KEYS, $jsonData['pagination']);
+        self::assertSame(1, $jsonData['pagination']['count']);
+
+        self::assertIsArray($jsonData['items'][0]);
+        self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][0]);
+        self::assertSame($first->getId(), $jsonData['items'][0]['entryId']);
+    }
+
+    public function testApiCanGetEntriesFederated(): void
+    {
+        $first = $this->getEntryByTitle('first', body: 'test');
+        $second = $this->getEntryByTitle('second', body: 'test2');
+
+        $second->apId = 'https://some.url';
+
+        $entityManager = $this->entityManager;
+        $entityManager->persist($first);
+        $entityManager->persist($second);
+        $entityManager->flush();
+
+        self::createOAuth2AuthCodeClient();
+        $this->client->loginUser($this->getUserByUsername('user'));
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+
+        $this->client->request('GET', '/api/entries?federation=federated', server: ['HTTP_AUTHORIZATION' => $token]);
+        self::assertResponseIsSuccessful();
+
+        $jsonData = self::getJsonResponse($this->client);
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
+
+        self::assertIsArray($jsonData['items']);
+        self::assertCount(1, $jsonData['items']);
+        self::assertIsArray($jsonData['pagination']);
+        self::assertArrayKeysMatch(self::PAGINATION_KEYS, $jsonData['pagination']);
+        self::assertSame(1, $jsonData['pagination']['count']);
+
+        self::assertIsArray($jsonData['items'][0]);
+        self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][0]);
+        self::assertSame($second->getId(), $jsonData['items'][0]['entryId']);
+    }
 }

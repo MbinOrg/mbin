@@ -22,6 +22,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\SecurityBundle\Security as SymfonySecurity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -167,6 +168,12 @@ class PostsRetrieveApi extends PostsBaseApi
         in: 'query',
         schema: new OA\Schema(type: 'boolean', default: false),
     )]
+    #[OA\Parameter(
+        name: 'federation',
+        description: 'What type of federated entries to retrieve',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
+    )]
     #[OA\Tag(name: 'post')]
     public function collection(
         PostRepository $repository,
@@ -175,6 +182,7 @@ class PostsRetrieveApi extends PostsBaseApi
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
         SymfonySecurity $security,
+        #[MapQueryParameter] ?string $federation,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -184,6 +192,7 @@ class PostsRetrieveApi extends PostsBaseApi
             $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
         );
         $criteria->perPage = self::constrainPerPage($request->getCurrentRequest()->get('perPage', PostRepository::PER_PAGE));
+        $criteria->setFederation($federation ?? Criteria::AP_ALL);
 
         $this->handleLanguageCriteria($criteria);
 
@@ -285,6 +294,12 @@ class PostsRetrieveApi extends PostsBaseApi
         in: 'query',
         schema: new OA\Schema(type: 'boolean', default: false),
     )]
+    #[OA\Parameter(
+        name: 'federation',
+        description: 'What type of federated entries to retrieve',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
+    )]
     #[OA\Tag(name: 'post')]
     #[Security(name: 'oauth2', scopes: ['read'])]
     #[IsGranted('ROLE_OAUTH2_READ')]
@@ -295,6 +310,7 @@ class PostsRetrieveApi extends PostsBaseApi
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
         SymfonySecurity $security,
+        #[MapQueryParameter] ?string $federation,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -304,6 +320,7 @@ class PostsRetrieveApi extends PostsBaseApi
             $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
         );
         $criteria->perPage = self::constrainPerPage($request->getCurrentRequest()->get('perPage', PostRepository::PER_PAGE));
+        $criteria->setFederation($federation ?? Criteria::AP_ALL);
         $criteria->subscribed = true;
 
         $this->handleLanguageCriteria($criteria);
@@ -394,6 +411,12 @@ class PostsRetrieveApi extends PostsBaseApi
         in: 'query',
         schema: new OA\Schema(type: 'string', default: Criteria::TIME_ALL, enum: Criteria::TIME_ROUTES_EN)
     )]
+    #[OA\Parameter(
+        name: 'federation',
+        description: 'What type of federated entries to retrieve',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
+    )]
     #[OA\Tag(name: 'post')]
     #[Security(name: 'oauth2', scopes: ['moderate:post'])]
     #[IsGranted('ROLE_OAUTH2_MODERATE:POST')]
@@ -404,6 +427,7 @@ class PostsRetrieveApi extends PostsBaseApi
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
         SymfonySecurity $security,
+        #[MapQueryParameter] ?string $federation,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -413,6 +437,7 @@ class PostsRetrieveApi extends PostsBaseApi
             $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
         );
         $criteria->perPage = self::constrainPerPage($request->getCurrentRequest()->get('perPage', PostRepository::PER_PAGE));
+        $criteria->setFederation($federation ?? Criteria::AP_ALL);
         $criteria->moderated = true;
 
         $posts = $repository->findByCriteria($criteria);
@@ -496,6 +521,12 @@ class PostsRetrieveApi extends PostsBaseApi
         in: 'query',
         schema: new OA\Schema(type: 'string', default: Criteria::TIME_ALL, enum: Criteria::TIME_ROUTES_EN)
     )]
+    #[OA\Parameter(
+        name: 'federation',
+        description: 'What type of federated entries to retrieve',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
+    )]
     #[OA\Tag(name: 'post')]
     #[Security(name: 'oauth2', scopes: ['post:vote'])]
     #[IsGranted('ROLE_OAUTH2_POST:VOTE')]
@@ -506,6 +537,7 @@ class PostsRetrieveApi extends PostsBaseApi
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
         SymfonySecurity $security,
+        #[MapQueryParameter] ?string $federation,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -515,6 +547,7 @@ class PostsRetrieveApi extends PostsBaseApi
             $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
         );
         $criteria->perPage = self::constrainPerPage($request->getCurrentRequest()->get('perPage', PostRepository::PER_PAGE));
+        $criteria->setFederation($federation ?? Criteria::AP_ALL);
         $criteria->favourite = true;
 
         $this->logger->debug(var_export($criteria, true));
@@ -628,6 +661,12 @@ class PostsRetrieveApi extends PostsBaseApi
         in: 'query',
         schema: new OA\Schema(type: 'boolean', default: false),
     )]
+    #[OA\Parameter(
+        name: 'federation',
+        description: 'What type of federated entries to retrieve',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
+    )]
     #[OA\Tag(name: 'magazine')]
     public function byMagazine(
         #[MapEntity(id: 'magazine_id')]
@@ -638,6 +677,7 @@ class PostsRetrieveApi extends PostsBaseApi
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
         SymfonySecurity $security,
+        #[MapQueryParameter] ?string $federation,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -647,6 +687,7 @@ class PostsRetrieveApi extends PostsBaseApi
             $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
         );
         $criteria->perPage = self::constrainPerPage($request->getCurrentRequest()->get('perPage', PostRepository::PER_PAGE));
+        $criteria->setFederation($federation ?? Criteria::AP_ALL);
         $criteria->stickiesFirst = true;
 
         $this->handleLanguageCriteria($criteria);

@@ -150,6 +150,8 @@ class PostRepository extends ServiceEntityRepository
 
         if (Criteria::AP_LOCAL === $criteria->federation) {
             $qb->andWhere('p.apId IS NULL');
+        } elseif (Criteria::AP_FEDERATED === $criteria->federation) {
+            $qb->andWhere('p.apId IS NOT NULL');
         }
 
         if ($criteria->magazine) {

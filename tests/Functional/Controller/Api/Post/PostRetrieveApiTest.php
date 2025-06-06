@@ -988,4 +988,76 @@ class PostRetrieveApiTest extends WebTestCase
         self::assertIsArray($jsonData['bookmarks']);
         self::assertEmpty($jsonData['bookmarks']);
     }
+
+    public function testApiCanGetPostsLocal(): void
+    {
+        $first = $this->createPost('first');
+        $second = $this->createPost('second');
+
+        $second->apId = 'https://some.url';
+
+        $entityManager = $this->entityManager;
+        $entityManager->persist($first);
+        $entityManager->persist($second);
+        $entityManager->flush();
+
+        self::createOAuth2AuthCodeClient();
+        $this->client->loginUser($this->getUserByUsername('user'));
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+
+        $this->client->request('GET', '/api/posts?federation=local', server: ['HTTP_AUTHORIZATION' => $token]);
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
+
+        self::assertIsArray($jsonData['items']);
+        self::assertCount(1, $jsonData['items']);
+        self::assertIsArray($jsonData['pagination']);
+        self::assertArrayKeysMatch(self::PAGINATION_KEYS, $jsonData['pagination']);
+        self::assertSame(1, $jsonData['pagination']['count']);
+
+        self::assertIsArray($jsonData['items'][0]);
+        self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $jsonData['items'][0]);
+        self::assertSame($first->getId(), $jsonData['items'][0]['postId']);
+    }
+
+    public function testApiCanGetPostsFederated(): void
+    {
+        $first = $this->createPost('first');
+        $second = $this->createPost('second');
+
+        $second->apId = 'https://some.url';
+
+        $entityManager = $this->entityManager;
+        $entityManager->persist($first);
+        $entityManager->persist($second);
+        $entityManager->flush();
+
+        self::createOAuth2AuthCodeClient();
+        $this->client->loginUser($this->getUserByUsername('user'));
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+
+        $this->client->request('GET', '/api/posts?federation=federated', server: ['HTTP_AUTHORIZATION' => $token]);
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
+
+        self::assertIsArray($jsonData['items']);
+        self::assertCount(1, $jsonData['items']);
+        self::assertIsArray($jsonData['pagination']);
+        self::assertArrayKeysMatch(self::PAGINATION_KEYS, $jsonData['pagination']);
+        self::assertSame(1, $jsonData['pagination']['count']);
+
+        self::assertIsArray($jsonData['items'][0]);
+        self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $jsonData['items'][0]);
+        self::assertSame($second->getId(), $jsonData['items'][0]['postId']);
+    }
 }
