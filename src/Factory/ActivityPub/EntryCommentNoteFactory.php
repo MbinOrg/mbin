@@ -58,6 +58,7 @@ class EntryCommentNoteFactory
                 ActivityPubActivityInterface::PUBLIC_URL,
             ],
             'cc' => $cc,
+            'audience' => $this->groupFactory->getActivityPubId($comment->magazine),
             'sensitive' => $comment->entry->isAdult(),
             'content' => $this->markdownConverter->convertToHtml(
                 $comment->body,

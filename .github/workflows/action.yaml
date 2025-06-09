@@ -105,6 +105,7 @@ jobs:
           DATABASE_PORT: 5432
           REDIS_HOST: valkey
           REDIS_PORT: 6379
+          CREATE_SNAPSHOTS: false
         run: php vendor/bin/paratest tests/Unit
 
       - name: Run non thread safe integration tests

@@ -1,0 +1,13 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://kbin.test/contexts"
+    ],
+    "id": "SCRUBBED_ID",
+    "type": "Follow",
+    "actor": "https://kbin.test/u/user2",
+    "object": "SCRUBBED_ID",
+    "to": [
+        "https://kbin.test/u/user"
+    ]
+}

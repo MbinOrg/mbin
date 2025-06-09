@@ -1,0 +1,30 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://kbin.test/contexts"
+    ],
+    "id": "SCRUBBED_ID",
+    "type": "Create",
+    "actor": "https://kbin.test/u/user",
+    "published": "SCRUBBED_DATE",
+    "to": [
+        "https://kbin.test/u/user2"
+    ],
+    "cc": [],
+    "object": {
+        "id": "SCRUBBED_ID",
+        "attributedTo": "https://kbin.test/u/user",
+        "to": [
+            "https://kbin.test/u/user2"
+        ],
+        "cc": [],
+        "type": "ChatMessage",
+        "published": "SCRUBBED_DATE",
+        "content": "<p>some test message</p>\n",
+        "mediaType": "text/html",
+        "source": {
+            "mediaType": "text/markdown",
+            "content": "some test message"
+        }
+    }
+}
