@@ -8,7 +8,11 @@
         </div>
     {% endif %}
 
-    {% if not magazine_has_local_subscribers(magazine) %}
+    {% if is_instance_of_magazine_blocked(magazine) %}
+        <div class="alert alert__info">
+            {{ 'magazine_instance_defederated_info'|trans }}
+        </div>
+    {% elseif not magazine_has_local_subscribers(magazine) %}
         {# Also show a warning if we're not actively receiving updates #}
         {% set lastOriginUpdate = magazine.lastOriginUpdate %}
         <div class="alert alert__info">

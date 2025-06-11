@@ -8,6 +8,7 @@ use App\Controller\AbstractController;
 use App\DTO\EntryDto;
 use App\Entity\Magazine;
 use App\Exception\ImageDownloadTooLargeException;
+use App\Exception\InstanceBannedException;
 use App\Exception\PostingRestrictedException;
 use App\Exception\TagBannedException;
 use App\PageView\EntryPageView;
@@ -103,7 +104,22 @@ class EntryCreateController extends AbstractController
             $this->logger->error($e);
 
             return $this->render(
-                $this->getTemplateName((new EntryPageView(1))->resolveType($type)),
+                $this->getTemplateName((new EntryPageView(1, $this->security))->resolveType($type)),
+                [
+                    'magazine' => $magazine,
+                    'user' => $user,
+                    'form' => $form->createView(),
+                    'maxSize' => $maxBytes,
+                ],
+                new Response(null, 422)
+            );
+        } catch (InstanceBannedException $e) {
+            // Show an error to the user
+            $this->addFlash('error', 'flash_thread_instance_banned');
+            $this->logger->error($e);
+
+            return $this->render(
+                $this->getTemplateName((new EntryPageView(1, $this->security))->resolveType($type)),
                 [
                     'magazine' => $magazine,
                     'user' => $user,

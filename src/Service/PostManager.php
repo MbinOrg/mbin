@@ -15,6 +15,7 @@ use App\Event\Post\PostCreatedEvent;
 use App\Event\Post\PostDeletedEvent;
 use App\Event\Post\PostEditedEvent;
 use App\Event\Post\PostRestoredEvent;
+use App\Exception\InstanceBannedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Factory\PostFactory;
@@ -61,6 +62,7 @@ class PostManager implements ContentManagerInterface
     /**
      * @throws TagBannedException
      * @throws UserBannedException
+     * @throws InstanceBannedException
      * @throws TooManyRequestsHttpException
      * @throws \Exception
      */
@@ -79,6 +81,10 @@ class PostManager implements ContentManagerInterface
 
         if ($this->tagManager->isAnyTagBanned($this->tagManager->extract($dto->body))) {
             throw new TagBannedException();
+        }
+
+        if (null !== $dto->magazine->apId && $this->settingsManager->isBannedInstance($dto->magazine->apInboxUrl)) {
+            throw new InstanceBannedException();
         }
 
         $post = $this->factory->createFromDto($dto, $user);
