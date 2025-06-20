@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class BookmarkListDto implements \JsonSerializable
 {
     #[NotBlank]
-    #[OA\Property(description: "The id of the list")]
+    #[OA\Property(description: 'The id of the list')]
     public ?int $id = null;
 
     #[NotBlank]
