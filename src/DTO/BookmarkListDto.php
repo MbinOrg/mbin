@@ -12,10 +12,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class BookmarkListDto implements \JsonSerializable
 {
     #[NotBlank]
-    #[OA\Property(description: 'The id of the list')]
-    public ?int $id = null;
-
-    #[NotBlank]
     #[OA\Property(description: 'The name of the list')]
     public string $name;
 
@@ -28,7 +24,6 @@ class BookmarkListDto implements \JsonSerializable
     public static function fromList(BookmarkList $list): BookmarkListDto
     {
         $dto = new BookmarkListDto();
-        $dto->id = $list->getId();
         $dto->name = $list->name;
         $dto->isDefault = $list->isDefault;
         $dto->count = $list->entities->count();
@@ -39,7 +34,6 @@ class BookmarkListDto implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'id' => $this->id,
             'name' => $this->name,
             'isDefault' => $this->isDefault,
             'count' => $this->count,
