@@ -13,7 +13,7 @@ class BookmarkListDto implements \JsonSerializable
 {
     #[NotBlank]
     #[OA\Property(description: "The id of the list")]
-    public int $id;
+    public ?int $id = null;
 
     #[NotBlank]
     #[OA\Property(description: 'The name of the list')]
