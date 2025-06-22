@@ -31,7 +31,7 @@ class GroupFactory
 
         $summary = !empty($markdownSummary) ? $this->markdownConverter->convertToHtml(
             $markdownSummary,
-            [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub],
+            context: [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub],
         ) : '';
 
         $group = [

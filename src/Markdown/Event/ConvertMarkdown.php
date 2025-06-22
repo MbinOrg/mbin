@@ -14,13 +14,18 @@ class ConvertMarkdown extends Event
     private RenderedContentInterface $renderedContent;
     private array $attributes = [];
 
-    public function __construct(private string $markdown)
+    public function __construct(private string $markdown, private string $sourceType)
     {
     }
 
     public function getMarkdown(): string
     {
         return $this->markdown;
+    }
+
+    public function getSourceType(): string
+    {
+        return $this->sourceType;
     }
 
     public function getRenderedContent(): RenderedContentInterface

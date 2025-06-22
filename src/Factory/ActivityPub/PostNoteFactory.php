@@ -69,7 +69,7 @@ class PostNoteFactory
             'stickied' => $post->sticky,
             'content' => $this->markdownConverter->convertToHtml(
                 $body,
-                [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub],
+                context: [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub],
             ),
             'mediaType' => 'text/html',
             'source' => $post->body ? [
