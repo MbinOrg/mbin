@@ -240,14 +240,21 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/MakaryGo">
+                    <img src="https://avatars.githubusercontent.com/u/24472656?v=4" width="100;" alt="MakaryGo"/>
+                    <br />
+                    <sub><b>Makary</b></sub>
+                </a>
+            </td>
+		</tr>
+		<tr>
+            <td align="center">
                 <a href="https://github.com/cavebob">
                     <img src="https://avatars.githubusercontent.com/u/75441692?v=4" width="100;" alt="cavebob"/>
                     <br />
                     <sub><b>cavebob</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/vpzomtrrfrt">
                     <img src="https://avatars.githubusercontent.com/u/3528358?v=4" width="100;" alt="vpzomtrrfrt"/>
@@ -277,13 +284,6 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/MakaryGo">
-                    <img src="https://avatars.githubusercontent.com/u/24472656?v=4" width="100;" alt="MakaryGo"/>
-                    <br />
-                    <sub><b>Makary</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/MHLoppy">
                     <img src="https://avatars.githubusercontent.com/u/12670674?v=4" width="100;" alt="MHLoppy"/>
                     <br />
@@ -293,17 +293,17 @@ Unofficial magazines:
 		</tr>
 		<tr>
             <td align="center">
-                <a href="https://github.com/DismalShadowX">
-                    <img src="https://avatars.githubusercontent.com/u/24910097?v=4" width="100;" alt="DismalShadowX"/>
-                    <br />
-                    <sub><b>Nathan Sparrow</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/robertolopezlopez">
                     <img src="https://avatars.githubusercontent.com/u/1519467?v=4" width="100;" alt="robertolopezlopez"/>
                     <br />
                     <sub><b>Roberto López López</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/olorin99">
+                    <img src="https://avatars.githubusercontent.com/u/36951539?v=4" width="100;" alt="olorin99"/>
+                    <br />
+                    <sub><b>olorin99</b></sub>
                 </a>
             </td>
             <td align="center">
