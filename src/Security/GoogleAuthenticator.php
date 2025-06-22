@@ -16,26 +16,21 @@ use App\Service\UserManager;
 use App\Utils\Slugger;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
-use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
 use League\OAuth2\Client\Provider\GoogleUser;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
-class GoogleAuthenticator extends OAuth2Authenticator
+class GoogleAuthenticator extends MbinOAuthAuthenticatorBase
 {
     public function __construct(
         private readonly ClientRegistry $clientRegistry,
-        private readonly RouterInterface $router,
+        RouterInterface $router,
         private readonly EntityManagerInterface $entityManager,
         private readonly UserManager $userManager,
         private readonly ImageManager $imageManager,
@@ -46,6 +41,7 @@ class GoogleAuthenticator extends OAuth2Authenticator
         private readonly Slugger $slugger,
         private readonly SettingsManager $settingsManager,
     ) {
+        parent::__construct($router);
     }
 
     public function supports(Request $request): ?bool
@@ -153,31 +149,5 @@ class GoogleAuthenticator extends OAuth2Authenticator
         }
 
         return $image ?? null;
-    }
-
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
-    {
-        if ($request->getSession()->get('is_newly_created')) {
-            $targetUrl = $this->router->generate('user_settings_profile');
-            $request->getSession()->remove('is_newly_created');
-        } else {
-            $targetUrl = $this->router->generate('front');
-        }
-
-        return new RedirectResponse($targetUrl);
-    }
-
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
-    {
-        $message = strtr($exception->getMessageKey(), $exception->getMessageData());
-
-        if ('MBIN_SSO_REGISTRATIONS_ENABLED' === $message) {
-            $session = $request->getSession();
-            $session->getFlashBag()->add('error', 'sso_registrations_enabled.error');
-
-            return new RedirectResponse($this->router->generate('app_login'));
-        }
-
-        return new Response($message, Response::HTTP_FORBIDDEN);
     }
 }
