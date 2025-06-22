@@ -136,7 +136,7 @@ class BookmarkListApiController extends BaseApi
     #[Security(name: 'oauth2', scopes: ['bookmark_list:read'])]
     #[IsGranted('ROLE_OAUTH2_BOOKMARK_LIST:READ')]
     public function front(
-        #[MapQueryParameter] ?int $list_id,
+        #[MapQueryParameter] ?string $list,
         #[MapQueryParameter] ?string $sort,
         #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
@@ -154,8 +154,8 @@ class BookmarkListApiController extends BaseApi
         $criteria->showSortOption($criteria->resolveSort($sort ?? Criteria::SORT_NEW));
         $criteria->setFederation($federation ?? Criteria::AP_ALL);
 
-        if (null !== $list_id) {
-            $bookmarkList = $this->bookmarkListRepository->findOneBy(['id' => $list_id, 'user' => $user]);
+        if (null !== $list) {
+            $bookmarkList = $this->bookmarkListRepository->findOneBy(['name' => $list, 'user' => $user]);
             if (null === $bookmarkList) {
                 return new JsonResponse(status: 404, headers: $headers);
             }
