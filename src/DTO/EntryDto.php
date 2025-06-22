@@ -24,11 +24,11 @@ class EntryDto implements ContentVisibilityInterface
     public ?string $imageUrl = null;
     public ?DomainDto $domain = null;
     #[Assert\NotBlank]
-    #[Assert\Length(min: 2, max: 255)]
+    #[Assert\Length(min: 2, max: 255, countUnit: Assert\Length::COUNT_GRAPHEMES)]
     public ?string $title = null;
     #[Assert\Url]
     public ?string $url = null;
-    #[Assert\Length(max: Entry::MAX_BODY_LENGTH)]
+    #[Assert\Length(max: Entry::MAX_BODY_LENGTH, countUnit: Assert\Length::COUNT_GRAPHEMES)]
     public ?string $body = null;
     public ?string $lang = null;
     public string $type = Entry::ENTRY_TYPE_ARTICLE;
