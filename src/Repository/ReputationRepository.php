@@ -37,10 +37,17 @@ class ReputationRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()
             ->getConnection();
 
-        $table = $this->getEntityManager()->getClassMetadata($className)->getTableName().'_vote';
+        $table = $this->getEntityManager()->getClassMetadata($className)->getTableName();
+        $voteTable = $table.'_vote';
+        $idColumn = $table.'_id';
 
-        $sql = "SELECT date_trunc('day', v.created_at) as day, sum(v.choice) as points FROM ".$table.' v
-                WHERE v.author_id = :userId GROUP BY day ORDER BY day DESC';
+        $sql = "SELECT date_trunc('day', created_at) as day, sum(choice) as points FROM (
+            SELECT v.created_at, v.choice FROM $voteTable v WHERE v.author_id = :userId AND v.choice = -1 --downvotes
+            UNION ALL
+            SELECT v.created_at, 2 as choice FROM $voteTable v WHERE v.author_id = :userId AND v.choice = 1 --boosts -> 2x
+            UNION ALL
+            SELECT f.created_at, 1 as choice FROM favourite f INNER JOIN $table s ON f.$idColumn = s.id WHERE s.user_id = :userId --upvotes -> 1x
+        ) as interactions GROUP BY day ORDER BY day DESC";
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('userId', $user->getId());
