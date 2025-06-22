@@ -333,7 +333,7 @@ class BookmarkApiTest extends WebTestCase
         $this->bookmarkManager->addBookmark($this->user, $list, $postComment);
         $this->bookmarkManager->addBookmark($this->user, $list, $postComment2);
 
-        $this->client->request('GET', "/api/bookmark-lists/show?list_id={$list->getId()}", server: ['HTTP_AUTHORIZATION' => $this->token]);
+        $this->client->request('GET', "/api/bookmark-lists/show?list={$list->name}", server: ['HTTP_AUTHORIZATION' => $this->token]);
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
 
