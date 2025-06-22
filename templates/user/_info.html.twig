@@ -41,7 +41,7 @@
         <li><a href="{{ path('user_moderated', {username: user.username}) }}"
                class="stretched-link">{{ 'moderated'|trans }}:</a> {{ count_user_moderated(user) }}
         </li>
-        {% if app.user is not same as user %}
+        {% if app.user is not same as user and not is_instance_of_user_banned(user) %}
             <li>
                 <a href="{{ path('messages_create', {username: user.username}) }}" class="stretched-link">
                     {{ 'send_message'|trans }}

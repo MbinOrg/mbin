@@ -8,6 +8,7 @@ use App\Entity\Instance;
 use App\Entity\Magazine;
 use App\Repository\InstanceRepository;
 use App\Repository\MagazineSubscriptionRepository;
+use App\Service\SettingsManager;
 use Symfony\Bundle\SecurityBundle\Security;
 use Twig\Extension\RuntimeExtensionInterface;
 
@@ -16,8 +17,9 @@ class MagazineExtensionRuntime implements RuntimeExtensionInterface
     public function __construct(
         private readonly InstanceRepository $instanceRepository,
         private readonly Security $security,
-        private readonly MagazineSubscriptionRepository $magazineSubscriptionRepository)
-    {
+        private readonly MagazineSubscriptionRepository $magazineSubscriptionRepository,
+        private readonly SettingsManager $settingsManager,
+    ) {
     }
 
     public function isSubscribed(Magazine $magazine): bool
@@ -48,5 +50,14 @@ class MagazineExtensionRuntime implements RuntimeExtensionInterface
     public function getInstanceOfMagazine(Magazine $magazine): ?Instance
     {
         return $this->instanceRepository->getInstanceOfMagazine($magazine);
+    }
+
+    public function isInstanceOfMagazineBanned(Magazine $magazine): bool
+    {
+        if (null === $magazine->apId) {
+            return false;
+        }
+
+        return $this->settingsManager->isBannedInstance($magazine->apProfileId);
     }
 }
