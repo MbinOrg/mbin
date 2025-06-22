@@ -300,6 +300,13 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/olorin99">
+                    <img src="https://avatars.githubusercontent.com/u/36951539?v=4" width="100;" alt="olorin99"/>
+                    <br />
+                    <sub><b>olorin99</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/privacyguard">
                     <img src="https://avatars.githubusercontent.com/u/92675882?v=4" width="100;" alt="privacyguard"/>
                     <br />
