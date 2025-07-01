@@ -219,7 +219,7 @@ trait FactoryTrait
         ];
     }
 
-    protected function getUserByUsername(string $username, bool $isAdmin = false, bool $hideAdult = true, ?string $about = null, bool $active = true): User
+    protected function getUserByUsername(string $username, bool $isAdmin = false, bool $hideAdult = true, ?string $about = null, bool $active = true, bool $isModerator = false): User
     {
         $user = $this->users->filter(fn (User $user) => $user->getUsername() === $username)->first();
 
@@ -231,6 +231,8 @@ trait FactoryTrait
 
         if ($isAdmin) {
             $user->roles = ['ROLE_ADMIN'];
+        } elseif ($isModerator) {
+            $user->roles = ['ROLE_MODERATOR'];
         }
 
         $this->entityManager->persist($user);
