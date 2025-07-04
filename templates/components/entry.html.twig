@@ -86,7 +86,7 @@
                 {% if entry.body and showBody %}
                     <div class="entry__body">
                         <div class="content formatted">
-                            {{ entry.body|markdown|raw }}
+                            {{ entry.body|markdown("entry")|raw }}
                         </div>
                     </div>
                 {% endif %}

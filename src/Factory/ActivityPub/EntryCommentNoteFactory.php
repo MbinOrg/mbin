@@ -61,7 +61,7 @@ class EntryCommentNoteFactory
             'sensitive' => $comment->entry->isAdult(),
             'content' => $this->markdownConverter->convertToHtml(
                 $comment->body,
-                [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub]
+                context: [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub]
             ),
             'mediaType' => 'text/html',
             'source' => $comment->body ? [

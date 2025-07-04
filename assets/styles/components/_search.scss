@@ -14,7 +14,9 @@
   button {
     border-radius: 0 var(--kbin-rounded-edges-radius) var(--kbin-rounded-edges-radius) 0 !important;
     border: 0;
-    padding: 1rem 0.5rem;
+    &:not(.small) {
+      padding: 1rem 0.5rem;
+    }
 
     &:not(:hover) {
       background: var(--kbin-input-bg);

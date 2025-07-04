@@ -74,7 +74,7 @@ class PersonFactory
         if ($user->about) {
             $person['summary'] = $this->markdownConverter->convertToHtml(
                 $user->about,
-                [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub],
+                context: [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub],
             );
         }
 
