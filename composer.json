@@ -85,7 +85,7 @@
         "symfony/mime": "7.2.*",
         "symfony/monolog-bundle": "^3.10.0",
         "symfony/property-access": "7.2.*",
-        "symfony/property-info": "7.2.*",
+        "symfony/property-info": "7.3.*",
         "symfony/rate-limiter": "7.2.*",
         "symfony/redis-messenger": "7.2.*",
         "symfony/runtime": "7.3.*",
