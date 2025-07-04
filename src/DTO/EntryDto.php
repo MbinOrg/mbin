@@ -62,11 +62,14 @@ class EntryDto implements ContentVisibilityInterface
         $payload,
     ) {
         if (empty($this->image)) {
-            $image = Request::createFromGlobals()->files->filter('entry_image');
-            if (\is_array($image)) {
-                $image = $image['image'];
-            } else {
-                $image = $context->getValue()->image;
+            $keys = ['entry_image', 'entry_edit'];
+            for ($i = 0; $i < \sizeof($keys) && empty($image); ++$i) {
+                $image = Request::createFromGlobals()->files->filter($keys[$i]);
+                if (\is_array($image)) {
+                    $image = $image['image'];
+                } else {
+                    $image = $context->getValue()->image;
+                }
             }
         } else {
             $image = $this->image;
@@ -81,7 +84,7 @@ class EntryDto implements ContentVisibilityInterface
 
     private function buildViolation(ExecutionContextInterface $context, $path)
     {
-        $context->buildViolation('This value should not be blank.')
+        $context->buildViolation('One of these values should not be blank.')
             ->atPath($path)
             ->addViolation();
     }
