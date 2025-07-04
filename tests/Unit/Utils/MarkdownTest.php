@@ -16,7 +16,7 @@ class MarkdownTest extends WebTestCase
     public function testMagazineLinks(): void
     {
         $text = 'This should belong to !magazine@kbin.test2';
-        $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
+        $markdown = $this->markdownConverter->convertToHtml($text, context: [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
         // assert that this community does not exist, and we get a search link for it that does not link to the external instance
         self::assertStringContainsString('search', $markdown);
         self::assertStringNotContainsString('(', $markdown);
@@ -29,7 +29,7 @@ class MarkdownTest extends WebTestCase
     public function testMagazineLinks2(): void
     {
         $text = 'Lots of activity on [!fedibridge@lemmy.dbzer0.com](https://lemmy.dbzer0.com/c/fedibridge) following Reddit paywall announcements';
-        $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
+        $markdown = $this->markdownConverter->convertToHtml($text, context: [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
         // assert that this community does not exist, and we get a search link for it that does not link to the external instance
         self::assertStringContainsString('search', $markdown);
         self::assertStringNotContainsString('(', $markdown);
@@ -42,7 +42,7 @@ class MarkdownTest extends WebTestCase
     public function testLemmyMagazineLinks(): void
     {
         $text = 'This should belong to [!magazine@kbin.test2](https://kbin.test2/m/magazine)';
-        $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
+        $markdown = $this->markdownConverter->convertToHtml($text, context: [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
         // assert that this community does not exist, and we get a search link for it that does not link to the external instance
         self::assertStringContainsString('search', $markdown);
         self::assertStringNotContainsString('(', $markdown);
@@ -55,14 +55,14 @@ class MarkdownTest extends WebTestCase
     public function testExternalMagazineLinks(): void
     {
         $text = 'This should belong to [this magazine](https://kbin.test2/m/magazine)';
-        $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
+        $markdown = $this->markdownConverter->convertToHtml($text, context: [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
         self::assertStringContainsString('https://kbin.test2', $markdown);
     }
 
     public function testMentionLink(): void
     {
         $text = 'Hi @admin@kbin.test2';
-        $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
+        $markdown = $this->markdownConverter->convertToHtml($text, context: [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
         // assert that this community does not exist, and we get a search link for it that does not link to the external instance
         self::assertStringContainsString('search', $markdown);
         self::assertStringNotContainsString('(', $markdown);
@@ -75,7 +75,7 @@ class MarkdownTest extends WebTestCase
     public function testNestedMentionLink(): void
     {
         $text = 'Hi [@admin@kbin.test2](https://kbin.test2/u/admin)';
-        $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
+        $markdown = $this->markdownConverter->convertToHtml($text, context: [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
         // assert that this community does not exist, and we get a search link for it that does not link to the external instance
         self::assertStringContainsString('search', $markdown);
         self::assertStringNotContainsString('(', $markdown);
@@ -88,7 +88,7 @@ class MarkdownTest extends WebTestCase
     public function testExternalMentionLink(): void
     {
         $text = 'You should really talk to your [instance admin](https://kbin.test2/u/admin)';
-        $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
+        $markdown = $this->markdownConverter->convertToHtml($text, context: [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
         // assert that this community does not exist, and we get a search link for it that does not link to the external instance
         self::assertStringContainsString('https://kbin.test2', $markdown);
     }
@@ -104,7 +104,7 @@ class MarkdownTest extends WebTestCase
         $entry = $this->getEntryByTitle('test', magazine: $m);
         $this->entityManager->flush();
         $text = "Look at my post at https://kbin.test/m/test@kbin.test2/t/{$entry->getId()}/some-slug";
-        $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
+        $markdown = $this->markdownConverter->convertToHtml($text, context: [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
         assertStringContainsString('entry-inline', $markdown);
     }
 
@@ -119,7 +119,7 @@ class MarkdownTest extends WebTestCase
         $post = $this->createPost('test', magazine: $m);
         $this->entityManager->flush();
         $text = "Look at my post at https://kbin.test/m/test@kbin.test2/p/{$post->getId()}/some-slug";
-        $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
+        $markdown = $this->markdownConverter->convertToHtml($text, context: [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
         assertStringContainsString('post-inline', $markdown);
     }
 
@@ -134,7 +134,7 @@ class MarkdownTest extends WebTestCase
         $entry = $this->getEntryByTitle('test', magazine: $m);
         $this->entityManager->flush();
         $text = "Look at my post at https://kbin.test/m/test@kbin.test2/t/{$entry->getId()}/some-slug/votes";
-        $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
+        $markdown = $this->markdownConverter->convertToHtml($text, context: [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
         assertStringContainsString("https://kbin.test/m/test@kbin.test2/t/{$entry->getId()}/some-slug/votes", $markdown);
     }
 
@@ -149,7 +149,7 @@ class MarkdownTest extends WebTestCase
         $entry = $this->getEntryByTitle('test', magazine: $m);
         $this->entityManager->flush();
         $text = "[Look at my post (or not, your choice)](https://kbin.test/m/test@kbin.test2/t/{$entry->getId()}/some-slug/favourites)";
-        $markdown = $this->markdownConverter->convertToHtml($text, [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
+        $markdown = $this->markdownConverter->convertToHtml($text, context: [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
         assertStringContainsString("https://kbin.test/m/test@kbin.test2/t/{$entry->getId()}/some-slug/favourites", $markdown);
     }
 }

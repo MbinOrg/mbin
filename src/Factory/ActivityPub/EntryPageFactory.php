@@ -61,7 +61,7 @@ class EntryPageFactory
             'name' => $entry->title,
             'content' => $entry->body ? $this->markdownConverter->convertToHtml(
                 $entry->body,
-                [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub]
+                context: [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub]
             ) : null,
             'summary' => $entry->getShortTitle().' '.implode(
                 ' ',

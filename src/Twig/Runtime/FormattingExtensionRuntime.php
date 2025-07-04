@@ -13,9 +13,9 @@ class FormattingExtensionRuntime implements RuntimeExtensionInterface
     {
     }
 
-    public function convertToHtml(?string $value): string
+    public function convertToHtml(?string $value, string $sourceType = ''): string
     {
-        return $value ? $this->markdownConverter->convertToHtml($value) : '';
+        return $value ? $this->markdownConverter->convertToHtml($value, $sourceType) : '';
     }
 
     public function getShortSentence(?string $val, $length = 330, $striptags = false): string
