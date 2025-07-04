@@ -36,7 +36,7 @@
         {% endif %}
         <a href="{{ route }}"
            class="{{ html_classes('sensitive-checked--show', {'thumb': is_single_image or LIST_LIGHTBOX is same as V_TRUE}) }}"
-           rel="{{ (type is same as 'link') ? get_rel(route) : '' }}"
+           rel="{{ (type is same as 'link') and route is not same as null ? get_rel(route) : '' }}"
            data-gallery="entry-{{ entry.id }}"
            data-description="{{ is_single_image and image.altText ? '.'~lightbox_alt_id : '' }}">
             <img class="thumb-subject"
