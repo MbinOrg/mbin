@@ -61,6 +61,40 @@ class UserRetrieveApiTest extends WebTestCase
         self::assertSame(self::NUM_USERS, \count($jsonData['items']));
     }
 
+    public function testApiCanRetrieveAdminsAnonymous(): void
+    {
+        $users = [];
+        for ($i = 0; $i < self::NUM_USERS; ++$i) {
+            $users[] = $this->getUserByUsername('admin'.(string) ($i + 1), isAdmin: true);
+        }
+
+        $this->client->request('GET', '/api/users/admins');
+        self::assertResponseIsSuccessful();
+
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertIsArray($jsonData['items']);
+        self::assertSame(self::NUM_USERS, \count($jsonData['items']));
+    }
+
+    public function testApiCanRetrieveModeratorsAnonymous(): void
+    {
+        $users = [];
+        for ($i = 0; $i < self::NUM_USERS; ++$i) {
+            $users[] = $this->getUserByUsername('moderator'.(string) ($i + 1), isModerator: true);
+        }
+
+        $this->client->request('GET', '/api/users/moderators');
+        self::assertResponseIsSuccessful();
+
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertIsArray($jsonData['items']);
+        self::assertSame(self::NUM_USERS, \count($jsonData['items']));
+    }
+
     public function testApiCanRetrieveUsersWithAbout(): void
     {
         self::createOAuth2AuthCodeClient();

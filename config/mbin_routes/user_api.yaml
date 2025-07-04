@@ -4,6 +4,18 @@ api_users_collection:
   methods: [ GET ]
   format: json
 
+api_admins_collection:
+  controller: App\Controller\Api\User\UserRetrieveApi::admins
+  path: /api/users/admins
+  methods: [ GET ]
+  format: json
+
+api_moderators_collection:
+    controller: App\Controller\Api\User\UserRetrieveApi::moderators
+    path: /api/users/moderators
+    methods: [ GET ]
+    format: json
+
 api_user_blocked:
   controller: App\Controller\Api\User\UserRetrieveApi::blocked
   path: /api/users/blocked
