@@ -129,6 +129,8 @@ security:
         - { path: ^/api/federated, roles: PUBLIC_ACCESS }
         - { path: ^/api/defederated, roles: PUBLIC_ACCESS }
         - { path: ^/api/dead, roles: PUBLIC_ACCESS }
+        - { path: ^/api/users/admins, role: PUBLIC_ACCESS }
+        - { path: ^/api/users/moderators, role: PUBLIC_ACCESS }
         - { path: ^/, roles: PUBLIC_ACCESS_UNLESS_PRIVATE_INSTANCE }
 
     role_hierarchy:

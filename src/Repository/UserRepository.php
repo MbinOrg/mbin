@@ -16,6 +16,7 @@ use App\Enums\EApplicationStatus;
 use App\Service\SettingsManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Result;
+use Doctrine\ORM\Query\Expr\OrderBy;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Adapter\ArrayAdapter;
@@ -240,147 +241,96 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $pagerfanta;
     }
 
-    public function findAllActivePaginated(int $page, bool $onlyLocal = false): PagerfantaInterface
+    public function findAllActivePaginated(int $page, bool $onlyLocal, ?string $searchTerm = null, ?OrderBy $orderBy = null): PagerfantaInterface
     {
-        $builder = $this->createQueryBuilder('u');
-        if ($onlyLocal) {
-            $builder->where('u.apId IS NULL')
-            ->andWhere('u.isVerified = true');
-        } else {
-            $builder->where('u.apId IS NOT NULL');
-        }
-        $query = $builder
+        $builder = $this->createBasicQueryBuilder($onlyLocal, $searchTerm);
+
+        $builder
             ->andWhere('u.visibility = :visibility')
             ->andWhere('u.isDeleted = false')
             ->andWhere('u.isBanned = false')
             ->andWhere('u.applicationStatus = :status')
             ->setParameter('status', EApplicationStatus::Approved->value)
-            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
-            ->orderBy('u.createdAt', 'ASC')
-            ->getQuery();
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
 
-        $pagerfanta = new Pagerfanta(
-            new QueryAdapter(
-                $query
-            )
-        );
-
-        try {
-            $pagerfanta->setMaxPerPage(self::PER_PAGE);
-            $pagerfanta->setCurrentPage($page);
-        } catch (NotValidCurrentPageException $e) {
-            throw new NotFoundHttpException();
-        }
-
-        return $pagerfanta;
+        return $this->executeBasicQueryBuilder($builder, $page, $orderBy);
     }
 
-    public function findAllInactivePaginated(int $page): PagerfantaInterface
+    public function findAllInactivePaginated(int $page, bool $onlyLocal = true, ?string $searchTerm = null, ?OrderBy $orderBy = null): PagerfantaInterface
     {
-        $builder = $this->createQueryBuilder('u');
+        $builder = $this->createBasicQueryBuilder($onlyLocal, $searchTerm);
 
-        $query = $builder->where('u.apId IS NULL')
-            ->andWhere('u.visibility = :visibility')
+        $builder->andWhere('u.visibility = :visibility')
             ->andWhere('u.isVerified = false')
             ->andWhere('u.isDeleted = false')
             ->andWhere('u.isBanned = false')
             ->andWhere('u.applicationStatus = :status')
             ->setParameter('status', EApplicationStatus::Approved->value)
-            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
-            ->orderBy('u.createdAt', 'ASC')
-            ->getQuery();
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
 
-        $pagerfanta = new Pagerfanta(
-            new QueryAdapter(
-                $query
-            )
-        );
-
-        try {
-            $pagerfanta->setMaxPerPage(self::PER_PAGE);
-            $pagerfanta->setCurrentPage($page);
-        } catch (NotValidCurrentPageException $e) {
-            throw new NotFoundHttpException();
-        }
-
-        return $pagerfanta;
+        return $this->executeBasicQueryBuilder($builder, $page, $orderBy);
     }
 
-    public function findAllBannedPaginated(int $page, bool $onlyLocal = false): PagerfantaInterface
+    public function findAllBannedPaginated(int $page, bool $onlyLocal = false, ?string $searchTerm = null, ?OrderBy $orderBy = null): PagerfantaInterface
     {
-        $builder = $this->createQueryBuilder('u');
-        if ($onlyLocal) {
-            $builder->where('u.apId IS NULL');
-        } else {
-            $builder->where('u.apId IS NOT NULL');
-        }
-        $query = $builder
+        $builder = $this->createBasicQueryBuilder($onlyLocal, $searchTerm);
+        $builder
             ->andWhere('u.isBanned = true')
-            ->andWhere('u.isDeleted = false')
-            ->orderBy('u.createdAt', 'ASC')
-            ->getQuery();
+            ->andWhere('u.isDeleted = false');
 
-        $pagerfanta = new Pagerfanta(
-            new QueryAdapter(
-                $query
-            )
-        );
-
-        try {
-            $pagerfanta->setMaxPerPage(self::PER_PAGE);
-            $pagerfanta->setCurrentPage($page);
-        } catch (NotValidCurrentPageException $e) {
-            throw new NotFoundHttpException();
-        }
-
-        return $pagerfanta;
+        return $this->executeBasicQueryBuilder($builder, $page, $orderBy);
     }
 
-    public function findAllSuspendedPaginated(int $page, bool $onlyLocal = false): PagerfantaInterface
+    public function findAllSuspendedPaginated(int $page, bool $onlyLocal = false, ?string $searchTerm = null, ?OrderBy $orderBy = null): PagerfantaInterface
     {
-        $builder = $this->createQueryBuilder('u');
-        if ($onlyLocal) {
-            $builder->where('u.apId IS NULL');
-        } else {
-            $builder->where('u.apId IS NOT NULL');
-        }
-        $query = $builder
+        $builder = $this->createBasicQueryBuilder($onlyLocal, $searchTerm);
+        $builder
             ->andWhere('u.visibility = :visibility')
             ->andWhere('u.isDeleted = false')
-            ->setParameter('visibility', VisibilityInterface::VISIBILITY_TRASHED)
-            ->orderBy('u.createdAt', 'ASC')
-            ->getQuery();
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_TRASHED);
 
-        $pagerfanta = new Pagerfanta(
-            new QueryAdapter(
-                $query
-            )
-        );
-
-        try {
-            $pagerfanta->setMaxPerPage(self::PER_PAGE);
-            $pagerfanta->setCurrentPage($page);
-        } catch (NotValidCurrentPageException $e) {
-            throw new NotFoundHttpException();
-        }
-
-        return $pagerfanta;
+        return $this->executeBasicQueryBuilder($builder, $page, $orderBy);
     }
 
     public function findForDeletionPaginated(int $page): PagerfantaInterface
     {
-        $query = $this->createQueryBuilder('u')
-            ->where('u.apId IS NULL')
+        $builder = $this->createBasicQueryBuilder(onlyLocal: true, searchTerm: null)
             ->andWhere('u.visibility = :visibility')
-            ->orderBy('u.markedForDeletionAt', 'ASC')
-            ->setParameter('visibility', VisibilityInterface::VISIBILITY_SOFT_DELETED)
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_SOFT_DELETED);
+
+        return $this->executeBasicQueryBuilder($builder, $page, new OrderBy('u.markedForDeletionAt', 'ASC'));
+    }
+
+    private function createBasicQueryBuilder(bool $onlyLocal, ?string $searchTerm): QueryBuilder
+    {
+        $builder = $this->createQueryBuilder('u');
+        if ($onlyLocal) {
+            $builder->where('u.apId IS NULL')
+                ->andWhere('u.isVerified = true');
+        } else {
+            $builder->where('u.apId IS NOT NULL');
+        }
+
+        if ($searchTerm) {
+            $builder
+                ->andWhere('lower(u.username) LIKE lower(:searchTerm) OR lower(u.email) LIKE lower(:searchTerm)')
+                ->setParameter('searchTerm', '%'.$searchTerm.'%');
+        }
+
+        return $builder;
+    }
+
+    private function executeBasicQueryBuilder(QueryBuilder $builder, int $page, ?OrderBy $orderBy = null): Pagerfanta
+    {
+        if (null === $orderBy) {
+            $orderBy = new OrderBy('u.createdAt', 'ASC');
+        }
+
+        $query = $builder
+            ->orderBy($orderBy)
             ->getQuery();
 
-        $pagerfanta = new Pagerfanta(
-            new QueryAdapter(
-                $query
-            )
-        );
+        $pagerfanta = new Pagerfanta(new QueryAdapter($query));
 
         try {
             $pagerfanta->setMaxPerPage(self::PER_PAGE);
