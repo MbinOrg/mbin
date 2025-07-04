@@ -77,7 +77,7 @@
         "symfony/form": "7.2.*",
         "symfony/framework-bundle": "7.2.*",
         "symfony/http-client": "7.2.*",
-        "symfony/lock": "7.2.*",
+        "symfony/lock": "7.3.*",
         "symfony/mailer": "7.2.*",
         "symfony/mailgun-mailer": "7.2.*",
         "symfony/mercure-bundle": "0.3.*",
