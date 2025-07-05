@@ -1088,12 +1088,12 @@ magazine_instance_defederated_info: La instància d'aquesta revista està
 user_instance_defederated_info: La instància d'aquest compte està defederada.
 flash_thread_instance_banned: La instància d'aquesta revista està banida.
 show_rich_mention: Mencions enriquides
-show_rich_mention_help: Renderitzar un component de compte quan es menciona un 
+show_rich_mention_help: Mostrar un component de compte quan es menciona un 
   compte. Això n'inclourà el nom de visualització i la foto de perfil.
-show_rich_mention_magazine: Mencions riques de revistes
-show_rich_mention_magazine_help: Renderitzar un component de revista quan es 
+show_rich_mention_magazine: Mencions enriquides de revistes
+show_rich_mention_magazine_help: Mostrar un component de revista quan es 
   menciona una revista. Això in'nclourà el nom de visualització i la icona.
-show_rich_ap_link: Enllaços AP rics
-show_rich_ap_link_help: Renderitzar un component en línia quan s'hi enllaça un 
-  altre contingut d'ActivityPub.
+show_rich_ap_link: Enllaços AP enriquits
+show_rich_ap_link_help: Mostrar un component en línia quan s'hi enllaça un altre
+  contingut d'ActivityPub.
 attitude: Actitud
