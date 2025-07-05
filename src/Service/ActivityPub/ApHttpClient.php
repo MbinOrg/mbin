@@ -577,9 +577,14 @@ class ApHttpClient implements ApHttpClientInterface
                 : $this->groupFactory->getActivityPubId($actor).'#main-key';
             $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
         } else {
-            $this->logger->error('[ApHttpClient::getHeaders] Failed to sign headers for {url}: {headers}', [
+            $this->logger->error('[ApHttpClient::getHeaders] Failed to sign headers for {url} with private key of {actor}: {headers}', [
                 'url' => $url,
                 'headers' => $headers,
+                'actor' => $actor->apId ?? (
+                    $actor instanceof User
+                        ? $this->personFactory->getActivityPubId($actor).'#main-key'
+                        : $this->groupFactory->getActivityPubId($actor).'#main-key'
+                ),
             ]);
             throw new \Exception('Failed to sign headers');
         }
