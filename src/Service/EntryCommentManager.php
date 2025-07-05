@@ -71,7 +71,7 @@ class EntryCommentManager implements ContentManagerInterface
             throw new TagBannedException();
         }
 
-        if (null !== $dto->magazine->apId && $this->settingsManager->isBannedInstance($dto->magazine->apInboxUrl)) {
+        if (null !== $dto->entry->magazine->apId && $this->settingsManager->isBannedInstance($dto->entry->magazine->apInboxUrl)) {
             throw new InstanceBannedException();
         }
 
