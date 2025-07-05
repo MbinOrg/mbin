@@ -989,3 +989,4 @@ show_rich_mention_magazine_help: Render a magazine component when a magazine is 
   This will include their display name and icon.
 show_rich_ap_link: Rich AP links
 show_rich_ap_link_help: Render an inline component when other ActivityPub content is linked to.
+attitude: Attitude

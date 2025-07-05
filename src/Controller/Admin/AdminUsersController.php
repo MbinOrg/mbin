@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Controller\AbstractController;
+use App\Entity\User;
+use App\Repository\ReputationRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Query\Expr\OrderBy;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -15,6 +18,8 @@ class AdminUsersController extends AbstractController
 {
     public function __construct(
         private readonly UserRepository $repository,
+        private readonly RequestStack $request,
+        private readonly ReputationRepository $reputationRepository,
     ) {
     }
 
@@ -33,6 +38,8 @@ class AdminUsersController extends AbstractController
                 searchTerm: $search,
                 orderBy: new OrderBy("u.$field", $sort),
             );
+        $userIds = array_map(fn (User $user) => $user->getId(), [...$users]);
+        $attitudes = $this->reputationRepository->getUserAttitudes(...$userIds);
 
         return $this->render(
             'admin/users.html.twig',
@@ -42,6 +49,7 @@ class AdminUsersController extends AbstractController
                 'sortField' => $field,
                 'order' => $sort,
                 'searchTerm' => $search,
+                'attitudes' => $attitudes,
             ]
         );
     }
