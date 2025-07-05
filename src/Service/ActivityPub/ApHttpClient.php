@@ -564,9 +564,11 @@ class ApHttpClient implements ApHttpClientInterface
         $stringToSign = self::headersToSigningString($headers);
         $signedHeaders = implode(' ', array_map('strtolower', array_keys($headers)));
         $key = openssl_pkey_get_private($actor->privateKey);
-        $success_sign = openssl_sign($stringToSign, $signature, $key, OPENSSL_ALGO_SHA256);
-        // Free the key from memory
-        openssl_free_key($key);
+        if (false !== $key) {
+            $success_sign = openssl_sign($stringToSign, $signature, $key, OPENSSL_ALGO_SHA256);
+        } else {
+            $success_sign = false;
+        }
         $signatureHeader = null;
         if ($success_sign) {
             $signature = base64_encode($signature);
@@ -600,9 +602,11 @@ class ApHttpClient implements ApHttpClientInterface
         $stringToSign = self::headersToSigningString($headers);
         $signedHeaders = implode(' ', array_map('strtolower', array_keys($headers)));
         $key = openssl_pkey_get_private($privateKey);
-        $success_sign = openssl_sign($stringToSign, $signature, $key, OPENSSL_ALGO_SHA256);
-        // Free the key from memory
-        openssl_free_key($key);
+        if (false !== $key) {
+            $success_sign = openssl_sign($stringToSign, $signature, $key, OPENSSL_ALGO_SHA256);
+        } else {
+            $success_sign = false;
+        }
         $signatureHeader = null;
         if ($success_sign) {
             $signature = base64_encode($signature);
