@@ -200,8 +200,10 @@ class EntryManager implements ContentManagerInterface
         $entry->slug = $this->slugger->slug($dto->title);
         $entry->visibility = $dto->visibility;
         $oldImage = $entry->image;
-        if ($dto->image) {
-            $entry->image = $this->imageRepository->find($dto->image->id);
+        $entry->image = $dto->image ? $this->imageRepository->find($dto->image->id) : null;
+        $this->logger->debug('setting image to {imageId}, dto was {dtoImageId}', ['imageId' => $entry->image?->getId() ?? 'none', 'dtoImageId' => $dto->image?->id ?? 'none']);
+        if ($entry->image && !$entry->image->altText) {
+            $entry->image->altText = $dto->imageAlt;
         }
         $this->tagManager->updateEntryTags($entry, $this->tagManager->getTagsFromEntryDto($dto));
 

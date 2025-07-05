@@ -981,3 +981,11 @@ magazine_instance_defederated_info: The instance of this magazine is defederated
   The magazine will therefore not receive updates.
 user_instance_defederated_info: The instance of this user is defederated.
 flash_thread_instance_banned: The instance of this magazine is banned.
+show_rich_mention: Rich mentions
+show_rich_mention_help: Render a user component when a user is mentioned.
+  This will include their display name and profile picture.
+show_rich_mention_magazine: Rich magazine mentions
+show_rich_mention_magazine_help: Render a magazine component when a magazine is mentioned.
+  This will include their display name and icon.
+show_rich_ap_link: Rich AP links
+show_rich_ap_link_help: Render an inline component when other ActivityPub content is linked to.

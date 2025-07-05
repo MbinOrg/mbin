@@ -1,30 +1,40 @@
-<span class="entry-comment-inline">
-    {{ component('user_inline', {user: comment.user, fullName: userFullName, showNewIcon: true}) }}:
-    <a href="{{ path('entry_comment_view', {magazine_name: comment.magazine.name, entry_id: comment.entry.id, comment_id: comment.id, slug: comment.entry.slug|length ? comment.entry.slug : '-'}) }}">
-        {% if comment.image is not same as null %}
-            <i class="fa-solid fa-photo-film"></i>
-        {% endif %}
-        {{ comment.getShortTitle() }}
-    </a>
-    {{ 'answered'|trans }}
-    {% if comment.parent is not same as null %}
-        <a href="{{ path('entry_comment_view', {magazine_name: comment.magazine.name, entry_id: comment.entry.id, comment_id: comment.parent.id, slug: comment.entry.slug|length ? comment.entry.slug : '-'}) }}">
-            {{ comment.parent.getShortTitle() }}
-        </a>
-        {{ 'by'|trans }}
-        {{ component('user_inline', {user: comment.parent.user, fullName: userFullName, showNewIcon: true}) }}
-    {% else %}
-        <a href="{{ path('entry_single', {magazine_name: comment.magazine.name, entry_id: comment.entry.id, slug: comment.entry.slug|length ? comment.entry.slug : '-'}) }}">
-            {% if comment.entry.image is not same as null %}
+{% if rich is same as true %}
+    <span class="entry-comment-inline">
+        {{ component('user_inline', {user: comment.user, fullName: userFullName, showNewIcon: true}) }}:
+        <a href="{{ path('entry_comment_view', {magazine_name: comment.magazine.name, entry_id: comment.entry.id, comment_id: comment.id, slug: comment.entry.slug|length ? comment.entry.slug : '-'}) }}">
+            {% if comment.image is not same as null %}
                 <i class="fa-solid fa-photo-film"></i>
             {% endif %}
-            {{ comment.entry.getShortTitle() }}
+            {{ comment.getShortTitle() }}
         </a>
-        {{ 'by'|trans }}
-        {{ component('user_inline', {user: comment.entry.user, fullName: userFullName, showNewIcon: true}) }}
-    {% endif %}
-    {% if comment.magazine.name is not same as 'random' %}
-        {{ 'in'|trans }}
-        {{ component('magazine_inline', {magazine: comment.magazine, fullName: magazineFullName, showNewIcon: true}) }}
-    {% endif %}
-</span>
+        {{ 'answered'|trans }}
+        {% if comment.parent is not same as null %}
+            <a href="{{ path('entry_comment_view', {magazine_name: comment.magazine.name, entry_id: comment.entry.id, comment_id: comment.parent.id, slug: comment.entry.slug|length ? comment.entry.slug : '-'}) }}">
+                {{ comment.parent.getShortTitle() }}
+            </a>
+            {{ 'by'|trans }}
+            {{ component('user_inline', {user: comment.parent.user, fullName: userFullName, showNewIcon: true}) }}
+        {% else %}
+            <a href="{{ path('entry_single', {magazine_name: comment.magazine.name, entry_id: comment.entry.id, slug: comment.entry.slug|length ? comment.entry.slug : '-'}) }}">
+                {% if comment.entry.image is not same as null %}
+                    <i class="fa-solid fa-photo-film"></i>
+                {% endif %}
+                {{ comment.entry.getShortTitle() }}
+            </a>
+            {{ 'by'|trans }}
+            {{ component('user_inline', {user: comment.entry.user, fullName: userFullName, showNewIcon: true}) }}
+        {% endif %}
+        {% if comment.magazine.name is not same as 'random' %}
+            {{ 'in'|trans }}
+            {{ component('magazine_inline', {magazine: comment.magazine, fullName: magazineFullName, showNewIcon: true}) }}
+        {% endif %}
+    </span>
+{% else %}
+    <a href="{{ path('entry_comment_view', {magazine_name: comment.magazine.name, entry_id: comment.entry.id, comment_id: comment.id, slug: comment.entry.slug|length ? comment.entry.slug : '-'}) }}">
+        {% if comment.apId is same as null %}
+            {{ url('entry_comment_view', {magazine_name: comment.magazine.name, entry_id: comment.entry.id, comment_id: comment.id, slug: '-'}) }}
+        {% else %}
+            {{ comment.apId }}
+        {% endif %}
+    </a>
+{% endif %}
