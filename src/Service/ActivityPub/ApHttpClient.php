@@ -372,7 +372,7 @@ class ApHttpClient implements ApHttpClientInterface
      *
      * @throws InvalidApPostException rethrows the error
      */
-    private function logRequestException(?ResponseInterface $response, string $requestUrl, string $requestType, \Exception $e): void
+    private function logRequestException(?ResponseInterface $response, string $requestUrl, string $requestType, \Exception $e, ?string $requestBody = null): void
     {
         if (null !== $response) {
             try {
@@ -385,12 +385,13 @@ class ApHttpClient implements ApHttpClientInterface
 
         // Often 400, 404 errors just return the full HTML page, so we don't want to log the full content of them
         // We truncate the content to 200 characters max.
-        $this->logger->error('[ApHttpClient::logRequestException] {type} failed: {address}, ex: {e}: {msg}. Truncated content: {content}', [
+        $this->logger->error('[ApHttpClient::logRequestException] {type} failed: {address}, ex: {e}: {msg}. Truncated content: {content}. Truncated request body: {body}', [
             'type' => $requestType,
             'address' => $requestUrl,
             'e' => \get_class($e),
             'msg' => $e->getMessage(),
             'content' => substr($content ?? 'No content provided', 0, 200),
+            'body' => substr($requestBody ?? 'No body provided', 0, 200),
         ]);
         // And only log the full content in debug log mode
         if ($content) {
@@ -445,7 +446,7 @@ class ApHttpClient implements ApHttpClientInterface
                 throw new InvalidApPostException('Post failed', $url, $statusCode, $body);
             }
         } catch (\Exception $e) {
-            $this->logRequestException($response, $url, 'ApHttpClient:post', $e);
+            $this->logRequestException($response, $url, 'ApHttpClient:post', $e, $jsonBody);
         }
 
         // build cache
@@ -564,9 +565,11 @@ class ApHttpClient implements ApHttpClientInterface
         $stringToSign = self::headersToSigningString($headers);
         $signedHeaders = implode(' ', array_map('strtolower', array_keys($headers)));
         $key = openssl_pkey_get_private($actor->privateKey);
-        $success_sign = openssl_sign($stringToSign, $signature, $key, OPENSSL_ALGO_SHA256);
-        // Free the key from memory
-        openssl_free_key($key);
+        if (false !== $key) {
+            $success_sign = openssl_sign($stringToSign, $signature, $key, OPENSSL_ALGO_SHA256);
+        } else {
+            $success_sign = false;
+        }
         $signatureHeader = null;
         if ($success_sign) {
             $signature = base64_encode($signature);
@@ -575,9 +578,14 @@ class ApHttpClient implements ApHttpClientInterface
                 : $this->groupFactory->getActivityPubId($actor).'#main-key';
             $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
         } else {
-            $this->logger->error('[ApHttpClient::getHeaders] Failed to sign headers for {url}: {headers}', [
+            $this->logger->error('[ApHttpClient::getHeaders] Failed to sign headers for {url} with private key of {actor}: {headers}', [
                 'url' => $url,
                 'headers' => $headers,
+                'actor' => $actor->apId ?? (
+                    $actor instanceof User
+                        ? $this->personFactory->getActivityPubId($actor).'#main-key'
+                        : $this->groupFactory->getActivityPubId($actor).'#main-key'
+                ),
             ]);
             throw new \Exception('Failed to sign headers');
         }
@@ -600,9 +608,11 @@ class ApHttpClient implements ApHttpClientInterface
         $stringToSign = self::headersToSigningString($headers);
         $signedHeaders = implode(' ', array_map('strtolower', array_keys($headers)));
         $key = openssl_pkey_get_private($privateKey);
-        $success_sign = openssl_sign($stringToSign, $signature, $key, OPENSSL_ALGO_SHA256);
-        // Free the key from memory
-        openssl_free_key($key);
+        if (false !== $key) {
+            $success_sign = openssl_sign($stringToSign, $signature, $key, OPENSSL_ALGO_SHA256);
+        } else {
+            $success_sign = false;
+        }
         $signatureHeader = null;
         if ($success_sign) {
             $signature = base64_encode($signature);
