@@ -977,6 +977,10 @@ image_lightbox_in_list_help: When checked, clicking the thumbnail shows a modal 
   box window. When unchecked, clicking the thumbnail will open the thread.
 show_new_icons: Show new icons
 show_new_icons_help: Show icon for new magazine/user (30 days old or newer)
+magazine_instance_defederated_info: The instance of this magazine is defederated.
+  The magazine will therefore not receive updates.
+user_instance_defederated_info: The instance of this user is defederated.
+flash_thread_instance_banned: The instance of this magazine is banned.
 show_rich_mention: Rich mentions
 show_rich_mention_help: Render a user component when a user is mentioned.
   This will include their display name and profile picture.

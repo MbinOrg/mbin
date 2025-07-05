@@ -15,6 +15,7 @@ use App\Event\EntryComment\EntryCommentDeletedEvent;
 use App\Event\EntryComment\EntryCommentEditedEvent;
 use App\Event\EntryComment\EntryCommentPurgedEvent;
 use App\Event\EntryComment\EntryCommentRestoredEvent;
+use App\Exception\InstanceBannedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Factory\EntryCommentFactory;
@@ -46,6 +47,13 @@ class EntryCommentManager implements ContentManagerInterface
     ) {
     }
 
+    /**
+     * @throws InstanceBannedException
+     * @throws TagBannedException
+     * @throws UserBannedException
+     * @throws TooManyRequestsHttpException
+     * @throws \Exception
+     */
     public function create(EntryCommentDto $dto, User $user, $rateLimit = true): EntryComment
     {
         if ($rateLimit) {
@@ -61,6 +69,10 @@ class EntryCommentManager implements ContentManagerInterface
 
         if ($this->tagManager->isAnyTagBanned($this->tagManager->extract($dto->body))) {
             throw new TagBannedException();
+        }
+
+        if (null !== $dto->magazine->apId && $this->settingsManager->isBannedInstance($dto->magazine->apInboxUrl)) {
+            throw new InstanceBannedException();
         }
 
         $comment = $this->factory->createFromDto($dto, $user);

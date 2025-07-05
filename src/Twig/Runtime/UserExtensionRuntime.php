@@ -8,6 +8,7 @@ use App\Entity\Instance;
 use App\Entity\User;
 use App\Repository\InstanceRepository;
 use App\Service\MentionManager;
+use App\Service\SettingsManager;
 use App\Service\UserManager;
 use Symfony\Bundle\SecurityBundle\Security;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -19,6 +20,7 @@ class UserExtensionRuntime implements RuntimeExtensionInterface
         private readonly MentionManager $mentionManager,
         private readonly InstanceRepository $instanceRepository,
         private readonly UserManager $userManager,
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 
@@ -58,5 +60,14 @@ class UserExtensionRuntime implements RuntimeExtensionInterface
     public function getInstanceOfUser(User $user): ?Instance
     {
         return $this->instanceRepository->getInstanceOfUser($user);
+    }
+
+    public function isInstanceOfUserBanned(User $user): bool
+    {
+        if (null === $user->apId) {
+            return false;
+        }
+
+        return $this->settingsManager->isBannedInstance($user->apProfileId);
     }
 }
