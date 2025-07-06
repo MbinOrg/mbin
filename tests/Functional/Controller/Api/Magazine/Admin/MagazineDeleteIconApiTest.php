@@ -12,9 +12,9 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class MagazineDeleteIconApiTest extends WebTestCase
 {
-    public function __construct($name = null, array $data = [], $dataName = '')
+    public function setUp(): void
     {
-        parent::__construct($name, $data, $dataName);
+        parent::setUp();
         $this->kibbyPath = \dirname(__FILE__, 6).'/assets/kibby_emoji.png';
     }
 
