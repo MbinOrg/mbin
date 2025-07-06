@@ -30,6 +30,9 @@ use Doctrine\ORM\Mapping\UniqueConstraint;
 #[Index(columns: ['visibility', 'is_adult'], name: 'magazine_visibility_adult_idx')]
 #[Index(columns: ['visibility'], name: 'magazine_visibility_idx')]
 #[Index(columns: ['is_adult'], name: 'magazine_adult_idx')]
+#[Index(columns: ['name_ts'], name: 'magazine_name_ts')]
+#[Index(columns: ['title_ts'], name: 'magazine_title_ts')]
+#[Index(columns: ['description_ts'], name: 'magazine_description_ts')]
 #[UniqueConstraint(name: 'magazine_name_idx', columns: ['name'])]
 class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiResourceInterface
 {
@@ -104,6 +107,14 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     #[OneToMany(mappedBy: 'magazine', targetEntity: MagazineLog::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $logs;
+
+    #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]
+    private ?string $nameTs;
+    #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]
+    private ?string $titleTs;
+    #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]
+    private ?string $descriptionTs;
+
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]

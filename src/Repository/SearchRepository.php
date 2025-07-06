@@ -10,6 +10,7 @@ use App\Entity\Moderator;
 use App\Entity\User;
 use App\Pagination\NativeQueryAdapter;
 use App\Pagination\Transformation\ContentPopulationTransformer;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\PagerfantaInterface;
@@ -82,71 +83,97 @@ class SearchRepository
     }
 
     /**
-     * @param 'entry'|'post'|null $specificType
+     * @param 'entry'|'post'|'magazine'|'user'|'users+magazines'|'entry+post'|null $specificType
      */
-    public function search(?User $searchingUser, string $query, int $page = 1, ?int $authorId = null, ?int $magazineId = null, ?string $specificType = null): PagerfantaInterface
-    {
+    public function search(
+        ?User $searchingUser,
+        string $query,
+        int $page = 1,
+        ?int $authorId = null,
+        ?int $magazineId = null,
+        ?string $specificType = null,
+        ?\DateTimeImmutable $sinceDate = null,
+    ): PagerfantaInterface {
         $authorWhere = null !== $authorId ? 'AND e.user_id = :authorId' : '';
         $magazineWhere = null !== $magazineId ? 'AND e.magazine_id = :magazineId' : '';
+        $createdWhere = null !== $sinceDate ? 'AND e.created_at >= :since' : '';
+        $createdWhereMagazine = null !== $sinceDate ? 'AND m.created_at >= :since' : '';
+        $createdWhereUser = null !== $sinceDate ? 'AND u.created_at >= :since' : '';
+        $blockMagazineAndUserResult = null !== $authorId || null !== $magazineId ? 'AND false' : '';
         $conn = $this->entityManager->getConnection();
-        $sqlEntry = "SELECT e.id, e.created_at, e.visibility, 'entry' AS type FROM entry e
+        $sqlEntry = "SELECT e.id, e.created_at, e.visibility, 2 * ts_rank_cd(e.title_ts, plainto_tsquery(:query)) + ts_rank_cd(e.body_ts, plainto_tsquery(:query)) as rank, 'entry' AS type FROM entry e
             INNER JOIN public.user u ON u.id = user_id
             INNER JOIN magazine m ON e.magazine_id = m.id
-            WHERE (body_ts @@ plainto_tsquery( :query ) = true OR title_ts @@ plainto_tsquery( :query ) = true)
+            WHERE (e.body_ts @@ plainto_tsquery( :query ) = true OR e.title_ts @@ plainto_tsquery( :query ) = true)
                 AND e.visibility = :visibility
                 AND u.is_deleted = false
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.entry_id = e.id)
-                $authorWhere $magazineWhere
+                $authorWhere $magazineWhere $createdWhere
         UNION ALL
-        SELECT e.id, e.created_at, e.visibility, 'entry_comment' AS type FROM entry_comment e
+        SELECT e.id, e.created_at, e.visibility, 3 * ts_rank_cd(e.body_ts, plainto_tsquery(:query)) as rank, 'entry_comment' AS type FROM entry_comment e
             INNER JOIN public.user u ON u.id = user_id
             INNER JOIN magazine m ON e.magazine_id = m.id
-            WHERE body_ts @@ plainto_tsquery( :query ) = true
+            WHERE e.body_ts @@ plainto_tsquery( :query ) = true
                 AND e.visibility = :visibility
                 AND u.is_deleted = false
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.entry_comment_id = e.id)
-                $authorWhere $magazineWhere
+                $authorWhere $magazineWhere $createdWhere
         ";
-        $sqlPost = "SELECT e.id, e.created_at, e.visibility, 'post' AS type FROM post e
+        $sqlPost = "SELECT e.id, e.created_at, e.visibility, 3 * ts_rank_cd(e.body_ts, plainto_tsquery(:query)) as rank, 'post' AS type FROM post e
             INNER JOIN public.user u ON u.id = user_id
             INNER JOIN magazine m ON e.magazine_id = m.id
-            WHERE body_ts @@ plainto_tsquery( :query ) = true
+            WHERE e.body_ts @@ plainto_tsquery( :query ) = true
                 AND e.visibility = :visibility
                 AND u.is_deleted = false
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.post_id = e.id)
-                $authorWhere $magazineWhere
+                $authorWhere $magazineWhere $createdWhere
         UNION ALL
-        SELECT e.id, e.created_at, e.visibility, 'post_comment' AS type FROM post_comment e
+        SELECT e.id, e.created_at, e.visibility, 3 * ts_rank_cd(e.body_ts, plainto_tsquery(:query)) as rank, 'post_comment' AS type FROM post_comment e
             INNER JOIN public.user u ON u.id = user_id
             INNER JOIN magazine m ON e.magazine_id = m.id
-            WHERE body_ts @@ plainto_tsquery( :query ) = true
+            WHERE e.body_ts @@ plainto_tsquery( :query ) = true
                 AND e.visibility = :visibility
                 AND u.is_deleted = false
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.post_comment_id = e.id)
-                $authorWhere $magazineWhere
+                $authorWhere $magazineWhere $createdWhere
+        ";
+
+        $sqlMagazine = "SELECT m.Id, m.created_at, m.visibility, ts_rank_cd(m.name_ts, plainto_tsquery(:query)) + ts_rank_cd(m.title_ts, plainto_tsquery(:query)) + ts_rank_cd(m.description_ts, plainto_tsquery(:query)) as rank, 'magazine' AS type FROM magazine m
+            WHERE (m.name_ts @@ plainto_tsquery( :query ) = true OR m.title_ts @@ plainto_tsquery( :query ) = true OR m.description_ts @@ plainto_tsquery( :query ) = true)
+                AND m.visibility = :visibility
+                AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
+                $createdWhereMagazine $blockMagazineAndUserResult
+        ";
+
+        $sqlUser = "SELECT u.Id, u.created_at, u.visibility, ts_rank_cd(u.username_ts, plainto_tsquery(:query)) + ts_rank_cd(u.about_ts, plainto_tsquery(:query)) as rank, 'user' AS type FROM \"user\" u
+            WHERE (u.username_ts @@ plainto_tsquery( :query ) = true OR u.about_ts @@ plainto_tsquery( :query ) = true)
+                AND u.visibility = :visibility
+                AND u.is_deleted = false
+                AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
+                $createdWhereUser $blockMagazineAndUserResult
         ";
 
         if (null === $specificType) {
-            $sql = "$sqlEntry UNION ALL $sqlPost ORDER BY created_at DESC";
+            $sql = "$sqlEntry UNION ALL $sqlPost UNION ALL $sqlMagazine UNION ALL $sqlUser ORDER BY rank DESC";
         } else {
-            if ('entry' === $specificType) {
-                $sql = "$sqlEntry ORDER BY created_at DESC";
-            } elseif ('post' === $specificType) {
-                $sql = "$sqlPost ORDER BY created_at DESC";
-            } else {
-                throw new \LogicException($specificType.' is not supported');
-            }
+            $sql = match ($specificType) {
+                'entry' => "$sqlEntry ORDER BY rank DESC",
+                'post' => "$sqlPost ORDER BY rank DESC",
+                'magazine' => "$sqlMagazine ORDER BY rank DESC",
+                'user' => "$sqlUser ORDER BY rank DESC",
+                'users+magazines' => "$sqlMagazine UNION ALL $sqlUser ORDER BY rank DESC",
+                'entry+post' => "$sqlEntry UNION ALL $sqlPost ORDER BY rank DESC",
+                default => throw new \LogicException($specificType.' is not supported'),
+            };
         }
-
-        $this->logger->debug('Search query: {sql}', ['sql' => $sql]);
 
         $parameters = [
             'query' => $query,
@@ -154,12 +181,18 @@ class SearchRepository
             'queryingUser' => $searchingUser?->getId() ?? -1,
         ];
 
+        $this->logger->debug('Search query: {sql}', ['sql' => $sql]);
+
         if (null !== $authorId) {
             $parameters['authorId'] = $authorId;
         }
 
         if (null !== $magazineId) {
             $parameters['magazineId'] = $magazineId;
+        }
+
+        if (null !== $sinceDate) {
+            $parameters['since'] = $sinceDate;
         }
 
         $adapter = new NativeQueryAdapter($conn, $sql, $parameters, transformer: $this->transformer);

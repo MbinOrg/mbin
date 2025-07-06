@@ -937,9 +937,13 @@ bookmarks_list_edit: Edit bookmark list
 bookmark_list_edit: Edit
 bookmark_list_selected_list: Selected list
 table_of_contents: Table of contents
-search_type_all: Threads + Microblogs
+search_type_all: Everything
 search_type_entry: Threads
 search_type_post: Microblogs
+search_type_magazine: Magazines
+search_type_user: Users
+search_type_actors: Magazines + Users
+search_type_content: Threads + Microblogs
 select_user: Choose a user
 new_users_need_approval: New users have to be approved by an admin before they can
   log in.
