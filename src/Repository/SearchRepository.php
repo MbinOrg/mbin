@@ -10,7 +10,6 @@ use App\Entity\Moderator;
 use App\Entity\User;
 use App\Pagination\NativeQueryAdapter;
 use App\Pagination\Transformation\ContentPopulationTransformer;
-use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\PagerfantaInterface;
