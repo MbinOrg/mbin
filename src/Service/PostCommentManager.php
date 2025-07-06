@@ -71,7 +71,7 @@ class PostCommentManager implements ContentManagerInterface
             throw new TagBannedException();
         }
 
-        if (null !== $dto->magazine->apId && $this->settingsManager->isBannedInstance($dto->magazine->apInboxUrl)) {
+        if (null !== $dto->post->magazine->apId && $this->settingsManager->isBannedInstance($dto->post->magazine->apInboxUrl)) {
             throw new InstanceBannedException();
         }
 
