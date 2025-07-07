@@ -1041,3 +1041,17 @@ admin_users_banned: Vetadas
 2fa.manual_code_hint: Se non podes escanear o código QR escribe a chave secreta 
   manualmente
 toolbar.emoji: Emoji
+magazine_instance_defederated_info: A instancia desta revista foi desfederada. A
+  revista non vai recibir actualizacións.
+user_instance_defederated_info: A instancia desta usuaria foi desfederada.
+flash_thread_instance_banned: A instancia desta revista foi vetada.
+show_rich_mention: Mencións melloradas
+show_rich_mention_help: Mostrar datos da usuaria cando é mencionada. Inclúe o 
+  seu nome público e imaxe de perfil.
+show_rich_mention_magazine: Mencións melloradas de revistas
+show_rich_mention_magazine_help: Mostra datos da revista cando se menciona. Isto
+  inclúe o seu nome público e icona.
+show_rich_ap_link: Ligazóns AP melloradas
+show_rich_ap_link_help: Mostra información en liña cando se inclúe a ligazón a 
+  contidos ActivityPub.
+attitude: Actitude
