@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "704b6ad7ff988c949bcf188a30ad0b26",
+    "content-hash": "507d7f8cb7b58849ad1471afbf83b515",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -17847,16 +17847,16 @@
         },
         {
             "name": "symfony/phpunit-bridge",
-            "version": "v7.2.8",
+            "version": "v7.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/phpunit-bridge.git",
-                "reference": "860206b88792463da3bb64763c224c29ddbe9729"
+                "reference": "71624984d8bcad6acf7a790d4e3ceafe04bc2485"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/860206b88792463da3bb64763c224c29ddbe9729",
-                "reference": "860206b88792463da3bb64763c224c29ddbe9729",
+                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/71624984d8bcad6acf7a790d4e3ceafe04bc2485",
+                "reference": "71624984d8bcad6acf7a790d4e3ceafe04bc2485",
                 "shasum": ""
             },
             "require": {
@@ -17912,7 +17912,7 @@
                 "testing"
             ],
             "support": {
-                "source": "https://github.com/symfony/phpunit-bridge/tree/v7.2.8"
+                "source": "https://github.com/symfony/phpunit-bridge/tree/v7.3.1"
             },
             "funding": [
                 {
@@ -17928,7 +17928,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-06-04T10:08:59+00:00"
+            "time": "2025-06-04T10:09:06+00:00"
         },
         {
             "name": "symfony/web-profiler-bundle",
@@ -18065,7 +18065,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -18081,6 +18081,6 @@
         "ext-openssl": "*",
         "ext-redis": "*"
     },
-    "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
 }
