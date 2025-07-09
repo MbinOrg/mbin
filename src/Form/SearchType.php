@@ -21,11 +21,11 @@ class SearchType extends AbstractType
             ->add('q', TextType::class, [
                 'required' => true,
                 'attr' => [
-                    'placeholder' => 'type_search_term',
+                    'placeholder' => 'type_search_term_url_handle',
                 ],
             ])
-            ->add('magazine', MagazineAutocompleteType::class, ['required' => false])
-            ->add('user', UserAutocompleteType::class, ['required' => false])
+            ->add('magazine', MagazineAutocompleteType::class, ['required' => false, 'placeholder' => 'type_search_magazine'])
+            ->add('user', UserAutocompleteType::class, ['required' => false, 'placeholder' => 'type_search_user'])
             ->add('type', ChoiceType::class, [
                 'choices' => [
                     'search_type_all' => null,
