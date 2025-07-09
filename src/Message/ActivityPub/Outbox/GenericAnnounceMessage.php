@@ -8,7 +8,10 @@ use App\Message\Contracts\ActivityPubOutboxInterface;
 
 class GenericAnnounceMessage implements ActivityPubOutboxInterface
 {
-    public function __construct(public int $announcingMagazineId, public array $payloadToAnnounce, public ?string $sourceInstance)
+    /**
+     * @param array|null $payloadToAnnounce THIS IS NOT USED ANYMORE, ONLY THERE FOR BACKWARDS COMPATIBILITY
+     */
+    public function __construct(public int $announcingMagazineId, public ?array $payloadToAnnounce, public ?string $sourceInstance, public ?string $innerActivityUUID, public ?string $innerActivityUrl)
     {
     }
 }

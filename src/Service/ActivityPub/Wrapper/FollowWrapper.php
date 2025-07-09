@@ -4,36 +4,27 @@ declare(strict_types=1);
 
 namespace App\Service\ActivityPub\Wrapper;
 
-use App\Entity\Contracts\ActivityPubActivityInterface;
-use JetBrains\PhpStorm\ArrayShape;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Uid\Uuid;
+use App\Entity\Activity;
+use App\Entity\Magazine;
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 
 class FollowWrapper
 {
-    public function __construct(private readonly UrlGeneratorInterface $urlGenerator)
-    {
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+    ) {
     }
 
-    #[ArrayShape([
-        '@context' => 'string',
-        'id' => 'string',
-        'type' => 'string',
-        'actor' => 'string',
-        'object' => 'string',
-    ])]
-    public function build(
-        string $follower,
-        string $following,
-    ): array {
-        $id = Uuid::v4()->toRfc4122();
+    public function build(User $follower, User|Magazine $following): Activity
+    {
+        $activity = new Activity('Follow');
+        $activity->setActor($follower);
+        $activity->setObject($following);
 
-        return [
-            '@context' => ActivityPubActivityInterface::CONTEXT_URL,
-            'id' => $this->urlGenerator->generate('ap_object', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL),
-            'type' => 'Follow',
-            'actor' => $follower,
-            'object' => $following,
-        ];
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
+
+        return $activity;
     }
 }
