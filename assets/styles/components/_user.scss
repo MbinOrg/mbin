@@ -67,7 +67,8 @@
   }
 }
 
-.user-box {
+.user-box,
+.user-box-inline {
   figure {
     margin: 0;
     padding: 0;
@@ -83,10 +84,10 @@
   }
 
   .user-main {
-    display: flex;
     margin-left: 1.5rem;
     padding-top: 2rem;
     text-align: center;
+    width: max-content;
 
     @include b.media-breakpoint-down(lg) {
       justify-content: space-around;
@@ -97,7 +98,7 @@
       margin-bottom: 0;
     }
 
-    h1>code {
+    h1 > code {
       background: var(--kbin-button-secondary-bg);
       border: var(--kbin-button-secondary-border);
       color: var(--kbin-button-secondary-text-color);
@@ -128,11 +129,19 @@
   }
 
   .with-cover.with-avatar {
+    figure {
+      position: relative;
+      top: -60px;
+      height: 40px;
+    }
+  }
+}
+
+.user-box {
+  .with-cover.with-avatar {
     .user-main {
       margin-top: 0;
       padding-top: 0;
-      position: relative;
-      top: -60px;
 
       .user__actions {
         margin: 0;
@@ -141,8 +150,7 @@
 
     .about {
       margin-bottom: 1.5rem;
-      position: relative;
-      top: -20px;
+      margin-top: 1em;
     }
   }
 }
@@ -338,4 +346,29 @@ td .user__actions {
 
 .new-user-icon {
   color: green;
+}
+
+.user-box-inline {
+  padding: 0;
+  overflow: clip;
+
+  .user-box-info {
+    display: flex;
+  }
+
+  .with-cover.with-avatar {
+    .user-main {
+      margin-top: 0;
+      padding-top: 0;
+
+      .user__actions {
+        margin: 0;
+      }
+    }
+  }
+
+  .about {
+    padding-top: 2em;
+    margin-bottom: 1.5rem;
+  }
 }

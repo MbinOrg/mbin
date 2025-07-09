@@ -13,6 +13,12 @@
 {% if postCommentAttributes is not defined %}
     {% set postCommentAttributes = {} %}
 {% endif %}
+{% if magazineAttributes is not defined %}
+    {% set magazineAttributes = {} %}
+{% endif %}
+{% if userAttributes is not defined %}
+    {% set userAttributes = {} %}
+{% endif %}
 
 {% if subject is entry %}
     {{ component('entry', {entry: subject}|merge(attributes)|merge(entryAttributes)) }}
@@ -23,5 +29,7 @@
 {% elseif subject is post_comment %}
     {{ component('post_comment', {comment: subject}|merge(attributes)|merge(postCommentAttributes)) }}
 {% elseif subject is magazine %}
-    {{ component('magazine_box', {magazine: subject}|merge(attributes)) }}
+    {{ component('magazine_box', {magazine: subject}|merge(attributes, magazineAttributes)) }}
+{% elseif subject is user %}
+    {{ component('user_inline_box', {user: subject}|merge(attributes, userAttributes)) }}
 {% endif %}

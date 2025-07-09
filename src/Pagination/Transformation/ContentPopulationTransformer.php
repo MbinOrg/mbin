@@ -6,8 +6,10 @@ namespace App\Pagination\Transformation;
 
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\Magazine;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ContentPopulationTransformer implements ResultTransformer
@@ -32,8 +34,14 @@ class ContentPopulationTransformer implements ResultTransformer
         $postComment = $this->entityManager->getRepository(PostComment::class)->findBy(
             ['id' => $this->getOverviewIds((array) $input, 'post_comment')]
         );
+        $magazines = $this->entityManager->getRepository(Magazine::class)->findBy(
+            ['id' => $this->getOverviewIds((array) $input, 'magazine')]
+        );
+        $users = $this->entityManager->getRepository(User::class)->findBy(
+            ['id' => $this->getOverviewIds((array) $input, 'user')]
+        );
 
-        return $this->applyPositions($positionsArray, $entries, $entryComments, $post, $postComment);
+        return $this->applyPositions($positionsArray, $entries, $entryComments, $post, $postComment, $magazines, $users);
     }
 
     private function getOverviewIds(array $result, string $type): array
@@ -52,6 +60,8 @@ class ContentPopulationTransformer implements ResultTransformer
         $entryCommentPositions = [];
         $postPositions = [];
         $postCommentPositions = [];
+        $userPositions = [];
+        $magazinePositions = [];
         $i = 0;
         foreach ($input as $current) {
             switch ($current['type']) {
@@ -67,6 +77,12 @@ class ContentPopulationTransformer implements ResultTransformer
                 case 'post_comment':
                     $postCommentPositions[$current['id']] = $i;
                     break;
+                case 'magazine':
+                    $magazinePositions[$current['id']] = $i;
+                    break;
+                case 'user':
+                    $userPositions[$current['id']] = $i;
+                    break;
             }
             ++$i;
         }
@@ -76,6 +92,8 @@ class ContentPopulationTransformer implements ResultTransformer
             'entry_comment' => $entryCommentPositions,
             'post' => $postPositions,
             'post_comment' => $postCommentPositions,
+            'magazine' => $magazinePositions,
+            'user' => $userPositions,
         ];
     }
 
@@ -86,7 +104,7 @@ class ContentPopulationTransformer implements ResultTransformer
      * @param Post[]         $posts
      * @param PostComment[]  $postComments
      */
-    private function applyPositions(array $positionsArray, array $entries, array $entryComments, array $posts, array $postComments): array
+    private function applyPositions(array $positionsArray, array $entries, array $entryComments, array $posts, array $postComments, array $magazines, array $users): array
     {
         $result = [];
         foreach ($entries as $entry) {
@@ -100,6 +118,12 @@ class ContentPopulationTransformer implements ResultTransformer
         }
         foreach ($postComments as $postComment) {
             $result[$positionsArray['post_comment'][$postComment->getId()]] = $postComment;
+        }
+        foreach ($magazines as $magazine) {
+            $result[$positionsArray['magazine'][$magazine->getId()]] = $magazine;
+        }
+        foreach ($users as $user) {
+            $result[$positionsArray['user'][$user->getId()]] = $user;
         }
         ksort($result, SORT_NUMERIC);
 

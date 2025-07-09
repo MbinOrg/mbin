@@ -13,4 +13,5 @@ class SearchDto
     public ?string $type = null;
     public ?User $user = null;
     public ?Magazine $magazine = null;
+    public ?\DateTimeImmutable $since = null;
 }
