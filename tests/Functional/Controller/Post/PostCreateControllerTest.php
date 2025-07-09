@@ -9,9 +9,9 @@ use PHPUnit\Framework\Attributes\Group;
 
 class PostCreateControllerTest extends WebTestCase
 {
-    public function __construct($name = null, array $data = [], $dataName = '')
+    public function setUp(): void
     {
-        parent::__construct($name, $data, $dataName);
+        parent::setUp();
         $this->kibbyPath = \dirname(__FILE__, 4).'/assets/kibby_emoji.png';
     }
 

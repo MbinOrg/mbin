@@ -13,9 +13,9 @@ class MagazineUpdateThemeApiTest extends WebTestCase
 {
     public const MAGAZINE_THEME_RESPONSE_KEYS = ['magazine', 'customCss', 'icon'];
 
-    public function __construct($name = null, array $data = [], $dataName = '')
+    public function setUp(): void
     {
-        parent::__construct($name, $data, $dataName);
+        parent::setUp();
         $this->kibbyPath = \dirname(__FILE__, 6).'/assets/kibby_emoji.png';
     }
 
