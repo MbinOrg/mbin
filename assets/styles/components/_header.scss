@@ -329,6 +329,10 @@
       li a.active {
         background: var(--kbin-header-link-active-bg);
       }
+
+      &__mobile-menu {
+        display: none;
+      }
     }
   }
 }
