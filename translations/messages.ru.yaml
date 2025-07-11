@@ -966,7 +966,10 @@ notification_title_removed_post: Запись удалена
 schedule_delete_account: Запланировать удаление
 toolbar.emoji: Эмодзи
 application_text: Расскажите, почему вы хотите присоединиться
-show_rich_mention_help: Отображать имена и изображения профилей упомянутых 
-  пользователей.
+show_rich_mention_help: Отображать имена и изображения профилей пользователей, 
+  упомянутых в тексте.
 show_rich_mention: Расширенные упоминания
 show_rich_mention_magazine: Расширенные упоминания журналов
+show_rich_mention_magazine_help: Отображать названия и изображения журналов, 
+  упомянутых в тексте.
+show_rich_ap_link: Расширенные ссылки AP
