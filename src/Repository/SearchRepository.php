@@ -148,6 +148,8 @@ class SearchRepository
         $sqlMagazine = "SELECT m.Id, m.created_at, m.visibility, ts_rank_cd(m.name_ts, plainto_tsquery(:query)) + ts_rank_cd(m.title_ts, plainto_tsquery(:query)) + ts_rank_cd(m.description_ts, plainto_tsquery(:query)) as rank, 'magazine' AS type FROM magazine m
             WHERE (m.name_ts @@ plainto_tsquery( :query ) = true OR m.title_ts @@ plainto_tsquery( :query ) = true OR m.description_ts @@ plainto_tsquery( :query ) = true)
                 AND m.visibility = :visibility
+                AND m.ap_deleted_at IS NULL
+                AND m.marked_for_deletion_at IS NULL
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 $createdWhereMagazine $blockMagazineAndUserResult
         ";
@@ -156,6 +158,8 @@ class SearchRepository
             WHERE (u.username_ts @@ plainto_tsquery( :query ) = true OR u.about_ts @@ plainto_tsquery( :query ) = true)
                 AND u.visibility = :visibility
                 AND u.is_deleted = false
+                AND u.marked_for_deletion_at IS NULL
+                AND u.ap_deleted_at IS NULL
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 $createdWhereUser $blockMagazineAndUserResult
         ";
