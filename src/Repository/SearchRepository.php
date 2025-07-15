@@ -103,7 +103,7 @@ class SearchRepository
         $sqlEntry = "SELECT e.id, e.created_at, e.visibility, 2 * ts_rank_cd(e.title_ts, plainto_tsquery(:query)) + ts_rank_cd(e.body_ts, plainto_tsquery(:query)) as rank, 'entry' AS type FROM entry e
             INNER JOIN public.user u ON u.id = user_id
             INNER JOIN magazine m ON e.magazine_id = m.id
-            WHERE (e.body_ts @@ plainto_tsquery( :query ) = true OR e.title_ts @@ plainto_tsquery( :query ) = true)
+            WHERE (e.body_ts @@ plainto_tsquery( :query ) = true OR e.title_ts @@ plainto_tsquery( :query ) = true OR e.title LIKE :likeQuery OR e.body LIKE :likeQuery)
                 AND e.visibility = :visibility
                 AND u.is_deleted = false
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
@@ -114,7 +114,7 @@ class SearchRepository
         SELECT e.id, e.created_at, e.visibility, 3 * ts_rank_cd(e.body_ts, plainto_tsquery(:query)) as rank, 'entry_comment' AS type FROM entry_comment e
             INNER JOIN public.user u ON u.id = user_id
             INNER JOIN magazine m ON e.magazine_id = m.id
-            WHERE e.body_ts @@ plainto_tsquery( :query ) = true
+            WHERE (e.body_ts @@ plainto_tsquery( :query ) = true OR e.body LIKE :likeQuery)
                 AND e.visibility = :visibility
                 AND u.is_deleted = false
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
@@ -125,7 +125,7 @@ class SearchRepository
         $sqlPost = "SELECT e.id, e.created_at, e.visibility, 3 * ts_rank_cd(e.body_ts, plainto_tsquery(:query)) as rank, 'post' AS type FROM post e
             INNER JOIN public.user u ON u.id = user_id
             INNER JOIN magazine m ON e.magazine_id = m.id
-            WHERE e.body_ts @@ plainto_tsquery( :query ) = true
+            WHERE (e.body_ts @@ plainto_tsquery( :query ) = true OR e.body LIKE :likeQuery)
                 AND e.visibility = :visibility
                 AND u.is_deleted = false
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
@@ -136,7 +136,7 @@ class SearchRepository
         SELECT e.id, e.created_at, e.visibility, 3 * ts_rank_cd(e.body_ts, plainto_tsquery(:query)) as rank, 'post_comment' AS type FROM post_comment e
             INNER JOIN public.user u ON u.id = user_id
             INNER JOIN magazine m ON e.magazine_id = m.id
-            WHERE e.body_ts @@ plainto_tsquery( :query ) = true
+            WHERE (e.body_ts @@ plainto_tsquery( :query ) = true OR e.body LIKE :likeQuery)
                 AND e.visibility = :visibility
                 AND u.is_deleted = false
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
@@ -146,7 +146,7 @@ class SearchRepository
         ";
 
         $sqlMagazine = "SELECT m.Id, m.created_at, m.visibility, ts_rank_cd(m.name_ts, plainto_tsquery(:query)) + ts_rank_cd(m.title_ts, plainto_tsquery(:query)) + ts_rank_cd(m.description_ts, plainto_tsquery(:query)) as rank, 'magazine' AS type FROM magazine m
-            WHERE (m.name_ts @@ plainto_tsquery( :query ) = true OR m.title_ts @@ plainto_tsquery( :query ) = true OR m.description_ts @@ plainto_tsquery( :query ) = true)
+            WHERE (m.name_ts @@ plainto_tsquery( :query ) = true OR m.title_ts @@ plainto_tsquery( :query ) = true OR m.description_ts @@ plainto_tsquery( :query ) = true OR m.title LIKE :likeQuery OR m.description LIKE :likeQuery)
                 AND m.visibility = :visibility
                 AND m.ap_deleted_at IS NULL
                 AND m.marked_for_deletion_at IS NULL
@@ -155,7 +155,7 @@ class SearchRepository
         ";
 
         $sqlUser = "SELECT u.Id, u.created_at, u.visibility, ts_rank_cd(u.username_ts, plainto_tsquery(:query)) + ts_rank_cd(u.about_ts, plainto_tsquery(:query)) as rank, 'user' AS type FROM \"user\" u
-            WHERE (u.username_ts @@ plainto_tsquery( :query ) = true OR u.about_ts @@ plainto_tsquery( :query ) = true)
+            WHERE (u.username_ts @@ plainto_tsquery( :query ) = true OR u.about_ts @@ plainto_tsquery( :query ) = true OR u.username LIKE :likeQuery OR u.about LIKE :likeQuery)
                 AND u.visibility = :visibility
                 AND u.is_deleted = false
                 AND u.marked_for_deletion_at IS NULL
@@ -165,21 +165,22 @@ class SearchRepository
         ";
 
         if (null === $specificType) {
-            $sql = "$sqlEntry UNION ALL $sqlPost UNION ALL $sqlMagazine UNION ALL $sqlUser ORDER BY rank DESC";
+            $sql = "$sqlEntry UNION ALL $sqlPost UNION ALL $sqlMagazine UNION ALL $sqlUser ORDER BY rank DESC, created_at DESC";
         } else {
             $sql = match ($specificType) {
-                'entry' => "$sqlEntry ORDER BY rank DESC",
-                'post' => "$sqlPost ORDER BY rank DESC",
-                'magazine' => "$sqlMagazine ORDER BY rank DESC",
-                'user' => "$sqlUser ORDER BY rank DESC",
-                'users+magazines' => "$sqlMagazine UNION ALL $sqlUser ORDER BY rank DESC",
-                'entry+post' => "$sqlEntry UNION ALL $sqlPost ORDER BY rank DESC",
+                'entry' => "$sqlEntry ORDER BY rank DESC, created_at DESC",
+                'post' => "$sqlPost ORDER BY rank DESC, created_at DESC",
+                'magazine' => "$sqlMagazine ORDER BY rank DESC, created_at DESC",
+                'user' => "$sqlUser ORDER BY rank DESC, created_at DESC",
+                'users+magazines' => "$sqlMagazine UNION ALL $sqlUser ORDER BY rank DESC, created_at DESC",
+                'entry+post' => "$sqlEntry UNION ALL $sqlPost ORDER BY rank DESC, created_at DESC",
                 default => throw new \LogicException($specificType.' is not supported'),
             };
         }
 
         $parameters = [
             'query' => $query,
+            'likeQuery' => "%$query%",
             'visibility' => VisibilityInterface::VISIBILITY_VISIBLE,
             'queryingUser' => $searchingUser?->getId() ?? -1,
         ];
