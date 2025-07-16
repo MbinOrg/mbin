@@ -191,7 +191,8 @@ from: 来自
 username: 用户名
 email: 电子邮件
 repeat_password: 重复密码
-agree_terms: 同意 %terms_link_start%条款和条件%terms_link_end% 和 %policy_link_start%隐私政策%policy_link_end%
+agree_terms: 同意 %terms_link_start%条款和条件%terms_link_end% 和 
+  %policy_link_start%隐私政策%policy_link_end%
 terms: 服务条款
 privacy_policy: 隐私政策
 about_instance: 关于
@@ -216,8 +217,8 @@ enabled: 已启用
 useful: 有用
 help: 帮助
 check_email: 检查您的电子邮件
-reset_check_email_desc: 如果您的电子邮件地址已经关联了一个账号，您应该会很快收到一封包含重置密码链接的电子邮件。该链接将在 %expire%
-  后过期。
+reset_check_email_desc: 如果您的电子邮件地址已经关联了一个账号，您应该会很快收到一封包含重置密码链接的电子邮件。该链接将在 
+  %expire% 后过期。
 reset_check_email_desc2: 如果您没有收到电子邮件，请检查您的垃圾邮件文件夹。
 try_again: 再试一次
 up_vote: 转发
@@ -379,7 +380,8 @@ show_top_bar: 显示顶部栏
 sticky_navbar: 固定导航栏
 subject_reported: 内容已被举报。
 password_confirm_header: 确认你的密码更改请求。
-your_account_is_not_active: 你的账号尚未激活。请检查你的电子邮件以获取账号激活说明，或<a href="%link_target%">请求新的账号激活邮件。</a>
+your_account_is_not_active: 你的账号尚未激活。请检查你的电子邮件以获取账号激活说明，或<a 
+  href="%link_target%">请求新的账号激活邮件。</a>
 your_account_has_been_banned: 你的账号已被禁用
 your_account_is_not_yet_approved: 你的账号尚未获得批准。管理员处理你的注册请求后，我们将立即发送电子邮件通知你。
 toolbar.bold: 粗体
@@ -402,7 +404,8 @@ federation_page_dead_description: 连续至少 10 个活动无法送达，且最
 federated_search_only_loggedin: 未登录时联邦搜索受限
 sidebar_sections_local_only: 将"随机X"和"活跃用户"版块限制为仅本地
 account_deletion_title: 账号删除
-account_deletion_description: 除非您选择立即删除账号，否则您的账号将在 30 天后被删除。要在 30 天内恢复账号，请使用相同的用户凭据登录或联系管理员。
+account_deletion_description: 除非您选择立即删除账号，否则您的账号将在 30 天后被删除。要在 30 
+  天内恢复账号，请使用相同的用户凭据登录或联系管理员。
 account_deletion_button: 删除账号
 account_deletion_immediate: 立即删除
 more_from_domain: 更多来自该域名
@@ -481,7 +484,8 @@ oauth2.grant.post_comment.edit: 编辑您在帖子上的现有评论。
 oauth2.grant.post_comment.delete: 删除您在帖子上的现有评论。
 oauth2.grant.post_comment.vote: 对帖子中的任何评论进行点赞、转发或点踩。
 oauth2.grant.post_comment.report: 举报帖子上的任何评论。
-oauth2.grant.user.all: 阅读和编辑您的个人资料、消息或通知；阅读和编辑您授予其他应用的权限；关注或屏蔽其他用户；查看您关注或屏蔽的用户列表。
+oauth2.grant.user.all: 
+  阅读和编辑您的个人资料、消息或通知；阅读和编辑您授予其他应用的权限；关注或屏蔽其他用户；查看您关注或屏蔽的用户列表。
 oauth2.grant.user.profile.all: 阅读和编辑您的个人资料。
 oauth2.grant.user.profile.read: 阅读您的个人资料。
 oauth2.grant.user.profile.edit: 编辑您的个人资料。
@@ -582,7 +586,8 @@ two_factor_backup: 双重认证备份码
 2fa.qr_code_img.alt: 允许为您的账号设置双重认证的二维码
 2fa.qr_code_link.title: 访问此链接可能允许您的平台注册此双重认证
 2fa.user_active_tfa.title: 用户已启用双重认证
-2fa.available_apps: 使用双重认证应用程序，如 %google_authenticator%、%aegis%（Android）或 %raivo%（iOS）扫描二维码。
+2fa.available_apps: 使用双重认证应用程序，如 %google_authenticator%、%aegis%（Android）或 
+  %raivo%（iOS）扫描二维码。
 2fa.backup_codes.help: 
   当您没有双重认证设备或应用程序时，可以使用这些码。这些码将<strong>不会再次显示</strong>，并且每个码<strong>仅可使用一次</strong>。
 2fa.backup_codes.recommendation: 建议您将它们的副本保存在安全的地方。
@@ -769,16 +774,16 @@ signup_requests_header: 注册请求
 signup_requests_paragraph: 这些用户希望加入您的服务器。在您批准他们的注册请求之前，他们无法登录。
 flash_application_info: 管理员需要批准您的账号才能登录。您的注册请求处理完毕后，您将收到一封电子邮件。
 email_application_approved_title: 您的注册请求已被批准
-email_application_approved_body: 您的注册请求已被服务器管理员批准。您现在可以在 <a href="%link%">%siteName%</a>
-  登录服务器。
+email_application_approved_body: 您的注册请求已被服务器管理员批准。您现在可以在 <a 
+  href="%link%">%siteName%</a> 登录服务器。
 email_application_rejected_title: 您的注册请求已被拒绝
 email_application_rejected_body: 感谢您的关注，但我们遗憾地通知您，您的注册请求已被拒绝。
 email_application_pending: 您的账号需要管理员批准才能登录。
 email_verification_pending: 您必须验证您的电子邮件地址才能登录。
 hot: 热门
 top: 最佳
-bot_body_content: "欢迎使用 Mbin 代理！此代理在 Mbin 中启用 ActivityPub 功能方面起着至关重要的作用。它确保 Mbin 可以与联邦宇宙中的其他实例通信和联邦。\n
-  \nActivityPub 是一个开放标准协议，允许去中心化的社交网络平台相互通信和交互。它使不同实例（服务器）上的用户能够关注、交互和分享跨联邦社交网络（称为联邦宇宙）的内容。它为用户提供了一种标准化的方式来发布内容、关注其他用户，并进行社交互动，如对线索或帖子进行点赞、分享和评论。"
+bot_body_content: "欢迎使用 Mbin 代理！此代理在 Mbin 中启用 ActivityPub 功能方面起着至关重要的作用。它确保 Mbin 可以与联邦宇宙中的其他实例通信和联邦。\n\
+  \ \nActivityPub 是一个开放标准协议，允许去中心化的社交网络平台相互通信和交互。它使不同实例（服务器）上的用户能够关注、交互和分享跨联邦社交网络（称为联邦宇宙）的内容。它为用户提供了一种标准化的方式来发布内容、关注其他用户，并进行社交互动，如对线索或帖子进行点赞、分享和评论。"
 moderation.report.reject_report_confirmation: 您确定要拒绝此举报吗？
 report: 举报
 report_issue: 举报问题
@@ -816,8 +821,9 @@ kbin_bot: Mbin 代理
 errors.server429.title: 429 请求过多
 errors.server404.title: 404 未找到
 custom_css: 自定义 CSS
-errors.server500.description: 抱歉，我们这边出现了一些问题。如果您持续看到此错误，请尝试联系实例所有者。如果此实例完全无法工作，您可以在问题解决期间查看
-  %link_start%其他 Mbin 实例%link_end%。
+errors.server500.description: 
+  抱歉，我们这边出现了一些问题。如果您持续看到此错误，请尝试联系实例所有者。如果此实例完全无法工作，您可以在问题解决期间查看 %link_start%其他 
+  Mbin 实例%link_end%。
 oauth2.grant.moderate.magazine.trash.read: 查看您管理的杂志中的已删除内容。
 oauth2.grant.moderate.magazine_admin.all: 创建、编辑或删除您拥有的杂志。
 oauth2.grant.moderate.magazine.reports.action: 接受或拒绝您管理的杂志中的举报。
