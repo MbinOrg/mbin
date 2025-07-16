@@ -51,7 +51,10 @@
     grid-template-columns: min-content max-content max-content auto max-content;
     position: relative;
     height: 100%;
-    max-width: 100vw;
+
+    @include b.media-breakpoint-down(lg) {
+      max-width: 100vw;
+    }
 
     & > menu {
       @include b.media-breakpoint-down(lg) {
