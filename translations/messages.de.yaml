@@ -933,7 +933,7 @@ notification_title_new_reply: Neue Antwort
 notification_title_new_thread: Neues Thema
 notification_title_removed_thread: Ein Thema wurde entfernt
 notification_title_edited_thread: Ein Thema wurde bearbeitet
-notification_title_ban: Du wurdest gebannt
+notification_title_ban: Du wurdest gesperrt
 notification_title_message: Neue Direktnachricht
 notification_title_new_post: Neuer Beitrag
 notification_title_removed_post: Ein Beitrag wurde entfernt
@@ -962,7 +962,7 @@ version: Version
 magazine_posting_restricted_to_mods_warning: Nur Mods können Themen in diesem 
   Magazin erstellen
 flash_posting_restricted_error: Die Erstellung von Themen ist in diesem Magazin 
-  auf mods eingeschränkt und du bist keiner
+  auf Moderatoren eingeschränkt und du bist keiner
 last_successful_deliver: Letzte erfolgreiche Zustellung
 last_successful_receive: Letzter erfolgreicher Empfang
 last_failed_contact: Letzter misslungener Kontakt
@@ -978,8 +978,8 @@ flash_image_download_too_large_error: 'Bild konnte nicht erstellt werden, da es 
 admin_users_active: Aktiv
 admin_users_inactive: Inaktiv
 admin_users_suspended: Suspendiert
-admin_users_banned: Gebannt
-user_verify: Account aktivieren
+admin_users_banned: Gesperrt
+user_verify: Konto aktivieren
 max_image_size: Maximale Dateigröße
 change_downvotes_mode: Reduzieren Modus ändern
 disabled: Deaktiviert
@@ -1036,7 +1036,7 @@ search_type_entry: Themen
 notification_body2_new_signup_approval: Du musst die Anfrage freigeben bevor 
   sich der Nutzer anmelden kann
 bookmark_remove_all: All Lesezeichen entfernen
-search_type_post: Mikroblogs
+search_type_post: Beiträge
 bookmark_remove_from_list: Lesezeichen von %list% entfernen
 search_type_all: Alles
 viewing_one_signup_request: Du schaust dir eine einzelne Registrierungsanfrage 
