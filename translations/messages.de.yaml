@@ -12,10 +12,10 @@ created_at: Erstellt
 filter_by_type: Filtern nach Typ
 active: Aktiv
 select_channel: Kanal auswählen
-events: Ereignis
+events: Ereignisse
 login: Anmelden
 newest: Neu
-oldest: Älteste(r)
+oldest: Alt
 commented: kommentiert
 favourites: Upvotes
 favourite: Favorit
@@ -50,9 +50,9 @@ threads: Themen
 microblog: Mikroblog
 enter_your_comment: Gib deinen Kommentar ein
 enter_your_post: Gib deinen Beitrag ein
-cover: Titelbild
+cover: Banner
 remember_me: An mich erinnern
-dont_have_account: Hast du noch kein Konto?
+dont_have_account: Noch kein Konto?
 you_cant_login: Passwort vergessen?
 add_new_photo: Neues Foto hinzufügen
 add_new_post: Neuen Beitrag hinzufügen
@@ -78,7 +78,7 @@ add_media: Medien hinzufügen
 activity: Aktivität
 federated_magazine_info: Dieses Magazin ist von einem föderierten Server und 
   möglicherweise unvollständig.
-federated_user_info: Dieses Profil is von einem föderierten Server und 
+federated_user_info: Dieses Profil ist von einem föderierten Server und 
   möglicherweise unvollständig.
 empty: Leer
 subscribe: Abonnieren
@@ -885,13 +885,13 @@ sso_registrations_enabled.error: Neue Konto Registrierung mit Identitätsmanager
 show: Zeige
 hide: Verstecke
 edited: Bearbeitet
-filter_by_federation: 'Nach Föderierungsstatus filtern'
+filter_by_federation: 'Filtern nach Föderierungsstatus'
 auto: 'Automatisch'
 filter_labels: 'Filter Beschreibung'
 restrict_magazine_creation: 'Erstellung lokaler Magazine auf Admins und globale Mods
   beschränken'
 sort_by: 'Sortieren nach'
-filter_by_subscription: 'Nach Abonnements filtern'
+filter_by_subscription: 'Filtern nach Abonnements'
 related_entry: Zugehörig
 tag: Hashtag
 unban: Sperre aufheben
@@ -1040,7 +1040,7 @@ notification_body2_new_signup_approval: Du musst die Anfrage freigeben bevor
 bookmark_remove_all: All Lesezeichen entfernen
 search_type_post: Mikroblogs
 bookmark_remove_from_list: Lesezeichen von %list% entfernen
-search_type_all: Themen + Mikroblogs
+search_type_all: Alles
 viewing_one_signup_request: Du schaust dir eine einzelne Registrierungsanfrage 
   von %username% an
 show_magazine_domains: Zeige Magazin-Domains
@@ -1061,7 +1061,7 @@ open_signup_request: Registrierungsanfrage öffnen
 image_lightbox_in_list: Themen-Vorschaubild öffnet Vollbild
 compact_view_help: Eine kompakte Ansicht mit geringeren Abständen, bei der die 
   Bilder auf der rechten Seite angezeigt werden.
-remove_user_avatar: Profilbild entfernen
+remove_user_avatar: Avatar entfernen
 image_lightbox_in_list_help: Wenn aktiviert werden Bilder in einem Pop-Up Dialog
   vergrößert dargestellt nachdem man auf ein Vorschaubild geklickt hat. 
   Andernfalls wird das Thema geöffnet.
@@ -1090,3 +1090,9 @@ show_rich_mention: Schöne Erwähnungen
 show_rich_mention_magazine: Schöne Magazin-Erwähnungen
 show_rich_ap_link: Schöne AP Links
 type_search_term_url_handle: Suchbegriff, URL oder Nutzername eingeben
+search_type_magazine: Magazine
+search_type_user: Nutzer
+search_type_actors: Magazine + Nutzer
+search_type_content: Themen + Mikroblogs
+type_search_magazine: Suche auf Magazin eingrenzen...
+type_search_user: Suche auf Author eingrenzen...
