@@ -721,8 +721,8 @@ show_avatars_on_comments_help: Zeige/Verstecke Nutzeravatare wenn Kommentare in
   einem einzelnen Thema oder Beitrag angeschaut werden.
 2fa.verify_authentication_code.label: Gebe einen Zwei-Faktor Code ein um die 
   Einrichtung zu verifizieren
-oauth2.grant.post.all: Erstelle, Bearbeite oder Lösche Mikroblogs und stimme ab,
-  booste oder melde jeden Mikroblog.
+oauth2.grant.post.all: Erstelle, Bearbeite oder Lösche Beiträge und stimme ab, 
+  booste oder melde jeden Betrag.
 oauth2.grant.block.general: Blockiere oder Entblockiere jedes Magazin, Domain, 
   oder Nutzer und zeige die Magazine, Domains und Nutzer die du blockiert hast.
 moderation.report.reject_report_confirmation: Bist du dir sicher dass du diese 
