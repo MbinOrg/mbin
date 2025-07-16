@@ -496,8 +496,8 @@ moderation.report.approve_report_title: Meldung Zustimmen
 moderation.report.reject_report_title: Meldung Ablehnen
 oauth2.grant.moderate.magazine.reports.all: Bearbeite Meldungen in deinen 
   moderierten Magazinen.
-oauth2.grant.admin.federation.update: Füge hinzu oder entferne Instanzen von der
-  liste der defederierten Instanzen.
+oauth2.grant.admin.federation.update: Instanzen der liste der deföderierten 
+  Instanzen hinzufügen oder davon entfernen.
 oauth2.grant.user.message.all: Lese deine Nachrichten und sende Nachrichten an 
   andere Nutzer.
 oauth2.grant.moderate.magazine.trash.read: Gelöschte Inhalte in Ihren 
@@ -505,7 +505,7 @@ oauth2.grant.moderate.magazine.trash.read: Gelöschte Inhalte in Ihren
 oauth2.grant.moderate.magazine_admin.create: Erstelle neue Magazine.
 oauth2.grant.post.vote: Favorisiere, booste oder reduziere jeden Beitrag.
 2fa.remove: 2FA Entfernen
-delete_content_desc: Lösche den Inhalt des Users, aber behalte die Antworten 
+delete_content_desc: Lösche den Inhalt des Nutzers, aber behalte die Antworten 
   anderer Nutzer in den erstellten Themen, Beiträgen und Kommentaren.
 magazine_theme_appearance_custom_css: Eigenes CSS das angewendet wird wenn 
   Inhalte innerhalb deines Magazins angeschaut werden.
@@ -525,14 +525,14 @@ oauth2.grant.moderate.magazine_admin.edit_theme: Bearbeite das Custom CSS deiner
   eigenen Magazine.
 oauth2.grant.moderate.magazine_admin.tags: Erstelle oder Entferne Tags von 
   deinen eigenen Magazinen.
-moderation.report.ban_user_description: Willst du den user (%username%) sperren 
-  der diesen Inhalt von dem Magazin erstellt hat?
+moderation.report.ban_user_description: Willst du den Nutzer (%username%) 
+  sperren der diesen Inhalt von dem Magazin erstellt hat?
 oauth2.grant.moderate.entry.pin: Pinne Themen an den Anfang deiner moderierten 
   Magazine.
 oauth2.grant.user.message.read: Lese deine Nachrichten.
 oauth2.grant.admin.entry.purge: Lösche jedes Thema endgültig von deiner Instanz.
 2fa.verify: Verifizieren
-2fa.add: Zu meinem Account hinzufügen
+2fa.add: Zu meinem Konto hinzufügen
 oauth2.grant.admin.magazine.all: Verschiebe Themen zwischen Magazinen oder 
   lösche Magazine endgültig von deiner Instanz.
 oauth2.grant.admin.instance.settings.read: Zeige die Einstellungen deiner 
@@ -559,7 +559,7 @@ oauth2.grant.admin.magazine.move_entry: Verschiebe Themen zwischen Magazinen auf
   deine Instanz.
 oauth2.grant.post_comment.edit: Bearbeite deine existierenden Kommentare unter 
   Beiträgen.
-oauth2.grant.moderate.post.pin: Pinne Beiträge oben an deine moderierten 
+oauth2.grant.moderate.post.pin: Hefte Beiträge oben an deine moderierten 
   Magazine an.
 oauth2.grant.entry.create: Erstelle neue Themen.
 oauth2.grant.moderate.magazine.reports.action: Akzeptiere oder Verwerfe 
@@ -599,7 +599,7 @@ oauth2.grant.moderate.magazine.ban.all: Verwalte gesperrte Nutzer in deinen
 oauth2.grant.moderate.magazine.all: Verwalte Sperren, Meldungen und zeige 
   gelöschte Items in deinen moderierten Magazinen.
 oauth2.grant.admin.federation.all: Zeige und aktualisiere die aktuell 
-  defederierten Instanzen.
+  deföderierten Instanzen.
 oauth2.grant.user.notification.all: Lese und lösche deine Benachrichtigungen.
 oauth2.grant.report.general: Melde Themen, Beiträge oder Kommentare.
 oauth2.grant.admin.post.purge: Lösche jeden Beitrag endgültig von deiner 
@@ -615,10 +615,10 @@ oauth2.grant.moderate.magazine.reports.read: Lese Meldungen in deinen
   moderierten Magazinen.
 oauth2.grant.entry_comment.create: Erstelle neue Kommentare in Themen.
 2fa.qr_code_img.alt: Ein QR-Code der die Einrichtung der 
-  Zwei-Faktor-Authentifizierung für deinen Account ermöglicht
+  Zwei-Faktor-Authentifizierung für dein Konto ermöglicht
 oauth2.grant.user.follow: Folge oder entfolge Nutzern und zeige die Nutzer denen
   du folgst.
-flash_post_pin_success: Der Beitrag wurde erfolgreich angepinnt.
+flash_post_pin_success: Der Beitrag wurde erfolgreich angeheftet.
 oauth2.grant.entry_comment.report: Melde jeden Kommentar in einem Thema.
 moderation.report.approve_report_confirmation: Bist du dir sicher dass du dieser
   Meldung zustimmen willst?
@@ -628,8 +628,8 @@ oauth2.grant.entry_comment.all: Erstelle, Bearbeite oder Lösche deine Kommentar
   in Themen und favorisiere, booste oder melde jeden Kommentar in einem Thema.
 oauth2.grant.entry_comment.delete: Lösche deine existierenden Kommentare in 
   Themen.
-delete_account_desc: Lösche den Account, inklusive Antworten anderer Nutzer in 
-  den erstellten Themen, Beiträgen und Kommentaren.
+delete_account_desc: Lösche das Konto, inklusive Antworten anderer Nutzer in den
+  erstellten Themen, Beiträgen und Kommentaren.
 subject_reported_exists: Dieser Inhalt wurde bereits gemeldet.
 oauth2.grant.moderate.entry_comment.set_adult: Kennzeichne Kommentare in Themen 
   in deinen moderierten Magazinen als NSFW.
@@ -695,7 +695,7 @@ delete_content: Lösche Inhalt
 two_factor_backup: Zwei-Faktor-Authentifizierung Backup Codes
 magazine_theme_appearance_background_image: Eigenes Hintergrundbild das 
   angezeigt wird wenn Inhalte innerhalb deines Magazins angezeigt werden.
-oauth2.grant.admin.federation.read: Zeige die defederierten Instanzen.
+oauth2.grant.admin.federation.read: Zeige die deföderierten Instanzen.
 oauth2.grant.moderate.entry_comment.change_language: Ändere die Sprache von 
   Kommentaren in Themen deiner moderierten Magazine.
 oauth2.grant.moderate.magazine_admin.stats: Zeige den Inhalt, Abstimmung, und 
@@ -722,7 +722,7 @@ show_avatars_on_comments_help: Zeige/Verstecke Nutzeravatare wenn Kommentare in
 2fa.verify_authentication_code.label: Gebe einen Zwei-Faktor Code ein um die 
   Einrichtung zu verifizieren
 oauth2.grant.post.all: Erstelle, Bearbeite oder Lösche Beiträge und stimme ab, 
-  booste oder melde jeden Betrag.
+  booste oder melde jeden Beitrag.
 oauth2.grant.block.general: Blockiere oder Entblockiere jedes Magazin, Domain, 
   oder Nutzer und zeige die Magazine, Domains und Nutzer die du blockiert hast.
 moderation.report.reject_report_confirmation: Bist du dir sicher dass du diese 
@@ -756,7 +756,7 @@ flash_account_settings_changed: Deine Konto Einstellungen wurden erfolgreich
   geändert. Du musst dich erneut anmelden.
 close: Schließen
 restore_magazine: Magazin wiederherstellen
-flash_post_new_success: Post wurde erfolgreich erstellt.
+flash_post_new_success: Beitrag wurde erfolgreich erstellt.
 flash_comment_edit_error: Kommentar konnte nicht bearbeitet werden. Etwas ist 
   schief gegangen.
 flash_comment_new_error: Kommentar konnte nicht erstellt werden. Etwas ist 
@@ -764,7 +764,7 @@ flash_comment_new_error: Kommentar konnte nicht erstellt werden. Etwas ist
 account_settings_changed: Die Kontoeinstellungen wurden erfolgreich geändert. Du
   musst dich erneut anmelden.
 suspend_account: Konto suspendieren
-flash_post_new_error: Post konnte nicht erstellt werden. Etwas ist schief 
+flash_post_new_error: Beitrag konnte nicht erstellt werden. Etwas ist schief 
   gegangen.
 default_theme: Standard Design
 page_width_fixed: Festgelegt
@@ -776,16 +776,16 @@ mark_as_adult: Als NSFW markieren
 user_badge_admin: Admin
 flash_magazine_theme_changed_error: Die Magazin Darstellung konnte nicht 
   aktualisiert werden.
-flash_post_edit_error: Post konnte nicht bearbeitet werden. Etwas ist schief 
+flash_post_edit_error: Beitrag konnte nicht bearbeitet werden. Etwas ist schief 
   gegangen.
 2fa.setup_error: Fehler bei der 2FA Aktivierung für das Konto
 page_width_auto: Automatisch
-flash_post_edit_success: Post erfolgreich bearbeitet.
+flash_post_edit_success: Beitrag erfolgreich bearbeitet.
 flash_user_edit_password_error: Passwort konnte nicht geändert werden.
 user_badge_global_moderator: Globaler Mod
 apply_for_moderator: Als Moderator bewerben
 unmark_as_adult: NSFW Markierung entfernen
-position_bottom: Unterseite
+position_bottom: Unten
 deletion: Löschung
 deleted_by_author: Thema, Post oder Kommentar wurde durch den Author gelöscht
 account_unbanned: Dieses Konto wurde entsperrt.
@@ -796,7 +796,7 @@ change_my_cover: Mein Deckblatt ändern
 flash_thread_edit_error: Thema konnte nicht bearbeitet werden. Etwas ist schief 
   gegangen.
 announcement: Ankündigung
-flash_user_edit_email_error: Email konnte nicht geändert werden.
+flash_user_edit_email_error: E-Mail konnte nicht geändert werden.
 page_width_max: Maximal
 sensitive_toggle: Sichtbarkeit für sensible Inhalte umschalten
 magazine_is_deleted: Magazin ist gelöscht. Du kannst es innerhalb von 30 Tagen 
@@ -806,14 +806,14 @@ open_url_to_fediverse: Ursprüngliche URL öffnen
 page_width: Seiten Breite
 user_badge_bot: Bot
 flash_comment_new_success: Kommentar wurde erfolgreich erstellt.
-flash_user_settings_general_error: Nutzer Einstellungen konnten nicht 
+flash_user_settings_general_error: Nutzer-Einstellungen konnten nicht 
   gespeichert werden.
 account_is_suspended: Dieses Nutzerkonto ist suspendiert.
 user_suspend_desc: Dein Konto suspendieren versteckt deine Inhalte auf der 
   Instanz, löscht diese aber nicht permanent, du kannst die Inhalte jederzeit 
   wiederherstellen.
 ownership_requests: Eigentümer Anfragen
-flash_email_was_sent: Email wurde erfolgreich versandt.
+flash_email_was_sent: E-Mail wurde erfolgreich versandt.
 account_unsuspended: Die Kontosuspendierung wurde aufgehoben.
 sensitive_warning: Sensibler Inhalt
 keywords: Schlüsselwörter
@@ -832,8 +832,7 @@ flash_unmark_as_adult_success: Die NSFW Markierung wurde vom Post erfolgreich
 abandoned: Verlassen
 account_banned: Dieses Konto wurde gesperrt.
 change_my_avatar: Meinen Avatar ändern
-flash_user_edit_profile_success: Nutzer Profil Einstellungen erfolgreich 
-  gespeichert.
+flash_user_edit_profile_success: Profil-Einstellungen erfolgreich gespeichert.
 flash_user_settings_general_success: Nutzer Einstellungen erfolgreich 
   gespeichert.
 remove_subscriptions: Abonnements entfernen
@@ -842,13 +841,13 @@ sensitive_hide: Klicke zum verstecken
 request_magazine_ownership: Magazin Eigentümerschaft beantragen
 pending: Unerledigt
 accept: Akzeptieren
-flash_email_failed_to_sent: Email konnte nicht gesendet werden.
-flash_user_edit_profile_error: Profil Einstellungen konnten nicht gespeichert 
+flash_email_failed_to_sent: E-Mail konnte nicht gesendet werden.
+flash_user_edit_profile_error: Profil-Einstellungen konnten nicht gespeichert 
   werden.
 user_badge_op: OP
 purge_magazine: Magazin permanent löschen
 magazine_deletion: Magazin Löschung
-position_top: Oberseite
+position_top: Oben
 subscribers_count: '{0}Abonnenten|{1}Abonennt|]1,Inf[ Abonnenten'
 followers_count: '{0}Follower|{1}Follower|]1,Inf[ Follower'
 remove_media: Medien entfernen
