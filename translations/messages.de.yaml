@@ -530,8 +530,7 @@ moderation.report.ban_user_description: Willst du den user (%username%) sperren
 oauth2.grant.moderate.entry.pin: Pinne Themen an den Anfang deiner moderierten 
   Magazine.
 oauth2.grant.user.message.read: Lese deine Nachrichten.
-oauth2.grant.admin.entry.purge: Lösche jedes Thema vollständig von deiner 
-  Instanz.
+oauth2.grant.admin.entry.purge: Lösche jedes Thema endgültig von deiner Instanz.
 2fa.verify: Verifizieren
 2fa.add: Zu meinem Account hinzufügen
 oauth2.grant.admin.magazine.all: Verschiebe Themen zwischen Magazinen oder 
