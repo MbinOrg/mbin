@@ -12,10 +12,10 @@ use App\Event\Post\PostDeletedEvent;
 use App\Message\ActivityPub\Outbox\DeleteMessage;
 use App\Message\Notification\PostDeletedNotificationMessage;
 use App\Repository\PostRepository;
+use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\ActivityPub\Wrapper\DeleteWrapper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Uid\Uuid;
 
 class PostDeleteSubscriber implements EventSubscriberInterface
 {
@@ -23,6 +23,7 @@ class PostDeleteSubscriber implements EventSubscriberInterface
         private readonly MessageBusInterface $bus,
         private readonly PostRepository $postRepository,
         private readonly DeleteWrapper $deleteWrapper,
+        private readonly ActivityJsonBuilder $activityJsonBuilder,
     ) {
     }
 
@@ -56,7 +57,8 @@ class PostDeleteSubscriber implements EventSubscriberInterface
         $this->bus->dispatch(new PostDeletedNotificationMessage($post->getId()));
 
         if (!$post->apId || !$post->magazine->apId || (null !== $user && $post->magazine->userIsModerator($user))) {
-            $payload = $this->deleteWrapper->adjustDeletePayload($user, $post, Uuid::v4()->toRfc4122());
+            $activity = $this->deleteWrapper->adjustDeletePayload($user, $post);
+            $payload = $this->activityJsonBuilder->buildActivityJson($activity);
             $this->bus->dispatch(new DeleteMessage($payload, $post->user->getId(), $post->magazine->getId()));
         }
     }

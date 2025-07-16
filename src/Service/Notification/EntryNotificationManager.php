@@ -73,7 +73,7 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
         $this->notifyMagazine(new EntryCreatedNotification($subject->user, $subject));
 
         // Notify mentioned
-        $mentions = MentionManager::clearLocal($this->mentionManager->extract($subject->body));
+        $mentions = $this->mentionManager->clearLocal($this->mentionManager->extract($subject->body));
         foreach ($this->mentionManager->getUsersFromArray($mentions) as $user) {
             if (!$user->apId && !$user->isBlocked($subject->user)) {
                 $notification = new EntryMentionedNotification($user, $subject);

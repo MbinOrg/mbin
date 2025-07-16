@@ -22,6 +22,7 @@ use App\Message\ActivityPub\Inbox\CreateMessage;
 use App\Message\ActivityPub\Outbox\AnnounceMessage;
 use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
+use App\Repository\ActivityRepository;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
@@ -49,6 +50,7 @@ class CreateHandler extends MbinMessageHandler
         private readonly LoggerInterface $logger,
         private readonly MessageManager $messageManager,
         private readonly ActivityPubManager $activityPubManager,
+        private readonly ActivityRepository $activityRepository,
         private readonly ApActivityRepository $repository,
         private readonly CacheInterface $cache,
     ) {
@@ -78,7 +80,7 @@ class CreateHandler extends MbinMessageHandler
             if ('ChatMessage' === $object['type']) {
                 $this->handlePrivateMessage($object);
             } elseif (\in_array($object['type'], $postTypes)) {
-                $this->handleChain($object, $stickyIt);
+                $this->handleChain($object, $stickyIt, $message->fullCreatePayload);
                 if (method_exists($this->cache, 'invalidateTags')) {
                     // clear markdown renders that are tagged with the id of the post
                     $tag = UrlUtils::getCacheKeyForMarkdownUrl($object['id']);
@@ -86,7 +88,7 @@ class CreateHandler extends MbinMessageHandler
                     $this->logger->debug('cleared cached items with tag {t}', ['t' => $tag]);
                 }
             } elseif (\in_array($object['type'], $entryTypes)) {
-                $this->handlePage($object, $stickyIt);
+                $this->handlePage($object, $stickyIt, $message->fullCreatePayload);
                 if (method_exists($this->cache, 'invalidateTags')) {
                     // clear markdown renders that are tagged with the id of the entry
                     $tag = UrlUtils::getCacheKeyForMarkdownUrl($object['id']);
@@ -120,7 +122,7 @@ class CreateHandler extends MbinMessageHandler
      * @throws UserDeletedException
      * @throws InstanceBannedException
      */
-    private function handleChain(array $object, bool $stickyIt): void
+    private function handleChain(array $object, bool $stickyIt, ?array $fullCreatePayload): void
     {
         if (isset($object['inReplyTo']) && $object['inReplyTo']) {
             $existed = $this->repository->findByObjectId($object['inReplyTo']);
@@ -134,6 +136,14 @@ class CreateHandler extends MbinMessageHandler
         $note = $this->note->create($object, stickyIt: $stickyIt);
         if ($note instanceof EntryComment || $note instanceof Post || $note instanceof PostComment) {
             if (null !== $note->apId and null === $note->magazine->apId and 'random' !== $note->magazine->name) {
+                $createActivity = $this->activityRepository->findFirstActivitiesByTypeAndObject('Create', $note);
+                if (null === $createActivity) {
+                    if (null !== $fullCreatePayload) {
+                        $this->activityRepository->createForRemoteActivity($fullCreatePayload, $note);
+                    } else {
+                        $this->logger->warning('[CreateHandler::handleChain] Could not create the activity with the full create payload because it was just missing...');
+                    }
+                }
                 // local magazine, but remote post. Random magazine is ignored, as it should not be federated at all
                 $this->bus->dispatch(new AnnounceMessage(null, $note->magazine->getId(), $note->getId(), \get_class($note)));
             }
@@ -148,11 +158,19 @@ class CreateHandler extends MbinMessageHandler
      * @throws PostingRestrictedException
      * @throws InstanceBannedException
      */
-    private function handlePage(array $object, bool $stickyIt): void
+    private function handlePage(array $object, bool $stickyIt, ?array $createPayload): void
     {
         $page = $this->page->create($object, stickyIt: $stickyIt);
         if ($page instanceof Entry) {
             if (null !== $page->apId and null === $page->magazine->apId and 'random' !== $page->magazine->name) {
+                $createActivity = $this->activityRepository->findFirstActivitiesByTypeAndObject('Create', $page);
+                if (null === $createActivity) {
+                    if (null !== $createPayload) {
+                        $this->activityRepository->createForRemoteActivity($createPayload, $page);
+                    } else {
+                        $this->logger->warning('[CreateHandler::handlePage] Could not create the activity with the full create payload because it was just missing...');
+                    }
+                }
                 // local magazine, but remote post. Random magazine is ignored, as it should not be federated at all
                 $this->bus->dispatch(new AnnounceMessage(null, $page->magazine->getId(), $page->getId(), \get_class($page)));
             }

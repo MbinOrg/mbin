@@ -82,4 +82,9 @@ class Message implements ActivityPubActivityInterface
 
         return grapheme_substr($firstLine, 0, 80).'…';
     }
+
+    public function getUser(): User
+    {
+        return $this->sender;
+    }
 }

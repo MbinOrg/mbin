@@ -59,6 +59,7 @@ class EntryPageFactory
             ],
             'cc' => $cc,
             'name' => $entry->title,
+            'audience' => $this->groupFactory->getActivityPubId($entry->magazine),
             'content' => $entry->body ? $this->markdownConverter->convertToHtml(
                 $entry->body,
                 context: [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub]

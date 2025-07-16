@@ -59,7 +59,7 @@ class PostsBaseApi extends BaseApi
         ]);
         \assert($deserialized instanceof PostRequestDto);
 
-        $dto = $deserialized->mergeIntoDto($dto);
+        $dto = $deserialized->mergeIntoDto($dto, $this->settingsManager);
 
         return $dto;
     }
@@ -73,7 +73,7 @@ class PostsBaseApi extends BaseApi
         $deserialized->lang = $request->get('lang');
         $deserialized->isAdult = filter_var($request->get('isAdult'), FILTER_VALIDATE_BOOL);
 
-        $dto = $deserialized->mergeIntoDto($dto);
+        $dto = $deserialized->mergeIntoDto($dto, $this->settingsManager);
 
         return $dto;
     }
@@ -125,7 +125,7 @@ class PostsBaseApi extends BaseApi
 
         \assert($deserialized instanceof PostCommentRequestDto);
 
-        return $deserialized->mergeIntoDto($dto);
+        return $deserialized->mergeIntoDto($dto, $this->settingsManager);
     }
 
     protected function deserializePostCommentFromForm(?PostCommentDto $dto = null): PostCommentDto
@@ -136,7 +136,7 @@ class PostsBaseApi extends BaseApi
         $deserialized->body = $request->get('body');
         $deserialized->lang = $request->get('lang');
 
-        $dto = $deserialized->mergeIntoDto($dto);
+        $dto = $deserialized->mergeIntoDto($dto, $this->settingsManager);
 
         return $dto;
     }

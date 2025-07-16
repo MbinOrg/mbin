@@ -4,28 +4,38 @@ declare(strict_types=1);
 
 namespace App\Service\ActivityPub\Wrapper;
 
+use App\Entity\Activity;
 use App\Entity\Contracts\ActivityPubActivityInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Uid\Uuid;
+use App\Entity\Entry;
+use App\Entity\EntryComment;
+use App\Entity\Post;
+use App\Entity\PostComment;
+use App\Entity\User;
+use App\Factory\ActivityPub\ActivityFactory;
+use Doctrine\ORM\EntityManagerInterface;
 
 class LikeWrapper
 {
-    public function __construct(private readonly UrlGeneratorInterface $urlGenerator)
-    {
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ActivityFactory $activityFactory,
+    ) {
     }
 
-    public function build(
-        string $user,
-        array $object,
-    ): array {
-        $id = Uuid::v4()->toRfc4122();
+    public function build(User $user, ActivityPubActivityInterface $object): Activity
+    {
+        $activityObject = $this->activityFactory->create($object);
+        $activity = new Activity('Like');
+        $activity->setObject($activityObject['id']);
+        $activity->userActor = $user;
 
-        return [
-            '@context' => ActivityPubActivityInterface::CONTEXT_URL,
-            'id' => $this->urlGenerator->generate('ap_object', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL),
-            'type' => 'Like',
-            'actor' => $user,
-            'object' => $object['id'],
-        ];
+        if ($object instanceof Entry || $object instanceof EntryComment || $object instanceof Post || $object instanceof PostComment) {
+            $activity->audience = $object->magazine;
+        }
+
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
+
+        return $activity;
     }
 }

@@ -14,6 +14,7 @@ use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
+use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\ActivityPub\Wrapper\LikeWrapper;
 use App\Service\ActivityPub\Wrapper\UndoWrapper;
 use App\Service\ActivityPubManager;
@@ -37,6 +38,7 @@ class LikeHandler extends MbinMessageHandler
         private readonly ActivityFactory $activityFactory,
         private readonly SettingsManager $settingsManager,
         private readonly DeliverManager $deliverManager,
+        private readonly ActivityJsonBuilder $activityJsonBuilder,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
@@ -59,10 +61,7 @@ class LikeHandler extends MbinMessageHandler
         /** @var Entry|EntryComment|Post|PostComment $object */
         $object = $this->entityManager->getRepository($message->objectType)->find($message->objectId);
 
-        $activity = $this->likeWrapper->build(
-            $this->activityPubManager->getActorProfileId($user),
-            $this->activityFactory->create($object),
-        );
+        $activity = $this->likeWrapper->build($user, $object);
 
         if ($message->removeLike) {
             $activity = $this->undoWrapper->build($activity);
@@ -78,6 +77,6 @@ class LikeHandler extends MbinMessageHandler
             $inboxes = array_merge($inboxes, $this->magazineRepository->findAudience($object->magazine));
         }
 
-        $this->deliverManager->deliver(array_filter(array_unique($inboxes)), $activity);
+        $this->deliverManager->deliver(array_filter(array_unique($inboxes)), $this->activityJsonBuilder->buildActivityJson($activity));
     }
 }

@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Message\ActivityPub\Outbox\DeliverMessage;
 use App\Message\Contracts\MessageInterface;
 use App\Message\DeleteUserMessage;
+use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\ActivityPub\Wrapper\DeleteWrapper;
 use App\Service\ImageManager;
 use App\Service\UserManager;
@@ -30,6 +31,7 @@ class DeleteUserHandler extends MbinMessageHandler
         private readonly DeleteWrapper $deleteWrapper,
         private readonly MessageBusInterface $bus,
         private readonly EntityManagerInterface $entityManager,
+        private readonly ActivityJsonBuilder $activityJsonBuilder,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
@@ -127,7 +129,8 @@ class DeleteUserHandler extends MbinMessageHandler
             return;
         }
 
-        $message = $this->deleteWrapper->buildForUser($deletedUser);
+        $activity = $this->deleteWrapper->buildForUser($deletedUser);
+        $message = $this->activityJsonBuilder->buildActivityJson($activity);
 
         foreach ($targetInboxes as $inbox) {
             $this->bus->dispatch(new DeliverMessage($inbox, $message));
