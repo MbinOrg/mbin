@@ -54,9 +54,9 @@ cover: Banner
 remember_me: An mich erinnern
 dont_have_account: Noch kein Konto?
 you_cant_login: Passwort vergessen?
-add_new_photo: Neues Foto hinzufügen
-add_new_post: Neuen Beitrag hinzufügen
-add_new_video: Neues Video hinzufügen
+add_new_photo: Neues Foto erstellen
+add_new_post: Neuen Beitrag erstellen
+add_new_video: Neues Video erstellen
 privacy_policy: Datenschutzbestimmungen
 useful: Nützlich
 edit: Bearbeiten
@@ -105,8 +105,8 @@ in: in
 all_magazines: Alle Magazine
 stats: Statistiken
 fediverse: Fediverse
-add_new_link: Neuen Link hinzufügen
-create_new_magazine: Neues Magazin hinzufügen
+add_new_link: Neuen Link erstellen
+create_new_magazine: Neues Magazin erstellen
 contact: Kontakt
 faq: FAQ
 rss: RSS
@@ -114,7 +114,7 @@ help: Hilfe
 check_email: Prüfe deine E-Mails
 reset_check_email_desc2: Bitte prüfe deinen Spam-Ordner, wenn du keine E-Mail 
   bekommen hast.
-try_again: Nochmals versuchen
+try_again: Nochmal versuchen
 email_confirm_header: Hallo! Bitte bestätige deine E-Mail-Adresse.
 email_verify: E-Mail-Adresse bestätigen
 email_confirm_expire: Achtung, dieser Link wird in einer Stunde ablaufen.
@@ -149,9 +149,9 @@ kbin_promo_title: Eigene Instanz erstellen
 captcha_enabled: Captcha aktiviert
 return: Zurück
 about_instance: Über
-add_new_article: Neues Thema hinzufügen
+add_new_article: Neues Thema erstellen
 reset_check_email_desc: Wenn zu dieser Email-Addresse bereits ein Konto 
-  registriert ist, dann wird in Kürze eine Email mit einem Link um das Passwort 
+  registriert ist, dann wird in Kürze eine E-Mail mit einem Link um das Passwort
   zurückzusetzen gesendet. Dieser Link läuft in %expire% ab.
 email_confirm_content: 'Bereit dein Mbin-Konto zu aktivieren? Dann klicke den folgenden
   Link:'
@@ -244,7 +244,7 @@ related_tags: Verwandte Tags
 appearance: Design
 homepage: Startseite
 hide_adult: 18+ Inhalte verbergen
-featured_magazines: Ausgewählte Magazine
+featured_magazines: Vorgestellte Magazine
 show_profile_subscriptions: Magazinabos anzeigen
 about: Über
 old_email: Derzeitige E-Mail
@@ -258,7 +258,7 @@ expand: Erweitern
 collapse: Einklappen
 error: Fehler
 votes: Stimmen
-theme: Theme
+theme: Design
 solarized_light: Sonniges Hell
 solarized_dark: Sonniges Dunkel
 boosts: Boosts
@@ -790,7 +790,7 @@ position_bottom: Unterseite
 deletion: Löschung
 deleted_by_author: Thema, Post oder Kommentar wurde durch den Author gelöscht
 account_unbanned: Dieses Konto wurde entsperrt.
-solarized_auto: Solarized (Auto Detektion)
+solarized_auto: Solarized (Auto Erkennung)
 flash_magazine_theme_changed_success: Die Magazin Darstellung wurde erfolgreich 
   aktualisiert.
 change_my_cover: Mein Deckblatt ändern
@@ -819,7 +819,7 @@ account_unsuspended: Die Kontosuspendierung wurde aufgehoben.
 sensitive_warning: Sensibler Inhalt
 keywords: Schlüsselwörter
 moderator_requests: Moderator Anfragen
-default_theme_auto: Hell/Dunkel (Auto Detektion)
+default_theme_auto: Hell/Dunkel (Auto Erkennung)
 flash_comment_edit_success: Kommentar wurde erfolgreich aktualisiert.
 action: Aktion
 flash_mark_as_adult_success: Die NSFW Markierung wurde dem Post erfolgreich 
