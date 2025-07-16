@@ -601,7 +601,7 @@ oauth2.grant.moderate.magazine.all: Verwalte Sperren, Meldungen und zeige
 oauth2.grant.admin.federation.all: Zeige und aktualisiere die aktuell 
   defederierten Instanzen.
 oauth2.grant.user.notification.all: Lese und lösche deine Benachrichtigungen.
-oauth2.grant.report.general: Melde Artikel, Beiträge oder Kommentare.
+oauth2.grant.report.general: Melde Themen, Beiträge oder Kommentare.
 oauth2.grant.admin.post.purge: Lösche jeden Beitrag endgültig von deiner 
   Instanz.
 oauth2.grant.moderate.magazine.ban.read: Zeige gesperrte Nutzer in deinen 
@@ -670,7 +670,7 @@ oauth2.grant.admin.instance.information.edit: Aktualisiere die Über, FAQ,
   Kontakt, Nutzungsbedingungen und Datenschutzerklärung Seiten deiner Instanz.
 oauth2.grant.read.general: Lese alle Inhalte zu denen du Zugang hast.
 oauth2.grant.domain.all: Abonniere oder Blockiere Domains und zeige die Domains 
-  die abonniert oder blockiert hast.
+  die du abonniert oder blockiert hast.
 purge_content_desc: Lösche den Inhalt des Nutzers endgültig, inklusive aller 
   Antworten anderer Nutzer in den erstellten Themen, Beiträgen und Kommentaren.
 flash_post_unpin_success: Der Beitrag wurde erfolgreich gelöst.
@@ -682,7 +682,7 @@ oauth2.grant.admin.instance.settings.edit: Aktualisiere die Einstellungen deiner
   Instanz.
 oauth2.grant.moderate.entry.set_adult: Kennzeichne Themen als NSFW in deinen 
   moderierten Magazinen.
-oauth2.grant.delete.general: Lösche jeden deiner Artikel, Beiträge oder 
+oauth2.grant.delete.general: Lösche jedes deiner Themen, Beiträge oder 
   Kommentare.
 oauth2.grant.entry_comment.vote: Favorisiere, booste oder reduziere jeden 
   Kommentar in einem Thema.
