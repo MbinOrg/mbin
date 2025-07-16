@@ -15,7 +15,6 @@ use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPubManager;
 use App\Service\SearchManager;
 use App\Service\SettingsManager;
-use App\Service\SubjectOverviewManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,7 +25,6 @@ class SearchController extends AbstractController
         private readonly SearchManager $manager,
         private readonly ActivityPubManager $activityPubManager,
         private readonly ApHttpClientInterface $apHttpClient,
-        private readonly SubjectOverviewManager $overviewManager,
         private readonly SettingsManager $settingsManager,
         private readonly LoggerInterface $logger,
         private readonly CreateHandler $createHandler,
@@ -78,7 +76,7 @@ class SearchController extends AbstractController
                 }
 
                 $user = $this->getUser();
-                $res = $this->manager->findPaginated($user, $query, $this->getPageNb($request), authorId: $dto->user?->getId(), magazineId: $dto->magazine?->getId(), specificType: $dto->type);
+                $res = $this->manager->findPaginated($user, $query, $this->getPageNb($request), authorId: $dto->user?->getId(), magazineId: $dto->magazine?->getId(), specificType: $dto->type, sinceDate: $dto->since);
 
                 $this->logger->debug('results: {num}', ['num' => $res->count()]);
 
@@ -86,7 +84,7 @@ class SearchController extends AbstractController
                     'search/front.html.twig',
                     [
                         'objects' => $objects,
-                        'results' => $this->overviewManager->buildList($res),
+                        'results' => $res,
                         'pagination' => $res,
                         'form' => $form->createView(),
                         'q' => $query,

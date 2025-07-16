@@ -41,6 +41,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[Entity(repositoryClass: UserRepository::class)]
 #[Table(name: '`user`')]
 #[Index(columns: ['visibility'], name: 'user_visibility_idx')]
+#[Index(columns: ['username_ts'], name: 'user_username_ts')]
+#[Index(columns: ['about_ts'], name: 'user_about_ts')]
 #[UniqueConstraint(name: 'user_email_idx', columns: ['email'])]
 #[UniqueConstraint(name: 'user_username_idx', columns: ['username'])]
 #[UniqueConstraint(name: 'user_ap_id_idx', columns: ['ap_id'])]
@@ -251,6 +253,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
 
     #[Column(type: 'text', nullable: true)]
     public ?string $applicationText;
+
+    #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]
+    private ?string $usernameTs;
+    #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]
+    private ?string $aboutTs;
 
     #[Column(type: 'enumApplicationStatus', nullable: false, options: ['default' => EApplicationStatus::Approved->value])]
     private string $applicationStatus;
