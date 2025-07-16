@@ -48,6 +48,7 @@ use App\Schema\PaginationSchema;
 use App\Service\BookmarkManager;
 use App\Service\IpResolver;
 use App\Service\ReportManager;
+use App\Service\SettingsManager;
 use App\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
@@ -104,6 +105,7 @@ class BaseApi extends AbstractController
         private readonly ReportManager $reportManager,
         private readonly OAuth2ClientAccessRepository $clientAccessRepository,
         protected readonly NotificationSettingsRepository $notificationSettingsRepository,
+        protected readonly SettingsManager $settingsManager,
     ) {
     }
 

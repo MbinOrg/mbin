@@ -10,6 +10,7 @@ use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
+use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,6 +28,7 @@ class RemoveHandler extends MbinMessageHandler
         private readonly SettingsManager $settingsManager,
         private readonly AddRemoveFactory $factory,
         private readonly DeliverManager $deliverManager,
+        private readonly ActivityJsonBuilder $activityJsonBuilder,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
@@ -61,6 +63,6 @@ class RemoveHandler extends MbinMessageHandler
         }
 
         $activity = $this->factory->buildRemoveModerator($actor, $removed, $magazine);
-        $this->deliverManager->deliver($audience, $activity);
+        $this->deliverManager->deliver($audience, $this->activityJsonBuilder->buildActivityJson($activity));
     }
 }

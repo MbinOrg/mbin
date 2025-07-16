@@ -65,6 +65,7 @@ class PostNoteFactory
                 ActivityPubActivityInterface::PUBLIC_URL,
             ],
             'cc' => $cc,
+            'audience' => $this->groupFactory->getActivityPubId($post->magazine),
             'sensitive' => $post->isAdult(),
             'stickied' => $post->sticky,
             'content' => $this->markdownConverter->convertToHtml(

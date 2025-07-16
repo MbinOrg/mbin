@@ -1,0 +1,13 @@
+{
+    "id": "SCRUBBED_ID",
+    "type": "Delete",
+    "actor": "https://kbin.test/u/user",
+    "object": "SCRUBBED_ID",
+    "to": [
+        "https://www.w3.org/ns/activitystreams#Public"
+    ],
+    "cc": [
+        "https://kbin.test/u/user/followers"
+    ],
+    "removeData": true
+}

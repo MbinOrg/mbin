@@ -360,4 +360,13 @@ class EntryFrontControllerTest extends WebTestCase
             json_decode($responseContent, true, 512, JSON_THROW_ON_ERROR),
         )['html'];
     }
+
+    private function clearDateTimes(string $responseContent): string
+    {
+        return preg_replace(
+            '/<time ?[ \w=\"\'\-:+\n]*>[ \w\n]*<\/time>/m',
+            '',
+            $responseContent
+        );
+    }
 }

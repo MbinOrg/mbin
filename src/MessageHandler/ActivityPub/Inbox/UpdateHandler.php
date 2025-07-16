@@ -120,22 +120,22 @@ class UpdateHandler extends MbinMessageHandler
         if ($object instanceof Entry) {
             $this->editEntry($object, $actor, $payload);
             if (null === $object->magazine->apId) {
-                $this->bus->dispatch(new GenericAnnounceMessage($object->magazine->getId(), $payload, $actor->apInboxUrl));
+                $this->bus->dispatch(new GenericAnnounceMessage($object->magazine->getId(), null, $actor->apInboxUrl, null, $payload['id']));
             }
         } elseif ($object instanceof EntryComment) {
             $this->editEntryComment($object, $actor, $payload);
             if (null === $object->magazine->apId) {
-                $this->bus->dispatch(new GenericAnnounceMessage($object->magazine->getId(), $payload, $actor->apInboxUrl));
+                $this->bus->dispatch(new GenericAnnounceMessage($object->magazine->getId(), null, $actor->apInboxUrl, null, $payload['id']));
             }
         } elseif ($object instanceof Post) {
             $this->editPost($object, $actor, $payload);
             if (null === $object->magazine->apId) {
-                $this->bus->dispatch(new GenericAnnounceMessage($object->magazine->getId(), $payload, $actor->apInboxUrl));
+                $this->bus->dispatch(new GenericAnnounceMessage($object->magazine->getId(), null, $actor->apInboxUrl, null, $payload['id']));
             }
         } elseif ($object instanceof PostComment) {
             $this->editPostComment($object, $actor, $payload);
             if (null === $object->magazine->apId) {
-                $this->bus->dispatch(new GenericAnnounceMessage($object->magazine->getId(), $payload, $actor->apInboxUrl));
+                $this->bus->dispatch(new GenericAnnounceMessage($object->magazine->getId(), null, $actor->apInboxUrl, null, $payload['id']));
             }
         } elseif ($object instanceof Message) {
             $this->editMessage($object, $actor, $payload);
