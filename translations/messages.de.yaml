@@ -281,7 +281,7 @@ flash_register_success: Willkommen an Bord! Dein Konto wurde registriert. Ein
 flash_thread_new_success: Das Thema wurde erfolgreich erstellt und ist jetzt für
   andere Benutzer sichtbar.
 related_magazines: Ähnliche Magazine
-active_users: Aktive Nutzer
+active_users: Aktive Personen
 sidebar: Seitenleiste
 banned_instances: Gesperrte Instanzen
 header_logo: Header Logo
@@ -323,7 +323,7 @@ Your account is not active: Dein Benutzerkonto ist nicht aktiv.
 random_magazines: Zufällige Magazine
 random_entries: Zufällige Themen
 related_entries: Verwandte Themen
-delete_account: Konto löschen
+delete_account: Benutzerkonto löschen
 auto_preview: Automatische Medienvorschau
 mod_remove_your_thread: Ein Moderator hat dein Thema entfernt
 mod_log_alert: WARNUNG - Der Modlog kann unangenehme oder verstörende Inhalte 
@@ -357,7 +357,7 @@ show_top_bar: Zeige obere Statusleiste an
 expired_at: Abgelaufen am
 registration_disabled: Registrierung geschlossen
 federation_enabled: Föderation aktiviert
-purge_account: Konto leeren
+purge_account: Benutzerkonto endgültig löschen
 unban_account: Konto entsperren
 kbin_intro_desc: ist eine dezentralisierte Plattform zur Inhaltssammlung und für
   Mikroblogs im Fediverse.
