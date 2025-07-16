@@ -280,7 +280,7 @@ flash_register_success: Willkommen an Bord! Dein Konto wurde registriert. Ein
   dein Konto zum Leben erwecken wird.
 flash_thread_new_success: Das Thema wurde erfolgreich erstellt und ist jetzt für
   andere Benutzer sichtbar.
-related_magazines: Ähnliche Magazine
+related_magazines: Verwandte Magazine
 active_users: Aktive Personen
 sidebar: Seitenleiste
 banned_instances: Gesperrte Instanzen
@@ -323,7 +323,7 @@ Your account is not active: Dein Benutzerkonto ist nicht aktiv.
 random_magazines: Zufällige Magazine
 random_entries: Zufällige Themen
 related_entries: Verwandte Themen
-delete_account: Benutzerkonto löschen
+delete_account: Konto löschen
 auto_preview: Automatische Medienvorschau
 mod_remove_your_thread: Ein Moderator hat dein Thema entfernt
 mod_log_alert: WARNUNG - Der Modlog kann unangenehme oder verstörende Inhalte 
@@ -357,7 +357,7 @@ show_top_bar: Zeige obere Statusleiste an
 expired_at: Abgelaufen am
 registration_disabled: Registrierung geschlossen
 federation_enabled: Föderation aktiviert
-purge_account: Benutzerkonto endgültig löschen
+purge_account: Konto endgültig löschen
 unban_account: Konto entsperren
 kbin_intro_desc: ist eine dezentralisierte Plattform zur Inhaltssammlung und für
   Mikroblogs im Fediverse.
@@ -376,7 +376,7 @@ add_ban: Sperre hinzufügen
 writing: Verfassen
 admin_panel: Admin Panel
 add_mentions_posts: Erwähnungen in Beiträgen hinzufügen
-ban_account: Account sperren
+ban_account: Konto sperren
 add_mentions_entries: Erwähnungen in Themen hinzufügen
 ban_expired: Sperre abgelaufen
 mercure_enabled: Mercure aktiviert
@@ -440,7 +440,7 @@ email_confirm_button_text: Bestätige deine Passwortänderungsanfrage
 errors.server429.title: 429 Zu viele Anfragen
 oauth.consent.to_allow_access: Um den Zugriff zu gestatten, klicken Sie den 
   "Erlauben" Button weiter unten
-email.delete.description: Der folgende Nutzer hat die Löschung seines Accounts 
+email.delete.description: Der folgende Nutzer hat die Löschung seines Kontos 
   angefragt
 oauth.consent.app_requesting_permissions: möchte die folgenden Aktionen in 
   deinem Namen ausführen
@@ -456,7 +456,7 @@ ignore_magazines_custom_css: Ignoriere das eigene CSS eines Magazins
 sidebars_same_side: Seitenleisten auf der selben Seite
 oauth.consent.deny: Verbieten
 oauth.consent.title: OAUTH2 Zustimmungsformular
-resend_account_activation_email: Account Aktivierungsmail erneut senden
+resend_account_activation_email: Konto Aktivierungsmail erneut senden
 errors.server500.title: 500 Interner Serverfehler
 alphabetically: Alphabetisch
 show_subscriptions: Zeige Abonnements
@@ -485,7 +485,7 @@ subscription_panel_large: Großes Panel
 subscription_header: Abonnierte Magazine
 oauth.client_identifier.invalid: Ungültige OAuth Client ID!
 oauth.consent.app_has_permissions: kann bereits die folgenden Aktionen ausführen
-email.delete.title: Nutzeraccount Löschanfrage
+email.delete.title: Benutzerkonto Löschanfrage
 email_confirm_link_help: Alternativ können Sie das Folgende in ihren Browser 
   kopieren
 2fa.authentication_code.label: Authentisierungscode
@@ -994,7 +994,7 @@ table_of_contents: Inhaltsverzeichnis
 notification_body_new_signup: Der Nutzer %u% hat sich registriert.
 notify_on_user_signup: Registrierungen
 notification_title_new_signup: Ein Nutzer hat sich registriert
-your_account_is_not_yet_approved: Dein Account wurde noch nicht freigegeben. Wir
+your_account_is_not_yet_approved: Dein Konto wurde noch nicht freigegeben. Wir 
   werden dir eine E-Mail schicken, sobald die Administratoren deine Anfrage 
   bearbeitet haben.
 bookmark_list_edit: Bearbeiten
