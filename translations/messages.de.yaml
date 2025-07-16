@@ -1027,7 +1027,7 @@ email_application_approved_body: 'Deine Registrierungsanfrage wurde von den Serv
   freigegeben. Du kannst dich jetzt unter <a href="%link%">%siteName%</a> auf dem
   Server anmelden.'
 email_application_rejected_title: Deine Registrierungsanfrage wurde abgelehnt
-email_application_pending: Dein Account muss von einem Admin freigegeben werden,
+email_application_pending: Dein Konto muss von einem Admin freigegeben werden, 
   bevor du dich anmelden kannst.
 email_verification_pending: Du musst deine E-Mail-Adresse bestätigen, bevor du 
   dich anmelden kannst.
@@ -1068,17 +1068,17 @@ show_thumbnails_help: Zeige Vorschaubilder.
 show_new_icons: Zeige das Neu-Icon
 show_new_icons_help: Zeige ein Icon neben neuen Magazinen/Nutzern an (30 Tage 
   alt oder jünger)
-show_users_avatars_help: Zeige Profilbilder von Nutzern.
-show_magazines_icons_help: Zeige Profilbilder von Magazinen.
+show_users_avatars_help: Zeige Avatare von Nutzern.
+show_magazines_icons_help: Zeige Icons von Magazinen.
 toolbar.emoji: Emoji
 2fa.manual_code_hint: Falls du den QR-Code nicht einlesen kannst, gib den 
   Schlüssel manuell ein
 magazine_instance_defederated_info: Die Instanz dieses Magazins ist deföderiert.
   Das Magazine wird deshalb keine Aktualisierungen erhalten.
 user_instance_defederated_info: Die Instanz dieses Nutzers ist deföderiert.
-flash_thread_instance_banned: Die Instanz dieses Magazines ist gebannt.
+flash_thread_instance_banned: Die Instanz dieses Magazines ist gesperrt.
 show_rich_mention_help: Zeige eine Nutzer-Komponente an wenn ein Nutzer erwähnt 
-  wird. Dies beinhaltet deren Anzeigename und Profilbild.
+  wird. Dies beinhaltet deren Anzeigename und Avatar.
 show_rich_mention_magazine_help: Zeige eine Magazin-Komponente an wenn ein 
   Magazine erwähnt wird. Dies beinhaltet dessen Anzeigename und Icon.
 show_rich_ap_link_help: Zeige eine Komponente wenn anderer ActivityPub-Inhalt 
