@@ -123,8 +123,8 @@ notification_title_new_signup: Erabiltzaile berri bat erregistratuta
 test_push_message: Kaixo mundua!
 table_of_contents: Edukien taula
 bookmark_lists: Markatzaile zerrendak
-email_verification_pending: Zure helbide elektronikoa egiaztatu behar duzu saioa hasi
-  aurretik.
+email_verification_pending: Zure helbide elektronikoa egiaztatu behar duzu saioa
+  hasi aurretik.
 show_thumbnails_help: Miniaturen irudiak erakutsi.
 commented: Komentatua
 followers_count: '{0}Jarratzaileak|{1}Jarratzaile|]1,Inf[ Jarratzaileak'
@@ -284,8 +284,8 @@ error: Errorea
 back: Atzera
 server_software: Zerbitzariaren softwarea
 search_type_all: Hariak + Mikroblogak
-show_new_icons_help: Erakutsi ikonoa aldizkari/erabiltzaile berriarentzat (30 egun
-  edo berriagoak)
+show_new_icons_help: Erakutsi ikonoa aldizkari/erabiltzaile berriarentzat (30 
+  egun edo berriagoak)
 settings: Doikuntzak
 blocked: Blokeatuta
 subscribers_count: '{0}Harpidedunak|{1}Harpidedun|]1,Inf[ Harpidedunak'
