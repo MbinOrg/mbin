@@ -166,7 +166,7 @@ reputation: Ruf
 preview: Vorschau
 pinned: Angeheftet
 change: Ändern
-change_magazine: Magazin wechseln
+change_magazine: Magazin ändern
 unpin: Lösen
 pin: Anheften
 done: Fertig
@@ -187,7 +187,7 @@ month: Monat
 weeks: Wochen
 week: Woche
 content: Inhalt
-change_language: Sprache wechseln
+change_language: Sprache ändern
 type.smart_contract: Smart Contract
 hot: Heiß
 unfollow: Entfolgen
@@ -368,16 +368,16 @@ kbin_promo_desc: '%link_start%Klone das Repo%link_end% und erweitere das Fediver
 browsing_one_thread: Du siehst nur Inhalte aus einem Thema in dieser Diskussion.
   Alle Kommentare sind auf der Beitragsseite verfügbar.
 boost: Boost
-icon: Symbol
-magazine_panel: Magazin Ansicht
+icon: Icon
+magazine_panel: Magazin Panel
 ban: Sperre
 bans: Sperren
 add_ban: Sperre hinzufügen
 writing: Verfassen
-admin_panel: Admin-Leiste
-add_mentions_posts: Erwähnungs-Tags in Beiträgen hinzufügen
+admin_panel: Admin Panel
+add_mentions_posts: Erwähnungen in Beiträgen hinzufügen
 ban_account: Account sperren
-add_mentions_entries: Erwähnungs-Tags in Themen hinzufügen
+add_mentions_entries: Erwähnungen in Themen hinzufügen
 ban_expired: Sperre abgelaufen
 mercure_enabled: Mercure aktiviert
 report_issue: Fehler melden
@@ -674,7 +674,7 @@ oauth2.grant.domain.all: Abonniere oder Blockiere Domains und zeige die Domains
   die abonniert oder blockiert hast.
 purge_content_desc: Lösche den Inhalt des Nutzers endgültig, inklusive aller 
   Antworten anderer Nutzer in den erstellten Themen, Beiträgen und Kommentaren.
-flash_post_unpin_success: Der Beitrag wurde erfolgreich entpinnt.
+flash_post_unpin_success: Der Beitrag wurde erfolgreich gelöst.
 oauth2.grant.post_comment.delete: Lösche deine existierenden Kommentare unter 
   Beiträgen.
 oauth2.grant.admin.oauth_clients.revoke: Widerrufe Zugang zu OAuth2 Clients auf 
@@ -773,7 +773,7 @@ flash_thread_new_error: Thema konnte nicht erstellt werden. Etwas ist schief
   gelaufen.
 remove_following: Folgen entfernen
 account_suspended: Das Konto wurde suspendiert.
-mark_as_adult: NSFW Markierung Anwenden
+mark_as_adult: Als NSFW markieren
 user_badge_admin: Admin
 flash_magazine_theme_changed_error: Die Magazin Darstellung konnte nicht 
   aktualisiert werden.
