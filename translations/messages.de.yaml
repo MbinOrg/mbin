@@ -787,12 +787,12 @@ apply_for_moderator: Als Moderator bewerben
 unmark_as_adult: NSFW Markierung entfernen
 position_bottom: Unten
 deletion: Löschung
-deleted_by_author: Thema, Post oder Kommentar wurde durch den Author gelöscht
+deleted_by_author: Thema, Beitrag oder Kommentar wurde durch den Author gelöscht
 account_unbanned: Dieses Konto wurde entsperrt.
 solarized_auto: Sonnig (Auto Erkennung)
 flash_magazine_theme_changed_success: Die Magazin Darstellung wurde erfolgreich 
   aktualisiert.
-change_my_cover: Mein Deckblatt ändern
+change_my_cover: Mein Banner ändern
 flash_thread_edit_error: Thema konnte nicht bearbeitet werden. Etwas ist schief 
   gegangen.
 announcement: Ankündigung
@@ -802,7 +802,7 @@ sensitive_toggle: Sichtbarkeit für sensible Inhalte umschalten
 magazine_is_deleted: Magazin ist gelöscht. Du kannst es innerhalb von 30 Tagen 
   <a href="%link_target%">wiederherstellen</a>.
 sensitive_show: Klicke zum anzeigen
-open_url_to_fediverse: Ursprüngliche URL öffnen
+open_url_to_fediverse: Original-URL öffnen
 page_width: Seiten Breite
 user_badge_bot: Bot
 flash_comment_new_success: Kommentar wurde erfolgreich erstellt.
@@ -825,7 +825,7 @@ flash_mark_as_adult_success: Die NSFW Markierung wurde dem Post erfolgreich
   hinzugefügt.
 cancel_request: Anfrage abbrechen
 unsuspend_account: Konto Suspendierung aufheben
-deleted_by_moderator: Thema, Post oder Kommentar wurde durch den Moderator 
+deleted_by_moderator: Thema, Beitrag oder Kommentar wurde durch den Moderator 
   gelöscht
 flash_unmark_as_adult_success: Die NSFW Markierung wurde vom Post erfolgreich 
   entfernt.
