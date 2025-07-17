@@ -394,7 +394,7 @@ class ApHttpClient implements ApHttpClientInterface
             'body' => substr($requestBody ?? 'No body provided', 0, 200),
         ]);
         // And only log the full content in debug log mode
-        if ($content) {
+        if (isset($content)) {
             $this->logger->debug('[ApHttpClient::logRequestException] Full response body content: {content}', [
                 'content' => $content,
             ]);
