@@ -1070,7 +1070,7 @@ bookmarks_list: Marcadors en %list%
 table_of_contents: Taula de continguts
 email_verification_pending: Heu de verificar la vostra adreça electrònica abans 
   de poder iniciar sessió.
-search_type_all: Fils + Microblogs
+search_type_all: Tot
 flash_application_info: L'administració ha d'aprovar el vostre compte abans de 
   poder iniciar sessió. Rebreu un correu electrònic quan s'haja processat la 
   vostra sol·licitud de registre.
@@ -1094,3 +1094,10 @@ show_rich_ap_link: Enllaços AP enriquits
 show_rich_ap_link_help: Mostrar un component en línia quan s'hi enllaça un altre
   contingut d'ActivityPub.
 attitude: Actitud
+type_search_term_url_handle: Escriviu el terme de cerca, l'URL o l'identificador
+search_type_magazine: Revistes
+search_type_user: Comptes
+search_type_actors: Revistes i comptes
+search_type_content: Temes i microblogs
+type_search_magazine: Limitar la cerca a la revista...
+type_search_user: Limitar la cerca a l'autoria...
