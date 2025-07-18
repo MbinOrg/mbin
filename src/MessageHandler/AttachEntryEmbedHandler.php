@@ -13,6 +13,7 @@ use App\Repository\ImageRepository;
 use App\Service\ImageManager;
 use App\Utils\Embed;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
@@ -27,6 +28,7 @@ class AttachEntryEmbedHandler extends MbinMessageHandler
         private readonly ImageManager $manager,
         private readonly ImageRepository $imageRepository,
         private readonly EntityManagerInterface $entityManager,
+        private readonly LoggerInterface $logger,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
@@ -48,6 +50,8 @@ class AttachEntryEmbedHandler extends MbinMessageHandler
         }
 
         if (!$entry->url) {
+            $this->logger->debug('[AttachEntryEmbedHandler::doWork] returning, as the entry {id} does not have a url', ['id' => $entry->getId()]);
+
             return;
         }
 
@@ -64,12 +68,15 @@ class AttachEntryEmbedHandler extends MbinMessageHandler
         $cover = $this->fetchCover($entry, $embed);
 
         if (!$html && !$cover && !$isImage) {
+            $this->logger->debug('[AttachEntryEmbedHandler::doWork] returning, as the embed is neither html, nor an image url and we could not extract an image from it either. URL: {u}', ['u' => $entry->url]);
+
             return;
         }
 
         $entry->type = $type;
         $entry->hasEmbed = $html || $isImage;
         if ($cover) {
+            $this->logger->debug('[AttachEntryEmbedHandler::doWork] setting entry ({id}) image to new one', ['id' => $entry->getId()]);
             $entry->image = $cover;
         }
 
@@ -90,6 +97,8 @@ class AttachEntryEmbedHandler extends MbinMessageHandler
                 }
             }
         }
+
+        $this->logger->debug('[AttachEntryEmbedHandler::fetchCover] returning null, as the entry ({id}) already has an image and does not have an embed', ['id' => $entry->getId()]);
 
         return null;
     }

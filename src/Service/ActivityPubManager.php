@@ -496,6 +496,25 @@ class ActivityPubManager
         return null;
     }
 
+    public static function extractUrlFromAttachment(mixed $attachment): ?string
+    {
+        $url = null;
+        if (\is_array($attachment)) {
+            $link = array_filter(
+                $attachment,
+                fn ($val) => 'Link' === $val['type']
+            );
+
+            if (!empty($link[0]) && isset($link[0]['href']) && \is_string($link[0]['href'])) {
+                $url = $link[0]['href'];
+            } elseif (isset($link['href']) && \is_string($link['href'])) {
+                $url = $link['href'];
+            }
+        }
+
+        return $url;
+    }
+
     /**
      * Creates a new magazine (Group).
      *
