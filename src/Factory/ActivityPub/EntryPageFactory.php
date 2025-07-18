@@ -73,7 +73,6 @@ class EntryPageFactory
                 'content' => $entry->body,
                 'mediaType' => 'text/markdown',
             ] : null,
-            'url' => $this->getUrl($entry),
             'tag' => array_merge(
                 $this->tagsWrapper->build($tags),
                 $this->mentionsWrapper->build($entry->mentions ?? [], $entry->body)
