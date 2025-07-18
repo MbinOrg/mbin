@@ -880,7 +880,7 @@ bookmark_list_is_default: É a lista por defecto
 bookmark_list_make_default: Converter en Por defecto
 bookmark_list_selected_list: Lista seleccionada
 table_of_contents: Táboa do contido
-search_type_all: Temas + Microblogs
+search_type_all: Todos os tipos
 search_type_entry: Temas
 search_type_post: Microblogs
 signup_requests: Solicitudes de novas contas
@@ -1055,3 +1055,10 @@ show_rich_ap_link: Ligazóns AP melloradas
 show_rich_ap_link_help: Mostra información en liña cando se inclúe a ligazón a 
   contidos ActivityPub.
 attitude: Actitude
+type_search_term_url_handle: Escribe a palabra, url ou alcume a buscar
+search_type_magazine: Revistas
+search_type_user: Usuarias
+search_type_actors: Revistas + Usuarias
+search_type_content: Temas + Microblogs
+type_search_magazine: Limitar busca á revista…
+type_search_user: Limitar a busca á autoría…
