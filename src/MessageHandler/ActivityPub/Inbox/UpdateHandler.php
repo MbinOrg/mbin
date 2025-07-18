@@ -81,7 +81,7 @@ class UpdateHandler extends MbinMessageHandler
             throw new \LogicException();
         }
         $payload = $message->payload;
-        $this->logger->debug('received Update activity: {json}', ['json' => $payload]);
+        $this->logger->debug('[UpdateHandler::doWork] received Update activity: {json}', ['json' => $payload]);
 
         try {
             $actor = $this->activityPubManager->findRemoteActor($payload['actor']);
@@ -110,7 +110,7 @@ class UpdateHandler extends MbinMessageHandler
             return;
         }
 
-        $this->logger->warning("didn't know what to do with the update activity concerning '{id}'. We don't have a local object that has this id", ['id' => $payload['object']['id']]);
+        $this->logger->warning("[UpdateHandler::doWork] didn't know what to do with the update activity concerning '{id}'. We don't have a local object that has this id", ['id' => $payload['object']['id']]);
     }
 
     private function editActivity(array $object, User $actor, array $payload): void
@@ -145,7 +145,7 @@ class UpdateHandler extends MbinMessageHandler
     private function editEntry(Entry $entry, User $user, array $payload): void
     {
         if (!$this->entryManager->canUserEditEntry($entry, $user)) {
-            $this->logger->warning('User {u} tried to edit entry {et} ({eId}), but is not allowed to', ['u' => $user->apId ?? $user->username, 'et' => $entry->title, 'eId' => $entry->getId()]);
+            $this->logger->warning('[UpdateHandler::editEntry] User {u} tried to edit entry {et} ({eId}), but is not allowed to', ['u' => $user->apId ?? $user->username, 'et' => $entry->title, 'eId' => $entry->getId()]);
 
             return;
         }
@@ -160,7 +160,7 @@ class UpdateHandler extends MbinMessageHandler
     private function editEntryComment(EntryComment $comment, User $user, array $payload): void
     {
         if (!$this->entryCommentManager->canUserEditComment($comment, $user)) {
-            $this->logger->warning('User {u} tried to edit entry comment {et} ({eId}), but is not allowed to', ['u' => $user->apId ?? $user->username, 'et' => $comment->getShortTitle(), 'eId' => $comment->getId()]);
+            $this->logger->warning('[UpdateHandler::editEntryComment] User {u} tried to edit entry comment {et} ({eId}), but is not allowed to', ['u' => $user->apId ?? $user->username, 'et' => $comment->getShortTitle(), 'eId' => $comment->getId()]);
 
             return;
         }
@@ -174,7 +174,7 @@ class UpdateHandler extends MbinMessageHandler
     private function editPost(Post $post, User $user, array $payload): void
     {
         if (!$this->postManager->canUserEditPost($post, $user)) {
-            $this->logger->warning('User {u} tried to edit post {pt} ({pId}), but is not allowed to', ['u' => $user->apId ?? $user->username, 'pt' => $post->getShortTitle(), 'pId' => $post->getId()]);
+            $this->logger->warning('[UpdateHandler::editPost] User {u} tried to edit post {pt} ({pId}), but is not allowed to', ['u' => $user->apId ?? $user->username, 'pt' => $post->getShortTitle(), 'pId' => $post->getId()]);
 
             return;
         }
@@ -188,7 +188,7 @@ class UpdateHandler extends MbinMessageHandler
     private function editPostComment(PostComment $comment, User $user, array $payload): void
     {
         if (!$this->postCommentManager->canUserEditPostComment($comment, $user)) {
-            $this->logger->warning('User {u} tried to edit post comment {pt} ({pId}), but is not allowed to', ['u' => $user->apId ?? $user->username, 'pt' => $comment->getShortTitle(), 'pId' => $comment->getId()]);
+            $this->logger->warning('[UpdateHandler::editPostComment] User {u} tried to edit post comment {pt} ({pId}), but is not allowed to', ['u' => $user->apId ?? $user->username, 'pt' => $comment->getShortTitle(), 'pId' => $comment->getId()]);
 
             return;
         }
@@ -201,10 +201,23 @@ class UpdateHandler extends MbinMessageHandler
 
     private function extractChanges(EntryDto|EntryCommentDto|PostDto|PostCommentDto $dto, array $payload): void
     {
+        $this->logger->debug('[UpdateHandler::extractChanges] extracting changes from {c}', ['c' => \get_class($dto)]);
         if (!empty($payload['object']['content'])) {
             $dto->body = $this->objectExtractor->getMarkdownBody($payload['object']);
         } else {
             $dto->body = null;
+        }
+        if (!empty($payload['object']['attachment'])) {
+            $this->logger->debug('[UpdateHandler::extractChanges] was not empty :)');
+            $image = $this->activityPubManager->handleImages($payload['object']['attachment']);
+            if (null !== $image) {
+                $dto->image = $this->imageFactory->createDto($image);
+            }
+            if ($dto instanceof EntryDto) {
+                $url = ActivityPubManager::extractUrlFromAttachment($payload['object']['attachment']);
+                $dto->url = $url;
+                $this->logger->debug('[UpdateHandler::extractChanges] setting url to {u} which was extracted from the attachment array', ['u' => $url]);
+            }
         }
         $dto->apLikeCount = $this->activityPubManager->extractRemoteLikeCount($payload['object']);
         $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($payload['object']);
@@ -217,7 +230,7 @@ class UpdateHandler extends MbinMessageHandler
             $this->messageManager->editMessage($message, $payload['object']);
         } else {
             $this->logger->warning(
-                'Got an update message from a user that is not allowed to edit it. Update actor: {ua}. Original Author: {oa}',
+                '[UpdateHandler::editMessage] Got an update message from a user that is not allowed to edit it. Update actor: {ua}. Original Author: {oa}',
                 ['ua' => $user->apId ?? $user->username, 'oa' => $message->sender->apId ?? $message->sender->username]
             );
         }
@@ -230,7 +243,7 @@ class UpdateHandler extends MbinMessageHandler
                 $this->bus->dispatch(new UpdateActorMessage($user->apProfileId, force: true));
             }
         } else {
-            $this->logger->warning('User {u1} wanted to update user {u2} without being allowed to do so', ['u1' => $actor->apId ?? $actor->username, 'u2' => $user->apId ?? $user->username]);
+            $this->logger->warning('[UpdateHandler::updateUser] User {u1} wanted to update user {u2} without being allowed to do so', ['u1' => $actor->apId ?? $actor->username, 'u2' => $user->apId ?? $user->username]);
         }
     }
 
@@ -265,7 +278,7 @@ class UpdateHandler extends MbinMessageHandler
 
             $this->magazineManager->edit($magazine, $dto, $actor);
         } else {
-            $this->logger->warning('User {u} wanted to update magazine {m} without being allowed to do so', ['u' => $actor->apId ?? $actor->username, 'm' => $magazine->apId ?? $magazine->name]);
+            $this->logger->warning('[UpdateHandler::updateMagazine] User {u} wanted to update magazine {m} without being allowed to do so', ['u' => $actor->apId ?? $actor->username, 'm' => $magazine->apId ?? $magazine->name]);
         }
     }
 }

@@ -101,7 +101,7 @@ class Page
 
             $dto->body = $this->objectExtractor->getMarkdownBody($object);
             $dto->visibility = $this->getVisibility($object, $actor);
-            $this->handleUrl($dto, $object);
+            $this->extractUrlIntoDto($dto, $object);
             $this->handleDate($dto, $object['published']);
             if (isset($object['sensitive'])) {
                 $this->handleSensitiveMedia($dto, $object['sensitive']);
@@ -154,29 +154,11 @@ class Page
         return VisibilityInterface::VISIBILITY_VISIBLE;
     }
 
-    private function handleUrl(EntryDto $dto, ?array $object): void
+    private function extractUrlIntoDto(EntryDto $dto, ?array $object): void
     {
         $attachment = \array_key_exists('attachment', $object) ? $object['attachment'] : null;
 
-        try {
-            if (\is_array($attachment)) {
-                $link = array_filter(
-                    $attachment,
-                    fn ($val) => \in_array($val['type'], ['Link'])
-                );
-
-                if (\is_array($link) && !empty($link[0]) && isset($link[0]['href'])) {
-                    $dto->url = $link[0]['href'];
-                } elseif (\is_array($link) && isset($link['href'])) {
-                    $dto->url = $link['href'];
-                }
-            }
-        } catch (\Exception $e) {
-        }
-
-        if (!$dto->url && isset($object['url'])) {
-            $dto->url = $this->activityPubManager->extractUrl($object['url']);
-        }
+        $dto->url = ActivityPubManager::extractUrlFromAttachment($attachment);
     }
 
     /**
