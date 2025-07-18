@@ -1034,7 +1034,7 @@ own_content_reported_accepted: S'ha acceptat una denúncia del vostre contingut.
 bookmark_list_edit: Editar
 bookmark_list_selected_list: Llista seleccionada
 table_of_contents: Taula de continguts
-search_type_all: Fils + Microblogs
+search_type_all: Tot
 search_type_entry: Fils
 search_type_post: Microblogs
 select_user: Trieu un(a) usuari(a)
@@ -1097,3 +1097,10 @@ show_rich_ap_link: Enllaços AP enriquits
 show_rich_ap_link_help: Mostrar un component en línia quan s'hi enllaça un altre
   contingut d'ActivityPub.
 attitude: Actitud
+type_search_term_url_handle: Escriviu el terme de cerca, l'URL o l'identificador
+search_type_magazine: Revistes
+search_type_user: Comptes
+search_type_actors: Revistes i comptes
+search_type_content: Temes i microblogs
+type_search_magazine: Limitar la cerca a la revista...
+type_search_user: Limitar la cerca a l'autoria...
