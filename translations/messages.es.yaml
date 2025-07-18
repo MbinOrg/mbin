@@ -967,7 +967,7 @@ bookmark_add_to_list: Añadir marcador a %list%
 bookmark_remove_from_list: Eliminar el marcador de %list%
 bookmark_list_create_placeholder: escribe el nombre...
 table_of_contents: Tabla de contenido
-search_type_all: Hilos + Microblogs
+search_type_all: Todo
 search_type_entry: Hilos
 application_text: Explica por qué quieres unirte
 signup_requests_header: Solicitudes de registro
@@ -1090,3 +1090,11 @@ show_rich_mention_magazine_help: Mostrar un componente de revista al mencionar
 show_rich_ap_link: Enlaces AP enriquecidos
 show_rich_ap_link_help: Mostrar un componente en línea cuando otro contenido de 
   ActivityPub está vinculado a él.
+type_search_term_url_handle: Escribe el término de búsqueda, URL o identificador
+search_type_magazine: Revistas
+search_type_user: Cuentas
+search_type_actors: Revistas + Cuentas
+search_type_content: Temas + Microblogs
+attitude: Actitud
+type_search_magazine: Limitar la búsqueda a la revista...
+type_search_user: Limitar búsqueda a la autoría...
