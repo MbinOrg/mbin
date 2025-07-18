@@ -15,6 +15,7 @@ use App\Service\ActivityPubManager;
 use App\Service\SearchManager;
 use App\Service\SettingsManager;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -81,6 +82,14 @@ class SearchController extends AbstractController
                 $res = $this->manager->findPaginated($user, $query, $this->getPageNb($request), authorId: $dto->user?->getId(), magazineId: $dto->magazine?->getId(), specificType: $dto->type, sinceDate: $dto->since);
 
                 $this->logger->debug('results: {num}', ['num' => $res->count()]);
+
+                if ($request->isXmlHttpRequest()) {
+                    return new JsonResponse([
+                        'html' => $this->renderView('search/_list.html.twig', [
+                            'results' => $res,
+                        ]),
+                    ]);
+                }
 
                 return $this->render(
                     'search/front.html.twig',
