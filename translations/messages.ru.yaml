@@ -355,7 +355,7 @@ send: Отправить
 active_users: Активные пользователи
 random_entries: Случайные ветки
 related_entries: Связанные ветки
-delete_account: Удалить аккаунт
+delete_account: Удалить учётную запись
 purge_account: Очистить аккаунт
 ban_account: Забанить аккаунт
 unban_account: Разбанить аккаунт
@@ -436,8 +436,8 @@ errors.server403.title: 403 - недоступно
 email_confirm_button_text: Подтвердите ваш запрос на изменение пароля
 email_confirm_link_help: Если не смогли перейти автоматически, скопируйте ссылку
   и откройте в вашем барузере
-email.delete.title: Запрос на удаление аккаунта
-email.delete.description: Запрос на удаление аккаунта подписчика
+email.delete.title: Запрос на удаление учётной записи
+email.delete.description: Запрос на удаление учётной записи подписчика
 resend_account_activation_email_question: Неактивный аккаунт?
 resend_account_activation_email: Ещё раз отправить запрос на активацию аккаунта
 resend_account_activation_email_error: Ошибка при отправке запроса. Запрос 
@@ -698,8 +698,8 @@ delete_content_desc: Удалить контент полльзователся,
   других полльзователей в созданных ветках,сообщениях и комментариях.
 purge_content_desc: Полная очистка контента полльзователя, включая удаление 
   ответов других пользователей в созданных ветках, постах и комментариях.
-delete_account_desc: Удалить аккаунт полльзователся, оставив при этом ответы 
-  других полльзователей в созданных ветках,сообщениях и комментариях.
+delete_account_desc: Удалить учётную запись, включая ответы других пользователей
+  в созданных темах, сообщениях и комментариях.
 two_factor_authentication: Двухфакторная аутентификация
 two_factor_backup: Коды восстановления двухфакторной аутентификации
 2fa.authentication_code.label: Код аутентификации
@@ -848,7 +848,7 @@ marked_for_deletion: Помечено для удаления
 direct_message: Личное сообщение
 subscribe_for_updates: Подпишитесь, чтобы получать оповещения о новых 
   публикациях.
-account_deletion_button: Удалить аккаунт
+account_deletion_button: Удалить учётную запись
 account_deletion_immediate: Удалить сейчас
 notification_title_new_reply: Новый ответ
 bookmark_add_to_list: Добавить закладку в %list%
@@ -973,3 +973,4 @@ show_rich_mention_magazine: Расширенные упоминания журн
 show_rich_mention_magazine_help: Отображать названия и изображения журналов, 
   упомянутых в тексте.
 show_rich_ap_link: Расширенные ссылки AP
+and: и
