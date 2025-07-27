@@ -268,7 +268,7 @@ restored_comment_by: ha restaurat el comentari de
 removed_post_by: ha eliminat una publicació de
 he_banned: vetar
 he_unbanned: retirar vet
-read_all: Llegir-ho tot
+read_all: Marcar-ho tot com a llegit
 show_all: Mostrar-ho tot
 flash_register_success: Benvinguda a bord! El vostre compte ja està registrat. 
   Un últim pas - consulteu la vostra safata d'entrada per a rebre un enllaç 
@@ -740,7 +740,7 @@ your_account_is_not_yet_approved: El vostre compte encara no s'ha aprovat.
   sol·licitud de registre.
 toolbar.link: Enllaç
 on: Encés
-purge: Purgar
+purge: Buidar la llista
 reject: Rebutjar
 instances: Instàncies
 from_url: Des de l'URL
