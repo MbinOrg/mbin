@@ -25,6 +25,10 @@ class SqlHelpers
         $where = 'WHERE ';
         $i = 0;
         foreach ($whereClauses as $whereClause) {
+            if (empty($whereClause)) {
+                continue;
+            }
+
             if ($i > 0) {
                 $where .= ' AND ';
             }
