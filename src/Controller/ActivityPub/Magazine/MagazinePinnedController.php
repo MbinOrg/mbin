@@ -46,7 +46,7 @@ class MagazinePinnedController
 
         $items = [];
         foreach ($pinned as $entry) {
-            $items[] = $this->entryFactory->create($entry, $this->tagLinkRepository->getTagsOfEntry($entry));
+            $items[] = $this->entryFactory->create($entry, $this->tagLinkRepository->getTagsOfContent($entry));
         }
 
         return [

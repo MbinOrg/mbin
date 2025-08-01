@@ -201,8 +201,6 @@ class PostFrontControllerTest extends WebTestCase
         $firstId = $firstNode->attributes->getNamedItem('id')->nodeValue;
         self::assertEquals("post-{$older->getId()}", $firstId);
         $iterator->next();
-        // jump over the comment that is previewed from the older post
-        $iterator->next();
         $secondNode = $iterator->current();
         $secondId = $secondNode->attributes->getNamedItem('id')->nodeValue;
         self::assertEquals("post-{$newer->getId()}", $secondId);
@@ -215,6 +213,9 @@ class PostFrontControllerTest extends WebTestCase
             $this->getMagazineByName('kbin', $this->getUserByUsername('JaneDoe')),
             $this->getUserByUsername('JaneDoe')
         );
+
+        // sleep so the creation time is actually 1 second apart for the sort to reliably be the same
+        sleep(1);
 
         $this->createPost('test post 2');
 

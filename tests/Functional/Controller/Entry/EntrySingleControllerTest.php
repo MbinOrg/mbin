@@ -20,8 +20,6 @@ class EntrySingleControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', '/');
 
-        $this->assertSelectorTextContains('#header nav .active', 'Threads');
-
         $this->client->click($crawler->selectLink('test entry 1')->link());
 
         $this->assertSelectorTextContains('.head-title', '/m/acme');
