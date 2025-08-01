@@ -5,8 +5,16 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Controller\AbstractController;
+use App\DTO\EntryCommentDto;
+use App\DTO\EntryCommentResponseDto;
+use App\DTO\EntryDto;
+use App\DTO\EntryResponseDto;
 use App\DTO\MagazineDto;
 use App\DTO\MagazineResponseDto;
+use App\DTO\PostCommentDto;
+use App\DTO\PostCommentResponseDto;
+use App\DTO\PostDto;
+use App\DTO\PostResponseDto;
 use App\DTO\ReportDto;
 use App\DTO\ReportRequestDto;
 use App\DTO\UserDto;
@@ -225,22 +233,22 @@ class BaseApi extends AbstractController
         if ($content instanceof Entry) {
             $cross = $this->entryRepository->findCross($content);
             $crossDtos = array_map(fn ($entry) => $this->entryFactory->createResponseDto($entry, []), $cross);
-            $dto = $this->entryFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfEntry($content), $crossDtos);
+            $dto = $this->entryFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfContent($content), $crossDtos);
             $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
             $toReturn = $dto->jsonSerialize();
             $toReturn['itemType'] = 'entry';
         } elseif ($content instanceof EntryComment) {
-            $dto = $this->entryCommentFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfEntryComment($content));
+            $dto = $this->entryCommentFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfContent($content));
             $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
             $toReturn = $dto->jsonSerialize();
             $toReturn['itemType'] = 'entry_comment';
         } elseif ($content instanceof Post) {
-            $dto = $this->postFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfPost($content));
+            $dto = $this->postFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfContent($content));
             $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
             $toReturn = $dto->jsonSerialize();
             $toReturn['itemType'] = 'post';
         } elseif ($content instanceof PostComment) {
-            $dto = $this->postCommentFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfPostComment($content));
+            $dto = $this->postCommentFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfContent($content));
             $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
             $toReturn = $dto->jsonSerialize();
             $toReturn['itemType'] = 'post_comment';
@@ -414,5 +422,92 @@ class BaseApi extends AbstractController
         } catch (SubjectHasBeenReportedException $e) {
             // Do nothing
         }
+    }
+
+    /**
+     * Serialize a single entry to JSON.
+     *
+     * @param Entry[]|null $crosspostedEntries
+     */
+    protected function serializeEntry(EntryDto|Entry $dto, array $tags, ?array $crosspostedEntries = null): EntryResponseDto
+    {
+        $crosspostedEntryDtos = null;
+        if (null !== $crosspostedEntries) {
+            $crosspostedEntryDtos = array_map(fn (Entry $item) => $this->entryFactory->createResponseDto($item, []), $crosspostedEntries);
+        }
+        $response = $this->entryFactory->createResponseDto($dto, $tags, $crosspostedEntryDtos);
+
+        if ($this->isGranted('ROLE_OAUTH2_ENTRY:VOTE')) {
+            $response->isFavourited = $dto instanceof EntryDto ? $dto->isFavourited : $dto->isFavored($this->getUserOrThrow());
+            $response->userVote = $dto instanceof EntryDto ? $dto->userVote : $dto->getUserChoice($this->getUserOrThrow());
+        }
+
+        if ($user = $this->getUser()) {
+            $response->canAuthUserModerate = $dto->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto)?->getStatus() ?? ENotificationStatus::Default;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Serialize a single entry comment to JSON.
+     */
+    protected function serializeEntryComment(EntryCommentDto $comment, array $tags): EntryCommentResponseDto
+    {
+        $response = $this->entryCommentFactory->createResponseDto($comment, $tags);
+
+        if ($this->isGranted('ROLE_OAUTH2_ENTRY_COMMENT:VOTE')) {
+            $response->isFavourited = $comment->isFavourited;
+            $response->userVote = $comment->userVote;
+        }
+
+        if ($user = $this->getUser()) {
+            $response->canAuthUserModerate = $comment->magazine->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+        }
+
+        return $response;
+    }
+
+    /**
+     * Serialize a single post to JSON.
+     */
+    protected function serializePost(Post|PostDto $dto, array $tags): PostResponseDto
+    {
+        if (null === $dto) {
+            return [];
+        }
+        $response = $this->postFactory->createResponseDto($dto, $tags);
+
+        if ($this->isGranted('ROLE_OAUTH2_POST:VOTE')) {
+            $response->isFavourited = $dto instanceof PostDto ? $dto->isFavourited : $dto->isFavored($this->getUserOrThrow());
+            $response->userVote = $dto instanceof PostDto ? $dto->userVote : $dto->getUserChoice($this->getUserOrThrow());
+        }
+
+        if ($user = $this->getUser()) {
+            $response->canAuthUserModerate = $dto->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto)?->getStatus() ?? ENotificationStatus::Default;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Serialize a single comment to JSON.
+     */
+    protected function serializePostComment(PostCommentDto $comment, array $tags): PostCommentResponseDto
+    {
+        $response = $this->postCommentFactory->createResponseDto($comment, $tags);
+
+        if ($this->isGranted('ROLE_OAUTH2_POST_COMMENT:VOTE')) {
+            $response->isFavourited = $comment instanceof PostCommentDto ? $comment->isFavourited : $comment->isFavored($this->getUserOrThrow());
+            $response->userVote = $comment instanceof PostCommentDto ? $comment->userVote : $comment->getUserChoice($this->getUserOrThrow());
+        }
+
+        if ($user = $this->getUser()) {
+            $response->canAuthUserModerate = $comment->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+        }
+
+        return $response;
     }
 }

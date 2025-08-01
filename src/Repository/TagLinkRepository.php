@@ -32,7 +32,26 @@ class TagLinkRepository extends ServiceEntityRepository
     /**
      * @return string[]
      */
-    public function getTagsOfEntry(Entry $entry): array
+    public function getTagsOfContent(Entry|EntryComment|Post|PostComment $content): array
+    {
+        if ($content instanceof Entry) {
+            return $this->getTagsOfEntry($content);
+        } elseif ($content instanceof EntryComment) {
+            return $this->getTagsOfEntryComment($content);
+        } elseif ($content instanceof Post) {
+            return $this->getTagsOfPost($content);
+        } elseif ($content instanceof PostComment) {
+            return $this->getTagsOfPostComment($content);
+        } else {
+            // this is unreachable because of the strict types
+            throw new \LogicException();
+        }
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getTagsOfEntry(Entry $entry): array
     {
         $result = $this->findBy(['entry' => $entry]);
 
@@ -63,7 +82,7 @@ class TagLinkRepository extends ServiceEntityRepository
     /**
      * @return string[]
      */
-    public function getTagsOfEntryComment(EntryComment $entryComment): array
+    private function getTagsOfEntryComment(EntryComment $entryComment): array
     {
         $result = $this->findBy(['entryComment' => $entryComment]);
 
@@ -89,7 +108,7 @@ class TagLinkRepository extends ServiceEntityRepository
     /**
      * @return string[]
      */
-    public function getTagsOfPost(Post $post): array
+    private function getTagsOfPost(Post $post): array
     {
         $result = $this->findBy(['post' => $post]);
 
@@ -115,7 +134,7 @@ class TagLinkRepository extends ServiceEntityRepository
     /**
      * @return string[]
      */
-    public function getTagsOfPostComment(PostComment $postComment): array
+    private function getTagsOfPostComment(PostComment $postComment): array
     {
         $result = $this->findBy(['postComment' => $postComment]);
 

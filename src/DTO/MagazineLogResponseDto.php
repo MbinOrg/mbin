@@ -83,22 +83,22 @@ class MagazineLogResponseDto implements \JsonSerializable
             case 'log_entry_deleted':
             case 'log_entry_restored':
                 \assert($subject instanceof Entry);
-                $this->subject = $entryFactory->createResponseDto($subject, tags: $tagLinkRepository->getTagsOfEntry($subject));
+                $this->subject = $entryFactory->createResponseDto($subject, tags: $tagLinkRepository->getTagsOfContent($subject));
                 break;
             case 'log_entry_comment_deleted':
             case 'log_entry_comment_restored':
                 \assert($subject instanceof EntryComment);
-                $this->subject = $entryCommentFactory->createResponseDto($subject, tags: $tagLinkRepository->getTagsOfEntryComment($subject));
+                $this->subject = $entryCommentFactory->createResponseDto($subject, tags: $tagLinkRepository->getTagsOfContent($subject));
                 break;
             case 'log_post_deleted':
             case 'log_post_restored':
                 \assert($subject instanceof Post);
-                $this->subject = $postFactory->createResponseDto($subject, tags: $tagLinkRepository->getTagsOfPost($subject));
+                $this->subject = $postFactory->createResponseDto($subject, tags: $tagLinkRepository->getTagsOfContent($subject));
                 break;
             case 'log_post_comment_deleted':
             case 'log_post_comment_restored':
                 \assert($subject instanceof PostComment);
-                $this->subject = $postCommentFactory->createResponseDto($subject, tags: $tagLinkRepository->getTagsOfPostComment($subject));
+                $this->subject = $postCommentFactory->createResponseDto($subject, tags: $tagLinkRepository->getTagsOfContent($subject));
                 break;
             default:
                 break;

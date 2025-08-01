@@ -37,7 +37,7 @@ class TagManager
     public function updateEntryTags(Entry $entry, array $newTags): void
     {
         $this->updateTags($newTags,
-            fn () => $this->tagLinkRepository->getTagsOfEntry($entry),
+            fn () => $this->tagLinkRepository->getTagsOfContent($entry),
             fn (Hashtag $hashtag) => $this->tagLinkRepository->removeTagOfEntry($entry, $hashtag),
             fn (Hashtag $hashtag) => $this->tagLinkRepository->addTagToEntry($entry, $hashtag)
         );
@@ -61,7 +61,7 @@ class TagManager
     public function updateEntryCommentTags(EntryComment $entryComment, array $newTags): void
     {
         $this->updateTags($newTags,
-            fn () => $this->tagLinkRepository->getTagsOfEntryComment($entryComment),
+            fn () => $this->tagLinkRepository->getTagsOfContent($entryComment),
             fn (Hashtag $hashtag) => $this->tagLinkRepository->removeTagOfEntryComment($entryComment, $hashtag),
             fn (Hashtag $hashtag) => $this->tagLinkRepository->addTagToEntryComment($entryComment, $hashtag)
         );
@@ -85,7 +85,7 @@ class TagManager
     public function updatePostTags(Post $post, array $newTags): void
     {
         $this->updateTags($newTags,
-            fn () => $this->tagLinkRepository->getTagsOfPost($post),
+            fn () => $this->tagLinkRepository->getTagsOfContent($post),
             fn (Hashtag $hashtag) => $this->tagLinkRepository->removeTagOfPost($post, $hashtag),
             fn (Hashtag $hashtag) => $this->tagLinkRepository->addTagToPost($post, $hashtag)
         );
@@ -97,7 +97,7 @@ class TagManager
     public function updatePostCommentTags(PostComment $postComment, array $newTags): void
     {
         $this->updateTags($newTags,
-            fn () => $this->tagLinkRepository->getTagsOfPostComment($postComment),
+            fn () => $this->tagLinkRepository->getTagsOfContent($postComment),
             fn (Hashtag $hashtag) => $this->tagLinkRepository->removeTagOfPostComment($postComment, $hashtag),
             fn (Hashtag $hashtag) => $this->tagLinkRepository->addTagToPostComment($postComment, $hashtag)
         );

@@ -82,7 +82,7 @@ class PostsTrashApi extends PostsBaseApi
         // Force response to have all fields visible
         $visibility = $post->visibility;
         $post->visibility = VisibilityInterface::VISIBILITY_VISIBLE;
-        $response = $this->serializePost($factory->createDto($post), $this->tagLinkRepository->getTagsOfPost($post))->jsonSerialize();
+        $response = $this->serializePost($factory->createDto($post), $this->tagLinkRepository->getTagsOfContent($post))->jsonSerialize();
         $response['visibility'] = $visibility;
 
         return new JsonResponse(
@@ -159,7 +159,7 @@ class PostsTrashApi extends PostsBaseApi
         }
 
         return new JsonResponse(
-            $this->serializePost($factory->createDto($post), $this->tagLinkRepository->getTagsOfPost($post)),
+            $this->serializePost($factory->createDto($post), $this->tagLinkRepository->getTagsOfContent($post)),
             headers: $headers
         );
     }

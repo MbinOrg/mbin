@@ -60,7 +60,7 @@ class PostCreateSubscriber implements EventSubscriberInterface
             // do not overwrite matched magazines
             return;
         }
-        $tags = $this->tagLinkRepository->getTagsOfPost($post);
+        $tags = $this->tagLinkRepository->getTagsOfContent($post);
 
         foreach ($tags as $tag) {
             if ($magazine = $this->magazineRepository->findByTag($tag)) {

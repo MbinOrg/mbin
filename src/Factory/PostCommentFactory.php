@@ -71,7 +71,7 @@ class PostCommentFactory
     public function createResponseTree(PostComment $comment, PostCommentPageView $criteria, int $depth, ?bool $canModerate = null): PostCommentResponseDto
     {
         $commentDto = $this->createDto($comment);
-        $toReturn = $this->createResponseDto($commentDto, $this->tagLinkRepository->getTagsOfPostComment($comment), array_reduce($comment->children->toArray(), PostCommentResponseDto::class.'::recursiveChildCount', 0));
+        $toReturn = $this->createResponseDto($commentDto, $this->tagLinkRepository->getTagsOfContent($comment), array_reduce($comment->children->toArray(), PostCommentResponseDto::class.'::recursiveChildCount', 0));
         $toReturn->isFavourited = $commentDto->isFavourited;
         $toReturn->userVote = $commentDto->userVote;
         $toReturn->canAuthUserModerate = $canModerate;

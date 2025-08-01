@@ -123,7 +123,7 @@ class EntryCommentsCreateApi extends EntriesBaseApi
         $dto->parent = $parent;
 
         return new JsonResponse(
-            $this->serializeComment($dto, $this->tagLinkRepository->getTagsOfEntryComment($comment)),
+            $this->serializeEntryComment($dto, $this->tagLinkRepository->getTagsOfContent($comment)),
             status: 201,
             headers: $headers
         );
@@ -237,7 +237,7 @@ class EntryCommentsCreateApi extends EntriesBaseApi
         $dto->parent = $parent;
 
         return new JsonResponse(
-            $this->serializeComment($dto, $this->tagLinkRepository->getTagsOfEntryComment($comment)),
+            $this->serializeEntryComment($dto, $this->tagLinkRepository->getTagsOfContent($comment)),
             status: 201,
             headers: $headers
         );

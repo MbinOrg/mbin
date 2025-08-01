@@ -97,7 +97,7 @@ class PostCommentsVoteApi extends PostsBaseApi
         $manager->vote($choice, $comment, $this->getUserOrThrow(), rateLimit: false);
 
         return new JsonResponse(
-            $this->serializePostComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfPostComment($comment)),
+            $this->serializePostComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfContent($comment)),
             headers: $headers
         );
     }

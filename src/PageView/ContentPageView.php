@@ -8,16 +8,8 @@ use App\Entity\User;
 use App\Repository\Criteria;
 use Symfony\Bundle\SecurityBundle\Security;
 
-class PostPageView extends Criteria
+class ContentPageView extends Criteria
 {
-    public const SORT_OPTIONS = [
-        self::SORT_ACTIVE,
-        self::SORT_HOT,
-        self::SORT_NEW,
-        self::SORT_TOP,
-        self::SORT_COMMENTED,
-    ];
-
     public function __construct(
         int $page,
         private readonly Security $security,
