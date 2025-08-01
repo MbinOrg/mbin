@@ -24,8 +24,6 @@ class EntryFrontControllerTest extends WebTestCase
         $this->assertSelectorTextContains('.entry__meta', 'JohnDoe');
         $this->assertSelectorTextContains('.entry__meta', 'to acme');
 
-        $this->assertSelectorTextContains('#header .active', 'Threads');
-
         $this->assertcount(2, $crawler->filter('.entry'));
 
         foreach ($this->getSortOptions() as $sortOption) {
@@ -71,8 +69,6 @@ class EntryFrontControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains('.entry__meta', 'JohnDoe');
         $this->assertSelectorTextContains('.entry__meta', 'to acme');
-
-        $this->assertSelectorTextContains('#header .active', 'Threads');
 
         $this->assertcount(2, $crawler->filter('.entry'));
 

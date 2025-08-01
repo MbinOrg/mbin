@@ -10,30 +10,42 @@ use App\Entity\Magazine;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\Repository\EntryCommentRepository;
+use App\Repository\EntryRepository;
+use App\Repository\PostCommentRepository;
+use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ContentPopulationTransformer implements ResultTransformer
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly EntryRepository $entryRepository,
+        private readonly EntryCommentRepository $entryCommentRepository,
+        private readonly PostRepository $postRepository,
+        private readonly PostCommentRepository $postCommentRepository,
     ) {
     }
 
     public function transform(iterable $input): iterable
     {
         $positionsArray = $this->buildPositionArray($input);
-        $entries = $this->entityManager->getRepository(Entry::class)->findBy(
+        $entries = $this->entryRepository->findBy(
             ['id' => $this->getOverviewIds((array) $input, 'entry')]
         );
-        $entryComments = $this->entityManager->getRepository(EntryComment::class)->findBy(
+        $this->entryRepository->hydrate(...$entries);
+        $entryComments = $this->entryCommentRepository->findBy(
             ['id' => $this->getOverviewIds((array) $input, 'entry_comment')]
         );
-        $post = $this->entityManager->getRepository(Post::class)->findBy(
+        $this->entryCommentRepository->hydrate(...$entryComments);
+        $post = $this->postRepository->findBy(
             ['id' => $this->getOverviewIds((array) $input, 'post')]
         );
-        $postComment = $this->entityManager->getRepository(PostComment::class)->findBy(
+        $this->postRepository->hydrate(...$post);
+        $postComment = $this->postCommentRepository->findBy(
             ['id' => $this->getOverviewIds((array) $input, 'post_comment')]
         );
+        $this->postCommentRepository->hydrate(...$postComment);
         $magazines = $this->entityManager->getRepository(Magazine::class)->findBy(
             ['id' => $this->getOverviewIds((array) $input, 'magazine')]
         );
