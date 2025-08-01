@@ -12,6 +12,7 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
 use App\Factory\ActivityPub\ActivityFactory;
+use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\ActivityPub\ContextsProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -24,6 +25,7 @@ class DeleteWrapper
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly EntityManagerInterface $entityManager,
         private readonly ContextsProvider $contextsProvider,
+        private readonly ActivityJsonBuilder $activityJsonBuilder,
     ) {
     }
 
@@ -98,7 +100,8 @@ class DeleteWrapper
         }
 
         if (null !== $actor?->apId) {
-            $json = $this->announceWrapper->build($content->magazine, $payload);
+            $announceActivity = $this->announceWrapper->build($content->magazine, $payload);
+            $json = $this->activityJsonBuilder->buildActivityJson($announceActivity);
         }
 
         $payload->activityJson = json_encode($json);

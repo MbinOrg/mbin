@@ -7,6 +7,7 @@ namespace App\Tests\Functional\ActivityPub;
 use App\ActivityPub\JsonRd;
 use App\DTO\MessageDto;
 use App\Entity\Contracts\ActivityPubActivityInterface;
+use App\Entity\Contracts\ActivityPubActorInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Magazine;
@@ -123,26 +124,12 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
 
         $username = 'remoteUser';
         $this->remoteUser = $this->getUserByUsername($username, addImage: false);
-        $json = $this->personFactory->create($this->remoteUser);
-        $this->testingApHttpClient->actorObjects[$json['id']] = $json;
-
-        $userEvent = new WebfingerResponseEvent(new JsonRd(), "acct:$username@$domain", ['account' => $username]);
-        $this->eventDispatcher->dispatch($userEvent);
-        $realDomain = \sprintf(WebFingerFactory::WEBFINGER_URL, 'https', $domain, '', "$username@$domain");
-        $this->testingApHttpClient->webfingerObjects[$realDomain] = $userEvent->jsonRd->toArray();
 
         $magazineName = 'remoteMagazine';
         $this->remoteMagazine = $this->getMagazineByName($magazineName, user: $this->remoteUser);
-        $json = $this->groupFactory->create($this->remoteMagazine);
-        $this->testingApHttpClient->actorObjects[$json['id']] = $json;
 
-        $magazineEvent = new WebfingerResponseEvent(new JsonRd(), "acct:$magazineName@$domain", ['account' => $magazineName]);
-        $this->eventDispatcher->dispatch($magazineEvent);
-        $realDomain = \sprintf(WebFingerFactory::WEBFINGER_URL, 'https', $domain, '', "$magazineName@$domain");
-        $this->testingApHttpClient->webfingerObjects[$realDomain] = $magazineEvent->jsonRd->toArray();
-
-        $this->entitiesToRemoveAfterSetup[] = $this->remoteMagazine;
-        $this->entitiesToRemoveAfterSetup[] = $this->remoteUser;
+        $this->registerActor($this->remoteMagazine, $domain, true);
+        $this->registerActor($this->remoteUser, $domain, true);
     }
 
     protected function setUpRemoteSubscriber(): void
@@ -150,15 +137,30 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         $domain = $this->remoteSubDomain;
         $username = 'remoteSubscriber';
         $this->remoteSubscriber = $this->getUserByUsername($username, addImage: false);
-        $json = $this->personFactory->create($this->remoteSubscriber);
+        $this->registerActor($this->remoteSubscriber, $domain, true);
+    }
+
+    protected function registerActor(ActivityPubActorInterface $actor, string $domain, bool $remoteAfterSetup = false): void
+    {
+        if ($actor instanceof User) {
+            $json = $this->personFactory->create($actor);
+        } elseif ($actor instanceof Magazine) {
+            $json = $this->groupFactory->create($actor);
+        } else {
+            $class = \get_class($actor);
+            throw new \LogicException("tests do not support actors of type $class");
+        }
         $this->testingApHttpClient->actorObjects[$json['id']] = $json;
+        $username = $json['preferredUsername'];
 
         $userEvent = new WebfingerResponseEvent(new JsonRd(), "acct:$username@$domain", ['account' => $username]);
         $this->eventDispatcher->dispatch($userEvent);
         $realDomain = \sprintf(WebFingerFactory::WEBFINGER_URL, 'https', $domain, '', "$username@$domain");
         $this->testingApHttpClient->webfingerObjects[$realDomain] = $userEvent->jsonRd->toArray();
 
-        $this->entitiesToRemoveAfterSetup[] = $this->remoteSubscriber;
+        if ($remoteAfterSetup) {
+            $this->entitiesToRemoveAfterSetup[] = $actor;
+        }
     }
 
     protected function switchToRemoteDomain($domain): void
@@ -454,5 +456,45 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         }
 
         return $activityArray;
+    }
+
+    protected function assertCountOfSentActivitiesOfType(int $expectedCount, string $type): void
+    {
+        $activities = $this->getSentActivitiesOfType($type);
+        $this->assertCount($expectedCount, $activities);
+    }
+
+    protected function assertOneSentActivityOfType(string $type, ?string $activityId = null): void
+    {
+        $activities = $this->getSentActivitiesOfType($type);
+        self::assertCount(1, $activities);
+        if (null !== $activityId) {
+            self::assertEquals($activityId, $activities[0]['payload']['id']);
+        }
+    }
+
+    protected function assertOneSentAnnouncedActivityOfType(string $type, ?string $announcedActivityId = null): void
+    {
+        $activities = $this->getSentAnnounceActivitiesOfInnerType($type);
+        self::assertCount(1, $activities);
+        if (null !== $announcedActivityId) {
+            self::assertEquals($announcedActivityId, $activities[0]['payload']['object']['id']);
+        }
+    }
+
+    /**
+     * @return array<int, array{inboxUrl: string, payload: array, actor: User|Magazine}>
+     */
+    protected function getSentActivitiesOfType(string $type): array
+    {
+        return array_values(array_filter($this->testingApHttpClient->getPostedObjects(), fn (array $item) => $type === $item['payload']['type']));
+    }
+
+    /**
+     * @return array<int, array{inboxUrl: string, payload: array, actor: User|Magazine}>
+     */
+    protected function getSentAnnounceActivitiesOfInnerType(string $type): array
+    {
+        return array_values(array_filter($this->testingApHttpClient->getPostedObjects(), fn (array $item) => 'Announce' === $item['payload']['type'] && $type === $item['payload']['object']['type']));
     }
 }

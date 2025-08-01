@@ -16,6 +16,7 @@ use App\Entity\PostComment;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -53,6 +54,25 @@ class ActivityRepository extends ServiceEntityRepository
         $qb->where('a.type = :type');
         $qb->setParameter('type', $type);
 
+        $this->addObjectFilter($qb, $object);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @return Activity[]|null
+     */
+    public function findAllActivitiesByObject(ActivityPubActivityInterface|ActivityPubActorInterface $object): ?array
+    {
+        $qb = $this->createQueryBuilder('a');
+
+        $this->addObjectFilter($qb, $object);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    private function addObjectFilter(QueryBuilder $qb, ActivityPubActivityInterface|ActivityPubActorInterface $object): void
+    {
         if ($object instanceof Entry) {
             $qb->andWhere('a.objectEntry = :entry')
                 ->setParameter('entry', $object);
@@ -75,8 +95,6 @@ class ActivityRepository extends ServiceEntityRepository
             $qb->andWhere('a.objectMagazine = :magazine')
                 ->setParameter('magazine', $object);
         }
-
-        return $qb->getQuery()->getResult();
     }
 
     public function createForRemotePayload(array $payload, ActivityPubActivityInterface|Entry|EntryComment|Post|PostComment|ActivityPubActorInterface|User|Magazine|Activity|array|string|null $object = null): Activity
@@ -103,7 +121,12 @@ class ActivityRepository extends ServiceEntityRepository
             unset($payload['@context']);
         }
         $activity = new Activity($payload['type']);
-        $activity->activityJson = json_encode($payload);
+        $nestedTypes = ['Announce', 'Accept', 'Reject', 'Add', 'Remove'];
+        if (\in_array($payload['type'], $nestedTypes) && isset($payload['object']) && \is_array($payload['object'])) {
+            $activity->innerActivity = $this->createForRemoteActivity($payload['object'], $object);
+        } else {
+            $activity->activityJson = json_encode($payload);
+        }
         $activity->isRemote = true;
         if (null !== $object) {
             $activity->setObject($object);
