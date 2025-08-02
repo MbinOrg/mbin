@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "abb30f8bbbb59fb648ccfdb4ae8d4a8c",
+    "content-hash": "f1129d3593bae878064e0a73a14f9775",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -15915,16 +15915,16 @@
         },
         {
             "name": "masterminds/html5",
-            "version": "2.9.0",
+            "version": "2.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Masterminds/html5-php.git",
-                "reference": "f5ac2c0b0a2eefca70b2ce32a5809992227e75a6"
+                "reference": "fcf91eb64359852f00d921887b219479b4f21251"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/f5ac2c0b0a2eefca70b2ce32a5809992227e75a6",
-                "reference": "f5ac2c0b0a2eefca70b2ce32a5809992227e75a6",
+                "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/fcf91eb64359852f00d921887b219479b4f21251",
+                "reference": "fcf91eb64359852f00d921887b219479b4f21251",
                 "shasum": ""
             },
             "require": {
@@ -15976,9 +15976,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Masterminds/html5-php/issues",
-                "source": "https://github.com/Masterminds/html5-php/tree/2.9.0"
+                "source": "https://github.com/Masterminds/html5-php/tree/2.10.0"
             },
-            "time": "2024-03-31T07:05:07+00:00"
+            "time": "2025-07-25T09:04:22+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -17623,16 +17623,16 @@
         },
         {
             "name": "symfony/browser-kit",
-            "version": "v7.2.4",
+            "version": "v7.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/browser-kit.git",
-                "reference": "8ce0ee23857d87d5be493abba2d52d1f9e49da61"
+                "reference": "f0b889b73a845cddef1d25fe207b37fd04cb5419"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/browser-kit/zipball/8ce0ee23857d87d5be493abba2d52d1f9e49da61",
-                "reference": "8ce0ee23857d87d5be493abba2d52d1f9e49da61",
+                "url": "https://api.github.com/repos/symfony/browser-kit/zipball/f0b889b73a845cddef1d25fe207b37fd04cb5419",
+                "reference": "f0b889b73a845cddef1d25fe207b37fd04cb5419",
                 "shasum": ""
             },
             "require": {
@@ -17671,7 +17671,7 @@
             "description": "Simulates the behavior of a web browser, allowing you to make requests, click on links and submit forms programmatically",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/browser-kit/tree/v7.2.4"
+                "source": "https://github.com/symfony/browser-kit/tree/v7.3.2"
             },
             "funding": [
                 {
@@ -17683,11 +17683,15 @@
                     "type": "github"
                 },
                 {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
                     "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-02-14T14:27:24+00:00"
+            "time": "2025-07-10T08:47:49+00:00"
         },
         {
             "name": "symfony/debug-bundle",
@@ -17765,16 +17769,16 @@
         },
         {
             "name": "symfony/dom-crawler",
-            "version": "v7.2.8",
+            "version": "v7.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dom-crawler.git",
-                "reference": "a7473767124513e4099186dba43403dbc45f26dc"
+                "reference": "8b2ee2e06ab99fa5f067b6699296d4e35c156bb9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/a7473767124513e4099186dba43403dbc45f26dc",
-                "reference": "a7473767124513e4099186dba43403dbc45f26dc",
+                "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/8b2ee2e06ab99fa5f067b6699296d4e35c156bb9",
+                "reference": "8b2ee2e06ab99fa5f067b6699296d4e35c156bb9",
                 "shasum": ""
             },
             "require": {
@@ -17812,7 +17816,7 @@
             "description": "Eases DOM navigation for HTML and XML documents",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/dom-crawler/tree/v7.2.8"
+                "source": "https://github.com/symfony/dom-crawler/tree/v7.3.1"
             },
             "funding": [
                 {
@@ -17828,7 +17832,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-06-15T10:06:57+00:00"
+            "time": "2025-06-15T10:07:06+00:00"
         },
         {
             "name": "symfony/maker-bundle",
@@ -18142,7 +18146,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -18158,6 +18162,6 @@
         "ext-openssl": "*",
         "ext-redis": "*"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
