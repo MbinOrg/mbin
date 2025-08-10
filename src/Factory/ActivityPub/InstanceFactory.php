@@ -39,4 +39,9 @@ class InstanceFactory
             'url' => 'https://'.$this->kbinDomain.'/instance-actor',
         ];
     }
+
+    public function getTargetUrl(): string
+    {
+        return 'https://'.$this->kbinDomain;
+    }
 }
