@@ -38,6 +38,7 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
     protected User $remoteSubscriber;
     protected ?string $prev;
 
+    protected string $localDomain;
     protected string $remoteDomain = 'remote.mbin';
     protected string $remoteSubDomain = 'remote.sub.mbin';
 
@@ -46,7 +47,7 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
     public function setUp(): void
     {
         parent::setUp();
-
+        $this->localDomain = $this->settingsManager->get('KBIN_DOMAIN');
         $this->setupLocalActors();
 
         $this->switchToRemoteDomain($this->remoteSubDomain);
@@ -467,13 +468,18 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         $this->assertCount($expectedCount, $activities);
     }
 
-    protected function assertOneSentActivityOfType(string $type, ?string $activityId = null): void
+    protected function assertOneSentActivityOfType(string $type, ?string $activityId = null, ?string $inboxUrl = null): array
     {
         $activities = $this->getSentActivitiesOfType($type);
         self::assertCount(1, $activities);
         if (null !== $activityId) {
             self::assertEquals($activityId, $activities[0]['payload']['id']);
         }
+        if (null !== $inboxUrl) {
+            self::assertEquals($inboxUrl, $activities[0]['inboxUrl']);
+        }
+
+        return $activities[0]['payload'];
     }
 
     protected function assertOneSentAnnouncedActivityOfType(string $type, ?string $announcedActivityId = null): void
@@ -483,6 +489,23 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         if (null !== $announcedActivityId) {
             self::assertEquals($announcedActivityId, $activities[0]['payload']['object']['id']);
         }
+    }
+
+    protected function assertOneSentAnnouncedActivityOfTypeGetInnerActivity(string $type, ?string $announcedActivityId = null, ?string $announceId = null, ?string $inboxUrl = null): array|string
+    {
+        $activities = $this->getSentAnnounceActivitiesOfInnerType($type);
+        self::assertCount(1, $activities);
+        if (null !== $announcedActivityId) {
+            self::assertEquals($announcedActivityId, $activities[0]['payload']['object']['id']);
+        }
+        if (null !== $announceId) {
+            self::assertEquals($announceId, $activities[0]['payload']['id']);
+        }
+        if (null !== $inboxUrl) {
+            self::assertEquals($inboxUrl, $activities[0]['inboxUrl']);
+        }
+
+        return $activities[0]['payload']['object'];
     }
 
     /**

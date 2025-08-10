@@ -7,9 +7,11 @@ namespace App\Tests;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Factory\ActivityPub\AddRemoveFactory;
+use App\Factory\ActivityPub\BlockFactory;
 use App\Factory\ActivityPub\EntryCommentNoteFactory;
 use App\Factory\ActivityPub\FlagFactory;
 use App\Factory\ActivityPub\GroupFactory;
+use App\Factory\ActivityPub\InstanceFactory;
 use App\Factory\ActivityPub\PersonFactory;
 use App\Factory\ActivityPub\PostCommentNoteFactory;
 use App\Factory\ActivityPub\PostNoteFactory;
@@ -35,6 +37,7 @@ class ActivityPubTestCase extends WebTestCase
 
     protected PersonFactory $personFactory;
     protected GroupFactory $groupFactory;
+    protected InstanceFactory $instanceFactory;
     protected EntryCommentNoteFactory $entryCommentNoteFactory;
     protected PostNoteFactory $postNoteFactory;
     protected PostCommentNoteFactory $postCommentNoteFactory;
@@ -48,6 +51,7 @@ class ActivityPubTestCase extends WebTestCase
     protected UndoWrapper $undoWrapper;
     protected FollowResponseWrapper $followResponseWrapper;
     protected FlagFactory $flagFactory;
+    protected BlockFactory $blockFactory;
     protected UserFollowRequestRepository $userFollowRequestRepository;
 
     public function setUp(): void
@@ -59,6 +63,7 @@ class ActivityPubTestCase extends WebTestCase
 
         $this->personFactory = $this->getService(PersonFactory::class);
         $this->groupFactory = $this->getService(GroupFactory::class);
+        $this->instanceFactory = $this->getService(InstanceFactory::class);
         $this->entryCommentNoteFactory = $this->getService(EntryCommentNoteFactory::class);
         $this->postNoteFactory = $this->getService(PostNoteFactory::class);
         $this->postCommentNoteFactory = $this->getService(PostCommentNoteFactory::class);
@@ -72,6 +77,7 @@ class ActivityPubTestCase extends WebTestCase
         $this->undoWrapper = $this->getService(UndoWrapper::class);
         $this->followResponseWrapper = $this->getService(FollowResponseWrapper::class);
         $this->flagFactory = $this->getService(FlagFactory::class);
+        $this->blockFactory = $this->getService(BlockFactory::class);
         $this->userFollowRequestRepository = $this->getService(UserFollowRequestRepository::class);
     }
 

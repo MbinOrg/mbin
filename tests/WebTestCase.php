@@ -18,6 +18,7 @@ use App\Repository\BookmarkRepository;
 use App\Repository\EntryCommentRepository;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
+use App\Repository\MagazineBanRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\MagazineSubscriptionRepository;
 use App\Repository\MessageRepository;
@@ -136,6 +137,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected UserFollowRepository $userFollowRepository;
     protected MagazineSubscriptionRepository $magazineSubscriptionRepository;
     protected ActivityRepository $activityRepository;
+    protected MagazineBanRepository $magazineBanRepository;
 
     protected ImageFactory $imageFactory;
     protected MagazineFactory $magazineFactory;
@@ -213,6 +215,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->userFollowRepository = $this->getService(UserFollowRepository::class);
         $this->magazineSubscriptionRepository = $this->getService(MagazineSubscriptionRepository::class);
         $this->activityRepository = $this->getService(ActivityRepository::class);
+        $this->magazineBanRepository = $this->getService(MagazineBanRepository::class);
 
         $this->imageFactory = $this->getService(ImageFactory::class);
         $this->personFactory = $this->getService(PersonFactory::class);

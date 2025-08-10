@@ -172,6 +172,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public bool $addMentionsPosts = true;
     #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
     public bool $isBanned = false;
+    #[Column(type: 'string', nullable: true, options: ['default' => null])]
+    public ?string $banReason = null;
     #[Column(type: 'boolean', nullable: false)]
     public bool $isVerified = false;
     #[Column(type: 'boolean', nullable: false, options: ['default' => false])]

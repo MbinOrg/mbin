@@ -12,6 +12,7 @@ use App\Exception\InvalidUserPublicKeyException;
 use App\Message\ActivityPub\Inbox\ActivityMessage;
 use App\Message\ActivityPub\Inbox\AddMessage;
 use App\Message\ActivityPub\Inbox\AnnounceMessage;
+use App\Message\ActivityPub\Inbox\BlockMessage;
 use App\Message\ActivityPub\Inbox\CreateMessage;
 use App\Message\ActivityPub\Inbox\DeleteMessage;
 use App\Message\ActivityPub\Inbox\DislikeMessage;
@@ -231,6 +232,9 @@ class ActivityHandler extends MbinMessageHandler
             case 'Flag':
                 $this->bus->dispatch(new FlagMessage($payload));
                 break;
+            case 'Block':
+                $this->bus->dispatch(new BlockMessage($payload));
+                break;
         }
     }
 
@@ -254,6 +258,9 @@ class ActivityHandler extends MbinMessageHandler
                 break;
             case 'Dislike':
                 $this->bus->dispatch(new DislikeMessage($payload));
+                break;
+            case 'Block':
+                $this->bus->dispatch(new BlockMessage($payload));
                 break;
         }
     }

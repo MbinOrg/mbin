@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\MessageHandler\ActivityPub\Outbox;
 
+use App\Entity\Instance;
 use App\Entity\User;
 use App\Exception\InstanceBannedException;
 use App\Exception\InvalidApPostException;
