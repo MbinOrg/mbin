@@ -58,7 +58,14 @@ class SqlHelpers
                     $newParameters["$name$i"] = $value[$i];
                     $newParameterNames[] = ":$name$i";
                 }
-                $newSql = str_replace(":$name", join(',', $newParameterNames), $sql);
+                if (\sizeof($newParameterNames) > 0) {
+                    $newParameterName = join(',', $newParameterNames);
+                    $newSql = str_replace(":$name", $newParameterName, $newSql);
+                } else {
+                    // for dealing with empty array parameters we put a -1 in there,
+                    // because just an empty `IN ()` will throw a syntax error
+                    $newParameters[$name] = -1;
+                }
             } else {
                 $newParameters[$name] = $value;
             }
