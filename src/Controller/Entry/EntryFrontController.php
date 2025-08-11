@@ -54,6 +54,10 @@ class EntryFrontController extends AbstractController
 
         $this->setUserPreferences($user, $criteria);
 
+        if (null !== $user) {
+            $criteria->fetchCachedItems($this->contentRepository, $user);
+        }
+
         $entities = $this->contentRepository->findByCriteria($criteria);
         $templatePath = 'content/';
         $dataKey = 'results';
@@ -119,6 +123,9 @@ class EntryFrontController extends AbstractController
         $this->handleSubscription($subscription, $criteria);
 
         $this->setUserPreferences($user, $criteria);
+        if (null !== $user) {
+            $criteria->fetchCachedItems($this->contentRepository, $user);
+        }
 
         return $this->renderResponse(
             $request,
