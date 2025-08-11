@@ -12,6 +12,7 @@ use App\Factory\ImageFactory;
 use App\Factory\MagazineFactory;
 use App\Markdown\MarkdownConverter;
 use App\MessageHandler\ActivityPub\Outbox\DeliverHandler;
+use App\Repository\ActivityRepository;
 use App\Repository\BookmarkListRepository;
 use App\Repository\BookmarkRepository;
 use App\Repository\EntryCommentRepository;
@@ -134,6 +135,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected BookmarkListRepository $bookmarkListRepository;
     protected UserFollowRepository $userFollowRepository;
     protected MagazineSubscriptionRepository $magazineSubscriptionRepository;
+    protected ActivityRepository $activityRepository;
 
     protected ImageFactory $imageFactory;
     protected MagazineFactory $magazineFactory;
@@ -209,6 +211,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->bookmarkListRepository = $this->getService(BookmarkListRepository::class);
         $this->userFollowRepository = $this->getService(UserFollowRepository::class);
         $this->magazineSubscriptionRepository = $this->getService(MagazineSubscriptionRepository::class);
+        $this->activityRepository = $this->getService(ActivityRepository::class);
 
         $this->imageFactory = $this->getService(ImageFactory::class);
         $this->personFactory = $this->getService(PersonFactory::class);
