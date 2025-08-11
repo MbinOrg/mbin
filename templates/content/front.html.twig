@@ -54,12 +54,6 @@
 {% block sidebar_top %}
 {% endblock %}
 
-{%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
-{%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
-
-{%- set DYNAMIC_LISTS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_DYNAMIC_LISTS'), V_FALSE) -%}
-{%- set INFINITE_SCROLL = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_INFINITE_SCROLL'), V_FALSE) -%}
-
 {% block body %}
     <header>
         {% if magazine is defined and magazine %}
@@ -86,14 +80,7 @@
         {% include 'magazine/_visibility_info.html.twig' %}
     {% endif %}
     <div id="content">
-        <div data-controller="subject-list"
-             data-action="{{- DYNAMIC_LISTS is same as V_TRUE ? 'notifications:EntryCreatedNotification@window->subject-list#addMainSubject' : 'notifications:EntryCreatedNotification@window->subject-list#increaseCounter' -}}">
-            {% if magazine is defined and magazine %}
-                {% include 'layout/_subject_list.html.twig' with {postAttributes: {showMagazineName: false}, entryAttributes: {showMagazineName: false}} %}
-            {% else %}
-                {% include 'layout/_subject_list.html.twig' %}
-            {% endif %}
-        </div>
+        {{ include('content/_list.html.twig') }}
     </div>
 {% endblock %}
 
