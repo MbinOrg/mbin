@@ -8,6 +8,7 @@ use App\Controller\Traits\PrivateContentTrait;
 use App\DTO\PostResponseDto;
 use App\Entity\Magazine;
 use App\Entity\Post;
+use App\Entity\User;
 use App\Event\Post\PostHasBeenSeenEvent;
 use App\Factory\PostFactory;
 use App\PageView\PostPageView;
@@ -329,6 +330,11 @@ class PostsRetrieveApi extends PostsBaseApi
 
         $this->handleLanguageCriteria($criteria);
 
+        $user = $security->getUser();
+        if ($user instanceof User) {
+            $criteria->fetchCachedItems($repository, $user);
+        }
+
         $posts = $repository->findByCriteria($criteria);
 
         $dtos = [];
@@ -447,6 +453,11 @@ class PostsRetrieveApi extends PostsBaseApi
         $criteria->moderated = true;
         $criteria->setContent(Criteria::CONTENT_MICROBLOG);
 
+        $user = $security->getUser();
+        if ($user instanceof User) {
+            $criteria->fetchCachedItems($repository, $user);
+        }
+
         $posts = $repository->findByCriteria($criteria);
 
         $dtos = [];
@@ -561,6 +572,11 @@ class PostsRetrieveApi extends PostsBaseApi
         $criteria->setContent(Criteria::CONTENT_MICROBLOG);
 
         $this->logger->debug(var_export($criteria, true));
+
+        $user = $security->getUser();
+        if ($user instanceof User) {
+            $criteria->fetchCachedItems($repository, $user);
+        }
 
         $posts = $repository->findByCriteria($criteria);
 
@@ -705,6 +721,11 @@ class PostsRetrieveApi extends PostsBaseApi
 
         $criteria->magazine = $magazine;
         $criteria->setContent(Criteria::CONTENT_MICROBLOG);
+
+        $user = $security->getUser();
+        if ($user instanceof User) {
+            $criteria->fetchCachedItems($repository, $user);
+        }
 
         $posts = $repository->findByCriteria($criteria);
 
