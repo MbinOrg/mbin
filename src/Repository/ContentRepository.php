@@ -301,7 +301,12 @@ class ContentRepository
         $this->logger->debug('{s} | {p}', ['s' => $sql, 'p' => $parameters]);
         $this->logger->debug('Rewritten to: {s} | {p}', ['p' => $rewritten['parameters'], 's' => $rewritten['sql']]);
 
-        $fanta = new Pagerfanta(new NativeQueryAdapter($conn, $rewritten['sql'], $rewritten['parameters'], transformer: $this->contentPopulationTransformer));
+        $numResults = null;
+        if (!$criteria->magazine && !$criteria->moderated && !$criteria->favourite && Criteria::TIME_ALL === $criteria->time && Criteria::AP_ALL === $criteria->federation && 'all' === $criteria->type) {
+            // pre-set the results to 1000 pages for queries not very limited by the parameters so the count query is not being executed
+            $numResults = 1000 * ($criteria->perPage ?? self::PER_PAGE);
+        }
+        $fanta = new Pagerfanta(new NativeQueryAdapter($conn, $rewritten['sql'], $rewritten['parameters'], numOfResults: $numResults, transformer: $this->contentPopulationTransformer, cache: $this->cache));
         $fanta->setMaxPerPage($criteria->perPage ?? self::PER_PAGE);
         $fanta->setCurrentPage($criteria->page);
 
