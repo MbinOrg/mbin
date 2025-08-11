@@ -7,6 +7,7 @@ namespace App\Controller\Api\Entry;
 use App\Controller\Traits\PrivateContentTrait;
 use App\DTO\EntryResponseDto;
 use App\Entity\Entry;
+use App\Entity\User;
 use App\Event\Entry\EntryHasBeenSeenEvent;
 use App\Factory\EntryFactory;
 use App\PageView\EntryPageView;
@@ -201,6 +202,11 @@ class EntriesRetrieveApi extends EntriesBaseApi
         $this->handleLanguageCriteria($criteria);
         $criteria->content = Criteria::CONTENT_THREADS;
 
+        $user = $security->getUser();
+        if ($user instanceof User) {
+            $criteria->fetchCachedItems($repository, $user);
+        }
+
         $entries = $repository->findByCriteria($criteria);
 
         $dtos = [];
@@ -316,6 +322,11 @@ class EntriesRetrieveApi extends EntriesBaseApi
 
         $criteria->subscribed = true;
         $criteria->content = Criteria::CONTENT_THREADS;
+
+        $user = $security->getUser();
+        if ($user instanceof User) {
+            $criteria->fetchCachedItems($repository, $user);
+        }
 
         $entries = $repository->findByCriteria($criteria);
 
@@ -433,6 +444,11 @@ class EntriesRetrieveApi extends EntriesBaseApi
         $criteria->moderated = true;
         $criteria->content = Criteria::CONTENT_THREADS;
 
+        $user = $security->getUser();
+        if ($user instanceof User) {
+            $criteria->fetchCachedItems($repository, $user);
+        }
+
         $entries = $repository->findByCriteria($criteria);
 
         $dtos = [];
@@ -547,6 +563,11 @@ class EntriesRetrieveApi extends EntriesBaseApi
         $criteria->setFederation($federation ?? Criteria::AP_ALL);
 
         $criteria->favourite = true;
+
+        $user = $security->getUser();
+        if ($user instanceof User) {
+            $criteria->fetchCachedItems($repository, $user);
+        }
 
         $entries = $repository->findByCriteria($criteria);
         $criteria->content = Criteria::CONTENT_THREADS;
