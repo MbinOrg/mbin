@@ -8,6 +8,7 @@ use App\Controller\Traits\PrivateContentTrait;
 use App\DTO\EntryResponseDto;
 use App\Entity\Entry;
 use App\Entity\Magazine;
+use App\Entity\User;
 use App\Factory\EntryFactory;
 use App\PageView\EntryPageView;
 use App\Repository\ContentRepository;
@@ -151,6 +152,11 @@ class MagazineEntriesRetrieveApi extends EntriesBaseApi
         $criteria->perPage = self::constrainPerPage($perPage ?? ContentRepository::PER_PAGE);
 
         $criteria->magazine = $magazine;
+
+        $user = $security->getUser();
+        if ($user instanceof User) {
+            $criteria->fetchCachedItems($repository, $user);
+        }
 
         $entries = $repository->findByCriteria($criteria);
 
