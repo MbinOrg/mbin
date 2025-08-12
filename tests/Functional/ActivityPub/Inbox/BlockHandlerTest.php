@@ -36,6 +36,7 @@ class BlockHandlerTest extends ActivityPubFunctionalTestCase
         // it is important that the moderators are initialized here, as they would be removed from the db if added in `setupRemoteEntries`
         $this->magazineManager->addModerator(new ModeratorDto($this->localMagazine, $this->remoteSubscriber, $this->localUser));
         $this->remoteAdmin = $this->activityPubManager->findActorOrCreate("@remoteAdmin@$this->remoteDomain");
+        $this->magazineManager->subscribe($this->localMagazine, $this->remoteUser);
     }
 
     protected function setUpRemoteActors(): void
@@ -69,7 +70,8 @@ class BlockHandlerTest extends ActivityPubFunctionalTestCase
         $this->entityManager->refresh($this->localMagazine);
         self::assertTrue($this->localMagazine->isBanned($this->localSubscriber));
 
-        $announcedBlock = $this->assertOneSentAnnouncedActivityOfTypeGetInnerActivity('Block', announcedActivityId: $this->blockLocalUserLocalMagazine['id'], inboxUrl: $this->remoteSubscriber->apInboxUrl);
+        // should not be sent to source instance, only to subscriber instance
+        $announcedBlock = $this->assertOneSentAnnouncedActivityOfTypeGetInnerActivity('Block', announcedActivityId: $this->blockLocalUserLocalMagazine['id'], inboxUrl: $this->remoteUser->apInboxUrl);
         self::assertEquals($this->blockLocalUserLocalMagazine['object'], $announcedBlock['object']);
     }
 
@@ -83,7 +85,8 @@ class BlockHandlerTest extends ActivityPubFunctionalTestCase
         $this->entityManager->refresh($this->localMagazine);
         self::assertFalse($this->localMagazine->isBanned($this->localSubscriber));
 
-        $announcedUndo = $this->assertOneSentAnnouncedActivityOfTypeGetInnerActivity('Undo', announcedActivityId: $this->undoBlockLocalUserLocalMagazine['id'], inboxUrl: $this->remoteSubscriber->apInboxUrl);
+        // should not be sent to source instance, only to subscriber instance
+        $announcedUndo = $this->assertOneSentAnnouncedActivityOfTypeGetInnerActivity('Undo', announcedActivityId: $this->undoBlockLocalUserLocalMagazine['id'], inboxUrl: $this->remoteUser->apInboxUrl);
         self::assertEquals($this->undoBlockLocalUserLocalMagazine['object']['object'], $announcedUndo['object']['object']);
         self::assertEquals($this->undoBlockLocalUserLocalMagazine['object']['id'], $announcedUndo['object']['id']);
     }
@@ -96,7 +99,8 @@ class BlockHandlerTest extends ActivityPubFunctionalTestCase
         $this->entityManager->refresh($this->localMagazine);
         self::assertTrue($this->localMagazine->isBanned($this->remoteUser));
 
-        $blockActivity = $this->assertOneSentAnnouncedActivityOfTypeGetInnerActivity('Block', announcedActivityId: $this->blockRemoteUserLocalMagazine['id'], inboxUrl: $this->remoteSubscriber->apInboxUrl);
+        // should not be sent to source instance, only to subscriber instance
+        $blockActivity = $this->assertOneSentAnnouncedActivityOfTypeGetInnerActivity('Block', announcedActivityId: $this->blockRemoteUserLocalMagazine['id'], inboxUrl: $this->remoteUser->apInboxUrl);
         self::assertEquals($this->blockRemoteUserLocalMagazine['object'], $blockActivity['object']);
     }
 
@@ -110,7 +114,8 @@ class BlockHandlerTest extends ActivityPubFunctionalTestCase
         $this->entityManager->refresh($this->localMagazine);
         self::assertFalse($this->localMagazine->isBanned($this->remoteUser));
 
-        $announcedUndo = $this->assertOneSentAnnouncedActivityOfTypeGetInnerActivity('Undo', announcedActivityId: $this->undoBlockRemoteUserLocalMagazine['id'], inboxUrl: $this->remoteSubscriber->apInboxUrl);
+        // should not be sent to source instance, only to subscriber instance
+        $announcedUndo = $this->assertOneSentAnnouncedActivityOfTypeGetInnerActivity('Undo', announcedActivityId: $this->undoBlockRemoteUserLocalMagazine['id'], inboxUrl: $this->remoteUser->apInboxUrl);
         self::assertEquals($this->undoBlockRemoteUserLocalMagazine['object']['id'], $announcedUndo['object']['id']);
         self::assertEquals($this->undoBlockRemoteUserLocalMagazine['object']['object'], $announcedUndo['object']['object']);
     }
