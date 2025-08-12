@@ -36,7 +36,6 @@ class InstanceFactory
                 'owner' => $actor,
                 'publicKeyPem' => $this->client->getInstancePublicKey(),
             ],
-            'url' => 'https://'.$this->kbinDomain.'/instance-actor',
         ];
     }
 }
