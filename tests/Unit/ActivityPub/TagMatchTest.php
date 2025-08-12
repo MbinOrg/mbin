@@ -69,7 +69,7 @@ class TagMatchTest extends WebTestCase
             $this->testingApHttpClient->webfingerObjects[$realDomain] = $magazineEvent->jsonRd->toArray();
 
             $entry = $this->getEntryByTitle("test from $domain", magazine: $magazine, user: $user);
-            $json = $this->pageFactory->create($entry, $this->tagLinkRepository->getTagsOfEntry($entry));
+            $json = $this->pageFactory->create($entry, $this->tagLinkRepository->getTagsOfContent($entry));
             $this->testingApHttpClient->activityObjects[$json['id']] = $json;
 
             $activity = $this->createWrapper->build($entry);
