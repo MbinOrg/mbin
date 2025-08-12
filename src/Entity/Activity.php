@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Controller\ActivityPub\ObjectController;
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Contracts\ActivityPubActorInterface;
+use App\Entity\Traits\CreatedAtTrait;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\CustomIdGenerator;
 use Doctrine\ORM\Mapping\Entity;
@@ -19,6 +20,10 @@ use Symfony\Component\Uid\Uuid;
 #[Entity]
 class Activity
 {
+    use CreatedAtTrait {
+        CreatedAtTrait::__construct as createdAtTraitConstruct;
+    }
+
     #[Column(type: 'uuid'), Id, GeneratedValue(strategy: 'CUSTOM')]
     #[CustomIdGenerator(class: 'doctrine.uuid_generator')]
     public Uuid $uuid;
@@ -86,6 +91,7 @@ class Activity
     public function __construct(string $type)
     {
         $this->type = $type;
+        $this->createdAtTraitConstruct();
     }
 
     public function setObject(ActivityPubActivityInterface|Entry|EntryComment|Post|PostComment|ActivityPubActorInterface|User|Magazine|Activity|array|string $object): void
