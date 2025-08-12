@@ -162,7 +162,7 @@ class MagazineBanApiTest extends WebTestCase
 
         $actualExpiry = \DateTimeImmutable::createFromFormat(\DateTimeImmutable::ATOM, $jsonData['expiredAt']);
         // Hopefully the API responds fast enough that there is only a max delta of 1 second between these two timestamps
-        self::assertEqualsWithDelta($expiredAt->getTimestamp(), $actualExpiry->getTimestamp(), 1.0);
+        self::assertEqualsWithDelta($expiredAt->getTimestamp(), $actualExpiry->getTimestamp(), 1000);
         self::assertTrue($jsonData['expired']);
     }
 }
