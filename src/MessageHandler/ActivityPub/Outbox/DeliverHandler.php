@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\MessageHandler\ActivityPub\Outbox;
 
+use App\Entity\Instance;
 use App\Entity\User;
 use App\Exception\InstanceBannedException;
 use App\Exception\InvalidApPostException;
@@ -105,7 +106,8 @@ class DeliverHandler extends MbinMessageHandler
             throw new \LogicException();
         }
 
-        $instance = $this->instanceRepository->findOneBy(['domain' => parse_url($message->apInboxUrl, PHP_URL_HOST)]);
+        $instanceDomain = parse_url($message->apInboxUrl, PHP_URL_HOST);
+        $instance = $this->instanceRepository->findOneBy(['domain' => $instanceDomain]);
         if ($instance && $instance->isDead()) {
             $this->logger->debug('instance {n} is considered dead. Last successful delivery date: {dd}, failed attempts since then: {fa}', [
                 'n' => $instance->domain,
@@ -114,6 +116,11 @@ class DeliverHandler extends MbinMessageHandler
             ]);
 
             return;
+        }
+
+        if (null === $instance) {
+            $instance = new Instance($instanceDomain);
+            $this->entityManager->persist($instance);
         }
 
         if ('Announce' !== $message->payload['type']) {

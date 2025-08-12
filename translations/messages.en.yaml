@@ -255,8 +255,8 @@ removed_comment_by: has removed a comment by
 restored_comment_by: has restored comment by
 removed_post_by: has removed a post by
 restored_post_by: has restored a post by
-he_banned: ban
-he_unbanned: unban
+he_banned: banned
+he_unbanned: unbanned
 read_all: Read all
 show_all: Show all
 flash_register_success: Welcome aboard! Your account is now registered. One last step

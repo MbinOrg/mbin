@@ -39,7 +39,7 @@ class Activity
     public ?Magazine $magazineActor;
 
     #[ManyToOne, JoinColumn(nullable: true, onDelete: 'CASCADE')]
-    public ?Magazine $audience;
+    public ?Magazine $audience = null;
 
     #[ManyToOne, JoinColumn(referencedColumnName: 'uuid', nullable: true, onDelete: 'CASCADE', options: ['default' => null])]
     public ?Activity $innerActivity = null;
@@ -68,6 +68,9 @@ class Activity
     #[ManyToOne, JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?Magazine $objectMagazine = null;
 
+    #[ManyToOne, JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    public ?MagazineBan $objectMagazineBan = null;
+
     #[Column(type: 'text', nullable: true)]
     public ?string $objectGeneric = null;
 
@@ -88,7 +91,7 @@ class Activity
         $this->type = $type;
     }
 
-    public function setObject(ActivityPubActivityInterface|Entry|EntryComment|Post|PostComment|ActivityPubActorInterface|User|Magazine|Activity|array|string $object): void
+    public function setObject(ActivityPubActivityInterface|Entry|EntryComment|Post|PostComment|ActivityPubActorInterface|User|Magazine|MagazineBan|Activity|array|string $object): void
     {
         if ($object instanceof Entry) {
             $this->objectEntry = $object;
@@ -104,6 +107,8 @@ class Activity
             $this->objectUser = $object;
         } elseif ($object instanceof Magazine) {
             $this->objectMagazine = $object;
+        } elseif ($object instanceof MagazineBan) {
+            $this->objectMagazineBan = $object;
         } elseif ($object instanceof Activity) {
             $this->innerActivity = $object;
         } elseif (\is_array($object)) {
@@ -118,9 +123,9 @@ class Activity
         }
     }
 
-    public function getObject(): Post|EntryComment|PostComment|Entry|Message|User|Magazine|array|string|null
+    public function getObject(): Post|EntryComment|PostComment|Entry|Message|User|Magazine|MagazineBan|array|string|null
     {
-        $o = $this->objectEntry ?? $this->objectEntryComment ?? $this->objectPost ?? $this->objectPostComment ?? $this->objectMessage ?? $this->objectUser ?? $this->objectMagazine;
+        $o = $this->objectEntry ?? $this->objectEntryComment ?? $this->objectPost ?? $this->objectPostComment ?? $this->objectMessage ?? $this->objectUser ?? $this->objectMagazine ?? $this->objectMagazineBan;
         if (null !== $o) {
             return $o;
         }
