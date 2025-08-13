@@ -36,6 +36,7 @@ class EntriesBaseApi extends BaseApi
 
     /**
      * Serialize a single entry to JSON.
+     *
      * @param Entry[]|null $crosspostedEntries
      */
     protected function serializeEntry(EntryDto|Entry $dto, array $tags, ?array $crosspostedEntries = null): EntryResponseDto
