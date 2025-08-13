@@ -12,6 +12,7 @@ use App\DTO\PostResponseDto;
 use App\Entity\Contracts\ReportInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\NewSignupNotification;
 use App\Entity\Notification;
 use App\Entity\Post;
 use App\Entity\PostComment;
@@ -134,6 +135,11 @@ class NotificationBaseApi extends BaseApi
                 $n = $dto;
                 $toReturn['subject'] = $this->createResponseDtoForReport($n->report->getSubject());
                 $toReturn['reportId'] = $n->report->getId();
+                break;
+            case 'new_signup':
+                /** @var NewSignupNotification $n */
+                $n = $dto;
+                $toReturn['subject'] = $this->userFactory->createDto($n->getSubject()->getId());
                 break;
         }
 
