@@ -36,10 +36,16 @@ class EntriesBaseApi extends BaseApi
 
     /**
      * Serialize a single entry to JSON.
+     *
+     * @param Entry[]|null $crosspostedEntries
      */
-    protected function serializeEntry(EntryDto|Entry $dto, array $tags): EntryResponseDto
+    protected function serializeEntry(EntryDto|Entry $dto, array $tags, ?array $crosspostedEntries = null): EntryResponseDto
     {
-        $response = $this->entryFactory->createResponseDto($dto, $tags);
+        $crosspostedEntryDtos = null;
+        if (null !== $crosspostedEntries) {
+            $crosspostedEntryDtos = array_map(fn (Entry $item) => $this->entryFactory->createResponseDto($item, []), $crosspostedEntries);
+        }
+        $response = $this->entryFactory->createResponseDto($dto, $tags, $crosspostedEntryDtos);
 
         if ($this->isGranted('ROLE_OAUTH2_ENTRY:VOTE')) {
             $response->isFavourited = $dto instanceof EntryDto ? $dto->isFavourited : $dto->isFavored($this->getUserOrThrow());

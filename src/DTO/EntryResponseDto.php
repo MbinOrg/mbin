@@ -53,6 +53,12 @@ class EntryResponseDto implements \JsonSerializable
     public ?array $bookmarks = null;
 
     /**
+     * @var EntryResponseDto[]|null $crosspostedEntries other entries that share either the link or the title (if that is longer than 10 characters)
+     */
+    #[OA\Property(type: 'array', items: new OA\Items(ref: new Model(type: EntryResponseDto::class)))]
+    public ?array $crosspostedEntries;
+
+    /**
      * @param string[]|null $bookmarks
      */
     public static function create(
@@ -83,6 +89,7 @@ class EntryResponseDto implements \JsonSerializable
         ?string $apId = null,
         ?bool $canAuthUserModerate = null,
         ?array $bookmarks = null,
+        ?array $crosspostedEntries = null,
     ): self {
         $dto = new EntryResponseDto();
         $dto->entryId = $id;
@@ -112,6 +119,7 @@ class EntryResponseDto implements \JsonSerializable
         $dto->apId = $apId;
         $dto->canAuthUserModerate = $canAuthUserModerate;
         $dto->bookmarks = $bookmarks;
+        $dto->crosspostedEntries = $crosspostedEntries;
 
         return $dto;
     }
@@ -167,6 +175,7 @@ class EntryResponseDto implements \JsonSerializable
             'canAuthUserModerate' => $this->canAuthUserModerate,
             'notificationStatus' => $this->notificationStatus,
             'bookmarks' => $this->bookmarks,
+            'crosspostedEntries' => $this->crosspostedEntries,
         ]);
     }
 }

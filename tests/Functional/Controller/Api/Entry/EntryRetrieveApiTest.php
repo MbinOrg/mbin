@@ -1155,4 +1155,46 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][0]);
         self::assertSame($second->getId(), $jsonData['items'][0]['entryId']);
     }
+
+    public function testApiContainsCrosspostInformation(): void
+    {
+        $magazine1 = $this->getMagazineByName('acme');
+        $entry1 = $this->getEntryByTitle('first URL', url: 'https://joinmbin.org', magazine: $magazine1);
+        sleep(1);
+        $magazine2 = $this->getMagazineByName('acme2');
+        $entry2 = $this->getEntryByTitle('second URL', url: 'https://joinmbin.org', magazine: $magazine2);
+
+        $this->entityManager->persist($entry1);
+        $this->entityManager->persist($entry2);
+        $this->entityManager->flush();
+
+        $this->client->request('GET', '/api/entries?sort=oldest');
+        self::assertResponseIsSuccessful();
+
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
+
+        self::assertIsArray($jsonData['items']);
+        self::assertCount(2, $jsonData['items']);
+        self::assertIsArray($jsonData['pagination']);
+        self::assertArrayKeysMatch(self::PAGINATION_KEYS, $jsonData['pagination']);
+        self::assertSame(2, $jsonData['pagination']['count']);
+
+        self::assertIsArray($jsonData['items'][0]);
+        self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][0]);
+        self::assertSame($entry1->getId(), $jsonData['items'][0]['entryId']);
+        self::assertIsArray($jsonData['items'][0]['crosspostedEntries']);
+        self::assertCount(1, $jsonData['items'][0]['crosspostedEntries']);
+        self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][0]['crosspostedEntries'][0]);
+        self::assertSame($entry2->getId(), $jsonData['items'][0]['crosspostedEntries'][0]['entryId']);
+
+        self::assertIsArray($jsonData['items'][1]);
+        self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][1]);
+        self::assertSame($entry2->getId(), $jsonData['items'][1]['entryId']);
+        self::assertIsArray($jsonData['items'][1]['crosspostedEntries']);
+        self::assertCount(1, $jsonData['items'][1]['crosspostedEntries']);
+        self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][1]['crosspostedEntries'][0]);
+        self::assertSame($entry1->getId(), $jsonData['items'][1]['crosspostedEntries'][0]['entryId']);
+    }
 }
