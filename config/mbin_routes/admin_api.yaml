@@ -76,6 +76,30 @@ api_admin_update_settings:
   methods: [ PUT ]
   format: json
 
+api_admin_ban_instance:
+    controller: App\Controller\Api\Instance\Admin\InstanceUpdateFederationApi::banInstance
+    path: /api/instance/ban/{domain}
+    methods: [ PUT ]
+    format: json
+
+api_admin_unban_instance:
+    controller: App\Controller\Api\Instance\Admin\InstanceUpdateFederationApi::unbanInstance
+    path: /api/instance/unban/{domain}
+    methods: [ PUT ]
+    format: json
+
+api_admin_allow_instance:
+    controller: App\Controller\Api\Instance\Admin\InstanceUpdateFederationApi::allowInstance
+    path: /api/instance/allow/{domain}
+    methods: [ PUT ]
+    format: json
+
+api_admin_deny_instance:
+    controller: App\Controller\Api\Instance\Admin\InstanceUpdateFederationApi::denyInstance
+    path: /api/instance/deny/{domain}
+    methods: [ PUT ]
+    format: json
+
 api_admin_update_pages:
   controller: App\Controller\Api\Instance\Admin\InstanceUpdatePagesApi
   path: /api/instance/{page}

@@ -4,6 +4,12 @@ api_instance_details_retrieve:
   methods: [ GET ]
   format: json
 
+api_remote_instance_details_retrieve:
+  controller: App\Controller\Api\Instance\InstanceDetailsApi::retrieveRemoteInstanceDetails
+  path: /api/remoteInstance/{domain}
+  methods: [ GET ]
+  format: json
+
 api_instance_modlog_retrieve:
   controller: App\Controller\Api\Instance\InstanceModLogApi::collection
   path: /api/modlog

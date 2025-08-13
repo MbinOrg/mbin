@@ -47,6 +47,7 @@ use App\Repository\Criteria;
 use App\Repository\EntryCommentRepository;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
+use App\Repository\InstanceRepository;
 use App\Repository\NotificationSettingsRepository;
 use App\Repository\OAuth2ClientAccessRepository;
 use App\Repository\PostCommentRepository;
@@ -56,6 +57,7 @@ use App\Repository\TagLinkRepository;
 use App\Repository\UserRepository;
 use App\Schema\PaginationSchema;
 use App\Service\BookmarkManager;
+use App\Service\InstanceManager;
 use App\Service\IpResolver;
 use App\Service\ReportManager;
 use App\Service\SettingsManager;
@@ -118,6 +120,8 @@ class BaseApi extends AbstractController
         protected readonly SettingsManager $settingsManager,
         protected readonly UserFactory $userFactory,
         protected readonly ReputationRepository $reputationRepository,
+        protected readonly InstanceRepository $instanceRepository,
+        protected readonly InstanceManager $instanceManager,
     ) {
     }
 

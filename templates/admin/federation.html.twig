@@ -4,7 +4,7 @@
     {{- 'federation'|trans }} - {{ parent() -}}
 {%- endblock -%}
 
-{% block mainClass %}page-admin-federation{% endblock %}
+{% block mainClass %}page-admin-federation page-settings{% endblock %}
 
 {% block header_nav %}
 {% endblock %}
@@ -14,14 +14,83 @@
 
 {% block body %}
     {% include 'admin/_options.html.twig' %}
-    <div class="section" id="content">
-        <div class="container">
-            {{ form_start(form) }}
-            {{ form_row(form.instances, {label: 'banned_instances'}) }}
-            <div class="actions">
-                {{ form_row(form.submit, { 'label': 'save'|trans, attr: {class: 'btn btn__primary'} }) }}
+    <div id="content">
+        <div class="section">
+            <div class="container">
+                {{ form_start(form) }}
+                <div class="checkbox">
+                    {{ form_label(form.federationEnabled, 'federation_enabled') }}
+                    {{ form_widget(form.federationEnabled) }}
+                </div>
+                <div class="checkbox">
+                    {{ form_label(form.federationPageEnabled, 'federation_page_enabled') }}
+                    {{ form_widget(form.federationPageEnabled) }}
+                </div>
+                <div class="checkbox">
+                    {{ form_label(form.federationUsesAllowList, 'federation_uses_allowlist') }}
+                    {{ form_widget(form.federationUsesAllowList) }}
+                </div>
+                {{ form_help(form.federationUsesAllowList) }}
+                <div class="actions">
+                    {{ form_row(form.submit, { 'label': 'save'|trans, attr: {class: 'btn btn__primary'} }) }}
+                </div>
+                {{ form_end(form) }}
             </div>
-            {{ form_end(form) }}
+        </div>
+        <div class="section">
+            <div class="container">
+                {% if useAllowList %}
+                    <form action="{{ url('admin_federation_allow_instance') }}">
+                        <div class="row">
+                            <label for="allow-instance-domain">{{ 'allow_instance'|trans }}</label>
+                        </div>
+                        <div>
+                            <input id="allow-instance-domain" type="text" name="instanceDomain" />
+                        </div>
+                        <div class="actions row">
+                            <div>
+                                <button type="submit" class="btn btn__primary">{{ 'btn_allow'|trans }}</button>
+                            </div>
+                        </div>
+                    </form>
+                {% else %}
+                    <form action="{{ url('admin_federation_ban_instance') }}">
+                        <div class="row">
+                            <label for="ban-instance-domain">{{ 'ban_instance'|trans }}</label>
+                        </div>
+                        <div>
+                            <input id="ban-instance-domain" type="text" name="instanceDomain" />
+                        </div>
+                        <div class="actions row">
+                            <div>
+                                <button type="submit" class="btn btn__primary">{{ 'ban'|trans }}</button>
+                            </div>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        <div class="section">
+            <h3>
+                {% if useAllowList %}
+                    {{ 'allowed_instances'|trans }}
+                {% else %}
+                    {{ 'banned_instances'|trans }}
+                {% endif %}
+            </h3>
+
+            {{ component('instance_list', {'instances': instances, 'showDenyButton': useAllowList, 'showUnBanButton': not useAllowList}) }}
+        </div>
+        <div class="section">
+            <h3>{{ 'instances'|trans }}</h3>
+
+            {{ component('instance_list', {
+                'instances': allInstances,
+                'showDenyButton': useAllowList,
+                'showUnBanButton': not useAllowList,
+                'showAllowButton': useAllowList,
+                'showBanButton': not useAllowList
+            }) }}
         </div>
     </div>
 {% endblock %}

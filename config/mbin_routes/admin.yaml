@@ -37,6 +37,26 @@ admin_federation:
     path: /admin/federation
     methods: [GET, POST]
 
+admin_federation_ban_instance:
+    controller: App\Controller\Admin\AdminFederationController::banInstance
+    path: /admin/federation/ban
+    methods: [GET, POST]
+
+admin_federation_unban_instance:
+    controller: App\Controller\Admin\AdminFederationController::unbanInstance
+    path: /admin/federation/unban
+    methods: [GET]
+
+admin_federation_allow_instance:
+    controller: App\Controller\Admin\AdminFederationController::allowInstance
+    path: /admin/federation/allow
+    methods: [GET]
+
+admin_federation_deny_instance:
+    controller: App\Controller\Admin\AdminFederationController::denyInstance
+    path: /admin/federation/deny
+    methods: [GET, POST]
+
 admin_pages:
     controller: App\Controller\Admin\AdminPagesController
     path: /admin/pages/{page}
