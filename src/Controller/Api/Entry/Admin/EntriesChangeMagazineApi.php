@@ -86,7 +86,7 @@ class EntriesChangeMagazineApi extends EntriesBaseApi
         $manager->changeMagazine($entry, $target);
 
         return new JsonResponse(
-            $this->serializeEntry($factory->createDto($entry), $this->tagLinkRepository->getTagsOfEntry($entry)),
+            $this->serializeEntry($factory->createDto($entry), $this->tagLinkRepository->getTagsOfEntry($entry), $this->entryRepository->findCross($entry)),
             headers: $headers
         );
     }

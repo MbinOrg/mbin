@@ -101,7 +101,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         ]);
 
         return new JsonResponse(
-            $this->serializeEntry($manager->createDto($entry), $this->tagLinkRepository->getTagsOfEntry($entry)),
+            $this->serializeEntry($manager->createDto($entry), $this->tagLinkRepository->getTagsOfEntry($entry), $this->entryRepository->findCross($entry)),
             status: 201,
             headers: $headers
         );
@@ -179,7 +179,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         ]);
 
         return new JsonResponse(
-            $this->serializeEntry($manager->createDto($entry), $this->tagLinkRepository->getTagsOfEntry($entry)),
+            $this->serializeEntry($manager->createDto($entry), $this->tagLinkRepository->getTagsOfEntry($entry), $this->entryRepository->findCross($entry)),
             status: 201,
             headers: $headers
         );
@@ -252,7 +252,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         ]);
 
         return new JsonResponse(
-            $this->serializeEntry($manager->createDto($entry), $this->tagLinkRepository->getTagsOfEntry($entry)),
+            $this->serializeEntry($manager->createDto($entry), $this->tagLinkRepository->getTagsOfEntry($entry), $this->entryRepository->findCross($entry)),
             status: 201,
             headers: $headers
         );
@@ -363,7 +363,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         $entry = $manager->create($dto, $this->getUserOrThrow());
 
         return new JsonResponse(
-            $this->serializeEntry($manager->createDto($entry), $this->tagLinkRepository->getTagsOfEntry($entry)),
+            $this->serializeEntry($manager->createDto($entry), $this->tagLinkRepository->getTagsOfEntry($entry), $this->entryRepository->findCross($entry)),
             status: 201,
             headers: $headers
         );
