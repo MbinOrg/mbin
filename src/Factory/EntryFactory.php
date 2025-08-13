@@ -74,6 +74,7 @@ class EntryFactory
             $dto->slug,
             $dto->apId,
             bookmarks: $this->bookmarkListRepository->getBookmarksOfContentInterface($entry),
+            isAuthorModeratorInMagazine: $dto->magazine->userIsModerator($dto->user),
         );
     }
 
