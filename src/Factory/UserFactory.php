@@ -19,7 +19,7 @@ class UserFactory
     ) {
     }
 
-    public function createDto(User $user): UserDto
+    public function createDto(User $user, ?int $reputationPoints = null): UserDto
     {
         $dto = UserDto::create(
             $user->username,
@@ -36,6 +36,7 @@ class UserFactory
             'Service' === $user->type, // setting isBot
             $user->isAdmin(),
             $user->isModerator(),
+            reputationPoints: $reputationPoints,
         );
 
         /** @var User $currentUser */
