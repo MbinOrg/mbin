@@ -47,6 +47,7 @@ class EntryResponseDto implements \JsonSerializable
     public ?string $apId = null;
     public ?bool $canAuthUserModerate = null;
     public ?ENotificationStatus $notificationStatus = null;
+    public ?bool $isAuthorModeratorInMagazine = null;
 
     /** @var string[]|null */
     #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
@@ -90,6 +91,7 @@ class EntryResponseDto implements \JsonSerializable
         ?bool $canAuthUserModerate = null,
         ?array $bookmarks = null,
         ?array $crosspostedEntries = null,
+        ?bool $isAuthorModeratorInMagazine = null,
     ): self {
         $dto = new EntryResponseDto();
         $dto->entryId = $id;
@@ -120,6 +122,7 @@ class EntryResponseDto implements \JsonSerializable
         $dto->canAuthUserModerate = $canAuthUserModerate;
         $dto->bookmarks = $bookmarks;
         $dto->crosspostedEntries = $crosspostedEntries;
+        $dto->isAuthorModeratorInMagazine = $isAuthorModeratorInMagazine;
 
         return $dto;
     }
@@ -176,6 +179,7 @@ class EntryResponseDto implements \JsonSerializable
             'notificationStatus' => $this->notificationStatus,
             'bookmarks' => $this->bookmarks,
             'crosspostedEntries' => $this->crosspostedEntries,
+            'isAuthorModeratorInMagazine' => $this->isAuthorModeratorInMagazine,
         ]);
     }
 }

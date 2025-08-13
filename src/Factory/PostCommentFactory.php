@@ -64,6 +64,7 @@ class PostCommentFactory
             $dto->editedAt,
             $dto->lastActive,
             bookmarks: $this->bookmarkListRepository->getBookmarksOfContentInterface($comment),
+            isAuthorModeratorInMagazine: $dto->magazine->userIsModerator($dto->user),
         );
     }
 
