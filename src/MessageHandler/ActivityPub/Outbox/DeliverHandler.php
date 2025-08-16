@@ -105,8 +105,8 @@ class DeliverHandler extends MbinMessageHandler
             throw new \LogicException();
         }
 
-        $instance = $this->instanceRepository->findOneBy(['domain' => parse_url($message->apInboxUrl, PHP_URL_HOST)]);
-        if ($instance && $instance->isDead()) {
+        $instance = $this->instanceRepository->getOrCreateInstance(parse_url($message->apInboxUrl, PHP_URL_HOST));
+        if ($instance->isDead()) {
             $this->logger->debug('instance {n} is considered dead. Last successful delivery date: {dd}, failed attempts since then: {fa}', [
                 'n' => $instance->domain,
                 'dd' => $instance->getLastSuccessfulDeliver(),
@@ -138,17 +138,16 @@ class DeliverHandler extends MbinMessageHandler
 
         try {
             $this->client->post($message->apInboxUrl, $actor, $message->payload);
-            if ($instance && $instance->getLastSuccessfulDeliver() < new \DateTime('now - 5 minutes')) {
+            if ($instance->getLastSuccessfulDeliver() < new \DateTime('now - 5 minutes')) {
                 $instance->setLastSuccessfulDeliver();
                 $this->entityManager->persist($instance);
                 $this->entityManager->flush();
             }
         } catch (InvalidApPostException $e) {
-            if ($instance) {
-                $instance->setLastFailedDeliver();
-                $this->entityManager->persist($instance);
-                $this->entityManager->flush();
-            }
+            $instance->setLastFailedDeliver();
+            $this->entityManager->persist($instance);
+            $this->entityManager->flush();
+
             throw $e;
         }
     }
