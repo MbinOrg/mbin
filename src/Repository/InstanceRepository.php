@@ -92,4 +92,18 @@ class InstanceRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function getOrCreateInstance(string $domain): Instance
+    {
+        $instance = $this->findOneBy(['domain' => $domain]);
+        if (null !== $instance) {
+            return $instance;
+        }
+
+        $instance = new Instance($domain);
+        $this->getEntityManager()->persist($instance);
+        $this->getEntityManager()->flush();
+
+        return $instance;
+    }
 }
