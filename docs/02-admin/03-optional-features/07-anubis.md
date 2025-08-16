@@ -8,14 +8,14 @@ Ths simple answer is: because it is better than just blocking anonymous access t
 
 ### How does it work?
 
-https://anubis.techaro.lol/docs/design/how-anubis-works
+<https://anubis.techaro.lol/docs/design/how-anubis-works>
 
 # Bare metal with nginx
 
 Links:
-- https://anubis.techaro.lol/docs/admin/installation
-- https://anubis.techaro.lol/docs/admin/native-install
-- socket discussion: https://github.com/TecharoHQ/anubis/discussions/541
+- <https://anubis.techaro.lol/docs/admin/installation>
+- <https://anubis.techaro.lol/docs/admin/native-install>
+- socket discussion: <https://github.com/TecharoHQ/anubis/discussions/541>
 
 ## Anubis setup
 
