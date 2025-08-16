@@ -4,7 +4,7 @@
 
 Anubis is a bot programm trying to block bots by presenting proof-of-work challengers to the user. A normal browser will just solve them (provided JavaScript is enabled on it) whilst AI scrapers will most likely just accept the challenge as the response.
 
-Ths simple answer is: because it is better than just blocking anonymous access to mbin.
+Ths simple answer is: because it is better than just blocking anonymous access to Mbin.
 
 ### How does it work?
 
@@ -59,7 +59,7 @@ In the `bots` section of the `mbin.botPolicies.yaml` file, prepend this (has to 
     action: ALLOW
 ```
 
-to explicitely allow all api, rss and activity pub requests. You should also switch the store backend to something different than the default in memory one. If you want to use a local bbolt db ([see alternatives](https://anubis.techaro.lol/docs/admin/policies#storage-backends)) change the `store` section to the following (in `mbin.botPolicies.yaml`):
+to explicitly allow all API, RSS and ActivityPub requests. You should also switch the store backend to something different from the default in memory one. If you want to use a local bbolt db ([see alternatives](https://anubis.techaro.lol/docs/admin/policies#storage-backends)) change the `store` section to the following (in `mbin.botPolicies.yaml`):
 
 ```yaml
 store:
@@ -70,7 +70,7 @@ store:
 
 The default config includes a few snippets that require a subscription. To avoid warn messages you should comment out everything that "Requires a subscription to Thoth to use" (just search for it in the file).
 
-For anubis to be able to access the socket we will create later we will have to change the service file (`/usr/lib/systemd/system/anubis@.service`) and set the user anubis is being executed by to `www-data`:
+For Anubis to be able to access the socket we will create later we will have to change the service file (`/usr/lib/systemd/system/anubis@.service`) and set the user anubis is being executed by to `www-data`:
 1. remove `DynamicUser=yes`
 2. add `User=www-data`
 
@@ -82,6 +82,7 @@ There are some paths that have to be created and then owned by `www-data`:
 ### Starting it
 
 Then start Anubis with `systemctl enable --now`:
+
 ```bash
 sudo systemctl enable --now anubis@mbin.service
 ```
@@ -90,7 +91,7 @@ Test to make sure it's running with curl:
 curl http://localhost:4673/metrics
 ```
 
-If you need to restart it just run
+If you need to restart it, just run:
 
 ```bash
 sudo systemctl restart anubis@mbin.service
@@ -104,7 +105,7 @@ upstream anubis {
   # Make sure this matches the values you set for `BIND` and `BIND_NETWORK`.
   # If this does not match, your services will not be protected by Anubis.
 
-  # Try anubis first over a UNIX socket
+  # Try Anubis first over a UNIX socket
   server unix:/run/anubis/mbin.sock;
   #server 127.0.0.1:8923;
 
@@ -124,7 +125,7 @@ Now we have to change the nginx conf that is serving mbin. We will use the defau
 
 ### Short Explainer Version
 
-without anubis:
+Without Anubis:
 
 ```nginx
 # Redirect HTTP to HTTPS
@@ -148,7 +149,8 @@ server {
 }
 ```
 
-with anubis:
+With Anubis:
+
 ```nginx
 # Redirect HTTP to HTTPS
 server {
@@ -182,7 +184,7 @@ server {
 }
 ```
 
-As you can see instead of serving mbin directly we proxy it through the anubis service. Anubis is then going to decide whether to call the unix socket that the actual mbin site is served over or if it presents a challenge to the client (or straight up denying it).
+As you can see instead of serving Mbin directly we proxy it through the Anubis service. Anubis is then going to decide whether to call the UNIX socket that the actual Mbin site is served over or if it presents a challenge to the client (or straight up denying it).
 
 ### The long one
 
@@ -375,29 +377,32 @@ server {
 
 ### Take it live
 
-To start routing the traffic through anubis nginx has to be restarted (not just reloaded), because of the new socket that needs to be created. But before we do that we should check the config for validity:
+To start routing the traffic through Anubis nginx has to be restarted (not just reloaded), because of the new socket that needs to be created. But before we do that we should check the config for validity:
 
 ```bash
 nginx -t
 ```
 
-If that is successful and you see a running anubis service with
+If that is successful and you see a running Anubis service with:
+
 ```bash
 systemctl status anubis@mbin.service
 ```
 
-you restart nginx with
+You restart nginx with:
+
 ```bash
 systemctl restart nginx
 ```
 
-If you reload the mbin website you should see the Anubis page for checking your browser
+If you reload the Mbin website you should see the Anubis page for checking your browser.
 
 ### Troubleshooting
 
 To get the logs of anubis:
+
 ```bash
 journalctl -ru anubis@mbin.service
 ```
 
-In the nginx config for mbin you can uncomment the access log line to see the access logs for the anubis upstream. If you combine that with changing the status codes in the anubis policy (just open the policy and search for `status_codes`) this is a good way to check whether rss, api and activity pub requests still make it through.
+In the nginx config for Mbin you can uncomment the access log line to see the access logs for the anubis upstream. If you combine that with changing the status codes in the Anubis policy (just open the policy and search for `status_codes`) this is a good way to check whether RSS, API and ActivityPub requests still make it through.
