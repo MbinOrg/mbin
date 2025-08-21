@@ -258,7 +258,7 @@ removed_post_by: ha eliminat una publicació de
 restored_post_by: ha restaurat una publicació de
 he_banned: bandejar
 he_unbanned: desbandejar
-read_all: Llegir-ho tot
+read_all: Marcar-ho tot com a llegit
 show_all: Mostrar-ho tot
 flash_thread_edit_success: El fil s'ha editat correctament.
 flash_magazine_edit_success: La revista ha estat editada amb èxit.
@@ -308,7 +308,7 @@ mentioned_you: Us ha esmentat
 comment: Comentari
 post: Publicació
 ban_expired: El bandeig ha expirat
-purge: Purgar
+purge: Buidar la llista
 send_message: Enviar missatge directe
 sticky_navbar: Barra de navegació fixa
 subject_reported: S'ha denunciat el contingut.
