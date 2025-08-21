@@ -110,22 +110,22 @@ errors.server500.title: 500 Pangloob na pagkamali sa Serbiro
 block: Harangan
 oauth.consent.allow: Payagan
 oauth2.grant.moderate.magazine_admin.create: Gumawa ng mga bagong magasin.
-oauth2.grant.moderate.magazine_admin.delete: Burahin ang ilan sa mga magasin na pinag-aari
-  mo.
-oauth2.grant.moderate.magazine_admin.all: Gawin, baguhin, o burahin ang mga magasin
-  na pinag-aari mo.
+oauth2.grant.moderate.magazine_admin.delete: Burahin ang ilan sa mga magasin na 
+  pinag-aari mo.
+oauth2.grant.moderate.magazine_admin.all: Gawin, baguhin, o burahin ang mga 
+  magasin na pinag-aari mo.
 moderation.report.reject_report_title: Tanggihan ang Ulat
-moderation.report.ban_user_description: Nais mo bang bawalan ang tagagamit (%username%)
-  na gumagawa ng nilalaman na ito mula sa magasin na ito?
+moderation.report.ban_user_description: Nais mo bang bawalan ang tagagamit 
+  (%username%) na gumagawa ng nilalaman na ito mula sa magasin na ito?
 subject_reported_exists: Inuulat na ang nilalaman na ito.
 purge_content: Purgahin ang nilalaman
-moderation.report.approve_report_confirmation: Sigorado ka bang nais mo na aprubahin
-  ang ulat na ito?
+moderation.report.approve_report_confirmation: Sigorado ka bang nais mo na 
+  aprubahin ang ulat na ito?
 ban_hashtag_btn: Bawalan ang Hashtag
 errors.server429.title: 429 Masyadong Maraming mga Hiling
 errors.server404.title: 404 Hindi nakita
-oauth.consent.to_allow_access: Upang payagan ang access, pindutin ang pindutang 'Payagan'
-  sa ilalim
+oauth.consent.to_allow_access: Upang payagan ang access, pindutin ang pindutang 
+  'Payagan' sa ilalim
 moderation.report.approve_report_title: Aprubahin ang Ulat
 moderation.report.ban_user_title: Bawalan ang Tagagamit
 delete_content: Tanggalin ang nilalaman
@@ -206,8 +206,8 @@ edited: binago
 and: at
 back: Bumalik
 mod_remove_your_post: Binura ang iyong post ng isang tagatimpi
-moderation.report.reject_report_confirmation: Sigurado ka bang tanggihan ang ulat
-  na ito?
+moderation.report.reject_report_confirmation: Sigurado ka bang tanggihan ang 
+  ulat na ito?
 open_url_to_fediverse: Buksan ang orihinal na URL
 deletion: Pagbura
 delete_magazine: Burahin ang magasin
@@ -238,24 +238,26 @@ enabled: Pinagana
 notification_title_new_report: Nagawa ang isang bagong ulat
 notification_title_edited_post: Nabago ang isang post
 notification_title_removed_post: Natanggal ang isang post
-magazine_posting_restricted_to_mods_warning: Mga tagatimpi lamang ang gumagawa ng
-  mga thread sa magasin na ito
+magazine_posting_restricted_to_mods_warning: Mga tagatimpi lamang ang gumagawa 
+  ng mga thread sa magasin na ito
 open_report: nakabukas na ulat
 already_have_account: Mayroon ka na bang account?
 eng: ENG
 comment_not_found: Hindi nakita ang puna
 subscription_header: Mga naka-subscribe na mga magasin
-flash_user_settings_general_success: Matagumpay na nakaimbak ang mga setting ng tagagamit.
+flash_user_settings_general_success: Matagumpay na nakaimbak ang mga setting ng 
+  tagagamit.
 subscribed: Naka-subscribe
 old_email: Kasalukuyang email
 restored_comment_by: binalik ang puna ni
 show_related_magazines: Ipakita ang mga pasadyang magasin
 hot: Patok
-reset_check_email_desc2: Kapag hindi ka nakatanggap ng "e-mail" mangyaring tingnan
-  ang folder ng spam.
+reset_check_email_desc2: Kapag hindi ka nakatanggap ng "e-mail" mangyaring 
+  tingnan ang folder ng spam.
 settings: Mga setting
 hide_adult: Itago ang nilalaman na NSFW
-notify_on_new_posts: Bagong mga post sa anumang magasin sa saan ako naka-subscribe
+notify_on_new_posts: Bagong mga post sa anumang magasin sa saan ako 
+  naka-subscribe
 writing: Pagsusulat
 firstname: Unang pangalan
 active_users: Mga aktibong tao
@@ -264,3 +266,52 @@ all_time: Lahat ng oras
 random_magazines: Mga pasadyang magasin
 restore: Ibalik
 flash_user_settings_general_error: Nabigong iimbak ang mga setting ng tagagamit.
+disconnected_magazine_info: Hindi tumatangap ng mga update ang magasin na ito 
+  (huling aktibidad noong %days% (na) araw ang nakalipas).
+always_disconnected_magazine_info: Hindi tumatangap ng mga update ang magasin na
+  ito.
+edit_comment: Iimbak ang nga pagbabago
+notify_on_new_entry_reply: Mga puna sa anumang antas sa mga thread na 
+  pinag-akdaan ko
+collapse: Paliitin
+removed_thread_by: tinanggal ang thread ni
+restored_thread_by: ibinalik ang thread ni
+removed_comment_by: tinanggal ang puna ni
+removed_post_by: tinanggal ang post ni
+restored_post_by: ibinalik ang post ni
+he_banned: binawalan
+flash_register_success: Maligayang paglalakbay! Nakarehistro na ang iyong 
+  account. Isang huling hakbang - tingnan ang iyong inbox para sa isang link ng 
+  pag-activate na magbibigay-buhay sa iyong account.
+mod_deleted_your_comment: Tinanggal ng isang tagatimpi ang iyong puna
+added_new_post: Idinagdag ang bagong post
+added_new_reply: Idinagdag ang bagong tugon
+wrote_message: Isinulat ang isang mensahe
+removed: Tinanggal ng tagatimpi
+comment: Puna
+replied_to_your_comment: Tinutugon sa iyong puna
+added_new_comment: Idinagdag ang isang bagong puna
+mod_remove_your_thread: Tinanggal ng isang tagatimpi ang iyong thread
+edited_thread: Binago ang thread
+added_new_thread: Idinagdag ang isang bagong puna
+mod_log_alert: BABALA - Maaaring naglalaman ang talaang ito ng hindi kasiya-siya
+  o nakakabagabag na nilalaman na tinanggal ng mga tagatimpi. Mangyaring 
+  mag-ingat.
+kbin_promo_title: Gumawa ng iyong sariling instance
+filter.origin.label: Piliin ang pinagmulan
+filter_labels: Salain ang mga label
+auto_preview: Automatikong paunang tigin ng media
+bookmark_add_to_list: Idagdag ang bookmark sa %list%
+bookmark_add_to_default_list: Idagdag ang bookmark sa pangunahing talaan
+magazine_posting_restricted_to_mods: Limitahin ang paggawa ng thread sa mga 
+  tagatimpi
+notification_title_new_signup: Nakarehisto ang isang bagong tagagamit
+notification_body_new_signup: Nagrehisto ang tagagamit na si %u%.
+notification_body2_new_signup_approval: Kailangan mong tanggapin ang hiling bago
+  sila maka-log-in
+notification_title_edited_thread: Nabago ang isang thread
+last_updated: Huling nabago
+someone: May
+edit_post: Baguhin ang post
+oauth2.grant.post.report: Iulat ang anumang post.
+oauth2.grant.post.create: Gumawa ng mga bagong post.
