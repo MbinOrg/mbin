@@ -262,9 +262,9 @@ readonly class UserManager
         $this->bus->dispatch(new DeleteUserMessage($user->getId()));
     }
 
-    public function createDto(User $user): UserDto
+    public function createDto(User $user, ?int $reputationPoints = null): UserDto
     {
-        return $this->factory->createDto($user);
+        return $this->factory->createDto($user, $reputationPoints);
     }
 
     public function verify(Request $request, User $user): void
