@@ -84,7 +84,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
         $dto = $factory->createDto($entry);
 
         return new JsonResponse(
-            $this->serializeEntry($dto, $this->tagLinkRepository->getTagsOfEntry($entry)),
+            $this->serializeEntry($dto, $this->tagLinkRepository->getTagsOfEntry($entry), $this->entryRepository->findCross($entry)),
             headers: $headers
         );
     }
@@ -207,7 +207,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
             try {
                 \assert($value instanceof Entry);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfEntry($value)));
+                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfEntry($value), $this->entryRepository->findCross($value));
             } catch (AccessDeniedException $e) {
                 continue;
             }
@@ -322,7 +322,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
             try {
                 \assert($value instanceof Entry);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfEntry($value)));
+                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfEntry($value), $this->entryRepository->findCross($value));
             } catch (\Exception $e) {
                 continue;
             }
@@ -437,7 +437,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
             try {
                 \assert($value instanceof Entry);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfEntry($value)));
+                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfEntry($value), $this->entryRepository->findCross($value));
             } catch (\Exception $e) {
                 continue;
             }
@@ -552,7 +552,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
             try {
                 \assert($value instanceof Entry);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfEntry($value)));
+                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfEntry($value), $this->entryRepository->findCross($value));
             } catch (\Exception $e) {
                 continue;
             }
