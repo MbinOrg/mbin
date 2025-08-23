@@ -33,7 +33,7 @@ class PostController extends AbstractController
             return $this->redirect($post->apId);
         }
 
-        $response = new JsonResponse($this->postNoteFactory->create($post, $this->tagLinkRepository->getTagsOfPost($post), true));
+        $response = new JsonResponse($this->postNoteFactory->create($post, $this->tagLinkRepository->getTagsOfContent($post), true));
 
         $response->headers->set('Content-Type', 'application/activity+json');
 

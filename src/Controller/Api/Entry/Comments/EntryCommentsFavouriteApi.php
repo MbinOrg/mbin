@@ -78,7 +78,7 @@ class EntryCommentsFavouriteApi extends EntriesBaseApi
         $manager->toggle($this->getUserOrThrow(), $comment);
 
         return new JsonResponse(
-            $this->serializeComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfEntryComment($comment)),
+            $this->serializeEntryComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfContent($comment)),
             headers: $headers
         );
     }
