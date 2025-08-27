@@ -143,7 +143,7 @@ class DeliverHandler extends MbinMessageHandler
                 $this->entityManager->persist($instance);
                 $this->entityManager->flush();
             }
-        } catch (InvalidApPostException $e) {
+        } catch (InvalidApPostException|TransportExceptionInterface $e) {
             $instance->setLastFailedDeliver();
             $this->entityManager->persist($instance);
             $this->entityManager->flush();
