@@ -138,7 +138,7 @@ class DeliverHandler extends MbinMessageHandler
 
         try {
             $this->client->post($message->apInboxUrl, $actor, $message->payload);
-            if ($instance->getLastSuccessfulDeliver() < new \DateTime('now - 5 minutes')) {
+            if ($instance->getLastSuccessfulDeliver() < new \DateTimeImmutable('now - 5 minutes')) {
                 $instance->setLastSuccessfulDeliver();
                 $this->entityManager->persist($instance);
                 $this->entityManager->flush();
