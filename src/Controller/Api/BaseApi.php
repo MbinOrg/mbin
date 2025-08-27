@@ -220,46 +220,30 @@ class BaseApi extends AbstractController
     public function serializeContentInterface(ContentInterface $content, bool $forceVisible = false): mixed
     {
         $toReturn = null;
-        $className = $this->entityManager->getClassMetadata(\get_class($content))->rootEntityName;
-        switch ($className) {
-            case Entry::class:
-                /**
-                 * @var Entry $content
-                 */
-                $dto = $this->entryFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfEntry($content));
-                $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
-                $toReturn = $dto->jsonSerialize();
-                $toReturn['itemType'] = 'entry';
-                break;
-            case EntryComment::class:
-                /**
-                 * @var EntryComment $content
-                 */
-                $dto = $this->entryCommentFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfEntryComment($content));
-                $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
-                $toReturn = $dto->jsonSerialize();
-                $toReturn['itemType'] = 'entry_comment';
-                break;
-            case Post::class:
-                /**
-                 * @var Post $content
-                 */
-                $dto = $this->postFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfPost($content));
-                $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
-                $toReturn = $dto->jsonSerialize();
-                $toReturn['itemType'] = 'post';
-                break;
-            case PostComment::class:
-                /**
-                 * @var PostComment $content
-                 */
-                $dto = $this->postCommentFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfPostComment($content));
-                $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
-                $toReturn = $dto->jsonSerialize();
-                $toReturn['itemType'] = 'post_comment';
-                break;
-            default:
-                throw new \LogicException('Invalid contentInterface classname "'.$className.'"');
+        if ($content instanceof Entry) {
+            $cross = $this->entryRepository->findCross($content);
+            $crossDtos = array_map(fn ($entry) => $this->entryFactory->createResponseDto($entry, []), $cross);
+            $dto = $this->entryFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfEntry($content), $crossDtos);
+            $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
+            $toReturn = $dto->jsonSerialize();
+            $toReturn['itemType'] = 'entry';
+        } elseif ($content instanceof EntryComment) {
+            $dto = $this->entryCommentFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfEntryComment($content));
+            $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
+            $toReturn = $dto->jsonSerialize();
+            $toReturn['itemType'] = 'entry_comment';
+        } elseif ($content instanceof Post) {
+            $dto = $this->postFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfPost($content));
+            $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
+            $toReturn = $dto->jsonSerialize();
+            $toReturn['itemType'] = 'post';
+        } elseif ($content instanceof PostComment) {
+            $dto = $this->postCommentFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfPostComment($content));
+            $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
+            $toReturn = $dto->jsonSerialize();
+            $toReturn['itemType'] = 'post_comment';
+        } else {
+            throw new \LogicException('Invalid contentInterface classname "'.$this->entityManager->getClassMetadata(\get_class($content))->rootEntityName.'"');
         }
 
         if ($forceVisible) {
