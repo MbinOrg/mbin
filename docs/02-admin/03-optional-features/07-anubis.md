@@ -180,11 +180,16 @@ server {
     location / {
         # try to serve file directly, fallback to index.php
         try_files $uri /index.php$is_args$args;
+        fastcgi_param SERVER_PORT "443";
+        fastcgi_param HTTPS "on";
     }
 }
 ```
 
 As you can see instead of serving Mbin directly we proxy it through the Anubis service. Anubis is then going to decide whether to call the UNIX socket that the actual Mbin site is served over or if it presents a challenge to the client (or straight up denying it).
+
+In the actual Mbin call we lie to Symfony that the request is coming from port 443 (`fastcgi_param SERVER_PORT`) and the https scheme (`fastcgi_param HTTPS`).
+The reason is that it will otherwise generate HTTP URLs which are incompatible with some other fediverse software, like Lemmy.
 
 ### The long one
 
@@ -339,6 +344,10 @@ server {
         include fastcgi_params;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         fastcgi_param DOCUMENT_ROOT $realpath_root;
+        
+        # lie to Symfony that the request is an HTTPS one, so it generates HTTPS URLs
+        fastcgi_param SERVER_PORT "443";
+        fastcgi_param HTTPS "on";
 
         # Prevents URIs that include the front controller. This will 404:
         # http://domain.tld/index.php/some-path
@@ -374,6 +383,14 @@ server {
     }
 }
 ```
+
+To test whether Mbin correctly uses the HTTPS scheme, you can run this command (replaced with you URL and username):
+
+```bash
+curl --header "Accept: application/activity+json" https://example.mbin/u/admin | jq
+```
+
+The `| jq` part outputs formatted json which should make this easier to see. There should not be any `http://` URLs in this output.  
 
 ### Take it live
 
