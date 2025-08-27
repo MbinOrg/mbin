@@ -31,6 +31,7 @@ use App\Factory\ImageFactory;
 use App\Factory\MagazineFactory;
 use App\Factory\PostCommentFactory;
 use App\Factory\PostFactory;
+use App\Factory\UserFactory;
 use App\Form\Constraint\ImageConstraint;
 use App\Repository\BookmarkListRepository;
 use App\Repository\BookmarkRepository;
@@ -106,6 +107,7 @@ class BaseApi extends AbstractController
         private readonly OAuth2ClientAccessRepository $clientAccessRepository,
         protected readonly NotificationSettingsRepository $notificationSettingsRepository,
         protected readonly SettingsManager $settingsManager,
+        protected readonly UserFactory $userFactory,
     ) {
     }
 
