@@ -75,6 +75,7 @@ class EntryFactory
             $dto->apId,
             bookmarks: $this->bookmarkListRepository->getBookmarksOfContentInterface($entry),
             crosspostedEntries: $crosspostedEntries,
+            isAuthorModeratorInMagazine: $dto->magazine->userIsModerator($dto->user),
         );
     }
 
