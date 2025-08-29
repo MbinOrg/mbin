@@ -65,6 +65,7 @@ class EntryCommentFactory
             $dto->lastActive,
             $childCount,
             bookmarks: $this->bookmarkListRepository->getBookmarksOfContentInterface($comment),
+            isAuthorModeratorInMagazine: $dto->magazine->userIsModerator($dto->user),
         );
     }
 

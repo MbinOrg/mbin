@@ -59,6 +59,7 @@ class PostFactory
             $dto->lastActive,
             $dto->slug,
             bookmarks: $this->bookmarkListRepository->getBookmarksOfContentInterface($post),
+            isAuthorModeratorInMagazine: $dto->magazine->userIsModerator($dto->user),
         );
     }
 
