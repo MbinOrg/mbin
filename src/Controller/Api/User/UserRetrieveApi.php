@@ -127,7 +127,7 @@ class UserRetrieveApi extends UserBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
-        $dto = $factory->createDto($user);
+        $dto = $factory->createDto($user, $this->reputationRepository->getUserReputationTotal($user));
 
         return new JsonResponse(
             $this->serializeUser($dto),
@@ -168,8 +168,9 @@ class UserRetrieveApi extends UserBaseApi
         RateLimiterFactory $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
+        $user = $this->getUserOrThrow();
 
-        $dto = $factory->createDto($this->getUserOrThrow());
+        $dto = $factory->createDto($user, $this->reputationRepository->getUserReputationTotal($user));
 
         return new JsonResponse(
             $this->serializeUser($dto),

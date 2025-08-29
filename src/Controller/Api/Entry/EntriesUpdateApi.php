@@ -96,7 +96,7 @@ class EntriesUpdateApi extends EntriesBaseApi
         $entry = $manager->edit($entry, $dto, $this->getUserOrThrow());
 
         return new JsonResponse(
-            $this->serializeEntry($entry, $this->tagLinkRepository->getTagsOfEntry($entry)),
+            $this->serializeEntry($entry, $this->tagLinkRepository->getTagsOfEntry($entry), $this->entryRepository->findCross($entry)),
             headers: $headers
         );
     }

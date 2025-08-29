@@ -19,8 +19,10 @@ class UserFactory
     ) {
     }
 
-    public function createDto(User $user): UserDto
+    public function createDto(User $user, ?int $reputationPoints = null): UserDto
     {
+        /** @var User $currentUser */
+        $currentUser = $this->security->getUser();
         $dto = UserDto::create(
             $user->username,
             $user->email,
@@ -36,10 +38,10 @@ class UserFactory
             'Service' === $user->type, // setting isBot
             $user->isAdmin(),
             $user->isModerator(),
+            $currentUser && ($currentUser->isAdmin() || $currentUser->isModerator()) ? $user->applicationText : null,
+            reputationPoints: $reputationPoints,
         );
 
-        /** @var User $currentUser */
-        $currentUser = $this->security->getUser();
         // Only return the user's vote if permission to control voting has been given
         $dto->isFollowedByUser = $this->security->isGranted('ROLE_OAUTH2_USER:FOLLOW') ? $currentUser->isFollowing($user) : null;
         $dto->isFollowerOfUser = $this->security->isGranted('ROLE_OAUTH2_USER:FOLLOW') && $user->showProfileFollowings ? $user->isFollowing($currentUser) : null;

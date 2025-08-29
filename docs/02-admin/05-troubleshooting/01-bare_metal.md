@@ -33,6 +33,31 @@ Web-server (Nginx):
 - Inbox access log: `sudo tail -f /var/log/nginx/mbin_inbox.log`
 - Error log: `sudo tail -f /var/log/nginx/mbin_error.log`
 
+### A useful command to view the logs
+
+If you have `tail`, `jq` and `awk` installed you can run this command to turn the json log into a color coded
+human-readable log:
+
+```shell
+tail -f /var/www/mbin/var/log/prod-2025-08-11.log  | jq -r '"\(.datetime) \(.level_name) \(.channel): \(.message)"' | awk '
+{
+  level=$2
+  color_reset="\033[0m"
+  color_info="\033[36m"      # Cyan
+  color_warning="\033[33m"   # Yellow
+  color_error="\033[31m"     # Red
+  color_debug="\033[35m"     # Magenta
+
+  if (level == "INFO") color=color_info
+  else if (level == "WARNING") color=color_warning
+  else if (level == "ERROR") color=color_error
+  else if (level == "DEBUG") color=color_debug
+  else color=color_reset
+
+  print color $0 color_reset
+}'
+```
+
 ## Debugging
 
 **Please, check the logs above first.** If you are really stuck, visit to our [Matrix space](https://matrix.to/#/%23mbin:melroy.org), there is a 'General' room and dedicated room for 'Issues/Support'.
