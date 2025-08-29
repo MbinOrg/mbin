@@ -43,6 +43,7 @@ use App\Repository\NotificationSettingsRepository;
 use App\Repository\OAuth2ClientAccessRepository;
 use App\Repository\PostCommentRepository;
 use App\Repository\PostRepository;
+use App\Repository\ReputationRepository;
 use App\Repository\TagLinkRepository;
 use App\Repository\UserRepository;
 use App\Schema\PaginationSchema;
@@ -108,6 +109,7 @@ class BaseApi extends AbstractController
         protected readonly NotificationSettingsRepository $notificationSettingsRepository,
         protected readonly SettingsManager $settingsManager,
         protected readonly UserFactory $userFactory,
+        protected readonly ReputationRepository $reputationRepository,
     ) {
     }
 
