@@ -180,6 +180,8 @@ server {
     location / {
         # try to serve file directly, fallback to index.php
         try_files $uri /index.php$is_args$args;
+        
+        # lie to Symfony that the request is an HTTPS one, so it generates HTTPS URLs
         fastcgi_param SERVER_PORT "443";
         fastcgi_param HTTPS "on";
     }
