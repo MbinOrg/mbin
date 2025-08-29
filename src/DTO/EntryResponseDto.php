@@ -47,10 +47,17 @@ class EntryResponseDto implements \JsonSerializable
     public ?string $apId = null;
     public ?bool $canAuthUserModerate = null;
     public ?ENotificationStatus $notificationStatus = null;
+    public ?bool $isAuthorModeratorInMagazine = null;
 
     /** @var string[]|null */
     #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
     public ?array $bookmarks = null;
+
+    /**
+     * @var EntryResponseDto[]|null $crosspostedEntries other entries that share either the link or the title (if that is longer than 10 characters)
+     */
+    #[OA\Property(type: 'array', items: new OA\Items(ref: new Model(type: EntryResponseDto::class)))]
+    public ?array $crosspostedEntries;
 
     /**
      * @param string[]|null $bookmarks
@@ -83,6 +90,8 @@ class EntryResponseDto implements \JsonSerializable
         ?string $apId = null,
         ?bool $canAuthUserModerate = null,
         ?array $bookmarks = null,
+        ?array $crosspostedEntries = null,
+        ?bool $isAuthorModeratorInMagazine = null,
     ): self {
         $dto = new EntryResponseDto();
         $dto->entryId = $id;
@@ -112,6 +121,8 @@ class EntryResponseDto implements \JsonSerializable
         $dto->apId = $apId;
         $dto->canAuthUserModerate = $canAuthUserModerate;
         $dto->bookmarks = $bookmarks;
+        $dto->crosspostedEntries = $crosspostedEntries;
+        $dto->isAuthorModeratorInMagazine = $isAuthorModeratorInMagazine;
 
         return $dto;
     }
@@ -167,6 +178,8 @@ class EntryResponseDto implements \JsonSerializable
             'canAuthUserModerate' => $this->canAuthUserModerate,
             'notificationStatus' => $this->notificationStatus,
             'bookmarks' => $this->bookmarks,
+            'crosspostedEntries' => $this->crosspostedEntries,
+            'isAuthorModeratorInMagazine' => $this->isAuthorModeratorInMagazine,
         ]);
     }
 }

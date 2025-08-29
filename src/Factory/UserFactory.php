@@ -19,7 +19,7 @@ class UserFactory
     ) {
     }
 
-    public function createDto(User $user): UserDto
+    public function createDto(User $user, ?int $reputationPoints = null): UserDto
     {
         /** @var User $currentUser */
         $currentUser = $this->security->getUser();
@@ -39,6 +39,7 @@ class UserFactory
             $user->isAdmin(),
             $user->isModerator(),
             $currentUser && ($currentUser->isAdmin() || $currentUser->isModerator()) ? $user->applicationText : null,
+            reputationPoints: $reputationPoints,
         );
 
         // Only return the user's vote if permission to control voting has been given
