@@ -81,7 +81,7 @@ parameters:
     default_type_options: article|articles|link|links|video|videos|photo|photos|image|images|all
     default_subscription_options: sub|fav|mod|all|home
     default_federation_options: local|all
-    default_content_options: threads|microblog
+    default_content_options: all|threads|microblog
     default_subject_type_options: entry|entry_comment|post|post_comment
 
     comment_sort_options: top|hot|active|newest|oldest
