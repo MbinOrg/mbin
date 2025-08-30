@@ -68,7 +68,7 @@
         "symfony/amqp-messenger": "7.2.*",
         "symfony/asset": "7.2.*",
         "symfony/cache": "7.2.*",
-        "symfony/console": "7.2.*",
+        "symfony/console": "7.3.*",
         "symfony/css-selector": "7.2.*",
         "symfony/doctrine-messenger": "7.2.*",
         "symfony/dotenv": "7.2.*",
