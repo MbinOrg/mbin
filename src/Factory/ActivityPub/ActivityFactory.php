@@ -27,10 +27,10 @@ class ActivityFactory
     public function create(ActivityPubActivityInterface $activity, bool $context = false): array
     {
         return match (true) {
-            $activity instanceof Entry => $this->pageFactory->create($activity, $this->tagLinkRepository->getTagsOfEntry($activity), $context),
-            $activity instanceof EntryComment => $this->entryNoteFactory->create($activity, $this->tagLinkRepository->getTagsOfEntryComment($activity), $context),
-            $activity instanceof Post => $this->postNoteFactory->create($activity, $this->tagLinkRepository->getTagsOfPost($activity), $context),
-            $activity instanceof PostComment => $this->postCommentNoteFactory->create($activity, $this->tagLinkRepository->getTagsOfPostComment($activity), $context),
+            $activity instanceof Entry => $this->pageFactory->create($activity, $this->tagLinkRepository->getTagsOfContent($activity), $context),
+            $activity instanceof EntryComment => $this->entryNoteFactory->create($activity, $this->tagLinkRepository->getTagsOfContent($activity), $context),
+            $activity instanceof Post => $this->postNoteFactory->create($activity, $this->tagLinkRepository->getTagsOfContent($activity), $context),
+            $activity instanceof PostComment => $this->postCommentNoteFactory->create($activity, $this->tagLinkRepository->getTagsOfContent($activity), $context),
             $activity instanceof Message => $this->messageFactory->build($activity, $context),
             default => throw new \LogicException(),
         };

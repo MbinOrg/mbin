@@ -76,7 +76,7 @@ class EntriesPinApi extends EntriesBaseApi
         $manager->pin($entry, $this->getUserOrThrow());
 
         return new JsonResponse(
-            $this->serializeEntry($factory->createDto($entry), $this->tagLinkRepository->getTagsOfEntry($entry), $this->entryRepository->findCross($entry)),
+            $this->serializeEntry($factory->createDto($entry), $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry)),
             headers: $headers
         );
     }
