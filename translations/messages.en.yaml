@@ -997,3 +997,16 @@ show_rich_ap_link_help: Render an inline component when other ActivityPub conten
 attitude: Attitude
 type_search_magazine: Limit search to magazine...
 type_search_user: Limit search to author...
+modlog_type_entry_deleted: Thread deleted
+modlog_type_entry_restored: Thread restored
+modlog_type_entry_comment_deleted: Thread comment deleted
+modlog_type_entry_comment_restored: Thread comment restored
+modlog_type_entry_pinned: Thread pinned
+modlog_type_entry_unpinned: Thread unpinned
+modlog_type_post_deleted: Microblog deleted
+modlog_type_post_restored: Microblog restored
+modlog_type_post_comment_deleted: Microblog reply deleted
+modlog_type_post_comment_restored: Microblog reply restored
+modlog_type_ban: User banned from magazine
+modlog_type_moderator_add: Magazine moderator added
+modlog_type_moderator_remove: Magazine moderator removed

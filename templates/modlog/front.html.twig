@@ -8,8 +8,10 @@
 {% set showNewIcons = app.request.cookies.get(MBIN_MODERATION_LOG_SHOW_NEW_ICONS, V_TRUE) is same as V_TRUE %}
 {% use 'modlog/_blocks.html.twig' %}
 
+{% set hasMagazine = magazine is defined and magazine ? true : false %}
+
 {%- block title -%}
-    {% if magazine is defined and magazine %}
+    {% if hasMagazine %}
         {{- 'mod_log'|trans }} - {{ magazine.title }} - {{ parent() -}}
     {% else %}
         {{- 'mod_log'|trans }} - {{ parent() -}}
@@ -29,12 +31,29 @@
     <div class="alert alert__danger">
         <p>{{ 'mod_log_alert'|trans }}</p>
     </div>
+
+    {{ form_start(form) }}
+    <div>
+        {{ form_widget(form.magazine, {'attr': {'onchange': '(function (e){ e.target.form.submit();})(event)'}}) }}
+    </div>
+    <div class="flex">
+        <div class="flex-item">
+            {{ form_widget(form.types) }}
+        </div>
+        <div>
+            <button class="btn btn__primary small" type="submit" title="{{ 'search'|trans }}" aria-label="{{ 'search'|trans }}">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+    {{ form_end(form) }}
+
     {% for log in logs %}
         <div class="section section--small log">
             <div>
                 {%- with {
                     log: log,
-                    showMagazine: true,
+                    showMagazine: not hasMagazine,
                     showAvatars: showAvatars,
                     showIcons: showIcons,
                     showNewIcons: showNewIcons,
