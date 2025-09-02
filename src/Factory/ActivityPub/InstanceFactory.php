@@ -38,4 +38,9 @@ class InstanceFactory
             ],
         ];
     }
+
+    public function getTargetUrl(): string
+    {
+        return 'https://'.$this->kbinDomain;
+    }
 }
