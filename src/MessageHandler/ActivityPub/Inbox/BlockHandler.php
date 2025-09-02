@@ -74,12 +74,12 @@ class BlockHandler extends MbinMessageHandler
 
         $actor = $this->activityPubManager->findActorOrCreate($payload['actor']);
         if (null === $actor) {
-            throw new \Exception("Unable to find user '{$payload['actor']}'");
+            throw new UnrecoverableMessageHandlingException("Unable to find user '{$payload['actor']}'");
         }
 
         $bannedUser = $this->activityPubManager->findActorOrCreate($payload['object']);
         if (null === $bannedUser) {
-            throw new \Exception("Could not find user '{$payload['object']}'");
+            throw new UnrecoverableMessageHandlingException("Could not find user '{$payload['object']}'");
         }
         if (!$bannedUser instanceof User) {
             throw new UnrecoverableMessageHandlingException('The object has to be a user');
@@ -115,11 +115,11 @@ class BlockHandler extends MbinMessageHandler
             throw new UnrecoverableMessageHandlingException("Only a user of the same instance can instance ban another user and the domains of the banned $bannedUser->username and the actor $actor->username do not match");
         }
         if ($isUndo) {
-            $this->userManager->unban($bannedUser, $actor, $reason);
             $this->logger->info('[BlockHandler::handleInstanceBan] {a} is unbanning {u} instance wide', ['a' => $actor->username, 'u' => $bannedUser->username]);
+            $this->userManager->unban($bannedUser, $actor, $reason);
         } else {
-            $this->userManager->ban($bannedUser, $actor, $reason);
             $this->logger->info('[BlockHandler::handleInstanceBan] {a} is banning {u} instance wide', ['a' => $actor->username, 'u' => $bannedUser->username]);
+            $this->userManager->ban($bannedUser, $actor, $reason);
         }
     }
 
@@ -148,8 +148,8 @@ class BlockHandler extends MbinMessageHandler
         } else {
             $this->logger->debug('it is a magazine ban and we do have an existing one');
             if ($isUndo) {
-                $ban = $this->magazineManager->unban($target, $bannedUser);
                 $this->logger->info("[BlockHandler::handleMagazineBan] {a} is unbanning {u} from magazine {m}. Reason: '{r}'", ['a' => $actor->username, 'u' => $bannedUser->username, 'm' => $target->name, 'r' => $reason]);
+                $ban = $this->magazineManager->unban($target, $bannedUser);
             } else {
                 $ban = $this->banImpl($reason, $expireDate, $target, $bannedUser, $actor);
             }
@@ -181,8 +181,8 @@ class BlockHandler extends MbinMessageHandler
         $dto->reason = $reason;
         $dto->expiredAt = $expireDate;
         try {
-            $ban = $this->magazineManager->ban($target, $bannedUser, $actor, $dto);
             $this->logger->info("[BlockHandler::handleMagazineBan] {a} is banning {u} from magazine {m}. Reason: '{r}'", ['a' => $actor->username, 'u' => $bannedUser->username, 'm' => $target->name, 'r' => $reason]);
+            $ban = $this->magazineManager->ban($target, $bannedUser, $actor, $dto);
         } catch (UserCannotBeBanned) {
             throw new UnrecoverableMessageHandlingException("$bannedUser->username is either an admin or a moderator of $target->name and can therefor not be banned from it");
         }
