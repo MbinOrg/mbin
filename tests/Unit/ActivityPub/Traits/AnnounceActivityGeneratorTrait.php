@@ -305,4 +305,14 @@ trait AnnounceActivityGeneratorTrait
     {
         return $this->announceWrapper->build($this->magazine, $this->getUpdatePostCommentActivity());
     }
+
+    public function getAnnounceBlockUserActivity(): Activity
+    {
+        return $this->announceWrapper->build($this->magazine, $this->getBlockUserActivity());
+    }
+
+    public function getAnnounceUndoBlockUserActivity(): Activity
+    {
+        return $this->announceWrapper->build($this->magazine, $this->getUndoBlockUserActivity());
+    }
 }
