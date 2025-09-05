@@ -370,6 +370,10 @@ figure {
   gap: .25rem;
 }
 
+.flex-item {
+  flex-grow: 1;
+}
+
 @include b.media-breakpoint-down(lg) {
   .flex.mobile {
     display: block;

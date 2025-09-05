@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\Magazine;
 use App\Entity\MagazineLog;
 use App\Entity\Post;
 use App\Entity\PostComment;
@@ -32,10 +33,26 @@ class MagazineLogRepository extends ServiceEntityRepository
         parent::__construct($registry, MagazineLog::class);
     }
 
-    public function listAll(int $page, int $perPage = self::PER_PAGE): PagerfantaInterface
+    /**
+     * @param string[]|null $types modlog types
+     */
+    public function findByCustom(int $page, int $perPage = self::PER_PAGE, ?array $types = null, ?Magazine $magazine = null): PagerfantaInterface
     {
-        $qb = $this->createQueryBuilder('ml')
-            ->orderBy('ml.createdAt', 'DESC');
+        $qb = $this->createQueryBuilder('ml');
+
+        if (null !== $types && \sizeof($types) > 0) {
+            $wheres = array_map(fn ($type) => 'ml INSTANCE OF '.MagazineLog::DISCRIMINATOR_MAP[$type], $types);
+            $qb = $qb->where(implode(' OR ', $wheres));
+            if (null !== $magazine) {
+                $qb = $qb->andWhere('ml.magazine = :magazine')
+                    ->setParameter('magazine', $magazine);
+            }
+        } elseif (null !== $magazine) {
+            $qb = $qb->where('ml.magazine = :magazine')
+                ->setParameter('magazine', $magazine);
+        }
+
+        $qb->orderBy('ml.createdAt', 'DESC');
 
         $pager = new Pagerfanta(new QueryAdapter($qb));
         try {
