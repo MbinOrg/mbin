@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\ActivityPub\Wrapper;
 
-use App\Entity\Contracts\ActivityPubActivityInterface;
+use App\Service\ActivityPub\ContextsProvider;
 use JetBrains\PhpStorm\ArrayShape;
 use Pagerfanta\PagerfantaInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -13,6 +13,7 @@ class CollectionItemsWrapper
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly ContextsProvider $contextProvider,
     ) {
     }
 
@@ -33,7 +34,7 @@ class CollectionItemsWrapper
         int $page,
     ): array {
         $result = [
-            '@context' => ActivityPubActivityInterface::CONTEXT_URL,
+            '@context' => $this->contextProvider->referencedContexts(),
             'type' => 'OrderedCollectionPage',
             'partOf' => $this->urlGenerator->generate(
                 $routeName,

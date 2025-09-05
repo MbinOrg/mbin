@@ -6,10 +6,10 @@ namespace App\Controller\ActivityPub\User;
 
 use App\Controller\AbstractController;
 use App\Entity\User;
-use App\Repository\UserRepository;
+use App\Repository\ActivityRepository;
+use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\ActivityPub\Wrapper\CollectionInfoWrapper;
 use App\Service\ActivityPub\Wrapper\CollectionItemsWrapper;
-use App\Service\ActivityPub\Wrapper\CreateWrapper;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,10 +17,10 @@ use Symfony\Component\HttpFoundation\Request;
 class UserOutboxController extends AbstractController
 {
     public function __construct(
-        private readonly UserRepository $userRepository,
         private readonly CollectionInfoWrapper $collectionInfoWrapper,
         private readonly CollectionItemsWrapper $collectionItemsWrapper,
-        private readonly CreateWrapper $createWrapper,
+        private readonly ActivityJsonBuilder $activityJsonBuilder,
+        private readonly ActivityRepository $activityRepository,
     ) {
     }
 
@@ -52,12 +52,12 @@ class UserOutboxController extends AbstractController
     ])]
     private function getCollectionInfo(User $user): array
     {
-        $hideAdult = false;
+        $fanta = $this->activityRepository->getOutboxActivitiesOfUser($user);
 
         return $this->collectionInfoWrapper->build(
             'ap_user_outbox',
             ['username' => $user->username],
-            $this->userRepository->countPublicActivity($user, $hideAdult)
+            $fanta->count()
         );
     }
 
@@ -73,12 +73,15 @@ class UserOutboxController extends AbstractController
         User $user,
         int $page,
     ): array {
-        $hideAdult = false;
-        $activity = $this->userRepository->findPublicActivity($page, $user, $hideAdult);
+        $activity = $this->activityRepository->getOutboxActivitiesOfUser($user);
+        $activity->setCurrentPage($page);
+        $activity->setMaxPerPage(10);
 
         $items = [];
         foreach ($activity as $item) {
-            $items[] = $this->createWrapper->build($item);
+            $json = $this->activityJsonBuilder->buildActivityJson($item);
+            unset($json['@context']);
+            $items[] = $json;
         }
 
         return $this->collectionItemsWrapper->build(
