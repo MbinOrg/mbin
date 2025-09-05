@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\Activity;
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Contracts\ActivityPubActorInterface;
+use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Magazine;
@@ -14,10 +15,14 @@ use App\Entity\Message;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\Pagination\Pagerfanta;
+use App\Pagination\QueryAdapter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Pagerfanta\Adapter\ArrayAdapter;
+use Pagerfanta\PagerfantaInterface;
 
 /**
  * @method Activity|null find($id, $lockMode = null, $lockVersion = null)
@@ -95,6 +100,35 @@ class ActivityRepository extends ServiceEntityRepository
             $qb->andWhere('a.objectMagazine = :magazine')
                 ->setParameter('magazine', $object);
         }
+    }
+
+    public function getOutboxActivitiesOfUser(User $user): PagerfantaInterface
+    {
+        if ($user->isDeleted || $user->isBanned || $user->isTrashed() || null !== $user->markedForDeletionAt) {
+            return new Pagerfanta(new ArrayAdapter([]));
+        }
+
+        $qb = $this->createQueryBuilder('a')
+            ->leftJoin('a.audience', 'm')
+            ->leftJoin('a.objectEntry', 'e')
+            ->leftJoin('a.objectEntryComment', 'ec')
+            ->leftJoin('a.objectPost', 'p')
+            ->leftJoin('a.objectPostComment', 'pc')
+            ->where('a.userActor = :user')
+            ->andWhere('a.type IN (:types)')
+            ->andWhere('a.objectMessage IS NULL') // chat messages are not public
+            ->andWhere('m IS NULL OR m.visibility = :visible')
+            ->andWhere('e IS NULL OR e.visibility = :visible')
+            ->andWhere('ec IS NULL OR ec.visibility = :visible')
+            ->andWhere('p IS NULL OR p.visibility = :visible')
+            ->andWhere('pc IS NULL OR pc.visibility = :visible')
+            ->setParameter('visible', VisibilityInterface::VISIBILITY_VISIBLE)
+            ->setParameter('user', $user)
+            ->setParameter('types', ['Create', 'Announce'])
+            ->orderBy('a.createdAt', 'DESC')
+            ->addOrderBy('a.uuid', 'DESC');
+
+        return new Pagerfanta(new QueryAdapter($qb));
     }
 
     public function createForRemotePayload(array $payload, ActivityPubActivityInterface|Entry|EntryComment|Post|PostComment|ActivityPubActorInterface|User|Magazine|Activity|array|string|null $object = null): Activity
