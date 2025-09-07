@@ -81,7 +81,7 @@ class TestingApHttpClient implements ApHttpClientInterface
         return null;
     }
 
-    public function post(string $url, Magazine|User $actor, ?array $body = null): void
+    public function post(string $url, Magazine|User $actor, ?array $body = null, bool $useOldPrivateKey = false): void
     {
         $this->postedObjects[] = [
             'inboxUrl' => $url,
