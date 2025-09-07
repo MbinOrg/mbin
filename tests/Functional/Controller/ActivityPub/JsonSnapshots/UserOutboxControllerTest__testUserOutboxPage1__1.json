@@ -95,7 +95,7 @@
                 "audience": "http://localhost/m/test-magazine",
                 "sensitive": false,
                 "stickied": false,
-                "content": "<p>post</p>\n<p><a href=\"https://kbin.test/tag/test\">#test</a>-magazine</p>\n",
+                "content": "<p>post</p>\n<p><a href=\"http://localhost/tag/test\">#test</a>-magazine</p>\n",
                 "mediaType": "text/html",
                 "source": {
                     "content": "post\n\n #test-magazine",
@@ -112,7 +112,7 @@
                 "commentsEnabled": true,
                 "published": "SCRUBBED_DATE",
                 "contentMap": {
-                    "en": "<p>post</p>\n<p><a href=\"https://kbin.test/tag/test\">#test</a>-magazine</p>\n"
+                    "en": "<p>post</p>\n<p><a href=\"http://localhost/tag/test\">#test</a>-magazine</p>\n"
                 }
             },
             "audience": "http://localhost/m/test-magazine"
