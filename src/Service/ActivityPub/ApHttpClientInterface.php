@@ -83,11 +83,12 @@ interface ApHttpClientInterface
      * @param string        $url   the URL to which the POST request will be sent
      * @param User|Magazine $actor The actor initiating the request, either a User or Magazine object
      * @param array|null    $body  (Optional) The body of the POST request. Defaults to null.
+     * @param bool $useOldPrivateKey (Optional) Whether to use the old private key for signing (e.g. to send an update activity rotating the private key)
      *
      * @throws InvalidApPostException      if the POST request fails with a non-2xx response status code
      * @throws TransportExceptionInterface
      */
-    public function post(string $url, User|Magazine $actor, ?array $body = null): void;
+    public function post(string $url, User|Magazine $actor, ?array $body = null, bool $useOldPrivateKey = false): void;
 
     public function fetchInstanceNodeInfoEndpoints(string $domain, bool $decoded = true): array|string|null;
 
