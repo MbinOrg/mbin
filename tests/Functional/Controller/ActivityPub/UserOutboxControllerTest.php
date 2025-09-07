@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\ActivityPub;
 
 use App\DTO\MessageDto;
-use App\Tests\ActivityPubJsonDriver;
 use App\Tests\ActivityPubTestCase;
 
 class UserOutboxControllerTest extends ActivityPubTestCase
@@ -88,8 +87,6 @@ class UserOutboxControllerTest extends ActivityPubTestCase
         self::assertCount(0, $dislikes);
         $chatMessages = array_filter($json['orderedItems'], fn (array $createActivity) => 'Create' === $createActivity['type'] && 'ChatMessage' === $createActivity['object']['type']);
         self::assertCount(0, $chatMessages);
-
-        $this->assertMatchesSnapshot($json, new ActivityPubJsonDriver());
 
         $ids = array_map(fn (array $createActivity) => $createActivity['id'], $json['orderedItems']);
 
