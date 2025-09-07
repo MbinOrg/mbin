@@ -91,6 +91,27 @@ abstract class Criteria
     public ?array $languages = null;
     public bool $stickiesFirst = false;
 
+    /** @var int[]|null */
+    public ?array $cachedUserFollows = null;
+
+    /** @var int[]|null */
+    public ?array $cachedUserSubscribedMagazines = null;
+
+    /** @var int[]|null */
+    public ?array $cachedUserModeratedMagazines = null;
+
+    /** @var int[]|null */
+    public ?array $cachedUserSubscribedDomains = null;
+
+    /** @var int[]|null */
+    public ?array $cachedUserBlocks = null;
+
+    /** @var int[]|null */
+    public ?array $cachedUserBlockedMagazines = null;
+
+    /** @var int[]|null */
+    public ?array $cachedUserBlockedDomains = null;
+
     public const THEME_MBIN = 'mbin';
     public const THEME_KBIN = 'kbin';
     public const THEME_AUTO = 'default';
@@ -312,5 +333,23 @@ abstract class Criteria
             'subscription' => $this->resolveSubscriptionFilter(),
             default => throw new \LogicException('Unknown option: '.$key),
         };
+    }
+
+    public function fetchCachedItems(ContentRepository $contentRepository, User $loggedInUser): void
+    {
+        $this->cachedUserFollows = $contentRepository->getCachedUserFollows($loggedInUser);
+
+        if ($this->subscribed) {
+            $this->cachedUserSubscribedDomains = $contentRepository->getCachedUserSubscribedDomains($loggedInUser);
+            $this->cachedUserSubscribedMagazines = $contentRepository->getCachedUserSubscribedMagazines($loggedInUser);
+        }
+
+        if ($this->moderated) {
+            $this->cachedUserModeratedMagazines = $contentRepository->getCachedUserModeratedMagazines($loggedInUser);
+        }
+
+        $this->cachedUserBlocks = $contentRepository->getCachedUserBlocks($loggedInUser);
+        $this->cachedUserBlockedDomains = $contentRepository->getCachedUserDomainBlocks($loggedInUser);
+        $this->cachedUserBlockedMagazines = $contentRepository->getCachedUserMagazineBlocks($loggedInUser);
     }
 }
