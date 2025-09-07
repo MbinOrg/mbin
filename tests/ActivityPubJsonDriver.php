@@ -82,6 +82,14 @@ class ActivityPubJsonDriver extends JsonDriver
             $data['object'] = $this->scrub($data['object']);
         }
 
+        if (isset($data['orderedItems']) && \is_array($data['orderedItems'])) {
+            $items = [];
+            foreach ($data['orderedItems'] as $item) {
+                $items[] = $this->scrub($item);
+            }
+            $data['orderedItems'] = $items;
+        }
+
         return $data;
     }
 
