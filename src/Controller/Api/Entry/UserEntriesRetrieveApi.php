@@ -153,7 +153,7 @@ class UserEntriesRetrieveApi extends EntriesBaseApi
         foreach ($entries->getCurrentPageResults() as $value) {
             try {
                 \assert($value instanceof Entry);
-                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfEntry($value), $this->entryRepository->findCross($value));
+                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value), $this->entryRepository->findCross($value));
             } catch (\Exception $e) {
                 continue;
             }
