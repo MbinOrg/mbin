@@ -57,6 +57,9 @@ In the `bots` section of the `mbin.botPolicies.yaml` file, prepend this (has to 
     headers_regex:
       Accept: application\/rss\+xml
     action: ALLOW
+  - name: nodeinfo
+    path_regex: ^\/nodeinfo\/.*$
+    action: ALLOW
 ```
 
 to explicitly allow all API, RSS and ActivityPub requests. You should also switch the store backend to something different from the default in memory one. If you want to use a local bbolt db ([see alternatives](https://anubis.techaro.lol/docs/admin/policies#storage-backends)) change the `store` section to the following (in `mbin.botPolicies.yaml`):
