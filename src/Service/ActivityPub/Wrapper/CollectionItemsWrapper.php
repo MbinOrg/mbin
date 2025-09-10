@@ -32,6 +32,7 @@ class CollectionItemsWrapper
         PagerfantaInterface $pagerfanta,
         array $items,
         int $page,
+        bool $includeContext = true,
     ): array {
         $result = [
             '@context' => $this->contextProvider->referencedContexts(),
@@ -49,6 +50,10 @@ class CollectionItemsWrapper
             'totalItems' => $pagerfanta->getNbResults(),
             'orderedItems' => $items,
         ];
+
+        if (!$includeContext) {
+            unset($result['@context']);
+        }
 
         if ($pagerfanta->hasNextPage()) {
             $result['next'] = $this->urlGenerator->generate(
