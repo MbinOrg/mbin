@@ -23,9 +23,9 @@ class CollectionInfoWrapper
         'first' => 'string',
         'totalItems' => 'int',
     ])]
-    public function build(string $routeName, array $routeParams, int $count): array
+    public function build(string $routeName, array $routeParams, int $count, bool $includeContext = true): array
     {
-        return [
+        $result = [
             '@context' => $this->contextsProvider->referencedContexts(),
             'type' => 'OrderedCollection',
             'id' => $this->urlGenerator->generate($routeName, $routeParams, UrlGeneratorInterface::ABSOLUTE_URL),
@@ -36,5 +36,11 @@ class CollectionInfoWrapper
             ),
             'totalItems' => $count,
         ];
+
+        if (!$includeContext) {
+            unset($result['@context']);
+        }
+
+        return $result;
     }
 }
