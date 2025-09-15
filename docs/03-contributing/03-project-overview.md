@@ -1,25 +1,25 @@
 # Project Overview
 
-Mbin is a big project with a lot of code. We do not use any library to handle ActivityPub requests, 
+Mbin is a big project with a lot of code. We do not use an existing library to handle ActivityPub requests, 
 therefore we have a lot of code to handle that. 
 While that is more error-prone it is also a lot more flexible.
 
 ## Directory Structure
 
-- `.devcontainer`
+- `.devcontainer` - Docker containers that are configured to provide a fully featured development environment.
 - `.github` - our GitHub specific CI workflows are stored here.
 - `assets` - the place for all our frontend code, that includes JavaScript and SCSS.
-- `bin` - only the symfony console, phpunit and our `post-upgrade` script are stores here.
-- `ci`
-- `config` - the config files for symfony are stored here.
+- `bin` - only the Symfony console, PHPUnit and our `post-upgrade` script are stores here.
+- `ci` - Storing our CI/CD helper code / Dockerfiles.
+- `config` - the config files for Symfony are stored here.
    - `config/mbin_routes` the HTTP routes to our controllers are defined here.
-   - `config/packages` all symfony add-ons are configured here.
+   - `config/packages` all Symfony add-ons are configured here.
 -  `docker` - some docker configs that are partly outdated. The one still in use is in `docker/tests`.
 - `docs` - you guessed it our documentation is stored here.
 - `LICENSES` - third party licenses.
 - `migrations` - all SQL migrations are stored here.
 - `public` - this is the publicly accessible directory through the webserver. There should mostly be compiled files in here.
-- `src` - that is where our php files are stored and the directory you will modify the most files.
+- `src` - that is where our PHP files are stored and the directory you will modify the most files.
     - `src/ActivityPub` - some things that are ActivityPub related and do not fit in another directory.
     - `src/ArgumentValueResolver`
     - `src/Command` - Every command that is executable via the symfone cli (`php bin/console`).
@@ -49,10 +49,10 @@ While that is more error-prone it is also a lot more flexible.
     - `src/Schema` - some OpenAPI schemas are stored here
     - `src/Security` - everything related to authentication and authorization should be stored here, that includes OAuth providers
     - `src/Service` - every service should be stored here. A service should be something that manipulates data or is checking for visibility, etc.
-    - `src/Twig` - the php code related to twig is stored here. That includes runtime extensions and component classes. 
+    - `src/Twig` - the PHP code related to Twig is stored here. That includes runtime extensions and component classes. 
     - `src/Utils` - some general utils
     - `src/Validator`
-- `templates` - the twig folder. All twig files are stored in here.
+- `templates` - the Twig folder. All Twig files are stored in here.
 - `tests` - everything relating to testing is stored here.
 - `translations` - self-explanatory.
 
@@ -119,14 +119,14 @@ your_route_name:
 > [!NOTE]
 > We do not use the attribute style for defining routes.
 
-Your controller needs to return a response. The most common way to do that is to return a rendered twig template:
+Your controller needs to return a response. The most common way to do that is to return a rendered Twig template:
 
 ```php
 return $this->render('some_template.html.twig')
 ```
 
 > [!TIP]
-> You can also pass parameters/variables to the twig template so it has access to it.
+> You can also pass parameters/variables to the Twig template so it has access to it.
 
 You also have to think about permissions a user needs to access an endpoint. 
 On "normal" controllers we do that by added an `IsGranted` attribute like this:
@@ -152,7 +152,7 @@ The options there are (OAuth has a lot more of them):
 This is much the same as the "normal" controller, except that you extend `BaseApi` (or another class derived from that) 
 instead of `AbstractController`.
 
-Additionally, you have to return a `JsonResponse` instead of rendering a twig template
+Additionally, you have to return a `JsonResponse` instead of rendering a Twig template
 and declare the correct OpenAPI attributes on your controller methods, so that the OpenAPI definition is generated accordingly. 
 To check for that you can visit `/api/docs` on your local instance and check for your method and how it is documented there.
 
