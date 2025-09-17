@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Instance;
 
+use App\Entity\MagazineLog;
 use App\Tests\WebTestCase;
 
 class InstanceModlogApiTest extends WebTestCase
@@ -29,6 +30,18 @@ class InstanceModlogApiTest extends WebTestCase
         $moderator = $magazine->getOwner();
 
         $this->validateModlog($jsonData, $magazine, $moderator);
+    }
+
+    public function testApiCanRetrieveModlogAnonymousWithTypeFilter(): void
+    {
+        $this->createModlogMessages();
+
+        $this->client->request('GET', '/api/modlog?types[]='.MagazineLog::CHOICES[0].'&types[]='.MagazineLog::CHOICES[1]);
+
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
     }
 
     public function testApiCanRetrieveModlog(): void
