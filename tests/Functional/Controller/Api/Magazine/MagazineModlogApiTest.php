@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Magazine;
 
+use App\Entity\MagazineLog;
 use App\Tests\WebTestCase;
 
 class MagazineModlogApiTest extends WebTestCase
@@ -13,6 +14,21 @@ class MagazineModlogApiTest extends WebTestCase
         $magazine = $this->getMagazineByName('test');
 
         $this->client->request('GET', '/api/magazine/'.(string) $magazine->getId().'/log');
+
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
+        self::assertIsArray($jsonData['items']);
+        self::assertEmpty($jsonData['items']);
+    }
+
+    public function testApiCanRetrieveModlogByMagazineIdAnonymouslyWithTypeFilter(): void
+    {
+        $magazine = $this->getMagazineByName('test');
+
+        $this->client->request('GET', '/api/magazine/'.$magazine->getId().'/log?types[]='.MagazineLog::CHOICES[0].'&types[]='.MagazineLog::CHOICES[1]);
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
