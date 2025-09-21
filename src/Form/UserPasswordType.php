@@ -9,6 +9,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -25,6 +26,18 @@ class UserPasswordType extends AbstractType
                     'data-controller' => 'password-preview',
                 ],
             ])
+            ->add('totpCode',
+                TextType::class,
+                [
+                    'label' => '2fa.authentication_code.label',
+                    'mapped' => false,
+                    'attr' => [
+                        'autocomplete' => 'one-time-code',
+                        'inputmode' => 'numeric',
+                        'pattern' => '[0-9]*',
+                    ],
+                ],
+            )
             ->add(
                 'plainPassword',
                 RepeatedType::class,
