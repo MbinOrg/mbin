@@ -32,7 +32,7 @@ class ActivityFactory
             $activity instanceof Post => $this->postNoteFactory->create($activity, $this->tagLinkRepository->getTagsOfContent($activity), $context),
             $activity instanceof PostComment => $this->postCommentNoteFactory->create($activity, $this->tagLinkRepository->getTagsOfContent($activity), $context),
             $activity instanceof Message => $this->messageFactory->build($activity, $context),
-            default => throw new \LogicException(),
+            default => throw new \LogicException('Cannot handle activity of type '.\get_class($activity)),
         };
     }
 }

@@ -44,7 +44,7 @@ class TagLinkRepository extends ServiceEntityRepository
             return $this->getTagsOfPostComment($content);
         } else {
             // this is unreachable because of the strict types
-            throw new \LogicException();
+            throw new \LogicException('Cannot handle content of type '.\get_class($content));
         }
     }
 

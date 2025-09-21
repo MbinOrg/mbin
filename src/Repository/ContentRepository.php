@@ -99,7 +99,7 @@ class ContentRepository
             } elseif ('microblog' === $criteria->content) {
                 $contentClauseEntry = 'false';
             } else {
-                throw new \LogicException("wtf is $criteria->content");
+                throw new \LogicException("cannot handle content of type $criteria->content");
             }
         }
 
