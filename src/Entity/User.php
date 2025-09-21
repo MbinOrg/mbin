@@ -750,7 +750,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
             && $pa->getValue($user, 'markedForDeletionAt') === $this->markedForDeletionAt
             && $pa->getValue($user, 'username') === $this->username
             && $pa->getValue($user, 'password') === $this->password
-            && $pa->getValue($user, 'visibility') === $this->visibility
             && ($theirTotpSecret === $this->totpSecret || $theirTotpSecret === hash('sha256', $this->totpSecret) || hash('sha256', $theirTotpSecret) === $this->totpSecret);
     }
 
@@ -973,7 +972,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
             "\0".self::class."\0isBanned" => $this->isBanned,
             "\0".self::class."\0isDeleted" => $this->isDeleted,
             "\0".self::class."\0markedForDeletionAt" => $this->markedForDeletionAt,
-            "\0".self::class."\0visibility" => $this->visibility,
         ];
     }
 }
