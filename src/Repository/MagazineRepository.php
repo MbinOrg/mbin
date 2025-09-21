@@ -216,22 +216,6 @@ class MagazineRepository extends ServiceEntityRepository
         return $moderators;
     }
 
-    public function findModlog(Magazine $magazine, ?int $page = 1, int $perPage = self::PER_PAGE): PagerfantaInterface
-    {
-        $criteria = Criteria::create()->orderBy(['createdAt' => 'DESC']);
-
-        $logs = new Pagerfanta(new SelectableAdapter($magazine->logs, $criteria));
-
-        try {
-            $logs->setMaxPerPage($perPage);
-            $logs->setCurrentPage($page);
-        } catch (NotValidCurrentPageException $e) {
-            throw new NotFoundHttpException();
-        }
-
-        return $logs;
-    }
-
     public function findBans(Magazine $magazine, ?int $page = 1, int $perPage = self::PER_PAGE): PagerfantaInterface
     {
         $criteria = Criteria::create()

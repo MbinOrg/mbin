@@ -20,26 +20,44 @@ use Doctrine\ORM\Mapping\ManyToOne;
 #[Entity(repositoryClass: NotificationRepository::class)]
 #[InheritanceType('SINGLE_TABLE')]
 #[DiscriminatorColumn(name: 'log_type', type: 'text')]
-#[DiscriminatorMap([
-    'entry_deleted' => MagazineLogEntryDeleted::class,
-    'entry_restored' => MagazineLogEntryRestored::class,
-    'entry_comment_deleted' => MagazineLogEntryCommentDeleted::class,
-    'entry_comment_restored' => MagazineLogEntryCommentRestored::class,
-    'entry_pinned' => MagazineLogEntryPinned::class,
-    'entry_unpinned' => MagazineLogEntryUnpinned::class,
-    'post_deleted' => MagazineLogPostDeleted::class,
-    'post_restored' => MagazineLogPostRestored::class,
-    'post_comment_deleted' => MagazineLogPostCommentDeleted::class,
-    'post_comment_restored' => MagazineLogPostCommentRestored::class,
-    'ban' => MagazineLogBan::class,
-    'moderator_add' => MagazineLogModeratorAdd::class,
-    'moderator_remove' => MagazineLogModeratorRemove::class,
-])]
+#[DiscriminatorMap(self::DISCRIMINATOR_MAP)]
 abstract class MagazineLog
 {
     use CreatedAtTrait {
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
+
+    public const DISCRIMINATOR_MAP = [
+        'entry_deleted' => MagazineLogEntryDeleted::class,
+        'entry_restored' => MagazineLogEntryRestored::class,
+        'entry_comment_deleted' => MagazineLogEntryCommentDeleted::class,
+        'entry_comment_restored' => MagazineLogEntryCommentRestored::class,
+        'entry_pinned' => MagazineLogEntryPinned::class,
+        'entry_unpinned' => MagazineLogEntryUnpinned::class,
+        'post_deleted' => MagazineLogPostDeleted::class,
+        'post_restored' => MagazineLogPostRestored::class,
+        'post_comment_deleted' => MagazineLogPostCommentDeleted::class,
+        'post_comment_restored' => MagazineLogPostCommentRestored::class,
+        'ban' => MagazineLogBan::class,
+        'moderator_add' => MagazineLogModeratorAdd::class,
+        'moderator_remove' => MagazineLogModeratorRemove::class,
+    ];
+
+    public const CHOICES = [
+        'entry_deleted',
+        'entry_restored',
+        'entry_comment_deleted',
+        'entry_comment_restored',
+        'entry_pinned',
+        'entry_unpinned',
+        'post_deleted',
+        'post_restored',
+        'post_comment_deleted',
+        'post_comment_restored',
+        'ban',
+        'moderator_add',
+        'moderator_remove',
+    ];
 
     #[ManyToOne(targetEntity: Magazine::class, inversedBy: 'logs')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]

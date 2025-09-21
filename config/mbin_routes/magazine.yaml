@@ -40,7 +40,7 @@ magazine_moderators:
     methods: [GET]
 
 magazine_modlog:
-    controller: App\Controller\Magazine\MagazineLogController
+    controller: App\Controller\ModlogController::magazine
     path: /m/{name}/modlog
     methods: [GET]
 
