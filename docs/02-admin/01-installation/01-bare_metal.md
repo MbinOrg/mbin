@@ -15,7 +15,7 @@ This guide is aimed for Debian / Ubuntu distribution servers, but it could run o
 - **RAM:** 6GB (_more is recommended_ for large instances)
 - **Storage:** 40GB (_more is recommended_, especially if you have a lot of remote/local magazines and/or have a lot of (local) users)
 
-You can start with a smaller server and add more resources later if you are using a VPS for example.
+You can start with a smaller server and add more resources later if you are using a VPS for example. Our _recommendation_ is to have 12 vCPUs with 32GB of RAM.
 
 ## Software Requirements
 
@@ -277,10 +277,10 @@ sudo nano /etc/php/8.4/fpm/php.ini
 ; Maximum execution time of each script, in seconds
 max_execution_time = 60
 ; Both max file size and post body size are personal preferences
-upload_max_filesize = 8M
-post_max_size = 8M
+upload_max_filesize = 12M
+post_max_size = 12M
 ; Remember the memory limit is per child process
-memory_limit = 256M
+memory_limit = 512M
 ; maximum memory allocated to store the results
 realpath_cache_size = 4096K
 ; save the results for 10 minutes (600 seconds)
