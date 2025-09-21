@@ -6,6 +6,7 @@ namespace App\Tests\Unit\ActivityPub\Outbox;
 
 use App\Tests\ActivityPubJsonDriver;
 use App\Tests\ActivityPubTestCase;
+use App\Tests\Unit\ActivityPub\Traits\BlockActivityGeneratorTrait;
 use App\Tests\Unit\ActivityPub\Traits\FollowActivityGeneratorTrait;
 use App\Tests\Unit\ActivityPub\Traits\LikeActivityGeneratorTrait;
 use App\Tests\Unit\ActivityPub\Traits\UndoActivityGeneratorTrait;
@@ -15,6 +16,7 @@ class UndoTest extends ActivityPubTestCase
     use FollowActivityGeneratorTrait;
     use LikeActivityGeneratorTrait;
     use UndoActivityGeneratorTrait;
+    use BlockActivityGeneratorTrait;
 
     public function testUndoLikeEntry(): void
     {
@@ -68,6 +70,13 @@ class UndoTest extends ActivityPubTestCase
     public function testUndoFollowMagazine(): void
     {
         $json = $this->activityJsonBuilder->buildActivityJson($this->getUndoFollowMagazineActivity());
+
+        $this->assertMatchesSnapshot($json, new ActivityPubJsonDriver());
+    }
+
+    public function testUndoBlockUser(): void
+    {
+        $json = $this->activityJsonBuilder->buildActivityJson($this->getUndoBlockUserActivity());
 
         $this->assertMatchesSnapshot($json, new ActivityPubJsonDriver());
     }
