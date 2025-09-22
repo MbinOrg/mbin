@@ -35,43 +35,43 @@ To save yourself much time setting up a development server, you can use our Dock
 > [!TIP]
 > Once you are done with your development server and would like to shutdown the Docker containers, hit `Ctrl+C` in your terminal.
 
-If you'd prefer a development setup without using Docker, then continue on the section *Bare metal installation*.
+If you'd prefer a development setup without using Docker, then continue on the section [Bare metal installation](#bare-metal-installation).
 
 ## Dev Container
 
 This project also provides a configuration to create a Dev Container which can be launched from IDEs which support it.
 To use it, follow these steps:
 
-1. if you are using Podman, then uncomment the lines below `Uncomment if you are using Podman` in `./.devcontainer/devcontainer.json`
-2. adjust values in `./.devcontainer/.env.devcontainer`:
+1. If you are using Podman, then uncomment the lines below `Uncomment if you are using Podman` in `./.devcontainer/devcontainer.json`
+2. Adjust values in: `./.devcontainer/.env.devcontainer`:
    1. `SERVER_NAME`: change `mbin.domain.tld` to `localhost`
    2. `KBIN_DOMAIN`: change to `localhost`
    3. `KBIN_STORAGE_URL`: change `mbin.domain.tld` to `localhost:8080` (or whatever port you set in `devcontainer.json`)
-3. start and open the Dev Container
-4. run `chmod o+rwx public/`
-5. check if all needed services are running: `service --status-all`; services which should have a `+`:
+3. Start and open the Dev Container
+4. Run `chmod o+rwx public/`
+5. Check if all needed services are running: `service --status-all`; services which should have a `+`:
    - apache2
    - apache-htcacheclean
    - postgresql
    - rabbitmq-server
    - redis-server
-6. if some service are not running, try:
-   - start it with `sudo service <service name> start`
-   - if postgres fails: `sudo chmod -R postgres:postgres /var/lib/postgresql/`
-7. run `php -d memory_limit=-1 bin/console doctrine:migrations:migrate`
-8. run `npm install && npm run dev`
-9. open `http://localhost:8080` in a browser; you should see some status page or the Mbin startpage
-10. run `sudo find public/ -type d -exec chgrp www-data '{}' \;` and `sudo find public/ -type d -exec chmod g+rwx '{}' \;`
-11. you can now follow the [initial configuration guide](../02-admin/04-running-mbin/01-first_setup.md)
+6. If some service are not running, try:
+   - Start it with `sudo service <service name> start`
+   - If postgres fails: `sudo chmod -R postgres:postgres /var/lib/postgresql/`
+7. Run `php -d memory_limit=-1 bin/console doctrine:migrations:migrate`
+8. Run `npm install && npm run dev`
+9. Open `http://localhost:8080` in a browser; you should see some status page or the Mbin startpage
+10. Run `sudo find public/ -type d -exec chgrp www-data '{}' \;` and `sudo find public/ -type d -exec chmod g+rwx '{}' \;`
+11. You can now follow the [initial configuration guide](../02-admin/04-running-mbin/01-first_setup.md)
 
 ### OAuth keys
 
 If you want to use OAuth for the API, do the following **before** creating the Dev Container:
-1. generate the key material by following *OAuth2 keys for API credential grants* in [Bare Metal/VM Installation](../02-admin/01-installation/01-bare_metal.md)
-2. configure the described env variables in `./.devcontainer/.env.devcontainer` (they are already declared at the end of the file)
-3. after the Dev Container is created and opened:
-   1. run `chgrp www-data ./config/oauth2/private.pem`
-   2. run `chmod g+r ./config/oauth2/private.pem`
+1. Generate the key material by following *OAuth2 keys for API credential grants* in [Bare Metal/VM Installation](../02-admin/01-installation/01-bare_metal.md)
+2. Configure the described env variables in: `./.devcontainer/.env.devcontainer` (they are already declared at the end of the file)
+3. After the Dev Container is created and opened:
+   1. Run `chgrp www-data ./config/oauth2/private.pem`
+   2. Run `chmod g+r ./config/oauth2/private.pem`
 
 ### Running tests
 
@@ -87,6 +87,7 @@ or `SYMFONY_DEPRECATIONS_HELPER=disabled php -d memory_limit=-1 ./bin/phpunit te
 For more information, read the *Testing* section on this page.
 
 ## Bare metal installation
+
 ### Initial setup
 
 Requirements:
