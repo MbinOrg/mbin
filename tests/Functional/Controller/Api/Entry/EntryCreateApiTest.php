@@ -339,6 +339,82 @@ class EntryCreateApiTest extends WebTestCase
         self::assertNull($jsonData['apId']);
     }
 
+    public function testApiCanCreateImageEntryWithBody(): void
+    {
+        $user = $this->getUserByUsername('user');
+        $magazine = $this->getMagazineByNameNoRSAKey('acme');
+        $entryRequest = [
+            'title' => 'Test Thread',
+            'alt' => 'It\'s kibby!',
+            'tags' => ['test'],
+            'isOc' => false,
+            'lang' => 'en',
+            'isAdult' => false,
+            'body' => 'body text',
+        ];
+
+        self::createOAuth2AuthCodeClient();
+        $this->client->loginUser($user);
+
+        // Uploading a file appears to delete the file at the given path, so make a copy before upload
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.png');
+        $image = new UploadedFile($tmpPath.'.png', 'kibby_emoji.png', 'image/png');
+
+        $imageManager = $this->imageManager;
+        $expectedPath = $imageManager->getFilePath($image->getFilename());
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry:create');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+
+        $this->client->request(
+            'POST', "/api/magazine/{$magazine->getId()}/image",
+            parameters: $entryRequest, files: ['uploadImage' => $image],
+            server: ['HTTP_AUTHORIZATION' => $token]
+        );
+        self::assertResponseStatusCodeSame(201);
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData);
+        self::assertNotNull($jsonData['entryId']);
+        self::assertEquals('Test Thread', $jsonData['title']);
+        self::assertIsArray($jsonData['magazine']);
+        self::assertArrayKeysMatch(self::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['magazine']);
+        self::assertSame($magazine->getId(), $jsonData['magazine']['magazineId']);
+        self::assertIsArray($jsonData['user']);
+        self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['user']);
+        self::assertSame($user->getId(), $jsonData['user']['userId']);
+        self::assertNull($jsonData['domain']);
+        self::assertNull($jsonData['url']);
+        self::assertEquals('body text', $jsonData['body']);
+        self::assertIsArray($jsonData['image']);
+        self::assertArrayKeysMatch(self::IMAGE_KEYS, $jsonData['image']);
+        self::assertStringContainsString($expectedPath, $jsonData['image']['filePath']);
+        self::assertEquals('It\'s kibby!', $jsonData['image']['altText']);
+        self::assertEquals('en', $jsonData['lang']);
+        self::assertIsArray($jsonData['tags']);
+        self::assertSame(['test'], $jsonData['tags']);
+        self::assertIsArray($jsonData['badges']);
+        self::assertEmpty($jsonData['badges']);
+        self::assertSame(0, $jsonData['numComments']);
+        self::assertSame(0, $jsonData['uv']);
+        self::assertSame(0, $jsonData['dv']);
+        self::assertSame(0, $jsonData['favourites']);
+        // No scope for seeing votes granted
+        self::assertNull($jsonData['isFavourited']);
+        self::assertNull($jsonData['userVote']);
+        self::assertFalse($jsonData['isOc']);
+        self::assertFalse($jsonData['isAdult']);
+        self::assertFalse($jsonData['isPinned']);
+        self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['createdAt'], 'createdAt date format invalid');
+        self::assertNull($jsonData['editedAt']);
+        self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['lastActive'], 'lastActive date format invalid');
+        self::assertEquals('image', $jsonData['type']);
+        self::assertEquals('Test-Thread', $jsonData['slug']);
+        self::assertNull($jsonData['apId']);
+    }
+
     public function testApiCannotCreateEntryWithoutMagazine(): void
     {
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
