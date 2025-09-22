@@ -659,12 +659,12 @@
         "version": "v5.3.0"
     },
     "symfony/routing": {
-        "version": "7.0",
+        "version": "7.3",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "7.0",
-            "ref": "21b72649d5622d8f7da329ffb5afb232a023619d"
+            "ref": "ab1e60e2afd5c6f4a6795908f646e235f2564eb2"
         },
         "files": [
             "config/packages/routing.yaml",
