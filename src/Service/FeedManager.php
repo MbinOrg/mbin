@@ -97,7 +97,7 @@ class FeedManager
 
     public function getEntries(\ArrayIterator $entries): \Generator
     {
-        /** @var $entry Entry */
+        /** @var Entry $entry */
         foreach ($entries as $entry) {
             $link = 'https://'.$this->settings->get('KBIN_DOMAIN').
                 $this->router->generate('entry_single', [
