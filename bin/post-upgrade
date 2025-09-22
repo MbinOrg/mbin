@@ -12,10 +12,10 @@ if [ "$answer" != "${answer#[Yy]}" ]; then
         echo -e "INFO: Environment detected: Development\n"
 
         cd "$BIN_DIR/.."
-        echo "INFO: Install/update PHP packages"
-        composer install
         echo "INFO: Dump env file"
         composer dump-env dev
+        echo "INFO: Install/update PHP packages"
+        composer install
         echo "INFO: Clear application cache"
         APP_ENV=dev APP_DEBUG=1 php "${BIN_DIR}"/console cache:clear -n
         echo "INFO: Perform database migration"
@@ -31,10 +31,10 @@ if [ "$answer" != "${answer#[Yy]}" ]; then
         echo -e "INFO: Environment detected: Production\n"
 
         cd "$BIN_DIR/.."
-        echo "INFO: Install/update PHP packages"
-        composer install --no-dev
         echo "INFO: Dump env file"
         composer dump-env prod
+        echo "INFO: Install/update PHP packages"
+        composer install --no-dev
         echo "INFO: Clear application cache"
         APP_ENV=prod APP_DEBUG=0 php "${BIN_DIR}"/console cache:clear -n
         echo "INFO: Perform database migration"
