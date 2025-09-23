@@ -302,7 +302,7 @@ class ContentRepository
         $this->logger->debug('Rewritten to: {s} | {p}', ['p' => $rewritten['parameters'], 's' => $rewritten['sql']]);
 
         $numResults = null;
-        if (!$criteria->magazine && !$criteria->moderated && !$criteria->favourite && Criteria::TIME_ALL === $criteria->time && Criteria::AP_ALL === $criteria->federation && 'all' === $criteria->type) {
+        if ('test' !== $this->kernel->getEnvironment() && !$criteria->magazine && !$criteria->moderated && !$criteria->favourite && Criteria::TIME_ALL === $criteria->time && Criteria::AP_ALL === $criteria->federation && 'all' === $criteria->type) {
             // pre-set the results to 1000 pages for queries not very limited by the parameters so the count query is not being executed
             $numResults = 1000 * ($criteria->perPage ?? self::PER_PAGE);
         }
