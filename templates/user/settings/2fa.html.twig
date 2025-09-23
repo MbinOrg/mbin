@@ -47,6 +47,7 @@
         <div class="container">
             {{ form_start(form) }}
             {{ form_row(form.totpCode) }}
+            {{ form_row(form.currentPassword) }}
             <div class="row actions">
                 <div><span class="cancel"><a href="{{ path('user_settings_password') }}">{{ 'cancel'|trans }}</a></span></div>
                 {{ form_row(form.submit, {label: '2fa.add', attr: {class: 'btn btn__primary'}}) }}

@@ -12,24 +12,11 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class UserTwoFactorType extends AbstractType
+class UserDisable2FAType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add(
-                'totpCode',
-                TextType::class,
-                [
-                    'label' => '2fa.verify_authentication_code.label',
-                    'mapped' => false,
-                    'attr' => [
-                        'autocomplete' => 'one-time-code',
-                        'inputmode' => 'numeric',
-                        'pattern' => '[0-9]*',
-                    ],
-                ],
-            )
             ->add('currentPassword', PasswordType::class, [
                 'label' => 'current_password',
                 'mapped' => false,
@@ -38,6 +25,18 @@ class UserTwoFactorType extends AbstractType
                     'data-controller' => 'password-preview',
                 ],
             ])
+            ->add('totpCode',
+                TextType::class,
+                [
+                    'label' => '2fa.authentication_code.label',
+                    'mapped' => false,
+                    'attr' => [
+                        'autocomplete' => 'one-time-code',
+                        'inputmode' => 'numeric',
+                        'pattern' => '[0-9]*',
+                    ],
+                ],
+            )
             ->add('submit', SubmitType::class);
     }
 
