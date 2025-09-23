@@ -68,6 +68,8 @@ class NativeQueryAdapter implements AdapterInterface
             return Types::DATETIMETZ_IMMUTABLE;
         } elseif ($value instanceof \DateTime) {
             return Types::DATETIMETZ_MUTABLE;
+        } elseif (\is_int($value)) {
+            return Types::INTEGER;
         }
 
         return ParameterType::STRING;

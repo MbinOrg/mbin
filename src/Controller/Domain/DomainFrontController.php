@@ -6,10 +6,8 @@ namespace App\Controller\Domain;
 
 use App\Controller\AbstractController;
 use App\PageView\EntryPageView;
-use App\Repository\Criteria;
+use App\Repository\ContentRepository;
 use App\Repository\DomainRepository;
-use App\Repository\EntryRepository;
-use Pagerfanta\PagerfantaInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +17,7 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 class DomainFrontController extends AbstractController
 {
     public function __construct(
-        private readonly EntryRepository $entryRepository,
+        private readonly ContentRepository $contentRepository,
         private readonly DomainRepository $domainRepository,
     ) {
     }
@@ -42,8 +40,9 @@ class DomainFrontController extends AbstractController
             ->setTime($criteria->resolveTime($time))
             ->setType($criteria->resolveType($type))
             ->setDomain($name);
-        $method = $criteria->resolveSort($sortBy);
-        $listing = $this->$method($criteria);
+        $resolvedSort = $criteria->resolveSort($sortBy);
+        $criteria->sortOption = $resolvedSort;
+        $listing = $this->contentRepository->findByCriteria($criteria);
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse(
@@ -66,30 +65,5 @@ class DomainFrontController extends AbstractController
                 'criteria' => $criteria,
             ]
         );
-    }
-
-    private function hot(EntryPageView $criteria): PagerfantaInterface
-    {
-        return $this->entryRepository->findByCriteria($criteria->showSortOption(Criteria::SORT_HOT));
-    }
-
-    private function top(EntryPageView $criteria): PagerfantaInterface
-    {
-        return $this->entryRepository->findByCriteria($criteria->showSortOption(Criteria::SORT_TOP));
-    }
-
-    private function active(EntryPageView $criteria): PagerfantaInterface
-    {
-        return $this->entryRepository->findByCriteria($criteria->showSortOption(Criteria::SORT_ACTIVE));
-    }
-
-    private function newest(EntryPageView $criteria): PagerfantaInterface
-    {
-        return $this->entryRepository->findByCriteria($criteria->showSortOption(Criteria::SORT_NEW));
-    }
-
-    private function commented(EntryPageView $criteria): PagerfantaInterface
-    {
-        return $this->entryRepository->findByCriteria($criteria->showSortOption(Criteria::SORT_COMMENTED));
     }
 }

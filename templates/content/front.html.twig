@@ -8,10 +8,24 @@
             {{- magazine.title }} - {{ parent() -}}
         {% endif %}
     {%- else -%}
-        {% if get_active_sort_option('sortBy') is not same as get_default_sort_option() %}
-            {{- get_active_sort_option('sortBy')|trans|capitalize }} - {{ parent() }} - {{ kbin_meta_description() -}}
+        {% if criteria.getOption('content') == 'threads' %}
+            {% if get_active_sort_option('sortBy') is not same as get_default_sort_option() %}
+                {{- get_active_sort_option('sortBy')|trans|capitalize }} - {{ 'thread'|trans }} - {{ parent() }}
+            {% else %}
+                {{- 'thread'|trans }} - {{ parent() -}}
+            {% endif %}
+        {% elseif criteria.getOption('content') == 'microblog' %}
+            {% if get_active_sort_option('sortBy') is not same as get_default_sort_option() %}
+                {{- get_active_sort_option('sortBy')|trans|capitalize }} - {{ 'microblog'|trans }} - {{ parent() }}
+            {% else %}
+                {{- 'microblog'|trans }} - {{ parent() -}}
+            {% endif %}
         {% else %}
-            {{- parent() }} - {{ kbin_meta_description() -}}
+            {% if get_active_sort_option('sortBy') is not same as get_default_sort_option() %}
+                {{- get_active_sort_option('sortBy')|trans|capitalize }} - {{ parent() }} - {{ kbin_meta_description() -}}
+            {% else %}
+                {{- parent() }} - {{ kbin_meta_description() -}}
+            {% endif %}
         {% endif %}
     {%- endif -%}
 {%- endblock -%}
@@ -49,7 +63,16 @@
             <h1 hidden>{{ get_active_sort_option()|trans }}</h1>
         {% endif %}
     </header>
-    {% include 'entry/_options.html.twig' %}
+    {% if criteria is defined %}
+        {% if criteria.getOption('content') == 'microblog' %}
+            <section class="section section--top">
+                {% include 'post/_form_post.html.twig' %}
+            </section>
+            {% include 'post/_options.html.twig' %}
+        {% else %}
+            {% include 'entry/_options.html.twig' %}
+        {% endif %}
+    {% endif %}
     {% include 'layout/_flash.html.twig' %}
     {% if magazine is defined and magazine %}
         {% include 'magazine/_restricted_info.html.twig' %}
@@ -57,7 +80,7 @@
         {% include 'magazine/_visibility_info.html.twig' %}
     {% endif %}
     <div id="content">
-        {% include 'entry/_list.html.twig' %}
+        {{ include('content/_list.html.twig') }}
     </div>
 {% endblock %}
 
