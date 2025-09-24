@@ -77,14 +77,15 @@ If you want to use OAuth for the API, do the following **before** creating the D
 
 To run test inside the Dev Container, some preparation is needed.
 These steps have to be repeated after every recreation of the Container:
-1. run `sudo pg_createcluster 13 tests --port=5433 --start`
-2. run `sudo su postgres -c 'psql -p 5433 -U postgres -d postgres'`
-3. inside the SQL shell, run `CREATE USER mbin WITH PASSWORD 'ChangeThisPostgresPass' SUPERUSER;`
 
-Now the testsuite can be launched with
+1. Run: `sudo pg_createcluster 13 tests --port=5433 --start`
+2. Run: `sudo su postgres -c 'psql -p 5433 -U postgres -d postgres'`
+3. Inside the SQL shell, run: `CREATE USER mbin WITH PASSWORD 'ChangeThisPostgresPass' SUPERUSER;`
+
+Now the testsuite can be launched with:
 `SYMFONY_DEPRECATIONS_HELPER=disabled php -d memory_limit=-1 ./bin/phpunit tests/Unit`
-or `SYMFONY_DEPRECATIONS_HELPER=disabled php -d memory_limit=-1 ./bin/phpunit tests/Functional/<path to tests to run>`.\
-For more information, read the *Testing* section on this page.
+or: `SYMFONY_DEPRECATIONS_HELPER=disabled php -d memory_limit=-1 ./bin/phpunit tests/Functional/<path to tests to run>`.\
+For more information, read the [Testing](#testing) section on this page.
 
 ## Bare metal installation
 
