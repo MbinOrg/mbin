@@ -405,14 +405,15 @@ class ApHttpClient implements ApHttpClientInterface
     /**
      * Sends a POST request to the specified URL with optional request body and caching mechanism.
      *
-     * @param string        $url   the URL to which the POST request will be sent
-     * @param User|Magazine $actor The actor initiating the request, either a User or Magazine object
-     * @param array|null    $body  (Optional) The body of the POST request. Defaults to null.
+     * @param string        $url              the URL to which the POST request will be sent
+     * @param User|Magazine $actor            The actor initiating the request, either a User or Magazine object
+     * @param array|null    $body             (Optional) The body of the POST request. Defaults to null.
+     * @param bool          $useOldPrivateKey (Optional) Whether to use the old private key for signing (e.g. to send an update activity rotating the private key)
      *
      * @throws InvalidApPostException      if the POST request fails with a non-2xx response status code
      * @throws TransportExceptionInterface
      */
-    public function post(string $url, User|Magazine $actor, ?array $body = null): void
+    public function post(string $url, User|Magazine $actor, ?array $body = null, bool $useOldPrivateKey = false): void
     {
         $cacheKey = 'ap_'.hash('sha256', $url.':'.$body['id']);
 
@@ -437,7 +438,7 @@ class ApHttpClient implements ApHttpClientInterface
                 'max_duration' => self::MAX_DURATION,
                 'timeout' => self::TIMEOUT,
                 'body' => $jsonBody,
-                'headers' => $this->getHeaders($url, $actor, $body),
+                'headers' => $this->getHeaders($url, $actor, $body, $useOldPrivateKey),
             ]);
 
             $statusCode = $response->getStatusCode();
@@ -559,12 +560,15 @@ class ApHttpClient implements ApHttpClientInterface
         }, array_keys($headers), $headers);
     }
 
-    private function getHeaders(string $url, User|Magazine $actor, ?array $body = null): array
+    private function getHeaders(string $url, User|Magazine $actor, ?array $body = null, bool $useOldPrivateKey = false): array
     {
+        if ($useOldPrivateKey) {
+            $this->logger->debug('[ApHttpClient::getHeaders] Signing headers using the old private key');
+        }
         $headers = self::headersToSign($url, $body ? self::digest($body) : null);
         $stringToSign = self::headersToSigningString($headers);
         $signedHeaders = implode(' ', array_map('strtolower', array_keys($headers)));
-        $key = openssl_pkey_get_private($actor->privateKey);
+        $key = openssl_pkey_get_private($useOldPrivateKey ? $actor->oldPrivateKey : $actor->privateKey);
         if (false !== $key) {
             $success_sign = openssl_sign($stringToSign, $signature, $key, OPENSSL_ALGO_SHA256);
         } else {
