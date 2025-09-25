@@ -196,10 +196,10 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/thepaperpilot">
-                    <img src="https://avatars.githubusercontent.com/u/3683148?v=4" width="100;" alt="thepaperpilot"/>
+                <a href="https://github.com/andrewmoise">
+                    <img src="https://avatars.githubusercontent.com/u/8404538?v=4" width="100;" alt="andrewmoise"/>
                     <br />
-                    <sub><b>Anthony Lawn</b></sub>
+                    <sub><b>andrewmoise</b></sub>
                 </a>
             </td>
 		</tr>
@@ -212,10 +212,10 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/andrewmoise">
-                    <img src="https://avatars.githubusercontent.com/u/8404538?v=4" width="100;" alt="andrewmoise"/>
+                <a href="https://github.com/thepaperpilot">
+                    <img src="https://avatars.githubusercontent.com/u/3683148?v=4" width="100;" alt="thepaperpilot"/>
                     <br />
-                    <sub><b>andrewmoise</b></sub>
+                    <sub><b>Anthony Lawn</b></sub>
                 </a>
             </td>
             <td align="center">
@@ -226,33 +226,10 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/ryanmonsen">
-                    <img src="https://avatars.githubusercontent.com/u/55466117?v=4" width="100;" alt="ryanmonsen"/>
+                <a href="https://github.com/lilfade">
+                    <img src="https://avatars.githubusercontent.com/u/4168401?v=4" width="100;" alt="lilfade"/>
                     <br />
-                    <sub><b>ryanmonsen</b></sub>
-                </a>
-            </td>
-            <td align="center">
-                <a href="https://github.com/drupol">
-                    <img src="https://avatars.githubusercontent.com/u/252042?v=4" width="100;" alt="drupol"/>
-                    <br />
-                    <sub><b>Pol Dellaiera</b></sub>
-                </a>
-            </td>
-            <td align="center">
-                <a href="https://github.com/MakaryGo">
-                    <img src="https://avatars.githubusercontent.com/u/24472656?v=4" width="100;" alt="MakaryGo"/>
-                    <br />
-                    <sub><b>Makary</b></sub>
-                </a>
-            </td>
-		</tr>
-		<tr>
-            <td align="center">
-                <a href="https://github.com/cavebob">
-                    <img src="https://avatars.githubusercontent.com/u/75441692?v=4" width="100;" alt="cavebob"/>
-                    <br />
-                    <sub><b>cavebob</b></sub>
+                    <sub><b>Bryson</b></sub>
                 </a>
             </td>
             <td align="center">
@@ -263,10 +240,33 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/lilfade">
-                    <img src="https://avatars.githubusercontent.com/u/4168401?v=4" width="100;" alt="lilfade"/>
+                <a href="https://github.com/cavebob">
+                    <img src="https://avatars.githubusercontent.com/u/75441692?v=4" width="100;" alt="cavebob"/>
                     <br />
-                    <sub><b>Bryson</b></sub>
+                    <sub><b>cavebob</b></sub>
+                </a>
+            </td>
+		</tr>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/MakaryGo">
+                    <img src="https://avatars.githubusercontent.com/u/24472656?v=4" width="100;" alt="MakaryGo"/>
+                    <br />
+                    <sub><b>Makary</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/drupol">
+                    <img src="https://avatars.githubusercontent.com/u/252042?v=4" width="100;" alt="drupol"/>
+                    <br />
+                    <sub><b>Pol Dellaiera</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/ryanmonsen">
+                    <img src="https://avatars.githubusercontent.com/u/55466117?v=4" width="100;" alt="ryanmonsen"/>
+                    <br />
+                    <sub><b>ryanmonsen</b></sub>
                 </a>
             </td>
             <td align="center">
@@ -297,6 +297,13 @@ Unofficial magazines:
                     <img src="https://avatars.githubusercontent.com/u/1519467?v=4" width="100;" alt="robertolopezlopez"/>
                     <br />
                     <sub><b>Roberto López López</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/blued-gear">
+                    <img src="https://avatars.githubusercontent.com/u/164888202?v=4" width="100;" alt="blued-gear"/>
+                    <br />
+                    <sub><b>blued_gear</b></sub>
                 </a>
             </td>
             <td align="center">
