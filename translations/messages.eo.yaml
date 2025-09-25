@@ -1053,3 +1053,16 @@ show_rich_ap_link_help: Bildigi enlinian komponenton kiam alia
 attitude: Sinteno
 type_search_magazine: Limigi serĉon al revuo...
 type_search_user: Limigi serĉon al aŭtoro...
+modlog_type_entry_deleted: Fadeno forigita
+modlog_type_entry_restored: Fadeno restarigita
+modlog_type_entry_comment_deleted: Komento pri fadeno forigita
+modlog_type_entry_comment_restored: Fadenkomento restarigita
+modlog_type_entry_pinned: Fadeno alpinglita
+modlog_type_entry_unpinned: Fadeno malfiksita
+modlog_type_post_deleted: Mikroblogo forigita
+modlog_type_post_restored: Mikroblogo restarigita
+modlog_type_post_comment_deleted: Respondo al mikroblogo forigita
+modlog_type_post_comment_restored: Respondo al mikroblogo restarigita
+modlog_type_ban: Uzanto malpermesita de revuo
+modlog_type_moderator_add: Revumoderigisto aldonita
+modlog_type_moderator_remove: Revuomoderigisto forigita

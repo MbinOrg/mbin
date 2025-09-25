@@ -1101,3 +1101,16 @@ search_type_actors: Revistes i comptes
 search_type_content: Temes i microblogs
 type_search_magazine: Limitar la cerca a la revista...
 type_search_user: Limitar la cerca a l'autoria...
+modlog_type_entry_deleted: Fil suprimit
+modlog_type_entry_restored: Fil restaurat
+modlog_type_entry_comment_deleted: Comentari del fil suprimit
+modlog_type_entry_comment_restored: Comentari del fil restaurat
+modlog_type_entry_pinned: Fil fixat
+modlog_type_entry_unpinned: Fil deixat de fixar
+modlog_type_post_deleted: Microblog suprimit
+modlog_type_post_restored: Microblog restaurat
+modlog_type_post_comment_deleted: Resposta del microblog suprimida
+modlog_type_post_comment_restored: Resposta del microblog restaurada
+modlog_type_ban: Compte expulsat de la revista
+modlog_type_moderator_add: Moderador(a) de la revista afegit(da)
+modlog_type_moderator_remove: Moderador(a) de la revista destituït(da)
