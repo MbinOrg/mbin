@@ -258,7 +258,7 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
 
     public function containsBannedHashtags(): bool
     {
-        foreach ($this->hashtags as /** @var $hashtag HashtagLink */ $hashtag) {
+        foreach ($this->hashtags as /** @var HashtagLink $hashtag */ $hashtag) {
             if ($hashtag->hashtag->banned) {
                 return true;
             }

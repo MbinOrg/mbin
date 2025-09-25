@@ -254,7 +254,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
 
     public function containsBannedHashtags(): bool
     {
-        foreach ($this->hashtags as /** @var $hashtag HashtagLink */ $hashtag) {
+        foreach ($this->hashtags as /** @var HashtagLink $hashtag */ $hashtag) {
             if ($hashtag->hashtag->banned) {
                 return true;
             }

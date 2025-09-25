@@ -80,7 +80,7 @@ class PostCommentFactory
             return $toReturn;
         }
 
-        foreach ($comment->getChildrenByCriteria($criteria) as /** @var $childComment PostComment */ $childComment) {
+        foreach ($comment->getChildrenByCriteria($criteria) as /** @var PostComment $childComment */ $childComment) {
             \assert($childComment instanceof PostComment);
             if (($user = $this->security->getUser()) && $user instanceof User) {
                 if ($user->isBlocked($childComment->user)) {

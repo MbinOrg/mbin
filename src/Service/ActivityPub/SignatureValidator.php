@@ -26,11 +26,11 @@ readonly class SignatureValidator
     /**
      * Attempts to validate an incoming signed HTTP request.
      *
-     * @phpstan-param RequestType $request
-     *
      * @param array  $request The information about the incoming request
      * @param array  $headers Headers attached to the incoming request
      * @param string $body    The body of the incoming request
+     *
+     * @phpstan-param RequestType $request
      *
      * @throws InvalidApSignatureException   The HTTP request was not signed appropriately
      * @throws InvalidUserPublicKeyException The public key of the specified user is invalid or null

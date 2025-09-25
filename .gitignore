@@ -66,6 +66,7 @@ yarn-error.log
 .phpunit.result.cache
 clover.xml
 /coverage
+/.phpunit.cache/
 ###< phpunit/phpunit ###
 
 ###> phpstan/phpstan ###
