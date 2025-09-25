@@ -89,6 +89,7 @@ abstract class Criteria
     public ?string $tag = null;
     public ?string $domain = null;
     public ?array $languages = null;
+    public bool $stickiesFirst = false;
 
     public const THEME_MBIN = 'mbin';
     public const THEME_KBIN = 'kbin';

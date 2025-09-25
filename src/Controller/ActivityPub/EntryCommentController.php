@@ -41,7 +41,7 @@ class EntryCommentController extends AbstractController
 
         $this->handlePrivateContent($comment);
 
-        $response = new JsonResponse($this->commentNoteFactory->create($comment, $this->tagLinkRepository->getTagsOfEntryComment($comment), true));
+        $response = new JsonResponse($this->commentNoteFactory->create($comment, $this->tagLinkRepository->getTagsOfContent($comment), true));
 
         $response->headers->set('Content-Type', 'application/activity+json');
 

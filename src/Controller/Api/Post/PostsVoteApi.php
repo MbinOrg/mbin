@@ -100,7 +100,7 @@ class PostsVoteApi extends PostsBaseApi
         $manager->vote($choice, $post, $this->getUserOrThrow(), rateLimit: false);
 
         return new JsonResponse(
-            $this->serializePost($factory->createDto($post), $this->tagLinkRepository->getTagsOfPost($post)),
+            $this->serializePost($factory->createDto($post), $this->tagLinkRepository->getTagsOfContent($post)),
             headers: $headers
         );
     }

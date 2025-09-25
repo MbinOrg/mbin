@@ -25,14 +25,49 @@ class SqlHelpers
         $where = 'WHERE ';
         $i = 0;
         foreach ($whereClauses as $whereClause) {
+            if (empty($whereClause)) {
+                continue;
+            }
+
             if ($i > 0) {
                 $where .= ' AND ';
             }
-            $where .= $whereClause;
+            $where .= "($whereClause)";
             ++$i;
         }
 
         return $where;
+    }
+
+    /**
+     * This method rewrites the parameter array and the native sql string to make use of array parameters
+     * which are not supported by sql directly. Keep in mind that postgresql has a limit of 65k parameters
+     * and each one of the array values counts as one parameter (because it only works that way).
+     *
+     * @return array{'sql': string, 'parameters': array}>
+     */
+    public static function rewriteArrayParameters(array $parameters, string $sql): array
+    {
+        $newParameters = [];
+        $newSql = $sql;
+        foreach ($parameters as $name => $value) {
+            if (\is_array($value)) {
+                $size = \sizeof($value);
+                $newParameterNames = [];
+                for ($i = 0; $i < $size; ++$i) {
+                    $newParameters["$name$i"] = $value[$i];
+                    $newParameterNames[] = ":$name$i";
+                }
+                $newSql = str_replace(":$name", join(',', $newParameterNames), $sql);
+            } else {
+                $newParameters[$name] = $value;
+            }
+        }
+
+        return [
+            'parameters' => $newParameters,
+            'sql' => $newSql,
+        ];
     }
 
     public function getBlockedMagazinesDql(User $user): string

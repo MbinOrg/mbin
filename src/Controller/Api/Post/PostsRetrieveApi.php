@@ -11,6 +11,7 @@ use App\Entity\Post;
 use App\Event\Post\PostHasBeenSeenEvent;
 use App\Factory\PostFactory;
 use App\PageView\PostPageView;
+use App\Repository\ContentRepository;
 use App\Repository\Criteria;
 use App\Repository\PostRepository;
 use App\Schema\PaginationSchema;
@@ -84,7 +85,7 @@ class PostsRetrieveApi extends PostsBaseApi
         $dto = $factory->createDto($post);
 
         return new JsonResponse(
-            $this->serializePost($dto, $this->tagLinkRepository->getTagsOfPost($post)),
+            $this->serializePost($dto, $this->tagLinkRepository->getTagsOfContent($post)),
             headers: $headers
         );
     }
@@ -203,7 +204,7 @@ class PostsRetrieveApi extends PostsBaseApi
             try {
                 \assert($value instanceof Post);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfPost($value)));
+                array_push($dtos, $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value)));
             } catch (\Exception $e) {
                 continue;
             }
@@ -304,24 +305,27 @@ class PostsRetrieveApi extends PostsBaseApi
     #[Security(name: 'oauth2', scopes: ['read'])]
     #[IsGranted('ROLE_OAUTH2_READ')]
     public function subscribed(
-        PostRepository $repository,
+        ContentRepository $repository,
         PostFactory $factory,
-        RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
         SymfonySecurity $security,
+        #[MapQueryParameter] ?int $p,
+        #[MapQueryParameter] ?int $perPage,
+        #[MapQueryParameter] ?string $sort,
+        #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
-        $criteria = new PostPageView((int) $request->getCurrentRequest()->get('p', 1), $security);
-        $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_HOT);
-        $criteria->time = $criteria->resolveTime(
-            $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
-        );
-        $criteria->perPage = self::constrainPerPage($request->getCurrentRequest()->get('perPage', PostRepository::PER_PAGE));
+        $criteria = new PostPageView($p ?? 1, $security);
+        $criteria->sortOption = $sort ?? Criteria::SORT_HOT;
+        $criteria->time = $criteria->resolveTime($time ?? Criteria::TIME_ALL);
+        $criteria->perPage = self::constrainPerPage($perPage ?? ContentRepository::PER_PAGE);
         $criteria->setFederation($federation ?? Criteria::AP_ALL);
+
         $criteria->subscribed = true;
+        $criteria->setContent(Criteria::CONTENT_MICROBLOG);
 
         $this->handleLanguageCriteria($criteria);
 
@@ -332,7 +336,7 @@ class PostsRetrieveApi extends PostsBaseApi
             try {
                 \assert($value instanceof Post);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfPost($value)));
+                array_push($dtos, $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value)));
             } catch (\Exception $e) {
                 continue;
             }
@@ -421,24 +425,27 @@ class PostsRetrieveApi extends PostsBaseApi
     #[Security(name: 'oauth2', scopes: ['moderate:post'])]
     #[IsGranted('ROLE_OAUTH2_MODERATE:POST')]
     public function moderated(
-        PostRepository $repository,
+        ContentRepository $repository,
         PostFactory $factory,
-        RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
         SymfonySecurity $security,
+        #[MapQueryParameter] ?int $p,
+        #[MapQueryParameter] ?int $perPage,
+        #[MapQueryParameter] ?string $sort,
+        #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
-        $criteria = new PostPageView((int) $request->getCurrentRequest()->get('p', 1), $security);
-        $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_NEW);
-        $criteria->time = $criteria->resolveTime(
-            $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
-        );
-        $criteria->perPage = self::constrainPerPage($request->getCurrentRequest()->get('perPage', PostRepository::PER_PAGE));
+        $criteria = new PostPageView($p ?? 1, $security);
+        $criteria->sortOption = $sort ?? Criteria::SORT_HOT;
+        $criteria->time = $criteria->resolveTime($time ?? Criteria::TIME_ALL);
+        $criteria->perPage = self::constrainPerPage($perPage ?? ContentRepository::PER_PAGE);
         $criteria->setFederation($federation ?? Criteria::AP_ALL);
+
         $criteria->moderated = true;
+        $criteria->setContent(Criteria::CONTENT_MICROBLOG);
 
         $posts = $repository->findByCriteria($criteria);
 
@@ -447,7 +454,7 @@ class PostsRetrieveApi extends PostsBaseApi
             try {
                 \assert($value instanceof Post);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfPost($value)));
+                array_push($dtos, $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value)));
             } catch (\Exception $e) {
                 continue;
             }
@@ -531,24 +538,27 @@ class PostsRetrieveApi extends PostsBaseApi
     #[Security(name: 'oauth2', scopes: ['post:vote'])]
     #[IsGranted('ROLE_OAUTH2_POST:VOTE')]
     public function favourited(
-        PostRepository $repository,
+        ContentRepository $repository,
         PostFactory $factory,
-        RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
         SymfonySecurity $security,
+        #[MapQueryParameter] ?int $p,
+        #[MapQueryParameter] ?int $perPage,
+        #[MapQueryParameter] ?string $sort,
+        #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
-        $criteria = new PostPageView((int) $request->getCurrentRequest()->get('p', 1), $security);
-        $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_HOT);
-        $criteria->time = $criteria->resolveTime(
-            $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
-        );
-        $criteria->perPage = self::constrainPerPage($request->getCurrentRequest()->get('perPage', PostRepository::PER_PAGE));
+        $criteria = new PostPageView($p ?? 1, $security);
+        $criteria->sortOption = $sort ?? Criteria::SORT_HOT;
+        $criteria->time = $criteria->resolveTime($time ?? Criteria::TIME_ALL);
+        $criteria->perPage = self::constrainPerPage($perPage ?? ContentRepository::PER_PAGE);
         $criteria->setFederation($federation ?? Criteria::AP_ALL);
+
         $criteria->favourite = true;
+        $criteria->setContent(Criteria::CONTENT_MICROBLOG);
 
         $this->logger->debug(var_export($criteria, true));
 
@@ -559,7 +569,7 @@ class PostsRetrieveApi extends PostsBaseApi
             try {
                 \assert($value instanceof Post);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfPost($value)));
+                array_push($dtos, $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value)));
             } catch (\Exception $e) {
                 continue;
             }
@@ -671,28 +681,30 @@ class PostsRetrieveApi extends PostsBaseApi
     public function byMagazine(
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
-        PostRepository $repository,
+        ContentRepository $repository,
         PostFactory $factory,
-        RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
         SymfonySecurity $security,
+        #[MapQueryParameter] ?int $p,
+        #[MapQueryParameter] ?int $perPage,
+        #[MapQueryParameter] ?string $sort,
+        #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
-        $criteria = new PostPageView((int) $request->getCurrentRequest()->get('p', 1), $security);
-        $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_HOT);
-        $criteria->time = $criteria->resolveTime(
-            $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
-        );
-        $criteria->perPage = self::constrainPerPage($request->getCurrentRequest()->get('perPage', PostRepository::PER_PAGE));
+        $criteria = new PostPageView($p ?? 1, $security);
+        $criteria->sortOption = $sort ?? Criteria::SORT_HOT;
+        $criteria->time = $criteria->resolveTime($time ?? Criteria::TIME_ALL);
+        $criteria->perPage = self::constrainPerPage($perPage ?? ContentRepository::PER_PAGE);
         $criteria->setFederation($federation ?? Criteria::AP_ALL);
         $criteria->stickiesFirst = true;
 
         $this->handleLanguageCriteria($criteria);
 
         $criteria->magazine = $magazine;
+        $criteria->setContent(Criteria::CONTENT_MICROBLOG);
 
         $posts = $repository->findByCriteria($criteria);
 
@@ -701,7 +713,7 @@ class PostsRetrieveApi extends PostsBaseApi
             try {
                 \assert($value instanceof Post);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfPost($value)));
+                array_push($dtos, $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value)));
             } catch (\Exception $e) {
                 continue;
             }
