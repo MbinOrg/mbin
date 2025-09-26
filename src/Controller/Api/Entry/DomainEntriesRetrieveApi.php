@@ -157,7 +157,7 @@ class DomainEntriesRetrieveApi extends EntriesBaseApi
             try {
                 \assert($value instanceof Entry);
                 $this->handlePrivateContent($value);
-                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value), $this->entryRepository->findCross($value));
+                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value));
             } catch (\Exception $e) {
                 continue;
             }

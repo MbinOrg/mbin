@@ -36,6 +36,7 @@ class MagazineEntryRetrieveApiTest extends WebTestCase
         self::assertSame($magazine->getId(), $jsonData['items'][0]['magazine']['magazineId']);
         self::assertEquals('link', $jsonData['items'][0]['type']);
         self::assertSame(0, $jsonData['items'][0]['numComments']);
+        self::assertNull($jsonData['items'][0]['crosspostedEntries']);
     }
 
     public function testApiCanGetMagazineEntries(): void
@@ -72,6 +73,7 @@ class MagazineEntryRetrieveApiTest extends WebTestCase
         self::assertSame($magazine->getId(), $jsonData['items'][0]['magazine']['magazineId']);
         self::assertEquals('link', $jsonData['items'][0]['type']);
         self::assertSame(0, $jsonData['items'][0]['numComments']);
+        self::assertNull($jsonData['items'][0]['crosspostedEntries']);
     }
 
     public function testApiCanGetMagazineEntriesPinnedFirst(): void
@@ -118,6 +120,7 @@ class MagazineEntryRetrieveApiTest extends WebTestCase
         self::assertSame(0, $jsonData['items'][0]['numComments']);
         self::assertSame(0, $jsonData['items'][0]['uv']);
         self::assertTrue($jsonData['items'][0]['isPinned']);
+        self::assertNull($jsonData['items'][0]['crosspostedEntries']);
 
         self::assertIsArray($jsonData['items'][1]);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][1]);
@@ -129,6 +132,7 @@ class MagazineEntryRetrieveApiTest extends WebTestCase
         self::assertSame(1, $jsonData['items'][1]['numComments']);
         self::assertSame(1, $jsonData['items'][1]['uv']);
         self::assertFalse($jsonData['items'][1]['isPinned']);
+        self::assertNull($jsonData['items'][1]['crosspostedEntries']);
     }
 
     public function testApiCanGetMagazineEntriesNewest(): void

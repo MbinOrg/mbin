@@ -54,7 +54,9 @@ class EntryResponseDto implements \JsonSerializable
     public ?array $bookmarks = null;
 
     /**
-     * @var EntryResponseDto[]|null $crosspostedEntries other entries that share either the link or the title (if that is longer than 10 characters)
+     * @var EntryResponseDto[]|null $crosspostedEntries other entries that share either the link or the title (if that is longer than 10 characters).
+     *                              If this property is null it means that this endpoint does not contain information about it,
+     *                              only an empty array means that there are no crossposts
      */
     #[OA\Property(type: 'array', items: new OA\Items(ref: new Model(type: EntryResponseDto::class)))]
     public ?array $crosspostedEntries;

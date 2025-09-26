@@ -40,6 +40,7 @@ class UserEntryRetrieveApiTest extends WebTestCase
         self::assertSame($otherUser->getId(), $jsonData['items'][0]['user']['userId']);
         self::assertEquals('link', $jsonData['items'][0]['type']);
         self::assertSame(0, $jsonData['items'][0]['numComments']);
+        self::assertNull($jsonData['items'][0]['crosspostedEntries']);
     }
 
     public function testApiCanGetUserEntries(): void
@@ -80,6 +81,7 @@ class UserEntryRetrieveApiTest extends WebTestCase
         self::assertSame($otherUser->getId(), $jsonData['items'][0]['user']['userId']);
         self::assertEquals('link', $jsonData['items'][0]['type']);
         self::assertSame(0, $jsonData['items'][0]['numComments']);
+        self::assertNull($jsonData['items'][0]['crosspostedEntries']);
     }
 
     public function testApiCanGetUserEntriesNewest(): void
@@ -381,5 +383,6 @@ class UserEntryRetrieveApiTest extends WebTestCase
         self::assertEquals('link', $jsonData['items'][0]['type']);
         self::assertEquals('another-entry', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertNull($jsonData['items'][0]['crosspostedEntries']);
     }
 }
