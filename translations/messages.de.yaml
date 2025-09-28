@@ -1094,3 +1094,16 @@ search_type_actors: Magazine + Nutzer
 search_type_content: Themen + Mikroblogs
 type_search_magazine: Suche auf Magazin eingrenzen...
 type_search_user: Suche auf Author eingrenzen...
+modlog_type_entry_deleted: Thema gelöscht
+modlog_type_entry_restored: Thema wiederhergestellt
+modlog_type_entry_comment_deleted: Themen-Kommentar gelöscht
+modlog_type_entry_comment_restored: Themen-Kommentar wiederhergestellt
+modlog_type_entry_pinned: Thema angeheftet
+modlog_type_entry_unpinned: Thema gelöst
+modlog_type_post_deleted: Mikroblog gelöscht
+modlog_type_post_restored: Mikroblog wiederhergestellt
+modlog_type_post_comment_deleted: Mikroblog-Kommentar gelöscht
+modlog_type_post_comment_restored: Mikroblog-Kommentar wiederhergestellt
+modlog_type_ban: Nutzer vom Magazine gebannt
+modlog_type_moderator_add: Magazin-Moderator hinzugefügt
+modlog_type_moderator_remove: Magazin-Moderator entfernt
