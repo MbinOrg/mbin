@@ -8,6 +8,7 @@ use App\Controller\Traits\PrivateContentTrait;
 use App\DTO\EntryResponseDto;
 use App\Entity\Domain;
 use App\Entity\Entry;
+use App\Entity\User;
 use App\Factory\EntryFactory;
 use App\PageView\EntryPageView;
 use App\Repository\ContentRepository;
@@ -145,6 +146,10 @@ class DomainEntriesRetrieveApi extends EntriesBaseApi
         $criteria->sortOption = $sort ?? Criteria::SORT_HOT;
         $criteria->time = $criteria->resolveTime($time ?? Criteria::TIME_ALL);
         $this->handleLanguageCriteria($criteria);
+        $user = $security->getUser();
+        if ($user instanceof User) {
+            $criteria->fetchCachedItems($repository, $user);
+        }
 
         $criteria->perPage = self::constrainPerPage($perPage ?? ContentRepository::PER_PAGE);
 

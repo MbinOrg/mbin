@@ -9,6 +9,7 @@ use App\Controller\Traits\PrivateContentTrait;
 use App\DTO\ContentResponseDto;
 use App\Entity\Entry;
 use App\Entity\Post;
+use App\Entity\User;
 use App\PageView\ContentPageView;
 use App\Repository\ContentRepository;
 use App\Repository\Criteria;
@@ -254,6 +255,10 @@ class ContentRetrieveApi extends BaseApi
         $this->handleLanguageCriteria($criteria);
         $criteria->content = Criteria::CONTENT_THREADS;
         $criteria->perPage = $perPage;
+        $user = $security->getUser();
+        if ($user instanceof User) {
+            $criteria->fetchCachedItems($contentRepository, $user);
+        }
 
         switch ($collectionType) {
             case 'sub':
