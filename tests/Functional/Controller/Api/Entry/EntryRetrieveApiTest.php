@@ -1199,6 +1199,10 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertFalse($jsonData['items'][1]['isAuthorModeratorInMagazine']);
     }
 
+    /**
+     * This function tests that the collection endpoint does not contain crosspost information,
+     * but fetching a single entry does.
+     */
     public function testApiContainsCrosspostInformation(): void
     {
         $magazine1 = $this->getMagazineByName('acme');
@@ -1227,17 +1231,29 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertIsArray($jsonData['items'][0]);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][0]);
         self::assertSame($entry1->getId(), $jsonData['items'][0]['entryId']);
-        self::assertIsArray($jsonData['items'][0]['crosspostedEntries']);
-        self::assertCount(1, $jsonData['items'][0]['crosspostedEntries']);
-        self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][0]['crosspostedEntries'][0]);
-        self::assertSame($entry2->getId(), $jsonData['items'][0]['crosspostedEntries'][0]['entryId']);
+        self::assertNull($jsonData['items'][0]['crosspostedEntries']);
 
         self::assertIsArray($jsonData['items'][1]);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][1]);
         self::assertSame($entry2->getId(), $jsonData['items'][1]['entryId']);
-        self::assertIsArray($jsonData['items'][1]['crosspostedEntries']);
-        self::assertCount(1, $jsonData['items'][1]['crosspostedEntries']);
-        self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][1]['crosspostedEntries'][0]);
-        self::assertSame($entry1->getId(), $jsonData['items'][1]['crosspostedEntries'][0]['entryId']);
+        self::assertNull($jsonData['items'][1]['crosspostedEntries']);
+
+        $this->client->request('GET', '/api/entry/'.$entry1->getId());
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData['crosspostedEntries']);
+        self::assertCount(1, $jsonData['crosspostedEntries']);
+        self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['crosspostedEntries'][0]);
+        self::assertSame($entry2->getId(), $jsonData['crosspostedEntries'][0]['entryId']);
+
+        $this->client->request('GET', '/api/entry/'.$entry2->getId());
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData['crosspostedEntries']);
+        self::assertCount(1, $jsonData['crosspostedEntries']);
+        self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['crosspostedEntries'][0]);
+        self::assertSame($entry1->getId(), $jsonData['crosspostedEntries'][0]['entryId']);
     }
 }

@@ -36,6 +36,7 @@ class DomainEntryRetrieveApiTest extends WebTestCase
         self::assertSame($magazine->getId(), $jsonData['items'][0]['magazine']['magazineId']);
         self::assertEquals('link', $jsonData['items'][0]['type']);
         self::assertSame(0, $jsonData['items'][0]['numComments']);
+        self::assertNull($jsonData['items'][0]['crosspostedEntries']);
     }
 
     public function testApiCanGetDomainEntries(): void
@@ -72,6 +73,7 @@ class DomainEntryRetrieveApiTest extends WebTestCase
         self::assertSame($magazine->getId(), $jsonData['items'][0]['magazine']['magazineId']);
         self::assertEquals('link', $jsonData['items'][0]['type']);
         self::assertSame(0, $jsonData['items'][0]['numComments']);
+        self::assertNull($jsonData['items'][0]['crosspostedEntries']);
     }
 
     public function testApiCanGetDomainEntriesNewest(): void
@@ -372,5 +374,6 @@ class DomainEntryRetrieveApiTest extends WebTestCase
         self::assertEquals('link', $jsonData['items'][0]['type']);
         self::assertEquals('another-entry', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertNull($jsonData['items'][0]['crosspostedEntries']);
     }
 }

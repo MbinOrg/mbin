@@ -164,7 +164,7 @@ class MagazineEntriesRetrieveApi extends EntriesBaseApi
         foreach ($entries->getCurrentPageResults() as $value) {
             try {
                 \assert($value instanceof Entry);
-                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value), $this->entryRepository->findCross($value));
+                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value));
             } catch (\Exception $e) {
                 continue;
             }
