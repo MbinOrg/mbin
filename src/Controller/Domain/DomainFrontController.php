@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Domain;
 
 use App\Controller\AbstractController;
+use App\Entity\User;
 use App\PageView\EntryPageView;
 use App\Repository\ContentRepository;
 use App\Repository\DomainRepository;
@@ -42,6 +43,12 @@ class DomainFrontController extends AbstractController
             ->setDomain($name);
         $resolvedSort = $criteria->resolveSort($sortBy);
         $criteria->sortOption = $resolvedSort;
+
+        $user = $security->getUser();
+        if ($user instanceof User) {
+            $criteria->fetchCachedItems($this->contentRepository, $user);
+        }
+
         $listing = $this->contentRepository->findByCriteria($criteria);
 
         if ($request->isXmlHttpRequest()) {
