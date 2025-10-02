@@ -29,6 +29,7 @@ class UserRetrieveApiTest extends WebTestCase
         'customCss',
         'ignoreMagazinesCustomCss',
         'notifyOnUserSignup',
+        'directMessageSetting',
     ];
     public const NUM_USERS = 10;
 
