@@ -892,3 +892,18 @@ account_settings_changed: Οι ρυθμίσεις λογαριασμού σου 
 magazine_deletion: Διαγραφή περιοδικού
 toolbar.emoji: Εμότζι
 edit_my_profile: Επεξεργασία του προφίλ μου
+type_search_term_url_handle: Τύπος αναζήτησης, διεύθυνση ή handle
+delete_magazine: Διαγραφή περιοδικού
+restore_magazine: Επαναφορά περιοδικού
+purge_magazine: Εκκαθάριση περιοδικού
+magazine_is_deleted: Το περιοδικό διαγράφεται. Μπορείς να κάνεις <a 
+  href="%link_target%">επαναφορά</a> μέσα σε 30 ημέρες.
+suspend_account: Αναστολή λογαριασμού
+unsuspend_account: Άρση αναστολής λογαριασμού
+account_suspended: Ο λογαριασμός έχει ανασταλεί.
+account_unsuspended: Ο λογαριασμός δεν είναι πλέον σε αναστολή.
+deletion: Διαγραφή
+user_suspend_desc: Η αναστολή του λογαριασμού σου κρύβει το περιεχόμενό σου από 
+  την οντότητα, αλλά δεν τον αφαιρεί μόνιμα και μπορείς να το επαναφέρεις ανά 
+  πάσα στιγμή.
+account_banned: Ο λογαριασμός έχει αποκλειστεί.
