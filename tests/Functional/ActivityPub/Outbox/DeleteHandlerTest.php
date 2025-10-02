@@ -27,11 +27,13 @@ class DeleteHandlerTest extends ActivityPubFunctionalTestCase
     private array $createRemotePostCommentInRemoteMagazine;
 
     private User $remotePoster;
+    private User $localPoster;
 
     public function setUp(): void
     {
         parent::setUp();
         $this->magazineManager->addModerator(new ModeratorDto($this->remoteMagazine, $this->localUser));
+        $this->localPoster = $this->getUserByUsername('localPoster', addImage: false);
     }
 
     public function setUpRemoteEntities(): void
@@ -247,6 +249,44 @@ class DeleteHandlerTest extends ActivityPubFunctionalTestCase
         self::assertNotNull($deleteActivity);
         $activityId = $this->urlGenerator->generate('ap_object', ['id' => $deleteActivity->uuid], UrlGeneratorInterface::ABSOLUTE_URL);
         $this->assertOneSentActivityOfType('Delete', $activityId);
+    }
+
+    public function testDeleteLocalEntryInRemoteMagazineByAuthor(): void
+    {
+        $entry = $this->createEntry('test local entry', $this->remoteMagazine, $this->localPoster);
+        $createEntryActivity = $this->activityRepository->findOneBy(['objectEntry' => $entry]);
+        $this->entityManager->remove($createEntryActivity);
+        $this->entryManager->delete($this->localPoster, $entry);
+        $this->assertOneSentActivityOfType('Delete');
+    }
+
+    public function testDeleteLocalEntryCommentInRemoteMagazineByAuthor(): void
+    {
+        $entry = $this->createEntry('test local entry', $this->remoteMagazine, $this->localPoster);
+        $entryComment = $this->createEntryComment('test local entryComment', $entry, $this->localPoster);
+        $createEntryCommentActivity = $this->activityRepository->findOneBy(['objectEntryComment' => $entryComment]);
+        $this->entityManager->remove($createEntryCommentActivity);
+        $this->entryCommentManager->delete($this->localPoster, $entryComment);
+        $this->assertOneSentActivityOfType('Delete');
+    }
+
+    public function testDeleteLocalPostInRemoteMagazineByAuthor(): void
+    {
+        $post = $this->createPost('test local post', $this->remoteMagazine, $this->localPoster);
+        $createPostActivity = $this->activityRepository->findOneBy(['objectPost' => $post]);
+        $this->entityManager->remove($createPostActivity);
+        $this->postManager->delete($this->localPoster, $post);
+        $this->assertOneSentActivityOfType('Delete');
+    }
+
+    public function testDeleteLocalPostCommentInRemoteMagazineByAuthor(): void
+    {
+        $post = $this->createPost('test local post', $this->remoteMagazine, $this->localPoster);
+        $postComment = $this->createPostComment('test local post comment', $post, $this->localPoster);
+        $createPostCommentActivity = $this->activityRepository->findOneBy(['objectPostComment' => $postComment]);
+        $this->entityManager->remove($createPostCommentActivity);
+        $this->postCommentManager->delete($this->localPoster, $postComment);
+        $this->assertOneSentActivityOfType('Delete');
     }
 
     public function removeActivitiesWithObject(ActivityPubActivityInterface|ActivityPubActorInterface $object): void

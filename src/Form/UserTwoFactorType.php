@@ -6,6 +6,7 @@ namespace App\Form;
 
 use App\DTO\UserDto;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -29,6 +30,14 @@ class UserTwoFactorType extends AbstractType
                     ],
                 ],
             )
+            ->add('currentPassword', PasswordType::class, [
+                'label' => 'current_password',
+                'mapped' => false,
+                'row_attr' => [
+                    'class' => 'password-preview',
+                    'data-controller' => 'password-preview',
+                ],
+            ])
             ->add('submit', SubmitType::class);
     }
 

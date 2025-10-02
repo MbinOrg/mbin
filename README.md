@@ -182,17 +182,17 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/CocoPoops">
-                    <img src="https://avatars.githubusercontent.com/u/7891055?v=4" width="100;" alt="CocoPoops"/>
-                    <br />
-                    <sub><b>CocoPoops</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/jwr1">
                     <img src="https://avatars.githubusercontent.com/u/47087725?v=4" width="100;" alt="jwr1"/>
                     <br />
                     <sub><b>John Wesley</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/CocoPoops">
+                    <img src="https://avatars.githubusercontent.com/u/7891055?v=4" width="100;" alt="CocoPoops"/>
+                    <br />
+                    <sub><b>CocoPoops</b></sub>
                 </a>
             </td>
             <td align="center">
@@ -297,6 +297,13 @@ Unofficial magazines:
                     <img src="https://avatars.githubusercontent.com/u/1519467?v=4" width="100;" alt="robertolopezlopez"/>
                     <br />
                     <sub><b>Roberto López López</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/blued-gear">
+                    <img src="https://avatars.githubusercontent.com/u/164888202?v=4" width="100;" alt="blued-gear"/>
+                    <br />
+                    <sub><b>blued_gear</b></sub>
                 </a>
             </td>
             <td align="center">

@@ -57,6 +57,9 @@ In the `bots` section of the `mbin.botPolicies.yaml` file, prepend this (has to 
     headers_regex:
       Accept: application\/rss\+xml
     action: ALLOW
+  - name: nodeinfo
+    path_regex: ^\/nodeinfo\/.*$
+    action: ALLOW
 ```
 
 to explicitly allow all API, RSS and ActivityPub requests. You should also switch the store backend to something different from the default in memory one. If you want to use a local bbolt db ([see alternatives](https://anubis.techaro.lol/docs/admin/policies#storage-backends)) change the `store` section to the following (in `mbin.botPolicies.yaml`):
@@ -66,6 +69,51 @@ store:
   backend: bbolt
   parameters:
     path: /opt/anubis/mbin.bdb
+```
+
+Adjust the `thresholds` section to match this (the only difference is that the `preact` type of challenge is removed):
+
+```yaml
+thresholds:
+  # By default Anubis ships with the following thresholds:
+  - name: minimal-suspicion # This client is likely fine, its soul is lighter than a feather
+    expression: weight <= 0 # a feather weighs zero units
+    action: ALLOW # Allow the traffic through
+  # For clients that had some weight reduced through custom rules, give them a
+  # lightweight challenge.
+  - name: mild-suspicion
+    expression:
+      all:
+        - weight > 0
+        - weight < 10
+    action: CHALLENGE
+    challenge:
+      # https://anubis.techaro.lol/docs/admin/configuration/challenges/metarefresh
+      algorithm: metarefresh
+      difficulty: 1
+      report_as: 1
+  # For clients that are browser-like but have either gained points from custom rules or
+  # report as a standard browser.
+  - name: moderate-suspicion
+    expression:
+      all:
+        - weight >= 10
+        - weight < 30
+    action: CHALLENGE
+    challenge:
+      # https://anubis.techaro.lol/docs/admin/configuration/challenges/proof-of-work
+      algorithm: fast
+      difficulty: 2 # two leading zeros, very fast for most clients
+      report_as: 2
+  # For clients that are browser like and have gained many points from custom rules
+  - name: extreme-suspicion
+    expression: weight >= 30
+    action: CHALLENGE
+    challenge:
+      # https://anubis.techaro.lol/docs/admin/configuration/challenges/proof-of-work
+      algorithm: fast
+      difficulty: 4
+      report_as: 4
 ```
 
 The default config includes a few snippets that require a subscription. To avoid warn messages you should comment out everything that "Requires a subscription to Thoth to use" (just search for it in the file).

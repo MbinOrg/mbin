@@ -3,7 +3,7 @@
 {
     "name": "PHP",
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-    "image": "mcr.microsoft.com/devcontainers/php:1-8.2-bullseye",
+    "image": "mcr.microsoft.com/devcontainers/php:1-8.3-bullseye",
 
     // Features to add to the dev container. More info: https://containers.dev/features.
     "features": {
@@ -71,4 +71,11 @@
 
     // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
     // "remoteUser": "root"
+
+    // Uncomment if you are using Podman
+    //runArgs: [
+    //    "--userns=keep-id",
+    //    "--security-opt=label=disable"
+    //],
+    //"updateRemoteUserUID": true
 }

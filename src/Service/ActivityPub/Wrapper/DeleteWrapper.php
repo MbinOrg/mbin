@@ -29,7 +29,7 @@ class DeleteWrapper
     ) {
     }
 
-    public function build(ActivityPubActivityInterface $item, ?User $deletingUser = null): Activity
+    public function build(ActivityPubActivityInterface $item, ?User $deletingUser = null, bool $includeContext = true): Activity
     {
         $activity = new Activity('Delete');
         $item = $this->factory->create($item);
@@ -48,7 +48,7 @@ class DeleteWrapper
         $this->entityManager->persist($activity);
         $this->entityManager->flush();
 
-        $activity->activityJson = json_encode([
+        $json = [
             '@context' => $this->contextsProvider->referencedContexts(),
             'id' => $this->urlGenerator->generate('ap_object', ['id' => $activity->uuid], UrlGeneratorInterface::ABSOLUTE_URL),
             'type' => 'Delete',
@@ -59,7 +59,13 @@ class DeleteWrapper
             ],
             'to' => $item['to'],
             'cc' => $item['cc'],
-        ]);
+        ];
+
+        if (!$includeContext) {
+            unset($json['@context']);
+        }
+
+        $activity->activityJson = json_encode($json);
         $this->entityManager->persist($activity);
         $this->entityManager->flush();
 
@@ -89,9 +95,9 @@ class DeleteWrapper
         return $activity;
     }
 
-    public function adjustDeletePayload(?User $actor, Entry|EntryComment|Post|PostComment $content): Activity
+    public function adjustDeletePayload(?User $actor, Entry|EntryComment|Post|PostComment $content, bool $includeContext = true): Activity
     {
-        $payload = $this->build($content, $actor);
+        $payload = $this->build($content, $actor, $includeContext);
         $json = json_decode($payload->activityJson, true);
 
         if (null !== $actor && $content->user->getId() !== $actor->getId()) {

@@ -47,7 +47,7 @@ class ActivityJsonBuilder
     ) {
     }
 
-    public function buildActivityJson(Activity $activity): array
+    public function buildActivityJson(Activity $activity, bool $includeContext = true): array
     {
         $this->logger->debug('activity json: build for {id}', ['id' => $activity->uuid->toString()]);
         if (null !== $activity->activityJson) {
@@ -72,6 +72,10 @@ class ActivityJsonBuilder
             default => new \LogicException(),
         };
         $this->logger->debug('activity json: {json}', ['json' => json_encode($json, JSON_PRETTY_PRINT)]);
+
+        if (!$includeContext) {
+            unset($json['@context']);
+        }
 
         return $json;
     }
@@ -158,7 +162,7 @@ class ActivityJsonBuilder
             'actor' => $object['actor'],
             'object' => $object,
             'to' => $object['to'],
-            'cc' => $object['cc'],
+            'cc' => $object['cc'] ?? [],
         ];
 
         if (isset($object['audience'])) {

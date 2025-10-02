@@ -1098,3 +1098,16 @@ search_type_content: Temas + Microblogs
 attitude: Actitud
 type_search_magazine: Limitar la búsqueda a la revista...
 type_search_user: Limitar búsqueda a la autoría...
+modlog_type_entry_deleted: Hilo eliminado
+modlog_type_entry_restored: Hilo restaurado
+modlog_type_entry_comment_deleted: Comentario del hilo eliminado
+modlog_type_entry_comment_restored: Comentario del hilo restaurado
+modlog_type_entry_pinned: Hilo fijado
+modlog_type_entry_unpinned: Hilo desfijado
+modlog_type_post_deleted: Microblog eliminado
+modlog_type_post_restored: Microblog restaurado
+modlog_type_post_comment_deleted: Respuesta de microblog eliminada
+modlog_type_post_comment_restored: Respuesta del microblog restaurada
+modlog_type_ban: Cuenta baneada de la revista
+modlog_type_moderator_add: Se agregó un/a moderador/a de la revista
+modlog_type_moderator_remove: Moderador/a de la revista eliminado/a

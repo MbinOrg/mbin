@@ -18,11 +18,11 @@ class InstanceFactory
     ) {
     }
 
-    public function create(): array
+    public function create(bool $includeContext = true): array
     {
         $actor = 'https://'.$this->kbinDomain.'/i/actor';
 
-        return [
+        $result = [
             '@context' => $this->contextProvider->referencedContexts(),
             'id' => $actor,
             'type' => 'Application',
@@ -37,6 +37,12 @@ class InstanceFactory
                 'publicKeyPem' => $this->client->getInstancePublicKey(),
             ],
         ];
+
+        if (!$includeContext) {
+            unset($result['@context']);
+        }
+
+        return $result;
     }
 
     public function getTargetUrl(): string

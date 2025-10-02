@@ -53,6 +53,8 @@ security:
                 path: /
                 token_provider:
                     doctrine: true
+                # see https://symfony.com/doc/current/security/remember_me.html#using-signed-remember-me-tokens
+                signature_properties: ['username', 'password', 'totpSecret', 'isBanned', 'isDeleted', 'markedForDeletionAt']
             two_factor:
                 auth_form_path: 2fa_login
                 check_path: 2fa_login_check

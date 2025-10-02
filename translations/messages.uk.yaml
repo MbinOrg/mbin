@@ -73,7 +73,8 @@ moderators: Модератори
 flash_comment_edit_error: Не вдалося відредагувати коментар. Щось пішло не так.
 toolbar.bold: Жирний
 errors.server429.title: 429 Забагато запитів
-auto_preview_help: Автоматично розгортати попередній перегляд медіа.
+auto_preview_help: Показати попередній перегляд медіафайлів (фото, відео) у 
+  збільшеному розмірі під вмістом.
 filter.fields.label: Виберіть поля для пошуку
 are_you_sure: Ви впевнені?
 2fa.backup_codes.help: 'Скористайтеся цими кодами, якщо у вас не буде пристрою двофакторної
@@ -439,7 +440,7 @@ oauth2.grant.moderate.post.all: Модерувати дописи у ваших 
   спільнотах.
 collapse: Згорнути
 preferred_languages: Фільтрувати мови гілок і дописів
-errors.server500.title: 500 Помилка сервера
+errors.server500.title: 500 Внутрішня помилка сервера
 2fa.enable: Увімкнути двофакторну автентифікацію
 oauth2.grant.entry_comment.edit: Редагувати ваші наявні коментарі в гілках.
 threads: Гілки
@@ -572,7 +573,7 @@ users: Користувачі
 removed: Видалено модератором
 domain: Домен
 search: Шукати
-go_to_original_instance: Переглянути на оригінальному інстансі.
+go_to_original_instance: Переглянути на віддаленому інстансі.
 oauth2.grant.moderate.entry.set_adult: Позначати гілки як «Делікатне» у ваших 
   модерованих спільнотах.
 oauth2.grant.delete.general: Видаляти будь-які ваші гілки, дописи чи коментарі.
@@ -790,3 +791,22 @@ count: Кількість
 cancel_request: Скасувати запит
 notification_title_new_comment: Новий коментар
 comment_not_found: Коментар не знайдено
+sort_by: Сортувати за
+filter_by_subscription: Фільтрувати по підпискам
+marked_for_deletion: Позначено для видалення
+remove_media: Видалити медіа
+remove_user_avatar: Видалити аватар
+subscribe_for_updates: Підпишіться, щоб отримувати оновлення.
+from: з
+disabled: Вимкнено
+enabled: Увімкнено
+mark_as_adult: Позначити як NSFW
+unmark_as_adult: Зняти позначку NSFW
+your_account_is_not_yet_approved: Ваш обліковий запис ще не затверджено. Ми 
+  надішлемо вам електронного листа, щойно адміністратори опрацюють вашу заявку 
+  на реєстрацію.
+account_deletion_title: Видалення облікового запису
+account_deletion_immediate: Видалити негайно
+oauth2.grant.user.bookmark.remove: Видалити закладки
+oauth2.grant.user.bookmark_list.edit: Відредагувати ваш список закладок
+oauth2.grant.user.bookmark_list.delete: Видалити ваш список закладок
