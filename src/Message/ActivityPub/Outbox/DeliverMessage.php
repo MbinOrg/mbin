@@ -8,7 +8,7 @@ use App\Message\Contracts\ActivityPubOutboxDeliverInterface;
 
 class DeliverMessage implements ActivityPubOutboxDeliverInterface
 {
-    public function __construct(public string $apInboxUrl, public array $payload)
+    public function __construct(public string $apInboxUrl, public array $payload, public bool $useOldPrivateKey = false)
     {
     }
 }
