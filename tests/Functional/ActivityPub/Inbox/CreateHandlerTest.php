@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\ActivityPub\Inbox;
 
+use App\Enums\EDirectMessageSettings;
 use App\Message\ActivityPub\Inbox\ActivityMessage;
 use App\Tests\Functional\ActivityPub\ActivityPubFunctionalTestCase;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 
 #[Group(name: 'ActivityPub')]
 #[Group(name: 'NonThreadSafe')]
@@ -33,7 +35,7 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         $this->createEntryComment = $this->createRemoteEntryCommentInLocalMagazine($this->localMagazine, $this->remoteUser);
         $this->createPost = $this->createRemotePostInLocalMagazine($this->localMagazine, $this->remoteUser);
         $this->createPostComment = $this->createRemotePostCommentInLocalMagazine($this->localMagazine, $this->remoteUser);
-        $this->createMessage = $this->createRemoteMessage($this->remoteUser, $this->user);
+        $this->createMessage = $this->createRemoteMessage($this->remoteUser, $this->localUser);
     }
 
     public function testCreateAnnouncedEntry(): void
@@ -137,5 +139,29 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         $this->bus->dispatch(new ActivityMessage(json_encode($this->createMessage)));
         $message = $this->messageRepository->findOneBy(['apId' => $this->createMessage['object']['id']]);
         self::assertNotNull($message);
+    }
+
+    public function testCreateMessageFollowersOnlyFails(): void
+    {
+        $this->localUser->directMessageSetting = EDirectMessageSettings::FollowersOnly->value;
+        self::expectException(HandlerFailedException::class);
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->createMessage)));
+    }
+
+    public function testCreateMessageFollowersOnly(): void
+    {
+        $this->localUser->directMessageSetting = EDirectMessageSettings::FollowersOnly->value;
+        $this->userManager->follow($this->remoteUser, $this->localUser);
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->createMessage)));
+        $message = $this->messageRepository->findOneBy(['apId' => $this->createMessage['object']['id']]);
+        self::assertNotNull($message);
+    }
+
+    public function testCreateMessageNobodyFails(): void
+    {
+        $this->localUser->directMessageSetting = EDirectMessageSettings::Nobody->value;
+        $this->userManager->follow($this->remoteUser, $this->localUser);
+        self::expectException(HandlerFailedException::class);
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->createMessage)));
     }
 }
