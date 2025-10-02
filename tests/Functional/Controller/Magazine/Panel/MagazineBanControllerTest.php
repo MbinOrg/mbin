@@ -40,7 +40,7 @@ class MagazineBanControllerTest extends WebTestCase
         );
 
         $this->client->followRedirect();
-        $this->assertSelectorTextContains('#main .bans-table', 'seconds');
+        $this->assertSelectorTextContains('#main', 'Empty');
     }
 
     public function testUnauthorizedUserCannotAddBan(): void

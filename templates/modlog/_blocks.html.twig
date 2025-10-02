@@ -39,7 +39,13 @@
 {% endblock %}
 
 {% block log_ban %}
-    {{ component('user_inline', {user: log.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }} {% if log.meta is same as 'ban' %}{{ 'he_banned'|trans|lower }}{% else %}{{ 'he_unbanned'|trans|lower }}{% endif %} {{ component('user_inline', {user: log.ban.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }}
+    {{ component('user_inline', {user: log.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }}
+    {% if log.meta is same as 'ban' %}
+        {{ 'he_banned'|trans|lower }}
+    {% else %}
+        {{ 'he_unbanned'|trans|lower }}
+    {% endif %}
+    {{ component('user_inline', {user: log.ban.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }}
     {% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.ban.magazine, showAvatar: showIcons, showNewIcon: showNewIcons}) }}{% endif %}{% if log.ban.reason %} - {{ log.ban.reason }}{% endif %}
 {% endblock %}
 
