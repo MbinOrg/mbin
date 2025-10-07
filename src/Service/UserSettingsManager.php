@@ -36,6 +36,7 @@ class UserSettingsManager
             $user->customCss,
             $user->ignoreMagazinesCustomCss,
             $user->notifyOnUserSignup,
+            $user->directMessageSetting,
         );
     }
 
@@ -59,6 +60,7 @@ class UserSettingsManager
         $user->preferredLanguages = $dto->preferredLanguages ? array_unique($dto->preferredLanguages) : [];
         $user->customCss = $dto->customCss;
         $user->ignoreMagazinesCustomCss = $dto->ignoreMagazinesCustomCss;
+        $user->directMessageSetting = $dto->directMessageSetting;
 
         if (null !== $dto->notifyOnUserSignup) {
             $user->notifyOnUserSignup = $dto->notifyOnUserSignup;
