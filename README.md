@@ -284,14 +284,21 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/e-michalak">
+                    <img src="https://avatars.githubusercontent.com/u/236532325?v=4" width="100;" alt="e-michalak"/>
+                    <br />
+                    <sub><b>e-michalak</b></sub>
+                </a>
+            </td>
+		</tr>
+		<tr>
+            <td align="center">
                 <a href="https://github.com/MHLoppy">
                     <img src="https://avatars.githubusercontent.com/u/12670674?v=4" width="100;" alt="MHLoppy"/>
                     <br />
                     <sub><b>Mark Heath</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/robertolopezlopez">
                     <img src="https://avatars.githubusercontent.com/u/1519467?v=4" width="100;" alt="robertolopezlopez"/>
