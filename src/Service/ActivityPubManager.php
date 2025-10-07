@@ -429,6 +429,14 @@ class ActivityPubManager
                 $user->cover = null;
             }
 
+            if (isset($actor['publicKey']['publicKeyPem']) && $user->publicKey !== $actor['publicKey']['publicKeyPem']) {
+                if (null !== $user->publicKey) {
+                    $this->logger->info('The public key of user "{u}" has changed', ['u' => $user->username]);
+                }
+                $user->oldPublicKey = $user->publicKey;
+                $user->publicKey = $actor['publicKey']['publicKeyPem'];
+            }
+
             if (null !== $user->apFollowersUrl) {
                 try {
                     $followersObj = $this->apHttpClient->getCollectionObject($user->apFollowersUrl);
@@ -652,6 +660,12 @@ class ActivityPubManager
                     $this->handleMagazineFeaturedCollection($actorUrl, $magazine);
                 } catch (InvalidArgumentException $ignored) {
                 }
+            }
+
+            if (isset($actor['publicKey']['publicKeyPem']) && $magazine->publicKey !== $actor['publicKey']['publicKeyPem']) {
+                $this->logger->info('The public key of magazine "{m}" has changed', ['m' => $magazine->name]);
+                $magazine->oldPublicKey = $magazine->publicKey;
+                $magazine->publicKey = $actor['publicKey']['publicKeyPem'];
             }
 
             if (null !== $magazine->apId) {
