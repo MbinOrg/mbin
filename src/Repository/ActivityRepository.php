@@ -64,6 +64,40 @@ class ActivityRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    public function findFirstActivitiesByTypeObjectAndActor(string $type, ActivityPubActivityInterface|ActivityPubActorInterface $object, ActivityPubActorInterface $actor): ?Activity
+    {
+        $results = $this->findAllActivitiesByTypeObjectAndActor($type, $object, $actor);
+        if (!empty($results)) {
+            return $results[0];
+        }
+
+        return null;
+    }
+
+    /**
+     * @return Activity[]|null
+     */
+    public function findAllActivitiesByTypeObjectAndActor(string $type, ActivityPubActivityInterface|ActivityPubActorInterface $object, ActivityPubActorInterface $actor): ?array
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb->where('a.type = :type');
+        $qb->setParameter('type', $type);
+
+        $this->addObjectFilter($qb, $object);
+
+        if ($actor instanceof User) {
+            $qb->andWhere('a.userActor = :user');
+            $qb->setParameter('user', $actor);
+        } elseif ($actor instanceof Magazine) {
+            $qb->andWhere('a.magazineActor = :magazine');
+            $qb->setParameter('magazine', $actor);
+        } else {
+            throw new \LogicException('Only magazine and user actors supported');
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
     /**
      * @return Activity[]|null
      */
