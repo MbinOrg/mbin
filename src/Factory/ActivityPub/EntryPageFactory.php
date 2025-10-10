@@ -128,7 +128,7 @@ class EntryPageFactory
         $imageUrl = $this->imageManager->getUrl($entry->image);
 
         if (Entry::ENTRY_TYPE_IMAGE === $entry->type && $imageUrl) {
-            return $this->imageManager->getUrl($entry->image);
+            return $imageUrl;
         }
 
         return $entry->url;
