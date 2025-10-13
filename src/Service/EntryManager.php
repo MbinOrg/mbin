@@ -111,6 +111,9 @@ class EntryManager implements ContentManagerInterface
         if ($entry->image && !$entry->image->altText) {
             $entry->image->altText = $dto->imageAlt;
         }
+        if($entry->url) {
+            $entry->url = ($this->urlCleaner)($dto->url);
+        }
         $entry->mentions = $dto->body ? $this->mentionManager->extract($dto->body) : null;
         $entry->visibility = $dto->visibility;
         $entry->apId = $dto->apId;
@@ -151,29 +154,24 @@ class EntryManager implements ContentManagerInterface
 
     private function setType(EntryDto $dto, Entry $entry): Entry
     {
-        $isImageUrl = false;
-        if ($dto->url) {
-            $entry->url = ($this->urlCleaner)($dto->url);
-            $isImageUrl = ImageManager::isImageUrl($dto->url);
-        }
-
-        if (($dto->image && !$dto->url) || $isImageUrl) {
+        if ($dto->image) {
             $entry->type = Entry::ENTRY_TYPE_IMAGE;
             $entry->hasEmbed = true;
-
-            return $entry;
-        }
-
-        if ($dto->url) {
-            $entry->type = Entry::ENTRY_TYPE_LINK;
-
-            return $entry;
-        }
-
-        if ($dto->body) {
+        } else if ($dto->url) {
+            if (ImageManager::isImageUrl($dto->url)) {
+                $entry->type = Entry::ENTRY_TYPE_IMAGE;
+                $entry->hasEmbed = true;
+            } else {
+                $entry->type = Entry::ENTRY_TYPE_LINK;
+            }
+        } else if ($dto->body) {
             $entry->type = Entry::ENTRY_TYPE_ARTICLE;
-            $entry->hasEmbed = false;
+        } else {
+            $this->logger->warning("entry has neither image nor url nor body; defaulting to article");
+            $entry->type = Entry::ENTRY_TYPE_ARTICLE;
         }
+
+        //TODO handle ENTRY_TYPE_VIDEO
 
         return $entry;
     }

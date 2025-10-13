@@ -283,7 +283,7 @@ class EntryCreateApiNewTest extends WebTestCase
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['createdAt'], 'createdAt date format invalid');
         self::assertNull($jsonData['editedAt']);
         self::assertStringMatchesFormat('%d-%d-%dT%d:%d:%d%i:00', $jsonData['lastActive'], 'lastActive date format invalid');
-        self::assertEquals('link', $jsonData['type']);
+        self::assertEquals('image', $jsonData['type']);
         self::assertEquals('Test-Thread', $jsonData['slug']);
         self::assertNull($jsonData['apId']);
     }
