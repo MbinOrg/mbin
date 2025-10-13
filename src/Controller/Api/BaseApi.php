@@ -364,7 +364,21 @@ class BaseApi extends AbstractController
         }
     }
 
+    /**
+     * @throws BadRequestHttpException|\Exception
+     */
     public function handleUploadedImage(): Image
+    {
+        $img = $this->handleUploadedImageOptional();
+        if ($img === null)
+            throw new BadRequestHttpException('Uploaded file not found!');;
+        return $img;
+    }
+
+    /**
+     * @throws BadRequestHttpException|\Exception
+     */
+    public function handleUploadedImageOptional(): ?Image
     {
         try {
             /**
@@ -372,12 +386,12 @@ class BaseApi extends AbstractController
              */
             $uploaded = $this->request->getCurrentRequest()->files->get('uploadImage');
 
-            if (null === self::$constraint) {
-                self::$constraint = ImageConstraint::default();
+            if (null === $uploaded) {
+                return null;
             }
 
-            if (null === $uploaded) {
-                throw new BadRequestHttpException('Uploaded file not found!');
+            if (null === self::$constraint) {
+                self::$constraint = ImageConstraint::default();
             }
 
             if (self::$constraint->maxSize < $uploaded->getSize()) {
