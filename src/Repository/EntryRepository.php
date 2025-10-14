@@ -482,11 +482,11 @@ class EntryRepository extends ServiceEntityRepository
 
     public function findCross(Entry $entry): array
     {
-        $qb = $this->createQueryBuilder('e');
-
         if (\strlen($entry->title) <= 10 && !$entry->url) {
             return [];
         }
+
+        $qb = $this->createQueryBuilder('e');
 
         if ($entry->url) {
             $qb->where('e.url = :url')
@@ -496,14 +496,21 @@ class EntryRepository extends ServiceEntityRepository
                 ->setParameter('title', $entry->title);
         }
 
+        if($entry->image) {
+            $qb->leftJoin('e.image', 'i')
+                ->andWhere('e.image is not null')
+                ->andWhere('i = :img')
+                ->setParameter('img', $entry->image);
+        }
+
         $qb->andWhere('e.id != :id')
             ->andWhere('m.visibility = :visibility')
             ->andWhere('e.visibility = :visibility')
             ->andWhere('u.isDeleted = false')
             ->innerJoin('e.user', 'u')
-            ->join('e.magazine', 'm')
-            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+            ->innerJoin('e.magazine', 'm')
             ->setParameter('id', $entry->getId())
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->orderBy('e.createdAt', 'DESC')
             ->setMaxResults(5);
 

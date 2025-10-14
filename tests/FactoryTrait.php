@@ -35,7 +35,6 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 use function PHPUnit\Framework\assertNotNull;
 
 trait FactoryTrait
@@ -596,14 +595,15 @@ trait FactoryTrait
         return $this->client;
     }
 
-    public function getKibbyImageDto(): ImageDto
+    public function getKibbyImageDto(string $suffix = ''): ImageDto
     {
         $imageRepository = $this->imageRepository;
         $imageFactory = $this->imageFactory;
 
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
         $tmpPath = bin2hex(random_bytes(32));
-        copy($this->kibbyPath, $tmpPath.'.png');
+        $srcPath = dirname($this->kibbyPath).'/'.basename($this->kibbyPath, '.png').$suffix.'.png';
+        copy($srcPath, $tmpPath.'.png');
         /** @var Image $image */
         $image = $imageRepository->findOrCreateFromUpload(new UploadedFile($tmpPath.'.png', 'kibby_emoji.png', 'image/png'));
         self::assertNotNull($image);
