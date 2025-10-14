@@ -267,8 +267,8 @@ show_magazines_icons: Magazin-Icons anzeigen
 rounded_edges: Abgerundete Ecken
 removed_post_by: hat den Beitrag entfernt, erstellt von
 restored_post_by: hat den Beitrag wiederhergestellt, erstellt von
-he_banned: sperren
-he_unbanned: entsperren
+he_banned: sperrte
+he_unbanned: entsperrte
 domains: Domänen
 dark: Dunkel
 light: Hell
