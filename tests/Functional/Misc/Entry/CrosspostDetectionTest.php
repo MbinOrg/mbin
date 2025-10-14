@@ -9,7 +9,6 @@ use App\Tests\WebTestCase;
 
 class CrosspostDetectionTest extends WebTestCase
 {
-
     public function testCrosspostsNoCrosspost(): void
     {
         $user = $this->getUserByUsername('JohnDoe');
@@ -123,15 +122,15 @@ class CrosspostDetectionTest extends WebTestCase
 
             self::assertIsArray($jsonData['crosspostedEntries']);
 
-            $crossposts = \array_filter($jsonData['crosspostedEntries'], function ($actual) use ($expectedEntries, $entry) {
-                $match = \array_filter($expectedEntries, function ($expected) use ($actual, $entry) {
+            $crossposts = array_filter($jsonData['crosspostedEntries'], function ($actual) use ($expectedEntries, $entry) {
+                $match = array_filter($expectedEntries, function ($expected) use ($actual, $entry) {
                     return $actual['entryId'] !== $entry->getId()
                         && $actual['entryId'] === $expected->getId();
                 });
                 $matchCount = \count($match);
-                if($matchCount === 0) {
+                if (0 === $matchCount) {
                     return false;
-                } else if($matchCount === 1) {
+                } elseif (1 === $matchCount) {
                     return true;
                 } else {
                     self::fail('crosspostedEntries contains duplicates');

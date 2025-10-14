@@ -496,9 +496,8 @@ class EntryRepository extends ServiceEntityRepository
                 ->setParameter('title', $entry->title);
         }
 
-        if($entry->image) {
+        if ($entry->image) {
             $qb->leftJoin('e.image', 'i')
-                ->andWhere('e.image is not null')
                 ->andWhere('i = :img')
                 ->setParameter('img', $entry->image);
         }
