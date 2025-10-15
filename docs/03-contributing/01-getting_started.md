@@ -46,10 +46,10 @@ To use it, follow these steps:
 2. Adjust values in: `./.devcontainer/.env.devcontainer`:
    1. `SERVER_NAME`: change `mbin.domain.tld` to `localhost`
    2. `KBIN_DOMAIN`: change to `localhost`
-   3. `KBIN_STORAGE_URL`: change `mbin.domain.tld` to `localhost:8080` (or whatever port you set in `devcontainer.json`)
+   3. `KBIN_STORAGE_URL`: change `https://mbin.domain.tld/media` to `http://localhost:8080/media` (or whatever port you set in `devcontainer.json`)
 3. Start and open the Dev Container
 4. Run `chmod o+rwx public/`
-5. Check if all needed services are running: `service --status-all`; services which should have a `+`:
+5. Check if all needed services are running: `sudo service --status-all`; services which should have a `+`:
    - apache2
    - apache-htcacheclean
    - postgresql
