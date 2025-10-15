@@ -370,8 +370,10 @@ class BaseApi extends AbstractController
     public function handleUploadedImage(): Image
     {
         $img = $this->handleUploadedImageOptional();
-        if ($img === null)
-            throw new BadRequestHttpException('Uploaded file not found!');;
+        if (null === $img) {
+            throw new BadRequestHttpException('Uploaded file not found!');
+        }
+
         return $img;
     }
 

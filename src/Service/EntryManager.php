@@ -111,7 +111,7 @@ class EntryManager implements ContentManagerInterface
         if ($entry->image && !$entry->image->altText) {
             $entry->image->altText = $dto->imageAlt;
         }
-        if($entry->url) {
+        if ($entry->url) {
             $entry->url = ($this->urlCleaner)($dto->url);
         }
         $entry->mentions = $dto->body ? $this->mentionManager->extract($dto->body) : null;
@@ -157,21 +157,21 @@ class EntryManager implements ContentManagerInterface
         if ($dto->image) {
             $entry->type = Entry::ENTRY_TYPE_IMAGE;
             $entry->hasEmbed = true;
-        } else if ($dto->url) {
+        } elseif ($dto->url) {
             if (ImageManager::isImageUrl($dto->url)) {
                 $entry->type = Entry::ENTRY_TYPE_IMAGE;
                 $entry->hasEmbed = true;
             } else {
                 $entry->type = Entry::ENTRY_TYPE_LINK;
             }
-        } else if ($dto->body) {
+        } elseif ($dto->body) {
             $entry->type = Entry::ENTRY_TYPE_ARTICLE;
         } else {
-            $this->logger->warning("entry has neither image nor url nor body; defaulting to article");
+            $this->logger->warning('entry has neither image nor url nor body; defaulting to article');
             $entry->type = Entry::ENTRY_TYPE_ARTICLE;
         }
 
-        //TODO handle ENTRY_TYPE_VIDEO
+        // TODO handle ENTRY_TYPE_VIDEO
 
         return $entry;
     }

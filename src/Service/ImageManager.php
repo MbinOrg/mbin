@@ -140,12 +140,14 @@ class ImageManager
     {
         $name = $this->getFileName($file);
         $path = $this->getFilePathFromName($name);
+
         return [$path, $name];
     }
 
     public function getFilePath(string $file): string
     {
         $name = $this->getFileName($file);
+
         return $this->getFilePathFromName($name);
     }
 
