@@ -47,6 +47,29 @@ class EntryCreateApiNewTest extends WebTestCase
         self::assertResponseStatusCodeSame(403);
     }
 
+    public function testApiCannotCreateEntryWithoutTitle(): void
+    {
+        $user = $this->getUserByUsername('user');
+        $magazine = $this->getMagazineByNameNoRSAKey('acme');
+        $entryRequest = [
+            'body' => 'This has no title',
+            'url' => 'https://google.com',
+            'tags' => ['test'],
+            'isOc' => false,
+            'lang' => 'en',
+            'isAdult' => false,
+        ];
+
+        self::createOAuth2AuthCodeClient();
+        $this->client->loginUser($user);
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry:create');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+
+        $this->client->request('POST', "/api/magazine/{$magazine->getId()}/entries", parameters: $entryRequest, server: ['HTTP_AUTHORIZATION' => $token]);
+        self::assertResponseStatusCodeSame(400);
+    }
+
     public function testApiCanCreateArticleEntry(): void
     {
         $user = $this->getUserByUsername('user');
