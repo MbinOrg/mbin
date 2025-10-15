@@ -9,7 +9,7 @@ use App\Service\SettingsManager;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[OA\Schema()]
+#[OA\Schema(required: ['title'])]
 class EntryRequestDto extends ContentRequestDto
 {
     #[Groups([

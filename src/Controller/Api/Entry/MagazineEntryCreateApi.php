@@ -29,6 +29,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
 {
     use PrivateContentTrait;
 
+    #[OA\Post(deprecated: true)]
     #[OA\Response(
         response: 201,
         description: 'Returns the created Entry',
@@ -85,7 +86,6 @@ class MagazineEntryCreateApi extends EntriesBaseApi
     #[OA\Tag(name: 'magazine')]
     #[Security(name: 'oauth2', scopes: ['entry:create'])]
     #[IsGranted('ROLE_OAUTH2_ENTRY:CREATE')]
-    #[\Deprecated]
     public function article(
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
@@ -108,6 +108,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         );
     }
 
+    #[OA\Post(deprecated: true)]
     #[OA\Response(
         response: 201,
         description: 'Returns the created Entry',
@@ -164,7 +165,6 @@ class MagazineEntryCreateApi extends EntriesBaseApi
     #[OA\Tag(name: 'magazine')]
     #[Security(name: 'oauth2', scopes: ['entry:create'])]
     #[IsGranted('ROLE_OAUTH2_ENTRY:CREATE')]
-    #[\Deprecated]
     public function link(
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
@@ -187,6 +187,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         );
     }
 
+    #[OA\Post(deprecated: true)]
     #[OA\Response(
         response: 201,
         description: 'Returns the created Entry',
@@ -238,7 +239,6 @@ class MagazineEntryCreateApi extends EntriesBaseApi
     #[OA\Tag(name: 'magazine')]
     #[Security(name: 'oauth2', scopes: ['entry:create'])]
     #[IsGranted('ROLE_OAUTH2_ENTRY:CREATE')]
-    #[\Deprecated]
     public function video(
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
@@ -261,6 +261,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         );
     }
 
+    #[OA\Post(deprecated: true)]
     #[OA\Response(
         response: 201,
         description: 'Returns the created image entry',
@@ -328,7 +329,6 @@ class MagazineEntryCreateApi extends EntriesBaseApi
     #[OA\Tag(name: 'magazine')]
     #[Security(name: 'oauth2', scopes: ['entry:create'])]
     #[IsGranted('ROLE_OAUTH2_ENTRY:CREATE')]
-    #[\Deprecated]
     public function uploadImage(
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
@@ -385,12 +385,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
     )]
     #[OA\Response(
         response: 400,
-        description: 'An entry must have at least one of URL, body, or image',
-        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\BadRequestErrorSchema::class))
-    )]
-    #[OA\Response(
-        response: 400,
-        description: 'Image was too large, not provided, or is not an acceptable file type',
+        description: 'An entry must have at least one of URL, body, or image; Image was too large or is not an acceptable file type',
         content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\BadRequestErrorSchema::class))
     )]
     #[OA\Response(
@@ -429,6 +424,14 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         schema: new OA\Schema(
             ref: new Model(
                 type: EntryRequestDto::class,
+                groups: [
+                    ImageUploadDto::IMAGE_UPLOAD,
+                    Entry::ENTRY_TYPE_ARTICLE,
+                    Entry::ENTRY_TYPE_LINK,
+                    Entry::ENTRY_TYPE_VIDEO,
+                    Entry::ENTRY_TYPE_IMAGE,
+                    'common',
+                ],
             )
         ),
         encoding: [
@@ -436,11 +439,11 @@ class MagazineEntryCreateApi extends EntriesBaseApi
                 'contentType' => ImageManager::IMAGE_MIMETYPE_STR,
             ],
         ]
-    ))]
+    ),
+    description: '"imageUpload" is optional')]
     #[OA\Tag(name: 'magazine')]
     #[Security(name: 'oauth2', scopes: ['entry:create'])]
     #[IsGranted('ROLE_OAUTH2_ENTRY:CREATE')]
-    #[\Deprecated]
     public function entry(
         #[MapEntity(id: 'magazine_id')]
         ?Magazine $magazine,
