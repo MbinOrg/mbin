@@ -419,28 +419,30 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         description: 'The magazine to create the entry in',
         schema: new OA\Schema(type: 'integer'),
     )]
-    #[OA\RequestBody(content: new OA\MediaType(
-        'multipart/form-data',
-        schema: new OA\Schema(
-            ref: new Model(
-                type: EntryRequestDto::class,
-                groups: [
-                    ImageUploadDto::IMAGE_UPLOAD,
-                    Entry::ENTRY_TYPE_ARTICLE,
-                    Entry::ENTRY_TYPE_LINK,
-                    Entry::ENTRY_TYPE_VIDEO,
-                    Entry::ENTRY_TYPE_IMAGE,
-                    'common',
+    #[OA\RequestBody(
+        content: new OA\MediaType(
+            mediaType: 'multipart/form-data',
+            schema: new OA\Schema(
+                ref: new Model(
+                    type: EntryRequestDto::class,
+                    groups: [
+                        ImageUploadDto::IMAGE_UPLOAD,
+                        Entry::ENTRY_TYPE_ARTICLE,
+                        Entry::ENTRY_TYPE_LINK,
+                        Entry::ENTRY_TYPE_VIDEO,
+                        Entry::ENTRY_TYPE_IMAGE,
+                        'common',
+                    ],
+                )
+            ),
+            encoding: [
+                'imageUpload' => [
+                    'contentType' => ImageManager::IMAGE_MIMETYPE_STR,
                 ],
-            )
+            ]
         ),
-        encoding: [
-            'imageUpload' => [
-                'contentType' => ImageManager::IMAGE_MIMETYPE_STR,
-            ],
-        ]
-    ),
-    description: '"imageUpload" is optional')]
+        description: '"uploadImage" is optional'
+    )]
     #[OA\Tag(name: 'magazine')]
     #[Security(name: 'oauth2', scopes: ['entry:create'])]
     #[IsGranted('ROLE_OAUTH2_ENTRY:CREATE')]
