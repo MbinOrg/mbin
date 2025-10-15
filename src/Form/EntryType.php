@@ -23,7 +23,7 @@ use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class EntryArticleType extends AbstractType
+class EntryType extends AbstractType
 {
     public function __construct(
         private readonly ImageListener $imageListener,

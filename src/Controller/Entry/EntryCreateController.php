@@ -11,7 +11,7 @@ use App\Exception\ImageDownloadTooLargeException;
 use App\Exception\InstanceBannedException;
 use App\Exception\PostingRestrictedException;
 use App\Exception\TagBannedException;
-use App\Form\EntryArticleType;
+use App\Form\EntryType;
 use App\Repository\Criteria;
 use App\Repository\TagLinkRepository;
 use App\Repository\TagRepository;
@@ -54,7 +54,7 @@ class EntryCreateController extends AbstractController
         $user = $this->getUserOrThrow();
         $maxBytes = $this->settingsManager->getMaxImageByteString();
 
-        $form = $this->createForm(EntryArticleType::class, $dto);
+        $form = $this->createForm(EntryType::class, $dto);
         try {
             // Could throw an error on event handlers (e.g. onPostSubmit if a user upload an incorrect image)
             $form->handleRequest($request);
