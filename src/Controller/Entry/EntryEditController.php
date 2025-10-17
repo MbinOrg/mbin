@@ -64,7 +64,7 @@ class EntryEditController extends AbstractController
         }
 
         return $this->render(
-            'entry/edit_entry.html.twig',
+            $this->getTemplateName(edit: true),
             [
                 'magazine' => $magazine,
                 'entry' => $entry,

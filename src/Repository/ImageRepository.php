@@ -69,8 +69,7 @@ class ImageRepository extends ServiceEntityRepository
      */
     private function findOrCreateFromSource(string $source, ImageOrigin $origin): ?Image
     {
-        $fileName = $this->imageManager->getFileName($source);
-        $filePath = $this->imageManager->getFilePath($source);
+        [$filePath, $fileName] = $this->imageManager->getFilePathAndName($source);
         $sha256 = hash_file('sha256', $source, true);
 
         if ($image = $this->findOneBySha256($sha256)) {

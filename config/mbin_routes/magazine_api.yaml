@@ -19,6 +19,13 @@ api_magazine_entry_create_image:
   methods: [ POST ]
   format: json
 
+# Create an image entry in a magazine
+api_magazine_entry_create:
+  controller: App\Controller\Api\Entry\MagazineEntryCreateApi::entry
+  path: /api/magazine/{magazine_id}/entries
+  methods: [ POST ]
+  format: json
+
 # # Create a video entry in a magazine (videos not yet implemented)
 # api_magazine_entry_create_video:
 #   controller: App\Controller\Api\Entry\MagazineEntryCreateApi::video
