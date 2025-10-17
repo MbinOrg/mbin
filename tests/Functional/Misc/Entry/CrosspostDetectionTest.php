@@ -83,7 +83,7 @@ class CrosspostDetectionTest extends WebTestCase
     {
         $user = $this->getUserByUsername('JohnDoe');
         $img1 = $this->getKibbyImageDto();
-        $img2 = $this->getKibbyImageDto('_2');
+        $img2 = $this->getKibbyFlippedImageDto();
 
         $magazine1 = $this->getMagazineByName('acme1');
         $entry1 = $this->createEntry('article 001', $magazine1, $user, imageDto: $img1);

@@ -596,7 +596,17 @@ trait FactoryTrait
         return $this->client;
     }
 
-    public function getKibbyImageDto(string $suffix = ''): ImageDto
+    public function getKibbyImageDto(): ImageDto
+    {
+        return $this->getKibbyImageVariantDto('');
+    }
+
+    public function getKibbyFlippedImageDto(): ImageDto
+    {
+        return $this->getKibbyImageVariantDto('_flipped');
+    }
+
+    private function getKibbyImageVariantDto(string $suffix): ImageDto
     {
         $imageRepository = $this->imageRepository;
         $imageFactory = $this->imageFactory;
