@@ -50,6 +50,12 @@ trait ActivityPubActorTrait
     #[Column(type: 'text', nullable: true)]
     public ?string $publicKey = null;
 
+    #[Column(type: 'text', nullable: true)]
+    public ?string $oldPrivateKey = null;
+
+    #[Column(type: 'text', nullable: true)]
+    public ?string $oldPublicKey = null;
+
     #[Column(type: 'datetimetz', nullable: true)]
     public ?\DateTime $apFetchedAt = null;
 
