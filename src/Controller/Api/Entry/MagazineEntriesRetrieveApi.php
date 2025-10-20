@@ -8,8 +8,10 @@ use App\Controller\Traits\PrivateContentTrait;
 use App\DTO\EntryResponseDto;
 use App\Entity\Entry;
 use App\Entity\Magazine;
+use App\Entity\User;
 use App\Factory\EntryFactory;
 use App\PageView\EntryPageView;
+use App\Repository\ContentRepository;
 use App\Repository\Criteria;
 use App\Repository\EntryRepository;
 use App\Schema\PaginationSchema;
@@ -19,6 +21,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 
 class MagazineEntriesRetrieveApi extends EntriesBaseApi
@@ -125,27 +128,35 @@ class MagazineEntriesRetrieveApi extends EntriesBaseApi
     public function __invoke(
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
-        EntryRepository $repository,
+        ContentRepository $repository,
         EntryFactory $factory,
         RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
         Security $security,
+        #[MapQueryParameter] ?int $p,
+        #[MapQueryParameter] ?int $perPage,
+        #[MapQueryParameter] ?string $sort,
+        #[MapQueryParameter] ?string $time,
+        #[MapQueryParameter] ?string $federation,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
-        $criteria = new EntryPageView((int) $request->getCurrentRequest()->get('p', 1), $security);
-        $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_HOT);
-        $criteria->time = $criteria->resolveTime(
-            $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
-        );
+        $criteria = new EntryPageView($p ?? 1, $security);
+        $criteria->sortOption = $sort ?? Criteria::SORT_HOT;
+        $criteria->time = $criteria->resolveTime($time ?? Criteria::TIME_ALL);
         $this->handleLanguageCriteria($criteria);
 
         $criteria->stickiesFirst = true;
 
-        $criteria->perPage = self::constrainPerPage($request->getCurrentRequest()->get('perPage', EntryRepository::PER_PAGE));
+        $criteria->perPage = self::constrainPerPage($perPage ?? ContentRepository::PER_PAGE);
 
         $criteria->magazine = $magazine;
+
+        $user = $security->getUser();
+        if ($user instanceof User) {
+            $criteria->fetchCachedItems($repository, $user);
+        }
 
         $entries = $repository->findByCriteria($criteria);
 
@@ -153,7 +164,7 @@ class MagazineEntriesRetrieveApi extends EntriesBaseApi
         foreach ($entries->getCurrentPageResults() as $value) {
             try {
                 \assert($value instanceof Entry);
-                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfEntry($value), $this->entryRepository->findCross($value));
+                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value));
             } catch (\Exception $e) {
                 continue;
             }

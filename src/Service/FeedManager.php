@@ -115,7 +115,7 @@ class FeedManager
             $item->setPublicId(IriGenerator::getIriFromResource($entry));
             $item->setAuthor((new Item\Author())->setName($entry->user->username));
 
-            foreach ($this->tagLinkRepository->getTagsOfEntry($entry) as $tag) {
+            foreach ($this->tagLinkRepository->getTagsOfContent($entry) as $tag) {
                 $category = new Category();
                 $category->setLabel($tag);
 

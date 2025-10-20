@@ -112,7 +112,7 @@ class EntryFactory
         $dto->apLikeCount = $entry->apLikeCount;
         $dto->apDislikeCount = $entry->apDislikeCount;
         $dto->apShareCount = $entry->apShareCount;
-        $dto->tags = $this->tagLinkRepository->getTagsOfEntry($entry);
+        $dto->tags = $this->tagLinkRepository->getTagsOfContent($entry);
 
         $currentUser = $this->security->getUser();
         // Only return the user's vote if permission to control voting has been given
