@@ -79,7 +79,7 @@ enabled: Habilitat
 followers: Seguidor(e)s
 reset_check_email_desc: Si ja hi ha un compte associat a la vostra adreça 
   electrònica, rebreu un correu electrònic en breu amb un enllaç que podeu 
-  utilitzar per restablir la vostra contrasenya. Aquest enllaç caducarà a 
+  utilitzar per restablir la vostra contrasenya. Aquest enllaç caducarà en 
   %expire%.
 email_confirm_expire: Tingueu en compte que l'enllaç caducarà d'aquí a una hora.
 moderated: Moderat(da)
@@ -256,8 +256,8 @@ restored_thread_by: ha restaurat un fil de
 restored_comment_by: ha restaurat el comentari de
 removed_post_by: ha eliminat una publicació de
 restored_post_by: ha restaurat una publicació de
-he_banned: bandejar
-he_unbanned: desbandejar
+he_banned: bandejat(da)
+he_unbanned: desbandejat(da)
 read_all: Marcar-ho tot com a llegit
 show_all: Mostrar-ho tot
 flash_thread_edit_success: El fil s'ha editat correctament.
