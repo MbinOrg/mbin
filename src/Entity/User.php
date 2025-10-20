@@ -11,6 +11,7 @@ use App\Entity\Traits\ActivityPubActorTrait;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\VisibilityTrait;
 use App\Enums\EApplicationStatus;
+use App\Enums\EDirectMessageSettings;
 use App\Enums\ESortOptions;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\ApHttpClientInterface;
@@ -111,6 +112,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public string $frontDefaultSort = ESortOptions::Hot->value;
     #[Column(type: 'enumSortOptions', nullable: false, options: ['default' => ESortOptions::Hot->value])]
     public string $commentDefaultSort = ESortOptions::Hot->value;
+    #[Column(type: 'enumDirectMessageSettings', nullable: false, options: ['default' => EDirectMessageSettings::Everyone->value])]
+    public string $directMessageSetting = EDirectMessageSettings::Everyone->value;
     #[Column(type: 'text', nullable: true)]
     public ?string $about = null;
     #[Column(type: 'datetimetz')]
@@ -952,6 +955,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public function setApplicationStatus(EApplicationStatus $applicationStatus): void
     {
         $this->applicationStatus = $applicationStatus->value;
+    }
+
+    /**
+     * @param User $dmAuthor the author of the direct message
+     *
+     * @return bool whether the $dmAuthor is allowed to send this user a direct message
+     */
+    public function canReceiveDirectMessage(User $dmAuthor): bool
+    {
+        if (EDirectMessageSettings::Everyone->value === $this->directMessageSetting) {
+            return true;
+        } elseif (EDirectMessageSettings::FollowersOnly->value === $this->directMessageSetting) {
+            $criteria = Criteria::create()->where(Criteria::expr()->eq('follower', $dmAuthor));
+
+            return $this->followers->matching($criteria)->count() > 0;
+        } else {
+            return false;
+        }
     }
 
     /**
