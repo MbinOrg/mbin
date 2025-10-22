@@ -8,6 +8,7 @@ use App\Tests\ActivityPubJsonDriver;
 use App\Tests\ActivityPubTestCase;
 use App\Tests\Unit\ActivityPub\Traits\AddRemoveActivityGeneratorTrait;
 use App\Tests\Unit\ActivityPub\Traits\AnnounceActivityGeneratorTrait;
+use App\Tests\Unit\ActivityPub\Traits\BlockActivityGeneratorTrait;
 use App\Tests\Unit\ActivityPub\Traits\CreateActivityGeneratorTrait;
 use App\Tests\Unit\ActivityPub\Traits\DeleteActivityGeneratorTrait;
 use App\Tests\Unit\ActivityPub\Traits\FollowActivityGeneratorTrait;
@@ -25,6 +26,7 @@ class AnnounceTest extends ActivityPubTestCase
     use DeleteActivityGeneratorTrait;
     use UndoActivityGeneratorTrait;
     use UpdateActivityGeneratorTrait;
+    use BlockActivityGeneratorTrait;
 
     public function testAnnounceAddModerator(): void
     {
@@ -372,6 +374,20 @@ class AnnounceTest extends ActivityPubTestCase
     public function testAnnounceUpdatePostComment(): void
     {
         $json = $this->activityJsonBuilder->buildActivityJson($this->getAnnounceUpdatePostCommentActivity());
+
+        $this->assertMatchesSnapshot($json, new ActivityPubJsonDriver());
+    }
+
+    public function testAnnounceBlockUser(): void
+    {
+        $json = $this->activityJsonBuilder->buildActivityJson($this->getAnnounceBlockUserActivity());
+
+        $this->assertMatchesSnapshot($json, new ActivityPubJsonDriver());
+    }
+
+    public function testAnnounceUndoBlockUser(): void
+    {
+        $json = $this->activityJsonBuilder->buildActivityJson($this->getAnnounceUndoBlockUserActivity());
 
         $this->assertMatchesSnapshot($json, new ActivityPubJsonDriver());
     }

@@ -9,6 +9,7 @@ use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\User;
 use App\Entity\UserFollowRequest;
 use App\Enums\EApplicationStatus;
+use App\Event\Instance\InstanceBanEvent;
 use App\Event\User\UserApplicationApprovedEvent;
 use App\Event\User\UserApplicationRejectedEvent;
 use App\Event\User\UserBlockEvent;
@@ -293,24 +294,29 @@ readonly class UserManager
         $this->requestStack->getSession()->invalidate();
     }
 
-    public function ban(User $user): void
+    public function ban(User $user, ?User $bannedBy, ?string $reason): void
     {
         if ($user->isAdmin() || $user->isModerator()) {
             throw new UserCannotBeBanned();
         }
 
         $user->isBanned = true;
+        $user->banReason = $reason;
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+
+        $this->eventDispatcher->dispatch(new InstanceBanEvent($user, $bannedBy, $reason));
     }
 
-    public function unban(User $user): void
+    public function unban(User $user, ?User $bannedBy, ?string $reason): void
     {
         $user->isBanned = false;
+        $user->banReason = $reason;
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+        $this->eventDispatcher->dispatch(new InstanceBanEvent($user, $bannedBy, $reason));
     }
 
     public function detachAvatar(User $user): void

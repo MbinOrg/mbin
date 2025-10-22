@@ -11,6 +11,7 @@ use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Magazine;
+use App\Entity\MagazineBan;
 use App\Entity\Message;
 use App\Entity\Post;
 use App\Entity\PostComment;
@@ -40,7 +41,7 @@ class ActivityRepository extends ServiceEntityRepository
         parent::__construct($registry, Activity::class);
     }
 
-    public function findFirstActivitiesByTypeAndObject(string $type, ActivityPubActivityInterface|ActivityPubActorInterface $object): ?Activity
+    public function findFirstActivitiesByTypeAndObject(string $type, ActivityPubActivityInterface|ActivityPubActorInterface|MagazineBan $object): ?Activity
     {
         $results = $this->findAllActivitiesByTypeAndObject($type, $object);
         if (!empty($results)) {
@@ -53,7 +54,7 @@ class ActivityRepository extends ServiceEntityRepository
     /**
      * @return Activity[]|null
      */
-    public function findAllActivitiesByTypeAndObject(string $type, ActivityPubActivityInterface|ActivityPubActorInterface $object): ?array
+    public function findAllActivitiesByTypeAndObject(string $type, ActivityPubActivityInterface|ActivityPubActorInterface|MagazineBan $object): ?array
     {
         $qb = $this->createQueryBuilder('a');
         $qb->where('a.type = :type');
@@ -110,7 +111,7 @@ class ActivityRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    private function addObjectFilter(QueryBuilder $qb, ActivityPubActivityInterface|ActivityPubActorInterface $object): void
+    private function addObjectFilter(QueryBuilder $qb, ActivityPubActivityInterface|ActivityPubActorInterface|MagazineBan $object): void
     {
         if ($object instanceof Entry) {
             $qb->andWhere('a.objectEntry = :entry')
@@ -133,6 +134,9 @@ class ActivityRepository extends ServiceEntityRepository
         } elseif ($object instanceof Magazine) {
             $qb->andWhere('a.objectMagazine = :magazine')
                 ->setParameter('magazine', $object);
+        } elseif ($object instanceof MagazineBan) {
+            $qb->andWhere('a.objectMagazineBan = :magazineBan')
+                ->setParameter('magazineBan', $object);
         }
     }
 
@@ -183,7 +187,7 @@ class ActivityRepository extends ServiceEntityRepository
         return $activity;
     }
 
-    public function createForRemoteActivity(array $payload, ActivityPubActivityInterface|Entry|EntryComment|Post|PostComment|ActivityPubActorInterface|User|Magazine|Activity|array|string|null $object = null): Activity
+    public function createForRemoteActivity(array $payload, ActivityPubActivityInterface|Entry|EntryComment|Post|PostComment|ActivityPubActorInterface|User|Magazine|MagazineBan|Activity|array|string|null $object = null): Activity
     {
         if (isset($payload['@context'])) {
             unset($payload['@context']);
