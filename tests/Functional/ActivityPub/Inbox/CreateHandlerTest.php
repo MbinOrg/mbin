@@ -25,6 +25,7 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
     private array $createPostComment;
     private array $createMessage;
     private array $createMastodonPostWithMention;
+    private array $createMastodonPostWithMentionWithoutTagArray;
 
     public function setUpRemoteEntities(): void
     {
@@ -180,10 +181,8 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
 
     public function testMastodonMentionInPostWithoutTagArray(): void
     {
-        $createMastodonPostWithMentionWithoutTagArray = $this->createMastodonPostWithMention;
-        unset($createMastodonPostWithMentionWithoutTagArray['object']['tag']);
-        $this->bus->dispatch(new ActivityMessage(json_encode($createMastodonPostWithMentionWithoutTagArray)));
-        $post = $this->postRepository->findOneBy(['apId' => $this->createMastodonPostWithMention['object']['id']]);
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->createMastodonPostWithMentionWithoutTagArray)));
+        $post = $this->postRepository->findOneBy(['apId' => $this->createMastodonPostWithMentionWithoutTagArray['object']['id']]);
         self::assertNotNull($post);
         $mentions = $this->mentionManager->extract($post->body);
         self::assertCount(1, $mentions);
@@ -209,11 +208,11 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
 
     private function setupMastodonPostWithoutTagArray(): void
     {
-        $this->createMastodonPostWithMention = $this->createRemotePostInLocalMagazine($this->localMagazine, $this->remoteUser);
-        unset($this->createMastodonPostWithMention['object']['source']);
+        $this->createMastodonPostWithMentionWithoutTagArray = $this->createRemotePostInLocalMagazine($this->localMagazine, $this->remoteUser);
+        unset($this->createMastodonPostWithMentionWithoutTagArray['object']['source']);
         // this is what it would look like if a user created a post in Mastodon with just a single mention and nothing else
         $text = '<p><span class="h-card" translate="no"><a href="https://remote.mbin/u/remoteUser" class="u-url mention">@<span>remoteUser</span></a></span>';
-        $this->createMastodonPostWithMention['object']['contentMap']['en'] = $text;
-        $this->createMastodonPostWithMention['object']['content'] = $text;
+        $this->createMastodonPostWithMentionWithoutTagArray['object']['contentMap']['en'] = $text;
+        $this->createMastodonPostWithMentionWithoutTagArray['object']['content'] = $text;
     }
 }
