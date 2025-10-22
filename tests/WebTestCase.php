@@ -193,6 +193,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->bookmarkManager = $this->getService(BookmarkManager::class);
         $this->markdownConverter = $this->getService(MarkdownConverter::class);
         $this->activityJsonBuilder = $this->getService(ActivityJsonBuilder::class);
+        $this->mentionManager = $this->getService(MentionManager::class);
 
         $this->magazineRepository = $this->getService(MagazineRepository::class);
         $this->entryRepository = $this->getService(EntryRepository::class);

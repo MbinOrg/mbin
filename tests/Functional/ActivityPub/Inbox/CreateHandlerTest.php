@@ -24,6 +24,7 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
     private array $createPost;
     private array $createPostComment;
     private array $createMessage;
+    private array $createMastodonPostWithMention;
 
     public function setUpRemoteEntities(): void
     {
@@ -36,6 +37,8 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         $this->createPost = $this->createRemotePostInLocalMagazine($this->localMagazine, $this->remoteUser);
         $this->createPostComment = $this->createRemotePostCommentInLocalMagazine($this->localMagazine, $this->remoteUser);
         $this->createMessage = $this->createRemoteMessage($this->remoteUser, $this->localUser);
+        $this->setupMastodonPost();
+        $this->setupMastodonPostWithoutTagArray();
     }
 
     public function testCreateAnnouncedEntry(): void
@@ -163,5 +166,54 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         $this->userManager->follow($this->remoteUser, $this->localUser);
         self::expectException(HandlerFailedException::class);
         $this->bus->dispatch(new ActivityMessage(json_encode($this->createMessage)));
+    }
+
+    public function testMastodonMentionInPost(): void
+    {
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->createMastodonPostWithMention)));
+        $post = $this->postRepository->findOneBy(['apId' => $this->createMastodonPostWithMention['object']['id']]);
+        self::assertNotNull($post);
+        $mentions = $this->mentionManager->extract($post->body);
+        self::assertCount(1, $mentions);
+        self::assertEquals('@user@some.instance.tld', $mentions[0]);
+    }
+
+    public function testMastodonMentionInPostWithoutTagArray(): void
+    {
+        $createMastodonPostWithMentionWithoutTagArray = $this->createMastodonPostWithMention;
+        unset($createMastodonPostWithMentionWithoutTagArray['object']['tag']);
+        $this->bus->dispatch(new ActivityMessage(json_encode($createMastodonPostWithMentionWithoutTagArray)));
+        $post = $this->postRepository->findOneBy(['apId' => $this->createMastodonPostWithMention['object']['id']]);
+        self::assertNotNull($post);
+        $mentions = $this->mentionManager->extract($post->body);
+        self::assertCount(1, $mentions);
+        self::assertEquals('@remoteUser@remote.mbin', $mentions[0]);
+    }
+
+    private function setupMastodonPost(): void
+    {
+        $this->createMastodonPostWithMention = $this->createRemotePostInLocalMagazine($this->localMagazine, $this->remoteUser);
+        unset($this->createMastodonPostWithMention['object']['source']);
+        // this is what it would look like if a user created a post in Mastodon with just a single mention and nothing else
+        $text = '<p><span class="h-card" translate="no"><a href="https://some.instance.tld/u/user" class="u-url mention">@<span>user</span></a></span>';
+        $this->createMastodonPostWithMention['object']['contentMap']['en'] = $text;
+        $this->createMastodonPostWithMention['object']['content'] = $text;
+        $this->createMastodonPostWithMention['object']['tag'] = [
+            [
+                'type' => 'Mention',
+                'href' => 'https://some.instance.tld/u/user',
+                'name' => '@user@some.instance.tld',
+            ],
+        ];
+    }
+
+    private function setupMastodonPostWithoutTagArray(): void
+    {
+        $this->createMastodonPostWithMention = $this->createRemotePostInLocalMagazine($this->localMagazine, $this->remoteUser);
+        unset($this->createMastodonPostWithMention['object']['source']);
+        // this is what it would look like if a user created a post in Mastodon with just a single mention and nothing else
+        $text = '<p><span class="h-card" translate="no"><a href="https://remote.mbin/u/remoteUser" class="u-url mention">@<span>remoteUser</span></a></span>';
+        $this->createMastodonPostWithMention['object']['contentMap']['en'] = $text;
+        $this->createMastodonPostWithMention['object']['content'] = $text;
     }
 }
