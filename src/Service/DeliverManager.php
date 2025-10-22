@@ -21,7 +21,7 @@ readonly class DeliverManager
     /**
      * @param string[]|ActivityPubActorTrait[] $inboxes
      */
-    public function deliver(array $inboxes, array $activity): void
+    public function deliver(array $inboxes, array $activity, bool $useOldPrivateKey = false): void
     {
         foreach ($inboxes as $inbox) {
             if (!$inbox) {
@@ -39,7 +39,7 @@ readonly class DeliverManager
                 continue;
             }
 
-            $this->bus->dispatch(new DeliverMessage($inboxUrl, $activity));
+            $this->bus->dispatch(new DeliverMessage($inboxUrl, $activity, $useOldPrivateKey));
         }
     }
 }

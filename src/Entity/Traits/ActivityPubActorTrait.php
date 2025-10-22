@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Traits;
 
+use App\Service\ActivityPub\KeysGenerator;
 use Doctrine\ORM\Mapping\Column;
 
 trait ActivityPubActorTrait
@@ -50,6 +51,12 @@ trait ActivityPubActorTrait
     #[Column(type: 'text', nullable: true)]
     public ?string $publicKey = null;
 
+    #[Column(type: 'text', nullable: true)]
+    public ?string $oldPrivateKey = null;
+
+    #[Column(type: 'text', nullable: true)]
+    public ?string $oldPublicKey = null;
+
     #[Column(type: 'datetimetz', nullable: true)]
     public ?\DateTime $apFetchedAt = null;
 
@@ -59,6 +66,9 @@ trait ActivityPubActorTrait
     #[Column(type: 'datetimetz', nullable: true)]
     public ?\DateTime $apTimeoutAt = null;
 
+    #[Column(type: 'datetimetz', nullable: true)]
+    public ?\DateTime $lastKeyRotationDate = null;
+
     public function getPrivateKey(): ?string
     {
         return $this->privateKey;
@@ -67,5 +77,14 @@ trait ActivityPubActorTrait
     public function getPublicKey(): ?string
     {
         return $this->publicKey;
+    }
+
+    public function rotatePrivateKey(): void
+    {
+        $this->oldPrivateKey = $this->privateKey;
+        $this->oldPublicKey = $this->publicKey;
+        // set new private and public key
+        KeysGenerator::generate($this);
+        $this->lastKeyRotationDate = new \DateTime();
     }
 }
