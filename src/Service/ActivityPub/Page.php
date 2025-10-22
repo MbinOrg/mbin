@@ -20,6 +20,7 @@ use App\Exception\UserBannedException;
 use App\Exception\UserDeletedException;
 use App\Factory\ImageFactory;
 use App\Repository\ApActivityRepository;
+use App\Repository\InstanceRepository;
 use App\Service\ActivityPubManager;
 use App\Service\EntryManager;
 use App\Service\SettingsManager;
@@ -37,6 +38,7 @@ class Page
         private readonly ImageFactory $imageFactory,
         private readonly ApObjectExtractor $objectExtractor,
         private readonly LoggerInterface $logger,
+        private readonly InstanceRepository $instanceRepository,
     ) {
     }
 
@@ -101,7 +103,7 @@ class Page
 
             $dto->body = $this->objectExtractor->getMarkdownBody($object);
             $dto->visibility = $this->getVisibility($object, $actor);
-            $this->extractUrlIntoDto($dto, $object);
+            $this->extractUrlIntoDto($dto, $object, $actor);
             $this->handleDate($dto, $object['published']);
             if (isset($object['sensitive'])) {
                 $this->handleSensitiveMedia($dto, $object['sensitive']);
@@ -154,11 +156,23 @@ class Page
         return VisibilityInterface::VISIBILITY_VISIBLE;
     }
 
-    private function extractUrlIntoDto(EntryDto $dto, ?array $object): void
+    private function extractUrlIntoDto(EntryDto $dto, ?array $object, User $actor): void
     {
         $attachment = \array_key_exists('attachment', $object) ? $object['attachment'] : null;
 
         $dto->url = ActivityPubManager::extractUrlFromAttachment($attachment);
+        if (null === $dto->url) {
+            $instance = $this->instanceRepository->findOneBy(['domain' => $actor->apDomain]);
+            if ($instance && 'peertube' === $instance->software) {
+                // we make an exception for PeerTube as we need their embed viewer.
+                // Normally the URL field only links to a user-friendly UI if that differs from the AP id,
+                // which we do not want to have as a URL, but without the embed from PeerTube
+                // a video is only viewable by clicking more -> open original URL
+                // which is not very user-friendly.
+                $url = \array_key_exists('url', $object) ? $object['url'] : null;
+                $dto->url = ActivityPubManager::extractUrlFromAttachment($url);
+            }
+        }
     }
 
     /**
