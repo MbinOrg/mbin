@@ -11,6 +11,7 @@ use App\Entity\Contracts\ReportInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Magazine;
+use App\Entity\MagazineBan;
 use App\Entity\Message;
 use App\Entity\Post;
 use App\Entity\PostComment;
@@ -19,6 +20,7 @@ use App\Factory\ActivityPub\ActivityFactory;
 use App\Factory\ActivityPub\EntryCommentNoteFactory;
 use App\Factory\ActivityPub\EntryPageFactory;
 use App\Factory\ActivityPub\GroupFactory;
+use App\Factory\ActivityPub\InstanceFactory;
 use App\Factory\ActivityPub\PersonFactory;
 use App\Factory\ActivityPub\PostCommentNoteFactory;
 use App\Factory\ActivityPub\PostNoteFactory;
@@ -30,6 +32,7 @@ class ActivityJsonBuilder
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly InstanceFactory $instanceFactory,
         private readonly PersonFactory $personFactory,
         private readonly GroupFactory $groupFactory,
         private readonly ActivityFactory $activityFactory,
@@ -65,6 +68,7 @@ class ActivityJsonBuilder
             'Follow' => $this->buildFollowFromActivity($activity),
             'Accept', 'Reject' => $this->buildAcceptRejectFromActivity($activity),
             'Update' => $this->buildUpdateFromActivity($activity),
+            'Block' => $this->buildBlockFromActivity($activity),
             default => new \LogicException(),
         };
         $this->logger->debug('activity json: {json}', ['json' => json_encode($json, JSON_PRETTY_PRINT)]);
@@ -437,6 +441,40 @@ class ActivityJsonBuilder
             'to' => [ActivityPubActivityInterface::PUBLIC_URL],
             'cc' => $cc,
             'object' => $activityObject,
+        ];
+    }
+
+    private function buildBlockFromActivity(Activity $activity): array
+    {
+        $object = $activity->getObject();
+        $expires = null;
+        $cc = [];
+        if ($object instanceof MagazineBan) {
+            $reason = $object->reason;
+            $jsonObject = $this->personFactory->getActivityPubId($object->user);
+            $target = $this->groupFactory->getActivityPubId($object->magazine);
+            $expires = $object->expiredAt?->format(DATE_ATOM);
+            $cc = [$this->groupFactory->getActivityPubId($activity->audience)];
+        } elseif ($object instanceof User) {
+            $reason = $object->banReason;
+            $jsonObject = $this->personFactory->getActivityPubId($object);
+            $target = $this->instanceFactory->getTargetUrl();
+        } else {
+            throw new \LogicException('Object of a block activity has to be of type MagazineBan');
+        }
+
+        return [
+            '@context' => $this->contextsProvider->referencedContexts(),
+            'id' => $this->urlGenerator->generate('ap_object', ['id' => $activity->uuid], UrlGeneratorInterface::ABSOLUTE_URL),
+            'type' => 'Block',
+            'actor' => $this->personFactory->getActivityPubId($activity->userActor),
+            'object' => $jsonObject,
+            'target' => $target,
+            'summary' => $reason,
+            'audience' => $activity->audience ? $this->groupFactory->getActivityPubId($activity->audience) : null,
+            'expires' => $expires,
+            'to' => [ActivityPubActivityInterface::PUBLIC_URL],
+            'cc' => $cc,
         ];
     }
 
