@@ -20,6 +20,7 @@ class MagazineDto
 
     private User|UserDto|null $owner = null;
     public Image|ImageDto|null $icon = null;
+    public Image|ImageDto|null $banner = null;
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: self::MAX_NAME_LENGTH, countUnit: Assert\Length::COUNT_GRAPHEMES)]
     #[Assert\Regex(pattern: RegPatterns::MAGAZINE_NAME, match: true)]

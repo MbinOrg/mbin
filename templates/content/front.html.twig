@@ -59,6 +59,14 @@
         {% if magazine is defined and magazine %}
             <h1 hidden>{{ magazine.title }}</h1>
             <h2 hidden>{{ get_active_sort_option()|trans }}</h2>
+            {% if magazine.banner is not same as null %}
+                <div class="magazine-banner">
+                    <img loading="lazy" class="cover"
+                        src="{{ magazine.banner.filePath ? (asset(magazine.banner.filePath)|imagine_filter('magazine_banner')) : magazine.banner.sourceUrl }}"
+                        alt="{{ magazine.name ~ ' ' ~ 'banner'|trans|lower }}"
+                        />
+                </div>
+            {% endif %}
         {% else %}
             <h1 hidden>{{ get_active_sort_option()|trans }}</h1>
         {% endif %}

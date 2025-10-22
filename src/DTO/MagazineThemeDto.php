@@ -10,6 +10,7 @@ class MagazineThemeDto
 {
     public ?Magazine $magazine = null;
     public ?ImageDto $icon = null;
+    public ?ImageDto $banner = null;
     public ?string $customCss = null;
     public ?string $customJs = null;
     public ?string $primaryColor = null;
@@ -25,5 +26,10 @@ class MagazineThemeDto
     public function create(?ImageDto $icon)
     {
         $this->icon = $icon;
+    }
+
+    public function createBanner(ImageDto $banner): void
+    {
+        $this->banner = $banner;
     }
 }
