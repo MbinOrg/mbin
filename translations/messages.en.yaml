@@ -1055,3 +1055,7 @@ modlog_type_post_comment_restored: Microblog reply restored
 modlog_type_ban: User banned from magazine
 modlog_type_moderator_add: Magazine moderator added
 modlog_type_moderator_remove: Magazine moderator removed
+everyone: Everyone
+nobody: Nobody
+followers_only: Followers only
+direct_message_setting_label: Who can send a direct message

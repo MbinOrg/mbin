@@ -11,6 +11,7 @@ use App\Entity\User;
 use App\Exception\InvalidApPostException;
 use App\Exception\InvalidWebfingerException;
 use App\Exception\UserBlockedException;
+use App\Exception\UserCannotReceiveDirectMessage;
 use App\Exception\UserDeletedException;
 use App\Message\ActivityPub\Outbox\CreateMessage;
 use App\Repository\MessageThreadRepository;
@@ -115,6 +116,7 @@ class MessageManager
      * @throws InvalidWebfingerException
      * @throws Exception
      * @throws UserDeletedException
+     * @throws UserCannotReceiveDirectMessage
      */
     public function createMessage(array $object): Message|MessageThread
     {
@@ -130,6 +132,9 @@ class MessageManager
         foreach ($participants as $participant) {
             if ($participant->isBlocked($author)) {
                 throw new UserBlockedException();
+            }
+            if (!$participant->canReceiveDirectMessage($author)) {
+                throw new UserCannotReceiveDirectMessage($author, $participant);
             }
         }
 
