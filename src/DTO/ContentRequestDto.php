@@ -14,6 +14,8 @@ class ContentRequestDto extends ImageUploadDto
     #[Groups([
         Entry::ENTRY_TYPE_ARTICLE,
         Entry::ENTRY_TYPE_LINK,
+        Entry::ENTRY_TYPE_IMAGE,
+        Entry::ENTRY_TYPE_VIDEO,
         'post',
         'comment',
     ])]
