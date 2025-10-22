@@ -145,6 +145,7 @@ class MagazineFactory
         return MagazineResponseDto::create(
             $dto->getOwner() ? $this->moderatorFactory->createDtoWithUser($dto->getOwner(), $magazine) : null,
             $dto->icon,
+            $dto->banner,
             $dto->name,
             $dto->title,
             $dto->description,
