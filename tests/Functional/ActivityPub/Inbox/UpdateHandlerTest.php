@@ -166,6 +166,9 @@ class UpdateHandlerTest extends ActivityPubFunctionalTestCase
         $user = $this->userRepository->findOneBy(['apPublicUrl' => $this->updateUser['object']['id']]);
         self::assertNotNull($user);
         self::assertStringContainsString('update', $user->about);
+        self::assertNotNull($user->publicKey);
+        self::assertStringContainsString('new public key', $user->publicKey);
+        self::assertNotNull($user->lastKeyRotationDate);
     }
 
     public function testUpdateRemoteMagazine(): void
@@ -176,6 +179,9 @@ class UpdateHandlerTest extends ActivityPubFunctionalTestCase
         $magazine = $this->magazineRepository->findOneBy(['apPublicUrl' => $this->updateMagazine['object']['id']]);
         self::assertNotNull($magazine);
         self::assertStringContainsString('update', $magazine->description);
+        self::assertNotNull($magazine->publicKey);
+        self::assertStringContainsString('new public key', $magazine->publicKey);
+        self::assertNotNull($magazine->lastKeyRotationDate);
     }
 
     public function setUpRemoteEntities(): void
@@ -282,6 +288,8 @@ class UpdateHandlerTest extends ActivityPubFunctionalTestCase
     {
         $aboutBefore = $this->remoteUser->about;
         $this->remoteUser->about = 'Some updated user description';
+        $this->remoteUser->publicKey = 'Some new public key';
+        $this->remoteUser->privateKey = 'Some new private key';
         $updateActivity = $this->updateWrapper->buildForActor($this->remoteUser, $this->remoteUser);
         $this->updateUser = $this->activityJsonBuilder->buildActivityJson($updateActivity);
         $this->remoteUser->about = $aboutBefore;
@@ -294,6 +302,8 @@ class UpdateHandlerTest extends ActivityPubFunctionalTestCase
     {
         $descriptionBefore = $this->remoteMagazine->description;
         $this->remoteMagazine->description = 'Some updated magazine description';
+        $this->remoteMagazine->publicKey = 'Some new public key';
+        $this->remoteMagazine->privateKey = 'Some new private key';
         $updateActivity = $this->updateWrapper->buildForActor($this->remoteMagazine, $this->remoteMagazine->getOwner());
         $this->updateMagazine = $this->activityJsonBuilder->buildActivityJson($updateActivity);
         $this->remoteMagazine->description = $descriptionBefore;

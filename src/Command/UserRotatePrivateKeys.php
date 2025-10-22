@@ -6,7 +6,6 @@ namespace App\Command;
 
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\ActivityJsonBuilder;
-use App\Service\ActivityPub\KeysGenerator;
 use App\Service\ActivityPub\Wrapper\UpdateWrapper;
 use App\Service\DeliverManager;
 use App\Service\UserManager;
@@ -66,11 +65,11 @@ class UserRotatePrivateKeys extends Command
             }
             $users = [$user];
         } elseif ($all) {
-            // all local users
+            // all local users, including suspended, banned and marked for deletion, but excluding deleted ones
             $users = $this->userRepository->findBy(['apId' => null, 'isDeleted' => false]);
         } else {
-            // unreachable
-            throw new \LogicException();
+            // unreachable because of the first if
+            throw new \LogicException('no username is set and it should not run for all local users!');
         }
 
         $userCount = \count($users);
@@ -78,10 +77,7 @@ class UserRotatePrivateKeys extends Command
         foreach ($users as $user) {
             $this->entityManager->beginTransaction();
 
-            $user->oldPrivateKey = $user->privateKey;
-            $user->oldPublicKey = $user->publicKey;
-            // set new private and public key
-            KeysGenerator::generate($user);
+            $user->rotatePrivateKey();
             $update = $this->updateWrapper->buildForActor($user);
 
             $this->entityManager->flush();

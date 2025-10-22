@@ -121,6 +121,24 @@ Options:
 > [!NOTE] 
 > If neither `--activate` nor `--deactivate` are provided, the current verification status will be returned
 
+
+### Rotate users private keys
+
+> [!WARNING]
+> You should inform your users about this when you are running this command
+
+This command allows you to rotate the private keys of your users with which the activities sent by them are authenticated.
+If private keys have been leaked you should rotate the private keys to avoid the potential for impersonation.
+
+Usage:
+
+```bash
+php bin/console mbin:user:private-keys:rotate [-a|--all-local-users] <username>
+```
+
+Arguments:
+- `username`: the single user for which this command should be executed
+
 ### User-Unsub
 
 > [!NOTE]
