@@ -508,3 +508,22 @@ details {
     color: var(--kbin-boosted-color);
   }
 }
+
+.magazine-banner {
+  margin-top: .5rem;
+  text-align: center;
+
+  img.cover {
+    width: 100%;
+    object-fit: cover;
+  }
+}
+
+.rounded-edges {
+  .magazine-banner {
+    border-radius: var(--kbin-rounded-edges-radius);
+    img.cover {
+      border-radius: var(--kbin-rounded-edges-radius);
+    }
+  }
+}

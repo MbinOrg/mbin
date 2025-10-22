@@ -343,6 +343,7 @@ expired_at: Expired at
 add_ban: Add ban
 trash: Trash
 icon: Icon
+banner: Banner
 done: Done
 pin: Pin
 unpin: Unpin
@@ -728,8 +729,9 @@ show_avatars_on_comments_help: Display/hide user avatars when viewing comments
 comment_reply_position: Comment reply position
 magazine_theme_appearance_custom_css: Custom CSS that will apply when viewing 
   content within your magazine.
-magazine_theme_appearance_icon: Custom icon for the magazine. If none is 
-  selected, the default icon will be used.
+magazine_theme_appearance_icon: Custom icon for the magazine.
+magazine_theme_appearance_banner: Custom banner for the magazine. It is displayed
+  above all threads and should be in a wide aspect ratio (5:1, or 1500px * 300px).
 magazine_theme_appearance_background_image: Custom background image that will be
   applied when viewing content within your magazine.
 moderation.report.approve_report_title: Approve Report
@@ -1059,3 +1061,7 @@ everyone: Everyone
 nobody: Nobody
 followers_only: Followers only
 direct_message_setting_label: Who can send a direct message
+delete_magazine_icon: Delete magazine icon
+flash_magazine_theme_icon_detached_success: Magazine icon deleted successfully
+delete_magazine_banner: Delete magazine banner
+flash_magazine_theme_banner_detached_success: Magazine banner deleted successfully

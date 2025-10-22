@@ -16,17 +16,17 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class MagazineDeleteIconApi extends MagazineBaseApi
+class MagazineDeleteBannerApi extends MagazineBaseApi
 {
     #[OA\Response(
         response: 200,
-        description: 'Icon removed',
-        content: new Model(type: MagazineThemeResponseDto::class),
+        description: 'Banner removed',
         headers: [
-            new OA\Header(header: 'X-RateLimit-Remaining', schema: new OA\Schema(type: 'integer'), description: 'Number of requests left until you will be rate limited'),
-            new OA\Header(header: 'X-RateLimit-Retry-After', schema: new OA\Schema(type: 'integer'), description: 'Unix timestamp to retry the request after'),
-            new OA\Header(header: 'X-RateLimit-Limit', schema: new OA\Schema(type: 'integer'), description: 'Number of requests available'),
-        ]
+            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
+        ],
+        content: new Model(type: MagazineThemeResponseDto::class)
     )]
     #[OA\Response(
         response: 401,
@@ -35,7 +35,7 @@ class MagazineDeleteIconApi extends MagazineBaseApi
     )]
     #[OA\Response(
         response: 403,
-        description: 'You do not have permission to delete this magazine\'s icon',
+        description: 'You do not have permission to delete this magazine\'s banner',
         content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\ForbiddenErrorSchema::class))
     )]
     #[OA\Response(
@@ -46,17 +46,17 @@ class MagazineDeleteIconApi extends MagazineBaseApi
     #[OA\Response(
         response: 429,
         description: 'You are being rate limited',
-        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\TooManyRequestsErrorSchema::class)),
         headers: [
-            new OA\Header(header: 'X-RateLimit-Remaining', schema: new OA\Schema(type: 'integer'), description: 'Number of requests left until you will be rate limited'),
-            new OA\Header(header: 'X-RateLimit-Retry-After', schema: new OA\Schema(type: 'integer'), description: 'Unix timestamp to retry the request after'),
-            new OA\Header(header: 'X-RateLimit-Limit', schema: new OA\Schema(type: 'integer'), description: 'Number of requests available'),
-        ]
+            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
+        ],
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\TooManyRequestsErrorSchema::class))
     )]
     #[OA\Parameter(
         name: 'magazine_id',
+        description: 'The id of the magazine to remove the banner from',
         in: 'path',
-        description: 'The id of the magazine to remove the icon from',
         schema: new OA\Schema(type: 'integer'),
     )]
     #[OA\Tag(name: 'moderation/magazine/owner')]
@@ -74,10 +74,10 @@ class MagazineDeleteIconApi extends MagazineBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        $manager->detachIcon($magazine);
+        $manager->detachBanner($magazine);
 
-        $bannerDto = $magazine->banner ? $this->imageFactory->createDto($magazine->banner) : null;
-        $dto = MagazineThemeResponseDto::create($manager->createDto($magazine), $magazine->customCss, icon: null, banner: $bannerDto);
+        $iconDto = $magazine->icon ? $this->imageFactory->createDto($magazine->icon) : null;
+        $dto = MagazineThemeResponseDto::create($manager->createDto($magazine), $magazine->customCss, $iconDto, banner: null);
 
         return new JsonResponse(
             $dto,
