@@ -686,8 +686,8 @@ removed_comment_by: eliminou un comentario de
 restored_comment_by: restableceu o comentario de
 removed_post_by: eliminou unha publicación de
 restored_post_by: restableceu unha publicación de
-he_banned: vetar
-he_unbanned: retirar veto
+he_banned: vetada
+he_unbanned: retirouse o veto
 read_all: Ler todo
 show_all: Mostrar todo
 flash_register_success: Benvida! Creouse a túa conta. Para rematar - comproba no

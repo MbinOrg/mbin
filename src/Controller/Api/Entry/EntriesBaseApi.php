@@ -69,6 +69,7 @@ class EntriesBaseApi extends BaseApi
         $deserialized->url = $request->get('url');
         $deserialized->body = $request->get('body');
         $deserialized->tags = $request->get('tags');
+        $deserialized->body = $request->get('body');
         // TODO: Support badges whenever/however they're implemented
         // $deserialized->badges = $request->get('badges');
         $deserialized->isOc = filter_var($request->get('isOc'), FILTER_VALIDATE_BOOL);

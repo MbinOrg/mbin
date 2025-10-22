@@ -226,6 +226,13 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/blued-gear">
+                    <img src="https://avatars.githubusercontent.com/u/164888202?v=4" width="100;" alt="blued-gear"/>
+                    <br />
+                    <sub><b>blued_gear</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/ryanmonsen">
                     <img src="https://avatars.githubusercontent.com/u/55466117?v=4" width="100;" alt="ryanmonsen"/>
                     <br />
@@ -239,6 +246,8 @@ Unofficial magazines:
                     <sub><b>Pol Dellaiera</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/MakaryGo">
                     <img src="https://avatars.githubusercontent.com/u/24472656?v=4" width="100;" alt="MakaryGo"/>
@@ -246,8 +255,6 @@ Unofficial magazines:
                     <sub><b>Makary</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/cavebob">
                     <img src="https://avatars.githubusercontent.com/u/75441692?v=4" width="100;" alt="cavebob"/>
@@ -283,6 +290,8 @@ Unofficial magazines:
                     <sub><b>CSDUMMI</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/e-michalak">
                     <img src="https://avatars.githubusercontent.com/u/236532325?v=4" width="100;" alt="e-michalak"/>
@@ -290,8 +299,6 @@ Unofficial magazines:
                     <sub><b>e-michalak</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/MHLoppy">
                     <img src="https://avatars.githubusercontent.com/u/12670674?v=4" width="100;" alt="MHLoppy"/>
@@ -304,13 +311,6 @@ Unofficial magazines:
                     <img src="https://avatars.githubusercontent.com/u/1519467?v=4" width="100;" alt="robertolopezlopez"/>
                     <br />
                     <sub><b>Roberto López López</b></sub>
-                </a>
-            </td>
-            <td align="center">
-                <a href="https://github.com/blued-gear">
-                    <img src="https://avatars.githubusercontent.com/u/164888202?v=4" width="100;" alt="blued-gear"/>
-                    <br />
-                    <sub><b>blued_gear</b></sub>
                 </a>
             </td>
             <td align="center">

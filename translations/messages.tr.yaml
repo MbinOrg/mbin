@@ -86,10 +86,12 @@ add_new_photo: Yeni fotoğraf ekle
 add_new_post: Yeni gönderi ekle
 add_new_video: Yeni video ekle
 useful: Kullanışlı
-reset_check_email_desc: Halihazırda e-posta adresinizle ilişkilendirilmiş bir hesap
-  varsa, kısa süre içinde parolanızı sıfırlamak için kullanabileceğiniz bir bağlantı
-  içeren bir e-posta alacaksınız. Bu bağlantı %expire% içinde geçerliliğini yitirecek.
-reset_check_email_desc2: Bir e-posta almazsanız, lütfen spam klasörünüzü kontrol edin.
+reset_check_email_desc: Halihazırda e-posta adresinizle ilişkilendirilmiş bir 
+  hesap varsa, kısa süre içinde parolanızı sıfırlamak için kullanabileceğiniz 
+  bir bağlantı içeren bir e-posta alacaksınız. Bu bağlantı %expire% içinde 
+  geçerliliğini yitirecek.
+reset_check_email_desc2: Bir e-posta almazsanız, lütfen spam klasörünüzü kontrol
+  edin.
 try_again: Yeniden dene
 up_vote: Yükselt
 url: URL
@@ -101,8 +103,8 @@ description: Tanım
 is_adult: +18 / NSFW
 down_vote: Azalt
 email_verify: E-posta adresini onayla
-email_confirm_expire: Lütfen bağlantının bir saat içinde geçerliliğini kaybedeceğini
-  unutmayın.
+email_confirm_expire: Lütfen bağlantının bir saat içinde geçerliliğini 
+  kaybedeceğini unutmayın.
 select_magazine: Dergi seçin
 add_new: Yenisini ekle
 title: Başlık
@@ -274,8 +276,8 @@ ban_expired: Yasak süresi doldu
 wrote_message: Mesaj yazdı
 mod_deleted_your_comment: Bir yönetici sizin yorumunuzu sildi
 appearance: Görünüm
-mod_log_alert: UYARI - Modlog'da yöneticiler tarafından kaldırılmış önemli gönderiler
-  bula bilirsiniz. Ne yaptığınızı bildiğinizden emin olun.
+mod_log_alert: UYARI - Modlog'da yöneticiler tarafından kaldırılmış önemli 
+  gönderiler bula bilirsiniz. Ne yaptığınızı bildiğinizden emin olun.
 show_profile_subscriptions: Dergi aboneliklerini göster
 new_email_repeat: Yeni e-postayı onayla
 show_users_avatars: Kullanıcı avatarını göster
@@ -292,20 +294,22 @@ flash_thread_edit_success: Başlık başarıyla düzenlendi.
 flash_thread_delete_success: Başlık başarıyla silindi.
 flash_thread_pin_success: Başlık başarıyla sabitlendi.
 flash_thread_unpin_success: Başlığın sabitlenmesi başarıyla kaldırıldı.
-set_magazines_bar_empty_desc: Alan boş ise aktif dergiler bar üzerinde gösterilir.
-flash_register_success: Aramıza hoş geldin! Hesabın başarıyla kaydedildi. Son bir
-  adım kaldı! - Gelen kutunu kontrol et, hesabını aktif hale getirecek bir aktivasyon
-  bağlantısı gönderdik.
-flash_thread_new_success: Başlık başarıyla oluşturuldu ve artık diğer kullanıcılara
-  görünebilir durumda.
-flash_magazine_new_success: Magazin başarıyla oluşturuldu. Artık yeni içerik ekleyebilirsiniz
-  veya magazinin yonetici panelini keşfedebilirsiniz.
+set_magazines_bar_empty_desc: Alan boş ise aktif dergiler bar üzerinde 
+  gösterilir.
+flash_register_success: Aramıza hoş geldin! Hesabın başarıyla kaydedildi. Son 
+  bir adım kaldı! - Gelen kutunu kontrol et, hesabını aktif hale getirecek bir 
+  aktivasyon bağlantısı gönderdik.
+flash_thread_new_success: Başlık başarıyla oluşturuldu ve artık diğer 
+  kullanıcılara görünebilir durumda.
+flash_magazine_new_success: Magazin başarıyla oluşturuldu. Artık yeni içerik 
+  ekleyebilirsiniz veya magazinin yonetici panelini keşfedebilirsiniz.
 type.article: İçerik
 thread: Başlık
 threads: Başlıklar
 top: Üst
 hot: Sıcak
-federated_magazine_info: Bu magazin federe bir sunucudan geliyor ve eksik olabilir.
+federated_magazine_info: Bu magazin federe bir sunucudan geliyor ve eksik 
+  olabilir.
 federated_user_info: Bu profil federe bir sunucudan geliyor ve eksik olabilir.
 go_to_original_instance: Özgün oluşuma daha fazla göz atın.
 agree_terms: '%terms_link_start%Kullanım şartlarını%terms_link_end% ve %policy_link_start%Gizlilik
@@ -315,9 +319,10 @@ domain: Alan
 joined: Katılanlar
 people_federated: Birleştirilmiş
 notify_on_new_entry_reply: Başlıklarımdaki bütün yorumlar
-notify_on_new_entry_comment_reply: Herhangi bir başlıkta yorumlarıma gelen yanıtlar
-notify_on_new_entry: Abone olduğum magazinlerdeki yeni başlıklar (bağlantılar veya
-  makaleler)
+notify_on_new_entry_comment_reply: Herhangi bir başlıkta yorumlarıma gelen 
+  yanıtlar
+notify_on_new_entry: Abone olduğum magazinlerdeki yeni başlıklar (bağlantılar 
+  veya makaleler)
 notify_on_new_posts: Abone olduğum magazinlerdeki yeni gönderiler
 save: Kayıt et
 collapse: Daralt
@@ -352,12 +357,12 @@ captcha_enabled: Captcha aktifleştirildi
 sidebar: Yan bar
 random_entries: Rastgele konular
 related_entries: Alakalı konular
-browsing_one_thread: Tartışmadaki sadece bir konuya bakıyorsunuz! Tüm yorumlar gönderi
-  sayfasında mevcut.
+browsing_one_thread: Tartışmadaki sadece bir konuya bakıyorsunuz! Tüm yorumlar 
+  gönderi sayfasında mevcut.
 kbin_promo_desc: "%link_start%Repo'yu klonlayın%link_end% ve Fediverse'ı geliştirin"
 article: Başlık
-kbin_intro_desc: Fediverse ağı içinde işleyen ve merkezi olmayan, içerik biriktirme
-  ve mikrobloglama platformudur.
+kbin_intro_desc: Fediverse ağı içinde işleyen ve merkezi olmayan, içerik 
+  biriktirme ve mikrobloglama platformudur.
 to: ile
 in: içinde
 solarized_light: Solarize Işık
@@ -367,16 +372,17 @@ off: Kapalı
 meta: Meta
 add_mentions_entries: Başlıklara bahsetme etiketi ekle
 banned_instances: Engellenmiş sunucular
-magazine_panel_tags_info: Bu bilgiyi sadece fediverse'ten etiketler aracılığıyla içerik
-  gelmesini istiyorsanız girin
+magazine_panel_tags_info: Bu bilgiyi sadece fediverse'ten etiketler aracılığıyla
+  içerik gelmesini istiyorsanız girin
 kbin_promo_title: Kendi sunucunu oluştur
 header_logo: Header logosu
 mercure_enabled: Merkür etkinleştir
 report_issue: Sorun bildir
 tokyo_night: Tokyo Gecesi
-infinite_scroll_help: Sayfanın en altına ulaştığınızda otomatik olarak daha fazla
-  içerik yükleyin.
-sticky_navbar_help: Navigasyon paneli aşağı kaydırdığınızda sayfanın üst kısmına yapışacaktır.
+infinite_scroll_help: Sayfanın en altına ulaştığınızda otomatik olarak daha 
+  fazla içerik yükleyin.
+sticky_navbar_help: Navigasyon paneli aşağı kaydırdığınızda sayfanın üst kısmına
+  yapışacaktır.
 auto_preview_help: Medya önizlemelerini otomatik olarak genişletin.
 reload_to_apply: Değişiklikleri uygulamak için sayfayı yeniden yükleyin
 preferred_languages: Başlıkların ve gönderilerin dillerini filtreleyin

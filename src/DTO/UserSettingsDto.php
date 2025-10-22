@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\DTO;
 
 use App\Entity\User;
+use App\Enums\EDirectMessageSettings;
 use App\PageView\EntryCommentPageView;
 use App\PageView\EntryPageView;
 use OpenApi\Attributes as OA;
@@ -37,6 +38,8 @@ class UserSettingsDto implements \JsonSerializable
         public ?string $customCss = null,
         public ?bool $ignoreMagazinesCustomCss = null,
         public ?bool $notifyOnUserSignup = null,
+        #[OA\Property(type: 'string', enum: EDirectMessageSettings::OPTIONS)]
+        public ?string $directMessageSetting = null,
     ) {
     }
 
@@ -62,6 +65,7 @@ class UserSettingsDto implements \JsonSerializable
             'customCss' => $this->customCss,
             'ignoreMagazinesCustomCss' => $this->ignoreMagazinesCustomCss,
             'notifyOnUserSignup' => $this->notifyOnUserSignup,
+            'directMessageSetting' => $this->directMessageSetting,
         ];
     }
 
@@ -85,6 +89,7 @@ class UserSettingsDto implements \JsonSerializable
         $dto->preferredLanguages = $this->preferredLanguages ?? $dto->preferredLanguages;
         $dto->customCss = $this->customCss ?? $dto->customCss;
         $dto->ignoreMagazinesCustomCss = $this->ignoreMagazinesCustomCss ?? $dto->ignoreMagazinesCustomCss;
+        $dto->directMessageSetting = $this->directMessageSetting ?? $dto->directMessageSetting;
 
         return $dto;
     }
