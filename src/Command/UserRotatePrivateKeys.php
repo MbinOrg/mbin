@@ -94,7 +94,10 @@ class UserRotatePrivateKeys extends Command
         }
         $progressBar->finish();
 
-        $io->info('Successfully rotated the private key for '.$userCount.' users. It might take up to 24 hours for other software to get the new public keys.');
+        $io->info('Successfully rotated the private key for '.$userCount.' users. '
+            .'After running this command it can take up to 24 hours for other instances to update their stored public keys. '
+            .'In this timeframe federation might be impacted by this, as those services cannot successfully verify the identity of your users. '
+            .'Please inform your users about this when you\'re running this command.');
 
         return Command::SUCCESS;
     }
