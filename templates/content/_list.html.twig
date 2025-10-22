@@ -1,0 +1,31 @@
+{%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
+{%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
+
+{%- set DYNAMIC_LISTS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_DYNAMIC_LISTS'), V_FALSE) -%}
+{%- set INFINITE_SCROLL = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_INFINITE_SCROLL'), V_FALSE) -%}
+{%- set SHOW_COMMENTS_AVATAR = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR')) -%}
+{%- set SHOW_POST_AVATAR = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_USERS_AVATARS')) -%}
+
+{% if criteria is defined and criteria.content is same as constant('APP\\Repository\\Criteria::CONTENT_THREADS') %}
+    {% set data_action = DYNAMIC_LISTS is same as V_TRUE ? 'notifications:EntryCreatedNotification@window->subject-list#addMainSubject' : 'notifications:EntryCreatedNotification@window->subject-list#increaseCounter' %}
+{% elseif criteria is defined and criteria.content is same as constant('APP\\Repository\\Criteria::CONTENT_MICROBLOG') %}
+    {% set data_action = DYNAMIC_LISTS is same as V_TRUE ? 'notifications:PostCreatedNotification@window->subject-list#addMainSubject' : 'notifications:PostCreatedNotification@window->subject-list#increaseCounter' %}
+{% else %}
+    {% set data_action = DYNAMIC_LISTS is same as V_TRUE ?
+        'notifications:EntryCreatedNotification@window->subject-list#addMainSubject notifications:PostCreatedNotification@window->subject-list#addMainSubject' :
+        'notifications:EntryCreatedNotification@window->subject-list#increaseCounter notifications:PostCreatedNotification@window->subject-list#increaseCounter'
+    %}
+{% endif %}
+
+<div data-controller="subject-list"
+     class="{{ html_classes({
+        'show-comment-avatar': SHOW_COMMENTS_AVATAR is same as V_TRUE or not SHOW_COMMENTS_AVATAR,
+        'show-post-avatar': SHOW_POST_AVATAR is same as V_TRUE or not SHOW_POST_AVATAR
+     }) }}"
+     data-action="{{- data_action -}}">
+    {% if magazine is defined and magazine %}
+        {% include 'layout/_subject_list.html.twig' with {postAttributes: {showMagazineName: false}, entryAttributes: {showMagazineName: false}} %}
+    {% else %}
+        {% include 'layout/_subject_list.html.twig' %}
+    {% endif %}
+</div>

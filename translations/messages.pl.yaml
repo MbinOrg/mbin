@@ -51,11 +51,11 @@ privacy: Prywatność
 show_profile_subscriptions: Pokaż w profilu obserwowane magazyny
 show_profile_followings: Pokaż w profilu obserwowanych ludzi
 notify_on_new_entry_reply: Powiadom mnie o nowym komentarzu w moich treściach
-notify_on_new_entry_comment_reply: Powiadom mnie o odpowiedzi na moje komentarze w
-  treściach
+notify_on_new_entry_comment_reply: Powiadom mnie o odpowiedzi na moje komentarze
+  w treściach
 notify_on_new_post_reply: Powiadom mnie o odpowiedzi na moje posty
-notify_on_new_post_comment_reply: Powiadom mnie o odpowiedzi na moje komentarze na
-  mikroblogu
+notify_on_new_post_comment_reply: Powiadom mnie o odpowiedzi na moje komentarze 
+  na mikroblogu
 notify_on_new_entry: Powiadom mnie o nowych treściach w obserwowanych magazynach
 notify_on_new_posts: Powiadom mnie o nowych postach w obserwowanych magazynach
 save: Zapisz
@@ -92,8 +92,8 @@ restored_post_by: przywrócił post utworzony przez
 he_banned: ban
 he_unbanned: odbanuj
 show_all: Pokaż wszystko
-flash_thread_new_success: Treść została poprawnie utworzona i za chwilę będzie widoczna
-  dla innych.
+flash_thread_new_success: Treść została poprawnie utworzona i za chwilę będzie 
+  widoczna dla innych.
 flash_thread_edit_success: Treść została poprawnie zedytowana.
 flash_thread_delete_success: Treść została poprawnie usunięta.
 flash_thread_pin_success: Treść została przypięta.
@@ -102,8 +102,8 @@ flash_magazine_edit_success: Magazyn został poprawnie zedytowany.
 too_many_requests: Limit wyczerpany, sprawdź ponownie później.
 set_magazines_bar: Pasek magazynów
 set_magazines_bar_desc: podaj nazwy magazynów oddzielone przecinkiem
-set_magazines_bar_empty_desc: jeżeli pole jest puste, na pasku wyświetlane będą aktywne
-  magazyny.
+set_magazines_bar_empty_desc: jeżeli pole jest puste, na pasku wyświetlane będą 
+  aktywne magazyny.
 trash: Kosz
 type.magazine: Magazyn
 thread: Treść
@@ -286,11 +286,11 @@ federated_user_info: Profil ze zdalnego serwera może być niekompletny.
 login_or_email: Login lub email
 dont_have_account: Nie masz konta?
 repeat_password: Powtórz hasło
-agree_terms: Zgadzam się z %terms_link_start%Regulaminem%terms_link_end% i %policy_link_start%Polityką
-  prywatności%policy_link_end%
-reset_check_email_desc: Jeśli już istnieje konto powiązane z twoim adresem email,
-  to wkrótce otrzymasz email zawierający link, który możesz użyć do zresetowania hasła.
-  Ten link wygaśnie za %expire%.
+agree_terms: Zgadzam się z %terms_link_start%Regulaminem%terms_link_end% i 
+  %policy_link_start%Polityką prywatności%policy_link_end%
+reset_check_email_desc: Jeśli już istnieje konto powiązane z twoim adresem 
+  email, to wkrótce otrzymasz email zawierający link, który możesz użyć do 
+  zresetowania hasła. Ten link wygaśnie za %expire%.
 image_alt: Alternatywny tekst opisujący obraz
 subscriptions: Subskrypcje
 reputation_points: Punkty reputacji
@@ -331,12 +331,12 @@ edit_comment: Zapisz zmiany
 show_users_avatars: Pokaż avatary użytkowników
 restored_thread_by: przywrócił treść utworzoną przez
 read_all: Przeczytaj wszystkie
-flash_register_success: Twoje konto zostało zarejestrowane. Sprawdź swoją skrzynkę
-  e-mail, wysłaliśmy wiadomość z linkiem aktywacyjnym.
-flash_magazine_new_success: Magazyn został poprawnie utworzony. Możesz dodawać nowe
-  treści lub zapoznać się z panelem administratora.
-mod_log_alert: W modlogu możesz trafić na drastyczne treści usunięte przez moderatorów.
-  Upewnij się, że wiesz co robisz...
+flash_register_success: Twoje konto zostało zarejestrowane. Sprawdź swoją 
+  skrzynkę e-mail, wysłaliśmy wiadomość z linkiem aktywacyjnym.
+flash_magazine_new_success: Magazyn został poprawnie utworzony. Możesz dodawać 
+  nowe treści lub zapoznać się z panelem administratora.
+mod_log_alert: W modlogu możesz trafić na drastyczne treści usunięte przez 
+  moderatorów. Upewnij się, że wiesz co robisz...
 mod_remove_your_post: Moderator usunął twój post
 ban_expired: Ban wygasa
 change_magazine: Zmień magazyn
@@ -353,30 +353,31 @@ ban_account: Zbanuj konto
 unban_account: Odbanuj konto
 related_magazines: Powiązane magazyny
 random_magazines: Losowe magazyny
-magazine_panel_tags_info: Wprowadź tylko wtedy, gdy chcesz żeby treści z fediwersum
-  były umieszczane w tym magazynie na podstawie tagów
+magazine_panel_tags_info: Wprowadź tylko wtedy, gdy chcesz żeby treści z 
+  fediwersum były umieszczane w tym magazynie na podstawie tagów
 sidebar: Menu boczne
 auto_preview: Pogląd mediów
 dynamic_lists: Dynamiczne listy
 banned_instances: Zbanowane instancje
 kbin_intro_title: Zanurkuj w Fediwersum
-kbin_intro_desc: to zdecentralizowana platforma służąca do agregowania treści i mikroblogowania,
-  działająca w sieci Fediverse.
+kbin_intro_desc: to zdecentralizowana platforma służąca do agregowania treści i 
+  mikroblogowania, działająca w sieci Fediverse.
 kbin_promo_title: Utwórz własną instancję
 kbin_promo_desc: '%link_start%Sklonuj repo%link_end% i rozwijaj fediverse'
 captcha_enabled: Captcha włączona
 header_logo: Logo w nagłówku
 return: Wróć
-browsing_one_thread: Przeglądasz tylko jeden wątek w dyskusji! Wszystkie Komentarze
-  dostępne są na stronie posta.
+browsing_one_thread: Przeglądasz tylko jeden wątek w dyskusji! Wszystkie 
+  Komentarze dostępne są na stronie posta.
 boost: Podbij
 report_issue: Zgłoś błąd
 mercure_enabled: Włączono Mercure
 tokyo_night: Tokyo Nocą
 preferred_languages: Filtruj język wątków i wpisów
-infinite_scroll_help: Automatycznie wczytuj więcej treści, gdy dotrzesz do końca strony.
-sticky_navbar_help: Pasek nawigacyjny przyczepi się do góry strony, gdy przewijasz
-  w dół.
+infinite_scroll_help: Automatycznie wczytuj więcej treści, gdy dotrzesz do końca
+  strony.
+sticky_navbar_help: Pasek nawigacyjny przyczepi się do góry strony, gdy 
+  przewijasz w dół.
 auto_preview_help: Automatycznie pokazuj podgląd mediów.
 reload_to_apply: Przeładuj stronę, żeby zaakceptować zmiany
 filter.origin.label: Wybierz pochodzenie
@@ -399,8 +400,8 @@ bot_body_content: "Witaj w Bocie Mbin! Ten bot odgrywa kluczową rolę w umożli
   udostępnianie i komentowanie wątków lub wpisów."
 kbin_bot: Bot Mbin
 password_confirm_header: Potwierdzi żądanie zmiany hasła.
-your_account_is_not_active: Twoje konto nie zostało aktywowane. Proszę sprawdź swój
-  email i kliknij na link aktywacyjny, żeby kontynuować
+your_account_is_not_active: Twoje konto nie zostało aktywowane. Proszę sprawdź 
+  swój email i kliknij na link aktywacyjny, żeby kontynuować
 your_account_has_been_banned: Twoje konto zostało zbanowane
 toolbar.bold: Pogrubienie
 toolbar.italic: Kursywa

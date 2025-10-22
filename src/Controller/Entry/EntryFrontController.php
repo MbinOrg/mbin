@@ -12,8 +12,7 @@ use App\Form\PostType;
 use App\PageView\EntryPageView;
 use App\PageView\PostPageView;
 use App\Pagination\Pagerfanta as MbinPagerfanta;
-use App\Repository\EntryRepository;
-use App\Repository\PostRepository;
+use App\Repository\ContentRepository;
 use Pagerfanta\PagerfantaInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -25,8 +24,7 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 class EntryFrontController extends AbstractController
 {
     public function __construct(
-        private readonly EntryRepository $entryRepository,
-        private readonly PostRepository $postRepository,
+        private readonly ContentRepository $contentRepository,
         private readonly Security $security,
     ) {
     }
@@ -56,18 +54,13 @@ class EntryFrontController extends AbstractController
 
         $this->setUserPreferences($user, $criteria);
 
-        if ('threads' === $content) {
-            $entities = $this->entryRepository->findByCriteria($criteria);
-            $entities = $this->handleCrossposts($entities);
-            $templatePath = 'entry/';
-            $dataKey = 'entries';
-        } elseif ('microblog' === $content) {
-            $entities = $this->postRepository->findByCriteria($criteria);
-            $templatePath = 'post/';
-            $dataKey = 'posts';
-        } else {
-            throw new \LogicException("Invalid content filter '{$content}'");
+        if (null !== $user) {
+            $criteria->fetchCachedItems($this->contentRepository, $user);
         }
+
+        $entities = $this->contentRepository->findByCriteria($criteria);
+        $templatePath = 'content/';
+        $dataKey = 'results';
 
         return $this->renderResponse(
             $request,
@@ -130,26 +123,16 @@ class EntryFrontController extends AbstractController
         $this->handleSubscription($subscription, $criteria);
 
         $this->setUserPreferences($user, $criteria);
-
-        if ('threads' === $content) {
-            $entities = $this->entryRepository->findByCriteria($criteria);
-            // Note no crosspost handling
-            $templatePath = 'entry/';
-            $dataKey = 'entries';
-        } elseif ('microblog' === $content) {
-            $entities = $this->postRepository->findByCriteria($criteria);
-            $templatePath = 'post/';
-            $dataKey = 'posts';
-        } else {
-            throw new \LogicException("Invalid content filter '{$content}'");
+        if (null !== $user) {
+            $criteria->fetchCachedItems($this->contentRepository, $user);
         }
 
         return $this->renderResponse(
             $request,
             $content,
             $criteria,
-            [$dataKey => $entities, 'magazine' => $magazine],
-            $templatePath,
+            ['results' => $this->contentRepository->findByCriteria($criteria), 'magazine' => $magazine],
+            'content/',
             $user
         );
     }
@@ -183,7 +166,7 @@ class EntryFrontController extends AbstractController
 
     private function createCriteria(string $content, Request $request)
     {
-        if ('threads' === $content) {
+        if ('threads' === $content || 'all' === $content) {
             $criteria = new EntryPageView($this->getPageNb($request), $this->security);
         } elseif ('microblog' === $content) {
             $criteria = new PostPageView($this->getPageNb($request), $this->security);

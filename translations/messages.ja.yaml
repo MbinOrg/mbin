@@ -170,8 +170,9 @@ image_alt: 画像の代替テキスト
 moderated: モデレートしているマガジン
 check_email: メールを確認してください
 unfollow: フォローを解除
-reset_check_email_desc: あなたのアカウントに紐づくメールアドレスが存在する場合、パスワードをリセットするためのメールが送信されます。このリンクの有効期限は
-  %expire% までです。
+reset_check_email_desc: 
+  あなたのアカウントに紐づくメールアドレスが存在する場合、パスワードをリセットするためのメールが送信されます。このリンクの有効期限は %expire% 
+  までです。
 remember_me: ログイン情報を保存
 reset_password: パスワードをリセットする
 repeat_password: パスワードを再入力
@@ -237,7 +238,8 @@ set_magazines_bar_desc: マガジン名はカンマで区切って入力して�
 set_magazines_bar_empty_desc: 空欄にするとアクティブなマガジンが表示されます。
 font_size: 文字サイズ
 rounded_edges: 丸角
-flash_register_success: ようこそ！アカウント登録ができました。最後の手順として、メールアドレスにアカウント検証リンクを送信しました。メールボックスを確認して下さい。
+flash_register_success: 
+  ようこそ！アカウント登録ができました。最後の手順として、メールアドレスにアカウント検証リンクを送信しました。メールボックスを確認して下さい。
 restored_thread_by: はこのアカウントが作成したスレッドを復旧しました：
 removed_post_by: はこのアカウントが作成した投稿を削除しました：
 flash_thread_unpin_success: スレッドの固定を外しました。

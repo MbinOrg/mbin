@@ -11,6 +11,7 @@ use App\Event\Magazine\MagazineModeratorAddedEvent;
 use App\Event\Magazine\MagazineModeratorRemovedEvent;
 use App\Message\ActivityPub\Outbox\AddMessage;
 use App\Message\ActivityPub\Outbox\RemoveMessage;
+use App\Repository\ContentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
@@ -25,11 +26,14 @@ class MagazineModeratorAddedRemovedSubscriber implements EventSubscriberInterfac
         private readonly CacheInterface $cache,
         private readonly LoggerInterface $logger,
         private readonly EntityManagerInterface $entityManager,
+        private readonly ContentRepository $contentRepository,
     ) {
     }
 
     public function onModeratorAdded(MagazineModeratorAddedEvent $event): void
     {
+        $this->contentRepository->clearCachedUserModeratedMagazines($event->user);
+
         // if the magazine is local then we have authority over it, otherwise the addedBy user has to be a local user
         if (!$event->magazine->apId or (null !== $event->addedBy and !$event->addedBy->apId)) {
             $this->bus->dispatch(new AddMessage($event->addedBy->getId(), $event->magazine->getId(), $event->user->getId()));
@@ -42,6 +46,8 @@ class MagazineModeratorAddedRemovedSubscriber implements EventSubscriberInterfac
 
     public function onModeratorRemoved(MagazineModeratorRemovedEvent $event): void
     {
+        $this->contentRepository->clearCachedUserModeratedMagazines($event->user);
+
         // if the magazine is local then we have authority over it, otherwise the removedBy user has to be a local user
         if (!$event->magazine->apId or (null !== $event->removedBy and !$event->removedBy->apId)) {
             $this->bus->dispatch(new RemoveMessage($event->removedBy->getId(), $event->magazine->getId(), $event->user->getId()));

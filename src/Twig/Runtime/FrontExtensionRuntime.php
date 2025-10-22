@@ -63,7 +63,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
             return 'front';
         } elseif ($subscription) {
             return 'front_sub';
-        } elseif ($content) {
+        } elseif ('all' !== $content) {
             return 'front_content';
         } else {
             return 'front_short';

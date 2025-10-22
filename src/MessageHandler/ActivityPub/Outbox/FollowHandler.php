@@ -62,7 +62,7 @@ class FollowHandler extends MbinMessageHandler
             $following = $this->userRepository->find($message->followingId);
         }
 
-        $followObject = $this->activityRepository->findFirstActivitiesByTypeAndObject('Follow', $following);
+        $followObject = $this->activityRepository->findFirstActivitiesByTypeObjectAndActor('Follow', $following, $follower);
         if (null === $followObject) {
             $followObject = $this->followWrapper->build($follower, $following);
         }

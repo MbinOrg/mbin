@@ -686,8 +686,8 @@ removed_comment_by: eliminou un comentario de
 restored_comment_by: restableceu o comentario de
 removed_post_by: eliminou unha publicación de
 restored_post_by: restableceu unha publicación de
-he_banned: vetar
-he_unbanned: retirar veto
+he_banned: vetada
+he_unbanned: retirouse o veto
 read_all: Ler todo
 show_all: Mostrar todo
 flash_register_success: Benvida! Creouse a túa conta. Para rematar - comproba no
@@ -1062,3 +1062,16 @@ search_type_actors: Revistas + Usuarias
 search_type_content: Temas + Microblogs
 type_search_magazine: Limitar busca á revista…
 type_search_user: Limitar a busca á autoría…
+modlog_type_entry_deleted: Fío eliminado
+modlog_type_entry_restored: Fío restaurado
+modlog_type_entry_comment_deleted: Comentario do fío eliminado
+modlog_type_entry_comment_restored: Comentario do fío restaurado
+modlog_type_entry_pinned: Fío fixado
+modlog_type_entry_unpinned: Fío solto
+modlog_type_post_deleted: Microblog eliminado
+modlog_type_post_restored: Microblog restaurado
+modlog_type_post_comment_deleted: Resposta do microblog eliminada
+modlog_type_post_comment_restored: Resposta do microblog restaurada
+modlog_type_ban: Usuaria expulsada da revista
+modlog_type_moderator_add: Engadiuse unha moderadora da revista
+modlog_type_moderator_remove: Moderadora da revista retirada

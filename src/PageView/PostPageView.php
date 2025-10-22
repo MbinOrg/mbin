@@ -18,8 +18,6 @@ class PostPageView extends Criteria
         self::SORT_COMMENTED,
     ];
 
-    public bool $stickiesFirst = false;
-
     public function __construct(
         int $page,
         private readonly Security $security,

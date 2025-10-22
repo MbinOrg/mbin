@@ -175,7 +175,7 @@ help: Ajuda
 check_email: Comproveu la vostra bústia electrònica
 reset_check_email_desc: Si ja hi ha un compte associat a la vostra adreça 
   electrònica, rebreu un correu electrònic en breu amb un enllaç que podeu 
-  utilitzar per restablir la vostra contrasenya. Este enllaç caducarà a 
+  utilitzar per restablir la vostra contrasenya. Este enllaç caducarà en 
   %expire%.
 up_vote: Impulsar
 down_vote: Votar en contra
@@ -266,8 +266,8 @@ restored_thread_by: ha restaurat un fil de
 removed_comment_by: ha eliminat un comentari de
 restored_comment_by: ha restaurat el comentari de
 removed_post_by: ha eliminat una publicació de
-he_banned: vetar
-he_unbanned: retirar vet
+he_banned: vetat(da)
+he_unbanned: vet retirat
 read_all: Marcar-ho tot com a llegit
 show_all: Mostrar-ho tot
 flash_register_success: Benvinguda a bord! El vostre compte ja està registrat. 
@@ -1101,3 +1101,16 @@ search_type_actors: Revistes i comptes
 search_type_content: Temes i microblogs
 type_search_magazine: Limitar la cerca a la revista...
 type_search_user: Limitar la cerca a l'autoria...
+modlog_type_entry_deleted: Fil suprimit
+modlog_type_entry_restored: Fil restaurat
+modlog_type_entry_comment_deleted: Comentari del fil suprimit
+modlog_type_entry_comment_restored: Comentari del fil restaurat
+modlog_type_entry_pinned: Fil fixat
+modlog_type_entry_unpinned: Fil deixat de fixar
+modlog_type_post_deleted: Microblog suprimit
+modlog_type_post_restored: Microblog restaurat
+modlog_type_post_comment_deleted: Resposta del microblog suprimida
+modlog_type_post_comment_restored: Resposta del microblog restaurada
+modlog_type_ban: Compte expulsat de la revista
+modlog_type_moderator_add: Moderador(a) de la revista afegit(da)
+modlog_type_moderator_remove: Moderador(a) de la revista destituït(da)

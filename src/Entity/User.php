@@ -11,6 +11,7 @@ use App\Entity\Traits\ActivityPubActorTrait;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\VisibilityTrait;
 use App\Enums\EApplicationStatus;
+use App\Enums\EDirectMessageSettings;
 use App\Enums\ESortOptions;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\ApHttpClientInterface;
@@ -33,6 +34,7 @@ use Scheb\TwoFactorBundle\Model\BackupCodeInterface;
 use Scheb\TwoFactorBundle\Model\Totp\TotpConfiguration;
 use Scheb\TwoFactorBundle\Model\Totp\TotpConfigurationInterface;
 use Scheb\TwoFactorBundle\Model\Totp\TwoFactorInterface;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -110,6 +112,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public string $frontDefaultSort = ESortOptions::Hot->value;
     #[Column(type: 'enumSortOptions', nullable: false, options: ['default' => ESortOptions::Hot->value])]
     public string $commentDefaultSort = ESortOptions::Hot->value;
+    #[Column(type: 'enumDirectMessageSettings', nullable: false, options: ['default' => EDirectMessageSettings::Everyone->value])]
+    public string $directMessageSetting = EDirectMessageSettings::Everyone->value;
     #[Column(type: 'text', nullable: true)]
     public ?string $about = null;
     #[Column(type: 'datetimetz')]
@@ -326,6 +330,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public function getEmail(): string
     {
         return $this->email;
+    }
+
+    public function getTotpSecret(): ?string
+    {
+        return $this->totpSecret;
     }
 
     public function setOrRemoveAdminRole(bool $remove = false): self
@@ -727,9 +736,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         // TODO: Implement @method string getUserIdentifier()
     }
 
+    /**
+     * This method is used by Symfony to determine whether a session needs to be refreshed.
+     * Every security relevant information needs to be in there.
+     * In order to check these parameters you need to add them to the __serialize function.
+     *
+     * @see User::__serialize()
+     */
     public function isEqualTo(UserInterface $user): bool
     {
-        return !$user->isBanned;
+        $pa = PropertyAccess::createPropertyAccessor();
+        $theirTotpSecret = $pa->getValue($user, 'totpSecret') ?? '';
+
+        return $pa->getValue($user, 'isBanned') === $this->isBanned
+            && $pa->getValue($user, 'isDeleted') === $this->isDeleted
+            && $pa->getValue($user, 'markedForDeletionAt') === $this->markedForDeletionAt
+            && $pa->getValue($user, 'username') === $this->username
+            && $pa->getValue($user, 'password') === $this->password
+            && ($theirTotpSecret === $this->totpSecret || $theirTotpSecret === hash('sha256', $this->totpSecret) || hash('sha256', $theirTotpSecret) === $this->totpSecret);
     }
 
     public function getApName(): string
@@ -931,5 +955,44 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public function setApplicationStatus(EApplicationStatus $applicationStatus): void
     {
         $this->applicationStatus = $applicationStatus->value;
+    }
+
+    /**
+     * @param User $dmAuthor the author of the direct message
+     *
+     * @return bool whether the $dmAuthor is allowed to send this user a direct message
+     */
+    public function canReceiveDirectMessage(User $dmAuthor): bool
+    {
+        if (EDirectMessageSettings::Everyone->value === $this->directMessageSetting) {
+            return true;
+        } elseif (EDirectMessageSettings::FollowersOnly->value === $this->directMessageSetting) {
+            $criteria = Criteria::create()->where(Criteria::expr()->eq('follower', $dmAuthor));
+
+            return $this->followers->matching($criteria)->count() > 0;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * this is used to check whether the session of a user is valid
+     * if any of these values have changed the user needs to re-login
+     * it should be the same values as the remember-me cookie signature in the security.yaml
+     * also have a look at the isEqualTo function as this stuff needs to be checked there.
+     *
+     * @see User::isEqualTo()
+     */
+    public function __serialize(): array
+    {
+        return [
+            "\0".self::class."\0id" => $this->id,
+            "\0".self::class."\0username" => $this->username,
+            "\0".self::class."\0password" => $this->password,
+            "\0".self::class."\0totpSecret" => $this->totpSecret ? hash('sha256', $this->totpSecret) : '',
+            "\0".self::class."\0isBanned" => $this->isBanned,
+            "\0".self::class."\0isDeleted" => $this->isDeleted,
+            "\0".self::class."\0markedForDeletionAt" => $this->markedForDeletionAt,
+        ];
     }
 }

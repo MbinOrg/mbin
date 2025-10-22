@@ -71,6 +71,51 @@ store:
     path: /opt/anubis/mbin.bdb
 ```
 
+Adjust the `thresholds` section to match this (the only difference is that the `preact` type of challenge is removed):
+
+```yaml
+thresholds:
+  # By default Anubis ships with the following thresholds:
+  - name: minimal-suspicion # This client is likely fine, its soul is lighter than a feather
+    expression: weight <= 0 # a feather weighs zero units
+    action: ALLOW # Allow the traffic through
+  # For clients that had some weight reduced through custom rules, give them a
+  # lightweight challenge.
+  - name: mild-suspicion
+    expression:
+      all:
+        - weight > 0
+        - weight < 10
+    action: CHALLENGE
+    challenge:
+      # https://anubis.techaro.lol/docs/admin/configuration/challenges/metarefresh
+      algorithm: metarefresh
+      difficulty: 1
+      report_as: 1
+  # For clients that are browser-like but have either gained points from custom rules or
+  # report as a standard browser.
+  - name: moderate-suspicion
+    expression:
+      all:
+        - weight >= 10
+        - weight < 30
+    action: CHALLENGE
+    challenge:
+      # https://anubis.techaro.lol/docs/admin/configuration/challenges/proof-of-work
+      algorithm: fast
+      difficulty: 2 # two leading zeros, very fast for most clients
+      report_as: 2
+  # For clients that are browser like and have gained many points from custom rules
+  - name: extreme-suspicion
+    expression: weight >= 30
+    action: CHALLENGE
+    challenge:
+      # https://anubis.techaro.lol/docs/admin/configuration/challenges/proof-of-work
+      algorithm: fast
+      difficulty: 4
+      report_as: 4
+```
+
 The default config includes a few snippets that require a subscription. To avoid warn messages you should comment out everything that "Requires a subscription to Thoth to use" (just search for it in the file).
 
 For Anubis to be able to access the socket we will create later we will have to change the service file (`/usr/lib/systemd/system/anubis@.service`) and set the user anubis is being executed by to `www-data`:

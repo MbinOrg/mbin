@@ -28,7 +28,7 @@ class DeleteService
 
     public function announceIfNecessary(?User $deletingUser, Entry|EntryComment|Post|PostComment $content): void
     {
-        if (null !== $deletingUser && (!$content->apId || !$content->magazine->apId || !$deletingUser->apId) && ($content->magazine->userIsModerator($deletingUser) || $content->magazine->hasSameHostAsUser($deletingUser))) {
+        if (null !== $deletingUser && (!$content->apId || !$content->magazine->apId || !$deletingUser->apId) && ($content->magazine->userIsModerator($deletingUser) || $content->magazine->hasSameHostAsUser($deletingUser) || $content->isAuthor($deletingUser))) {
             if ($deletingUser->apId) {
                 $deleteActivity = $this->activityRepository->findFirstActivitiesByTypeAndObject('Delete', $content);
                 if (!$deleteActivity) {
