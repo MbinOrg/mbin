@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\ActivityPub;
 
+use App\Entity\User;
 use App\Service\ActivityPubManager;
 use App\Service\MentionManager;
 use App\Service\TagExtractor;
@@ -19,21 +20,28 @@ class MarkdownConverter
     ) {
     }
 
-    public function convert(string $value): string
+    public function convert(string $value, array $apTags): string
     {
         $converter = new HtmlConverter(['strip_tags' => true]);
         $converter->getEnvironment()->addConverter(new TableConverter());
         $converter->getEnvironment()->addConverter(new StrikethroughConverter());
         $value = stripslashes($converter->convert($value));
 
+        // an example value: [@user](https://some.instance.tld/u/user)
         preg_match_all('/\[([^]]*)\] *\(([^)]*)\)/i', $value, $matches, PREG_SET_ORDER);
 
         foreach ($matches as $match) {
             if ($this->mentionManager->extract($match[1])) {
-                try {
-                    $replace = '@'.$this->activityPubManager->webfinger($match[2])->getHandle();
-                } catch (\Exception $e) {
-                    $replace = $match[1];
+                $mentionFromTag = array_filter($apTags, fn ($tag) => 'Mention' === $tag['type'] ?? '' && $match[2] === $tag['href'] ?? '');
+                if (\count($mentionFromTag)) {
+                    $replace = $mentionFromTag[array_key_first($mentionFromTag)]['name'] ?? $match[1];
+                } else {
+                    try {
+                        $actor = $this->activityPubManager->findActorOrCreate($match[2]);
+                        $replace = '@'.($actor instanceof User ? $actor->username : $actor->name);
+                    } catch (\Throwable $e) {
+                        $replace = $match[1];
+                    }
                 }
                 $value = str_replace($match[0], $replace, $value);
             }
