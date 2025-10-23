@@ -17,13 +17,13 @@ class EntryCreateControllerTest extends WebTestCase
         $this->kibbyPath = \dirname(__FILE__, 4).'/assets/kibby_emoji.png';
     }
 
-    public function testUserCanCreateEntryLink()
+    public function testUserCanCreateEntry()
     {
         $this->client->loginUser($this->getUserByUsername('user'));
 
-        $this->client->request('GET', '/m/acme/new');
+        $this->client->request('GET', '/m/acme/new_entry');
 
-        $this->assertSelectorExists('form[name=entry_link]');
+        $this->assertSelectorExists('form[name=entry]');
     }
 
     public function testUserCanCreateEntryLinkFromMagazinePage(): void
@@ -32,14 +32,14 @@ class EntryCreateControllerTest extends WebTestCase
 
         $this->getMagazineByName('acme');
 
-        $crawler = $this->client->request('GET', '/m/acme/new');
+        $crawler = $this->client->request('GET', '/m/acme/new_entry');
 
         $this->client->submit(
-            $crawler->filter('form[name=entry_link]')->selectButton('Add new link')->form(
+            $crawler->filter('form[name=entry]')->selectButton('Add new thread')->form(
                 [
-                    'entry_link[url]' => 'https://kbin.pub',
-                    'entry_link[title]' => 'Test entry 1',
-                    'entry_link[body]' => 'Test body',
+                    'entry[url]' => 'https://kbin.pub',
+                    'entry[title]' => 'Test entry 1',
+                    'entry[body]' => 'Test body',
                 ]
             )
         );
@@ -48,15 +48,6 @@ class EntryCreateControllerTest extends WebTestCase
         $this->client->followRedirect();
 
         $this->assertSelectorTextContains('article h2', 'Test entry 1');
-    }
-
-    public function testUserCanCreateEntryArticle()
-    {
-        $this->client->loginUser($this->getUserByUsername('user'));
-
-        $this->client->request('GET', '/m/acme/new/article');
-
-        $this->assertSelectorExists('form[name=entry_article]');
     }
 
     public function testUserCanCreateEntryArticleFromMagazinePage()
@@ -65,13 +56,13 @@ class EntryCreateControllerTest extends WebTestCase
 
         $this->getMagazineByName('acme');
 
-        $crawler = $this->client->request('GET', '/m/acme/new/article');
+        $crawler = $this->client->request('GET', '/m/acme/new_entry');
 
         $this->client->submit(
-            $crawler->filter('form[name=entry_article]')->selectButton('Add new thread')->form(
+            $crawler->filter('form[name=entry]')->selectButton('Add new thread')->form(
                 [
-                    'entry_article[title]' => 'Test entry 1',
-                    'entry_article[body]' => 'Test body',
+                    'entry[title]' => 'Test entry 1',
+                    'entry[body]' => 'Test body',
                 ]
             )
         );
@@ -80,15 +71,6 @@ class EntryCreateControllerTest extends WebTestCase
         $this->client->followRedirect();
 
         $this->assertSelectorTextContains('article h2', 'Test entry 1');
-    }
-
-    public function testUserCanCreateEntryPhoto()
-    {
-        $this->client->loginUser($this->getUserByUsername('user'));
-
-        $this->client->request('GET', '/m/acme/new/photo');
-
-        $this->assertSelectorExists('form[name=entry_image]');
     }
 
     #[Group(name: 'NonThreadSafe')]
@@ -99,13 +81,13 @@ class EntryCreateControllerTest extends WebTestCase
         $this->getMagazineByName('acme');
         $repository = $this->entryRepository;
 
-        $crawler = $this->client->request('GET', '/m/acme/new/photo');
+        $crawler = $this->client->request('GET', '/m/acme/new_entry');
 
-        $this->assertSelectorExists('form[name=entry_image]');
+        $this->assertSelectorExists('form[name=entry]');
 
-        $form = $crawler->filter('#main form[name=entry_image]')->selectButton('Add new photo')->form([
-            'entry_image[title]' => 'Test image 1',
-            'entry_image[image]' => $this->kibbyPath,
+        $form = $crawler->filter('#main form[name=entry]')->selectButton('Add new thread')->form([
+            'entry[title]' => 'Test image 1',
+            'entry[image]' => $this->kibbyPath,
         ]);
         // Needed since we require this global to be set when validating entries but the client doesn't actually set it
         $_FILES = $form->getPhpFiles();
@@ -134,14 +116,14 @@ class EntryCreateControllerTest extends WebTestCase
 
         $this->getMagazineByName('acme');
 
-        $crawler = $this->client->request('GET', '/m/acme/new/article');
+        $crawler = $this->client->request('GET', '/m/acme/new_entry');
 
         $this->client->submit(
-            $crawler->filter('form[name=entry_article]')->selectButton('Add new thread')->form(
+            $crawler->filter('form[name=entry]')->selectButton('Add new thread')->form(
                 [
-                    'entry_article[title]' => 'Test entry 1',
-                    'entry_article[body]' => 'Test body',
-                    'entry_article[isAdult]' => '1',
+                    'entry[title]' => 'Test entry 1',
+                    'entry[body]' => 'Test body',
+                    'entry[isAdult]' => '1',
                 ]
             )
         );

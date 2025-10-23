@@ -10,7 +10,6 @@ use App\Form\DataTransformer\TagTransformer;
 use App\Form\EventListener\DefaultLanguage;
 use App\Form\EventListener\DisableFieldsOnEntryEdit;
 use App\Form\EventListener\ImageListener;
-use App\Form\EventListener\RemoveFieldsOnEntryImageEdit;
 // use App\Form\Type\BadgesType;
 use App\Form\Type\LanguageType;
 use App\Form\Type\MagazineAutocompleteType;
@@ -24,20 +23,28 @@ use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class EntryImageType extends AbstractType
+class EntryType extends AbstractType
 {
     public function __construct(
         private readonly ImageListener $imageListener,
         private readonly DefaultLanguage $defaultLanguage,
         private readonly DisableFieldsOnEntryEdit $disableFieldsOnEntryEdit,
-        private readonly RemoveFieldsOnEntryImageEdit $removeFieldsOnEntryImageEdit,
     ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title', TextareaType::class)
+            ->add('url', UrlType::class, [
+                'required' => false,
+                'default_protocol' => 'https',
+            ])
+            ->add('title', TextareaType::class, [
+                'required' => true,
+            ])
+            ->add('body', TextareaType::class, [
+                'required' => false,
+            ])
             ->add('magazine', MagazineAutocompleteType::class)
             ->add('tags', TextType::class, [
                 'required' => false,
@@ -59,12 +66,14 @@ class EntryImageType extends AbstractType
                 'image',
                 FileType::class,
                 [
+                    'required' => false,
                     'constraints' => ImageConstraint::default(),
                     'mapped' => false,
                 ]
             )
             ->add('imageUrl', UrlType::class, [
                 'required' => false,
+                'default_protocol' => 'https',
             ])
             ->add('imageAlt', TextType::class, [
                 'required' => false,
@@ -83,7 +92,6 @@ class EntryImageType extends AbstractType
         );
 
         $builder->addEventSubscriber($this->defaultLanguage);
-        $builder->addEventSubscriber($this->removeFieldsOnEntryImageEdit);
         $builder->addEventSubscriber($this->disableFieldsOnEntryEdit);
         $builder->addEventSubscriber($this->imageListener);
     }
