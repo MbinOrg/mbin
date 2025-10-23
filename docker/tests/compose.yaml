@@ -1,6 +1,6 @@
 services:
     db:
-        image: postgres:${POSTGRES_VERSION:-17}-bookworm
+        image: postgres:${POSTGRES_VERSION:-17}-trixie
         container_name: mbin-tests-db
         restart: unless-stopped
         ports:
@@ -10,7 +10,7 @@ services:
             - POSTGRES_USER=mbin
             - POSTGRES_PASSWORD=ChangeThisPostgresPass
     valkey:
-        image: valkey/valkey:bookworm
+        image: valkey/valkey:trixie
         container_name: mbin-tests-valkey
         restart: unless-stopped
         ports:
