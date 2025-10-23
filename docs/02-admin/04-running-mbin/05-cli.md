@@ -121,6 +121,27 @@ Options:
 > [!NOTE] 
 > If neither `--activate` nor `--deactivate` are provided, the current verification status will be returned
 
+
+### Rotate users private keys
+
+> [!WARNING]
+> After running this command it can take up to 24 hours for other instances to update their stored public keys.
+> In this timeframe federation might be impacted by this, 
+> as those services cannot successfully verify the identity of your users.
+> Please inform your users about this when you're running this command.
+
+This command allows you to rotate the private keys of your users with which the activities sent by them are authenticated.
+If private keys have been leaked you should rotate the private keys to avoid the potential for impersonation.
+
+Usage:
+
+```bash
+php bin/console mbin:user:private-keys:rotate [-a|--all-local-users] <username>
+```
+
+Arguments:
+- `username`: the single user for which this command should be executed
+
 ### User-Unsub
 
 > [!NOTE]

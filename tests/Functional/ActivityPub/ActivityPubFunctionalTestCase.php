@@ -86,8 +86,11 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         $this->entityManager->clear();
 
         $this->remoteSubscriber = $this->activityPubManager->findActorOrCreate("@remoteSubscriber@$this->remoteSubDomain");
+        $this->remoteSubscriber->publicKey = 'some public key';
         $this->remoteMagazine = $this->activityPubManager->findActorOrCreate("!remoteMagazine@$this->remoteDomain");
+        $this->remoteMagazine->publicKey = 'some public key';
         $this->remoteUser = $this->activityPubManager->findActorOrCreate("@remoteUser@$this->remoteDomain");
+        $this->remoteUser->publicKey = 'some public key';
         $this->localMagazine = $this->magazineRepository->findOneByName('magazine');
         $this->magazineManager->subscribe($this->localMagazine, $this->remoteSubscriber);
         self::assertTrue($this->localMagazine->isSubscribed($this->remoteSubscriber));
