@@ -48,6 +48,9 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     #[ManyToOne(targetEntity: Image::class, cascade: ['persist'])]
     #[JoinColumn(nullable: true)]
     public ?Image $icon = null;
+    #[ManyToOne(targetEntity: Image::class, cascade: ['persist'])]
+    #[JoinColumn(nullable: true)]
+    public ?Image $banner = null;
     #[Column(type: 'string', nullable: false)]
     public string $name;
     #[Column(type: 'string')]
@@ -129,6 +132,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         bool $isAdult,
         bool $postingRestrictedToMods,
         ?Image $icon,
+        ?Image $banner = null,
     ) {
         $this->name = $name;
         $this->title = $title;
@@ -137,6 +141,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         $this->isAdult = $isAdult;
         $this->postingRestrictedToMods = $postingRestrictedToMods;
         $this->icon = $icon;
+        $this->banner = $banner;
         $this->moderators = new ArrayCollection();
         $this->entries = new ArrayCollection();
         $this->posts = new ArrayCollection();

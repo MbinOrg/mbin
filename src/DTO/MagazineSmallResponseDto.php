@@ -12,6 +12,7 @@ class MagazineSmallResponseDto implements \JsonSerializable
     public ?string $name = null;
     public ?int $magazineId = null;
     public ?ImageDto $icon = null;
+    public ?ImageDto $banner = null;
     public ?bool $isUserSubscribed = null;
     public ?bool $isBlockedByUser = null;
     public ?string $apId = null;
@@ -22,6 +23,7 @@ class MagazineSmallResponseDto implements \JsonSerializable
         $this->name = $dto->name;
         $this->magazineId = $dto->getId();
         $this->icon = $dto->icon;
+        $this->banner = $dto->banner;
         $this->isUserSubscribed = $dto->isUserSubscribed;
         $this->isBlockedByUser = $dto->isBlockedByUser;
         $this->apId = $dto->apId;
@@ -34,6 +36,7 @@ class MagazineSmallResponseDto implements \JsonSerializable
             'magazineId' => $this->magazineId,
             'name' => $this->name,
             'icon' => $this->icon,
+            'banner' => $this->banner,
             'isUserSubscribed' => $this->isUserSubscribed,
             'isBlockedByUser' => $this->isBlockedByUser,
             'apId' => $this->apId,

@@ -56,6 +56,7 @@ class MagazineFactory
         $dto = new MagazineDto();
         $dto->setOwner($magazine->getOwner());
         $dto->icon = $magazine->icon ? $this->imageFactory->createDto($magazine->icon) : null;
+        $dto->banner = $magazine->banner ? $this->imageFactory->createDto($magazine->banner) : null;
         $dto->name = $magazine->name;
         $dto->title = $magazine->title;
         $dto->description = $magazine->description;
@@ -144,6 +145,7 @@ class MagazineFactory
         return MagazineResponseDto::create(
             $dto->getOwner() ? $this->moderatorFactory->createDtoWithUser($dto->getOwner(), $magazine) : null,
             $dto->icon,
+            $dto->banner,
             $dto->name,
             $dto->title,
             $dto->description,

@@ -98,6 +98,13 @@ class GroupFactory
             ];
         }
 
+        if ($magazine->banner) {
+            $group['image'] = [
+                'type' => 'Image',
+                'url' => $this->imageManager->getUrl($magazine->banner),
+            ];
+        }
+
         if (!$includeContext) {
             unset($group['@context']);
         }

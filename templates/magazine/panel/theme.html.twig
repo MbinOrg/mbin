@@ -25,16 +25,61 @@
                 {{ form_label(form.icon, 'icon') }}
                 {{ form_widget(form.icon) }}
                 {{ form_help(form.icon) }}
+                {{ form_errors(form.icon) }}
             </div>
+
+            {% if magazine.icon is not same as null %}
+                <div class="actions">
+                    <ul style="width: 100%">
+                        <img width="40"
+                             height="40"
+                             src="{{ asset(magazine.icon.filePath)|imagine_filter('entry_thumb') }}"
+                             alt="{{ magazine.icon.altText }}" />
+                        <button formaction="{{ path('magazine_panel_theme_detach_icon', {'name': magazine.name}) }}"
+                                class="btn-link"
+                                aria-label="{{ 'delete_magazine_icon'|trans }}"
+                                title="{{ 'delete_magazine_icon'|trans }}"
+                                data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
+                            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                        </button>
+                    </ul>
+                </div>
+            {% endif %}
+            <div>
+                {{ form_label(form.banner, 'banner') }}
+                {{ form_widget(form.banner) }}
+                {{ form_help(form.banner) }}
+                {{ form_errors(form.banner) }}
+            </div>
+
+            {% if magazine.banner is not same as null %}
+                <div class="actions">
+                    <ul style="width: 100%">
+                        <img width="40"
+                             height="40"
+                             src="{{ asset(magazine.banner.filePath)|imagine_filter('magazine_banner') }}"
+                             alt="{{ magazine.banner.altText }}" />
+                        <button formaction="{{ path('magazine_panel_theme_detach_banner', {'name': magazine.name}) }}"
+                                class="btn-link"
+                                aria-label="{{ 'delete_magazine_banner'|trans }}"
+                                title="{{ 'delete_magazine_banner'|trans }}"
+                                data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
+                            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                        </button>
+                    </ul>
+                </div>
+            {% endif %}
             <div>
                 {{ form_label(form.customCss, 'CSS') }}
                 {{ form_widget(form.customCss) }}
                 {{ form_help(form.customCss) }}
+                {{ form_errors(form.customCss) }}
             </div>
             <div class="radios">
                 {{ form_label(form.backgroundImage, 'Background') }}
                 {{ form_widget(form.backgroundImage) }}
                 {{ form_help(form.backgroundImage) }}
+                {{ form_errors(form.backgroundImage) }}
             </div>
             <div class="actions">
                 {{ form_row(form.submit, { 'label': 'done', attr: {class: 'btn btn__primary'} }) }}

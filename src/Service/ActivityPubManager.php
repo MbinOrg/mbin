@@ -605,6 +605,18 @@ class ActivityPubManager
                 $magazine->icon = null;
             }
 
+            if (isset($actor['image'])) {
+                $banner = !\array_key_exists('type', $actor['image']) ? $actor['image'] : [$actor['image']];
+                $newImage = $this->handleImages($banner);
+                if ($magazine->banner && $newImage !== $magazine->banner) {
+                    $this->bus->dispatch(new DeleteImageMessage($magazine->banner->getId()));
+                }
+                $magazine->banner = $newImage;
+            } elseif (null !== $magazine->banner) {
+                $this->bus->dispatch(new DeleteImageMessage($magazine->banner->getId()));
+                $magazine->banner = null;
+            }
+
             if ($actor['name']) {
                 $magazine->title = $actor['name'];
             } elseif ($actor['preferredUsername']) {

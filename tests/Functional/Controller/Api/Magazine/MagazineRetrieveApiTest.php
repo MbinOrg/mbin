@@ -35,6 +35,7 @@ class MagazineRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MODERATOR_RESPONSE_KEYS, $jsonData['owner']);
         self::assertSame($magazine->getOwner()->getId(), $jsonData['owner']['userId']);
         self::assertNull($jsonData['icon']);
+        self::assertNull($jsonData['banner']);
         self::assertEmpty($jsonData['tags']);
         self::assertEquals('test', $jsonData['name']);
         self::assertIsArray($jsonData['badges']);
@@ -72,6 +73,7 @@ class MagazineRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MODERATOR_RESPONSE_KEYS, $jsonData['owner']);
         self::assertSame($magazine->getOwner()->getId(), $jsonData['owner']['userId']);
         self::assertNull($jsonData['icon']);
+        self::assertNull($jsonData['banner']);
         self::assertEmpty($jsonData['tags']);
         self::assertEquals('test', $jsonData['name']);
         self::assertIsArray($jsonData['badges']);
@@ -103,6 +105,7 @@ class MagazineRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MODERATOR_RESPONSE_KEYS, $jsonData['owner']);
         self::assertSame($magazine->getOwner()->getId(), $jsonData['owner']['userId']);
         self::assertNull($jsonData['icon']);
+        self::assertNull($jsonData['banner']);
         self::assertEmpty($jsonData['tags']);
         self::assertEquals('test', $jsonData['name']);
         self::assertIsArray($jsonData['badges']);
@@ -140,6 +143,7 @@ class MagazineRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::MODERATOR_RESPONSE_KEYS, $jsonData['owner']);
         self::assertSame($magazine->getOwner()->getId(), $jsonData['owner']['userId']);
         self::assertNull($jsonData['icon']);
+        self::assertNull($jsonData['banner']);
         self::assertEmpty($jsonData['tags']);
         self::assertEquals('test', $jsonData['name']);
         self::assertIsArray($jsonData['badges']);

@@ -51,3 +51,7 @@ liip_imagine:
             filters:
                 auto_rotate: ~
                 thumbnail: { size: [1500, 500], mode: fixed }
+        magazine_banner:
+            filters:
+                auto_rotate: ~
+                thumbnail: { size: [1500, 300], mode: fixed }

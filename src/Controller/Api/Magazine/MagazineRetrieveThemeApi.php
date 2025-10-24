@@ -60,7 +60,8 @@ class MagazineRetrieveThemeApi extends MagazineBaseApi
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
         $imageDto = $magazine->icon ? $this->imageFactory->createDto($magazine->icon) : null;
-        $dto = MagazineThemeResponseDto::create($magazineFactory->createDto($magazine), $magazine->customCss, $imageDto);
+        $bannerDto = $magazine->banner ? $this->imageFactory->createDto($magazine->banner) : null;
+        $dto = MagazineThemeResponseDto::create($magazineFactory->createDto($magazine), $magazine->customCss, $imageDto, $bannerDto);
 
         return new JsonResponse(
             $dto,
