@@ -2,7 +2,7 @@
 
 
 # Base FrankenPHP image
-FROM dunglas/frankenphp:1-php8.4-bookworm AS base
+FROM dunglas/frankenphp:1-php8.4-trixie AS base
 
 WORKDIR /app
 
@@ -92,7 +92,7 @@ RUN set -eux; \
 
 
 # Node assets builder
-FROM node:22-bookworm-slim AS node
+FROM node:22-trixie-slim AS node
 
 RUN mkdir /app
 WORKDIR /app
