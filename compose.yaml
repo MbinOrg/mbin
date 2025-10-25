@@ -48,7 +48,7 @@ services:
             replicas: 6
 
     postgres:
-        image: postgres:${POSTGRES_VERSION}-bookworm
+        image: postgres:${POSTGRES_VERSION}-trixie
         restart: unless-stopped
         user: ${MBIN_USER}
         healthcheck:
@@ -73,7 +73,7 @@ services:
         hostname: rabbitmq
 
     valkey:
-        image: valkey/valkey:bookworm
+        image: valkey/valkey:trixie
         restart: unless-stopped
         user: ${MBIN_USER}
         command: valkey-server /valkey.conf --requirepass ${VALKEY_PASSWORD}
