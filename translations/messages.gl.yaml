@@ -1075,3 +1075,7 @@ modlog_type_post_comment_restored: Resposta do microblog restaurada
 modlog_type_ban: Usuaria expulsada da revista
 modlog_type_moderator_add: Engadiuse unha moderadora da revista
 modlog_type_moderator_remove: Moderadora da revista retirada
+everyone: Todo o mundo
+nobody: Ninguén
+followers_only: Só seguidoras
+direct_message_setting_label: Quen pode enviar unha mensaxe directa
