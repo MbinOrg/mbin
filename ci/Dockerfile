@@ -1,5 +1,5 @@
-# Using the latest LTS release
-FROM ubuntu:latest
+# Using the Ubuntu Plucky (25.04)⁠ release
+FROM ubuntu:plucky⁠
 
 ARG DEBIAN_FRONTEND=noninteractive
 
