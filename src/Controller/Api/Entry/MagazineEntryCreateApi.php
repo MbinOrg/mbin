@@ -439,9 +439,11 @@ class MagazineEntryCreateApi extends EntriesBaseApi
                 'imageUpload' => [
                     'contentType' => ImageManager::IMAGE_MIMETYPE_STR,
                 ],
+                'uploadImage' => [
+                    'contentType' => ImageManager::IMAGE_MIMETYPE_STR,
+                ],
             ]
-        ),
-        description: '"uploadImage" is optional'
+        )
     )]
     #[OA\Tag(name: 'magazine')]
     #[Security(name: 'oauth2', scopes: ['entry:create'])]
