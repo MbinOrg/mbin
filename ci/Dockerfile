@@ -1,5 +1,5 @@
 # Using the Ubuntu Plucky (25.04)⁠ release
-FROM ubuntu:plucky
+FROM ubuntu:plucky⁠
 
 ARG DEBIAN_FRONTEND=noninteractive
 
