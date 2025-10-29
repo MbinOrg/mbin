@@ -36,7 +36,7 @@ class ApObjectExtractor
         } elseif ($content && \is_string($content)) {
             // assuming default content mediaType of text/html,
             // returning html -> markdown conversion of content
-            return $this->markdownConverter->convert($content);
+            return $this->markdownConverter->convert($content, $object['tag'] ?? []);
         }
 
         return '';
