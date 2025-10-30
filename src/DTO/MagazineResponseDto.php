@@ -13,6 +13,7 @@ class MagazineResponseDto implements \JsonSerializable
 {
     public ?ModeratorResponseDto $owner = null;
     public ?ImageDto $icon = null;
+    public ?ImageDto $banner = null;
     public ?string $name = null;
     public ?string $title = null;
     public ?string $description = null;
@@ -43,6 +44,7 @@ class MagazineResponseDto implements \JsonSerializable
     public static function create(
         ?ModeratorResponseDto $owner = null,
         ?ImageDto $icon = null,
+        ?ImageDto $banner = null,
         ?string $name = null,
         ?string $title = null,
         ?string $description = null,
@@ -69,6 +71,7 @@ class MagazineResponseDto implements \JsonSerializable
         $dto = new MagazineResponseDto();
         $dto->owner = $owner;
         $dto->icon = $icon;
+        $dto->banner = $banner;
         $dto->name = $name;
         $dto->title = $title;
         $dto->description = $description;
@@ -101,6 +104,7 @@ class MagazineResponseDto implements \JsonSerializable
             'magazineId' => $this->magazineId,
             'owner' => $this->owner?->jsonSerialize(),
             'icon' => $this->icon ? $this->icon->jsonSerialize() : null,
+            'banner' => $this->banner?->jsonSerialize(),
             'name' => $this->name,
             'title' => $this->title,
             'description' => $this->description,

@@ -8,7 +8,7 @@ use App\Tests\WebTestCase;
 
 class MagazineRetrieveThemeApiTest extends WebTestCase
 {
-    public const MAGAZINE_THEME_RESPONSE_KEYS = ['magazine', 'customCss', 'icon'];
+    public const MAGAZINE_THEME_RESPONSE_KEYS = ['magazine', 'customCss', 'icon', 'banner'];
 
     public function testApiCanRetrieveMagazineThemeByIdAnonymously(): void
     {

@@ -9,6 +9,7 @@ use App\DTO\MagazineThemeDto;
 use App\Entity\Magazine;
 use App\Form\MagazineThemeType;
 use App\Service\MagazineManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -49,5 +50,25 @@ class MagazineThemeController extends AbstractController
                 'form' => $form->createView(),
             ]
         );
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[IsGranted('edit', subject: 'magazine')]
+    public function detachIcon(#[MapEntity] Magazine $magazine): Response
+    {
+        $this->manager->detachIcon($magazine);
+        $this->addFlash('success', 'flash_magazine_theme_icon_detached_success');
+
+        return $this->redirectToRoute('magazine_panel_theme', ['name' => $magazine->name]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[IsGranted('edit', subject: 'magazine')]
+    public function detachBanner(#[MapEntity] Magazine $magazine): Response
+    {
+        $this->manager->detachBanner($magazine);
+        $this->addFlash('success', 'flash_magazine_theme_banner_detached_success');
+
+        return $this->redirectToRoute('magazine_panel_theme', ['name' => $magazine->name]);
     }
 }

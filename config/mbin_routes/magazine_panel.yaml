@@ -50,6 +50,16 @@ magazine_panel_theme:
   path: /m/{name}/panel/appearance
   methods: [ GET, POST ]
 
+magazine_panel_theme_detach_icon:
+    controller: App\Controller\Magazine\Panel\MagazineThemeController::detachIcon
+    path: /m/{name}/panel/appearance/detachIcon
+    methods: [ POST ]
+
+magazine_panel_theme_detach_banner:
+    controller: App\Controller\Magazine\Panel\MagazineThemeController::detachBanner
+    path: /m/{name}/panel/appearance/detachBanner
+    methods: [ POST ]
+
 magazine_panel_badges:
   controller: App\Controller\Magazine\Panel\MagazineBadgeController::badges
   path: /m/{name}/panel/badges

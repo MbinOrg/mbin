@@ -198,12 +198,18 @@ api_moderate_magazine_set_theme:
   methods: [ POST ]
   format: json
 
+api_moderate_magazine_set_banner:
+    controller: App\Controller\Api\Magazine\Admin\MagazineUpdateThemeApi::banner
+    path: /api/moderate/magazine/{magazine_id}/banner
+    methods: [ PUT ]
+    format: json
+
 api_moderate_magazine_delete_icon:
   controller: App\Controller\Api\Magazine\Admin\MagazineDeleteIconApi
   path: /api/moderate/magazine/{magazine_id}/icon
   methods: [ DELETE ]
   format: json
-  
+
 api_moderate_magazine_retrieve_votes:
   controller: App\Controller\Api\Magazine\Admin\MagazineRetrieveStatsApi::votes
   path: /api/stats/magazine/{magazine_id}/votes
