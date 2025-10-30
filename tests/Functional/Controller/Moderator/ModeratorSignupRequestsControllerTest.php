@@ -15,7 +15,7 @@ class ModeratorSignupRequestsControllerTest extends WebTestCase
         $this->client->loginUser($this->getUserByUsername('moderator', isModerator: true));
 
         $crawler = $this->client->request('GET', '/');
-        $this->client->click($crawler->filter('#header menu')->selectLink('Signup Requests')->link());
+        $this->client->click($crawler->filter('#header menu')->selectLink('Signup requests')->link());
 
         $this->assertSelectorTextContains('#main h3', 'Signup Requests');
     }
