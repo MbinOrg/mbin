@@ -18,8 +18,8 @@ use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 class SentNewSignupNotificationHandler extends MbinMessageHandler
 {
     public function __construct(
-        readonly EntityManagerInterface $entityManager,
-        readonly KernelInterface $kernel,
+        EntityManagerInterface $entityManager,
+        KernelInterface $kernel,
         private readonly UserRepository $userRepository,
         private readonly SignupNotificationManager $signupNotificationManager,
     ) {

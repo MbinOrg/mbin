@@ -497,7 +497,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
             ->where(Criteria::expr()->eq('blocked', $blocked));
 
         /**
-         * @var $userBlock UserBlock
+         * @var UserBlock $userBlock
          */
         $userBlock = $this->blocks->matching($criteria)->first();
 
@@ -539,7 +539,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
             ->where(Criteria::expr()->eq('following', $following));
 
         /**
-         * @var $following UserFollow
+         * @var UserFollow $following
          */
         $following = $this->follows->matching($criteria)->first();
 
@@ -615,7 +615,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
             ->where(Criteria::expr()->eq('magazine', $magazine));
 
         /**
-         * @var $magazineBlock MagazineBlock
+         * @var MagazineBlock $magazineBlock
          */
         $magazineBlock = $this->blockedMagazines->matching($criteria)->first();
 
@@ -650,7 +650,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
             ->where(Criteria::expr()->eq('domain', $domain));
 
         /**
-         * @var $domainBlock DomainBlock
+         * @var DomainBlock $domainBlock
          */
         $domainBlock = $this->blockedDomains->matching($criteria)->first();
 
