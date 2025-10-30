@@ -10,10 +10,10 @@ use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
 use App\Service\UserManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\ExpressionLanguage\Expression;
 
 class AdminSignupRequestsController extends AbstractController
 {
