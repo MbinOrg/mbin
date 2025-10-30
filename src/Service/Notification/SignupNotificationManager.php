@@ -22,7 +22,9 @@ readonly class SignupNotificationManager
 
     public function sendNewSignupNotification(User $newUser): void
     {
-        $receivers = $this->userRepository->findAllAdmins();
+        $receiver_admins = $this->userRepository->findAllAdmins();
+        $receiver_moderators = $this->userRepository->findAllModerators();
+        $receivers = array_merge($receiver_admins, $receiver_moderators);
         foreach ($receivers as $receiver) {
             if (!$receiver->notifyOnUserSignup) {
                 continue;
