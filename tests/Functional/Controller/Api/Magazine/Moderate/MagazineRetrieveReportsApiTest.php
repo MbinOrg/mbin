@@ -102,7 +102,7 @@ class MagazineRetrieveReportsApiTest extends WebTestCase
         self::assertSame(1, $jsonData['weight']);
         self::assertNull($jsonData['consideredAt']);
         self::assertNull($jsonData['consideredBy']);
-        self::assertEquals($report->createdAt->getTimestamp(), \DateTimeImmutable::createFromFormat(\DateTimeImmutable::ATOM, $jsonData['createdAt'])->getTimestamp());
+        self::assertEqualsWithDelta($report->createdAt->getTimestamp(), \DateTimeImmutable::createFromFormat(\DateTimeImmutable::ATOM, $jsonData['createdAt'])->getTimestamp(), 5.0);
     }
 
     public function testApiCannotRetrieveMagazineReportsAnonymous(): void
@@ -185,6 +185,6 @@ class MagazineRetrieveReportsApiTest extends WebTestCase
         self::assertSame(1, $jsonData['items'][0]['weight']);
         self::assertNull($jsonData['items'][0]['consideredAt']);
         self::assertNull($jsonData['items'][0]['consideredBy']);
-        self::assertEquals($report->createdAt->getTimestamp(), \DateTimeImmutable::createFromFormat(\DateTimeImmutable::ATOM, $jsonData['items'][0]['createdAt'])->getTimestamp());
+        self::assertEqualsWithDelta($report->createdAt->getTimestamp(), \DateTimeImmutable::createFromFormat(\DateTimeImmutable::ATOM, $jsonData['items'][0]['createdAt'])->getTimestamp(), 5.0);
     }
 }

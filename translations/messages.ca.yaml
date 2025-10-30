@@ -1117,3 +1117,7 @@ modlog_type_post_comment_restored: Resposta del microblog restaurada
 modlog_type_ban: Compte expulsat de la revista
 modlog_type_moderator_add: Moderador(a) de la revista afegit(da)
 modlog_type_moderator_remove: Moderador(a) de la revista destituït(da)
+everyone: Tothom
+nobody: Ningú
+followers_only: Només seguidor(e)s
+direct_message_setting_label: Qui pot enviar un missatge directe
