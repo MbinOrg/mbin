@@ -107,6 +107,8 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     public bool $isAdult = false;
     #[Column(type: 'boolean', nullable: false)]
     public bool $sticky = false;
+    #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
+    public bool $isLocked = false;
     #[Column(type: 'datetimetz')]
     public ?\DateTime $lastActive = null;
     #[Column(type: 'string', nullable: true)]
