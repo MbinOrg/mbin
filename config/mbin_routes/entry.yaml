@@ -186,14 +186,12 @@ entry_comment_boost:
 
 entry_create:
   controller: App\Controller\Entry\EntryCreateController
-  defaults: { type: link }
-  path: /new/{type}
+  path: /new_entry
   methods: [ GET, POST ]
 
 magazine_entry_create:
   controller: App\Controller\Entry\EntryCreateController
-  defaults: { type: link }
-  path: /m/{name}/new/{type}
+  path: /m/{name}/new_entry
   methods: [ GET, POST ]
 
 entry_edit:

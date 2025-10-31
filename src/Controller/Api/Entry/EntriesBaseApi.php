@@ -66,6 +66,8 @@ class EntriesBaseApi extends BaseApi
         $request = $this->request->getCurrentRequest();
         $deserialized = new EntryRequestDto();
         $deserialized->title = $request->get('title');
+        $deserialized->url = $request->get('url');
+        $deserialized->body = $request->get('body');
         $deserialized->tags = $request->get('tags');
         $deserialized->body = $request->get('body');
         // TODO: Support badges whenever/however they're implemented

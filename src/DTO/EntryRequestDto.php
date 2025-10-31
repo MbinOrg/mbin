@@ -9,7 +9,7 @@ use App\Service\SettingsManager;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[OA\Schema()]
+#[OA\Schema(required: ['title'])]
 class EntryRequestDto extends ContentRequestDto
 {
     #[Groups([
@@ -31,7 +31,7 @@ class EntryRequestDto extends ContentRequestDto
         Entry::ENTRY_TYPE_IMAGE,
         Entry::ENTRY_TYPE_VIDEO,
     ])]
-    #[OA\Property(type: 'array', items: new OA\Items(type: 'string'), example: ['cat', 'blep', 'cute'])]
+    #[OA\Property(type: 'array', nullable: true, items: new OA\Items(type: 'string'), example: ['cat', 'blep', 'cute'])]
     public ?array $tags = null;
 
     // TODO: Support badges whenever/however they're implemented

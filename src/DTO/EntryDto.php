@@ -62,7 +62,7 @@ class EntryDto implements ContentVisibilityInterface
         $payload,
     ) {
         if (empty($this->image)) {
-            $keys = ['entry_image', 'entry_edit'];
+            $keys = ['entry', 'entry_edit'];
             for ($i = 0; $i < \sizeof($keys) && empty($image); ++$i) {
                 $image = Request::createFromGlobals()->files->filter($keys[$i]);
                 if (\is_array($image)) {
