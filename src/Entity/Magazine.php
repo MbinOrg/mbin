@@ -446,7 +446,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
          * @var MagazineBan $ban
          */
         $ban = $this->bans->matching($criteria)->first();
-        $ban->expiredAt = new \DateTime('+10 seconds');
+        $ban->expiredAt = new \DateTime('-10 seconds');
 
         return $ban;
     }

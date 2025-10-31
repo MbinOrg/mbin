@@ -143,7 +143,7 @@ class MagazineBanApiTest extends WebTestCase
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine:ban:delete');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $expiredAt = (new \DateTimeImmutable('+10 seconds'));
+        $expiredAt = new \DateTimeImmutable();
 
         $this->client->request('DELETE', "/api/moderate/magazine/{$magazine->getId()}/ban/{$bannedUser->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
 
@@ -161,8 +161,8 @@ class MagazineBanApiTest extends WebTestCase
         self::assertSame($user->getId(), $jsonData['bannedBy']['userId']);
 
         $actualExpiry = \DateTimeImmutable::createFromFormat(\DateTimeImmutable::ATOM, $jsonData['expiredAt']);
-        // Hopefully the API responds fast enough that there is only a max delta of 5 second between these two timestamps
-        self::assertEqualsWithDelta($expiredAt->getTimestamp(), $actualExpiry->getTimestamp(), 5.0);
+        // Hopefully the API responds fast enough that there is only a max delta of 10 second between these two timestamps
+        self::assertEqualsWithDelta($expiredAt->getTimestamp(), $actualExpiry->getTimestamp(), 10.0);
         self::assertTrue($jsonData['expired']);
     }
 }

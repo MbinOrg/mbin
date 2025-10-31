@@ -20,7 +20,7 @@ class UserBanController extends AbstractController
     {
         $this->validateCsrf('user_ban', $request->getPayload()->get('token'));
 
-        $manager->ban($user);
+        $manager->ban($user, $this->getUserOrThrow(), reason: null);
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse(
@@ -40,7 +40,7 @@ class UserBanController extends AbstractController
     {
         $this->validateCsrf('user_ban', $request->getPayload()->get('token'));
 
-        $manager->unban($user);
+        $manager->unban($user, $this->getUserOrThrow(), reason: null);
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse(
