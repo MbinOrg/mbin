@@ -281,6 +281,10 @@ class MagazineManager
             $magazine->icon = $this->imageRepository->find($dto->icon->id);
         }
 
+        if ($dto->banner && $magazine->banner?->getId() !== $dto->banner->id) {
+            $magazine->banner = $this->imageRepository->find($dto->banner->id);
+        }
+
         // custom css
         $customCss = $dto->customCss;
 
@@ -319,6 +323,20 @@ class MagazineManager
         $this->entityManager->persist($magazine);
         $this->entityManager->flush();
 
+        $this->bus->dispatch(new DeleteImageMessage($image));
+    }
+
+    public function detachBanner(Magazine $magazine): void
+    {
+        if (!$magazine->banner) {
+            return;
+        }
+
+        $image = $magazine->banner->getId();
+
+        $magazine->banner = null;
+        $this->entityManager->persist($magazine);
+        $this->entityManager->flush();
         $this->bus->dispatch(new DeleteImageMessage($image));
     }
 
