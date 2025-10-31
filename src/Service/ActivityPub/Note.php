@@ -14,7 +14,9 @@ use App\Entity\Magazine;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\Exception\EntryLockedException;
 use App\Exception\InstanceBannedException;
+use App\Exception\PostLockedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Exception\UserDeletedException;
@@ -50,6 +52,8 @@ class Note extends ActivityPubContent
      * @throws UserBannedException
      * @throws UserDeletedException
      * @throws InstanceBannedException
+     * @throws EntryLockedException
+     * @throws PostLockedException
      * @throws \Exception
      */
     public function create(array $object, ?array $root = null, bool $stickyIt = false): EntryComment|PostComment|Post
@@ -106,6 +110,7 @@ class Note extends ActivityPubContent
      * @throws TagBannedException
      * @throws UserBannedException
      * @throws UserDeletedException
+     * @throws EntryLockedException
      * @throws \Exception
      */
     private function createEntryComment(array $object, ActivityPubActivityInterface $parent, ?ActivityPubActivityInterface $root = null): EntryComment
@@ -224,6 +229,7 @@ class Note extends ActivityPubContent
      * @throws UserDeletedException
      * @throws TagBannedException
      * @throws UserBannedException
+     * @throws PostLockedException
      */
     private function createPostComment(array $object, ActivityPubActivityInterface $parent, ?ActivityPubActivityInterface $root = null): PostComment
     {

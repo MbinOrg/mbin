@@ -22,6 +22,7 @@ class PostResponseDto implements \JsonSerializable
     public ?string $lang = null;
     public bool $isAdult = false;
     public bool $isPinned = false;
+    public bool $isLocked = false;
     public ?string $slug = null;
     public int $comments = 0;
     public ?int $uv = 0;
@@ -57,6 +58,7 @@ class PostResponseDto implements \JsonSerializable
         ?string $lang = null,
         ?bool $isAdult = null,
         bool $isPinned = false,
+        bool $isLocked = false,
         ?int $comments = null,
         ?int $uv = null,
         ?int $dv = null,
@@ -82,6 +84,7 @@ class PostResponseDto implements \JsonSerializable
         $dto->lang = $lang;
         $dto->isAdult = $isAdult;
         $dto->isPinned = $isPinned;
+        $dto->isLocked = $isLocked;
         $dto->comments = $comments;
         $dto->uv = $uv;
         $dto->dv = $dv;
@@ -127,6 +130,7 @@ class PostResponseDto implements \JsonSerializable
             'lang' => $this->lang,
             'isAdult' => $this->isAdult,
             'isPinned' => $this->isPinned,
+            'isLocked' => $this->isLocked,
             'comments' => $this->comments,
             'uv' => $this->uv,
             'dv' => $this->dv,

@@ -193,7 +193,7 @@ class ActivityRepository extends ServiceEntityRepository
             unset($payload['@context']);
         }
         $activity = new Activity($payload['type']);
-        $nestedTypes = ['Announce', 'Accept', 'Reject', 'Add', 'Remove'];
+        $nestedTypes = ['Announce', 'Accept', 'Reject', 'Add', 'Remove', 'Lock'];
         if (\in_array($payload['type'], $nestedTypes) && isset($payload['object']) && \is_array($payload['object'])) {
             $activity->innerActivity = $this->createForRemoteActivity($payload['object'], $object);
         } else {

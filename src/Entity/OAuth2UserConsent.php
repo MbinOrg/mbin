@@ -101,6 +101,7 @@ class OAuth2UserConsent
         'moderate:entry' => 'oauth2.grant.moderate.entry.all',
         'moderate:entry:language' => 'oauth2.grant.moderate.entry.change_language',
         'moderate:entry:pin' => 'oauth2.grant.moderate.entry.pin',
+        'moderate:entry:lock' => 'oauth2.grant.moderate.entry.lock',
         'moderate:entry:set_adult' => 'oauth2.grant.moderate.entry.set_adult',
         'moderate:entry:trash' => 'oauth2.grant.moderate.entry.trash',
         // Entry comment moderation grants

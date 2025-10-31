@@ -71,6 +71,19 @@
       </form>
     </li>
     {% endif %}
+    {% if is_granted('lock', entry) %}
+      <li>
+        <form method="post" action="{{ path('entry_lock', {'magazine_name': entry.magazine.name, 'entry_id': entry.id, 'slug': entry.slug}) }}" data-action="confirmation#ask"
+          data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
+          <input type="hidden" name="token" value="{{ csrf_token('entry_lock') }}">
+          {% if entry.isLocked %}
+            <button type="submit"><i class="fa fa-lock-open" aria-hidden="true" style="margin-right: .5em;"></i>{{ 'unlock'|trans }}</button>
+          {% else %}
+            <button type="submit"><i class="fa fa-lock" aria-hidden="true" style="margin-right: .5em;"></i>{{ 'lock'|trans }}</button>
+          {% endif %}
+        </form>
+      </li>
+    {% endif %}
     {% if is_granted('moderate', entry) %}
     <li>
       <a href="{{ entry_moderate_url(entry) }}" class="{{ html_classes({'active': is_route_name('entry_moderate')}) }}"

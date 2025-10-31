@@ -67,6 +67,21 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         self::assertNotNull($entryComment);
     }
 
+    #[Depends('testCreateAnnouncedEntryComment')]
+    public function testCannotCreateAnnouncedEntryCommentInLockedEntry(): void
+    {
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->announceEntry)));
+        $entry = $this->entryRepository->findOneBy(['apId' => $this->announceEntry['object']['object']['id']]);
+        self::assertNotNull($entry);
+
+        $entry->isLocked = true;
+
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->announceEntryComment)));
+        $entryComment = $this->entryCommentRepository->findOneBy(['apId' => $this->announceEntryComment['object']['object']['id']]);
+        // the comment should not be created and therefore be null
+        self::assertNull($entryComment);
+    }
+
     public function testCreateAnnouncedPost(): void
     {
         $this->bus->dispatch(new ActivityMessage(json_encode($this->announcePost)));
@@ -81,6 +96,21 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         $this->bus->dispatch(new ActivityMessage(json_encode($this->announcePostComment)));
         $postComment = $this->postCommentRepository->findOneBy(['apId' => $this->announcePostComment['object']['object']['id']]);
         self::assertNotNull($postComment);
+    }
+
+    #[Depends('testCreateAnnouncedPostComment')]
+    public function testCannotCreateAnnouncedPostCommentInLockedPost(): void
+    {
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->announcePost)));
+        $post = $this->postRepository->findOneBy(['apId' => $this->announcePost['object']['object']['id']]);
+        self::assertNotNull($post);
+
+        $post->isLocked = true;
+
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->announcePostComment)));
+        $postComment = $this->postCommentRepository->findOneBy(['apId' => $this->announcePostComment['object']['object']['id']]);
+        // the comment should not be created and therefore be null
+        self::assertNull($postComment);
     }
 
     public function testCreateEntry(): void
