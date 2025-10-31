@@ -201,6 +201,8 @@ POST /api/client
         - Allows changing the language of threads moderated by the user
       - `moderate:entry:pin`
         - Allows pinning/unpinning threads to the top of magazines moderated by the user
+      - `moderate:entry:lock`
+        - Allows locking/unlocking of threads
       - `moderate:entry:set_adult`
         - Allows toggling the NSFW status of threads moderated by the user
       - `moderate:entry:trash`
@@ -219,6 +221,10 @@ POST /api/client
         - Allows toggling the NSFW status of posts moderated by the user
       - `moderate:post:trash`
         - Allows soft deletion or restoration of posts moderated by the user
+      - `moderate:post:pin`
+          - Allows pinning/unpinning posts to the top of magazines moderated by the user
+      - `moderate:post:lock`
+          - Allows locking/unlocking of posts
     - `moderate:post_comment`
       - `moderate:post_comment:language`
         - Allows changing the language of comments on posts moderated by the user
