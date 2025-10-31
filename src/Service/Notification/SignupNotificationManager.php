@@ -24,7 +24,7 @@ readonly class SignupNotificationManager
     {
         $receiver_admins = $this->userRepository->findAllAdmins();
         $receiver_moderators = $this->userRepository->findAllModerators();
-        $receivers = array_merge($receiver_admins, $receiver_moderators);
+        $receivers = array_unique(array_merge($receiver_admins, $receiver_moderators));
         foreach ($receivers as $receiver) {
             if (!$receiver->notifyOnUserSignup) {
                 continue;
