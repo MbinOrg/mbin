@@ -218,6 +218,15 @@ If a user boosts content:
 %activity_user_delete%
 ```
 
+### Lock own content
+
+Only top level content (meaning no comments) can be locked.
+When content is locked, comments can no longer be created for it.
+
+```json
+%activity_user_lock%
+```
+
 ## Moderator Activities
 
 ### Add or Remove moderator
@@ -254,6 +263,14 @@ When a thread is unpinned:
 %activity_mod_delete%
 ```
 
+### Lock content
+
+When content is locked, comments can no longer be created for it.
+
+```json
+%activity_mod_lock%
+```
+
 ## Admin Activities
 
 ## Magazine Activities
@@ -261,7 +278,7 @@ When a thread is unpinned:
 ### Announce activities
 
 The magazine is mainly there to announce the activities users do with it as the audience.
-The announced type can be `Create`, `Update`, `Add`, `Remove`, `Announce`, `Delete`, `Like`, `Dislike` and `Flag`.
+The announced type can be `Create`, `Update`, `Add`, `Remove`, `Announce`, `Delete`, `Like`, `Dislike`, `Flag` and `Lock`.
 `Announce(Flag)` activities are only sent to instances with moderators of this magazine on them. 
 
 ```json
