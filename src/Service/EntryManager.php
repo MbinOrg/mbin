@@ -198,7 +198,6 @@ class EntryManager implements ContentManagerInterface
         $entry->body = $dto->body;
         $entry->lang = $dto->lang;
         $entry->isAdult = $dto->isAdult || $entry->magazine->isAdult;
-        $entry->isLocked = $dto->isLocked;
         $entry->slug = $this->slugger->slug($dto->title);
         $entry->visibility = $dto->visibility;
         $oldImage = $entry->image;
@@ -234,6 +233,10 @@ class EntryManager implements ContentManagerInterface
 
         if ($entry->url !== $oldUrl) {
             $this->bus->dispatch(new EntryEmbedMessage($entry->getId()));
+        }
+
+        if ($entry->isLocked !== $dto->isLocked) {
+            $this->toggleLock($entry, $editedBy);
         }
 
         $this->dispatcher->dispatch(new EntryEditedEvent($entry, $editedBy));

@@ -147,7 +147,6 @@ class PostManager implements ContentManagerInterface
         $post->body = $dto->body;
         $post->lang = $dto->lang;
         $post->isAdult = $dto->isAdult || $post->magazine->isAdult;
-        $post->isLocked = $dto->isLocked;
         $post->slug = $this->slugger->slug($dto->body ?? $dto->magazine->name.' '.$dto->image->altText);
         $oldImage = $post->image;
         if ($dto->image) {
@@ -171,6 +170,10 @@ class PostManager implements ContentManagerInterface
 
         if ($oldImage && $post->image !== $oldImage) {
             $this->bus->dispatch(new DeleteImageMessage($oldImage->getId()));
+        }
+
+        if ($post->isLocked !== $dto->isLocked) {
+            $this->toggleLock($post, $editedBy);
         }
 
         $this->dispatcher->dispatch(new PostEditedEvent($post, $editedBy));
