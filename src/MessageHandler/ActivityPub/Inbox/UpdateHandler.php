@@ -218,7 +218,7 @@ class UpdateHandler extends MbinMessageHandler
         $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($payload['object']);
 
         if (isset($payload['object']['commentsEnabled']) && \is_bool($payload['object']['commentsEnabled']) && ($dto instanceof EntryDto || $dto instanceof PostDto)) {
-            $dto->isLocked = $payload['object']['commentsEnabled'];
+            $dto->isLocked = !$payload['object']['commentsEnabled'];
         }
     }
 

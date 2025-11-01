@@ -45,6 +45,7 @@ class UpdateHandlerTest extends ActivityPubFunctionalTestCase
         self::assertNotNull($entry);
         self::assertStringContainsString('update', $entry->title);
         self::assertStringContainsString('update', $entry->body);
+        self::assertFalse($entry->isLocked);
     }
 
     public function testUpdateRemoteEntryCommentInRemoteMagazine(): void
@@ -68,6 +69,7 @@ class UpdateHandlerTest extends ActivityPubFunctionalTestCase
         $this->entityManager->refresh($post);
         self::assertNotNull($post);
         self::assertStringContainsString('update', $post->body);
+        self::assertFalse($post->isLocked);
     }
 
     public function testUpdateRemotePostCommentInRemoteMagazine(): void
@@ -89,6 +91,8 @@ class UpdateHandlerTest extends ActivityPubFunctionalTestCase
         self::assertStringNotContainsString('update', $entry->title);
         $this->bus->dispatch(new ActivityMessage(json_encode($this->updateCreateEntry)));
         self::assertStringContainsString('update', $entry->title);
+        // explicitly set in the build method
+        self::assertTrue($entry->isLocked);
 
         $postedObjects = $this->testingApHttpClient->getPostedObjects();
         self::assertNotEmpty($postedObjects);
@@ -127,6 +131,8 @@ class UpdateHandlerTest extends ActivityPubFunctionalTestCase
         self::assertStringNotContainsString('update', $post->body);
         $this->bus->dispatch(new ActivityMessage(json_encode($this->updateCreatePost)));
         self::assertStringContainsString('update', $post->body);
+        // explicitly set in the build method
+        self::assertTrue($post->isLocked);
 
         $postedObjects = $this->testingApHttpClient->getPostedObjects();
         self::assertNotEmpty($postedObjects);
@@ -245,8 +251,10 @@ class UpdateHandlerTest extends ActivityPubFunctionalTestCase
         $titleBefore = $entry->title;
         $entry->title = 'Some updated title';
         $entry->body = 'Some updated body';
+        $entry->isLocked = true;
         $this->updateCreateEntry = $this->RewriteTargetFieldsToLocal($entry->magazine, $this->activityJsonBuilder->buildActivityJson($updateActivity));
         $entry->title = $titleBefore;
+        $entry->isLocked = false;
 
         $this->testingApHttpClient->activityObjects[$this->updateCreateEntry['id']] = $this->updateCreateEntry;
         $this->entitiesToRemoveAfterSetup[] = $updateActivity;
@@ -267,8 +275,10 @@ class UpdateHandlerTest extends ActivityPubFunctionalTestCase
         $updateActivity = $this->updateWrapper->buildForActivity($post, $this->remoteUser);
         $bodyBefore = $post->body;
         $post->body = 'Some updated body';
+        $post->isLocked = true;
         $this->updateCreatePost = $this->RewriteTargetFieldsToLocal($post->magazine, $this->activityJsonBuilder->buildActivityJson($updateActivity));
         $post->body = $bodyBefore;
+        $post->isLocked = false;
 
         $this->testingApHttpClient->activityObjects[$this->updateCreatePost['id']] = $this->updateCreatePost;
         $this->entitiesToRemoveAfterSetup[] = $updateActivity;

@@ -217,6 +217,10 @@ class Note extends ActivityPubContent
             $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($object);
             $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($object);
 
+            if (isset($object['commentsEnabled']) && \is_bool($object['commentsEnabled'])) {
+                $dto->isLocked = !$object['commentsEnabled'];
+            }
+
             return $this->postManager->create($dto, $actor, false, $stickyIt);
         } elseif ($actor instanceof Magazine) {
             throw new UnrecoverableMessageHandlingException('Actor "'.$object['attributedTo'].'" is not a user, but a magazine for post "'.$dto->apId.'".');
