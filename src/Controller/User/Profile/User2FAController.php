@@ -121,7 +121,7 @@ class User2FAController extends AbstractController
         } else {
             $errors = $form->getErrors(true);
             foreach ($errors as $error) {
-                /** @var $error FormError */
+                /** @var FormError $error */
                 $this->addFlash('error', $error->getMessage());
             }
         }
@@ -196,7 +196,7 @@ class User2FAController extends AbstractController
         if (!$form->isValid()) {
             $errors = $form->getErrors(true);
             foreach ($errors as $error) {
-                /** @var $error FormError */
+                /** @var FormError $error */
                 $this->addFlash('error', $error->getMessage());
             }
 

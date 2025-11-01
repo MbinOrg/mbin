@@ -6,6 +6,7 @@ namespace App\Form;
 
 use App\DTO\MagazineThemeDto;
 use App\Form\Constraint\ImageConstraint;
+use App\Form\EventListener\AvatarListener;
 use App\Form\EventListener\ImageListener;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -17,8 +18,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MagazineThemeType extends AbstractType
 {
-    public function __construct(private readonly ImageListener $imageListener)
-    {
+    public function __construct(
+        private readonly ImageListener $imageListener,
+        private readonly AvatarListener $avatarListener,
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -32,6 +35,16 @@ class MagazineThemeType extends AbstractType
                     'mapped' => false,
                     'required' => false,
                     'help' => 'magazine_theme_appearance_icon',
+                ]
+            )
+            ->add(
+                'banner',
+                FileType::class,
+                [
+                    'constraints' => ImageConstraint::default(),
+                    'mapped' => false,
+                    'required' => false,
+                    'help' => 'magazine_theme_appearance_banner',
                 ]
             )
             ->add('customCss', TextareaType::class, [
@@ -52,7 +65,8 @@ class MagazineThemeType extends AbstractType
             ])
             ->add('submit', SubmitType::class);
 
-        $builder->addEventSubscriber($this->imageListener->setFieldName('icon'));
+        $builder->addEventSubscriber($this->avatarListener->setFieldName('icon'));
+        $builder->addEventSubscriber($this->imageListener->setFieldName('banner'));
     }
 
     public function configureOptions(OptionsResolver $resolver): void

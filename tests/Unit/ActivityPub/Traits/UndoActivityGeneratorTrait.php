@@ -47,4 +47,9 @@ trait UndoActivityGeneratorTrait
     {
         return $this->undoWrapper->build($this->getFollowMagazineActivity());
     }
+
+    public function getUndoBlockUserActivity(): Activity
+    {
+        return $this->undoWrapper->build($this->getBlockUserActivity());
+    }
 }

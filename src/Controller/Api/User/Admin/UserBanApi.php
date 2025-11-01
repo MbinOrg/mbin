@@ -74,7 +74,7 @@ class UserBanApi extends UserBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        $manager->ban($user);
+        $manager->ban($user, $this->getUserOrThrow(), null);
         // Response needs to be an array to insert isBanned
         $response = $this->serializeUser($factory->createDto($user))->jsonSerialize();
         $response['isBanned'] = $user->isBanned;
@@ -140,7 +140,7 @@ class UserBanApi extends UserBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        $manager->unban($user);
+        $manager->unban($user, $this->getUserOrThrow(), null);
         // Response needs to be an array to insert isBanned
         $response = $this->serializeUser($factory->createDto($user))->jsonSerialize();
         $response['isBanned'] = $user->isBanned;

@@ -76,8 +76,8 @@ class MagazineDeleteIconApi extends MagazineBaseApi
 
         $manager->detachIcon($magazine);
 
-        $imageDto = null;
-        $dto = MagazineThemeResponseDto::create($manager->createDto($magazine), $magazine->customCss, $imageDto);
+        $bannerDto = $magazine->banner ? $this->imageFactory->createDto($magazine->banner) : null;
+        $dto = MagazineThemeResponseDto::create($manager->createDto($magazine), $magazine->customCss, icon: null, banner: $bannerDto);
 
         return new JsonResponse(
             $dto,

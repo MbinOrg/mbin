@@ -24,6 +24,6 @@ class ImageUploadDto
         self::IMAGE_UPLOAD,
         self::IMAGE_UPLOAD_NO_ALT,
     ])]
-    #[OA\Property(type: 'string', format: 'binary')]
+    #[OA\Property(type: 'string', format: 'binary', nullable: true)]
     public ?UploadedFile $uploadImage = null;
 }

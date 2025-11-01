@@ -172,6 +172,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public bool $addMentionsPosts = true;
     #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
     public bool $isBanned = false;
+    #[Column(type: 'string', nullable: true, options: ['default' => null])]
+    public ?string $banReason = null;
     #[Column(type: 'boolean', nullable: false)]
     public bool $isVerified = false;
     #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
@@ -497,7 +499,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
             ->where(Criteria::expr()->eq('blocked', $blocked));
 
         /**
-         * @var $userBlock UserBlock
+         * @var UserBlock $userBlock
          */
         $userBlock = $this->blocks->matching($criteria)->first();
 
@@ -539,7 +541,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
             ->where(Criteria::expr()->eq('following', $following));
 
         /**
-         * @var $following UserFollow
+         * @var UserFollow $following
          */
         $following = $this->follows->matching($criteria)->first();
 
@@ -615,7 +617,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
             ->where(Criteria::expr()->eq('magazine', $magazine));
 
         /**
-         * @var $magazineBlock MagazineBlock
+         * @var MagazineBlock $magazineBlock
          */
         $magazineBlock = $this->blockedMagazines->matching($criteria)->first();
 
@@ -650,7 +652,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
             ->where(Criteria::expr()->eq('domain', $domain));
 
         /**
-         * @var $domainBlock DomainBlock
+         * @var DomainBlock $domainBlock
          */
         $domainBlock = $this->blockedDomains->matching($criteria)->first();
 

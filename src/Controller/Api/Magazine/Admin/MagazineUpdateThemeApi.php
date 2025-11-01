@@ -11,6 +11,10 @@ use App\DTO\MagazineThemeRequestDto;
 use App\DTO\MagazineThemeResponseDto;
 use App\Entity\Magazine;
 use App\Factory\ImageFactory;
+use App\Schema\Errors\BadRequestErrorSchema;
+use App\Schema\Errors\ForbiddenErrorSchema;
+use App\Schema\Errors\TooManyRequestsErrorSchema;
+use App\Schema\Errors\UnauthorizedErrorSchema;
 use App\Service\ImageManager;
 use App\Service\MagazineManager;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -38,17 +42,17 @@ class MagazineUpdateThemeApi extends MagazineBaseApi
     #[OA\Response(
         response: 400,
         description: 'Invalid parameters',
-        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\BadRequestErrorSchema::class))
+        content: new OA\JsonContent(ref: new Model(type: BadRequestErrorSchema::class))
     )]
     #[OA\Response(
         response: 401,
         description: 'Permission denied due to missing or expired token',
-        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\UnauthorizedErrorSchema::class))
+        content: new OA\JsonContent(ref: new Model(type: UnauthorizedErrorSchema::class))
     )]
     #[OA\Response(
         response: 403,
         description: 'You do not have permission to update this magazine',
-        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\ForbiddenErrorSchema::class))
+        content: new OA\JsonContent(ref: new Model(type: ForbiddenErrorSchema::class))
     )]
     #[OA\Response(
         response: 404,
@@ -58,7 +62,7 @@ class MagazineUpdateThemeApi extends MagazineBaseApi
     #[OA\Response(
         response: 429,
         description: 'You are being rate limited',
-        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\TooManyRequestsErrorSchema::class)),
+        content: new OA\JsonContent(ref: new Model(type: TooManyRequestsErrorSchema::class)),
         headers: [
             new OA\Header(header: 'X-RateLimit-Remaining', schema: new OA\Schema(type: 'integer'), description: 'Number of requests left until you will be rate limited'),
             new OA\Header(header: 'X-RateLimit-Retry-After', schema: new OA\Schema(type: 'integer'), description: 'Unix timestamp to retry the request after'),
@@ -123,10 +127,94 @@ class MagazineUpdateThemeApi extends MagazineBaseApi
         $manager->changeTheme($dto);
 
         $imageDto = $magazine->icon ? $this->imageFactory->createDto($magazine->icon) : null;
-        $dto = MagazineThemeResponseDto::create($manager->createDto($magazine), $magazine->customCss, $imageDto);
+        $bannerDto = $magazine->banner ? $this->imageFactory->createDto($magazine->banner) : null;
+        $dto = MagazineThemeResponseDto::create($manager->createDto($magazine), $magazine->customCss, $imageDto, $bannerDto);
 
         return new JsonResponse(
             $dto,
+            headers: $headers
+        );
+    }
+
+    #[OA\Response(
+        response: 200,
+        description: 'Magazine banner updated',
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
+        ],
+        content: new Model(type: MagazineThemeResponseDto::class)
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'The uploaded image was missing or invalid',
+        content: new OA\JsonContent(ref: new Model(type: BadRequestErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Permission denied due to missing or expired token',
+        content: new OA\JsonContent(ref: new Model(type: UnauthorizedErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 403,
+        description: 'You are not authorized to update the magazine\'s banner',
+        content: new OA\JsonContent(ref: new Model(type: ForbiddenErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 429,
+        description: 'You are being rate limited',
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
+        ],
+        content: new OA\JsonContent(ref: new Model(type: TooManyRequestsErrorSchema::class))
+    )]
+    #[OA\RequestBody(content: new OA\MediaType(
+        'multipart/form-data',
+        schema: new OA\Schema(
+            ref: new Model(
+                type: ImageUploadDto::class,
+                groups: [
+                    ImageUploadDto::IMAGE_UPLOAD_NO_ALT,
+                ]
+            )
+        ),
+        encoding: [
+            'imageUpload' => [
+                'contentType' => ImageManager::IMAGE_MIMETYPE_STR,
+            ],
+        ]
+    ))]
+    #[OA\Tag(name: 'moderation/magazine/owner')]
+    #[Security(name: 'oauth2', scopes: ['moderate:magazine_admin:theme'])]
+    #[IsGranted('ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN:THEME')]
+    #[IsGranted('edit', subject: 'magazine')]
+    public function banner(
+        #[MapEntity(id: 'magazine_id')]
+        Magazine $magazine,
+        MagazineManager $manager,
+        RateLimiterFactory $apiModerateLimiter,
+    ): JsonResponse {
+        $headers = $this->rateLimit($apiModerateLimiter);
+
+        $image = $this->handleUploadedImage();
+
+        if (null !== $magazine->banner && $image->getId() !== $magazine->banner->getId()) {
+            $manager->detachBanner($magazine);
+        }
+
+        $dto = new MagazineThemeDto($magazine);
+
+        $dto->banner = $image ? $this->imageFactory->createDto($image) : $dto->banner;
+
+        $magazine = $manager->changeTheme($dto);
+        $iconDto = $magazine->icon ? $this->imageFactory->createDto($magazine->icon) : null;
+        $bannerDto = $magazine->banner ? $this->imageFactory->createDto($magazine->banner) : null;
+
+        return new JsonResponse(
+            MagazineThemeResponseDto::create($manager->createDto($magazine), $magazine->customCss, $iconDto, $bannerDto),
             headers: $headers
         );
     }

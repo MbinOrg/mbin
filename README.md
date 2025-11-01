@@ -212,6 +212,13 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/blued-gear">
+                    <img src="https://avatars.githubusercontent.com/u/164888202?v=4" width="100;" alt="blued-gear"/>
+                    <br />
+                    <sub><b>blued_gear</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/andrewmoise">
                     <img src="https://avatars.githubusercontent.com/u/8404538?v=4" width="100;" alt="andrewmoise"/>
                     <br />
@@ -223,13 +230,6 @@ Unofficial magazines:
                     <img src="https://avatars.githubusercontent.com/u/1295000?v=4" width="100;" alt="piotr-sikora-v"/>
                     <br />
                     <sub><b>Piotr Sikora</b></sub>
-                </a>
-            </td>
-            <td align="center">
-                <a href="https://github.com/blued-gear">
-                    <img src="https://avatars.githubusercontent.com/u/164888202?v=4" width="100;" alt="blued-gear"/>
-                    <br />
-                    <sub><b>blued_gear</b></sub>
                 </a>
             </td>
             <td align="center">

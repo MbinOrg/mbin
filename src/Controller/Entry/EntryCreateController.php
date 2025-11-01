@@ -11,7 +11,7 @@ use App\Exception\ImageDownloadTooLargeException;
 use App\Exception\InstanceBannedException;
 use App\Exception\PostingRestrictedException;
 use App\Exception\TagBannedException;
-use App\PageView\EntryPageView;
+use App\Form\EntryType;
 use App\Repository\Criteria;
 use App\Repository\TagLinkRepository;
 use App\Repository\TagRepository;
@@ -31,7 +31,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class EntryCreateController extends AbstractController
 {
     use EntryTemplateTrait;
-    use EntryFormTrait;
 
     public function __construct(
         private readonly TranslatorInterface $translator,
@@ -48,16 +47,16 @@ class EntryCreateController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    public function __invoke(?Magazine $magazine, ?string $type, Request $request): Response
+    public function __invoke(?Magazine $magazine, Request $request): Response
     {
         $dto = new EntryDto();
         $dto->magazine = $magazine;
         $user = $this->getUserOrThrow();
         $maxBytes = $this->settingsManager->getMaxImageByteString();
 
-        $form = $this->createFormByType((new EntryPageView(1, $this->security))->resolveType($type), $dto);
+        $form = $this->createForm(EntryType::class, $dto);
         try {
-            // Could thrown an error on event handlers (eg. onPostSubmit if a user upload an incorrect image)
+            // Could throw an error on event handlers (e.g. onPostSubmit if a user upload an incorrect image)
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
@@ -89,7 +88,7 @@ class EntryCreateController extends AbstractController
             }
 
             return $this->render(
-                $this->getTemplateName((new EntryPageView(1, $this->security))->resolveType($type)),
+                $this->getTemplateName(),
                 [
                     'magazine' => $magazine,
                     'user' => $user,
@@ -104,7 +103,7 @@ class EntryCreateController extends AbstractController
             $this->logger->error($e);
 
             return $this->render(
-                $this->getTemplateName((new EntryPageView(1, $this->security))->resolveType($type)),
+                $this->getTemplateName(),
                 [
                     'magazine' => $magazine,
                     'user' => $user,
@@ -119,7 +118,7 @@ class EntryCreateController extends AbstractController
             $this->logger->error($e);
 
             return $this->render(
-                $this->getTemplateName((new EntryPageView(1, $this->security))->resolveType($type)),
+                $this->getTemplateName(),
                 [
                     'magazine' => $magazine,
                     'user' => $user,
@@ -133,7 +132,7 @@ class EntryCreateController extends AbstractController
             $this->logger->error($e);
 
             return $this->render(
-                $this->getTemplateName((new EntryPageView(1, $this->security))->resolveType($type)),
+                $this->getTemplateName(),
                 [
                     'magazine' => $magazine,
                     'user' => $user,
@@ -147,7 +146,7 @@ class EntryCreateController extends AbstractController
             $this->logger->error($e);
 
             return $this->render(
-                $this->getTemplateName((new EntryPageView(1, $this->security))->resolveType($type)),
+                $this->getTemplateName(),
                 [
                     'magazine' => $magazine,
                     'user' => $user,
@@ -162,7 +161,7 @@ class EntryCreateController extends AbstractController
             $this->logger->error($e);
 
             return $this->render(
-                $this->getTemplateName((new EntryPageView(1, $this->security))->resolveType($type)),
+                $this->getTemplateName(),
                 [
                     'magazine' => $magazine,
                     'user' => $user,
