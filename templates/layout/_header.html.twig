@@ -143,8 +143,16 @@
                         {% if is_granted('ROLE_MODERATOR') %}
                             <li>
                                 <a href="{{ path('admin_reports', {status: STATUS_PENDING}) }}"
-                                   class="{{ html_classes({'active': is_route_name_starts_with('admin')}) }}">
+                                   class="{{ html_classes({'active': is_route_name_starts_with('admin_reports')}) }}">
                                     {{ 'reports'|trans }}
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if is_granted('ROLE_MODERATOR') and do_new_users_need_approval() %}
+                            <li>
+                                <a href="{{ path('admin_signup_requests') }}"
+                                   class="{{ html_classes({'active': is_route_name_starts_with('admin_signup_requests')}) }}">
+                                    {{ 'signup_requests'|trans }}
                                 </a>
                             </li>
                         {% endif %}
