@@ -19,6 +19,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
+use Symfony\Component\Language\Expression;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -74,7 +75,7 @@ class UserApplicationApi extends UserBaseApi
         schema: new OA\Schema(type: 'integer', default: 1, minimum: 1)
     )]
     #[OA\Tag(name: 'admin/user')]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
     #[Security(name: 'oauth2', scopes: ['admin:user:application'])]
     #[IsGranted('ROLE_OAUTH2_ADMIN:USER:APPLICATION')]
     /** Retrieve users waiting for admin approval */
@@ -141,7 +142,7 @@ class UserApplicationApi extends UserBaseApi
         schema: new OA\Schema(type: 'integer', minimum: 1)
     )]
     #[OA\Tag(name: 'admin/user')]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
     #[Security(name: 'oauth2', scopes: ['admin:user:application'])]
     #[IsGranted('ROLE_OAUTH2_ADMIN:USER:APPLICATION')]
     public function approve(
@@ -197,7 +198,7 @@ class UserApplicationApi extends UserBaseApi
         schema: new OA\Schema(type: 'integer', minimum: 1)
     )]
     #[OA\Tag(name: 'admin/user')]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
     #[Security(name: 'oauth2', scopes: ['admin:user:application'])]
     #[IsGranted('ROLE_OAUTH2_ADMIN:USER:APPLICATION')]
     public function reject(

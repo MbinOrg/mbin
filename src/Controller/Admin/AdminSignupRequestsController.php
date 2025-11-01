@@ -10,6 +10,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
 use App\Service\UserManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -23,7 +24,7 @@ class AdminSignupRequestsController extends AbstractController
     ) {
     }
 
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
     public function requests(#[MapQueryParameter] ?int $page = 1, #[MapQueryParameter] ?string $username = null): Response
     {
         if (null === $username) {
@@ -45,7 +46,7 @@ class AdminSignupRequestsController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
     public function approve(#[MapQueryParameter] int $page, #[MapEntity(id: 'id')] User $user): Response
     {
         $this->userManager->approveUserApplication($user);
@@ -53,7 +54,7 @@ class AdminSignupRequestsController extends AbstractController
         return $this->redirectToRoute('admin_signup_requests', ['page' => $page]);
     }
 
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
     public function reject(#[MapQueryParameter] int $page, #[MapEntity(id: 'id')] User $user): Response
     {
         $this->userManager->rejectUserApplication($user);

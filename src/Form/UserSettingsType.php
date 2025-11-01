@@ -141,7 +141,7 @@ class UserSettingsType extends AbstractType
 
         /** @var User $user */
         $user = $this->security->getUser();
-        if ($user->isAdmin()) {
+        if ($user->isAdmin() or $user->isModerator()) {
             $builder->add('notifyOnUserSignup', CheckboxType::class, ['required' => false]);
         }
 
