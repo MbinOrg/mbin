@@ -165,8 +165,8 @@ class AddHandler extends MbinMessageHandler
                     $isBanned = false;
                     try {
                         $isBanned = $this->settingsManager->isBannedInstance($apId);
-                    } catch (\LogicException) {
-                        throw new UnrecoverableMessageHandlingException('Failed to check if instance is banned');
+                    } catch (\LogicException $ext) {
+                        throw new UnrecoverableMessageHandlingException('Failed to check if instance is banned, due to: '.$ext->getMessage());
                     }
 
                     if (!$isBanned) {

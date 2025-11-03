@@ -82,8 +82,8 @@ class ActivityHandler extends MbinMessageHandler
                 $isBanned = false;
                 try {
                     $isBanned = $this->settingsManager->isBannedInstance($exception->realOrigin);
-                } catch (\LogicException) {
-                    throw new UnrecoverableMessageHandlingException('Failed to check if instance is banned');
+                } catch (\LogicException $ext) {
+                    throw new UnrecoverableMessageHandlingException('Failed to check if instance is banned, due to: '.$ext->getMessage());
                 }
                 if (!$isBanned) {
                     $body = $this->apHttpClient->getActivityObject($exception->realOrigin, false);

@@ -104,8 +104,8 @@ class ChainActivityHandler extends MbinMessageHandler
         $isBanned = false;
         try {
             $isBanned = $this->settingsManager->isBannedInstance($apUrl);
-        } catch (\LogicException) {
-            throw new UnrecoverableMessageHandlingException('Failed to check if instance is banned');
+        } catch (\LogicException $ext) {
+            throw new UnrecoverableMessageHandlingException('Failed to check if instance is banned, due to: '.$ext->getMessage());
         }
 
         if ($isBanned) {
