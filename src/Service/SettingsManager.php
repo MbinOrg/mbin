@@ -13,7 +13,6 @@ use JetBrains\PhpStorm\Pure;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
 class SettingsManager
 {
@@ -176,10 +175,13 @@ class SettingsManager
     {
         $host = parse_url($inboxUrl, PHP_URL_HOST);
         if (null === $host) {
-            $this->logger->error('SettingsManager::isBannedInstance: unable to parse host from inbox URL: {url}', ['url' => $inboxUrl]);
+            // Try to retrieve the caller function
+            $bt = debug_backtrace();
+            $caller_function = ($bt[1]) ? $bt[1]['function'] : 'Unknown function caller';
 
-            // Do not retry, since that won't solve the problem
-            throw new UnrecoverableMessageHandlingException(\sprintf('Invalid inbox URL provided: %s', $inboxUrl));
+            $this->logger->error('SettingsManager::isBannedInstance: unable to parse host from inbox URL: {url}, called from function: {caller}', ['url' => $inboxUrl, 'caller' => $caller_function]);
+
+            throw new \LogicException(\sprintf('Invalid inbox URL provided: %s', $inboxUrl));
         }
 
         return \in_array(
