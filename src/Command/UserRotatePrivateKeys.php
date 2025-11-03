@@ -37,7 +37,8 @@ class UserRotatePrivateKeys extends Command
     protected function configure(): void
     {
         $this->addArgument('username', InputArgument::OPTIONAL)
-            ->addOption('all-local-users', 'a');
+            ->addOption('all-local-users', 'a')
+            ->addOption('revert', 'r', description: 'revert a previous rotation of private keys');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -45,6 +46,7 @@ class UserRotatePrivateKeys extends Command
         $io = new SymfonyStyle($input, $output);
         $username = $input->getArgument('username');
         $all = $input->getOption('all-local-users');
+        $revert = $input->getOption('revert');
 
         if (!$username && !$all) {
             $io->error('You must provide a username or execute the command for all local users!');
@@ -73,11 +75,18 @@ class UserRotatePrivateKeys extends Command
         }
 
         $userCount = \count($users);
+        $ignoreCount = 0;
         $progressBar = $io->createProgressBar($userCount);
         foreach ($users as $user) {
             $this->entityManager->beginTransaction();
 
-            $user->rotatePrivateKey();
+            if ($revert && (null === $user->oldPrivateKey || null === $user->oldPublicKey)) {
+                ++$ignoreCount;
+                $progressBar->advance();
+                continue;
+            }
+
+            $user->rotatePrivateKey(revert: $revert);
             $update = $this->updateWrapper->buildForActor($user);
 
             $this->entityManager->flush();
@@ -94,10 +103,13 @@ class UserRotatePrivateKeys extends Command
         }
         $progressBar->finish();
 
-        $io->info('Successfully rotated the private key for '.$userCount.' users. '
+        $ignoreText = $revert ? " $ignoreCount users have been ignored, because their keys were never rotated" : '';
+        $action = $revert ? 'reverted' : 'rotated';
+
+        $io->info("Successfully $action the private key for $userCount users. "
             .'After running this command it can take up to 24 hours for other instances to update their stored public keys. '
             .'In this timeframe federation might be impacted by this, as those services cannot successfully verify the identity of your users. '
-            .'Please inform your users about this when you\'re running this command.');
+            .'Please inform your users about this when you\'re running this command.'.$ignoreText);
 
         return Command::SUCCESS;
     }

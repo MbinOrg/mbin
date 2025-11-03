@@ -79,12 +79,24 @@ trait ActivityPubActorTrait
         return $this->publicKey;
     }
 
-    public function rotatePrivateKey(): void
+    public function rotatePrivateKey(bool $revert = false): void
     {
-        $this->oldPrivateKey = $this->privateKey;
-        $this->oldPublicKey = $this->publicKey;
-        // set new private and public key
-        KeysGenerator::generate($this);
+        if (!$revert) {
+            $this->oldPrivateKey = $this->privateKey;
+            $this->oldPublicKey = $this->publicKey;
+            // set new private and public key
+            KeysGenerator::generate($this);
+        } else {
+            if (null === $this->oldPrivateKey || null === $this->oldPublicKey) {
+                throw new \InvalidArgumentException('you cannot revert if there is no old key');
+            }
+            $newerPrivateKey = $this->privateKey;
+            $newerPublicKey = $this->publicKey;
+            $this->privateKey = $this->oldPrivateKey;
+            $this->publicKey = $this->oldPublicKey;
+            $this->oldPrivateKey = $newerPrivateKey;
+            $this->oldPublicKey = $newerPublicKey;
+        }
         $this->lastKeyRotationDate = new \DateTime();
     }
 }
