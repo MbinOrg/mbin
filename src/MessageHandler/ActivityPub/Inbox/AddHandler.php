@@ -26,6 +26,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
@@ -161,7 +162,14 @@ class AddHandler extends MbinMessageHandler
                 }
             } else {
                 if (!\is_array($object)) {
-                    if (!$this->settingsManager->isBannedInstance($apId)) {
+                    $isBanned = false;
+                    try {
+                        $isBanned = $this->settingsManager->isBannedInstance($apId);
+                    } catch (\LogicException) {
+                        throw new UnrecoverableMessageHandlingException('Failed to check if instance is banned');
+                    }
+
+                    if (!$isBanned) {
                         $object = $this->apHttpClient->getActivityObject($apId);
 
                         return;
