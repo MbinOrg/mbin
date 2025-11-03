@@ -75,6 +75,13 @@ class UserRotatePrivateKeys extends Command
         }
 
         $userCount = \count($users);
+        $action = $revert ? 'reverted' : 'rotated';
+
+        $io->confirm("This command will $action the private and public key of $userCount users. "
+            .'After running this command it can take up to 24 hours for other instances to update their stored public keys. '
+            .'In this timeframe federation might be impacted by this, as those services cannot successfully verify the identity of your users. '
+            .'Please inform your users about this when you\'re running this command. Do you want to continue?');
+
         $ignoreCount = 0;
         $progressBar = $io->createProgressBar($userCount);
         foreach ($users as $user) {
@@ -103,13 +110,8 @@ class UserRotatePrivateKeys extends Command
         }
         $progressBar->finish();
 
-        $ignoreText = $revert ? " $ignoreCount users have been ignored, because their keys were never rotated" : '';
-        $action = $revert ? 'reverted' : 'rotated';
-
-        $io->info("Successfully $action the private key for $userCount users. "
-            .'After running this command it can take up to 24 hours for other instances to update their stored public keys. '
-            .'In this timeframe federation might be impacted by this, as those services cannot successfully verify the identity of your users. '
-            .'Please inform your users about this when you\'re running this command.'.$ignoreText);
+        $ignoreText = $revert && $ignoreCount > 0 ? " $ignoreCount users have been ignored, because their keys were never rotated." : '';
+        $io->info("Successfully $action the private key for $userCount users. $ignoreText");
 
         return Command::SUCCESS;
     }
