@@ -28,6 +28,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
@@ -100,7 +101,14 @@ class ChainActivityHandler extends MbinMessageHandler
      */
     private function retrieveObject(string $apUrl): Entry|EntryComment|Post|PostComment|null
     {
-        if ($this->settingsManager->isBannedInstance($apUrl)) {
+        $isBanned = false;
+        try {
+            $isBanned = $this->settingsManager->isBannedInstance($apUrl);
+        } catch (\LogicException) {
+            throw new UnrecoverableMessageHandlingException('Failed to check if instance is banned');
+        }
+
+        if ($isBanned) {
             throw new InstanceBannedException();
         }
         try {

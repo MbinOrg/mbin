@@ -79,7 +79,13 @@ class ActivityHandler extends MbinMessageHandler
                 $this->signatureValidator->validate($message->request, $message->headers, $message->payload);
             } catch (InboxForwardingException $exception) {
                 $this->logger->info("[ActivityHandler::doWork] The message was forwarded by {receivedFrom}. Dispatching a new activity message '{origin}'", ['receivedFrom' => $exception->receivedFrom, 'origin' => $exception->realOrigin]);
-                if (!$this->settingsManager->isBannedInstance($exception->realOrigin)) {
+                $isBanned = false;
+                try {
+                    $isBanned = $this->settingsManager->isBannedInstance($exception->realOrigin);
+                } catch (\LogicException) {
+                    throw new UnrecoverableMessageHandlingException('Failed to check if instance is banned');
+                }
+                if (!$isBanned) {
                     $body = $this->apHttpClient->getActivityObject($exception->realOrigin, false);
                     $this->bus->dispatch(new ActivityMessage($body));
                 } else {
