@@ -13,6 +13,7 @@ use JetBrains\PhpStorm\Pure;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
 class SettingsManager
 {
@@ -181,7 +182,8 @@ class SettingsManager
 
             $this->logger->error('SettingsManager::isBannedInstance: unable to parse host from inbox URL: {url}, called from function: {caller}', ['url' => $inboxUrl, 'caller' => $caller_function]);
 
-            throw new \LogicException(\sprintf('Invalid inbox URL provided: %s', $inboxUrl));
+            // Do not retry, retrying will always cause a failure
+            throw new UnrecoverableMessageHandlingException(\sprintf('Invalid inbox URL provided: %s', $inboxUrl));
         }
 
         return \in_array(
