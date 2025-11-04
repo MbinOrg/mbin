@@ -13,6 +13,6 @@
         <div hidden>
             {{ form_row(form.imageUrl, {label: 'url'}) }}
         </div>
-        {{ form_row(form.imageAlt, {label: 'image_alt'}) }}
+        {{ form_row(form.imageAlt, {label: 'image_alt', attr: {'data-entry-prefill-target': 'imageAlt'}}) }}
     </div>
 </div>
