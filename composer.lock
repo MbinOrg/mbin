@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "abb30f8bbbb59fb648ccfdb4ae8d4a8c",
+    "content-hash": "edf03519593baf1c325454f67d74a153",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -8721,6 +8721,86 @@
                 }
             ],
             "time": "2024-11-27T11:18:42+00:00"
+        },
+        {
+            "name": "symfony/emoji",
+            "version": "v7.2.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/emoji.git",
+                "reference": "0d832412549e334da9082bbd79a1cca39cef460d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/emoji/zipball/0d832412549e334da9082bbd79a1cca39cef460d",
+                "reference": "0d832412549e334da9082bbd79a1cca39cef460d",
+                "shasum": ""
+            },
+            "require": {
+                "ext-intl": "*",
+                "php": ">=8.2"
+            },
+            "require-dev": {
+                "symfony/filesystem": "^7.1",
+                "symfony/finder": "^6.4|^7.0",
+                "symfony/var-exporter": "^6.4|^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Emoji\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/",
+                    "/Resources/data/",
+                    "/Resources/bin/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Grégoire Pineau",
+                    "email": "lyrixx@lyrixx.info"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Provides access to emoji characters and sequences from the Unicode CLDR",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "cldr",
+                "emoji",
+                "intl",
+                "transliterator",
+                "unicode"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/emoji/tree/v7.2.9"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2025-07-10T08:29:33+00:00"
         },
         {
             "name": "symfony/error-handler",
@@ -18142,7 +18222,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -18158,6 +18238,6 @@
         "ext-openssl": "*",
         "ext-redis": "*"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
