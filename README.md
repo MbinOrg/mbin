@@ -196,26 +196,26 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/blued-gear">
+                    <img src="https://avatars.githubusercontent.com/u/164888202?v=4" width="100;" alt="blued-gear"/>
+                    <br />
+                    <sub><b>blued_gear</b></sub>
+                </a>
+            </td>
+		</tr>
+		<tr>
+            <td align="center">
                 <a href="https://github.com/thepaperpilot">
                     <img src="https://avatars.githubusercontent.com/u/3683148?v=4" width="100;" alt="thepaperpilot"/>
                     <br />
                     <sub><b>Anthony Lawn</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/chall8908">
                     <img src="https://avatars.githubusercontent.com/u/315948?v=4" width="100;" alt="chall8908"/>
                     <br />
                     <sub><b>Chris Hall</b></sub>
-                </a>
-            </td>
-            <td align="center">
-                <a href="https://github.com/blued-gear">
-                    <img src="https://avatars.githubusercontent.com/u/164888202?v=4" width="100;" alt="blued-gear"/>
-                    <br />
-                    <sub><b>blued_gear</b></sub>
                 </a>
             </td>
             <td align="center">
