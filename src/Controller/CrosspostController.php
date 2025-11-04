@@ -26,36 +26,36 @@ class CrosspostController extends AbstractController
         Entry $entry,
         Request $request,
     ): Response {
-        $fragment = '';
+        $query = '';
 
-        $fragment = $fragment.'prefill-nsfw='.($entry->isAdult ? '1' : '0');
-        $fragment = $fragment.'&prefill-oc='.($entry->isOc ? '1' : '0');
+        $query = $query.'isNsfw='.($entry->isAdult ? '1' : '0');
+        $query = $query.'&isOc='.($entry->isOc ? '1' : '0');
 
         if ('' !== $entry->title) {
-            $fragment = $fragment.'&prefill-title='.urlencode($entry->title);
+            $query = $query.'&title='.urlencode($entry->title);
         }
         if (null !== $entry->url && '' !== $entry->url) {
-            $fragment = $fragment.'&prefill-url='.urlencode($entry->url);
+            $query = $query.'&url='.urlencode($entry->url);
         }
 
         if (null !== $entry->image) {
             $imgUrl = $this->getImageUrl($entry->image);
             if (null !== $imgUrl) {
                 if (null !== $entry->url && '' !== $entry->url) {
-                    $fragment = $fragment.'&prefill-imageUrl='.urlencode($imgUrl);
+                    $query = $query.'&imageUrl='.urlencode($imgUrl);
                 } else {
-                    $fragment = $fragment.'&prefill-url='.urlencode($imgUrl);
+                    $query = $query.'&url='.urlencode($imgUrl);
                 }
             }
 
             if (null !== $entry->image->altText && '' !== $entry->image->altText) {
-                $fragment = $fragment.'&prefill-imageAlt='.urlencode($entry->image->altText);
+                $query = $query.'&imageAlt='.urlencode($entry->image->altText);
             }
         }
 
         foreach ($entry->hashtags as $hashtag) {
             /* @var $hashtag \App\Entity\HashtagLink */
-            $fragment = $fragment.'&prefill-tags='.urlencode($hashtag->hashtag->tag);
+            $query = $query.'&tags[]='.urlencode($hashtag->hashtag->tag);
         }
 
         $entryUrl = $this->urlGenerator->generate(
@@ -63,13 +63,13 @@ class CrosspostController extends AbstractController
             ['magazine_name' => $entry->magazine->name, 'entry_id' => $entry->getId()],
             UrlGeneratorInterface::ABSOLUTE_URL
         );
-        $body = '[Crosspost]('.$entryUrl.')';
+        $body = 'Crossposted from ['.$entryUrl.']('.$entryUrl.')';
         if (null !== $entry->body && '' !== $entry->body) {
             $body = $body."\n\n".$entry->body;
         }
-        $fragment = $fragment.'&prefill-body='.urlencode($body);
+        $query = $query.'&body='.urlencode($body);
 
-        return $this->redirect('/new_entry#'.$fragment);
+        return $this->redirect('/new_entry?'.$query);
     }
 
     private function getImageUrl(Image $image): ?string

@@ -20,8 +20,7 @@
         {{ form_errors(form.url) }}
         {{ form_widget(form.url, {attr: {
             'data-action': 'entry-link-create#fetchLink',
-            'data-entry-link-create-target': 'url',
-            'data-entry-prefill-target': 'url'
+            'data-entry-link-create-target': 'url'
         }}) }}
     </div>
 
@@ -30,8 +29,7 @@
             'data-controller' : "input-length autogrow",
             'data-entry-link-create-target': 'title',
             'data-action' : 'input-length#updateDisplay',
-            'data-input-length-max-value' : constant('App\\Entity\\Entry::MAX_TITLE_LENGTH'),
-            'data-entry-prefill-target': 'title'
+            'data-input-length-max-value' : constant('App\\Entity\\Entry::MAX_TITLE_LENGTH')
        }})
     }}
 
@@ -42,17 +40,16 @@
             'data-controller': 'rich-textarea input-length autogrow',
             'data-entry-link-create-target': 'description',
             'data-action' : 'input-length#updateDisplay',
-            'data-input-length-max-value' : constant('App\\Entity\\Entry::MAX_BODY_LENGTH'),
-            'data-entry-prefill-target': 'body'
+            'data-input-length-max-value' : constant('App\\Entity\\Entry::MAX_BODY_LENGTH')
         }})
     }}
 
     {{ form_row(form.magazine, {label: false}) }}
-    {{ form_row(form.tags, {label: 'tags', row_attr: {'data-entry-prefill-target': 'tags'}}) }}
+    {{ form_row(form.tags, {label: 'tags'}) }}
     {# form_row(form.badges, {label: 'badges'}) #}
     <div class="row params">
-        {{ form_row(form.isAdult, {label: 'is_adult', row_attr: {class: 'checkbox'}, attr: {'data-entry-prefill-target': 'nsfw'}}) }}
-        {{ form_row(form.isOc, {label: 'oc', row_attr: {class: 'checkbox'}, attr: {'data-entry-prefill-target': 'oc'}}) }}
+        {{ form_row(form.isAdult, {label: 'is_adult', row_attr: {class: 'checkbox'}}) }}
+        {{ form_row(form.isOc, {label: 'oc', row_attr: {class: 'checkbox'}}) }}
     </div>
 
     <div class="row actions">

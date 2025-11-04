@@ -11,8 +11,8 @@
             <div>{{ 'max_image_size'|trans }}: {{ maxSize }}</div>
         {% endif %}
         <div hidden>
-            {{ form_row(form.imageUrl, {label: 'url', attr: {'data-entry-prefill-target': 'imageUrl'}}) }}
+            {{ form_row(form.imageUrl, {label: 'url'}) }}
         </div>
-        {{ form_row(form.imageAlt, {label: 'image_alt', attr: {'data-entry-prefill-target': 'imageAlt'}}) }}
+        {{ form_row(form.imageAlt, {label: 'image_alt'}) }}
     </div>
 </div>

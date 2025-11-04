@@ -23,6 +23,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -46,11 +47,42 @@ class EntryCreateController extends AbstractController
     ) {
     }
 
+    /**
+     * @param string[] | null $tags
+     */
     #[IsGranted('ROLE_USER')]
-    public function __invoke(?Magazine $magazine, Request $request): Response
+    public function __invoke(
+        ?Magazine $magazine,
+        #[MapQueryParameter]
+        ?string $title,
+        #[MapQueryParameter]
+        ?string $url,
+        #[MapQueryParameter]
+        ?string $body,
+        #[MapQueryParameter]
+        ?string $imageUrl,
+        #[MapQueryParameter]
+        ?string $imageAlt,
+        #[MapQueryParameter]
+        ?string $isNsfw,
+        #[MapQueryParameter]
+        ?string $isOc,
+        #[MapQueryParameter]
+        ?array $tags,
+        Request $request,
+    ): Response
     {
         $dto = new EntryDto();
         $dto->magazine = $magazine;
+        $dto->title = $title;
+        $dto->url = $url;
+        $dto->body = $body;
+        $dto->imageUrl = $imageUrl;
+        $dto->imageAlt = $imageAlt;
+        $dto->isAdult = $isNsfw === '1';
+        $dto->isOc = $isOc === '1';
+        $dto->tags = $tags;
+
         $user = $this->getUserOrThrow();
         $maxBytes = $this->settingsManager->getMaxImageByteString();
 
