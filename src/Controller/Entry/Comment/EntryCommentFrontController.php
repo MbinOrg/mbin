@@ -29,7 +29,7 @@ class EntryCommentFrontController extends AbstractController
         $criteria = new EntryCommentPageView($this->getPageNb($request), $this->security);
         $criteria->showSortOption($criteria->resolveSort($sortBy ?? Criteria::SORT_DEFAULT))
             ->setTime($criteria->resolveTime($time));
-        $criteria->setFederation($federation);
+        $criteria->setFederation($federation ?? Criteria::AP_ALL);
 
         if ($magazine) {
             $criteria->magazine = $params['magazine'] = $magazine;

@@ -12,25 +12,31 @@
             </button>
             <ul class="dropdown__menu">
                 <li>
-                    <a href="{{ front_options_url('sortBy', 'top', null, {'p': null}) }}"
+                    <a href="{{ options_url('sortBy', 'top') }}"
                        class="{{ html_classes({'active': criteria.getOption('sort') == 'top'}) }}">
                         {{ 'top'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ front_options_url('sortBy', 'hot', null, {'p': null}) }}"
+                    <a href="{{ options_url('sortBy', 'hot') }}"
                        class="{{ html_classes({'active': criteria.getOption('sort') == 'hot'}) }}">
                         {{ 'hot'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ front_options_url('sortBy', 'newest', null, {'p': null}) }}"
+                    <a href="{{ options_url('sortBy', 'newest') }}"
                        class="{{ html_classes({'active': criteria.getOption('sort') == 'newest'}) }}">
                         {{ 'newest'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ options_url('sortBy', 'oldest', null, {'p': null}) }}"
+                    <a href="{{ options_url('sortBy', 'active') }}"
+                       class="{{ html_classes({'active': criteria.getOption('sort') == 'active'}) }}">
+                        {{ 'active'|trans }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ options_url('sortBy', 'oldest') }}"
                        class="{{ html_classes({'active': criteria.getOption('sort') == 'oldest'}) }}">
                         {{ 'oldest'|trans }}
                     </a>
@@ -47,48 +53,48 @@
             </button>
             <ul class="dropdown__menu">
                 <li>
-                    <a href="{{ front_options_url('time', '∞', null, {'p': null}) }}"
+                    <a href="{{ options_url('time', '∞') }}"
                        class="{{ html_classes({'active': criteria.getOption('time') == 'all'}) }}">
                         {{ 'all_time'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ front_options_url('time', '3h', null, {'p': null}) }}"
+                    <a href="{{ options_url('time', '3h') }}"
                        class="{{ html_classes({'active': criteria.getOption('time') == '3h' }) }}">
                         {{ '3h'|trans }}
                     </a></li>
                 <li>
-                    <a href="{{ front_options_url('time', '6h', null, {'p': null}) }}"
+                    <a href="{{ options_url('time', '6h') }}"
                        class="{{ html_classes({'active': criteria.getOption('time') == '6h' }) }}">
                         {{ '6h'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ front_options_url('time', '12h', null, {'p': null}) }}"
+                    <a href="{{ options_url('time', '12h') }}"
                        class="{{ html_classes({'active': criteria.getOption('time') == '12h' }) }}">
                         {{ '12h'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ front_options_url('time', '1d', null, {'p': null}) }}"
+                    <a href="{{ options_url('time', '1d') }}"
                        class="{{ html_classes({'active': criteria.getOption('time') == '1d' }) }}">
                         {{ '1d'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ front_options_url('time', '1w', null, {'p': null}) }}"
+                    <a href="{{ options_url('time', '1w') }}"
                        class="{{ html_classes({'active': criteria.getOption('time') == '1w' }) }}">
                         {{ '1w'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ front_options_url('time', '1m', null, {'p': null}) }}"
+                    <a href="{{ options_url('time', '1m') }}"
                        class="{{ html_classes({'active': criteria.getOption('time') == '1m' }) }}">
                         {{ '1m'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ front_options_url('time', '1y', null, {'p': null}) }}"
+                    <a href="{{ options_url('time', '1y') }}"
                        class="{{ html_classes({'active': criteria.getOption('time') == '1y' }) }}">
                         {{ '1y'|trans }}
                     </a>
@@ -116,12 +122,12 @@
             </button>
             <ul class="dropdown__menu">
                 <li>
-                    <a href="{{ front_options_url('federation', 'all', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('federation') == 'all' }) }}">
+                    <a href="{{ options_url('federation', 'all') }}" class="{{ html_classes({'active': criteria.getOption('federation') == 'all' }) }}">
                         <i class="fa-solid fa-circle-nodes" aria-hidden="true"></i> &nbsp; {{ 'all'|trans }}
                     </a>
                 </li>
                 <li>
-                    <a href="{{ front_options_url('federation', 'local', null, {'p': null}) }}" class="{{ html_classes({'active': criteria.getOption('federation') == 'local' }) }}">
+                    <a href="{{ options_url('federation', 'local') }}" class="{{ html_classes({'active': criteria.getOption('federation') == 'local' }) }}">
                         <i class="fa-solid fa-house-chimney" aria-hidden="true"></i> &nbsp; {{ 'local'|trans }}
                     </a>
                 </li>
