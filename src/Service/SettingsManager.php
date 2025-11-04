@@ -176,11 +176,10 @@ class SettingsManager
     {
         $host = parse_url($inboxUrl, PHP_URL_HOST);
         if (null === $host) {
-            // Try to retrieve the caller function
-            $bt = debug_backtrace();
-            $caller_function = ($bt[1]) ? $bt[1]['function'] : 'Unknown function caller';
-
-            $this->logger->error('SettingsManager::isBannedInstance: unable to parse host from URL: {url}, called from function: {caller}', ['url' => $inboxUrl, 'caller' => $caller_function]);
+            // Try to retrieve the caller function (commented-out for performance reasons)
+            // $bt = debug_backtrace();
+            // $caller_function = ($bt[1]) ? $bt[1]['function'] : 'Unknown function caller';
+            $this->logger->error('SettingsManager::isBannedInstance: unable to parse host from URL: {url}', ['url' => $inboxUrl]);
 
             // Do not retry, retrying will always cause a failure
             throw new UnrecoverableMessageHandlingException(\sprintf('Invalid URL provided: %s', $inboxUrl));
