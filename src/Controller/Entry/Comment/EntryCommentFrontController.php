@@ -12,6 +12,7 @@ use App\Repository\EntryCommentRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class EntryCommentFrontController extends AbstractController
@@ -22,12 +23,13 @@ class EntryCommentFrontController extends AbstractController
     ) {
     }
 
-    public function front(?Magazine $magazine, ?string $sortBy, ?string $time, Request $request): Response
+    public function front(?Magazine $magazine, ?string $sortBy, ?string $time, Request $request, #[MapQueryParameter] ?string $federation): Response
     {
         $params = [];
         $criteria = new EntryCommentPageView($this->getPageNb($request), $this->security);
         $criteria->showSortOption($criteria->resolveSort($sortBy ?? Criteria::SORT_DEFAULT))
             ->setTime($criteria->resolveTime($time));
+        $criteria->setFederation($federation);
 
         if ($magazine) {
             $criteria->magazine = $params['magazine'] = $magazine;
