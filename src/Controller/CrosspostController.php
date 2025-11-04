@@ -38,9 +38,9 @@ class CrosspostController extends AbstractController
             $fragment = $fragment.'&prefill-url='.urlencode($entry->url);
         }
 
-        if(null !== $entry->image) {
+        if (null !== $entry->image) {
             $imgUrl = $this->getImageUrl($entry->image);
-            if($imgUrl !== null) {
+            if (null !== $imgUrl) {
                 if (null !== $entry->url && '' !== $entry->url) {
                     $fragment = $fragment.'&prefill-imageUrl='.urlencode($imgUrl);
                 } else {
@@ -72,9 +72,9 @@ class CrosspostController extends AbstractController
         return $this->redirect('/new_entry#'.$fragment);
     }
 
-    private function getImageUrl(Image $image): string | null
+    private function getImageUrl(Image $image): ?string
     {
-        if($image->filePath !== null) {
+        if (null !== $image->filePath) {
             return $this->storageUrl.'/'.$image->filePath;
         } else {
             return $image->sourceUrl;
