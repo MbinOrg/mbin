@@ -183,7 +183,7 @@ class SettingsManager
             $this->logger->error('SettingsManager::isBannedInstance: unable to parse host from URL: {url}, called from function: {caller}', ['url' => $inboxUrl, 'caller' => $caller_function]);
 
             // Do not retry, retrying will always cause a failure
-            throw new UnrecoverableMessageHandlingException(\sprintf('Invalid inbox URL provided: %s', $inboxUrl));
+            throw new UnrecoverableMessageHandlingException(\sprintf('Invalid URL provided: %s', $inboxUrl));
         }
 
         return \in_array(
