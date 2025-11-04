@@ -1,46 +1,147 @@
-<aside class="options" id="options">
+{% set showFilterLabels = app.request.cookies.get('kbin_general_filter_labels')|default('on') %}
+
+<aside class="options options--top" id="options">
     {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::ENTRY_COMMENTS_VIEW')) is not same as constant('App\\Controller\\User\\ThemeSettingsController::CHAT') %}
     <div></div>
-    <menu class="options__main">
-        <li>
-            <a href="{{ options_url('sortBy', 'top') }}"
-               class="{{ html_classes({'active': criteria.getOption('sort') == 'top'}) }}">
-                {{ 'top'|trans }}
-            </a>
+    <menu class="options__filter">
+        <li class="dropdown">
+            <button aria-label="{{ 'sort_by'|trans }}"
+                    title="{{ 'sort_by'|trans }}"><i
+                    class="fa-solid fa-sort" aria-hidden="true"></i>
+                <span>{{ criteria.getOption('sort')|trans }}</span>
+            </button>
+            <ul class="dropdown__menu">
+                <li>
+                    <a href="{{ options_url('sortBy', 'top') }}"
+                       class="{{ html_classes({'active': criteria.getOption('sort') == 'top'}) }}">
+                        {{ 'top'|trans }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ options_url('sortBy', 'hot') }}"
+                       class="{{ html_classes({'active': criteria.getOption('sort') == 'hot'}) }}">
+                        {{ 'hot'|trans }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ options_url('sortBy', 'newest') }}"
+                       class="{{ html_classes({'active': criteria.getOption('sort') == 'newest'}) }}">
+                        {{ 'newest'|trans }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ options_url('sortBy', 'active') }}"
+                       class="{{ html_classes({'active': criteria.getOption('sort') == 'active'}) }}">
+                        {{ 'active'|trans }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ options_url('sortBy', 'oldest') }}"
+                       class="{{ html_classes({'active': criteria.getOption('sort') == 'oldest'}) }}">
+                        {{ 'oldest'|trans }}
+                    </a>
+                </li>
+            </ul>
         </li>
-        <li>
-            <a href="{{ options_url('sortBy', 'hot') }}"
-               class="{{ html_classes({'active': criteria.getOption('sort') == 'hot'}) }}">
-                {{ 'hot'|trans }}
-            </a>
+        <li class="dropdown">
+            <button aria-label="{{ 'filter_by_time'|trans }}"
+                    title="{{ 'filter_by_time'|trans }}">
+                <i aria-hidden="true" class="fa-solid fa-clock"></i>
+                {% if showFilterLabels == 'on' or (showFilterLabels == 'auto' and criteria.getOption('time') != 'all') %}
+                    <span>{{ criteria.getOption('time')|trans }}</span>
+                {% endif %}
+            </button>
+            <ul class="dropdown__menu">
+                <li>
+                    <a href="{{ options_url('time', '∞') }}"
+                       class="{{ html_classes({'active': criteria.getOption('time') == 'all'}) }}">
+                        {{ 'all_time'|trans }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ options_url('time', '3h') }}"
+                       class="{{ html_classes({'active': criteria.getOption('time') == '3h' }) }}">
+                        {{ '3h'|trans }}
+                    </a></li>
+                <li>
+                    <a href="{{ options_url('time', '6h') }}"
+                       class="{{ html_classes({'active': criteria.getOption('time') == '6h' }) }}">
+                        {{ '6h'|trans }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ options_url('time', '12h') }}"
+                       class="{{ html_classes({'active': criteria.getOption('time') == '12h' }) }}">
+                        {{ '12h'|trans }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ options_url('time', '1d') }}"
+                       class="{{ html_classes({'active': criteria.getOption('time') == '1d' }) }}">
+                        {{ '1d'|trans }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ options_url('time', '1w') }}"
+                       class="{{ html_classes({'active': criteria.getOption('time') == '1w' }) }}">
+                        {{ '1w'|trans }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ options_url('time', '1m') }}"
+                       class="{{ html_classes({'active': criteria.getOption('time') == '1m' }) }}">
+                        {{ '1m'|trans }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ options_url('time', '1y') }}"
+                       class="{{ html_classes({'active': criteria.getOption('time') == '1y' }) }}">
+                        {{ '1y'|trans }}
+                    </a>
+                </li>
+            </ul>
         </li>
-        <li>
-            <a href="{{ options_url('sortBy', 'active') }}"
-               class="{{ html_classes({'active': criteria.getOption('sort') == 'active'}) }}">
-                {{ 'active'|trans }}
-            </a>
-        </li>
-        <li>
-            <a href="{{ options_url('sortBy', 'newest') }}"
-               class="{{ html_classes({'active': criteria.getOption('sort') == 'newest'}) }}">
-                {{ 'newest'|trans }}
-            </a>
-        </li>
-        <li>
-            <a href="{{ options_url('sortBy', 'oldest') }}"
-               class="{{ html_classes({'active': criteria.getOption('sort') == 'oldest'}) }}">
-                {{ 'oldest'|trans }}
-            </a>
+        <li class="dropdown">
+            <button
+                aria-label="{{ 'filter_by_federation'|trans }}"
+                title="{{ 'filter_by_federation'|trans }}">
+                <i aria-hidden="true" class="fa-solid
+                    {% if criteria.getOption('federation') == 'all' %}
+                        fa-circle-nodes
+                    {% elseif criteria.getOption('federation') == 'local' %}
+                        fa-house-chimney
+                    {% elseif criteria.getOption('federation') == 'federated' %}
+                        fa-network-wired
+                    {% else %}
+                        fa-question
+                    {% endif %}">
+                </i>
+                {% if showFilterLabels == 'on' or (showFilterLabels == 'auto' and criteria.getOption('federation') != 'all') %}
+                    <span class="hide-on-mobile">{{ criteria.federation|trans }}</span>
+                {% endif %}
+            </button>
+            <ul class="dropdown__menu">
+                <li>
+                    <a href="{{ options_url('federation', 'all') }}" class="{{ html_classes({'active': criteria.getOption('federation') == 'all' }) }}">
+                        <i class="fa-solid fa-circle-nodes" aria-hidden="true"></i> &nbsp; {{ 'all'|trans }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ options_url('federation', 'local') }}" class="{{ html_classes({'active': criteria.getOption('federation') == 'local' }) }}">
+                        <i class="fa-solid fa-house-chimney" aria-hidden="true"></i> &nbsp; {{ 'local'|trans }}
+                    </a>
+                </li>
+            </ul>
         </li>
     </menu>
     {% else %}
-        <div class="options__title"><h2>{{ 'comments'|trans }} ({{ entry.commentCount }})</h2></div>
+        <div class="options__title"><h2>{{ 'comments'|trans }}</h2></div>
     {% endif %}
     <menu class="options__view">
         <li class="dropdown">
             <button aria-label="{{ 'change_view'|trans }}"
                     title="{{ 'change_view'|trans }}"><i
-                        class="fa-solid fa-layer-group" aria-hidden="true"></i>
+                    class="fa-solid fa-layer-group" aria-hidden="true"></i>
             </button>
             <ul class="dropdown__menu">
                 <li>

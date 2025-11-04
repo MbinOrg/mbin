@@ -84,7 +84,7 @@ parameters:
     default_content_options: all|threads|microblog
     default_subject_type_options: entry|entry_comment|post|post_comment
 
-    comment_sort_options: top|hot|active|newest|oldest
+    comment_sort_options: top|hot|active|newest|oldest|default
 
     stats_type: general|content|votes
 

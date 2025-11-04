@@ -27,8 +27,8 @@ class DomainCommentFrontControllerTest extends WebTestCase
         $this->assertSelectorTextContains('blockquote .content', 'test comment 1');
 
         foreach ($this->getSortOptions() as $sortOption) {
-            $crawler = $this->client->click($crawler->filter('.options__main')->selectLink($sortOption)->link());
-            $this->assertSelectorTextContains('.options__main', $sortOption);
+            $crawler = $this->client->click($crawler->filter('.options__filter')->selectLink($sortOption)->link());
+            $this->assertSelectorTextContains('.options__filter', $sortOption);
             $this->assertSelectorTextContains('h1', 'kbin.pub');
             $this->assertSelectorTextContains('h2', ucfirst($sortOption));
         }
