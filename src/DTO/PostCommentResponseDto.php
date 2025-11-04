@@ -81,6 +81,7 @@ class PostCommentResponseDto implements \JsonSerializable
     )]
     public array $children = [];
     public ?bool $canAuthUserModerate = null;
+    public ?bool $isAuthorModeratorInMagazine = null;
 
     /** @var string[]|null */
     #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
