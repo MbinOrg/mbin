@@ -1107,3 +1107,16 @@ modlog_type_post_comment_restored: Mikroblog-Kommentar wiederhergestellt
 modlog_type_ban: Nutzer vom Magazine gebannt
 modlog_type_moderator_add: Magazin-Moderator hinzugefügt
 modlog_type_moderator_remove: Magazin-Moderator entfernt
+banner: Banner
+magazine_theme_appearance_banner: Nutzerdefiniertes Banner für das Magazin. Es 
+  wird über allen Themen angezeigt und sollte in einem breiten Format sein (5:1 
+  oder 1500px * 300px).
+everyone: Jeder
+nobody: Niemand
+followers_only: Nur Follower
+direct_message_setting_label: Wer kann eine Direktnachricht senden
+delete_magazine_icon: Magazin Icon löschen
+flash_magazine_theme_icon_detached_success: Magazin Icon erfolgreich gelöscht
+delete_magazine_banner: Magazin Banner löschen
+flash_magazine_theme_banner_detached_success: Magazin Banner erfolgreich 
+  gelöscht
