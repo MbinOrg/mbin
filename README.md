@@ -189,17 +189,17 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/CocoPoops">
-                    <img src="https://avatars.githubusercontent.com/u/7891055?v=4" width="100;" alt="CocoPoops"/>
-                    <br />
-                    <sub><b>CocoPoops</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/blued-gear">
                     <img src="https://avatars.githubusercontent.com/u/164888202?v=4" width="100;" alt="blued-gear"/>
                     <br />
                     <sub><b>blued_gear</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/CocoPoops">
+                    <img src="https://avatars.githubusercontent.com/u/7891055?v=4" width="100;" alt="CocoPoops"/>
+                    <br />
+                    <sub><b>CocoPoops</b></sub>
                 </a>
             </td>
 		</tr>
