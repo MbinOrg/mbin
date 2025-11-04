@@ -413,19 +413,19 @@ export default class extends Controller {
 
         elem.parentNode.insertBefore(moreBtn, elem.nextSibling);
 
-        elem.setAttribute('style', (elem.getAttribute('style') ?? '') + ' margin-bottom: 2rem !important');
-
         return moreBtn;
     }
 
     more() {
         this.moreBtn.addEventListener('click', (e) => {
             if (e.target.previousSibling.style.maxHeight) {
+                e.target.previousSibling.setAttribute('style', 'margin-bottom: 2rem !important');
                 e.target.previousSibling.style.maxHeight = null;
                 e.target.innerHTML = '<i class="fa-solid fa-angles-up"></i>';
                 this.isExpandedValue = true;
             } else {
                 e.target.previousSibling.style.maxHeight = '25rem';
+                e.target.previousSibling.style.marginBottom = null;
                 e.target.innerHTML = '<i class="fa-solid fa-angles-down"></i>';
                 e.target.previousSibling.scrollIntoView();
                 this.isExpandedValue = false;
