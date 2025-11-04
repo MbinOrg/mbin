@@ -92,7 +92,7 @@ RUN set -eux; \
 
 
 # Node assets builder
-FROM node:22-trixie-slim AS node
+FROM node:24-trixie-slim AS node
 
 RUN mkdir /app
 WORKDIR /app
