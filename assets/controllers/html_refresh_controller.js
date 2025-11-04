@@ -1,5 +1,5 @@
-import { Controller } from "@hotwired/stimulus";
-import { fetch, ok } from "../utils/http";
+import { fetch, ok } from '../utils/http';
+import { Controller } from '@hotwired/stimulus';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -9,10 +9,10 @@ export default class extends Controller {
      */
     async linkCallback(event) {
         event.preventDefault();
-        const { cssclass: cssClass, refreshlink: refreshLink, refreshselector: refreshSelector } = event.params
+        const { cssclass: cssClass, refreshlink: refreshLink, refreshselector: refreshSelector } = event.params;
 
         const a = event.target.closest('a');
-        let subjectController = this.application.getControllerForElementAndIdentifier(this.element, 'subject')
+        const subjectController = this.application.getControllerForElementAndIdentifier(this.element, 'subject');
 
         try {
             if (subjectController) {
@@ -26,9 +26,9 @@ export default class extends Controller {
 
             event.target.closest(`.${cssClass}`).outerHTML = response.html;
 
-            const refreshElement = this.element.querySelector(refreshSelector)
+            const refreshElement = this.element.querySelector(refreshSelector);
 
-            if (!!refreshLink && refreshLink !== "" && !!refreshElement) {
+            if (!!refreshLink && '' !== refreshLink && !!refreshElement) {
                 let response = await fetch(refreshLink);
 
                 response = await ok(response);
@@ -36,7 +36,7 @@ export default class extends Controller {
                 refreshElement.outerHTML = response.html;
             }
         } catch (e) {
-            console.error(e)
+            console.error(e);
         } finally {
             if (subjectController) {
                 subjectController.loadingValue = false;
