@@ -545,8 +545,7 @@ last_active: Zuletzt Aktiv
 purge_content: Lösche Inhalt endgültig
 oauth2.grant.domain.subscribe: Abonniere oder Deabonniere Domains und zeige die 
   Domains die du abonniert hast.
-magazine_theme_appearance_icon: Eigenes Icon für das Magazin. Wenn keins 
-  ausgewählt wird, wird das Standardicon verwendet.
+magazine_theme_appearance_icon: Eigenes Icon für das Magazin.
 oauth2.grant.moderate.magazine.ban.create: Sperre Nutzer in deinen moderierten 
   Magazinen.
 oauth2.grant.admin.user.delete: Lösche Nutzer von deiner Instanz.
