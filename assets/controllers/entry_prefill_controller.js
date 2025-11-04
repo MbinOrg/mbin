@@ -3,7 +3,7 @@ import { Controller } from '@hotwired/stimulus';
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
 
-    static targets = [ 'url', 'title', 'body', 'nsfw', 'oc', 'tags', 'imageAlt' ];
+    static targets = [ 'url', 'title', 'body', 'nsfw', 'oc', 'tags', 'imageUrl', 'imageAlt' ];
 
     params;
 
@@ -16,6 +16,7 @@ export default class extends Controller {
         this.applyTextValue('url', this.urlTarget);
         this.applyTextValue('title', this.titleTarget);
         this.applyTextValue('body', this.bodyTarget);
+        this.applyTextValue('imageUrl', this.imageUrlTarget);
         this.applyTextValue('imageAlt', this.imageAltTarget);
         this.applyBoolValue('nsfw', this.nsfwTarget);
         this.applyBoolValue('oc', this.ocTarget);

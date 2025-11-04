@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Entry;
+use App\Entity\Image;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,6 +16,7 @@ class CrosspostController extends AbstractController
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly string $storageUrl,
     ) {
     }
 
@@ -35,8 +37,20 @@ class CrosspostController extends AbstractController
         if (null !== $entry->url && '' !== $entry->url) {
             $fragment = $fragment.'&prefill-url='.urlencode($entry->url);
         }
-        if (null !== $entry->image && null !== $entry->image->altText && '' !== $entry->image->altText) {
-            $fragment = $fragment.'&prefill-imageAlt='.urlencode($entry->image->altText);
+
+        if(null !== $entry->image) {
+            $imgUrl = $this->getImageUrl($entry->image);
+            if($imgUrl !== null) {
+                if (null !== $entry->url && '' !== $entry->url) {
+                    $fragment = $fragment.'&prefill-imageUrl='.urlencode($imgUrl);
+                } else {
+                    $fragment = $fragment.'&prefill-url='.urlencode($imgUrl);
+                }
+            }
+
+            if (null !== $entry->image->altText && '' !== $entry->image->altText) {
+                $fragment = $fragment.'&prefill-imageAlt='.urlencode($entry->image->altText);
+            }
         }
 
         foreach ($entry->hashtags as $hashtag) {
@@ -56,5 +70,14 @@ class CrosspostController extends AbstractController
         $fragment = $fragment.'&prefill-body='.urlencode($body);
 
         return $this->redirect('/new_entry#'.$fragment);
+    }
+
+    private function getImageUrl(Image $image): string | null
+    {
+        if($image->filePath !== null) {
+            return $this->storageUrl.'/'.$image->filePath;
+        } else {
+            return $image->sourceUrl;
+        }
     }
 }
