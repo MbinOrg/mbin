@@ -10,8 +10,10 @@ use App\Repository\SettingsRepository;
 use App\Utils\DownvotesMode;
 use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\Pure;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
 class SettingsManager
 {
@@ -44,6 +46,7 @@ class SettingsManager
         private readonly int $maxImageBytes,
         private readonly DownvotesMode $mbinDownvotesMode,
         private readonly bool $mbinNewUsersNeedApproval,
+        private readonly LoggerInterface $logger,
     ) {
         if (!self::$dto || 'test' === $this->kernel->getEnvironment()) {
             $results = $this->repository->findAll();
@@ -171,8 +174,19 @@ class SettingsManager
      */
     public function isBannedInstance(string $inboxUrl): bool
     {
+        $host = parse_url($inboxUrl, PHP_URL_HOST);
+        if (null === $host) {
+            // Try to retrieve the caller function (commented-out for performance reasons)
+            // $bt = debug_backtrace();
+            // $caller_function = ($bt[1]) ? $bt[1]['function'] : 'Unknown function caller';
+            $this->logger->error('SettingsManager::isBannedInstance: unable to parse host from URL: {url}', ['url' => $inboxUrl]);
+
+            // Do not retry, retrying will always cause a failure
+            throw new UnrecoverableMessageHandlingException(\sprintf('Invalid URL provided: %s', $inboxUrl));
+        }
+
         return \in_array(
-            str_replace('www.', '', parse_url($inboxUrl, PHP_URL_HOST)),
+            str_replace('www.', '', $host),
             $this->get('KBIN_BANNED_INSTANCES') ?? []
         );
     }
