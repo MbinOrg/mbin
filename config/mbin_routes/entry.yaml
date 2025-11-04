@@ -348,3 +348,11 @@ entry_boost:
   methods: [ POST ]
   requirements:
     id: \d+
+
+entry_crosspost:
+    controller: App\Controller\CrosspostController
+    defaults: { entityClass: App\Entity\Entry }
+    path: /crosspost/{id}
+    methods: [ GET ]
+    requirements:
+        id: \d+
