@@ -167,9 +167,13 @@ table th a{
 
 table th,
 table td {
-  padding: 1.5rem 1rem;
+  padding: 0.5rem 0.25rem;
   position: relative;
   border: var(--kbin-section-border);
+
+  button.btn {
+    padding: .25rem;
+  }
 }
 
 table tbody tr {

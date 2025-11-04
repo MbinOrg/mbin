@@ -37,22 +37,29 @@ export default class extends Controller {
         if (!this.element.classList.contains('isSingle')) {
             this.element.querySelector('.content')?.addEventListener('click', (e) => {
                 if (e.defaultPrevented) {
-                    return
+                    return;
                 }
                 if ('a' === e.target.nodeName?.toLowerCase() || 'a' === e.target.tagName?.toLowerCase()) {
                     // ignore clicks on links
-                    return
+                    return;
+                }
+                if (
+                    'details' === e.target.nodeName?.toLowerCase() || 'details' === e.target.tagName?.toLowerCase()
+                    || 'summary' === e.target.nodeName?.toLowerCase() || 'summary' === e.target.tagName?.toLowerCase()
+                ) {
+                    // ignore clicks on spoilers
+                    return;
                 }
                 if ('touch' === e.pointerType) {
-                    const link = this.element.querySelector("header a:not(.user-inline)")
+                    const link = this.element.querySelector('header a:not(.user-inline)');
                     if (link) {
-                        const href = link.getAttribute('href')
+                        const href = link.getAttribute('href');
                         if (href) {
-                            document.location.href = href
+                            document.location.href = href;
                         }
                     }
                 }
-            })
+            });
         }
     }
 
