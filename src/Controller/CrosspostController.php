@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Entry;
-use App\Entity\Image;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +15,6 @@ class CrosspostController extends AbstractController
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly string $storageUrl,
     ) {
     }
 
@@ -26,36 +24,31 @@ class CrosspostController extends AbstractController
         Entry $entry,
         Request $request,
     ): Response {
-        $query = '';
+        $query = [];
 
-        $query = $query.'isNsfw='.($entry->isAdult ? '1' : '0');
-        $query = $query.'&isOc='.($entry->isOc ? '1' : '0');
+        $query['isNsfw'] = $entry->isAdult ? '1' : '0';
+        $query['isOc'] = $entry->isOc ? '1' : '0';
 
         if ('' !== $entry->title) {
-            $query = $query.'&title='.urlencode($entry->title);
+            $query['title'] = $entry->title;
         }
         if (null !== $entry->url && '' !== $entry->url) {
-            $query = $query.'&url='.urlencode($entry->url);
+            $query['url'] = $entry->url;
         }
 
         if (null !== $entry->image) {
-            $imgUrl = $this->getImageUrl($entry->image);
-            if (null !== $imgUrl) {
-                if (null !== $entry->url && '' !== $entry->url) {
-                    $query = $query.'&imageUrl='.urlencode($imgUrl);
-                } else {
-                    $query = $query.'&url='.urlencode($imgUrl);
-                }
-            }
+            $query['imageHash'] = strtok($entry->image->fileName, '.');
 
             if (null !== $entry->image->altText && '' !== $entry->image->altText) {
-                $query = $query.'&imageAlt='.urlencode($entry->image->altText);
+                $query['imageAlt'] = $entry->image->altText;
             }
         }
 
+        $tagNum = 0;
         foreach ($entry->hashtags as $hashtag) {
             /* @var $hashtag \App\Entity\HashtagLink */
-            $query = $query.'&tags[]='.urlencode($hashtag->hashtag->tag);
+            $query["tags[$tagNum]"] = $hashtag->hashtag->tag;
+            ++$tagNum;
         }
 
         $entryUrl = $this->urlGenerator->generate(
@@ -65,19 +58,14 @@ class CrosspostController extends AbstractController
         );
         $body = 'Crossposted from ['.$entryUrl.']('.$entryUrl.')';
         if (null !== $entry->body && '' !== $entry->body) {
-            $body = $body."\n\n".$entry->body;
+            $bodyLines = explode("\n", $entry->body);
+            $body = $body."\n";
+            foreach ($bodyLines as $line) {
+                $body = $body."\n> ".$line;
+            }
         }
-        $query = $query.'&body='.urlencode($body);
+        $query['body'] = $body;
 
-        return $this->redirect('/new_entry?'.$query);
-    }
-
-    private function getImageUrl(Image $image): ?string
-    {
-        if (null !== $image->filePath) {
-            return $this->storageUrl.'/'.$image->filePath;
-        } else {
-            return $image->sourceUrl;
-        }
+        return $this->redirectToRoute('entry_create', $query);
     }
 }

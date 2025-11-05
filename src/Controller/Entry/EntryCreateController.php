@@ -11,8 +11,10 @@ use App\Exception\ImageDownloadTooLargeException;
 use App\Exception\InstanceBannedException;
 use App\Exception\PostingRestrictedException;
 use App\Exception\TagBannedException;
+use App\Factory\ImageFactory;
 use App\Form\EntryType;
 use App\Repository\Criteria;
+use App\Repository\ImageRepository;
 use App\Repository\TagLinkRepository;
 use App\Repository\TagRepository;
 use App\Service\EntryCommentManager;
@@ -41,6 +43,8 @@ class EntryCreateController extends AbstractController
         private readonly TagRepository $tagRepository,
         private readonly EntryManager $manager,
         private readonly EntryCommentManager $commentManager,
+        private readonly ImageRepository $imageRepository,
+        private readonly ImageFactory $imageFactory,
         private readonly ValidatorInterface $validator,
         private readonly IpResolver $ipResolver,
         private readonly Security $security,
@@ -60,8 +64,6 @@ class EntryCreateController extends AbstractController
         #[MapQueryParameter]
         ?string $body,
         #[MapQueryParameter]
-        ?string $imageUrl,
-        #[MapQueryParameter]
         ?string $imageAlt,
         #[MapQueryParameter]
         ?string $isNsfw,
@@ -69,6 +71,8 @@ class EntryCreateController extends AbstractController
         ?string $isOc,
         #[MapQueryParameter]
         ?array $tags,
+        #[MapQueryParameter]
+        ?string $imageHash,
         Request $request,
     ): Response {
         $dto = new EntryDto();
@@ -76,11 +80,17 @@ class EntryCreateController extends AbstractController
         $dto->title = $title;
         $dto->url = $url;
         $dto->body = $body;
-        $dto->imageUrl = $imageUrl;
         $dto->imageAlt = $imageAlt;
         $dto->isAdult = '1' === $isNsfw;
         $dto->isOc = '1' === $isOc;
         $dto->tags = $tags;
+
+        if (null !== $imageHash) {
+            $img = $this->imageRepository->findOneBySha256(hex2bin($imageHash));
+            if (null !== $img) {
+                $dto->image = $this->imageFactory->createDto($img);
+            }
+        }
 
         $user = $this->getUserOrThrow();
         $maxBytes = $this->settingsManager->getMaxImageByteString();

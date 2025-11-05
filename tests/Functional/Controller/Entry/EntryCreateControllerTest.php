@@ -146,7 +146,6 @@ class EntryCreateControllerTest extends WebTestCase
                 .'title=test'
                 .'&url='.urlencode('https://example.com#title')
                 .'&body='.urlencode("**Test**\nbody")
-                .'&imageUrl=abc'
                 .'&imageAlt=alt'
                 .'&isNsfw=1'
                 .'&isOc=1'
@@ -156,7 +155,6 @@ class EntryCreateControllerTest extends WebTestCase
         $this->assertFormValue('form[name=entry]', 'entry[title]', 'test');
         $this->assertFormValue('form[name=entry]', 'entry[url]', 'https://example.com#title');
         $this->assertFormValue('form[name=entry]', 'entry[body]', "**Test**\nbody");
-        $this->assertFormValue('form[name=entry]', 'entry[imageUrl]', 'abc');
         $this->assertFormValue('form[name=entry]', 'entry[imageAlt]', 'alt');
         $this->assertFormValue('form[name=entry]', 'entry[isAdult]', '1');
         $this->assertFormValue('form[name=entry]', 'entry[isOc]', '1');

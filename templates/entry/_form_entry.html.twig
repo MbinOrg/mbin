@@ -18,10 +18,7 @@
         {% endset %}
         {{ form_label(form.url, label, {'label_html': true}) }}
         {{ form_errors(form.url) }}
-        {{ form_widget(form.url, {attr: {
-            'data-action': 'entry-link-create#fetchLink',
-            'data-entry-link-create-target': 'url'
-        }}) }}
+        {{ form_widget(form.url, {attr: {'data-action': 'entry-link-create#fetchLink','data-entry-link-create-target': 'url'}}) }}
     </div>
 
     {{ form_row(form.title, {
