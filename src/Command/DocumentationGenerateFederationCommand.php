@@ -13,7 +13,9 @@ use App\DTO\PostDto;
 use App\DTO\ReportDto;
 use App\DTO\UserDto;
 use App\Entity\Image;
+use App\Entity\MagazineBan;
 use App\Factory\ActivityPub\AddRemoveFactory;
+use App\Factory\ActivityPub\BlockFactory;
 use App\Factory\ActivityPub\CollectionFactory;
 use App\Factory\ActivityPub\EntryCommentNoteFactory;
 use App\Factory\ActivityPub\EntryPageFactory;
@@ -98,6 +100,7 @@ class DocumentationGenerateFederationCommand extends Command
         private readonly UpdateWrapper $updateWrapper,
         private readonly UserRepository $userRepository,
         private readonly CollectionInfoWrapper $collectionInfoWrapper,
+        private readonly BlockFactory $blockFactory,
     ) {
         parent::__construct();
     }
@@ -245,13 +248,18 @@ class DocumentationGenerateFederationCommand extends Command
         $activityUserEdit = $this->updateWrapper->buildForActivity($entry);
         $activityUserDelete = $this->deleteWrapper->build($entry, includeContext: false);
 
+        $magazineBan = new MagazineBan($magazine, $user, $user2, 'A very specific reason', \DateTimeImmutable::createFromFormat('Y-m-d', '2025-01-01'));
+        $this->entityManager->persist($magazineBan);
+
         $activityModAddMod = $this->addRemoveFactory->buildAddModerator($user, $user2, $magazine);
         $activityModRemoveMod = $this->addRemoveFactory->buildRemoveModerator($user, $user2, $magazine);
         $activityModAddPin = $this->addRemoveFactory->buildAddPinnedPost($user, $entry);
         $activityModRemovePin = $this->addRemoveFactory->buildRemovePinnedPost($user, $entry);
         $activityModDelete = $this->deleteWrapper->adjustDeletePayload($user, $entryComment, false);
+        $activityModBan = $this->blockFactory->createActivityFromMagazineBan($magazineBan);
 
         $activityMagAnnounce = $this->announceWrapper->build($magazine, $entryCreate);
+        $activityAdminBan = $this->blockFactory->createActivityFromInstanceBan($user2, $user);
 
         $jsonFlags = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES;
         $replaceVariables = [
@@ -290,7 +298,9 @@ class DocumentationGenerateFederationCommand extends Command
             '%activity_mod_add_pin%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityModAddPin, false), $jsonFlags),
             '%activity_mod_remove_pin%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityModRemovePin, false), $jsonFlags),
             '%activity_mod_delete%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityModDelete, false), $jsonFlags),
+            '%activity_mod_ban%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityModBan, false), $jsonFlags),
             '%activity_mag_announce%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityMagAnnounce, false), $jsonFlags),
+            '%activity_admin_ban%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityAdminBan, false), $jsonFlags),
         ];
 
         foreach ($replaceVariables as $key => $value) {
