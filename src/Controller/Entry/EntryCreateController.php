@@ -48,7 +48,7 @@ class EntryCreateController extends AbstractController
     }
 
     /**
-     * @param string[] | null $tags
+     * @param string[]|null $tags
      */
     #[IsGranted('ROLE_USER')]
     public function __invoke(
@@ -70,8 +70,7 @@ class EntryCreateController extends AbstractController
         #[MapQueryParameter]
         ?array $tags,
         Request $request,
-    ): Response
-    {
+    ): Response {
         $dto = new EntryDto();
         $dto->magazine = $magazine;
         $dto->title = $title;
@@ -79,8 +78,8 @@ class EntryCreateController extends AbstractController
         $dto->body = $body;
         $dto->imageUrl = $imageUrl;
         $dto->imageAlt = $imageAlt;
-        $dto->isAdult = $isNsfw === '1';
-        $dto->isOc = $isOc === '1';
+        $dto->isAdult = '1' === $isNsfw;
+        $dto->isOc = '1' === $isOc;
         $dto->tags = $tags;
 
         $user = $this->getUserOrThrow();

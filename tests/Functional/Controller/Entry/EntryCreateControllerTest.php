@@ -134,4 +134,32 @@ class EntryCreateControllerTest extends WebTestCase
         $this->assertSelectorTextContains('article h2', 'Test entry 1');
         $this->assertSelectorTextContains('article h2 .danger', '18+');
     }
+
+    public function testPresetValues()
+    {
+        $this->client->loginUser($this->getUserByUsername('user', hideAdult: false));
+
+        $this->getMagazineByName('acme');
+
+        $crawler = $this->client->request('GET',
+            '/m/acme/new_entry?'
+                .'title=test'
+                .'&url='.urlencode('https://example.com#title')
+                .'&body='.urlencode("**Test**\nbody")
+                .'&imageUrl=abc'
+                .'&imageAlt=alt'
+                .'&isNsfw=1'
+                .'&isOc=1'
+                .'&tags[]=1&tags[]=2'
+        );
+
+        $this->assertFormValue('form[name=entry]', 'entry[title]', 'test');
+        $this->assertFormValue('form[name=entry]', 'entry[url]', 'https://example.com#title');
+        $this->assertFormValue('form[name=entry]', 'entry[body]', "**Test**\nbody");
+        $this->assertFormValue('form[name=entry]', 'entry[imageUrl]', 'abc');
+        $this->assertFormValue('form[name=entry]', 'entry[imageAlt]', 'alt');
+        $this->assertFormValue('form[name=entry]', 'entry[isAdult]', '1');
+        $this->assertFormValue('form[name=entry]', 'entry[isOc]', '1');
+        $this->assertFormValue('form[name=entry]', 'entry[tags]', '1 2');
+    }
 }
