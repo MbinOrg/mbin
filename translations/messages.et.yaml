@@ -1,1 +1,34 @@
-{}
+type.link: Link
+type.article: Jutulõng
+type.photo: Foto
+type.video: Video
+type.smart_contract: Nutileping
+type.magazine: Ajakiri
+thread: Jutulõng
+threads: Jutulõngad
+microblog: Mikroblogi
+people: Inimesed
+events: Sündmused
+magazine: Ajakiri
+magazines: Ajakirjad
+search: Otsi
+add: Lisa
+select_channel: Vali kanal
+login: Logi sisse
+sort_by: Järjestus
+top: Parimad
+hot: Hetkel teemaks
+active: Aktiivne
+newest: Uusim
+oldest: Vanim
+commented: Kommenteeritud
+change_view: Muuda vaadet
+filter_by_time: Filtreeri aja alusel
+filter_by_type: Filtreeri tüübi alusel
+filter_by_subscription: Filtreeri tellimuse alusel
+filter_by_federation: Filtreeri födereerimise oleku alusel
+comments_count: '{0} kommentaari|{1} kommentaar|]1,Inf[ kommentaari'
+subscribers_count: '{0} tellijat|{1} tellija|]1,Inf[ tellijat'
+followers_count: '{0} jälgijat|{1} jälgija|]1,Inf[ jälgijat'
+marked_for_deletion: Märgitud kustutamiseks
+marked_for_deletion_at: Märgitud kustutamiseks %date%
