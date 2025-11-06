@@ -254,7 +254,19 @@ When a thread is unpinned:
 %activity_mod_delete%
 ```
 
+### Ban user from magazine
+
+```json
+%activity_mod_ban%
+```
+
 ## Admin Activities
+
+### Ban user from instance
+
+```json
+%activity_admin_ban%
+```
 
 ## Magazine Activities
 
