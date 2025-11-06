@@ -281,8 +281,7 @@ single_settings: Único
 comment_reply_position: Posición do comentario de resposta
 magazine_theme_appearance_custom_css: CSS personalizado que se aplicará ao ver o
   contido na túa revista.
-magazine_theme_appearance_icon: Icona personalizada para a revista. Se non 
-  escolles ningún, usarase a icona por defecto.
+magazine_theme_appearance_icon: Icona personalizada para a revista.
 magazine_theme_appearance_background_image: Imaxe de fondo personalizada que se 
   aplicará ao ver o contido na túa revista.
 delete_content_desc: Eliminar o contido da usuaria pero deixar os temas, 
@@ -1079,3 +1078,13 @@ everyone: Todo o mundo
 nobody: Ninguén
 followers_only: Só seguidoras
 direct_message_setting_label: Quen pode enviar unha mensaxe directa
+banner: Imaxe cabeceira
+magazine_theme_appearance_banner: Imaxe de cabeceira persoal para a revista. 
+  Móstrase na parte superior de todos os fíos e debería ter proporcións anchas 
+  (5:1, ou 1500px * 300px).
+delete_magazine_icon: Eliminar icona da revista
+flash_magazine_theme_icon_detached_success: Eliminouse correctamente a icona da 
+  revista
+delete_magazine_banner: Eliminar cabeceira da revista
+flash_magazine_theme_banner_detached_success: Eliminouse correctamente a imaxe 
+  de cabeceira

@@ -338,6 +338,8 @@ class EntryFrontControllerTest extends WebTestCase
             $this->getUserByUsername('JaneDoe')
         );
 
+        // this  is necessary so the second entry is guaranteed to be newer than the first
+        sleep(1);
         $this->getEntryByTitle('test entry 2', 'https://kbin.pub');
 
         return $this->client;

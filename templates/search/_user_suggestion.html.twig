@@ -1,0 +1,5 @@
+<div id="user-suggestions" class="suggestions">
+    {% for user in users %}
+        <div class="suggestion" data-replace="{{ user.username|username(true) }}">{{ user.username|username(true) }}</div>
+    {% endfor %}
+</div>
