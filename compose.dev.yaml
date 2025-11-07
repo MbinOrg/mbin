@@ -24,7 +24,7 @@ services:
         tty: true
 
     node:
-        image: node:22-trixie-slim
+        image: node:24-trixie-slim
         user: ${MBIN_USER}
         volumes:
             - ./:/app

@@ -21,7 +21,7 @@ You can start with a smaller server and add more resources later if you are usin
 
 - Debian 12 or Ubuntu 22.04 LTS or later
 - PHP v8.3 or higher
-- NodeJS v20 or higher
+- NodeJS v22 or higher
 - Valkey / KeyDB / Redis (pick one)
 - PostgreSQL
 - Supervisor
@@ -103,7 +103,7 @@ If you have a firewall installed (or you're behind a NAT), be sure to open port 
 1. Setup the Nodesource repository:
 
 ```bash
-curl -fsSL https://deb.nodesource.com/setup_22.x | sudo bash -
+curl -fsSL https://deb.nodesource.com/setup_24.x | sudo bash -
 ```
 
 3. Install Node.JS:
