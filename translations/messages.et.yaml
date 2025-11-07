@@ -32,3 +32,23 @@ subscribers_count: '{0} tellijat|{1} tellija|]1,Inf[ tellijat'
 followers_count: '{0} jälgijat|{1} jälgija|]1,Inf[ jälgijat'
 marked_for_deletion: Märgitud kustutamiseks
 marked_for_deletion_at: Märgitud kustutamiseks %date%
+avatar: Tunnuspilt
+added: Lisatud
+up_votes: Hoolisamised
+down_votes: Mahahääletused
+no_comments: Kommentaare pole
+created_at: Loodud
+owner: Omanik
+subscribers: Tellijad
+online: Võrgus
+comments: Kommentaarid
+posts: Postitused
+replies: Vastused
+moderators: Moderaatorid
+mod_log: Modereerimislogi
+add_comment: Lisa kommentaar
+add_post: Lisa postitus
+add_media: Lisa meediat
+remove_media: Eemalda meedia
+remove_user_avatar: Eemalda tunnuspilt
+remove_user_cover: Eemalda kaanepilt
