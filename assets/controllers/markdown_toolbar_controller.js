@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { Controller } from '@hotwired/stimulus';
-import { computePosition, flip, shift, limitShift, autoUpdate } from '@floating-ui/dom';
 import 'emoji-picker-element';
+import { autoUpdate, computePosition, flip, limitShift, shift } from '@floating-ui/dom';
+import { Controller } from '@hotwired/stimulus';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -52,12 +52,12 @@ ${spoilerBody}
             emojiPicker.removeEventListener('emoji-click', this.emojiClickHandler);
         }
 
-        if(!this.cleanupTooltip) {
+        if (!this.cleanupTooltip) {
             this.cleanupTooltip = autoUpdate(button, tooltip, () => {
                 computePosition(button, tooltip, {
                     placement: 'bottom',
-                    middleware: [flip(), shift({limiter: limitShift()})],
-                }).then(({x, y}) => {
+                    middleware: [flip(), shift({ limiter: limitShift() })],
+                }).then(({ x, y }) => {
                     Object.assign(tooltip.style, {
                         left: `${x}px`,
                         top: `${y}px`,

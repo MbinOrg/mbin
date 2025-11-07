@@ -13,7 +13,7 @@
                 <img class="image-inline {{ magazine.isAdult ? 'image-adult' : '' }}"
                      loading="lazy"
                      src="{{ computed.magazine.icon.filePath ? (asset(computed.magazine.icon.filePath)|imagine_filter('post_thumb')) : computed.magazine.icon.sourceUrl }}"
-                     {% if magazine.isAdult %}data-controller="thumb" data-action="mouseover->thumb#adult_image_hover mouseout->thumb#adult_image_hover_out"{% endif %}
+                     {% if magazine.isAdult %}data-controller="thumb" data-action="mouseover->thumb#adultImageHover mouseout->thumb#adultImageHoverOut"{% endif %}
                      alt="{{ computed.magazine.name ~ ' ' ~ 'icon'|trans|lower }}" width="260">
             </figure>
         {% endif %}

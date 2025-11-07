@@ -1,6 +1,6 @@
+import { ThrowResponseIfNotOk, fetch } from '../utils/http';
 import { Controller } from '@hotwired/stimulus';
 import Subscribe from '../utils/event-source';
-import {fetch, ThrowResponseIfNotOk} from "../utils/http";
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -19,7 +19,7 @@ export default class extends Controller {
             window.addEventListener('pagehide', this.closeEs);
         }
         if (this.userValue) {
-            this.fetchAndSetNewNotificationAndMessageCount()
+            this.fetchAndSetNewNotificationAndMessageCount();
         }
     }
 
@@ -107,39 +107,39 @@ export default class extends Controller {
     }
 
     fetchAndSetNewNotificationAndMessageCount() {
-        fetch("/ajax/fetch_user_notifications_count")
+        fetch('/ajax/fetch_user_notifications_count')
             .then(ThrowResponseIfNotOk)
             .then((data) => {
-                if (typeof data.notifications === "number") {
-                    this.setNotificationCount(data.notifications)
+                if ('number' === typeof data.notifications) {
+                    this.setNotificationCount(data.notifications);
                 }
-                if (typeof data.messages === "number") {
-                    this.setMessageCount(data.messages)
+                if ('number' === typeof data.messages) {
+                    this.setMessageCount(data.messages);
                 }
-                window.setTimeout(() => this.fetchAndSetNewNotificationAndMessageCount(), 30 * 1000)
-            })
+                window.setTimeout(() => this.fetchAndSetNewNotificationAndMessageCount(), 30 * 1000);
+            });
     }
 
     /**
      * @param {number} count
      */
     setNotificationCount(count) {
-        let notificationHeader = self.window.document.getElementById("header-notification-count")
-        notificationHeader.style.display = count ? "" : "none"
-        this.setCountInSubBadgeElement(notificationHeader, count)
-        let notificationDropdown = self.window.document.getElementById("dropdown-notifications-count")
-        this.setCountInSubBadgeElement(notificationDropdown, count)
+        const notificationHeader = self.window.document.getElementById('header-notification-count');
+        notificationHeader.style.display = count ? '' : 'none';
+        this.setCountInSubBadgeElement(notificationHeader, count);
+        const notificationDropdown = self.window.document.getElementById('dropdown-notifications-count');
+        this.setCountInSubBadgeElement(notificationDropdown, count);
     }
 
     /**
      * @param {number} count
      */
     setMessageCount(count) {
-        let messagesHeader = self.window.document.getElementById("header-messages-count")
-        messagesHeader.style.display = count ? "" : "none"
-        this.setCountInSubBadgeElement(messagesHeader, count)
-        let messageDropdown = self.window.document.getElementById("dropdown-messages-count")
-        this.setCountInSubBadgeElement(messageDropdown, count)
+        const messagesHeader = self.window.document.getElementById('header-messages-count');
+        messagesHeader.style.display = count ? '' : 'none';
+        this.setCountInSubBadgeElement(messagesHeader, count);
+        const messageDropdown = self.window.document.getElementById('dropdown-messages-count');
+        this.setCountInSubBadgeElement(messageDropdown, count);
     }
 
     /**
@@ -147,11 +147,11 @@ export default class extends Controller {
      * @param {number} count
      */
     setCountInSubBadgeElement(element, count) {
-        let badgeElements = element.getElementsByClassName("badge")
-        for (let i = 0; i<badgeElements.length; i++) {
-            let el = badgeElements.item(i)
-            el.textContent = count.toString(10)
-            el.style.display = count ? "" : "none"
+        const badgeElements = element.getElementsByClassName('badge');
+        for (let i = 0; i < badgeElements.length; i++) {
+            const el = badgeElements.item(i);
+            el.textContent = count.toString(10);
+            el.style.display = count ? '' : 'none';
         }
     }
 }
