@@ -168,10 +168,10 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/Ahrotahn">
-                    <img src="https://avatars.githubusercontent.com/u/40727284?v=4" width="100;" alt="Ahrotahn"/>
+                <a href="https://github.com/jwr1">
+                    <img src="https://avatars.githubusercontent.com/u/47087725?v=4" width="100;" alt="jwr1"/>
                     <br />
-                    <sub><b>Ahrotahn</b></sub>
+                    <sub><b>John Wesley</b></sub>
                 </a>
             </td>
             <td align="center">
@@ -182,10 +182,10 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/jwr1">
-                    <img src="https://avatars.githubusercontent.com/u/47087725?v=4" width="100;" alt="jwr1"/>
+                <a href="https://github.com/Ahrotahn">
+                    <img src="https://avatars.githubusercontent.com/u/40727284?v=4" width="100;" alt="Ahrotahn"/>
                     <br />
-                    <sub><b>John Wesley</b></sub>
+                    <sub><b>Ahrotahn</b></sub>
                 </a>
             </td>
             <td align="center">
