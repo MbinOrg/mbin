@@ -84,10 +84,11 @@
                     </div>
                 {% endif %}
                 {% if entry.body and showBody %}
-                    <div class="entry__body">
-                        <div class="content formatted">
+                    <div data-controller="collapsable" class="entry__body">
+                        <div data-collapsable-target="content" class="content formatted">
                             {{ entry.body|markdown("entry")|raw }}
                         </div>
+                        <div data-collapsable-target="button"></div>
                     </div>
                 {% endif %}
             {% endif %}
