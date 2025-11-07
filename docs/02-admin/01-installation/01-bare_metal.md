@@ -517,7 +517,7 @@ Now, we will add a new `mbin` user with the correct permissions:
 
 ```bash
 sudo rabbitmqctl add_user 'mbin' '{!SECRET!!KEY!-16_2-!}'
-sudo rabbitmqctl set_permissions -p '/' 'mbin' '.' '.' '.*'
+sudo rabbitmqctl set_permissions -p / mbin ".*" ".*" ".*"
 ```
 
 Remove the `guest` account:
