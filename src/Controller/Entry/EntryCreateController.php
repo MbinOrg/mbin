@@ -7,6 +7,7 @@ namespace App\Controller\Entry;
 use App\Controller\AbstractController;
 use App\DTO\EntryDto;
 use App\Entity\Magazine;
+use App\Entity\User;
 use App\Exception\ImageDownloadTooLargeException;
 use App\Exception\InstanceBannedException;
 use App\Exception\PostingRestrictedException;
@@ -23,6 +24,7 @@ use App\Service\IpResolver;
 use App\Service\SettingsManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
@@ -75,6 +77,9 @@ class EntryCreateController extends AbstractController
         ?string $imageHash,
         Request $request,
     ): Response {
+        $user = $this->getUserOrThrow();
+        $maxBytes = $this->settingsManager->getMaxImageByteString();
+
         $dto = new EntryDto();
         $dto->magazine = $magazine;
         $dto->title = $title;
@@ -89,11 +94,12 @@ class EntryCreateController extends AbstractController
             $img = $this->imageRepository->findOneBySha256(hex2bin($imageHash));
             if (null !== $img) {
                 $dto->image = $this->imageFactory->createDto($img);
+            } else {
+                $form = $this->createForm(EntryType::class, $dto);
+
+                return $this->showFailure('flash_thread_ref_image_not_found', 400, $magazine, $user, $form, $maxBytes);
             }
         }
-
-        $user = $this->getUserOrThrow();
-        $maxBytes = $this->settingsManager->getMaxImageByteString();
 
         $form = $this->createForm(EntryType::class, $dto);
         try {
@@ -139,78 +145,48 @@ class EntryCreateController extends AbstractController
                 new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200)
             );
         } catch (TagBannedException $e) {
-            // Show an error to the user
-            $this->addFlash('error', 'flash_thread_tag_banned_error');
             $this->logger->error($e);
 
-            return $this->render(
-                $this->getTemplateName(),
-                [
-                    'magazine' => $magazine,
-                    'user' => $user,
-                    'form' => $form->createView(),
-                    'maxSize' => $maxBytes,
-                ],
-                new Response(null, 422)
-            );
+            return $this->showFailure('flash_thread_tag_banned_error', 422, $magazine, $user, $form, $maxBytes);
         } catch (InstanceBannedException $e) {
-            // Show an error to the user
-            $this->addFlash('error', 'flash_thread_instance_banned');
             $this->logger->error($e);
 
-            return $this->render(
-                $this->getTemplateName(),
-                [
-                    'magazine' => $magazine,
-                    'user' => $user,
-                    'form' => $form->createView(),
-                    'maxSize' => $maxBytes,
-                ],
-                new Response(null, 422)
-            );
+            return $this->showFailure('flash_thread_instance_banned', 422, $magazine, $user, $form, $maxBytes);
         } catch (PostingRestrictedException $e) {
-            $this->addFlash('error', 'flash_posting_restricted_error');
             $this->logger->error($e);
 
-            return $this->render(
-                $this->getTemplateName(),
-                [
-                    'magazine' => $magazine,
-                    'user' => $user,
-                    'form' => $form->createView(),
-                    'maxSize' => $maxBytes,
-                ],
-                new Response(null, 422)
-            );
+            return $this->showFailure('flash_posting_restricted_error', 422, $magazine, $user, $form, $maxBytes);
         } catch (ImageDownloadTooLargeException $e) {
-            $this->addFlash('error', $this->translator->trans('flash_image_download_too_large_error', ['%bytes%' => $maxBytes]));
             $this->logger->error($e);
 
-            return $this->render(
-                $this->getTemplateName(),
-                [
-                    'magazine' => $magazine,
-                    'user' => $user,
-                    'form' => $form->createView(),
-                    'maxSize' => $maxBytes,
-                ],
-                new Response(null, 422)
+            return $this->showFailure(
+                $this->translator->trans('flash_image_download_too_large_error', ['%bytes%' => $maxBytes]),
+                422,
+                $magazine,
+                $user,
+                $form,
+                $maxBytes
             );
         } catch (\Exception $e) {
-            // Show an error to the user
-            $this->addFlash('error', 'flash_thread_new_error');
             $this->logger->error($e);
 
-            return $this->render(
-                $this->getTemplateName(),
-                [
-                    'magazine' => $magazine,
-                    'user' => $user,
-                    'form' => $form->createView(),
-                    'maxSize' => $maxBytes,
-                ],
-                new Response(null, 422)
-            );
+            return $this->showFailure('flash_thread_new_error', 422, $magazine, $user, $form, $maxBytes);
         }
+    }
+
+    private function showFailure(string $flashMessage, int $httpCode, ?Magazine $magazine, User $user, FormInterface $form, string $maxBytes): Response
+    {
+        $this->addFlash('error', $flashMessage);
+
+        return $this->render(
+            $this->getTemplateName(),
+            [
+                'magazine' => $magazine,
+                'user' => $user,
+                'form' => $form->createView(),
+                'maxSize' => $maxBytes,
+            ],
+            new Response(null, $httpCode),
+        );
     }
 }

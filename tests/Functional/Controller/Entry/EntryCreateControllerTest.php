@@ -160,4 +160,55 @@ class EntryCreateControllerTest extends WebTestCase
         $this->assertFormValue('form[name=entry]', 'entry[isOc]', '1');
         $this->assertFormValue('form[name=entry]', 'entry[tags]', '1 2');
     }
+
+    public function testPresetImage()
+    {
+        $user = $this->getUserByUsername('user');
+        $this->client->loginUser($user);
+
+        $magazine = $this->getMagazineByName('acme');
+
+        $imgEntry = $this->createEntry('img', $magazine, $user, imageDto: $this->getKibbyImageDto());
+        $imgHash = strtok($imgEntry->image->fileName, '.');
+
+        // this  is necessary so the second entry is guaranteed to be newer than the first
+        sleep(1);
+
+        $crawler = $this->client->request('GET',
+            '/m/acme/new_entry?'
+            .'title=test'
+            .'&imageHash='.$imgHash
+        );
+
+        $this->client->submit($crawler->filter('form[name=entry]')->form());
+        $crawler = $this->client->followRedirect();
+
+        $this->assertSelectorTextContains('article h2', 'test');
+        $this->assertSelectorExists('figure img');
+        $imgSrc = $crawler->filter('figure img.thumb-subject')->getNode(0)->attributes->getNamedItem('src')->textContent;
+        $this->assertStringContainsString(self::KIBBY_PNG_URL_RESULT, $imgSrc);
+    }
+
+    public function testPresetImageNotFound()
+    {
+        $user = $this->getUserByUsername('user');
+        $this->client->loginUser($user);
+
+        $magazine = $this->getMagazineByName('acme');
+
+        $imgEntry = $this->createEntry('img', $magazine, $user, imageDto: $this->getKibbyImageDto());
+        $imgHash = strtok($imgEntry->image->fileName, '.');
+        $imgHash = substr($imgHash, 0, \strlen($imgHash) - 1).'0';
+
+        // this  is necessary so the second entry is guaranteed to be newer than the first
+        sleep(1);
+
+        $crawler = $this->client->request('GET',
+            '/m/acme/new_entry?'
+            .'title=test'
+            .'&imageHash='.$imgHash
+        );
+
+        $this->assertSelectorTextContains('.alert.alert__danger', 'The image referenced by \'imageHash\' could not be found.');
+    }
 }
