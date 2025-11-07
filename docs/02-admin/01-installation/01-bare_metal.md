@@ -455,13 +455,15 @@ php bin/console doctrine:migrations:migrate
 > [!IMPORTANT]
 > Check out the [PostgreSQL configuration page](../02-configuration/04-postgresql.md). You should not run the default PostgreSQL configuration in production!
 
-## RabbitMQ
+## Message Handling
+
+### RabbitMQ
 
 RabbitMQ is a feature rich, multi-protocol messaging and streaming broker, used by Mbin to process outgoing and incoming messages. 
 
 Read also [What is RabbitMQ](../FAQ.md#what-is-rabbitmq) and [Symfony Messenger Queues](../04-running-mbin/04-messenger.md) for more information.
 
-### Install RabbitMQ
+#### Installing RabbitMQ
 
 See also: [RabbitMQ Install](https://www.rabbitmq.com/install-debian.html#apt-quick-start-cloudsmith).
 
