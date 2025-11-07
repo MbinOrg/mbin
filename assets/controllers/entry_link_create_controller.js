@@ -45,8 +45,8 @@ export default class extends ApplicationController {
                 .catch(() => {
                     this.loadingValue = false;
                     this.timeoutId = null;
-                })
-        }, 1000)
+                });
+        }, 1000);
     }
 
     loadingValueChanged(val) {

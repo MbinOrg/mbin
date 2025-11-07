@@ -38,7 +38,7 @@ export async function ok(response) {
  */
 export function ThrowResponseIfNotOk(response) {
     if (!response.ok) {
-        throw response
+        throw response;
     }
-    return response.json()
+    return response.json();
 }

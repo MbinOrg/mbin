@@ -211,6 +211,46 @@ jobs:
       - name: PHP CS Fixer to PR Annotations
         run: tools/vendor/bin/php-cs-fixer fix --dry-run --format=checkstyle --show-progress=none | cs2pr
 
+  frontend-lint:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/mbinorg/mbin-pipeline-image:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Get NPM cache directory path
+        id: npm-cache-dir-path
+        run: echo "dir=$(npm get cache)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('*/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: ${{ steps.npm-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('*/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-npm-
+
+      - name: Composer install
+        run: composer install --no-scripts --no-progress
+
+      - run: cp .env.example .env
+
+      - name: NPM install
+        run: npm ci
+
+      - name: eslint
+        run: npm run lint
+
   build-and-publish-docker-image:
     runs-on: ubuntu-latest
     # Let's only run this on branches and tagged releases only

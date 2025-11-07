@@ -53,15 +53,12 @@ export default [
             "no-empty": ["error", {
                 allowEmptyCatch: true,
             }],
-            "no-empty-function": ["error", {
-                allow: ["arrowFunctions", "constructors"],
-            }],
             "no-eval": ["error"],
-            "no-implicit-coercion": ["error"],
             "no-implied-eval": ["error"],
             "prefer-const": ["error"],
             "sort-imports": ["error"],
             yoda: ["error", "always"],
+            "no-undef": ["warn"],
         },
     }
 ];
