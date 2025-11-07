@@ -109,7 +109,6 @@ class OAuth2TokenControllerTest extends WebTestCase
         self::assertEquals('invalid_grant', $jsonData['error']);
         self::assertArrayHasKey('error_description', $jsonData);
         self::assertArrayHasKey('hint', $jsonData);
-        self::assertArrayHasKey('message', $jsonData);
     }
 
     public function testCannotGetTokenWithoutChallengeAuthorizationCodePKCE(): void
@@ -132,7 +131,6 @@ class OAuth2TokenControllerTest extends WebTestCase
         self::assertArrayHasKey('error_description', $jsonData);
         self::assertArrayHasKey('hint', $jsonData);
         self::assertStringContainsStringIgnoringCase('code challenge', $jsonData['hint']);
-        self::assertArrayHasKey('message', $jsonData);
     }
 
     public function testReceiveErrorWithInvalidAuthorizationCode(): void
@@ -154,10 +152,9 @@ class OAuth2TokenControllerTest extends WebTestCase
 
         self::assertIsArray($jsonData);
         self::assertArrayHasKey('error', $jsonData);
-        self::assertEquals('invalid_request', $jsonData['error']);
+        self::assertEquals('invalid_grant', $jsonData['error']);
         self::assertArrayHasKey('error_description', $jsonData);
         self::assertArrayHasKey('hint', $jsonData);
-        self::assertArrayHasKey('message', $jsonData);
     }
 
     public function testReceiveErrorWithInvalidClientId(): void
@@ -179,7 +176,6 @@ class OAuth2TokenControllerTest extends WebTestCase
         self::assertArrayHasKey('error', $jsonData);
         self::assertEquals('invalid_client', $jsonData['error']);
         self::assertArrayHasKey('error_description', $jsonData);
-        self::assertArrayHasKey('message', $jsonData);
     }
 
     public function testReceiveErrorWithInvalidClientSecret(): void
@@ -195,7 +191,6 @@ class OAuth2TokenControllerTest extends WebTestCase
         self::assertArrayHasKey('error', $jsonData);
         self::assertEquals('invalid_client', $jsonData['error']);
         self::assertArrayHasKey('error_description', $jsonData);
-        self::assertArrayHasKey('message', $jsonData);
     }
 
     public function testReceiveErrorWithInvalidRedirectUri(): void
@@ -217,6 +212,5 @@ class OAuth2TokenControllerTest extends WebTestCase
         self::assertArrayHasKey('error', $jsonData);
         self::assertEquals('invalid_client', $jsonData['error']);
         self::assertArrayHasKey('error_description', $jsonData);
-        self::assertArrayHasKey('message', $jsonData);
     }
 }

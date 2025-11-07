@@ -101,7 +101,7 @@ export default class extends Controller {
 
                 textarea.focus();
             }
-        } catch (e) {
+        } catch {
             window.location.href = event.target.href;
         } finally {
             this.loadingValue = false;
@@ -193,7 +193,7 @@ export default class extends Controller {
             response = await response.json();
 
             form.innerHTML = response.html;
-        } catch (e) {
+        } catch {
             form.submit();
         } finally {
             this.loadingValue = false;
@@ -217,7 +217,7 @@ export default class extends Controller {
             response = await response.json();
 
             event.target.closest('.vote').outerHTML = response.html;
-        } catch (e) {
+        } catch {
             form.submit();
         } finally {
             this.loadingValue = false;
@@ -264,7 +264,7 @@ export default class extends Controller {
             response = await response.json();
 
             this.element.querySelector('.moderate-inline').insertAdjacentHTML('afterbegin', response.html);
-        } catch (e) {
+        } catch {
             window.location.href = event.target.href;
         } finally {
             this.loadingValue = false;
@@ -319,7 +319,7 @@ export default class extends Controller {
 
             div.firstElementChild.className = this.element.className;
             this.element.outerHTML = div.firstElementChild.outerHTML;
-        } catch (e) {
+        } catch {
         } finally {
             this.loadingValue = false;
         }
@@ -364,12 +364,12 @@ export default class extends Controller {
             let response = await fetch(event.target.parentNode.formAction, { method: 'POST' });
 
             response = await ok(response);
-            response = await response.json();
+            await response.json();
 
             event.target.parentNode.previousElementSibling.remove();
             event.target.parentNode.nextElementSibling.classList.remove('hidden');
             event.target.parentNode.remove();
-        } catch (e) {
+        } catch {
         } finally {
             this.loadingValue = false;
         }

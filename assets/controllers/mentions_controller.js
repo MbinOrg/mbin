@@ -21,28 +21,27 @@ export default class extends Controller {
      * @param {*} event
      * @returns
      */
-    async user_popup(event) {
+    async userPopup(event) {
 
         if (false === event.target.matches(':hover')) {
             return;
         }
 
         //create a setTimeout callback to be executed when the user has hovered over the target for a set amount of time
-        this.userPopupTimeout = setTimeout(this.trigger_user_popup, this.userPopupTimeoutDelay, event);
+        this.userPopupTimeout = setTimeout(this.triggerUserPopup, this.userPopupTimeoutDelay, event);
     }
 
     /**
      * Called on mouseout, cancel the UI popup as the user has moved off the element
-     * @param {*} event
      */
-    async user_popup_out(event) {
+    async userPopupOut() {
         clearTimeout(this.userPopupTimeout);
     }
 
     /**
      * Called when the user popup should open
      */
-    async trigger_user_popup(event) {
+    async triggerUserPopup(event) {
 
         try {
             let param = event.params.username;
@@ -65,19 +64,19 @@ export default class extends Controller {
             popover.trigger = event.target;
             popover.selectedTrigger = event.target;
             popover.element.dispatchEvent(new Event('openPopover'));
-        } catch (e) {
+        } catch {
         } finally {
             this.loadingValue = false;
         }
     }
 
-    async navigate_user(event) {
+    async navigateUser(event) {
         event.preventDefault();
 
         window.location = '/u/' + event.params.username;
     }
 
-    async navigate_magazine(event) {
+    async navigateMagazine(event) {
         event.preventDefault();
 
         window.location = '/m/' + event.params.username;

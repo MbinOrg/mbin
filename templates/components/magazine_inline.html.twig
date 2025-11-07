@@ -6,7 +6,7 @@
              width="30" height="30"
              loading="lazy"
              style="max-width: 30px; max-height: 30px;"
-             {% if magazine.isAdult %}data-controller="thumb" data-action="mouseover->thumb#adult_image_hover mouseout->thumb#adult_image_hover_out"{% endif %}
+             {% if magazine.isAdult %}data-controller="thumb" data-action="mouseover->thumb#adultImageHover mouseout->thumb#adultImageHoverOut"{% endif %}
              src="{{ magazine.icon.filePath ? (asset(magazine.icon.filePath)|imagine_filter('avatar_thumb')) : magazine.icon.sourceUrl }}"
              alt="{{ magazine.name ~ ' ' ~ 'icon'|trans|lower }}">
     {% endif %}

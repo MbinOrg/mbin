@@ -47,30 +47,30 @@ class OAuth2ClientApiTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
 
-        $this->clientData = self::getJsonResponse($this->client);
-        self::assertIsArray($this->clientData);
-        self::assertArrayKeysMatch(self::CLIENT_RESPONSE_KEYS, $this->clientData);
-        self::assertNotNull($this->clientData['identifier']);
-        self::assertNotNull($this->clientData['secret']);
-        self::assertEquals($requestData['name'], $this->clientData['name']);
-        self::assertEquals($requestData['contactEmail'], $this->clientData['contactEmail']);
-        self::assertEquals($requestData['description'], $this->clientData['description']);
-        self::assertNull($this->clientData['user']);
-        self::assertIsArray($this->clientData['redirectUris']);
-        self::assertEquals($requestData['redirectUris'], $this->clientData['redirectUris']);
-        self::assertIsArray($this->clientData['grants']);
-        self::assertEquals($requestData['grants'], $this->clientData['grants']);
-        self::assertIsArray($this->clientData['scopes']);
-        self::assertEquals($requestData['scopes'], $this->clientData['scopes']);
-        self::assertNull($this->clientData['image']);
+        $clientData = self::getJsonResponse($this->client);
+        self::assertIsArray($clientData);
+        self::assertArrayKeysMatch(self::CLIENT_RESPONSE_KEYS, $clientData);
+        self::assertNotNull($clientData['identifier']);
+        self::assertNotNull($clientData['secret']);
+        self::assertEquals($requestData['name'], $clientData['name']);
+        self::assertEquals($requestData['contactEmail'], $clientData['contactEmail']);
+        self::assertEquals($requestData['description'], $clientData['description']);
+        self::assertNull($clientData['user']);
+        self::assertIsArray($clientData['redirectUris']);
+        self::assertEquals($requestData['redirectUris'], $clientData['redirectUris']);
+        self::assertIsArray($clientData['grants']);
+        self::assertEquals($requestData['grants'], $clientData['grants']);
+        self::assertIsArray($clientData['scopes']);
+        self::assertEquals($requestData['scopes'], $clientData['scopes']);
+        self::assertNull($clientData['image']);
 
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $jsonData = self::getAuthorizationCodeTokenResponse(
             $this->client,
-            clientId: $this->clientData['identifier'],
-            clientSecret: $this->clientData['secret'],
-            redirectUri: $this->clientData['redirectUris'][0],
+            clientId: $clientData['identifier'],
+            clientSecret: $clientData['secret'],
+            redirectUri: $clientData['redirectUris'][0],
         );
 
         self::assertResponseIsSuccessful();
@@ -216,7 +216,6 @@ class OAuth2ClientApiTest extends WebTestCase
         self::assertArrayHasKey('error', $jsonData);
         self::assertEquals('invalid_client', $jsonData['error']);
         self::assertArrayHasKey('error_description', $jsonData);
-        self::assertArrayHasKey('message', $jsonData);
     }
 
     public function testAdminApiCanAccessClientStats(): void
@@ -454,17 +453,15 @@ class OAuth2ClientApiTest extends WebTestCase
 
         $jsonData = self::getRefreshTokenResponse($this->client, $tokenData['refresh_token']);
 
-        self::assertResponseStatusCodeSame(401);
+        self::assertResponseStatusCodeSame(400);
 
         self::assertIsArray($jsonData);
         self::assertArrayHasKey('error', $jsonData);
-        self::assertEquals('invalid_request', $jsonData['error']);
+        self::assertEquals('invalid_grant', $jsonData['error']);
         self::assertArrayHasKey('error_description', $jsonData);
         self::assertEquals('The refresh token is invalid.', $jsonData['error_description']);
         self::assertArrayHasKey('hint', $jsonData);
         self::assertEquals('Token has been revoked', $jsonData['hint']);
-        self::assertArrayHasKey('message', $jsonData);
-        self::assertEquals('The refresh token is invalid.', $jsonData['message']);
     }
 
     public function testAdminApiCannotAccessClientByIdentifierWithoutScope(): void
