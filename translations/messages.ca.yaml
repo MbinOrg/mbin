@@ -672,8 +672,7 @@ update_comment: Actualitzar comentari
 show_avatars_on_comments_help: Mostrar/amagar els avatars quan es veuen 
   comentaris en un sol fil o publicació.
 comment_reply_position: Posició del comentari de resposta
-magazine_theme_appearance_icon: Icona personalitzada per a la revista. Si no 
-  se'n selecciona cap, s'utilitzarà la icona predeterminada.
+magazine_theme_appearance_icon: Icona personalitzada per a la revista.
 magazine_theme_appearance_background_image: Imatge de fons personalitzada que 
   s'aplicarà quan visualitzeu contingut a la vostra revista.
 moderation.report.approve_report_title: Aprovar la denúncia
@@ -1121,3 +1120,13 @@ everyone: Tothom
 nobody: Ningú
 followers_only: Només seguidor(e)s
 direct_message_setting_label: Qui pot enviar un missatge directe
+banner: Bàner
+magazine_theme_appearance_banner: Bàner personalitzat per a la revista. Es 
+  mostra a sobre de tots els fils de discussió i ha de tenir una relació 
+  d'aspecte ampla (5:1 o 1500 px * 300 px).
+delete_magazine_icon: Icona de suprimir revista
+flash_magazine_theme_icon_detached_success: La icona de la revista s'ha suprimit
+  correctament
+delete_magazine_banner: Suprimir el bàner de la revista
+flash_magazine_theme_banner_detached_success: El bàner de la revista s'ha 
+  suprimit correctament

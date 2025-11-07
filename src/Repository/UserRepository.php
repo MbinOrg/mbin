@@ -563,6 +563,9 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->getResult();
     }
 
+    /**
+     * @return User[]
+     */
     public function findUsersSuggestions(string $query): array
     {
         $qb = $this->createQueryBuilder('u');

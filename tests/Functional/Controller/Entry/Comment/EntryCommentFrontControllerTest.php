@@ -27,8 +27,8 @@ class EntryCommentFrontControllerTest extends WebTestCase
         $this->assertcount(3, $crawler->filter('.comment'));
 
         foreach ($this->getSortOptions() as $sortOption) {
-            $crawler = $this->client->click($crawler->filter('.options__main')->selectLink($sortOption)->link());
-            $this->assertSelectorTextContains('.options__main', $sortOption);
+            $crawler = $this->client->click($crawler->filter('.options__filter')->selectLink($sortOption)->link());
+            $this->assertSelectorTextContains('.options__filter', $sortOption);
             $this->assertSelectorTextContains('h1', ucfirst($sortOption));
         }
     }
@@ -53,8 +53,8 @@ class EntryCommentFrontControllerTest extends WebTestCase
         $this->assertcount(2, $crawler->filter('.comment'));
 
         foreach ($this->getSortOptions() as $sortOption) {
-            $crawler = $this->client->click($crawler->filter('.options__main')->selectLink($sortOption)->link());
-            $this->assertSelectorTextContains('.options__main', $sortOption);
+            $crawler = $this->client->click($crawler->filter('.options__filter')->selectLink($sortOption)->link());
+            $this->assertSelectorTextContains('.options__filter', $sortOption);
             $this->assertSelectorTextContains('h1', 'acme');
             $this->assertSelectorTextContains('h2', ucfirst($sortOption));
         }
@@ -83,8 +83,8 @@ class EntryCommentFrontControllerTest extends WebTestCase
         $this->assertcount(2, $crawler->filter('.comment'));
 
         foreach ($this->getSortOptions() as $sortOption) {
-            $crawler = $this->client->click($crawler->filter('.options__main')->selectLink($sortOption)->link());
-            $this->assertSelectorTextContains('.options__main', $sortOption);
+            $crawler = $this->client->click($crawler->filter('.options__filter')->selectLink($sortOption)->link());
+            $this->assertSelectorTextContains('.options__filter', $sortOption);
             $this->assertSelectorTextContains('h1', ucfirst($sortOption));
         }
     }
@@ -116,8 +116,8 @@ class EntryCommentFrontControllerTest extends WebTestCase
         $this->assertcount(2, $crawler->filter('.comment'));
 
         foreach ($this->getSortOptions() as $sortOption) {
-            $crawler = $this->client->click($crawler->filter('.options__main')->selectLink($sortOption)->link());
-            $this->assertSelectorTextContains('.options__main', $sortOption);
+            $crawler = $this->client->click($crawler->filter('.options__filter')->selectLink($sortOption)->link());
+            $this->assertSelectorTextContains('.options__filter', $sortOption);
             $this->assertSelectorTextContains('h1', ucfirst($sortOption));
         }
     }
@@ -146,8 +146,8 @@ class EntryCommentFrontControllerTest extends WebTestCase
         $this->assertcount(1, $crawler->filter('.comment'));
 
         foreach ($this->getSortOptions() as $sortOption) {
-            $crawler = $this->client->click($crawler->filter('.options__main')->selectLink($sortOption)->link());
-            $this->assertSelectorTextContains('.options__main', $sortOption);
+            $crawler = $this->client->click($crawler->filter('.options__filter')->selectLink($sortOption)->link());
+            $this->assertSelectorTextContains('.options__filter', $sortOption);
             $this->assertSelectorTextContains('h1', ucfirst($sortOption));
         }
     }

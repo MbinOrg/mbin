@@ -1,0 +1,30 @@
+.suggestions {
+  position: absolute;
+  z-index: 10;
+  border: var(--kbin-input-border);
+  background: var(--kbin-input-bg);
+  padding: 0 .5rem;
+
+  .suggestion {
+    color: var(--kbin-input-text-color);
+    cursor: pointer;
+    margin: 0;
+    padding: .5rem 0;
+
+    &:hover,
+    &.selected {
+      background: var(--kbin-input-hover-background);
+      color: var(--kbin-meta-link-hover-color);
+    }
+
+    &:not(:last-child):not(:only-child) {
+      border-bottom: var(--kbin-input-border);
+    }
+  }
+}
+
+.rounded-edges {
+  .suggestions {
+    border-radius: var(--kbin-rounded-edges-radius) !important;
+  }
+}

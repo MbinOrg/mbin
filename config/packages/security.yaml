@@ -72,7 +72,6 @@ security:
         - { path: ^/reset-password, role: PUBLIC_ACCESS }
         - { path: ^/login, role: PUBLIC_ACCESS }
         - { path: ^/resend-email-activation, role: PUBLIC_ACCESS }
-        - { path: ^/consent, role: PUBLIC_ACCESS }
         - { path: ^/oauth, role: PUBLIC_ACCESS }
         - { path: ^/terms, role: PUBLIC_ACCESS }
         - { path: ^/privacy-policy, role: PUBLIC_ACCESS }
