@@ -246,9 +246,7 @@ jobs:
       - run: cp .env.example .env
 
       - name: NPM install
-        run: npm ci --include=dev
-        env:
-          NODE_ENV: production
+        run: npm ci
 
       - name: eslint
         run: npm run lint
