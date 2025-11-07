@@ -1,5 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
-import {fetch} from "../utils/http";
+import { fetch } from '../utils/http';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -46,25 +46,25 @@ export default class extends Controller {
 
             this.toggleFormattingEnclosure(key, this.enclosureKeys[key] ?? 1);
             event.preventDefault();
-        } else if(!this.emojiAutocompleteActive && key === ':') {
+        } else if (!this.emojiAutocompleteActive && ':' === key) {
             this.emojiAutocompleteActive = true;
-        } else if(this.emojiAutocompleteActive && (key === ':' || key === " ")) {
-            this.clearAutocomplete()
-        } else if(!this.mentionAutocompleteActive && key === '@') {
+        } else if (this.emojiAutocompleteActive && (':' === key || ' ' === key)) {
+            this.clearAutocomplete();
+        } else if (!this.mentionAutocompleteActive && '@' === key) {
             this.mentionAutocompleteActive = true;
-        } else if(this.mentionAutocompleteActive && (key === '@' || key === " ")) {
-            this.clearAutocomplete()
-        } else if(this.mentionAutocompleteActive || this.emojiAutocompleteActive) {
-            if (key === "ArrowDown" || key === "ArrowUp") {
-                if (key === "ArrowDown") {
+        } else if (this.mentionAutocompleteActive && ('@' === key || ' ' === key)) {
+            this.clearAutocomplete();
+        } else if (this.mentionAutocompleteActive || this.emojiAutocompleteActive) {
+            if ('ArrowDown' === key || 'ArrowUp' === key) {
+                if ('ArrowDown' === key) {
                     this.selectedSuggestionIndex = Math.min(this.getSuggestionElements().length-1, this.selectedSuggestionIndex + 1);
-                } else if (key === "ArrowUp") {
+                } else if ('ArrowUp' === key) {
                     this.selectedSuggestionIndex = Math.max(0, this.selectedSuggestionIndex - 1);
                 }
                 this.markSelectedSuggestion();
                 event.preventDefault();
-            } else if (key === "Enter") {
-                this.replaceAutocompleteSearchString(this.getSelectedSuggestionReplacement())
+            } else if ('Enter' === key) {
+                this.replaceAutocompleteSearchString(this.getSelectedSuggestionReplacement());
                 event.preventDefault();
             } else {
                 this.fetchAutocompleteResults(this.getAutocompleteSearchString(key));
@@ -107,7 +107,7 @@ export default class extends Controller {
     }
 
     delayedClearAutocomplete() {
-        window.setTimeout(() => this.clearAutocomplete(), 100)
+        window.setTimeout(() => this.clearAutocomplete(), 100);
     }
 
     clearAutocomplete() {
@@ -121,10 +121,10 @@ export default class extends Controller {
     }
 
     getAutocompleteSearchString(key) {
-        const [wordStart, wordEnd] = this.getAutocompleteSearchStringStartAndEnd()
+        const [wordStart, wordEnd] = this.getAutocompleteSearchStringStartAndEnd();
         let val = this.element.value.substring(wordStart, wordEnd+1);
 
-        if (key.length === 1) {
+        if (1 === key.length) {
             val += key;
         }
         //console.log(`pressed key: '${key}', under cursor: '${value[selection]}', cursor: '${selection}', wordStart: '${wordStart}', wordEnd: '${wordEnd}', resulting in '${val}'`);
@@ -133,19 +133,18 @@ export default class extends Controller {
     }
 
     getAutocompleteSearchStringStartAndEnd() {
-        let wordStart, wordEnd;
-        let value = this.element.value;
-        let selection = this.element.selectionStart-1;
+        const value = this.element.value;
+        const selection = this.element.selectionStart-1;
         let cursor = selection;
         const breakCharacters = ' \n\t*#?!';
-        while (cursor > 0) {
+        while (0 < cursor) {
             cursor--;
             if (breakCharacters.includes(value[cursor])) {
                 cursor++;
                 break;
             }
         }
-        wordStart = cursor;
+        const wordStart = cursor;
         cursor = selection;
 
         while (cursor < value.length) {
@@ -155,7 +154,7 @@ export default class extends Controller {
                 break;
             }
         }
-        wordEnd = cursor;
+        const wordEnd = cursor;
 
         return [wordStart, wordEnd];
     }
@@ -168,23 +167,23 @@ export default class extends Controller {
         if (this.mentionAutocompleteActive) {
             this.abortController = new AbortController();
             this.requestActive = true;
-            fetch(`/ajax/fetch_users_suggestions/${searchText}`, {signal: this.abortController.signal})
-                .then(response => response.json())
-                .then(data => {
+            fetch(`/ajax/fetch_users_suggestions/${searchText}`, { signal: this.abortController.signal })
+                .then((response) => response.json())
+                .then((data) => {
                     this.fillSuggestions(data.html);
                     this.requestActive = false;
                 })
-                .catch(() =>  {});
+                .catch(() => {});
         } else if (this.emojiAutocompleteActive) {
             this.abortController = new AbortController();
             this.requestActive = true;
-            fetch(`/ajax/fetch_emoji_suggestions?query=${searchText}`, {signal: this.abortController.signal})
-                .then(response => response.json())
-                .then(data => {
+            fetch(`/ajax/fetch_emoji_suggestions?query=${searchText}`, { signal: this.abortController.signal })
+                .then((response) => response.json())
+                .then((data) => {
                     this.fillSuggestions(data.html);
                     this.requestActive = false;
                 })
-                .catch(() =>  {});
+                .catch(() => {});
         }
     }
 
@@ -200,20 +199,20 @@ export default class extends Controller {
     }
 
     fillSuggestions (html) {
-        let id = this.mentionAutocompleteActive ? 'user-suggestions' : 'emoji-suggestions';
-        let element = document.getElementById(id)
+        const id = this.mentionAutocompleteActive ? 'user-suggestions' : 'emoji-suggestions';
+        let element = document.getElementById(id);
         if (element) {
             element.outerHTML = html;
         } else {
             element = this.element.insertAdjacentElement('afterend', document.createElement('div'));
             element.outerHTML = html;
         }
-        for (let suggestion of this.getSuggestionElements()) {
+        for (const suggestion of this.getSuggestionElements()) {
             suggestion.onclick = (event) => {
-                let value = event.target.getAttribute('data-replace') ?? event.target.outerText;
+                const value = event.target.getAttribute('data-replace') ?? event.target.outerText;
                 this.element.focus();
                 this.replaceAutocompleteSearchString(value);
-            }
+            };
         }
         this.markSelectedSuggestion();
     }
