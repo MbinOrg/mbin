@@ -94,3 +94,9 @@ ajax_fetch_users_suggestions:
   defaults: { _format: json }
   path: /ajax/fetch_users_suggestions/{username}
   methods: [ GET ]
+
+ajax_fetch_emoji_suggestions:
+    controller: App\Controller\AjaxController::fetchEmojiSuggestions
+    defaults: { _format: json }
+    path: /ajax/fetch_emoji_suggestions
+    methods: [ GET ]
