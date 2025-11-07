@@ -20,6 +20,7 @@ class MagazineTagsType extends AbstractType
             ->add('tags')
             ->add('submit', SubmitType::class)
             ->add('tags', TextType::class, [
+                'required' => false,
                 'autocomplete' => true,
                 'tom_select_options' => [
                     'create' => true,
