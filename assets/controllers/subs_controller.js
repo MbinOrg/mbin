@@ -24,7 +24,7 @@ export default class extends Controller {
             response = await response.json();
 
             this.element.outerHTML = response.html;
-        } catch (e) {
+        } catch {
             form.submit();
         } finally {
             this.loadingValue = false;
