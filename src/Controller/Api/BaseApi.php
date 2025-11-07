@@ -280,7 +280,7 @@ class BaseApi extends AbstractController
             $this->tagLinkRepository,
         );
 
-        if ($response->subject) {
+        if ($response->subject && property_exists($response->subject, 'visibility')) {
             $response->subject->visibility = 'visible';
         }
 

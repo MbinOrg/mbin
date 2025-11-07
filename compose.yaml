@@ -21,8 +21,8 @@ services:
             - 443:443
             - 443:443/udp
         depends_on:
+            - amqproxy
             - postgres
-            - rabbitmq
             - valkey
 
     messenger:
@@ -40,12 +40,36 @@ services:
             - ./storage/media:/app/public/media
             - ./storage/messenger_logs:/app/var/log
         depends_on:
+            - amqproxy
             - postgres
-            - rabbitmq
             - valkey
         deploy:
             mode: replicated
             replicas: 6
+
+    amqproxy:
+        image: cloudamqp/amqproxy
+        restart: unless-stopped
+        user: ${MBIN_USER}
+        command: amqp://rabbitmq:5672
+        depends_on:
+            rabbitmq:
+                condition: service_healthy
+
+    rabbitmq:
+        image: rabbitmq:3-management-alpine
+        restart: unless-stopped
+        user: ${MBIN_USER}
+        healthcheck:
+            test: ['CMD', 'rabbitmq-diagnostics', 'check_port_connectivity']
+        env_file: .env
+        volumes:
+            - ./storage/rabbitmq_data:/var/lib/rabbitmq
+            - ./storage/rabbitmq_logs:/var/log/rabbitmq
+        ports:
+            - 15672:15672
+        # Hostname specified to ensure persistent data: https://stackoverflow.com/questions/41330514
+        hostname: rabbitmq
 
     postgres:
         image: postgres:${POSTGRES_VERSION}-trixie
@@ -56,21 +80,6 @@ services:
         env_file: .env
         volumes:
             - ./storage/postgres:/var/lib/postgresql/data
-
-    rabbitmq:
-        image: rabbitmq:3-management-alpine
-        restart: unless-stopped
-        user: ${MBIN_USER}
-        healthcheck:
-            test: ['CMD', 'rabbitmq-diagnostics', '-q', 'ping']
-        env_file: .env
-        volumes:
-            - ./storage/rabbitmq_data:/var/lib/rabbitmq
-            - ./storage/rabbitmq_logs:/var/log/rabbitmq
-        ports:
-            - 15672:15672
-        # Hostname specified to ensure persistent data: https://stackoverflow.com/questions/41330514
-        hostname: rabbitmq
 
     valkey:
         image: valkey/valkey:trixie
