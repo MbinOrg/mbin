@@ -35,7 +35,7 @@ class MessageFactory
         $participants = array_map(fn (User $participant) => new UserResponseDto($this->userFactory->createDto($participant)), $thread->participants->toArray());
 
         $messages = $thread->messages->toArray();
-        usort($messages, fn (Message $a, Message $b) => $a->createdAt < $b->createdAt);
+        usort($messages, fn (Message $a, Message $b) => $a->createdAt < $b->createdAt ? 1 : -1);
 
         $messageResponses = array_map(fn (Message $message) => $this->createResponseDto($message), $messages);
 
