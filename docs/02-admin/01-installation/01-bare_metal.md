@@ -531,7 +531,7 @@ cd /var/www/mbin
 nano .env
 ```
 
-We do recommend to use RabbitMQ, that is listening on port `5672` by default:
+We do recommend to use RabbitMQ, which is listening on port `5672` by default:
 
 ```ini
 # Use RabbitMQ (recommended for production):
