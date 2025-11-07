@@ -7,7 +7,7 @@ export default class extends Controller {
      * @param {*} event
      * @returns
      */
-    async adult_image_hover(event) {
+    async adultImageHover(event) {
         if (false === event.target.matches(':hover')) {
             return;
         }
@@ -19,7 +19,7 @@ export default class extends Controller {
      * Called on mouseout
      * @param {*} event
      */
-    async adult_image_hover_out(event) {
+    async adultImageHoverOut(event) {
         event.target.style.filter = 'blur(8px)';
     }
 }

@@ -16,7 +16,7 @@
                                  loading="lazy"
                                  class="image-inline {{ attribute(subject, actor).isAdult ? 'image-adult' : '' }}"
                                  src="{{ asset(attribute(subject, actor).icon.filePath) | imagine_filter('avatar_thumb') }}"
-                                 {% if attribute(subject, actor).isAdult %}data-controller="thumb" data-action="mouseover->thumb#adult_image_hover mouseout->thumb#adult_image_hover_out"{% endif %}
+                                 {% if attribute(subject, actor).isAdult %}data-controller="thumb" data-action="mouseover->thumb#adultImageHover mouseout->thumb#adultImageHoverOut"{% endif %}
                                  alt="{{ attribute(subject, actor).name ~' '~ 'icon'|trans|lower }}">
                         </figure>
                     {% endif %}
