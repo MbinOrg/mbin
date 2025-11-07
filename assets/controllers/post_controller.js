@@ -66,7 +66,7 @@ export default class extends Controller {
             this.application
                 .getControllerForElementAndIdentifier(document.getElementById('main'), 'timeago')
                 .connect();
-        } catch (e) {
+        } catch {
         } finally {
             this.loadingValue = false;
         }
@@ -102,7 +102,7 @@ export default class extends Controller {
             response = await response.json();
 
             event.target.parentNode.innerHTML = response.html;
-        } catch (e) {
+        } catch {
         } finally {
             this.loadingValue = false;
         }

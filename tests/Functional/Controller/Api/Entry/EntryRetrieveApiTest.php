@@ -986,7 +986,7 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['type']);
         self::assertEquals('an-entry', $jsonData['slug']);
         self::assertNull($jsonData['apId']);
-        self::assertNull($jsonData['items'][0]['bookmarks']);
+        self::assertNull($jsonData['bookmarks']);
     }
 
     public function testApiCanGetEntryById(): void

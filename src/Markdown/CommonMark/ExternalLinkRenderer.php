@@ -282,12 +282,12 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
 
         if (MentionType::Magazine === $link->getType() || MentionType::RemoteMagazine === $link->getType()) {
             $data['class'] = $data['class'].' mention--magazine';
-            $data['data-action'] = 'mentions#navigate_magazine';
+            $data['data-action'] = 'mentions#navigateMagazine';
         }
 
         if (MentionType::User === $link->getType() || MentionType::RemoteUser === $link->getType()) {
             $data['class'] = $data['class'].' u-url mention--user';
-            $data['data-action'] = 'mouseover->mentions#user_popup mouseout->mentions#user_popup_out mentions#navigate_user';
+            $data['data-action'] = 'mouseover->mentions#userPopup mouseout->mentions#userPopupOut mentions#navigateUser';
         }
 
         return $data;
@@ -307,7 +307,7 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
             'class' => 'mention mention--magazine',
             'title' => $link->getTitle(),
             'data-mentions-username-param' => $link->getKbinUsername(),
-            'data-action' => 'mentions#navigate_magazine',
+            'data-action' => 'mentions#navigateMagazine',
         ];
 
         return $data;

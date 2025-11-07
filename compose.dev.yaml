@@ -55,6 +55,12 @@ services:
             # Change to 1 to enable federation
             replicas: 0
 
+    amqproxy:
+        deploy:
+            mode: replicated
+            # Change to 1 to enable federation
+            replicas: 0
+
     rabbitmq:
         deploy:
             mode: replicated
