@@ -457,7 +457,7 @@ php bin/console doctrine:migrations:migrate
 
 ## RabbitMQ
 
-RabbitMQ is a feature rich, multi-protocol messaging and streaming broker. Used by Mbin to process outgoing and incoming messages. 
+RabbitMQ is a feature rich, multi-protocol messaging and streaming broker, used by Mbin to process outgoing and incoming messages. 
 
 Read also [What is RabbitMQ](../FAQ.md#what-is-rabbitmq) and [Symfony Messenger Queues](../04-running-mbin/04-messenger.md) for more information.
 
