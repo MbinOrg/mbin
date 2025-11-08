@@ -26,6 +26,7 @@ You can start with a smaller server and add more resources later if you are usin
 - PostgreSQL
 - Supervisor
 - RabbitMQ
+- AMQProxy
 - Nginx / OpenResty (pick one)
 - _Optionally:_ Mercure
 
@@ -471,32 +472,20 @@ See also: [RabbitMQ Install](https://www.rabbitmq.com/install-debian.html#apt-qu
 > This assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
 
 ```bash
-## Team RabbitMQ's main signing key
+## Team RabbitMQ's signing key
 curl -1sLf "https://keys.openpgp.org/vks/v1/by-fingerprint/0A9AF2115F4687BD29803A206B73A36E6026DFCA" | sudo gpg --dearmor | sudo tee /usr/share/keyrings/com.rabbitmq.team.gpg > /dev/null
-## Community mirror of Cloudsmith: modern Erlang repository
-curl -1sLf https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key | sudo gpg --dearmor | sudo tee /usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg > /dev/null
-## Community mirror of Cloudsmith: RabbitMQ repository
-curl -1sLf https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key | sudo gpg --dearmor | sudo tee /usr/share/keyrings/rabbitmq.9F4587F226208342.gpg > /dev/null
 
 ## Add apt repositories maintained by Team RabbitMQ
 sudo tee /etc/apt/sources.list.d/rabbitmq.list <<EOF
-## Provides modern Erlang/OTP releases
+## Modern Erlang/OTP releases
 ##
-deb [arch=amd64 signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa1.novemberain.com/rabbitmq/rabbitmq-erlang/deb/ubuntu jammy main
-deb-src [signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa1.novemberain.com/rabbitmq/rabbitmq-erlang/deb/ubuntu jammy main
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb1.rabbitmq.com/rabbitmq-erlang/ubuntu/jammy jammy main
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb2.rabbitmq.com/rabbitmq-erlang/ubuntu/jammy jammy main
 
-# another mirror for redundancy
-deb [arch=amd64 signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa2.novemberain.com/rabbitmq/rabbitmq-erlang/deb/ubuntu jammy main
-deb-src [signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa2.novemberain.com/rabbitmq/rabbitmq-erlang/deb/ubuntu jammy main
-
-## Provides RabbitMQ
+## Latest RabbitMQ releases
 ##
-deb [arch=amd64 signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa1.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu jammy main
-deb-src [signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa1.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu jammy main
-
-# another mirror for redundancy
-deb [arch=amd64 signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa2.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu jammy main
-deb-src [signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa2.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu jammy main
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb1.rabbitmq.com/rabbitmq-server/ubuntu/jammy jammy main
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb2.rabbitmq.com/rabbitmq-server/ubuntu/jammy jammy main
 EOF
 
 ## Update package indices
@@ -526,6 +515,24 @@ Remove the `guest` account:
 sudo rabbitmqctl delete_user 'guest'
 ```
 
+### AMQProxy
+
+Installing and using AMQProxy is _optional_, however we highly recommend using AMQProxy for better performance and reduced protocol overhead.
+
+AMQProxy is proxy server for the AMQP protcol (one of the protocols supported by RabbitMQ) with channel pooling and channel reusing. Allows PHP clients to keep long lived connections to upstream servers, increasing publishing speed.
+
+See also [What is AMQProxy](../FAQ.md#what-is-amqproxy)
+
+#### Installing AMQProxy
+
+```bash
+curl -fsSL https://packagecloud.io/cloudamqp/amqproxy/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/amqproxy.gpg > /dev/null
+. /etc/os-release
+echo "deb [signed-by=/usr/share/keyrings/amqproxy.gpg] https://packagecloud.io/cloudamqp/amqproxy/$ID $VERSION_CODENAME main" | sudo tee /etc/apt/sources.list.d/amqproxy.list
+sudo apt-get update
+sudo apt-get install amqproxy
+```
+
 ### Configure Queue Messenger Handler
 
 ```bash
@@ -533,12 +540,15 @@ cd /var/www/mbin
 nano .env
 ```
 
-We do recommend to use RabbitMQ, which is listening on port `5672` by default:
+We recommend to use RabbitMQ together with AMQProxy, AMQProxy is listening on port `5673` by default (you could also directly use RabbitMQ, but that is *not* recommended):
 
 ```ini
 # Use RabbitMQ (recommended for production):
 RABBITMQ_PASSWORD=!ChangeThisRabbitPass!
-MESSENGER_TRANSPORT_DSN=amqp://mbin:${RABBITMQ_PASSWORD}@127.0.0.1:5672/%2f/messages
+# Use RabbitMQ with AMQProxy (port 5673, recommended for production):
+MESSENGER_TRANSPORT_DSN=amqp://mbin:${RABBITMQ_PASSWORD}@127.0.0.1:5673/%2f/messages
+# Directly connect to RabbitMQ, without proxy (port 5672)
+#MESSENGER_TRANSPORT_DSN=amqp://mbin:${RABBITMQ_PASSWORD}@127.0.0.1:5672/%2f/messages
 
 # or Redis/KeyDB:
 #MESSENGER_TRANSPORT_DSN=redis://${REDIS_PASSWORD}@127.0.0.1:6379/messages

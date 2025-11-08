@@ -41,13 +41,24 @@ Mbin uses Mercure (optionally), on very large instances you might want to consid
 
 ## What is Redis?
 
-Redis is a _persinstent key-value store_, which can help for caching purposes or other storage requirements. We **recommend** to setup Redis when running Mbin, but Redis is optional.
+Redis is a _persinstent key-value store_ that runs in-memory, which can help for caching purposes or other storage requirements. We **recommend** to setup Redis/Valkey or KeyDB (pick one) when running Mbin.
 
 ## What is RabbitMQ?
 
 RabbitMQ is an open-source _message broker_ software that facilitates the exchange of messages between different server instances (in our case ActivityPub messages), using queues to store and manage messages.
 
 We highly **recommend** to setup RabbitMQ on your Mbin instance, but RabbitMQ is optional. Failed messages are no longer stored in RabbitMQ, but in PostgreSQL instead (table: `public.messenger_messages`).
+
+Read more below about AMQProxy.
+
+## What is AMQProxy?
+
+AMQProxy is a proxy service for AMQP (Advanced Message Queuing Protocol) most used with message brokers like RabbitMQ. It allows for channel pooling and reusing, hence reducing the AMQP protocol (TCP packages) overhead.
+
+AMQProxy is a proxy service for AMQP (Advanced Message Queuing Protocol), most often used with message brokers like RabbitMQ. It allows for channel pooling and reuse, significantly reducing AMQP protocol overhead and TCP connection.  
+By maintaining persistent connections to the broker, AMQProxy minimizes connection setup latency and resource consumption, improving throughput and scalability for high-load applications. It also simplifies client configuration and load balancing by acting as a single entry point between multiple clients and one (or more) RabbitMQ instances.
+
+Therefor we highly **recommend** to use RabbitMQ together with AMQProxy for more efficient messenger processing and higher performance. Especially when all services are hosted on the same server.
 
 ## How do I know Redis is working?
 
