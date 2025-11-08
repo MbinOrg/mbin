@@ -466,7 +466,7 @@ Read also [What is RabbitMQ](../FAQ.md#what-is-rabbitmq) and [Symfony Messenger 
 
 #### Installing RabbitMQ
 
-See also: [RabbitMQ Install](https://www.rabbitmq.com/install-debian.html#apt-quick-start-cloudsmith).
+See also: [RabbitMQ Install](https://www.rabbitmq.com/docs/install-debian#apt-quick-start).
 
 > [!NOTE]
 > This assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
