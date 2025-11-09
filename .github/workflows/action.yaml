@@ -1,6 +1,14 @@
 name: Mbin Workflow
 on:
   pull_request:
+    paths-ignore:
+      # A separate workflow is used to build and publish the pipeline image
+      - 'ci/**'
+      # Documentation changes are not relevant to the workflow and are taking care of by mbin-docs repository
+      - 'docs/**'
+      # Other files are not relevant to the workflow
+      - 'LICENSES/**'
+      - '*.md'
     branches:
       - main
       - develop
