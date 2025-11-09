@@ -455,9 +455,17 @@ php bin/console doctrine:migrations:migrate
 > [!IMPORTANT]
 > Check out the [PostgreSQL configuration page](../02-configuration/04-postgresql.md). You should not run the default PostgreSQL configuration in production!
 
-## Install RabbitMQ
+## Message Handling
 
-[RabbitMQ Install](https://www.rabbitmq.com/install-debian.html#apt-quick-start-cloudsmith)
+### RabbitMQ
+
+RabbitMQ is a feature rich, multi-protocol messaging and streaming broker, used by Mbin to process outgoing and incoming messages. 
+
+Read also [What is RabbitMQ](../FAQ.md#what-is-rabbitmq) and [Symfony Messenger Queues](../04-running-mbin/04-messenger.md) for more information.
+
+#### Installing RabbitMQ
+
+See also: [RabbitMQ Install](https://www.rabbitmq.com/install-debian.html#apt-quick-start-cloudsmith).
 
 > [!NOTE]
 > This assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
@@ -509,7 +517,7 @@ Now, we will add a new `mbin` user with the correct permissions:
 
 ```bash
 sudo rabbitmqctl add_user 'mbin' '{!SECRET!!KEY!-16_2-!}'
-sudo rabbitmqctl set_permissions -p '/' 'mbin' '.' '.' '.*'
+sudo rabbitmqctl set_permissions -p / mbin ".*" ".*" ".*"
 ```
 
 Remove the `guest` account:
@@ -518,12 +526,14 @@ Remove the `guest` account:
 sudo rabbitmqctl delete_user 'guest'
 ```
 
-## Configure Queue Messenger Handler
+### Configure Queue Messenger Handler
 
 ```bash
 cd /var/www/mbin
 nano .env
 ```
+
+We do recommend to use RabbitMQ, which is listening on port `5672` by default:
 
 ```ini
 # Use RabbitMQ (recommended for production):
@@ -536,9 +546,9 @@ MESSENGER_TRANSPORT_DSN=amqp://mbin:${RABBITMQ_PASSWORD}@127.0.0.1:5672/%2f/mess
 #MESSENGER_TRANSPORT_DSN=doctrine://default
 ```
 
-## Setup Supervisor
+### Setup Supervisor
 
-We use Supervisor to run our background workers, aka. "Messengers".
+We use Supervisor to run our background workers, aka. "Messengers", which are processes that work together with RabbitMQ to consume the actual data.
 
 Install Supervisor:
 
