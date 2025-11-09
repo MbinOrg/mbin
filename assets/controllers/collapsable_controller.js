@@ -1,6 +1,7 @@
 import { Controller } from '@hotwired/stimulus';
 
-const MAX_COLLAPSED_HEIGHT = '25rem';
+const MAX_COLLAPSED_HEIGHT = '16lh';
+const MAX_FULL_HEIGHT = '20lh';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -12,9 +13,11 @@ export default class extends Controller {
     buttonIcon = null;
 
     connect() {
-        this.contentTarget.style.maxHeight = MAX_COLLAPSED_HEIGHT;
+        // use some buffer-space so that the expand-button won't be included if just a couple of lines would be hidden
+        this.contentTarget.style.maxHeight = MAX_FULL_HEIGHT;
 
         if (!this.checkSize()) {
+            this.contentTarget.style.maxHeight = null;
             return;
         }
 
