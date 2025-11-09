@@ -2,6 +2,9 @@ name: Mbin Workflow
 on:
   pull_request:
     paths-ignore:
+      # Issue and pull request templates are not relevant to the workflow
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/PULL_REQUEST_TEMPLATE/**'
       # A separate workflow is used to build and publish the pipeline image
       - 'ci/**'
       # Documentation changes are not relevant to the workflow and are taking care of by mbin-docs repository
@@ -9,6 +12,7 @@ on:
       # Other files are not relevant to the workflow
       - 'LICENSES/**'
       - '*.md'
+      - 'public/robots.txt'
     branches:
       - main
       - develop
