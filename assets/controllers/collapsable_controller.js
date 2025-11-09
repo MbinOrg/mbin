@@ -22,7 +22,7 @@ export default class extends Controller {
         }
 
         this.setupButton();
-        this.setExpanded(false);
+        this.setExpanded(false, true);
     }
 
     checkSize() {
@@ -39,13 +39,13 @@ export default class extends Controller {
         this.button.appendChild(this.buttonIcon);
 
         this.button.addEventListener('click', () => {
-            this.setExpanded(!this.isExpanded);
+            this.setExpanded(!this.isExpanded, false);
         });
 
         this.buttonTarget.appendChild(this.button);
     }
 
-    setExpanded(expanded) {
+    setExpanded(expanded, skipEffects) {
         if (expanded) {
             this.contentTarget.style.maxHeight = null;
             this.buttonIcon.classList.remove('fa-angles-down');
@@ -55,7 +55,9 @@ export default class extends Controller {
             this.buttonIcon.classList.remove('fa-angles-up');
             this.buttonIcon.classList.add('fa-angles-down');
 
-            this.contentTarget.scrollIntoView();
+            if (!skipEffects) {
+                this.contentTarget.scrollIntoView();
+            }
         }
 
         this.isExpanded = expanded;
