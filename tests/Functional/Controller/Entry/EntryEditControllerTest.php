@@ -18,7 +18,7 @@ class EntryEditControllerTest extends WebTestCase
 
         $crawler = $this->client->click($crawler->filter('#main .entry')->selectLink('Edit')->link());
 
-        $this->assertSelectorExists('#main .entry');
+        $this->assertSelectorExists('#main .entry_edit');
 
         $this->assertInputValueSame('entry_edit[url]', 'https://kbin.pub');
         $this->assertEquals('disabled', $crawler->filter('#entry_edit_magazine')->attr('disabled'));
@@ -47,7 +47,7 @@ class EntryEditControllerTest extends WebTestCase
 
         $crawler = $this->client->click($crawler->filter('#main .entry')->selectLink('Edit')->link());
 
-        $this->assertSelectorExists('#main .entry');
+        $this->assertSelectorExists('#main .entry_edit');
 
         $this->assertEquals('disabled', $crawler->filter('#entry_edit_magazine')->attr('disabled'));
 
