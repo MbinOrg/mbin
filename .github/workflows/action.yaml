@@ -2,6 +2,8 @@ name: Mbin Workflow
 on:
   pull_request:
     paths-ignore:
+      # Dev container is not relevant to the workflow
+      - '.devcontainer/**'
       # Issue and pull request templates are not relevant to the workflow
       - '.github/ISSUE_TEMPLATE/**'
       - '.github/PULL_REQUEST_TEMPLATE/**'
