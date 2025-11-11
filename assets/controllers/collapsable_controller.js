@@ -16,16 +16,13 @@ export default class extends Controller {
         // use some buffer-space so that the expand-button won't be included if just a couple of lines would be hidden
         this.contentTarget.style.maxHeight = MAX_FULL_HEIGHT;
 
-        // give the render-engine some time
-        setTimeout(() => {
-            if (!this.checkSize()) {
-                this.contentTarget.style.maxHeight = null;
-                return;
-            }
+        if (!this.checkSize()) {
+            this.contentTarget.style.maxHeight = null;
+            return;
+        }
 
-            this.setupButton();
-            this.setExpanded(false, true);
-        }, 5);
+        this.setupButton();
+        this.setExpanded(false, true);
     }
 
     checkSize() {
