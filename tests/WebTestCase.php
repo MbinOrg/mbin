@@ -18,6 +18,7 @@ use App\Repository\BookmarkRepository;
 use App\Repository\EntryCommentRepository;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
+use App\Repository\InstanceRepository;
 use App\Repository\MagazineBanRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\MagazineSubscriptionRepository;
@@ -43,6 +44,7 @@ use App\Service\EntryCommentManager;
 use App\Service\EntryManager;
 use App\Service\FavouriteManager;
 use App\Service\ImageManager;
+use App\Service\InstanceManager;
 use App\Service\MagazineManager;
 use App\Service\MentionManager;
 use App\Service\MessageManager;
@@ -118,6 +120,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected ActivityPubManager $activityPubManager;
     protected BookmarkManager $bookmarkManager;
     protected MarkdownConverter $markdownConverter;
+    protected InstanceManager $instanceManager;
 
     protected MagazineRepository $magazineRepository;
     protected EntryRepository $entryRepository;
@@ -137,6 +140,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected UserFollowRepository $userFollowRepository;
     protected MagazineSubscriptionRepository $magazineSubscriptionRepository;
     protected ActivityRepository $activityRepository;
+    protected InstanceRepository $instanceRepository;
     protected MagazineBanRepository $magazineBanRepository;
 
     protected ImageFactory $imageFactory;
@@ -194,6 +198,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->activityPubManager = $this->getService(ActivityPubManager::class);
         $this->bookmarkManager = $this->getService(BookmarkManager::class);
         $this->markdownConverter = $this->getService(MarkdownConverter::class);
+        $this->instanceManager = $this->getService(InstanceManager::class);
         $this->activityJsonBuilder = $this->getService(ActivityJsonBuilder::class);
         $this->mentionManager = $this->getService(MentionManager::class);
 
@@ -215,6 +220,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->userFollowRepository = $this->getService(UserFollowRepository::class);
         $this->magazineSubscriptionRepository = $this->getService(MagazineSubscriptionRepository::class);
         $this->activityRepository = $this->getService(ActivityRepository::class);
+        $this->instanceRepository = $this->getService(InstanceRepository::class);
         $this->magazineBanRepository = $this->getService(MagazineBanRepository::class);
 
         $this->imageFactory = $this->getService(ImageFactory::class);
