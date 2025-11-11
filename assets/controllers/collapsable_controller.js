@@ -1,33 +1,55 @@
 import { Controller } from '@hotwired/stimulus';
 
-const MAX_COLLAPSED_HEIGHT = '16lh';
-const MAX_FULL_HEIGHT = '20lh';
+// use some buffer-space so that the expand-button won't be included if just a couple of lines would be hidden
+const MAX_COLLAPSED_HEIGHT_REM = 25;
+const MAX_FULL_HEIGHT_REM = 28;
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
 
     static targets = ['content', 'button'];
 
+    maxCollapsedHeightPx = 0;
+    maxFullHeightPx = 0;
+
+    isActive = false;
     isExpanded = true;
     button = null;
     buttonIcon = null;
 
     connect() {
-        // use some buffer-space so that the expand-button won't be included if just a couple of lines would be hidden
-        this.contentTarget.style.maxHeight = MAX_FULL_HEIGHT;
+        const remConvert = parseFloat(getComputedStyle(document.documentElement).fontSize);
+        this.maxCollapsedHeightPx = MAX_COLLAPSED_HEIGHT_REM * remConvert;
+        this.maxFullHeightPx = MAX_FULL_HEIGHT_REM * remConvert;
 
-        if (!this.checkSize()) {
-            this.contentTarget.style.maxHeight = null;
+        this.setup();
+
+        const observer = new ResizeObserver(() => {
+            this.setup();
+        });
+        observer.observe(this.contentTarget);
+    }
+
+    setup() {
+        const activate = this.checkSize();
+        if (activate === this.isActive) {
             return;
         }
 
-        this.setupButton();
-        this.setExpanded(false, true);
+        if (activate) {
+            this.setupButton();
+            this.setExpanded(false, true);
+        } else {
+            this.contentTarget.style.maxHeight = null;
+            this.button.remove();
+        }
+
+        this.isActive = activate;
     }
 
     checkSize() {
         const elem = this.contentTarget;
-        return elem.scrollHeight - 30 > elem.clientHeight || elem.scrollWidth > elem.clientWidth;
+        return elem.scrollHeight - 30 > this.maxFullHeightPx || elem.scrollWidth > elem.clientWidth;
     }
 
     setupButton() {
@@ -51,7 +73,7 @@ export default class extends Controller {
             this.buttonIcon.classList.remove('fa-angles-down');
             this.buttonIcon.classList.add('fa-angles-up');
         } else {
-            this.contentTarget.style.maxHeight = MAX_COLLAPSED_HEIGHT;
+            this.contentTarget.style.maxHeight = `${MAX_COLLAPSED_HEIGHT_REM}rem`;
             this.buttonIcon.classList.remove('fa-angles-up');
             this.buttonIcon.classList.add('fa-angles-down');
 
