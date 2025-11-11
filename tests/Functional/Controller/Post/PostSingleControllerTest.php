@@ -25,6 +25,7 @@ class PostSingleControllerTest extends WebTestCase
         $this->assertSelectorTextContains('#main', 'No comments');
         $this->assertSelectorTextContains('#sidebar .magazine', 'Magazine');
         $this->assertSelectorTextContains('#sidebar .user-list', 'Moderators');
+        $this->assertSelectorTextContains('.head-nav__menu .active', $this->translator->trans('microblog'));
     }
 
     public function testUserCanSeePost(): void
@@ -36,6 +37,7 @@ class PostSingleControllerTest extends WebTestCase
         $this->client->request('GET', "/m/acme/p/{$post->getId()}/test-post-1");
 
         $this->assertSelectorTextContains('blockquote', 'test post 1');
+        $this->assertSelectorTextContains('.head-nav__menu .active', $this->translator->trans('microblog'));
     }
 
     public function testPostActivityCounter(): void

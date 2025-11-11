@@ -283,7 +283,7 @@ class ActivityHandler extends MbinMessageHandler
     {
         if (!\is_null($id) && \in_array(
             str_replace('www.', '', parse_url($id, PHP_URL_HOST)),
-            $this->settingsManager->get('KBIN_BANNED_INSTANCES') ?? []
+            $this->instanceRepository->getBannedInstanceUrls()
         )) {
             return false;
         }

@@ -22,8 +22,6 @@ class SettingsDto implements \JsonSerializable
         public bool $KBIN_JS_ENABLED,
         public bool $KBIN_FEDERATION_ENABLED,
         public bool $KBIN_REGISTRATIONS_ENABLED,
-        #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
-        public array $KBIN_BANNED_INSTANCES,
         public bool $KBIN_HEADER_LOGO,
         public bool $KBIN_CAPTCHA_ENABLED,
         public bool $KBIN_MERCURE_ENABLED,
@@ -39,6 +37,7 @@ class SettingsDto implements \JsonSerializable
         public int $MAX_IMAGE_BYTES,
         public string $MBIN_DOWNVOTES_MODE,
         public bool $MBIN_NEW_USERS_NEED_APPROVAL,
+        public bool $MBIN_USE_FEDERATION_ALLOW_LIST,
     ) {
     }
 
@@ -56,7 +55,6 @@ class SettingsDto implements \JsonSerializable
         $dto->KBIN_JS_ENABLED = $this->KBIN_JS_ENABLED ?? $dto->KBIN_JS_ENABLED;
         $dto->KBIN_FEDERATION_ENABLED = $this->KBIN_FEDERATION_ENABLED ?? $dto->KBIN_FEDERATION_ENABLED;
         $dto->KBIN_REGISTRATIONS_ENABLED = $this->KBIN_REGISTRATIONS_ENABLED ?? $dto->KBIN_REGISTRATIONS_ENABLED;
-        $dto->KBIN_BANNED_INSTANCES = $this->KBIN_BANNED_INSTANCES ?? $dto->KBIN_BANNED_INSTANCES;
         $dto->KBIN_HEADER_LOGO = $this->KBIN_HEADER_LOGO ?? $dto->KBIN_HEADER_LOGO;
         $dto->KBIN_CAPTCHA_ENABLED = $this->KBIN_CAPTCHA_ENABLED ?? $dto->KBIN_CAPTCHA_ENABLED;
         $dto->KBIN_MERCURE_ENABLED = $this->KBIN_MERCURE_ENABLED ?? $dto->KBIN_MERCURE_ENABLED;
@@ -72,6 +70,7 @@ class SettingsDto implements \JsonSerializable
         $dto->MAX_IMAGE_BYTES = $this->MAX_IMAGE_BYTES ?? $dto->MAX_IMAGE_BYTES;
         $dto->MBIN_DOWNVOTES_MODE = $this->MBIN_DOWNVOTES_MODE ?? $dto->MBIN_DOWNVOTES_MODE;
         $dto->MBIN_NEW_USERS_NEED_APPROVAL = $this->MBIN_NEW_USERS_NEED_APPROVAL ?? $dto->MBIN_NEW_USERS_NEED_APPROVAL;
+        $dto->MBIN_USE_FEDERATION_ALLOW_LIST = $this->MBIN_USE_FEDERATION_ALLOW_LIST ?? $dto->MBIN_USE_FEDERATION_ALLOW_LIST;
 
         return $dto;
     }
@@ -91,7 +90,6 @@ class SettingsDto implements \JsonSerializable
             'KBIN_JS_ENABLED' => $this->KBIN_JS_ENABLED,
             'KBIN_FEDERATION_ENABLED' => $this->KBIN_FEDERATION_ENABLED,
             'KBIN_REGISTRATIONS_ENABLED' => $this->KBIN_REGISTRATIONS_ENABLED,
-            'KBIN_BANNED_INSTANCES' => $this->KBIN_BANNED_INSTANCES,
             'KBIN_HEADER_LOGO' => $this->KBIN_HEADER_LOGO,
             'KBIN_CAPTCHA_ENABLED' => $this->KBIN_CAPTCHA_ENABLED,
             'KBIN_MERCURE_ENABLED' => $this->KBIN_MERCURE_ENABLED,
@@ -107,6 +105,7 @@ class SettingsDto implements \JsonSerializable
             'MAX_IMAGE_BYTES' => $this->MAX_IMAGE_BYTES,
             'MBIN_DOWNVOTES_MODE' => $this->MBIN_DOWNVOTES_MODE,
             'MBIN_NEW_USERS_NEED_APPROVAL' => $this->MBIN_NEW_USERS_NEED_APPROVAL,
+            'MBIN_USE_FEDERATION_ALLOW_LIST' => $this->MBIN_USE_FEDERATION_ALLOW_LIST,
         ];
     }
 }
