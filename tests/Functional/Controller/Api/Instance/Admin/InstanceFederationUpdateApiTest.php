@@ -63,8 +63,7 @@ class InstanceFederationUpdateApiTest extends WebTestCase
 
     public function testApiCanClearInstanceFederation(): void
     {
-        $manager = $this->settingsManager;
-        $manager->set('KBIN_BANNED_INSTANCES', ['defederated.social', 'evil.social']);
+        $this->instanceManager->setBannedInstances(['defederated.social', 'evil.social']);
 
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe', isAdmin: true);
