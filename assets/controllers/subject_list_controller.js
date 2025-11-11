@@ -62,7 +62,7 @@ export default class extends Controller {
                     current.insertAdjacentElement('afterend', div.firstElementChild);
                 }
             }
-        } catch (e) {
+        } catch {
         } finally {
             this.application
                 .getControllerForElementAndIdentifier(document.getElementById('main'), 'timeago')
@@ -101,7 +101,7 @@ export default class extends Controller {
             }
 
             parent.nextElementSibling.appendChild(div.firstElementChild);
-        } catch (e) {
+        } catch {
         } finally {
             this.application
                 .getControllerForElementAndIdentifier(document.getElementById('main'), 'timeago')
