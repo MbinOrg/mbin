@@ -812,8 +812,8 @@ position_top: Top
 pending: Pending
 flash_thread_new_error: Thread could not be created. Something went wrong.
 flash_thread_tag_banned_error: Thread could not be created. The content is not 
-flash_thread_ref_image_not_found: The image referenced by 'imageHash' could not be found.
   allowed.
+flash_thread_ref_image_not_found: The image referenced by 'imageHash' could not be found.
 flash_image_download_too_large_error: Image could not be created, it is too big 
   (max size %bytes%)
 flash_email_was_sent: Email has been successfully sent.
