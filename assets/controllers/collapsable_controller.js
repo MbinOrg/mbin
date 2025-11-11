@@ -1,4 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
+import debounce from '../utils/debounce';
 
 // use some buffer-space so that the expand-button won't be included if just a couple of lines would be hidden
 const MAX_COLLAPSED_HEIGHT_REM = 25;
@@ -24,9 +25,10 @@ export default class extends Controller {
 
         this.setup();
 
-        const observer = new ResizeObserver(() => {
+        const observerDebounced = debounce(200, () => {
             this.setup();
         });
+        const observer = new ResizeObserver(observerDebounced);
         observer.observe(this.contentTarget);
     }
 
