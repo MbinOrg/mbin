@@ -47,7 +47,7 @@ class InstanceRepository extends ServiceEntityRepository
         }
 
         return $qb
-            ->orderBy('i.id')
+            ->orderBy('i.domain')
             ->getQuery()
             ->getResult();
     }
@@ -58,7 +58,7 @@ class InstanceRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('i')
             ->where('i.isBanned = true')
             ->andWhere('i.isExplicitlyAllowed = false')
-            ->orderBy('i.id')
+            ->orderBy('i.domain')
             ->getQuery()
             ->getResult();
     }
@@ -72,7 +72,7 @@ class InstanceRepository extends ServiceEntityRepository
             ->andWhere('i.lastSuccessfulReceive < :dateBeforeDead OR i.lastSuccessfulReceive IS NULL')
             ->setParameter('numToDead', Instance::NUMBER_OF_FAILED_DELIVERS_UNTIL_DEAD)
             ->setParameter('dateBeforeDead', Instance::getDateBeforeDead())
-            ->orderBy('i.id')
+            ->orderBy('i.domain')
             ->getQuery()
             ->getResult();
     }
@@ -161,5 +161,16 @@ class InstanceRepository extends ServiceEntityRepository
             'ourSubscriptions' => $mappedResult['ourSubscriptions'],
             'theirSubscriptions' => $mappedResult['theirSubscriptions'],
         ];
+    }
+
+    /**
+     * @return Instance[]
+     */
+    public function findAllOrdered(): array
+    {
+        $qb = $this->createQueryBuilder('i')
+            ->orderBy('i.domain', 'ASC');
+
+        return $qb->getQuery()->getResult();
     }
 }
