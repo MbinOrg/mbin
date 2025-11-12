@@ -64,6 +64,10 @@ To use it, follow these steps:
 10. Run `sudo find public/ -type d -exec chgrp www-data '{}' \;` and `sudo find public/ -type d -exec chmod g+rwx '{}' \;`
 11. You can now follow the [initial configuration guide](../02-admin/04-running-mbin/01-first_setup.md)
 
+> [!TIP]
+> If you get at some point an error with `Expected to find class <class name and path> while importing services from resource "../src/", but it was not found!`
+> you can fix this by running `composer dump-autoload`.
+
 ### OAuth keys
 
 If you want to use OAuth for the API, do the following **before** creating the Dev Container:
