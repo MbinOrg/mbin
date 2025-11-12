@@ -333,10 +333,22 @@ To start the services in the background:
 docker compose -f docker/tests/compose.yaml up -d
 ```
 
-Then run the integration test(s):
+Then run all the integration test(s):
 
 ```sh
 SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Functional
+```
+
+Or maybe better, run the non-thread-safe group using `phpunit`:
+
+```sh
+SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Functional --group NonThreadSafe
+```
+
+And run the remaining thread-safe integration tests using `paratest`, which runs the test in parallel:
+
+```sh
+SYMFONY_DEPRECATIONS_HELPER=disabled php vendor/bin/paratest tests/Functional --exclude-group NonThreadSafe
 ```
 
 ## Linting
