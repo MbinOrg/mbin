@@ -54,14 +54,17 @@
                 height: 40,
                 asLink: true
             }) }}
-            <div class="content">
-                {% if post.visibility in ['visible', 'private'] or (post.visibility is same as 'trashed' and this.canSeeTrashed) %}
-                    {{ post.body|markdown("post")|raw }}
-                {% elseif(post.visibility is same as 'trashed') %}
-                    <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
-                {% elseif(post.visibility is same as 'soft_deleted') %}
-                    <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
-                {% endif %}
+            <div data-controller="collapsable">
+                <div data-collapsable-target="content" class="content">
+                    {% if post.visibility in ['visible', 'private'] or (post.visibility is same as 'trashed' and this.canSeeTrashed) %}
+                        {{ post.body|markdown("post")|raw }}
+                    {% elseif(post.visibility is same as 'trashed') %}
+                        <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
+                    {% elseif(post.visibility is same as 'soft_deleted') %}
+                        <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
+                    {% endif %}
+                </div>
+                <div data-collapsable-target="button"></div>
             </div>
             {% if post.visibility in ['visible', 'private'] %}
                 {{ component('vote', {
