@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\DTO\SettingsDto;
+use App\Entity\Instance;
 use App\Entity\Settings;
+use App\Repository\InstanceRepository;
 use App\Repository\SettingsRepository;
 use App\Utils\DownvotesMode;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,6 +28,7 @@ class SettingsManager
         private readonly SettingsRepository $repository,
         private readonly RequestStack $requestStack,
         private readonly KernelInterface $kernel,
+        private readonly InstanceRepository $instanceRepository,
         private readonly string $kbinDomain,
         private readonly string $kbinTitle,
         private readonly string $kbinMetaTitle,
@@ -47,6 +50,7 @@ class SettingsManager
         private readonly DownvotesMode $mbinDownvotesMode,
         private readonly bool $mbinNewUsersNeedApproval,
         private readonly LoggerInterface $logger,
+        private readonly bool $mbinUseFederationAllowList,
     ) {
         if (!self::$dto || 'test' === $this->kernel->getEnvironment()) {
             $results = $this->repository->findAll();
@@ -86,7 +90,6 @@ class SettingsManager
                     'KBIN_REGISTRATIONS_ENABLED',
                     FILTER_VALIDATE_BOOLEAN
                 ) ?? $this->kbinRegistrationsEnabled,
-                $this->find($results, 'KBIN_BANNED_INSTANCES') ?? [],
                 $this->find($results, 'KBIN_HEADER_LOGO', FILTER_VALIDATE_BOOLEAN) ?? $this->kbinHeaderLogo,
                 $this->find($results, 'KBIN_CAPTCHA_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? $this->kbinCaptchaEnabled,
                 $this->find($results, 'KBIN_MERCURE_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? false,
@@ -102,6 +105,7 @@ class SettingsManager
                 $maxImageBytesEdited,
                 $this->find($results, 'MBIN_DOWNVOTES_MODE') ?? $this->mbinDownvotesMode->value,
                 $newUsersNeedApprovalEdited,
+                $this->find($results, 'MBIN_USE_FEDERATION_ALLOW_LIST', FILTER_VALIDATE_BOOLEAN) ?? $this->mbinUseFederationAllowList,
             );
             $this->instanceDto = $dto;
         } else {
@@ -185,10 +189,31 @@ class SettingsManager
             throw new UnrecoverableMessageHandlingException(\sprintf('Invalid URL provided: %s', $inboxUrl));
         }
 
-        return \in_array(
-            str_replace('www.', '', $host),
-            $this->get('KBIN_BANNED_INSTANCES') ?? []
-        );
+        $finalUrl = str_replace('www.', '', $host);
+        if (!$this->getUseAllowList()) {
+            return \in_array($finalUrl, $this->instanceRepository->getBannedInstanceUrls());
+        } else {
+            // when using an allow list the instance is considered banned if it does not exist or if it is not explicitly allowed
+            $instance = $this->instanceRepository->findOneBy(['domain' => $finalUrl]);
+
+            return null === $instance || !$instance->isExplicitlyAllowed;
+        }
+    }
+
+    /** @return Instance[] */
+    public function getBannedInstances(): array
+    {
+        return $this->instanceRepository->getBannedInstances();
+    }
+
+    public function getUseAllowList(): bool
+    {
+        return $this->getDto()->MBIN_USE_FEDERATION_ALLOW_LIST;
+    }
+
+    public function getAllowedInstances(): array
+    {
+        return $this->instanceRepository->getAllowedInstances($this->getUseAllowList());
     }
 
     public function get(string $name)
@@ -198,12 +223,12 @@ class SettingsManager
 
     public function getDownvotesMode(): DownvotesMode
     {
-        return DownvotesMode::from($this->get('MBIN_DOWNVOTES_MODE'));
+        return DownvotesMode::from($this->getDto()->MBIN_DOWNVOTES_MODE);
     }
 
     public function getNewUsersNeedApproval(): bool
     {
-        return $this->get('MBIN_NEW_USERS_NEED_APPROVAL');
+        return $this->getDto()->MBIN_NEW_USERS_NEED_APPROVAL;
     }
 
     public function set(string $name, $value): void

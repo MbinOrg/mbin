@@ -23,7 +23,6 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
         'KBIN_JS_ENABLED',
         'KBIN_FEDERATION_ENABLED',
         'KBIN_REGISTRATIONS_ENABLED',
-        'KBIN_BANNED_INSTANCES',
         'KBIN_HEADER_LOGO',
         'KBIN_CAPTCHA_ENABLED',
         'KBIN_MERCURE_ENABLED',
@@ -39,6 +38,7 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
         'MBIN_SSO_SHOW_FIRST',
         'MAX_IMAGE_BYTES',
         'MBIN_NEW_USERS_NEED_APPROVAL',
+        'MBIN_USE_FEDERATION_ALLOW_LIST',
     ];
 
     public function testApiCannotUpdateInstanceSettingsAnonymous(): void
@@ -98,7 +98,6 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'KBIN_JS_ENABLED' => true,
             'KBIN_FEDERATION_ENABLED' => true,
             'KBIN_REGISTRATIONS_ENABLED' => false,
-            'KBIN_BANNED_INSTANCES' => ['test.social'],
             'KBIN_HEADER_LOGO' => true,
             'KBIN_CAPTCHA_ENABLED' => true,
             'KBIN_MERCURE_ENABLED' => false,
@@ -114,6 +113,7 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'MBIN_SSO_SHOW_FIRST' => false,
             'MAX_IMAGE_BYTES' => 10000,
             'MBIN_NEW_USERS_NEED_APPROVAL' => false,
+            'MBIN_USE_FEDERATION_ALLOW_LIST' => false,
         ];
 
         $this->client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);
@@ -139,7 +139,6 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'KBIN_JS_ENABLED' => false,
             'KBIN_FEDERATION_ENABLED' => false,
             'KBIN_REGISTRATIONS_ENABLED' => true,
-            'KBIN_BANNED_INSTANCES' => ['test.social'],
             'KBIN_HEADER_LOGO' => false,
             'KBIN_CAPTCHA_ENABLED' => false,
             'KBIN_MERCURE_ENABLED' => true,
@@ -155,6 +154,7 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'MBIN_SSO_SHOW_FIRST' => true,
             'MAX_IMAGE_BYTES' => 30000,
             'MBIN_NEW_USERS_NEED_APPROVAL' => false,
+            'MBIN_USE_FEDERATION_ALLOW_LIST' => false,
         ];
 
         $this->client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);

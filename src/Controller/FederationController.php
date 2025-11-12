@@ -17,7 +17,7 @@ class FederationController extends AbstractController
             return $this->redirectToRoute('front');
         }
 
-        $allowedInstances = $instanceRepository->getAllowedInstances();
+        $allowedInstances = $instanceRepository->getAllowedInstances($settings->getUseAllowList());
         $defederatedInstances = $instanceRepository->getBannedInstances();
         $deadInstances = $instanceRepository->getDeadInstances();
 

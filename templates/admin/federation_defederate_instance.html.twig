@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{%- block title -%}
+    {{- 'defederating_instance'|trans }} {{ instance.domain }} - {{ parent() -}}
+{%- endblock -%}
+
+{% block mainClass %}page-settings page-federation page-defederation{% endblock %}
+
+{% block header_nav %}
+{% endblock %}
+
+{% block sidebar_top %}
+{% endblock %}
+
+{% block body %}
+    {% include 'admin/_options.html.twig' %}
+    {% include 'layout/_flash.html.twig' %}
+    <div class="section">
+        <h3>{{ 'defederating_instance'|trans({'%i': instance.domain}) }}</h3>
+        <div class="container">
+            <table>
+                <tbody>
+                    <tr>
+                        <td>{{ 'magazines'|trans }}</td>
+                        <td>{{ counts['magazines'] }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ 'users'|trans }}</td>
+                        <td>{{ counts['users'] }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ 'their_user_follows'|trans }}</td>
+                        <td>{{ counts['ourUserFollows'] }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ 'our_user_follows'|trans }}</td>
+                        <td>{{ counts['theirUserFollows'] }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ 'their_magazine_subscriptions'|trans }}</td>
+                        <td>{{ counts['ourSubscriptions'] }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ 'our_magazine_subscriptions'|trans }}</td>
+                        <td>{{ counts['theirSubscriptions'] }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            {{ form_start(form) }}
+            {{ form_errors(form) }}
+                <div class="errors">
+                    {{ form_errors(form.confirm) }}
+                </div>
+                <div class="checkbox">
+                    {{ form_label(form.confirm, 'confirm_defederation') }}
+                    {{ form_widget(form.confirm) }}
+                </div>
+                <div class="actions">
+                    {{ form_row(form.submit, { 'label': useAllowList ? 'btn_deny'|trans : 'ban'|trans, attr: {class: 'btn btn__primary'}}) }}
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
