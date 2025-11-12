@@ -194,9 +194,7 @@ jobs:
         run: npm audit --omit=dev
 
       - name: Run Composer audit
-        env:
-          COMPOSER_AUDIT_ABANDONED: ignore
-        run: composer audit
+        run: composer audit --no-dev --abandoned=ignore
 
   fixer-dry-run:
     runs-on: ubuntu-latest
