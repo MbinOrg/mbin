@@ -21,14 +21,14 @@
 .subject {
   .more {
     background: var(--kbin-bg);
-    bottom: -15px;
     cursor: pointer;
-    position: absolute;
     text-align: center;
     width: 100%;
+    margin-top: 1rem;
 
     // bigger button for touch devices
     @media (pointer:none), (pointer:coarse) {
+      margin-top: 2rem;
       padding: 0.5rem;
     }
 

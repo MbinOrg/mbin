@@ -60,7 +60,7 @@ class AdminFederationController extends AbstractController
                 'form' => $form->createView(),
                 'useAllowList' => $useAllowList,
                 'instances' => $useAllowList ? $this->settingsManager->getAllowedInstances() : $this->settingsManager->getBannedInstances(),
-                'allInstances' => $this->instanceRepository->findAll(),
+                'allInstances' => $this->instanceRepository->findAllOrdered(),
             ]
         );
     }
