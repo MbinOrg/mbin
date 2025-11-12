@@ -1,0 +1,24 @@
+name: Build Mbin GitHub pipeline image
+
+# Only trigger on Pull requests when ci/Dockerfile is changed (do not push the image)
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'ci/Dockerfile'
+
+jobs:
+  build-docker-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Build test image
+        working-directory: ./ci
+        run: |
+          docker build .
