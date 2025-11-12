@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-publish-workflow-docker-image:
+  build-and-publish-docker-image:
     runs-on: ubuntu-latest
     permissions:
       contents: write
