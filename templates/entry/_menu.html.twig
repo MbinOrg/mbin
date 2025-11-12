@@ -8,6 +8,11 @@
       </a>
     </li>
     <li>
+      <a href="{{ path('entry_crosspost', {id: entry.id}) }}">
+        {{ 'crosspost'|trans }}
+      </a>
+    </li>
+    <li>
       <a href="{{ entry_voters_url(entry, 'up') }}"
         class="{{ html_classes({'active': is_route_name('entry_fav') or is_route_name('entry_voters')}) }}">
         {{ 'activity'|trans }}
