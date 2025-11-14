@@ -12,7 +12,6 @@ use App\DTO\PostCommentResponseDto;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Factory\PostCommentFactory;
-use App\Service\ImageManager;
 use App\Service\PostCommentManager;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
@@ -184,12 +183,7 @@ class PostCommentsCreateApi extends PostsBaseApi
                     ImageUploadDto::IMAGE_UPLOAD,
                 ]
             )
-        ),
-        encoding: [
-            'imageUpload' => [
-                'contentType' => ImageManager::IMAGE_MIMETYPE_STR,
-            ],
-        ]
+        )
     ))]
     #[OA\Tag(name: 'post_comment')]
     #[Security(name: 'oauth2', scopes: ['post_comment:create'])]

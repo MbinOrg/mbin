@@ -10,7 +10,6 @@ use App\DTO\PostDto;
 use App\DTO\PostRequestDto;
 use App\DTO\PostResponseDto;
 use App\Entity\Magazine;
-use App\Service\ImageManager;
 use App\Service\PostManager;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
@@ -169,12 +168,7 @@ class PostsCreateApi extends PostsBaseApi
                     ImageUploadDto::IMAGE_UPLOAD,
                 ]
             )
-        ),
-        encoding: [
-            'imageUpload' => [
-                'contentType' => ImageManager::IMAGE_MIMETYPE_STR,
-            ],
-        ]
+        )
     ))]
     #[OA\Tag(name: 'magazine')]
     #[Security(name: 'oauth2', scopes: ['post:create'])]
