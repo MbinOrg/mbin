@@ -49,7 +49,8 @@ class EntryCommentViewController extends AbstractController
         $this->dispatcher->dispatch(new EntryHasBeenSeenEvent($entry));
 
         $this->entryRepository->hydrate($entry);
-        if (null !== $comment->root) {
+        // Both comment and root comment can be null
+        if (null !== $comment && null !== $comment->root) {
             $this->entryCommentRepository->hydrateChildren($comment->root);
         }
         $criteria = new EntryCommentPageView(1, $security);
