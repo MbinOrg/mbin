@@ -274,6 +274,14 @@ entry_pin:
   requirements:
     entry_id: \d+
 
+entry_lock:
+    controller: App\Controller\Entry\EntryLockController
+    defaults: { slug: -, sortBy: default }
+    path: /m/{magazine_name}/t/{entry_id}/{slug}/lock
+    methods: [ POST ]
+    requirements:
+        entry_id: \d+
+
 entry_voters:
   controller: App\Controller\Entry\EntryVotersController
   defaults: { slug: -, sortBy: default }

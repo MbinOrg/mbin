@@ -269,6 +269,7 @@ security:
                 'ROLE_OAUTH2_MODERATE:ENTRY:PIN',
                 'ROLE_OAUTH2_MODERATE:ENTRY:SET_ADULT',
                 'ROLE_OAUTH2_MODERATE:ENTRY:TRASH',
+                'ROLE_OAUTH2_MODERATE:ENTRY:LOCK',
             ]
         'ROLE_OAUTH2_MODERATE:ENTRY_COMMENT':
             [
@@ -280,6 +281,7 @@ security:
             [
                 'ROLE_OAUTH2_MODERATE:POST:LANGUAGE',
                 'ROLE_OAUTH2_MODERATE:POST:PIN',
+                'ROLE_OAUTH2_MODERATE:POST:LOCK',
                 'ROLE_OAUTH2_MODERATE:POST:SET_ADULT',
                 'ROLE_OAUTH2_MODERATE:POST:TRASH',
             ]
