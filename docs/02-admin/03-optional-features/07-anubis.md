@@ -450,7 +450,7 @@ The `| jq` part outputs formatted json which should make this easier to see. The
 
 ### Take it live
 
-To start routing the traffic through Anubis nginx has to be restarted (not just reloaded), because of the new socket that needs to be created. But before we do that we should check the config for validity:
+To start routing the traffic through Anubis Nginx has to be restarted (not just reloaded), because of the new socket that needs to be created. But before we do that we should check the config for validity:
 
 ```bash
 nginx -t
@@ -478,5 +478,4 @@ To get the logs of anubis:
 journalctl -ru anubis@mbin.service
 ```
 
-
-In the nginx config for Mbin you can uncomment the access log line to see the access logs for the anubis upstream. If you combine that with changing the status codes in the Anubis policy (just open the policy and search for `status_codes`) this is a good way to check whether RSS, API and ActivityPub requests still make it through.
+In the Nginx config for Mbin, you can uncomment the access log line to see the access logs for the Anubis upstream. If you combine that with changing the status codes in the Anubis policy (just open the policy and search for `status_codes`) this is a good way to check whether RSS, API and ActivityPub requests still make it through.
