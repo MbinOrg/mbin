@@ -1130,3 +1130,27 @@ flash_magazine_theme_icon_detached_success: La icona de la revista s'ha suprimit
 delete_magazine_banner: Suprimir el bàner de la revista
 flash_magazine_theme_banner_detached_success: El bàner de la revista s'ha 
   suprimit correctament
+federation_page_use_allowlist_help: Si s'utilitza una llista de permesos, 
+  aquesta instància només es federarà amb les instàncies explícitament permeses.
+  En cas contrari, aquesta instància es federarà amb totes les instàncies, 
+  excepte les que estiguin prohibides.
+crosspost: Publicació creuada
+flash_thread_ref_image_not_found: No s'ha pogut trobar la imatge a què fa 
+  referència 'imageHash'.
+federation_uses_allowlist: Utilitzar la llista de permesos per a la federació
+defederating_instance: S'està defederant la instància %i
+their_user_follows: Quantitat de comptes de la seva instància que segueixen 
+  comptes de la nostra
+our_user_follows: Quantitat de comptes de la nostra instància que segueixen 
+  comptes de la seva
+their_magazine_subscriptions: Quantitat de comptes de la seva instància 
+  subscrits a revistes de la nostra
+our_magazine_subscriptions: Quantitat de comptes de la nostra instància 
+  subscrits a revistes des de la seva
+confirm_defederation: Confirmar la desfederació
+flash_error_defederation_must_confirm: Heu de confirmar la desfederació
+allowed_instances: Instàncies permeses
+btn_deny: Denegar
+btn_allow: Permetre
+ban_instance: Banir instància
+allow_instance: Permetre instància
