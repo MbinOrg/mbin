@@ -1,4 +1,4 @@
-# Anubis setup for mbin
+# Anubis setup for Mbin
 
 ### Why?
 
@@ -8,20 +8,22 @@ Ths simple answer is: because it is better than just blocking anonymous access t
 
 ### How does it work?
 
-[https://anubis.techaro.lol/docs/design/how-anubis-works](https://anubis.techaro.lol/docs/design/how-anubis-works)
+See the official [How Anubis works](https://anubis.techaro.lol/docs/design/how-anubis-works) web page.
 
-# Bare metal with nginx
+# Bare metal with Nginx
 
-Links:
-- [https://anubis.techaro.lol/docs/admin/installation](https://anubis.techaro.lol/docs/admin/installation)
-- [https://anubis.techaro.lol/docs/admin/native-install](https://anubis.techaro.lol/docs/admin/native-install)
-- socket discussion: [https://github.com/TecharoHQ/anubis/discussions/541](https://github.com/TecharoHQ/anubis/discussions/541)
+## External links
+
+- [Installation (Official documentation)](https://anubis.techaro.lol/docs/admin/installation)
+- [Native installation (Official documentation)](https://anubis.techaro.lol/docs/admin/native-install)
+- [Best practices for unix socket (on Anubis GitHub.com project)](https://github.com/TecharoHQ/anubis/discussions/541)
 
 ## Anubis setup
 
 ### Installation
 
-Download the package for your system from [the most recent release on GitHub](https://github.com/TecharoHQ/anubis/releases) and install it with you package manager:
+Download the package for your system from [the most recent release on GitHub](https://github.com/TecharoHQ/anubis/releases) and install the package via your package manager:
+
 - `deb`: `sudo apt install ./anubis-$VERSION-$ARCH.deb`
 - `rpm`: `sudo dnf -y install ./anubis-$VERSION.$ARCH.rpm`
 
@@ -42,7 +44,7 @@ POLICY_FNAME=/etc/anubis/mbin.botPolicies.yaml
 
 Copy the content from [default bot policy](https://github.com/TecharoHQ/anubis/blob/main/data/botPolicies.yaml) to `/etc/anubis/mbin.botPolicies.yaml`.
 
-In the `bots` section of the `mbin.botPolicies.yaml` file, prepend this (has to be infront of the other rules):
+In the `bots` section of the `mbin.botPolicies.yaml` file, prepend this (has to be in front of the other rules):
 
 ```yaml
   - name: mbin-activity-pub
@@ -62,7 +64,7 @@ In the `bots` section of the `mbin.botPolicies.yaml` file, prepend this (has to 
     action: ALLOW
 ```
 
-to explicitly allow all API, RSS and ActivityPub requests. You should also switch the store backend to something different from the default in memory one. If you want to use a local bbolt db ([see alternatives](https://anubis.techaro.lol/docs/admin/policies#storage-backends)) change the `store` section to the following (in `mbin.botPolicies.yaml`):
+To explicitly allow all API, RSS and ActivityPub requests. You should also switch the store backend to something different from the default in-memory one. If you want to use a local bbolt db ([see alternatives](https://anubis.techaro.lol/docs/admin/policies#storage-backends)) change the `store` section to the following (in `mbin.botPolicies.yaml`):
 
 ```yaml
 store:
@@ -116,30 +118,34 @@ thresholds:
       report_as: 4
 ```
 
-The default config includes a few snippets that require a subscription. To avoid warn messages you should comment out everything that "Requires a subscription to Thoth to use" (just search for it in the file).
+The default config includes a few snippets that requires a subscription. To avoid warn messages you should comment-out everything that "Requires a subscription to Thoth to use" (just search for it in the file).
 
-For Anubis to be able to access the socket we will create later we will have to change the service file (`/usr/lib/systemd/system/anubis@.service`) and set the user anubis is being executed by to `www-data`:
-1. remove `DynamicUser=yes`
-2. add `User=www-data`
+For Anubis to be able to access the socket, that we will use later, we will have to change the service file (`/usr/lib/systemd/system/anubis@.service`) and set the user anubis is being executed by to `www-data`:
+
+1. Remove: `DynamicUser=yes`
+2. Add: `User=www-data`
 
 There are some paths that have to be created and then owned by `www-data`:
+
 - `/opt/anubis/`
 - `/run/anubis/`
 - `/run/nginx/`
 
 ### Starting it
 
-Then start Anubis with `systemctl enable --now`:
+Then start Anubis, via:
 
 ```bash
 sudo systemctl enable --now anubis@mbin.service
 ```
-Test to make sure it's running with curl:
+
+Test to make sure Anibus is running using the `curl` command:
+
 ```bash
 curl http://localhost:4673/metrics
 ```
 
-If you need to restart it, just run:
+If you need to restart Anubis, just run:
 
 ```bash
 sudo systemctl restart anubis@mbin.service
@@ -165,11 +171,11 @@ upstream anubis {
 }
 ```
 
-You can just put it in `/etc/nginx/conf.d/anubis.conf` for example and the default nginx conifuration will just import it.
+You can just put it in `/etc/nginx/conf.d/anubis.conf` for example and the default Nginx configuration will then import this file.
 
 ## Change nginx mbin.conf
 
-Now we have to change the nginx conf that is serving mbin. We will use the default config as an example.
+Now we have to change the Nginx configuration that is serving Mbin. We will use the default config as an example.
 
 ### Short Explainer Version
 
@@ -450,19 +456,19 @@ To start routing the traffic through Anubis nginx has to be restarted (not just 
 nginx -t
 ```
 
-If that is successful and you see a running Anubis service with:
+If `nginx -t` runs successfully and the Anubis service is also running without any issues:
 
 ```bash
 systemctl status anubis@mbin.service
 ```
 
-You restart nginx with:
+Then you finally restart Nginx with:
 
 ```bash
 systemctl restart nginx
 ```
 
-If you reload the Mbin website you should see the Anubis page for checking your browser.
+If you reload the Mbin website, you should see the Anubis page for checking your browser.
 
 ### Troubleshooting
 
@@ -471,5 +477,6 @@ To get the logs of anubis:
 ```bash
 journalctl -ru anubis@mbin.service
 ```
+
 
 In the nginx config for Mbin you can uncomment the access log line to see the access logs for the anubis upstream. If you combine that with changing the status codes in the Anubis policy (just open the policy and search for `status_codes`) this is a good way to check whether RSS, API and ActivityPub requests still make it through.
