@@ -12,7 +12,6 @@ use App\DTO\ImageUploadDto;
 use App\Entity\Entry;
 use App\Entity\Magazine;
 use App\Service\EntryManager;
-use App\Service\ImageManager;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -319,12 +318,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
                     'common',
                 ]
             )
-        ),
-        encoding: [
-            'imageUpload' => [
-                'contentType' => ImageManager::IMAGE_MIMETYPE_STR,
-            ],
-        ]
+        )
     ))]
     #[OA\Tag(name: 'magazine')]
     #[Security(name: 'oauth2', scopes: ['entry:create'])]
@@ -434,15 +428,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
                         'common',
                     ],
                 )
-            ),
-            encoding: [
-                'imageUpload' => [
-                    'contentType' => ImageManager::IMAGE_MIMETYPE_STR,
-                ],
-                'uploadImage' => [
-                    'contentType' => ImageManager::IMAGE_MIMETYPE_STR,
-                ],
-            ]
+            )
         )
     )]
     #[OA\Tag(name: 'magazine')]

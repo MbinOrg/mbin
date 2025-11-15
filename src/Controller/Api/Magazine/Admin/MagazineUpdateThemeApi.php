@@ -15,7 +15,6 @@ use App\Schema\Errors\BadRequestErrorSchema;
 use App\Schema\Errors\ForbiddenErrorSchema;
 use App\Schema\Errors\TooManyRequestsErrorSchema;
 use App\Schema\Errors\UnauthorizedErrorSchema;
-use App\Service\ImageManager;
 use App\Service\MagazineManager;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
@@ -85,12 +84,7 @@ class MagazineUpdateThemeApi extends MagazineBaseApi
                     'common',
                 ]
             )
-        ),
-        encoding: [
-            'imageUpload' => [
-                'contentType' => ImageManager::IMAGE_MIMETYPE_STR,
-            ],
-        ]
+        )
     ))]
     #[OA\Tag(name: 'moderation/magazine/owner')]
     #[Security(name: 'oauth2', scopes: ['moderate:magazine_admin:theme'])]
@@ -180,12 +174,7 @@ class MagazineUpdateThemeApi extends MagazineBaseApi
                     ImageUploadDto::IMAGE_UPLOAD_NO_ALT,
                 ]
             )
-        ),
-        encoding: [
-            'imageUpload' => [
-                'contentType' => ImageManager::IMAGE_MIMETYPE_STR,
-            ],
-        ]
+        )
     ))]
     #[OA\Tag(name: 'moderation/magazine/owner')]
     #[Security(name: 'oauth2', scopes: ['moderate:magazine_admin:theme'])]
