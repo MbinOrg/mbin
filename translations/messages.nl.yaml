@@ -214,7 +214,7 @@ removed_comment_by: heeft een reactie verwijderd van
 restored_comment_by: heeft een reactie hersteld van
 restored_post_by: heeft een bericht hersteld van
 he_banned: Verbannen
-he_unbanned: Toelaten
+he_unbanned: Ongeblokkeerd
 read_all: Alles als gelezen markeren
 show_all: Alles tonen
 flash_thread_new_success: Het gesprek is succesvol aangemaakt en zichtbaar voor 
@@ -687,8 +687,7 @@ show_avatars_on_comments_help: Toon/verberg profielfoto's bij het bekijken van
 comment_reply_position: Commentaar reactie positie
 magazine_theme_appearance_custom_css: Aangepaste CSS die van toepassing is bij 
   het bekijken van inhoud in uw tijdschrift.
-magazine_theme_appearance_icon: Aangepast pictogram voor het tijdschrift. Als er
-  geen is geselecteerd, wordt het standaardpictogram gebruikt.
+magazine_theme_appearance_icon: Aangepast pictogram voor het tijdschrift.
 magazine_theme_appearance_background_image: Aangepaste CSS die van toepassing is
   bij het bekijken van inhoud in uw tijdschrift.
 moderation.report.approve_report_title: Rapport Goedkeuren
@@ -1000,7 +999,7 @@ bookmark_list_create_label: Lijstnaam
 bookmarks_list_edit: Bladwijzerlijst bewerken
 bookmark_list_edit: Bewerken
 bookmark_list_selected_list: Geselecteerde lijst
-search_type_all: Discussies + Microblogs
+search_type_all: Alles
 search_type_post: Microblogs
 select_user: Kies een gebruiker
 new_users_need_approval: Nieuwe gebruikers moeten door een beheerder worden 
@@ -1068,3 +1067,76 @@ show_new_icons_help: Toon pictogram voor nieuw tijdschrift/gebruiker (30 dagen
 toolbar.emoji: Emoji
 2fa.manual_code_hint: Als u de QR-code niet kunt scannen, voer dan het 
   geheimcode handmatig in
+crosspost: Kruistpost
+banner: Banner
+type_search_term_url_handle: Typ zoekterm, url of gebruikersnaam
+magazine_theme_appearance_banner: Aangepaste banner voor het tijdschrift. Deze 
+  wordt boven alle discussies weergegeven en moet een brede beeldverhouding 
+  hebben (5:1, of 1500px * 300px).
+flash_thread_ref_image_not_found: De afbeelding waarnaar 'imageHash' verwijst, 
+  kon niet worden gevonden.
+search_type_magazine: Tijdschriften
+search_type_user: Gebruikers
+search_type_actors: Tijdschriften + Gebruikers
+search_type_content: Discussies + Microblogs
+magazine_instance_defederated_info: De instantie van dit tijdschrift is 
+  gedefedereerd. Het tijdschrift ontvangt daarom geen updates.
+user_instance_defederated_info: De instantie van deze gebruiker is 
+  gedefedereerd.
+flash_thread_instance_banned: De instantie van dit tijdschrift is verbannen.
+show_rich_mention: Rijke vermeldingen
+show_rich_mention_help: Geef een gebruikerscomponent weer wanneer een gebruiker 
+  wordt genoemd. Dit omvat de weergavenaam en profielfoto.
+show_rich_mention_magazine: Rijke tijdschriften vermeldingen
+show_rich_mention_magazine_help: Geef een tijdschriftcomponent weer wanneer een 
+  tijdschrift wordt genoemd. Dit omvat de weergavenaam en het pictogram.
+show_rich_ap_link: Rijke AP-koppelingen
+show_rich_ap_link_help: Geef een inline-component weer wanneer er naar andere 
+  ActivityPub-inhoud wordt gelinkt.
+attitude: Houding
+type_search_magazine: Beperk uw zoekopdracht tot tijdschrift...
+type_search_user: Beperk zoekopdracht tot auteur...
+modlog_type_entry_deleted: Discussie is verwijderd
+modlog_type_entry_restored: Discussie is hersteld
+modlog_type_entry_comment_deleted: Discussie commentaar is verwijderd
+modlog_type_entry_comment_restored: Discussie commentaar is hersteld
+modlog_type_entry_pinned: Discussie vastgezet
+modlog_type_entry_unpinned: Discussie losmaken
+modlog_type_post_deleted: Microblog verwijderd
+modlog_type_post_restored: Microblog hersteld
+modlog_type_post_comment_deleted: Microblog-antwoord verwijderd
+modlog_type_post_comment_restored: Microblog-antwoord hersteld
+modlog_type_ban: Gebruiker verbannen uit tijdschrift
+modlog_type_moderator_add: Moderator voor het tijdschrift toegevoegd
+modlog_type_moderator_remove: Magazine moderator verwijderd
+everyone: Iedereen
+nobody: Niemand
+followers_only: Alleen volgers
+direct_message_setting_label: Wie kan een direct bericht sturen
+delete_magazine_icon: Tijdschriftpictogram verwijderen
+flash_magazine_theme_icon_detached_success: Tijdschriftpictogram succesvol 
+  verwijderd
+delete_magazine_banner: Verwijder tijdschriftbanner
+flash_magazine_theme_banner_detached_success: Tijdschriftbanner succesvol 
+  verwijderd
+federation_uses_allowlist: Gebruik een toegestane lijst voor federatie
+defederating_instance: Defederatie-instantie %i
+their_user_follows: Aantal gebruikers van hun instantie die gebruikers op onze 
+  instantie volgen
+our_user_follows: Aantal gebruikers van onze instantie dat gebruikers op hun 
+  instantie volgen
+their_magazine_subscriptions: Aantal gebruikers van hun instantie dat zich heeft
+  geabonneerd op tijdschriften op onze instantie
+our_magazine_subscriptions: Aantal gebruikers op ons instantie dat zich heeft 
+  geabonneerd op tijdschriften op hun instantie
+confirm_defederation: Bevestig de defederatie
+flash_error_defederation_must_confirm: U moet de defederatie bevestigen
+allowed_instances: Toegestane instanties
+btn_deny: Weigeren
+btn_allow: Toestaan
+ban_instance: Ban instantie
+allow_instance: Sta instantie toe
+federation_page_use_allowlist_help: Als een toegestane lijst wordt gebruikt, zal
+  deze instantie alleen federeren met de expliciet toegestane instanties. Anders
+  zal deze instantie federeren met elke instantie, behalve met instanties die 
+  geblokkeerd zijn.
