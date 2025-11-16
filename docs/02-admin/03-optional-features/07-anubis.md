@@ -64,7 +64,7 @@ In the `bots` section of the `mbin.botPolicies.yaml` file, prepend this (has to 
     action: ALLOW
 ```
 
-To explicitly allow all API, RSS and ActivityPub requests. You should also switch the store backend to something different from the default in-memory one. If you want to use a local bbolt db ([see alternatives](https://anubis.techaro.lol/docs/admin/policies#storage-backends)) change the `store` section to the following (in `mbin.botPolicies.yaml`):
+To explicitly allow all API, RSS and ActivityPub requests. You should also switch the store backend to something different from the default in-memory one. If you want to use a local Bolt database, by using the `bbolt` package ([see alternatives](https://anubis.techaro.lol/docs/admin/policies#storage-backends)) change the `store` section to the following (in `mbin.botPolicies.yaml`):
 
 ```yaml
 store:
@@ -120,7 +120,7 @@ thresholds:
 
 The default config includes a few snippets that requires a subscription. To avoid warn messages you should comment-out everything that "Requires a subscription to Thoth to use" (just search for it in the file).
 
-For Anubis to be able to access the socket, that we will use later, we will have to change the service file (`/usr/lib/systemd/system/anubis@.service`) and set the user anubis is being executed by to `www-data`:
+For Anubis to be able to access the socket, that we will use later, we will have to change the service file (`/usr/lib/systemd/system/anubis@.service`) and run the Anubis service under the `www-data` user:
 
 1. Remove: `DynamicUser=yes`
 2. Add: `User=www-data`
