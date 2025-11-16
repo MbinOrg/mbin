@@ -125,11 +125,12 @@ For Anubis to be able to access the socket, that we will use later, we will have
 1. Remove: `DynamicUser=yes`
 2. Add: `User=www-data`
 
-There are some paths that have to be created and then owned by `www-data`:
+There are some paths that need to be created and then owned by `www-data` user and group:
 
-- `/opt/anubis/`
-- `/run/anubis/`
-- `/run/nginx/`
+```bash
+sudo mkdir -p /opt/anubis/ && sudo  mkdir -p /run/anubis/ && sudo mkdir -p /run/nginx/
+sudo chown -R www-data.www-data /opt/anubis/ && sudo chown -R www-data.www-data /run/anubis/ && sudo chown -R www-data.www-data /run/nginx/
+```
 
 ### Starting it
 
@@ -179,7 +180,7 @@ Now we have to change the Nginx configuration that is serving Mbin. We will use 
 
 ### Short Explainer Version
 
-Without Anubis:
+**Without** Anubis:
 
 ```nginx
 # Redirect HTTP to HTTPS
@@ -203,7 +204,7 @@ server {
 }
 ```
 
-With Anubis:
+**With** Anubis:
 
 ```nginx
 # Redirect HTTP to HTTPS
@@ -453,7 +454,7 @@ The `| jq` part outputs formatted json which should make this easier to see. The
 To start routing the traffic through Anubis Nginx has to be restarted (not just reloaded), because of the new socket that needs to be created. But before we do that we should check the config for validity:
 
 ```bash
-nginx -t
+sudo nginx -t
 ```
 
 If `nginx -t` runs successfully and the Anubis service is also running without any issues:
@@ -465,7 +466,7 @@ systemctl status anubis@mbin.service
 Then you finally restart Nginx with:
 
 ```bash
-systemctl restart nginx
+sudo systemctl restart nginx
 ```
 
 If you reload the Mbin website, you should see the Anubis page for checking your browser.
