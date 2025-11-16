@@ -300,3 +300,12 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      # We will also use this job to dispatch an event to the mbin-docs repository to trigger documentation build and publish
+      - name: Trigger mbin-docs workflow dispatch
+        if: github.event_name != 'pull_request'
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          token: ${{ secrets.MBIN_ACCESS_TOKEN }}
+          repository: MbinOrg/mbin-docs
+          event-type: update-docs
