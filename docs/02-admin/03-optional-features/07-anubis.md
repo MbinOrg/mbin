@@ -2,9 +2,9 @@
 
 ### Why?
 
-Anubis is a bot programm trying to block bots by presenting proof-of-work challengers to the user. A normal browser will just solve them (provided JavaScript is enabled on it) whilst AI scrapers will most likely just accept the challenge as the response.
+Anubis is a program that attempts to block bots by presenting proof-of-work challenges to the user. A normal browser will simply solve the challenges (provided JavaScript is enabled), while AI scrapers will most likely just accept the challenge as the response.
 
-Ths simple answer is: because it is better than just blocking anonymous access to Mbin.
+The simple answer is: because it's better than entirely blocking anonymous access to Mbin.
 
 ### How does it work?
 
@@ -44,7 +44,7 @@ POLICY_FNAME=/etc/anubis/mbin.botPolicies.yaml
 
 Copy the content from [default bot policy](https://github.com/TecharoHQ/anubis/blob/main/data/botPolicies.yaml) to `/etc/anubis/mbin.botPolicies.yaml`.
 
-In the `bots` section of the `mbin.botPolicies.yaml` file, prepend this (has to be in front of the other rules):
+In the `bots` section of the `mbin.botPolicies.yaml` file, prepend the following (has to be in front of the other rules) to explicitly allow all API, RSS, and ActivityPub requests:
 
 ```yaml
   - name: mbin-activity-pub
@@ -64,7 +64,7 @@ In the `bots` section of the `mbin.botPolicies.yaml` file, prepend this (has to 
     action: ALLOW
 ```
 
-To explicitly allow all API, RSS and ActivityPub requests. You should also switch the store backend to something different from the default in-memory one. If you want to use a local Bolt database, by using the `bbolt` package ([see alternatives](https://anubis.techaro.lol/docs/admin/policies#storage-backends)) change the `store` section to the following (in `mbin.botPolicies.yaml`):
+You should also switch the store backend to something different from the default in-memory one. If you want to use a local Bolt database, by using the `bbolt` package ([see alternatives](https://anubis.techaro.lol/docs/admin/policies#storage-backends)), change the `store` section to the following (in `mbin.botPolicies.yaml`):
 
 ```yaml
 store:
@@ -118,9 +118,9 @@ thresholds:
       report_as: 4
 ```
 
-The default config includes a few snippets that requires a subscription. To avoid warn messages you should comment-out everything that "Requires a subscription to Thoth to use" (just search for it in the file).
+The default config includes a few snippets that require a subscription. To avoid any warning messages, you should comment out any sections that contain "Requires a subscription to Thoth to use" (just search for it in the file).
 
-For Anubis to be able to access the socket, that we will use later, we will have to change the service file (`/usr/lib/systemd/system/anubis@.service`) and run the Anubis service under the `www-data` user:
+For Anubis to be able to access the socket that we will use later, we will have to change the service file (`/usr/lib/systemd/system/anubis@.service`) and run the Anubis service under the `www-data` user:
 
 1. Remove: `DynamicUser=yes`
 2. Add: `User=www-data`
@@ -134,13 +134,13 @@ sudo chown -R www-data.www-data /opt/anubis/ && sudo chown -R www-data.www-data 
 
 ### Starting it
 
-Then start Anubis, via:
+Start the Anubis service with the following command:
 
 ```bash
 sudo systemctl enable --now anubis@mbin.service
 ```
 
-Test to make sure Anibus is running using the `curl` command:
+Test it to make sure Anibus is running by using `curl`:
 
 ```bash
 curl http://localhost:4673/metrics
@@ -172,11 +172,11 @@ upstream anubis {
 }
 ```
 
-You can just put it in `/etc/nginx/conf.d/anubis.conf` for example and the default Nginx configuration will then import this file.
+You can just put it in `/etc/nginx/conf.d/anubis.conf`, for example, and the default Nginx configuration will then import this file.
 
 ## Change nginx mbin.conf
 
-Now we have to change the Nginx configuration that is serving Mbin. We will use the default config as an example.
+Now we need to modify the Nginx configuration that is serving Mbin. We will use the default config as an example.
 
 ### Short Explainer Version
 
@@ -243,10 +243,10 @@ server {
 }
 ```
 
-As you can see instead of serving Mbin directly we proxy it through the Anubis service. Anubis is then going to decide whether to call the UNIX socket that the actual Mbin site is served over or if it presents a challenge to the client (or straight up denying it).
+As you can see, instead of serving Mbin directly, we proxy it through the Anubis service. Anubis will then decide whether to call the UNIX socket that the actual Mbin site is served over, or if it will present a challenge to the client (or straight up deny it).
 
-In the actual Mbin call we lie to Symfony that the request is coming from port 443 (`fastcgi_param SERVER_PORT`) and the https scheme (`fastcgi_param HTTPS`).
-The reason is that it will otherwise generate HTTP URLs which are incompatible with some other fediverse software, like Lemmy.
+During the actual Mbin call, we lie to Symfony that the request is coming from port 443 (`fastcgi_param SERVER_PORT`) and that HTTPS is being used (`fastcgi_param HTTPS`).
+The reason is that it will otherwise generate HTTP (non-secure) URLs that are incompatible with some other Fediverse software, such as Lemmy.
 
 ### The long one
 
@@ -441,39 +441,39 @@ server {
 }
 ```
 
-To test whether Mbin correctly uses the HTTPS scheme, you can run this command (replaced with you URL and username):
+To test whether Mbin correctly uses the HTTPS scheme, you can run this command (replaced with your URL and username):
 
 ```bash
 curl --header "Accept: application/activity+json" https://example.mbin/u/admin | jq
 ```
 
-The `| jq` part outputs formatted json which should make this easier to see. There should not be any `http://` URLs in this output.  
+The `| jq` part outputs formatted JSON, which should make this easier to view. There should not be any `http://` URLs in this output.  
 
 ### Take it live
 
-To start routing the traffic through Anubis Nginx has to be restarted (not just reloaded), because of the new socket that needs to be created. But before we do that we should check the config for validity:
+To start routing traffic through Anubis, Nginx must be restarted (not just reloaded) due to the new socket that needs to be created. However, before we do that, we should check the config for validity:
 
 ```bash
 sudo nginx -t
 ```
 
-If `nginx -t` runs successfully and the Anubis service is also running without any issues:
+If `nginx -t` runs successfully, then you should ensure Anubis is also running without any issues:
 
 ```bash
 systemctl status anubis@mbin.service
 ```
 
-Then you finally restart Nginx with:
+You can finally restart Nginx with:
 
 ```bash
 sudo systemctl restart nginx
 ```
 
-If you reload the Mbin website, you should see the Anubis page for checking your browser.
+Once you reload the Mbin website, you should see the Anubis challenge page that checks your browser.
 
 ### Troubleshooting
 
-To get the logs of anubis:
+Use the following to view the Anubis logs:
 
 ```bash
 journalctl -ru anubis@mbin.service
