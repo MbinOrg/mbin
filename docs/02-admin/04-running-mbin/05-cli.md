@@ -140,7 +140,7 @@ php bin/console mbin:user:private-keys:rotate [-a|--all-local-users] [-r|--rever
 ```
 
 Arguments:
-- `username`: the single user for which this command should be executed (optional)
+- `username`: the single user for which this command should be executed (not required when using the `-a` / `--all-local-users` option, see below)
 
 Options:
 - `-a|--all-local-users`: Rotate private keys of all local users
