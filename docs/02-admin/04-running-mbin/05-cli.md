@@ -136,11 +136,15 @@ If private keys have been leaked you should rotate the private keys to avoid the
 Usage:
 
 ```bash
-php bin/console mbin:user:private-keys:rotate [-a|--all-local-users] <username>
+php bin/console mbin:user:private-keys:rotate [-a|--all-local-users] [-r|--revert] [<username>]
 ```
 
 Arguments:
-- `username`: the single user for which this command should be executed
+- `username`: the single user for which this command should be executed (optional)
+
+Options:
+- `-a|--all-local-users`: Rotate private keys of all local users
+- `-r|--revert`: revert to the old private and public keys
 
 ### User-Unsub
 
