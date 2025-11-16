@@ -1112,7 +1112,7 @@ modlog_type_moderator_remove: Magazine moderator verwijderd
 everyone: Iedereen
 nobody: Niemand
 followers_only: Alleen volgers
-direct_message_setting_label: Wie kan een direct bericht sturen
+direct_message_setting_label: Wie kan jou een direct bericht sturen
 delete_magazine_icon: Tijdschriftpictogram verwijderen
 flash_magazine_theme_icon_detached_success: Tijdschriftpictogram succesvol 
   verwijderd
