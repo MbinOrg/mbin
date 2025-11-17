@@ -97,7 +97,10 @@
 {% endblock message_notification %}
 
 {% block magazine_ban_notification %}
-    {{ component('user_inline', {user: notification.ban.bannedBy, showNewIcon: true}) }} {{ 'banned'|trans|lower }}. {{ 'ban_expired'|trans }} {{ component('date', {date: notification.ban.expiredAt}) }}. {{ notification.ban.reason }}
+    {{ component('user_inline', {user: notification.ban.bannedBy, showNewIcon: true}) }} {{ 'banned'|trans|lower }}. {{ 'ban_expired'|trans }}
+    {%- if notification.ban.expiredAt is not same as null -%}
+        {{ component('date', {date: notification.ban.expiredAt}) }}
+    {%- endif -%}. {{ notification.ban.reason }}
 {% endblock magazine_ban_notification %}
 
 {% block reportlink %}
