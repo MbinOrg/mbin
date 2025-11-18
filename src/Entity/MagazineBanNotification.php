@@ -37,20 +37,20 @@ class MagazineBanNotification extends Notification
 
     public function getMessage(TranslatorInterface $trans, string $locale, UrlGeneratorInterface $urlGenerator): PushNotification
     {
-        $intl = new \IntlDateFormatter($trans->getLocale(), \IntlDateFormatter::SHORT, \IntlDateFormatter::SHORT, calendar: \IntlDateFormatter::GREGORIAN);
+        $intl = new \IntlDateFormatter($locale, \IntlDateFormatter::SHORT, \IntlDateFormatter::SHORT, calendar: \IntlDateFormatter::GREGORIAN);
 
         if ($this->ban->expiredAt) {
             $message = \sprintf('%s %s: %s. %s: %s',
                 $trans->trans('you_have_been_banned_from_magazine', ['%m' => $this->ban->magazine->name]),
-                new \DateTimeImmutable() > $this->ban->expiredAt ? $trans->trans('ban_expired') : $trans->trans('ban_expires'),
+                new \DateTimeImmutable() > $this->ban->expiredAt ? $trans->trans('ban_expired', locale: $locale) : $trans->trans('ban_expires', locale: $locale),
                 $intl->format($this->ban->expiredAt),
-                $trans->trans('reason'),
+                $trans->trans('reason', locale: $locale),
                 $this->ban->reason
             );
         } else {
             $message = \sprintf('%s %s: %s',
-                $trans->trans('you_have_been_banned_from_magazine_permanently', ['%m' => $this->ban->magazine->name]),
-                $trans->trans('reason'),
+                $trans->trans('you_have_been_banned_from_magazine_permanently', ['%m' => $this->ban->magazine->name], locale: $locale),
+                $trans->trans('reason', locale: $locale),
                 $this->ban->reason
             );
         }
