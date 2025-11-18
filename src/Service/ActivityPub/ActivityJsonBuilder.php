@@ -205,7 +205,7 @@ class ActivityJsonBuilder
         $actorUrl = $actor instanceof User ? $this->personFactory->getActivityPubId($actor) : $this->groupFactory->getActivityPubId($actor);
 
         if (isset($object['cc'])) {
-            $cc = array_merge($cc, array_filter($object['cc'], fn(string $url) => $url !== $actorUrl));
+            $cc = array_merge($cc, array_filter($object['cc'], fn (string $url) => $url !== $actorUrl));
         }
 
         $activityJson = [
