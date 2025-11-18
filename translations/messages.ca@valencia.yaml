@@ -1116,7 +1116,7 @@ modlog_type_moderator_remove: Moderador(a) de la revista destituït(da)
 everyone: Tot el món
 nobody: Ningú
 followers_only: Només seguidor(e)s
-direct_message_setting_label: Qui pot enviar un missatge directe
+direct_message_setting_label: Qui pot enviar-vos un missatge directe
 banner: Bàner
 magazine_theme_appearance_banner: Bàner personalitzat per a la revista. Es 
   mostra damunt de tots els fils de discussió i ha de tindre una relació 
