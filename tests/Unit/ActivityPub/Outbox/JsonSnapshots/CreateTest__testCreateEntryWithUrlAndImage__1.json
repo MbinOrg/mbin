@@ -1,0 +1,57 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://kbin.test/contexts"
+    ],
+    "id": "SCRUBBED_ID",
+    "type": "Create",
+    "actor": "https://kbin.test/u/user",
+    "published": "SCRUBBED_DATE",
+    "to": [
+        "https://kbin.test/m/test",
+        "https://www.w3.org/ns/activitystreams#Public"
+    ],
+    "cc": [
+        "https://kbin.test/u/user/followers"
+    ],
+    "object": {
+        "id": "SCRUBBED_ID",
+        "type": "Page",
+        "attributedTo": "https://kbin.test/u/user",
+        "inReplyTo": null,
+        "to": [
+            "https://kbin.test/m/test",
+            "https://www.w3.org/ns/activitystreams#Public"
+        ],
+        "cc": [
+            "https://kbin.test/u/user/followers"
+        ],
+        "name": "test",
+        "audience": "https://kbin.test/m/test",
+        "content": null,
+        "summary": "test #test",
+        "mediaType": "text/html",
+        "source": "https://joinmbin.org",
+        "tag": [
+            {
+                "type": "Hashtag",
+                "href": "https://kbin.test/tag/test",
+                "name": "#test"
+            }
+        ],
+        "commentsEnabled": true,
+        "sensitive": false,
+        "stickied": false,
+        "published": "SCRUBBED_DATE",
+        "contentMap": {
+            "en": null
+        },
+        "attachment": [
+            {
+                "href": "https://mbin-test1.bentigorlich.ddns.net/media/a8/1c/a81cc2fea35eeb232cd28fcb109b3eb5a4e52c71bce95af6650d71876c1bcbb7.png",
+                "type": "Link"
+            }
+        ]
+    },
+    "audience": "https://kbin.test/m/test"
+}
