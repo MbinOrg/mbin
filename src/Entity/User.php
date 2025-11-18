@@ -12,6 +12,7 @@ use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\VisibilityTrait;
 use App\Enums\EApplicationStatus;
 use App\Enums\EDirectMessageSettings;
+use App\Enums\EFrontContentOptions;
 use App\Enums\ESortOptions;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\ApHttpClientInterface;
@@ -110,6 +111,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public string $homepage = self::HOMEPAGE_ALL;
     #[Column(type: 'enumSortOptions', nullable: false, options: ['default' => ESortOptions::Hot->value])]
     public string $frontDefaultSort = ESortOptions::Hot->value;
+    #[Column(type: 'enumFrontContentOptions', nullable: false, options: ['default' => EFrontContentOptions::All->value])]
+    public string $frontDefaultContent = EFrontContentOptions::All->value;
     #[Column(type: 'enumSortOptions', nullable: false, options: ['default' => ESortOptions::Hot->value])]
     public string $commentDefaultSort = ESortOptions::Hot->value;
     #[Column(type: 'enumDirectMessageSettings', nullable: false, options: ['default' => EDirectMessageSettings::Everyone->value])]

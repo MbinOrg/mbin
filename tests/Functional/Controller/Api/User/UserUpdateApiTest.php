@@ -7,6 +7,7 @@ namespace App\Tests\Functional\Controller\Api\User;
 use App\DTO\UserSettingsDto;
 use App\Entity\User;
 use App\Enums\EDirectMessageSettings;
+use App\Enums\EFrontContentOptions;
 use App\Repository\Criteria;
 use App\Tests\WebTestCase;
 
@@ -98,6 +99,7 @@ class UserUpdateApiTest extends WebTestCase
             ['test'],
             ['en'],
             directMessageSetting: EDirectMessageSettings::Everyone->value,
+            frontDefaultContent: EFrontContentOptions::All->value,
         ))->jsonSerialize();
 
         $this->client->jsonRequest(
@@ -133,6 +135,7 @@ class UserUpdateApiTest extends WebTestCase
             ['test'],
             ['en'],
             directMessageSetting: EDirectMessageSettings::FollowersOnly->value,
+            frontDefaultContent: EFrontContentOptions::Threads->value,
         ))->jsonSerialize();
 
         $this->client->jsonRequest(
@@ -164,6 +167,7 @@ class UserUpdateApiTest extends WebTestCase
         self::assertEquals(['test'], $jsonData['featuredMagazines']);
         self::assertEquals(['en'], $jsonData['preferredLanguages']);
         self::assertEquals(EDirectMessageSettings::FollowersOnly->value, $jsonData['directMessageSetting']);
+        self::assertEquals(EFrontContentOptions::Threads->value, $jsonData['frontDefaultContent']);
 
         $this->client->request('GET', '/api/users/settings', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
@@ -190,5 +194,6 @@ class UserUpdateApiTest extends WebTestCase
         self::assertEquals(['test'], $jsonData['featuredMagazines']);
         self::assertEquals(['en'], $jsonData['preferredLanguages']);
         self::assertEquals(EDirectMessageSettings::FollowersOnly->value, $jsonData['directMessageSetting']);
+        self::assertEquals(EFrontContentOptions::Threads->value, $jsonData['frontDefaultContent']);
     }
 }
