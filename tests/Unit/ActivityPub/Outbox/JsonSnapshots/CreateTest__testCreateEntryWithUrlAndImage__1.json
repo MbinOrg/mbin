@@ -43,15 +43,32 @@
         "sensitive": false,
         "stickied": false,
         "published": "SCRUBBED_DATE",
+        "attachment": [
+            {
+                "href": "https://joinmbin.org",
+                "type": "Link"
+            },
+            {
+                "type": "Image",
+                "mediaType": "image/png",
+                "url": "https://mbin.domain.tld/media/a8/1c/a81cc2fea35eeb232cd28fcb109b3eb5a4e52c71bce95af6650d71876c1bcbb7.png",
+                "name": "kibby",
+                "blurhash": "L$Pie*?^spxt%3W.oyn*r^W-tQjG",
+                "focalPoint": [
+                    0,
+                    0
+                ],
+                "width": 96,
+                "height": 96
+            }
+        ],
         "contentMap": {
             "en": null
         },
-        "attachment": [
-            {
-                "href": "https://mbin-test1.bentigorlich.ddns.net/media/a8/1c/a81cc2fea35eeb232cd28fcb109b3eb5a4e52c71bce95af6650d71876c1bcbb7.png",
-                "type": "Link"
-            }
-        ]
+        "image": {
+            "type": "Image",
+            "url": "https://mbin.domain.tld/media/a8/1c/a81cc2fea35eeb232cd28fcb109b3eb5a4e52c71bce95af6650d71876c1bcbb7.png"
+        }
     },
     "audience": "https://kbin.test/m/test"
 }

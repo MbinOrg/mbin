@@ -89,16 +89,14 @@ class EntryPageFactory
 
         if ($entry->url) {
             $page['source'] = $entry->url;
-            $page['attachment'] = [
-                [
-                    'href' => $this->getUrl($entry),
-                    'type' => 'Link',
-                ],
+            $page['attachment'][] = [
+                'href' => $entry->url,
+                'type' => 'Link',
             ];
-        } else {
-            if ($entry->image) {
-                $page = $this->imageWrapper->build($page, $entry->image, $entry->title);
-            }
+        }
+
+        if ($entry->image) {
+            $page = $this->imageWrapper->build($page, $entry->image, $entry->title);
         }
 
         if ($entry->body) {
@@ -121,16 +119,5 @@ class EntryPageFactory
             ['magazine_name' => $entry->magazine->name, 'entry_id' => $entry->getId()],
             UrlGeneratorInterface::ABSOLUTE_URL
         );
-    }
-
-    private function getUrl(Entry $entry): ?string
-    {
-        $imageUrl = $this->imageManager->getUrl($entry->image);
-
-        if (Entry::ENTRY_TYPE_IMAGE === $entry->type && $imageUrl) {
-            return $imageUrl;
-        }
-
-        return $entry->url;
     }
 }
