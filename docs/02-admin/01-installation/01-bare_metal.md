@@ -593,7 +593,8 @@ Save and close the file.
 > [!IMPORTANT]
 > Uncomment the `stdout_logfile` and `redirect_stderr` lines if you do *not** want the Supervisor worker logs being written to `/var/log/supervisor`. After all the same log entries will be written to the Mbin production log.
 
-_Note:_ you can increase the number of running messenger jobs if your queue is building up (i.e. more messages are coming in than your messengers can handle)
+> [!NOTE]
+> you can increase the number of running messenger jobs if your queue is building up (i.e. more messages are coming in than your messengers can handle)
 
 Save and close the file. Restart supervisor jobs:
 
