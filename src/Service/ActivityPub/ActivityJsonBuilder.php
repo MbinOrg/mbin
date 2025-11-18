@@ -177,6 +177,13 @@ class ActivityJsonBuilder
         $actor = $activity->getActor();
         $to = [ActivityPubActivityInterface::PUBLIC_URL];
 
+        $cc = [];
+        if ($actor instanceof User) {
+            $cc[] = $this->personFactory->getActivityPubFollowersId($actor);
+        } elseif ($actor instanceof Magazine) {
+            $cc[] = $this->groupFactory->getActivityPubFollowersId($actor);
+        }
+
         $object = $activity->getObject();
 
         if (null !== $activity->innerActivity) {
@@ -196,6 +203,10 @@ class ActivityJsonBuilder
             unset($object['@context']);
         }
 
+        if (isset($object['cc'])) {
+            $cc = array_merge($cc, $object['cc']);
+        }
+
         $activityJson = [
             '@context' => $this->contextsProvider->referencedContexts(),
             'id' => $this->urlGenerator->generate('ap_object', ['id' => $activity->uuid], UrlGeneratorInterface::ABSOLUTE_URL),
@@ -203,7 +214,7 @@ class ActivityJsonBuilder
             'actor' => $actor instanceof User ? $this->personFactory->getActivityPubId($actor) : $this->groupFactory->getActivityPubId($actor),
             'object' => $object,
             'to' => $to,
-            'cc' => $object['cc'] ?? [],
+            'cc' => $cc,
             'published' => (new \DateTime())->format(DATE_ATOM),
         ];
 

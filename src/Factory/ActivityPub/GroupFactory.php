@@ -50,11 +50,7 @@ class GroupFactory
                 ['name' => $magazine->name],
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
-            'followers' => $this->urlGenerator->generate(
-                'ap_magazine_followers',
-                ['name' => $magazine->name],
-                UrlGeneratorInterface::ABSOLUTE_URL
-            ),
+            'followers' => $this->getActivityPubFollowersId($magazine),
             'featured' => $this->urlGenerator->generate(
                 'ap_magazine_pinned',
                 ['name' => $magazine->name],
@@ -120,6 +116,19 @@ class GroupFactory
 
         return $this->urlGenerator->generate(
             'ap_magazine',
+            ['name' => $magazine->name],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+    }
+
+    public function getActivityPubFollowersId(Magazine $magazine): string
+    {
+        if ($magazine->apId) {
+            return $magazine->apFollowersUrl;
+        }
+
+        return $this->urlGenerator->generate(
+            'ap_magazine_followers',
             ['name' => $magazine->name],
             UrlGeneratorInterface::ABSOLUTE_URL
         );
