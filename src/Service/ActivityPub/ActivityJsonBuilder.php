@@ -202,16 +202,17 @@ class ActivityJsonBuilder
         if (isset($object['@context'])) {
             unset($object['@context']);
         }
+        $actorUrl = $actor instanceof User ? $this->personFactory->getActivityPubId($actor) : $this->groupFactory->getActivityPubId($actor);
 
         if (isset($object['cc'])) {
-            $cc = array_merge($cc, $object['cc']);
+            $cc = array_merge($cc, array_filter($object['cc'], fn(string $url) => $url !== $actorUrl));
         }
 
         $activityJson = [
             '@context' => $this->contextsProvider->referencedContexts(),
             'id' => $this->urlGenerator->generate('ap_object', ['id' => $activity->uuid], UrlGeneratorInterface::ABSOLUTE_URL),
             'type' => 'Announce',
-            'actor' => $actor instanceof User ? $this->personFactory->getActivityPubId($actor) : $this->groupFactory->getActivityPubId($actor),
+            'actor' => $actorUrl,
             'object' => $object,
             'to' => $to,
             'cc' => $cc,
