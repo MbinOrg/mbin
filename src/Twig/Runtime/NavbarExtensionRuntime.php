@@ -130,6 +130,7 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
         $sortOption = $this->getActiveSortOption();
         $timeOption = $this->getActiveTimeOption();
         $subscriptionOption = $this->getActiveSubscriptionOption();
+        $contentOption = $this->getActiveContentOption();
 
         // don't add the current options if they are the defaults.
         // this isn't bad, but keeps urls shorter for instance
@@ -140,6 +141,9 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
         }
         if ('∞' !== $timeOption) {
             $options['time'] = $timeOption;
+        }
+        if ('default' !== $contentOption) {
+            $options['content'] = $contentOption;
         }
         if (!\in_array($subscriptionOption, [null, 'home'])) {
             $options['subscription'] = $subscriptionOption;
@@ -161,6 +165,11 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
     private function getActiveTimeOption(): string
     {
         return $this->requestStack->getCurrentRequest()->get('time') ?? '∞';
+    }
+
+    private function getActiveContentOption(): string
+    {
+        return $this->requestStack->getCurrentRequest()->get('content') ?? 'default';
     }
 
     private function isRouteNameStartsWith(string $needle): bool
