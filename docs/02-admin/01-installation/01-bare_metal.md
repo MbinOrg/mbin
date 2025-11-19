@@ -577,6 +577,8 @@ With the following content:
 ```ini
 [program:messenger]
 command=php /var/www/mbin/bin/console messenger:consume scheduler_default old async outbox deliver inbox resolve receive failed --time-limit=3600
+#stdout_logfile=NONE
+#redirect_stderr=true
 user=www-data
 numprocs=6
 startsecs=0
@@ -586,9 +588,11 @@ startretries=10
 process_name=%(program_name)s_%(process_num)02d
 ```
 
-Save and close the file.
+> [!IMPORTANT]
+> Uncomment the `stdout_logfile` and `redirect_stderr` lines if you do **not** want the Supervisor worker logs being written to `/var/log/supervisor`. After all the same log entries will be written to the Mbin production log.
 
-Note: you can increase the number of running messenger jobs if your queue is building up (i.e. more messages are coming in than your messengers can handle)
+> [!NOTE]
+> You can increase the number of running messenger jobs if your queue is building up (i.e. more messages are coming in than your messengers can handle).
 
 Save and close the file. Restart supervisor jobs:
 
