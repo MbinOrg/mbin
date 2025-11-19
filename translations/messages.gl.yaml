@@ -1077,7 +1077,7 @@ modlog_type_moderator_remove: Moderadora da revista retirada
 everyone: Todo o mundo
 nobody: Ninguén
 followers_only: Só seguidoras
-direct_message_setting_label: Quen pode enviar unha mensaxe directa
+direct_message_setting_label: Quen pode enviarche unha mensaxe directa
 banner: Imaxe cabeceira
 magazine_theme_appearance_banner: Imaxe de cabeceira persoal para a revista. 
   Móstrase na parte superior de todos os fíos e debería ter proporcións anchas 
@@ -1088,3 +1088,25 @@ flash_magazine_theme_icon_detached_success: Eliminouse correctamente a icona da
 delete_magazine_banner: Eliminar cabeceira da revista
 flash_magazine_theme_banner_detached_success: Eliminouse correctamente a imaxe 
   de cabeceira
+flash_thread_ref_image_not_found: Non se puido atopar a imaxe referenciada por 
+  'imageHash'.
+federation_uses_allowlist: Usa lista de permitidos para a federación
+defederating_instance: Deixando de federar con %i
+their_user_follows: Cantidade de usuarias desa instancia que seguen a usuarias 
+  da túa instancia
+our_user_follows: Cantidade de usuarias da nosa instancia que seguen usuarias da
+  outra instancia
+their_magazine_subscriptions: Cantidade de usuarias da outra instancia 
+  subscritas a revistas da nosa instancia
+our_magazine_subscriptions: Cantidade de usuarias da nosa instancia subscritas a
+  revistas da outra instancia
+confirm_defederation: Confirmar a desfederación
+flash_error_defederation_must_confirm: Tes que confirmar a desfederación
+allowed_instances: Instancias permitidas
+btn_deny: Rexeitar
+btn_allow: Permitir
+ban_instance: Vetar instancia
+allow_instance: Permitir instancia
+federation_page_use_allowlist_help: Se utilizas unha lista de permitidas, esta 
+  instancia só federará coas que estén incluídas nesa lista. Se non é así, esta 
+  instancia federará con todas as instancias excepto as que estean vetadas.
