@@ -44,8 +44,10 @@ class UserSettingsType extends AbstractType
         foreach (EDirectMessageSettings::getValues() as $option) {
             $directMessageSettingChoices[$this->translator->trans($option)] = $option;
         }
-        $frontDefaultContentChoices = [];
-        foreach (EFrontContentOptions::getValues() as $option) {
+        $frontDefaultContentChoices = [
+            $this->translator->trans('default_content_default') => null,
+        ];
+        foreach (EFrontContentOptions::OPTIONS as $option) {
             $frontDefaultContentChoices[$this->translator->trans('default_content_'.$option)] = $option;
         }
         $builder

@@ -9,6 +9,8 @@
         {% set activeLink = 'threads' %}
     {% elseif criteria.getOption('content') == 'microblog' %}
         {% set activeLink = 'microblog' %}
+    {% elseif criteria.getOption('content') == 'all' %}
+        {% set activeLink = 'all' %}
     {% endif %}
 {% elseif entry is defined and entry %}
     {% set activeLink = 'threads' %}
@@ -17,6 +19,11 @@
 {% endif %}
 
 {% if header_nav is empty %}
+    <li>
+        <a href="{{ navbar_combined_url(magazine ?? null) }}" class="{{ html_classes({'active': activeLink == 'all'}) }}">
+            {{ 'combined'|trans }}
+        </a>
+    </li>
     <li>
         <a href="{{ navbar_threads_url(magazine ?? null) }}" class="{{ html_classes({'active': activeLink == 'threads'}) }}">
             {{ 'threads'|trans }} {% if magazine is defined and magazine %}({{ magazine.entryCount }}){% endif %}

@@ -52,6 +52,41 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
         return $this->urlGenerator->generate('front', $this->getActiveOptions());
     }
 
+    public function navbarCombinedUrl(?Magazine $magazine): string
+    {
+        if ($this->isRouteNameStartsWith('front')) {
+            return $this->frontExtension->frontOptionsUrl(
+                'content', 'all',
+                $magazine instanceof Magazine ? 'front_magazine' : 'front',
+                ['name' => $magazine?->name, 'p' => null],
+            );
+        }
+
+        if ($magazine instanceof Magazine) {
+            return $this->urlGenerator->generate('front_magazine', [
+                'name' => $magazine->name,
+                ...$this->getActiveOptions(),
+                'content' => 'all',
+            ]);
+        }
+
+        if ($domain = $this->requestStack->getCurrentRequest()->get('domain')) {
+            return $this->urlGenerator->generate('domain_entries', [
+                'name' => $domain->name,
+                ...$this->getActiveOptions(),
+            ]);
+        }
+
+        if ($this->isRouteNameStartsWith('tag')) {
+            return $this->urlGenerator->generate(
+                'tag_entries',
+                ['name' => $this->requestStack->getCurrentRequest()->get('name')]
+            );
+        }
+
+        return $this->urlGenerator->generate('front', $this->getActiveOptions());
+    }
+
     public function navbarPostsUrl(?Magazine $magazine): string
     {
         if ($this->isRouteNameStartsWith('front')) {

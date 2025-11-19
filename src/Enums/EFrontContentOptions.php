@@ -21,6 +21,9 @@ enum EFrontContentOptions: string
      */
     public static function getValues(): array
     {
-        return self::OPTIONS;
+        return [
+            ...self::OPTIONS,
+            null,
+        ];
     }
 }

@@ -17,7 +17,7 @@ final class Version20251118112235 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql('CREATE TYPE enumFrontContentOptions AS ENUM(\'all\', \'threads\', \'microblog\')');
-        $this->addSql('ALTER TABLE "user" ADD front_default_content enumFrontContentOptions DEFAULT \'all\' NOT NULL');
+        $this->addSql('ALTER TABLE "user" ADD front_default_content enumFrontContentOptions DEFAULT NULL');
     }
 
     public function down(Schema $schema): void
