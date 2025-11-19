@@ -293,6 +293,7 @@ class EntryRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
 
+        /* we don't need to hydrate all the votes and favourites. We only use the count saved in the entry entity
         if ($this->security->getUser()) {
             $this->_em->createQueryBuilder()
                 ->select('PARTIAL e.{id}')
@@ -306,6 +307,7 @@ class EntryRepository extends ServiceEntityRepository
                 ->getQuery()
                 ->getResult();
         }
+        */
     }
 
     public function countEntriesByMagazine(Magazine $magazine): int
