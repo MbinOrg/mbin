@@ -259,6 +259,7 @@ class PostRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
 
+        /* we don't need to hydrate all the votes and favourites. We only use the count saved in the post entity
         if ($this->security->getUser()) {
             $this->_em->createQueryBuilder()
                 ->select('PARTIAL p.{id}')
@@ -272,6 +273,7 @@ class PostRepository extends ServiceEntityRepository
                 ->getQuery()
                 ->getResult();
         }
+        */
     }
 
     public function countPostsByMagazine(Magazine $magazine)
