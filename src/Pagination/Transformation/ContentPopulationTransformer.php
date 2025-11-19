@@ -6,54 +6,65 @@ namespace App\Pagination\Transformation;
 
 use App\Entity\Entry;
 use App\Entity\EntryComment;
-use App\Entity\Magazine;
 use App\Entity\Post;
 use App\Entity\PostComment;
-use App\Entity\User;
 use App\Repository\EntryCommentRepository;
 use App\Repository\EntryRepository;
+use App\Repository\MagazineRepository;
 use App\Repository\PostCommentRepository;
 use App\Repository\PostRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UserRepository;
 
 class ContentPopulationTransformer implements ResultTransformer
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
         private readonly EntryRepository $entryRepository,
         private readonly EntryCommentRepository $entryCommentRepository,
         private readonly PostRepository $postRepository,
         private readonly PostCommentRepository $postCommentRepository,
+        private readonly MagazineRepository $magazineRepository,
+        private readonly UserRepository $userRepository,
     ) {
     }
 
     public function transform(iterable $input): iterable
     {
         $positionsArray = $this->buildPositionArray($input);
-        $entries = $this->entryRepository->findBy(
-            ['id' => $this->getOverviewIds((array) $input, 'entry')]
-        );
-        $this->entryRepository->hydrate(...$entries);
-        $entryComments = $this->entryCommentRepository->findBy(
-            ['id' => $this->getOverviewIds((array) $input, 'entry_comment')]
-        );
-        $this->entryCommentRepository->hydrate(...$entryComments);
-        $post = $this->postRepository->findBy(
-            ['id' => $this->getOverviewIds((array) $input, 'post')]
-        );
-        $this->postRepository->hydrate(...$post);
-        $postComment = $this->postCommentRepository->findBy(
-            ['id' => $this->getOverviewIds((array) $input, 'post_comment')]
-        );
-        $this->postCommentRepository->hydrate(...$postComment);
-        $magazines = $this->entityManager->getRepository(Magazine::class)->findBy(
-            ['id' => $this->getOverviewIds((array) $input, 'magazine')]
-        );
-        $users = $this->entityManager->getRepository(User::class)->findBy(
-            ['id' => $this->getOverviewIds((array) $input, 'user')]
-        );
+        $entryIds = $this->getOverviewIds((array) $input, 'entry');
+        if (\count($entryIds) > 0) {
+            $entries = $this->entryRepository->findBy(['id' => $entryIds]);
+            $this->entryRepository->hydrate(...$entries);
+        }
 
-        return $this->applyPositions($positionsArray, $entries, $entryComments, $post, $postComment, $magazines, $users);
+        $entryCommentIds = $this->getOverviewIds((array) $input, 'entry_comment');
+        if (\count($entryCommentIds) > 0) {
+            $entryComments = $this->entryCommentRepository->findBy(['id' => $entryCommentIds]);
+            $this->entryCommentRepository->hydrate(...$entryComments);
+        }
+
+        $postIds = $this->getOverviewIds((array) $input, 'post');
+        if (\count($postIds) > 0) {
+            $post = $this->postRepository->findBy(['id' => $postIds]);
+            $this->postRepository->hydrate(...$post);
+        }
+
+        $postCommentIds = $this->getOverviewIds((array) $input, 'post_comment');
+        if (\count($postCommentIds) > 0) {
+            $postComment = $this->postCommentRepository->findBy(['id' => $postCommentIds]);
+            $this->postCommentRepository->hydrate(...$postComment);
+        }
+
+        $magazineIds = $this->getOverviewIds((array) $input, 'magazine');
+        if (\count($magazineIds) > 0) {
+            $magazines = $this->magazineRepository->findBy(['id' => $magazineIds]);
+        }
+
+        $userIds = $this->getOverviewIds((array) $input, 'user');
+        if (\count($userIds) > 0) {
+            $users = $this->userRepository->findBy(['id' => $userIds]);
+        }
+
+        return $this->applyPositions($positionsArray, $entries ?? [], $entryComments ?? [], $post ?? [], $postComment ?? [], $magazines ?? [], $users ?? []);
     }
 
     private function getOverviewIds(array $result, string $type): array
