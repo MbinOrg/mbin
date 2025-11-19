@@ -90,7 +90,7 @@ class ApActivityRepository extends ServiceEntityRepository
             return null;
         }
 
-        if ($parsed['host'] === $this->settingsManager->get('KBIN_DOMAIN') && isset($parsed['path']) && !empty($parsed['path'])) {
+        if ($parsed['host'] === $this->settingsManager->get('KBIN_DOMAIN') && !empty($parsed['path'])) {
             $exploded = array_filter(explode('/', $parsed['path']));
             $id = \intval(end($exploded));
             if (\sizeof($exploded) < 3) {
