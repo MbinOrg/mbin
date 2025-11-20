@@ -362,11 +362,24 @@ export default class extends Controller {
             });
 
             this.moreTarget.addEventListener('mouseenter', () => {
-                self.element.parentNode
+                const parent = self.element.parentNode;
+                parent
                     .querySelectorAll('.z-5')
                     .forEach((el) => {
                         el.classList.remove('z-5');
                     });
+
+                // Clear keyboard focus from any element inside the same
+                // parent so that :focus-within is removed from the old
+                // element without assigning focus to the hovered one.
+                const active = document.activeElement;
+                if (active && parent.contains(active) && !self.moreTarget.contains(active)) {
+                    try {
+                        active.blur();
+                    } catch (e) {
+                        // ignore environments where blur may throw
+                    }
+                }
             });
         }
     }
