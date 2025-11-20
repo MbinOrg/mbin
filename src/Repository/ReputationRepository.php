@@ -6,17 +6,19 @@ namespace App\Repository;
 
 use App\Entity\Site;
 use App\Entity\User;
+use App\Pagination\NativeQueryAdapter;
+use App\Pagination\Transformation\ContentPopulationTransformer;
 use App\Service\SettingsManager;
 use App\Utils\DownvotesMode;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
-use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Exception\NotValidCurrentPageException;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\PagerfantaInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class ReputationRepository extends ServiceEntityRepository
 {
@@ -30,15 +32,14 @@ class ReputationRepository extends ServiceEntityRepository
     public function __construct(
         ManagerRegistry $registry,
         private readonly SettingsManager $settingsManager,
+        private readonly ContentPopulationTransformer $contentPopulationTransformer,
+        private readonly CacheInterface $cache,
     ) {
         parent::__construct($registry, Site::class);
     }
 
     public function getUserReputation(User $user, string $className, int $page = 1): PagerfantaInterface
     {
-        $conn = $this->getEntityManager()
-            ->getConnection();
-
         $table = $this->getEntityManager()->getClassMetadata($className)->getTableName();
         $voteTable = $table.'_vote';
         $idColumn = $table.'_id';
@@ -51,20 +52,13 @@ class ReputationRepository extends ServiceEntityRepository
             SELECT f.created_at, 1 as choice FROM favourite f INNER JOIN $table s ON f.$idColumn = s.id WHERE s.user_id = :userId --upvotes -> 1x
         ) as interactions GROUP BY day ORDER BY day DESC";
 
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue('userId', $user->getId());
-        $stmt = $stmt->executeQuery();
-
-        $pagerfanta = new Pagerfanta(
-            new ArrayAdapter(
-                $stmt->fetchAllAssociative()
-            )
-        );
+        $adapter = new NativeQueryAdapter($this->_em->getConnection(), $sql, ['userId' => $user->getId()], cache: $this->cache);
+        $pagerfanta = new Pagerfanta($adapter);
 
         try {
             $pagerfanta->setMaxPerPage(self::PER_PAGE);
             $pagerfanta->setCurrentPage($page);
-        } catch (NotValidCurrentPageException $e) {
+        } catch (NotValidCurrentPageException) {
             throw new NotFoundHttpException();
         }
 
