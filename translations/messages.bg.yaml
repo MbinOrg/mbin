@@ -1127,3 +1127,9 @@ our_magazine_subscriptions: Брой потребители от нашата и
   общности от тяхната инстанция
 btn_deny: Отказване
 ban_instance: Забраняване на инстанцията
+default_content_threads: Нишки
+default_content_microblog: Микроблог
+combined: Обединено
+direct_message_setting_label: Кой може да ви изпраща лично съобщение
+default_content_all: Нишки + Микроблог
+default_content_default: По подразбиране, в момента Нишки
