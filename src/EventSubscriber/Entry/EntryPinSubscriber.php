@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\EventSubscriber\Entry;
 
 use App\Event\Entry\EntryPinEvent;
-use App\Factory\ActivityPub\AddRemoveFactory;
 use App\Message\ActivityPub\Outbox\EntryPinMessage;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -16,7 +15,6 @@ class EntryPinSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly MessageBusInterface $bus,
         private readonly LoggerInterface $logger,
-        private readonly AddRemoveFactory $addRemoveFactory,
     ) {
     }
 
