@@ -1082,9 +1082,54 @@ btn_allow: Позволяване
 allow_instance: Позволяване на инстанцията
 allowed_instances: Позволени инстанции
 nobody: Никой
-modlog_type_entry_deleted: Нишката е изтрита
-modlog_type_entry_restored: Нишката е възстановена
+modlog_type_entry_deleted: Нишка е изтрита
+modlog_type_entry_restored: Нишка е възстановена
 modlog_type_entry_comment_deleted: Нишков коментар е изтрит
 modlog_type_entry_comment_restored: Нишков коментар е възстановен
 modlog_type_entry_pinned: Нишка е закачена
 modlog_type_entry_unpinned: Нишка е откачена
+crosspost: Препубликуване
+banner: Банер
+magazine_theme_appearance_banner: Персонализиран банер за общността. Показва се 
+  над всички нишки и трябва да е в широк формат (5:1 или 1500px * 300px).
+flash_thread_ref_image_not_found: Изображението, посочено чрез „imageHash“, не 
+  може да бъде намерено.
+show_rich_mention_help: Изобразяване на потребителски компонент при споменаване 
+  на потребител. Това ще включва показваното им име и профилна снимка.
+show_rich_mention_magazine_help: Изобразяване на компонент на общността при 
+  споменаване. Това ще включва показваното име и иконка.
+show_rich_ap_link: Богати AP връзки
+attitude: Отношение
+modlog_type_post_deleted: Микроблог е изтрит
+modlog_type_post_restored: Микроблог е възстановен
+modlog_type_post_comment_deleted: Микроблогов отговор е изтрит
+modlog_type_post_comment_restored: Микроблогов отговор е възстановен
+modlog_type_ban: Потребител получи забрана от общност
+modlog_type_moderator_add: Добавен е модератор на общност
+modlog_type_moderator_remove: Премахнат е модератор на общност
+show_rich_ap_link_help: Изобразяване на вграден компонент, когато е свързано 
+  друго съдържание на ActivityPub.
+everyone: Всеки
+followers_only: Само последователи
+delete_magazine_icon: Изтриване на иконката на общността
+flash_magazine_theme_icon_detached_success: Иконката на общността е изтрита 
+  успешно
+delete_magazine_banner: Изтриване на банера на общността
+flash_magazine_theme_banner_detached_success: Банерът на общността е изтрит 
+  успешно
+their_user_follows: Брой потребители от тяхната инстанция, следващи потребители 
+  от нашата инстанция
+our_user_follows: Брой потребители от нашата инстанция, следващи потребители от 
+  тяхната инстанция
+their_magazine_subscriptions: Брой потребители от тяхната инстанция, абонирани 
+  за общности от нашата инстанция
+our_magazine_subscriptions: Брой потребители от нашата инстанция, абонирани за 
+  общности от тяхната инстанция
+btn_deny: Отказване
+ban_instance: Забраняване на инстанцията
+default_content_threads: Нишки
+default_content_microblog: Микроблог
+combined: Обединено
+direct_message_setting_label: Кой може да ви изпраща лично съобщение
+default_content_all: Нишки + Микроблог
+default_content_default: По подразбиране, в момента Нишки
