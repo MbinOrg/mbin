@@ -1090,3 +1090,9 @@ allow_instance: Allow instance
 federation_page_use_allowlist_help: If an allow list is used, this instance will
   only federate with the explicitly allowed instances. Otherwise this instance 
   will federate with every instance, except those that are banned.
+front_default_content: Front default content
+default_content_default: The default, currently Threads
+default_content_all: Threads + Microblog
+default_content_threads: Threads
+default_content_microblog: Microblog
+combined: Combined
