@@ -352,6 +352,8 @@ export default class extends Controller {
     wireMoreFocusClassAdjustment() {
         const self = this;
         if (this.hasMoreTarget) {
+            // Add z-5 (higher z-index with !important) to the element when more button is focused (eg. clicked)
+            // Remove z-5 from other elements in the same parent
             this.moreTarget.addEventListener('focusin', () => {
                 self.element.parentNode
                     .querySelectorAll('.z-5')
@@ -361,7 +363,10 @@ export default class extends Controller {
                 this.element.classList.add('z-5');
             });
 
+            // During a mouse hover, remove z-5 from other elements in the same parent
+            // and clear :focus-within from any focused element inside the same parent
             this.moreTarget.addEventListener('mouseenter', () => {
+                // Remove z-5 from other elements in the same parent
                 const parent = self.element.parentNode;
                 parent
                     .querySelectorAll('.z-5')
@@ -369,7 +374,7 @@ export default class extends Controller {
                         el.classList.remove('z-5');
                     });
 
-                // Clear keyboard focus from any element inside the same
+                // Clear keyboard/mouse focus from any element inside the same
                 // parent so that :focus-within is removed from the old
                 // element without assigning focus to the hovered one.
                 const active = document.activeElement;
