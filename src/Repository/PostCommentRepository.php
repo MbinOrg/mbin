@@ -216,11 +216,10 @@ class PostCommentRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
 
+        /* we don't need to hydrate all the votes and favourites. We only use the count saved in the PostComment entity
         if ($this->security->getUser()) {
             $this->_em->createQueryBuilder()
                 ->select('PARTIAL c.{id}')
-                ->addSelect('cv')
-                ->addSelect('cf')
                 ->from(PostComment::class, 'c')
                 ->leftJoin('c.votes', 'cv')
                 ->leftJoin('c.favourites', 'cf')
@@ -229,5 +228,6 @@ class PostCommentRepository extends ServiceEntityRepository
                 ->getQuery()
                 ->getResult();
         }
+        */
     }
 }

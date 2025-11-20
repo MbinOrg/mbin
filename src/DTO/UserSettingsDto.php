@@ -6,6 +6,7 @@ namespace App\DTO;
 
 use App\Entity\User;
 use App\Enums\EDirectMessageSettings;
+use App\Enums\EFrontContentOptions;
 use App\PageView\EntryCommentPageView;
 use App\PageView\EntryPageView;
 use OpenApi\Attributes as OA;
@@ -40,6 +41,8 @@ class UserSettingsDto implements \JsonSerializable
         public ?bool $notifyOnUserSignup = null,
         #[OA\Property(type: 'string', enum: EDirectMessageSettings::OPTIONS)]
         public ?string $directMessageSetting = null,
+        #[OA\Property(type: 'string', enum: EFrontContentOptions::OPTIONS)]
+        public ?string $frontDefaultContent = null,
     ) {
     }
 
@@ -59,6 +62,7 @@ class UserSettingsDto implements \JsonSerializable
             'addMentionsPosts' => $this->addMentionsPosts,
             'homepage' => $this->homepage,
             'frontDefaultSort' => $this->frontDefaultSort,
+            'frontDefaultContent' => $this->frontDefaultContent,
             'commentDefaultSort' => $this->commentDefaultSort,
             'featuredMagazines' => $this->featuredMagazines,
             'preferredLanguages' => $this->preferredLanguages,
@@ -90,6 +94,7 @@ class UserSettingsDto implements \JsonSerializable
         $dto->customCss = $this->customCss ?? $dto->customCss;
         $dto->ignoreMagazinesCustomCss = $this->ignoreMagazinesCustomCss ?? $dto->ignoreMagazinesCustomCss;
         $dto->directMessageSetting = $this->directMessageSetting ?? $dto->directMessageSetting;
+        $dto->frontDefaultContent = $this->frontDefaultContent ?? $dto->frontDefaultContent;
 
         return $dto;
     }

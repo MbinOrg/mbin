@@ -13,6 +13,7 @@ use App\PageView\EntryPageView;
 use App\PageView\PostPageView;
 use App\Pagination\Pagerfanta as MbinPagerfanta;
 use App\Repository\ContentRepository;
+use App\Repository\Criteria;
 use Pagerfanta\PagerfantaInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -41,7 +42,7 @@ class EntryFrontController extends AbstractController
     ): Response {
         $user = $this->getUser();
 
-        $criteria = $this->createCriteria($content, $request);
+        $criteria = $this->createCriteria($content, $request, $user);
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setFederation($federation)
             ->setTime($criteria->resolveTime($time))
@@ -64,7 +65,6 @@ class EntryFrontController extends AbstractController
 
         return $this->renderResponse(
             $request,
-            $content,
             $criteria,
             [$dataKey => $entities],
             $templatePath,
@@ -111,7 +111,7 @@ class EntryFrontController extends AbstractController
             $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
         }
 
-        $criteria = $this->createCriteria($content, $request);
+        $criteria = $this->createCriteria($content, $request, $user);
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setFederation($federation)
             ->setTime($criteria->resolveTime($time))
@@ -129,7 +129,6 @@ class EntryFrontController extends AbstractController
 
         return $this->renderResponse(
             $request,
-            $content,
             $criteria,
             ['results' => $this->contentRepository->findByCriteria($criteria), 'magazine' => $magazine],
             'content/',
@@ -148,7 +147,6 @@ class EntryFrontController extends AbstractController
         string $federation,
         #[MapQueryParameter]
         ?string $type,
-        Request $request,
     ): Response {
         $user = $this->getUser(); // Fetch the user
         $subscription = $this->subscriptionFor($user); // Determine the subscription filter based on the user
@@ -164,8 +162,12 @@ class EntryFrontController extends AbstractController
         ]);
     }
 
-    private function createCriteria(string $content, Request $request)
+    private function createCriteria(string $content, Request $request, ?User $user): Criteria
     {
+        if ('default' === $content) {
+            $content = $user?->frontDefaultContent ?? 'threads';
+        }
+
         if ('threads' === $content || 'all' === $content) {
             $criteria = new EntryPageView($this->getPageNb($request), $this->security);
         } elseif ('microblog' === $content) {
@@ -202,11 +204,11 @@ class EntryFrontController extends AbstractController
         }
     }
 
-    private function renderResponse(Request $request, $content, $criteria, $data, $templatePath, ?User $user)
+    private function renderResponse(Request $request, Criteria $criteria, array $data, string $templatePath, ?User $user): Response
     {
         $baseData = array_merge(['criteria' => $criteria], $data);
 
-        if ('microblog' === $content) {
+        if ('microblog' === $criteria->content) {
             $dto = new PostDto();
             if (isset($data['magazine'])) {
                 $dto->magazine = $data['magazine'];

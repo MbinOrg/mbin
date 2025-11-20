@@ -1,6 +1,6 @@
 front:
   controller: App\Controller\Entry\EntryFrontController::front
-  defaults: &front_defaults { subscription: home, content: all, sortBy: default, time: '∞', federation: all }
+  defaults: &front_defaults { subscription: home, content: default, sortBy: default, time: '∞', federation: all }
   path: /{subscription}/{content}/{sortBy}/{time}/{federation}
   methods: [GET]
   requirements: &front_requirement
@@ -33,7 +33,7 @@ front_short:
 
 front_magazine:
   controller: App\Controller\Entry\EntryFrontController::magazine
-  defaults: &front_magazine_defaults { content: all, sortBy: default, time: '∞', federation: all }
+  defaults: &front_magazine_defaults { content: default, sortBy: default, time: '∞', federation: all }
   path: /m/{name}/{content}/{sortBy}/{time}/{federation}
   methods: [GET]
   requirements: *front_requirement
