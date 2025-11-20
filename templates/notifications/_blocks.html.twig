@@ -97,11 +97,27 @@
 {% endblock message_notification %}
 
 {% block magazine_ban_notification %}
-    {{ component('user_inline', {user: notification.ban.bannedBy, showNewIcon: true}) }} {{ 'banned'|trans|lower }}. {{ 'ban_expired'|trans }}
-    {%- if notification.ban.expiredAt is not same as null -%}
-        {{ component('date', {date: notification.ban.expiredAt}) }}
-    {%- endif -%}. {{ notification.ban.reason }}
+    {% if notification.ban.expiredAt is not same as null -%}
+        {{ 'you_have_been_banned_from_magazine'|trans({'%m': component('magazine_inline', {'magazine': notification.ban.magazine})})|raw }}
+        <div>
+            {% if now() < notification.ban.expiredAt %}
+                {{ 'ban_expires'|trans }}:
+            {% else %}
+                {{ 'ban_expired'|trans }}:
+            {% endif %}
+            {{ component('date', {date: notification.ban.expiredAt}) -}}.
+        </div>
+    {% else -%}
+        {{ 'you_have_been_banned_from_magazine_permanently'|trans({'%m': component('magazine_inline', {'magazine': notification.ban.magazine})})|raw }}
+    {% endif -%}
+    <div>
+        {{ 'reason'|trans }}: {{ notification.ban.reason }}
+    </div>
 {% endblock magazine_ban_notification %}
+
+{% block magazine_unban_notification %}
+    {{ 'you_are_no_longer_banned_from_magazine'|trans({'%m': component('magazine_inline', {'magazine': notification.ban.magazine})})|raw }}
+{% endblock magazine_unban_notification %}
 
 {% block reportlink %}
     {% if notification.report.entry is defined and notification.report.entry is not same as null %}
