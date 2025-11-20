@@ -381,7 +381,7 @@ export default class extends Controller {
                 if (active && parent.contains(active) && !self.moreTarget.contains(active)) {
                     try {
                         active.blur();
-                    } catch (e) {
+                    } catch {
                         // ignore environments where blur may throw
                     }
                 }
