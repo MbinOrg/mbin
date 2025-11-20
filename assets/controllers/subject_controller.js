@@ -360,6 +360,14 @@ export default class extends Controller {
                     });
                 this.element.classList.add('z-5');
             });
+
+            this.moreTarget.addEventListener('mouseenter', () => {
+                self.element.parentNode
+                    .querySelectorAll('.z-5')
+                    .forEach((el) => {
+                        el.classList.remove('z-5');
+                    });
+            });
         }
     }
 
