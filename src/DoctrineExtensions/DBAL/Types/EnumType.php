@@ -8,7 +8,7 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
 
 /**
- * See example by doctrine: https://www.doctrine-project.org/projects/doctrine-orm/en/3.5/cookbook/mysql-enums.html#solution-2-defining-a-type
+ * See example by doctrine: https://www.doctrine-project.org/projects/doctrine-orm/en/3.5/cookbook/mysql-enums.html#solution-2-defining-a-type.
  */
 abstract class EnumType extends Type
 {
