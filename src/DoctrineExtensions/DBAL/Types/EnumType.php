@@ -31,7 +31,7 @@ abstract class EnumType extends Type
         return $value;
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): string
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): string
     {
         if (!\in_array($value, $this->getValues())) {
             throw new \InvalidArgumentException("Invalid '".$this->getName()."' value.");
