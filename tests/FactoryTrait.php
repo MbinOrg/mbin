@@ -221,7 +221,7 @@ trait FactoryTrait
         ];
     }
 
-    protected function getUserByUsername(string $username, bool $isAdmin = false, bool $hideAdult = true, ?string $about = null, bool $active = true, bool $isModerator = false, bool $addImage = true): User
+    protected function getUserByUsername(string $username, bool $isAdmin = false, bool $hideAdult = true, ?string $about = null, bool $active = true, bool $isModerator = false, bool $addImage = true, ?string $email = null): User
     {
         $user = $this->users->filter(fn (User $user) => $user->getUsername() === $username)->first();
 
@@ -229,7 +229,7 @@ trait FactoryTrait
             return $user;
         }
 
-        $user = $this->createUser($username, active: $active, hideAdult: $hideAdult, about: $about, addImage: $addImage);
+        $user = $this->createUser($username, email: $email, active: $active, hideAdult: $hideAdult, about: $about, addImage: $addImage);
 
         if ($isAdmin) {
             $user->roles = ['ROLE_ADMIN'];
