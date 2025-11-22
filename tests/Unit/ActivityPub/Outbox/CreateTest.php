@@ -19,6 +19,13 @@ class CreateTest extends ActivityPubTestCase
         $this->assertMatchesSnapshot($json, new ActivityPubJsonDriver());
     }
 
+    public function testCreateEntryWithUrlAndImage(): void
+    {
+        $json = $this->activityJsonBuilder->buildActivityJson($this->getCreateEntryActivityWithImageAndUrl());
+
+        $this->assertMatchesSnapshot($json, new ActivityPubJsonDriver());
+    }
+
     public function testCreateEntryComment(): void
     {
         $json = $this->activityJsonBuilder->buildActivityJson($this->getCreateEntryCommentActivity());
