@@ -218,6 +218,23 @@ POSTGRES_PASSWORD=<password>
 MESSENGER_TRANSPORT_DSN=doctrine://default
 ```
 
+### Change yaml configuration
+
+In case you are using Doctrine as the messenger transport (see `MESSENGER_TRANSPORT_DSN` above), then you will also need to comment-out all the `options:` sections in the `config/packages/messenger.yaml` file. So the whole section, for example:
+
+```yaml
+    # options:
+    #     queues:
+    #         receive:
+    #             arguments:
+    #                 x-queue-version: 2
+    #                 x-queue-type: 'classic'
+    #     exchange:
+    #         name: receive
+```
+
+This is because those options are only meant for AMQP transport (like with RabbitMQ), but these options can **not** be used with Doctrine transport.
+
 ### Install Symfony CLI tool
 
 1. Install Symfony CLI: `wget https://get.symfony.com/cli/installer -O - | bash`
