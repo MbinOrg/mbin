@@ -202,6 +202,18 @@ In this example, port `8080` will connect to your Mbin server.
 > [!TIP]
 > In order to verify your server is correctly detecting it's public protocol (HTTP vs HTTPS), visit `/.well-known/nodeinfo` and look at which protocol is being used in the `href` fields. A public server should always be using HTTPS and not contain port numbers (i.e., `https://DOMAINHERE/`).
 
+### Additional configuration (Optional)
+
+If you run larger Mbin instance, its recommended to increase (or decrease) the `shm_size` value of the `postgres` service. `shm_size` sets the size of the shared memory (`/dev/shm`) and used for dynamic memory allocation. PostgreSQL is using this for buffering the write-ahead logs (also known as "WALL buffer"). The following step is **optional** and also depends on how much RAM you have left as well as how many parallel workers, table sizes, expected concurrent users and more...
+
+1. In `compose.override.yaml`, add `shm_size` to `postgres` service:
+
+```yaml
+services:
+  postgres:
+    shm_size: '4gb'
+```
+
 ## Running the containers
 
 By default `docker compose` will execute the `compose.yaml` and `compose.override.yaml` files.
