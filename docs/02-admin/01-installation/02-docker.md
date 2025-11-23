@@ -206,7 +206,7 @@ In this example, port `8080` will connect to your Mbin server.
 
 If you run a larger Mbin instance, its recommended to increase the `shm_size` value of the `postgres` service (first try the default `2gb`!). Although you can also decrease the number if you wish on smaller instances. `shm_size` sets the size of the shared memory (`/dev/shm`) and used for dynamic memory allocation. PostgreSQL is using this for buffering the write-ahead logs (also known as "WALL buffer").
 
-The following step is **optional** and also depends on how much RAM you have left as well as how many parallel workers, table sizes, expected concurrent users and more. You can first use the default `2gb`, which should be sufficient, however below is explained how to futher increase this number.
+The following step is **optional** and also depends on how much RAM you have left as well as how many parallel workers, table sizes, expected concurrent users and more. You can first use the default `2gb`, which should be sufficient, however below is explained how to further increase this number.
 
 1. In `compose.override.yaml`, add `shm_size` to the `postgres` service (`4gb` is an example here):
 
