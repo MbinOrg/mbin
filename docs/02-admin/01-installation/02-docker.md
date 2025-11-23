@@ -208,7 +208,7 @@ If you run a larger Mbin instance, its recommended to increase the `shm_size` va
 
 The following step is **optional** and also depends on how much RAM you have left as well as how many parallel workers, table sizes, expected concurrent users and more. You can first use the default `2gb`, which should be sufficient, however below is explained how to further increase this number.
 
-1. In `compose.override.yaml`, add `shm_size` to the `postgres` service (`4gb` is an example here):
+In `compose.override.yaml`, add `shm_size` to the `postgres` service (`4gb` is an example here):
 
 ```yaml
 services:
