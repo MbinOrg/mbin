@@ -75,7 +75,7 @@ services:
         image: postgres:${POSTGRES_VERSION}-trixie
         restart: unless-stopped
         user: ${MBIN_USER}
-        shm_size: '1gb'
+        shm_size: '2gb'
         healthcheck:
             test: ['CMD', 'pg_isready']
         env_file: .env
