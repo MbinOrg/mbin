@@ -1096,4 +1096,4 @@ default_content_all: Threads + Microblog
 default_content_threads: Threads
 default_content_microblog: Microblog
 combined: Combined
-local_only_performance_warning: Enabling "local only" may cause SQL performance degradation.
+local_only_performance_warning: Enabling "local only" may cause SQL performance impact.
