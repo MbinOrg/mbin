@@ -75,6 +75,13 @@
                 {{ form_label(form.MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY, 'sidebar_sections_local_only') }}
                 {{ form_widget(form.MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY) }}
             </div>
+            {% if form.MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY.vars.errors|length > 0 %}
+                <div class="alert__info section section-sm">
+                    {% for error in form.MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY.vars.errors %}
+                        {{ error.message }}
+                    {% endfor %}
+                </div>
+            {% endif %}
             <div class="checkbox">
                 {{ form_label(form.MBIN_RESTRICT_MAGAZINE_CREATION, 'restrict_magazine_creation') }}
                 {{ form_widget(form.MBIN_RESTRICT_MAGAZINE_CREATION) }}
