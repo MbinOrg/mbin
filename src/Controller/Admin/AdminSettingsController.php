@@ -29,6 +29,7 @@ class AdminSettingsController extends AbstractController
         $form = $this->createForm(SettingsType::class, $dto);
 
         if ($dto->MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY) {
+            // See: https://github.com/MbinOrg/mbin/issues/1868
             $form->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')->addError(new FormError($this->translator->trans('local_only_performance_warning')));
         }
 
