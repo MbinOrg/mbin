@@ -12,6 +12,7 @@ use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\VisibilityTrait;
 use App\Enums\EApplicationStatus;
 use App\Enums\EDirectMessageSettings;
+use App\Enums\EFrontContentOptions;
 use App\Enums\ESortOptions;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\ApHttpClientInterface;
@@ -108,14 +109,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public int $followersCount = 0;
     #[Column(type: 'string', nullable: false, options: ['default' => self::HOMEPAGE_ALL])]
     public string $homepage = self::HOMEPAGE_ALL;
-    #[Column(type: 'enumSortOptions', nullable: false, options: ['default' => ESortOptions::Hot->value])]
-    public string $frontDefaultSort = ESortOptions::Hot->value;
-    #[Column(type: 'enumFrontContentOptions', nullable: true)]
-    public ?string $frontDefaultContent = null;
-    #[Column(type: 'enumSortOptions', nullable: false, options: ['default' => ESortOptions::Hot->value])]
-    public string $commentDefaultSort = ESortOptions::Hot->value;
-    #[Column(type: 'enumDirectMessageSettings', nullable: false, options: ['default' => EDirectMessageSettings::Everyone->value])]
-    public string $directMessageSetting = EDirectMessageSettings::Everyone->value;
+    #[Column(type: 'enum', enumType: ESortOptions::class, nullable: false, options: ['default' => ESortOptions::Hot])]
+    public ESortOptions $frontDefaultSort = ESortOptions::Hot;
+    #[Column(type: 'enum', enumType: EFrontContentOptions::class, nullable: true)]
+    public ?EFrontContentOptions $frontDefaultContent = null;
+    #[Column(type: 'enum', enumType: ESortOptions::class, nullable: false, options: ['default' => ESortOptions::Hot])]
+    public ESortOptions $commentDefaultSort = ESortOptions::Hot;
+    #[Column(type: 'enum', enumType: EDirectMessageSettings::class, nullable: false, options: ['default' => EDirectMessageSettings::Everyone])]
+    public EDirectMessageSettings $directMessageSetting = EDirectMessageSettings::Everyone;
     #[Column(type: 'text', nullable: true)]
     public ?string $about = null;
     #[Column(type: 'datetimetz')]
@@ -267,8 +268,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]
     private ?string $aboutTs;
 
-    #[Column(type: 'enumApplicationStatus', nullable: false, options: ['default' => EApplicationStatus::Approved->value])]
-    private string $applicationStatus;
+    #[Column(type: 'enum', enumType: EApplicationStatus::class, nullable: false, options: ['default' => EApplicationStatus::Approved])]
+    private EApplicationStatus $applicationStatus = EApplicationStatus::Approved;
 
     public function __construct(
         string $email,
@@ -953,12 +954,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
 
     public function getApplicationStatus(): EApplicationStatus
     {
-        return EApplicationStatus::getFromString($this->applicationStatus);
+        return $this->applicationStatus;
     }
 
     public function setApplicationStatus(EApplicationStatus $applicationStatus): void
     {
-        $this->applicationStatus = $applicationStatus->value;
+        $this->applicationStatus = $applicationStatus;
     }
 
     /**
@@ -968,9 +969,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
      */
     public function canReceiveDirectMessage(User $dmAuthor): bool
     {
-        if (EDirectMessageSettings::Everyone->value === $this->directMessageSetting) {
+        if (EDirectMessageSettings::Everyone === $this->directMessageSetting) {
             return true;
-        } elseif (EDirectMessageSettings::FollowersOnly->value === $this->directMessageSetting) {
+        } elseif (EDirectMessageSettings::FollowersOnly === $this->directMessageSetting) {
             $criteria = Criteria::create()->where(Criteria::expr()->eq('follower', $dmAuthor));
 
             return $this->followers->matching($criteria)->count() > 0;
