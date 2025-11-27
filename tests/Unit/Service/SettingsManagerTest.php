@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
+use App\Repository\InstanceRepository;
+use App\Repository\SettingsRepository;
 use App\Service\SettingsManager;
 use App\Utils\DownvotesMode;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Psr\Log\LoggerInterface;
-use App\Repository\SettingsRepository;
-use App\Repository\InstanceRepository;
 
 class SettingsManagerTest extends WebTestCase
 {
