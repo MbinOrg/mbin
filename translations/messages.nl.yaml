@@ -852,8 +852,6 @@ all_time: Alle tijden
 spoiler: Spoiler
 show: Tonen
 hide: Verbergen
-sidebar_sections_local_only: Beperk de secties 'Random X' en 'Actieve mensen' 
-  tot alleen lokaal
 edited: bewerkt
 disconnected_magazine_info: Dit tijdschrift heeft geen updates ontvangen 
   (laatste activiteit %days% dag(en) geleden).

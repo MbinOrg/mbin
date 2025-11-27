@@ -489,8 +489,6 @@ federation_page_disallowed_description: நாங்கள் கூட்டு
 federation_page_dead_title: இறந்த நிகழ்வுகள்
 federated_search_only_loggedin: உள்நுழையவில்லை என்றால் ஃபெடரேட்டட் தேடல் 
   லிமிடெட்
-sidebar_sections_local_only: '"சீரற்ற ஃச்" மற்றும் "செயலில் உள்ள நபர்கள்" பிரிவுகளை
-  உள்ளக மட்டுமே கட்டுப்படுத்தவும்'
 account_deletion_title: கணக்கு நீக்குதல்
 federation_page_dead_description: ஒரு வரிசையில் குறைந்தது 10 நடவடிக்கைகளை 
   எங்களால் வழங்க முடியவில்லை, கடைசியாக வெற்றிகரமான மகப்பேறு மற்றும் ரெசிவ் ஒரு 

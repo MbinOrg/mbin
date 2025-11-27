@@ -739,8 +739,6 @@ oauth.client_not_granted_message_read_permission: Това приложение 
   разрешение да чете твоите съобщения.
 auto_preview_help: Показване на прегледите на мултимедията (снимка, видео) в 
   по-голям размер под съдържанието.
-sidebar_sections_local_only: Ограничаване на секциите „Случайни X“ и „Активни 
-  хора“ само до местни
 your_account_has_been_banned: Вашият акаунт е забранен
 oauth2.grant.report.general: Докладване на нишки, публикации или коментари.
 oauth2.grant.post.edit: Редактиране на твоите съществуващи публикации.
