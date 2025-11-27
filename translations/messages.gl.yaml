@@ -819,8 +819,6 @@ bot_body_content: "Benvida ao Mbin Agent! Este axente ten un rol moi importante 
   coñecida como o Fediverso. Proporciona un xeito estandarizado para que as usuarias
   publiquen contidos, se sigan entre si e se relacionen compartindo, gustando e comentando
   nos temas ou publicacións."
-sidebar_sections_local_only: Restrinxir as seccións «Tema ao chou» e «Persoas 
-  activas» a elementos locais
 oauth2.grant.user.bookmark: Engadir e retirar marcadores
 subscription_panel_large: Taboleiro grande
 subscription_header: Subscricións a revistas
