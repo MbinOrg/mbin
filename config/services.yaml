@@ -107,8 +107,8 @@ parameters:
     exif_exiftool_path: '%env(default::EXIF_EXIFTOOL_PATH)%'
     exif_exiftool_timeout: '%env(int:default::EXIF_EXIFTOOL_TIMEOUT)%'
 
-    max_image_bytes: '%env(int:default:max_image_bytes_default:MAX_IMAGE_BYTES)%'
-    max_image_bytes_default: 6000000
+    mbin_max_image_bytes: '%env(int:default:mbin_max_image_bytes_default:MBIN_MAX_IMAGE_BYTES)%'
+    mbin_max_image_bytes_default: 6000000
 
     mbin_downvotes_mode_default: 'enabled'
     mbin_downvotes_mode: '%env(enum:\App\Utils\DownvotesMode:default:mbin_downvotes_mode_default:MBIN_DOWNVOTES_MODE)%'
@@ -183,7 +183,7 @@ services:
             $kbinFederationPageEnabled: '%env(bool:KBIN_FEDERATION_PAGE_ENABLED)%'
             $kbinAdminOnlyOauthClients: '%env(bool:KBIN_ADMIN_ONLY_OAUTH_CLIENTS)%'
             $mbinSsoOnlyMode: '%sso_only_mode%'
-            $maxImageBytes: '%max_image_bytes%'
+            $mbinMaxImageBytes: '%mbin_max_image_bytes%'
             $mbinDownvotesMode: '%mbin_downvotes_mode%'
             $mbinNewUsersNeedApproval: '%mbin_new_users_need_approval%'
             $mbinUseFederationAllowList: '%mbin_use_federation_allow_list%'

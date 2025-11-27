@@ -428,7 +428,7 @@ class MagazineRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
         $whereClauses = [];
         $parameters = [];
-        if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
+        if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_RANDOM_LOCAL_ONLY')) {
             $whereClauses[] = 'm.ap_id IS NULL';
         }
         if (null !== $user) {
