@@ -1094,6 +1094,6 @@ default_content_all: Threads + Microblog
 default_content_threads: Threads
 default_content_microblog: Microblog
 combined: Combined
-sidebar_sections_random_local_only: Restrict "Random X" sidebar sections to local only
+sidebar_sections_random_local_only: Restrict "Random Threads/Posts" sidebar sections to local only
 sidebar_sections_users_local_only: Restrict "Active people" sidebar section to local only
 random_local_only_performance_warning: Enabling "Random local only" may cause SQL performance impact.
