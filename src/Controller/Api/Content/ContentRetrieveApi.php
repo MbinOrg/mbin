@@ -113,8 +113,6 @@ class ContentRetrieveApi extends BaseApi
         in: 'query',
         schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
     )]
-    #[OA\Tag(name: 'post')]
-    #[OA\Tag(name: 'entry')]
     #[OA\Tag(name: 'content')]
     public function collection(
         RateLimiterFactory $apiReadLimiter,
@@ -215,8 +213,6 @@ class ContentRetrieveApi extends BaseApi
         in: 'query',
         schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
     )]
-    #[OA\Tag(name: 'post')]
-    #[OA\Tag(name: 'entry')]
     #[OA\Tag(name: 'content')]
     #[\Nelmio\ApiDocBundle\Attribute\Security(name: 'oauth2', scopes: ['read'])]
     #[IsGranted('ROLE_OAUTH2_READ')]
