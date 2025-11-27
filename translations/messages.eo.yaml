@@ -615,8 +615,6 @@ oauth2.grant.moderate.magazine.ban.create: Forbari uzantojn en la revuoj, kiujn
 oauth2.grant.block.general: Bloki aŭ malbloki ajnan revuon, domajnon aŭ uzanton,
   kaj rigardi la revuojn, domajnojn kaj uzantojn, kiujn vi blokis.
 toolbar.spoiler: Malkaŝo de intrigo
-sidebar_sections_local_only: Limigi sekciojn "Hazarda X" kaj "Aktivaj Homoj" nur
-  al lokaj
 account_deletion_description: Via konto estos forigita post 30 tagoj krom se vi 
   elektas forigi la konton tuj. Por restarigi vian konton ene de 30 tagoj, 
   ensalutu kun la samaj uzantkreditaĵoj aŭ kontaktu administranton.

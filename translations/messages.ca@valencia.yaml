@@ -833,8 +833,6 @@ federation_page_disallowed_description: Instàncies amb què no ens federem
 resend_account_activation_email_error: Hi ha hagut un problema en enviar la 
   sol·licitud. Potser no hi ha cap compte associat amb l'adreça electrònica o 
   potser ja està activat.
-sidebar_sections_local_only: Restringir les seccions «Aleatoris» i «Persones 
-  actives» només a locals
 ignore_magazines_custom_css: Ignorar el CSS personalitzat de les revistes
 errors.server404.title: 404 No trobat
 private_instance: Forçar a iniciar sessió abans de poder accedir a qualsevol 

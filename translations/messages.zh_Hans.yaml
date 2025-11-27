@@ -402,7 +402,6 @@ federation_page_disallowed_description: 我们不联邦的实例
 federation_page_dead_title: 失效实例
 federation_page_dead_description: 连续至少 10 个活动无法送达，且最后一次成功送达和接收已超过一周的实例
 federated_search_only_loggedin: 未登录时联邦搜索受限
-sidebar_sections_local_only: 将"随机X"和"活跃用户"版块限制为仅本地
 account_deletion_title: 账号删除
 account_deletion_description: 除非您选择立即删除账号，否则您的账号将在 30 天后被删除。要在 30 
   天内恢复账号，请使用相同的用户凭据登录或联系管理员。

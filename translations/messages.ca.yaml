@@ -479,8 +479,6 @@ federation_page_disallowed_description: Instàncies amb què no ens federem
 federation_page_dead_title: Instàncies mortes
 federated_search_only_loggedin: Cerca federada limitada si no s'ha iniciat 
   sessió
-sidebar_sections_local_only: Restringir les seccions «Aleatoris» i «Persones 
-  actives» només a locals
 account_deletion_title: Supressió del compte
 account_deletion_button: Suprimir el compte
 account_deletion_immediate: Suprimir immediatament
