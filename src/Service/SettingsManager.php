@@ -253,9 +253,12 @@ class SettingsManager
 
     public function getMaxImageByteString(): string
     {
-        $megaBytes = round($this->mbinMaxImageBytes / 1024 / 1024, 2);
+        $bytes = (int) $this->getDto()->MBIN_MAX_IMAGE_BYTES;
+        // We use 1000 for MB (instead of 1024, which would be MiB)
+        // Linux is using SI standard, see also: https://wiki.ubuntu.com/UnitsPolicy
+        $megaBytes = round($bytes / pow(1000, 2), 2);
 
-        return $megaBytes.'MB';
+        return $megaBytes.' MB';
     }
 
     /**
