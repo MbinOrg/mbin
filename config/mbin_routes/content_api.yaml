@@ -1,13 +1,13 @@
-api_posts_subscribed:
-  controller: App\Controller\Api\Content\ContentRetrieveApi::userCollection
-  path: /api/posts/{contentType}
-  requirements:
-    contentType: sub|fav|mod
+api_content_collection:
+  controller: App\Controller\Api\Content\ContentRetrieveApi::collection
+  path: /api/content
   methods: [ GET ]
   format: json
 
-api_posts_collection:
-  controller: App\Controller\Api\Content\ContentRetrieveApi::collection
-  path: /api/content
+api_content_user_collection:
+  controller: App\Controller\Api\Content\ContentRetrieveApi::userCollection
+  path: /api/content/{contentType}
+  requirements:
+    contentType: sub|fav|mod
   methods: [ GET ]
   format: json
