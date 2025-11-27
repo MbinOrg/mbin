@@ -382,7 +382,7 @@ class PostRepository extends ServiceEntityRepository
         $qb = $qb->where('p.isAdult = false')
             ->andWhere('p.visibility = :visibility')
             ->andWhere('m.isAdult = false');
-        if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
+        if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_RANDOM_LOCAL_ONLY')) {
             $qb = $qb->andWhere('m.apId IS NULL');
         }
 

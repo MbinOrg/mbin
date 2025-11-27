@@ -46,7 +46,7 @@ class SettingsManager
         private readonly bool $kbinFederationPageEnabled,
         private readonly bool $kbinAdminOnlyOauthClients,
         private readonly bool $mbinSsoOnlyMode,
-        private readonly int $maxImageBytes,
+        private readonly int $mbinMaxImageBytes,
         private readonly DownvotesMode $mbinDownvotesMode,
         private readonly bool $mbinNewUsersNeedApproval,
         private readonly LoggerInterface $logger,
@@ -55,9 +55,9 @@ class SettingsManager
         if (!self::$dto || 'test' === $this->kernel->getEnvironment()) {
             $results = $this->repository->findAll();
 
-            $maxImageBytesEdited = $this->find($results, 'MAX_IMAGE_BYTES', FILTER_VALIDATE_INT);
-            if (null === $maxImageBytesEdited || 0 === $maxImageBytesEdited) {
-                $maxImageBytesEdited = $this->maxImageBytes;
+            $mbinMaxImageBytesEdited = $this->find($results, 'MBIN_MAX_IMAGE_BYTES', FILTER_VALIDATE_INT);
+            if (null === $mbinMaxImageBytesEdited || 0 === $mbinMaxImageBytesEdited) {
+                $mbinMaxImageBytesEdited = $this->mbinMaxImageBytes;
             }
 
             $newUsersNeedApprovalDb = $this->find($results, 'MBIN_NEW_USERS_NEED_APPROVAL');
@@ -98,11 +98,12 @@ class SettingsManager
                 $this->find($results, 'MBIN_SSO_ONLY_MODE', FILTER_VALIDATE_BOOLEAN) ?? $this->mbinSsoOnlyMode,
                 $this->find($results, 'MBIN_PRIVATE_INSTANCE', FILTER_VALIDATE_BOOLEAN) ?? false,
                 $this->find($results, 'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', FILTER_VALIDATE_BOOLEAN) ?? true,
-                $this->find($results, 'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY', FILTER_VALIDATE_BOOLEAN) ?? false,
+                $this->find($results, 'MBIN_SIDEBAR_SECTIONS_RANDOM_LOCAL_ONLY', FILTER_VALIDATE_BOOLEAN) ?? false,
+                $this->find($results, 'MBIN_SIDEBAR_SECTIONS_USERS_LOCAL_ONLY', FILTER_VALIDATE_BOOLEAN) ?? false,
                 $this->find($results, 'MBIN_SSO_REGISTRATIONS_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? true,
                 $this->find($results, 'MBIN_RESTRICT_MAGAZINE_CREATION', FILTER_VALIDATE_BOOLEAN) ?? false,
                 $this->find($results, 'MBIN_SSO_SHOW_FIRST', FILTER_VALIDATE_BOOLEAN) ?? false,
-                $maxImageBytesEdited,
+                $mbinMaxImageBytesEdited,
                 $this->find($results, 'MBIN_DOWNVOTES_MODE') ?? $this->mbinDownvotesMode->value,
                 $newUsersNeedApprovalEdited,
                 $this->find($results, 'MBIN_USE_FEDERATION_ALLOW_LIST', FILTER_VALIDATE_BOOLEAN) ?? $this->mbinUseFederationAllowList,
@@ -252,7 +253,7 @@ class SettingsManager
 
     public function getMaxImageByteString(): string
     {
-        $megaBytes = round($this->maxImageBytes / 1024 / 1024, 2);
+        $megaBytes = round($this->mbinMaxImageBytes / 1024 / 1024, 2);
 
         return $megaBytes.'MB';
     }

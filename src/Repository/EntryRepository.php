@@ -419,7 +419,7 @@ class EntryRepository extends ServiceEntityRepository
             ->andWhere('u.visibility = :visibility')
             ->andWhere('u.isDeleted = false')
             ->andWhere('m.isAdult = false');
-        if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
+        if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_RANDOM_LOCAL_ONLY')) {
             $qb = $qb->andWhere('m.apId IS NULL');
         }
 
