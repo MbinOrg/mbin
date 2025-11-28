@@ -1130,4 +1130,5 @@ default_content_microblog: Микроблог
 combined: Обединено
 direct_message_setting_label: Кой може да ви изпраща лично съобщение
 default_content_all: Нишки + Микроблог
-default_content_default: По подразбиране, в момента Нишки
+default_content_default: По подразбиране (Нишки)
+front_default_content: Изглед по подразбиране на началната страница
