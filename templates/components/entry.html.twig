@@ -120,6 +120,8 @@
                     {% elseif entry.type is same as 'image' or entry.type is same as 'article' %}
                         {{ include('components/_figure_entry.html.twig', {entry: entry, type: 'image'}) }}
                     {% endif %}
+                {% elseif entry.hasEmbed and entry.url is not null %}
+                    {{ include('components/_figure_entry_url.html.twig', {entry: entry}) }}
                 {% else %}
                     <div class="no-image-placeholder">
                         <a href="{{ is_route_name('entry_single') ? entry.url : entry_url(entry) }}"
@@ -153,7 +155,7 @@
                             </li>
                         {% endif %}
                         {% if entry.hasEmbed %}
-                            {% set preview_url = entry.type is same as 'image' and entry.image ? uploaded_asset(entry.image) : entry.url %}
+                            {% set preview_url = entry.image ? uploaded_asset(entry.image) : entry.url %}
                             <li>
                                 <button class="show-preview"
                                         data-action="preview#show"

@@ -1,0 +1,53 @@
+{# this fragment is only meant to be used in entry component #}
+{% with {is_single: is_route_name('entry_single')} %}
+    {% set sensitive_id = 'sensitive-check-%s-link'|format(entry.id) %}
+    {% set lightbox_alt_id = 'thumb-alt-%s-link'|format(entry.id) %}
+    {% set image_path = entry.url %}
+    {% set route = entry.url %}
+
+    {%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
+    {%- set LIST_LIGHTBOX = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_LIST_IMAGE_LIGHTBOX'), V_TRUE) -%}
+
+    <figure>
+        <div class="image-filler" aria-hidden="true">
+            <img src="{{ image_path }}" style="object-fit: fill; filter: blur(16px);">
+        </div>
+        {% if entry.isAdult %}
+            <input id="{{ sensitive_id }}"
+                   type="checkbox"
+                   class="sensitive-state"
+                   aria-label="{{ 'sensitive_toggle'|trans }}">
+        {% endif %}
+        <a href="{{ route }}"
+           class="{{ html_classes('sensitive-checked--show', {'thumb': true}) }}"
+           rel="{{ route is not same as null ? get_rel(route) : '' }}"
+           data-gallery="entry-{{ entry.id }}">
+            <img class="thumb-subject"
+                 loading="lazy"
+                 src="{{ image_path }}">
+        </a>
+        <div class="figure-badge sensitive-checked--show">
+            {% if image_path|lower ends with '.gif' %}
+                <div class="figure-badge-label">GIF</div>
+            {% endif %}
+        </div>
+        {% if entry.isAdult %}
+            <label for="{{ sensitive_id }}"
+                   class="sensitive-button sensitive-button-show sensitive-checked--hide"
+                   title="{{ 'sensitive_show'|trans }}"
+                   aria-label="{{ 'sensitive_show'|trans }}">
+                <div class="sensitive-button-label">
+                    <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                </div>
+            </label>
+            <label for="{{ sensitive_id }}"
+                   class="sensitive-button sensitive-button-hide sensitive-checked--show"
+                   title="{{ 'sensitive_hide'|trans }}"
+                   aria-label="{{ 'sensitive_hide'|trans }}">
+                <div class="sensitive-button-label">
+                    <i class="fa-solid fa-eye-slash" aria-hidden="true"></i>
+                </div>
+            </label>
+        {% endif %}
+    </figure>
+{% endwith %}
