@@ -3,10 +3,15 @@
     {% set sensitive_id = 'sensitive-check-%s-link'|format(entry.id) %}
     {% set lightbox_alt_id = 'thumb-alt-%s-link'|format(entry.id) %}
     {% set image_path = entry.url %}
-    {% set route = entry.url %}
 
     {%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
     {%- set LIST_LIGHTBOX = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_LIST_IMAGE_LIGHTBOX'), V_TRUE) -%}
+
+    {% if LIST_LIGHTBOX is same as V_TRUE %}
+        {% set route = entry.url %}
+    {% else %}
+        {% set route = entry_url(entry) %}
+    {% endif %}
 
     <figure>
         <div class="image-filler" aria-hidden="true">
@@ -19,7 +24,7 @@
                    aria-label="{{ 'sensitive_toggle'|trans }}">
         {% endif %}
         <a href="{{ route }}"
-           class="{{ html_classes('sensitive-checked--show', {'thumb': true}) }}"
+           class="{{ html_classes('sensitive-checked--show', {'thumb': LIST_LIGHTBOX is same as V_TRUE}) }}"
            rel="{{ route is not same as null ? get_rel(route) : '' }}"
            data-gallery="entry-{{ entry.id }}">
             <img class="thumb-subject"
