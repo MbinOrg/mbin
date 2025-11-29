@@ -55,6 +55,7 @@ class TestingImageManager implements ImageManagerInterface
             throw new \Exception('For some reason the kibby image got deleted');
         }
         copy($srcPath, $tmpPath);
+
         return $tmpPath;
     }
 
