@@ -156,7 +156,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected GroupFactory $groupFactory;
     protected EntryPageFactory $pageFactory;
     protected TestingApHttpClient $testingApHttpClient;
-    protected TestingImageManager $testingImageManager;
+    protected TestingImageManager $imageManager;
 
     protected CreateWrapper $createWrapper;
     protected LikeWrapper $likeWrapper;
@@ -186,7 +186,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->testingApHttpClient = new TestingApHttpClient();
         self::getContainer()->set(ApHttpClientInterface::class, $this->testingApHttpClient);
 
-        $this->testingImageManager = new TestingImageManager(
+        $this->imageManager = new TestingImageManager(
             $this->getContainer()->getParameter('kbin_storage_url'),
             $this->getService(Filesystem::class),
             $this->getService(HttpClientInterface::class),
@@ -195,8 +195,8 @@ abstract class WebTestCase extends BaseWebTestCase
             $this->getService(LoggerInterface::class),
             $this->getService(SettingsManager::class),
         );
-        $this->testingImageManager->setKibbyPath($this->kibbyPath);
-        self::getContainer()->set(ImageManagerInterface::class, $this->testingImageManager);
+        $this->imageManager->setKibbyPath($this->kibbyPath);
+        self::getContainer()->set(ImageManagerInterface::class, $this->imageManager);
 
         $this->entityManager = $this->getService(EntityManagerInterface::class);
         $this->magazineManager = $this->getService(MagazineManager::class);
@@ -205,7 +205,6 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->entryCommentManager = $this->getService(EntryCommentManager::class);
         $this->postManager = $this->getService(PostManager::class);
         $this->postCommentManager = $this->getService(PostCommentManager::class);
-        $this->imageManager = $this->getService(ImageManager::class);
         $this->messageManager = $this->getService(MessageManager::class);
         $this->favouriteManager = $this->getService(FavouriteManager::class);
         $this->voteManager = $this->getService(VoteManager::class);
