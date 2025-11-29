@@ -1154,7 +1154,6 @@ ban_instance: Banir instància
 allow_instance: Permetre instància
 front_default_content: Vista frontal per defecte
 default_content_default: Valor per defecte del servidor (Fils)
-default_content_all: Fils + Microblog
 default_content_threads: Fils
 default_content_microblog: Microblog
 combined: Combinat

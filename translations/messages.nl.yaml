@@ -1140,7 +1140,6 @@ federation_page_use_allowlist_help: Als een toegestane lijst wordt gebruikt, zal
   geblokkeerd zijn.
 front_default_content: Standaard vooraanzicht
 default_content_default: Serverstandaard (Gesprekken)
-default_content_all: Gesprekken + Microblog
 default_content_microblog: Microblog
 default_content_threads: Gesprekken
 combined: Gecombineerd
