@@ -43,7 +43,6 @@ use App\Service\DomainManager;
 use App\Service\EntryCommentManager;
 use App\Service\EntryManager;
 use App\Service\FavouriteManager;
-use App\Service\ImageManager;
 use App\Service\ImageManagerInterface;
 use App\Service\InstanceManager;
 use App\Service\MagazineManager;
