@@ -151,7 +151,7 @@
                                     <i class="fa-regular fa-newspaper" aria-hidden="true"></i>
                                 </span>
                             </li>
-                        {% elseif entry.type is same as 'link' and entry.image is null %}
+                        {% elseif entry.type is same as 'link' and entry.hasEmbed is same as false %}
                             <li class="meta-link">
                                 <span aria-label="{{ 'link'|trans }}">
                                     <i class="fa-solid fa-link" aria-hidden="true"></i>
