@@ -16,11 +16,11 @@ final class Version20251129140919 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TYPE enumfrontcontentoptions RENAME VALUE \'all\' TO \'combined\'');
+        $this->addSql('ALTER TYPE enumFrontContentOptions RENAME VALUE \'all\' TO \'combined\'');
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TYPE enumfrontcontentoptions RENAME VALUE \'combined\' TO \'all\'');
+        $this->addSql('ALTER TYPE enumFrontContentOptions RENAME VALUE \'combined\' TO \'all\'');
     }
 }
