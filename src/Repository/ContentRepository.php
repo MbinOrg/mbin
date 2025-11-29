@@ -284,9 +284,12 @@ class ContentRepository
         }
 
         $orderBy = 'ORDER BY '.join(', ', $orderings);
+        // only join domain if we are explicitly looking at one
+        $domainJoin = $criteria->domain ? 'LEFT JOIN domain d ON d.id = c.domain_id' : '';
 
         $entrySql = "SELECT c.id, 'entry' as type, c.type as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM entry c
             LEFT JOIN magazine m ON c.magazine_id = m.id
+            $domainJoin
             $entryWhere";
         $postSql = "SELECT c.id, 'post' as type, 'microblog' as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM post c
             LEFT JOIN magazine m ON c.magazine_id = m.id
