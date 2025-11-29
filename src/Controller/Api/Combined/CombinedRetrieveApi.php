@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Api\Content;
+namespace App\Controller\Api\Combined;
 
 use App\Controller\Api\BaseApi;
 use App\Controller\Traits\PrivateContentTrait;
@@ -24,13 +24,13 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class ContentRetrieveApi extends BaseApi
+class CombinedRetrieveApi extends BaseApi
 {
     use PrivateContentTrait;
 
     #[OA\Response(
         response: 200,
-        description: 'A paginated list of entries and posts filtered by the query parameters',
+        description: 'A paginated list of combined entries and posts filtered by the query parameters',
         headers: [
             new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
             new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
@@ -113,9 +113,7 @@ class ContentRetrieveApi extends BaseApi
         in: 'query',
         schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
     )]
-    #[OA\Tag(name: 'post')]
-    #[OA\Tag(name: 'entry')]
-    #[OA\Tag(name: 'content')]
+    #[OA\Tag(name: 'combined')]
     public function collection(
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
@@ -132,7 +130,7 @@ class ContentRetrieveApi extends BaseApi
 
     #[OA\Response(
         response: 200,
-        description: 'A paginated list of entries and posts from subscribed magazines and users filtered by the query parameters',
+        description: 'A paginated list of combined entries and posts from subscribed magazines and users filtered by the query parameters',
         headers: [
             new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
             new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
@@ -215,9 +213,7 @@ class ContentRetrieveApi extends BaseApi
         in: 'query',
         schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
     )]
-    #[OA\Tag(name: 'post')]
-    #[OA\Tag(name: 'entry')]
-    #[OA\Tag(name: 'content')]
+    #[OA\Tag(name: 'combined')]
     #[\Nelmio\ApiDocBundle\Attribute\Security(name: 'oauth2', scopes: ['read'])]
     #[IsGranted('ROLE_OAUTH2_READ')]
     public function userCollection(
@@ -261,13 +257,13 @@ class ContentRetrieveApi extends BaseApi
         }
 
         switch ($collectionType) {
-            case 'sub':
+            case 'subscribed':
                 $criteria->subscribed = true;
                 break;
-            case 'mod':
+            case 'moderated':
                 $criteria->moderated = true;
                 break;
-            case 'fav':
+            case 'favourited':
                 $criteria->favourite = true;
                 break;
         }
