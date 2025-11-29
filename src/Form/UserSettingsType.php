@@ -7,6 +7,7 @@ namespace App\Form;
 use App\DTO\UserSettingsDto;
 use App\Entity\User;
 use App\Enums\EDirectMessageSettings;
+use App\Enums\EFrontContentOptions;
 use App\Form\DataTransformer\FeaturedMagazinesBarTransformer;
 use App\PageView\EntryCommentPageView;
 use App\PageView\EntryPageView;
@@ -43,6 +44,12 @@ class UserSettingsType extends AbstractType
         foreach (EDirectMessageSettings::getValues() as $option) {
             $directMessageSettingChoices[$this->translator->trans($option)] = $option;
         }
+        $frontDefaultContentChoices = [
+            $this->translator->trans('default_content_default') => null,
+        ];
+        foreach (EFrontContentOptions::OPTIONS as $option) {
+            $frontDefaultContentChoices[$this->translator->trans('default_content_'.$option)] = $option;
+        }
         $builder
             ->add(
                 'hideAdult',
@@ -62,6 +69,10 @@ class UserSettingsType extends AbstractType
             ->add('frontDefaultSort', ChoiceType::class, [
                 'autocomplete' => true,
                 'choices' => $frontDefaultSortChoices,
+            ])
+            ->add('frontDefaultContent', ChoiceType::class, [
+                'autocomplete' => true,
+                'choices' => $frontDefaultContentChoices,
             ])
             ->add('commentDefaultSort', ChoiceType::class, [
                 'autocomplete' => true,

@@ -1,10 +1,10 @@
 # NGINX
 
-We will use NGINX as reverse proxy between the public site and various backend services (static files, PHP and Mercure).
+We will use NGINX as a reverse proxy between the public site and various backend services (static files, PHP and Mercure).
 
 ## General NGINX configs
 
-Generate DH parameters (will be used later):
+Generate DH parameters (used later):
 
 ```bash
 sudo openssl dhparam -dsaparam -out /etc/nginx/dhparam.pem 4096
@@ -32,7 +32,7 @@ ssl_session_tickets off; # Requires nginx >= 1.5.9
 ssl_stapling on; # Requires nginx >= 1.3.7
 ssl_stapling_verify on; # Requires nginx => 1.3.7
 
-# This is an example DNS (replace the DNS IPs if you wish)
+# This is an example resolver configuration (replace the DNS IPs if you prefer)
 resolver 1.1.1.1 9.9.9.9 valid=300s;
 resolver_timeout 5s;
 
@@ -227,7 +227,7 @@ server {
         internal;
     }
 
-    # bypass thumbs cache image files
+    # bypass thumbnail cache image files
     location ~ ^/media/cache/resolve {
       expires 1M;
       access_log off;
@@ -257,14 +257,14 @@ server {
 ```
 
 > [!TIP]
-> If have multiple PHP versions installed. You can switch the PHP version that Nginx is using (`/var/run/php/php-fpm.sock`) via the the following command:
+> If you have multiple PHP versions installed. You can switch the PHP version that Nginx is using (`/var/run/php/php-fpm.sock`) via the the following command:
 > `sudo update-alternatives --config php-fpm.sock`
 >
 > Same is true for the PHP CLI command (`/usr/bin/php`), via the following command:
 > `sudo update-alternatives --config php`
 
 > [!WARNING]
-> If also want to also configure your `www.domain.tld` subdomain; our advise is to use a HTTP 301 redirect from the `www` subdomain towards the root domain. Do _NOT_ try to setup a double instance (you want to _avoid_ that ActivityPub will see `www` as a separate instance). See Nginx example below
+> If also want to configure your `www.domain.tld` subdomain; our advice is to use a HTTP 301 redirect from the `www` subdomain towards the root domain. Do _NOT_ try to setup a second instance (you want to _avoid_ that ActivityPub will see `www` as a separate instance). See Nginx example below:
 
 ```nginx
 # Example of a 301 redirect response for the www subdomain
@@ -306,7 +306,7 @@ sudo systemctl restart nginx
 
 ## Trusted Proxies
 
-If you are using a reverse proxy, you need to configure your trusted proxies to use the `X-Forwarded-For` header. Mbin configured the following trusted headers for you already: `x-forwarded-for`, `x-forwarded-proto`, `x-forwarded-port` and `x-forwarded-prefix`.
+If you are using a reverse proxy, you need to configure your trusted proxies to use the `X-Forwarded-For` header. Mbin already configures the following trusted headers: `x-forwarded-for`, `x-forwarded-proto`, `x-forwarded-port` and `x-forwarded-prefix`.
 
 Trusted proxies can be configured in the `.env` file (or your `.env.local` file):
 
@@ -328,7 +328,7 @@ TRUSTED_PROXIES=127.0.0.1,REMOTE_ADDR
 ```
 
 > [!WARNING]
-> In this last example be sure that you configure the web server to _not_
+> In this last example, be sure that you configure the web server to _not_
 > respond to traffic from _any_ clients other than your trusted load balancers
 > (eg. within AWS this can be achieved via security groups).
 
@@ -342,7 +342,7 @@ More detailed info can be found at: [Symfony Trusted Proxies docs](https://symfo
 
 ## Media reverse proxy
 
-we suggest that you do not use this configuration:
+We suggest that you do not use this configuration:
 
 ```ini
 KBIN_STORAGE_URL=https://mbin.domain.tld/media
@@ -371,7 +371,7 @@ server {
 }
 ```
 
-Be sure that the `root /path` is correct (maybe you use `/var/www/mbin/public`).
+Make sure the `root /path` is correct (you may be using `/var/www/mbin/public`).
 
 Enable the NGINX site, using a symlink:
 
@@ -380,11 +380,11 @@ sudo ln -s /etc/nginx/sites-available/mbin-media.conf /etc/nginx/sites-enabled/
 ```
 
 > [!TIP]
-> before reloading nginx in a production environment you can run `nginx -t` to test your configuration.
-> If your configuration is faulty and you run `systemctl reload nginx` it will crash the webserver.
+> Before reloading nginx in a production environment you can run `nginx -t` to test your configuration.
+> If your configuration is faulty and you run `systemctl reload nginx` it will cause Nginx to stop instead of reloading cleanly.
 
-Run `systemctl reload nginx` so the site is loaded.
-For it to be a usable https site you have to run `certbot --nginx` and select the media domain or supply your certificates manually.
+Run `systemctl reload nginx` so the site configuration is reloaded.
+For it to be a usable HTTPS site, you must run: `certbot --nginx` and select the media domain or supply your certificates manually.
 
 > [!TIP]
-> don't forget to enable http2 by adding `http2 on;` after certbot ran (underneath the `listen 443 ssl;` line)
+> Don't forget to enable HTTP/2 by adding `http2 on;` after certbot ran (underneath the `listen 443 ssl;` line). It used to be part of the same line, however in recent NGINX versions `http2 on` is a separate directive for enabling the HTTP/2 protocol.

@@ -82,7 +82,7 @@ If you want to use OAuth for the API, do the following **before** creating the D
 To run test inside the Dev Container, some preparation is needed.
 These steps have to be repeated after every recreation of the Container:
 
-1. Run: `sudo pg_createcluster 13 tests --port=5433 --start`
+1. Run: `sudo pg_createcluster 18 tests --port=5433 --start`
 2. Run: `sudo su postgres -c 'psql -p 5433 -U postgres -d postgres'`
 3. Inside the SQL shell, run: `CREATE USER mbin WITH PASSWORD 'ChangeThisPostgresPass' SUPERUSER;`
 
@@ -217,6 +217,23 @@ POSTGRES_PASSWORD=<password>
 # Set messenger to Doctrine (= PostgresQL DB)
 MESSENGER_TRANSPORT_DSN=doctrine://default
 ```
+
+### Change yaml configuration
+
+In case you are using Doctrine as the messenger transport (see `MESSENGER_TRANSPORT_DSN` above), then you will also need to comment-out all the `options:` sections in the `config/packages/messenger.yaml` file. So the whole section, for example:
+
+```yaml
+    # options:
+    #     queues:
+    #         receive:
+    #             arguments:
+    #                 x-queue-version: 2
+    #                 x-queue-type: 'classic'
+    #     exchange:
+    #         name: receive
+```
+
+This is because those options are only meant for AMQP transport (like with RabbitMQ), but these options can **not** be used with Doctrine transport.
 
 ### Install Symfony CLI tool
 
