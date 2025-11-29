@@ -29,19 +29,19 @@
   display: grid;
   font-size: .9rem;
   grid-gap: .5rem;
-  grid-template-areas: "avatar header vote"
-                         "avatar body body"
-                         "avatar meta meta"
-                         "avatar footer footer"
+  grid-template-areas:   "vote header header"
+                         "vote body body"
+                         "vote meta meta"
+                         "vote footer footer"
                          "moderate moderate moderate";
   grid-template-columns: min-content auto min-content;
   margin: 0 0 .5rem;
-  padding: 0.75rem;
+  padding: var(--kbin-entry-element-spacing);
   position: relative;
   z-index: 2;
 
   @include b.media-breakpoint-down(sm) {
-    grid-template-areas: "avatar header vote"
+    grid-template-areas: "vote header header"
                          "body body body"
                          "meta meta meta"
                          "footer footer footer"
@@ -95,17 +95,6 @@
 
     img {
       border: var(--kbin-avatar-border);
-    }
-  }
-
-  .vote {
-    display: flex;
-    gap: .5rem;
-    justify-content: flex-end;
-
-    button {
-      height: 1.2rem;
-      width: 4rem;
     }
   }
 

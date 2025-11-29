@@ -20,9 +20,17 @@
                 id="post-{{ post.id }}"
                 data-controller="post subject mentions html-refresh"
                 data-action="notifications:Notification@window->subject#notification">
+
+            {% if post.visibility in ['visible', 'private'] %}
+                {{ component('vote', {
+                    subject: post,
+                    showDownvote: false
+                }) }}
+            {% endif %}
+
             <header>
                 {% if post.isAdult %}<span class="badge danger">18+</span>{% endif %}
-                {{ component('user_inline', {user: post.user, showAvatar: false, showNewIcon: true, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) }}
+                {{ component('user_inline', {user: post.user, showAvatar: true, showNewIcon: true, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) }}
 
                 {% if (post.user.type) == "Service" %}
                     <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
@@ -48,12 +56,8 @@
                     <small class="badge-lang kbin-bg">{{ post.lang|language_name }}</small>
                 {% endif %}
             </header>
-            {{ component('user_avatar', {
-                user: post.user,
-                width: 40,
-                height: 40,
-                asLink: true
-            }) }}
+
+            <!-- body -->
             <div data-controller="collapsable">
                 <div data-collapsable-target="content" class="content">
                     {% if post.visibility in ['visible', 'private'] or (post.visibility is same as 'trashed' and this.canSeeTrashed) %}
@@ -63,25 +67,21 @@
                     {% elseif(post.visibility is same as 'soft_deleted') %}
                         <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
                     {% endif %}
+
+                    {% if post.image %}
+                        {{ include('components/_figure_image.html.twig', {
+                            image: post.image,
+                            parent_id: post.id,
+                            is_adult: post.isAdult,
+                            thumb_filter: 'post_thumb',
+                            gallery_name: 'post-%d'|format(post.id),
+                        }) }}
+                    {% endif %}
                 </div>
                 <div data-collapsable-target="button"></div>
             </div>
-            {% if post.visibility in ['visible', 'private'] %}
-                {{ component('vote', {
-                    subject: post,
-                    showDownvote: false
-                }) }}
-            {% endif %}
+
             <footer>
-                {% if post.image %}
-                    {{ include('components/_figure_image.html.twig', {
-                        image: post.image,
-                        parent_id: post.id,
-                        is_adult: post.isAdult,
-                        thumb_filter: 'post_thumb',
-                        gallery_name: 'post-%d'|format(post.id),
-                    }) }}
-                {% endif %}
                 {% if post.visibility in ['visible', 'private'] %}
                     <menu>
                         {% if post.sticky %}
@@ -168,6 +168,7 @@
                 <div data-subject-target="container" class="js-container">
                 </div>
             </footer>
+
         </blockquote>
     {% endif %}
     {% if(showCommentsPreview and post.commentCount) %}
