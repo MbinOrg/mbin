@@ -1,0 +1,13 @@
+api_combined:
+  controller: App\Controller\Api\Combined\CombinedRetrieveApi::collection
+  path: /api/combined
+  methods: [ GET ]
+  format: json
+
+api_combined_user:
+  controller: App\Controller\Api\Combined\CombinedRetrieveApi::userCollection
+  path: /api/combined/{contentType}
+  requirements:
+    contentType: subscribed|moderated|favourited
+  methods: [ PUT ]
+  format: json

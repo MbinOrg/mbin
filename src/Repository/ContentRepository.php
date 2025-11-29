@@ -110,7 +110,7 @@ class ContentRepository
 
         $contentClauseEntry = '';
         $contentClausePost = '';
-        if ('all' !== $criteria->content) {
+        if ('combined' !== $criteria->content) {
             if ('threads' === $criteria->content) {
                 $contentClausePost = 'false';
             } elseif ('microblog' === $criteria->content) {

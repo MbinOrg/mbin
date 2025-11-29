@@ -99,7 +99,7 @@ class UserUpdateApiTest extends WebTestCase
             ['test'],
             ['en'],
             directMessageSetting: EDirectMessageSettings::Everyone->value,
-            frontDefaultContent: EFrontContentOptions::All->value,
+            frontDefaultContent: EFrontContentOptions::Combined->value,
         ))->jsonSerialize();
 
         $this->client->jsonRequest(
