@@ -177,6 +177,13 @@ class ActivityJsonBuilder
         $actor = $activity->getActor();
         $to = [ActivityPubActivityInterface::PUBLIC_URL];
 
+        $cc = [];
+        if ($actor instanceof User) {
+            $cc[] = $this->personFactory->getActivityPubFollowersId($actor);
+        } elseif ($actor instanceof Magazine) {
+            $cc[] = $this->groupFactory->getActivityPubFollowersId($actor);
+        }
+
         $object = $activity->getObject();
 
         if (null !== $activity->innerActivity) {
@@ -195,15 +202,20 @@ class ActivityJsonBuilder
         if (isset($object['@context'])) {
             unset($object['@context']);
         }
+        $actorUrl = $actor instanceof User ? $this->personFactory->getActivityPubId($actor) : $this->groupFactory->getActivityPubId($actor);
+
+        if (isset($object['cc'])) {
+            $cc = array_merge($cc, array_filter($object['cc'], fn (string $url) => $url !== $actorUrl));
+        }
 
         $activityJson = [
             '@context' => $this->contextsProvider->referencedContexts(),
             'id' => $this->urlGenerator->generate('ap_object', ['id' => $activity->uuid], UrlGeneratorInterface::ABSOLUTE_URL),
             'type' => 'Announce',
-            'actor' => $actor instanceof User ? $this->personFactory->getActivityPubId($actor) : $this->groupFactory->getActivityPubId($actor),
+            'actor' => $actorUrl,
             'object' => $object,
             'to' => $to,
-            'cc' => $object['cc'] ?? [],
+            'cc' => $cc,
             'published' => (new \DateTime())->format(DATE_ATOM),
         ];
 

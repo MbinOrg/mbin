@@ -110,7 +110,7 @@ class ContentRepository
 
         $contentClauseEntry = '';
         $contentClausePost = '';
-        if ('all' !== $criteria->content) {
+        if ('combined' !== $criteria->content) {
             if ('threads' === $criteria->content) {
                 $contentClausePost = 'false';
             } elseif ('microblog' === $criteria->content) {
@@ -290,7 +290,7 @@ class ContentRepository
             INNER JOIN \"user\" u ON c.user_id = u.id
             $postWhere";
 
-        $sql = "$entrySql UNION $postSql $orderBy";
+        $sql = "$entrySql UNION ALL $postSql $orderBy";
         if (!str_contains($sql, ':loggedInUser')) {
             $parameters = array_filter($parameters, fn ($key) => 'loggedInUser' !== $key, mode: ARRAY_FILTER_USE_KEY);
         }

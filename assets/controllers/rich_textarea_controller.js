@@ -46,13 +46,13 @@ export default class extends Controller {
 
             this.toggleFormattingEnclosure(key, this.enclosureKeys[key] ?? 1);
             event.preventDefault();
-        } else if (!this.emojiAutocompleteActive && ':' === key) {
+        } else if (!this.emojiAutocompleteActive && !this.mentionAutocompleteActive && ':' === key) {
             this.emojiAutocompleteActive = true;
-        } else if (this.emojiAutocompleteActive && (':' === key || ' ' === key)) {
+        } else if (this.emojiAutocompleteActive && ('Escape' === key || ' ' === key)) {
             this.clearAutocomplete();
-        } else if (!this.mentionAutocompleteActive && '@' === key) {
+        } else if (!this.emojiAutocompleteActive && !this.mentionAutocompleteActive && '@' === key) {
             this.mentionAutocompleteActive = true;
-        } else if (this.mentionAutocompleteActive && ('@' === key || ' ' === key)) {
+        } else if (this.mentionAutocompleteActive && ('Escape' === key || ' ' === key)) {
             this.clearAutocomplete();
         } else if (this.mentionAutocompleteActive || this.emojiAutocompleteActive) {
             if ('ArrowDown' === key || 'ArrowUp' === key) {
@@ -127,7 +127,6 @@ export default class extends Controller {
         if (1 === key.length) {
             val += key;
         }
-        //console.log(`pressed key: '${key}', under cursor: '${value[selection]}', cursor: '${selection}', wordStart: '${wordStart}', wordEnd: '${wordEnd}', resulting in '${val}'`);
 
         return val;
     }

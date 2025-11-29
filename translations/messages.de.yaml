@@ -858,8 +858,6 @@ sso_registrations_enabled: SSO Registrierung aktiviert
 marked_for_deletion: für Löschung markiert
 marked_for_deletion_at: für Löschung am %date% markiert
 subscribe_for_updates: Abonniere um Updates zu erhalten.
-sidebar_sections_local_only: Beschränke "Zufällige X" und "Aktive Nutzer" 
-  Abschnitte auf lokale Inhalte
 account_deletion_title: Kontolöschung
 account_deletion_description: Dein Konto wird in 30 Tagen gelöscht außer du 
   entscheidest dich dein Konto sofort zu löschen. Um das Konto 
@@ -1119,3 +1117,27 @@ flash_magazine_theme_icon_detached_success: Magazin Icon erfolgreich gelöscht
 delete_magazine_banner: Magazin Banner löschen
 flash_magazine_theme_banner_detached_success: Magazin Banner erfolgreich 
   gelöscht
+crosspost: Cross-Post
+flash_thread_ref_image_not_found: Das Bild, welches durch 'imageHash' 
+  referenziert wird, konnte nicht gefunden werden.
+federation_uses_allowlist: Nutze eine Erlaubnisliste für Föderation
+defederating_instance: Deföderation von Instanz %i
+their_user_follows: Anzahl an Nutzern von deren Instanz die Nutzern auf unserer 
+  Instanz folgen
+our_user_follows: Anzahl an Nutzern von unserer Instanz die Nutzern auf deren 
+  Instanz folgen
+their_magazine_subscriptions: Anzahl an Nutzern von deren Instanz die ein 
+  Magazin auf unserer Instanz abonniert haben
+our_magazine_subscriptions: Anzahl an Nutzern von unserer Instanz die ein 
+  Magazin auf deren Instanz abonniert haben
+confirm_defederation: Deföderation bestätigen
+flash_error_defederation_must_confirm: Du musst die Deföderation bestätigen
+allowed_instances: Erlaubte Instanzen
+btn_deny: Verweigern
+btn_allow: Erlauben
+ban_instance: Instanz sperren
+allow_instance: Instanz erlauben
+federation_page_use_allowlist_help: Wenn eine Erlaubnisliste genutzt wird, wird 
+  diese Instanz nur mit explizit erlaubten Instanzen föderieren. Andernfalls 
+  wird diese Instanz mit allen Instanzen föderieren, mit Ausnahme derer die 
+  gesperrt sind.
