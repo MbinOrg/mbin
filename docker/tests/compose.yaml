@@ -2,6 +2,7 @@ services:
     db:
         image: postgres:${POSTGRES_VERSION:-17}-trixie
         container_name: mbin-tests-db
+        shm_size: 128mb
         restart: unless-stopped
         ports:
             - '5433:5432'

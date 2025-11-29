@@ -858,8 +858,6 @@ sso_registrations_enabled: SSO Registrierung aktiviert
 marked_for_deletion: für Löschung markiert
 marked_for_deletion_at: für Löschung am %date% markiert
 subscribe_for_updates: Abonniere um Updates zu erhalten.
-sidebar_sections_local_only: Beschränke "Zufällige X" und "Aktive Nutzer" 
-  Abschnitte auf lokale Inhalte
 account_deletion_title: Kontolöschung
 account_deletion_description: Dein Konto wird in 30 Tagen gelöscht außer du 
   entscheidest dich dein Konto sofort zu löschen. Um das Konto 

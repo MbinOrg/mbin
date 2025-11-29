@@ -44,7 +44,7 @@ class EntryCreateControllerTest extends WebTestCase
             )
         );
 
-        $this->assertResponseRedirects('/m/acme/all/newest');
+        $this->assertResponseRedirects('/m/acme/default/newest');
         $this->client->followRedirect();
 
         $this->assertSelectorTextContains('article h2', 'Test entry 1');
@@ -67,7 +67,7 @@ class EntryCreateControllerTest extends WebTestCase
             )
         );
 
-        $this->assertResponseRedirects('/m/acme/all/newest');
+        $this->assertResponseRedirects('/m/acme/default/newest');
         $this->client->followRedirect();
 
         $this->assertSelectorTextContains('article h2', 'Test entry 1');
@@ -93,7 +93,7 @@ class EntryCreateControllerTest extends WebTestCase
         $_FILES = $form->getPhpFiles();
         $this->client->submit($form);
 
-        $this->assertResponseRedirects('/m/acme/all/newest');
+        $this->assertResponseRedirects('/m/acme/default/newest');
 
         $crawler = $this->client->followRedirect();
 
@@ -128,7 +128,7 @@ class EntryCreateControllerTest extends WebTestCase
             )
         );
 
-        $this->assertResponseRedirects('/m/acme/all/newest');
+        $this->assertResponseRedirects('/m/acme/default/newest');
         $this->client->followRedirect();
 
         $this->assertSelectorTextContains('article h2', 'Test entry 1');

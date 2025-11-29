@@ -16,6 +16,7 @@ class NavbarExtension extends AbstractExtension
             new TwigFunction('navbar_threads_url', [NavbarExtensionRuntime::class, 'navbarThreadsUrl']),
             new TwigFunction('navbar_posts_url', [NavbarExtensionRuntime::class, 'navbarPostsUrl']),
             new TwigFunction('navbar_people_url', [NavbarExtensionRuntime::class, 'navbarPeopleUrl']),
+            new TwigFunction('navbar_combined_url', [NavbarExtensionRuntime::class, 'navbarCombinedUrl']),
         ];
     }
 }

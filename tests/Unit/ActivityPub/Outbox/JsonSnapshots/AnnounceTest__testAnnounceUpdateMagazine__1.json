@@ -47,6 +47,7 @@
         "https://www.w3.org/ns/activitystreams#Public"
     ],
     "cc": [
+        "https://kbin.test/m/test/followers",
         "https://kbin.test/m/test/followers"
     ],
     "published": "SCRUBBED_DATE",

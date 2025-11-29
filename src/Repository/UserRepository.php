@@ -5,21 +5,19 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
-use App\Entity\Entry;
-use App\Entity\EntryComment;
 use App\Entity\Magazine;
-use App\Entity\Post;
-use App\Entity\PostComment;
 use App\Entity\User;
 use App\Entity\UserFollow;
 use App\Enums\EApplicationStatus;
+use App\Pagination\NativeQueryAdapter;
+use App\Pagination\Transformation\ContentPopulationTransformer;
 use App\Service\SettingsManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\DBAL\Result;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Query\Expr\OrderBy;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Pagerfanta\Adapter\ArrayAdapter;
+use Pagerfanta\Adapter\AdapterInterface;
 use Pagerfanta\Doctrine\Collections\CollectionAdapter;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Exception\NotValidCurrentPageException;
@@ -30,6 +28,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -49,8 +48,12 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         self::USERS_REMOTE,
     ];
 
-    public function __construct(ManagerRegistry $registry, private readonly SettingsManager $settingsManager)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly SettingsManager $settingsManager,
+        private readonly CacheInterface $cache,
+        private readonly ContentPopulationTransformer $contentPopulationTransformer,
+    ) {
         parent::__construct($registry, User::class);
     }
 
@@ -78,96 +81,44 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->getOneOrNullResult();
     }
 
-    private function getPublicActivityQuery(User $user, bool $hideAdult): Result
+    /**
+     * @throws Exception
+     */
+    private function getPublicActivityQueryAdapter(User $user, bool $hideAdult): AdapterInterface
     {
         $falseCond = $user->isDeleted ? ' AND FALSE ' : '';
-        $conn = $this->_em->getConnection();
+        $hideAdultCond = $hideAdult ? ' AND is_adult = false ' : '';
         $sql = "SELECT id, created_at, 'entry' AS type FROM entry
-            WHERE user_id = :userId AND visibility = :visibility $falseCond
-            AND is_adult = CASE WHEN :hideAdult THEN false ELSE is_adult END
-        UNION
+            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond
+        UNION ALL
         SELECT id, created_at, 'entry_comment' AS type FROM entry_comment
-            WHERE user_id = :userId AND visibility = :visibility $falseCond
-            AND is_adult = CASE WHEN :hideAdult THEN false ELSE is_adult END
-        UNION
+            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond
+        UNION ALL
         SELECT id, created_at, 'post' AS type FROM post
-            WHERE user_id = :userId AND visibility = :visibility $falseCond
-            AND is_adult = CASE WHEN :hideAdult THEN false ELSE is_adult END
-        UNION
+            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond
+        UNION ALL
         SELECT id, created_at, 'post_comment' AS type FROM post_comment
-            WHERE user_id = :userId AND visibility = :visibility $falseCond
-            AND is_adult = CASE WHEN :hideAdult THEN false ELSE is_adult END
+            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond
         ORDER BY created_at DESC";
 
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue('userId', $user->getId());
-        $stmt->bindValue('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
-        $stmt->bindValue('hideAdult', $hideAdult, \PDO::PARAM_BOOL);
+        $parameters = [
+            'userId' => $user->getId(),
+            'visibility' => VisibilityInterface::VISIBILITY_VISIBLE,
+        ];
 
-        return $stmt->executeQuery();
+        return new NativeQueryAdapter($this->_em->getConnection(), $sql, $parameters, transformer: $this->contentPopulationTransformer, cache: $this->cache);
     }
 
     /**
-     * @throws \Doctrine\DBAL\Exception
+     * @throws Exception
      */
     public function findPublicActivity(int $page, User $user, bool $hideAdult): PagerfantaInterface
     {
-        // @todo union adapter
-        $stmt = $this->getPublicActivityQuery($user, $hideAdult);
-
-        $pagerfanta = new Pagerfanta(
-            new ArrayAdapter(
-                $stmt->fetchAllAssociative()
-            )
-        );
-
-        $countAll = $pagerfanta->count();
-
-        try {
-            $pagerfanta->setMaxPerPage(20000);
-            $pagerfanta->setCurrentPage(1);
-        } catch (NotValidCurrentPageException $e) {
-            throw new NotFoundHttpException();
-        }
-
-        $result = $pagerfanta->getCurrentPageResults();
-
-        $entries = $this->_em->getRepository(Entry::class)->findBy(
-            ['id' => $this->getOverviewIds((array) $result, 'entry')]
-        );
-        $entryComments = $this->_em->getRepository(EntryComment::class)->findBy(
-            ['id' => $this->getOverviewIds((array) $result, 'entry_comment')]
-        );
-        $post = $this->_em->getRepository(Post::class)->findBy(['id' => $this->getOverviewIds((array) $result, 'post')]);
-        $postComment = $this->_em->getRepository(PostComment::class)->findBy(
-            ['id' => $this->getOverviewIds((array) $result, 'post_comment')]
-        );
-
-        $result = array_merge($entries, $entryComments, $post, $postComment);
-        uasort($result, fn ($a, $b) => $a->getCreatedAt() > $b->getCreatedAt() ? -1 : 1);
-
-        $pagerfanta = new Pagerfanta(
-            new ArrayAdapter(
-                $result
-            )
-        );
-
-        try {
-            $pagerfanta->setMaxPerPage(self::PER_PAGE);
-            $pagerfanta->setCurrentPage($page);
-            $pagerfanta->setMaxNbPages($countAll > 0 ? ((int) ceil($countAll / self::PER_PAGE)) : 1);
-        } catch (NotValidCurrentPageException $e) {
-            throw new NotFoundHttpException();
-        }
+        $pagerfanta = new Pagerfanta($this->getPublicActivityQueryAdapter($user, $hideAdult));
+        $pagerfanta->setMaxPerPage(self::PER_PAGE);
+        $pagerfanta->setCurrentPage($page);
 
         return $pagerfanta;
-    }
-
-    private function getOverviewIds(array $result, string $type): array
-    {
-        $result = array_filter($result, fn ($subject) => $subject['type'] === $type);
-
-        return array_map(fn ($subject) => $subject['id'], $result);
     }
 
     public function findFollowing(int $page, User $user, int $perPage = self::PER_PAGE): PagerfantaInterface
@@ -672,7 +623,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
                 ->andWhere('u.apDeletedAt IS NULL')
                 ->andWhere('u.apTimeoutAt IS NULL')
                 ->andWhere('u.avatar IS NOT NULL');
-            if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
+            if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_USERS_LOCAL_ONLY')) {
                 $results = $results->andWhere('u.apId IS NULL');
             }
 

@@ -479,8 +479,6 @@ federation_page_disallowed_description: Instàncies amb què no ens federem
 federation_page_dead_title: Instàncies mortes
 federated_search_only_loggedin: Cerca federada limitada si no s'ha iniciat 
   sessió
-sidebar_sections_local_only: Restringir les seccions «Aleatoris» i «Persones 
-  actives» només a locals
 account_deletion_title: Supressió del compte
 account_deletion_button: Suprimir el compte
 account_deletion_immediate: Suprimir immediatament
@@ -1154,3 +1152,9 @@ btn_deny: Denegar
 btn_allow: Permetre
 ban_instance: Banir instància
 allow_instance: Permetre instància
+front_default_content: Vista frontal per defecte
+default_content_default: Valor per defecte del servidor (Fils)
+default_content_all: Fils + Microblog
+default_content_threads: Fils
+default_content_microblog: Microblog
+combined: Combinat

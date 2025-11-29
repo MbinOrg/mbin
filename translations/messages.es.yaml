@@ -529,8 +529,6 @@ always_disconnected_magazine_info: Esta revista no recibe actualizaciones.
 subscribe_for_updates: Suscríbete para comenzar a recibir actualizaciones.
 default_theme_auto: Claro/Oscuro (detección automática)
 solarized_auto: Solarizado (Detección automática)
-sidebar_sections_local_only: Restringir las secciones "X al azar" y "Personas 
-  activas" solo a nivel local
 oauth2.grant.moderate.magazine.trash.read: Mostrar el contenido de la papelera 
   en tus revistas moderadas.
 oauth2.grant.moderate.magazine_admin.edit_theme: Editar el CSS personalizado de 

@@ -51,11 +51,7 @@ class PersonFactory
                     ['username' => $user->username],
                     UrlGeneratorInterface::ABSOLUTE_URL
                 ),
-                'followers' => $this->urlGenerator->generate(
-                    'ap_user_followers',
-                    ['username' => $user->username],
-                    UrlGeneratorInterface::ABSOLUTE_URL
-                ),
+                'followers' => $this->getActivityPubFollowersId($user),
                 'publicKey' => [
                     'owner' => $this->getActivityPubId($user),
                     'id' => $this->getActivityPubId($user).'#main-key',
@@ -105,6 +101,19 @@ class PersonFactory
 
         return $this->urlGenerator->generate(
             'ap_user',
+            ['username' => $user->username],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+    }
+
+    public function getActivityPubFollowersId(User $user): string
+    {
+        if ($user->apId) {
+            return $user->apFollowersUrl;
+        }
+
+        return $this->urlGenerator->generate(
+            'ap_user_followers',
             ['username' => $user->username],
             UrlGeneratorInterface::ABSOLUTE_URL
         );

@@ -459,8 +459,6 @@ federation_page_disallowed_description: Οντότητες με τις οποί�
 account_deletion_title: Διαγραφή λογαριασμού
 account_deletion_button: Διαγραφή Λογαριασμού
 errors.server404.title: 404 Δε βρέθηκε
-sidebar_sections_local_only: Περιορισμός των κατηγοριών "Τυχαίο Χ" και "Ενεργά 
-  Άτομα" σε μόνο για τοπική
 errors.server500.title: 500 Εσωτερικό Σφάλμα Διακομιστή
 email_confirm_link_help: Εναλλακτικά μπορείς να κάνεις αντιγραφή επικόλληση στον
   περιηγητή σου το ακόλουθο

@@ -10,6 +10,8 @@
     "to": [
         "https://www.w3.org/ns/activitystreams#Public"
     ],
-    "cc": [],
+    "cc": [
+        "https://kbin.test/u/user/followers"
+    ],
     "published": "SCRUBBED_DATE"
 }

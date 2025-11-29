@@ -35,7 +35,7 @@ class WebFingerParameters
             }
 
             $url = parse_url($resource);
-            if (isset($url['scheme']) && isset($url['user']) && isset($url['host'])) {
+            if (!empty($url['scheme']) && !empty($url['user']) && !empty($url['host'])) {
                 $params[static::HOST_KEY_NAME] = $host;
 
                 if ('acct' === $url['scheme']) {

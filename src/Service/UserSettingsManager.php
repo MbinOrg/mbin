@@ -37,6 +37,7 @@ class UserSettingsManager
             $user->ignoreMagazinesCustomCss,
             $user->notifyOnUserSignup,
             $user->directMessageSetting,
+            $user->frontDefaultContent,
         );
     }
 
@@ -61,6 +62,7 @@ class UserSettingsManager
         $user->customCss = $dto->customCss;
         $user->ignoreMagazinesCustomCss = $dto->ignoreMagazinesCustomCss;
         $user->directMessageSetting = $dto->directMessageSetting;
+        $user->frontDefaultContent = $dto->frontDefaultContent;
 
         if (null !== $dto->notifyOnUserSignup) {
             $user->notifyOnUserSignup = $dto->notifyOnUserSignup;

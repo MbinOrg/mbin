@@ -503,8 +503,6 @@ more_from_domain: Mais do domínio
 federation_page_enabled: Página da federação ativada
 errors.server404.title: 404 Não encontrado
 toolbar.spoiler: Spoiler
-sidebar_sections_local_only: Restringir as seções “X Aleatório” e “Pessoas 
-  Ativas” somente em local
 oauth2.grant.moderate.magazine.ban.delete: Desbanir usuários de suas revistas 
   moderadas.
 oauth2.grant.moderate.magazine_admin.delete: Exclua as revistas que você possui.

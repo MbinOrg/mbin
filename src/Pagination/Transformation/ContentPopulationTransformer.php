@@ -6,62 +6,61 @@ namespace App\Pagination\Transformation;
 
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\Magazine;
 use App\Entity\Post;
 use App\Entity\PostComment;
-use App\Repository\EntryCommentRepository;
-use App\Repository\EntryRepository;
-use App\Repository\MagazineRepository;
-use App\Repository\PostCommentRepository;
-use App\Repository\PostRepository;
-use App\Repository\UserRepository;
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 
 class ContentPopulationTransformer implements ResultTransformer
 {
     public function __construct(
-        private readonly EntryRepository $entryRepository,
-        private readonly EntryCommentRepository $entryCommentRepository,
-        private readonly PostRepository $postRepository,
-        private readonly PostCommentRepository $postCommentRepository,
-        private readonly MagazineRepository $magazineRepository,
-        private readonly UserRepository $userRepository,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
     public function transform(iterable $input): iterable
     {
+        $entryRepository = $this->entityManager->getRepository(Entry::class);
+        $entryCommentRepository = $this->entityManager->getRepository(EntryComment::class);
+        $postRepository = $this->entityManager->getRepository(Post::class);
+        $postCommentRepository = $this->entityManager->getRepository(PostComment::class);
+        $magazineRepository = $this->entityManager->getRepository(Magazine::class);
+        $userRepository = $this->entityManager->getRepository(User::class);
+
         $positionsArray = $this->buildPositionArray($input);
         $entryIds = $this->getOverviewIds((array) $input, 'entry');
         if (\count($entryIds) > 0) {
-            $entries = $this->entryRepository->findBy(['id' => $entryIds]);
-            $this->entryRepository->hydrate(...$entries);
+            $entries = $entryRepository->findBy(['id' => $entryIds]);
+            $entryRepository->hydrate(...$entries);
         }
 
         $entryCommentIds = $this->getOverviewIds((array) $input, 'entry_comment');
         if (\count($entryCommentIds) > 0) {
-            $entryComments = $this->entryCommentRepository->findBy(['id' => $entryCommentIds]);
-            $this->entryCommentRepository->hydrate(...$entryComments);
+            $entryComments = $entryCommentRepository->findBy(['id' => $entryCommentIds]);
+            $entryCommentRepository->hydrate(...$entryComments);
         }
 
         $postIds = $this->getOverviewIds((array) $input, 'post');
         if (\count($postIds) > 0) {
-            $post = $this->postRepository->findBy(['id' => $postIds]);
-            $this->postRepository->hydrate(...$post);
+            $post = $postRepository->findBy(['id' => $postIds]);
+            $postRepository->hydrate(...$post);
         }
 
         $postCommentIds = $this->getOverviewIds((array) $input, 'post_comment');
         if (\count($postCommentIds) > 0) {
-            $postComment = $this->postCommentRepository->findBy(['id' => $postCommentIds]);
-            $this->postCommentRepository->hydrate(...$postComment);
+            $postComment = $postCommentRepository->findBy(['id' => $postCommentIds]);
+            $postCommentRepository->hydrate(...$postComment);
         }
 
         $magazineIds = $this->getOverviewIds((array) $input, 'magazine');
         if (\count($magazineIds) > 0) {
-            $magazines = $this->magazineRepository->findBy(['id' => $magazineIds]);
+            $magazines = $magazineRepository->findBy(['id' => $magazineIds]);
         }
 
         $userIds = $this->getOverviewIds((array) $input, 'user');
         if (\count($userIds) > 0) {
-            $users = $this->userRepository->findBy(['id' => $userIds]);
+            $users = $userRepository->findBy(['id' => $userIds]);
         }
 
         return $this->applyPositions($positionsArray, $entries ?? [], $entryComments ?? [], $post ?? [], $postComment ?? [], $magazines ?? [], $users ?? []);

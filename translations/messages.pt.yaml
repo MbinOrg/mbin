@@ -704,8 +704,6 @@ bot_body_content: "Bem-vindo ao Agente Mbin! Este Agente desempenha um papel cru
   e comentar em fios ou publicações."
 toolbar.spoiler: Spoiler
 federated_search_only_loggedin: Pesquisa federada limitada se não estiver logado
-sidebar_sections_local_only: Restringir as secções “X Aleatório” e “Pessoas 
-  Ativas” somente em local
 account_deletion_title: Apagar contas
 account_deletion_immediate: Apagar imediatamente
 more_from_domain: Mais do domínio
