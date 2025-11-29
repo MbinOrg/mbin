@@ -11,7 +11,7 @@ final class Version20251129140919 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Rename column to combined in front_default_content enum. But there is no rename of enum values';
+        return 'Rename value all to combined in front_default_content enum.';
     }
 
     public function up(Schema $schema): void
