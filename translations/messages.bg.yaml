@@ -1131,3 +1131,19 @@ combined: Обединено
 direct_message_setting_label: Кой може да ви изпраща лично съобщение
 default_content_default: По подразбиране (Нишки)
 front_default_content: Изглед по подразбиране на началната страница
+federation_uses_allowlist: Използване на списък с разрешени инстанции за 
+  федериране
+defederating_instance: Дефедериране от инстанция %i
+confirm_defederation: Потвърдете дефедериране
+flash_error_defederation_must_confirm: Трябва да потвърдите дефедерирането
+federation_page_use_allowlist_help: Ако се използва списък с разрешени 
+  инстанции, тази инстанция ще се федерира само с изрично разрешените инстанции.
+  В противен случай тази инстанция ще се федерира с всички инстанции, с 
+  изключение на тези, които са забранени.
+default_content_combined: Нишки + Микроблог
+sidebar_sections_random_local_only: Ограничаване на секциите в страничната лента
+  „Случайни нишки/публикации“ само до местни
+sidebar_sections_users_local_only: Ограничаване на секцията в страничната лента 
+  „Активни хора“ само до местни
+random_local_only_performance_warning: Включването на „Случайни (само местни)“ 
+  може да повлияе на производителността на SQL.
