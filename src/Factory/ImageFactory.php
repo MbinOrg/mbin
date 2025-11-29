@@ -6,13 +6,13 @@ namespace App\Factory;
 
 use App\DTO\ImageDto;
 use App\Entity\Image;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ImageFactory
 {
     public function __construct(
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }

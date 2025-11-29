@@ -14,7 +14,6 @@ use App\Service\ActivityPub\Wrapper\ImageWrapper;
 use App\Service\ActivityPub\Wrapper\MentionsWrapper;
 use App\Service\ActivityPub\Wrapper\TagsWrapper;
 use App\Service\ActivityPubManager;
-use App\Service\ImageManager;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class EntryPageFactory
@@ -23,7 +22,6 @@ class EntryPageFactory
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly ContextsProvider $contextProvider,
         private readonly GroupFactory $groupFactory,
-        private readonly ImageManager $imageManager,
         private readonly ImageWrapper $imageWrapper,
         private readonly TagsWrapper $tagsWrapper,
         private readonly MentionsWrapper $mentionsWrapper,
@@ -87,16 +85,16 @@ class EntryPageFactory
             $entry->lang => $page['content'],
         ];
 
+        if ($entry->image) {
+            $page = $this->imageWrapper->build($page, $entry->image, $entry->title);
+        }
+
         if ($entry->url) {
             $page['source'] = $entry->url;
             $page['attachment'][] = [
                 'href' => $entry->url,
                 'type' => 'Link',
             ];
-        }
-
-        if ($entry->image) {
-            $page = $this->imageWrapper->build($page, $entry->image, $entry->title);
         }
 
         if ($entry->body) {

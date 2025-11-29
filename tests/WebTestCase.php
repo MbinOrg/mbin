@@ -44,6 +44,7 @@ use App\Service\EntryCommentManager;
 use App\Service\EntryManager;
 use App\Service\FavouriteManager;
 use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use App\Service\InstanceManager;
 use App\Service\MagazineManager;
 use App\Service\MentionManager;
@@ -56,8 +57,11 @@ use App\Service\ReportManager;
 use App\Service\SettingsManager;
 use App\Service\UserManager;
 use App\Service\VoteManager;
+use App\Tests\Service\TestingApHttpClient;
+use App\Tests\Service\TestingImageManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\Filesystem;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -66,8 +70,11 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Mime\MimeTypesInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class WebTestCase extends BaseWebTestCase
@@ -107,7 +114,6 @@ abstract class WebTestCase extends BaseWebTestCase
     protected EntryCommentManager $entryCommentManager;
     protected PostManager $postManager;
     protected PostCommentManager $postCommentManager;
-    protected ImageManager $imageManager;
     protected MessageManager $messageManager;
     protected FavouriteManager $favouriteManager;
     protected VoteManager $voteManager;
@@ -150,6 +156,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected GroupFactory $groupFactory;
     protected EntryPageFactory $pageFactory;
     protected TestingApHttpClient $testingApHttpClient;
+    protected TestingImageManager $testingImageManager;
 
     protected CreateWrapper $createWrapper;
     protected LikeWrapper $likeWrapper;
@@ -178,6 +185,18 @@ abstract class WebTestCase extends BaseWebTestCase
 
         $this->testingApHttpClient = new TestingApHttpClient();
         self::getContainer()->set(ApHttpClientInterface::class, $this->testingApHttpClient);
+
+        $this->testingImageManager = new TestingImageManager(
+            $this->getContainer()->getParameter('kbin_storage_url'),
+            $this->getService(Filesystem::class),
+            $this->getService(HttpClientInterface::class),
+            $this->getService(MimeTypesInterface::class),
+            $this->getService(ValidatorInterface::class),
+            $this->getService(LoggerInterface::class),
+            $this->getService(SettingsManager::class),
+        );
+        $this->testingImageManager->setKibbyPath($this->kibbyPath);
+        self::getContainer()->set(ImageManagerInterface::class, $this->testingImageManager);
 
         $this->entityManager = $this->getService(EntityManagerInterface::class);
         $this->magazineManager = $this->getService(MagazineManager::class);
