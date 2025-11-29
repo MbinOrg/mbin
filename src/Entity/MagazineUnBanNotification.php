@@ -37,7 +37,7 @@ class MagazineUnBanNotification extends Notification
 
     public function getMessage(TranslatorInterface $trans, string $locale, UrlGeneratorInterface $urlGenerator): PushNotification
     {
-        $message = $trans->trans('you_are_no_longer_banned_from_magazine', ['%m' => $this->ban->magazine->name]);
+        $message = $trans->trans('you_are_no_longer_banned_from_magazine', ['%m' => $this->ban->magazine->name], locale: $locale);
         $slash = $this->ban->magazine->icon && !str_starts_with('/', $this->ban->magazine->icon->filePath) ? '/' : '';
         $avatarUrl = $this->ban->magazine->icon ? '/media/cache/resolve/avatar_thumb'.$slash.$this->ban->magazine->icon->filePath : null;
 
