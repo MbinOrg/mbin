@@ -62,7 +62,7 @@ class ActivityPubManager
         private readonly MagazineRepository $magazineRepository,
         private readonly ApHttpClientInterface $apHttpClient,
         private readonly ImageRepository $imageRepository,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
         private readonly EntityManagerInterface $entityManager,
         private readonly PersonFactory $personFactory,
         private readonly SettingsManager $settingsManager,
@@ -478,7 +478,7 @@ class ActivityPubManager
 
         if (\count($images)) {
             try {
-                $imageObject = $images[0];
+                $imageObject = $images[array_key_first($images)];
                 if (isset($imageObject['height'])) {
                     // determine the highest resolution image
                     foreach ($images as $i) {
@@ -515,8 +515,9 @@ class ActivityPubManager
                 fn ($val) => 'Link' === $val['type']
             );
 
-            if (!empty($link[0]) && isset($link[0]['href']) && \is_string($link[0]['href'])) {
-                $url = $link[0]['href'];
+            $firstArrayKey = array_key_first($link);
+            if (!empty($link[$firstArrayKey]) && isset($link[$firstArrayKey]['href']) && \is_string($link[$firstArrayKey]['href'])) {
+                $url = $link[$firstArrayKey]['href'];
             } elseif (isset($link['href']) && \is_string($link['href'])) {
                 $url = $link['href'];
             }
