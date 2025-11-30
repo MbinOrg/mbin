@@ -41,7 +41,7 @@ class MagazineBanNotification extends Notification
 
         if ($this->ban->expiredAt) {
             $message = \sprintf('%s %s: %s. %s: %s',
-                $trans->trans('you_have_been_banned_from_magazine', ['%m' => $this->ban->magazine->name]),
+                $trans->trans('you_have_been_banned_from_magazine', ['%m' => $this->ban->magazine->name], locale: $locale),
                 new \DateTimeImmutable() > $this->ban->expiredAt ? $trans->trans('ban_expired', locale: $locale) : $trans->trans('ban_expires', locale: $locale),
                 $intl->format($this->ban->expiredAt),
                 $trans->trans('reason', locale: $locale),
