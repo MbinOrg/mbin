@@ -1091,6 +1091,8 @@ class ActivityPubManager
                     $object = $this->apHttpClient->getActivityObject($apObject);
                 } else {
                     $this->logger->info('[ActivityPubManager::getEntityObject] The instance is banned, url: {url}', ['url' => $apObject]);
+
+                    return null;
                 }
             }
         } else {
