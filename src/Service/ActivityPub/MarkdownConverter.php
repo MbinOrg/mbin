@@ -34,12 +34,17 @@ class MarkdownConverter
             if ($this->mentionManager->extract($match[1])) {
                 $mentionFromTag = array_filter($apTags, fn ($tag) => 'Mention' === $tag['type'] ?? '' && $match[2] === $tag['href'] ?? '');
                 if (\count($mentionFromTag)) {
-                    $replace = $mentionFromTag[array_key_first($mentionFromTag)]['name'] ?? $match[1];
+                    $mentionFromTagObj = $mentionFromTag[array_key_first($mentionFromTag)];
+                    try {
+                        $mentioned = $this->activityPubManager->findActorOrCreate($mentionFromTagObj['href']);
+                    } catch (\Throwable) {
+                    }
+                    $replace = $mentioned?->username ?? $mentioned?->name ?? $mentionFromTagObj['name'] ?? $match[1];
                 } else {
                     try {
                         $actor = $this->activityPubManager->findActorOrCreate($match[2]);
                         $replace = '@'.($actor instanceof User ? $actor->username : $actor->name);
-                    } catch (\Throwable $e) {
+                    } catch (\Throwable) {
                         $replace = $match[1];
                     }
                 }
