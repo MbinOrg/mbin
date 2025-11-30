@@ -33,6 +33,7 @@ abstract class Criteria
     public const AP_LOCAL = 'local';
     public const AP_FEDERATED = 'federated';
 
+    public const CONTENT_COMBINED = 'combined';
     public const CONTENT_THREADS = 'threads';
     public const CONTENT_MICROBLOG = 'microblog';
 
