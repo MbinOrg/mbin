@@ -6,7 +6,7 @@ namespace App\Command\Update\Async;
 
 use App\Entity\Image;
 use App\Repository\ImageRepository;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -15,7 +15,7 @@ class ImageBlurhashHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly ImageManager $manager,
+        private readonly ImageManagerInterface $manager,
     ) {
     }
 

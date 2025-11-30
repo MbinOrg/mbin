@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\ActivityPub\Inbox;
 
+use App\Entity\Magazine;
+use App\Entity\User;
 use App\Enums\EDirectMessageSettings;
 use App\Message\ActivityPub\Inbox\ActivityMessage;
 use App\Tests\Functional\ActivityPub\ActivityPubFunctionalTestCase;
@@ -20,6 +22,7 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
     private array $announcePost;
     private array $announcePostComment;
     private array $createEntry;
+    private array $createEntryWithUrlAndImage;
     private array $createEntryComment;
     private array $createPost;
     private array $createPostComment;
@@ -34,6 +37,7 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         $this->announcePost = $this->createRemotePostInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
         $this->announcePostComment = $this->createRemotePostCommentInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
         $this->createEntry = $this->createRemoteEntryInLocalMagazine($this->localMagazine, $this->remoteUser);
+        $this->createEntryWithUrlAndImage = $this->createRemoteEntryWithUrlAndImageInLocalMagazine($this->localMagazine, $this->remoteUser);
         $this->createEntryComment = $this->createRemoteEntryCommentInLocalMagazine($this->localMagazine, $this->remoteUser);
         $this->createPost = $this->createRemotePostInLocalMagazine($this->localMagazine, $this->remoteUser);
         $this->createPostComment = $this->createRemotePostCommentInLocalMagazine($this->localMagazine, $this->remoteUser);
@@ -90,6 +94,22 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         // the id of the 'Create' activity should be wrapped in a 'Announce' activity
         self::assertEquals($this->createEntry['id'], $postedObjects[0]['payload']['object']['id']);
         self::assertEquals($this->createEntry['object']['id'], $postedObjects[0]['payload']['object']['object']['id']);
+        self::assertEquals($this->remoteSubscriber->apInboxUrl, $postedObjects[0]['inboxUrl']);
+    }
+
+    public function testCreateEntryWithUrlAndImage(): void
+    {
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->createEntryWithUrlAndImage)));
+        $entry = $this->entryRepository->findOneBy(['apId' => $this->createEntryWithUrlAndImage['object']['id']]);
+        self::assertNotNull($entry);
+        self::assertNotNull($entry->image);
+        self::assertNotNull($entry->url);
+        self::assertTrue($this->localMagazine->isSubscribed($this->remoteSubscriber));
+        $postedObjects = $this->testingApHttpClient->getPostedObjects();
+        self::assertNotEmpty($postedObjects);
+        // the id of the 'Create' activity should be wrapped in a 'Announce' activity
+        self::assertEquals($this->createEntryWithUrlAndImage['id'], $postedObjects[0]['payload']['object']['id']);
+        self::assertEquals($this->createEntryWithUrlAndImage['object']['id'], $postedObjects[0]['payload']['object']['object']['id']);
         self::assertEquals($this->remoteSubscriber->apInboxUrl, $postedObjects[0]['inboxUrl']);
     }
 
@@ -228,5 +248,23 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         $text = '<p><span class="h-card" translate="no"><a href="https://remote.mbin/u/remoteUser" class="u-url mention">@<span>remoteUser</span></a></span>';
         $this->createMastodonPostWithMentionWithoutTagArray['object']['contentMap']['en'] = $text;
         $this->createMastodonPostWithMentionWithoutTagArray['object']['content'] = $text;
+    }
+
+    private function createRemoteEntryWithUrlAndImageInLocalMagazine(Magazine $magazine, User $user): array
+    {
+        $entry = $this->getEntryByTitle('remote entry with URL and image in local', url: 'https://joinmbin.org', magazine: $magazine, user: $user, image: $this->getKibbyImageDto());
+        $json = $this->pageFactory->create($entry, $this->tagLinkRepository->getTagsOfContent($entry));
+        $this->testingApHttpClient->activityObjects[$json['id']] = $json;
+
+        $createActivity = $this->createWrapper->build($entry);
+        $create = $this->activityJsonBuilder->buildActivityJson($createActivity);
+        $this->testingApHttpClient->activityObjects[$create['id']] = $create;
+
+        $create = $this->RewriteTargetFieldsToLocal($magazine, $create);
+
+        $this->entitiesToRemoveAfterSetup[] = $createActivity;
+        $this->entitiesToRemoveAfterSetup[] = $entry;
+
+        return $create;
     }
 }

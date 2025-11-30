@@ -22,6 +22,7 @@ tools/vendor/
 /public/media
 yarn.lock
 /metal/
+/tests/assets/copy
 
 # Docker specific
 /storage/

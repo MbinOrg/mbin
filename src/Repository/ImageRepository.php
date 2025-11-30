@@ -7,7 +7,7 @@ namespace App\Repository;
 use App\Entity\Image;
 use App\Event\ImagePostProcessEvent;
 use App\Exception\ImageDownloadTooLargeException;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use App\Utils\ImageOrigin;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -27,7 +27,7 @@ class ImageRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly LoggerInterface $logger,
     ) {
