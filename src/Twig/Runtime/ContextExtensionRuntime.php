@@ -115,4 +115,9 @@ class ContextExtensionRuntime implements RuntimeExtensionInterface
 
         return $this->translator->trans($paramValue);
     }
+
+    public function now(): \DateTimeImmutable
+    {
+        return new \DateTimeImmutable('now');
+    }
 }
