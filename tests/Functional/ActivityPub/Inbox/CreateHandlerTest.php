@@ -46,6 +46,11 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         $this->setupMastodonPostWithoutTagArray();
     }
 
+    public function setUpLocalEntities(): void
+    {
+        $this->setupRemoteActor();
+    }
+
     public function testCreateAnnouncedEntry(): void
     {
         $this->bus->dispatch(new ActivityMessage(json_encode($this->announceEntry)));
@@ -196,7 +201,7 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         self::assertNotNull($post);
         $mentions = $this->mentionManager->extract($post->body);
         self::assertCount(1, $mentions);
-        self::assertEquals('@user@some.instance.tld', $mentions[0]);
+        self::assertEquals('@someOtherUser@some.instance.tld', $mentions[0]);
     }
 
     public function testMastodonMentionInPostWithoutTagArray(): void
@@ -209,19 +214,28 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         self::assertEquals('@remoteUser@remote.mbin', $mentions[0]);
     }
 
+    private function setupRemoteActor(): void
+    {
+        $domain = 'some.instance.tld';
+        $this->switchToRemoteDomain($domain);
+        $user = $this->getUserByUsername('someOtherUser', addImage: false, email: 'user@some.tld');
+        $this->registerActor($user, $domain, true);
+        $this->switchToLocalDomain();
+    }
+
     private function setupMastodonPost(): void
     {
         $this->createMastodonPostWithMention = $this->createRemotePostInLocalMagazine($this->localMagazine, $this->remoteUser);
         unset($this->createMastodonPostWithMention['object']['source']);
         // this is what it would look like if a user created a post in Mastodon with just a single mention and nothing else
-        $text = '<p><span class="h-card" translate="no"><a href="https://some.instance.tld/u/user" class="u-url mention">@<span>user</span></a></span>';
+        $text = '<p><span class="h-card" translate="no"><a href="https://some.instance.tld/u/someOtherUser" class="u-url mention">@<span>someOtherUser</span></a></span>';
         $this->createMastodonPostWithMention['object']['contentMap']['en'] = $text;
         $this->createMastodonPostWithMention['object']['content'] = $text;
         $this->createMastodonPostWithMention['object']['tag'] = [
             [
                 'type' => 'Mention',
-                'href' => 'https://some.instance.tld/u/user',
-                'name' => '@user@some.instance.tld',
+                'href' => 'https://some.instance.tld/u/someOtherUser',
+                'name' => '@someOtherUser',
             ],
         ];
     }
