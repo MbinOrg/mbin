@@ -6,11 +6,11 @@ namespace App\Service;
 
 use App\Entity\Contracts\ContentInterface;
 use App\Entity\MagazineBan;
-use App\Entity\MagazineBanNotification;
 use App\Entity\Message;
 use App\Entity\MessageNotification;
 use App\Entity\Notification;
 use App\Entity\User;
+use App\Service\Notification\MagazineBanNotificationManager;
 use App\Service\Notification\MessageNotificationManager;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -20,6 +20,7 @@ class NotificationManager
         private readonly NotificationManagerTypeResolver $resolver,
         private readonly MessageNotificationManager $messageNotificationManager,
         private readonly EntityManagerInterface $entityManager,
+        private readonly MagazineBanNotificationManager $magazineBanNotificationManager,
     ) {
     }
 
@@ -43,12 +44,9 @@ class NotificationManager
         $this->messageNotificationManager->send($message, $sender);
     }
 
-    public function sendMagazineBanNotification(MagazineBan $ban)
+    public function sendMagazineBanNotification(MagazineBan $ban): void
     {
-        $notification = new MagazineBanNotification($ban->user, $ban);
-
-        $this->entityManager->persist($notification);
-        $this->entityManager->flush();
+        $this->magazineBanNotificationManager->send($ban);
     }
 
     public function markAllAsRead(User $user): void

@@ -303,6 +303,7 @@ mentioned_you: Mentioned you
 comment: Comment
 post: Post
 ban_expired: Ban expired
+ban_expires: Ban expires
 purge: Purge
 send_message: Send direct message
 message: Message
@@ -1088,6 +1089,9 @@ allow_instance: Allow instance
 federation_page_use_allowlist_help: If an allow list is used, this instance will
   only federate with the explicitly allowed instances. Otherwise this instance 
   will federate with every instance, except those that are banned.
+you_have_been_banned_from_magazine: You have been banned from magazine %m.
+you_have_been_banned_from_magazine_permanently: You have been permanently banned from magazine %m.
+you_are_no_longer_banned_from_magazine: You are no longer banned from magazine %m.
 front_default_content: Front default view
 default_content_default: Server default (Threads)
 default_content_combined: Threads + Microblog
