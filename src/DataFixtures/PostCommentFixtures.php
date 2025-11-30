@@ -9,7 +9,7 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
 use App\Repository\ImageRepository;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use App\Service\PostCommentManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,7 +23,7 @@ class PostCommentFixtures extends BaseFixture implements DependentFixtureInterfa
 
     public function __construct(
         PostCommentManager $postCommentManager,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
         private readonly ImageRepository $imageRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {

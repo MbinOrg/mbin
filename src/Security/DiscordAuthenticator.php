@@ -6,9 +6,6 @@ namespace App\Security;
 
 use App\DTO\UserDto;
 use App\Entity\User;
-use App\Factory\ImageFactory;
-use App\Repository\ImageRepository;
-use App\Service\ImageManager;
 use App\Service\IpResolver;
 use App\Service\SettingsManager;
 use App\Service\UserManager;
@@ -32,9 +29,6 @@ class DiscordAuthenticator extends MbinOAuthAuthenticatorBase
         RouterInterface $router,
         private readonly EntityManagerInterface $entityManager,
         private readonly UserManager $userManager,
-        private readonly ImageManager $imageManager,
-        private readonly ImageFactory $imageFactory,
-        private readonly ImageRepository $imageRepository,
         private readonly RequestStack $requestStack,
         private readonly IpResolver $ipResolver,
         private readonly Slugger $slugger,

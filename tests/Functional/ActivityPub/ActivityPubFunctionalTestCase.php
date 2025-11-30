@@ -144,7 +144,7 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         $this->registerActor($this->remoteSubscriber, $domain, true);
     }
 
-    protected function registerActor(ActivityPubActorInterface $actor, string $domain, bool $remoteAfterSetup = false): void
+    protected function registerActor(ActivityPubActorInterface $actor, string $domain, bool $removeAfterSetup = false): void
     {
         if ($actor instanceof User) {
             $json = $this->personFactory->create($actor);
@@ -162,7 +162,7 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         $realDomain = \sprintf(WebFingerFactory::WEBFINGER_URL, 'https', $domain, '', "$username@$domain");
         $this->testingApHttpClient->webfingerObjects[$realDomain] = $userEvent->jsonRd->toArray();
 
-        if ($remoteAfterSetup) {
+        if ($removeAfterSetup) {
             $this->entitiesToRemoveAfterSetup[] = $actor;
         }
     }

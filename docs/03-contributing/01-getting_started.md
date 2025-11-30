@@ -82,7 +82,7 @@ If you want to use OAuth for the API, do the following **before** creating the D
 To run test inside the Dev Container, some preparation is needed.
 These steps have to be repeated after every recreation of the Container:
 
-1. Run: `sudo pg_createcluster 13 tests --port=5433 --start`
+1. Run: `sudo pg_createcluster 18 tests --port=5433 --start`
 2. Run: `sudo su postgres -c 'psql -p 5433 -U postgres -d postgres'`
 3. Inside the SQL shell, run: `CREATE USER mbin WITH PASSWORD 'ChangeThisPostgresPass' SUPERUSER;`
 

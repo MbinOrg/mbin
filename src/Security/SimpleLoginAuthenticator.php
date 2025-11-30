@@ -11,7 +11,7 @@ use App\Factory\ImageFactory;
 use App\Provider\SimpleLoginResourceOwner;
 use App\Repository\ImageRepository;
 use App\Repository\UserRepository;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use App\Service\IpResolver;
 use App\Service\SettingsManager;
 use App\Service\UserManager;
@@ -33,7 +33,7 @@ class SimpleLoginAuthenticator extends MbinOAuthAuthenticatorBase
         RouterInterface $router,
         private readonly EntityManagerInterface $entityManager,
         private readonly UserManager $userManager,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
         private readonly ImageFactory $imageFactory,
         private readonly ImageRepository $imageRepository,
         private readonly IpResolver $ipResolver,

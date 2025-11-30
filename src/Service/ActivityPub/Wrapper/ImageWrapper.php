@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Service\ActivityPub\Wrapper;
 
 use App\Entity\Image;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 
 class ImageWrapper
 {
-    public function __construct(private readonly ImageManager $imageManager)
+    public function __construct(private readonly ImageManagerInterface $imageManager)
     {
     }
 

@@ -7,7 +7,7 @@ namespace App\MessageHandler;
 use App\Message\Contracts\MessageInterface;
 use App\Message\DeleteImageMessage;
 use App\Repository\ImageRepository;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -19,7 +19,7 @@ class DeleteImageHandler extends MbinMessageHandler
     public function __construct(
         private readonly ImageRepository $imageRepository,
         private readonly KernelInterface $kernel,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
         private readonly EntityManagerInterface $entityManager,
         private readonly ManagerRegistry $managerRegistry,
     ) {

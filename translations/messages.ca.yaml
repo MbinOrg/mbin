@@ -1154,7 +1154,13 @@ ban_instance: Banir instància
 allow_instance: Permetre instància
 front_default_content: Vista frontal per defecte
 default_content_default: Valor per defecte del servidor (Fils)
-default_content_all: Fils + Microblog
 default_content_threads: Fils
 default_content_microblog: Microblog
 combined: Combinat
+sidebar_sections_random_local_only: Restringir les seccions de la barra lateral 
+  «Publicacions/Fils aleatoris» només a locals
+sidebar_sections_users_local_only: Restringir la secció de la barra lateral 
+  «Persones actives» només a locals
+random_local_only_performance_warning: Habilitar «Només aleatoris locals» pot 
+  afectar el rendiment de l'SQL.
+default_content_combined: Fils + Microblog

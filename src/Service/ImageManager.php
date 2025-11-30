@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints\Image;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class ImageManager
+class ImageManager implements ImageManagerInterface
 {
     public const IMAGE_MIMETYPES = [
         'image/jpeg', 'image/jpg', 'image/gif', 'image/png',

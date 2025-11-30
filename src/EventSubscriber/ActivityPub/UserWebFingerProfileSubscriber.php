@@ -8,7 +8,7 @@ use App\ActivityPub\JsonRdLink;
 use App\Event\ActivityPub\WebfingerResponseEvent;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\Webfinger\WebFingerParameters;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use App\Service\SettingsManager;
 use JetBrains\PhpStorm\ArrayShape;
 use Psr\Log\LoggerInterface;
@@ -23,7 +23,7 @@ class UserWebFingerProfileSubscriber implements EventSubscriberInterface
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly SettingsManager $settingsManager,
         private readonly LoggerInterface $logger,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
     ) {
     }
 

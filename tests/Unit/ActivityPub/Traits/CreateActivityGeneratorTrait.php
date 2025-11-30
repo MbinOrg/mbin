@@ -15,6 +15,13 @@ trait CreateActivityGeneratorTrait
         return $this->createWrapper->build($entry);
     }
 
+    public function getCreateEntryActivityWithImageAndUrl(): Activity
+    {
+        $entry = $this->getEntryByTitle('test', url: 'https://joinmbin.org', magazine: $this->magazine, user: $this->user, image: $this->getKibbyImageDto());
+
+        return $this->createWrapper->build($entry);
+    }
+
     public function getCreateEntryCommentActivity(): Activity
     {
         $entry = $this->getEntryByTitle('test', magazine: $this->magazine, user: $this->user);

@@ -9,7 +9,7 @@ use App\Entity\Magazine;
 use App\Entity\User;
 use App\Repository\ImageRepository;
 use App\Service\EntryManager;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -20,7 +20,7 @@ class EntryFixtures extends BaseFixture implements DependentFixtureInterface
 
     public function __construct(
         private readonly EntryManager $entryManager,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
         private readonly ImageRepository $imageRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {

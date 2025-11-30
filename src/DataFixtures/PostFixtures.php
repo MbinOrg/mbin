@@ -8,7 +8,7 @@ use App\DTO\PostDto;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Repository\ImageRepository;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use App\Service\PostManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,7 +20,7 @@ class PostFixtures extends BaseFixture implements DependentFixtureInterface
 
     public function __construct(
         private readonly PostManager $postManager,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
         private readonly ImageRepository $imageRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {

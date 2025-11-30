@@ -6,6 +6,7 @@ namespace App\Service\Notification;
 
 use App\Entity\MagazineBan;
 use App\Entity\MagazineBanNotification;
+use App\Entity\MagazineUnBanNotification;
 use App\Event\NotificationCreatedEvent;
 use App\Repository\MagazineBanRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,7 +25,11 @@ class MagazineBanNotificationManager
 
     public function send(MagazineBan $ban): void
     {
-        $notification = new MagazineBanNotification($ban->user, $ban);
+        if ($ban->expiredAt && new \DateTimeImmutable('now') >= $ban->expiredAt) {
+            $notification = new MagazineUnBanNotification($ban->user, $ban);
+        } else {
+            $notification = new MagazineBanNotification($ban->user, $ban);
+        }
 
         $this->entityManager->persist($notification);
         $this->entityManager->flush();

@@ -303,6 +303,7 @@ mentioned_you: Mentioned you
 comment: Comment
 post: Post
 ban_expired: Ban expired
+ban_expires: Ban expires
 purge: Purge
 send_message: Send direct message
 message: Message
@@ -1101,6 +1102,9 @@ modlog_type_entry_lock: Thread locked
 modlog_type_entry_unlock: Thread unlocked
 modlog_type_post_lock: Microblog locked
 modlog_type_post_unlock: Microblog unlocked
+you_have_been_banned_from_magazine: You have been banned from magazine %m.
+you_have_been_banned_from_magazine_permanently: You have been permanently banned from magazine %m.
+you_are_no_longer_banned_from_magazine: You are no longer banned from magazine %m.
 front_default_content: Front default view
 default_content_default: Server default (Threads)
 default_content_combined: Threads + Microblog

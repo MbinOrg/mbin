@@ -44,6 +44,7 @@ class ContentRepository
 
     public function findByCriteria(Criteria $criteria): PagerfantaInterface
     {
+        $includeEntries = Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_THREADS === $criteria->content;
         $parameters = [
             'visible' => VisibilityInterface::VISIBILITY_VISIBLE,
             'private' => VisibilityInterface::VISIBILITY_PRIVATE,
@@ -110,10 +111,10 @@ class ContentRepository
 
         $contentClauseEntry = '';
         $contentClausePost = '';
-        if ('combined' !== $criteria->content) {
-            if ('threads' === $criteria->content) {
+        if (Criteria::CONTENT_COMBINED !== $criteria->content) {
+            if (Criteria::CONTENT_THREADS === $criteria->content) {
                 $contentClausePost = 'false';
-            } elseif ('microblog' === $criteria->content) {
+            } elseif (Criteria::CONTENT_MICROBLOG === $criteria->content) {
                 $contentClauseEntry = 'false';
             } else {
                 throw new \LogicException("cannot handle content of type $criteria->content");
@@ -132,17 +133,17 @@ class ContentRepository
                     ' OR EXISTS (SELECT * FROM magazine_subscription ms WHERE ms.user_id = :loggedInUser AND ms.magazine_id = m.id)' :
                     ' OR m.id IN (:cachedUserSubscribedMagazines)')
                 .(null === $criteria->cachedUserFollows ?
-                    ' OR EXISTS (SELECT * FROM user_follow uf WHERE uf.following_id = :loggedInUser AND uf.follower_id = u.id)' :
-                    ' OR u.id IN (:cachedUserFollows)');
+                    ' OR EXISTS (SELECT * FROM user_follow uf WHERE uf.following_id = :loggedInUser AND uf.follower_id = c.user_id)' :
+                    ' OR c.user_id IN (:cachedUserFollows)');
             $subClauseEntry = $subClausePost
                 .(null === $criteria->cachedUserSubscribedDomains ?
                     ' OR EXISTS (SELECT * FROM domain_subscription ds WHERE ds.domain_id = c.domain_id AND ds.user_id = :loggedInUser)' :
-                    ' OR d.id IN (:cachedUserSubscribedDomains)');
+                    ' OR c.domain_id IN (:cachedUserSubscribedDomains)');
 
             if (null !== $criteria->cachedUserSubscribedMagazines) {
                 $parameters['cachedUserSubscribedMagazines'] = $criteria->cachedUserSubscribedMagazines;
             }
-            if (null !== $criteria->cachedUserSubscribedDomains) {
+            if (null !== $criteria->cachedUserSubscribedDomains && $includeEntries) {
                 $parameters['cachedUserSubscribedDomains'] = $criteria->cachedUserSubscribedDomains;
             }
         }
@@ -168,9 +169,9 @@ class ContentRepository
         $blockingClauseEntry = '';
         if ($user && (!$criteria->magazine || !$criteria->magazine->userIsModerator($user)) && !$criteria->moderated) {
             if (null === $criteria->cachedUserBlocks) {
-                $blockingClausePost = 'NOT EXISTS (SELECT * FROM user_block ub WHERE ub.blocker_id = :loggedInUser AND ub.blocked_id = u.id)';
+                $blockingClausePost = 'NOT EXISTS (SELECT * FROM user_block ub WHERE ub.blocker_id = :loggedInUser AND ub.blocked_id = c.user_id)';
             } else {
-                $blockingClausePost = 'u.id NOT IN (:cachedUserBlocks)';
+                $blockingClausePost = 'c.user_id NOT IN (:cachedUserBlocks)';
                 $parameters['cachedUserBlocks'] = $criteria->cachedUserBlocks;
             }
 
@@ -186,8 +187,10 @@ class ContentRepository
             if (null === $criteria->cachedUserBlockedDomains) {
                 $blockingClauseEntry = $blockingClausePost.' AND NOT EXISTS (SELECT * FROM domain_block db WHERE db.user_id = :loggedInUser AND db.domain_id = c.domain_id)';
             } else {
-                $blockingClauseEntry = $blockingClausePost.' AND (d IS NULL OR d.id NOT IN (:cachedUserBlockedDomains))';
-                $parameters['cachedUserBlockedDomains'] = $criteria->cachedUserBlockedDomains;
+                $blockingClauseEntry = $blockingClausePost.' AND (c.domain_id IS NULL OR c.domain_id NOT IN (:cachedUserBlockedDomains))';
+                if ($includeEntries) {
+                    $parameters['cachedUserBlockedDomains'] = $criteria->cachedUserBlockedDomains;
+                }
             }
         }
 
@@ -197,13 +200,14 @@ class ContentRepository
         }
 
         $visibilityClauseM = 'm.visibility = :visible';
-        $visibilityClauseU = 'u.visibility = :visible';
         if (null === $criteria->cachedUserFollows) {
-            $visibilityClauseC = 'c.visibility = :visible OR (c.visibility = :private AND EXISTS (SELECT * FROM user_follow uf WHERE uf.following_id = :loggedInUser AND uf.follower_id = u.id))';
+            $visibilityClauseC = 'c.visibility = :visible OR (c.visibility = :private AND EXISTS (SELECT * FROM user_follow uf WHERE uf.following_id = :loggedInUser AND uf.follower_id = c.user_id))';
         } else {
-            $visibilityClauseC = 'c.visibility = :visible OR (c.visibility = :private AND u.id IN (:cachedUserFollows))';
+            $visibilityClauseC = 'c.visibility = :visible OR (c.visibility = :private AND c.user_id IN (:cachedUserFollows))';
         }
+
         $deletedClause = 'u.is_deleted = false';
+        $visibilityClauseU = 'u.visibility = :visible';
 
         $entryWhere = SqlHelpers::makeWhereString([
             $contentClauseEntry,
@@ -221,9 +225,7 @@ class ContentRepository
             $blockingClauseEntry,
             $hideAdultClause,
             $visibilityClauseM,
-            $visibilityClauseU,
             $visibilityClauseC,
-            $deletedClause,
         ]);
 
         $postWhere = SqlHelpers::makeWhereString([
@@ -242,8 +244,11 @@ class ContentRepository
             $blockingClausePost,
             $hideAdultClause,
             $visibilityClauseM,
-            $visibilityClauseU,
             $visibilityClauseC,
+        ]);
+
+        $outerWhere = SqlHelpers::makeWhereString([
+            $visibilityClauseU,
             $deletedClause,
         ]);
 
@@ -279,18 +284,30 @@ class ContentRepository
         }
 
         $orderBy = 'ORDER BY '.join(', ', $orderings);
+        // only join domain if we are explicitly looking at one
+        $domainJoin = $criteria->domain ? 'LEFT JOIN domain d ON d.id = c.domain_id' : '';
 
-        $entrySql = "SELECT c.id, 'entry' as type, c.type as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active FROM entry c
+        $entrySql = "SELECT c.id, 'entry' as type, c.type as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM entry c
             LEFT JOIN magazine m ON c.magazine_id = m.id
-            LEFT JOIN domain d ON c.domain_id = d.id
-            INNER JOIN \"user\" u ON c.user_id = u.id
+            $domainJoin
             $entryWhere";
-        $postSql = "SELECT c.id, 'post' as type, 'microblog' as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active FROM post c
+        $postSql = "SELECT c.id, 'post' as type, 'microblog' as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM post c
             LEFT JOIN magazine m ON c.magazine_id = m.id
-            INNER JOIN \"user\" u ON c.user_id = u.id
             $postWhere";
 
-        $sql = "$entrySql UNION ALL $postSql $orderBy";
+        $innerSql = '';
+        if (Criteria::CONTENT_THREADS === $criteria->content) {
+            $innerSql = "$entrySql $orderBy";
+        } elseif (Criteria::CONTENT_MICROBLOG === $criteria->content) {
+            $innerSql = "$postSql $orderBy";
+        } else {
+            $innerSql = "$entrySql UNION ALL $postSql $orderBy";
+        }
+
+        $sql = "SELECT content.* FROM ($innerSql) content
+            INNER JOIN \"user\" u ON content.user_id = u.id
+            $outerWhere";
+
         if (!str_contains($sql, ':loggedInUser')) {
             $parameters = array_filter($parameters, fn ($key) => 'loggedInUser' !== $key, mode: ARRAY_FILTER_USE_KEY);
         }

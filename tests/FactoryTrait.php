@@ -221,7 +221,7 @@ trait FactoryTrait
         ];
     }
 
-    protected function getUserByUsername(string $username, bool $isAdmin = false, bool $hideAdult = true, ?string $about = null, bool $active = true, bool $isModerator = false, bool $addImage = true): User
+    protected function getUserByUsername(string $username, bool $isAdmin = false, bool $hideAdult = true, ?string $about = null, bool $active = true, bool $isModerator = false, bool $addImage = true, ?string $email = null): User
     {
         $user = $this->users->filter(fn (User $user) => $user->getUsername() === $username)->first();
 
@@ -229,7 +229,7 @@ trait FactoryTrait
             return $user;
         }
 
-        $user = $this->createUser($username, active: $active, hideAdult: $hideAdult, about: $about, addImage: $addImage);
+        $user = $this->createUser($username, email: $email, active: $active, hideAdult: $hideAdult, about: $about, addImage: $addImage);
 
         if ($isAdmin) {
             $user->roles = ['ROLE_ADMIN'];
@@ -611,12 +611,21 @@ trait FactoryTrait
         $imageRepository = $this->imageRepository;
         $imageFactory = $this->imageFactory;
 
+        if (!file_exists(\dirname($this->kibbyPath).'/copy')) {
+            if (!mkdir(\dirname($this->kibbyPath).'/copy')) {
+                throw new \Exception('The copy dir could not be created');
+            }
+        }
+
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        $tmpPath = bin2hex(random_bytes(32));
+        $tmpPath = \dirname($this->kibbyPath).'/copy/'.bin2hex(random_bytes(32)).'.png';
         $srcPath = \dirname($this->kibbyPath).'/'.basename($this->kibbyPath, '.png').$suffix.'.png';
-        copy($srcPath, $tmpPath.'.png');
+        if (!file_exists($srcPath)) {
+            throw new \Exception('For some reason the kibby image got deleted');
+        }
+        copy($srcPath, $tmpPath);
         /** @var Image $image */
-        $image = $imageRepository->findOrCreateFromUpload(new UploadedFile($tmpPath.'.png', 'kibby_emoji.png', 'image/png'));
+        $image = $imageRepository->findOrCreateFromUpload(new UploadedFile($tmpPath, 'kibby_emoji.png', 'image/png'));
         self::assertNotNull($image);
         $image->altText = 'kibby';
         $this->entityManager->persist($image);

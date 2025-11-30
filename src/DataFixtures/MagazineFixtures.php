@@ -7,7 +7,7 @@ namespace App\DataFixtures;
 use App\DTO\MagazineDto;
 use App\Entity\User;
 use App\Repository\ImageRepository;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use App\Service\MagazineManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -20,7 +20,7 @@ class MagazineFixtures extends BaseFixture implements DependentFixtureInterface
 
     public function __construct(
         private readonly MagazineManager $magazineManager,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
         private readonly ImageRepository $imageRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
