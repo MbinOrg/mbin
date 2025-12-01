@@ -1075,6 +1075,7 @@ class ActivityPubManager
     public function getEntityObject(string|array $apObject, array $fullPayload, callable $chainDispatch): Entry|EntryComment|Post|PostComment|null
     {
         $object = null;
+        $activity = null;
         $calledUrl = null;
         if (\is_string($apObject)) {
             if (false === filter_var($apObject, FILTER_VALIDATE_URL)) {
