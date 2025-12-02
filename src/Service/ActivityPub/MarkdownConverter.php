@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\ActivityPub;
 
+use App\Entity\Magazine;
 use App\Entity\User;
 use App\Service\ActivityPubManager;
 use App\Service\MentionManager;
@@ -32,14 +33,21 @@ class MarkdownConverter
 
         foreach ($matches as $match) {
             if ($this->mentionManager->extract($match[1])) {
-                $mentionFromTag = array_filter($apTags, fn ($tag) => 'Mention' === $tag['type'] ?? '' && $match[2] === $tag['href'] ?? '');
+                $mentionFromTag = array_filter($apTags, fn ($tag) => 'Mention' === ($tag['type'] ?? '') && $match[2] === ($tag['href'] ?? ''));
                 if (\count($mentionFromTag)) {
                     $mentionFromTagObj = $mentionFromTag[array_key_first($mentionFromTag)];
+                    $mentioned = null;
                     try {
                         $mentioned = $this->activityPubManager->findActorOrCreate($mentionFromTagObj['href']);
                     } catch (\Throwable) {
                     }
-                    $replace = $mentioned?->username ?? $mentioned?->name ?? $mentionFromTagObj['name'] ?? $match[1];
+                    if ($mentioned instanceof User) {
+                        $replace = $this->mentionManager->getUsername($mentioned->username, true);
+                    } elseif ($mentioned instanceof Magazine) {
+                        $replace = $this->mentionManager->getUsername('@'.$mentioned->name, true);
+                    } else {
+                        $replace = $mentionFromTagObj['name'] ?? $match[1];
+                    }
                 } else {
                     try {
                         $actor = $this->activityPubManager->findActorOrCreate($match[2]);
