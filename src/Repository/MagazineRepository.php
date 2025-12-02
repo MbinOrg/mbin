@@ -380,8 +380,11 @@ class MagazineRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('m')
             ->andWhere('m.postCount > 0')
             ->orWhere('m.entryCount > 0')
-            ->orderBy('m.postCount', 'DESC')
+            ->andWhere('m.isAdult = false')
+            ->andWhere('m.visibility = :visibility')
             ->setMaxResults(50)
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+            ->orderBy('m.entryCount', 'DESC')
             ->getQuery()
             ->getResult();
     }
