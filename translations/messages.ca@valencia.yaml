@@ -1161,3 +1161,9 @@ sidebar_sections_users_local_only: Restringir la secció de la barra lateral
 random_local_only_performance_warning: Habilitar «Només aleatoris locals» pot 
   afectar el rendiment de l'SQL.
 default_content_combined: Fils + Microblog
+ban_expires: La prohibició caduca
+you_have_been_banned_from_magazine: Vos han prohibit l'accés a la revista %m.
+you_have_been_banned_from_magazine_permanently: Vos han prohibit permanentment 
+  l'accés a la revista %m.
+you_are_no_longer_banned_from_magazine: Ja no teniu prohibit l'accés a la 
+  revista %m.
