@@ -1075,6 +1075,7 @@ class ActivityPubManager
     public function getEntityObject(string|array $apObject, array $fullPayload, callable $chainDispatch): Entry|EntryComment|Post|PostComment|null
     {
         $object = null;
+        $activity = null;
         $calledUrl = null;
         if (\is_string($apObject)) {
             if (false === filter_var($apObject, FILTER_VALIDATE_URL)) {
@@ -1091,6 +1092,8 @@ class ActivityPubManager
                     $object = $this->apHttpClient->getActivityObject($apObject);
                 } else {
                     $this->logger->info('[ActivityPubManager::getEntityObject] The instance is banned, url: {url}', ['url' => $apObject]);
+
+                    return null;
                 }
             }
         } else {
