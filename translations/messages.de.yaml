@@ -545,7 +545,7 @@ last_active: Zuletzt Aktiv
 purge_content: Lösche Inhalt endgültig
 oauth2.grant.domain.subscribe: Abonniere oder Deabonniere Domains und zeige die 
   Domains die du abonniert hast.
-magazine_theme_appearance_icon: Eigenes Icon für das Magazin.
+magazine_theme_appearance_icon: Benutzerdefiniertes Icon für das Magazin.
 oauth2.grant.moderate.magazine.ban.create: Sperre Nutzer in deinen moderierten 
   Magazinen.
 oauth2.grant.admin.user.delete: Lösche Nutzer von deiner Instanz.
@@ -1141,3 +1141,21 @@ federation_page_use_allowlist_help: Wenn eine Erlaubnisliste genutzt wird, wird
   diese Instanz nur mit explizit erlaubten Instanzen föderieren. Andernfalls 
   wird diese Instanz mit allen Instanzen föderieren, mit Ausnahme derer die 
   gesperrt sind.
+ban_expires: Sperre läuft ab
+you_have_been_banned_from_magazine: Du wurdest in Magazine %m gesperrt.
+you_have_been_banned_from_magazine_permanently: Du wurdest dauerhaft in Magazin 
+  %m gesperrt.
+you_are_no_longer_banned_from_magazine: Du ist nicht mehr in Magazin %m 
+  gesperrt.
+front_default_content: Startseite Standard-Ansicht
+default_content_default: Server Standard (Themen)
+default_content_combined: Themen + Mikroblog
+default_content_threads: Themen
+default_content_microblog: Mikroblog
+combined: Kombiniert
+sidebar_sections_random_local_only: '"Zufällige Themen/Posts" in der Seitenleiste
+  auf lokale Themen beschränken'
+sidebar_sections_users_local_only: '"Aktive Nutzer" in der Seitenleiste auf lokale
+  beschränken'
+random_local_only_performance_warning: Aktivierung von "Zufällige nur lokal" 
+  kann zu SQL Performance Problemen führen.
