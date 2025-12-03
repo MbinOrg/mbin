@@ -20,30 +20,20 @@
                 'no-image': SHOW_THUMBNAILS is same as V_FALSE,
                 'own': app.user and post.isAuthor(app.user),
                 'show-preview': SHOW_PREVIEW is same as V_TRUE and not post.isAdult,
-                'isSingle': isSingle is same as true
+                'isSingle': false
             })}).without('id') }}
             id="post-{{ post.id }}"
             data-controller="subject preview mentions html-refresh"
             data-action="notifications:Notification@window->subject#notification">
             <header>
                 {% if post.visibility in ['visible', 'private'] or (post.visibility is same as 'trashed' and this.canSeeTrashed) %}
-                    {% if isSingle %}
-                        <h1>
-                            {% if post.isAdult %}<small class="badge danger">18+</small>{% endif %}
+                    <h2>
+                        {% if post.isAdult %}<small class="badge danger">18+</small>{% endif %}
 
-                            {% if post.lang is not same as app.request.locale and post.lang is not same as kbin_default_lang() %}
-                                <small class="badge-lang">{{ post.lang|language_name }}</small>
-                            {% endif %}
-                        </h1>
-                    {% else %}
-                        <h2>
-                            {% if post.isAdult %}<small class="badge danger">18+</small>{% endif %}
-
-                            {% if post.lang is not same as app.request.locale and post.lang is not same as kbin_default_lang() %}
-                                <small class="badge-lang kbin-bg">{{ post.lang|language_name }}</small>
-                            {% endif %}
-                        </h2>
-                    {% endif %}
+                        {% if post.lang is not same as app.request.locale and post.lang is not same as kbin_default_lang() %}
+                            <small class="badge-lang kbin-bg">{{ post.lang|language_name }}</small>
+                        {% endif %}
+                    </h2>
                 {% elseif(post.visibility is same as 'trashed') %}
                     <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
                 {% elseif(post.visibility is same as 'soft_deleted') %}

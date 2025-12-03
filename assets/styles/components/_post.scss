@@ -266,8 +266,20 @@ article.post {
         margin-left: 0;
       }
 
+      header {
+        margin-top: 0.2rem;
+        margin-bottom: 0;
+        flex-flow: row-reverse;
+      }
+
       .short-desc {
-        display: none;
+        margin-top: 0.2rem;
+        margin-bottom: 0.2rem;
+        max-height: 3lh;
+
+        p {
+          margin-bottom: 0;
+        }
       }
     }
 
@@ -292,8 +304,19 @@ article.post {
                            "preview preview preview";
       grid-template-columns: min-content 1fr min-content;
 
+      header {
+        margin-top: 0.2rem;
+        margin-bottom: 0;
+      }
+
       .short-desc {
-        display: none;
+        margin-top: 0.2rem;
+        margin-bottom: 0.2rem;
+        max-height: 3lh;
+
+        p {
+          margin-bottom: 0;
+        }
       }
     }
   }
@@ -430,6 +453,12 @@ article.post {
     figure {
       display: none;
     }
+
+    .short-desc {
+      @include b.media-breakpoint-up(sm) {
+        max-height: 1lh;
+      }
+    }
   }
 
   header {
@@ -529,25 +558,6 @@ article.post {
     footer menu,
     .entry__meta {
       @include ani.fade-in(.5s, .75);
-    }
-  }
-
-  &--single {
-    border-top: 0;
-    margin-top: 0;
-
-    .no-image-placeholder {
-      display: none;
-    }
-
-    .rounded-edges .view-compact & figure {
-      border-bottom-right-radius: 0;
-    }
-
-    @include b.media-breakpoint-down(sm) {
-      .rounded-edges .view-compact & figure {
-        border-bottom-right-radius: var(--kbin-rounded-edges-radius);
-      }
     }
   }
 
