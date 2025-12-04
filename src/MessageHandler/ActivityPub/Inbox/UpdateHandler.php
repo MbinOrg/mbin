@@ -15,7 +15,6 @@ use App\Entity\Message;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
-use App\Exception\RetryMessageException;
 use App\Factory\EntryCommentFactory;
 use App\Factory\EntryFactory;
 use App\Factory\ImageFactory;
@@ -105,7 +104,7 @@ class UpdateHandler extends MbinMessageHandler
             return;
         }
 
-        throw new RetryMessageException('Don\'t know what to do with the update activity concerning \''.$payload['object']['id'].'\'. We didn\'t have a local object that has this id.');
+        throw new \LogicException('Don\'t know what to do with the update activity concerning \''.$payload['object']['id'].'\'. We didn\'t have a local object that has this id.');
     }
 
     private function editActivity(array $object, User $actor, array $payload): void
