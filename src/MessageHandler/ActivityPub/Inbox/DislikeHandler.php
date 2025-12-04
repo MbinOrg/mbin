@@ -50,7 +50,7 @@ class DislikeHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof DislikeMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("DislikeHandler called, but is wasn\'t a DislikeMessage. Type: ".get_class($message));
         }
         if (!isset($message->payload['type'])) {
             return;

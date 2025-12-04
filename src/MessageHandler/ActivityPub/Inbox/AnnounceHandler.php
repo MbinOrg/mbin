@@ -41,7 +41,7 @@ class AnnounceHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof AnnounceMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("AnnounceHandler called, but is wasn\'t an AnnounceMessage. Type: ".get_class($message));
         }
         $chainDispatchCallback = function (array $object, ?string $adjustedUrl) use ($message) {
             if ($adjustedUrl) {

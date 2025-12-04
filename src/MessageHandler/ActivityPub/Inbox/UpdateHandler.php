@@ -72,7 +72,7 @@ class UpdateHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof UpdateMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("UpdateHandler called, but is wasn\'t an UpdateMessage. Type: ".get_class($message));
         }
         $payload = $message->payload;
         $this->logger->debug('[UpdateHandler::doWork] received Update activity: {json}', ['json' => $payload]);

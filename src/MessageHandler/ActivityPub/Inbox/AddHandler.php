@@ -57,7 +57,7 @@ class AddHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof AddMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("AddHandler called, but is wasn\'t an AddMessage. Type: ".get_class($message));
         }
         $payload = $message->payload;
         $actor = $this->activityPubManager->findUserActorOrCreateOrThrow($payload['actor']);

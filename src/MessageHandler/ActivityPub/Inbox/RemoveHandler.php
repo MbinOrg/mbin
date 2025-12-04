@@ -53,7 +53,7 @@ class RemoveHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof RemoveMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("RemoveHandler called, but is wasn\'t a RemoveMessage. Type: ".get_class($message));
         }
         $payload = $message->payload;
         $actor = $this->activityPubManager->findUserActorOrCreateOrThrow($payload['actor']);

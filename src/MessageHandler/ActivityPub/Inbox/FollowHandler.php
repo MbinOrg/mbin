@@ -45,7 +45,7 @@ class FollowHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof FollowMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("FollowHandler called, but is wasn\'t a FollowMessage. Type: ".get_class($message));
         }
         $this->logger->debug('got a FollowMessage: {message}', [$message]);
         $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
