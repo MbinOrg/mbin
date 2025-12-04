@@ -53,7 +53,7 @@ class DeleteHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof DeleteMessage)) {
-            throw new \LogicException("DeleteHandler called, but is wasn\'t a DeleteMessage. Type: ".get_class($message));
+            throw new \LogicException("DeleteHandler called, but is wasn\'t a DeleteMessage. Type: ".\get_class($message));
         }
         $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
 

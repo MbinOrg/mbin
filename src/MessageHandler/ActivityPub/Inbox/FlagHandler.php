@@ -49,7 +49,7 @@ class FlagHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof FlagMessage)) {
-            throw new \LogicException("FlagHandler called, but is wasn\'t a FlagMessage. Type: ".get_class($message));
+            throw new \LogicException("FlagHandler called, but is wasn\'t a FlagMessage. Type: ".\get_class($message));
         }
         $this->logger->debug('Got FlagMessage: '.json_encode($message));
         $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);

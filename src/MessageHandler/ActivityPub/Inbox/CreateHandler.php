@@ -66,7 +66,7 @@ class CreateHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof CreateMessage)) {
-            throw new \LogicException("CreateHandler called, but is wasn\'t a CreateMessage. Type: ".get_class($message));
+            throw new \LogicException("CreateHandler called, but is wasn\'t a CreateMessage. Type: ".\get_class($message));
         }
         $object = $message->payload;
         $stickyIt = $message->stickyIt;
