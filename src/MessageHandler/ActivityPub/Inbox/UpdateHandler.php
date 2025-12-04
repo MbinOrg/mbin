@@ -15,10 +15,10 @@ use App\Entity\Message;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\Exception\RetryMessageException;
 use App\Factory\EntryCommentFactory;
 use App\Factory\EntryFactory;
 use App\Factory\ImageFactory;
-use App\Factory\MagazineFactory;
 use App\Factory\PostCommentFactory;
 use App\Factory\PostFactory;
 use App\Message\ActivityPub\Inbox\UpdateMessage;
@@ -31,7 +31,6 @@ use App\Service\ActivityPub\ApObjectExtractor;
 use App\Service\ActivityPubManager;
 use App\Service\EntryCommentManager;
 use App\Service\EntryManager;
-use App\Service\MagazineManager;
 use App\Service\MessageManager;
 use App\Service\PostCommentManager;
 use App\Service\PostManager;
@@ -61,8 +60,6 @@ class UpdateHandler extends MbinMessageHandler
         private readonly MessageManager $messageManager,
         private readonly LoggerInterface $logger,
         private readonly MessageBusInterface $bus,
-        private readonly MagazineManager $magazineManager,
-        private readonly MagazineFactory $magazineFactory,
         private readonly ImageFactory $imageFactory,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
@@ -108,7 +105,7 @@ class UpdateHandler extends MbinMessageHandler
             return;
         }
 
-        $this->logger->warning("[UpdateHandler::doWork] didn't know what to do with the update activity concerning '{id}'. We don't have a local object that has this id", ['id' => $payload['object']['id']]);
+        throw new RetryMessageException('Don\'t know what to do with the update activity concerning \''.$payload['object']['id'].'\'. We didn\'t have a local object that has this id.');
     }
 
     private function editActivity(array $object, User $actor, array $payload): void
