@@ -104,6 +104,7 @@ class UpdateHandler extends MbinMessageHandler
             return;
         }
 
+        $this->logger->warning("[UpdateHandler::doWork] didn't know what to do with the update activity concerning '{id}'. We don't have a local object that has this id", ['id' => $payload['object']['id']]);
         throw new \LogicException('Don\'t know what to do with the update activity concerning \''.$payload['object']['id'].'\'. We didn\'t have a local object that has this id.');
     }
 
