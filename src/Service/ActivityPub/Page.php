@@ -124,6 +124,10 @@ class Page
             $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($object);
             $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($object);
 
+            if (isset($object['commentsEnabled']) && \is_bool($object['commentsEnabled'])) {
+                $dto->isLocked = !$object['commentsEnabled'];
+            }
+
             $this->logger->debug('creating page');
 
             return $this->entryManager->create($dto, $actor, false, $stickyIt);

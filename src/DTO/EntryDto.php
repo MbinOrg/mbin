@@ -41,6 +41,7 @@ class EntryDto implements ContentVisibilityInterface
     public bool $isOc = false;
     public bool $isAdult = false;
     public bool $isPinned = false;
+    public bool $isLocked = false;
     public ?Collection $badges = null;
     public ?string $slug = null;
     public int $score = 0;
