@@ -1,8 +1,8 @@
-import { fetch, ok } from '../utils/http';
-import getIntIdFromElement, { getDepth, getLevel, getTypeFromNotification } from '../utils/mbin';
-import { Controller } from '@hotwired/stimulus';
+import {fetch, ok} from '../utils/http';
+import getIntIdFromElement, {getDepth, getLevel, getTypeFromNotification} from '../utils/mbin';
+import {Controller} from '@hotwired/stimulus';
 import router from '../utils/routing';
-import { useIntersection } from 'stimulus-use';
+import {useIntersection} from 'stimulus-use';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -390,23 +390,21 @@ export default class extends Controller {
     }
 
     wireTouchEvent() {
+        if (this.isOnCombined()) {
+            this.wireTouchEventCombined();
+        } else {
+            this.wireTouchEventRegular();
+        }
+    }
+
+    wireTouchEventRegular() {
         // if in a list and the click is made via touch, open the post
         if (!this.element.classList.contains('isSingle')) {
             this.element.querySelector('.content')?.addEventListener('click', (e) => {
-                if (e.defaultPrevented) {
+                if (this.filterClickEvent(e)) {
                     return;
                 }
-                if ('a' === e.target.nodeName?.toLowerCase() || 'a' === e.target.tagName?.toLowerCase()) {
-                    // ignore clicks on links
-                    return;
-                }
-                if (
-                    'details' === e.target.nodeName?.toLowerCase() || 'details' === e.target.tagName?.toLowerCase()
-                    || 'summary' === e.target.nodeName?.toLowerCase() || 'summary' === e.target.tagName?.toLowerCase()
-                ) {
-                    // ignore clicks on spoilers
-                    return;
-                }
+
                 if ('touch' === e.pointerType) {
                     const link = this.element.querySelector('header a:not(.user-inline)');
                     if (link) {
@@ -418,5 +416,56 @@ export default class extends Controller {
                 }
             });
         }
+    }
+
+    wireTouchEventCombined() {
+        // if on Combined view, open the post via click on card
+        this.element.addEventListener('click', (e) => {
+            if (this.filterClickEvent(e)) {
+                return;
+            }
+
+            const link = this.element.querySelector('footer span[data-subject-target="commentsCounter"]')?.parentElement;
+            if (link) {
+                let href = link.getAttribute('href');
+                href = href.substring(0, href.length - '#comments'.length);
+                if (href) {
+                    document.location.href = href;
+                }
+            }
+        });
+    }
+
+    isOnCombined() {
+        return location.pathname.endsWith('/combined') || location.pathname.includes('/combined/');
+    }
+
+    filterClickEvent(e) {
+        if (e.defaultPrevented) {
+            return true;
+        }
+
+        // ignore clicks on links
+        if ('a' === e.target.nodeName?.toLowerCase() || 'a' === e.target.tagName?.toLowerCase()) {
+            return true;
+        }
+
+        // ignore clicks on spoilers
+        if (
+            'details' === e.target.nodeName?.toLowerCase() || 'details' === e.target.tagName?.toLowerCase()
+            || 'summary' === e.target.nodeName?.toLowerCase() || 'summary' === e.target.tagName?.toLowerCase()
+        ) {
+            return true;
+        }
+
+        // ignore click on images
+        const figures = this.element.querySelectorAll('figure');
+        if (
+            figures.entries().some(([, elem]) => elem.contains(e.target))
+        ) {
+            return true;
+        }
+
+        return false;
     }
 }
