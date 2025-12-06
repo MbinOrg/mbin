@@ -56,8 +56,8 @@ class ImageManager implements ImageManagerInterface
         $fh = fopen($source, 'rb');
 
         try {
-            if (filesize($source) > $this->settings->get('MBIN_MAX_IMAGE_BYTES')) {
-                throw new ImageDownloadTooLargeException('the image is too large, max size is '.$this->settings->get('MBIN_MAX_IMAGE_BYTES'));
+            if (filesize($source) > $this->settings->getMaxImageBytes()) {
+                throw new ImageDownloadTooLargeException('the image is too large, max size is '.$this->settings->getMaxImageBytes());
             }
 
             $this->validate($source);

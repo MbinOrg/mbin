@@ -11,12 +11,13 @@ final class Version20251206145724 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Remove old MAX_IMAGE_BYTES unused setting.';
+        return 'Remove old MAX_IMAGE_BYTES unused setting and also remove the renamed MBIN_MAX_IMAGE_BYTES.';
     }
 
     public function up(Schema $schema): void
     {
         $this->addSql('DELETE FROM settings WHERE name=\'MAX_IMAGE_BYTES\'');
+        $this->addSql('DELETE FROM settings WHERE name=\'MBIN_MAX_IMAGE_BYTES\'');
     }
 
     public function down(Schema $schema): void
