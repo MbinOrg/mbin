@@ -1149,7 +1149,7 @@ federation_page_use_allowlist_help: Si s'utilitza una llista de permesos, esta
   instància només es federarà amb les instàncies explícitament permeses. En cas 
   contrari, esta instància es federarà amb totes les instàncies, excepte les que
   estiguen prohibides.
-front_default_content: Vista frontal per defecte
+front_default_content: Vista per defecte de portada
 default_content_default: Valor per defecte del servidor (Fils)
 default_content_threads: Fils
 default_content_microblog: Microblog
