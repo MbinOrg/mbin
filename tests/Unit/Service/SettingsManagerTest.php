@@ -27,10 +27,11 @@ class SettingsManagerTest extends WebTestCase
     {
         SettingsManager::resetDto();
 
-        // settings repository returns no override
+        // Set max images bytes (as if its coming from the .env)
+        $setMaxImagesBytes = 1500000;
+
         $settingsRepository = $this->createStub(SettingsRepository::class);
         $settingsRepository->method('findAll')->willReturn([]);
-
         $entityManager = $this->createStub(EntityManagerInterface::class);
         $requestStack = $this->createStub(RequestStack::class);
         $kernel = $this->createStub(KernelInterface::class);
@@ -38,6 +39,7 @@ class SettingsManagerTest extends WebTestCase
         $instanceRepository = $this->createStub(InstanceRepository::class);
         $logger = $this->createStub(LoggerInterface::class);
 
+        // SUT
         $manager = new SettingsManager(
             entityManager: $entityManager,
             repository: $settingsRepository,
@@ -61,14 +63,14 @@ class SettingsManagerTest extends WebTestCase
             kbinFederationPageEnabled: true,
             kbinAdminOnlyOauthClients: true,
             mbinSsoOnlyMode: false,
-            mbinMaxImageBytes: 1500000,
+            mbinMaxImageBytes: $setMaxImagesBytes,
             mbinDownvotesMode: DownvotesMode::Enabled,
             mbinNewUsersNeedApproval: false,
             logger: $logger,
             mbinUseFederationAllowList: false
         );
 
-        // SUT
+        // Assert
         $this->assertSame('1.5 MB', $manager->getMaxImageByteString());
     }
 
@@ -76,12 +78,11 @@ class SettingsManagerTest extends WebTestCase
     {
         SettingsManager::resetDto();
 
-        // settings repository returns an override for MBIN_MAX_IMAGE_BYTES
-        // and should ignore the default configured in the constructor
-        $overrideResult = (object) ['name' => 'MBIN_MAX_IMAGE_BYTES', 'value' => '1572864'];
-        $settingsRepository = $this->createStub(SettingsRepository::class);
-        $settingsRepository->method('findAll')->willReturn([$overrideResult]);
+        // Set max images bytes (as if its coming from the .env)
+        $setMaxImagesBytes = 1572864;
 
+        $settingsRepository = $this->createStub(SettingsRepository::class);
+        $settingsRepository->method('findAll')->willReturn([]);
         $entityManager = $this->createStub(EntityManagerInterface::class);
         $requestStack = $this->createStub(RequestStack::class);
         $kernel = $this->createStub(KernelInterface::class);
@@ -89,6 +90,7 @@ class SettingsManagerTest extends WebTestCase
         $instanceRepository = $this->createStub(InstanceRepository::class);
         $logger = $this->createStub(LoggerInterface::class);
 
+        // SUT
         $manager = new SettingsManager(
             entityManager: $entityManager,
             repository: $settingsRepository,
@@ -112,14 +114,14 @@ class SettingsManagerTest extends WebTestCase
             kbinFederationPageEnabled: true,
             kbinAdminOnlyOauthClients: true,
             mbinSsoOnlyMode: false,
-            mbinMaxImageBytes: 1500000,
+            mbinMaxImageBytes: $setMaxImagesBytes,
             mbinDownvotesMode: DownvotesMode::Enabled,
             mbinNewUsersNeedApproval: false,
             logger: $logger,
             mbinUseFederationAllowList: false
         );
 
-        // SUT
+        // Assert
         $this->assertSame('1.57 MB', $manager->getMaxImageByteString());
     }
 }

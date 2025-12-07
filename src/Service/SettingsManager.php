@@ -55,11 +55,6 @@ class SettingsManager
         if (!self::$dto || 'test' === $this->kernel->getEnvironment()) {
             $results = $this->repository->findAll();
 
-            $mbinMaxImageBytesEdited = $this->find($results, 'MBIN_MAX_IMAGE_BYTES', FILTER_VALIDATE_INT);
-            if (null === $mbinMaxImageBytesEdited || 0 === $mbinMaxImageBytesEdited) {
-                $mbinMaxImageBytesEdited = $this->mbinMaxImageBytes;
-            }
-
             $newUsersNeedApprovalDb = $this->find($results, 'MBIN_NEW_USERS_NEED_APPROVAL');
             if ('true' === $newUsersNeedApprovalDb) {
                 $newUsersNeedApprovalEdited = true;
@@ -103,7 +98,6 @@ class SettingsManager
                 $this->find($results, 'MBIN_SSO_REGISTRATIONS_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? true,
                 $this->find($results, 'MBIN_RESTRICT_MAGAZINE_CREATION', FILTER_VALIDATE_BOOLEAN) ?? false,
                 $this->find($results, 'MBIN_SSO_SHOW_FIRST', FILTER_VALIDATE_BOOLEAN) ?? false,
-                $mbinMaxImageBytesEdited,
                 $this->find($results, 'MBIN_DOWNVOTES_MODE') ?? $this->mbinDownvotesMode->value,
                 $newUsersNeedApprovalEdited,
                 $this->find($results, 'MBIN_USE_FEDERATION_ALLOW_LIST', FILTER_VALIDATE_BOOLEAN) ?? $this->mbinUseFederationAllowList,
@@ -251,9 +245,14 @@ class SettingsManager
         return $request->cookies->get('mbin_lang') ?? $request->getLocale() ?? $this->get('KBIN_DEFAULT_LANG');
     }
 
+    public function getMaxImageBytes(): int
+    {
+        return $this->mbinMaxImageBytes;
+    }
+
     public function getMaxImageByteString(): string
     {
-        $bytes = (int) $this->getDto()->MBIN_MAX_IMAGE_BYTES;
+        $bytes = $this->mbinMaxImageBytes;
         // We use 1000 for MB (instead of 1024, which would be MiB)
         // Linux is using SI standard, see also: https://wiki.ubuntu.com/UnitsPolicy
         $megaBytes = round($bytes / pow(1000, 2), 2);
