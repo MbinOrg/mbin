@@ -82,6 +82,9 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         for ($i = \sizeof($this->entitiesToRemoveAfterSetup) - 1; $i >= 0; --$i) {
             $this->entityManager->remove($this->entitiesToRemoveAfterSetup[$i]);
         }
+        $this->entries = new ArrayCollection();
+        $this->magazines = new ArrayCollection();
+        $this->users = new ArrayCollection();
 
         $this->entityManager->flush();
         $this->entityManager->clear();

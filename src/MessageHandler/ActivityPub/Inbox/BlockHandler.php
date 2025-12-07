@@ -52,7 +52,7 @@ class BlockHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!$message instanceof BlockMessage) {
-            throw new \LogicException();
+            throw new \LogicException("BlockHandler called, but is wasn\'t a BlockMessage. Type: ".\get_class($message));
         }
 
         if (!isset($message->payload['id']) || !isset($message->payload['actor']) || !isset($message->payload['object'])) {

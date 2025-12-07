@@ -72,7 +72,7 @@ class UpdateHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof UpdateMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("UpdateHandler called, but is wasn\'t an UpdateMessage. Type: ".\get_class($message));
         }
         $payload = $message->payload;
         $this->logger->debug('[UpdateHandler::doWork] received Update activity: {json}', ['json' => $payload]);
@@ -104,7 +104,7 @@ class UpdateHandler extends MbinMessageHandler
             return;
         }
 
-        $this->logger->warning("[UpdateHandler::doWork] didn't know what to do with the update activity concerning '{id}'. We don't have a local object that has this id", ['id' => $payload['object']['id']]);
+        throw new \LogicException('Don\'t know what to do with the update activity concerning \''.$payload['object']['id'].'\'. We didn\'t have a local object that has this id.');
     }
 
     private function editActivity(array $object, User $actor, array $payload): void

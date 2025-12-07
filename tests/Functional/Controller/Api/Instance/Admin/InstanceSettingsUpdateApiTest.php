@@ -37,7 +37,6 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
         'MBIN_DOWNVOTES_MODE',
         'MBIN_SSO_ONLY_MODE',
         'MBIN_SSO_SHOW_FIRST',
-        'MBIN_MAX_IMAGE_BYTES',
         'MBIN_NEW_USERS_NEED_APPROVAL',
         'MBIN_USE_FEDERATION_ALLOW_LIST',
     ];
@@ -113,7 +112,6 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'MBIN_DOWNVOTES_MODE' => DownvotesMode::Enabled->value,
             'MBIN_SSO_ONLY_MODE' => false,
             'MBIN_SSO_SHOW_FIRST' => false,
-            'MBIN_MAX_IMAGE_BYTES' => 10000,
             'MBIN_NEW_USERS_NEED_APPROVAL' => false,
             'MBIN_USE_FEDERATION_ALLOW_LIST' => false,
         ];
@@ -155,7 +153,6 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'MBIN_DOWNVOTES_MODE' => DownvotesMode::Hidden->value,
             'MBIN_SSO_ONLY_MODE' => true,
             'MBIN_SSO_SHOW_FIRST' => true,
-            'MBIN_MAX_IMAGE_BYTES' => 30000,
             'MBIN_NEW_USERS_NEED_APPROVAL' => false,
             'MBIN_USE_FEDERATION_ALLOW_LIST' => false,
         ];

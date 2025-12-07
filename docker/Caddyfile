@@ -29,6 +29,11 @@
 	encode zstd br gzip
 
 	mercure {
+		# The transport to use
+		transport bolt {
+			path {$MERCURE_BOLT_PATH:/data/mercure.db}
+			{$MERCURE_BOLT_EXTRA_DIRECTIVES}
+		}
 		# Publisher JWT key
 		publisher_jwt {env.MERCURE_PUBLISHER_JWT_KEY} {env.MERCURE_PUBLISHER_JWT_ALG}
 		# Subscriber JWT key

@@ -28,7 +28,6 @@ use App\Repository\ActivityRepository;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
-use App\Service\ActivityPubManager;
 use App\Service\MessageManager;
 use App\Utils\UrlUtils;
 use Doctrine\DBAL\Exception;
@@ -51,7 +50,6 @@ class CreateHandler extends MbinMessageHandler
         private readonly MessageBusInterface $bus,
         private readonly LoggerInterface $logger,
         private readonly MessageManager $messageManager,
-        private readonly ActivityPubManager $activityPubManager,
         private readonly ActivityRepository $activityRepository,
         private readonly ApActivityRepository $repository,
         private readonly CacheInterface $cache,
@@ -70,7 +68,7 @@ class CreateHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof CreateMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("CreateHandler called, but is wasn\'t a CreateMessage. Type: ".\get_class($message));
         }
         $object = $message->payload;
         $stickyIt = $message->stickyIt;
