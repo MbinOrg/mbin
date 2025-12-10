@@ -101,7 +101,7 @@ If you have a firewall installed (or you're behind a NAT), be sure to open port 
 > [!NOTE]
 > This assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
 
-1. Setup the Nodesource repository:
+2. Setup the Nodesource repository:
 
 ```bash
 curl -fsSL https://deb.nodesource.com/setup_24.x | sudo bash -
