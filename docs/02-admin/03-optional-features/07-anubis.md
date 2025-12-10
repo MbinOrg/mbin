@@ -232,6 +232,10 @@ server {
     server_name domain.tld;
     root /var/www/mbin/public;
 
+    # Get the visiting IP from the TLS termination server
+    set_real_ip_from unix:;
+    real_ip_header   X-Real-IP;
+
     location / {
         # try to serve file directly, fallback to index.php
         try_files $uri /index.php$is_args$args;
@@ -333,6 +337,10 @@ server {
     listen unix:/run/nginx/mbin.sock;
     server_name domain.tld;
     root /var/www/mbin/public;
+
+    # Get the visiting IP from the TLS termination server
+    set_real_ip_from unix:;
+    real_ip_header   X-Real-IP;
 
     index index.php;
 
