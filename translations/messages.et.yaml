@@ -52,3 +52,17 @@ add_media: Lisa meediat
 remove_media: Eemalda meedia
 remove_user_avatar: Eemalda tunnuspilt
 remove_user_cover: Eemalda kaanepilt
+local_and_federated: Kohalik ja födiversumis
+filter.fields.only_names: Ainult nimed
+filter.fields.names_and_descriptions: Nimed ja kirjedused
+toolbar.bold: Paks kiri
+toolbar.italic: Kaldkiri
+toolbar.strikethrough: Läbikriipsutatud kiri
+toolbar.header: Päis
+toolbar.quote: Tsitaat
+toolbar.code: Koodilõik
+toolbar.link: Link
+toolbar.image: Pilt
+toolbar.unordered_list: Järjestamata loend
+toolbar.ordered_list: Järjestatud loend
+toolbar.mention: Mainimine
