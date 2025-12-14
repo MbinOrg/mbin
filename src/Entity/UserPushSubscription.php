@@ -19,6 +19,7 @@ class UserPushSubscription
     public int $id;
 
     #[ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy: 'pushSubscriptions')]
+    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $user;
 
     #[Column(type: 'text')]
