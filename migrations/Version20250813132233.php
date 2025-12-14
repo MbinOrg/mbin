@@ -30,7 +30,7 @@ BEGIN
     LOOP
         IF NOT EXISTS (SELECT * FROM instance i WHERE i.domain = tempRow.value) THEN
             INSERT INTO instance(id, domain, created_at, failed_delivers, updated_at, is_banned)
-                VALUES (NEXTVAL('instance_id_seq'), current_timestamp(0), 0, current_timestamp(0), true);
+                VALUES (NEXTVAL('instance_id_seq'), tempRow.value, current_timestamp(0), 0, current_timestamp(0), true);
         ELSE
             UPDATE instance SET is_banned = true WHERE domain = tempRow.value;
         END IF;
