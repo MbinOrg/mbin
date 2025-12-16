@@ -11,3 +11,5 @@ docs/**
 LICENSES/**
 *.md
 public/robots.txt
+
+*

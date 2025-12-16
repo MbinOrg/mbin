@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
+set -eu
+
 # necessary in the GitHub Action environment
 git config --global --add safe.directory "$(realpath .)"
 
 ignoredPatterns="$(cat ./ci/ignoredPaths.txt)"
-echo branch: "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
 if [[ "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" == 'main' ]]; then
     git fetch origin main:main --depth 2
     changedFiles="$(git diff --name-only main^ HEAD)"
