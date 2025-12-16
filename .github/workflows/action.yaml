@@ -1,20 +1,6 @@
 name: Mbin Workflow
 on:
   pull_request:
-    paths-ignore:
-      # Dev container is not relevant to the workflow
-      - '.devcontainer/**'
-      # Issue and pull request templates are not relevant to the workflow
-      - '.github/ISSUE_TEMPLATE/**'
-      - '.github/PULL_REQUEST_TEMPLATE/**'
-      # A separate workflow is used to build and publish the pipeline image
-      - 'ci/**'
-      # Documentation changes are not relevant to the workflow and are taking care of by mbin-docs repository
-      - 'docs/**'
-      # Other files are not relevant to the workflow
-      - 'LICENSES/**'
-      - '*.md'
-      - 'public/robots.txt'
     branches:
       - main
       - develop
@@ -60,18 +46,18 @@ jobs:
 
       - run: cp .env.example .env
       - name: Composer install
-        run: composer install --no-dev --no-progress
+        run: ./ci/skipOnExcluded.sh composer install --no-dev --no-progress
 
       - name: Test API dump
-        run: php bin/console nelmio:apidoc:dump
+        run: ./ci/skipOnExcluded.sh php bin/console nelmio:apidoc:dump
 
       - name: NPM install
-        run: npm ci --include=dev
+        run: ./ci/skipOnExcluded.sh npm ci --include=dev
         env:
           NODE_ENV: production
 
       - name: Build frontend (production)
-        run: npm run build
+        run: ./ci/skipOnExcluded.sh npm run build
 
   automated-tests:
     runs-on: ubuntu-latest
@@ -103,17 +89,17 @@ jobs:
           restore-keys: ${{ runner.os }}-npm-
 
       - name: Composer install
-        run: composer install --no-scripts --no-progress
+        run: ./ci/skipOnExcluded.sh composer install --no-scripts --no-progress
 
       - run: cp .env.example .env
 
       - name: NPM install
-        run: npm ci --include=dev
+        run: ./ci/skipOnExcluded.sh npm ci --include=dev
         env:
           NODE_ENV: production
 
       - name: Build frontend (production)
-        run: npm run build
+        run: ./ci/skipOnExcluded.sh npm run build
 
       - name: Run unit tests
         env:
@@ -124,7 +110,7 @@ jobs:
           REDIS_HOST: valkey
           REDIS_PORT: 6379
           CREATE_SNAPSHOTS: false
-        run: php vendor/bin/paratest tests/Unit
+        run: ./ci/skipOnExcluded.sh php vendor/bin/paratest tests/Unit
 
       - name: Run non thread safe integration tests
         env:
@@ -134,7 +120,7 @@ jobs:
           DATABASE_PORT: 5432
           REDIS_HOST: valkey
           REDIS_PORT: 6379
-        run: php vendor/bin/phpunit tests/Functional --group NonThreadSafe
+        run: ./ci/skipOnExcluded.sh php vendor/bin/phpunit tests/Functional --group NonThreadSafe
 
       - name: Run thread safe integration tests
         env:
@@ -144,7 +130,7 @@ jobs:
           DATABASE_PORT: 5432
           REDIS_HOST: valkey
           REDIS_PORT: 6379
-        run: php vendor/bin/paratest tests/Functional --exclude-group NonThreadSafe
+        run: ./ci/skipOnExcluded.sh php vendor/bin/paratest tests/Functional --exclude-group NonThreadSafe
     services:
       postgres:
         # Docker Hub image
