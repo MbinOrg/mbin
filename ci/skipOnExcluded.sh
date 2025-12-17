@@ -3,9 +3,9 @@
 set -eu
 
 # Necessary in the GitHub Action environment
-git config --global --add safe.directory "$(realpath .)"
+git config --global --add safe.directory "$(realpath "$GITHUB_WORKSPACE")"
 
-ignoredPatterns="$(cat ./ci/ignoredPaths.txt)"
+ignoredPatterns="$(cat "$GITHUB_WORKSPACE"/ci/ignoredPaths.txt)"
 if [[ "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" == 'main' ]]; then
     git fetch origin main:main --depth 2
     changedFiles="$(git diff --name-only main^ HEAD)"
