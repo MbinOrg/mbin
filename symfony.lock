@@ -40,14 +40,8 @@
         },
         "files": []
     },
-    "doctrine/cache": {
-        "version": "2.1.1"
-    },
     "doctrine/collections": {
         "version": "1.6.7"
-    },
-    "doctrine/common": {
-        "version": "3.1.2"
     },
     "doctrine/data-fixtures": {
         "version": "1.5.0"
@@ -85,7 +79,7 @@
         ]
     },
     "doctrine/doctrine-migrations-bundle": {
-        "version": "3.2",
+        "version": "3.7",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
@@ -108,9 +102,6 @@
     },
     "doctrine/lexer": {
         "version": "1.2.1"
-    },
-    "doctrine/migrations": {
-        "version": "3.2.0"
     },
     "doctrine/orm": {
         "version": "2.9.3"
