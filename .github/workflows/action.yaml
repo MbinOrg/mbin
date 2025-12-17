@@ -45,6 +45,7 @@ jobs:
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
+          git config --global --add safe.directory $GITHUB_WORKSPACE
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v4
