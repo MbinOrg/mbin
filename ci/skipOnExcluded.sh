@@ -2,7 +2,7 @@
 
 set -eu
 
-# necessary in the GitHub Action environment
+# Necessary in the GitHub Action environment
 git config --global --add safe.directory "$(realpath .)"
 
 ignoredPatterns="$(cat ./ci/ignoredPaths.txt)"
@@ -31,10 +31,10 @@ while read -r path; do
 done <<< "$changedFiles"
 
 if [[ "$doSkip" == 1 ]]; then
-    echo skipping actions because diff only affects ignored paths
+    echo "Skipping actions because diff only affects ignored paths"
     exit 0
 else
-    echo running actions
+    echo "Running actions"
     echo
     exec "$@"
 fi
