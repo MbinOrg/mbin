@@ -28,10 +28,12 @@ jobs:
         id: npm-cache-dir-path
         run: echo "dir=$(npm get cache)" >> $GITHUB_OUTPUT
 
+      - name: Add GITHUB_WORKSPACE as a safe directory
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v4
         id: npm-cache
@@ -66,10 +68,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Add GITHUB_WORKSPACE as a safe directory
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Get NPM cache directory path
         id: npm-cache-dir-path
@@ -164,10 +168,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get Composer cache directory
+      - name: Add GITHUB_WORKSPACE as a safe directory
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
+      - name: Get Composer Cache Directory
         id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache vendor directory
         uses: actions/cache@v4
@@ -193,10 +199,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Add GITHUB_WORKSPACE as a safe directory
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v4
         with:
@@ -220,10 +228,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Add GITHUB_WORKSPACE as a safe directory
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Get NPM cache directory path
         id: npm-cache-dir-path
