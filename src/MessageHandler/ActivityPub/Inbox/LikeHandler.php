@@ -45,7 +45,7 @@ class LikeHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof LikeMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("LikeHandler called, but is wasn\'t a LikeMessage. Type: ".\get_class($message));
         }
         if (!isset($message->payload['type'])) {
             return;

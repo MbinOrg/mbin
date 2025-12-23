@@ -35,7 +35,6 @@ class InstanceSettingsRetrieveApiTest extends WebTestCase
         'MBIN_DOWNVOTES_MODE',
         'MBIN_SSO_ONLY_MODE',
         'MBIN_SSO_SHOW_FIRST',
-        'MBIN_MAX_IMAGE_BYTES',
         'MBIN_NEW_USERS_NEED_APPROVAL',
         'MBIN_USE_FEDERATION_ALLOW_LIST',
     ];

@@ -55,7 +55,7 @@ class ChainActivityHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof ChainActivityMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("ChainActivityHandler called, but is wasn\'t a ChainActivityMessage. Type: ".\get_class($message));
         }
         $this->logger->debug('Got chain activity message: {m}', ['m' => $message]);
         if (!$message->chain || 0 === \sizeof($message->chain)) {

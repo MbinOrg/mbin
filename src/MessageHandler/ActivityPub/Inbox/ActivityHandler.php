@@ -62,7 +62,7 @@ class ActivityHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof ActivityMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("ActivityHandler called, but is wasn\'t an ActivityMessage. Type: ".\get_class($message));
         }
 
         $payload = @json_decode($message->payload, true);
