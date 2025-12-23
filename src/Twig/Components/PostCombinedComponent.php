@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Twig\Components;
 
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -12,5 +14,4 @@ class PostCombinedComponent extends PostComponent
     {
         parent::__construct($authorizationChecker);
     }
-
 }
