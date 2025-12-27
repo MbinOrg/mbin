@@ -119,7 +119,7 @@
     "require-dev": {
         "brianium/paratest": "^7.10.1",
         "dama/doctrine-test-bundle": "^8.2.0",
-        "doctrine/doctrine-fixtures-bundle": "^3.6.1",
+        "doctrine/doctrine-fixtures-bundle": "^4.3.0",
         "fakerphp/faker": "^1.23.1",
         "justinrainbow/json-schema": "^6.0.0",
         "phpstan/phpstan": "^2.0.2",
