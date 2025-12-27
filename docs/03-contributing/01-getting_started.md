@@ -58,7 +58,7 @@ To use it, follow these steps:
 6. If some service are not running, try:
    - Start it with `sudo service <service name> start`
    - If postgres fails: `sudo chmod -R postgres:postgres /var/lib/postgresql/`
-7. Run `php -d memory_limit=-1 bin/console doctrine:migrations:migrate`
+7. Run `bin/console doctrine:migrations:migrate`
 8. Run `npm install && npm run dev`
 9. Open `http://localhost:8080` in a browser; you should see some status page or the Mbin startpage
 10. Run `sudo find public/ -type d -exec chgrp www-data '{}' \;` and `sudo find public/ -type d -exec chmod g+rwx '{}' \;`
@@ -87,8 +87,8 @@ These steps have to be repeated after every recreation of the Container:
 3. Inside the SQL shell, run: `CREATE USER mbin WITH PASSWORD 'ChangeThisPostgresPass' SUPERUSER;`
 
 Now the testsuite can be launched with:
-`SYMFONY_DEPRECATIONS_HELPER=disabled php -d memory_limit=-1 ./bin/phpunit tests/Unit`
-or: `SYMFONY_DEPRECATIONS_HELPER=disabled php -d memory_limit=-1 ./bin/phpunit tests/Functional/<path to tests to run>`.\
+`SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Unit`
+or: `SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Functional/<path to tests to run>`.\
 For more information, read the [Testing](#testing) section on this page.
 
 ## Bare metal installation
