@@ -878,9 +878,10 @@ class ActivityPubManager
         $arr = array_unique(
             array_filter(
                 array_merge(
-                    \is_array($activity['cc']) ? $activity['cc'] : [$activity['cc']],
-                    \is_array($activity['to']) ? $activity['to'] : [$activity['to']]
-                ), fn ($val) => !\in_array($val, [ActivityPubActivityInterface::PUBLIC_URL, $followersUrl, []])
+                    \App\Utils\JsonldUtils::getArrayValue($activity, 'cc'),
+                    \App\Utils\JsonldUtils::getArrayValue($activity, 'to'),
+                ),
+                fn ($val) => !\in_array($val, [ActivityPubActivityInterface::PUBLIC_URL, $followersUrl, []])
             )
         );
 
@@ -999,43 +1000,19 @@ class ActivityPubManager
 
     public static function getReceivers(array $object): array
     {
-        $res = [];
-        if (isset($object['audience']) and \is_array($object['audience'])) {
-            $res = array_merge($res, $object['audience']);
-        } elseif (isset($object['audience']) and \is_string($object['audience'])) {
-            $res[] = $object['audience'];
-        }
-
-        if (isset($object['to']) and \is_array($object['to'])) {
-            $res = array_merge($res, $object['to']);
-        } elseif (isset($object['to']) and \is_string($object['to'])) {
-            $res[] = $object['to'];
-        }
-
-        if (isset($object['cc']) and \is_array($object['cc'])) {
-            $res = array_merge($res, $object['cc']);
-        } elseif (isset($object['cc']) and \is_string($object['cc'])) {
-            $res[] = $object['cc'];
-        }
+        $res = array_merge(
+            \App\Utils\JsonldUtils::getArrayValue($object, 'audience'),
+            \App\Utils\JsonldUtils::getArrayValue($object, 'to'),
+            \App\Utils\JsonldUtils::getArrayValue($object, 'cc'),
+        );
 
         if (isset($object['object']) and \is_array($object['object'])) {
-            if (isset($object['object']['audience']) and \is_array($object['object']['audience'])) {
-                $res = array_merge($res, $object['object']['audience']);
-            } elseif (isset($object['object']['audience']) and \is_string($object['object']['audience'])) {
-                $res[] = $object['object']['audience'];
-            }
-
-            if (isset($object['object']['to']) and \is_array($object['object']['to'])) {
-                $res = array_merge($res, $object['object']['to']);
-            } elseif (isset($object['object']['to']) and \is_string($object['object']['to'])) {
-                $res[] = $object['object']['to'];
-            }
-
-            if (isset($object['object']['cc']) and \is_array($object['object']['cc'])) {
-                $res = array_merge($res, $object['object']['cc']);
-            } elseif (isset($object['object']['cc']) and \is_string($object['object']['cc'])) {
-                $res[] = $object['object']['cc'];
-            }
+            $res = array_merge(
+                $res,
+                \App\Utils\JsonldUtils::getArrayValue($object['object'], 'audience'),
+                \App\Utils\JsonldUtils::getArrayValue($object['object'], 'to'),
+                \App\Utils\JsonldUtils::getArrayValue($object['object'], 'cc'),
+            );
         } elseif (isset($object['attributedTo']) && \is_array($object['attributedTo'])) {
             // if there is no "object" inside of this it will probably be a create activity which has an attributedTo field
             // this was implemented for peertube support, because they list the channel (Group) and the user in an array in that field
@@ -1152,14 +1129,10 @@ class ActivityPubManager
 
     public function isActivityPublic(array $payload): bool
     {
-        $to = [];
-        if (!empty($payload['to']) && \is_array($payload['to'])) {
-            $to = array_merge($to, $payload['to']);
-        }
-
-        if (!empty($payload['cc']) && \is_array($payload['cc'])) {
-            $to = array_merge($to, $payload['cc']);
-        }
+        $to = array_merge(
+            \App\Utils\JsonldUtils::getArrayValue($payload, 'to'),
+            \App\Utils\JsonldUtils::getArrayValue($payload, 'cc'),
+        );
 
         foreach ($to as $receiver) {
             $id = null;

@@ -51,7 +51,9 @@ class MessageManager
         }
         $message = new Message($thread, $sender, $dto->body, $dto->apId);
 
-        foreach ($thread->participants as /** @var User $participant */ $participant) {
+        foreach ($thread->participants as
+        /** @var User $participant */
+        $participant) {
             if ($sender->getId() !== $participant->getId()) {
                 if ($participant->isBlocked($sender)) {
                     throw new UserBlockedException();
@@ -121,7 +123,10 @@ class MessageManager
     public function createMessage(array $object): Message|MessageThread
     {
         $this->logger->debug('creating message from {o}', ['o' => $object]);
-        $participantIds = array_merge($object['to'] ?? [], $object['cc'] ?? []);
+        // Possible improvement: convert this to a utility function for getting JSON-LD value or default of empty array
+        $obj_to = \App\Utils\JsonldUtils::getArrayValue($object, 'to');
+        $obj_cc = \App\Utils\JsonldUtils::getArrayValue($object, 'cc');
+        $participantIds = array_merge($obj_to, $obj_cc);
         $participants = array_map(fn ($participant) => $this->activityPubManager->findActorOrCreate(\is_string($participant) ? $participant : $participant['id']), $participantIds);
         $author = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
 
