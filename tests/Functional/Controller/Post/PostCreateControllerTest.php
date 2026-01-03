@@ -57,8 +57,8 @@ class PostCreateControllerTest extends WebTestCase
         $crawler = $this->client->followRedirect();
 
         $this->assertSelectorTextContains('#content .post', 'test post 1');
-        $this->assertSelectorExists('#content .post footer figure img');
-        $imgSrc = $crawler->filter('#content .post footer figure img')->getNode(0)->attributes->getNamedItem('src')->textContent;
+        $this->assertSelectorExists('#content .post div.content figure img');
+        $imgSrc = $crawler->filter('#content .post div.content figure img')->getNode(0)->attributes->getNamedItem('src')->textContent;
         $this->assertStringContainsString(self::KIBBY_PNG_URL_RESULT, $imgSrc);
         $_FILES = [];
     }
