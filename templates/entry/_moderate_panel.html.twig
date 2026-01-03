@@ -10,6 +10,20 @@
             </form>
         </li>
         <li>
+            <form action="{{ path('entry_lock', {'magazine_name': entry.magazine.name, 'entry_id': entry.id}) }}"
+                  method="post">
+                <input type="hidden" name="token" value="{{ csrf_token('entry_lock') }}">
+                <button type="submit" class="btn btn__secondary">
+                    {% if entry.isLocked %}
+                        <i class="fa fa-lock-open" aria-hidden="true"></i>
+                    {% else %}
+                        <i class="fa fa-lock" aria-hidden="true"></i>
+                    {% endif %}
+                    <span>{{ entry.isLocked ? 'unlock'|trans : 'lock'|trans }}</span>
+                </button>
+            </form>
+        </li>
+        <li>
             <form action="{{ path('entry_change_adult', {magazine_name: magazine.name, entry_id: entry.id}) }}"
                   method="post">
                 <input type="hidden" name="token" value="{{ csrf_token('change_adult') }}">

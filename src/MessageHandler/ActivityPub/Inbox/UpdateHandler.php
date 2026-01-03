@@ -216,6 +216,10 @@ class UpdateHandler extends MbinMessageHandler
         $dto->apLikeCount = $this->activityPubManager->extractRemoteLikeCount($payload['object']);
         $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($payload['object']);
         $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($payload['object']);
+
+        if (isset($payload['object']['commentsEnabled']) && \is_bool($payload['object']['commentsEnabled']) && ($dto instanceof EntryDto || $dto instanceof PostDto)) {
+            $dto->isLocked = !$payload['object']['commentsEnabled'];
+        }
     }
 
     private function editMessage(Message $message, User $user, array $payload): void

@@ -18,13 +18,14 @@ class EntryVoter extends Voter
     public const COMMENT = 'comment';
     public const VOTE = 'vote';
     public const MODERATE = 'moderate';
+    public const LOCK = 'lock';
 
     protected function supports(string $attribute, $subject): bool
     {
         return $subject instanceof Entry
             && \in_array(
                 $attribute,
-                [self::CREATE, self::EDIT, self::DELETE, self::PURGE, self::COMMENT, self::VOTE, self::MODERATE],
+                [self::CREATE, self::EDIT, self::DELETE, self::PURGE, self::COMMENT, self::VOTE, self::MODERATE, self::LOCK],
                 true
             );
     }
@@ -44,6 +45,7 @@ class EntryVoter extends Voter
             self::COMMENT => $this->canComment($subject, $user),
             self::VOTE => $this->canVote($subject, $user),
             self::MODERATE => $this->canModerate($subject, $user),
+            self::LOCK => $subject->user === $user || $this->canModerate($subject, $user),
             default => throw new \LogicException(),
         };
     }

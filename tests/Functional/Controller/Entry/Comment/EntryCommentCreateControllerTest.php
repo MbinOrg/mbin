@@ -37,6 +37,19 @@ class EntryCommentCreateControllerTest extends WebTestCase
         $this->assertSelectorTextContains('#main blockquote', 'test comment 1');
     }
 
+    public function testUserCannotCreateEntryCommentInLockedEntry(): void
+    {
+        $user = $this->getUserByUsername('JohnDoe');
+        $this->client->loginUser($user);
+
+        $entry = $this->getEntryByTitle('test entry 1', 'https://kbin.pub');
+        $this->entryManager->toggleLock($entry, $user);
+
+        $this->client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
+
+        self::assertSelectorTextNotContains('#main', 'Add comment');
+    }
+
     #[Group(name: 'NonThreadSafe')]
     public function testUserCanCreateEntryCommentWithImage(): void
     {
