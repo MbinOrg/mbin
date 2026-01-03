@@ -785,8 +785,7 @@ show_avatars_on_comments_help: Montri/kaŝi uzantajn avatarojn kiam rigardado
   komentojn pri ununura fadeno aŭ afiŝo.
 magazine_theme_appearance_custom_css: Adaptita CSS-o kiu aplikiĝos dum rigardado
   de enhavo ene de via revuo.
-magazine_theme_appearance_icon: Adaptita ikono por la revuo. Se neniu estas 
-  elektita, la defaŭlta ikono estos uzata.
+magazine_theme_appearance_icon: Adaptita ikono por la revuo.
 magazine_theme_appearance_background_image: Adaptita fonbildo kiu estos aplikata
   dum rigardado de enhavo ene de via revuo.
 oauth2.grant.moderate.post.pin: Alpingli afiŝojn al la supro de la revuoj, kiujn
@@ -1090,3 +1089,5 @@ their_magazine_subscriptions: Kvanto da uzantoj de ilia nodo abonis revuojn en
 our_magazine_subscriptions: Kvanto da uzantoj de nia nodo abonis revuojn en ilia
   nodo
 confirm_defederation: Konfirmi malfederacion
+ban_instance: Forbari nodon
+allow_instance: Malforbari nodon
