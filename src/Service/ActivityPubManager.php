@@ -77,8 +77,7 @@ class ActivityPubManager
         private readonly RemoteInstanceManager $remoteInstanceManager,
         private readonly InstanceRepository $instanceRepository,
         private readonly CacheInterface $cache,
-    ) {
-    }
+    ) {}
 
     public function getActorProfileId(ActivityPubActorInterface $actor): string
     {
@@ -141,8 +140,8 @@ class ActivityPubManager
         }
 
         $this->logger->debug('[ActivityPubManager::findActorOrCreate] Cearching for actor at "{handle}"', ['handle' => $actorUrlOrHandle]);
-        if (str_contains($actorUrlOrHandle, $this->settingsManager->get('KBIN_DOMAIN').'/m/')) {
-            $magazine = str_replace('https://'.$this->settingsManager->get('KBIN_DOMAIN').'/m/', '', $actorUrlOrHandle);
+        if (str_contains($actorUrlOrHandle, $this->settingsManager->get('KBIN_DOMAIN') . '/m/')) {
+            $magazine = str_replace('https://' . $this->settingsManager->get('KBIN_DOMAIN') . '/m/', '', $actorUrlOrHandle);
             $this->logger->debug('[ActivityPubManager::findActorOrCreate] Found magazine: "{magName}"', ['magName' => $magazine]);
 
             return $this->magazineRepository->findOneByName($magazine);
@@ -291,7 +290,7 @@ class ActivityPubManager
     private function buildHandle(string $id): string
     {
         $port = !\is_null(parse_url($id, PHP_URL_PORT))
-            ? ':'.parse_url($id, PHP_URL_PORT)
+            ? ':' . parse_url($id, PHP_URL_PORT)
             : '';
         $apObj = $this->apHttpClient->getActorObject($id);
         if (!isset($apObj['preferredUsername'])) {
@@ -446,7 +445,7 @@ class ActivityPubManager
                         $user->apFollowersCount = $followersObj['totalItems'];
                         $user->updateFollowCounts();
                     }
-                } catch (InvalidApPostException|InvalidArgumentException $ignored) {
+                } catch (InvalidApPostException | InvalidArgumentException $ignored) {
                 }
             }
 
@@ -473,7 +472,7 @@ class ActivityPubManager
     {
         $images = array_filter(
             $attachment,
-            fn ($val) => $this->isImageAttachment($val)
+            fn($val) => $this->isImageAttachment($val)
         ); // @todo multiple images
 
         if (\count($images)) {
@@ -512,7 +511,7 @@ class ActivityPubManager
         if (\is_array($attachment)) {
             $link = array_filter(
                 $attachment,
-                fn ($val) => 'Link' === $val['type']
+                fn($val) => 'Link' === $val['type']
             );
 
             $firstArrayKey = array_key_first($link);
@@ -657,7 +656,7 @@ class ActivityPubManager
                         $magazine->apFollowersCount = $followersObj['totalItems'];
                         $magazine->updateSubscriptionsCount();
                     }
-                } catch (InvalidApPostException|InvalidArgumentException $ignored) {
+                } catch (InvalidApPostException | InvalidArgumentException $ignored) {
                 }
             }
 
@@ -878,9 +877,10 @@ class ActivityPubManager
         $arr = array_unique(
             array_filter(
                 array_merge(
-                    \is_array($activity['cc']) ? $activity['cc'] : [$activity['cc']],
-                    \is_array($activity['to']) ? $activity['to'] : [$activity['to']]
-                ), fn ($val) => !\in_array($val, [ActivityPubActivityInterface::PUBLIC_URL, $followersUrl, []])
+                    \App\Utils\JsonldUtils::getArrayValue($activity, 'cc'),
+                    \App\Utils\JsonldUtils::getArrayValue($activity, 'to'),
+                ),
+                fn($val) => !\in_array($val, [ActivityPubActivityInterface::PUBLIC_URL, $followersUrl, []])
             )
         );
 
@@ -891,14 +891,14 @@ class ActivityPubManager
             }
         }
 
-        return array_map(fn ($user) => $user->apInboxUrl, $users);
+        return array_map(fn($user) => $user->apInboxUrl, $users);
     }
 
     public function handleVideos(array $attachment): ?VideoDto
     {
         $videos = array_filter(
             $attachment,
-            fn ($val) => \in_array($val['type'], ['Document', 'Video']) && VideoManager::isVideoUrl($val['url'])
+            fn($val) => \in_array($val['type'], ['Document', 'Video']) && VideoManager::isVideoUrl($val['url'])
         );
 
         if (\count($videos)) {
@@ -916,13 +916,13 @@ class ActivityPubManager
     {
         $images = array_filter(
             $attachment,
-            fn ($val) => $this->isImageAttachment($val)
+            fn($val) => $this->isImageAttachment($val)
         );
 
         array_shift($images);
 
         if (\count($images)) {
-            return array_map(fn ($val) => (new ImageDto())->create(
+            return array_map(fn($val) => (new ImageDto())->create(
                 $val['url'],
                 $val['mediaType'],
                 !empty($val['name']) ? $val['name'] : $val['mediaType']
@@ -936,11 +936,11 @@ class ActivityPubManager
     {
         $videos = array_filter(
             $attachment,
-            fn ($val) => \in_array($val['type'], ['Document', 'Video']) && VideoManager::isVideoUrl($val['url'])
+            fn($val) => \in_array($val['type'], ['Document', 'Video']) && VideoManager::isVideoUrl($val['url'])
         );
 
         if (\count($videos)) {
-            return array_map(fn ($val) => (new VideoDto())->create(
+            return array_map(fn($val) => (new VideoDto())->create(
                 $val['url'],
                 $val['mediaType'],
                 !empty($val['name']) ? $val['name'] : $val['mediaType']
@@ -999,51 +999,27 @@ class ActivityPubManager
 
     public static function getReceivers(array $object): array
     {
-        $res = [];
-        if (isset($object['audience']) and \is_array($object['audience'])) {
-            $res = array_merge($res, $object['audience']);
-        } elseif (isset($object['audience']) and \is_string($object['audience'])) {
-            $res[] = $object['audience'];
-        }
-
-        if (isset($object['to']) and \is_array($object['to'])) {
-            $res = array_merge($res, $object['to']);
-        } elseif (isset($object['to']) and \is_string($object['to'])) {
-            $res[] = $object['to'];
-        }
-
-        if (isset($object['cc']) and \is_array($object['cc'])) {
-            $res = array_merge($res, $object['cc']);
-        } elseif (isset($object['cc']) and \is_string($object['cc'])) {
-            $res[] = $object['cc'];
-        }
+        $res = array_merge(
+            \App\Utils\JsonldUtils::getArrayValue($object, 'audience'),
+            \App\Utils\JsonldUtils::getArrayValue($object, 'to'),
+            \App\Utils\JsonldUtils::getArrayValue($object, 'cc'),
+        );
 
         if (isset($object['object']) and \is_array($object['object'])) {
-            if (isset($object['object']['audience']) and \is_array($object['object']['audience'])) {
-                $res = array_merge($res, $object['object']['audience']);
-            } elseif (isset($object['object']['audience']) and \is_string($object['object']['audience'])) {
-                $res[] = $object['object']['audience'];
-            }
-
-            if (isset($object['object']['to']) and \is_array($object['object']['to'])) {
-                $res = array_merge($res, $object['object']['to']);
-            } elseif (isset($object['object']['to']) and \is_string($object['object']['to'])) {
-                $res[] = $object['object']['to'];
-            }
-
-            if (isset($object['object']['cc']) and \is_array($object['object']['cc'])) {
-                $res = array_merge($res, $object['object']['cc']);
-            } elseif (isset($object['object']['cc']) and \is_string($object['object']['cc'])) {
-                $res[] = $object['object']['cc'];
-            }
+            $res = array_merge(
+                $res,
+                \App\Utils\JsonldUtils::getArrayValue($object['object'], 'audience'),
+                \App\Utils\JsonldUtils::getArrayValue($object['object'], 'to'),
+                \App\Utils\JsonldUtils::getArrayValue($object['object'], 'cc'),
+            );
         } elseif (isset($object['attributedTo']) && \is_array($object['attributedTo'])) {
             // if there is no "object" inside of this it will probably be a create activity which has an attributedTo field
             // this was implemented for peertube support, because they list the channel (Group) and the user in an array in that field
-            $groups = array_filter($object['attributedTo'], fn ($item) => \is_array($item) && !empty($item['type']) && 'Group' === $item['type']);
-            $res = array_merge($res, array_map(fn ($item) => $item['id'], $groups));
+            $groups = array_filter($object['attributedTo'], fn($item) => \is_array($item) && !empty($item['type']) && 'Group' === $item['type']);
+            $res = array_merge($res, array_map(fn($item) => $item['id'], $groups));
         }
 
-        $res = array_filter($res, fn ($i) => null !== $i and ActivityPubActivityInterface::PUBLIC_URL !== $i);
+        $res = array_filter($res, fn($i) => null !== $i and ActivityPubActivityInterface::PUBLIC_URL !== $i);
 
         return array_unique($res);
     }
@@ -1152,14 +1128,10 @@ class ActivityPubManager
 
     public function isActivityPublic(array $payload): bool
     {
-        $to = [];
-        if (!empty($payload['to']) && \is_array($payload['to'])) {
-            $to = array_merge($to, $payload['to']);
-        }
-
-        if (!empty($payload['cc']) && \is_array($payload['cc'])) {
-            $to = array_merge($to, $payload['cc']);
-        }
+        $to = array_merge(
+            \App\Utils\JsonldUtils::getArrayValue($payload, 'to'),
+            \App\Utils\JsonldUtils::getArrayValue($payload, 'cc'),
+        );
 
         foreach ($to as $receiver) {
             $id = null;
@@ -1198,9 +1170,9 @@ class ActivityPubManager
         if (\is_string($attributedTo)) {
             return [$attributedTo];
         } elseif (\is_array($attributedTo)) {
-            $actors = array_filter($attributedTo, fn ($item) => \is_string($item) || (\is_array($item) && !empty($item['type']) && (!$filterForPerson || 'Person' === $item['type'])));
+            $actors = array_filter($attributedTo, fn($item) => \is_string($item) || (\is_array($item) && !empty($item['type']) && (!$filterForPerson || 'Person' === $item['type'])));
 
-            return array_map(fn ($item) => $item['id'], $actors);
+            return array_map(fn($item) => $item['id'], $actors);
         }
 
         return [];
@@ -1211,7 +1183,7 @@ class ActivityPubManager
         if (\is_string($url)) {
             return $url;
         } elseif (\is_array($url)) {
-            $urls = array_filter($url, fn ($item) => \is_string($item) || (\is_array($item) && !empty($item['type']) && 'Link' === $item['type'] && (empty($item['mediaType']) || 'text/html' === $item['mediaType'])));
+            $urls = array_filter($url, fn($item) => \is_string($item) || (\is_array($item) && !empty($item['type']) && 'Link' === $item['type'] && (empty($item['mediaType']) || 'text/html' === $item['mediaType'])));
             if (\sizeof($urls) >= 1) {
                 if (\is_string($urls[0])) {
                     return $urls[0];
