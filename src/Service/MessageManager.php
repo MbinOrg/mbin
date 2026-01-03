@@ -121,7 +121,14 @@ class MessageManager
     public function createMessage(array $object): Message|MessageThread
     {
         $this->logger->debug('creating message from {o}', ['o' => $object]);
-        $participantIds = array_merge($object['to'] ?? [], $object['cc'] ?? []);
+        // Possible improvement: convert this to a utility function for getting JSON-LD value or default of empty array
+        $obj_to = array_key_exists('to', $object)
+            ? (\is_array($object['to']) ? $object['to'] : [$object['to']])
+            : [];
+        $obj_cc = array_key_exists('cc', $object)
+            ? (\is_array($object['cc']) ? $object['cc'] : [$object['cc']])
+            : [];
+        $participantIds = array_merge($obj_to, $obj_cc);
         $participants = array_map(fn ($participant) => $this->activityPubManager->findActorOrCreate(\is_string($participant) ? $participant : $participant['id']), $participantIds);
         $author = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
 
