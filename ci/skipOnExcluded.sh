@@ -7,7 +7,7 @@ git config --global --add safe.directory "$(realpath "$GITHUB_WORKSPACE")"
 
 ignoredPatterns="$(cat "$GITHUB_WORKSPACE"/ci/ignoredPaths.txt)"
 if [[ "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" == 'main' ]]; then
-    git fetch origin main:main --depth 2
+    git fetch origin main --depth 2
     changedFiles="$(git diff --name-only main^ HEAD)"
 else
     git fetch origin main:main --depth 1
