@@ -178,11 +178,11 @@ class PostFrontControllerTest extends WebTestCase
 
         $iterator = $crawler->filter('#content div')->children()->getIterator();
         /** @var \DOMElement $firstNode */
-        $firstNode = $iterator->current();
+        $firstNode = $iterator->current()->firstElementChild;
         $firstId = $firstNode->attributes->getNamedItem('id')->nodeValue;
         self::assertEquals("post-{$newer->getId()}", $firstId);
         $iterator->next();
-        $secondNode = $iterator->current();
+        $secondNode = $iterator->current()->firstElementChild;
         $secondId = $secondNode->attributes->getNamedItem('id')->nodeValue;
         self::assertEquals("post-{$older->getId()}", $secondId);
 
@@ -197,11 +197,11 @@ class PostFrontControllerTest extends WebTestCase
         $children = $crawler->filter('#content div')->children();
         $iterator = $children->getIterator();
         /** @var \DOMElement $firstNode */
-        $firstNode = $iterator->current();
+        $firstNode = $iterator->current()->firstElementChild;
         $firstId = $firstNode->attributes->getNamedItem('id')->nodeValue;
         self::assertEquals("post-{$older->getId()}", $firstId);
         $iterator->next();
-        $secondNode = $iterator->current();
+        $secondNode = $iterator->current()->firstElementChild;
         $secondId = $secondNode->attributes->getNamedItem('id')->nodeValue;
         self::assertEquals("post-{$newer->getId()}", $secondId);
     }
