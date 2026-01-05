@@ -82,6 +82,7 @@
             {% if post.visibility in ['visible', 'private'] %}
                 {{ component('vote', {
                     subject: post,
+                    showDownvote: false
                 }) }}
             {% endif %}
             <aside class="entry__preview hidden" data-preview-target="container"></aside>
