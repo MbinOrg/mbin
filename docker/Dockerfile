@@ -78,10 +78,6 @@ FROM base AS prod_deps
 
 ENV APP_ENV=prod
 
-RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-
-COPY --link docker/conf.d/20-app.prod.ini $PHP_INI_DIR/app.conf.d/
-
 # prevent the reinstallation of vendors at every changes in the source code
 COPY --link composer.* symfony.* ./
 RUN set -eux; \
@@ -89,7 +85,7 @@ RUN set -eux; \
 
 
 # Node assets builder
-FROM node:24-trixie-slim AS node
+FROM node:24-trixie-slim AS prod_node
 
 RUN mkdir /app
 WORKDIR /app
@@ -108,7 +104,10 @@ RUN npm run build
 
 FROM prod_deps AS prod
 
-# copy sources
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+COPY --link docker/conf.d/20-app.prod.ini $PHP_INI_DIR/app.conf.d/
+
 COPY --link . ./
 RUN rm -Rf docker/
 RUN cp .env.example_docker .env
@@ -120,4 +119,4 @@ RUN set -eux; \
 	composer run-script --no-dev post-install-cmd; \
 	chmod +x bin/console; sync;
 
-COPY --link --from=node /app/public/build /app/public/build
+COPY --link --from=prod_node /app/public/build /app/public/build
