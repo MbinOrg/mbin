@@ -6,6 +6,7 @@
 {%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_FALSE) -%}
 
 {% if not app.user or (app.user and not app.user.isBlocked(post.user)) %}
+<div data-controller="post" class="post-container">
     {% if post.visibility is same as 'private' and (not app.user or not app.user.isFollower(post.user)) %}
         <div class="section section--small">
             Private
@@ -18,8 +19,9 @@
                 'isSingle': isSingle is same as true
             })}).without('id') }}
                 id="post-{{ post.id }}"
-                data-controller="post subject mentions html-refresh"
-                data-action="notifications:Notification@window->subject#notification">
+                data-controller="subject mentions html-refresh"
+                data-action="notifications:Notification@window->subject#notification"
+                data-post-target="main">
             <header>
                 {% if post.isAdult %}<span class="badge danger">18+</span>{% endif %}
                 {{ component('user_inline', {user: post.user, showAvatar: false, showNewIcon: true, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) }}
@@ -170,7 +172,11 @@
             </footer>
         </blockquote>
     {% endif %}
-    {% if(showCommentsPreview and post.commentCount) %}
-        {{ component('post_comments_preview', {post: post, 'data-post-target': 'preview'}) }}
-    {% endif %}
+
+    <div data-post-target="comments" class="comments post-comments post-comments-preview comments-tree">
+        {% if(showCommentsPreview and post.commentCount) %}
+            {{ component('post_comments_preview', {post: post}) }}
+        {% endif %}
+    </div>
+</div>
 {% endif %}
