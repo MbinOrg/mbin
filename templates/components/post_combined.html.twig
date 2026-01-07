@@ -43,7 +43,7 @@
             {% if post.visibility in ['visible', 'private'] or (post.visibility is same as 'trashed' and this.canSeeTrashed) %}
                 {% if post.body %}
                     <div class="content short-desc">
-                        <p>{{ get_short_sentence(post.body|markdown|raw, striptags = true) }}</p>
+                        <p>{{ get_short_sentence(post.body|markdown|raw, striptags = true, onlyFirstParagraph = false) }}</p>
                     </div>
                 {% endif %}
             {% endif %}
