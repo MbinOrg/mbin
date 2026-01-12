@@ -1108,3 +1108,21 @@ allow_instance: Permitir instancia
 federation_page_use_allowlist_help: Se utilizas unha lista de permitidas, esta 
   instancia só federará coas que estén incluídas nesa lista. Se non é así, esta 
   instancia federará con todas as instancias excepto as que estean vetadas.
+crosspost: Compartir fóra
+ban_expires: O veto caduca
+you_have_been_banned_from_magazine: Vetáronte na revista %m.
+you_have_been_banned_from_magazine_permanently: Vetáronte permanentemente na 
+  revista %m.
+you_are_no_longer_banned_from_magazine: Xa non estás vetada na revista %m.
+front_default_content: Vista por defecto da páxina inicial
+default_content_default: Por defecto (Fíos)
+default_content_combined: Fíos + Microblog
+default_content_threads: Fíos
+default_content_microblog: Microblog
+combined: Combinada
+sidebar_sections_random_local_only: Limitar as seccións do panel lateral a 
+  "Fíos/Publicacións ao chou" só locais
+sidebar_sections_users_local_only: Limitar a sección "Persoas activas" do panel 
+  lateral a só locais
+random_local_only_performance_warning: Activar "Ao chou só local" podería 
+  impactar no rendemento SQL.

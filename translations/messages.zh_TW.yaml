@@ -18,10 +18,10 @@ hot: 熱門
 active: 活躍
 newest: 最新
 oldest: 最舊
-commented: 有討論串
+commented: 有帖子
 change_view: 改變版面
 filter_by_type: 按類型篩選
-comments_count: '{0}留言|{1}留言|]1,Inf[ 留言'
+comments_count: '{0}評論|{1}評論|]1,Inf[ 評論'
 favourites: 喜歡的
 favourite: 喜歡
 more: 更多
@@ -77,7 +77,7 @@ stats: 統計
 fediverse: 聯邦宇宙
 create_new_magazine: 立刊
 add_new_post: 新鋪文
-add_new_article: 新帖文
+add_new_article: 新帖子
 add_new_photo: 新圖片
 add_new_link: 新連結
 contact: 聯繫
@@ -185,7 +185,7 @@ chat_view: 對話版面
 tree_view: 樹狀版面
 table_view: 表格版面
 cards_view: 卡片版面
-copy_url: 複製網址
+copy_url: 複製 Mbin 網址
 copy_url_to_fediverse: 複製聯邦網址
 share_on_fediverse: 分享至聯邦宇宙
 are_you_sure: 您確定嗎？
@@ -337,12 +337,12 @@ captcha_enabled: 已啟用Captcha
 kbin_promo_title: 創造你自己的實體
 kbin_intro_title: 探索聯邦宇宙
 banned_instances: 封鎖中的實體
-browsing_one_thread: 您現在正在瀏覽討論串的其中一文！所有的留言請從原鋪文閱覽。
+browsing_one_thread: 您現在正在瀏覽帖子的其中一文！所有的留言請從原鋪文閱覽。
 return: 返回
 kbin_intro_desc: 是一個在聯邦宇宙的去中心化的內容蒐集器和微鋪（微博）平台。
 kbin_promo_desc: '%link_start%複製源碼目錄%link_end%以一同開發聯邦宇宙'
 mod_log_alert: 警告：管理日誌可能有不討喜和令人不安而受管理員移除的內容，請謹慎小心。
-mercure_enabled: Mercure已啟動
+mercure_enabled: Mercure 已啟動
 tokyo_night: 東京之夜
 set_magazines_bar: 刊版欄
 bans: 封鎖
@@ -380,3 +380,556 @@ purge: 清除
 purge_account: 停用帳號
 password_confirm_header: 請確認您的密碼變更請求。
 filter.fields.label: 選擇搜尋哪個項目
+sort_by: 排序方式
+filter_by_subscription: 依訂閱篩選
+filter_by_federation: 依聯邦狀態篩選
+subscribers_count: '{0}位訂閱者|{1}位訂閱者|]1,Inf[ 位訂閱者'
+followers_count: '{0}位追蹤者|{1}位追蹤者|]1,Inf[ 位追蹤者'
+marked_for_deletion: 標記為待刪除
+marked_for_deletion_at: 標記為待刪除於 %date%
+remove_media: 移除媒體
+remove_user_avatar: 移除頭像
+remove_user_cover: 移除封面
+disconnected_magazine_info: 此雜誌未接收更新（上次活動於 %days% 天前）。
+always_disconnected_magazine_info: 此雜誌未接收更新。
+subscribe_for_updates: 訂閱以開始接收更新。
+from: 來自
+downvotes_mode: 負評模式
+change_downvotes_mode: 變更負評模式
+disabled: 已停用
+hidden: 已隱藏
+enabled: 已啟用
+tag: 標籤
+crosspost: 跨鋪文
+edit_entry: 編輯帖子
+menu: 選單
+notify_on_user_signup: 新註冊通知
+default_theme: 預設主題
+default_theme_auto: 淺色/深色（自動偵測）
+solarized_auto: Solarized（自動偵測）
+flash_mark_as_adult_success: 鋪文已成功標記為 NSFW。
+flash_unmark_as_adult_success: 鋪文已成功取消標記為 NSFW。
+ban_expires: 封鎖到期時間
+unban: 解除封鎖
+ban_hashtag_btn: 封鎖主題標籤
+ban_hashtag_description: 封鎖主題標籤將阻止建立帶有此標籤的鋪文，並隱藏現有帶有此標籤的鋪文。
+unban_hashtag_btn: 解除封鎖主題標籤
+unban_hashtag_description: 解除封鎖主題標籤將允許再次建立帶有此標籤的鋪文。現有帶有此標籤的鋪文將不再隱藏。
+banner: 橫幅
+mark_as_adult: 標記為 NSFW
+unmark_as_adult: 取消標記為 NSFW
+type_search_term_url_handle: 輸入搜尋詞、網址或使用者代號
+viewing_one_signup_request: 您正在檢視 %username% 的一項註冊請求
+your_account_is_not_active: 您的帳號尚未啟用。請檢查您的電子郵件以取得帳號啟用說明，或<a 
+  href="%link_target%">請求新的帳號啟用郵件。</a>
+your_account_has_been_banned: 您的帳號已被封鎖
+your_account_is_not_yet_approved: 您的帳號尚未獲得批准。一旦管理員處理完您的註冊請求，我們將向您發送電子郵件。
+toolbar.bold: 粗體
+toolbar.italic: 斜體
+toolbar.strikethrough: 刪除線
+toolbar.header: 標題
+toolbar.quote: 引用
+toolbar.code: 程式碼
+toolbar.link: 連結
+toolbar.image: 圖片
+toolbar.unordered_list: 無序清單
+toolbar.ordered_list: 有序清單
+toolbar.mention: 提及
+toolbar.spoiler: 劇透
+toolbar.emoji: 表情符號
+federation_page_enabled: 聯邦頁面已啟用
+federation_page_allowed_description: 我們與之聯邦的已知實例
+federation_page_disallowed_description: 我們不與之聯邦的實例
+federation_page_dead_title: 失效實例
+federation_page_dead_description: 我們連續無法傳送至少 10 個活動，且上次成功傳送與接收均超過一週前的實例
+federated_search_only_loggedin: 未登入時聯邦搜尋受限
+account_deletion_title: 帳號刪除
+account_deletion_description: 您的帳號將在 30 天後刪除，除非您選擇立即刪除帳號。若要在 30 
+  天內恢復帳號，請使用相同的使用者憑證登入或聯絡管理員。
+account_deletion_button: 刪除帳號
+account_deletion_immediate: 立即刪除
+more_from_domain: 更多來自此網域
+errors.server500.title: 500 內部伺服器錯誤
+errors.server500.description: 
+  抱歉，我們這邊出了點問題。如果您持續看到此錯誤，請嘗試聯絡站台擁有者。如果此站台完全無法運作，在問題解決之前，您可以先查看 %link_start%其他 
+  Mbin 站台%link_end%。
+errors.server429.title: 429 請求過多
+errors.server404.title: 404 找不到
+errors.server403.title: 403 禁止存取
+email_confirm_button_text: 確認您的密碼變更請求
+email_confirm_link_help: 或者，您可以將以下連結複製並貼到您的瀏覽器中
+email.delete.title: 使用者帳號刪除請求
+email.delete.description: 以下使用者已請求刪除其帳號
+resend_account_activation_email_question: 帳號未啟用？
+resend_account_activation_email: 重新發送帳號啟用電子郵件
+resend_account_activation_email_error: 提交此請求時發生問題。可能沒有與該電子郵件關聯的帳號，或者該帳號可能已經啟用。
+resend_account_activation_email_success: 如果存在與該電子郵件關聯的帳號，我們將發送新的啟用電子郵件。
+resend_account_activation_email_description: 輸入與您帳號關聯的電子郵件地址。我們將為您重新發送一封啟用電子郵件。
+custom_css: 自訂 CSS
+ignore_magazines_custom_css: 忽略雜誌的自訂 CSS
+oauth.consent.title: OAuth2 授權同意表單
+oauth.consent.grant_permissions: 授予權限
+oauth.consent.app_requesting_permissions: 希望代表您執行以下操作
+oauth.consent.app_has_permissions: 已可執行以下操作
+oauth.consent.to_allow_access: 若要允許此存取，請點擊下方的「允許」按鈕
+oauth.consent.allow: 允許
+oauth.consent.deny: 拒絕
+oauth.client_identifier.invalid: 無效的 OAuth 客戶端 ID！
+oauth.client_not_granted_message_read_permission: 此應用程式未獲得讀取您訊息的權限。
+restrict_oauth_clients: 將 OAuth2 客戶端建立限制為管理員
+private_instance: 強制使用者在登入後才能存取任何內容
+block: 封鎖
+unblock: 解除封鎖
+oauth2.grant.moderate.magazine.ban.delete: 在您管理的雜誌中解除封鎖使用者。
+oauth2.grant.moderate.magazine.list: 讀取您管理的雜誌清單。
+oauth2.grant.moderate.magazine.reports.all: 管理您管理的雜誌中的檢舉。
+oauth2.grant.moderate.magazine.reports.read: 讀取您管理的雜誌中的檢舉。
+oauth2.grant.moderate.magazine.reports.action: 在您管理的雜誌中接受或拒絕檢舉。
+oauth2.grant.moderate.magazine.trash.read: 檢視您管理的雜誌中已刪除的內容。
+oauth2.grant.moderate.magazine_admin.all: 建立、編輯或刪除您擁有的雜誌。
+oauth2.grant.moderate.magazine_admin.create: 建立新雜誌。
+oauth2.grant.moderate.magazine_admin.delete: 刪除您擁有的任何雜誌。
+oauth2.grant.moderate.magazine_admin.update: 編輯您擁有的任何雜誌的規則、描述、NSFW 狀態或圖示。
+oauth2.grant.moderate.magazine_admin.edit_theme: 編輯您擁有的任何雜誌的自訂 CSS。
+oauth2.grant.moderate.magazine_admin.moderators: 在您擁有的任何雜誌中新增或移除版主。
+oauth2.grant.moderate.magazine_admin.badges: 在您擁有的雜誌中建立或移除徽章。
+oauth2.grant.moderate.magazine_admin.tags: 在您擁有的雜誌中建立或移除標籤。
+oauth2.grant.moderate.magazine_admin.stats: 檢視您擁有的雜誌的內容、投票和檢視統計資料。
+oauth2.grant.admin.all: 在您的站台上執行任何管理操作。
+oauth2.grant.admin.entry.purge: 完全刪除您實例中的任何帖子。
+oauth2.grant.read.general: 讀取您有權存取的所有內容。
+oauth2.grant.write.general: 建立或編輯您的任何帖子、鋪文或評論。
+oauth2.grant.delete.general: 刪除您的任何帖子、鋪文或評論。
+oauth2.grant.report.general: 檢舉帖子、鋪文或評論。
+oauth2.grant.vote.general: 對帖子、鋪文或評論進行贊成、反對或推廣。
+oauth2.grant.subscribe.general: 訂閱或追蹤任何雜誌、網域或使用者，並查看您訂閱的雜誌、網域和使用者。
+oauth2.grant.block.general: 封鎖或解除封鎖任何雜誌、網域或使用者，並查看您已封鎖的雜誌、網域和使用者。
+oauth2.grant.domain.all: 訂閱或封鎖網域，並查看您訂閱或封鎖的網域。
+oauth2.grant.domain.subscribe: 訂閱或取消訂閱網域，並查看您訂閱的網域。
+oauth2.grant.domain.block: 封鎖或解除封鎖網域，並查看您已封鎖的網域。
+oauth2.grant.entry.all: 建立、編輯或刪除您的帖子，並對任何帖子進行投票、推廣或檢舉。
+oauth2.grant.entry.create: 建立新的帖子。
+oauth2.grant.entry.edit: 編輯您現有的帖子。
+oauth2.grant.entry.delete: 刪除您現有的帖子。
+oauth2.grant.entry.vote: 對任何帖子進行贊成、推廣或反對。
+oauth2.grant.entry.report: 檢舉任何帖子。
+oauth2.grant.entry_comment.all: 在帖子中建立、編輯或刪除您的評論，並對帖子中的任何評論進行投票、推廣或檢舉。
+oauth2.grant.entry_comment.create: 在帖子中建立新的評論。
+oauth2.grant.entry_comment.edit: 編輯您在帖子中的現有評論。
+oauth2.grant.entry_comment.delete: 刪除您在帖子中的現有評論。
+oauth2.grant.entry_comment.vote: 對帖子中的任何評論進行贊成、推廣或反對。
+oauth2.grant.entry_comment.report: 檢舉帖子中的任何評論。
+oauth2.grant.magazine.all: 訂閱或封鎖雜誌，並查看您訂閱或封鎖的雜誌。
+oauth2.grant.magazine.subscribe: 訂閱或取消訂閱雜誌，並查看您訂閱的雜誌。
+oauth2.grant.magazine.block: 封鎖或解除封鎖雜誌，並查看您已封鎖的雜誌。
+oauth2.grant.post.all: 建立、編輯或刪除您的微鋪，並對任何微鋪進行投票、推廣或檢舉。
+oauth2.grant.post.create: 建立新的鋪文。
+oauth2.grant.post.edit: 編輯您現有的鋪文。
+oauth2.grant.post.delete: 刪除您現有的鋪文。
+oauth2.grant.post.vote: 對任何鋪文進行贊成、推廣或反對。
+oauth2.grant.post.report: 檢舉任何鋪文。
+oauth2.grant.post_comment.all: 在鋪文上建立、編輯或刪除您的評論，並對鋪文上的任何評論進行投票、推廣或檢舉。
+oauth2.grant.post_comment.create: 在鋪文上建立新的評論。
+oauth2.grant.post_comment.edit: 編輯您在鋪文上的現有評論。
+oauth2.grant.post_comment.delete: 刪除您在鋪文上的現有評論。
+oauth2.grant.post_comment.vote: 對鋪文上的任何評論進行贊成、推廣或反對。
+oauth2.grant.post_comment.report: 檢舉鋪文上的任何評論。
+oauth2.grant.user.all: 
+  讀取和編輯您的個人資料、訊息或通知；讀取和編輯您授予其他應用程式的權限；追蹤或封鎖其他使用者；查看您追蹤或封鎖的使用者清單。
+oauth2.grant.user.bookmark: 新增與移除書籤
+oauth2.grant.user.bookmark.add: 新增書籤
+oauth2.grant.user.bookmark.remove: 移除書籤
+oauth2.grant.user.bookmark_list: 讀取、編輯與刪除您的書籤清單
+oauth2.grant.user.bookmark_list.read: 讀取您的書籤清單
+oauth2.grant.user.bookmark_list.edit: 編輯您的書籤清單
+oauth2.grant.user.bookmark_list.delete: 刪除您的書籤清單
+oauth2.grant.user.profile.all: 讀取與編輯您的個人檔案。
+oauth2.grant.user.profile.read: 讀取您的個人檔案。
+oauth2.grant.user.profile.edit: 編輯您的個人檔案。
+oauth2.grant.user.message.all: 讀取您的訊息並傳送訊息給其他使用者。
+oauth2.grant.user.message.read: 讀取您的訊息。
+oauth2.grant.user.message.create: 傳送訊息給其他使用者。
+oauth2.grant.user.notification.all: 讀取與清除您的通知。
+oauth2.grant.user.notification.read: 讀取您的通知，包含訊息通知。
+oauth2.grant.user.notification.delete: 清除您的通知。
+oauth2.grant.user.oauth_clients.all: 讀取與編輯您授予其他 OAuth2 應用程式的權限。
+oauth2.grant.user.oauth_clients.read: 讀取您授予其他 OAuth2 應用程式的權限。
+oauth2.grant.user.oauth_clients.edit: 編輯您授予其他 OAuth2 應用程式的權限。
+oauth2.grant.user.follow: 追蹤或取消追蹤使用者，並讀取您追蹤的使用者清單。
+oauth2.grant.user.block: 封鎖或解除封鎖使用者，並讀取您封鎖的使用者清單。
+oauth2.grant.moderate.all: 在您管理的雜誌中執行您有權執行的任何審核操作。
+oauth2.grant.moderate.entry.all: 在您管理的雜誌中審核帖子。
+oauth2.grant.moderate.entry.change_language: 變更您管理的雜誌中帖子的語言。
+oauth2.grant.moderate.entry.pin: 將帖子置頂於您管理的雜誌中。
+oauth2.grant.moderate.entry.set_adult: 在您管理的雜誌中將帖子標記為 NSFW。
+oauth2.grant.moderate.entry.trash: 在您管理的雜誌中將帖子移至垃圾桶或還原。
+oauth2.grant.moderate.entry_comment.all: 在您管理的雜誌中審核帖子內的留言。
+oauth2.grant.moderate.entry_comment.change_language: 變更您管理的雜誌中帖子內留言的語言。
+oauth2.grant.moderate.entry_comment.set_adult: 在您管理的雜誌中將帖子內的留言標記為 NSFW。
+oauth2.grant.moderate.entry_comment.trash: 在您管理的雜誌中將帖子內的留言移至垃圾桶或還原。
+oauth2.grant.moderate.post.all: 在您管理的雜誌中審核鋪文。
+oauth2.grant.moderate.post.change_language: 變更您管理的雜誌中鋪文的語言。
+oauth2.grant.moderate.post.set_adult: 在您管理的雜誌中將鋪文標記為 NSFW。
+oauth2.grant.moderate.post.trash: 在您管理的雜誌中將鋪文移至垃圾桶或還原。
+oauth2.grant.moderate.post_comment.all: 在您管理的雜誌中審核鋪文上的留言。
+oauth2.grant.moderate.post_comment.change_language: 變更您管理的雜誌中鋪文上留言的語言。
+oauth2.grant.moderate.post_comment.set_adult: 在您管理的雜誌中將鋪文上的留言標記為 NSFW。
+oauth2.grant.moderate.post_comment.trash: 在您管理的雜誌中將鋪文上的留言移至垃圾桶或還原。
+oauth2.grant.moderate.magazine.all: 在您管理的雜誌中管理封鎖、檢舉，並檢視已移至垃圾桶的項目。
+oauth2.grant.moderate.magazine.ban.all: 在您管理的雜誌中管理被封鎖的使用者。
+oauth2.grant.moderate.magazine.ban.read: 檢視您管理的雜誌中被封鎖的使用者。
+oauth2.grant.moderate.magazine.ban.create: 在您管理的雜誌中封鎖使用者。
+oauth2.grant.admin.entry_comment.purge: 完全刪除您實例中帖子內的任何評論。
+oauth2.grant.admin.post.purge: 完全刪除您實例中的任何鋪文。
+oauth2.grant.admin.post_comment.purge: 完全刪除您實例中鋪文上的任何評論。
+oauth2.grant.admin.magazine.all: 在您的實例中移動帖子或完全刪除雜誌。
+oauth2.grant.admin.magazine.move_entry: 在您的實例中，於雜誌之間移動帖子。
+oauth2.grant.admin.magazine.purge: 完全刪除您實例中的雜誌。
+oauth2.grant.admin.user.all: 在您的實例中封鎖、驗證或完全刪除使用者。
+oauth2.grant.admin.user.ban: 從您的實例中封鎖或解除封鎖使用者。
+oauth2.grant.admin.user.verify: 驗證您實例中的使用者。
+oauth2.grant.admin.user.delete: 從您的實例中刪除使用者。
+oauth2.grant.admin.user.purge: 從您的實例中完全刪除使用者。
+oauth2.grant.admin.instance.all: 檢視與更新實例設定或資訊。
+oauth2.grant.admin.instance.stats: 檢視您實例的統計資料。
+oauth2.grant.admin.instance.settings.all: 檢視或更新您實例上的設定。
+oauth2.grant.admin.instance.settings.read: 檢視您實例上的設定。
+oauth2.grant.admin.instance.settings.edit: 更新您實例上的設定。
+oauth2.grant.admin.instance.information.edit: 更新您實例的「關於」、常見問題、聯絡方式、服務條款與隱私權政策頁面。
+oauth2.grant.admin.federation.all: 檢視與更新目前已斷開聯邦的實例。
+oauth2.grant.admin.federation.read: 檢視已斷開聯邦的實例清單。
+oauth2.grant.admin.federation.update: 新增或移除已斷開聯邦實例清單中的實例。
+oauth2.grant.admin.oauth_clients.all: 檢視或撤銷您實例上存在的 OAuth2 客戶端。
+oauth2.grant.admin.oauth_clients.read: 檢視您實例上存在的 OAuth2 客戶端及其使用統計資料。
+oauth2.grant.admin.oauth_clients.revoke: 撤銷您實例上 OAuth2 客戶端的存取權限。
+last_active: 最後活動時間
+flash_post_pin_success: 鋪文已成功置頂。
+flash_post_unpin_success: 鋪文已成功取消置頂。
+comment_reply_position_help: 將評論回覆表單顯示在頁面頂部或底部。當啟用「無限捲動」時，位置將始終出現在頂部。
+show_avatars_on_comments: 顯示評論頭像
+single_settings: 單一
+update_comment: 更新評論
+show_avatars_on_comments_help: 在檢視單一帖子或鋪文的評論時，顯示/隱藏使用者頭像。
+comment_reply_position: 評論回覆位置
+magazine_theme_appearance_custom_css: 自訂 CSS，將在檢視您雜誌內的內容時套用。
+magazine_theme_appearance_icon: 雜誌的自訂圖示。
+magazine_theme_appearance_banner: 雜誌的自訂橫幅。它會顯示在所有帖子上方，應為寬幅比例（5:1，或 1500px * 
+  300px）。
+magazine_theme_appearance_background_image: 自訂背景圖片，將在檢視您雜誌內的內容時套用。
+moderation.report.approve_report_title: 核准檢舉
+moderation.report.reject_report_title: 駁回檢舉
+moderation.report.ban_user_description: 您要封鎖在此雜誌中建立此內容的使用者（%username%）嗎？
+moderation.report.approve_report_confirmation: 您確定要核准此檢舉嗎？
+subject_reported_exists: 此內容已被檢舉過。
+moderation.report.ban_user_title: 封鎖使用者
+moderation.report.reject_report_confirmation: 您確定要拒絕此檢舉嗎？
+oauth2.grant.moderate.post.pin: 將鋪文置頂於您管理的雜誌。
+delete_content: 刪除內容
+purge_content: 清除內容
+delete_content_desc: 刪除使用者的內容，但保留其他使用者在所建立的主題、鋪文和評論中的回覆。
+purge_content_desc: 完全清除使用者的內容，包括刪除其他使用者在所建立的主題、鋪文和評論中的回覆。
+delete_account_desc: 刪除帳號，包括其他使用者在所建立的主題、鋪文和評論中的回覆。
+schedule_delete_account: 排程刪除
+schedule_delete_account_desc: 將此帳號排程於 30 天後刪除。這將會隱藏該使用者及其內容，並阻止該使用者登入。
+remove_schedule_delete_account: 移除排程刪除
+remove_schedule_delete_account_desc: 移除已排程的刪除。所有內容將再次可用，且使用者將能夠登入。
+two_factor_authentication: 雙重驗證
+two_factor_backup: 雙重驗證備用碼
+2fa.authentication_code.label: 驗證碼
+2fa.verify: 驗證
+2fa.code_invalid: 驗證碼無效
+2fa.setup_error: 為帳號啟用雙重驗證時發生錯誤
+2fa.enable: 設定雙重驗證
+2fa.disable: 停用雙重驗證
+2fa.backup: 您的雙重驗證備用碼
+2fa.backup-create.help: 您可以建立新的備用驗證碼；此操作將使現有碼失效。
+2fa.backup-create.label: 建立新的備用驗證碼
+2fa.remove: 移除雙重驗證
+2fa.add: 新增至我的帳號
+2fa.verify_authentication_code.label: 輸入雙重驗證碼以確認設定
+2fa.qr_code_img.alt: 一個可用於為您帳號設定雙重驗證的 QR 碼
+2fa.qr_code_link.title: 造訪此連結可能允許您的平台註冊此雙重驗證
+2fa.user_active_tfa.title: 使用者已啟用雙重驗證
+2fa.available_apps: 使用雙重驗證應用程式（例如 %google_authenticator%、%aegis%（Android）或 
+  %raivo%（iOS））來掃描 QR 碼。
+2fa.backup_codes.help: 
+  當您沒有雙重驗證裝置或應用程式時，可以使用這些備用碼。您將<strong>不會再次看到它們</strong>，且每個碼<strong>僅能使用一次</strong>。
+2fa.backup_codes.recommendation: 建議您將它們的副本保存在安全的地方。
+2fa.manual_code_hint: 若無法掃描 QR 碼，請手動輸入密鑰
+cancel: 取消
+password_and_2fa: 密碼與雙重驗證
+flash_account_settings_changed: 您的帳號設定已成功變更。您需要重新登入。
+show_subscriptions: 顯示訂閱
+subscription_sort: 排序
+alphabetically: 依字母順序
+subscriptions_in_own_sidebar: 於獨立側邊欄中
+sidebars_same_side: 側邊欄位於同一側
+subscription_sidebar_pop_out_right: 移至右側獨立側邊欄
+subscription_sidebar_pop_out_left: 移至左側獨立側邊欄
+subscription_sidebar_pop_in: 將訂閱移至內嵌面板
+subscription_panel_large: 大型面板
+subscription_header: 已訂閱雜誌
+close: 關閉
+position_bottom: 底部
+position_top: 頂部
+pending: 待處理
+flash_thread_new_error: 無法建立帖子。發生錯誤。
+flash_thread_tag_banned_error: 無法建立帖子。內容不被允許。
+flash_thread_ref_image_not_found: 無法找到 'imageHash' 所引用的圖片。
+flash_image_download_too_large_error: 無法建立圖片，檔案過大（最大尺寸為 %bytes%）
+flash_email_was_sent: 電子郵件已成功寄出。
+flash_email_failed_to_sent: 無法寄出電子郵件。
+flash_post_new_success: 鋪文已成功建立。
+flash_post_new_error: 無法建立鋪文。發生錯誤。
+flash_magazine_theme_changed_success: 已成功更新雜誌外觀。
+flash_magazine_theme_changed_error: 更新雜誌外觀失敗。
+flash_comment_new_success: 留言已成功建立。
+flash_comment_edit_success: 留言已成功更新。
+flash_comment_new_error: 建立留言失敗。發生錯誤。
+flash_comment_edit_error: 編輯留言失敗。發生錯誤。
+flash_user_settings_general_success: 使用者設定已成功儲存。
+flash_user_settings_general_error: 儲存使用者設定失敗。
+flash_user_edit_profile_error: 儲存個人資料設定失敗。
+flash_user_edit_profile_success: 使用者個人資料設定已成功儲存。
+flash_user_edit_email_error: 變更電子郵件失敗。
+flash_user_edit_password_error: 變更密碼失敗。
+flash_thread_edit_error: 編輯帖子失敗。發生錯誤。
+flash_post_edit_error: 編輯鋪文失敗。發生錯誤。
+flash_post_edit_success: 鋪文已成功編輯。
+page_width: 頁面寬度
+page_width_max: 最大
+page_width_auto: 自動
+page_width_fixed: 固定
+filter_labels: 篩選標籤
+auto: 自動
+open_url_to_fediverse: 開啟原始網址
+change_my_avatar: 變更我的頭像
+change_my_cover: 變更我的封面
+edit_my_profile: 編輯我的個人資料
+account_settings_changed: 您的帳號設定已成功變更。您需要重新登入。
+magazine_deletion: 雜誌刪除
+delete_magazine: 刪除雜誌
+restore_magazine: 還原雜誌
+purge_magazine: 清除雜誌
+magazine_is_deleted: 雜誌已被刪除。您可以在 30 天內<a href="%link_target%">還原</a>它。
+suspend_account: 停用帳號
+unsuspend_account: 啟用帳號
+account_suspended: 帳號已被停用。
+account_unsuspended: 帳號已被啟用。
+deletion: 刪除
+user_suspend_desc: 停用您的帳號會隱藏您在站台上的內容，但不會永久移除，您可以隨時還原。
+account_banned: 帳號已被封鎖。
+account_unbanned: 帳號已被解除封鎖。
+account_is_suspended: 使用者帳號已停用。
+remove_following: 移除追蹤
+remove_subscriptions: 移除訂閱
+apply_for_moderator: 申請成為版主
+request_magazine_ownership: 請求雜誌所有權
+cancel_request: 取消請求
+abandoned: 已棄置
+ownership_requests: 所有權請求
+accept: 接受
+moderator_requests: 版主請求
+action: 操作
+user_badge_op: 原發文者
+user_badge_admin: 管理員
+user_badge_global_moderator: 全域版主
+user_badge_moderator: 版主
+user_badge_bot: 機器人
+announcement: 公告
+keywords: 關鍵字
+deleted_by_moderator: 帖子、鋪文或留言已被版主刪除
+deleted_by_author: 帖子、鋪文或留言已被作者刪除
+sensitive_warning: 敏感內容
+sensitive_toggle: 切換敏感內容可見性
+sensitive_show: 點擊顯示
+sensitive_hide: 點擊隱藏
+details: 詳細資訊
+spoiler: 劇透
+all_time: 所有時間
+show: 顯示
+hide: 隱藏
+edited: 已編輯
+sso_registrations_enabled: SSO 註冊已啟用
+sso_registrations_enabled.error: 目前無法使用第三方身份管理員註冊新帳號。
+sso_only_mode: 僅限 SSO 方式登入與註冊
+related_entry: 相關
+restrict_magazine_creation: 僅限管理員與全域版主建立本地雜誌
+sso_show_first: 在登入與註冊頁面優先顯示 SSO
+continue_with: 繼續使用
+reported_user: 被檢舉的使用者
+reporting_user: 檢舉的使用者
+reported: 已檢舉
+report_subject: 主題
+own_report_rejected: 您的檢舉已被駁回
+own_report_accepted: 您的檢舉已被接受
+own_content_reported_accepted: 您內容的檢舉已被接受。
+report_accepted: 檢舉已被接受
+open_report: 開啟檢舉
+cake_day: 蛋糕日
+someone: 某人
+back: 返回
+magazine_log_mod_added: 已新增版主
+magazine_log_mod_removed: 已移除版主
+magazine_log_entry_pinned: 已置頂帖子
+magazine_log_entry_unpinned: 已取消置頂帖子
+last_updated: 最後更新
+and: 與
+direct_message: 私訊
+manually_approves_followers: 手動核准追蹤者
+register_push_notifications_button: 註冊推播通知
+unregister_push_notifications_button: 移除推播註冊
+test_push_notifications_button: 測試推播通知
+test_push_message: 哈囉世界！
+notification_title_new_comment: 新留言
+notification_title_removed_comment: 留言已被移除
+notification_title_edited_comment: 留言已被編輯
+notification_title_mention: 您被提及
+notification_title_new_reply: 新回覆
+notification_title_new_thread: 新帖子
+notification_title_removed_thread: 帖子已被移除
+notification_title_edited_thread: 帖子已被編輯
+notification_title_ban: 您已被封鎖
+notification_title_message: 新私訊
+notification_title_new_post: 新鋪文
+notification_title_removed_post: 鋪文已被移除
+notification_title_edited_post: 鋪文已被編輯
+notification_title_new_signup: 新使用者註冊
+notification_body_new_signup: 使用者 %u% 已註冊。
+notification_body2_new_signup_approval: 您需要在他們登入前核准此請求
+show_related_magazines: 顯示隨機雜誌
+show_related_entries: 顯示隨機帖子
+show_related_posts: 顯示隨機鋪文
+show_active_users: 顯示活躍使用者
+notification_title_new_report: 已建立新檢舉
+magazine_posting_restricted_to_mods_warning: 只有版主可以在這個雜誌建立帖子
+flash_posting_restricted_error: 在此雜誌中建立帖子僅限版主，而您並非版主
+server_software: 伺服器軟體
+version: 版本
+last_successful_deliver: 最後成功傳送
+last_successful_receive: 最後成功接收
+last_failed_contact: 最後聯絡失敗
+magazine_posting_restricted_to_mods: 僅限版主建立帖子
+new_user_description: 此使用者為新使用者（活躍時間少於 %days% 天）
+new_magazine_description: 此雜誌為新雜誌（活躍時間少於 %days% 天）
+admin_users_active: 活躍
+admin_users_inactive: 非活躍
+admin_users_suspended: 已停權
+admin_users_banned: 已封鎖
+user_verify: 啟用帳號
+max_image_size: 最大檔案大小
+comment_not_found: 找不到留言
+bookmark_add_to_list: 將書籤加入 %list%
+bookmark_remove_from_list: 從 %list% 移除書籤
+bookmark_remove_all: 移除所有書籤
+bookmark_add_to_default_list: 將書籤加入預設清單
+bookmark_lists: 書籤清單
+bookmarks: 書籤
+bookmarks_list: '%list% 中的書籤'
+count: 數量
+is_default: 是否為預設
+bookmark_list_is_default: 是否為預設清單
+bookmark_list_make_default: 設為預設
+bookmark_list_create: 建立
+bookmark_list_create_placeholder: 輸入名稱...
+bookmark_list_create_label: 清單名稱
+bookmarks_list_edit: 編輯書籤清單
+bookmark_list_edit: 編輯
+bookmark_list_selected_list: 已選清單
+table_of_contents: 目錄
+search_type_all: 全部
+search_type_entry: 帖子
+search_type_post: 微鋪
+search_type_magazine: 雜誌
+search_type_user: 使用者
+search_type_actors: 雜誌 + 使用者
+search_type_content: 帖子 + 微鋪
+select_user: 選擇使用者
+new_users_need_approval: 新使用者需經管理員核准後才能登入。
+signup_requests: 註冊申請
+application_text: 請說明您想加入的原因
+signup_requests_header: 註冊申請
+signup_requests_paragraph: 這些使用者希望加入您的伺服器。在您核准他們的註冊申請之前，他們無法登入。
+flash_application_info: 管理員需要核准您的帳號後您才能登入。您的註冊申請處理完成後，您將會收到一封電子郵件。
+email_application_approved_title: 您的註冊申請已獲核准
+email_application_approved_body: 您的註冊申請已獲伺服器管理員核准。您現在可以登入伺服器：<a 
+  href="%link%">%siteName%</a>。
+email_application_rejected_title: 您的註冊申請已被拒絕
+email_application_rejected_body: 感謝您的關注，但我們遺憾地通知您，您的註冊申請已被拒絕。
+email_application_pending: 您的帳號需要管理員核准後才能登入。
+email_verification_pending: 您必須驗證您的電子郵件地址才能登入。
+show_magazine_domains: 顯示雜誌網域
+show_user_domains: 顯示使用者網域
+answered: 已回覆
+by: 由
+front_default_sort: 首頁預設排序
+comment_default_sort: 留言預設排序
+open_signup_request: 開啟註冊申請
+image_lightbox_in_list: 帖子縮圖開啟全螢幕
+compact_view_help: 一種邊距較小的精簡檢視，媒體會移至右側。
+show_users_avatars_help: 顯示使用者頭像圖片。
+show_magazines_icons_help: 顯示雜誌圖示。
+show_thumbnails_help: 顯示縮圖圖片。
+image_lightbox_in_list_help: 勾選時，點擊縮圖會顯示模態圖片視窗。未勾選時，點擊縮圖將開啟帖子。
+show_new_icons: 顯示新圖示
+show_new_icons_help: 顯示新雜誌/使用者的圖示（30天內新建立）
+magazine_instance_defederated_info: 此雜誌的實例已解除聯邦。因此，該雜誌將不會收到更新。
+user_instance_defederated_info: 此使用者的實例已解除聯邦。
+flash_thread_instance_banned: 此雜誌的實例已被封鎖。
+show_rich_mention: 豐富提及
+show_rich_mention_help: 當提及使用者時，呈現使用者元件。這將包含他們的顯示名稱和個人資料圖片。
+show_rich_mention_magazine: 豐富雜誌提及
+show_rich_mention_magazine_help: 當提及雜誌時，呈現雜誌元件。這將包含它們的顯示名稱和圖示。
+show_rich_ap_link: 豐富 AP 連結
+show_rich_ap_link_help: 當連結到其他 ActivityPub 內容時，呈現內嵌元件。
+attitude: 態度
+type_search_magazine: 將搜尋限制於雜誌...
+type_search_user: 將搜尋限制於作者...
+modlog_type_entry_deleted: 帖子已刪除
+modlog_type_entry_restored: 帖子已還原
+modlog_type_entry_comment_deleted: 帖子留言已刪除
+modlog_type_entry_comment_restored: 帖子留言已還原
+modlog_type_entry_pinned: 帖子已置頂
+modlog_type_entry_unpinned: 帖子已取消置頂
+modlog_type_post_deleted: 微鋪已刪除
+modlog_type_post_restored: 微鋪已還原
+modlog_type_post_comment_deleted: 微鋪回覆已刪除
+modlog_type_post_comment_restored: 微鋪回覆已還原
+modlog_type_ban: 使用者已被雜誌封鎖
+modlog_type_moderator_add: 雜誌版主已新增
+modlog_type_moderator_remove: 雜誌版主已移除
+everyone: 所有人
+nobody: 無人
+followers_only: 僅限追蹤者
+direct_message_setting_label: 誰可以向您發送私訊
+delete_magazine_icon: 刪除雜誌圖示
+flash_magazine_theme_icon_detached_success: 雜誌圖示已成功刪除
+delete_magazine_banner: 刪除雜誌橫幅
+flash_magazine_theme_banner_detached_success: 雜誌橫幅已成功刪除
+federation_uses_allowlist: 對聯邦使用允許清單
+defederating_instance: 正在與實例 %i 解除聯邦
+their_user_follows: 來自其實例並追蹤我們實例用戶的用戶數量
+our_user_follows: 來自我們實例並追蹤其實例用戶的用戶數量
+their_magazine_subscriptions: 來自其實例並訂閱我們實例雜誌的用戶數量
+our_magazine_subscriptions: 我們實例中訂閱來自其實例雜誌的用戶數量
+confirm_defederation: 確認解除聯邦
+flash_error_defederation_must_confirm: 您必須確認解除聯邦
+allowed_instances: 允許的實例
+btn_deny: 拒絕
+btn_allow: 允許
+ban_instance: 封鎖實例
+allow_instance: 允許實例
+federation_page_use_allowlist_help: 
+  如果使用允許清單，此實例將僅與明確允許的實例進行聯邦。否則，此實例將與所有實例進行聯邦，除了那些被封鎖的實例。
+you_have_been_banned_from_magazine: 您已被雜誌 %m 封鎖。
+you_have_been_banned_from_magazine_permanently: 您已被雜誌 %m 永久封鎖。
+you_are_no_longer_banned_from_magazine: 您已不再被雜誌 %m 封鎖。
+front_default_content: 首頁預設檢視
+default_content_default: 伺服器預設（帖子）
+default_content_combined: 帖子 + 微鋪
+default_content_threads: 帖子
+default_content_microblog: 微鋪
+combined: 合併
+sidebar_sections_random_local_only: 將「隨機帖子/鋪文」側邊欄區塊限制為僅限本地
+sidebar_sections_users_local_only: 將「活躍用戶」側邊欄區塊限制為僅限本地
+random_local_only_performance_warning: 啟用「僅限本地隨機」可能會對 SQL 效能造成影響。
