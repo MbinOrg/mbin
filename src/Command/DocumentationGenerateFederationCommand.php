@@ -247,6 +247,7 @@ class DocumentationGenerateFederationCommand extends Command
         $activityUserUpdate = $this->updateWrapper->buildForActor($user2);
         $activityUserEdit = $this->updateWrapper->buildForActivity($entry);
         $activityUserDelete = $this->deleteWrapper->build($entry, includeContext: false);
+        $activityUserDeleteAccount = $this->deleteWrapper->buildForUser($user);
 
         $magazineBan = new MagazineBan($magazine, $user, $user2, 'A very specific reason', \DateTimeImmutable::createFromFormat('Y-m-d', '2025-01-01'));
         $this->entityManager->persist($magazineBan);
@@ -260,6 +261,7 @@ class DocumentationGenerateFederationCommand extends Command
 
         $activityMagAnnounce = $this->announceWrapper->build($magazine, $entryCreate);
         $activityAdminBan = $this->blockFactory->createActivityFromInstanceBan($user2, $user);
+        $activityAdminDeleteAccount = $this->deleteWrapper->buildForUser($user);
 
         $jsonFlags = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES;
         $replaceVariables = [
@@ -293,6 +295,7 @@ class DocumentationGenerateFederationCommand extends Command
             '%activity_user_update_user%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityUserUpdate, false), $jsonFlags),
             '%activity_user_update_content%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityUserEdit, false), $jsonFlags),
             '%activity_user_delete%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityUserDelete, false), $jsonFlags),
+            '%activity_user_delete_account%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityUserDeleteAccount, false), $jsonFlags),
             '%activity_mod_add_mod%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityModAddMod, false), $jsonFlags),
             '%activity_mod_remove_mod%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityModRemoveMod, false), $jsonFlags),
             '%activity_mod_add_pin%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityModAddPin, false), $jsonFlags),
@@ -301,6 +304,7 @@ class DocumentationGenerateFederationCommand extends Command
             '%activity_mod_ban%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityModBan, false), $jsonFlags),
             '%activity_mag_announce%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityMagAnnounce, false), $jsonFlags),
             '%activity_admin_ban%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityAdminBan, false), $jsonFlags),
+            '%activity_admin_delete_account%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityAdminDeleteAccount, false), $jsonFlags),
         ];
 
         foreach ($replaceVariables as $key => $value) {
