@@ -152,19 +152,19 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/danielpervan">
-                    <img src="https://avatars.githubusercontent.com/u/5121830?v=4" width="100;" alt="danielpervan"/>
+                <a href="https://github.com/blued-gear">
+                    <img src="https://avatars.githubusercontent.com/u/164888202?v=4" width="100;" alt="blued-gear"/>
                     <br />
-                    <sub><b>Daniel Pervan</b></sub>
+                    <sub><b>blued_gear</b></sub>
                 </a>
             </td>
 		</tr>
 		<tr>
             <td align="center">
-                <a href="https://github.com/blued-gear">
-                    <img src="https://avatars.githubusercontent.com/u/164888202?v=4" width="100;" alt="blued-gear"/>
+                <a href="https://github.com/danielpervan">
+                    <img src="https://avatars.githubusercontent.com/u/5121830?v=4" width="100;" alt="danielpervan"/>
                     <br />
-                    <sub><b>blued_gear</b></sub>
+                    <sub><b>Daniel Pervan</b></sub>
                 </a>
             </td>
             <td align="center">

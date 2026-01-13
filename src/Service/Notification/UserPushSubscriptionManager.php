@@ -10,6 +10,7 @@ use App\Payloads\PushNotification;
 use App\Repository\SiteRepository;
 use App\Repository\UserPushSubscriptionRepository;
 use App\Service\SettingsManager;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use Minishlink\WebPush\MessageSentReport;
 use Minishlink\WebPush\Subscription;
@@ -27,6 +28,7 @@ class UserPushSubscriptionManager
         private readonly TranslatorInterface $translator,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly LoggerInterface $logger,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -75,6 +77,11 @@ class UserPushSubscriptionManager
                 $this->logger->debug('[v] Message sent successfully for subscription {e}.', ['e' => $endpoint]);
             } else {
                 $this->logger->debug('[x] Message failed to sent for subscription {e}: {r}', ['e' => $endpoint, 'r' => $report->getReason()]);
+                if ($report->isSubscriptionExpired()) {
+                    $subscription = $this->pushSubscriptionRepository->findBy(['endpoint' => $endpoint]);
+                    $this->entityManager->remove($subscription);
+                    $this->logger->info('Removed push subscription for user "{u}" at endpoint "{e}", because it expired', ['e' => $endpoint, 'u' => $user->username]);
+                }
             }
         }
     }
