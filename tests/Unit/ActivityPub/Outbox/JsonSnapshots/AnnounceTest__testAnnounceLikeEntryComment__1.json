@@ -15,7 +15,7 @@
         ],
         "cc": [
             "https://kbin.test/u/user2/followers",
-            "https://kbin.test/m/test/followers"
+            "https://kbin.test/m/test"
         ],
         "object": "SCRUBBED_ID",
         "audience": "https://kbin.test/m/test"
@@ -25,8 +25,7 @@
     ],
     "cc": [
         "https://kbin.test/m/test/followers",
-        "https://kbin.test/u/user2/followers",
-        "https://kbin.test/m/test/followers"
+        "https://kbin.test/u/user2/followers"
     ],
     "published": "SCRUBBED_DATE",
     "audience": "https://kbin.test/m/test"
