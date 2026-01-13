@@ -46,11 +46,9 @@ class FeedManager
         $criteria = $this->getCriteriaFromRequest($request);
         $feed = $this->createFeed($criteria);
 
-        $items = $this->contentRepository->findByCriteria($criteria);
+        $content = $this->contentRepository->findByCriteria($criteria);
 
-        $items = $this->getItems($items->getCurrentPageResults());
-
-        foreach ($items as $item) {
+        foreach ($this->getItems($content->getCurrentPageResults()) as $item) {
             $feed->add($item);
         }
 
@@ -78,9 +76,13 @@ class FeedManager
         return $feed;
     }
 
+    /**
+     * @param iterable<Post|Entry> $content
+     *
+     * @return \Generator<Item>
+     */
     public function getItems(iterable $content): \Generator
     {
-        /** @var Entry|Post $subject */
         foreach ($content as $subject) {
             $item = new Item();
             $item->setLastModified(\DateTime::createFromImmutable($subject->createdAt));
@@ -145,18 +147,18 @@ class FeedManager
             $criteria->setContent(Criteria::CONTENT_THREADS);
         }
 
-        if ($magazine = $request->get('magazine')) {
-            $magazine = $this->magazineRepository->findOneBy(['name' => $magazine]);
+        if ($magazineName = $request->get('magazine')) {
+            $magazine = $this->magazineRepository->findOneBy(['name' => $magazineName]);
             if (!$magazine) {
-                throw new NotFoundHttpException();
+                throw new NotFoundHttpException("The magazine $magazineName does not exist");
             }
             $criteria->magazine = $magazine;
         }
 
-        if ($user = $request->get('user')) {
-            $user = $this->userRepository->findOneByUsername($user);
+        if ($userName = $request->get('user')) {
+            $user = $this->userRepository->findOneByUsername($userName);
             if (!$user) {
-                throw new NotFoundHttpException();
+                throw new NotFoundHttpException("The user $userName does not exist");
             }
             $criteria->user = $user;
         }
