@@ -380,6 +380,7 @@ class ActivityPubManager
             $user->apAttributedToUrl = $actor['attributedTo'] ?? null;
             $user->apPreferredUsername = $actor['preferredUsername'] ?? null;
             $user->apDiscoverable = $actor['discoverable'] ?? null;
+            $user->apIndexable = $actor['indexable'] ?? null;
             $user->apManuallyApprovesFollowers = $actor['manuallyApprovesFollowers'] ?? false;
             $user->apPublicUrl = $actor['url'] ?? $actorUrl;
             $user->apDeletedAt = null;
@@ -652,6 +653,7 @@ class ActivityPubManager
             $magazine->apFetchedAt = new \DateTime();
             $magazine->isAdult = $actor['sensitive'] ?? false;
             $magazine->postingRestrictedToMods = filter_var($actor['postingRestrictedToMods'] ?? false, FILTER_VALIDATE_BOOLEAN) ?? false;
+            $magazine->apIndexable = $actor['indexable'] ?? null;
 
             if (null !== $magazine->apFollowersUrl) {
                 try {

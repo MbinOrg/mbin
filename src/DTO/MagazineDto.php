@@ -40,6 +40,7 @@ class MagazineDto
     public int $postCommentCount = 0;
     public bool $isAdult = false;
     public bool $isPostingRestrictedToMods = false;
+    public ?bool $indexable = null;
     public ?bool $isUserSubscribed = null;
     public ?bool $isBlockedByUser = null;
     public ?int $localSubscribers = null;

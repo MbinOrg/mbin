@@ -137,6 +137,7 @@ class UserUpdateApiTest extends WebTestCase
             directMessageSetting: EDirectMessageSettings::FollowersOnly->value,
             frontDefaultContent: EFrontContentOptions::Threads->value,
             discoverable: false,
+            indexable: false,
         ))->jsonSerialize();
 
         $this->client->jsonRequest(
@@ -170,6 +171,7 @@ class UserUpdateApiTest extends WebTestCase
         self::assertEquals(['en'], $jsonData['preferredLanguages']);
         self::assertEquals(EDirectMessageSettings::FollowersOnly->value, $jsonData['directMessageSetting']);
         self::assertEquals(EFrontContentOptions::Threads->value, $jsonData['frontDefaultContent']);
+        self::assertFalse($jsonData['indexable']);
 
         $this->client->request('GET', '/api/users/settings', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
@@ -198,5 +200,6 @@ class UserUpdateApiTest extends WebTestCase
         self::assertEquals(['en'], $jsonData['preferredLanguages']);
         self::assertEquals(EDirectMessageSettings::FollowersOnly->value, $jsonData['directMessageSetting']);
         self::assertEquals(EFrontContentOptions::Threads->value, $jsonData['frontDefaultContent']);
+        self::assertFalse($jsonData['indexable']);
     }
 }

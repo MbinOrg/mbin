@@ -52,6 +52,7 @@ class UserDto implements UserDtoInterface
     public ?string $applicationText = null;
     public ?int $reputationPoints = null;
     public ?bool $discoverable = null;
+    public ?bool $indexable = null;
 
     #[Assert\Callback]
     public function validate(
@@ -97,6 +98,7 @@ class UserDto implements UserDtoInterface
         ?string $applicationText = null,
         ?int $reputationPoints = null,
         ?bool $discoverable = null,
+        ?bool $indexable = null,
     ): self {
         $dto = new UserDto();
         $dto->id = $id;
@@ -116,6 +118,7 @@ class UserDto implements UserDtoInterface
         $dto->applicationText = $applicationText;
         $dto->reputationPoints = $reputationPoints;
         $dto->discoverable = $discoverable;
+        $dto->indexable = $indexable;
 
         return $dto;
     }

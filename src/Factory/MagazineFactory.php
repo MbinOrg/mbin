@@ -71,6 +71,7 @@ class MagazineFactory
         $dto->isAdult = $magazine->isAdult;
         $dto->isPostingRestrictedToMods = $magazine->postingRestrictedToMods;
         $dto->discoverable = $magazine->apDiscoverable;
+        $dto->indexable = $magazine->apIndexable;
         $dto->tags = $magazine->tags;
         $dto->badges = $magazine->badges;
         $dto->moderators = $magazine->moderators;
@@ -178,6 +179,7 @@ class MagazineFactory
             $dto->isPostingRestrictedToMods,
             $dto->localSubscribers,
             $dto->discoverable,
+            $dto->indexable,
         );
     }
 

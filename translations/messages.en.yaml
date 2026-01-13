@@ -1122,3 +1122,10 @@ modlog_type_entry_lock: Thread locked
 modlog_type_entry_unlock: Thread unlocked
 modlog_type_post_lock: Microblog locked
 modlog_type_post_unlock: Microblog unlocked
+indexable_by_search_engines: Indexable by search engines
+user_indexable_by_search_engines_help: If this setting is false, search engines are advised to not index any of your threads
+  and microblogs, however your comments are not affected by this and bad actors might ignore it. This setting is also
+  federated to other servers.
+magazine_indexable_by_search_engines_help: If this setting is false, search engines are advised to not index any of the
+  threads and microblogs in this magazines. That includes the landing page and all comment pages. This setting is also
+  federated to other servers.
