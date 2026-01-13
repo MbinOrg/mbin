@@ -51,6 +51,7 @@ class UserDto implements UserDtoInterface
     public ?string $serverSoftwareVersion = null;
     public ?string $applicationText = null;
     public ?int $reputationPoints = null;
+    public ?bool $discoverable = null;
 
     #[Assert\Callback]
     public function validate(
@@ -95,6 +96,7 @@ class UserDto implements UserDtoInterface
         ?bool $isGlobalModerator = null,
         ?string $applicationText = null,
         ?int $reputationPoints = null,
+        ?bool $discoverable = null,
     ): self {
         $dto = new UserDto();
         $dto->id = $id;
@@ -113,6 +115,7 @@ class UserDto implements UserDtoInterface
         $dto->isGlobalModerator = $isGlobalModerator;
         $dto->applicationText = $applicationText;
         $dto->reputationPoints = $reputationPoints;
+        $dto->discoverable = $discoverable;
 
         return $dto;
     }

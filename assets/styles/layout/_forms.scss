@@ -240,6 +240,12 @@ form {
 
   .help-text {
     font-size: 0.8rem;
+
+    &.checkbox {
+      margin-top: -.75rem;
+      margin-left: 2rem;
+      margin-bottom: 0;
+    }
   }
 
   .length-indicator {

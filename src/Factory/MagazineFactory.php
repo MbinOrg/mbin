@@ -68,6 +68,7 @@ class MagazineFactory
         $dto->postCommentCount = $magazine->postCommentCount;
         $dto->isAdult = $magazine->isAdult;
         $dto->isPostingRestrictedToMods = $magazine->postingRestrictedToMods;
+        $dto->discoverable = $magazine->apDiscoverable;
         $dto->tags = $magazine->tags;
         $dto->badges = $magazine->badges;
         $dto->moderators = $magazine->moderators;
@@ -168,6 +169,7 @@ class MagazineFactory
             $dto->serverSoftwareVersion,
             $dto->isPostingRestrictedToMods,
             $dto->localSubscribers,
+            $dto->discoverable,
         );
     }
 

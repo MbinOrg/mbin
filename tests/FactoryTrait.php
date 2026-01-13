@@ -98,6 +98,7 @@ trait FactoryTrait
         $user->showProfileFollowings = true;
         $user->showProfileSubscriptions = true;
         $user->hideAdult = $hideAdult;
+        $user->apDiscoverable = true;
         $user->about = $about;
         if ($addImage) {
             $user->avatar = $this->createImage(bin2hex(random_bytes(20)).'.png');

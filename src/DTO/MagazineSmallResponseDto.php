@@ -17,6 +17,7 @@ class MagazineSmallResponseDto implements \JsonSerializable
     public ?bool $isBlockedByUser = null;
     public ?string $apId = null;
     public ?string $apProfileId = null;
+    public ?bool $discoverable = null;
 
     public function __construct(MagazineDto $dto)
     {
@@ -28,6 +29,7 @@ class MagazineSmallResponseDto implements \JsonSerializable
         $this->isBlockedByUser = $dto->isBlockedByUser;
         $this->apId = $dto->apId;
         $this->apProfileId = $dto->apProfileId;
+        $this->discoverable = $dto->discoverable;
     }
 
     public function jsonSerialize(): mixed
@@ -41,6 +43,7 @@ class MagazineSmallResponseDto implements \JsonSerializable
             'isBlockedByUser' => $this->isBlockedByUser,
             'apId' => $this->apId,
             'apProfileId' => $this->apProfileId,
+            'discoverable' => $this->discoverable,
         ];
     }
 }
