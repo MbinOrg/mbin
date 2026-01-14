@@ -64,6 +64,13 @@ abstract class MagazineLog
     public Magazine $magazine;
     #[ManyToOne(targetEntity: User::class)]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    /**
+     * Usually the acting moderator. There are 2 exceptions MagazineLogModeratorAdd and MagazineLogModeratorRemove,
+     * because the acting moderator can be null. In that case this is the moderator being added or removed.
+     *
+     * @see MagazineLogModeratorAdd
+     * @see MagazineLogModeratorRemove
+     */
     public User $user;
     #[Id]
     #[GeneratedValue]
