@@ -58,7 +58,6 @@ export default class extends Controller {
         const elements = div.querySelectorAll('[data-controller="subject-list"] > *');
         for (let i = 0; i < elements.length; i++) {
             const element = elements[i];
-            console.log(element)
             if ((element.id && null === document.getElementById(element.id)) || element.classList.contains('user-box-inline') || element.classList.contains('magazine')) {
                 this.element.before(element);
 
