@@ -1,0 +1,10 @@
+<div class="monitoring-twig-render">
+    <div>
+        {{ render.shortDescription }} | {{ render.profilerDuration|round(2) }}ms
+    </div>
+    <div class="children">
+        {% for child in render.children %}
+            {{ component('monitoring_twig_render', {'render': child}) }}
+        {% endfor %}
+    </div>
+</div>
