@@ -182,6 +182,10 @@ class ActivityPubManager
         }
 
         $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
+        if (!$user) {
+            // also try the public URL if it was not found by the profile id
+            $user = $this->userRepository->findOneBy(['apPublicUrl' => $actorUrl]);
+        }
         if ($user instanceof User) {
             $this->logger->debug('[ActivityPubManager::findActorOrCreate] Found remote user for url: "{url}" in db', ['url' => $actorUrl]);
             if ($user->apId && !$user->isDeleted && !$user->isSoftDeleted() && !$user->isTrashed() && (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
