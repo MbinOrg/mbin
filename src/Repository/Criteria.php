@@ -74,6 +74,12 @@ abstract class Criteria
         self::AP_LOCAL,
     ];
 
+    public const array CONTENT_OPTIONS = [
+        self::CONTENT_COMBINED,
+        self::CONTENT_THREADS,
+        self::CONTENT_MICROBLOG,
+    ];
+
     public int $page = 1;
     public ?Magazine $magazine = null;
     public ?User $user = null;
