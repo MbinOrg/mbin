@@ -59,19 +59,38 @@ class MagazineLogResponseDto implements \JsonSerializable
         UserSmallResponseDto $moderator,
         \DateTimeImmutable $createdAt,
         string $type,
-        ?MagazineBanResponseDto $banSubject = null,
-        ?UserSmallResponseDto $moderatorSubject = null,
     ): self {
         $dto = new MagazineLogResponseDto();
         $dto->magazine = $magazine;
         $dto->moderator = $moderator;
         $dto->createdAt = $createdAt;
         $dto->type = $type;
-        if ('log_ban' === $type || 'log_unban' === $type) {
-            $dto->subject2 = $banSubject;
-        } elseif ('log_moderator_add' === $type || 'log_moderator_remove' === $type) {
-            $dto->subject2 = $moderatorSubject;
-        }
+
+        return $dto;
+    }
+
+    public static function createBanUnban(
+        MagazineSmallResponseDto $magazine,
+        UserSmallResponseDto $moderator,
+        \DateTimeImmutable $createdAt,
+        string $type,
+        MagazineBanResponseDto $banSubject,
+    ): self {
+        $dto = self::create($magazine, $moderator, $createdAt, $type);
+        $dto->subject2 = $banSubject;
+
+        return $dto;
+    }
+
+    public static function createModeratorAddRemove(
+        MagazineSmallResponseDto $magazine,
+        UserSmallResponseDto $moderator,
+        \DateTimeImmutable $createdAt,
+        string $type,
+        UserSmallResponseDto $moderatorSubject,
+    ): self {
+        $dto = self::create($magazine, $moderator, $createdAt, $type);
+        $dto->subject2 = $moderatorSubject;
 
         return $dto;
     }

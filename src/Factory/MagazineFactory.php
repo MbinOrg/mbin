@@ -119,26 +119,26 @@ class MagazineFactory
     {
         $magazine = $this->createSmallDto($log->magazine);
         $type = $log->getType();
-        $moderatorSubject = null;
+        $createdAt = $log->createdAt;
+
         if ($log instanceof MagazineLogModeratorAdd || $log instanceof MagazineLogModeratorRemove) {
             $moderator = $this->userFactory->createSmallDto($log->actingUser);
             $moderatorSubject = $this->userFactory->createSmallDto($log->user);
-        } else {
+
+            return MagazineLogResponseDto::createModeratorAddRemove($magazine, $moderator, $createdAt, $type, $moderatorSubject);
+        } elseif ($log instanceof MagazineLogBan) {
             $moderator = $this->userFactory->createSmallDto($log->user);
-        }
-        $createdAt = $log->createdAt;
-        $banSubject = null;
-        if ('log_ban' === $type) {
-            /**
-             * @var MagazineLogBan $log
-             */
             $banSubject = $this->createBanDto($log->ban);
             if ('unban' === $log->meta) {
                 $type = 'log_unban';
             }
-        }
 
-        return MagazineLogResponseDto::create($magazine, $moderator, $createdAt, $type, $banSubject, $moderatorSubject);
+            return MagazineLogResponseDto::createBanUnban($magazine, $moderator, $createdAt, $type, $banSubject);
+        } else {
+            $moderator = $this->userFactory->createSmallDto($log->user);
+
+            return MagazineLogResponseDto::create($magazine, $moderator, $createdAt, $type);
+        }
     }
 
     public function createResponseDto(MagazineDto|Magazine $magazine): MagazineResponseDto
