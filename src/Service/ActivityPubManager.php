@@ -1197,16 +1197,36 @@ class ActivityPubManager
         return null;
     }
 
+    public function extractTotalAmountFromCollection(mixed $collection): ?int
+    {
+        $id = null;
+        if (\is_string($collection)) {
+            if (false !== filter_var($collection, FILTER_VALIDATE_URL)) {
+                $id = $collection;
+            }
+        } elseif (\is_array($collection)) {
+            if (isset($collection['totalItems'])) {
+                return \intval($collection['totalItems']);
+            } elseif (isset($collection['id'])) {
+                $id = $collection['id'];
+            }
+        }
+
+        if ($id) {
+            $this->apHttpClient->invalidateCollectionObjectCache($id);
+            $collection = $this->apHttpClient->getCollectionObject($id);
+            if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
+                return $collection['totalItems'];
+            }
+        }
+
+        return null;
+    }
+
     public function extractRemoteLikeCount(array $apObject): ?int
     {
         if (!empty($apObject['likes'])) {
-            if (false !== filter_var($apObject['likes'], FILTER_VALIDATE_URL)) {
-                $this->apHttpClient->invalidateCollectionObjectCache($apObject['likes']);
-                $collection = $this->apHttpClient->getCollectionObject($apObject['likes']);
-                if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
-                    return $collection['totalItems'];
-                }
-            }
+            return $this->extractTotalAmountFromCollection($apObject['likes']);
         }
 
         return null;
@@ -1215,13 +1235,7 @@ class ActivityPubManager
     public function extractRemoteDislikeCount(array $apObject): ?int
     {
         if (!empty($apObject['dislikes'])) {
-            if (false !== filter_var($apObject['dislikes'], FILTER_VALIDATE_URL)) {
-                $this->apHttpClient->invalidateCollectionObjectCache($apObject['dislikes']);
-                $collection = $this->apHttpClient->getCollectionObject($apObject['dislikes']);
-                if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
-                    return $collection['totalItems'];
-                }
-            }
+            return $this->extractTotalAmountFromCollection($apObject['dislikes']);
         }
 
         return null;
@@ -1230,13 +1244,7 @@ class ActivityPubManager
     public function extractRemoteShareCount(array $apObject): ?int
     {
         if (!empty($apObject['shares'])) {
-            if (false !== filter_var($apObject['shares'], FILTER_VALIDATE_URL)) {
-                $this->apHttpClient->invalidateCollectionObjectCache($apObject['shares']);
-                $collection = $this->apHttpClient->getCollectionObject($apObject['shares']);
-                if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
-                    return $collection['totalItems'];
-                }
-            }
+            return $this->extractTotalAmountFromCollection($apObject['shares']);
         }
 
         return null;
