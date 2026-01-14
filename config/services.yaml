@@ -124,6 +124,8 @@ parameters:
     mbin_new_users_need_approval: '%env(bool:default::MBIN_NEW_USERS_NEED_APPROVAL)%'
     mbin_use_federation_allow_list: '%env(bool:default::MBIN_USE_FEDERATION_ALLOW_LIST)%'
 
+    mbin_monitoring_enabled: '%env(bool:default::MBIN_MONITORING_ENABLED)%'
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -138,6 +140,7 @@ services:
             $kbinApiItemsPerPage: '%kbin_api_items_per_page%'
             $storageUrl: '%kbin_storage_url%'
             $publicDir: '%kernel.project_dir%/public'
+            $monitoringEnabled: '%mbin_monitoring_enabled%'
 
     kbin.s3_client:
         class: Aws\S3\S3Client

@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{%- block title -%}
+    {{- 'pages'|trans }} - {{ parent() -}}
+{%- endblock -%}
+
+{% block mainClass %}page-admin-monitoring{% endblock %}
+
+{% block header_nav %}
+{% endblock %}
+
+{% block sidebar_top %}
+{% endblock %}
+
+{% block body %}
+    {% include 'admin/_options.html.twig' %}
+
+    <div class="section" id="content">
+        <div class="container">
+            <h2>{{ 'monitoring_route_overview'|trans }}</h2>
+            <p>{{ 'monitoring_route_overview_description'|trans }}</p>
+            {{ render_chart(chart, {'data-chart-unit-value': 'ms'}) }}
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>{{ 'monitoring_user_type'|trans }}</th>
+                        <th>{{ 'monitoring_path'|trans }}</th>
+                        <th>{{ 'monitoring_handler'|trans }}</th>
+                        <th>{{ 'monitoring_started'|trans }}</th>
+                        <th>{{ 'monitoring_duration'|trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for context in executionContexts %}
+                        <tr>
+                            <td>
+                                <a style="word-wrap: normal" href="{{ path('admin_monitoring_single_context', {'id': context.uuid.__toString()}) }}">
+                                    {{ context.uuid|uuidEnd }}
+                                </a>
+                            </td>
+                            {% if context.executionType is same as 'messenger' %}
+                                <td>messenger</td>
+                            {% else %}
+                                <td>{{ context.userType }}</td>
+                            {% endif %}
+                            <td>{{ context.path }}</td>
+                            <td>{{ context.handler }}</td>
+                            <td>{{ context.startedAt|date }}</td>
+                            <td>{{ context.duration|round(2) }}ms</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% if(executionContexts.haveToPaginate is defined and executionContexts.haveToPaginate) %}
+        {{ pagerfanta(executionContexts, null, {'pageParameter':'[p]'}) }}
+    {% endif %}
+
+{% endblock %}
