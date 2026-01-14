@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+
+{%- block title -%}
+    {{- 'pages'|trans }} - {{ parent() -}}
+{%- endblock -%}
+
+{% block mainClass %}page-admin-monitoring{% endblock %}
+
+{% block header_nav %}
+{% endblock %}
+
+{% block sidebar_top %}
+{% endblock %}
+
+{% block body %}
+    {% include 'admin/_options.html.twig' %}
+    {% include 'admin/monitoring/monitoring_single_options.html.twig' %}
+
+    <div class="section" id="content">
+        <div class="container">
+            {% if page is same as 'overview' %}
+                {% set queryDuration = context.queryDurationMilliseconds %}
+                {% set twigDuration = context.twigRenderDurationMilliseconds %}
+                {% set curlRequestDuration = context.curlRequestDurationMilliseconds %}
+                <table>
+                    <tbody>
+                        <tr><td>{{ 'monitoring_user_type'|trans }}</td><td>{{ context.userType }}</td></tr>
+                        <tr><td>{{ 'monitoring_path'|trans }}</td><td>{{ context.path }}</td></tr>
+                        <tr><td>{{ 'monitoring_handler'|trans }}</td><td>{{ context.handler }}</td></tr>
+                        <tr><td>{{ 'monitoring_started'|trans }}</td><td>{{ component('date', {'date': context.startedAt}) }}</td></tr>
+                        <tr><td>{{ 'monitoring_duration'|trans }}</td><td>{{ context.duration|round(2) }}ms</td></tr>
+                        <tr><td>{{ 'monitoring_queries'|trans({'%count%': 2}) }}</td><td>{{ context.queries.count() }} in {{ queryDuration|round(2) }}ms ({{ (100 / context.duration * queryDuration)|round }}%)</td></tr>
+                        <tr><td>{{ 'monitoring_twig_renders'|trans() }}</td><td>{{ context.twigRenders.count() }} in {{ twigDuration|round(2) }}ms ({{ (100 / context.duration * twigDuration)|round }}%)</td></tr>
+                        <tr><td>{{ 'monitoring_curl_requests'|trans() }}</td><td>{{ context.curlRequests.count() }} in {{ curlRequestDuration|round(2) }}ms ({{ (100 / context.duration * curlRequestDuration)|round }}%)</td></tr>
+                    </tbody>
+                </table>
+            {% elseif page is same as 'queries' %}
+                {{ 'monitoring_queries'|trans({'%count%': 2}) }}
+                <a href="{{ path('admin_monitoring_single_context', {'id': context.uuid.toString, 'page': page, 'groupSimilar': not groupSimilar, 'formatQuery': formatQuery, 'showParameters': showParameters}) }}" class="btn btn-link">
+                    {% if groupSimilar %}
+                        {{ 'monitoring_dont_group_similar'|trans }}
+                    {% else %}
+                        {{ 'monitoring_group_similar'|trans }}
+                    {% endif %}
+                </a>
+                <a href="{{ path('admin_monitoring_single_context', {'id': context.uuid.toString, 'page': page, 'groupSimilar': groupSimilar, 'formatQuery': not formatQuery, 'showParameters': showParameters}) }}" class="btn btn-link">
+                    {% if formatQuery %}
+                        {{ 'monitoring_dont_format_query'|trans }}
+                    {% else %}
+                        {{ 'monitoring_format_query'|trans }}
+                    {% endif %}
+                </a>
+                <a href="{{ path('admin_monitoring_single_context', {'id': context.uuid.toString, 'page': page, 'groupSimilar': groupSimilar, 'formatQuery': formatQuery, 'showParameters': not showParameters}) }}" class="btn btn-link">
+                    {% if showParameters %}
+                        {{ 'monitoring_dont_show_parameters'|trans }}
+                    {% else %}
+                        {{ 'monitoring_show_parameters'|trans }}
+                    {% endif %}
+                </a>
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th>{{ 'monitoring_queries'|trans({'%count%': 1}) }}</th>
+                        {% if groupSimilar is same as false %}
+                            <th>{{ 'monitoring_duration'|trans }}</th>
+                        {% else %}
+                            <th>{{ 'monitoring_duration_min'|trans }}</th>
+                            <th>{{ 'monitoring_duration_mean'|trans }}</th>
+                            <th>{{ 'monitoring_duration_max'|trans }}</th>
+                            <th>{{ 'monitoring_query_count'|trans }}</th>
+                        {% endif %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if groupSimilar is same as false %}
+                        {% for query in context.getQueriesSorted() %}
+                            <tr>
+                                <td>
+                                    {% if formatQuery %}
+                                        <pre>{{ query.query|formatQuery }}</pre>
+                                    {% else %}
+                                        {{ query.query }}
+                                    {% endif %}
+                                    {% if showParameters %}
+                                        <pre>{{ 'parameters'|trans }} = {{ query.parameters|json_encode(constant('\JSON_PRETTY_PRINT')) }}</pre>
+                                    {% endif %}
+                                </td>
+                                <td>{{ query.duration|round(2) }}ms</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        {% for query in context.getGroupedQueries() %}
+                            <tr>
+                                <td>
+                                    {% if formatQuery %}
+                                        <pre>{{ query.query|formatQuery }}</pre>
+                                    {% else %}
+                                        {{ query.query }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ query.minExecutionTime|round(2) }}ms</td>
+                                <td>{{ query.maxExecutionTime|round(2) }}ms</td>
+                                <td>{{ query.meanExecutionTime|round(2) }}ms</td>
+                                <td>{{ query.count }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                    </tbody>
+                </table>
+            {% elseif page is same as 'twig' %}
+                {% for render in context.getRootTwigRenders() %}
+                    {{ component('monitoring_twig_render', {'render': render}) }}
+                {% endfor %}
+            {% elseif page is same as 'requests' %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>{{ 'monitoring_http_method'|trans }}</th>
+                            <th>{{ 'monitoring_url'|trans }}</th>
+                            <th>{{ 'monitoring_request_successful'|trans }}</th>
+                            <th>{{ 'monitoring_duration'|trans }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in context.getRequestsSorted() %}
+                            <tr>
+                                <td>{{ request.method }}</td>
+                                <td>{{ request.url }}</td>
+                                <td>{{ request.wasSuccessful ? 'yes'|trans : 'no'|trans }}</td>
+                                <td>{{ request.duration|round(2) }}ms</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
