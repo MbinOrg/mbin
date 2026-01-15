@@ -51,9 +51,7 @@ class MarkdownConverter
                 } else {
                     try {
                         $actor = $this->activityPubManager->findActorOrCreate($match[2]);
-                        $username = $actor instanceof User ?
-                            $actor->apId ?? $actor->username :
-                            $actor->apId ?? $actor->name;
+                        $username = $actor instanceof User ? $actor->username : $actor->name;
                         $replace = $this->mentionManager->getUsername($username, true);
                     } catch (\Throwable) {
                         $replace = $match[1];
