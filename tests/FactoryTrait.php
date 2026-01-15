@@ -340,6 +340,7 @@ trait FactoryTrait
         $magazine = $factory->createFromDto($dto, $user ?? $this->getUserByUsername('JohnDoe'));
         $magazine->apId = $dto->apId;
         $magazine->apProfileId = $dto->apProfileId;
+        $magazine->apDiscoverable = true;
 
         if (!$dto->apId) {
             $urlGenerator = $this->urlGenerator;

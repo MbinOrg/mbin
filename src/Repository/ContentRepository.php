@@ -158,6 +158,14 @@ class ContentRepository
             }
         }
 
+        $allClause = '';
+        $allClauseU = '';
+        if (!$criteria->moderated && !$criteria->subscribed && !$criteria->magazine && !$criteria->user && !$criteria->domain && !$criteria->tag) {
+            // hide all posts from non-discoverable users and magazines from /all (and only from there)
+            $allClause = 'm.ap_discoverable = true OR m.ap_discoverable IS NULL';
+            $allClauseU = 'u.ap_discoverable = true OR u.ap_discoverable IS NULL';
+        }
+
         $favClauseEntry = '';
         $favClausePost = '';
         if ($user && $criteria->favourite) {
@@ -226,6 +234,7 @@ class ContentRepository
             $hideAdultClause,
             $visibilityClauseM,
             $visibilityClauseC,
+            $allClause,
         ]);
 
         $postWhere = SqlHelpers::makeWhereString([
@@ -245,11 +254,13 @@ class ContentRepository
             $hideAdultClause,
             $visibilityClauseM,
             $visibilityClauseC,
+            $allClause,
         ]);
 
         $outerWhere = SqlHelpers::makeWhereString([
             $visibilityClauseU,
             $deletedClause,
+            $allClauseU,
         ]);
 
         $orderings = [];
