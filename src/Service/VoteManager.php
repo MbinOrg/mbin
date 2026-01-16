@@ -122,10 +122,6 @@ class VoteManager
 
     public function upvote(VotableInterface $votable, User $user): Vote
     {
-        if ('Service' === $user->type) {
-            throw new AccessDeniedHttpException('Bots are not allowed to vote on items!');
-        }
-
         // @todo save activity pub object id
         $vote = $votable->getUserVote($user);
 
@@ -162,10 +158,6 @@ class VoteManager
 
     public function removeVote(VotableInterface $votable, User $user): ?Vote
     {
-        if ('Service' === $user->type) {
-            throw new AccessDeniedHttpException('Bots are not allowed to vote on items!');
-        }
-
         // @todo save activity pub object id
         $vote = $votable->getUserVote($user);
 
