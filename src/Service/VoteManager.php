@@ -40,13 +40,12 @@ class VoteManager
             }
         }
 
-        if ('Service' === $user->type) {
-            throw new AccessDeniedHttpException('Bots are not allowed to vote on items!');
-        }
-
         $downVotesMode = $this->settingsManager->getDownvotesMode();
         if (DownvotesMode::Disabled === $downVotesMode && VotableInterface::VOTE_DOWN === $choice) {
             throw new \LogicException('cannot downvote, because that is disabled');
+        }
+        if (VotableInterface::VOTE_DOWN === $choice && 'Service' === $user->type) {
+            throw new AccessDeniedHttpException('Bots are not allowed to vote on items!');
         }
 
         $vote = $votable->getUserVote($user);
