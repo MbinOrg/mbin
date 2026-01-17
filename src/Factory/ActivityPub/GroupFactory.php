@@ -74,6 +74,7 @@ class GroupFactory
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
             'postingRestrictedToMods' => $magazine->postingRestrictedToMods,
+            'discoverable' => $magazine->apDiscoverable,
             'endpoints' => [
                 'sharedInbox' => $this->urlGenerator->generate(
                     'ap_shared_inbox',

@@ -40,6 +40,7 @@ class MagazineResponseDto implements \JsonSerializable
     public bool $isPostingRestrictedToMods = false;
     public ?int $localSubscribers = null;
     public ?ENotificationStatus $notificationStatus = null;
+    public ?bool $discoverable = null;
 
     public static function create(
         ?ModeratorResponseDto $owner = null,
@@ -67,6 +68,7 @@ class MagazineResponseDto implements \JsonSerializable
         ?string $serverSoftwareVersion = null,
         bool $isPostingRestrictedToMods = false,
         ?int $localSubscribers = null,
+        ?bool $discoverable = null,
     ): self {
         $dto = new MagazineResponseDto();
         $dto->owner = $owner;
@@ -94,6 +96,7 @@ class MagazineResponseDto implements \JsonSerializable
         $dto->serverSoftwareVersion = $serverSoftwareVersion;
         $dto->isPostingRestrictedToMods = $isPostingRestrictedToMods;
         $dto->localSubscribers = $localSubscribers;
+        $dto->discoverable = $discoverable;
 
         return $dto;
     }
@@ -127,6 +130,7 @@ class MagazineResponseDto implements \JsonSerializable
             'isPostingRestrictedToMods' => $this->isPostingRestrictedToMods,
             'localSubscribers' => $this->localSubscribers,
             'notificationStatus' => $this->notificationStatus,
+            'discoverable' => $this->discoverable,
         ];
     }
 }

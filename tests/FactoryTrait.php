@@ -98,6 +98,7 @@ trait FactoryTrait
         $user->showProfileFollowings = true;
         $user->showProfileSubscriptions = true;
         $user->hideAdult = $hideAdult;
+        $user->apDiscoverable = true;
         $user->about = $about;
         if ($addImage) {
             $user->avatar = $this->createImage(bin2hex(random_bytes(20)).'.png');
@@ -339,6 +340,7 @@ trait FactoryTrait
         $magazine = $factory->createFromDto($dto, $user ?? $this->getUserByUsername('JohnDoe'));
         $magazine->apId = $dto->apId;
         $magazine->apProfileId = $dto->apProfileId;
+        $magazine->apDiscoverable = true;
 
         if (!$dto->apId) {
             $urlGenerator = $this->urlGenerator;

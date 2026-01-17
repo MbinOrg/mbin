@@ -382,6 +382,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
         return $qb
             ->andWhere('u.isDeleted = false')
+            ->andWhere('u.apDiscoverable = true')
             ->andWhere('u.applicationStatus = :status')
             ->setParameter('status', EApplicationStatus::Approved->value)
             ->orderBy('u.lastActive', 'DESC');
@@ -570,6 +571,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere('u.isDeleted = false')
             ->andWhere('u.applicationStatus = :status')
             ->andWhere('u.visibility = :visibility')
+            ->andWhere('u.apDiscoverable = true')
             ->andWhere('u.apDeletedAt IS NULL')
             ->andWhere('u.apTimeoutAt IS NULL');
 
@@ -620,6 +622,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
                 ->andWhere('u.isBanned = false')
                 ->andWhere('u.isDeleted = false')
                 ->andWhere('u.visibility = :visibility')
+                ->andWhere('u.apDiscoverable = true')
                 ->andWhere('u.apDeletedAt IS NULL')
                 ->andWhere('u.apTimeoutAt IS NULL')
                 ->andWhere('u.avatar IS NOT NULL');
