@@ -75,7 +75,7 @@ class EntryPageFactory
                 $this->tagsWrapper->build($tags),
                 $this->mentionsWrapper->build($entry->mentions ?? [], $entry->body)
             ),
-            'commentsEnabled' => true,
+            'commentsEnabled' => !$entry->isLocked,
             'sensitive' => $entry->isAdult(),
             'stickied' => $entry->sticky,
             'published' => $entry->createdAt->format(DATE_ATOM),

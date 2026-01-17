@@ -22,6 +22,7 @@ use App\Factory\ActivityPub\EntryPageFactory;
 use App\Factory\ActivityPub\FlagFactory;
 use App\Factory\ActivityPub\GroupFactory;
 use App\Factory\ActivityPub\InstanceFactory;
+use App\Factory\ActivityPub\LockFactory;
 use App\Factory\ActivityPub\MessageFactory;
 use App\Factory\ActivityPub\PersonFactory;
 use App\Factory\ActivityPub\PostCommentNoteFactory;
@@ -101,6 +102,7 @@ class DocumentationGenerateFederationCommand extends Command
         private readonly UserRepository $userRepository,
         private readonly CollectionInfoWrapper $collectionInfoWrapper,
         private readonly BlockFactory $blockFactory,
+        private readonly LockFactory $lockFactory,
     ) {
         parent::__construct();
     }
@@ -248,6 +250,7 @@ class DocumentationGenerateFederationCommand extends Command
         $activityUserEdit = $this->updateWrapper->buildForActivity($entry);
         $activityUserDelete = $this->deleteWrapper->build($entry, includeContext: false);
         $activityUserDeleteAccount = $this->deleteWrapper->buildForUser($user);
+        $activityUserLock = $this->lockFactory->build($user2, $entry);
 
         $magazineBan = new MagazineBan($magazine, $user, $user2, 'A very specific reason', \DateTimeImmutable::createFromFormat('Y-m-d', '2025-01-01'));
         $this->entityManager->persist($magazineBan);
@@ -258,6 +261,7 @@ class DocumentationGenerateFederationCommand extends Command
         $activityModRemovePin = $this->addRemoveFactory->buildRemovePinnedPost($user, $entry);
         $activityModDelete = $this->deleteWrapper->adjustDeletePayload($user, $entryComment, false);
         $activityModBan = $this->blockFactory->createActivityFromMagazineBan($magazineBan);
+        $activityModLock = $this->lockFactory->build($user, $entry);
 
         $activityMagAnnounce = $this->announceWrapper->build($magazine, $entryCreate);
         $activityAdminBan = $this->blockFactory->createActivityFromInstanceBan($user2, $user);
@@ -296,10 +300,12 @@ class DocumentationGenerateFederationCommand extends Command
             '%activity_user_update_content%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityUserEdit, false), $jsonFlags),
             '%activity_user_delete%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityUserDelete, false), $jsonFlags),
             '%activity_user_delete_account%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityUserDeleteAccount, false), $jsonFlags),
+            '%activity_user_lock%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityUserLock, false), $jsonFlags),
             '%activity_mod_add_mod%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityModAddMod, false), $jsonFlags),
             '%activity_mod_remove_mod%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityModRemoveMod, false), $jsonFlags),
             '%activity_mod_add_pin%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityModAddPin, false), $jsonFlags),
             '%activity_mod_remove_pin%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityModRemovePin, false), $jsonFlags),
+            '%activity_mod_lock%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityModLock, false), $jsonFlags),
             '%activity_mod_delete%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityModDelete, false), $jsonFlags),
             '%activity_mod_ban%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityModBan, false), $jsonFlags),
             '%activity_mag_announce%' => json_encode($this->activityJsonBuilder->buildActivityJson($activityMagAnnounce, false), $jsonFlags),

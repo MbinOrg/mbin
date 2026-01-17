@@ -94,9 +94,18 @@
                             </li>
                         {% endif %}
                         <li>
-                            <a class="stretched-link"
-                               href="{{ path('post_comment_create', {magazine_name: post.magazine.name, post_id: post.id, slug: post.slug|length ? post.slug : '-'}) }}"
-                               data-action="subject#getForm">{{ 'reply'|trans }}</a>
+                            {% if not post.isLocked %}
+                                <a class="stretched-link"
+                                   href="{{ path('post_comment_create', {magazine_name: post.magazine.name, post_id: post.id, slug: post.slug|length ? post.slug : '-'}) }}"
+                                   data-action="subject#getForm">
+                                    {{ 'reply'|trans }}
+                                </a>
+                            {% else %}
+                                <span class="stretched-link">
+                                    <i class="fa fa-lock" aria-hidden="true"></i>
+                                    {{ 'reply'|trans }}
+                                </span>
+                            {% endif %}
                         </li>
                         {% if not is_route_name('post_single', true) and ((not showCommentsPreview and post.commentCount > 0) or post.commentCount > 2) %}
                             <li data-post-target="expand">

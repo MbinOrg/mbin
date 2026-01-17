@@ -41,6 +41,10 @@ abstract class MagazineLog
         'ban' => MagazineLogBan::class,
         'moderator_add' => MagazineLogModeratorAdd::class,
         'moderator_remove' => MagazineLogModeratorRemove::class,
+        'entry_locked' => MagazineLogEntryLocked::class,
+        'entry_unlocked' => MagazineLogEntryUnlocked::class,
+        'post_locked' => MagazineLogPostLocked::class,
+        'post_unlocked' => MagazineLogPostUnlocked::class,
     ];
 
     public const CHOICES = [
@@ -57,6 +61,10 @@ abstract class MagazineLog
         'ban',
         'moderator_add',
         'moderator_remove',
+        'entry_locked',
+        'entry_unlocked',
+        'post_locked',
+        'post_unlocked',
     ];
 
     #[ManyToOne(targetEntity: Magazine::class, inversedBy: 'logs')]
