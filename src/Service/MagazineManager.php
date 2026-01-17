@@ -82,6 +82,8 @@ class MagazineManager
                 ['name' => $magazine->name],
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
+            // default new local magazines to be discoverable
+            $magazine->apDiscoverable = $dto->discoverable ?? true;
         }
 
         $this->entityManager->persist($magazine);
@@ -143,6 +145,10 @@ class MagazineManager
         $magazine->rules = $dto->rules;
         $magazine->isAdult = $dto->isAdult;
         $magazine->postingRestrictedToMods = $dto->isPostingRestrictedToMods;
+
+        if (null !== $dto->discoverable) {
+            $magazine->apDiscoverable = $dto->discoverable;
+        }
 
         $this->entityManager->flush();
 

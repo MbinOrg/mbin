@@ -34,6 +34,7 @@ class UserResponseDto implements \JsonSerializable
      *               because it is a costly operation
      */
     public ?int $reputationPoints = null;
+    public ?bool $discoverable = null;
 
     public function __construct(UserDto $dto)
     {
@@ -55,6 +56,7 @@ class UserResponseDto implements \JsonSerializable
         $this->isAdmin = $dto->isAdmin;
         $this->isGlobalModerator = $dto->isGlobalModerator;
         $this->reputationPoints = $dto->reputationPoints;
+        $this->discoverable = $dto->discoverable;
     }
 
     public function jsonSerialize(): mixed
@@ -79,6 +81,7 @@ class UserResponseDto implements \JsonSerializable
             'serverSoftwareVersion' => $this->serverSoftwareVersion,
             'notificationStatus' => $this->notificationStatus,
             'reputationPoints' => $this->reputationPoints,
+            'discoverable' => $this->discoverable,
         ];
     }
 }

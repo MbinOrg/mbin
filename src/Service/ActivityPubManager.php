@@ -379,7 +379,7 @@ class ActivityPubManager
             $user->apFollowersUrl = $actor['followers'] ?? null;
             $user->apAttributedToUrl = $actor['attributedTo'] ?? null;
             $user->apPreferredUsername = $actor['preferredUsername'] ?? null;
-            $user->apDiscoverable = $actor['discoverable'] ?? true;
+            $user->apDiscoverable = $actor['discoverable'] ?? null;
             $user->apManuallyApprovesFollowers = $actor['manuallyApprovesFollowers'] ?? false;
             $user->apPublicUrl = $actor['url'] ?? $actorUrl;
             $user->apDeletedAt = null;
@@ -645,7 +645,7 @@ class ActivityPubManager
             $magazine->apAttributedToUrl = isset($actor['attributedTo']) && \is_string($actor['attributedTo']) ? $actor['attributedTo'] : null;
             $magazine->apFeaturedUrl = $actor['featured'] ?? null;
             $magazine->apPreferredUsername = $actor['preferredUsername'] ?? null;
-            $magazine->apDiscoverable = $actor['discoverable'] ?? true;
+            $magazine->apDiscoverable = $actor['discoverable'] ?? null;
             $magazine->apPublicUrl = $actor['url'] ?? $actorUrl;
             $magazine->apDeletedAt = null;
             $magazine->apTimeoutAt = null;
