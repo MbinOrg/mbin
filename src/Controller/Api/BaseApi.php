@@ -284,20 +284,7 @@ class BaseApi extends AbstractController
             $this->tagLinkRepository,
         );
 
-        if ($response->subject && property_exists($response->subject, 'visibility')) {
-            $response->subject->visibility = 'visible';
-        }
-
-        $toReturn = $response->jsonSerialize();
-        if ($subject) {
-            if ($toReturn['subject'] instanceof \JsonSerializable) {
-                $toReturn['subject'] = $toReturn['subject']->jsonSerialize();
-            }
-
-            $toReturn['subject']['visibility'] = $subject->getVisibility();
-        }
-
-        return $toReturn;
+        return $response->jsonSerialize();
     }
 
     /**

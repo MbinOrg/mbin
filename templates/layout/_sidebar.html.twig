@@ -144,7 +144,18 @@
             {% else %}
                 {% set args = {} %}
             {% endif %}
-            <li><a href="{{ path('feed_rss', args) }}">{{ 'rss'|trans }}</a>
+
+            {% if criteria is defined and criteria %}
+                {% if criteria.getOption('content') is same as 'threads' %}
+                    {% set args = {...args, 'content': 'threads'} %}
+                {% elseif criteria.getOption('content') is same as 'microblog' %}
+                    {% set args = {...args, 'content': 'microblog'} %}
+                {% elseif criteria.getOption('content') is same as 'combined' %}
+                    {% set args = {...args, 'content': 'combined'} %}
+                {% endif %}
+            {% endif %}
+            <li>
+                <a href="{{ path('feed_rss', args) }}">{{ 'rss'|trans }}</a>
             </li>
         </ul>
         <div class="about-seperator"></div>

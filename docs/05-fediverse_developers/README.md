@@ -218,6 +218,12 @@ If a user boosts content:
 %activity_user_delete%
 ```
 
+### Delete own account
+
+```json
+%activity_user_delete_account%
+```
+
 ## Moderator Activities
 
 ### Add or Remove moderator
@@ -266,6 +272,14 @@ When a thread is unpinned:
 
 ```json
 %activity_admin_ban%
+```
+
+### Delete account
+
+If an admin deletes another user's account the activity actually does not reflect that, it looks exactly as if the user deleted their own account.
+
+```json
+%activity_admin_delete_account%
 ```
 
 ## Magazine Activities

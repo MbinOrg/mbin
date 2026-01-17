@@ -211,18 +211,18 @@ class SearchRepository
     {
         $conn = $this->entityManager->getConnection();
         $sql = "
-        SELECT id, created_at, 'entry' AS type FROM entry WHERE ap_id ILIKE :url
+        SELECT id, created_at, 'entry' AS type FROM entry WHERE ap_id = :url
         UNION ALL
-        SELECT id, created_at, 'entry_comment' AS type FROM entry_comment WHERE ap_id ILIKE :url
+        SELECT id, created_at, 'entry_comment' AS type FROM entry_comment WHERE ap_id = :url
         UNION ALL
-        SELECT id, created_at, 'post' AS type FROM post WHERE ap_id ILIKE :url
+        SELECT id, created_at, 'post' AS type FROM post WHERE ap_id = :url
         UNION ALL
-        SELECT id, created_at, 'post_comment' AS type FROM post_comment WHERE ap_id ILIKE :url
+        SELECT id, created_at, 'post_comment' AS type FROM post_comment WHERE ap_id = :url
         ORDER BY created_at DESC
         ";
 
         $pagerfanta = new Pagerfanta(new NativeQueryAdapter($conn, $sql, [
-            'url' => "%$url%",
+            'url' => "$url",
         ], transformer: $this->transformer));
 
         return $pagerfanta->getCurrentPageResults();
