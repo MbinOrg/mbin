@@ -312,12 +312,13 @@ class ContentRepository
         } elseif (Criteria::CONTENT_MICROBLOG === $criteria->content) {
             $innerSql = "$postSql $orderBy";
         } else {
-            $innerSql = "$entrySql UNION ALL $postSql $orderBy";
+            $innerSql = "$entrySql UNION ALL $postSql";
         }
 
         $sql = "SELECT content.* FROM ($innerSql) content
             INNER JOIN \"user\" u ON content.user_id = u.id
-            $outerWhere";
+            $outerWhere
+            $orderBy";
 
         if (!str_contains($sql, ':loggedInUser')) {
             $parameters = array_filter($parameters, fn ($key) => 'loggedInUser' !== $key, mode: ARRAY_FILTER_USE_KEY);

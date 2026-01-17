@@ -16,6 +16,8 @@ use App\Entity\Magazine;
 use App\Entity\MagazineBan;
 use App\Entity\MagazineLog;
 use App\Entity\MagazineLogBan;
+use App\Entity\MagazineLogModeratorAdd;
+use App\Entity\MagazineLogModeratorRemove;
 use App\Entity\Moderator;
 use App\Entity\User;
 use App\Repository\InstanceRepository;
@@ -117,21 +119,27 @@ class MagazineFactory
     public function createLogDto(MagazineLog $log): MagazineLogResponseDto
     {
         $magazine = $this->createSmallDto($log->magazine);
-        $moderator = $this->userFactory->createSmallDto($log->user);
-        $createdAt = $log->createdAt;
         $type = $log->getType();
-        $subject = null;
-        if ('log_ban' === $type) {
-            /**
-             * @var MagazineLogBan $log
-             */
-            $subject = $this->createBanDto($log->ban);
+        $createdAt = $log->createdAt;
+
+        if ($log instanceof MagazineLogModeratorAdd || $log instanceof MagazineLogModeratorRemove) {
+            $moderator = $this->userFactory->createSmallDto($log->actingUser);
+            $moderatorSubject = $this->userFactory->createSmallDto($log->user);
+
+            return MagazineLogResponseDto::createModeratorAddRemove($magazine, $moderator, $createdAt, $type, $moderatorSubject);
+        } elseif ($log instanceof MagazineLogBan) {
+            $moderator = $this->userFactory->createSmallDto($log->user);
+            $banSubject = $this->createBanDto($log->ban);
             if ('unban' === $log->meta) {
                 $type = 'log_unban';
             }
-        }
 
-        return MagazineLogResponseDto::create($magazine, $moderator, $createdAt, $type, $subject);
+            return MagazineLogResponseDto::createBanUnban($magazine, $moderator, $createdAt, $type, $banSubject);
+        } else {
+            $moderator = $this->userFactory->createSmallDto($log->user);
+
+            return MagazineLogResponseDto::create($magazine, $moderator, $createdAt, $type);
+        }
     }
 
     public function createResponseDto(MagazineDto|Magazine $magazine): MagazineResponseDto
