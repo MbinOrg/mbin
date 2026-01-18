@@ -11,7 +11,7 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\PostMount;
 
 #[AsTwigComponent('post')]
-final class PostComponent
+class PostComponent
 {
     public Post $post;
     public bool $isSingle = false;

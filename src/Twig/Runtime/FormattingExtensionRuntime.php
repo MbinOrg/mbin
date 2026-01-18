@@ -18,15 +18,52 @@ class FormattingExtensionRuntime implements RuntimeExtensionInterface
         return $value ? $this->markdownConverter->convertToHtml($value, $sourceType) : '';
     }
 
-    public function getShortSentence(?string $val, $length = 330, $striptags = false): string
+    public function getShortSentence(?string $val, $length = 330, $striptags = false, bool $onlyFirstParagraph = true): string
     {
         if (!$val) {
             return '';
         }
-        $body = $striptags ? strip_tags(html_entity_decode($val)) : $val;
-        $body = wordwrap(trim($body), $length);
-        $body = explode("\n", $body);
 
-        return trim($body[0]).(isset($body[1]) ? '...' : '');
+        $body = $striptags ? strip_tags(html_entity_decode($val)) : $val;
+
+        if ($onlyFirstParagraph) {
+            $body = wordwrap(trim($body), $length);
+            $lines = explode("\n", $body);
+
+            $shortened = trim($lines[0]);
+            $ellipsis = isset($lines[1]) ? ' ...' : '';
+        } elseif (\strlen($body) <= $length) {
+            $shortened = $body;
+            $ellipsis = '';
+        } else {
+            $sentenceTolerance = 12;
+            $limit = $length - 1;
+            $sentenceDelimiters = ['. ', ', ', '; ', "\n", "\t", "\f", "\v"];
+            $sentencePreLimit = self::strrposMulti($body, $sentenceDelimiters, $limit);
+            if ($sentencePreLimit > -1 && $sentencePreLimit >= $length - $sentenceTolerance) {
+                $limit = $sentencePreLimit;
+                $ellipsis = ' ...';
+            } else {
+                $ellipsis = '...';
+            }
+
+            $shortened = trim(substr($body, 0, $limit + 1));
+        }
+
+        return $shortened.$ellipsis;
+    }
+
+    private static function strrposMulti(string $haystack, array $needle, int $offset): int
+    {
+        $offset = $offset - \strlen($haystack);
+        $pos = -1;
+        foreach ($needle as $n) {
+            $idx = strrpos($haystack, $n, $offset);
+            if (false !== $idx) {
+                $pos = max($pos, $idx);
+            }
+        }
+
+        return $pos;
     }
 }
