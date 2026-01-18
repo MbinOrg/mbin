@@ -534,22 +534,23 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->getResult();
     }
 
-    public function findUsersForMagazine(Magazine $magazine, ?bool $federated = false, $limit = 200, bool $limitTime = false, bool $requireAvatar = false): array
+    public function findUsersForMagazine(Magazine $magazine, ?bool $federated = false, int $limit = 200, bool $limitTime = false, bool $requireAvatar = false): array
     {
         $conn = $this->_em->getConnection();
         $timeWhere = $limitTime ? "AND created_at > now() - '30 days'::interval" : '';
         $sql = "
-        (SELECT count(id), user_id FROM entry WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT 50)
-        UNION
-        (SELECT count(id), user_id FROM entry_comment WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT 50)
-        UNION
-        (SELECT count(id), user_id FROM post WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT 50)
-        UNION
-        (SELECT count(id), user_id FROM post_comment WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT 50)
-        ORDER BY count DESC";
+        (SELECT count(id), user_id FROM entry WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT :limit)
+        UNION ALL
+        (SELECT count(id), user_id FROM entry_comment WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT :limit)
+        UNION ALL
+        (SELECT count(id), user_id FROM post WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT :limit)
+        UNION ALL
+        (SELECT count(id), user_id FROM post_comment WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT :limit)
+        ";
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('magazineId', $magazine->getId());
+        $stmt->bindValue('limit', $limit);
         $counter = $stmt->executeQuery()->fetchAllAssociative();
 
         $output = [];
@@ -562,6 +563,9 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
                 $output[$user_id] = ['count' => $count, 'user_id' => $user_id];
             }
         }
+
+        // sort the array after the counts from the different table are added up
+        usort($output, fn ($a, $b) => $b['count'] - $a['count']);
 
         $user = array_map(fn ($item) => $item['user_id'], $output);
 
@@ -581,8 +585,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
         if (null !== $federated) {
             if ($federated) {
-                $qb->andWhere('u.apId IS NOT NULL')
-                    ->andWhere('u.apDiscoverable = true');
+                $qb->andWhere('u.apId IS NOT NULL');
             } else {
                 $qb->andWhere('u.apId IS NULL');
             }
@@ -603,7 +606,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             if (isset($users[$item['user_id']])) {
                 $res[] = $users[$item['user_id']];
             }
-            if (\count($res) >= 35) {
+            if (\count($res) >= $limit) {
                 break;
             }
         }
