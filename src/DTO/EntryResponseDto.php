@@ -38,6 +38,7 @@ class EntryResponseDto implements \JsonSerializable
     public bool $isOc = false;
     public bool $isAdult = false;
     public bool $isPinned = false;
+    public bool $isLocked = false;
     public ?\DateTimeImmutable $createdAt = null;
     public ?\DateTimeImmutable $editedAt = null;
     public ?\DateTime $lastActive = null;
@@ -80,6 +81,7 @@ class EntryResponseDto implements \JsonSerializable
         ?int $uv = null,
         ?int $dv = null,
         ?bool $isPinned = null,
+        ?bool $isLocked = null,
         ?string $visibility = null,
         ?int $favouriteCount = null,
         ?bool $isOc = null,
@@ -111,6 +113,7 @@ class EntryResponseDto implements \JsonSerializable
         $dto->uv = $uv;
         $dto->dv = $dv;
         $dto->isPinned = $isPinned;
+        $dto->isLocked = $isLocked;
         $dto->visibility = $visibility;
         $dto->favourites = $favouriteCount;
         $dto->isOc = $isOc;
@@ -170,6 +173,7 @@ class EntryResponseDto implements \JsonSerializable
             'isOc' => $this->isOc,
             'isAdult' => $this->isAdult,
             'isPinned' => $this->isPinned,
+            'isLocked' => $this->isLocked,
             'createdAt' => $this->createdAt->format(\DateTimeInterface::ATOM),
             'editedAt' => $this->editedAt?->format(\DateTimeInterface::ATOM),
             'lastActive' => $this->lastActive?->format(\DateTimeInterface::ATOM),

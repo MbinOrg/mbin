@@ -158,6 +158,14 @@ class ContentRepository
             }
         }
 
+        $allClause = '';
+        $allClauseU = '';
+        if (!$criteria->moderated && !$criteria->subscribed && !$criteria->magazine && !$criteria->user && !$criteria->domain && !$criteria->tag) {
+            // hide all posts from non-discoverable users and magazines from /all (and only from there)
+            $allClause = 'm.ap_discoverable = true OR m.ap_discoverable IS NULL';
+            $allClauseU = 'u.ap_discoverable = true OR u.ap_discoverable IS NULL';
+        }
+
         $favClauseEntry = '';
         $favClausePost = '';
         if ($user && $criteria->favourite) {
@@ -226,6 +234,7 @@ class ContentRepository
             $hideAdultClause,
             $visibilityClauseM,
             $visibilityClauseC,
+            $allClause,
         ]);
 
         $postWhere = SqlHelpers::makeWhereString([
@@ -245,11 +254,13 @@ class ContentRepository
             $hideAdultClause,
             $visibilityClauseM,
             $visibilityClauseC,
+            $allClause,
         ]);
 
         $outerWhere = SqlHelpers::makeWhereString([
             $visibilityClauseU,
             $deletedClause,
+            $allClauseU,
         ]);
 
         $orderings = [];
@@ -301,12 +312,13 @@ class ContentRepository
         } elseif (Criteria::CONTENT_MICROBLOG === $criteria->content) {
             $innerSql = "$postSql $orderBy";
         } else {
-            $innerSql = "$entrySql UNION ALL $postSql $orderBy";
+            $innerSql = "$entrySql UNION ALL $postSql";
         }
 
         $sql = "SELECT content.* FROM ($innerSql) content
             INNER JOIN \"user\" u ON content.user_id = u.id
-            $outerWhere";
+            $outerWhere
+            $orderBy";
 
         if (!str_contains($sql, ':loggedInUser')) {
             $parameters = array_filter($parameters, fn ($key) => 'loggedInUser' !== $key, mode: ARRAY_FILTER_USE_KEY);

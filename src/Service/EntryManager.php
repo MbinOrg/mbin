@@ -8,7 +8,9 @@ use App\DTO\EntryDto;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\Magazine;
+use App\Entity\MagazineLogEntryLocked;
 use App\Entity\MagazineLogEntryPinned;
+use App\Entity\MagazineLogEntryUnlocked;
 use App\Entity\MagazineLogEntryUnpinned;
 use App\Entity\User;
 use App\Event\Entry\EntryBeforeDeletedEvent;
@@ -16,6 +18,7 @@ use App\Event\Entry\EntryBeforePurgeEvent;
 use App\Event\Entry\EntryCreatedEvent;
 use App\Event\Entry\EntryDeletedEvent;
 use App\Event\Entry\EntryEditedEvent;
+use App\Event\Entry\EntryLockEvent;
 use App\Event\Entry\EntryPinEvent;
 use App\Event\Entry\EntryRestoredEvent;
 use App\Exception\InstanceBannedException;
@@ -195,6 +198,7 @@ class EntryManager implements ContentManagerInterface
         $entry->body = $dto->body;
         $entry->lang = $dto->lang;
         $entry->isAdult = $dto->isAdult || $entry->magazine->isAdult;
+        $entry->isLocked = $dto->isLocked;
         $entry->slug = $this->slugger->slug($dto->title);
         $entry->visibility = $dto->visibility;
         $oldImage = $entry->image;
@@ -327,6 +331,23 @@ class EntryManager implements ContentManagerInterface
         if (null !== $entry->magazine->apFeaturedUrl) {
             $this->apHttpClient->invalidateCollectionObjectCache($entry->magazine->apFeaturedUrl);
         }
+
+        return $entry;
+    }
+
+    public function toggleLock(Entry $entry, ?User $actor): Entry
+    {
+        $entry->isLocked = !$entry->isLocked;
+
+        if ($entry->isLocked) {
+            $log = new MagazineLogEntryLocked($entry, $actor);
+        } else {
+            $log = new MagazineLogEntryUnlocked($entry, $actor);
+        }
+        $this->entityManager->persist($log);
+        $this->entityManager->flush();
+
+        $this->dispatcher->dispatch(new EntryLockEvent($entry, $actor));
 
         return $entry;
     }

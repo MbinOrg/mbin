@@ -1,0 +1,17 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://kbin.test/contexts"
+    ],
+    "id": "SCRUBBED_ID",
+    "type": "Lock",
+    "actor": "https://kbin.test/u/owner",
+    "to": [
+        "https://www.w3.org/ns/activitystreams#Public"
+    ],
+    "cc": [
+        "https://kbin.test/m/test",
+        "https://kbin.test/u/owner/followers"
+    ],
+    "object": "SCRUBBED_ID"
+}
