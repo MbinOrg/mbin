@@ -25,21 +25,30 @@
             id="post-{{ post.id }}"
             data-controller="subject preview mentions html-refresh"
             data-action="notifications:Notification@window->subject#notification">
-            <header>
-                {% if post.visibility in ['visible', 'private'] or (post.visibility is same as 'trashed' and this.canSeeTrashed) %}
-                    <h2>
-                        {% if post.isAdult %}<small class="badge danger">18+</small>{% endif %}
+            {% with %}
+                {% set hasTitle = post.visibility in ['visible', 'private'] or (post.visibility is same as 'trashed' and this.canSeeTrashed) %}
+                {% set isAdult = post.isAdult %}
+                {% set hasLang = post.lang is not same as app.request.locale and post.lang is not same as kbin_default_lang() %}
+                {% set isModDeleted = post.visibility is same as 'trashed' %}
+                {% set isUserDeleted = post.visibility is same as 'soft_deleted' %}
+                {% set needsHeader = (hasTitle and (isAdult or hasLang)) or isModDeleted or isUserDeleted %}
 
-                        {% if post.lang is not same as app.request.locale and post.lang is not same as kbin_default_lang() %}
-                            <small class="badge-lang kbin-bg">{{ post.lang|language_name }}</small>
-                        {% endif %}
-                    </h2>
-                {% elseif(post.visibility is same as 'trashed') %}
-                    <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
-                {% elseif(post.visibility is same as 'soft_deleted') %}
-                    <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
-                {% endif %}
-            </header>
+                <header {% if not needsHeader %} style="margin: 0 0 var(--kbin-entry-element-spacing) 0;" {% endif %}>
+                    {% if hasTitle %}
+                        <h2>
+                            {% if isAdult %}<small class="badge danger">18+</small>{% endif %}
+
+                            {% if hasLang %}
+                                <small class="badge-lang kbin-bg">{{ post.lang|language_name }}</small>
+                            {% endif %}
+                        </h2>
+                    {% elseif(isModDeleted) %}
+                        <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
+                    {% elseif(isUserDeleted) %}
+                        <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
+                    {% endif %}
+                </header>
+            {% endwith %}
             {% if post.visibility in ['visible', 'private'] or (post.visibility is same as 'trashed' and this.canSeeTrashed) %}
                 {% if post.body %}
                     <div class="content short-desc">
