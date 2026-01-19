@@ -61,6 +61,12 @@ jobs:
           key: ${{ runner.os }}-composer-no-dev-${{ hashFiles('**/composer.lock') }}
 
       - run: cp .env.example .env
+
+      - run: composer install --no-scripts --no-dev --no-progress
+        name: Composer install without scripts
+
+      - run: composer dump-env prod
+
       - name: Composer install
         run: composer install --no-dev --no-progress
 
