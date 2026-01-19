@@ -54,7 +54,8 @@ class DeleteUserHandler extends MbinMessageHandler
         if (!$user) {
             throw new UnrecoverableMessageHandlingException('User not found');
         } elseif ($user->isDeleted && null === $user->markedForDeletionAt) {
-            throw new UnrecoverableMessageHandlingException('User already deleted');
+            // user already deleted
+            return;
         }
 
         $isLocal = null === $user->apId;
