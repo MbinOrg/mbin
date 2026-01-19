@@ -51,6 +51,7 @@ class MagazineCreateApiTest extends WebTestCase
                 'description' => $description,
                 'rules' => $rules,
                 'isAdult' => false,
+                'discoverable' => false,
             ],
             server: ['HTTP_AUTHORIZATION' => $token]
         );
@@ -65,6 +66,7 @@ class MagazineCreateApiTest extends WebTestCase
         self::assertEquals($description, $jsonData['description']);
         self::assertEquals($rules, $jsonData['rules']);
         self::assertFalse($jsonData['isAdult']);
+        self::assertFalse($jsonData['discoverable']);
     }
 
     public function testApiCannotCreateInvalidMagazine(): void

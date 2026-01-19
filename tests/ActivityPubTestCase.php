@@ -12,6 +12,7 @@ use App\Factory\ActivityPub\EntryCommentNoteFactory;
 use App\Factory\ActivityPub\FlagFactory;
 use App\Factory\ActivityPub\GroupFactory;
 use App\Factory\ActivityPub\InstanceFactory;
+use App\Factory\ActivityPub\LockFactory;
 use App\Factory\ActivityPub\PersonFactory;
 use App\Factory\ActivityPub\PostCommentNoteFactory;
 use App\Factory\ActivityPub\PostNoteFactory;
@@ -53,6 +54,7 @@ class ActivityPubTestCase extends WebTestCase
     protected FollowResponseWrapper $followResponseWrapper;
     protected FlagFactory $flagFactory;
     protected BlockFactory $blockFactory;
+    protected LockFactory $lockFactory;
     protected UserFollowRequestRepository $userFollowRequestRepository;
 
     protected MarkdownConverter $apMarkdownConverter;
@@ -81,6 +83,7 @@ class ActivityPubTestCase extends WebTestCase
         $this->followResponseWrapper = $this->getService(FollowResponseWrapper::class);
         $this->flagFactory = $this->getService(FlagFactory::class);
         $this->blockFactory = $this->getService(BlockFactory::class);
+        $this->lockFactory = $this->getService(LockFactory::class);
         $this->userFollowRequestRepository = $this->getService(UserFollowRequestRepository::class);
 
         $this->apMarkdownConverter = $this->getService(MarkdownConverter::class);

@@ -56,6 +56,7 @@ class MagazineUpdateApiTest extends WebTestCase
                 'description' => $description,
                 'rules' => $rules,
                 'isAdult' => true,
+                'discoverable' => false,
             ],
             server: ['HTTP_AUTHORIZATION' => $token]
         );
@@ -70,6 +71,7 @@ class MagazineUpdateApiTest extends WebTestCase
         self::assertEquals($description, $jsonData['description']);
         self::assertEquals($rules, $jsonData['rules']);
         self::assertTrue($jsonData['isAdult']);
+        self::assertFalse($jsonData['discoverable']);
     }
 
     public function testApiCannotUpdateMagazineWithInvalidParams(): void

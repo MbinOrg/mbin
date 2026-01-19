@@ -9,10 +9,12 @@ use App\Entity\EntryComment;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\Exception\EntryLockedException;
 use App\Exception\InstanceBannedException;
 use App\Exception\InvalidApPostException;
 use App\Exception\InvalidWebfingerException;
 use App\Exception\PostingRestrictedException;
+use App\Exception\PostLockedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Exception\UserBlockedException;
@@ -116,6 +118,8 @@ class CreateHandler extends MbinMessageHandler
             $this->logger->info('[CreateHandler::doWork] Did not create the post, because the user\'s instance is banned');
         } catch (UserBlockedException $e) {
             $this->logger->info('[CreateHandler::doWork] Did not create the message, because the user is blocked by one of the receivers');
+        } catch (EntryLockedException|PostLockedException) {
+            $this->logger->info('[CreateHandler::doWork] Did not create the comment, because the entry/post is locked');
         }
     }
 
@@ -124,6 +128,8 @@ class CreateHandler extends MbinMessageHandler
      * @throws UserBannedException
      * @throws UserDeletedException
      * @throws InstanceBannedException
+     * @throws EntryLockedException
+     * @throws PostLockedException
      */
     private function handleChain(array $object, bool $stickyIt, ?array $fullCreatePayload): void
     {

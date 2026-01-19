@@ -19,6 +19,7 @@ use App\Message\ActivityPub\Inbox\DislikeMessage;
 use App\Message\ActivityPub\Inbox\FlagMessage;
 use App\Message\ActivityPub\Inbox\FollowMessage;
 use App\Message\ActivityPub\Inbox\LikeMessage;
+use App\Message\ActivityPub\Inbox\LockMessage;
 use App\Message\ActivityPub\Inbox\RemoveMessage;
 use App\Message\ActivityPub\Inbox\UpdateMessage;
 use App\Message\Contracts\MessageInterface;
@@ -236,6 +237,9 @@ class ActivityHandler extends MbinMessageHandler
             case 'Block':
                 $this->bus->dispatch(new BlockMessage($payload));
                 break;
+            case 'Lock':
+                $this->bus->dispatch(new LockMessage($payload));
+                break;
         }
     }
 
@@ -262,6 +266,9 @@ class ActivityHandler extends MbinMessageHandler
                 break;
             case 'Block':
                 $this->bus->dispatch(new BlockMessage($payload));
+                break;
+            case 'Lock':
+                $this->bus->dispatch(new LockMessage($payload));
                 break;
         }
     }

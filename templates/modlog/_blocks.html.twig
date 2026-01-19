@@ -90,3 +90,31 @@
     <a href="{{ entry_url(log.entry) }}">{{ log.entry.shortTitle(300) }}</a>
     {% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.magazine, showAvatar: showIcons, showNewIcon: showNewIcons}) -}}{%- endif -%}
 {% endblock %}
+
+{% block log_entry_locked %}
+    {{ component('user_inline', {user: log.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }}
+    {{ 'magazine_log_entry_locked'|trans }}
+    <a href="{{ entry_url(log.entry) }}">{{ log.entry.shortTitle(300) }}</a>
+    {% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.magazine, showAvatar: showIcons, showNewIcon: showNewIcons}) -}}{%- endif -%}
+{% endblock %}
+
+{% block log_entry_unlocked %}
+    {{ component('user_inline', {user: log.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }}
+    {{ 'magazine_log_entry_unlocked'|trans }}
+    <a href="{{ entry_url(log.entry) }}">{{ log.entry.shortTitle(300) }}</a>
+    {% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.magazine, showAvatar: showIcons, showNewIcon: showNewIcons}) -}}{%- endif -%}
+{% endblock %}
+
+{% block log_post_locked %}
+    {{ component('user_inline', {user: log.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }}
+    {{ 'magazine_log_entry_locked'|trans }}
+    <a href="{{ post_url(log.post) }}">{{ log.post.shortTitle(300) }}</a>
+    {% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.magazine, showAvatar: showIcons, showNewIcon: showNewIcons}) -}}{%- endif -%}
+{% endblock %}
+
+{% block log_post_unlocked %}
+    {{ component('user_inline', {user: log.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }}
+    {{ 'magazine_log_entry_unlocked'|trans }}
+    <a href="{{ post_url(log.post) }}">{{ log.post.shortTitle(300) }}</a>
+    {% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.magazine, showAvatar: showIcons, showNewIcon: showNewIcons}) -}}{%- endif -%}
+{% endblock %}

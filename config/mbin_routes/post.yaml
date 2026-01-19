@@ -137,6 +137,14 @@ post_pin:
   requirements:
     post_id: \d+
 
+post_lock:
+    controller: App\Controller\Post\PostLockController
+    defaults: { slug: - }
+    path: /m/{magazine_name}/p/{post_id}/{slug}/lock
+    methods: [ POST ]
+    requirements:
+        post_id: \d+
+
 post_voters:
   controller: App\Controller\Post\PostVotersController
   defaults: { slug: -, }
