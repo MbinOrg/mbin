@@ -182,6 +182,10 @@ class ActivityPubManager
         }
 
         $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
+        if (!$user) {
+            // also try the public URL if it was not found by the profile id
+            $user = $this->userRepository->findOneBy(['apPublicUrl' => $actorUrl]);
+        }
         if ($user instanceof User) {
             $this->logger->debug('[ActivityPubManager::findActorOrCreate] Found remote user for url: "{url}" in db', ['url' => $actorUrl]);
             if ($user->apId && !$user->isDeleted && !$user->isSoftDeleted() && !$user->isTrashed() && (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
@@ -375,7 +379,7 @@ class ActivityPubManager
             $user->apFollowersUrl = $actor['followers'] ?? null;
             $user->apAttributedToUrl = $actor['attributedTo'] ?? null;
             $user->apPreferredUsername = $actor['preferredUsername'] ?? null;
-            $user->apDiscoverable = $actor['discoverable'] ?? true;
+            $user->apDiscoverable = $actor['discoverable'] ?? null;
             $user->apManuallyApprovesFollowers = $actor['manuallyApprovesFollowers'] ?? false;
             $user->apPublicUrl = $actor['url'] ?? $actorUrl;
             $user->apDeletedAt = null;
@@ -641,7 +645,7 @@ class ActivityPubManager
             $magazine->apAttributedToUrl = isset($actor['attributedTo']) && \is_string($actor['attributedTo']) ? $actor['attributedTo'] : null;
             $magazine->apFeaturedUrl = $actor['featured'] ?? null;
             $magazine->apPreferredUsername = $actor['preferredUsername'] ?? null;
-            $magazine->apDiscoverable = $actor['discoverable'] ?? true;
+            $magazine->apDiscoverable = $actor['discoverable'] ?? null;
             $magazine->apPublicUrl = $actor['url'] ?? $actorUrl;
             $magazine->apDeletedAt = null;
             $magazine->apTimeoutAt = null;

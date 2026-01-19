@@ -82,6 +82,10 @@ class UserSettingsType extends AbstractType
                 'autocomplete' => true,
                 'choices' => $directMessageSettingChoices,
             ])
+            ->add('discoverable', CheckboxType::class, [
+                'required' => false,
+                'help' => 'user_discoverable_help',
+            ])
             ->add('featuredMagazines', TextareaType::class, ['required' => false])
             ->add('preferredLanguages', LanguageType::class, [
                 'required' => false,

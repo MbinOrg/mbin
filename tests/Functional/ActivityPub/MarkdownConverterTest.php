@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\ActivityPub;
 
+use App\Entity\User;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 use function PHPUnit\Framework\assertEquals;
@@ -32,6 +33,9 @@ class MarkdownConverterTest extends ActivityPubFunctionalTestCase
         // generate the local user 'someUser'
         $user = $this->getUserByUsername('someUser', email: 'someUser@kbin.test');
         $this->getMagazineByName('someMagazine', $user);
+        $mastodonUser = new User('SomeUser@mastodon.tld', 'SomeUser@mastodon.tld', '', 'Person', 'https://mastodon.tld/users/SomeAccount');
+        $mastodonUser->apPublicUrl = 'https://mastodon.tld/@SomeAccount';
+        $this->entityManager->persist($mastodonUser);
     }
 
     #[DataProvider('htmlMentionsProvider')]
@@ -85,6 +89,18 @@ class MarkdownConverterTest extends ActivityPubFunctionalTestCase
                 ],
                 'expectedMentions' => ['@someMagazine@kbin.test'],
                 'name' => 'Local magazine mention',
+            ],
+            [
+                'html' => '<a href=\"https://mastodon.tld/@SomeAccount\" class=\"u-url mention\">@<span>SomeAccount</span></a></span>',
+                'apTags' => [
+                    [
+                        'type' => 'Mention',
+                        'href' => 'https://mastodon.tld/users/SomeAccount',
+                        'name' => '@SomeAccount@mastodon.tld',
+                    ],
+                ],
+                'expectedMentions' => ['@SomeAccount@mastodon.tld'],
+                'name' => 'Mastodon account mention',
             ],
         ];
     }

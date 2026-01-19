@@ -36,6 +36,7 @@
             "sensitive": false,
             "attributedTo": "https://kbin.test/m/test/moderators",
             "postingRestrictedToMods": false,
+            "discoverable": true,
             "endpoints": {
                 "sharedInbox": "https://kbin.test/f/inbox"
             },

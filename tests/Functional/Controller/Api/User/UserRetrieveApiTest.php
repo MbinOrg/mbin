@@ -31,6 +31,7 @@ class UserRetrieveApiTest extends WebTestCase
         'notifyOnUserSignup',
         'directMessageSetting',
         'frontDefaultContent',
+        'discoverable',
     ];
     public const NUM_USERS = 10;
 
