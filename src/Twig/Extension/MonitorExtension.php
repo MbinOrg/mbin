@@ -39,7 +39,7 @@ class MonitorExtension extends AbstractExtension
 
         $label = $this->getLabelTitle($profile);
         $this->monitor->startTwigRendering($label, $profile->getType());
-        $this->runningTemplates[$label] = $label;
+        $this->runningTemplates[] = $label;
     }
 
     /**
@@ -57,14 +57,14 @@ class MonitorExtension extends AbstractExtension
         $profile->leave();
 
         $key = $this->getLabelTitle($profile);
-        if (!\array_key_exists($key, $this->runningTemplates)) {
-            $this->logger->warning('Trying to leave a node, but we have not entered it, yet {node}', ['node' => $key]);
+        $popped = array_pop($this->runningTemplates);
+        if ($popped !== $key) {
+            $this->logger->warning('Trying to leave a node, but the last entered one is of a different template: {popped} !== {key}', ['popped' => $popped, 'key' => $key]);
 
             return;
         }
 
         $this->monitor->endTwigRendering($key, $profile->getMemoryUsage(), $profile->getPeakMemoryUsage(), $profile->getName(), $profile->getType(), $profile->getDuration() * 1000);
-        unset($this->runningTemplates[$key]);
     }
 
     public function getNodeVisitors(): array
