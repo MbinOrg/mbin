@@ -1156,8 +1156,8 @@ monitoring_http_method: HTTP Method
 monitoring_url: URL
 monitoring_request_successful: Successful
 monitoring_user_type: User Type
-monitoring_path: Route/Transport
-monitoring_handler: Controller/Message class
+monitoring_path: Route/Message class
+monitoring_handler: Controller/Transport
 monitoring_started: Started
 monitoring_twig_renders: Twig Renders
 monitoring_curl_requests: Curl Requests
@@ -1168,6 +1168,7 @@ monitoring_duration_overall: Other
 monitoring_duration_query: Query
 monitoring_duration_twig_render: Twit Render
 monitoring_duration_curl_request: Curl Request
+monitoring_duration_sending_response: Sending Response
 monitoring_dont_format_query: don't format query
 monitoring_format_query: format query
 monitoring_dont_show_parameters: don't show parameters

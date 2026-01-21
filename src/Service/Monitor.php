@@ -26,6 +26,8 @@ class Monitor
      * @var array<array{level: int, render: MonitoringTwigRender}>
      */
     protected array $runningTwigTemplates = [];
+    protected ?float $startSendingResponseTime = null;
+    protected ?float $endSendingResponseTime = null;
 
     public function __construct(
         protected readonly EntityManagerInterface $entityManager,
@@ -281,5 +283,26 @@ class Monitor
         }
 
         return $duration;
+    }
+
+    public function startSendingResponse(): void
+    {
+        if (null === $this->currentContext || 'response' !== $this->currentContext->executionType) {
+            $this->startSendingResponseTime = null;
+
+            return;
+        }
+        $this->startSendingResponseTime = microtime(true);
+    }
+
+    public function endSendingResponse(): void
+    {
+        if (null === $this->currentContext || 'response' !== $this->currentContext->executionType || null === $this->startSendingResponseTime) {
+            $this->endSendingResponseTime = null;
+
+            return;
+        }
+        $this->endSendingResponseTime = microtime(true);
+        $this->currentContext->responseSendingDurationMilliseconds = ($this->endSendingResponseTime - $this->startSendingResponseTime) * 1000;
     }
 }

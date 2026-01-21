@@ -33,6 +33,7 @@ readonly class KernelEventsSubscriber implements EventSubscriberInterface
             KernelEvents::REQUEST => ['onKernelRequest'],
             KernelEvents::CONTROLLER => ['onKernelController'],
             KernelEvents::EXCEPTION => ['onKernelException'],
+            KernelEvents::RESPONSE => ['onKernelResponse'],
             KernelEvents::TERMINATE => ['onKernelResponseSent'],
         ];
     }
@@ -103,11 +104,20 @@ readonly class KernelEventsSubscriber implements EventSubscriberInterface
         }
     }
 
+    public function onKernelResponse(ResponseEvent $event): void
+    {
+        if (!$this->monitor->shouldRecord() || null === $this->monitor->currentContext) {
+            return;
+        }
+        $this->monitor->startSendingResponse();
+    }
+
     public function onKernelResponseSent(TerminateEvent $event): void
     {
         if (!$this->monitor->shouldRecord() || null === $this->monitor->currentContext) {
             return;
         }
+        $this->monitor->endSendingResponse();
         $response = $event->getResponse();
         $this->monitor->endCurrentExecutionContext($response->getStatusCode());
     }

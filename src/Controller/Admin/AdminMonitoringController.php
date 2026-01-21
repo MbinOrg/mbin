@@ -89,8 +89,9 @@ class AdminMonitoringController extends AbstractController
         $labels = [];
         $overallDurationRemaining = [];
         $queryDurations = [];
-        $twigRenderDurationRemaining = [];
-        $curlRequestDurationRemaining = [];
+        $twigRenderDuration = [];
+        $curlRequestDuration = [];
+        $sendingDuration = [];
 
         foreach ($rawData as $data) {
             $labels[] = $data['path'];
@@ -98,10 +99,12 @@ class AdminMonitoringController extends AbstractController
             $query = round(\floatval($data['query_duration']), 2);
             $twig = round(\floatval($data['twig_render_duration']), 2);
             $curl = round(\floatval($data['curl_request_duration']), 2);
-            $overallDurationRemaining[] = max(0, round($total - $query - $twig - $curl, 2));
+            $sending = round(\floatval($data['response_duration']), 2);
+            $overallDurationRemaining[] = max(0, round($total - $query - $twig - $curl - $sending, 2));
             $queryDurations[] = $query;
-            $twigRenderDurationRemaining[] = $twig;
-            $curlRequestDurationRemaining[] = $curl;
+            $twigRenderDuration[] = $twig;
+            $curlRequestDuration[] = $curl;
+            $sendingDuration[] = $sending;
         }
 
         return [
@@ -123,16 +126,23 @@ class AdminMonitoringController extends AbstractController
                 ],
                 [
                     'label' => $this->translator->trans('monitoring_duration_twig_render'),
-                    'data' => $twigRenderDurationRemaining,
+                    'data' => $twigRenderDuration,
                     'stack' => '1',
                     'backgroundColor' => 'green',
                     'borderRadius' => 5,
                 ],
                 [
                     'label' => $this->translator->trans('monitoring_duration_curl_request'),
-                    'data' => $curlRequestDurationRemaining,
+                    'data' => $curlRequestDuration,
                     'stack' => '1',
                     'backgroundColor' => '#07abaf',
+                    'borderRadius' => 5,
+                ],
+                [
+                    'label' => $this->translator->trans('monitoring_duration_sending_response'),
+                    'data' => $sendingDuration,
+                    'stack' => '1',
+                    'backgroundColor' => 'lightgray',
                     'borderRadius' => 5,
                 ],
             ],

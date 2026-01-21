@@ -39,7 +39,7 @@ class MonitoringRepository extends ServiceEntityRepository
     /**
      * @var int
      *
-     * @return array{path: string, total_duration: float, query_duration: float, twig_render_duration: float, curl_request_duration: float}
+     * @return array{path: string, total_duration: float, query_duration: float, twig_render_duration: float, curl_request_duration: float, response_duration: float}
      *
      * @throws \Doctrine\DBAL\Exception
      */
@@ -50,7 +50,8 @@ class MonitoringRepository extends ServiceEntityRepository
                     SUM(duration_milliseconds) as total_duration,
                     SUM(query_duration_milliseconds) as query_duration,
                     SUM(twig_render_duration_milliseconds) as twig_render_duration,
-                    SUM(curl_request_duration_milliseconds) as curl_request_duration
+                    SUM(curl_request_duration_milliseconds) as curl_request_duration,
+                    SUM(response_sending_duration_milliseconds) as response_duration
                 FROM monitoring_execution_context WHERE created_at > now() - '30 days'::interval GROUP BY path ORDER BY total_duration DESC LIMIT :limit";
         $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($sql);
