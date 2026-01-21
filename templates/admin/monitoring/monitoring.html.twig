@@ -17,9 +17,46 @@
 
     <div class="section" id="content">
         <div class="container">
-            <h2>{{ 'monitoring_route_overview'|trans }}</h2>
-            <p>{{ 'monitoring_route_overview_description'|trans }}</p>
-            {{ render_chart(chart, {'data-chart-unit-value': 'ms'}) }}
+            {% if chart is not same as null %}
+                <h2>{{ 'monitoring_route_overview'|trans }}</h2>
+                <p>{{ 'monitoring_route_overview_description'|trans }}</p>
+                {{ render_chart(chart, {'data-chart-unit-value': 'ms'}) }}
+            {% endif %}
+            {{ form_start(form) }}
+            <div class="row">
+                <div class="col">
+                    {{ form_row(form.executionType) }}
+                </div>
+                <div class="col">
+                    {{ form_row(form.userType) }}
+                </div>
+                <div class="col">
+                    {{ form_row(form.path) }}
+                </div>
+                <div class="col">
+                    {{ form_row(form.handler) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    {{ form_row(form.durationMinimum) }}
+                </div>
+                <div class="col">
+                    {{ form_row(form.hasException) }}
+                </div>
+                <div class="col">
+                    {{ form_row(form.createdFrom) }}
+                </div>
+                <div class="col">
+                    {{ form_row(form.createdTo) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col btn-col">
+                    {{ form_row(form.submit, {'attr': {'class': 'btn btn__primary'}}) }}
+                </div>
+            </div>
+            {{ form_end(form) }}
             <table>
                 <thead>
                     <tr>

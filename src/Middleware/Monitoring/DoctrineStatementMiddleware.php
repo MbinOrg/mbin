@@ -25,7 +25,7 @@ class DoctrineStatementMiddleware extends AbstractStatementMiddleware
         parent::__construct($statement);
     }
 
-    public function bindValue($param, $value, $type = ParameterType::STRING)
+    public function bindValue($param, $value, $type = ParameterType::STRING): bool
     {
         $this->parameters[$param] = $value;
 

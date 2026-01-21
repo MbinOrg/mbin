@@ -35,7 +35,7 @@ readonly class MessengerEventsSubscriber implements EventSubscriberInterface
             return;
         }
         $message = $event->getEnvelope()->getMessage();
-        $this->monitor->startNewExecutionContext('messenger', 'anonymous', \get_class($message), $event->getReceiverName());
+        $this->monitor->startNewExecutionContext('messenger', 'anonymous', $event->getReceiverName(), \get_class($message));
     }
 
     public function onWorkerMessageFailed(WorkerMessageFailedEvent $event): void

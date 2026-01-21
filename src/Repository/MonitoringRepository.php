@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\DTO\MonitoringExecutionContextFilterDto;
 use App\Entity\MonitoringExecutionContext;
 use App\Pagination\Pagerfanta;
 use App\Pagination\QueryAdapter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @method MonitoringExecutionContext|null find($id, $lockMode = null, $lockVersion = null)
@@ -23,12 +24,11 @@ class MonitoringRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,
-        private readonly TranslatorInterface $translator,
     ) {
         parent::__construct($registry, MonitoringExecutionContext::class);
     }
 
-    public function findByPaginated(\Doctrine\Common\Collections\Criteria $criteria): Pagerfanta
+    public function findByPaginated(Criteria $criteria): Pagerfanta
     {
         $qb = $this->createQueryBuilder('m')
             ->addCriteria($criteria);
@@ -59,59 +59,38 @@ class MonitoringRepository extends ServiceEntityRepository
         return $stmt->executeQuery()->fetchAllAssociative();
     }
 
-    public function getChartData(): array
+    public function getFilteredContextsPaginated(MonitoringExecutionContextFilterDto $dto): Pagerfanta
     {
-        $rawData = $this->getOverviewRouteCalls();
-        $labels = [];
-        $overallDurationRemaining = [];
-        $queryDurations = [];
-        $twigRenderDurationRemaining = [];
-        $curlRequestDurationRemaining = [];
-
-        foreach ($rawData as $data) {
-            $labels[] = $data['path'];
-            $total = round(\floatval($data['total_duration']), 2);
-            $query = round(\floatval($data['query_duration']), 2);
-            $twig = round(\floatval($data['twig_render_duration']), 2);
-            $curl = round(\floatval($data['curl_request_duration']), 2);
-            $overallDurationRemaining[] = max(0, round($total - $query - $twig - $curl, 2));
-            $queryDurations[] = $query;
-            $twigRenderDurationRemaining[] = $twig;
-            $curlRequestDurationRemaining[] = $curl;
+        $criteria = new Criteria(orderings: ['createdAt' => 'DESC']);
+        if (null !== $dto->executionType) {
+            $criteria->andWhere(Criteria::expr()->eq('executionType', $dto->executionType));
+        }
+        if (null !== $dto->userType) {
+            $criteria->andWhere(Criteria::expr()->eq('userType', $dto->userType));
+        }
+        if (null !== $dto->path) {
+            $criteria->andWhere(Criteria::expr()->eq('path', $dto->path));
+        }
+        if (null !== $dto->handler) {
+            $criteria->andWhere(Criteria::expr()->eq('handler', $dto->handler));
+        }
+        if (null !== $dto->hasException) {
+            if ($dto->hasException) {
+                $criteria->andWhere(Criteria::expr()->isNotNull('exception'));
+            } else {
+                $criteria->andWhere(Criteria::expr()->isNull('exception'));
+            }
+        }
+        if (null !== $dto->durationMinimum) {
+            $criteria->andWhere(Criteria::expr()->gt('durationMilliseconds', $dto->durationMinimum));
+        }
+        if (null !== $dto->createdFrom) {
+            $criteria->andWhere(Criteria::expr()->gt('createdAt', $dto->createdFrom));
+        }
+        if (null !== $dto->createdTo) {
+            $criteria->andWhere(Criteria::expr()->lt('createdAt', $dto->createdTo));
         }
 
-        return [
-            'labels' => $labels,
-            'datasets' => [
-                [
-                    'label' => $this->translator->trans('monitoring_duration_overall'),
-                    'data' => $overallDurationRemaining,
-                    'stack' => '1',
-                    'backgroundColor' => 'gray',
-                    'borderRadius' => 5,
-                ],
-                [
-                    'label' => $this->translator->trans('monitoring_duration_query'),
-                    'data' => $queryDurations,
-                    'stack' => '1',
-                    'backgroundColor' => '#a3067c',
-                    'borderRadius' => 5,
-                ],
-                [
-                    'label' => $this->translator->trans('monitoring_duration_twig_render'),
-                    'data' => $twigRenderDurationRemaining,
-                    'stack' => '1',
-                    'backgroundColor' => 'green',
-                    'borderRadius' => 5,
-                ],
-                [
-                    'label' => $this->translator->trans('monitoring_duration_curl_request'),
-                    'data' => $curlRequestDurationRemaining,
-                    'stack' => '1',
-                    'backgroundColor' => '#07abaf',
-                    'borderRadius' => 5,
-                ],
-            ],
-        ];
+        return $this->findByPaginated($criteria);
     }
 }
