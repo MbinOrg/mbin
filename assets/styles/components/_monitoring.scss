@@ -7,4 +7,36 @@
       margin-left: 2rem;
     }
   }
+
+  input[type=text],
+  input[type=datetime-local],
+  select {
+    padding: 0.65rem;
+    width: 100%;
+  }
+
+  form div {
+    margin-bottom: .25rem;
+  }
+
+  .row {
+    display: flex;
+    flex-direction: row;
+
+    .col {
+      flex: 1 1;
+      margin-bottom: 0;
+      padding: 0 .25rem;
+    }
+
+    .col-auto {
+      flex: 0 0 auto;
+      margin-bottom: 0;
+    }
+
+    .btn-col {
+      text-align: right;
+      margin: auto;
+    }
+  }
 }

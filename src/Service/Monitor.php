@@ -152,6 +152,7 @@ class Monitor
         $this->logger->debug('[Monitor] ending a query');
         $this->currentQuery->setEndedAt();
         $this->currentQuery->setDuration();
+        $this->currentQuery->cleanParameterArray();
         $this->contextSegments[] = $this->currentQuery;
         $this->currentQuery = null;
     }
