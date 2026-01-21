@@ -23,7 +23,7 @@ class Monitor
     protected ?MonitoringCurlRequest $currentCurlRequest = null;
 
     /**
-     * @var array<string, MonitoringTwigRender>
+     * @var array<array{level: int, render: MonitoringTwigRender}>
      */
     protected array $runningTwigTemplates = [];
 
@@ -167,13 +167,14 @@ class Monitor
         $this->logger->debug('[Monitor] Starting a twig render of {name}, {type} at level {level}', ['name' => $templateName, 'type' => $type]);
 
         $render = new MonitoringTwigRender();
+        $render->templateName = $templateName;
         $render->context = $this->currentContext;
         $render->shortDescription = $templateName;
         $render->setStartedAt();
 
         $maxLevel = 0;
         $parent = null;
-        foreach ($this->runningTwigTemplates as $templateKey => $obj) {
+        foreach ($this->runningTwigTemplates as $obj) {
             if ($obj['level'] > $maxLevel) {
                 $maxLevel = $obj['level'];
                 $parent = $obj['render'];
@@ -184,7 +185,7 @@ class Monitor
             $render->parent = $parent;
         }
 
-        $this->runningTwigTemplates[$templateName] = [
+        $this->runningTwigTemplates[] = [
             'level' => $maxLevel + 1,
             'render' => $render,
         ];
@@ -192,14 +193,21 @@ class Monitor
 
     public function endTwigRendering(string $templateName, ?int $memoryUsage, ?int $peakMemoryUsage, ?string $name, ?string $type, ?float $profilerDuration): void
     {
-        if (!\array_key_exists($templateName, $this->runningTwigTemplates)) {
-            $this->logger->error('[Monitor] Trying to end a twig render but it has not been started ({name})', ['name' => $templateName]);
+        if (0 === \sizeof($this->runningTwigTemplates)) {
+            $this->logger->error('[Monitor] Trying to end a twig render but none have been started ({name})', ['name' => $templateName]);
 
             return;
         }
         $this->logger->debug('[Monitor] Ending a twig render of {name}', ['name' => $templateName]);
 
-        $render = $this->runningTwigTemplates[$templateName]['render'];
+        $lastTemplate = array_pop($this->runningTwigTemplates);
+        /** @var MonitoringTwigRender $render */
+        $render = $lastTemplate['render'];
+
+        if ($templateName !== $render->templateName) {
+            $this->logger->warning('[Monitor] the popped twig render has a different template name than the one that should be ended: {name} !== {renderTemplateName}', ['name' => $templateName, 'renderTemplateName' => $render->templateName]);
+        }
+
         $render->setEndedAt();
         $render->setDuration();
         $render->memoryUsage = $memoryUsage;
@@ -209,7 +217,6 @@ class Monitor
         $render->profilerDuration = $profilerDuration;
 
         $this->contextSegments[] = $render;
-        unset($this->runningTwigTemplates[$templateName]);
     }
 
     public function startCurlRequest(string $targetUrl, string $method): void
