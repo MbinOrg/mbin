@@ -36,13 +36,13 @@ class MonitoringExecutionContext
     public string $executionType;
 
     /**
-     * @var string the path or the message class
+     * @var string the path or the messenger transport
      */
     #[Column]
     public string $path;
 
     /**
-     * @var string the controller or the message handler
+     * @var string the controller or the message class
      */
     #[Column]
     public string $handler;

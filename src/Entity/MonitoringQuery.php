@@ -40,4 +40,12 @@ class MonitoringQuery
     {
         $this->createdAtTraitConstruct();
     }
+
+    public function cleanParameterArray(): void
+    {
+        if (null !== $this->parameters) {
+            $json = json_encode($this->parameters, JSON_INVALID_UTF8_IGNORE);
+            $this->parameters = json_decode($json, true);
+        }
+    }
 }
