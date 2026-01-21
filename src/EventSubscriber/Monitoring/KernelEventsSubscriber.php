@@ -11,6 +11,7 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\HttpKernel\Event\TerminateEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -32,7 +33,7 @@ readonly class KernelEventsSubscriber implements EventSubscriberInterface
             KernelEvents::REQUEST => ['onKernelRequest'],
             KernelEvents::CONTROLLER => ['onKernelController'],
             KernelEvents::EXCEPTION => ['onKernelException'],
-            KernelEvents::RESPONSE => ['onKernelResponse'],
+            KernelEvents::TERMINATE => ['onKernelResponseSent'],
         ];
     }
 
@@ -102,7 +103,7 @@ readonly class KernelEventsSubscriber implements EventSubscriberInterface
         }
     }
 
-    public function onKernelResponse(ResponseEvent $event): void
+    public function onKernelResponseSent(TerminateEvent $event): void
     {
         if (!$this->monitor->shouldRecord() || null === $this->monitor->currentContext) {
             return;
