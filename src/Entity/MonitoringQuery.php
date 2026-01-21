@@ -44,8 +44,16 @@ class MonitoringQuery
     public function cleanParameterArray(): void
     {
         if (null !== $this->parameters) {
-            $json = json_encode($this->parameters, JSON_INVALID_UTF8_IGNORE);
-            $this->parameters = json_decode($json, true);
+            $json = json_encode($this->parameters, JSON_INVALID_UTF8_IGNORE | JSON_UNESCAPED_UNICODE);
+            $newParameters = json_decode($json, true);
+            $newParameters2 = [];
+            foreach ($newParameters as $newParameter) {
+                if (\is_string($newParameter)) {
+                    $newParameter = preg_replace('/[[:cntrl:]]/', '', $newParameter);
+                }
+                $newParameters2[] = $newParameter;
+            }
+            $this->parameters = $newParameters2;
         }
     }
 }
