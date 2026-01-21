@@ -62,6 +62,9 @@ class MonitoringExecutionContext
     #[Column(nullable: true)]
     public ?string $stacktrace = null;
 
+    #[Column(nullable: true)]
+    public ?float $responseSendingDurationMilliseconds = null;
+
     #[Column]
     public float $queryDurationMilliseconds;
 
