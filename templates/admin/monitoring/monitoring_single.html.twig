@@ -32,6 +32,7 @@
                         <tr><td>{{ 'monitoring_queries'|trans({'%count%': 2}) }}</td><td>{{ context.queries.count() }} in {{ queryDuration|round(2) }}ms ({{ (100 / context.duration * queryDuration)|round }}%)</td></tr>
                         <tr><td>{{ 'monitoring_twig_renders'|trans() }}</td><td>{{ context.twigRenders.count() }} in {{ twigDuration|round(2) }}ms ({{ (100 / context.duration * twigDuration)|round }}%)</td></tr>
                         <tr><td>{{ 'monitoring_curl_requests'|trans() }}</td><td>{{ context.curlRequests.count() }} in {{ curlRequestDuration|round(2) }}ms ({{ (100 / context.duration * curlRequestDuration)|round }}%)</td></tr>
+                        <tr><td>{{ 'monitoring_duration_sending_response'|trans() }}</td><td>{{ context.responseSendingDurationMilliseconds|round(2) }}ms ({{ (100 / context.duration * context.responseSendingDurationMilliseconds)|round }}%)</td></tr>
                     </tbody>
                 </table>
             {% elseif page is same as 'queries' %}
