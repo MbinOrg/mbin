@@ -256,13 +256,12 @@ article.post {
     }
 
     .view-compact & {
-      grid-template-areas: "shortDesc shortDesc vote"
-                           "header header image"
-                           "meta meta image"
-                           "footer footer image"
-                           "moderate moderate moderate"
-                           "preview preview preview";
-      grid-template-columns: 1fr min-content min-content;
+      grid-template-areas: "shortDesc shortDesc shortDesc vote"
+                           "header meta meta image"
+                           "footer footer footer image"
+                           "moderate moderate moderate moderate"
+                           "preview preview preview preview";
+      grid-template-columns: max-content 1fr min-content min-content;
 
       .vote {
         justify-content: right;
@@ -279,9 +278,9 @@ article.post {
       .short-desc {
         margin-top: 0.2rem;
         margin-bottom: 0.2rem;
-        max-height: 3lh;
 
         p {
+          max-height: 3lh;
           margin-bottom: 0;
         }
       }
@@ -316,9 +315,9 @@ article.post {
       .short-desc {
         margin-top: 0.2rem;
         margin-bottom: 0.2rem;
-        max-height: 3lh;
 
         p {
+          max-height: 3lh;
           margin-bottom: 0;
         }
       }
