@@ -94,7 +94,6 @@ class DeleteUserHandler extends MbinMessageHandler
 
         $this->entityManager->beginTransaction();
         try {
-
             // delete the original user, so all the content is cascade deleted
             $this->entityManager->remove($user);
             $this->entityManager->flush();
