@@ -708,18 +708,18 @@
         "version": "v2.4.0"
     },
     "symfony/stimulus-bundle": {
-        "version": "2.24",
+        "version": "2.32",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
-            "version": "2.20",
-            "ref": "3acc494b566816514a6873a89023a35440b6386d"
+            "version": "2.24",
+            "ref": "3357f2fa6627b93658d8e13baa416b2a94a50c5f"
         },
         "files": [
-            "assets/bootstrap.js",
             "assets/controllers.json",
             "assets/controllers/csrf_protection_controller.js",
-            "assets/controllers/hello_controller.js"
+            "assets/controllers/hello_controller.js",
+            "assets/stimulus_bootstrap.js"
         ]
     },
     "symfony/stopwatch": {
