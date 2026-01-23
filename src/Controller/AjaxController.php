@@ -27,6 +27,7 @@ use App\Service\Notification\UserPushSubscriptionManager;
 use App\Service\SettingsManager;
 use App\Service\UserNoteManager;
 use App\Utils\Embed;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -322,7 +323,9 @@ class AjaxController extends AbstractController
         try {
             $conn = $this->entityManager->getConnection();
             $stmt = $conn->prepare('DELETE FROM user_push_subscription WHERE user_id = :user AND device_key = :device');
-            $stmt->executeQuery(['user' => $this->getUserOrThrow()->getId(), 'device' => $payload->deviceKey]);
+            $stmt->bindValue('user', $this->getUserOrThrow()->getId(), ParameterType::INTEGER);
+            $stmt->bindValue('device', $payload->deviceKey, ParameterType::STRING);
+            $stmt->executeQuery();
 
             return new JsonResponse();
         } catch (\Exception $e) {

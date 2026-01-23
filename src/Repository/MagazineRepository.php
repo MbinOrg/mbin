@@ -19,6 +19,7 @@ use App\Utils\SubscriptionSort;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Doctrine\Collections\CollectionAdapter;
 use Pagerfanta\Doctrine\Collections\SelectableAdapter;
@@ -438,12 +439,15 @@ class MagazineRepository extends ServiceEntityRepository
         if (null !== $user) {
             $subSql = 'SELECT * FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :user';
             $whereClauses[] = "NOT EXISTS($subSql)";
-            $parameters['user'] = $user->getId();
+            $parameters['user'] = [$user->getId(), ParameterType::INTEGER];
         }
         $whereString = SqlHelpers::makeWhereString($whereClauses);
         $sql = "SELECT m.id FROM magazine m $whereString ORDER BY random() LIMIT 5";
         $stmt = $conn->prepare($sql);
-        $stmt = $stmt->executeQuery($parameters);
+        foreach ($parameters as $param => $value) {
+            $stmt->bindValue($param, $value[0], $value[1]);
+        }
+        $stmt = $stmt->executeQuery();
         $ids = $stmt->fetchAllAssociative();
 
         return $this->createQueryBuilder('m')
