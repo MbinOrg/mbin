@@ -381,6 +381,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         return null;
     }
 
+    #[\Deprecated]
     public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here

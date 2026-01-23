@@ -44,7 +44,7 @@ class PostType extends AbstractType
             )
             ->add('magazine', MagazineAutocompleteType::class)
             ->add('lang', LanguageType::class)
-            ->add('imageUrl', UrlType::class, ['required' => false])
+            ->add('imageUrl', UrlType::class, ['required' => false, 'default_protocol' => 'https'])
             ->add('imageAlt', TextareaType::class, ['required' => false])
             ->add('isAdult', CheckboxType::class, ['required' => false])
             ->add('submit', SubmitType::class);

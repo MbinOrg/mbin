@@ -79,7 +79,7 @@ class ImageManager implements ImageManagerInterface
         $violations = $this->validator->validate(
             $filePath,
             [
-                new Image(['detectCorrupted' => true]),
+                new Image(detectCorrupted: true),
             ]
         );
 

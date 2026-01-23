@@ -8,6 +8,7 @@ use App\Entity\Contracts\VotableInterface;
 use App\Service\CacheService;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -41,7 +42,7 @@ final class VotersInlineComponent
                 $votes = $votes->matching(
                     new Criteria(
                         Criteria::expr()->eq('choice', VotableInterface::VOTE_UP),
-                        ['createdAt' => Criteria::DESC]
+                        ['createdAt' => Order::Descending]
                     )
                 )->slice(0, 4);
 
