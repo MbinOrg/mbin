@@ -93,30 +93,35 @@ class DeleteUserHandler extends MbinMessageHandler
         }
 
         $this->entityManager->beginTransaction();
+        try {
+            // delete the original user, so all the content is cascade deleted
+            $this->entityManager->remove($user);
+            $this->entityManager->flush();
 
-        // delete the original user, so all the content is cascade deleted
-        $this->entityManager->remove($user);
-        $this->entityManager->flush();
+            // recreate a user with the same name, so this handle is blocked
+            $user = $this->userManager->create($userDto, verifyUserEmail: false, rateLimit: false, preApprove: true);
+            $user->isDeleted = true;
+            $user->markedForDeletionAt = null;
+            $user->isVerified = false;
 
-        // recreate a user with the same name, so this handle is blocked
-        $user = $this->userManager->create($userDto, verifyUserEmail: false, rateLimit: false, preApprove: true);
-        $user->isDeleted = true;
-        $user->markedForDeletionAt = null;
-        $user->isVerified = false;
+            if ($isLocal) {
+                $user->privateKey = $privateKey;
+                $user->publicKey = $publicKey;
+            }
 
-        if ($isLocal) {
-            $user->privateKey = $privateKey;
-            $user->publicKey = $publicKey;
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+
+            if ($isLocal) {
+                $this->sendDeleteMessages($inboxes, $user);
+            }
+
+            $this->entityManager->commit();
+        } catch (\Exception $e) {
+            $this->entityManager->rollback();
+
+            throw $e;
         }
-
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-
-        if ($isLocal) {
-            $this->sendDeleteMessages($inboxes, $user);
-        }
-
-        $this->entityManager->commit();
     }
 
     private function getInboxes(?User $user): array
