@@ -8,6 +8,7 @@ use App\Controller\AbstractController;
 use App\Entity\MessageThread;
 use App\Form\MessageType;
 use App\Service\MessageManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -20,7 +21,7 @@ class MessageThreadController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('show', subject: 'thread', statusCode: 403)]
-    public function __invoke(MessageThread $thread, Request $request): Response
+    public function __invoke(#[MapEntity(id: 'id')] MessageThread $thread, Request $request): Response
     {
         $form = $this->createForm(MessageType::class);
         $form->handleRequest($request);
