@@ -7,6 +7,7 @@ namespace App\Controller\Domain;
 use App\Controller\AbstractController;
 use App\Entity\Domain;
 use App\Service\DomainManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +21,7 @@ class DomainBlockController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    public function block(Domain $domain, Request $request): Response
+    public function block(#[MapEntity(mapping: ['name' => 'name'])] Domain $domain, Request $request): Response
     {
         $this->manager->block($domain, $this->getUserOrThrow());
 
@@ -32,7 +33,7 @@ class DomainBlockController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    public function unblock(Domain $domain, Request $request): Response
+    public function unblock(#[MapEntity(mapping: ['name' => 'name'])] Domain $domain, Request $request): Response
     {
         $this->manager->unblock($domain, $this->getUserOrThrow());
 

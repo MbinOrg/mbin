@@ -30,6 +30,7 @@ use App\Utils\Embed;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Emoji\EmojiTransliterator;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -106,7 +107,7 @@ class AjaxController extends AbstractController
         );
     }
 
-    public function fetchEntry(Entry $entry, Request $request): JsonResponse
+    public function fetchEntry(#[MapEntity(id: 'id')] Entry $entry, Request $request): JsonResponse
     {
         return new JsonResponse(
             [
@@ -123,7 +124,7 @@ class AjaxController extends AbstractController
         );
     }
 
-    public function fetchEntryComment(EntryComment $comment): JsonResponse
+    public function fetchEntryComment(#[MapEntity(id: 'id')] EntryComment $comment): JsonResponse
     {
         return new JsonResponse(
             [
@@ -142,7 +143,7 @@ class AjaxController extends AbstractController
         );
     }
 
-    public function fetchPost(Post $post): JsonResponse
+    public function fetchPost(#[MapEntity(id: 'id')] Post $post): JsonResponse
     {
         return new JsonResponse(
             [
@@ -159,7 +160,7 @@ class AjaxController extends AbstractController
         );
     }
 
-    public function fetchPostComment(PostComment $comment): JsonResponse
+    public function fetchPostComment(#[MapEntity(id: 'id')] PostComment $comment): JsonResponse
     {
         return new JsonResponse(
             [
@@ -176,7 +177,7 @@ class AjaxController extends AbstractController
         );
     }
 
-    public function fetchPostComments(Post $post, PostCommentRepository $repository): JsonResponse
+    public function fetchPostComments(#[MapEntity(id: 'id')] Post $post, PostCommentRepository $repository): JsonResponse
     {
         $criteria = new PostCommentPageView(1, $this->security);
         $criteria->post = $post;
@@ -218,7 +219,7 @@ class AjaxController extends AbstractController
         ]);
     }
 
-    public function fetchUserPopup(User $user, UserNoteManager $manager): JsonResponse
+    public function fetchUserPopup(#[MapEntity(mapping: ['username' => 'username'])] User $user, UserNoteManager $manager): JsonResponse
     {
         if ($this->getUser()) {
             $dto = $manager->createDto($this->getUserOrThrow(), $user);

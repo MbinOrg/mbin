@@ -7,6 +7,7 @@ namespace App\Controller\Magazine;
 use App\Controller\AbstractController;
 use App\Entity\Magazine;
 use App\Service\MagazineManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +21,7 @@ class MagazineSubController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('subscribe', subject: 'magazine')]
-    public function subscribe(Magazine $magazine, Request $request): Response
+    public function subscribe(#[MapEntity(mapping: ['name' => 'name'])] Magazine $magazine, Request $request): Response
     {
         $this->manager->subscribe($magazine, $this->getUserOrThrow());
 
@@ -33,7 +34,7 @@ class MagazineSubController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('subscribe', subject: 'magazine')]
-    public function unsubscribe(Magazine $magazine, Request $request): Response
+    public function unsubscribe(#[MapEntity(mapping: ['name' => 'name'])] Magazine $magazine, Request $request): Response
     {
         $this->manager->unsubscribe($magazine, $this->getUserOrThrow());
 

@@ -7,6 +7,7 @@ namespace App\Controller\User;
 use App\Controller\AbstractController;
 use App\Entity\User;
 use App\Service\UserManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,8 +17,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UserBanController extends AbstractController
 {
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
-    public function ban(User $user, UserManager $manager, Request $request): Response
-    {
+    public function ban(
+        #[MapEntity(mapping: ['username' => 'username'])] User $user,
+        UserManager $manager,
+        Request $request,
+    ): Response {
         $this->validateCsrf('user_ban', $request->getPayload()->get('token'));
 
         $manager->ban($user, $this->getUserOrThrow(), reason: null);
@@ -36,8 +40,12 @@ class UserBanController extends AbstractController
     }
 
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
-    public function unban(User $user, UserManager $manager, Request $request): Response
-    {
+    public function unban(
+        #[MapEntity(mapping: ['username' => 'username'])]
+        User $user,
+        UserManager $manager,
+        Request $request,
+    ): Response {
         $this->validateCsrf('user_ban', $request->getPayload()->get('token'));
 
         $manager->unban($user, $this->getUserOrThrow(), reason: null);
