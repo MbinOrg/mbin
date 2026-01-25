@@ -1126,6 +1126,6 @@ modlog_type_entry_lock: Thread locked
 modlog_type_entry_unlock: Thread unlocked
 modlog_type_post_lock: Microblog locked
 modlog_type_post_unlock: Microblog unlocked
-contentnotification.muted: Get no notifications
+contentnotification.muted: Mute | get no notifications
 contentnotification.default: Get notifications according to your settings
 contentnotification.loud: Get all notifications
