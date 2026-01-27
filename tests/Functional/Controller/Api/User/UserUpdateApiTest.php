@@ -99,7 +99,7 @@ class UserUpdateApiTest extends WebTestCase
             ['test'],
             ['en'],
             directMessageSetting: EDirectMessageSettings::Everyone->value,
-            frontDefaultContent: EFrontContentOptions::All->value,
+            frontDefaultContent: EFrontContentOptions::Combined->value,
         ))->jsonSerialize();
 
         $this->client->jsonRequest(
@@ -136,6 +136,7 @@ class UserUpdateApiTest extends WebTestCase
             ['en'],
             directMessageSetting: EDirectMessageSettings::FollowersOnly->value,
             frontDefaultContent: EFrontContentOptions::Threads->value,
+            discoverable: false,
         ))->jsonSerialize();
 
         $this->client->jsonRequest(
@@ -161,6 +162,7 @@ class UserUpdateApiTest extends WebTestCase
         self::assertFalse($jsonData['showProfileFollowings']);
         self::assertFalse($jsonData['addMentionsEntries']);
         self::assertFalse($jsonData['addMentionsPosts']);
+        self::assertFalse($jsonData['discoverable']);
         self::assertEquals(User::HOMEPAGE_MOD, $jsonData['homepage']);
         self::assertEquals(Criteria::SORT_NEW, $jsonData['frontDefaultSort']);
         self::assertEquals(Criteria::SORT_TOP, $jsonData['commentDefaultSort']);
@@ -188,6 +190,7 @@ class UserUpdateApiTest extends WebTestCase
         self::assertFalse($jsonData['showProfileFollowings']);
         self::assertFalse($jsonData['addMentionsEntries']);
         self::assertFalse($jsonData['addMentionsPosts']);
+        self::assertFalse($jsonData['discoverable']);
         self::assertEquals(User::HOMEPAGE_MOD, $jsonData['homepage']);
         self::assertEquals(Criteria::SORT_NEW, $jsonData['frontDefaultSort']);
         self::assertEquals(Criteria::SORT_TOP, $jsonData['commentDefaultSort']);

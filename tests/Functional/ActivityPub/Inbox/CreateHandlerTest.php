@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\ActivityPub\Inbox;
 
+use App\Entity\Magazine;
+use App\Entity\User;
 use App\Enums\EDirectMessageSettings;
 use App\Message\ActivityPub\Inbox\ActivityMessage;
 use App\Tests\Functional\ActivityPub\ActivityPubFunctionalTestCase;
@@ -20,6 +22,7 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
     private array $announcePost;
     private array $announcePostComment;
     private array $createEntry;
+    private array $createEntryWithUrlAndImage;
     private array $createEntryComment;
     private array $createPost;
     private array $createPostComment;
@@ -34,12 +37,18 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         $this->announcePost = $this->createRemotePostInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
         $this->announcePostComment = $this->createRemotePostCommentInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
         $this->createEntry = $this->createRemoteEntryInLocalMagazine($this->localMagazine, $this->remoteUser);
+        $this->createEntryWithUrlAndImage = $this->createRemoteEntryWithUrlAndImageInLocalMagazine($this->localMagazine, $this->remoteUser);
         $this->createEntryComment = $this->createRemoteEntryCommentInLocalMagazine($this->localMagazine, $this->remoteUser);
         $this->createPost = $this->createRemotePostInLocalMagazine($this->localMagazine, $this->remoteUser);
         $this->createPostComment = $this->createRemotePostCommentInLocalMagazine($this->localMagazine, $this->remoteUser);
         $this->createMessage = $this->createRemoteMessage($this->remoteUser, $this->localUser);
         $this->setupMastodonPost();
         $this->setupMastodonPostWithoutTagArray();
+    }
+
+    public function setUpLocalEntities(): void
+    {
+        $this->setupRemoteActor();
     }
 
     public function testCreateAnnouncedEntry(): void
@@ -58,6 +67,21 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         self::assertNotNull($entryComment);
     }
 
+    #[Depends('testCreateAnnouncedEntryComment')]
+    public function testCannotCreateAnnouncedEntryCommentInLockedEntry(): void
+    {
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->announceEntry)));
+        $entry = $this->entryRepository->findOneBy(['apId' => $this->announceEntry['object']['object']['id']]);
+        self::assertNotNull($entry);
+
+        $entry->isLocked = true;
+
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->announceEntryComment)));
+        $entryComment = $this->entryCommentRepository->findOneBy(['apId' => $this->announceEntryComment['object']['object']['id']]);
+        // the comment should not be created and therefore be null
+        self::assertNull($entryComment);
+    }
+
     public function testCreateAnnouncedPost(): void
     {
         $this->bus->dispatch(new ActivityMessage(json_encode($this->announcePost)));
@@ -74,6 +98,21 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         self::assertNotNull($postComment);
     }
 
+    #[Depends('testCreateAnnouncedPostComment')]
+    public function testCannotCreateAnnouncedPostCommentInLockedPost(): void
+    {
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->announcePost)));
+        $post = $this->postRepository->findOneBy(['apId' => $this->announcePost['object']['object']['id']]);
+        self::assertNotNull($post);
+
+        $post->isLocked = true;
+
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->announcePostComment)));
+        $postComment = $this->postCommentRepository->findOneBy(['apId' => $this->announcePostComment['object']['object']['id']]);
+        // the comment should not be created and therefore be null
+        self::assertNull($postComment);
+    }
+
     public function testCreateEntry(): void
     {
         $this->bus->dispatch(new ActivityMessage(json_encode($this->createEntry)));
@@ -85,6 +124,22 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         // the id of the 'Create' activity should be wrapped in a 'Announce' activity
         self::assertEquals($this->createEntry['id'], $postedObjects[0]['payload']['object']['id']);
         self::assertEquals($this->createEntry['object']['id'], $postedObjects[0]['payload']['object']['object']['id']);
+        self::assertEquals($this->remoteSubscriber->apInboxUrl, $postedObjects[0]['inboxUrl']);
+    }
+
+    public function testCreateEntryWithUrlAndImage(): void
+    {
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->createEntryWithUrlAndImage)));
+        $entry = $this->entryRepository->findOneBy(['apId' => $this->createEntryWithUrlAndImage['object']['id']]);
+        self::assertNotNull($entry);
+        self::assertNotNull($entry->image);
+        self::assertNotNull($entry->url);
+        self::assertTrue($this->localMagazine->isSubscribed($this->remoteSubscriber));
+        $postedObjects = $this->testingApHttpClient->getPostedObjects();
+        self::assertNotEmpty($postedObjects);
+        // the id of the 'Create' activity should be wrapped in a 'Announce' activity
+        self::assertEquals($this->createEntryWithUrlAndImage['id'], $postedObjects[0]['payload']['object']['id']);
+        self::assertEquals($this->createEntryWithUrlAndImage['object']['id'], $postedObjects[0]['payload']['object']['object']['id']);
         self::assertEquals($this->remoteSubscriber->apInboxUrl, $postedObjects[0]['inboxUrl']);
     }
 
@@ -175,8 +230,10 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         $post = $this->postRepository->findOneBy(['apId' => $this->createMastodonPostWithMention['object']['id']]);
         self::assertNotNull($post);
         $mentions = $this->mentionManager->extract($post->body);
-        self::assertCount(1, $mentions);
-        self::assertEquals('@user@some.instance.tld', $mentions[0]);
+        self::assertCount(3, $mentions);
+        self::assertEquals('@someOtherUser@some.instance.tld', $mentions[0]);
+        self::assertEquals('@someUser@some.instance.tld', $mentions[1]);
+        self::assertEquals('@someMagazine@some.instance.tld', $mentions[2]);
     }
 
     public function testMastodonMentionInPostWithoutTagArray(): void
@@ -189,19 +246,46 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         self::assertEquals('@remoteUser@remote.mbin', $mentions[0]);
     }
 
+    private function setupRemoteActor(): void
+    {
+        $domain = 'some.instance.tld';
+        $this->switchToRemoteDomain($domain);
+
+        $user = $this->getUserByUsername('someOtherUser', addImage: false, email: 'user@some.tld');
+        $this->registerActor($user, $domain, true);
+
+        $user = $this->getUserByUsername('someUser', addImage: false, email: 'user2@some.tld');
+        $this->registerActor($user, $domain, true);
+
+        $magazine = $this->getMagazineByName('someMagazine', user: $user);
+        $this->registerActor($magazine, $domain, true);
+
+        $this->switchToLocalDomain();
+    }
+
     private function setupMastodonPost(): void
     {
         $this->createMastodonPostWithMention = $this->createRemotePostInLocalMagazine($this->localMagazine, $this->remoteUser);
         unset($this->createMastodonPostWithMention['object']['source']);
         // this is what it would look like if a user created a post in Mastodon with just a single mention and nothing else
-        $text = '<p><span class="h-card" translate="no"><a href="https://some.instance.tld/u/user" class="u-url mention">@<span>user</span></a></span>';
+        $text = '<p><span class="h-card" translate="no"><a href="https://some.instance.tld/u/someOtherUser" class="u-url mention">@<span>someOtherUser</span></a></span> <span class="h-card" translate="no"><a href="https://some.instance.tld/u/someUser" class="u-url mention">@<span>someUser</span></a></span> <span class="h-card" translate="no"><a href="https://some.instance.tld/m/someMagazine" class="u-url mention">@<span>someMagazine</span></a></span></p>';
         $this->createMastodonPostWithMention['object']['contentMap']['en'] = $text;
         $this->createMastodonPostWithMention['object']['content'] = $text;
         $this->createMastodonPostWithMention['object']['tag'] = [
             [
                 'type' => 'Mention',
-                'href' => 'https://some.instance.tld/u/user',
-                'name' => '@user@some.instance.tld',
+                'href' => 'https://some.instance.tld/u/someOtherUser',
+                'name' => '@someOtherUser',
+            ],
+            [
+                'type' => 'Mention',
+                'href' => 'https://some.instance.tld/u/someUser',
+                'name' => '@someUser',
+            ],
+            [
+                'type' => 'Mention',
+                'href' => 'https://some.instance.tld/m/someMagazine',
+                'name' => '@someMagazine',
             ],
         ];
     }
@@ -214,5 +298,23 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         $text = '<p><span class="h-card" translate="no"><a href="https://remote.mbin/u/remoteUser" class="u-url mention">@<span>remoteUser</span></a></span>';
         $this->createMastodonPostWithMentionWithoutTagArray['object']['contentMap']['en'] = $text;
         $this->createMastodonPostWithMentionWithoutTagArray['object']['content'] = $text;
+    }
+
+    private function createRemoteEntryWithUrlAndImageInLocalMagazine(Magazine $magazine, User $user): array
+    {
+        $entry = $this->getEntryByTitle('remote entry with URL and image in local', url: 'https://joinmbin.org', magazine: $magazine, user: $user, image: $this->getKibbyImageDto());
+        $json = $this->pageFactory->create($entry, $this->tagLinkRepository->getTagsOfContent($entry));
+        $this->testingApHttpClient->activityObjects[$json['id']] = $json;
+
+        $createActivity = $this->createWrapper->build($entry);
+        $create = $this->activityJsonBuilder->buildActivityJson($createActivity);
+        $this->testingApHttpClient->activityObjects[$create['id']] = $create;
+
+        $create = $this->RewriteTargetFieldsToLocal($magazine, $create);
+
+        $this->entitiesToRemoveAfterSetup[] = $createActivity;
+        $this->entitiesToRemoveAfterSetup[] = $entry;
+
+        return $create;
     }
 }

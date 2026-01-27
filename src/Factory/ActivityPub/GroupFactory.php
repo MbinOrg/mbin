@@ -8,7 +8,7 @@ use App\Entity\Magazine;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
 use App\Service\ActivityPub\ContextsProvider;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class GroupFactory
@@ -17,7 +17,7 @@ class GroupFactory
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly MarkdownConverter $markdownConverter,
         private readonly ContextsProvider $contextProvider,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
     ) {
     }
 
@@ -74,6 +74,7 @@ class GroupFactory
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
             'postingRestrictedToMods' => $magazine->postingRestrictedToMods,
+            'discoverable' => $magazine->apDiscoverable,
             'endpoints' => [
                 'sharedInbox' => $this->urlGenerator->generate(
                     'ap_shared_inbox',

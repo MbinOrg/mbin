@@ -9,12 +9,12 @@ use HeyMoon\DoctrinePostgresEnum\Attribute\EnumType;
 #[EnumType('enum_front_content_options')]
 enum EFrontContentOptions: string
 {
-    case All = 'all';
+    case Combined = 'combined';
     case Threads = 'threads';
     case Microblog = 'microblog';
 
     public const array OPTIONS = [
-        EFrontContentOptions::All->value,
+        EFrontContentOptions::Combined->value,
         EFrontContentOptions::Threads->value,
         EFrontContentOptions::Microblog->value,
     ];

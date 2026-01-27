@@ -3,7 +3,7 @@
 {
     "name": "PHP",
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-    "image": "mcr.microsoft.com/devcontainers/php:1-8.3-bullseye",
+    "image": "mcr.microsoft.com/devcontainers/php:2.0.1-8.4-trixie",
 
     // Features to add to the dev container. More info: https://containers.dev/features.
     "features": {
@@ -15,7 +15,7 @@
             "version": "latest"
         },
         "ghcr.io/itsmechlark/features/postgresql:1": {
-            "version": "13"
+            "version": "18"
         },
         "ghcr.io/itsmechlark/features/rabbitmq-server:1": {},
         "ghcr.io/itsmechlark/features/redis-server:1": {}
@@ -66,6 +66,7 @@
         "deps": "if [ -f composer.json ]; then composer install; fi",
         "config": "cp .devcontainer/.env.devcontainer .env",
         "apache": "sudo sed -i 's/Listen 80$//' /etc/apache2/ports.conf && sudo cp .devcontainer/apache-vhost.conf /etc/apache2/sites-enabled/000-default.conf && sudo a2enmod rewrite",
+        "phpconf": "sudo cp .devcontainer/php_config.ini /usr/local/etc/php/conf.d/custom.ini",
         "symfony": "wget https://get.symfony.com/cli/installer -O - | bash && sudo mv ~/.symfony5/bin/symfony /usr/local/bin/symfony"
     }
 

@@ -852,8 +852,6 @@ all_time: Alle tijden
 spoiler: Spoiler
 show: Tonen
 hide: Verbergen
-sidebar_sections_local_only: Beperk de secties 'Random X' en 'Actieve mensen' 
-  tot alleen lokaal
 edited: bewerkt
 disconnected_magazine_info: Dit tijdschrift heeft geen updates ontvangen 
   (laatste activiteit %days% dag(en) geleden).
@@ -1140,3 +1138,21 @@ federation_page_use_allowlist_help: Als een toegestane lijst wordt gebruikt, zal
   deze instantie alleen federeren met de expliciet toegestane instanties. Anders
   zal deze instantie federeren met elke instantie, behalve met instanties die 
   geblokkeerd zijn.
+front_default_content: Standaardweergave voorpagina
+default_content_default: Serverstandaard (Gesprekken)
+default_content_microblog: Microblog
+default_content_threads: Gesprekken
+combined: Gecombineerd
+sidebar_sections_random_local_only: Beperk de 'Willekeurige threads/berichten' 
+  in de zijblak tot alleen lokaal
+sidebar_sections_users_local_only: Beperk de 'Actieve mensen' in de zijbalk tot 
+  alleen lokaal
+random_local_only_performance_warning: Het inschakelen van 'Alleen willekeurig 
+  lokaal' kan gevolgen hebben voor de SQL prestaties.
+default_content_combined: Gesprekken + Microblog
+ban_expires: Ban vervalt
+you_have_been_banned_from_magazine: Je bent verbannen uit het tijdschrift %m.
+you_have_been_banned_from_magazine_permanently: Je bent permanent verbannen uit 
+  het tijdschrift %m.
+you_are_no_longer_banned_from_magazine: Je bent niet langer verbannen uit 
+  tijdschrift %m.

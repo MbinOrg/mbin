@@ -322,6 +322,7 @@ class PostRepository extends ServiceEntityRepository
             ->andWhere('p.visibility = :visibility')
             ->andWhere('m.visibility = :visibility')
             ->andWhere('u.visibility = :visibility')
+            ->andWhere('u.apDiscoverable = true')
             ->andWhere('m.name != :name')
             ->andWhere('p.isAdult = false')
             ->andWhere('m.isAdult = false')
@@ -355,6 +356,7 @@ class PostRepository extends ServiceEntityRepository
             ->andWhere('p.visibility = :visibility')
             ->andWhere('m.visibility = :visibility')
             ->andWhere('u.visibility = :visibility')
+            ->andWhere('u.apDiscoverable = true')
             ->andWhere('p.isAdult = false')
             ->andWhere('m.isAdult = false')
             ->join('p.magazine', 'm')
@@ -381,8 +383,10 @@ class PostRepository extends ServiceEntityRepository
 
         $qb = $qb->where('p.isAdult = false')
             ->andWhere('p.visibility = :visibility')
-            ->andWhere('m.isAdult = false');
-        if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
+            ->andWhere('u.apDiscoverable = true')
+            ->andWhere('m.isAdult = false')
+            ->andWhere('m.apDiscoverable = true');
+        if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_RANDOM_LOCAL_ONLY')) {
             $qb = $qb->andWhere('m.apId IS NULL');
         }
 

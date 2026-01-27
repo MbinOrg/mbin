@@ -530,4 +530,9 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
 
         return true;
     }
+
+    public function getContentCount(): int
+    {
+        return $this->entryCount + $this->entryCommentCount + $this->postCount + $this->postCommentCount;
+    }
 }

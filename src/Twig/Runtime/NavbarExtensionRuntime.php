@@ -49,14 +49,17 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
             );
         }
 
-        return $this->urlGenerator->generate('front', $this->getActiveOptions());
+        return $this->urlGenerator->generate('front_content', [
+            ...$this->getActiveOptions(),
+            'content' => 'threads',
+        ]);
     }
 
     public function navbarCombinedUrl(?Magazine $magazine): string
     {
         if ($this->isRouteNameStartsWith('front')) {
             return $this->frontExtension->frontOptionsUrl(
-                'content', 'all',
+                'content', 'combined',
                 $magazine instanceof Magazine ? 'front_magazine' : 'front',
                 ['name' => $magazine?->name, 'p' => null],
             );
@@ -66,7 +69,7 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
             return $this->urlGenerator->generate('front_magazine', [
                 'name' => $magazine->name,
                 ...$this->getActiveOptions(),
-                'content' => 'all',
+                'content' => 'combined',
             ]);
         }
 
@@ -84,7 +87,10 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
             );
         }
 
-        return $this->urlGenerator->generate('front', $this->getActiveOptions());
+        return $this->urlGenerator->generate('front_content', [
+            ...$this->getActiveOptions(),
+            'content' => 'combined',
+        ]);
     }
 
     public function navbarPostsUrl(?Magazine $magazine): string

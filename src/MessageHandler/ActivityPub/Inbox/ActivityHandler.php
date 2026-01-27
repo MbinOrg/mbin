@@ -19,6 +19,7 @@ use App\Message\ActivityPub\Inbox\DislikeMessage;
 use App\Message\ActivityPub\Inbox\FlagMessage;
 use App\Message\ActivityPub\Inbox\FollowMessage;
 use App\Message\ActivityPub\Inbox\LikeMessage;
+use App\Message\ActivityPub\Inbox\LockMessage;
 use App\Message\ActivityPub\Inbox\RemoveMessage;
 use App\Message\ActivityPub\Inbox\UpdateMessage;
 use App\Message\Contracts\MessageInterface;
@@ -62,7 +63,7 @@ class ActivityHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof ActivityMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("ActivityHandler called, but is wasn\'t an ActivityMessage. Type: ".\get_class($message));
         }
 
         $payload = @json_decode($message->payload, true);
@@ -236,6 +237,9 @@ class ActivityHandler extends MbinMessageHandler
             case 'Block':
                 $this->bus->dispatch(new BlockMessage($payload));
                 break;
+            case 'Lock':
+                $this->bus->dispatch(new LockMessage($payload));
+                break;
         }
     }
 
@@ -262,6 +266,9 @@ class ActivityHandler extends MbinMessageHandler
                 break;
             case 'Block':
                 $this->bus->dispatch(new BlockMessage($payload));
+                break;
+            case 'Lock':
+                $this->bus->dispatch(new LockMessage($payload));
                 break;
         }
     }

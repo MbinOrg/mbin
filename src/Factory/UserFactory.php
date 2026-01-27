@@ -40,6 +40,7 @@ class UserFactory
             $user->isModerator(),
             $currentUser && ($currentUser->isAdmin() || $currentUser->isModerator()) ? $user->applicationText : null,
             reputationPoints: $reputationPoints,
+            discoverable: $user->apDiscoverable,
         );
 
         // Only return the user's vote if permission to control voting has been given

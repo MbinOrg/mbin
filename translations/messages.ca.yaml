@@ -479,8 +479,6 @@ federation_page_disallowed_description: Instàncies amb què no ens federem
 federation_page_dead_title: Instàncies mortes
 federated_search_only_loggedin: Cerca federada limitada si no s'ha iniciat 
   sessió
-sidebar_sections_local_only: Restringir les seccions «Aleatoris» i «Persones 
-  actives» només a locals
 account_deletion_title: Supressió del compte
 account_deletion_button: Suprimir el compte
 account_deletion_immediate: Suprimir immediatament
@@ -1154,3 +1152,21 @@ btn_deny: Denegar
 btn_allow: Permetre
 ban_instance: Banir instància
 allow_instance: Permetre instància
+front_default_content: Vista per defecte de portada
+default_content_default: Valor per defecte del servidor (Fils)
+default_content_threads: Fils
+default_content_microblog: Microblog
+combined: Combinat
+sidebar_sections_random_local_only: Restringir les seccions de la barra lateral 
+  «Publicacions/Fils aleatoris» només a locals
+sidebar_sections_users_local_only: Restringir la secció de la barra lateral 
+  «Persones actives» només a locals
+random_local_only_performance_warning: Habilitar «Només aleatoris locals» pot 
+  afectar el rendiment de l'SQL.
+default_content_combined: Fils + Microblog
+ban_expires: La prohibició caduca
+you_have_been_banned_from_magazine: Us han prohibit l'accés a la revista %m.
+you_have_been_banned_from_magazine_permanently: Us han prohibit permanentment 
+  l'accés a la revista %m.
+you_are_no_longer_banned_from_magazine: Ja no teniu prohibit l'accés a la 
+  revista %m.

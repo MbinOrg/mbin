@@ -21,6 +21,7 @@ use App\Repository\UserRepository;
 use App\Service\Contracts\ContentNotificationManagerInterface;
 use App\Service\GenerateHtmlClassService;
 use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use App\Service\MentionManager;
 use App\Service\SettingsManager;
 use App\Utils\IriGenerator;
@@ -46,7 +47,7 @@ class PostNotificationManager implements ContentNotificationManagerInterface
         private readonly Environment $twig,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly EntityManagerInterface $entityManager,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
         private readonly GenerateHtmlClassService $classService,
         private readonly SettingsManager $settingsManager,
         private readonly NotificationSettingsRepository $notificationSettingsRepository,

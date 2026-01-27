@@ -10,7 +10,7 @@ use App\Entity\EntryComment;
 use App\Entity\User;
 use App\Repository\ImageRepository;
 use App\Service\EntryCommentManager;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -21,7 +21,7 @@ class EntryCommentFixtures extends BaseFixture implements DependentFixtureInterf
 
     public function __construct(
         private readonly EntryCommentManager $commentManager,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
         private readonly ImageRepository $imageRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {

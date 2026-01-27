@@ -7,7 +7,7 @@ oldest: En Eski
 login: Giriş yap
 filter_by_time: Zamana göre filtrele
 filter_by_type: Türe göre filtrele
-favourites: Favoriler
+favourites: Oylar
 up_votes: Boostlar
 add_comment: Yorum ekle
 add_post: Gönderi ekle
@@ -406,3 +406,21 @@ filter.fields.only_names: Sadece isimler
 filter.fields.names_and_descriptions: İsimler ve açıklamalar
 kbin_bot: Mbin Bot
 password_confirm_header: Parola değiştirme isteğinizi onaylayın.
+sort_by: Göre sırala
+filter_by_subscription: Aboneliğe göre filtrele
+filter_by_federation: Federasyon durumuna göre filtrele
+subscribers_count: '{0}Aboneler|{1}Abone|]1,Bilgi[Aboneler'
+followers_count: '{0}Takipçiler|{1}Takipçi|]1,Bilg[ Takipçiler'
+marked_for_deletion: Silinmek üzere işaretlendi
+marked_for_deletion_at: '%date% tarihinde silinmek üzere işaretlendi'
+remove_media: Medyayı kaldır
+remove_user_avatar: Avatarı kaldır
+remove_user_cover: Kapağı kaldır
+disconnected_magazine_info: Bu dergi güncelleme almıyor (son etkinlik %days% gün
+  önce).
+always_disconnected_magazine_info: Bu dergiye güncelleme gelmiyor.
+subscribe_for_updates: Güncellemeleri almaya başlamak için abone olun.
+change_downvotes_mode: Oylama modunu değiştir
+hidden: Gizlenmiş
+enabled: Etkinleştirilmiş
+tag: Etiket

@@ -218,6 +218,21 @@ If a user boosts content:
 %activity_user_delete%
 ```
 
+### Delete own account
+
+```json
+%activity_user_delete_account%
+```
+
+### Lock own content
+
+Only top level content (meaning no comments) can be locked.
+When content is locked, comments can no longer be created for it.
+
+```json
+%activity_user_lock%
+```
+
 ## Moderator Activities
 
 ### Add or Remove moderator
@@ -260,6 +275,14 @@ When a thread is unpinned:
 %activity_mod_ban%
 ```
 
+### Lock content
+
+When content is locked, comments can no longer be created for it.
+
+```json
+%activity_mod_lock%
+```
+
 ## Admin Activities
 
 ### Ban user from instance
@@ -268,12 +291,20 @@ When a thread is unpinned:
 %activity_admin_ban%
 ```
 
+### Delete account
+
+If an admin deletes another user's account the activity actually does not reflect that, it looks exactly as if the user deleted their own account.
+
+```json
+%activity_admin_delete_account%
+```
+
 ## Magazine Activities
 
 ### Announce activities
 
 The magazine is mainly there to announce the activities users do with it as the audience.
-The announced type can be `Create`, `Update`, `Add`, `Remove`, `Announce`, `Delete`, `Like`, `Dislike` and `Flag`.
+The announced type can be `Create`, `Update`, `Add`, `Remove`, `Announce`, `Delete`, `Like`, `Dislike`, `Flag` and `Lock`.
 `Announce(Flag)` activities are only sent to instances with moderators of this magazine on them. 
 
 ```json

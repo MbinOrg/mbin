@@ -58,7 +58,7 @@ To use it, follow these steps:
 6. If some service are not running, try:
    - Start it with `sudo service <service name> start`
    - If postgres fails: `sudo chmod -R postgres:postgres /var/lib/postgresql/`
-7. Run `php -d memory_limit=-1 bin/console doctrine:migrations:migrate`
+7. Run `bin/console doctrine:migrations:migrate`
 8. Run `npm install && npm run dev`
 9. Open `http://localhost:8080` in a browser; you should see some status page or the Mbin startpage
 10. Run `sudo find public/ -type d -exec chgrp www-data '{}' \;` and `sudo find public/ -type d -exec chmod g+rwx '{}' \;`
@@ -82,13 +82,13 @@ If you want to use OAuth for the API, do the following **before** creating the D
 To run test inside the Dev Container, some preparation is needed.
 These steps have to be repeated after every recreation of the Container:
 
-1. Run: `sudo pg_createcluster 13 tests --port=5433 --start`
+1. Run: `sudo pg_createcluster 18 tests --port=5433 --start`
 2. Run: `sudo su postgres -c 'psql -p 5433 -U postgres -d postgres'`
 3. Inside the SQL shell, run: `CREATE USER mbin WITH PASSWORD 'ChangeThisPostgresPass' SUPERUSER;`
 
 Now the testsuite can be launched with:
-`SYMFONY_DEPRECATIONS_HELPER=disabled php -d memory_limit=-1 ./bin/phpunit tests/Unit`
-or: `SYMFONY_DEPRECATIONS_HELPER=disabled php -d memory_limit=-1 ./bin/phpunit tests/Functional/<path to tests to run>`.\
+`SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Unit`
+or: `SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit tests/Functional/<path to tests to run>`.\
 For more information, read the [Testing](#testing) section on this page.
 
 ## Bare metal installation
@@ -217,6 +217,23 @@ POSTGRES_PASSWORD=<password>
 # Set messenger to Doctrine (= PostgresQL DB)
 MESSENGER_TRANSPORT_DSN=doctrine://default
 ```
+
+### Change yaml configuration
+
+In case you are using Doctrine as the messenger transport (see `MESSENGER_TRANSPORT_DSN` above), then you will also need to comment-out all the `options:` sections in the `config/packages/messenger.yaml` file. So the whole section, for example:
+
+```yaml
+    # options:
+    #     queues:
+    #         receive:
+    #             arguments:
+    #                 x-queue-version: 2
+    #                 x-queue-type: 'classic'
+    #     exchange:
+    #         name: receive
+```
+
+This is because those options are only meant for AMQP transport (like with RabbitMQ), but these options can **not** be used with Doctrine transport.
 
 ### Install Symfony CLI tool
 

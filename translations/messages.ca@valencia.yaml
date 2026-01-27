@@ -833,8 +833,6 @@ federation_page_disallowed_description: Instàncies amb què no ens federem
 resend_account_activation_email_error: Hi ha hagut un problema en enviar la 
   sol·licitud. Potser no hi ha cap compte associat amb l'adreça electrònica o 
   potser ja està activat.
-sidebar_sections_local_only: Restringir les seccions «Aleatoris» i «Persones 
-  actives» només a locals
 ignore_magazines_custom_css: Ignorar el CSS personalitzat de les revistes
 errors.server404.title: 404 No trobat
 private_instance: Forçar a iniciar sessió abans de poder accedir a qualsevol 
@@ -1151,3 +1149,21 @@ federation_page_use_allowlist_help: Si s'utilitza una llista de permesos, esta
   instància només es federarà amb les instàncies explícitament permeses. En cas 
   contrari, esta instància es federarà amb totes les instàncies, excepte les que
   estiguen prohibides.
+front_default_content: Vista per defecte de portada
+default_content_default: Valor per defecte del servidor (Fils)
+default_content_threads: Fils
+default_content_microblog: Microblog
+combined: Combinat
+sidebar_sections_random_local_only: Restringir les seccions de la barra lateral 
+  «Publicacions/Fils aleatoris» només a locals
+sidebar_sections_users_local_only: Restringir la secció de la barra lateral 
+  «Persones actives» només a locals
+random_local_only_performance_warning: Habilitar «Només aleatoris locals» pot 
+  afectar el rendiment de l'SQL.
+default_content_combined: Fils + Microblog
+ban_expires: La prohibició caduca
+you_have_been_banned_from_magazine: Vos han prohibit l'accés a la revista %m.
+you_have_been_banned_from_magazine_permanently: Vos han prohibit permanentment 
+  l'accés a la revista %m.
+you_are_no_longer_banned_from_magazine: Ja no teniu prohibit l'accés a la 
+  revista %m.

@@ -33,6 +33,7 @@ abstract class Criteria
     public const AP_LOCAL = 'local';
     public const AP_FEDERATED = 'federated';
 
+    public const CONTENT_COMBINED = 'combined';
     public const CONTENT_THREADS = 'threads';
     public const CONTENT_MICROBLOG = 'microblog';
 
@@ -71,6 +72,12 @@ abstract class Criteria
         self::AP_ALL,
         self::AP_FEDERATED,
         self::AP_LOCAL,
+    ];
+
+    public const array CONTENT_OPTIONS = [
+        self::CONTENT_COMBINED,
+        self::CONTENT_THREADS,
+        self::CONTENT_MICROBLOG,
     ];
 
     public int $page = 1;

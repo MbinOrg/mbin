@@ -303,6 +303,7 @@ mentioned_you: Mentioned you
 comment: Comment
 post: Post
 ban_expired: Ban expired
+ban_expires: Ban expires
 purge: Purge
 send_message: Send direct message
 message: Message
@@ -475,8 +476,6 @@ federation_page_dead_description: Instances that we could not deliver at least
   10 activities in a row and where the last successful deliver and -receive were
   more than a week ago
 federated_search_only_loggedin: Federated search limited if not logged in
-sidebar_sections_local_only: Restrict "Random X" and "Active People" sections to
-  local only
 account_deletion_title: Account deletion
 account_deletion_description: Your account will be deleted in 30 days unless you
   choose to delete the account immediately. To restore your account within 30 
@@ -645,7 +644,9 @@ oauth2.grant.moderate.entry.change_language: Change the language of threads in
   your moderated magazines.
 oauth2.grant.moderate.entry.pin: Pin threads to the top of your moderated 
   magazines.
-oauth2.grant.moderate.entry.set_adult: Mark threads as NSFW in your moderated 
+oauth2.grant.moderate.entry.lock: Lock threads in your moderated magazines,
+  so no one can comment on it
+oauth2.grant.moderate.entry.set_adult: Mark threads as NSFW in your moderated
   magazines.
 oauth2.grant.moderate.entry.trash: Trash or restore threads in your moderated 
   magazines.
@@ -660,7 +661,9 @@ oauth2.grant.moderate.entry_comment.trash: Trash or restore comments in threads
 oauth2.grant.moderate.post.all: Moderate posts in your moderated magazines.
 oauth2.grant.moderate.post.change_language: Change the language of posts in your
   moderated magazines.
-oauth2.grant.moderate.post.set_adult: Mark posts as NSFW in your moderated 
+oauth2.grant.moderate.post.lock: Lock microblogs in your moderated magazines,
+  so no one can comment on it
+oauth2.grant.moderate.post.set_adult: Mark posts as NSFW in your moderated
   magazines.
 oauth2.grant.moderate.post.trash: Trash or restore posts in your moderated 
   magazines.
@@ -1090,9 +1093,39 @@ allow_instance: Allow instance
 federation_page_use_allowlist_help: If an allow list is used, this instance will
   only federate with the explicitly allowed instances. Otherwise this instance 
   will federate with every instance, except those that are banned.
-front_default_content: Front default view
+you_have_been_banned_from_magazine: You have been banned from magazine %m.
+you_have_been_banned_from_magazine_permanently: You have been permanently banned from magazine %m.
+you_are_no_longer_banned_from_magazine: You are no longer banned from magazine %m.
+front_default_content: Frontpage default view
 default_content_default: Server default (Threads)
-default_content_all: Threads + Microblog
+default_content_combined: Threads + Microblog
 default_content_threads: Threads
 default_content_microblog: Microblog
 combined: Combined
+sidebar_sections_random_local_only: Restrict "Random Threads/Posts" sidebar sections to local only
+sidebar_sections_users_local_only: Restrict "Active people" sidebar section to local only
+random_local_only_performance_warning: Enabling "Random local only" may cause SQL performance impact.
+discoverable: Discoverable
+user_discoverable_help: If this is enabled, your profile, threads, microblogs and comments can be found
+  through search and the random panels. Your profile might also appear in the active user panel and on the people page.
+  If this is disabled, your posts will still be visible to other users, but they will not show up in the all feed.
+magazine_discoverable_help: If this is enabled, this magazine and threads, microblogs and comments of this magazine
+  can be found through search and the random panels.
+  If this is disabled the magazine will still appear in the magazine list, but the threads and microblogs will not
+  appear in the all feed.
+flash_thread_lock_success: Thread locked successfully
+flash_thread_unlock_success: Thread unlocked successfully
+flash_post_lock_success: Microblog locked successfully
+flash_post_unlock_success: Microblog unlocked successfully
+lock: Lock
+unlock: Unlock
+comments_locked: The comments are locked.
+magazine_log_entry_locked: locked the comments of
+magazine_log_entry_unlocked: unlocked the comments of
+modlog_type_entry_lock: Thread locked
+modlog_type_entry_unlock: Thread unlocked
+modlog_type_post_lock: Microblog locked
+modlog_type_post_unlock: Microblog unlocked
+contentnotification.muted: Mute | get no notifications
+contentnotification.default: Default | get notifications according to your default settings
+contentnotification.loud: Loud | get all notifications

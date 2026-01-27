@@ -151,6 +151,12 @@
                                     <i class="fa-regular fa-newspaper" aria-hidden="true"></i>
                                 </span>
                             </li>
+                        {% elseif entry.type is same as 'link' and entry.hasEmbed is same as false %}
+                            <li class="meta-link">
+                                <span aria-label="{{ 'link'|trans }}">
+                                    <i class="fa-solid fa-link" aria-hidden="true"></i>
+                                </span>
+                            </li>
                         {% endif %}
                         {% if entry.hasEmbed %}
                             {% set preview_url = entry.type is same as 'image' and entry.image ? uploaded_asset(entry.image) : entry.url %}
@@ -165,10 +171,17 @@
                             </li>
                         {% endif %}
                         <li>
-                            <a class="stretched-link"
-                               href="{{ entry_url(entry) ~ '#comments' }}">
-                                <span data-subject-target="commentsCounter">{{ entry.commentCount }}</span> {{ 'comments_count'|trans({'%count%': entry.commentCount}) }}
-                            </a>
+                            {% if not entry.isLocked %}
+                                <a class="stretched-link"
+                                   href="{{ entry_url(entry) ~ '#comments' }}">
+                                    <span data-subject-target="commentsCounter">{{ entry.commentCount }}</span> {{ 'comments_count'|trans({'%count%': entry.commentCount}) }}
+                                </a>
+                            {% else %}
+                                <span class="stretched-link">
+                                    <i class="fa fa-lock" aria-hidden="true"></i>
+                                    <span data-subject-target="commentsCounter">{{ entry.commentCount }}</span> {{ 'comments_count'|trans({'%count%': entry.commentCount}) }}
+                                </span>
+                            {% endif %}
                         </li>
                         <li>
                             {{ component('boost', {

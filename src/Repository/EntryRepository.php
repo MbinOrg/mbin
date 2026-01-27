@@ -356,6 +356,7 @@ class EntryRepository extends ServiceEntityRepository
             ->andWhere('m.visibility = :visibility')
             ->andWhere('u.visibility = :visibility')
             ->andWhere('u.isDeleted = false')
+            ->andWhere('u.apDiscoverable = true')
             ->andWhere('m.isAdult = false')
             ->andWhere('e.isAdult = false')
             ->andWhere('h.tag = :tag')
@@ -389,6 +390,7 @@ class EntryRepository extends ServiceEntityRepository
             ->andWhere('m.visibility = :visibility')
             ->andWhere('u.visibility = :visibility')
             ->andWhere('u.isDeleted = false')
+            ->andWhere('u.apDiscoverable = true')
             ->andWhere('m.isAdult = false')
             ->andWhere('e.isAdult = false')
             ->join('e.magazine', 'm')
@@ -416,10 +418,12 @@ class EntryRepository extends ServiceEntityRepository
         $qb = $qb->where('e.isAdult = false')
             ->andWhere('e.visibility = :visibility')
             ->andWhere('m.visibility = :visibility')
+            ->andWhere('m.apDiscoverable = true')
             ->andWhere('u.visibility = :visibility')
+            ->andWhere('u.apDiscoverable = true')
             ->andWhere('u.isDeleted = false')
             ->andWhere('m.isAdult = false');
-        if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
+        if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_RANDOM_LOCAL_ONLY')) {
             $qb = $qb->andWhere('m.apId IS NULL');
         }
 

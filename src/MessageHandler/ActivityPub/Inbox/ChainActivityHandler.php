@@ -9,7 +9,9 @@ use App\Entity\EntryComment;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Exception\EntityNotFoundException;
+use App\Exception\EntryLockedException;
 use App\Exception\InstanceBannedException;
+use App\Exception\PostLockedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Exception\UserDeletedException;
@@ -55,7 +57,7 @@ class ChainActivityHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof ChainActivityMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("ChainActivityHandler called, but is wasn\'t a ChainActivityMessage. Type: ".\get_class($message));
         }
         $this->logger->debug('Got chain activity message: {m}', ['m' => $message]);
         if (!$message->chain || 0 === \sizeof($message->chain)) {
@@ -153,6 +155,10 @@ class ChainActivityHandler extends MbinMessageHandler
             $this->logger->info('[ChainActivityHandler::retrieveObject] One of the used tags is banned, url: {url}', ['url' => $apUrl]);
         } catch (InstanceBannedException) {
             $this->logger->info('[ChainActivityHandler::retrieveObject] The instance is banned, url: {url}', ['url' => $apUrl]);
+        } catch (EntryLockedException) {
+            $this->logger->error('[ChainActivityHandler::retrieveObject] The entry in which this comment should be created, is locked: {url}', ['url' => $apUrl]);
+        } catch (PostLockedException) {
+            $this->logger->error('[ChainActivityHandler::retrieveObject] The post in which this comment should be created, is locked: {url}', ['url' => $apUrl]);
         } catch (EntityNotFoundException $e) {
             $this->logger->error('[ChainActivityHandler::retrieveObject] There was an exception while getting {url}: {ex} - {m}. {o}', ['url' => $apUrl, 'ex' => \get_class($e), 'm' => $e->getMessage(), 'o' => $e]);
         }

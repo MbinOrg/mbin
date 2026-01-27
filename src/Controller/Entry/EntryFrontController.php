@@ -168,7 +168,7 @@ class EntryFrontController extends AbstractController
             $content = $user?->frontDefaultContent?->value ?? 'threads';
         }
 
-        if ('threads' === $content || 'all' === $content) {
+        if ('threads' === $content || 'combined' === $content) {
             $criteria = new EntryPageView($this->getPageNb($request), $this->security);
         } elseif ('microblog' === $content) {
             $criteria = new PostPageView($this->getPageNb($request), $this->security);

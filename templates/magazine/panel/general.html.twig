@@ -44,6 +44,13 @@
                 {{ form_label(form.isPostingRestrictedToMods) }}
                 {{ form_widget(form.isPostingRestrictedToMods) }}
             </div>
+            <div class="checkbox">
+                {{ form_label(form.discoverable, 'discoverable') }}
+                {{ form_widget(form.discoverable) }}
+            </div>
+            <div class="checkbox help-text">
+                {{ form_help(form.discoverable) }}
+            </div>
             <div class="actions">
                 {{ form_row(form.submit, { 'label': 'done'|trans, 'attr': {'class': 'btn btn__primary'} }) }}
             </div>

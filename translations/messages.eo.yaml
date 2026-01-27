@@ -615,8 +615,6 @@ oauth2.grant.moderate.magazine.ban.create: Forbari uzantojn en la revuoj, kiujn
 oauth2.grant.block.general: Bloki aŭ malbloki ajnan revuon, domajnon aŭ uzanton,
   kaj rigardi la revuojn, domajnojn kaj uzantojn, kiujn vi blokis.
 toolbar.spoiler: Malkaŝo de intrigo
-sidebar_sections_local_only: Limigi sekciojn "Hazarda X" kaj "Aktivaj Homoj" nur
-  al lokaj
 account_deletion_description: Via konto estos forigita post 30 tagoj krom se vi 
   elektas forigi la konton tuj. Por restarigi vian konton ene de 30 tagoj, 
   ensalutu kun la samaj uzantkreditaĵoj aŭ kontaktu administranton.
@@ -787,8 +785,7 @@ show_avatars_on_comments_help: Montri/kaŝi uzantajn avatarojn kiam rigardado
   komentojn pri ununura fadeno aŭ afiŝo.
 magazine_theme_appearance_custom_css: Adaptita CSS-o kiu aplikiĝos dum rigardado
   de enhavo ene de via revuo.
-magazine_theme_appearance_icon: Adaptita ikono por la revuo. Se neniu estas 
-  elektita, la defaŭlta ikono estos uzata.
+magazine_theme_appearance_icon: Adaptita ikono por la revuo.
 magazine_theme_appearance_background_image: Adaptita fonbildo kiu estos aplikata
   dum rigardado de enhavo ene de via revuo.
 oauth2.grant.moderate.post.pin: Alpingli afiŝojn al la supro de la revuoj, kiujn
@@ -922,7 +919,7 @@ magazine_log_entry_pinned: alpinglita eniro
 magazine_log_entry_unpinned: forigita alpinglita eniro
 last_updated: Laste ĝisdatigita
 and: kaj
-direct_message: Senpera mesaĝo
+direct_message: Rektmesaĝo
 manually_approves_followers: Mane aprobas sekvantojn
 register_push_notifications_button: Registriĝi por Puŝaj Sciigoj
 unregister_push_notifications_button: Forigi Puŝan Registriĝon
@@ -937,7 +934,7 @@ notification_title_new_thread: Nova fadeno
 notification_title_removed_thread: Fadeno forigitis
 notification_title_edited_thread: Fadeno redaktitis
 notification_title_ban: Vi estis forbarita
-notification_title_message: Nova senpera mesaĝo
+notification_title_message: Nova rektmesaĝo
 notification_title_new_post: Nova Afiŝo
 notification_title_removed_post: Afiŝo estis forigita
 notification_title_edited_post: Afiŝo estis redaktita
@@ -1066,3 +1063,31 @@ modlog_type_post_comment_restored: Respondo al mikroblogo restarigita
 modlog_type_ban: Uzanto malpermesita de revuo
 modlog_type_moderator_add: Revumoderigisto aldonita
 modlog_type_moderator_remove: Revuomoderigisto forigita
+crosspost: Disafiŝi
+ban_expires: Forbaro eksvalidiĝas
+banner: Standardo
+magazine_theme_appearance_banner: Propra standardo por la revuo. Ĝi estas 
+  montrata super ĉiuj fadenoj kaj devus esti en larĝa bildformato (5:1, aŭ 
+  1500px * 300px).
+flash_thread_ref_image_not_found: La bildo referencia de 'imageHash' ne 
+  trovitis.
+everyone: Ĉiuj
+nobody: Neniu
+followers_only: Nur sekvantoj
+direct_message_setting_label: Kiu povas sendi al vi rektmesaĝon
+delete_magazine_icon: Forigi revuikonon
+flash_magazine_theme_icon_detached_success: Revuikono sukcese forigitis
+delete_magazine_banner: Forigi revustandardo
+flash_magazine_theme_banner_detached_success: Revustandardo sukcese forigitis
+federation_uses_allowlist: Uzi permesliston por federacio
+defederating_instance: Malfederanta nodo %i
+their_user_follows: Kvanto da uzantoj de ilia nodo sekvantaj uzantojn sur nia 
+  nodo
+our_user_follows: Kvanto da uzantoj de nia nodo sekvantaj uzantojn sur ilia nodo
+their_magazine_subscriptions: Kvanto da uzantoj de ilia nodo abonis revuojn en 
+  nia nodo
+our_magazine_subscriptions: Kvanto da uzantoj de nia nodo abonis revuojn en ilia
+  nodo
+confirm_defederation: Konfirmi malfederacion
+ban_instance: Forbari nodon
+allow_instance: Malforbari nodon

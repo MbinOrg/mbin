@@ -23,8 +23,8 @@
             {{ form_start(form) }}
             <h2>{{ 'appearance'|trans }}</h2>
             {{ form_row(form.homepage, {label: 'homepage'}) }}
-            {{ form_row(form.frontDefaultSort, {label: 'front_default_sort'}) }}
             {{ form_row(form.frontDefaultContent, {label: 'front_default_content'}) }}
+            {{ form_row(form.frontDefaultSort, {label: 'front_default_sort'}) }}
             {{ form_row(form.commentDefaultSort, {label: 'comment_default_sort'}) }}
             {{ form_row(form.preferredLanguages, {label: 'preferred_languages'}) }}
             {{ form_row(form.featuredMagazines, {label: 'featured_magazines'}) }}
@@ -38,6 +38,13 @@
             {{ form_row(form.directMessageSetting, {label: 'direct_message_setting_label'}) }}
             {{ form_row(form.showProfileSubscriptions, {label: 'show_profile_subscriptions', row_attr: {class: 'checkbox'}}) }}
             {{ form_row(form.showProfileFollowings, {label: 'show_profile_followings', row_attr: {class: 'checkbox'}}) }}
+            <div class="checkbox">
+                {{ form_label(form.discoverable, 'discoverable') }}
+                {{ form_widget(form.discoverable) }}
+            </div>
+            <div class="checkbox help-text">
+                {{ form_help(form.discoverable) }}
+            </div>
             <h2>{{ 'notifications'|trans }}</h2>
             {{ form_row(form.notifyOnNewEntryReply, {label: 'notify_on_new_entry_reply', row_attr: {class: 'checkbox'}}) }}
             {{ form_row(form.notifyOnNewEntryCommentReply, {label: 'notify_on_new_entry_comment_reply', row_attr: {class: 'checkbox'}}) }}

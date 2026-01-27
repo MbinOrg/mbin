@@ -43,7 +43,7 @@ use App\Service\DomainManager;
 use App\Service\EntryCommentManager;
 use App\Service\EntryManager;
 use App\Service\FavouriteManager;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use App\Service\InstanceManager;
 use App\Service\MagazineManager;
 use App\Service\MentionManager;
@@ -56,8 +56,11 @@ use App\Service\ReportManager;
 use App\Service\SettingsManager;
 use App\Service\UserManager;
 use App\Service\VoteManager;
+use App\Tests\Service\TestingApHttpClient;
+use App\Tests\Service\TestingImageManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\Filesystem;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -66,8 +69,11 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Mime\MimeTypesInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class WebTestCase extends BaseWebTestCase
@@ -80,16 +86,16 @@ abstract class WebTestCase extends BaseWebTestCase
     protected const PAGINATION_KEYS = ['count', 'currentPage', 'maxPage', 'perPage'];
     protected const IMAGE_KEYS = ['filePath', 'sourceUrl', 'storageUrl', 'altText', 'width', 'height', 'blurHash'];
     protected const MESSAGE_RESPONSE_KEYS = ['messageId', 'threadId', 'sender', 'body', 'status', 'createdAt'];
-    protected const USER_RESPONSE_KEYS = ['userId', 'username', 'about', 'avatar', 'cover', 'createdAt', 'followersCount', 'apId', 'apProfileId', 'isBot', 'isFollowedByUser', 'isFollowerOfUser', 'isBlockedByUser', 'isAdmin', 'isGlobalModerator', 'serverSoftware', 'serverSoftwareVersion', 'notificationStatus', 'reputationPoints'];
-    protected const USER_SMALL_RESPONSE_KEYS = ['userId', 'username', 'isBot', 'isFollowedByUser', 'isFollowerOfUser', 'isBlockedByUser', 'avatar', 'apId', 'apProfileId', 'createdAt', 'isAdmin', 'isGlobalModerator'];
-    protected const ENTRY_RESPONSE_KEYS = ['entryId', 'magazine', 'user', 'domain', 'title', 'url', 'image', 'body', 'lang', 'tags', 'badges', 'numComments', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'isOc', 'isAdult', 'isPinned', 'createdAt', 'editedAt', 'lastActive', 'visibility', 'type', 'slug', 'apId', 'canAuthUserModerate', 'notificationStatus', 'bookmarks', 'crosspostedEntries', 'isAuthorModeratorInMagazine'];
+    protected const USER_RESPONSE_KEYS = ['userId', 'username', 'about', 'avatar', 'cover', 'createdAt', 'followersCount', 'apId', 'apProfileId', 'isBot', 'isFollowedByUser', 'isFollowerOfUser', 'isBlockedByUser', 'isAdmin', 'isGlobalModerator', 'serverSoftware', 'serverSoftwareVersion', 'notificationStatus', 'reputationPoints', 'discoverable'];
+    protected const USER_SMALL_RESPONSE_KEYS = ['userId', 'username', 'isBot', 'isFollowedByUser', 'isFollowerOfUser', 'isBlockedByUser', 'avatar', 'apId', 'apProfileId', 'createdAt', 'isAdmin', 'isGlobalModerator', 'discoverable'];
+    protected const ENTRY_RESPONSE_KEYS = ['entryId', 'magazine', 'user', 'domain', 'title', 'url', 'image', 'body', 'lang', 'tags', 'badges', 'numComments', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'isOc', 'isAdult', 'isPinned', 'isLocked', 'createdAt', 'editedAt', 'lastActive', 'visibility', 'type', 'slug', 'apId', 'canAuthUserModerate', 'notificationStatus', 'bookmarks', 'crosspostedEntries', 'isAuthorModeratorInMagazine'];
     protected const ENTRY_COMMENT_RESPONSE_KEYS = ['commentId', 'magazine', 'user', 'entryId', 'parentId', 'rootId', 'image', 'body', 'lang', 'isAdult', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'mentions', 'tags', 'createdAt', 'editedAt', 'lastActive', 'childCount', 'children', 'canAuthUserModerate', 'bookmarks', 'isAuthorModeratorInMagazine'];
-    protected const POST_RESPONSE_KEYS = ['postId', 'user', 'magazine', 'image', 'body', 'lang', 'isAdult', 'isPinned', 'comments', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'tags', 'mentions', 'createdAt', 'editedAt', 'lastActive', 'slug', 'canAuthUserModerate', 'notificationStatus', 'bookmarks', 'isAuthorModeratorInMagazine'];
+    protected const POST_RESPONSE_KEYS = ['postId', 'user', 'magazine', 'image', 'body', 'lang', 'isAdult', 'isPinned', 'isLocked', 'comments', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'tags', 'mentions', 'createdAt', 'editedAt', 'lastActive', 'slug', 'canAuthUserModerate', 'notificationStatus', 'bookmarks', 'isAuthorModeratorInMagazine'];
     protected const POST_COMMENT_RESPONSE_KEYS = ['commentId', 'user', 'magazine', 'postId', 'parentId', 'rootId', 'image', 'body', 'lang', 'isAdult', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'mentions', 'tags', 'createdAt', 'editedAt', 'lastActive', 'childCount', 'children', 'canAuthUserModerate', 'bookmarks', 'isAuthorModeratorInMagazine'];
     protected const BAN_RESPONSE_KEYS = ['banId', 'reason', 'expired', 'expiredAt', 'bannedUser', 'bannedBy', 'magazine'];
     protected const LOG_ENTRY_KEYS = ['type', 'createdAt', 'magazine', 'moderator', 'subject'];
-    protected const MAGAZINE_RESPONSE_KEYS = ['magazineId', 'owner', 'icon', 'banner', 'name', 'title', 'description', 'rules', 'subscriptionsCount', 'entryCount', 'entryCommentCount', 'postCount', 'postCommentCount', 'isAdult', 'isUserSubscribed', 'isBlockedByUser', 'tags', 'badges', 'moderators', 'apId', 'apProfileId', 'serverSoftware', 'serverSoftwareVersion', 'isPostingRestrictedToMods', 'localSubscribers', 'notificationStatus'];
-    protected const MAGAZINE_SMALL_RESPONSE_KEYS = ['magazineId', 'name', 'icon', 'banner', 'isUserSubscribed', 'isBlockedByUser', 'apId', 'apProfileId'];
+    protected const MAGAZINE_RESPONSE_KEYS = ['magazineId', 'owner', 'icon', 'banner', 'name', 'title', 'description', 'rules', 'subscriptionsCount', 'entryCount', 'entryCommentCount', 'postCount', 'postCommentCount', 'isAdult', 'isUserSubscribed', 'isBlockedByUser', 'tags', 'badges', 'moderators', 'apId', 'apProfileId', 'serverSoftware', 'serverSoftwareVersion', 'isPostingRestrictedToMods', 'localSubscribers', 'notificationStatus', 'discoverable'];
+    protected const MAGAZINE_SMALL_RESPONSE_KEYS = ['magazineId', 'name', 'icon', 'banner', 'isUserSubscribed', 'isBlockedByUser', 'apId', 'apProfileId', 'discoverable'];
     protected const DOMAIN_RESPONSE_KEYS = ['domainId', 'name', 'entryCount', 'subscriptionsCount', 'isUserSubscribed', 'isBlockedByUser'];
 
     protected const KIBBY_PNG_URL_RESULT = 'a8/1c/a81cc2fea35eeb232cd28fcb109b3eb5a4e52c71bce95af6650d71876c1bcbb7.png';
@@ -107,7 +113,6 @@ abstract class WebTestCase extends BaseWebTestCase
     protected EntryCommentManager $entryCommentManager;
     protected PostManager $postManager;
     protected PostCommentManager $postCommentManager;
-    protected ImageManager $imageManager;
     protected MessageManager $messageManager;
     protected FavouriteManager $favouriteManager;
     protected VoteManager $voteManager;
@@ -150,6 +155,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected GroupFactory $groupFactory;
     protected EntryPageFactory $pageFactory;
     protected TestingApHttpClient $testingApHttpClient;
+    protected TestingImageManager $imageManager;
 
     protected CreateWrapper $createWrapper;
     protected LikeWrapper $likeWrapper;
@@ -179,6 +185,18 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->testingApHttpClient = new TestingApHttpClient();
         self::getContainer()->set(ApHttpClientInterface::class, $this->testingApHttpClient);
 
+        $this->imageManager = new TestingImageManager(
+            $this->getContainer()->getParameter('kbin_storage_url'),
+            $this->getService(Filesystem::class),
+            $this->getService(HttpClientInterface::class),
+            $this->getService(MimeTypesInterface::class),
+            $this->getService(ValidatorInterface::class),
+            $this->getService(LoggerInterface::class),
+            $this->getService(SettingsManager::class),
+        );
+        $this->imageManager->setKibbyPath($this->kibbyPath);
+        self::getContainer()->set(ImageManagerInterface::class, $this->imageManager);
+
         $this->entityManager = $this->getService(EntityManagerInterface::class);
         $this->magazineManager = $this->getService(MagazineManager::class);
         $this->userManager = $this->getService(UserManager::class);
@@ -186,7 +204,6 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->entryCommentManager = $this->getService(EntryCommentManager::class);
         $this->postManager = $this->getService(PostManager::class);
         $this->postCommentManager = $this->getService(PostCommentManager::class);
-        $this->imageManager = $this->getService(ImageManager::class);
         $this->messageManager = $this->getService(MessageManager::class);
         $this->favouriteManager = $this->getService(FavouriteManager::class);
         $this->voteManager = $this->getService(VoteManager::class);

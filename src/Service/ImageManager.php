@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints\Image;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class ImageManager
+class ImageManager implements ImageManagerInterface
 {
     public const IMAGE_MIMETYPES = [
         'image/jpeg', 'image/jpg', 'image/gif', 'image/png',
@@ -56,8 +56,8 @@ class ImageManager
         $fh = fopen($source, 'rb');
 
         try {
-            if (filesize($source) > $this->settings->get('MAX_IMAGE_BYTES')) {
-                throw new ImageDownloadTooLargeException('the image is too large, max size is '.$this->settings->get('MAX_IMAGE_BYTES'));
+            if (filesize($source) > $this->settings->getMaxImageBytes()) {
+                throw new ImageDownloadTooLargeException('the image is too large, max size is '.$this->settings->getMaxImageBytes());
             }
 
             $this->validate($source);
@@ -206,7 +206,7 @@ class ImageManager
     {
         try {
             return $this->publicUploadsFilesystem->mimeType($image->filePath);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 'none';
         }
     }

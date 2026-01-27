@@ -380,8 +380,13 @@ class MagazineRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('m')
             ->andWhere('m.postCount > 0')
             ->orWhere('m.entryCount > 0')
-            ->orderBy('m.postCount', 'DESC')
+            ->andWhere('m.lastActive >= :date')
+            ->andWhere('m.isAdult = false')
+            ->andWhere('m.visibility = :visibility')
             ->setMaxResults(50)
+            ->setParameter('date', new \DateTime('-5 months'))
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+            ->orderBy('m.entryCount', 'DESC')
             ->getQuery()
             ->getResult();
     }
@@ -428,7 +433,7 @@ class MagazineRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
         $whereClauses = [];
         $parameters = [];
-        if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
+        if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_RANDOM_LOCAL_ONLY')) {
             $whereClauses[] = 'm.ap_id IS NULL';
         }
         if (null !== $user) {
