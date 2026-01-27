@@ -7,9 +7,7 @@ namespace App\Tests\Service;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Service\ActivityPub\ApHttpClientInterface;
-use Symfony\Component\DependencyInjection\Attribute\When;
 
-#[When(env: 'test')]
 class TestingApHttpClient implements ApHttpClientInterface
 {
     /**

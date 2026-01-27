@@ -19,7 +19,6 @@ use JetBrains\PhpStorm\ArrayShape;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\CacheItem;
-use Symfony\Component\DependencyInjection\Attribute\WhenNot;
 use Symfony\Component\HttpClient\CurlHttpClient;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -42,7 +41,6 @@ enum ApRequestType
     case NodeInfo;
 }
 
-#[WhenNot(env: 'test')]
 class ApHttpClient implements ApHttpClientInterface
 {
     public const TIMEOUT = 8;

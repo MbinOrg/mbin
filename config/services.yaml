@@ -239,10 +239,6 @@ services:
                   event: kernel.controller_arguments,
               }
 
-    # Testing
-    App\Tests\Service\:
-        resource: '../tests/Service/'
-
     # Feeds
     debril.rss_atom.provider:
         class: App\Feed\Provider

@@ -8,14 +8,12 @@ use App\Exception\CorruptedFileException;
 use App\Exception\ImageDownloadTooLargeException;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Attribute\WhenNot;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Mime\MimeTypesInterface;
 use Symfony\Component\Validator\Constraints\Image;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-#[WhenNot(env: 'test')]
 class ImageManager implements ImageManagerInterface
 {
     public const IMAGE_MIMETYPES = [
