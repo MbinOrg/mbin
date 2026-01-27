@@ -1167,3 +1167,36 @@ you_have_been_banned_from_magazine_permanently: Vos han prohibit permanentment
   l'accés a la revista %m.
 you_are_no_longer_banned_from_magazine: Ja no teniu prohibit l'accés a la 
   revista %m.
+oauth2.grant.moderate.entry.lock: Bloqueja els fils de les revistes moderades 
+  perquè ningú no hi puga fer comentaris
+oauth2.grant.moderate.post.lock: Bloqueja els microblogs a les revistes 
+  moderades, perquè ningú no hi puga fer comentaris
+discoverable: Descobrible
+user_discoverable_help: Si esta opció està habilitada, el vostre perfil, fils de
+  discussió, microblogs i comentaris es poden trobar mitjançant la cerca i els 
+  panells aleatoris. El vostre perfil també pot aparèixer al panell d'usuari(a) 
+  actiu(va) i a la pàgina de persones. Si esta opció està desactivada, les 
+  vostres publicacions continuaran sent visibles per a altres usuari(e)s, però 
+  no apareixeran al canal complet.
+magazine_discoverable_help: Si això està habilitat, esta revista i els fils, 
+  microblogs i comentaris d'esta revista es poden trobar mitjançant la busca i 
+  els panells aleatoris. Si això està desactivat, la revista encara apareixerà a
+  la llista de revistes, però els fils i microblogs no apareixeran al canal 
+  complet.
+flash_thread_lock_success: Fil bloquejat correctament
+flash_thread_unlock_success: Fil desbloquejat correctament
+flash_post_lock_success: Microblog bloquejat correctament
+flash_post_unlock_success: Microblog desbloquejat correctament
+lock: Bloquejar
+unlock: Desbloquejar
+comments_locked: Els comentaris estan bloquejats.
+magazine_log_entry_locked: ha bloquejat els comentaris de
+magazine_log_entry_unlocked: ha desbloquejat els comentaris de
+modlog_type_entry_lock: Fil bloquejat
+modlog_type_entry_unlock: Fil desbloquejat
+modlog_type_post_lock: Microblog bloquejat
+modlog_type_post_unlock: Microblog desbloquejat
+contentnotification.muted: Silenciós | no rebre notificacions
+contentnotification.default: Predeterminat | rebre notificacions segons la 
+  configuració predeterminada
+contentnotification.loud: Sorollós | rebre totes les notificacions
