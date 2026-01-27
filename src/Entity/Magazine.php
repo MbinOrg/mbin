@@ -28,7 +28,6 @@ use Doctrine\ORM\Mapping\UniqueConstraint;
 
 #[Entity(repositoryClass: MagazineRepository::class)]
 #[Index(columns: ['visibility', 'is_adult'], name: 'magazine_visibility_adult_idx')]
-#[Index(columns: ['visibility'], name: 'magazine_visibility_idx')]
 #[Index(columns: ['is_adult'], name: 'magazine_adult_idx')]
 #[Index(columns: ['name_ts'], name: 'magazine_name_ts')]
 #[Index(columns: ['title_ts'], name: 'magazine_title_ts')]
