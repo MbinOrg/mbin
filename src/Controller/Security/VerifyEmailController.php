@@ -21,7 +21,11 @@ class VerifyEmailController extends AbstractController
             return $this->redirectToRoute('app_register');
         }
 
-        $user = $repository->find($id);
+        try {
+            $user = $repository->find($id);
+        } catch (\Exception) {
+            return $this->redirectToRoute('app_register');
+        }
 
         if (null === $user) {
             return $this->redirectToRoute('app_register');

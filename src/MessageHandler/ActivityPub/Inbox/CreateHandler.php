@@ -95,6 +95,11 @@ class CreateHandler extends MbinMessageHandler
                     $this->cache->invalidateTags([$tag]);
                     $this->logger->debug('cleared cached items with tag {t}', ['t' => $tag]);
                 }
+            } else {
+                $this->logger->warning('received Create activity for unknown type {t} of object {o}; ignoring', [
+                    't' => $object['type'],
+                    'o' => $object['id'] ?? '<no id>',
+                ]);
             }
         } catch (UserBannedException) {
             $this->logger->info('[CreateHandler::doWork] Did not create the post, because the user is banned');
