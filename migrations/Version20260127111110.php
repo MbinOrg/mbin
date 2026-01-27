@@ -54,7 +54,6 @@ final class Version20260127111110 extends AbstractMigration
         $this->addSql('CREATE INDEX IF NOT EXISTS entry_visibility_idx ON entry (visibility)');
         $this->addSql('CREATE INDEX IF NOT EXISTS IDX_9E561267A76ED395 ON entry_comment_vote (user_id)');
         $this->addSql('CREATE INDEX IF NOT EXISTS IDX_62A2CA1960C33421 ON favourite (entry_comment_id)');
-        $this->addSql('CREATE INDEX IF NOT EXISTS IDX_62A2CA1960C33421 ON favourite (entry_comment_id)');
         $this->addSql('CREATE INDEX IF NOT EXISTS IDX_62A2CA19BA364942 ON favourite (entry_id)');
         $this->addSql('CREATE INDEX IF NOT EXISTS IDX_62A2CA19DB1174D2 ON favourite (post_comment_id)');
         $this->addSql('CREATE INDEX IF NOT EXISTS IDX_62A2CA194B89032C ON favourite (post_id)');
