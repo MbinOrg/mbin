@@ -11,6 +11,7 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
 use App\Entity\Vote;
+use App\Enums\EUserType;
 use App\Event\VoteEvent;
 use App\Factory\VoteFactory;
 use App\Utils\DownvotesMode;
@@ -44,7 +45,7 @@ class VoteManager
         if (DownvotesMode::Disabled === $downVotesMode && VotableInterface::VOTE_DOWN === $choice) {
             throw new \LogicException('cannot downvote, because that is disabled');
         }
-        if (VotableInterface::VOTE_DOWN === $choice && 'Service' === $user->type) {
+        if (VotableInterface::VOTE_DOWN === $choice && EUserType::Service === $user->type) {
             throw new AccessDeniedHttpException('Bots are not allowed to vote on items!');
         }
 

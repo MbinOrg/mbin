@@ -74,7 +74,7 @@ class ContextExtensionRuntime implements RuntimeExtensionInterface
         $defaultSort = 'hot';
         $user = $this->security->getUser();
         if ($user instanceof User) {
-            $defaultSort = $user->frontDefaultSort;
+            $defaultSort = $user->frontDefaultSort->value;
         }
 
         return $defaultSort;
@@ -93,7 +93,7 @@ class ContextExtensionRuntime implements RuntimeExtensionInterface
         $defaultSort = 'hot';
         $user = $this->security->getUser();
         if ($user instanceof User) {
-            $defaultSort = $user->commentDefaultSort;
+            $defaultSort = $user->commentDefaultSort->value;
         }
 
         return $defaultSort;

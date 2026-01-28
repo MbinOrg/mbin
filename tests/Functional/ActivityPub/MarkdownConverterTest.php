@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\ActivityPub;
 
 use App\Entity\User;
+use App\Enums\EUserType;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 use function PHPUnit\Framework\assertEquals;
@@ -33,7 +34,7 @@ class MarkdownConverterTest extends ActivityPubFunctionalTestCase
         // generate the local user 'someUser'
         $user = $this->getUserByUsername('someUser', email: 'someUser@kbin.test');
         $this->getMagazineByName('someMagazine', $user);
-        $mastodonUser = new User('SomeUser@mastodon.tld', 'SomeUser@mastodon.tld', '', 'Person', 'https://mastodon.tld/users/SomeAccount');
+        $mastodonUser = new User('SomeUser@mastodon.tld', 'SomeUser@mastodon.tld', '', EUserType::Person, 'https://mastodon.tld/users/SomeAccount');
         $mastodonUser->apPublicUrl = 'https://mastodon.tld/@SomeAccount';
         $this->entityManager->persist($mastodonUser);
     }

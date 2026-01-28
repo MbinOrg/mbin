@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Entity\User;
+use App\Enums\EUserType;
 use App\Repository\ImageRepository;
 use App\Repository\UserRepository;
 use App\Service\ImageManagerInterface;
@@ -30,7 +31,7 @@ class UserFixtures extends BaseFixture
                 $user['email'],
                 $user['username'],
                 $user['password'],
-                $user['type']
+                EUserType::getFromString($user['type'])
             );
 
             $newUser->setPassword(
