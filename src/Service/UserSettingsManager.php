@@ -54,8 +54,8 @@ class UserSettingsManager
         $user->notifyOnNewEntryReply = $dto->notifyOnNewEntryReply;
         $user->notifyOnNewPostCommentReply = $dto->notifyOnNewPostCommentReply;
         $user->homepage = $dto->homepage;
-        $user->frontDefaultSort = null != $dto->frontDefaultSort ? ESortOptions::getFromString($dto->frontDefaultSort) : null;
-        $user->commentDefaultSort = null != $dto->commentDefaultSort ? ESortOptions::getFromString($dto->commentDefaultSort) : null;
+        $user->frontDefaultSort = null !== $dto->frontDefaultSort ? ESortOptions::getFromString($dto->frontDefaultSort) : null;
+        $user->commentDefaultSort = null !== $dto->commentDefaultSort ? ESortOptions::getFromString($dto->commentDefaultSort) : null;
         $user->hideAdult = $dto->hideAdult;
         $user->showProfileSubscriptions = $dto->showProfileSubscriptions;
         $user->showProfileFollowings = $dto->showProfileFollowings;
@@ -65,8 +65,8 @@ class UserSettingsManager
         $user->preferredLanguages = $dto->preferredLanguages ? array_unique($dto->preferredLanguages) : [];
         $user->customCss = $dto->customCss;
         $user->ignoreMagazinesCustomCss = $dto->ignoreMagazinesCustomCss;
-        $user->directMessageSetting = null != $dto->directMessageSetting ? EDirectMessageSettings::getFromString($dto->directMessageSetting) : null;
-        $user->frontDefaultContent = null != $dto->frontDefaultContent ? EFrontContentOptions::getFromString($dto->frontDefaultContent) : null;
+        $user->directMessageSetting = null !== $dto->directMessageSetting ? EDirectMessageSettings::getFromString($dto->directMessageSetting) : null;
+        $user->frontDefaultContent = null !== $dto->frontDefaultContent ? EFrontContentOptions::getFromString($dto->frontDefaultContent) : null;
 
         if (null !== $dto->notifyOnUserSignup) {
             $user->notifyOnUserSignup = $dto->notifyOnUserSignup;
