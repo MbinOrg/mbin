@@ -47,7 +47,7 @@ class ApActivityRepository extends ServiceEntityRepository
             return $local;
         }
 
-        $conn = $this->_em->getConnection();
+        $conn = $this->getEntityManager()->getConnection();
         $tables = [
             ['table' => 'entry', 'class' => Entry::class],
             ['table' => 'entry_comment', 'class' => EntryComment::class],
@@ -162,7 +162,7 @@ class ApActivityRepository extends ServiceEntityRepository
 
     public function getLocalUrlOfActivity(string $type, int $id): ?string
     {
-        $repo = $this->_em->getRepository($type);
+        $repo = $this->getEntityManager()->getRepository($type);
         $entity = $repo->find($id);
 
         return $this->getLocalUrlOfEntity($entity);

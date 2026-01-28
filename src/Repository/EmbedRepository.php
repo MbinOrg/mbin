@@ -32,10 +32,10 @@ class EmbedRepository extends ServiceEntityRepository
         if (null === $this->findOneByUrl($entity->url)) {
             // Do not exceed URL length limit defined by db schema
             try {
-                $this->_em->persist($entity);
+                $this->getEntityManager()->persist($entity);
 
                 if ($flush) {
-                    $this->_em->flush();
+                    $this->getEntityManager()->flush();
                 }
             } catch (\Exception $e) {
                 $this->logger->warning('Embed URL exceeds allowed length: {url, length}', ['url' => $entity->url, \strlen($entity->url)]);
@@ -45,9 +45,9 @@ class EmbedRepository extends ServiceEntityRepository
 
     public function remove(Embed $entity, bool $flush = true): void
     {
-        $this->_em->remove($entity);
+        $this->getEntityManager()->remove($entity);
         if ($flush) {
-            $this->_em->flush();
+            $this->getEntityManager()->flush();
         }
     }
 }

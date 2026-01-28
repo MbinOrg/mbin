@@ -243,7 +243,7 @@ class PostRepository extends ServiceEntityRepository
 
     public function hydrate(Post ...$posts): void
     {
-        $this->_em->createQueryBuilder()
+        $this->getEntityManager()->createQueryBuilder()
             ->select('PARTIAL p.{id}')
             ->addSelect('u')
             ->addSelect('ua')
@@ -261,7 +261,7 @@ class PostRepository extends ServiceEntityRepository
 
         /* we don't need to hydrate all the votes and favourites. We only use the count saved in the post entity
         if ($this->security->getUser()) {
-            $this->_em->createQueryBuilder()
+            $this->getEntityManager()->createQueryBuilder()
                 ->select('PARTIAL p.{id}')
                 ->addSelect('pv')
                 ->addSelect('pf')
@@ -467,12 +467,12 @@ class PostRepository extends ServiceEntityRepository
                 $item->expiresAfter(60);
 
                 if (!$criteria->magazine) {
-                    $query = $this->_em->createQuery(
+                    $query = $this->getEntityManager()->createQuery(
                         'SELECT COUNT(p.id) FROM App\Entity\Post p WHERE p.visibility = :visibility'
                     )
                         ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
                 } else {
-                    $query = $this->_em->createQuery(
+                    $query = $this->getEntityManager()->createQuery(
                         'SELECT COUNT(p.id) FROM App\Entity\Post p WHERE p.visibility = :visibility AND p.magazine = :magazine'
                     )
                         ->setParameters(

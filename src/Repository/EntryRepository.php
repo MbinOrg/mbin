@@ -271,7 +271,7 @@ class EntryRepository extends ServiceEntityRepository
 
     public function hydrate(Entry ...$entries): void
     {
-        $this->_em->createQueryBuilder()
+        $this->getEntityManager()->createQueryBuilder()
             ->select('PARTIAL e.{id}')
             ->addSelect('u')
             ->addSelect('ua')
@@ -295,7 +295,7 @@ class EntryRepository extends ServiceEntityRepository
 
         /* we don't need to hydrate all the votes and favourites. We only use the count saved in the entry entity
         if ($this->security->getUser()) {
-            $this->_em->createQueryBuilder()
+            $this->getEntityManager()->createQueryBuilder()
                 ->select('PARTIAL e.{id}')
                 ->addSelect('ev')
                 ->addSelect('ef')
@@ -466,12 +466,12 @@ class EntryRepository extends ServiceEntityRepository
                 $item->expiresAfter(60);
 
                 if (!$criteria->magazine) {
-                    $query = $this->_em->createQuery(
+                    $query = $this->getEntityManager()->createQuery(
                         'SELECT COUNT(p.id) FROM App\Entity\Entry p WHERE p.visibility = :visibility'
                     )
                         ->setParameter('visibility', 'visible');
                 } else {
-                    $query = $this->_em->createQuery(
+                    $query = $this->getEntityManager()->createQuery(
                         'SELECT COUNT(p.id) FROM App\Entity\Entry p WHERE p.visibility = :visibility AND p.magazine = :magazine'
                     )
                         ->setParameters(['visibility' => 'visible', 'magazine' => $criteria->magazine]);

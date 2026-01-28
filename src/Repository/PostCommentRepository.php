@@ -202,7 +202,7 @@ class PostCommentRepository extends ServiceEntityRepository
 
     public function hydrate(PostComment ...$comment): void
     {
-        $this->_em->createQueryBuilder()
+        $this->getEntityManager()->createQueryBuilder()
             ->select('PARTIAL c.{id}')
             ->addSelect('u')
             ->addSelect('m')
@@ -218,7 +218,7 @@ class PostCommentRepository extends ServiceEntityRepository
 
         /* we don't need to hydrate all the votes and favourites. We only use the count saved in the PostComment entity
         if ($this->security->getUser()) {
-            $this->_em->createQueryBuilder()
+            $this->getEntityManager()->createQueryBuilder()
                 ->select('PARTIAL c.{id}')
                 ->from(PostComment::class, 'c')
                 ->leftJoin('c.votes', 'cv')

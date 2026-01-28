@@ -321,7 +321,7 @@ class MagazineRepository extends ServiceEntityRepository
         $parameters = [
             'magazineId' => $magazineId,
         ];
-        $adapter = new NativeQueryAdapter($this->_em->getConnection(), $sql, $parameters, transformer: $this->contentPopulationTransformer, cache: $this->cache);
+        $adapter = new NativeQueryAdapter($this->getEntityManager()->getConnection(), $sql, $parameters, transformer: $this->contentPopulationTransformer, cache: $this->cache);
 
         $pagerfanta = new Pagerfanta($adapter);
 

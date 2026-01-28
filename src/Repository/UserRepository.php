@@ -106,7 +106,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             'visibility' => VisibilityInterface::VISIBILITY_VISIBLE,
         ];
 
-        return new NativeQueryAdapter($this->_em->getConnection(), $sql, $parameters, transformer: $this->contentPopulationTransformer, cache: $this->cache);
+        return new NativeQueryAdapter($this->getEntityManager()->getConnection(), $sql, $parameters, transformer: $this->contentPopulationTransformer, cache: $this->cache);
     }
 
     /**
@@ -299,8 +299,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
         $user->setPassword($newHashedPassword);
 
-        $this->_em->persist($user);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
     }
 
     public function findOneByUsername(string $username): ?User
@@ -536,7 +536,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
     public function findUsersForMagazine(Magazine $magazine, ?bool $federated = false, int $limit = 200, bool $limitTime = false, bool $requireAvatar = false): array
     {
-        $conn = $this->_em->getConnection();
+        $conn = $this->getEntityManager()->getConnection();
         $timeWhere = $limitTime ? "AND created_at > now() - '30 days'::interval" : '';
         $sql = "
         (SELECT count(id), user_id FROM entry WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT :limit)
