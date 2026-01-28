@@ -20,7 +20,6 @@
         "aws/aws-sdk-php": "^3.317.0",
         "babdev/pagerfanta-bundle": "^v4.4.0",
         "debril/rss-atom-bundle": "^5.2.0",
-        "doctrine/annotations": "^2.0.1",
         "doctrine/doctrine-bundle": "^2.18",
         "doctrine/doctrine-migrations-bundle": "^3.7",
         "doctrine/orm": "^3.5",
