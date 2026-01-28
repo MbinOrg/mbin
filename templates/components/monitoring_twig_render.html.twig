@@ -1,10 +1,16 @@
 <div class="monitoring-twig-render">
-    <div>
-        {{ render.shortDescription }} | {{ render.profilerDuration|round(2) }}ms
-    </div>
+    {% if compareToParent %}
+        <div style="background-color: {{ render.getColorBasedOnPercentageDuration() }}; color: #e4e4e7;">
+            {{ render.shortDescription }} | {{ render.profilerDuration|round(2) }}ms / {{ render.getPercentageOfParentDuration()|round }}%
+        </div>
+    {% else %}
+        <div style="background-color: {{ render.getColorBasedOnPercentageDuration(false) }}; color: #e4e4e7;">
+            {{ render.shortDescription }} | {{ render.profilerDuration|round(2) }}ms / {{ render.getPercentageOfTotalDuration()|round }}%
+        </div>
+    {% endif %}
     <div class="children">
         {% for child in render.children %}
-            {{ component('monitoring_twig_render', {'render': child}) }}
+            {{ component('monitoring_twig_render', {'render': child, 'compareToParent': compareToParent}) }}
         {% endfor %}
     </div>
 </div>

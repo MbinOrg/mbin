@@ -64,4 +64,37 @@ class MonitoringTwigRender
     {
         $this->createdAtTraitConstruct();
     }
+
+    public function getPercentageOfParentDuration(): float
+    {
+        if (null === $this->parent) {
+            return 100 / $this->context->twigRenderDurationMilliseconds * $this->durationMilliseconds;
+        }
+
+        return 100 / $this->parent->durationMilliseconds * $this->durationMilliseconds;
+    }
+
+    public function getPercentageOfTotalDuration(): float
+    {
+        return 100 / $this->context->twigRenderDurationMilliseconds * $this->durationMilliseconds;
+    }
+
+    public function getColorBasedOnPercentageDuration(bool $compareToParent = true): string
+    {
+        if ($compareToParent) {
+            $percentage = $this->getPercentageOfParentDuration() / 100;
+        } else {
+            $percentage = $this->getPercentageOfTotalDuration() / 100;
+        }
+        $baseline = 50;
+        $rFactor = 1;
+        $gFactor = 0.25;
+        $bFactor = 0.1;
+
+        $valueR = ($rFactor * (255 - $baseline) * $percentage) + $baseline;
+        $valueG = ($gFactor * (255 - $baseline) * $percentage) + $baseline;
+        $valueB = ($bFactor * (255 - $baseline) * $percentage) + $baseline;
+
+        return "rgb($valueR, $valueG, $valueB)";
+    }
 }
