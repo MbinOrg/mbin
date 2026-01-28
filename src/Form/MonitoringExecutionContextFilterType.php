@@ -71,6 +71,14 @@ class MonitoringExecutionContextFilterType extends AbstractType
                     $this->translator->trans('no') => false,
                 ],
             ])
+            ->add('chartOrdering', ChoiceType::class, [
+                'label' => $this->translator->trans('monitoring_chart_ordering'),
+                'required' => false,
+                'choices' => [
+                    $this->translator->trans('monitoring_total_duration') => 'total',
+                    $this->translator->trans('monitoring_mean_duration') => 'mean',
+                ],
+            ])
             ->add('submit', SubmitType::class, ['label' => $this->translator->trans('monitoring_submit')])
         ;
     }

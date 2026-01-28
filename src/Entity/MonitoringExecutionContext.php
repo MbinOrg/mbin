@@ -115,7 +115,7 @@ class MonitoringExecutionContext
         /** @var array<string, MonitoringQuery[]> $groupedQueries */
         $groupedQueries = [];
         foreach ($this->getQueriesSorted() as $query) {
-            $hash = md5($query->query);
+            $hash = $query->queryString->queryHash;
             if (!\array_key_exists($hash, $groupedQueries)) {
                 $groupedQueries[$hash] = [];
             }
@@ -124,7 +124,7 @@ class MonitoringExecutionContext
         $dtos = [];
         foreach ($groupedQueries as $hash => $queries) {
             $dto = new GroupedMonitoringQueryDto();
-            $dto->query = $queries[0]->query;
+            $dto->query = $queries[0]->queryString->query;
             $minTime = 10000000000;
             $maxTime = 0;
             $addedTime = 0;
@@ -144,9 +144,16 @@ class MonitoringExecutionContext
             $dto->maxExecutionTime = $maxTime;
             $dto->minExecutionTime = $minTime;
             $dto->meanExecutionTime = $addedTime / $queryCount;
+            $dto->totalExecutionTime = $addedTime;
             $dtos[] = $dto;
         }
-        usort($dtos, fn ($a, $b) => $b->maxExecutionTime - $a->maxExecutionTime);
+        usort($dtos, function (GroupedMonitoringQueryDto $a, GroupedMonitoringQueryDto $b) {
+            if ($a->totalExecutionTime === $b->totalExecutionTime) {
+                return 0;
+            }
+
+            return $b->totalExecutionTime < $a->totalExecutionTime ? -1 : 1;
+        });
 
         return $dtos;
     }
