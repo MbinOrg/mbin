@@ -15,6 +15,7 @@ use App\Service\MagazineManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -85,7 +86,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public ?\DateTime $lastOriginUpdate = null;
     #[Column(type: 'datetimetz', nullable: true)]
     public ?\DateTime $markedForDeletionAt = null;
-    #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
+    #[Column(type: Types::JSONB, nullable: true)]
     public ?array $tags = null;
     #[OneToMany(mappedBy: 'magazine', targetEntity: Moderator::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $moderators;

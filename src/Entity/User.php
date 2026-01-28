@@ -20,6 +20,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Order;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -103,7 +104,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public string $email;
     #[Column(type: 'string', unique: true, nullable: false)]
     public string $username;
-    #[Column(type: 'json', nullable: false, options: ['jsonb' => true])]
+    #[Column(type: Types::JSONB, nullable: false)]
     public array $roles = [];
     #[Column(type: 'integer', nullable: false)]
     public int $followersCount = 0;
@@ -123,7 +124,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public ?\DateTime $lastActive = null;
     #[Column(type: 'datetimetz', nullable: true)]
     public ?\DateTime $markedForDeletionAt = null;
-    #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
+    #[Column(type: Types::JSONB, nullable: true)]
     public ?array $fields = null;
     #[Column(type: 'string', nullable: true)]
     public ?string $oauthAzureId = null;
@@ -147,9 +148,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public ?string $oauthAuthentikId = null;
     #[Column(type: 'boolean', nullable: false, options: ['default' => true])]
     public bool $hideAdult = true;
-    #[Column(type: 'json', nullable: false, options: ['jsonb' => true, 'default' => '[]'])]
+    #[Column(type: Types::JSONB, nullable: false, options: ['default' => '[]'])]
     public array $preferredLanguages = [];
-    #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
+    #[Column(type: Types::JSONB, nullable: true)]
     public ?array $featuredMagazines = null;
     #[Column(type: 'boolean', nullable: false, options: ['default' => true])]
     public bool $showProfileSubscriptions = false;
@@ -253,7 +254,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     private string $password;
     #[Column(type: 'string', nullable: true)]
     private ?string $totpSecret = null;
-    #[Column(type: 'json', nullable: false, options: ['jsonb' => true, 'default' => '[]'])]
+    #[Column(type: Types::JSONB, nullable: false, options: ['default' => '[]'])]
     private array $totpBackupCodes = [];
     #[OneToMany(mappedBy: 'user', targetEntity: OAuth2UserConsent::class, orphanRemoval: true)]
     private Collection $oAuth2UserConsents;
