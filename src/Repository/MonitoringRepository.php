@@ -37,60 +37,54 @@ class MonitoringRepository extends ServiceEntityRepository
     }
 
     /**
-     * @var int
-     *
      * @return array{path: string, total_duration: float, query_duration: float, twig_render_duration: float, curl_request_duration: float, response_duration: float}
      *
      * @throws \Doctrine\DBAL\Exception
      */
-    public function getOverviewRouteCalls(int $limit = 10): array
+    public function getOverviewRouteCalls(MonitoringExecutionContextFilterDto $dto, int $limit = 10): array
     {
-        $sql = "SELECT
+        $criteria = $dto->toSqlWheres();
+        if (null === $dto->createdFrom) {
+            $criteria['whereConditions'][] = 'created_at > now() - \'30 days\'::interval';
+        }
+        $whereString = implode(' AND ', $criteria['whereConditions']);
+        if ('mean' === $dto->chartOrdering) {
+            $sql = "SELECT
+                    path,
+                    (SUM(duration_milliseconds) / COUNT(uuid)) as total_duration,
+                    (SUM(query_duration_milliseconds) / COUNT(uuid)) as query_duration,
+                    (SUM(twig_render_duration_milliseconds) / COUNT(uuid)) as twig_render_duration,
+                    (SUM(curl_request_duration_milliseconds) / COUNT(uuid)) as curl_request_duration,
+                    (SUM(response_sending_duration_milliseconds) / COUNT(uuid)) as response_duration
+                FROM monitoring_execution_context WHERE $whereString GROUP BY path ORDER BY total_duration DESC LIMIT :limit";
+        } else {
+            $sql = "SELECT
                     path,
                     SUM(duration_milliseconds) as total_duration,
                     SUM(query_duration_milliseconds) as query_duration,
                     SUM(twig_render_duration_milliseconds) as twig_render_duration,
                     SUM(curl_request_duration_milliseconds) as curl_request_duration,
                     SUM(response_sending_duration_milliseconds) as response_duration
-                FROM monitoring_execution_context WHERE created_at > now() - '30 days'::interval GROUP BY path ORDER BY total_duration DESC LIMIT :limit";
+                FROM monitoring_execution_context WHERE $whereString GROUP BY path ORDER BY total_duration DESC LIMIT :limit";
+        }
         $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('limit', $limit, ParameterType::INTEGER);
+        foreach ($criteria['parameters'] as $key => $value) {
+            if (\is_string($value)) {
+                $stmt->bindValue($key, $value);
+            } elseif (\is_array($value)) {
+                $stmt->bindValue($key, $value['value'], $value['type']);
+            }
+        }
 
         return $stmt->executeQuery()->fetchAllAssociative();
     }
 
     public function getFilteredContextsPaginated(MonitoringExecutionContextFilterDto $dto): Pagerfanta
     {
-        $criteria = new Criteria(orderings: ['createdAt' => 'DESC']);
-        if (null !== $dto->executionType) {
-            $criteria->andWhere(Criteria::expr()->eq('executionType', $dto->executionType));
-        }
-        if (null !== $dto->userType) {
-            $criteria->andWhere(Criteria::expr()->eq('userType', $dto->userType));
-        }
-        if (null !== $dto->path) {
-            $criteria->andWhere(Criteria::expr()->eq('path', $dto->path));
-        }
-        if (null !== $dto->handler) {
-            $criteria->andWhere(Criteria::expr()->eq('handler', $dto->handler));
-        }
-        if (null !== $dto->hasException) {
-            if ($dto->hasException) {
-                $criteria->andWhere(Criteria::expr()->isNotNull('exception'));
-            } else {
-                $criteria->andWhere(Criteria::expr()->isNull('exception'));
-            }
-        }
-        if (null !== $dto->durationMinimum) {
-            $criteria->andWhere(Criteria::expr()->gt('durationMilliseconds', $dto->durationMinimum));
-        }
-        if (null !== $dto->createdFrom) {
-            $criteria->andWhere(Criteria::expr()->gt('createdAt', $dto->createdFrom));
-        }
-        if (null !== $dto->createdTo) {
-            $criteria->andWhere(Criteria::expr()->lt('createdAt', $dto->createdTo));
-        }
+        $criteria = $dto->toCriteria();
+        $criteria->orderBy(orderings: ['createdAt' => 'DESC']);
 
         return $this->findByPaginated($criteria);
     }

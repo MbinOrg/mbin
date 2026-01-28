@@ -11,4 +11,6 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 class MonitoringTwigRenderComponent
 {
     public MonitoringTwigRender $render;
+
+    public bool $compareToParent = true;
 }

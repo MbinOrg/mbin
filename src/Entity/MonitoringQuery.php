@@ -26,15 +26,16 @@ class MonitoringQuery
     #[Column(type: 'integer')]
     private int $id;
 
-    #[Column(type: 'text')]
-    public string $query;
-
     #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
     public ?array $parameters = null;
 
     #[ManyToOne(targetEntity: MonitoringExecutionContext::class, inversedBy: 'queries')]
     #[JoinColumn(referencedColumnName: 'uuid', onDelete: 'CASCADE')]
     public MonitoringExecutionContext $context;
+
+    #[ManyToOne(targetEntity: MonitoringQueryString::class, fetch: 'EAGER', inversedBy: 'queryInstances')]
+    #[JoinColumn(referencedColumnName: 'query_hash', onDelete: 'CASCADE')]
+    public MonitoringQueryString $queryString;
 
     public function __construct()
     {

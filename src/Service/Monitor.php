@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Entity\MonitoringCurlRequest;
 use App\Entity\MonitoringExecutionContext;
 use App\Entity\MonitoringQuery;
+use App\Entity\MonitoringQueryString;
 use App\Entity\MonitoringTwigRender;
 use App\Entity\Traits\MonitoringPerformanceTrait;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,6 +34,7 @@ class Monitor
         protected readonly EntityManagerInterface $entityManager,
         protected readonly LoggerInterface $logger,
         private readonly bool $monitoringEnabled,
+        private readonly bool $monitoringQueryParametersEnabled,
     ) {
     }
 
@@ -104,7 +106,26 @@ class Monitor
 
         try {
             $this->entityManager->persist($this->currentContext);
+            $queryStringRepo = $this->entityManager->getRepository(MonitoringQueryString::class);
+            $queryStringsByHash = [];
             foreach ($this->contextSegments as $contextSegment) {
+                if ($contextSegment instanceof MonitoringQuery) {
+                    // we don't want to compute hashes during event listening, as even sha1 will be a bit time-consuming
+                    $hash = hash('sha1', $contextSegment->queryString->query);
+                    if (\array_key_exists($hash, $queryStringsByHash)) {
+                        $contextSegment->queryString = $queryStringsByHash[$hash];
+                    }
+                    $queryString = $queryStringRepo->find($hash);
+                    if (null !== $queryString) {
+                        $queryStringsByHash[$hash] = $queryString;
+                        $contextSegment->queryString = $queryString;
+                    } else {
+                        // not in cache and not in DB -> persist new entity
+                        $queryStringsByHash[$hash] = $contextSegment->queryString;
+                        $contextSegment->queryString->queryHash = $hash;
+                        $this->entityManager->persist($contextSegment->queryString);
+                    }
+                }
                 $this->entityManager->persist($contextSegment);
             }
             $this->entityManager->flush();
@@ -137,10 +158,14 @@ class Monitor
             return;
         }
         $this->logger->debug('[Monitor] starting a query');
+        $queryString = new MonitoringQueryString();
+        $queryString->query = $sql;
         $this->currentQuery = new MonitoringQuery();
         $this->currentQuery->setStartedAt();
-        $this->currentQuery->query = $sql;
-        $this->currentQuery->parameters = $parameters;
+        $this->currentQuery->queryString = $queryString;
+        if ($this->monitoringQueryParametersEnabled) {
+            $this->currentQuery->parameters = $parameters;
+        }
         $this->currentQuery->context = $this->currentContext;
     }
 
@@ -154,7 +179,9 @@ class Monitor
         $this->logger->debug('[Monitor] ending a query');
         $this->currentQuery->setEndedAt();
         $this->currentQuery->setDuration();
-        $this->currentQuery->cleanParameterArray();
+        if ($this->monitoringQueryParametersEnabled) {
+            $this->currentQuery->cleanParameterArray();
+        }
         $this->contextSegments[] = $this->currentQuery;
         $this->currentQuery = null;
     }
@@ -166,7 +193,7 @@ class Monitor
 
             return;
         }
-        $this->logger->debug('[Monitor] Starting a twig render of {name}, {type} at level {level}', ['name' => $templateName, 'type' => $type]);
+        $this->logger->debug('[Monitor] Starting a twig render of {name}, {type} at level {level}', ['name' => $templateName, 'type' => $type, 'level' => \sizeof($this->runningTwigTemplates)]);
 
         $render = new MonitoringTwigRender();
         $render->templateName = $templateName;

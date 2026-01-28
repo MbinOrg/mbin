@@ -1149,6 +1149,7 @@ monitoring_duration_min: min
 monitoring_duration_mean: mean
 monitoring_duration_max: max
 monitoring_query_count: count
+monitoring_query_total: total
 monitoring_duration: Duration
 monitoring_dont_group_similar: don't group similar queries
 monitoring_group_similar: group similar queries
@@ -1185,3 +1186,8 @@ monitoring_created_to: Started before
 monitoring_duration_minimum: Minimum duration
 monitoring_submit: Filter
 monitoring_has_exception: Has exception
+monitoring_chart_ordering: Chart ordering
+monitoring_total_duration: Total duration
+monitoring_mean_duration: Mean duration
+monitoring_twig_compare_to_total: Compare to total duration
+monitoring_twig_compare_to_parent: Compare to parent duration

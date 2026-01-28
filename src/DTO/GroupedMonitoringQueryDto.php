@@ -10,5 +10,6 @@ class GroupedMonitoringQueryDto
     public float $minExecutionTime;
     public float $maxExecutionTime;
     public float $meanExecutionTime;
+    public float $totalExecutionTime;
     public int $count;
 }

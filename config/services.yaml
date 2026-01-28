@@ -125,6 +125,7 @@ parameters:
     mbin_use_federation_allow_list: '%env(bool:default::MBIN_USE_FEDERATION_ALLOW_LIST)%'
 
     mbin_monitoring_enabled: '%env(bool:default::MBIN_MONITORING_ENABLED)%'
+    mbin_monitoring_query_parameters_enabled: '%env(bool:default::MBIN_MONITORING_QUERY_PARAMETERS_ENABLED)%'
 
 services:
     # default configuration for services in *this* file
@@ -141,6 +142,7 @@ services:
             $storageUrl: '%kbin_storage_url%'
             $publicDir: '%kernel.project_dir%/public'
             $monitoringEnabled: '%mbin_monitoring_enabled%'
+            $monitoringQueryParametersEnabled: '%mbin_monitoring_query_parameters_enabled%'
 
     kbin.s3_client:
         class: Aws\S3\S3Client

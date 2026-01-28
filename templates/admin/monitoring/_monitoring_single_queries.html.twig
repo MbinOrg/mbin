@@ -1,0 +1,86 @@
+{{ 'monitoring_queries'|trans({'%count%': 2}) }}
+<a href="{{ path('admin_monitoring_single_context', {'id': context.uuid.toString, 'page': page, 'groupSimilar': not groupSimilar, 'formatQuery': formatQuery, 'showParameters': showParameters}) }}" class="btn btn-link">
+    {% if groupSimilar %}
+        {{ 'monitoring_dont_group_similar'|trans }}
+    {% else %}
+        {{ 'monitoring_group_similar'|trans }}
+    {% endif %}
+</a>
+<a href="{{ path('admin_monitoring_single_context', {'id': context.uuid.toString, 'page': page, 'groupSimilar': groupSimilar, 'formatQuery': not formatQuery, 'showParameters': showParameters}) }}" class="btn btn-link">
+    {% if formatQuery %}
+        {{ 'monitoring_dont_format_query'|trans }}
+    {% else %}
+        {{ 'monitoring_format_query'|trans }}
+    {% endif %}
+</a>
+<a href="{{ path('admin_monitoring_single_context', {'id': context.uuid.toString, 'page': page, 'groupSimilar': groupSimilar, 'formatQuery': formatQuery, 'showParameters': not showParameters}) }}" class="btn btn-link">
+    {% if showParameters %}
+        {{ 'monitoring_dont_show_parameters'|trans }}
+    {% else %}
+        {{ 'monitoring_show_parameters'|trans }}
+    {% endif %}
+</a>
+
+<table>
+    <thead>
+    <tr>
+        <th>{{ 'monitoring_queries'|trans({'%count%': 1}) }}</th>
+        {% if groupSimilar is same as false %}
+            <th>{{ 'monitoring_duration'|trans }}</th>
+        {% else %}
+            <th>{{ 'monitoring_duration_min'|trans }}</th>
+            <th>{{ 'monitoring_duration_mean'|trans }}</th>
+            <th>{{ 'monitoring_duration_max'|trans }}</th>
+            <th>{{ 'monitoring_query_count'|trans }}</th>
+            <th>{{ 'monitoring_query_total'|trans }}</th>
+        {% endif %}
+    </tr>
+    </thead>
+    <tbody>
+    {% if groupSimilar is same as false %}
+        {% for query in context.getQueriesSorted() %}
+            <tr>
+                <td class="query">
+                    <div data-controller="collapsable">
+                        {% if formatQuery %}
+                            <pre data-collapsable-target="content">{{ query.queryString.query|formatQuery }}</pre>
+                        {% else %}
+                            <div data-collapsable-target="content">
+                                {{ query.queryString.query }}
+                            </div>
+                        {% endif %}
+                        <div data-collapsable-target="button"></div>
+                    </div>
+                    {% if showParameters %}
+                        <div data-controller="collapsable">
+                            <pre data-collapsable-target="content">{{ 'parameters'|trans }} = {{ query.parameters|json_encode(constant('\JSON_PRETTY_PRINT')) }}</pre>
+                        </div>
+                        <div data-collapsable-target="button"></div>
+                    {% endif %}
+                </td>
+                <td>{{ query.duration|round(2) }}ms</td>
+            </tr>
+        {% endfor %}
+    {% else %}
+        {% for query in context.getGroupedQueries() %}
+            <tr>
+                <td class="query">
+                    <div data-controller="collapsable">
+                        {% if formatQuery %}
+                            <pre data-collapsable-target="content" class="content">{{ query.query|formatQuery }}</pre>
+                        {% else %}
+                            <div data-collapsable-target="content" class="content">{{ query.query }}</div>
+                        {% endif %}
+                        <div data-collapsable-target="button"></div>
+                    </div>
+                </td>
+                <td>{{ query.minExecutionTime|round(2) }}ms</td>
+                <td>{{ query.maxExecutionTime|round(2) }}ms</td>
+                <td>{{ query.meanExecutionTime|round(2) }}ms</td>
+                <td>{{ query.count }}</td>
+                <td>{{ query.totalExecutionTime|round(2) }}ms</td>
+            </tr>
+        {% endfor %}
+    {% endif %}
+    </tbody>
+</table>

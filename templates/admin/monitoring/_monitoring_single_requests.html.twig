@@ -1,0 +1,20 @@
+<table>
+    <thead>
+    <tr>
+        <th>{{ 'monitoring_http_method'|trans }}</th>
+        <th>{{ 'monitoring_url'|trans }}</th>
+        <th>{{ 'monitoring_request_successful'|trans }}</th>
+        <th>{{ 'monitoring_duration'|trans }}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for request in context.getRequestsSorted() %}
+        <tr>
+            <td>{{ request.method }}</td>
+            <td>{{ request.url }}</td>
+            <td>{{ request.wasSuccessful ? 'yes'|trans : 'no'|trans }}</td>
+            <td>{{ request.duration|round(2) }}ms</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

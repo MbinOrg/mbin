@@ -8,6 +8,29 @@
     }
   }
 
+  .more {
+    background: var(--kbin-bg);
+    cursor: pointer;
+    text-align: center;
+    width: 100%;
+    margin-top: 1rem;
+
+    // bigger button for touch devices
+    @media (pointer:none), (pointer:coarse) {
+      margin-top: 2rem;
+      padding: 0.5rem;
+    }
+
+    i {
+      padding: .35rem;
+      pointer-events: none;
+    }
+
+    .rounded-edges & {
+      border-radius: var(--kbin-rounded-edges-radius);
+    }
+  }
+
   input[type=text],
   input[type=datetime-local],
   select {
@@ -17,6 +40,14 @@
 
   form div {
     margin-bottom: .25rem;
+  }
+
+  table tr {
+    vertical-align: top;
+    td.query * {
+      margin: 0;
+      overflow: hidden;
+    }
   }
 
   .row {

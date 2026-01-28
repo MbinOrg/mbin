@@ -32,13 +32,11 @@ class AdminMonitoringController extends AbstractController
     {
         $dto = new MonitoringExecutionContextFilterDto();
         $form = $this->formFactory->createNamed('filter', MonitoringExecutionContextFilterType::class, $dto, ['method' => 'GET']);
-        $hideChart = false;
 
         try {
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
                 $dto = $form->getData();
-                $hideChart = true;
             }
         } catch (\Exception) {
         }
@@ -47,8 +45,8 @@ class AdminMonitoringController extends AbstractController
         $contexts->setCurrentPage($p);
         $contexts->setMaxPerPage(50);
 
-        if (1 === $p && !$hideChart) {
-            $chart = $this->getOverViewChart();
+        if (1 === $p) {
+            $chart = $this->getOverViewChart($dto);
         }
 
         return $this->render('admin/monitoring/monitoring.html.twig', [
@@ -59,10 +57,10 @@ class AdminMonitoringController extends AbstractController
         ]);
     }
 
-    private function getOverViewChart(): Chart
+    private function getOverViewChart(MonitoringExecutionContextFilterDto $dto): Chart
     {
         $chart = $this->chartBuilder->createChart(Chart::TYPE_BAR);
-        $chart->setData($this->getOverviewChartData());
+        $chart->setData($this->getOverviewChartData($dto));
         $chart->setOptions([
             'scales' => [
                 'y' => [
@@ -83,9 +81,9 @@ class AdminMonitoringController extends AbstractController
         return $chart;
     }
 
-    public function getOverviewChartData(): array
+    public function getOverviewChartData(MonitoringExecutionContextFilterDto $dto): array
     {
-        $rawData = $this->monitoringRepository->getOverviewRouteCalls();
+        $rawData = $this->monitoringRepository->getOverviewRouteCalls($dto);
         $labels = [];
         $overallDurationRemaining = [];
         $queryDurations = [];
@@ -150,7 +148,7 @@ class AdminMonitoringController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    public function single(string $id, string $page, #[MapQueryParameter] bool $groupSimilar = true, #[MapQueryParameter] bool $formatQuery = false, #[MapQueryParameter] bool $showParameters = false): Response
+    public function single(string $id, string $page, #[MapQueryParameter] bool $groupSimilar = true, #[MapQueryParameter] bool $formatQuery = false, #[MapQueryParameter] bool $showParameters = false, #[MapQueryParameter] bool $compareToParent = true): Response
     {
         $context = $this->monitoringRepository->findOneBy(['uuid' => $id]);
         if (!$context) {
@@ -163,6 +161,7 @@ class AdminMonitoringController extends AbstractController
             'groupSimilar' => $groupSimilar,
             'formatQuery' => $formatQuery,
             'showParameters' => $showParameters,
+            'compareToParent' => $compareToParent,
         ]);
     }
 }
