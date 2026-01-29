@@ -455,7 +455,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     {
         if (!$this->subscriptions->contains($subscription)) {
             $this->subscriptions->add($subscription);
-            $subscription->setUser($this);
+            $subscription->user = $this;
         }
 
         return $this;

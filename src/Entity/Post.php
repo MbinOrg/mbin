@@ -283,8 +283,8 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         Assert::isInstanceOf($vote, PostVote::class);
 
         if ($this->votes->removeElement($vote)) {
-            if ($vote->getPost() === $this) {
-                $vote->setPost(null);
+            if ($vote->post === $this) {
+                $vote->post = null;
             }
         }
 

@@ -418,7 +418,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public function isBanned(User $user): bool
     {
         $criteria = Criteria::create()
-            ->andWhere(Criteria::expr()->gt('expiredAt', new \DateTime()))
+            ->andWhere(Criteria::expr()->gt('expiredAt', new \DateTimeImmutable()))
             ->orWhere(Criteria::expr()->isNull('expiredAt'))
             ->andWhere(Criteria::expr()->eq('user', $user));
 
@@ -439,7 +439,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public function unban(User $user): MagazineBan
     {
         $criteria = Criteria::create()
-            ->andWhere(Criteria::expr()->gt('expiredAt', new \DateTime()))
+            ->andWhere(Criteria::expr()->gt('expiredAt', new \DateTimeImmutable()))
             ->orWhere(Criteria::expr()->isNull('expiredAt'))
             ->andWhere(Criteria::expr()->eq('user', $user));
 
@@ -447,7 +447,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
          * @var MagazineBan $ban
          */
         $ban = $this->bans->matching($criteria)->first();
-        $ban->expiredAt = new \DateTime('-10 seconds');
+        $ban->expiredAt = new \DateTimeImmutable('-10 seconds');
 
         return $ban;
     }

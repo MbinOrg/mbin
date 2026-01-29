@@ -59,7 +59,7 @@ class MagazineVoter extends Voter
 
     private function canCreateContent(Magazine $magazine, User $user): bool
     {
-        return !$magazine->isBanned($user) && !$user->isBanned();
+        return !$magazine->isBanned($user) && !$user->isBanned;
     }
 
     private function canEdit(Magazine $magazine, User $user): bool
@@ -84,7 +84,7 @@ class MagazineVoter extends Voter
 
     public function canSubscribe(Magazine $magazine, User $user): bool
     {
-        return !$magazine->isBanned($user) && !$user->isBanned();
+        return !$magazine->isBanned($user) && !$user->isBanned;
     }
 
     public function canBlock(Magazine $magazine, User $user): bool
@@ -93,6 +93,6 @@ class MagazineVoter extends Voter
             return false;
         }
 
-        return !$magazine->isBanned($user) && !$user->isBanned();
+        return !$magazine->isBanned($user) && !$user->isBanned;
     }
 }

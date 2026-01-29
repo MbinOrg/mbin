@@ -528,7 +528,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere('u.isBanned = false')
             ->andWhere('u.isDeleted = false')
             ->andWhere('u.applicationStatus = :status')
-            ->setParameters(['query' => "{$query}%", 'status' => EApplicationStatus::Approved->value])
+            ->setParameter('query', "{$query}%")
+            ->setParameter('status', EApplicationStatus::Approved->value)
             ->setMaxResults(5)
             ->getQuery()
             ->getResult();
@@ -635,7 +636,9 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
             $results = $results->join('u.avatar', 'a')
                 ->orderBy('u.lastActive', 'DESC')
-                ->setParameters(['lastActive' => (new \DateTime())->modify('-7 days'), 'visibility' => VisibilityInterface::VISIBILITY_VISIBLE, 'status' => EApplicationStatus::Approved->value])
+                ->setParameter('lastActive', (new \DateTime())->modify('-7 days'))
+                ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+                ->setParameter('status', EApplicationStatus::Approved->value)
                 ->setMaxResults(35)
                 ->getQuery()
                 ->getResult();

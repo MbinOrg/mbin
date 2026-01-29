@@ -19,7 +19,7 @@ class OAuth2ClientAccess
     #[ORM\JoinColumn(nullable: false, referencedColumnName: 'identifier')]
     private ?Client $client = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'datetimetz_immutable')]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(length: 255)]

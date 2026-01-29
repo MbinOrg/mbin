@@ -65,7 +65,7 @@ class PostCommentManager implements ContentManagerInterface
             }
         }
 
-        if ($dto->post->magazine->isBanned($user) || $user->isBanned()) {
+        if ($dto->post->magazine->isBanned($user) || $user->isBanned) {
             throw new UserBannedException();
         }
 

@@ -22,7 +22,7 @@ enum EFrontContentOptions: string
     public static function getFromString(string $value): ?EFrontContentOptions
     {
         return match ($value) {
-            EFrontContentOptions::All->value => EFrontContentOptions::All,
+            EFrontContentOptions::Combined->value => EFrontContentOptions::Combined,
             EFrontContentOptions::Threads->value => EFrontContentOptions::Threads,
             EFrontContentOptions::Microblog->value => EFrontContentOptions::Microblog,
             default => null,

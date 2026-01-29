@@ -96,7 +96,7 @@ class EntryVoter extends Voter
         //            return false;
         //        }
 
-        if ($entry->magazine->isBanned($user) || $user->isBanned()) {
+        if ($entry->magazine->isBanned($user) || $user->isBanned) {
             return false;
         }
 

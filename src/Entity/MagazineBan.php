@@ -31,8 +31,8 @@ class MagazineBan
     public ?User $bannedBy;
     #[Column(type: 'text', length: 2048, nullable: true)]
     public ?string $reason = null;
-    #[Column(type: 'datetimetz', nullable: true)]
-    public ?\DateTimeInterface $expiredAt = null;
+    #[Column(type: 'datetimetz_immutable', nullable: true)]
+    public ?\DateTimeImmutable $expiredAt = null;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
@@ -49,7 +49,7 @@ class MagazineBan
         $this->user = $user;
         $this->bannedBy = $bannedBy;
         $this->reason = $reason;
-        $this->expiredAt = $expiredAt;
+        $this->expiredAt = $expiredAt === null ? null : ($expiredAt instanceof \DateTimeImmutable ? $expiredAt : \DateTimeImmutable::createFromMutable($expiredAt));
 
         $this->createdAtTraitConstruct();
     }

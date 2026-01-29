@@ -341,7 +341,8 @@ class EntryRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('e')
             ->where('e.visibility != :visibility')
             ->andWhere('e.user = :user')
-            ->setParameters(['visibility' => VisibilityInterface::VISIBILITY_SOFT_DELETED, 'user' => $user])
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_SOFT_DELETED)
+            ->setParameter('user', $user)
             ->orderBy('e.id', 'DESC')
             ->setMaxResults($limit)
             ->getQuery()
@@ -365,10 +366,8 @@ class EntryRepository extends ServiceEntityRepository
             ->join('e.hashtags', 'hl')
             ->join('hl.hashtag', 'h')
             ->orderBy('e.createdAt', 'DESC')
-            ->setParameters([
-                'visibility' => VisibilityInterface::VISIBILITY_VISIBLE,
-                'tag' => $tag,
-            ])
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+            ->setParameter('tag', $tag)
             ->setMaxResults($limit);
 
         if (null !== $user) {
@@ -396,9 +395,9 @@ class EntryRepository extends ServiceEntityRepository
             ->join('e.magazine', 'm')
             ->join('e.user', 'u')
             ->orderBy('e.createdAt', 'DESC')
-            ->setParameters(
-                ['name' => "%{$name}%", 'title' => "%{$name}%", 'visibility' => VisibilityInterface::VISIBILITY_VISIBLE]
-            )
+            ->setParameter('name', "%{$name}%")
+            ->setParameter('title', "%{$name}%")
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->setMaxResults($limit);
 
         if (null !== $user) {
@@ -474,7 +473,8 @@ class EntryRepository extends ServiceEntityRepository
                     $query = $this->getEntityManager()->createQuery(
                         'SELECT COUNT(p.id) FROM App\Entity\Entry p WHERE p.visibility = :visibility AND p.magazine = :magazine'
                     )
-                        ->setParameters(['visibility' => 'visible', 'magazine' => $criteria->magazine]);
+                        ->setParameter('visibility', 'visible')
+                        ->setParameter('magazine', $criteria->magazine);
                 }
 
                 try {

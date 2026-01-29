@@ -153,6 +153,7 @@ class MentionLinkParser implements InlineParserInterface
             MentionType::RemoteUser => ['route' => 'user_overview',  'param' => 'username'],
             MentionType::Search => ['route' => 'search',         'param' => 'search[q]'],
             MentionType::User => ['route' => 'user_overview',  'param' => 'username'],
+            MentionType::Unresolvable => throw new \LogicException('should be unreachable'),
         };
     }
 }
