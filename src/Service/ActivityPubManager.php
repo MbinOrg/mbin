@@ -196,6 +196,10 @@ class ActivityPubManager
         }
 
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
+        if (!$magazine) {
+            // also try the public URL if it was not found by the profile id
+            $magazine = $this->magazineRepository->findOneBy(['apPublicUrl' => $actorUrl]);
+        }
         if ($magazine instanceof Magazine) {
             $this->logger->debug('[ActivityPubManager::findActorOrCreate] Found remote user for url: "{url}" in db', ['url' => $actorUrl]);
             if (!$magazine->isTrashed() && !$magazine->isSoftDeleted() && (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
