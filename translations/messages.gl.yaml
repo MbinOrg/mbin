@@ -1126,3 +1126,34 @@ sidebar_sections_users_local_only: Limitar a sección "Persoas activas" do panel
   lateral a só locais
 random_local_only_performance_warning: Activar "Ao chou só local" podería 
   impactar no rendemento SQL.
+oauth2.grant.moderate.entry.lock: Bloquea os fíos nas revistas que moderas, polo
+  que ninguén poderá comentar neles
+oauth2.grant.moderate.post.lock: Bloquea os microblogs nas revistas que moderas,
+  polo que ninguén poderá comentalos
+discoverable: Descubrible
+user_discoverable_help: Se activas isto poderase atopar nas buscas e paneis ao 
+  chou tanto o teu perfil, fíos, microblogs e comentarios. O teu perfil tamén 
+  vai aparecer no panel de usuarias activas e na páxina de persoas. Se o 
+  desactivas, as túas publicacións seguirán sendo visibles por outras usuarias, 
+  pero non se mostrarán na cronoloxía global.
+flash_thread_lock_success: Fío bloqueado correctamente
+flash_thread_unlock_success: Fío desbloqueado correctamente
+flash_post_lock_success: Microblog bloqueado correctamente
+flash_post_unlock_success: Microblog desbloqueado correctamente
+lock: Bloquear
+unlock: Desbloquear
+magazine_discoverable_help: Se activas isto poderanse atopar esta revista e 
+  fíos, microblogs e comentarios desta revista nas buscas e paneis ao chou. Se 
+  está desactivado a revista aparecerá igualmente na lista de revistas, pero os 
+  fíos e microblogs non aparecerán na cronoloxía global.
+comments_locked: Os comentarios están bloqueados.
+magazine_log_entry_locked: bloqueou os comentarios en
+magazine_log_entry_unlocked: desbloqueou os comentarios en
+modlog_type_entry_lock: Fío bloqueado
+modlog_type_entry_unlock: Fío desbloqueado
+modlog_type_post_lock: Microblog bloqueado
+modlog_type_post_unlock: Microblog desbloqueado
+contentnotification.muted: Silenciar | non ter notificacións
+contentnotification.default: Predeterminado | recibir notificacións seguindo os 
+  axustes
+contentnotification.loud: Ruidoso | notificar todo

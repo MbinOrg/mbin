@@ -65,7 +65,7 @@
 }
 
 div.moderate-inline {
-  grid-area: moderate;
+  grid-area: moderate !important;
   // this is to appear below the more menu
   z-index: -1;
 }

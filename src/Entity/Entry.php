@@ -36,7 +36,6 @@ use Webmozart\Assert\Assert;
 
 #[Entity(repositoryClass: EntryRepository::class)]
 #[Index(columns: ['visibility', 'is_adult'], name: 'entry_visibility_adult_idx')]
-#[Index(columns: ['visibility'], name: 'entry_visibility_idx')]
 #[Index(columns: ['is_adult'], name: 'entry_adult_idx')]
 #[Index(columns: ['ranking'], name: 'entry_ranking_idx')]
 #[Index(columns: ['score'], name: 'entry_score_idx')]
