@@ -49,7 +49,7 @@ class MagazineBan
         $this->user = $user;
         $this->bannedBy = $bannedBy;
         $this->reason = $reason;
-        $this->expiredAt = $expiredAt === null ? null : ($expiredAt instanceof \DateTimeImmutable ? $expiredAt : \DateTimeImmutable::createFromMutable($expiredAt));
+        $this->expiredAt = null === $expiredAt ? null : ($expiredAt instanceof \DateTimeImmutable ? $expiredAt : \DateTimeImmutable::createFromMutable($expiredAt));
 
         $this->createdAtTraitConstruct();
     }

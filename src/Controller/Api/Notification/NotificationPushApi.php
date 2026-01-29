@@ -160,7 +160,7 @@ class NotificationPushApi extends NotificationBaseApi
             $conn = $this->entityManager->getConnection();
             $stmt = $conn->prepare('DELETE FROM user_push_subscription WHERE user_id = :user AND api_token = :token');
             $stmt->bindValue('user', $user->getId(), ParameterType::INTEGER);
-            $stmt->bindValue('token', $apiToken);//TODO $apiToken is an object, but query expects string
+            $stmt->bindValue('token', $apiToken); // TODO $apiToken is an object, but query expects string
             $stmt->executeQuery();
 
             return new JsonResponse(headers: $headers);
