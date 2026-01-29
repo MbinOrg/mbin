@@ -123,7 +123,7 @@ class ApHttpClient implements ApHttpClientInterface
             $content = $response->getContent(false);
             $this->logger->debug('[ApHttpClient::getActivityObjectImpl] URL: {url} - content: {content}', ['url' => $url, 'content' => $content]);
         } catch (\Exception $e) {
-            $this->logRequestException($response, $url, 'ApHttpClient:getActivityObject', $e);
+            $this->logRequestException($response ?? null, $url, 'ApHttpClient:getActivityObject', $e);
         }
 
         return $content;
@@ -447,7 +447,7 @@ class ApHttpClient implements ApHttpClientInterface
                 throw new InvalidApPostException('Post failed', $url, $statusCode, $body);
             }
         } catch (\Exception $e) {
-            $this->logRequestException($response, $url, 'ApHttpClient:post', $e, $jsonBody);
+            $this->logRequestException($response ?? null, $url, 'ApHttpClient:post', $e, $jsonBody);
         }
 
         // build cache

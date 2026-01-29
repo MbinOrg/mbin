@@ -82,7 +82,7 @@ class PostNoteFactory
                 $this->tagsWrapper->build($tags),
                 $this->mentionsWrapper->build($post->mentions ?? [], $post->body)
             ),
-            'commentsEnabled' => true,
+            'commentsEnabled' => !$post->isLocked,
             'published' => $post->createdAt->format(DATE_ATOM),
         ]);
 

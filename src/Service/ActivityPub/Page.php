@@ -4,12 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\ActivityPub;
 
-use App\DTO\EntryCommentDto;
 use App\DTO\EntryDto;
-use App\DTO\PostCommentDto;
-use App\DTO\PostDto;
-use App\Entity\Contracts\ActivityPubActivityInterface;
-use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\User;
 use App\Exception\EntityNotFoundException;
@@ -27,7 +22,7 @@ use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
-class Page
+class Page extends ActivityPubContent
 {
     public function __construct(
         private readonly ApActivityRepository $repository,
@@ -124,36 +119,16 @@ class Page
             $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($object);
             $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($object);
 
+            if (isset($object['commentsEnabled']) && \is_bool($object['commentsEnabled'])) {
+                $dto->isLocked = !$object['commentsEnabled'];
+            }
+
             $this->logger->debug('creating page');
 
             return $this->entryManager->create($dto, $actor, false, $stickyIt);
         } else {
             throw new EntityNotFoundException('Actor could not be found for entry.');
         }
-    }
-
-    /**
-     * @throws \LogicException
-     */
-    private function getVisibility(array $object, User $actor): string
-    {
-        if (!\in_array(
-            ActivityPubActivityInterface::PUBLIC_URL,
-            array_merge($object['to'] ?? [], $object['cc'] ?? [])
-        )) {
-            if (
-                !\in_array(
-                    $actor->apFollowersUrl,
-                    array_merge($object['to'] ?? [], $object['cc'] ?? [])
-                )
-            ) {
-                throw new \LogicException('PM: not implemented.');
-            }
-
-            return VisibilityInterface::VISIBILITY_PRIVATE;
-        }
-
-        return VisibilityInterface::VISIBILITY_VISIBLE;
     }
 
     private function extractUrlIntoDto(EntryDto $dto, ?array $object, User $actor): void
@@ -172,22 +147,6 @@ class Page
                 $url = \array_key_exists('url', $object) ? $object['url'] : null;
                 $dto->url = ActivityPubManager::extractUrlFromAttachment($url);
             }
-        }
-    }
-
-    /**
-     * @throws \Exception
-     */
-    private function handleDate(EntryDto $dto, string $date): void
-    {
-        $dto->createdAt = new \DateTimeImmutable($date);
-        $dto->lastActive = new \DateTime($date);
-    }
-
-    private function handleSensitiveMedia(PostDto|PostCommentDto|EntryCommentDto|EntryDto $dto, string|bool $sensitive): void
-    {
-        if (true === filter_var($sensitive, FILTER_VALIDATE_BOOLEAN)) {
-            $dto->isAdult = true;
         }
     }
 }

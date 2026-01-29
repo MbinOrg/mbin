@@ -182,6 +182,10 @@ class ActivityPubManager
         }
 
         $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
+        if (!$user) {
+            // also try the public URL if it was not found by the profile id
+            $user = $this->userRepository->findOneBy(['apPublicUrl' => $actorUrl]);
+        }
         if ($user instanceof User) {
             $this->logger->debug('[ActivityPubManager::findActorOrCreate] Found remote user for url: "{url}" in db', ['url' => $actorUrl]);
             if ($user->apId && !$user->isDeleted && !$user->isSoftDeleted() && !$user->isTrashed() && (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
@@ -192,6 +196,10 @@ class ActivityPubManager
         }
 
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
+        if (!$magazine) {
+            // also try the public URL if it was not found by the profile id
+            $magazine = $this->magazineRepository->findOneBy(['apPublicUrl' => $actorUrl]);
+        }
         if ($magazine instanceof Magazine) {
             $this->logger->debug('[ActivityPubManager::findActorOrCreate] Found remote user for url: "{url}" in db', ['url' => $actorUrl]);
             if (!$magazine->isTrashed() && !$magazine->isSoftDeleted() && (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
@@ -375,7 +383,7 @@ class ActivityPubManager
             $user->apFollowersUrl = $actor['followers'] ?? null;
             $user->apAttributedToUrl = $actor['attributedTo'] ?? null;
             $user->apPreferredUsername = $actor['preferredUsername'] ?? null;
-            $user->apDiscoverable = $actor['discoverable'] ?? true;
+            $user->apDiscoverable = $actor['discoverable'] ?? null;
             $user->apManuallyApprovesFollowers = $actor['manuallyApprovesFollowers'] ?? false;
             $user->apPublicUrl = $actor['url'] ?? $actorUrl;
             $user->apDeletedAt = null;
@@ -641,7 +649,7 @@ class ActivityPubManager
             $magazine->apAttributedToUrl = isset($actor['attributedTo']) && \is_string($actor['attributedTo']) ? $actor['attributedTo'] : null;
             $magazine->apFeaturedUrl = $actor['featured'] ?? null;
             $magazine->apPreferredUsername = $actor['preferredUsername'] ?? null;
-            $magazine->apDiscoverable = $actor['discoverable'] ?? true;
+            $magazine->apDiscoverable = $actor['discoverable'] ?? null;
             $magazine->apPublicUrl = $actor['url'] ?? $actorUrl;
             $magazine->apDeletedAt = null;
             $magazine->apTimeoutAt = null;
@@ -878,9 +886,10 @@ class ActivityPubManager
         $arr = array_unique(
             array_filter(
                 array_merge(
-                    \is_array($activity['cc']) ? $activity['cc'] : [$activity['cc']],
-                    \is_array($activity['to']) ? $activity['to'] : [$activity['to']]
-                ), fn ($val) => !\in_array($val, [ActivityPubActivityInterface::PUBLIC_URL, $followersUrl, []])
+                    \App\Utils\JsonldUtils::getArrayValue($activity, 'cc'),
+                    \App\Utils\JsonldUtils::getArrayValue($activity, 'to'),
+                ),
+                fn ($val) => !\in_array($val, [ActivityPubActivityInterface::PUBLIC_URL, $followersUrl, []])
             )
         );
 
@@ -999,43 +1008,19 @@ class ActivityPubManager
 
     public static function getReceivers(array $object): array
     {
-        $res = [];
-        if (isset($object['audience']) and \is_array($object['audience'])) {
-            $res = array_merge($res, $object['audience']);
-        } elseif (isset($object['audience']) and \is_string($object['audience'])) {
-            $res[] = $object['audience'];
-        }
-
-        if (isset($object['to']) and \is_array($object['to'])) {
-            $res = array_merge($res, $object['to']);
-        } elseif (isset($object['to']) and \is_string($object['to'])) {
-            $res[] = $object['to'];
-        }
-
-        if (isset($object['cc']) and \is_array($object['cc'])) {
-            $res = array_merge($res, $object['cc']);
-        } elseif (isset($object['cc']) and \is_string($object['cc'])) {
-            $res[] = $object['cc'];
-        }
+        $res = array_merge(
+            \App\Utils\JsonldUtils::getArrayValue($object, 'audience'),
+            \App\Utils\JsonldUtils::getArrayValue($object, 'to'),
+            \App\Utils\JsonldUtils::getArrayValue($object, 'cc'),
+        );
 
         if (isset($object['object']) and \is_array($object['object'])) {
-            if (isset($object['object']['audience']) and \is_array($object['object']['audience'])) {
-                $res = array_merge($res, $object['object']['audience']);
-            } elseif (isset($object['object']['audience']) and \is_string($object['object']['audience'])) {
-                $res[] = $object['object']['audience'];
-            }
-
-            if (isset($object['object']['to']) and \is_array($object['object']['to'])) {
-                $res = array_merge($res, $object['object']['to']);
-            } elseif (isset($object['object']['to']) and \is_string($object['object']['to'])) {
-                $res[] = $object['object']['to'];
-            }
-
-            if (isset($object['object']['cc']) and \is_array($object['object']['cc'])) {
-                $res = array_merge($res, $object['object']['cc']);
-            } elseif (isset($object['object']['cc']) and \is_string($object['object']['cc'])) {
-                $res[] = $object['object']['cc'];
-            }
+            $res = array_merge(
+                $res,
+                \App\Utils\JsonldUtils::getArrayValue($object['object'], 'audience'),
+                \App\Utils\JsonldUtils::getArrayValue($object['object'], 'to'),
+                \App\Utils\JsonldUtils::getArrayValue($object['object'], 'cc'),
+            );
         } elseif (isset($object['attributedTo']) && \is_array($object['attributedTo'])) {
             // if there is no "object" inside of this it will probably be a create activity which has an attributedTo field
             // this was implemented for peertube support, because they list the channel (Group) and the user in an array in that field
@@ -1152,14 +1137,10 @@ class ActivityPubManager
 
     public function isActivityPublic(array $payload): bool
     {
-        $to = [];
-        if (!empty($payload['to']) && \is_array($payload['to'])) {
-            $to = array_merge($to, $payload['to']);
-        }
-
-        if (!empty($payload['cc']) && \is_array($payload['cc'])) {
-            $to = array_merge($to, $payload['cc']);
-        }
+        $to = array_merge(
+            \App\Utils\JsonldUtils::getArrayValue($payload, 'to'),
+            \App\Utils\JsonldUtils::getArrayValue($payload, 'cc'),
+        );
 
         foreach ($to as $receiver) {
             $id = null;
@@ -1224,16 +1205,36 @@ class ActivityPubManager
         return null;
     }
 
+    public function extractTotalAmountFromCollection(mixed $collection): ?int
+    {
+        $id = null;
+        if (\is_string($collection)) {
+            if (false !== filter_var($collection, FILTER_VALIDATE_URL)) {
+                $id = $collection;
+            }
+        } elseif (\is_array($collection)) {
+            if (isset($collection['totalItems'])) {
+                return \intval($collection['totalItems']);
+            } elseif (isset($collection['id'])) {
+                $id = $collection['id'];
+            }
+        }
+
+        if ($id) {
+            $this->apHttpClient->invalidateCollectionObjectCache($id);
+            $collection = $this->apHttpClient->getCollectionObject($id);
+            if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
+                return $collection['totalItems'];
+            }
+        }
+
+        return null;
+    }
+
     public function extractRemoteLikeCount(array $apObject): ?int
     {
         if (!empty($apObject['likes'])) {
-            if (false !== filter_var($apObject['likes'], FILTER_VALIDATE_URL)) {
-                $this->apHttpClient->invalidateCollectionObjectCache($apObject['likes']);
-                $collection = $this->apHttpClient->getCollectionObject($apObject['likes']);
-                if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
-                    return $collection['totalItems'];
-                }
-            }
+            return $this->extractTotalAmountFromCollection($apObject['likes']);
         }
 
         return null;
@@ -1242,13 +1243,7 @@ class ActivityPubManager
     public function extractRemoteDislikeCount(array $apObject): ?int
     {
         if (!empty($apObject['dislikes'])) {
-            if (false !== filter_var($apObject['dislikes'], FILTER_VALIDATE_URL)) {
-                $this->apHttpClient->invalidateCollectionObjectCache($apObject['dislikes']);
-                $collection = $this->apHttpClient->getCollectionObject($apObject['dislikes']);
-                if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
-                    return $collection['totalItems'];
-                }
-            }
+            return $this->extractTotalAmountFromCollection($apObject['dislikes']);
         }
 
         return null;
@@ -1257,13 +1252,7 @@ class ActivityPubManager
     public function extractRemoteShareCount(array $apObject): ?int
     {
         if (!empty($apObject['shares'])) {
-            if (false !== filter_var($apObject['shares'], FILTER_VALIDATE_URL)) {
-                $this->apHttpClient->invalidateCollectionObjectCache($apObject['shares']);
-                $collection = $this->apHttpClient->getCollectionObject($apObject['shares']);
-                if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
-                    return $collection['totalItems'];
-                }
-            }
+            return $this->extractTotalAmountFromCollection($apObject['shares']);
         }
 
         return null;

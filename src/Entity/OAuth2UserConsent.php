@@ -101,6 +101,7 @@ class OAuth2UserConsent
         'moderate:entry' => 'oauth2.grant.moderate.entry.all',
         'moderate:entry:language' => 'oauth2.grant.moderate.entry.change_language',
         'moderate:entry:pin' => 'oauth2.grant.moderate.entry.pin',
+        'moderate:entry:lock' => 'oauth2.grant.moderate.entry.lock',
         'moderate:entry:set_adult' => 'oauth2.grant.moderate.entry.set_adult',
         'moderate:entry:trash' => 'oauth2.grant.moderate.entry.trash',
         // Entry comment moderation grants
@@ -112,6 +113,7 @@ class OAuth2UserConsent
         'moderate:post' => 'oauth2.grant.moderate.post.all',
         'moderate:post:language' => 'oauth2.grant.moderate.post.change_language',
         'moderate:post:pin' => 'oauth2.grant.moderate.post.pin',
+        'moderate:post:lock' => 'oauth2.grant.moderate.post.lock',
         'moderate:post:set_adult' => 'oauth2.grant.moderate.post.set_adult',
         'moderate:post:trash' => 'oauth2.grant.moderate.post.trash',
         // Post comment moderation grants

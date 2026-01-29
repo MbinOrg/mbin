@@ -62,7 +62,7 @@ class MentionManager
             function ($val) {
                 preg_match(RegPatterns::LOCAL_USER, $val, $l);
 
-                return preg_match(RegPatterns::AP_USER, $val) || $val === $l[0] ?? '';
+                return preg_match(RegPatterns::AP_USER, $val) || $val === ($l[0] ?? '');
             }
         );
 

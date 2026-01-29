@@ -7,8 +7,11 @@ namespace App\Service;
 use App\DTO\PostDto;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Magazine;
+use App\Entity\MagazineLogPostLocked;
+use App\Entity\MagazineLogPostUnlocked;
 use App\Entity\Post;
 use App\Entity\User;
+use App\Event\Entry\PostLockEvent;
 use App\Event\Post\PostBeforeDeletedEvent;
 use App\Event\Post\PostBeforePurgeEvent;
 use App\Event\Post\PostCreatedEvent;
@@ -144,6 +147,7 @@ class PostManager implements ContentManagerInterface
         $post->body = $dto->body;
         $post->lang = $dto->lang;
         $post->isAdult = $dto->isAdult || $post->magazine->isAdult;
+        $post->isLocked = $dto->isLocked;
         $post->slug = $this->slugger->slug($dto->body ?? $dto->magazine->name.' '.$dto->image->altText);
         $oldImage = $post->image;
         if ($dto->image) {
@@ -258,6 +262,23 @@ class PostManager implements ContentManagerInterface
         if (null !== $post->magazine->apFeaturedUrl) {
             $this->apHttpClient->invalidateCollectionObjectCache($post->magazine->apFeaturedUrl);
         }
+
+        return $post;
+    }
+
+    public function toggleLock(Post $post, ?User $actor): Post
+    {
+        $post->isLocked = !$post->isLocked;
+
+        if ($post->isLocked) {
+            $log = new MagazineLogPostLocked($post, $actor);
+        } else {
+            $log = new MagazineLogPostUnlocked($post, $actor);
+        }
+        $this->entityManager->persist($log);
+        $this->entityManager->flush();
+
+        $this->dispatcher->dispatch(new PostLockEvent($post, $actor));
 
         return $post;
     }
