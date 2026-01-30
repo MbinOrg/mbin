@@ -247,6 +247,32 @@ jobs:
           tools/vendor/bin/php-cs-fixer fix
           --dry-run --format=checkstyle --show-progress=none | cs2pr
 
+  twig-lint:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/mbinorg/mbin-pipeline-image:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Add GITHUB_WORKSPACE as a safe directory
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-tools-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-tools-
+
+      - name: Composer tools install
+        run: composer -d tools install --no-scripts --no-progress
+
+      - name: Twig linter
+        run: php bin/console lint:twig
+
   frontend-lint:
     runs-on: ubuntu-latest
     container:
