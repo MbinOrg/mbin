@@ -1,0 +1,183 @@
+{%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
+{%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
+
+{%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_PREVIEW'), V_FALSE) -%}
+{%- set SHOW_THUMBNAILS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_THUMBNAILS'), V_TRUE) -%}
+{%- set SHOW_USER_AVATARS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_USERS_AVATARS'), V_TRUE) -%}
+{%- set SHOW_MAGAZINE_ICONS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_MAGAZINES_ICONS'), V_TRUE) -%}
+{%- set SHOW_USER_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_USER_DOMAIN'), V_FALSE) -%}
+{%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_FALSE) -%}
+
+{% if not app.user or (app.user and not app.user.isBlocked(post.user)) %}
+    {% if post.visibility is same as 'private' and (not app.user or not app.user.isFollower(post.user)) %}
+        <div class="section section--small"
+             style="z-index:3; position:relative;">
+            Private
+        </div>
+    {% else %}
+        <article {{ attributes.defaults({
+            class: html_classes('post section subject', {
+                'no-image': SHOW_THUMBNAILS is same as V_FALSE,
+                'own': app.user and post.isAuthor(app.user),
+                'show-preview': SHOW_PREVIEW is same as V_TRUE and not post.isAdult,
+                'isSingle': false
+            })}).without('id') }}
+            id="post-{{ post.id }}"
+            data-controller="subject preview mentions html-refresh"
+            data-action="notifications:Notification@window->subject#notification">
+            {% with %}
+                {% set hasTitle = post.visibility in ['visible', 'private'] or (post.visibility is same as 'trashed' and this.canSeeTrashed) %}
+                {% set isAdult = post.isAdult %}
+                {% set hasLang = post.lang is not same as app.request.locale and post.lang is not same as kbin_default_lang() %}
+                {% set isModDeleted = post.visibility is same as 'trashed' %}
+                {% set isUserDeleted = post.visibility is same as 'soft_deleted' %}
+                {% set needsHeader = (hasTitle and (isAdult or hasLang)) or isModDeleted or isUserDeleted %}
+
+                <header {% if not needsHeader %} style="margin: 0 0 var(--kbin-entry-element-spacing) 0;" {% endif %}>
+                    {% if hasTitle %}
+                        <h2>
+                            {% if isAdult %}<small class="badge danger">18+</small>{% endif %}
+
+                            {% if hasLang %}
+                                <small class="badge-lang kbin-bg">{{ post.lang|language_name }}</small>
+                            {% endif %}
+                        </h2>
+                    {% elseif(isModDeleted) %}
+                        <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
+                    {% elseif(isUserDeleted) %}
+                        <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
+                    {% endif %}
+                </header>
+            {% endwith %}
+            {% if post.visibility in ['visible', 'private'] or (post.visibility is same as 'trashed' and this.canSeeTrashed) %}
+                {% if post.body %}
+                    <div class="content short-desc">
+                        <p>{{ get_short_sentence(post.body|markdown|raw, striptags = true, onlyFirstParagraph = false) }}</p>
+                    </div>
+                {% endif %}
+            {% endif %}
+            <aside class="meta entry__meta">
+                <span>{{ component('user_inline', {user: post.user, showAvatar: SHOW_USER_AVATARS is same as V_TRUE, showNewIcon: true, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) -}}</span>
+
+                {% if (post.user.type) == "Service" %}
+                    <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
+                {% endif %}
+
+                {% if post.user.admin() %}
+                    <span class="user-badge">{{ 'user_badge_admin'|trans }}</span>
+                {% elseif post.user.moderator() %}
+                    <span class="user-badge">{{ 'user_badge_global_moderator'|trans }}</span>
+                {% elseif post.magazine.userIsModerator(post.user) %}
+                    <span class="user-badge">{{ 'user_badge_moderator'|trans }}</span>
+                {% endif %}
+                <span>, </span>
+                <span>{{ component('date', {date: post.createdAt}) }}</span>
+                <span>{{ component('date_edited', {createdAt: post.createdAt, editedAt: post.editedAt}) }}</span>
+                {% if showMagazineName %}
+                    <span>{{ 'to'|trans }} {{ component('magazine_inline', {magazine: post.magazine, showAvatar: SHOW_MAGAZINE_ICONS is same as V_TRUE, showNewIcon: true, fullName: SHOW_MAGAZINE_FULLNAME is same as V_TRUE}) }}</span>
+                {% endif %}
+            </aside>
+            {% if SHOW_THUMBNAILS is same as V_TRUE %}
+                {% if post.image %}
+                    {{ include('components/_figure_entry.html.twig', {entry: post, type: 'image'}) }}
+                {% else %}
+                    <div class="no-image-placeholder">
+                        <a href="{{ post_url(post) }}">
+                            <i class="fa-solid fa-pen-nib"></i>
+                        </a>
+                    </div>
+                {% endif %}
+            {% endif %}
+            {% if post.visibility in ['visible', 'private'] %}
+                {{ component('vote', {
+                    subject: post,
+                    showDownvote: false
+                }) }}
+            {% endif %}
+            <aside class="entry__preview hidden" data-preview-target="container"></aside>
+            <footer>
+                {% if post.visibility in ['visible', 'private'] %}
+                    <menu>
+                        {% if post.sticky %}
+                            <li>
+                                <span aria-label="{{ 'pinned'|trans }}">
+                                    <i class="fa-solid fa-thumbtack" aria-hidden="true"></i>
+                                </span>
+                            </li>
+                        {% endif %}
+
+                        <li class="meta-link">
+                                <span aria-label="{{ 'post'|trans }}">
+                                    <i class="fa-solid fa-pen-nib" aria-hidden="true"></i>
+                                </span>
+                        </li>
+
+                        {% if post.image %}
+                            <li>
+                                <button class="show-preview"
+                                        data-action="preview#show"
+                                        aria-label="{{ 'preview'|trans }}"
+                                        data-preview-url-param="{{ uploaded_asset(post.image) }}">
+                                    <i class="fa-solid fa-photo-film" aria-hidden="true"></i>
+                                </button>
+                            </li>
+                        {% endif %}
+
+                        <li>
+                            <a class="stretched-link"
+                               href="{{ post_url(post) ~ '#comments' }}">
+                                <span data-subject-target="commentsCounter">{{ post.commentCount }}</span> {{ 'comments_count'|trans({'%count%': post.commentCount}) }}
+                            </a>
+                        </li>
+                        <li>
+                            {{ component('boost', {
+                                subject: post
+                            }) }}
+                        </li>
+                        {% if app.user is defined and app.user is not same as null %}
+                            {{ component('bookmark_standard', { subject: post }) }}
+                        {% endif %}
+                        {% include 'post/_menu.html.twig' %}
+
+                        <li data-subject-target="loader" style="display:none">
+                            <div class="loader" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </li>
+                    </menu>
+                {% elseif (post.visibility is same as 'trashed' and this.canSeeTrashed) %}
+                    <menu>
+                        <li>
+                            <form method="post"
+                                  action="{{ path('post_restore', {magazine_name: post.magazine.name, post_id: post.id}) }}"
+                                  data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
+                                <button type="submit">{{ 'restore'|trans }}</button>
+                            </form>
+                        </li>
+                        {% if app.user is defined and app.user is not same as null and is_bookmarked(app.user, post) %}
+                            {{ component('bookmark_standard', { subject: post }) }}
+                        {% endif %}
+                        <li data-subject-target="loader" style="display:none">
+                            <div class="loader" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </li>
+                    </menu>
+                {% else %}
+                    <menu>
+                        {% if app.user is defined and app.user is not same as null and is_bookmarked(app.user, post) %}
+                            {{ component('bookmark_standard', { subject: post }) }}
+                        {% endif %}
+                        <li data-subject-target="loader" style="display:none">
+                            <div class="loader" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </li>
+                    </menu>
+                {% endif %}
+                <div data-subject-target="container" class="js-container">
+                </div>
+            </footer>
+        </article>
+    {% endif %}
+{% endif %}

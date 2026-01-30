@@ -37,6 +37,7 @@ class InstanceRetrieveInfoApiTest extends WebTestCase
         'publicKey',
         'endpoints',
         'icon',
+        'discoverable',
     ];
 
     public function testCanRetrieveInfoAnonymous(): void

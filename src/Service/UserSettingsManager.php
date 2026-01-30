@@ -38,6 +38,7 @@ class UserSettingsManager
             $user->notifyOnUserSignup,
             $user->directMessageSetting,
             $user->frontDefaultContent,
+            $user->apDiscoverable,
         );
     }
 
@@ -66,6 +67,10 @@ class UserSettingsManager
 
         if (null !== $dto->notifyOnUserSignup) {
             $user->notifyOnUserSignup = $dto->notifyOnUserSignup;
+        }
+
+        if (null !== $dto->discoverable) {
+            $user->apDiscoverable = $dto->discoverable;
         }
 
         $this->entityManager->flush();

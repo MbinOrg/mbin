@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace App\Service\ActivityPub;
 
 use App\DTO\EntryCommentDto;
-use App\DTO\EntryDto;
 use App\DTO\PostCommentDto;
 use App\DTO\PostDto;
 use App\Entity\Contracts\ActivityPubActivityInterface;
-use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Magazine;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\Exception\EntryLockedException;
 use App\Exception\InstanceBannedException;
+use App\Exception\PostLockedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Exception\UserDeletedException;
@@ -31,7 +31,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
-class Note
+class Note extends ActivityPubContent
 {
     public function __construct(
         private readonly LoggerInterface $logger,
@@ -52,6 +52,8 @@ class Note
      * @throws UserBannedException
      * @throws UserDeletedException
      * @throws InstanceBannedException
+     * @throws EntryLockedException
+     * @throws PostLockedException
      * @throws \Exception
      */
     public function create(array $object, ?array $root = null, bool $stickyIt = false): EntryComment|PostComment|Post
@@ -80,28 +82,24 @@ class Note
             $parentObjectId = $this->repository->findByObjectId($replyTo);
             $parent = $this->entityManager->getRepository($parentObjectId['type'])->find((int) $parentObjectId['id']);
 
-            if (Entry::class === \get_class($parent)) {
+            if ($parent instanceof Entry) {
                 $root = $parent;
 
                 return $this->createEntryComment($object, $parent, $root);
-            }
-
-            if (EntryComment::class === \get_class($parent)) {
+            } elseif ($parent instanceof EntryComment) {
                 $root = $parent->entry;
 
                 return $this->createEntryComment($object, $parent, $root);
-            }
-
-            if (Post::class === \get_class($parent)) {
+            } elseif ($parent instanceof Post) {
                 $root = $parent;
 
                 return $this->createPostComment($object, $parent, $root);
-            }
-
-            if (PostComment::class === \get_class($parent)) {
+            } elseif ($parent instanceof PostComment) {
                 $root = $parent->post;
 
                 return $this->createPostComment($object, $parent, $root);
+            } else {
+                throw new \LogicException(\get_class($parent).' is not a valid parent');
             }
         }
 
@@ -112,6 +110,7 @@ class Note
      * @throws TagBannedException
      * @throws UserBannedException
      * @throws UserDeletedException
+     * @throws EntryLockedException
      * @throws \Exception
      */
     private function createEntryComment(array $object, ActivityPubActivityInterface $parent, ?ActivityPubActivityInterface $root = null): EntryComment
@@ -171,40 +170,6 @@ class Note
         }
     }
 
-    private function getVisibility(array $object, User $actor): string
-    {
-        if (!\in_array(
-            ActivityPubActivityInterface::PUBLIC_URL,
-            array_merge($object['to'] ?? [], $object['cc'] ?? [])
-        )) {
-            if (
-                !\in_array(
-                    $actor->apFollowersUrl,
-                    array_merge($object['to'] ?? [], $object['cc'] ?? [])
-                )
-            ) {
-                throw new \Exception('PM: not implemented.');
-            }
-
-            return VisibilityInterface::VISIBILITY_PRIVATE;
-        }
-
-        return VisibilityInterface::VISIBILITY_VISIBLE;
-    }
-
-    private function handleDate(PostDto|PostCommentDto|EntryCommentDto|EntryDto $dto, string $date): void
-    {
-        $dto->createdAt = new \DateTimeImmutable($date);
-        $dto->lastActive = new \DateTime($date);
-    }
-
-    private function handleSensitiveMedia(PostDto|PostCommentDto|EntryCommentDto|EntryDto $dto, string|bool $sensitive): void
-    {
-        if (true === filter_var($sensitive, FILTER_VALIDATE_BOOLEAN)) {
-            $dto->isAdult = true;
-        }
-    }
-
     /**
      * @throws UserDeletedException
      * @throws TagBannedException
@@ -252,6 +217,10 @@ class Note
             $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($object);
             $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($object);
 
+            if (isset($object['commentsEnabled']) && \is_bool($object['commentsEnabled'])) {
+                $dto->isLocked = !$object['commentsEnabled'];
+            }
+
             return $this->postManager->create($dto, $actor, false, $stickyIt);
         } elseif ($actor instanceof Magazine) {
             throw new UnrecoverableMessageHandlingException('Actor "'.$object['attributedTo'].'" is not a user, but a magazine for post "'.$dto->apId.'".');
@@ -264,6 +233,7 @@ class Note
      * @throws UserDeletedException
      * @throws TagBannedException
      * @throws UserBannedException
+     * @throws PostLockedException
      */
     private function createPostComment(array $object, ActivityPubActivityInterface $parent, ?ActivityPubActivityInterface $root = null): PostComment
     {

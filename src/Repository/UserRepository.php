@@ -382,6 +382,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
         return $qb
             ->andWhere('u.isDeleted = false')
+            ->andWhere('u.apDiscoverable = true')
             ->andWhere('u.applicationStatus = :status')
             ->setParameter('status', EApplicationStatus::Approved->value)
             ->orderBy('u.lastActive', 'DESC');
@@ -533,22 +534,23 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->getResult();
     }
 
-    public function findUsersForMagazine(Magazine $magazine, ?bool $federated = false, $limit = 200, bool $limitTime = false, bool $requireAvatar = false): array
+    public function findUsersForMagazine(Magazine $magazine, ?bool $federated = false, int $limit = 200, bool $limitTime = false, bool $requireAvatar = false): array
     {
         $conn = $this->_em->getConnection();
         $timeWhere = $limitTime ? "AND created_at > now() - '30 days'::interval" : '';
         $sql = "
-        (SELECT count(id), user_id FROM entry WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT 50)
-        UNION
-        (SELECT count(id), user_id FROM entry_comment WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT 50)
-        UNION
-        (SELECT count(id), user_id FROM post WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT 50)
-        UNION
-        (SELECT count(id), user_id FROM post_comment WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT 50)
-        ORDER BY count DESC";
+        (SELECT count(id), user_id FROM entry WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT :limit)
+        UNION ALL
+        (SELECT count(id), user_id FROM entry_comment WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT :limit)
+        UNION ALL
+        (SELECT count(id), user_id FROM post WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT :limit)
+        UNION ALL
+        (SELECT count(id), user_id FROM post_comment WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT :limit)
+        ";
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('magazineId', $magazine->getId());
+        $stmt->bindValue('limit', $limit);
         $counter = $stmt->executeQuery()->fetchAllAssociative();
 
         $output = [];
@@ -562,6 +564,9 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             }
         }
 
+        // sort the array after the counts from the different table are added up
+        usort($output, fn ($a, $b) => $b['count'] - $a['count']);
+
         $user = array_map(fn ($item) => $item['user_id'], $output);
 
         $qb = $this->createQueryBuilder('u', 'u.id');
@@ -570,6 +575,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere('u.isDeleted = false')
             ->andWhere('u.applicationStatus = :status')
             ->andWhere('u.visibility = :visibility')
+            ->andWhere('u.apDiscoverable = true')
             ->andWhere('u.apDeletedAt IS NULL')
             ->andWhere('u.apTimeoutAt IS NULL');
 
@@ -579,8 +585,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
         if (null !== $federated) {
             if ($federated) {
-                $qb->andWhere('u.apId IS NOT NULL')
-                    ->andWhere('u.apDiscoverable = true');
+                $qb->andWhere('u.apId IS NOT NULL');
             } else {
                 $qb->andWhere('u.apId IS NULL');
             }
@@ -601,7 +606,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             if (isset($users[$item['user_id']])) {
                 $res[] = $users[$item['user_id']];
             }
-            if (\count($res) >= 35) {
+            if (\count($res) >= $limit) {
                 break;
             }
         }
@@ -620,6 +625,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
                 ->andWhere('u.isBanned = false')
                 ->andWhere('u.isDeleted = false')
                 ->andWhere('u.visibility = :visibility')
+                ->andWhere('u.apDiscoverable = true')
                 ->andWhere('u.apDeletedAt IS NULL')
                 ->andWhere('u.apTimeoutAt IS NULL')
                 ->andWhere('u.avatar IS NOT NULL');

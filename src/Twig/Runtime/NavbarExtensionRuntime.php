@@ -49,7 +49,10 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
             );
         }
 
-        return $this->urlGenerator->generate('front', $this->getActiveOptions());
+        return $this->urlGenerator->generate('front_content', [
+            ...$this->getActiveOptions(),
+            'content' => 'threads',
+        ]);
     }
 
     public function navbarCombinedUrl(?Magazine $magazine): string
@@ -84,7 +87,10 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
             );
         }
 
-        return $this->urlGenerator->generate('front', $this->getActiveOptions());
+        return $this->urlGenerator->generate('front_content', [
+            ...$this->getActiveOptions(),
+            'content' => 'combined',
+        ]);
     }
 
     public function navbarPostsUrl(?Magazine $magazine): string

@@ -41,6 +41,10 @@ abstract class MagazineLog
         'ban' => MagazineLogBan::class,
         'moderator_add' => MagazineLogModeratorAdd::class,
         'moderator_remove' => MagazineLogModeratorRemove::class,
+        'entry_locked' => MagazineLogEntryLocked::class,
+        'entry_unlocked' => MagazineLogEntryUnlocked::class,
+        'post_locked' => MagazineLogPostLocked::class,
+        'post_unlocked' => MagazineLogPostUnlocked::class,
     ];
 
     public const CHOICES = [
@@ -57,6 +61,10 @@ abstract class MagazineLog
         'ban',
         'moderator_add',
         'moderator_remove',
+        'entry_locked',
+        'entry_unlocked',
+        'post_locked',
+        'post_unlocked',
     ];
 
     #[ManyToOne(targetEntity: Magazine::class, inversedBy: 'logs')]
@@ -64,6 +72,13 @@ abstract class MagazineLog
     public Magazine $magazine;
     #[ManyToOne(targetEntity: User::class)]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    /**
+     * Usually the acting moderator. There are 2 exceptions MagazineLogModeratorAdd and MagazineLogModeratorRemove;
+     * in that case this is the moderator being added or removed, because the acting moderator can be null.
+     *
+     * @see MagazineLogModeratorAdd
+     * @see MagazineLogModeratorRemove
+     */
     public User $user;
     #[Id]
     #[GeneratedValue]

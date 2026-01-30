@@ -63,6 +63,7 @@ class EntryFactory
             $dto->uv,
             $dto->dv,
             $dto->isPinned,
+            $dto->isLocked,
             $dto->visibility,
             $dto->favouriteCount,
             $dto->isOc,
@@ -95,6 +96,7 @@ class EntryFactory
         $dto->dv = $entry->countDownVotes();
         $dto->favouriteCount = $entry->favouriteCount;
         $dto->isAdult = $entry->isAdult;
+        $dto->isLocked = $entry->isLocked;
         $dto->isOc = $entry->isOc;
         $dto->lang = $entry->lang;
         $dto->badges = $entry->badges;

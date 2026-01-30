@@ -69,6 +69,7 @@ class ActivityJsonBuilder
             'Accept', 'Reject' => $this->buildAcceptRejectFromActivity($activity),
             'Update' => $this->buildUpdateFromActivity($activity),
             'Block' => $this->buildBlockFromActivity($activity),
+            'Lock' => $this->buildLockFromActivity($activity),
             default => new \LogicException(),
         };
         $this->logger->debug('activity json: {json}', ['json' => json_encode($json, JSON_PRETTY_PRINT)]);
@@ -488,6 +489,31 @@ class ActivityJsonBuilder
             'expires' => $expires,
             'to' => [ActivityPubActivityInterface::PUBLIC_URL],
             'cc' => $cc,
+        ];
+    }
+
+    private function buildLockFromActivity(Activity $activity): array
+    {
+        $object = $activity->getObject();
+        if ($object instanceof Entry) {
+            $objectUrl = $this->entryPageFactory->getActivityPubId($object);
+        } elseif ($object instanceof Post) {
+            $objectUrl = $this->postNoteFactory->getActivityPubId($object);
+        } else {
+            throw new \LogicException('Lock activity is only supported for entries and posts, not for '.\get_class($object));
+        }
+
+        return [
+            '@context' => $this->contextsProvider->referencedContexts(),
+            'id' => $this->urlGenerator->generate('ap_object', ['id' => $activity->uuid], UrlGeneratorInterface::ABSOLUTE_URL),
+            'type' => 'Lock',
+            'actor' => $this->personFactory->getActivityPubId($activity->userActor),
+            'to' => [ActivityPubActivityInterface::PUBLIC_URL],
+            'cc' => [
+                $this->groupFactory->getActivityPubId($object->magazine),
+                $this->urlGenerator->generate('ap_user_followers', ['username' => $activity->userActor->username], UrlGeneratorInterface::ABSOLUTE_URL),
+            ],
+            'object' => $objectUrl,
         ];
     }
 

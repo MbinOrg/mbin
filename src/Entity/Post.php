@@ -33,7 +33,6 @@ use Webmozart\Assert\Assert;
 
 #[Entity(repositoryClass: PostRepository::class)]
 #[Index(columns: ['visibility', 'is_adult'], name: 'post_visibility_adult_idx')]
-#[Index(columns: ['visibility'], name: 'post_visibility_idx')]
 #[Index(columns: ['is_adult'], name: 'post_adult_idx')]
 #[Index(columns: ['ranking'], name: 'post_ranking_idx')]
 #[Index(columns: ['score'], name: 'post_score_idx')]
@@ -77,6 +76,8 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     public bool $isAdult = false;
     #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
     public bool $sticky = false;
+    #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
+    public bool $isLocked = false;
     #[Column(type: 'datetimetz')]
     public ?\DateTime $lastActive;
     #[Column(type: 'string', nullable: true)]

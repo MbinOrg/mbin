@@ -10,7 +10,6 @@ use App\Entity\Magazine;
 use App\Entity\User;
 use App\Form\SearchType;
 use App\Message\ActivityPub\Inbox\CreateMessage;
-use App\MessageHandler\ActivityPub\Inbox\CreateHandler;
 use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPubManager;
 use App\Service\SearchManager;
@@ -18,6 +17,8 @@ use App\Service\SettingsManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
 
 class SearchController extends AbstractController
 {
@@ -27,7 +28,7 @@ class SearchController extends AbstractController
         private readonly ApHttpClientInterface $apHttpClient,
         private readonly SettingsManager $settingsManager,
         private readonly LoggerInterface $logger,
-        private readonly CreateHandler $createHandler,
+        private readonly MessageBusInterface $bus,
     ) {
     }
 
@@ -40,7 +41,7 @@ class SearchController extends AbstractController
             if ($form->isSubmitted() && $form->isValid()) {
                 /** @var SearchDto $dto */
                 $dto = $form->getData();
-                $query = $dto->q;
+                $query = trim($dto->q);
                 $this->logger->debug('searching for {query}', ['query' => $query]);
 
                 $objects = [];
@@ -66,7 +67,8 @@ class SearchController extends AbstractController
                         $objects = $this->manager->findByApId($postId);
                         if (0 === \sizeof($objects)) {
                             try {
-                                $this->createHandler->doWork(new CreateMessage($body));
+                                // process the message in the sync transport, so that the created content is directly visible
+                                $this->bus->dispatch(new CreateMessage($body), [new TransportNamesStamp('sync')]);
                                 $objects = $this->manager->findByApId($postId);
                             } catch (\Exception $e) {
                                 $this->addFlash('error', $e->getMessage());

@@ -206,7 +206,7 @@ class ImageManager implements ImageManagerInterface
     {
         try {
             return $this->publicUploadsFilesystem->mimeType($image->filePath);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 'none';
         }
     }
