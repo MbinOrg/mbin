@@ -140,7 +140,7 @@ class ActivityPubManager
             return null;
         }
 
-        $this->logger->debug('[ActivityPubManager::findActorOrCreate] Cearching for actor at "{handle}"', ['handle' => $actorUrlOrHandle]);
+        $this->logger->debug('[ActivityPubManager::findActorOrCreate] Searching for actor at "{handle}"', ['handle' => $actorUrlOrHandle]);
         if (str_contains($actorUrlOrHandle, $this->settingsManager->get('KBIN_DOMAIN').'/m/')) {
             $magazine = str_replace('https://'.$this->settingsManager->get('KBIN_DOMAIN').'/m/', '', $actorUrlOrHandle);
             $this->logger->debug('[ActivityPubManager::findActorOrCreate] Found magazine: "{magName}"', ['magName' => $magazine]);
@@ -151,14 +151,18 @@ class ActivityPubManager
         $actorUrl = $actorUrlOrHandle;
         if (false === filter_var($actorUrl, FILTER_VALIDATE_URL)) {
             if (!substr_count(ltrim($actorUrl, '@'), '@')) {
+                // local user. Maybe an @ at the beginning, but not in the middle
                 $user = $this->userRepository->findOneBy(['username' => ltrim($actorUrl, '@')]);
-                if ($user instanceof User) {
-                    if ($user->apId && !$user->isDeleted && !$user->isSoftDeleted() && !$user->isTrashed() && (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
-                        $this->dispatchUpdateActor($user->apProfileId);
-                    }
-
-                    return $user;
+            } else {
+                // remote user. Maybe @user@domain, maybe only user@domain -> trim left and look in apId
+                $user = $this->userRepository->findOneBy(['apId' => ltrim($actorUrl, '@')]);
+            }
+            if ($user instanceof User) {
+                if ($user->apId && !$user->isDeleted && !$user->isSoftDeleted() && !$user->isTrashed() && (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
+                    $this->dispatchUpdateActor($user->apProfileId);
                 }
+
+                return $user;
             }
 
             $actorUrl = $this->webfinger($actorUrl)->getProfileId();
