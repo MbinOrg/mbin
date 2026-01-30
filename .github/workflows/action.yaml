@@ -267,6 +267,8 @@ jobs:
           key: ${{ runner.os }}-composer-tools-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-tools-
 
+      - run: cp .env.example .env
+
       - name: Composer tools install
         run: composer install --no-scripts --no-progress
 
