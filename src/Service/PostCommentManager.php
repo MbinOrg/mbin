@@ -15,6 +15,8 @@ use App\Event\PostComment\PostCommentDeletedEvent;
 use App\Event\PostComment\PostCommentEditedEvent;
 use App\Event\PostComment\PostCommentPurgedEvent;
 use App\Event\PostComment\PostCommentRestoredEvent;
+use App\Exception\InstanceBannedException;
+use App\Exception\PostLockedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
 use App\Factory\PostCommentFactory;
@@ -49,7 +51,9 @@ class PostCommentManager implements ContentManagerInterface
     /**
      * @throws TagBannedException
      * @throws UserBannedException
+     * @throws InstanceBannedException
      * @throws TooManyRequestsHttpException
+     * @throws PostLockedException
      * @throws \Exception
      */
     public function create(PostCommentDto $dto, User $user, $rateLimit = true): PostComment
@@ -67,6 +71,14 @@ class PostCommentManager implements ContentManagerInterface
 
         if ($this->tagManager->isAnyTagBanned($this->tagManager->extract($dto->body))) {
             throw new TagBannedException();
+        }
+
+        if (null !== $dto->post->magazine->apId && $this->settingsManager->isBannedInstance($dto->post->magazine->apInboxUrl)) {
+            throw new InstanceBannedException();
+        }
+
+        if ($dto->post->isLocked) {
+            throw new PostLockedException();
         }
 
         $comment = $this->factory->createFromDto($dto, $user);

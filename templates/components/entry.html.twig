@@ -84,15 +84,16 @@
                     </div>
                 {% endif %}
                 {% if entry.body and showBody %}
-                    <div class="entry__body">
-                        <div class="content formatted">
-                            {{ entry.body|markdown|raw }}
+                    <div data-controller="collapsable" class="entry__body">
+                        <div data-collapsable-target="content" class="content formatted">
+                            {{ entry.body|markdown("entry")|raw }}
                         </div>
+                        <div data-collapsable-target="button"></div>
                     </div>
                 {% endif %}
             {% endif %}
             <aside class="meta entry__meta">
-                <span>{{ component('user_inline', {user: entry.user, showAvatar: SHOW_USER_AVATARS is same as V_TRUE, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) -}}</span>
+                <span>{{ component('user_inline', {user: entry.user, showAvatar: SHOW_USER_AVATARS is same as V_TRUE, showNewIcon: true, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) -}}</span>
 
                 {% if (entry.user.type) == "Service" %}
                     <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
@@ -109,7 +110,7 @@
                 <span>{{ component('date', {date: entry.createdAt}) }}</span>
                 <span>{{ component('date_edited', {createdAt: entry.createdAt, editedAt: entry.editedAt}) }}</span>
                 {% if showMagazineName %}
-                    <span>{{ 'to'|trans }} {{ component('magazine_inline', {magazine: entry.magazine, showAvatar: SHOW_MAGAZINE_ICONS is same as V_TRUE, fullName: SHOW_MAGAZINE_FULLNAME is same as V_TRUE}) }}</span>
+                    <span>{{ 'to'|trans }} {{ component('magazine_inline', {magazine: entry.magazine, showAvatar: SHOW_MAGAZINE_ICONS is same as V_TRUE, showNewIcon: true, fullName: SHOW_MAGAZINE_FULLNAME is same as V_TRUE}) }}</span>
                 {% endif %}
             </aside>
             {% if SHOW_THUMBNAILS is same as V_TRUE %}
@@ -150,6 +151,12 @@
                                     <i class="fa-regular fa-newspaper" aria-hidden="true"></i>
                                 </span>
                             </li>
+                        {% elseif entry.type is same as 'link' and entry.hasEmbed is same as false %}
+                            <li class="meta-link">
+                                <span aria-label="{{ 'link'|trans }}">
+                                    <i class="fa-solid fa-link" aria-hidden="true"></i>
+                                </span>
+                            </li>
                         {% endif %}
                         {% if entry.hasEmbed %}
                             {% set preview_url = entry.type is same as 'image' and entry.image ? uploaded_asset(entry.image) : entry.url %}
@@ -164,10 +171,17 @@
                             </li>
                         {% endif %}
                         <li>
-                            <a class="stretched-link"
-                               href="{{ entry_url(entry) ~ '#comments' }}">
-                                <span data-subject-target="commentsCounter">{{ entry.commentCount }}</span> {{ 'comments_count'|trans({'%count%': entry.commentCount}) }}
-                            </a>
+                            {% if not entry.isLocked %}
+                                <a class="stretched-link"
+                                   href="{{ entry_url(entry) ~ '#comments' }}">
+                                    <span data-subject-target="commentsCounter">{{ entry.commentCount }}</span> {{ 'comments_count'|trans({'%count%': entry.commentCount}) }}
+                                </a>
+                            {% else %}
+                                <span class="stretched-link">
+                                    <i class="fa fa-lock" aria-hidden="true"></i>
+                                    <span data-subject-target="commentsCounter">{{ entry.commentCount }}</span> {{ 'comments_count'|trans({'%count%': entry.commentCount}) }}
+                                </span>
+                            {% endif %}
                         </li>
                         <li>
                             {{ component('boost', {
@@ -199,6 +213,9 @@
                                 <button type="submit">{{ 'restore'|trans }}</button>
                             </form>
                         </li>
+                        {% if app.user is defined and app.user is not same as null and is_bookmarked(app.user, entry) %}
+                            {{ component('bookmark_standard', { subject: entry }) }}
+                        {% endif %}
                         <li data-subject-target="loader" style="display:none">
                             <div class="loader" role="status">
                                 <span class="visually-hidden">Loading...</span>
@@ -207,6 +224,9 @@
                     </menu>
                 {% else %}
                     <menu>
+                        {% if app.user is defined and app.user is not same as null and is_bookmarked(app.user, entry) %}
+                            {{ component('bookmark_standard', { subject: entry }) }}
+                        {% endif %}
                         <li data-subject-target="loader" style="display:none">
                             <div class="loader" role="status">
                                 <span class="visually-hidden">Loading...</span>

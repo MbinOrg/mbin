@@ -32,6 +32,11 @@
                 }) | raw }}
             </p>
 
+            <p>
+                {{ '2fa.manual_code_hint'|trans }}:<br />
+                {% include 'user/settings/2fa_secret.html.twig' with {'secret': secret} %}
+            </p>
+
             <h3>{{ '2fa.backup'|trans }}</h3>
 
             {% include 'user/settings/_2fa_backup.html.twig' %}
@@ -42,6 +47,7 @@
         <div class="container">
             {{ form_start(form) }}
             {{ form_row(form.totpCode) }}
+            {{ form_row(form.currentPassword) }}
             <div class="row actions">
                 <div><span class="cancel"><a href="{{ path('user_settings_password') }}">{{ 'cancel'|trans }}</a></span></div>
                 {{ form_row(form.submit, {label: '2fa.add', attr: {class: 'btn btn__primary'}}) }}

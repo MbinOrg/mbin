@@ -32,6 +32,7 @@
 @use 'components/post';
 @use 'components/search';
 @use 'components/subject';
+@use 'components/suggestions';
 @use 'components/login';
 @use 'components/modlog';
 @use 'components/notification_switch';
@@ -47,9 +48,11 @@
 @use 'components/sidebar-subscriptions';
 @use 'components/settings_row';
 @use 'components/inline_md';
+@use 'components/emoji_picker';
 @use 'pages/post_single';
 @use 'pages/post_front';
 @use 'pages/page_bookmarks';
+@use 'pages/page_modlog';
 @use 'themes/kbin';
 @use 'themes/default';
 @use 'themes/solarized';

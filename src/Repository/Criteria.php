@@ -33,6 +33,7 @@ abstract class Criteria
     public const AP_LOCAL = 'local';
     public const AP_FEDERATED = 'federated';
 
+    public const CONTENT_COMBINED = 'combined';
     public const CONTENT_THREADS = 'threads';
     public const CONTENT_MICROBLOG = 'microblog';
 
@@ -73,6 +74,12 @@ abstract class Criteria
         self::AP_LOCAL,
     ];
 
+    public const array CONTENT_OPTIONS = [
+        self::CONTENT_COMBINED,
+        self::CONTENT_THREADS,
+        self::CONTENT_MICROBLOG,
+    ];
+
     public int $page = 1;
     public ?Magazine $magazine = null;
     public ?User $user = null;
@@ -89,6 +96,28 @@ abstract class Criteria
     public ?string $tag = null;
     public ?string $domain = null;
     public ?array $languages = null;
+    public bool $stickiesFirst = false;
+
+    /** @var int[]|null */
+    public ?array $cachedUserFollows = null;
+
+    /** @var int[]|null */
+    public ?array $cachedUserSubscribedMagazines = null;
+
+    /** @var int[]|null */
+    public ?array $cachedUserModeratedMagazines = null;
+
+    /** @var int[]|null */
+    public ?array $cachedUserSubscribedDomains = null;
+
+    /** @var int[]|null */
+    public ?array $cachedUserBlocks = null;
+
+    /** @var int[]|null */
+    public ?array $cachedUserBlockedMagazines = null;
+
+    /** @var int[]|null */
+    public ?array $cachedUserBlockedDomains = null;
 
     public const THEME_MBIN = 'mbin';
     public const THEME_KBIN = 'kbin';
@@ -311,5 +340,23 @@ abstract class Criteria
             'subscription' => $this->resolveSubscriptionFilter(),
             default => throw new \LogicException('Unknown option: '.$key),
         };
+    }
+
+    public function fetchCachedItems(ContentRepository $contentRepository, User $loggedInUser): void
+    {
+        $this->cachedUserFollows = $contentRepository->getCachedUserFollows($loggedInUser);
+
+        if ($this->subscribed) {
+            $this->cachedUserSubscribedDomains = $contentRepository->getCachedUserSubscribedDomains($loggedInUser);
+            $this->cachedUserSubscribedMagazines = $contentRepository->getCachedUserSubscribedMagazines($loggedInUser);
+        }
+
+        if ($this->moderated) {
+            $this->cachedUserModeratedMagazines = $contentRepository->getCachedUserModeratedMagazines($loggedInUser);
+        }
+
+        $this->cachedUserBlocks = $contentRepository->getCachedUserBlocks($loggedInUser);
+        $this->cachedUserBlockedDomains = $contentRepository->getCachedUserDomainBlocks($loggedInUser);
+        $this->cachedUserBlockedMagazines = $contentRepository->getCachedUserMagazineBlocks($loggedInUser);
     }
 }

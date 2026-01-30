@@ -1,0 +1,54 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://kbin.test/contexts"
+    ],
+    "id": "SCRUBBED_ID",
+    "type": "Update",
+    "actor": "https://kbin.test/u/user",
+    "published": "SCRUBBED_DATE",
+    "to": [
+        "https://kbin.test/m/test",
+        "https://www.w3.org/ns/activitystreams#Public"
+    ],
+    "cc": [
+        "https://kbin.test/u/user/followers"
+    ],
+    "object": {
+        "id": "SCRUBBED_ID",
+        "type": "Page",
+        "attributedTo": "https://kbin.test/u/user",
+        "inReplyTo": null,
+        "to": [
+            "https://kbin.test/m/test",
+            "https://www.w3.org/ns/activitystreams#Public"
+        ],
+        "cc": [
+            "https://kbin.test/u/user/followers"
+        ],
+        "name": "test",
+        "audience": "https://kbin.test/m/test",
+        "content": null,
+        "summary": "test #test",
+        "mediaType": "text/html",
+        "source": null,
+        "tag": [
+            {
+                "type": "Hashtag",
+                "href": "https://kbin.test/tag/test",
+                "name": "#test"
+            }
+        ],
+        "commentsEnabled": true,
+        "sensitive": false,
+        "stickied": false,
+        "published": "SCRUBBED_DATE",
+        "contentMap": {
+            "en": null
+        },
+        "object": {
+            "updated": "SCRUBBED_DATE"
+        }
+    },
+    "audience": "https://kbin.test/m/test"
+}

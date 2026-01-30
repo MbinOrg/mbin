@@ -1,9 +1,14 @@
 # Docker Installation
 
-> [!NOTE]
-> Docker installation is currently not advised for production use. Try the [Bare Metal installation](01-bare_metal.md) instead.
+## Minimum hardware requirements
 
-## System Requirements
+- **vCPU:** 4 virtual cores (>= 2GHz, _more is recommended_ on larger instances)
+- **RAM:** 6GB (_more is recommended_ for large instances)
+- **Storage:** 40GB (_more is recommended_, especially if you have a lot of remote/local magazines and/or have a lot of (local) users)
+
+You can start with a smaller server and add more resources later if you are using a VPS for example.
+
+## System Prerequisites
 
 - Docker Engine
 - Docker Compose V2
@@ -40,83 +45,59 @@ git clone https://github.com/MbinOrg/mbin.git
 cd mbin
 ```
 
-### Docker image preparation
+### Environment configuration
+
+Use either the automatic environment setup script _OR_ manually configure the `.env`, `compose.override.yaml`, and OAuth2 keys. Select one of the two options.
+
+> [!TIP]
+> Everything configured for your specific instance is in `.env`, `compose.override.yaml`, and `storage/` (assuming you haven't modified anything else). If you'd like to backup, or even completely reset/delete your instance, then these are the files to do so with.
+
+#### Automatic setup script
+
+Run the setup script and pass in a mode (either `prod` or `dev`) and your domain (which can be `localhost` if you plan to just test locally):
+
+```bash
+./docker/setup.sh prod mbin.domain.tld
+```
 
 > [!NOTE]
-> If you're using a version of Docker Engine earlier than 23.0, run `export DOCKER_BUILDKIT=1`, prior to building the image. This does not apply to users running Docker Desktop. More info can be found [here](https://docs.docker.com/build/buildkit/#getting-started)
+> Once the script has been run, you will not be able to run it again, in order to prevent data loss. You can always edit the `.env` and `compose.override.yaml` files manually if you'd like to make changes.
 
-1. First go to the _docker directory_:
+Continue on to the [_Docker image preparation_](#docker-image-preparation) section for the next steps.
 
-```bash
-cd docker
-```
+#### Manually configure `.env` and `compose.override.yaml`
 
-2. Use the existing Docker image _OR_ build the docker image. Select one of the two options.
-
-#### Build our own Docker image
-
-If you want to build our own image, run (_no_ need to update the `compose.yml` file):
+Create config files and storage directories:
 
 ```bash
-docker build --no-cache -t mbin -f Dockerfile  ..
+cp .env.example_docker .env
+touch compose.override.yaml
+mkdir -p storage/{caddy_config,caddy_data,media,messenger_logs,oauth,php_logs,postgres,rabbitmq_data,rabbitmq_logs}
 ```
 
-#### Use Mbin pre-build image
-
-_OR_ use our pre-build images from [ghcr.io](https://ghcr.io). In this case you need to update the `compose.yml` file:
-
-```bash
-nano compose.yml
-```
-
-Find and replace or comment-out the following 4 lines:
-
-```yml
-build:
-  context: ../
-  dockerfile: docker/Dockerfile
-image: mbin
-```
-
-And instead use the following line on all places (`www`, `php`, and `messenger` services):
-
-```yml
-image: "ghcr.io/mbinorg/mbin:latest"
-```
-
-**Important:** Do _NOT_ forget to change **ALL LINES** in that matches `image: mbin` to: `image: "ghcr.io/mbinorg/mbin:latest"` in the `compose.yml` file (should be 4 matches in total).
-
-3. Create config files and storage directories:
-
-```bash
-cp ../.env.example_docker .env
-cp compose.prod.yml compose.override.yml
-mkdir -p storage/media storage/caddy_config storage/caddy_data storage/logs
-sudo chown $USER:$USER storage/media storage/caddy_config storage/caddy_data storage/logs
-```
-
-### Configure `.env` and `compose.override.yml`
-
-1. Choose your Redis password, PostgreSQL password, RabbitMQ password, and Mercure password.
-2. Place the passwords in the corresponding variables in both `.env` and `compose.override.yml`.
+1. Choose your Valkey password, PostgreSQL password, RabbitMQ password, and Mercure password.
+2. Place the passwords in the corresponding variables in `.env`.
 3. Update the `SERVER_NAME`, `KBIN_DOMAIN` and `KBIN_STORAGE_URL` in `.env`.
-4. Update `APP_SECRET` in `.env`, generate a new one via: `node -e  "console.log(require('crypto').randomBytes(16).toString('hex'))"`
-5. _Optionally_: Use a newer PostgreSQL version (current fallback is v13). Update/set the `POSTGRES_VERSION` variable in your `.env` and `compose.override.yml` under `db`.
+4. Update `APP_SECRET` in `.env`, see the note below to generate one.
+5. Update `MBIN_USER` in `.env` to match your user and group id (`id -u` & `id -g`).
+6. _Optionally_: Use a newer PostgreSQL version. Update/set the `POSTGRES_VERSION` variable in your `.env`.
 
 > [!NOTE]
-> Ensure the `HTTPS` environmental variable is set to `TRUE` in `compose.override.yml` for the `php`, `messenger`, and `messenger_ap` containers **if your environment is using a valid certificate behind a reverse proxy**. This is likely true for most production environments and is required for proper federation, that is, this will ensure the webfinger responses include `https:` in the URLs generated.
+> To generate a random password or secret, use the following command:
+>
+> ```bash
+> tr -dc A-Za-z0-9 < /dev/urandom | head -c 32 && echo
+> ```
 
-### Configure OAuth2 keys
+##### Configure OAuth2 keys
 
 1. Create an RSA key pair using OpenSSL:
 
 ```bash
-# Replace <mbin_dir> with Mbin's root directory
-mkdir <mbin_dir>/config/oauth2/
 # If you protect the key with a passphrase, make sure to remember it!
 # You will need it later
-openssl genrsa -des3 -out ./config/oauth2/private.pem 4096
-openssl rsa -in ./config/oauth2/private.pem --outform PEM -pubout -out ./config/oauth2/public.pem
+openssl genrsa -des3 -out ./storage/oauth/private.pem 4096
+openssl rsa -in ./storage/oauth/private.pem --outform PEM -pubout -out ./storage/oauth/public.pem
 ```
 
 2. Generate a random hex string for the OAuth2 encryption key:
@@ -130,149 +111,129 @@ openssl rand -hex 16
 ```env
 OAUTH_PRIVATE_KEY=%kernel.project_dir%/config/oauth2/private.pem
 OAUTH_PUBLIC_KEY=%kernel.project_dir%/config/oauth2/public.pem
-OAUTH_PASSPHRASE=<Your (optional) passphrase from above here>
+OAUTH_PASSPHRASE=<Your passphrase from above here>
 OAUTH_ENCRYPTION_KEY=<Hex string generated in previous step>
 ```
 
-### Running the containers
+### Docker image preparation
 
-By default `docker compose` will execute the `compose.yml` and `compose.override.yml` files.
+> [!NOTE]
+> If you're using a version of Docker Engine earlier than 23.0, run `export DOCKER_BUILDKIT=1`, prior to building the image. This does not apply to users running Docker Desktop. More info can be found [here](https://docs.docker.com/build/buildkit/#getting-started)
+
+Use the Mbin provided Docker image (default) _OR_ build the docker image locally. Select one of the two options.
+
+The default is to use our prebuilt images from [ghcr.io](https://github.com/MbinOrg/mbin/pkgs/container/mbin). Reference the next section if you'd like to build the Docker image locally instead.
+
+> [!IMPORTANT]
+> In **production** a recommended practice is to pin the image tag to a specific release (example: v1.8.2) _instead_ of using `latest`.
+>
+
+Pinning the docker image version can be done by editing the `compose.override.yaml` file and uncommenting the following lines
+(update the version number to one you want to pin to and is available on [ghcr.io](https://github.com/MbinOrg/mbin/pkgs/container/mbin)):
+
+```yaml
+services:
+  php:
+    image: ghcr.io/mbinorg/mbin:v1.8.2
+  messenger:
+    image: ghcr.io/mbinorg/mbin:v1.8.2
+```
+
+#### Build your own image
+
+If you want to build your own image, add `pull_policy: build` to both the `php` and `messenger` services in `compose.override.yaml`:
+
+```yaml
+services:
+  php:
+    pull_policy: build
+  messenger:
+    pull_policy: build
+```
+
+Once that's done, run `docker compose build --no-cache` in order to build the Mbin Docker image.
+
+### Uploaded media files
+
+Uploaded media files (e.g. photos uploaded by users) will be stored on the host directory `storage/media`. They will be served by the web server in the `php` container as static files.
+
+Make sure `KBIN_STORAGE_URL` in your `.env` configuration file is set to be `https://yourdomain.tld/media`.
+
+You can also serve those media files on another server by mirroring the files at `storage/media` and changing `KBIN_STORAGE_URL` correspondingly.
+
+> [!TIP]
+> S3 can also be utilized to store images in the cloud. Just fill in the `S3_` fields in `.env` and Mbin will take care of the rest. See [this page](../03-optional-features/06-s3_storage.md) for more info.
+
+### Running behind a reverse proxy
+
+A reverse proxy is unneeded with this Docker setup, as HTTPS is automatically applied through the built in Caddy server. If you'd like to use a reverse proxy regardless, then you'll need to make a few changes:
+
+1. In `.env`, change your `SERVER_NAME` to `":80"`:
+
+```env
+SERVER_NAME=":80"
+```
+
+2. In `compose.override.yaml`, add `CADDY_GLOBAL_OPTIONS: auto_https off` to your php service environment:
+
+```yaml
+services:
+  php:
+    environment:
+      CADDY_GLOBAL_OPTIONS: auto_https off
+```
+
+3. Also in `compose.override.yaml`, add `!override` to your php `ports` to override the current configuration and add your own based on what your reverse proxy needs:
+
+```yaml
+services:
+  php:
+    ports: !override
+      - 8080:80
+```
+
+In this example, port `8080` will connect to your Mbin server.
+
+4. Make sure your reverse proxy correctly sets the common `X-Forwarded` headers (especially `X-Forwarded-Proto`). This is needed so that both rate limiting works correctly, but especially so that your server can detect its correct outward facing protocol (HTTP vs HTTPS).
+
+> [!WARNING]
+> `TRUSTED_PROXIES` in `.env` needs to be a valid value (which is the default) in order for your server to work correctly behind a reverse proxy.
+
+> [!TIP]
+> In order to verify your server is correctly detecting it's public protocol (HTTP vs HTTPS), visit `/.well-known/nodeinfo` and look at which protocol is being used in the `href` fields. A public server should always be using HTTPS and not contain port numbers (i.e., `https://DOMAINHERE/`).
+
+### Additional configuration (Optional)
+
+If you run a larger Mbin instance, its recommended to increase the `shm_size` value of the `postgres` service (first try the default `2gb`!). Although you can also decrease the number if you wish on smaller instances. `shm_size` sets the size of the shared memory (`/dev/shm`) and used for dynamic memory allocation. PostgreSQL is using this for buffering the write-ahead logs (also known as "WALL buffer").
+
+The following step is **optional** and also depends on how much RAM you have left as well as how many parallel workers, table sizes, expected concurrent users and more. You can first use the default `2gb`, which should be sufficient, however below is explained how to further increase this number.
+
+In `compose.override.yaml`, add `shm_size` to the `postgres` service (`4gb` is an example here):
+
+```yaml
+services:
+  postgres:
+    shm_size: '4gb'
+```
+
+## Running the containers
+
+By default `docker compose` will execute the `compose.yaml` and `compose.override.yaml` files.
 
 Run the container in the background (`-d` means detach, but this can also be omitted for testing or debugging purposes):
 
 ```bash
-# Go to the docker directory within the git repo
-cd docker
-
-# Starts the containers
 docker compose up -d
 ```
 
 See your running containers via: `docker ps`.
 
-Then, you should be able to access the new instance via [http://localhost:8008](http://localhost:8008).
-You can also access RabbitMQ management UI via [http://localhost:15672](http://localhost:15672).
-
-### Add auxiliary containers to `compose.yml`
-
-Add any auxiliary container as you want. For example, add a Nginx container as reverse proxy to provide HTTPS encryption.
+This docker setup comes with automatic HTTPS support. Assuming you have set up your DNS and firewall (allow ports `80` & `443`) configured correctly, then you should be able to access the new instance via your domain.
 
 > [!NOTE]
-> If you are building the docker images yourself, you might get merge conflicts when changing the `compose.yml`
+> If you specified `localhost` as your domain, then a self signed HTTPS certificate is provided and you should be able to access your instance here: [https://localhost](https://localhost).
 
-### Uploaded media files
+You can also access the RabbitMQ management UI via [http://localhost:15672](http://localhost:15672).
 
-Uploaded media files (e.g. photos uploaded by users) will be stored on the host directory `storage/media`. They will be served by the Caddy web server in the `www` container as static files.
-
-Make sure `KBIN_STORAGE_URL` in your `.env` configuration file is set to be `https://yourdomain.tld/media` (assuming you setup Nginx with SSL certificate by now).
-
-You can also serve those media files on another server by mirroring the files at `storage/media` and changing `KBIN_STORAGE_URL` correspondingly.
-
-### Filesystem ACL support
-
-The filesystem ACL is disabled by default, in the `mbin` image. You can set the environment variable `ENABLE_ACL=1` to enable it. Remember that not all filesystems support ACL. This will cause an error if you enable filesystem ACL for such filesystems.
-
-## Run Production
-
-If you created the file `compose.override.yml` with your configs (`cp compose.prod.yml compose.override.yml`), running production would be the same command:
-
-```bash
-docker compose up -d
-```
-
-**Important:** The docker instance is can be reached at [http://127.0.0.1:8008](http://127.0.0.1:8008), we strongly advise you to put a reverse proxy (like Nginx) in front of the docker instance. Nginx can could listen on ports 80 and 443 and Nginx should handle SSL/TLS offloading. See also Nginx example below.
-
-If you want to deploy your app on a cluster of machines, you can
-use [Docker Swarm](https://docs.docker.com/engine/swarm/stack-deploy/), which is compatible with the provided Compose
-files.
-
-### Mbin NGINX Server Block
-
-NGINX reverse proxy example for the Mbin Docker instance:
-
-```nginx
-upstream backend {
-    server 127.0.0.1:8008;
-    keepalive 12;
-}
-
-# Map between POST requests on inbox vs the rest
-map $request $inboxRequest {
-    ~^POST\ \/f\/inbox      1;
-    ~^POST\ \/i\/inbox      1;
-    ~^POST\ \/m\/.+\/inbox  1;
-    ~^POST\ \/u\/.+\/inbox  1;
-    default                 0;
-}
-
-map $inboxRequest $regularRequest {
-    1 0;
-    default 1;
-}
-
-# Redirect HTTP to HTTPS
-server {
-    server_name domain.tld;
-    listen 80;
-
-    return 301 https://$host$request_uri;
-}
-
-server {
-    listen 443 ssl;
-    http2 on;
-    server_name domain.tld;
-
-    charset utf-8;
-
-    # TLS
-    ssl_certificate /etc/letsencrypt/live/domain.tld/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/domain.tld/privkey.pem;
-
-    # Don't leak powered-by
-    fastcgi_hide_header X-Powered-By;
-
-    # Security headers
-    add_header X-Frame-Options "DENY" always;
-    add_header X-XSS-Protection "1; mode=block" always;
-    add_header X-Content-Type-Options "nosniff" always;
-    add_header Referrer-Policy "same-origin" always;
-    add_header X-Download-Options "noopen" always;
-    add_header X-Permitted-Cross-Domain-Policies "none" always;
-    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
-
-    client_max_body_size 20M; # Max size of a file that a user can upload
-
-    # Logs
-    error_log /var/log/nginx/mbin_error.log;
-    access_log /var/log/nginx/mbin_access.log if=$regularRequest;
-    access_log /var/log/nginx/mbin_inbox.log if=$inboxRequest buffer=32k flush=5m;
-
-    open_file_cache          max=1000 inactive=20s;
-    open_file_cache_valid    60s;
-    open_file_cache_min_uses 2;
-    open_file_cache_errors   on;
-
-    location / {
-        proxy_http_version 1.1;
-        proxy_set_header HOST $host;
-        proxy_set_header X-Forwarded-Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header Connection "";
-        proxy_pass http://backend;
-    }
-
-    location /.well-known/mercure {
-        proxy_pass http://backend$request_uri;
-        proxy_read_timeout 24h;
-        proxy_http_version 1.1;
-        proxy_set_header Connection "";
-
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Host $host;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-```
+> [!WARNING]
+> Be sure not to forget the [Mbin first setup](../04-running-mbin/01-first_setup.md) instructions in order to create your admin user, `random` magazine, and AP & Push Notification keys.

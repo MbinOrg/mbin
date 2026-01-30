@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 Util = function() {};
 
 Util.hasClass = function(el, className) {
@@ -105,7 +106,7 @@ Util.moveFocus = function (element) {
                 popover.trigger[i].addEventListener('click', function(event) {
                     event.preventDefault();
                     // if the popover had been previously opened by another trigger element -> close it first and reopen in the right position
-                    if (Util.hasClass(popover.element, popover.popoverVisibleClass) && popover.s != popover.trigger[i]) {
+                    if (Util.hasClass(popover.element, popover.popoverVisibleClass) && popover.s !== popover.trigger[i]) {
                         togglePopover(popover, false, false); // close menu
                     }
                     // toggle popover
@@ -117,14 +118,14 @@ Util.moveFocus = function (element) {
 
         // trap focus
         popover.element.addEventListener('keydown', function(event) {
-            if (event.keyCode && 9 == event.keyCode || event.key && 'Tab' == event.key) {
+            if (event.keyCode && 9 === event.keyCode || event.key && 'Tab' === event.key) {
                 //trap focus inside popover
                 trapFocus(popover, event);
             }
         });
 
         // custom events -> open/close popover
-        popover.element.addEventListener('openPopover', function(event) {
+        popover.element.addEventListener('openPopover', function() {
             togglePopover(popover, true);
         });
 
@@ -142,7 +143,7 @@ Util.moveFocus = function (element) {
             getFocusableElements(popover);
             // move focus
             focusPopover(popover);
-            popover.element.addEventListener('transitionend', function(event) {
+            popover.element.addEventListener('transitionend', function() {
                 focusPopover(popover);
             }, { once: true });
             // position the popover element
@@ -259,12 +260,12 @@ Util.moveFocus = function (element) {
     }
 
     function trapFocus(popover, event) {
-        if (popover.firstFocusable == document.activeElement && event.shiftKey) {
+        if (popover.firstFocusable === document.activeElement && event.shiftKey) {
             //on Shift+Tab -> focus last focusable element when focus moves out of popover
             event.preventDefault();
             popover.lastFocusable.focus();
         }
-        if (popover.lastFocusable == document.activeElement && !event.shiftKey) {
+        if (popover.lastFocusable === document.activeElement && !event.shiftKey) {
             //on Tab -> focus first focusable element when focus moves out of popover
             event.preventDefault();
             popover.firstFocusable.focus();
@@ -298,7 +299,7 @@ Util.moveFocus = function (element) {
 
         // listen for key events
         window.addEventListener('keyup', function(event) {
-            if (event.keyCode && 27 == event.keyCode || event.key && 'escape' == event.key.toLowerCase()) {
+            if (event.keyCode && 27 === event.keyCode || event.key && 'escape' === event.key.toLowerCase()) {
                 // close popover on 'Esc'
                 popoversArray.forEach(function(element) {
                     element.checkPopoverFocus();
@@ -312,13 +313,13 @@ Util.moveFocus = function (element) {
             });
         });
         // on resize -> close all popover elements
-        window.addEventListener('resize', function(event) {
+        window.addEventListener('resize', function() {
             popoversArray.forEach(function(element) {
                 element.togglePopover(false, false);
             });
         });
         // on scroll -> close all popover elements
-        window.addEventListener('scroll', function(event) {
+        window.addEventListener('scroll', function() {
             popoversArray.forEach(function(element) {
                 if (element.popoverIsOpen) {
                     element.togglePopover(false, false);
@@ -329,7 +330,7 @@ Util.moveFocus = function (element) {
         for (var j = 0; j < scrollingContainers.length; j++) {
             var scrollingContainer = document.querySelector(scrollingContainers[j]);
             if (scrollingContainer) {
-                scrollingContainer.addEventListener('scroll', function(event) {
+                scrollingContainer.addEventListener('scroll', function() {
                     popoversArray.forEach(function(element) {
                         if (element.popoverIsOpen) {
                             element.togglePopover(false, false);

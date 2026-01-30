@@ -81,10 +81,10 @@ parameters:
     default_type_options: article|articles|link|links|video|videos|photo|photos|image|images|all
     default_subscription_options: sub|fav|mod|all|home
     default_federation_options: local|all
-    default_content_options: threads|microblog
+    default_content_options: default|combined|threads|microblog
     default_subject_type_options: entry|entry_comment|post|post_comment
 
-    comment_sort_options: top|hot|active|newest|oldest
+    comment_sort_options: top|hot|active|newest|oldest|default
 
     stats_type: general|content|votes
 
@@ -107,13 +107,14 @@ parameters:
     exif_exiftool_path: '%env(default::EXIF_EXIFTOOL_PATH)%'
     exif_exiftool_timeout: '%env(int:default::EXIF_EXIFTOOL_TIMEOUT)%'
 
-    max_image_bytes: '%env(int:default:max_image_bytes_default:MAX_IMAGE_BYTES)%'
-    max_image_bytes_default: 6000000
+    mbin_max_image_bytes: '%env(int:default:mbin_max_image_bytes_default:MBIN_MAX_IMAGE_BYTES)%'
+    mbin_max_image_bytes_default: 6000000
 
     mbin_downvotes_mode_default: 'enabled'
     mbin_downvotes_mode: '%env(enum:\App\Utils\DownvotesMode:default:mbin_downvotes_mode_default:MBIN_DOWNVOTES_MODE)%'
 
     mbin_new_users_need_approval: '%env(bool:default::MBIN_NEW_USERS_NEED_APPROVAL)%'
+    mbin_use_federation_allow_list: '%env(bool:default::MBIN_USE_FEDERATION_ALLOW_LIST)%'
 
 services:
     # default configuration for services in *this* file
@@ -182,9 +183,10 @@ services:
             $kbinFederationPageEnabled: '%env(bool:KBIN_FEDERATION_PAGE_ENABLED)%'
             $kbinAdminOnlyOauthClients: '%env(bool:KBIN_ADMIN_ONLY_OAUTH_CLIENTS)%'
             $mbinSsoOnlyMode: '%sso_only_mode%'
-            $maxImageBytes: '%max_image_bytes%'
+            $mbinMaxImageBytes: '%mbin_max_image_bytes%'
             $mbinDownvotesMode: '%mbin_downvotes_mode%'
             $mbinNewUsersNeedApproval: '%mbin_new_users_need_approval%'
+            $mbinUseFederationAllowList: '%mbin_use_federation_allow_list%'
 
     # Markdown
     App\Markdown\Factory\EnvironmentFactory:

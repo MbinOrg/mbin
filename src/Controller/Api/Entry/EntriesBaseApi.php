@@ -7,15 +7,14 @@ namespace App\Controller\Api\Entry;
 use App\Controller\Api\BaseApi;
 use App\DTO\EntryCommentDto;
 use App\DTO\EntryCommentRequestDto;
-use App\DTO\EntryCommentResponseDto;
 use App\DTO\EntryDto;
 use App\DTO\EntryRequestDto;
-use App\DTO\EntryResponseDto;
 use App\DTO\ImageDto;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Magazine;
 use App\Factory\EntryCommentFactory;
+use App\PageView\EntryCommentPageView;
 use App\Service\EntryManager;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -30,26 +29,6 @@ class EntriesBaseApi extends BaseApi
     public function setCommentsFactory(EntryCommentFactory $commentsFactory): void
     {
         $this->commentsFactory = $commentsFactory;
-    }
-
-    /**
-     * Serialize a single entry to JSON.
-     */
-    protected function serializeEntry(EntryDto|Entry $dto, array $tags): EntryResponseDto
-    {
-        $response = $this->entryFactory->createResponseDto($dto, $tags);
-
-        if ($this->isGranted('ROLE_OAUTH2_ENTRY:VOTE')) {
-            $response->isFavourited = $dto instanceof EntryDto ? $dto->isFavourited : $dto->isFavored($this->getUserOrThrow());
-            $response->userVote = $dto instanceof EntryDto ? $dto->userVote : $dto->getUserChoice($this->getUserOrThrow());
-        }
-
-        if ($user = $this->getUser()) {
-            $response->canAuthUserModerate = $dto->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
-            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto);
-        }
-
-        return $response;
     }
 
     /**
@@ -75,7 +54,7 @@ class EntriesBaseApi extends BaseApi
         $deserialized = $this->serializer->deserialize($this->request->getCurrentRequest()->getContent(), EntryRequestDto::class, 'json', $context);
         \assert($deserialized instanceof EntryRequestDto);
 
-        $dto = $deserialized->mergeIntoDto($dto);
+        $dto = $deserialized->mergeIntoDto($dto, $this->settingsManager);
 
         $dto->ip = $this->ipResolver->resolve();
 
@@ -87,7 +66,10 @@ class EntriesBaseApi extends BaseApi
         $request = $this->request->getCurrentRequest();
         $deserialized = new EntryRequestDto();
         $deserialized->title = $request->get('title');
+        $deserialized->url = $request->get('url');
+        $deserialized->body = $request->get('body');
         $deserialized->tags = $request->get('tags');
+        $deserialized->body = $request->get('body');
         // TODO: Support badges whenever/however they're implemented
         // $deserialized->badges = $request->get('badges');
         $deserialized->isOc = filter_var($request->get('isOc'), FILTER_VALIDATE_BOOL);
@@ -95,25 +77,6 @@ class EntriesBaseApi extends BaseApi
         $deserialized->isAdult = filter_var($request->get('isAdult'), FILTER_VALIDATE_BOOL);
 
         return $deserialized;
-    }
-
-    /**
-     * Serialize a single comment to JSON.
-     */
-    protected function serializeComment(EntryCommentDto $comment, array $tags): EntryCommentResponseDto
-    {
-        $response = $this->entryCommentFactory->createResponseDto($comment, $tags);
-
-        if ($this->isGranted('ROLE_OAUTH2_ENTRY_COMMENT:VOTE')) {
-            $response->isFavourited = $comment->isFavourited;
-            $response->userVote = $comment->userVote;
-        }
-
-        if ($user = $this->getUser()) {
-            $response->canAuthUserModerate = $comment->magazine->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
-        }
-
-        return $response;
     }
 
     /**
@@ -147,7 +110,7 @@ class EntriesBaseApi extends BaseApi
 
         $dto->ip = $this->ipResolver->resolve();
 
-        return $deserialized->mergeIntoDto($dto);
+        return $deserialized->mergeIntoDto($dto, $this->settingsManager);
     }
 
     protected function deserializeCommentFromForm(?EntryCommentDto $dto = null): EntryCommentDto
@@ -161,7 +124,7 @@ class EntriesBaseApi extends BaseApi
 
         $dto->ip = $this->ipResolver->resolve();
 
-        return $deserialized->mergeIntoDto($dto);
+        return $deserialized->mergeIntoDto($dto, $this->settingsManager);
     }
 
     /**
@@ -172,7 +135,7 @@ class EntriesBaseApi extends BaseApi
      *
      * @return array An associative array representation of the comment's hierarchy, to be used as JSON
      */
-    protected function serializeCommentTree(?EntryComment $comment, ?int $depth = null): array
+    protected function serializeCommentTree(?EntryComment $comment, EntryCommentPageView $commentPageView, ?int $depth = null): array
     {
         if (null === $comment) {
             return [];
@@ -186,7 +149,7 @@ class EntriesBaseApi extends BaseApi
             $canModerate = $comment->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
         }
 
-        $commentTree = $this->commentsFactory->createResponseTree($comment, $depth, $canModerate);
+        $commentTree = $this->commentsFactory->createResponseTree($comment, $commentPageView, $depth, $canModerate);
         $commentTree->canAuthUserModerate = $canModerate;
 
         return $commentTree->jsonSerialize();

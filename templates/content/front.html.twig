@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{%- block title -%}
+    {%- if magazine is defined and magazine -%}
+        {% if get_active_sort_option('sortBy') is not same as get_default_sort_option() %}
+            {{- get_active_sort_option('sortBy')|trans|capitalize }} - {{ magazine.title }} - {{ parent() -}}
+        {% else %}
+            {{- magazine.title }} - {{ parent() -}}
+        {% endif %}
+    {%- else -%}
+        {% if criteria.getOption('content') == 'threads' %}
+            {% if get_active_sort_option('sortBy') is not same as get_default_sort_option() %}
+                {{- get_active_sort_option('sortBy')|trans|capitalize }} - {{ 'thread'|trans }} - {{ parent() }}
+            {% else %}
+                {{- 'thread'|trans }} - {{ parent() -}}
+            {% endif %}
+        {% elseif criteria.getOption('content') == 'microblog' %}
+            {% if get_active_sort_option('sortBy') is not same as get_default_sort_option() %}
+                {{- get_active_sort_option('sortBy')|trans|capitalize }} - {{ 'microblog'|trans }} - {{ parent() }}
+            {% else %}
+                {{- 'microblog'|trans }} - {{ parent() -}}
+            {% endif %}
+        {% else %}
+            {% if get_active_sort_option('sortBy') is not same as get_default_sort_option() %}
+                {{- get_active_sort_option('sortBy')|trans|capitalize }} - {{ parent() }} - {{ kbin_meta_description() -}}
+            {% else %}
+                {{- parent() }} - {{ kbin_meta_description() -}}
+            {% endif %}
+        {% endif %}
+    {%- endif -%}
+{%- endblock -%}
+
+{% block description %}
+    {%- if magazine is defined and magazine -%}
+        {{- magazine.description ? get_short_sentence(magazine.description) : '' -}}
+    {%- else -%}
+        {{- parent() -}}
+    {%- endif -%}
+{% endblock %}
+
+{% block image %}
+    {%- if magazine is defined and magazine and magazine.icon -%}
+        {{- uploaded_asset(magazine.icon) -}}
+    {%- else -%}
+        {{- parent() -}}
+    {%- endif -%}
+{% endblock %}
+
+{% block mainClass %}page-entry-front{% endblock %}
+
+{% block header_nav %}
+{% endblock %}
+
+{% block sidebar_top %}
+{% endblock %}
+
+{% block body %}
+    <header>
+        {% if magazine is defined and magazine %}
+            <h1 hidden>{{ magazine.title }}</h1>
+            <h2 hidden>{{ get_active_sort_option()|trans }}</h2>
+            {% if magazine.banner is not same as null %}
+                <div class="magazine-banner">
+                    <img loading="lazy" class="cover"
+                        src="{{ magazine.banner.filePath ? (asset(magazine.banner.filePath)|imagine_filter('magazine_banner')) : magazine.banner.sourceUrl }}"
+                        alt="{{ magazine.name ~ ' ' ~ 'banner'|trans|lower }}"
+                        />
+                </div>
+            {% endif %}
+        {% else %}
+            <h1 hidden>{{ get_active_sort_option()|trans }}</h1>
+        {% endif %}
+    </header>
+    {% if criteria is defined %}
+        {% if criteria.getOption('content') == 'microblog' %}
+            <section class="section section--top">
+                {% include 'post/_form_post.html.twig' %}
+            </section>
+            {% include 'post/_options.html.twig' %}
+        {% else %}
+            {% include 'entry/_options.html.twig' %}
+        {% endif %}
+    {% endif %}
+    {% include 'layout/_flash.html.twig' %}
+    {% if magazine is defined and magazine %}
+        {% include 'magazine/_restricted_info.html.twig' %}
+        {% include 'magazine/_federated_info.html.twig' %}
+        {% include 'magazine/_visibility_info.html.twig' %}
+    {% endif %}
+    <div id="content">
+        {{ include('content/_list.html.twig') }}
+    </div>
+{% endblock %}
+

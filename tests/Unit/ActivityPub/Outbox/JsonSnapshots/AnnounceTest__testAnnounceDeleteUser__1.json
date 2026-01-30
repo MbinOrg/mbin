@@ -1,0 +1,31 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://kbin.test/contexts"
+    ],
+    "id": "SCRUBBED_ID",
+    "type": "Announce",
+    "actor": "https://kbin.test/m/test",
+    "object": {
+        "id": "SCRUBBED_ID",
+        "type": "Delete",
+        "actor": "https://kbin.test/u/user",
+        "object": "SCRUBBED_ID",
+        "to": [
+            "https://www.w3.org/ns/activitystreams#Public"
+        ],
+        "cc": [
+            "https://kbin.test/u/user/followers"
+        ],
+        "removeData": true
+    },
+    "to": [
+        "https://www.w3.org/ns/activitystreams#Public"
+    ],
+    "cc": [
+        "https://kbin.test/m/test/followers",
+        "https://kbin.test/u/user/followers"
+    ],
+    "published": "SCRUBBED_DATE",
+    "audience": "https://kbin.test/m/test"
+}

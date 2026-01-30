@@ -5,21 +5,30 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\DTO\SettingsDto;
+use App\Entity\Instance;
 use App\Entity\Settings;
+use App\Repository\InstanceRepository;
 use App\Repository\SettingsRepository;
 use App\Utils\DownvotesMode;
 use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\Pure;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
 class SettingsManager
 {
     private static ?SettingsDto $dto = null;
 
+    private SettingsDto $instanceDto;
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly SettingsRepository $repository,
         private readonly RequestStack $requestStack,
+        private readonly KernelInterface $kernel,
+        private readonly InstanceRepository $instanceRepository,
         private readonly string $kbinDomain,
         private readonly string $kbinTitle,
         private readonly string $kbinMetaTitle,
@@ -37,17 +46,14 @@ class SettingsManager
         private readonly bool $kbinFederationPageEnabled,
         private readonly bool $kbinAdminOnlyOauthClients,
         private readonly bool $mbinSsoOnlyMode,
-        private readonly int $maxImageBytes,
+        private readonly int $mbinMaxImageBytes,
         private readonly DownvotesMode $mbinDownvotesMode,
         private readonly bool $mbinNewUsersNeedApproval,
+        private readonly LoggerInterface $logger,
+        private readonly bool $mbinUseFederationAllowList,
     ) {
-        if (!self::$dto) {
+        if (!self::$dto || 'test' === $this->kernel->getEnvironment()) {
             $results = $this->repository->findAll();
-
-            $maxImageBytesEdited = $this->find($results, 'MAX_IMAGE_BYTES', FILTER_VALIDATE_INT);
-            if (null === $maxImageBytesEdited || 0 === $maxImageBytesEdited) {
-                $maxImageBytesEdited = $this->maxImageBytes;
-            }
 
             $newUsersNeedApprovalDb = $this->find($results, 'MBIN_NEW_USERS_NEED_APPROVAL');
             if ('true' === $newUsersNeedApprovalDb) {
@@ -58,7 +64,7 @@ class SettingsManager
                 $newUsersNeedApprovalEdited = $this->mbinNewUsersNeedApproval;
             }
 
-            self::$dto = new SettingsDto(
+            $dto = new SettingsDto(
                 $this->kbinDomain,
                 $this->find($results, 'KBIN_TITLE') ?? $this->kbinTitle,
                 $this->find($results, 'KBIN_META_TITLE') ?? $this->kbinMetaTitle,
@@ -79,7 +85,6 @@ class SettingsManager
                     'KBIN_REGISTRATIONS_ENABLED',
                     FILTER_VALIDATE_BOOLEAN
                 ) ?? $this->kbinRegistrationsEnabled,
-                $this->find($results, 'KBIN_BANNED_INSTANCES') ?? [],
                 $this->find($results, 'KBIN_HEADER_LOGO', FILTER_VALIDATE_BOOLEAN) ?? $this->kbinHeaderLogo,
                 $this->find($results, 'KBIN_CAPTCHA_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? $this->kbinCaptchaEnabled,
                 $this->find($results, 'KBIN_MERCURE_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? false,
@@ -88,14 +93,18 @@ class SettingsManager
                 $this->find($results, 'MBIN_SSO_ONLY_MODE', FILTER_VALIDATE_BOOLEAN) ?? $this->mbinSsoOnlyMode,
                 $this->find($results, 'MBIN_PRIVATE_INSTANCE', FILTER_VALIDATE_BOOLEAN) ?? false,
                 $this->find($results, 'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', FILTER_VALIDATE_BOOLEAN) ?? true,
-                $this->find($results, 'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY', FILTER_VALIDATE_BOOLEAN) ?? false,
+                $this->find($results, 'MBIN_SIDEBAR_SECTIONS_RANDOM_LOCAL_ONLY', FILTER_VALIDATE_BOOLEAN) ?? false,
+                $this->find($results, 'MBIN_SIDEBAR_SECTIONS_USERS_LOCAL_ONLY', FILTER_VALIDATE_BOOLEAN) ?? false,
                 $this->find($results, 'MBIN_SSO_REGISTRATIONS_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? true,
                 $this->find($results, 'MBIN_RESTRICT_MAGAZINE_CREATION', FILTER_VALIDATE_BOOLEAN) ?? false,
                 $this->find($results, 'MBIN_SSO_SHOW_FIRST', FILTER_VALIDATE_BOOLEAN) ?? false,
-                $maxImageBytesEdited,
                 $this->find($results, 'MBIN_DOWNVOTES_MODE') ?? $this->mbinDownvotesMode->value,
                 $newUsersNeedApprovalEdited,
+                $this->find($results, 'MBIN_USE_FEDERATION_ALLOW_LIST', FILTER_VALIDATE_BOOLEAN) ?? $this->mbinUseFederationAllowList,
             );
+            $this->instanceDto = $dto;
+        } else {
+            $this->instanceDto = self::$dto;
         }
     }
 
@@ -118,7 +127,7 @@ class SettingsManager
 
     public function getDto(): SettingsDto
     {
-        return self::$dto;
+        return $this->instanceDto;
     }
 
     public function save(SettingsDto $dto): void
@@ -164,37 +173,69 @@ class SettingsManager
      */
     public function isBannedInstance(string $inboxUrl): bool
     {
-        return \in_array(
-            str_replace('www.', '', parse_url($inboxUrl, PHP_URL_HOST)),
-            $this->get('KBIN_BANNED_INSTANCES') ?? []
-        );
+        $host = parse_url($inboxUrl, PHP_URL_HOST);
+        if (null === $host) {
+            // Try to retrieve the caller function (commented-out for performance reasons)
+            // $bt = debug_backtrace();
+            // $caller_function = ($bt[1]) ? $bt[1]['function'] : 'Unknown function caller';
+            $this->logger->error('SettingsManager::isBannedInstance: unable to parse host from URL: {url}', ['url' => $inboxUrl]);
+
+            // Do not retry, retrying will always cause a failure
+            throw new UnrecoverableMessageHandlingException(\sprintf('Invalid URL provided: %s', $inboxUrl));
+        }
+
+        $finalUrl = str_replace('www.', '', $host);
+        if (!$this->getUseAllowList()) {
+            return \in_array($finalUrl, $this->instanceRepository->getBannedInstanceUrls());
+        } else {
+            // when using an allow list the instance is considered banned if it does not exist or if it is not explicitly allowed
+            $instance = $this->instanceRepository->findOneBy(['domain' => $finalUrl]);
+
+            return null === $instance || !$instance->isExplicitlyAllowed;
+        }
+    }
+
+    /** @return Instance[] */
+    public function getBannedInstances(): array
+    {
+        return $this->instanceRepository->getBannedInstances();
+    }
+
+    public function getUseAllowList(): bool
+    {
+        return $this->getDto()->MBIN_USE_FEDERATION_ALLOW_LIST;
+    }
+
+    public function getAllowedInstances(): array
+    {
+        return $this->instanceRepository->getAllowedInstances($this->getUseAllowList());
     }
 
     public function get(string $name)
     {
-        return self::$dto->{$name};
+        return $this->instanceDto->{$name};
     }
 
     public function getDownvotesMode(): DownvotesMode
     {
-        return DownvotesMode::from($this->get('MBIN_DOWNVOTES_MODE'));
+        return DownvotesMode::from($this->getDto()->MBIN_DOWNVOTES_MODE);
     }
 
     public function getNewUsersNeedApproval(): bool
     {
-        return $this->get('MBIN_NEW_USERS_NEED_APPROVAL');
+        return $this->getDto()->MBIN_NEW_USERS_NEED_APPROVAL;
     }
 
     public function set(string $name, $value): void
     {
-        self::$dto->{$name} = $value;
+        $this->instanceDto->{$name} = $value;
 
-        $this->save(self::$dto);
+        $this->save($this->instanceDto);
     }
 
-    public static function getValue(string $name): string
+    public function getValue(string $name): string
     {
-        return self::$dto->{$name};
+        return $this->instanceDto->{$name};
     }
 
     public function getLocale(): string
@@ -204,11 +245,19 @@ class SettingsManager
         return $request->cookies->get('mbin_lang') ?? $request->getLocale() ?? $this->get('KBIN_DEFAULT_LANG');
     }
 
+    public function getMaxImageBytes(): int
+    {
+        return $this->mbinMaxImageBytes;
+    }
+
     public function getMaxImageByteString(): string
     {
-        $megaBytes = round($this->maxImageBytes / 1024 / 1024, 2);
+        $bytes = $this->mbinMaxImageBytes;
+        // We use 1000 for MB (instead of 1024, which would be MiB)
+        // Linux is using SI standard, see also: https://wiki.ubuntu.com/UnitsPolicy
+        $megaBytes = round($bytes / pow(1000, 2), 2);
 
-        return $megaBytes.'MB';
+        return $megaBytes.' MB';
     }
 
     /**

@@ -30,8 +30,10 @@ use App\Utils\Embed;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Emoji\EmojiTransliterator;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -186,7 +188,7 @@ class AjaxController extends AbstractController
             [
                 'html' => $this->renderView(
                     'post/comment/_preview.html.twig',
-                    ['comments' => $comments, 'post' => $post]
+                    ['comments' => $comments, 'post' => $post, 'criteria' => $criteria]
                 ),
             ]
         );
@@ -239,9 +241,36 @@ class AjaxController extends AbstractController
         return new JsonResponse(
             [
                 'html' => $this->renderView(
-                    'user/_suggestion.html.twig',
+                    'search/_user_suggestion.html.twig',
                     [
                         'users' => $repository->findUsersSuggestions(ltrim($username, '@')),
+                    ]
+                ),
+            ]
+        );
+    }
+
+    public function fetchEmojiSuggestions(#[MapQueryParameter] string $query): JsonResponse
+    {
+        $trans = EmojiTransliterator::create('text-emoji');
+        $class = new \ReflectionClass($trans);
+        $emojis = $class->getProperty('map')->getValue($trans);
+        $codes = array_keys($emojis);
+        $matches = array_filter($codes, fn ($emoji) => str_contains($emoji, $query));
+        $results = array_map(function ($code) use ($emojis) {
+            $std = new \stdClass();
+            $std->shortCode = $code;
+            $std->emoji = $emojis[$code];
+
+            return $std;
+        }, $matches);
+
+        return new JsonResponse(
+            [
+                'html' => $this->renderView(
+                    'search/_emoji_suggestion.html.twig',
+                    [
+                        'emojis' => \array_slice($results, 0, 5),
                     ]
                 ),
             ]
@@ -273,7 +302,7 @@ class AjaxController extends AbstractController
         $this->entityManager->flush();
 
         try {
-            $testNotification = new PushNotification('', $this->translator->trans('test_push_message', locale: $pushSubscription->locale));
+            $testNotification = new PushNotification(null, '', $this->translator->trans('test_push_message', locale: $pushSubscription->locale));
             $this->pushSubscriptionManager->sendTextToUser($user, $testNotification, specificDeviceKey: $payload->deviceKey);
 
             return new JsonResponse();
@@ -311,7 +340,7 @@ class AjaxController extends AbstractController
     {
         $user = $this->getUserOrThrow();
         try {
-            $this->pushSubscriptionManager->sendTextToUser($user, new PushNotification('', $this->translator->trans('test_push_message')), specificDeviceKey: $payload->deviceKey);
+            $this->pushSubscriptionManager->sendTextToUser($user, new PushNotification(null, '', $this->translator->trans('test_push_message')), specificDeviceKey: $payload->deviceKey);
 
             return new JsonResponse();
         } catch (\ErrorException $e) {

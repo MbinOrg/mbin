@@ -9,9 +9,9 @@ use PHPUnit\Framework\Attributes\Group;
 
 class PostCommentCreateControllerTest extends WebTestCase
 {
-    public function __construct($name = null, array $data = [], $dataName = '')
+    public function setUp(): void
     {
-        parent::__construct($name, $data, $dataName);
+        parent::setUp();
         $this->kibbyPath = \dirname(__FILE__, 5).'/assets/kibby_emoji.png';
     }
 
@@ -35,6 +35,28 @@ class PostCommentCreateControllerTest extends WebTestCase
         $this->client->followRedirect();
 
         $this->assertSelectorTextContains('#comments .content', 'test comment 1');
+    }
+
+    public function testUserCannotCreatePostCommentInLockedPost(): void
+    {
+        $user = $this->getUserByUsername('JohnDoe');
+        $this->client->loginUser($user);
+
+        $post = $this->createPost('test post 1');
+        $this->postManager->toggleLock($post, $user);
+
+        $crawler = $this->client->request('GET', '/m/acme/p/'.$post->getId().'/test-post-1/reply');
+
+        $this->client->submit(
+            $crawler->filter('form[name=post_comment]')->selectButton('Add comment')->form(
+                [
+                    'post_comment[body]' => 'test comment 1',
+                ]
+            )
+        );
+
+        self::assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('#main', 'Failed to create comment');
     }
 
     #[Group(name: 'NonThreadSafe')]

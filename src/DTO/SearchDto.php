@@ -9,8 +9,9 @@ use App\Entity\User;
 
 class SearchDto
 {
-    public string $q;
+    public string $q = '';
     public ?string $type = null;
     public ?User $user = null;
     public ?Magazine $magazine = null;
+    public ?\DateTimeImmutable $since = null;
 }

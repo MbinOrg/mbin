@@ -9,6 +9,7 @@ use App\DTO\EntryResponseDto;
 use App\Entity\Badge;
 use App\Entity\Entry;
 use App\Entity\User;
+use App\Repository\BookmarkListRepository;
 use App\Repository\TagLinkRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -22,6 +23,7 @@ class EntryFactory
         private readonly UserFactory $userFactory,
         private readonly BadgeFactory $badgeFactory,
         private readonly TagLinkRepository $tagLinkRepository,
+        private readonly BookmarkListRepository $bookmarkListRepository,
     ) {
     }
 
@@ -40,7 +42,7 @@ class EntryFactory
         );
     }
 
-    public function createResponseDto(EntryDto|Entry $entry, array $tags): EntryResponseDto
+    public function createResponseDto(EntryDto|Entry $entry, array $tags, ?array $crosspostedEntries = null): EntryResponseDto
     {
         $dto = $entry instanceof Entry ? $this->createDto($entry) : $entry;
         $badges = $dto->badges ? array_map(fn (Badge $badge) => $this->badgeFactory->createDto($badge), $dto->badges->toArray()) : null;
@@ -61,6 +63,7 @@ class EntryFactory
             $dto->uv,
             $dto->dv,
             $dto->isPinned,
+            $dto->isLocked,
             $dto->visibility,
             $dto->favouriteCount,
             $dto->isOc,
@@ -70,7 +73,10 @@ class EntryFactory
             $dto->lastActive,
             $dto->type,
             $dto->slug,
-            $dto->apId
+            $dto->apId,
+            bookmarks: $this->bookmarkListRepository->getBookmarksOfContentInterface($entry),
+            crosspostedEntries: $crosspostedEntries,
+            isAuthorModeratorInMagazine: $dto->magazine->userIsModerator($dto->user),
         );
     }
 
@@ -90,6 +96,7 @@ class EntryFactory
         $dto->dv = $entry->countDownVotes();
         $dto->favouriteCount = $entry->favouriteCount;
         $dto->isAdult = $entry->isAdult;
+        $dto->isLocked = $entry->isLocked;
         $dto->isOc = $entry->isOc;
         $dto->lang = $entry->lang;
         $dto->badges = $entry->badges;
@@ -107,7 +114,7 @@ class EntryFactory
         $dto->apLikeCount = $entry->apLikeCount;
         $dto->apDislikeCount = $entry->apDislikeCount;
         $dto->apShareCount = $entry->apShareCount;
-        $dto->tags = $this->tagLinkRepository->getTagsOfEntry($entry);
+        $dto->tags = $this->tagLinkRepository->getTagsOfContent($entry);
 
         $currentUser = $this->security->getUser();
         // Only return the user's vote if permission to control voting has been given

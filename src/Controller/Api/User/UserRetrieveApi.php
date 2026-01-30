@@ -127,7 +127,7 @@ class UserRetrieveApi extends UserBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
-        $dto = $factory->createDto($user);
+        $dto = $factory->createDto($user, $this->reputationRepository->getUserReputationTotal($user));
 
         return new JsonResponse(
             $this->serializeUser($dto),
@@ -168,8 +168,9 @@ class UserRetrieveApi extends UserBaseApi
         RateLimiterFactory $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
+        $user = $this->getUserOrThrow();
 
-        $dto = $factory->createDto($this->getUserOrThrow());
+        $dto = $factory->createDto($user, $this->reputationRepository->getUserReputationTotal($user));
 
         return new JsonResponse(
             $this->serializeUser($dto),
@@ -764,5 +765,107 @@ class UserRetrieveApi extends UserBaseApi
             $this->serializePaginated($dtos, $users),
             headers: $headers
         );
+    }
+
+    #[OA\Response(
+        response: 200,
+        description: 'Returns all instance admins',
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
+        ],
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'items', type: 'array', items: new OA\Items(ref: new Model(type: UserResponseDto::class))),
+                new OA\Property(property: 'pagination', ref: new Model(type: PaginationSchema::class)),
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Permission denied due to missing or expired token',
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\UnauthorizedErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 429,
+        description: 'You are being rate limited',
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
+        ],
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\TooManyRequestsErrorSchema::class))
+    )]
+    #[OA\Tag(name: 'instance')]
+    public function admins(
+        UserRepository $repository,
+        UserFactory $factory,
+        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactory $anonymousApiReadLimiter,
+    ): JsonResponse {
+        $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
+
+        $users = $repository->findAllAdmins();
+
+        $dtos = [];
+        foreach ($users as $value) {
+            \assert($value instanceof User);
+            $dtos[] = $this->serializeUser($factory->createDto($value));
+        }
+
+        return new JsonResponse(['items' => $dtos], headers: $headers);
+    }
+
+    #[OA\Response(
+        response: 200,
+        description: 'Returns all instance moderators',
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
+        ],
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'items', type: 'array', items: new OA\Items(ref: new Model(type: UserResponseDto::class))),
+                new OA\Property(property: 'pagination', ref: new Model(type: PaginationSchema::class)),
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Permission denied due to missing or expired token',
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\UnauthorizedErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 429,
+        description: 'You are being rate limited',
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
+        ],
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\TooManyRequestsErrorSchema::class))
+    )]
+    #[OA\Tag(name: 'instance')]
+    public function moderators(
+        UserRepository $repository,
+        UserFactory $factory,
+        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactory $anonymousApiReadLimiter,
+    ): JsonResponse {
+        $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
+
+        $users = $repository->findAllModerators();
+
+        $dtos = [];
+        foreach ($users as $value) {
+            \assert($value instanceof User);
+            $dtos[] = $this->serializeUser($factory->createDto($value));
+        }
+
+        return new JsonResponse(['items' => $dtos], headers: $headers);
     }
 }

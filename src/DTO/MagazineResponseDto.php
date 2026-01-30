@@ -13,6 +13,7 @@ class MagazineResponseDto implements \JsonSerializable
 {
     public ?ModeratorResponseDto $owner = null;
     public ?ImageDto $icon = null;
+    public ?ImageDto $banner = null;
     public ?string $name = null;
     public ?string $title = null;
     public ?string $description = null;
@@ -39,10 +40,13 @@ class MagazineResponseDto implements \JsonSerializable
     public bool $isPostingRestrictedToMods = false;
     public ?int $localSubscribers = null;
     public ?ENotificationStatus $notificationStatus = null;
+    public ?bool $discoverable = null;
+    public ?bool $indexable = null;
 
     public static function create(
         ?ModeratorResponseDto $owner = null,
         ?ImageDto $icon = null,
+        ?ImageDto $banner = null,
         ?string $name = null,
         ?string $title = null,
         ?string $description = null,
@@ -65,10 +69,13 @@ class MagazineResponseDto implements \JsonSerializable
         ?string $serverSoftwareVersion = null,
         bool $isPostingRestrictedToMods = false,
         ?int $localSubscribers = null,
+        ?bool $discoverable = null,
+        ?bool $indexable = null,
     ): self {
         $dto = new MagazineResponseDto();
         $dto->owner = $owner;
         $dto->icon = $icon;
+        $dto->banner = $banner;
         $dto->name = $name;
         $dto->title = $title;
         $dto->description = $description;
@@ -91,6 +98,8 @@ class MagazineResponseDto implements \JsonSerializable
         $dto->serverSoftwareVersion = $serverSoftwareVersion;
         $dto->isPostingRestrictedToMods = $isPostingRestrictedToMods;
         $dto->localSubscribers = $localSubscribers;
+        $dto->discoverable = $discoverable;
+        $dto->indexable = $indexable;
 
         return $dto;
     }
@@ -101,6 +110,7 @@ class MagazineResponseDto implements \JsonSerializable
             'magazineId' => $this->magazineId,
             'owner' => $this->owner?->jsonSerialize(),
             'icon' => $this->icon ? $this->icon->jsonSerialize() : null,
+            'banner' => $this->banner?->jsonSerialize(),
             'name' => $this->name,
             'title' => $this->title,
             'description' => $this->description,
@@ -123,6 +133,8 @@ class MagazineResponseDto implements \JsonSerializable
             'isPostingRestrictedToMods' => $this->isPostingRestrictedToMods,
             'localSubscribers' => $this->localSubscribers,
             'notificationStatus' => $this->notificationStatus,
+            'discoverable' => $this->discoverable,
+            'indexable' => $this->indexable,
         ];
     }
 }

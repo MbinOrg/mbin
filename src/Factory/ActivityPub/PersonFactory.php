@@ -8,7 +8,7 @@ use App\Entity\User;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
 use App\Service\ActivityPub\ContextsProvider;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class PersonFactory
@@ -16,7 +16,7 @@ class PersonFactory
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly ContextsProvider $contextProvider,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
         private readonly MarkdownConverter $markdownConverter,
     ) {
     }
@@ -45,17 +45,15 @@ class PersonFactory
                 ),
                 'url' => $this->getActivityPubId($user),
                 'manuallyApprovesFollowers' => false,
+                'discoverable' => $user->apDiscoverable,
+                'indexable' => $user->apIndexable,
                 'published' => $user->createdAt->format(DATE_ATOM),
                 'following' => $this->urlGenerator->generate(
                     'ap_user_following',
                     ['username' => $user->username],
                     UrlGeneratorInterface::ABSOLUTE_URL
                 ),
-                'followers' => $this->urlGenerator->generate(
-                    'ap_user_followers',
-                    ['username' => $user->username],
-                    UrlGeneratorInterface::ABSOLUTE_URL
-                ),
+                'followers' => $this->getActivityPubFollowersId($user),
                 'publicKey' => [
                     'owner' => $this->getActivityPubId($user),
                     'id' => $this->getActivityPubId($user).'#main-key',
@@ -74,7 +72,7 @@ class PersonFactory
         if ($user->about) {
             $person['summary'] = $this->markdownConverter->convertToHtml(
                 $user->about,
-                [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub],
+                context: [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub],
             );
         }
 
@@ -105,6 +103,19 @@ class PersonFactory
 
         return $this->urlGenerator->generate(
             'ap_user',
+            ['username' => $user->username],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+    }
+
+    public function getActivityPubFollowersId(User $user): string
+    {
+        if ($user->apId) {
+            return $user->apFollowersUrl;
+        }
+
+        return $this->urlGenerator->generate(
+            'ap_user_followers',
             ['username' => $user->username],
             UrlGeneratorInterface::ABSOLUTE_URL
         );

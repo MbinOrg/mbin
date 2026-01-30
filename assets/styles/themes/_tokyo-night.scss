@@ -54,7 +54,8 @@
   // forms
   --kbin-input-bg: #1b1c27;
   --kbin-input-text-color: #d6d6ff;
-  --kbin-input-border: 1px solid #414358;
+  --kbin-input-border-color: #414358;
+  --kbin-input-border: 1px solid var(--kbin-input-border-color);
   --kbin-input-placeholder-text-color: #9292b1;
 
   // buttons
@@ -98,6 +99,7 @@
 
   // vote
   --kbin-vote-bg: #1c1d26;
+  --kbin-vote-bg-hover-bg: #13141b;
   --kbin-vote-text-color: #d6d6ff;
   --kbin-vote-text-hover-color: #9999ff;
   --kbin-upvoted-color: var(--kbin-success-color);
@@ -130,7 +132,6 @@
   .options--top,
   .section--top {
     border-top: var(--kbin-options-border) !important;
-    margin-top: 0.5rem !important;
   }
 
   &.rounded-edges {

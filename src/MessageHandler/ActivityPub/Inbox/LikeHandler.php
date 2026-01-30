@@ -45,7 +45,7 @@ class LikeHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof LikeMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("LikeHandler called, but is wasn\'t a LikeMessage. Type: ".\get_class($message));
         }
         if (!isset($message->payload['type'])) {
             return;
@@ -89,7 +89,7 @@ class LikeHandler extends MbinMessageHandler
         if (isset($entity) and isset($actor) and ($entity instanceof Entry or $entity instanceof EntryComment or $entity instanceof Post or $entity instanceof PostComment)) {
             if (!$entity->magazine->apId and $actor->apId and 'random' !== $entity->magazine->name) {
                 // local magazine, but remote user. Don't announce for random magazine
-                $this->bus->dispatch(new AnnounceLikeMessage($actor->getId(), $entity->getId(), \get_class($entity), 'Undo' === $message->payload['type']));
+                $this->bus->dispatch(new AnnounceLikeMessage($actor->getId(), $entity->getId(), \get_class($entity), 'Undo' === $message->payload['type'], $message->payload['id']));
             }
         }
     }

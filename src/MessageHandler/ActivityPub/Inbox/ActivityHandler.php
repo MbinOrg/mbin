@@ -12,12 +12,14 @@ use App\Exception\InvalidUserPublicKeyException;
 use App\Message\ActivityPub\Inbox\ActivityMessage;
 use App\Message\ActivityPub\Inbox\AddMessage;
 use App\Message\ActivityPub\Inbox\AnnounceMessage;
+use App\Message\ActivityPub\Inbox\BlockMessage;
 use App\Message\ActivityPub\Inbox\CreateMessage;
 use App\Message\ActivityPub\Inbox\DeleteMessage;
 use App\Message\ActivityPub\Inbox\DislikeMessage;
 use App\Message\ActivityPub\Inbox\FlagMessage;
 use App\Message\ActivityPub\Inbox\FollowMessage;
 use App\Message\ActivityPub\Inbox\LikeMessage;
+use App\Message\ActivityPub\Inbox\LockMessage;
 use App\Message\ActivityPub\Inbox\RemoveMessage;
 use App\Message\ActivityPub\Inbox\UpdateMessage;
 use App\Message\Contracts\MessageInterface;
@@ -61,7 +63,7 @@ class ActivityHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof ActivityMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("ActivityHandler called, but is wasn\'t an ActivityMessage. Type: ".\get_class($message));
         }
 
         $payload = @json_decode($message->payload, true);
@@ -78,6 +80,7 @@ class ActivityHandler extends MbinMessageHandler
                 $this->signatureValidator->validate($message->request, $message->headers, $message->payload);
             } catch (InboxForwardingException $exception) {
                 $this->logger->info("[ActivityHandler::doWork] The message was forwarded by {receivedFrom}. Dispatching a new activity message '{origin}'", ['receivedFrom' => $exception->receivedFrom, 'origin' => $exception->realOrigin]);
+
                 if (!$this->settingsManager->isBannedInstance($exception->realOrigin)) {
                     $body = $this->apHttpClient->getActivityObject($exception->realOrigin, false);
                     $this->bus->dispatch(new ActivityMessage($body));
@@ -188,7 +191,7 @@ class ActivityHandler extends MbinMessageHandler
 
         switch ($payload['type']) {
             case 'Create':
-                $this->bus->dispatch(new CreateMessage($payload['object']));
+                $this->bus->dispatch(new CreateMessage($payload['object'], fullCreatePayload: $payload));
                 break;
             case 'Note':
             case 'Page':
@@ -231,6 +234,12 @@ class ActivityHandler extends MbinMessageHandler
             case 'Flag':
                 $this->bus->dispatch(new FlagMessage($payload));
                 break;
+            case 'Block':
+                $this->bus->dispatch(new BlockMessage($payload));
+                break;
+            case 'Lock':
+                $this->bus->dispatch(new LockMessage($payload));
+                break;
         }
     }
 
@@ -255,6 +264,12 @@ class ActivityHandler extends MbinMessageHandler
             case 'Dislike':
                 $this->bus->dispatch(new DislikeMessage($payload));
                 break;
+            case 'Block':
+                $this->bus->dispatch(new BlockMessage($payload));
+                break;
+            case 'Lock':
+                $this->bus->dispatch(new LockMessage($payload));
+                break;
         }
     }
 
@@ -275,7 +290,7 @@ class ActivityHandler extends MbinMessageHandler
     {
         if (!\is_null($id) && \in_array(
             str_replace('www.', '', parse_url($id, PHP_URL_HOST)),
-            $this->settingsManager->get('KBIN_BANNED_INSTANCES') ?? []
+            $this->instanceRepository->getBannedInstanceUrls()
         )) {
             return false;
         }

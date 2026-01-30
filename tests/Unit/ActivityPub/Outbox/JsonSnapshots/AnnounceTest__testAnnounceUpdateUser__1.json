@@ -1,0 +1,49 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://kbin.test/contexts"
+    ],
+    "id": "SCRUBBED_ID",
+    "type": "Announce",
+    "actor": "https://kbin.test/m/test",
+    "object": {
+        "id": "SCRUBBED_ID",
+        "type": "Update",
+        "actor": "https://kbin.test/u/user",
+        "published": "SCRUBBED_DATE",
+        "to": [
+            "https://www.w3.org/ns/activitystreams#Public"
+        ],
+        "cc": [
+            "https://kbin.test/u/user/followers"
+        ],
+        "object": {
+            "id": "SCRUBBED_ID",
+            "type": "Person",
+            "name": "user",
+            "preferredUsername": "user",
+            "inbox": "https://kbin.test/u/user/inbox",
+            "outbox": "https://kbin.test/u/user/outbox",
+            "url": "https://kbin.test/u/user",
+            "manuallyApprovesFollowers": false,
+            "discoverable": true,
+            "indexable": true,
+            "published": "SCRUBBED_DATE",
+            "following": "https://kbin.test/u/user/following",
+            "followers": "https://kbin.test/u/user/followers",
+            "publicKey": "SCRUBBED_KEY",
+            "endpoints": {
+                "sharedInbox": "https://kbin.test/f/inbox"
+            }
+        }
+    },
+    "to": [
+        "https://www.w3.org/ns/activitystreams#Public"
+    ],
+    "cc": [
+        "https://kbin.test/m/test/followers",
+        "https://kbin.test/u/user/followers"
+    ],
+    "published": "SCRUBBED_DATE",
+    "audience": "https://kbin.test/m/test"
+}

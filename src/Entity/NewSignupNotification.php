@@ -14,7 +14,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Entity]
 class NewSignupNotification extends Notification
 {
-    #[ManyToOne(targetEntity: User::class, cascade: ['remove'])]
+    #[ManyToOne(targetEntity: User::class)]
     #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?User $newUser;
 
@@ -36,6 +36,6 @@ class NewSignupNotification extends Notification
         $slash = $this->newUser->avatar && !str_starts_with('/', $this->newUser->avatar->filePath) ? '/' : '';
         $avatarUrl = $this->newUser->avatar ? '/media/cache/resolve/avatar_thumb'.$slash.$this->newUser->avatar->filePath : null;
 
-        return new PushNotification($message, $title, actionUrl: $url, avatarUrl: $avatarUrl);
+        return new PushNotification($this->getId(), $message, $title, actionUrl: $url, avatarUrl: $avatarUrl);
     }
 }

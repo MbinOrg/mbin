@@ -10,15 +10,15 @@ use App\Entity\Magazine;
 use App\Entity\User;
 use App\Form\SearchType;
 use App\Message\ActivityPub\Inbox\CreateMessage;
-use App\MessageHandler\ActivityPub\Inbox\CreateHandler;
 use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPubManager;
 use App\Service\SearchManager;
 use App\Service\SettingsManager;
-use App\Service\SubjectOverviewManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
 
 class SearchController extends AbstractController
 {
@@ -26,10 +26,9 @@ class SearchController extends AbstractController
         private readonly SearchManager $manager,
         private readonly ActivityPubManager $activityPubManager,
         private readonly ApHttpClientInterface $apHttpClient,
-        private readonly SubjectOverviewManager $overviewManager,
         private readonly SettingsManager $settingsManager,
         private readonly LoggerInterface $logger,
-        private readonly CreateHandler $createHandler,
+        private readonly MessageBusInterface $bus,
     ) {
     }
 
@@ -42,7 +41,7 @@ class SearchController extends AbstractController
             if ($form->isSubmitted() && $form->isValid()) {
                 /** @var SearchDto $dto */
                 $dto = $form->getData();
-                $query = $dto->q;
+                $query = trim($dto->q);
                 $this->logger->debug('searching for {query}', ['query' => $query]);
 
                 $objects = [];
@@ -68,7 +67,8 @@ class SearchController extends AbstractController
                         $objects = $this->manager->findByApId($postId);
                         if (0 === \sizeof($objects)) {
                             try {
-                                $this->createHandler->doWork(new CreateMessage($body));
+                                // process the message in the sync transport, so that the created content is directly visible
+                                $this->bus->dispatch(new CreateMessage($body), [new TransportNamesStamp('sync')]);
                                 $objects = $this->manager->findByApId($postId);
                             } catch (\Exception $e) {
                                 $this->addFlash('error', $e->getMessage());
@@ -78,7 +78,7 @@ class SearchController extends AbstractController
                 }
 
                 $user = $this->getUser();
-                $res = $this->manager->findPaginated($user, $query, $this->getPageNb($request), authorId: $dto->user?->getId(), magazineId: $dto->magazine?->getId(), specificType: $dto->type);
+                $res = $this->manager->findPaginated($user, $query, $this->getPageNb($request), authorId: $dto->user?->getId(), magazineId: $dto->magazine?->getId(), specificType: $dto->type, sinceDate: $dto->since);
 
                 $this->logger->debug('results: {num}', ['num' => $res->count()]);
 
@@ -86,7 +86,7 @@ class SearchController extends AbstractController
                     'search/front.html.twig',
                     [
                         'objects' => $objects,
-                        'results' => $this->overviewManager->buildList($res),
+                        'results' => $res,
                         'pagination' => $res,
                         'form' => $form->createView(),
                         'q' => $query,

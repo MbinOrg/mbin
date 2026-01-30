@@ -9,7 +9,7 @@ use App\Service\SettingsManager;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[OA\Schema()]
+#[OA\Schema(required: ['title'])]
 class EntryRequestDto extends ContentRequestDto
 {
     #[Groups([
@@ -31,7 +31,7 @@ class EntryRequestDto extends ContentRequestDto
         Entry::ENTRY_TYPE_IMAGE,
         Entry::ENTRY_TYPE_VIDEO,
     ])]
-    #[OA\Property(type: 'array', items: new OA\Items(type: 'string'), example: ['cat', 'blep', 'cute'])]
+    #[OA\Property(type: 'array', nullable: true, items: new OA\Items(type: 'string'), example: ['cat', 'blep', 'cute'])]
     public ?array $tags = null;
 
     // TODO: Support badges whenever/however they're implemented
@@ -61,7 +61,7 @@ class EntryRequestDto extends ContentRequestDto
      *
      * @return EntryDto The newly merged entry
      */
-    public function mergeIntoDto(EntryDto $dto): EntryDto
+    public function mergeIntoDto(EntryDto $dto, SettingsManager $settingsManager): EntryDto
     {
         $dto->title = $this->title ?? $dto->title;
         $dto->body = $this->body ?? $dto->body;
@@ -69,7 +69,7 @@ class EntryRequestDto extends ContentRequestDto
         // $dto->badges = $this->badges ?? $dto->badges;
         $dto->isAdult = $this->isAdult ?? $dto->isAdult;
         $dto->isOc = $this->isOc ?? $dto->isOc;
-        $dto->lang = $this->lang ?? $dto->lang ?? SettingsManager::getValue('KBIN_DEFAULT_LANG');
+        $dto->lang = $this->lang ?? $dto->lang ?? $settingsManager->getValue('KBIN_DEFAULT_LANG');
         $dto->url = $this->url ?? $dto->url;
         $dto->tags = $this->tags ?? $dto->tags;
 

@@ -58,10 +58,11 @@ class EntryCommentNoteFactory
                 ActivityPubActivityInterface::PUBLIC_URL,
             ],
             'cc' => $cc,
+            'audience' => $this->groupFactory->getActivityPubId($comment->magazine),
             'sensitive' => $comment->entry->isAdult(),
             'content' => $this->markdownConverter->convertToHtml(
                 $comment->body,
-                [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub]
+                context: [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub]
             ),
             'mediaType' => 'text/html',
             'source' => $comment->body ? [
@@ -87,7 +88,10 @@ class EntryCommentNoteFactory
         $mentions = [];
         foreach ($comment->mentions ?? [] as $mention) {
             try {
-                $mentions[] = $this->activityPubManager->webfinger($mention)->getProfileId();
+                $profileId = $this->activityPubManager->findActorOrCreate($mention)?->apProfileId;
+                if ($profileId) {
+                    $mentions[] = $profileId;
+                }
             } catch (\Exception $e) {
                 continue;
             }

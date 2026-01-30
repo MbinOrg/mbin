@@ -10,8 +10,10 @@ use App\Entity\Magazine;
 use App\Entity\User;
 use App\Message\ActivityPub\Inbox\AddMessage;
 use App\Message\ActivityPub\Inbox\CreateMessage;
+use App\Message\ActivityPub\Outbox\GenericAnnounceMessage;
 use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
+use App\Repository\ActivityRepository;
 use App\Repository\ApActivityRepository;
 use App\Repository\EntryRepository;
 use App\Repository\MagazineRepository;
@@ -35,6 +37,7 @@ class AddHandler extends MbinMessageHandler
         private readonly ActivityPubManager $activityPubManager,
         private readonly ApHttpClientInterface $apHttpClient,
         private readonly ApActivityRepository $apActivityRepository,
+        private readonly ActivityRepository $activityRepository,
         private readonly MagazineRepository $magazineRepository,
         private readonly MagazineManager $magazineManager,
         private readonly LoggerInterface $logger,
@@ -54,29 +57,29 @@ class AddHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof AddMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("AddHandler called, but is wasn\'t an AddMessage. Type: ".\get_class($message));
         }
         $payload = $message->payload;
         $actor = $this->activityPubManager->findUserActorOrCreateOrThrow($payload['actor']);
         $targetMag = $this->magazineRepository->getMagazineFromModeratorsUrl($payload['target']);
         if ($targetMag) {
-            $this->handleModeratorAdd($targetMag, $actor, $payload['object']);
+            $this->handleModeratorAdd($targetMag, $actor, $payload['object'], $payload);
 
             return;
         }
         $targetMag = $this->magazineRepository->getMagazineFromPinnedUrl($payload['target']);
         if ($targetMag) {
-            $this->handlePinnedAdd($targetMag, $actor, $payload['object']);
+            $this->handlePinnedAdd($targetMag, $actor, $payload['object'], $payload);
 
             return;
         }
         throw new \LogicException("could not find a magazine with moderators url like: '{$payload['target']}'");
     }
 
-    public function handleModeratorAdd(Magazine $targetMag, Magazine|User $actor, $object1): void
+    public function handleModeratorAdd(Magazine $targetMag, Magazine|User $actor, $object1, array $messagePayload): void
     {
         if (!$targetMag->userIsModerator($actor) and !$targetMag->hasSameHostAsUser($actor)) {
-            throw new \LogicException("the user '$actor->username' ({$actor->getId()}) is not a moderator of $targetMag->name ({$targetMag->getId()}) and is not from the same instance. He can therefore not add moderators");
+            throw new \LogicException("the user '$actor->username' ({$actor->getId()}) is not a moderator of '$targetMag->name' ({$targetMag->getId()}) and is not from the same instance. They can therefore not add moderators");
         }
 
         $object = $this->activityPubManager->findUserActorOrCreateOrThrow($object1);
@@ -100,9 +103,16 @@ class AddHandler extends MbinMessageHandler
             'magId' => $targetMag->getId(),
         ]);
         $this->magazineManager->addModerator(new ModeratorDto($targetMag, $object, $actor));
+
+        if (null === $targetMag->apId) {
+            $activityToAnnounce = $messagePayload;
+            unset($activityToAnnounce['@context']);
+            $activity = $this->activityRepository->createForRemoteActivity($activityToAnnounce);
+            $this->bus->dispatch(new GenericAnnounceMessage($targetMag->getId(), null, parse_url($actor->apDomain, PHP_URL_HOST), $activity->uuid->toString(), null));
+        }
     }
 
-    private function handlePinnedAdd(Magazine $targetMag, User $actor, mixed $object): void
+    private function handlePinnedAdd(Magazine $targetMag, User $actor, mixed $object, array $messagePayload): void
     {
         if (!$targetMag->userIsModerator($actor) && !$targetMag->hasSameHostAsUser($actor)) {
             throw new \LogicException("the user '$actor->username' ({$actor->getId()}) is not a moderator of $targetMag->name ({$targetMag->getId()}) and is not from the same instance. They can therefore not add pinned entries");
@@ -131,6 +141,9 @@ class AddHandler extends MbinMessageHandler
                 } elseif ($existingEntry && !$existingEntry->sticky) {
                     $this->logger->info('[AddHandler::handlePinnedAdd] Pinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
                     $this->entryManager->pin($existingEntry, $actor);
+                    if (null === $targetMag->apId) {
+                        $this->announcePin($actor, $targetMag, $messagePayload);
+                    }
                 }
             }
         } else {
@@ -142,6 +155,9 @@ class AddHandler extends MbinMessageHandler
                 if (!$existingEntry->sticky) {
                     $this->logger->info('[AddHandler::handlePinnedAdd] Pinning entry {e} to magazine {m}', ['e' => $existingEntry->title, 'm' => $existingEntry->magazine->name]);
                     $this->entryManager->pin($existingEntry, $actor);
+                    if (null === $targetMag->apId) {
+                        $this->announcePin($actor, $targetMag, $messagePayload);
+                    }
                 }
             } else {
                 if (!\is_array($object)) {
@@ -156,5 +172,13 @@ class AddHandler extends MbinMessageHandler
                 $this->bus->dispatch(new CreateMessage($object, true));
             }
         }
+    }
+
+    private function announcePin(User $actor, Magazine $targetMag, mixed $object): void
+    {
+        $activityToAnnounce = $object;
+        unset($activityToAnnounce['@context']);
+        $activity = $this->activityRepository->createForRemoteActivity($activityToAnnounce);
+        $this->bus->dispatch(new GenericAnnounceMessage($targetMag->getId(), null, parse_url($actor->apDomain, PHP_URL_HOST), $activity->uuid->toString(), null));
     }
 }

@@ -35,8 +35,13 @@ class EntryEditType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('url', UrlType::class, ['required' => false])
-            ->add('title', TextareaType::class)
+            ->add('url', UrlType::class, [
+                'required' => false,
+                'default_protocol' => 'https',
+            ])
+            ->add('title', TextareaType::class, [
+                'required' => true,
+            ])
             ->add('body', TextareaType::class, [
                 'required' => false,
             ])
@@ -68,6 +73,7 @@ class EntryEditType extends AbstractType
             )
             ->add('imageUrl', UrlType::class, [
                 'required' => false,
+                'default_protocol' => 'https',
             ])
             ->add('imageAlt', TextType::class, [
                 'required' => false,

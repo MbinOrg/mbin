@@ -9,9 +9,9 @@ use PHPUnit\Framework\Attributes\Group;
 
 class EntryCommentCreateControllerTest extends WebTestCase
 {
-    public function __construct($name = null, array $data = [], $dataName = '')
+    public function setUp(): void
     {
-        parent::__construct($name, $data, $dataName);
+        parent::setUp();
         $this->kibbyPath = \dirname(__FILE__, 5).'/assets/kibby_emoji.png';
     }
 
@@ -35,6 +35,19 @@ class EntryCommentCreateControllerTest extends WebTestCase
         $this->client->followRedirect();
 
         $this->assertSelectorTextContains('#main blockquote', 'test comment 1');
+    }
+
+    public function testUserCannotCreateEntryCommentInLockedEntry(): void
+    {
+        $user = $this->getUserByUsername('JohnDoe');
+        $this->client->loginUser($user);
+
+        $entry = $this->getEntryByTitle('test entry 1', 'https://kbin.pub');
+        $this->entryManager->toggleLock($entry, $user);
+
+        $this->client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
+
+        self::assertSelectorTextNotContains('#main', 'Add comment');
     }
 
     #[Group(name: 'NonThreadSafe')]

@@ -42,15 +42,22 @@
     <strong>{{ 'threads'|trans }}</strong>
     <div class="settings-section">
         {{ component('settings_row_switch', {label: 'auto_preview'|trans, help: 'auto_preview_help'|trans,  settingsKey: 'KBIN_ENTRIES_SHOW_PREVIEW'}) }}
-        {{ component('settings_row_switch', {label: 'compact_view'|trans, settingsKey: 'KBIN_ENTRIES_COMPACT'}) }}
-        {{ component('settings_row_switch', {label: 'show_users_avatars'|trans, settingsKey: 'KBIN_ENTRIES_SHOW_USERS_AVATARS', defaultValue: true}) }}
-        {{ component('settings_row_switch', {label: 'show_magazines_icons'|trans, settingsKey: 'KBIN_ENTRIES_SHOW_MAGAZINES_ICONS', defaultValue: true}) }}
-        {{ component('settings_row_switch', {label: 'show_thumbnails'|trans, settingsKey: 'KBIN_ENTRIES_SHOW_THUMBNAILS', defaultValue: true}) }}
+        {{ component('settings_row_switch', {label: 'compact_view'|trans, help: 'compact_view_help'|trans, settingsKey: 'KBIN_ENTRIES_COMPACT'}) }}
+        {{ component('settings_row_switch', {label: 'show_users_avatars'|trans, help: 'show_users_avatars_help'|trans, settingsKey: 'KBIN_ENTRIES_SHOW_USERS_AVATARS', defaultValue: true}) }}
+        {{ component('settings_row_switch', {label: 'show_magazines_icons'|trans, help: 'show_magazines_icons_help'|trans, settingsKey: 'KBIN_ENTRIES_SHOW_MAGAZINES_ICONS', defaultValue: true}) }}
+        {{ component('settings_row_switch', {label: 'show_thumbnails'|trans, help: 'show_thumbnails_help'|trans, settingsKey: 'KBIN_ENTRIES_SHOW_THUMBNAILS', defaultValue: true}) }}
+        {{ component('settings_row_switch', {label: 'image_lightbox_in_list'|trans, help: 'image_lightbox_in_list_help'|trans, settingsKey: 'MBIN_LIST_IMAGE_LIGHTBOX', defaultValue: true}) }}
+        {{ component('settings_row_switch', {label: 'show_rich_mention'|trans, help: 'show_rich_mention_help'|trans, settingsKey: 'MBIN_ENTRIES_SHOW_RICH_MENTION', defaultValue: true}) }}
+        {{ component('settings_row_switch', {label: 'show_rich_mention_magazine'|trans, help: 'show_rich_mention_magazine_help'|trans, settingsKey: 'MBIN_ENTRIES_SHOW_RICH_MENTION_MAGAZINE', defaultValue: true}) }}
+        {{ component('settings_row_switch', {label: 'show_rich_ap_link'|trans, help: 'show_rich_ap_link_help'|trans, settingsKey: 'MBIN_ENTRIES_SHOW_RICH_AP_LINK', defaultValue: true}) }}
     </div>
     <strong>{{ 'microblog'|trans }}</strong>
     <div class="settings-section">
         {{ component('settings_row_switch', {label: 'auto_preview'|trans, help: 'auto_preview_help'|trans,  settingsKey: 'KBIN_POSTS_SHOW_PREVIEW'}) }}
-        {{ component('settings_row_switch', {label: 'show_users_avatars'|trans, settingsKey: 'KBIN_POSTS_SHOW_USERS_AVATARS', defaultValue: true}) }}
+        {{ component('settings_row_switch', {label: 'show_users_avatars'|trans, help: 'show_users_avatars_help'|trans, settingsKey: 'KBIN_POSTS_SHOW_USERS_AVATARS', defaultValue: true}) }}
+        {{ component('settings_row_switch', {label: 'show_rich_mention'|trans, help: 'show_rich_mention_help'|trans, settingsKey: 'MBIN_POSTS_SHOW_RICH_MENTION', defaultValue: false}) }}
+        {{ component('settings_row_switch', {label: 'show_rich_mention_magazine'|trans, help: 'show_rich_mention_magazine_help'|trans, settingsKey: 'MBIN_POSTS_SHOW_RICH_MENTION_MAGAZINE', defaultValue: true}) }}
+        {{ component('settings_row_switch', {label: 'show_rich_ap_link'|trans, help: 'show_rich_ap_link_help'|trans, settingsKey: 'MBIN_POSTS_SHOW_RICH_AP_LINK', defaultValue: true}) }}
     </div>
     <strong>{{ 'single_settings'|trans }}</strong>
     <div class="settings-section">
@@ -59,7 +66,8 @@
     </div>
     <strong>{{ 'mod_log'|trans }}</strong>
     <div class="settings-section">
-        {{ component('settings_row_switch', {label: 'show_users_avatars'|trans, settingsKey: 'MBIN_MODERATION_LOG_SHOW_USER_AVATARS', defaultValue: false}) }}
-        {{ component('settings_row_switch', {label: 'show_magazines_icons'|trans, settingsKey: 'MBIN_MODERATION_LOG_SHOW_MAGAZINE_ICONS', defaultValue: false}) }}
+        {{ component('settings_row_switch', {label: 'show_users_avatars'|trans, help: 'show_users_avatars_help'|trans, settingsKey: 'MBIN_MODERATION_LOG_SHOW_USER_AVATARS', defaultValue: false}) }}
+        {{ component('settings_row_switch', {label: 'show_magazines_icons'|trans, help: 'show_magazines_icons_help'|trans, settingsKey: 'MBIN_MODERATION_LOG_SHOW_MAGAZINE_ICONS', defaultValue: false}) }}
+        {{ component('settings_row_switch', {label: 'show_new_icons'|trans, help: 'show_new_icons_help'|trans, settingsKey: 'MBIN_MODERATION_LOG_SHOW_NEW_ICONS', defaultValue: true}) }}
     </div>
 </div>

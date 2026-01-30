@@ -9,20 +9,18 @@ use App\Entity\User;
 use App\Event\Post\PostBeforeDeletedEvent;
 use App\Event\Post\PostBeforePurgeEvent;
 use App\Event\Post\PostDeletedEvent;
-use App\Message\ActivityPub\Outbox\DeleteMessage;
 use App\Message\Notification\PostDeletedNotificationMessage;
 use App\Repository\PostRepository;
-use App\Service\ActivityPub\Wrapper\DeleteWrapper;
+use App\Service\ActivityPub\DeleteService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Uid\Uuid;
 
 class PostDeleteSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly MessageBusInterface $bus,
         private readonly PostRepository $postRepository,
-        private readonly DeleteWrapper $deleteWrapper,
+        private readonly DeleteService $deleteService,
     ) {
     }
 
@@ -54,10 +52,6 @@ class PostDeleteSubscriber implements EventSubscriberInterface
     public function onPostBeforeDeleteImpl(?User $user, Post $post): void
     {
         $this->bus->dispatch(new PostDeletedNotificationMessage($post->getId()));
-
-        if (!$post->apId || !$post->magazine->apId || (null !== $user && $post->magazine->userIsModerator($user))) {
-            $payload = $this->deleteWrapper->adjustDeletePayload($user, $post, Uuid::v4()->toRfc4122());
-            $this->bus->dispatch(new DeleteMessage($payload, $post->user->getId(), $post->magazine->getId()));
-        }
+        $this->deleteService->announceIfNecessary($user, $post);
     }
 }

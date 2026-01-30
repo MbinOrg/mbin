@@ -22,15 +22,19 @@ readonly class SignupNotificationManager
 
     public function sendNewSignupNotification(User $newUser): void
     {
-        $receivers = $this->userRepository->findAllAdmins();
+        $receiver_admins = $this->userRepository->findAllAdmins();
+        $receiver_moderators = $this->userRepository->findAllModerators();
+        $receivers = array_merge($receiver_admins, $receiver_moderators);
+        $sentNotificationUserIds = [];
         foreach ($receivers as $receiver) {
-            if (!$receiver->notifyOnUserSignup) {
+            if (!$receiver->notifyOnUserSignup || \array_key_exists($receiver->getId(), $sentNotificationUserIds)) {
                 continue;
             }
             $notification = new NewSignupNotification($receiver);
             $notification->newUser = $newUser;
             $this->entityManager->persist($notification);
             $this->dispatcher->dispatch(new NotificationCreatedEvent($notification));
+            $sentNotificationUserIds[$receiver->getId()] = true;
         }
         $this->entityManager->flush();
     }

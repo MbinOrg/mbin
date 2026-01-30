@@ -32,7 +32,7 @@ Or use the Swagger documentation on an existing Mbin instance: `https://mbin_sit
 > [!NOTE]
 > Some of these structures contain comments that need to be removed before making the API calls. Copy/paste with care.
 
-1. Create a private OAuth2 client (for use in secure environments that you control)
+1. Create a private OAuth2 client (for use in secure environments that you control), the post request body should be JSON.
 
 ```
 POST /api/client
@@ -60,7 +60,7 @@ POST /api/client
 
 2. Save the identifier and secret returned by this API call - this will be the only time you can access the secret for a private client.
 
-```
+```json
 {
     "identifier": "someRandomString",
     "secret": "anEvenLongerRandomStringThatYouShouldKeepSafe",
@@ -68,9 +68,9 @@ POST /api/client
 }
 ```
 
-3. Use the OAuth2 client id and secret you just created to obtain credentials for a user (This is a standard authorization_code OAuth2 flow, which is supported by many libraries for your preferred language)
+3. Use the OAuth2 client id (`identifier`) and `secret` you just created to obtain credentials for a user (This is a standard authorization_code OAuth2 flow, which is supported by many libraries for your preferred language)
 
-   1. Begin authorization_code OAuth2 flow
+   1. Begin authorization_code OAuth2 flow, by providing the `/authorize` endpint with the following query parameters:
 
    ```
    GET /authorize?response_type=code&client_id=(the client id generated at client creation)&redirect_uri=(One of the URIs added during client creation)&scope=(space-delimited list of scopes)&state=(random string for CSRF protection)
@@ -78,7 +78,7 @@ POST /api/client
 
    2. The user will be directed to log in to their account and grant their consent for the scopes you have requested.
    3. When the user grants their consent, their browser will be redirected to the given redirect_uri with a `code` query parameter, as long as it matches one of the URIs provided when the client was created.
-   4. After obtaining the code, obtain an authorization token with a multipart/form-data POST request:
+   4. After obtaining the code, obtain an authorization token with a `multipart/form-data` POST request towards the `/token` endpoint:
 
    ```
    POST /token
@@ -90,7 +90,7 @@ POST /api/client
    redirect_uri=(One of the URIs added during client creation)
    ```
 
-   5. The token endpoint will respond with the token and information about it
+   5. The `/token` endpoint will respond with the access token, refresh token and information about it:
 
    ```json
    {
@@ -100,6 +100,8 @@ POST /api/client
      "refresh_token": "aLargeEncodedTokenToBeUsedInTheRefreshTokenFlow"
    }
    ```
+
+  6. Once you have obtained an access token, you can use it to make authenticated requests to the API end-points that need authentication. This is done by adding the `Authorization` header to the request with the value: `Bearer <access_token>`.
 
 ### Available Scopes
 
@@ -199,6 +201,8 @@ POST /api/client
         - Allows changing the language of threads moderated by the user
       - `moderate:entry:pin`
         - Allows pinning/unpinning threads to the top of magazines moderated by the user
+      - `moderate:entry:lock`
+        - Allows locking/unlocking of threads
       - `moderate:entry:set_adult`
         - Allows toggling the NSFW status of threads moderated by the user
       - `moderate:entry:trash`
@@ -217,6 +221,10 @@ POST /api/client
         - Allows toggling the NSFW status of posts moderated by the user
       - `moderate:post:trash`
         - Allows soft deletion or restoration of posts moderated by the user
+      - `moderate:post:pin`
+          - Allows pinning/unpinning posts to the top of magazines moderated by the user
+      - `moderate:post:lock`
+          - Allows locking/unlocking of posts
     - `moderate:post_comment`
       - `moderate:post_comment:language`
         - Allows changing the language of comments on posts moderated by the user

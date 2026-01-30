@@ -9,6 +9,7 @@ use App\DTO\EntryCommentDto;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Magazine;
+use App\Exception\InstanceBannedException;
 use App\Form\EntryCommentType;
 use App\PageView\EntryCommentPageView;
 use App\Service\EntryCommentManager;
@@ -65,6 +66,8 @@ class EntryCommentCreateController extends AbstractController
 
                 return $this->handleValidRequest($dto, $request);
             }
+        } catch (InstanceBannedException) {
+            $this->addFlash('error', 'flash_instance_banned_error');
         } catch (\Exception $e) {
             // Show an error to the user
             $this->addFlash('error', 'flash_comment_new_error');

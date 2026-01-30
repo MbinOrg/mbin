@@ -20,7 +20,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.3.0
+      image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     steps:
       - uses: actions/checkout@v4
 
@@ -28,10 +28,12 @@ jobs:
         id: npm-cache-dir-path
         run: echo "dir=$(npm get cache)" >> $GITHUB_OUTPUT
 
+      - name: Add GITHUB_WORKSPACE as a safe directory
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v4
         id: npm-cache
@@ -46,26 +48,40 @@ jobs:
 
       - run: cp .env.example .env
       - name: Composer install
-        run: composer install --no-dev --no-progress
+        run: >
+          ./ci/skipOnExcluded.sh
+          composer install --no-dev --no-progress
+
+      - name: Test API dump
+        run: >
+          ./ci/skipOnExcluded.sh
+          php bin/console nelmio:apidoc:dump
+
       - name: NPM install
-        run: npm ci --include=dev
+        run: >
+          ./ci/skipOnExcluded.sh
+          npm ci --include=dev
         env:
           NODE_ENV: production
 
       - name: Build frontend (production)
-        run: npm run build
+        run: >
+          ./ci/skipOnExcluded.sh
+          npm run build
 
   automated-tests:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.3.0
+      image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     steps:
       - uses: actions/checkout@v4
 
+      - name: Add GITHUB_WORKSPACE as a safe directory
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Get NPM cache directory path
         id: npm-cache-dir-path
@@ -85,17 +101,23 @@ jobs:
           restore-keys: ${{ runner.os }}-npm-
 
       - name: Composer install
-        run: composer install --no-scripts --no-progress
+        run: >
+          ./ci/skipOnExcluded.sh
+          composer install --no-scripts --no-progress
 
       - run: cp .env.example .env
 
       - name: NPM install
-        run: npm ci --include=dev
+        run: >
+          ./ci/skipOnExcluded.sh
+          npm ci --include=dev
         env:
           NODE_ENV: production
 
       - name: Build frontend (production)
-        run: npm run build
+        run: >
+          ./ci/skipOnExcluded.sh
+          npm run build
 
       - name: Run unit tests
         env:
@@ -105,7 +127,10 @@ jobs:
           DATABASE_PORT: 5432
           REDIS_HOST: valkey
           REDIS_PORT: 6379
-        run: php vendor/bin/paratest tests/Unit
+          CREATE_SNAPSHOTS: false
+        run: >
+          ./ci/skipOnExcluded.sh
+          php vendor/bin/paratest tests/Unit
 
       - name: Run non thread safe integration tests
         env:
@@ -115,7 +140,10 @@ jobs:
           DATABASE_PORT: 5432
           REDIS_HOST: valkey
           REDIS_PORT: 6379
-        run: php vendor/bin/phpunit tests/Functional --group NonThreadSafe
+        run: >
+          ./ci/skipOnExcluded.sh
+          php vendor/bin/phpunit tests/Functional
+          --group NonThreadSafe
 
       - name: Run thread safe integration tests
         env:
@@ -125,7 +153,10 @@ jobs:
           DATABASE_PORT: 5432
           REDIS_HOST: valkey
           REDIS_PORT: 6379
-        run: php vendor/bin/paratest tests/Functional --exclude-group NonThreadSafe
+        run: >
+          ./ci/skipOnExcluded.sh
+          php vendor/bin/paratest tests/Functional
+          --exclude-group NonThreadSafe
     services:
       postgres:
         # Docker Hub image
@@ -154,15 +185,17 @@ jobs:
   audit-check:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.3.0
+      image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get Composer cache directory
+      - name: Add GITHUB_WORKSPACE as a safe directory
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
+      - name: Get Composer Cache Directory
         id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache vendor directory
         uses: actions/cache@v4
@@ -179,21 +212,21 @@ jobs:
         run: npm audit --omit=dev
 
       - name: Run Composer audit
-        env:
-          COMPOSER_AUDIT_ABANDONED: ignore
-        run: composer audit
+        run: composer audit --no-dev --abandoned=ignore
 
   fixer-dry-run:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.3.0
+      image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     steps:
       - uses: actions/checkout@v4
 
+      - name: Add GITHUB_WORKSPACE as a safe directory
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v4
         with:
@@ -204,8 +237,57 @@ jobs:
       - name: Composer tools install
         run: composer -d tools install --no-scripts --no-progress
 
-      - name: php-cs-fixer dry-run
-        run: tools/vendor/bin/php-cs-fixer fix --dry-run -v --show-progress=none #--format=checkstyle #would be nice if codeberg did something with this like github does.
+      - name: PHP CS Fixer dry-run with diff
+        run: >
+          tools/vendor/bin/php-cs-fixer fix
+          --dry-run --diff --show-progress=none
+
+      - name: PHP CS Fixer to PR Annotations
+        run: >
+          tools/vendor/bin/php-cs-fixer fix
+          --dry-run --format=checkstyle --show-progress=none | cs2pr
+
+  frontend-lint:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/mbinorg/mbin-pipeline-image:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Add GITHUB_WORKSPACE as a safe directory
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Get NPM cache directory path
+        id: npm-cache-dir-path
+        run: echo "dir=$(npm get cache)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('*/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: ${{ steps.npm-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('*/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-npm-
+
+      - name: Composer install
+        run: composer install --no-scripts --no-progress
+
+      - run: cp .env.example .env
+
+      - name: NPM install
+        run: npm ci
+
+      - name: eslint
+        run: npm run lint
 
   build-and-publish-docker-image:
     runs-on: ubuntu-latest
@@ -240,3 +322,12 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      # We will also use this job to dispatch an event to the mbin-docs repository to trigger documentation build and publish
+      - name: Trigger mbin-docs workflow dispatch
+        if: github.event_name != 'pull_request'
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          token: ${{ secrets.MBIN_ACCESS_TOKEN }}
+          repository: MbinOrg/mbin-docs
+          event-type: update-docs

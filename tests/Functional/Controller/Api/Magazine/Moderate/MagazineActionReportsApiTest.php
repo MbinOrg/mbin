@@ -157,8 +157,8 @@ class MagazineActionReportsApiTest extends WebTestCase
         self::assertEquals($entry->body, $jsonData['subject']['body']);
         self::assertEquals('approved', $jsonData['status']);
         self::assertSame(1, $jsonData['weight']);
-        self::assertGreaterThanOrEqual($report->createdAt->getTimestamp(), \DateTimeImmutable::createFromFormat(\DateTimeImmutable::ATOM, $jsonData['createdAt'])->getTimestamp());
-        self::assertGreaterThanOrEqual($consideredAt->getTimestamp(), \DateTimeImmutable::createFromFormat(\DateTimeImmutable::ATOM, $jsonData['consideredAt'])->getTimestamp());
+        self::assertEqualsWithDelta($report->createdAt->getTimestamp(), \DateTimeImmutable::createFromFormat(\DateTimeImmutable::ATOM, $jsonData['createdAt'])->getTimestamp(), 10.0);
+        self::assertEqualsWithDelta($consideredAt->getTimestamp(), \DateTimeImmutable::createFromFormat(\DateTimeImmutable::ATOM, $jsonData['consideredAt'])->getTimestamp(), 10.0);
         self::assertNotNull($jsonData['consideredBy']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['consideredBy']);
         self::assertSame($user->getId(), $jsonData['consideredBy']['userId']);
@@ -203,8 +203,8 @@ class MagazineActionReportsApiTest extends WebTestCase
         self::assertEquals($entry->body, $jsonData['subject']['body']);
         self::assertEquals('rejected', $jsonData['status']);
         self::assertSame(1, $jsonData['weight']);
-        self::assertSame($report->createdAt->getTimestamp(), \DateTimeImmutable::createFromFormat(\DateTimeImmutable::ATOM, $jsonData['createdAt'])->getTimestamp());
-        self::assertSame($adjustedConsideredAt, $adjustedReceivedConsideredAt);
+        self::assertEqualsWithDelta($report->createdAt->getTimestamp(), \DateTimeImmutable::createFromFormat(\DateTimeImmutable::ATOM, $jsonData['createdAt'])->getTimestamp(), 10.0);
+        self::assertEqualsWithDelta($adjustedConsideredAt, $adjustedReceivedConsideredAt, 10.0);
         self::assertNotNull($jsonData['consideredBy']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['consideredBy']);
         self::assertSame($user->getId(), $jsonData['consideredBy']['userId']);

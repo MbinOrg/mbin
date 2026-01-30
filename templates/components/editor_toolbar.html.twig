@@ -33,6 +33,13 @@
         <i class="fa-solid fa-at" aria-hidden="true"></i>
     </md-mention>
     <md-spoiler title="{{ 'toolbar.spoiler'|trans }}" aria-label="{{ 'toolbar.spoiler'|trans }}" data-action="click->markdown-toolbar#addSpoiler">
-        <i class="fa-solid fa-triangle-exclamation"></i>
+        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
     </md-spoiler>
+    <md-emoji title="{{ 'toolbar.emoji'|trans }}" aria-label="{{ 'toolbar.emoji'|trans }}" data-action="click->markdown-toolbar#toggleEmojiPicker">
+        <i class="fa-solid fa-face-smile" aria-hidden="true"></i>
+    </md-emoji>
 </markdown-toolbar>
+
+<div id="tooltip" class="tooltip" role="tooltip">
+    <emoji-picker id="emoji-picker"></emoji-picker>
+</div>

@@ -24,11 +24,11 @@ class EntryDto implements ContentVisibilityInterface
     public ?string $imageUrl = null;
     public ?DomainDto $domain = null;
     #[Assert\NotBlank]
-    #[Assert\Length(min: 2, max: 255)]
+    #[Assert\Length(min: 2, max: 255, countUnit: Assert\Length::COUNT_GRAPHEMES)]
     public ?string $title = null;
     #[Assert\Url]
     public ?string $url = null;
-    #[Assert\Length(max: Entry::MAX_BODY_LENGTH)]
+    #[Assert\Length(max: Entry::MAX_BODY_LENGTH, countUnit: Assert\Length::COUNT_GRAPHEMES)]
     public ?string $body = null;
     public ?string $lang = null;
     public string $type = Entry::ENTRY_TYPE_ARTICLE;
@@ -41,6 +41,7 @@ class EntryDto implements ContentVisibilityInterface
     public bool $isOc = false;
     public bool $isAdult = false;
     public bool $isPinned = false;
+    public bool $isLocked = false;
     public ?Collection $badges = null;
     public ?string $slug = null;
     public int $score = 0;
@@ -62,11 +63,14 @@ class EntryDto implements ContentVisibilityInterface
         $payload,
     ) {
         if (empty($this->image)) {
-            $image = Request::createFromGlobals()->files->filter('entry_image');
-            if (\is_array($image)) {
-                $image = $image['image'];
-            } else {
-                $image = $context->getValue()->image;
+            $keys = ['entry', 'entry_edit'];
+            for ($i = 0; $i < \sizeof($keys) && empty($image); ++$i) {
+                $image = Request::createFromGlobals()->files->filter($keys[$i]);
+                if (\is_array($image)) {
+                    $image = $image['image'];
+                } else {
+                    $image = $context->getValue()->image;
+                }
             }
         } else {
             $image = $this->image;
@@ -81,7 +85,7 @@ class EntryDto implements ContentVisibilityInterface
 
     private function buildViolation(ExecutionContextInterface $context, $path)
     {
-        $context->buildViolation('This value should not be blank.')
+        $context->buildViolation('One of these values should not be blank.')
             ->atPath($path)
             ->addViolation();
     }

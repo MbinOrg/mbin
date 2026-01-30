@@ -23,7 +23,6 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
         'KBIN_JS_ENABLED',
         'KBIN_FEDERATION_ENABLED',
         'KBIN_REGISTRATIONS_ENABLED',
-        'KBIN_BANNED_INSTANCES',
         'KBIN_HEADER_LOGO',
         'KBIN_CAPTCHA_ENABLED',
         'KBIN_MERCURE_ENABLED',
@@ -31,14 +30,15 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
         'KBIN_ADMIN_ONLY_OAUTH_CLIENTS',
         'MBIN_PRIVATE_INSTANCE',
         'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN',
-        'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY',
+        'MBIN_SIDEBAR_SECTIONS_RANDOM_LOCAL_ONLY',
+        'MBIN_SIDEBAR_SECTIONS_USERS_LOCAL_ONLY',
         'MBIN_SSO_REGISTRATIONS_ENABLED',
         'MBIN_RESTRICT_MAGAZINE_CREATION',
         'MBIN_DOWNVOTES_MODE',
         'MBIN_SSO_ONLY_MODE',
         'MBIN_SSO_SHOW_FIRST',
-        'MAX_IMAGE_BYTES',
         'MBIN_NEW_USERS_NEED_APPROVAL',
+        'MBIN_USE_FEDERATION_ALLOW_LIST',
     ];
 
     public function testApiCannotUpdateInstanceSettingsAnonymous(): void
@@ -98,7 +98,6 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'KBIN_JS_ENABLED' => true,
             'KBIN_FEDERATION_ENABLED' => true,
             'KBIN_REGISTRATIONS_ENABLED' => false,
-            'KBIN_BANNED_INSTANCES' => ['test.social'],
             'KBIN_HEADER_LOGO' => true,
             'KBIN_CAPTCHA_ENABLED' => true,
             'KBIN_MERCURE_ENABLED' => false,
@@ -106,14 +105,15 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'KBIN_ADMIN_ONLY_OAUTH_CLIENTS' => true,
             'MBIN_PRIVATE_INSTANCE' => true,
             'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN' => false,
-            'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY' => false,
+            'MBIN_SIDEBAR_SECTIONS_RANDOM_LOCAL_ONLY' => false,
+            'MBIN_SIDEBAR_SECTIONS_USERS_LOCAL_ONLY' => false,
             'MBIN_SSO_REGISTRATIONS_ENABLED' => true,
             'MBIN_RESTRICT_MAGAZINE_CREATION' => false,
             'MBIN_DOWNVOTES_MODE' => DownvotesMode::Enabled->value,
             'MBIN_SSO_ONLY_MODE' => false,
             'MBIN_SSO_SHOW_FIRST' => false,
-            'MAX_IMAGE_BYTES' => 10000,
             'MBIN_NEW_USERS_NEED_APPROVAL' => false,
+            'MBIN_USE_FEDERATION_ALLOW_LIST' => false,
         ];
 
         $this->client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);
@@ -139,7 +139,6 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'KBIN_JS_ENABLED' => false,
             'KBIN_FEDERATION_ENABLED' => false,
             'KBIN_REGISTRATIONS_ENABLED' => true,
-            'KBIN_BANNED_INSTANCES' => ['test.social'],
             'KBIN_HEADER_LOGO' => false,
             'KBIN_CAPTCHA_ENABLED' => false,
             'KBIN_MERCURE_ENABLED' => true,
@@ -147,14 +146,15 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
             'KBIN_ADMIN_ONLY_OAUTH_CLIENTS' => false,
             'MBIN_PRIVATE_INSTANCE' => false,
             'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN' => true,
-            'MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY' => true,
+            'MBIN_SIDEBAR_SECTIONS_RANDOM_LOCAL_ONLY' => true,
+            'MBIN_SIDEBAR_SECTIONS_USERS_LOCAL_ONLY' => true,
             'MBIN_SSO_REGISTRATIONS_ENABLED' => false,
             'MBIN_RESTRICT_MAGAZINE_CREATION' => true,
             'MBIN_DOWNVOTES_MODE' => DownvotesMode::Hidden->value,
             'MBIN_SSO_ONLY_MODE' => true,
             'MBIN_SSO_SHOW_FIRST' => true,
-            'MAX_IMAGE_BYTES' => 30000,
             'MBIN_NEW_USERS_NEED_APPROVAL' => false,
+            'MBIN_USE_FEDERATION_ALLOW_LIST' => false,
         ];
 
         $this->client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);

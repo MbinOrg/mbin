@@ -88,6 +88,8 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('link', $jsonData['items'][0]['type']);
         self::assertEquals('another-entry', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
     }
 
     public function testApiCannotGetModeratedEntriesAnonymous(): void
@@ -170,6 +172,8 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('link', $jsonData['items'][0]['type']);
         self::assertEquals('another-entry', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
     }
 
     public function testApiCannotGetFavouritedEntriesAnonymous(): void
@@ -253,6 +257,8 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['items'][0]['type']);
         self::assertEquals('an-entry', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
     }
 
     public function testApiCanGetEntriesAnonymous(): void
@@ -311,6 +317,7 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['items'][0]['type']);
         self::assertEquals('an-entry', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertNull($jsonData['items'][0]['bookmarks']);
 
         self::assertIsArray($jsonData['items'][1]);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][1]);
@@ -320,6 +327,7 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertSame($magazine->getId(), $jsonData['items'][1]['magazine']['magazineId']);
         self::assertEquals('link', $jsonData['items'][1]['type']);
         self::assertSame(0, $jsonData['items'][1]['numComments']);
+        self::assertNull($jsonData['items'][0]['bookmarks']);
     }
 
     public function testApiCanGetEntries(): void
@@ -382,6 +390,8 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['items'][0]['type']);
         self::assertEquals('an-entry', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
 
         self::assertIsArray($jsonData['items'][1]);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][1]);
@@ -450,6 +460,7 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['items'][0]['type']);
         self::assertEquals('an-entry', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertNull($jsonData['items'][0]['bookmarks']);
 
         self::assertIsArray($jsonData['items'][1]);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][1]);
@@ -523,6 +534,8 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['items'][0]['type']);
         self::assertEquals('an-entry', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
 
         self::assertIsArray($jsonData['items'][1]);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][1]);
@@ -616,6 +629,8 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['items'][0]['type']);
         self::assertEquals('an-entry', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
 
         self::assertIsArray($jsonData['items'][1]);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][1]);
@@ -919,6 +934,8 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['items'][0]['type']);
         self::assertEquals('an-entry', $jsonData['items'][0]['slug']);
         self::assertNull($jsonData['items'][0]['apId']);
+        self::assertIsArray($jsonData['items'][0]['bookmarks']);
+        self::assertEmpty($jsonData['items'][0]['bookmarks']);
 
         self::assertIsArray($jsonData['items'][1]);
         self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][1]);
@@ -969,6 +986,7 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['type']);
         self::assertEquals('an-entry', $jsonData['slug']);
         self::assertNull($jsonData['apId']);
+        self::assertNull($jsonData['bookmarks']);
     }
 
     public function testApiCanGetEntryById(): void
@@ -1015,6 +1033,8 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['type']);
         self::assertEquals('an-entry', $jsonData['slug']);
         self::assertNull($jsonData['apId']);
+        self::assertIsArray($jsonData['bookmarks']);
+        self::assertEmpty($jsonData['bookmarks']);
     }
 
     public function testApiCanGetEntryByIdWithUserVoteStatus(): void
@@ -1060,5 +1080,180 @@ class EntryRetrieveApiTest extends WebTestCase
         self::assertEquals('article', $jsonData['type']);
         self::assertEquals('an-entry', $jsonData['slug']);
         self::assertNull($jsonData['apId']);
+        self::assertIsArray($jsonData['bookmarks']);
+        self::assertEmpty($jsonData['bookmarks']);
+    }
+
+    public function testApiCanGetEntriesLocal(): void
+    {
+        $first = $this->getEntryByTitle('first', body: 'test');
+        $second = $this->getEntryByTitle('second', body: 'test2');
+
+        $second->apId = 'https://some.url';
+
+        $entityManager = $this->entityManager;
+        $entityManager->persist($first);
+        $entityManager->persist($second);
+        $entityManager->flush();
+
+        self::createOAuth2AuthCodeClient();
+        $this->client->loginUser($this->getUserByUsername('user'));
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+
+        $this->client->request('GET', '/api/entries?federation=local', server: ['HTTP_AUTHORIZATION' => $token]);
+        self::assertResponseIsSuccessful();
+
+        $jsonData = self::getJsonResponse($this->client);
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
+
+        self::assertIsArray($jsonData['items']);
+        self::assertCount(1, $jsonData['items']);
+        self::assertIsArray($jsonData['pagination']);
+        self::assertArrayKeysMatch(self::PAGINATION_KEYS, $jsonData['pagination']);
+        self::assertSame(1, $jsonData['pagination']['count']);
+
+        self::assertIsArray($jsonData['items'][0]);
+        self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][0]);
+        self::assertSame($first->getId(), $jsonData['items'][0]['entryId']);
+        self::assertTrue($jsonData['items'][0]['isAuthorModeratorInMagazine']);
+    }
+
+    public function testApiCanGetEntriesFederated(): void
+    {
+        $first = $this->getEntryByTitle('first', body: 'test');
+        $second = $this->getEntryByTitle('second', body: 'test2');
+
+        $second->apId = 'https://some.url';
+
+        $entityManager = $this->entityManager;
+        $entityManager->persist($first);
+        $entityManager->persist($second);
+        $entityManager->flush();
+
+        self::createOAuth2AuthCodeClient();
+        $this->client->loginUser($this->getUserByUsername('user'));
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+
+        $this->client->request('GET', '/api/entries?federation=federated', server: ['HTTP_AUTHORIZATION' => $token]);
+        self::assertResponseIsSuccessful();
+
+        $jsonData = self::getJsonResponse($this->client);
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
+
+        self::assertIsArray($jsonData['items']);
+        self::assertCount(1, $jsonData['items']);
+        self::assertIsArray($jsonData['pagination']);
+        self::assertArrayKeysMatch(self::PAGINATION_KEYS, $jsonData['pagination']);
+        self::assertSame(1, $jsonData['pagination']['count']);
+
+        self::assertIsArray($jsonData['items'][0]);
+        self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][0]);
+        self::assertSame($second->getId(), $jsonData['items'][0]['entryId']);
+        self::assertTrue($jsonData['items'][0]['isAuthorModeratorInMagazine']);
+    }
+
+    public function testApiGetAuthorNotModerator(): void
+    {
+        $first = $this->getEntryByTitle('first', body: 'test');
+        sleep(1);
+        $second = $this->getEntryByTitle('second', body: 'test2', user: $this->getUserByUsername('Jane Doe'));
+
+        $entityManager = $this->entityManager;
+        $entityManager->persist($first);
+        $entityManager->persist($second);
+        $entityManager->flush();
+
+        self::createOAuth2AuthCodeClient();
+        $this->client->loginUser($this->getUserByUsername('user'));
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+
+        $this->client->request('GET', '/api/entries?sort=oldest', server: ['HTTP_AUTHORIZATION' => $token]);
+        self::assertResponseIsSuccessful();
+
+        $jsonData = self::getJsonResponse($this->client);
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
+
+        self::assertIsArray($jsonData['items']);
+        self::assertCount(2, $jsonData['items']);
+        self::assertIsArray($jsonData['pagination']);
+        self::assertArrayKeysMatch(self::PAGINATION_KEYS, $jsonData['pagination']);
+        self::assertSame(2, $jsonData['pagination']['count']);
+
+        self::assertIsArray($jsonData['items'][0]);
+        self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][0]);
+        self::assertSame($first->getId(), $jsonData['items'][0]['entryId']);
+        self::assertTrue($jsonData['items'][0]['isAuthorModeratorInMagazine']);
+
+        self::assertIsArray($jsonData['items'][1]);
+        self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][1]);
+        self::assertSame($second->getId(), $jsonData['items'][1]['entryId']);
+        self::assertFalse($jsonData['items'][1]['isAuthorModeratorInMagazine']);
+    }
+
+    /**
+     * This function tests that the collection endpoint does not contain crosspost information,
+     * but fetching a single entry does.
+     */
+    public function testApiContainsCrosspostInformation(): void
+    {
+        $magazine1 = $this->getMagazineByName('acme');
+        $entry1 = $this->getEntryByTitle('first URL', url: 'https://joinmbin.org', magazine: $magazine1);
+        sleep(1);
+        $magazine2 = $this->getMagazineByName('acme2');
+        $entry2 = $this->getEntryByTitle('second URL', url: 'https://joinmbin.org', magazine: $magazine2);
+
+        $this->entityManager->persist($entry1);
+        $this->entityManager->persist($entry2);
+        $this->entityManager->flush();
+
+        $this->client->request('GET', '/api/entries?sort=oldest');
+        self::assertResponseIsSuccessful();
+
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
+
+        self::assertIsArray($jsonData['items']);
+        self::assertCount(2, $jsonData['items']);
+        self::assertIsArray($jsonData['pagination']);
+        self::assertArrayKeysMatch(self::PAGINATION_KEYS, $jsonData['pagination']);
+        self::assertSame(2, $jsonData['pagination']['count']);
+
+        self::assertIsArray($jsonData['items'][0]);
+        self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][0]);
+        self::assertSame($entry1->getId(), $jsonData['items'][0]['entryId']);
+        self::assertNull($jsonData['items'][0]['crosspostedEntries']);
+
+        self::assertIsArray($jsonData['items'][1]);
+        self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['items'][1]);
+        self::assertSame($entry2->getId(), $jsonData['items'][1]['entryId']);
+        self::assertNull($jsonData['items'][1]['crosspostedEntries']);
+
+        $this->client->request('GET', '/api/entry/'.$entry1->getId());
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData['crosspostedEntries']);
+        self::assertCount(1, $jsonData['crosspostedEntries']);
+        self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['crosspostedEntries'][0]);
+        self::assertSame($entry2->getId(), $jsonData['crosspostedEntries'][0]['entryId']);
+
+        $this->client->request('GET', '/api/entry/'.$entry2->getId());
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData['crosspostedEntries']);
+        self::assertCount(1, $jsonData['crosspostedEntries']);
+        self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $jsonData['crosspostedEntries'][0]);
+        self::assertSame($entry1->getId(), $jsonData['crosspostedEntries'][0]['entryId']);
     }
 }

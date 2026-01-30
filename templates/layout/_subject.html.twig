@@ -13,15 +13,29 @@
 {% if postCommentAttributes is not defined %}
     {% set postCommentAttributes = {} %}
 {% endif %}
+{% if magazineAttributes is not defined %}
+    {% set magazineAttributes = {} %}
+{% endif %}
+{% if userAttributes is not defined %}
+    {% set userAttributes = {} %}
+{% endif %}
+
+{% set forCombined = route_param_exists('content') and get_route_param('content') is same as 'combined' %}
 
 {% if subject is entry %}
     {{ component('entry', {entry: subject}|merge(attributes)|merge(entryAttributes)) }}
 {% elseif subject is entry_comment %}
     {{ component('entry_comment', {comment: subject, showEntryTitle: false}|merge(attributes)|merge(entryCommentAttributes)) }}
 {% elseif subject is post %}
-    {{ component('post', {post: subject}|merge(attributes)|merge(postAttributes)) }}
+    {% if forCombined is same as true %}
+        {{ component('post_combined', {post: subject}|merge(attributes)|merge(postAttributes)) }}
+    {% else %}
+        {{ component('post', {post: subject}|merge(attributes)|merge(postAttributes)) }}
+    {% endif %}
 {% elseif subject is post_comment %}
     {{ component('post_comment', {comment: subject}|merge(attributes)|merge(postCommentAttributes)) }}
 {% elseif subject is magazine %}
-    {{ component('magazine_box', {magazine: subject}|merge(attributes)) }}
+    {{ component('magazine_box', {magazine: subject}|merge(attributes, magazineAttributes)) }}
+{% elseif subject is user %}
+    {{ component('user_inline_box', {user: subject}|merge(attributes, userAttributes)) }}
 {% endif %}

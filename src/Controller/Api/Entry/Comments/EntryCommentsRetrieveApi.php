@@ -143,7 +143,8 @@ class EntryCommentsRetrieveApi extends EntriesBaseApi
 
         $request = $this->request->getCurrentRequest();
         $criteria = new EntryCommentPageView($this->getPageNb($request), $security);
-        $criteria->showSortOption($criteria->resolveSort($request->get('sortBy', Criteria::SORT_HOT)));
+        $sort = $criteria->resolveSort($request->get('sortBy', Criteria::SORT_HOT));
+        $criteria->showSortOption($sort);
         $criteria->entry = $entry;
         $criteria->perPage = self::constrainPerPage($request->get('perPage', EntryCommentRepository::PER_PAGE));
         $criteria->setTime($criteria->resolveTime($request->get('time', Criteria::TIME_ALL)));
@@ -160,7 +161,7 @@ class EntryCommentsRetrieveApi extends EntriesBaseApi
             try {
                 \assert($value instanceof EntryComment);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializeCommentTree($value));
+                $dtos[] = $this->serializeCommentTree($value, $criteria);
             } catch (\Exception $e) {
                 continue;
             }
@@ -206,15 +207,13 @@ class EntryCommentsRetrieveApi extends EntriesBaseApi
         EntryCommentRepository $commentsRepository,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
+        Security $security,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
         $this->handlePrivateContent($comment);
 
-        $commentsRepository->hydrate($comment);
-        $commentsRepository->hydrateChildren($comment);
-
         return new JsonResponse(
-            $this->serializeCommentTree($comment),
+            $this->serializeCommentTree($comment, new EntryCommentPageView(0, $security)),
             headers: $headers
         );
     }

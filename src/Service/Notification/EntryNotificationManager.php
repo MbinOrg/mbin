@@ -22,6 +22,7 @@ use App\Repository\UserRepository;
 use App\Service\Contracts\ContentNotificationManagerInterface;
 use App\Service\GenerateHtmlClassService;
 use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use App\Service\MentionManager;
 use App\Service\SettingsManager;
 use App\Service\UserManager;
@@ -48,7 +49,7 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
         private readonly Environment $twig,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly EntityManagerInterface $entityManager,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
         private readonly GenerateHtmlClassService $classService,
         private readonly UserManager $userManager,
         private readonly SettingsManager $settingsManager,
@@ -73,7 +74,7 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
         $this->notifyMagazine(new EntryCreatedNotification($subject->user, $subject));
 
         // Notify mentioned
-        $mentions = MentionManager::clearLocal($this->mentionManager->extract($subject->body));
+        $mentions = $this->mentionManager->clearLocal($this->mentionManager->extract($subject->body));
         foreach ($this->mentionManager->getUsersFromArray($mentions) as $user) {
             if (!$user->apId && !$user->isBlocked($subject->user)) {
                 $notification = new EntryMentionedNotification($user, $subject);

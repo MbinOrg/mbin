@@ -13,7 +13,6 @@ use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Factory\EntryCommentFactory;
 use App\Service\EntryCommentManager;
-use App\Service\ImageManager;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -123,7 +122,7 @@ class EntryCommentsCreateApi extends EntriesBaseApi
         $dto->parent = $parent;
 
         return new JsonResponse(
-            $this->serializeComment($dto, $this->tagLinkRepository->getTagsOfEntryComment($comment)),
+            $this->serializeEntryComment($dto, $this->tagLinkRepository->getTagsOfContent($comment)),
             status: 201,
             headers: $headers
         );
@@ -186,12 +185,7 @@ class EntryCommentsCreateApi extends EntriesBaseApi
                     ImageUploadDto::IMAGE_UPLOAD,
                 ]
             )
-        ),
-        encoding: [
-            'imageUpload' => [
-                'contentType' => ImageManager::IMAGE_MIMETYPE_STR,
-            ],
-        ]
+        )
     ))]
     #[OA\Tag(name: 'entry_comment')]
     #[Security(name: 'oauth2', scopes: ['entry_comment:create'])]
@@ -237,7 +231,7 @@ class EntryCommentsCreateApi extends EntriesBaseApi
         $dto->parent = $parent;
 
         return new JsonResponse(
-            $this->serializeComment($dto, $this->tagLinkRepository->getTagsOfEntryComment($comment)),
+            $this->serializeEntryComment($dto, $this->tagLinkRepository->getTagsOfContent($comment)),
             status: 201,
             headers: $headers
         );

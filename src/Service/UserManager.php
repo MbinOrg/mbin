@@ -9,6 +9,7 @@ use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\User;
 use App\Entity\UserFollowRequest;
 use App\Enums\EApplicationStatus;
+use App\Event\Instance\InstanceBanEvent;
 use App\Event\User\UserApplicationApprovedEvent;
 use App\Event\User\UserApplicationRejectedEvent;
 use App\Event\User\UserBlockEvent;
@@ -169,6 +170,10 @@ readonly class UserManager
 
         if (!$dto->apId) {
             $user = KeysGenerator::generate($user);
+            // default new local users to be discoverable
+            $user->apDiscoverable = $dto->discoverable ?? true;
+            // default new local users to be indexable
+            $user->apIndexable = true;
         }
 
         $this->entityManager->persist($user);
@@ -262,9 +267,9 @@ readonly class UserManager
         $this->bus->dispatch(new DeleteUserMessage($user->getId()));
     }
 
-    public function createDto(User $user): UserDto
+    public function createDto(User $user, ?int $reputationPoints = null): UserDto
     {
-        return $this->factory->createDto($user);
+        return $this->factory->createDto($user, $reputationPoints);
     }
 
     public function verify(Request $request, User $user): void
@@ -293,24 +298,29 @@ readonly class UserManager
         $this->requestStack->getSession()->invalidate();
     }
 
-    public function ban(User $user): void
+    public function ban(User $user, ?User $bannedBy, ?string $reason): void
     {
         if ($user->isAdmin() || $user->isModerator()) {
             throw new UserCannotBeBanned();
         }
 
         $user->isBanned = true;
+        $user->banReason = $reason;
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+
+        $this->eventDispatcher->dispatch(new InstanceBanEvent($user, $bannedBy, $reason));
     }
 
-    public function unban(User $user): void
+    public function unban(User $user, ?User $bannedBy, ?string $reason): void
     {
         $user->isBanned = false;
+        $user->banReason = $reason;
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+        $this->eventDispatcher->dispatch(new InstanceBanEvent($user, $bannedBy, $reason));
     }
 
     public function detachAvatar(User $user): void

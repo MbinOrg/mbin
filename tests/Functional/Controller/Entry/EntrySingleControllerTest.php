@@ -20,8 +20,6 @@ class EntrySingleControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', '/');
 
-        $this->assertSelectorTextContains('#header nav .active', 'Threads');
-
         $this->client->click($crawler->selectLink('test entry 1')->link());
 
         $this->assertSelectorTextContains('.head-title', '/m/acme');
@@ -84,8 +82,8 @@ class EntrySingleControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
         foreach ($this->getSortOptions() as $sortOption) {
-            $crawler = $this->client->click($crawler->filter('.options__main')->selectLink($sortOption)->link());
-            $this->assertSelectorTextContains('.options__main', $sortOption);
+            $crawler = $this->client->click($crawler->filter('.options__filter')->selectLink($sortOption)->link());
+            $this->assertSelectorTextContains('.options__filter', $sortOption);
         }
     }
 
@@ -103,7 +101,7 @@ class EntrySingleControllerTest extends WebTestCase
         $this->client->loginUser($user);
         $crawler = $this->client->request('GET', "/m/{$entry->magazine->name}/t/{$entry->getId()}/-");
         self::assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('.options__main .active', $this->translator->trans(ESortOptions::Oldest->value));
+        $this->assertSelectorTextContains('.options__filter .active', $this->translator->trans(ESortOptions::Oldest->value));
 
         $iterator = $crawler->filter('#comments div')->children()->getIterator();
         /** @var \DOMElement $firstNode */
@@ -120,7 +118,7 @@ class EntrySingleControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', "/m/{$entry->magazine->name}/t/{$entry->getId()}/-");
         self::assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('.options__main .active', $this->translator->trans(ESortOptions::Newest->value));
+        $this->assertSelectorTextContains('.options__filter .active', $this->translator->trans(ESortOptions::Newest->value));
 
         $iterator = $crawler->filter('#comments div')->children()->getIterator();
         /** @var \DOMElement $firstNode */

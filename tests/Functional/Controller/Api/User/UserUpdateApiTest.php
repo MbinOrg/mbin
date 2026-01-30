@@ -6,6 +6,8 @@ namespace App\Tests\Functional\Controller\Api\User;
 
 use App\DTO\UserSettingsDto;
 use App\Entity\User;
+use App\Enums\EDirectMessageSettings;
+use App\Enums\EFrontContentOptions;
 use App\Repository\Criteria;
 use App\Tests\WebTestCase;
 
@@ -95,7 +97,9 @@ class UserUpdateApiTest extends WebTestCase
             Criteria::SORT_HOT,
             Criteria::SORT_HOT,
             ['test'],
-            ['en']
+            ['en'],
+            directMessageSetting: EDirectMessageSettings::Everyone->value,
+            frontDefaultContent: EFrontContentOptions::Combined->value,
         ))->jsonSerialize();
 
         $this->client->jsonRequest(
@@ -129,7 +133,11 @@ class UserUpdateApiTest extends WebTestCase
             Criteria::SORT_NEW,
             Criteria::SORT_TOP,
             ['test'],
-            ['en']
+            ['en'],
+            directMessageSetting: EDirectMessageSettings::FollowersOnly->value,
+            frontDefaultContent: EFrontContentOptions::Threads->value,
+            discoverable: false,
+            indexable: false,
         ))->jsonSerialize();
 
         $this->client->jsonRequest(
@@ -155,11 +163,15 @@ class UserUpdateApiTest extends WebTestCase
         self::assertFalse($jsonData['showProfileFollowings']);
         self::assertFalse($jsonData['addMentionsEntries']);
         self::assertFalse($jsonData['addMentionsPosts']);
+        self::assertFalse($jsonData['discoverable']);
         self::assertEquals(User::HOMEPAGE_MOD, $jsonData['homepage']);
         self::assertEquals(Criteria::SORT_NEW, $jsonData['frontDefaultSort']);
         self::assertEquals(Criteria::SORT_TOP, $jsonData['commentDefaultSort']);
         self::assertEquals(['test'], $jsonData['featuredMagazines']);
         self::assertEquals(['en'], $jsonData['preferredLanguages']);
+        self::assertEquals(EDirectMessageSettings::FollowersOnly->value, $jsonData['directMessageSetting']);
+        self::assertEquals(EFrontContentOptions::Threads->value, $jsonData['frontDefaultContent']);
+        self::assertFalse($jsonData['indexable']);
 
         $this->client->request('GET', '/api/users/settings', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
@@ -180,10 +192,14 @@ class UserUpdateApiTest extends WebTestCase
         self::assertFalse($jsonData['showProfileFollowings']);
         self::assertFalse($jsonData['addMentionsEntries']);
         self::assertFalse($jsonData['addMentionsPosts']);
+        self::assertFalse($jsonData['discoverable']);
         self::assertEquals(User::HOMEPAGE_MOD, $jsonData['homepage']);
         self::assertEquals(Criteria::SORT_NEW, $jsonData['frontDefaultSort']);
         self::assertEquals(Criteria::SORT_TOP, $jsonData['commentDefaultSort']);
         self::assertEquals(['test'], $jsonData['featuredMagazines']);
         self::assertEquals(['en'], $jsonData['preferredLanguages']);
+        self::assertEquals(EDirectMessageSettings::FollowersOnly->value, $jsonData['directMessageSetting']);
+        self::assertEquals(EFrontContentOptions::Threads->value, $jsonData['frontDefaultContent']);
+        self::assertFalse($jsonData['indexable']);
     }
 }

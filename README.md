@@ -94,6 +94,13 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/weblate">
+                    <img src="https://avatars.githubusercontent.com/u/1607653?v=4" width="100;" alt="weblate"/>
+                    <br />
+                    <sub><b>Weblate (bot)</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/e-five256">
                     <img src="https://avatars.githubusercontent.com/u/146029455?v=4" width="100;" alt="e-five256"/>
                     <br />
@@ -105,13 +112,6 @@ Unofficial magazines:
                     <img src="https://avatars.githubusercontent.com/u/20770492?v=4" width="100;" alt="asdfzdfj"/>
                     <br />
                     <sub><b>asdfzdfj</b></sub>
-                </a>
-            </td>
-            <td align="center">
-                <a href="https://github.com/weblate">
-                    <img src="https://avatars.githubusercontent.com/u/1607653?v=4" width="100;" alt="weblate"/>
-                    <br />
-                    <sub><b>Weblate (bot)</b></sub>
                 </a>
             </td>
 		</tr>
@@ -152,14 +152,21 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/blued-gear">
+                    <img src="https://avatars.githubusercontent.com/u/164888202?v=4" width="100;" alt="blued-gear"/>
+                    <br />
+                    <sub><b>blued_gear</b></sub>
+                </a>
+            </td>
+		</tr>
+		<tr>
+            <td align="center">
                 <a href="https://github.com/danielpervan">
                     <img src="https://avatars.githubusercontent.com/u/5121830?v=4" width="100;" alt="danielpervan"/>
                     <br />
                     <sub><b>Daniel Pervan</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/garrettw">
                     <img src="https://avatars.githubusercontent.com/u/84885?v=4" width="100;" alt="garrettw"/>
@@ -168,10 +175,10 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/GauthierPLM">
-                    <img src="https://avatars.githubusercontent.com/u/2579741?v=4" width="100;" alt="GauthierPLM"/>
+                <a href="https://github.com/jwr1">
+                    <img src="https://avatars.githubusercontent.com/u/47087725?v=4" width="100;" alt="jwr1"/>
                     <br />
-                    <sub><b>Gauthier POGAM--LE MONTAGNER</b></sub>
+                    <sub><b>John Wesley</b></sub>
                 </a>
             </td>
             <td align="center">
@@ -182,12 +189,21 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/GauthierPLM">
+                    <img src="https://avatars.githubusercontent.com/u/2579741?v=4" width="100;" alt="GauthierPLM"/>
+                    <br />
+                    <sub><b>Gauthier POGAM--LE MONTAGNER</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/CocoPoops">
                     <img src="https://avatars.githubusercontent.com/u/7891055?v=4" width="100;" alt="CocoPoops"/>
                     <br />
                     <sub><b>CocoPoops</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/thepaperpilot">
                     <img src="https://avatars.githubusercontent.com/u/3683148?v=4" width="100;" alt="thepaperpilot"/>
@@ -202,8 +218,6 @@ Unofficial magazines:
                     <sub><b>Chris Hall</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/andrewmoise">
                     <img src="https://avatars.githubusercontent.com/u/8404538?v=4" width="100;" alt="andrewmoise"/>
@@ -216,13 +230,6 @@ Unofficial magazines:
                     <img src="https://avatars.githubusercontent.com/u/1295000?v=4" width="100;" alt="piotr-sikora-v"/>
                     <br />
                     <sub><b>Piotr Sikora</b></sub>
-                </a>
-            </td>
-            <td align="center">
-                <a href="https://github.com/jwr1">
-                    <img src="https://avatars.githubusercontent.com/u/47087725?v=4" width="100;" alt="jwr1"/>
-                    <br />
-                    <sub><b>John Wesley</b></sub>
                 </a>
             </td>
             <td align="center">
@@ -239,6 +246,15 @@ Unofficial magazines:
                     <sub><b>Pol Dellaiera</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/MakaryGo">
+                    <img src="https://avatars.githubusercontent.com/u/24472656?v=4" width="100;" alt="MakaryGo"/>
+                    <br />
+                    <sub><b>Makary</b></sub>
+                </a>
+            </td>
             <td align="center">
                 <a href="https://github.com/cavebob">
                     <img src="https://avatars.githubusercontent.com/u/75441692?v=4" width="100;" alt="cavebob"/>
@@ -246,8 +262,6 @@ Unofficial magazines:
                     <sub><b>cavebob</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/vpzomtrrfrt">
                     <img src="https://avatars.githubusercontent.com/u/3528358?v=4" width="100;" alt="vpzomtrrfrt"/>
@@ -276,11 +290,41 @@ Unofficial magazines:
                     <sub><b>CSDUMMI</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
-                <a href="https://github.com/DismalShadowX">
-                    <img src="https://avatars.githubusercontent.com/u/24910097?v=4" width="100;" alt="DismalShadowX"/>
+                <a href="https://github.com/e-michalak">
+                    <img src="https://avatars.githubusercontent.com/u/236532325?v=4" width="100;" alt="e-michalak"/>
                     <br />
-                    <sub><b>Nathan Sparrow</b></sub>
+                    <sub><b>e-michalak</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/MHLoppy">
+                    <img src="https://avatars.githubusercontent.com/u/12670674?v=4" width="100;" alt="MHLoppy"/>
+                    <br />
+                    <sub><b>Mark Heath</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/robertolopezlopez">
+                    <img src="https://avatars.githubusercontent.com/u/1519467?v=4" width="100;" alt="robertolopezlopez"/>
+                    <br />
+                    <sub><b>Roberto López López</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/grahhnt">
+                    <img src="https://avatars.githubusercontent.com/u/46821216?v=4" width="100;" alt="grahhnt"/>
+                    <br />
+                    <sub><b>grahhnt</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/olorin99">
+                    <img src="https://avatars.githubusercontent.com/u/36951539?v=4" width="100;" alt="olorin99"/>
+                    <br />
+                    <sub><b>olorin99</b></sub>
                 </a>
             </td>
             <td align="center">
@@ -318,6 +362,7 @@ See [docs.joinmbin.org](https://docs.joinmbin.org)
 Following languages are currently supported/translated:
 
 - Bulgarian
+- Catalan
 - Chinese
 - Danish
 - Dutch

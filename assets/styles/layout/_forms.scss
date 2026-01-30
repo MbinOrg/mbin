@@ -72,6 +72,25 @@
       color: var(--kbin-button-secondary-text-hover-color) !important;
     }
   }
+
+  &__emoji {
+    cursor: pointer;
+    float: right;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    height: fit-content;
+    background-color: transparent;
+    border: 0;
+
+    &:hover {
+      background-color: var(--kbin-button-primary-bg);
+    }
+
+    &.active {
+      background-color: var(--kbin-button-primary-hover-bg);
+    }
+  }
 }
 
 select {
@@ -221,6 +240,12 @@ form {
 
   .help-text {
     font-size: 0.8rem;
+
+    &.checkbox {
+      margin-top: -.75rem;
+      margin-left: 2rem;
+      margin-bottom: 0;
+    }
   }
 
   .length-indicator {
@@ -508,6 +533,18 @@ markdown-toolbar {
     }
   }
 
+}
+
+.tooltip {
+  width: max-content;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+}
+
+.tooltip:not(.shown) {
+  display: none;
 }
 
 div.input-box {

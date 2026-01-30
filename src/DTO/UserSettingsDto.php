@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\DTO;
 
 use App\Entity\User;
+use App\Enums\EDirectMessageSettings;
+use App\Enums\EFrontContentOptions;
 use App\PageView\EntryCommentPageView;
 use App\PageView\EntryPageView;
 use OpenApi\Attributes as OA;
@@ -37,6 +39,12 @@ class UserSettingsDto implements \JsonSerializable
         public ?string $customCss = null,
         public ?bool $ignoreMagazinesCustomCss = null,
         public ?bool $notifyOnUserSignup = null,
+        #[OA\Property(type: 'string', enum: EDirectMessageSettings::OPTIONS)]
+        public ?string $directMessageSetting = null,
+        #[OA\Property(type: 'string', enum: EFrontContentOptions::OPTIONS)]
+        public ?string $frontDefaultContent = null,
+        public ?bool $discoverable = null,
+        public ?bool $indexable = null,
     ) {
     }
 
@@ -56,12 +64,16 @@ class UserSettingsDto implements \JsonSerializable
             'addMentionsPosts' => $this->addMentionsPosts,
             'homepage' => $this->homepage,
             'frontDefaultSort' => $this->frontDefaultSort,
+            'frontDefaultContent' => $this->frontDefaultContent,
             'commentDefaultSort' => $this->commentDefaultSort,
             'featuredMagazines' => $this->featuredMagazines,
             'preferredLanguages' => $this->preferredLanguages,
             'customCss' => $this->customCss,
             'ignoreMagazinesCustomCss' => $this->ignoreMagazinesCustomCss,
             'notifyOnUserSignup' => $this->notifyOnUserSignup,
+            'directMessageSetting' => $this->directMessageSetting,
+            'discoverable' => $this->discoverable,
+            'indexable' => $this->indexable,
         ];
     }
 
@@ -79,12 +91,16 @@ class UserSettingsDto implements \JsonSerializable
         $dto->addMentionsEntries = $this->addMentionsEntries ?? $dto->addMentionsEntries;
         $dto->addMentionsPosts = $this->addMentionsPosts ?? $dto->addMentionsPosts;
         $dto->homepage = $this->homepage ?? $dto->homepage;
-        $dto->frontDefaultSort = $this->frontDefaultSort;
-        $dto->commentDefaultSort = $this->commentDefaultSort;
+        $dto->frontDefaultSort = $this->frontDefaultSort ?? $dto->frontDefaultSort;
+        $dto->commentDefaultSort = $this->commentDefaultSort ?? $dto->commentDefaultSort;
         $dto->featuredMagazines = $this->featuredMagazines ?? $dto->featuredMagazines;
         $dto->preferredLanguages = $this->preferredLanguages ?? $dto->preferredLanguages;
         $dto->customCss = $this->customCss ?? $dto->customCss;
         $dto->ignoreMagazinesCustomCss = $this->ignoreMagazinesCustomCss ?? $dto->ignoreMagazinesCustomCss;
+        $dto->directMessageSetting = $this->directMessageSetting ?? $dto->directMessageSetting;
+        $dto->frontDefaultContent = $this->frontDefaultContent ?? $dto->frontDefaultContent;
+        $dto->discoverable = $this->discoverable ?? $dto->discoverable;
+        $dto->indexable = $this->indexable ?? $dto->indexable;
 
         return $dto;
     }

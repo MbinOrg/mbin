@@ -57,6 +57,7 @@ class PostSingleController extends AbstractController
 
         $criteria = new PostCommentPageView($this->getPageNb($request), $security);
         $criteria->showSortOption($criteria->resolveSort($sortBy));
+        $criteria->content = Criteria::CONTENT_MICROBLOG;
         $criteria->post = $post;
         $criteria->onlyParents = true;
         $criteria->perPage = 25;
@@ -70,6 +71,10 @@ class PostSingleController extends AbstractController
         }
 
         $comments = $repository->findByCriteria($criteria);
+
+        $commentObjects = [...$comments->getCurrentPageResults()];
+        $repository->hydrate(...$commentObjects);
+        $repository->hydrateChildren(...$commentObjects);
 
         $dispatcher->dispatch(new PostHasBeenSeenEvent($post));
 

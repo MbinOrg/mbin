@@ -121,6 +121,31 @@ Options:
 > [!NOTE] 
 > If neither `--activate` nor `--deactivate` are provided, the current verification status will be returned
 
+
+### Rotate users private keys
+
+> [!WARNING]
+> After running this command it can take up to 24 hours for other instances to update their stored public keys.
+> In this timeframe federation might be impacted by this, 
+> as those services cannot successfully verify the identity of your users.
+> Please inform your users about this when you're running this command.
+
+This command allows you to rotate the private keys of your users with which the activities sent by them are authenticated.
+If private keys have been leaked you should rotate the private keys to avoid the potential for impersonation.
+
+Usage:
+
+```bash
+php bin/console mbin:user:private-keys:rotate [-a|--all-local-users] [-r|--revert] [<username>]
+```
+
+Arguments:
+- `username`: the single user for which this command should be executed (not required when using the `-a` / `--all-local-users` option, see below)
+
+Options:
+- `-a|--all-local-users`: Rotate private keys of all local users
+- `-r|--revert`: revert to the old private and public keys
+
 ### User-Unsub
 
 > [!NOTE]
@@ -191,6 +216,26 @@ php bin/console mbin:magazine:unsub <magazine>
 
 Arguments:
 - `magazine`: the magazine name from which to remove all the subscribers.
+
+## Direct Messages
+
+### Remove-and-Ban
+
+Search for direct messages using the body input parameter. List all the found matches, and ask for permission to continue.
+
+If you agree to continue, *all* the sender users will be **banned** and *all* the direct messages will be **removed**!
+
+> [!WARNING]
+> This action cannot be undone (once you confirmed with `yes`)!
+
+Usage:
+
+```bash
+php bin/console mbin:messages:remove_and_ban "<body>"
+```
+
+Arguments:
+- `body`: the direct message body to search for.
 
 ## Post Management
 

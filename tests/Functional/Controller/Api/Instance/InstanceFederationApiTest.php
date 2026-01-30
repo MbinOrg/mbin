@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Instance;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class InstanceFederationApiTest extends WebTestCase
 {
@@ -12,8 +13,7 @@ class InstanceFederationApiTest extends WebTestCase
 
     public function testApiCanRetrieveEmptyInstanceDefederation(): void
     {
-        $settings = $this->settingsManager;
-        $settings->set('KBIN_BANNED_INSTANCES', []);
+        $this->instanceManager->setBannedInstances([]);
 
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');
@@ -31,10 +31,10 @@ class InstanceFederationApiTest extends WebTestCase
         self::assertSame([], $jsonData['instances']);
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testApiCanRetrieveInstanceDefederationAnonymous(): void
     {
-        $settings = $this->settingsManager;
-        $settings->set('KBIN_BANNED_INSTANCES', ['defederated.social']);
+        $this->instanceManager->setBannedInstances(['defederated.social']);
 
         $this->client->request('GET', '/api/defederated');
 
@@ -45,10 +45,10 @@ class InstanceFederationApiTest extends WebTestCase
         self::assertSame(['defederated.social'], $jsonData['instances']);
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testApiCanRetrieveInstanceDefederation(): void
     {
-        $settings = $this->settingsManager;
-        $settings->set('KBIN_BANNED_INSTANCES', ['defederated.social', 'evil.social']);
+        $this->instanceManager->setBannedInstances(['defederated.social', 'evil.social']);
 
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('JohnDoe');

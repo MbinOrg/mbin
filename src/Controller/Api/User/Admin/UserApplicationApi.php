@@ -13,10 +13,11 @@ use App\Schema\Errors\NotFoundErrorSchema;
 use App\Schema\Errors\TooManyRequestsErrorSchema;
 use App\Schema\Errors\UnauthorizedErrorSchema;
 use App\Schema\PaginationSchema;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
@@ -74,7 +75,7 @@ class UserApplicationApi extends UserBaseApi
         schema: new OA\Schema(type: 'integer', default: 1, minimum: 1)
     )]
     #[OA\Tag(name: 'admin/user')]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
     #[Security(name: 'oauth2', scopes: ['admin:user:application'])]
     #[IsGranted('ROLE_OAUTH2_ADMIN:USER:APPLICATION')]
     /** Retrieve users waiting for admin approval */
@@ -141,7 +142,7 @@ class UserApplicationApi extends UserBaseApi
         schema: new OA\Schema(type: 'integer', minimum: 1)
     )]
     #[OA\Tag(name: 'admin/user')]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
     #[Security(name: 'oauth2', scopes: ['admin:user:application'])]
     #[IsGranted('ROLE_OAUTH2_ADMIN:USER:APPLICATION')]
     public function approve(
@@ -197,7 +198,7 @@ class UserApplicationApi extends UserBaseApi
         schema: new OA\Schema(type: 'integer', minimum: 1)
     )]
     #[OA\Tag(name: 'admin/user')]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
     #[Security(name: 'oauth2', scopes: ['admin:user:application'])]
     #[IsGranted('ROLE_OAUTH2_ADMIN:USER:APPLICATION')]
     public function reject(

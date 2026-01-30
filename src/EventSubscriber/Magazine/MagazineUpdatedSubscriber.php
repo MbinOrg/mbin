@@ -32,7 +32,7 @@ class MagazineUpdatedSubscriber implements EventSubscriberInterface
         $mag = $event->magazine;
         if (null === $mag->apId) {
             $activity = $this->updateWrapper->buildForActor($mag, $event->editedBy);
-            $this->bus->dispatch(new GenericAnnounceMessage($mag->getId(), $activity, $event->editedBy->apDomain));
+            $this->bus->dispatch(new GenericAnnounceMessage($mag->getId(), null, $event->editedBy->apDomain, $activity->uuid->toString(), null));
         } elseif (null !== $event->editedBy && null === $event->editedBy->apId) {
             $this->bus->dispatch(new UpdateMessage($mag->getId(), Magazine::class, $event->editedBy->getId()));
         }

@@ -29,6 +29,10 @@ class UserRetrieveApiTest extends WebTestCase
         'customCss',
         'ignoreMagazinesCustomCss',
         'notifyOnUserSignup',
+        'directMessageSetting',
+        'frontDefaultContent',
+        'discoverable',
+        'indexable',
     ];
     public const NUM_USERS = 10;
 
@@ -57,6 +61,40 @@ class UserRetrieveApiTest extends WebTestCase
         // Default perPage count should be used since no perPage value was specified
         self::assertSame(UserRepository::PER_PAGE, $jsonData['pagination']['perPage']);
 
+        self::assertIsArray($jsonData['items']);
+        self::assertSame(self::NUM_USERS, \count($jsonData['items']));
+    }
+
+    public function testApiCanRetrieveAdminsAnonymous(): void
+    {
+        $users = [];
+        for ($i = 0; $i < self::NUM_USERS; ++$i) {
+            $users[] = $this->getUserByUsername('admin'.(string) ($i + 1), isAdmin: true);
+        }
+
+        $this->client->request('GET', '/api/users/admins');
+        self::assertResponseIsSuccessful();
+
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertIsArray($jsonData['items']);
+        self::assertSame(self::NUM_USERS, \count($jsonData['items']));
+    }
+
+    public function testApiCanRetrieveModeratorsAnonymous(): void
+    {
+        $users = [];
+        for ($i = 0; $i < self::NUM_USERS; ++$i) {
+            $users[] = $this->getUserByUsername('moderator'.(string) ($i + 1), isModerator: true);
+        }
+
+        $this->client->request('GET', '/api/users/moderators');
+        self::assertResponseIsSuccessful();
+
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
         self::assertIsArray($jsonData['items']);
         self::assertSame(self::NUM_USERS, \count($jsonData['items']));
     }

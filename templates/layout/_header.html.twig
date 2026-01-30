@@ -26,6 +26,11 @@
                 </li>
                 {% include 'layout/_header_nav.html.twig' %}
             </menu>
+            <menu class="head-nav__mobile-menu">
+                <li>
+                    {% include 'layout/_header_bread.html.twig' %}
+                </li>
+            </menu>
         </nav>
         <menu>
             <li>
@@ -46,21 +51,9 @@
                 <ul class="dropdown__menu">
                     {% if magazine is defined and magazine %}
                         <li>
-                            <a href="{{ path('magazine_entry_create', {name: magazine.name, type: 'link'}) }}"
-                               class="{{ html_classes({'active': is_route_name('magazine_entry_create') and route_has_param('type', 'type.link'|trans|lower)}) }}">
-                                {{ 'add_new_link'|trans }}
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ path('magazine_entry_create', {name: magazine.name, type: 'article'}) }}"
-                               class="{{ html_classes({'active': is_route_name('magazine_entry_create') and route_has_param('type', 'article')}) }}">
+                            <a href="{{ path('magazine_entry_create', {name: magazine.name}) }}"
+                               class="{{ html_classes({'active': is_route_name('magazine_entry_create')}) }}">
                                 {{ 'add_new_article'|trans }}
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ path('magazine_entry_create', {name: magazine.name, type: 'photo'}) }}"
-                               class="{{ html_classes({'active': is_route_name('magazine_entry_create') and route_has_param('type', 'photo')}) }}">
-                                {{ 'add_new_photo'|trans }}
                             </a>
                         </li>
                         <li>
@@ -70,21 +63,9 @@
                         </li>
                     {% else %}
                         <li>
-                            <a href="{{ path('entry_create', {type: 'link'}) }}"
-                               class="{{ html_classes({'active': is_route_name('entry_create') and route_has_param('type', 'link')}) }}">
-                                {{ 'add_new_link'|trans }}
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ path('entry_create', {type: 'article'}) }}"
-                               class="{{ html_classes({'active': is_route_name('entry_create') and route_has_param('type', 'article')}) }}">
+                            <a href="{{ path('entry_create', {}) }}"
+                               class="{{ html_classes({'active': is_route_name('entry_create')}) }}">
                                 {{ 'add_new_article'|trans }}
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ path('entry_create', {type: 'photo'}) }}"
-                               class="{{ html_classes({'active': is_route_name('entry_create') and route_has_param('type', 'photo')}) }}">
-                                {{ 'add_new_photo'|trans }}
                             </a>
                         </li>
                         <li>
@@ -162,8 +143,16 @@
                         {% if is_granted('ROLE_MODERATOR') %}
                             <li>
                                 <a href="{{ path('admin_reports', {status: STATUS_PENDING}) }}"
-                                   class="{{ html_classes({'active': is_route_name_starts_with('admin')}) }}">
+                                   class="{{ html_classes({'active': is_route_name_starts_with('admin_reports')}) }}">
                                     {{ 'reports'|trans }}
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if is_granted('ROLE_MODERATOR') and do_new_users_need_approval() %}
+                            <li>
+                                <a href="{{ path('admin_signup_requests') }}"
+                                   class="{{ html_classes({'active': is_route_name_starts_with('admin_signup_requests')}) }}">
+                                    {{ 'signup_requests'|trans }}
                                 </a>
                             </li>
                         {% endif %}

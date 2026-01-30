@@ -1,10 +1,10 @@
 {% block entry_created_notification %}
-    {{ component('user_inline', {user: notification.entry.user}) }} {{ 'added_new_thread'|trans|lower }} - <a
+    {{ component('user_inline', {user: notification.entry.user, showNewIcon: true}) }} {{ 'added_new_thread'|trans|lower }} - <a
         href="{{ entry_url(notification.entry) }}">{{ notification.entry.shortTitle }}</a>
 {% endblock entry_created_notification %}
 
 {% block entry_edited_notification %}
-    {{ component('user_inline', {user: notification.entry.user}) }} {{ 'edited_thread'|trans|lower }} - <a
+    {{ component('user_inline', {user: notification.entry.user, showNewIcon: true}) }} {{ 'edited_thread'|trans|lower }} - <a
         href="{{ entry_url(notification.entry) }}">{{ notification.entry.shortTitle }}</a>
 {% endblock entry_edited_notification %}
 
@@ -14,22 +14,22 @@
 {% endblock entry_deleted_notification %}
 
 {% block entry_mentioned_notification %}
-    {{ component('user_inline', {user: notification.entry.user}) }} {{ 'mentioned_you'|trans|lower }} - <a
+    {{ component('user_inline', {user: notification.entry.user, showNewIcon: true}) }} {{ 'mentioned_you'|trans|lower }} - <a
         href="{{ entry_url(notification.entry) }}">{{ notification.entry.shortTitle }}</a>
 {% endblock entry_mentioned_notification %}
 
 {% block entry_comment_created_notification %}
-    {{ component('user_inline', {user: notification.comment.user}) }} {{ 'added_new_comment'|trans|lower }} - <a
+    {{ component('user_inline', {user: notification.comment.user, showNewIcon: true}) }} {{ 'added_new_comment'|trans|lower }} - <a
         href="{{ entry_comment_view_url(notification.comment) }}#{{ get_url_fragment(notification.comment) }}">{{ notification.comment.shortTitle }}</a>
 {% endblock entry_comment_created_notification %}
 
 {% block entry_comment_edited_notification %}
-    {{ component('user_inline', {user: notification.comment.user}) }} {{ 'edited_comment'|trans|lower }} - <a
+    {{ component('user_inline', {user: notification.comment.user, showNewIcon: true}) }} {{ 'edited_comment'|trans|lower }} - <a
         href="{{ entry_comment_view_url(notification.comment) }}#{{ get_url_fragment(notification.comment) }}">{{ notification.comment.shortTitle }}</a>
 {% endblock entry_comment_edited_notification %}
 
 {% block entry_comment_reply_notification %}
-    {{ component('user_inline', {user: notification.comment.user}) }} {{ 'replied_to_your_comment'|trans|lower }} - <a
+    {{ component('user_inline', {user: notification.comment.user, showNewIcon: true}) }} {{ 'replied_to_your_comment'|trans|lower }} - <a
         href="{{ entry_comment_view_url(notification.comment) }}#{{ get_url_fragment(notification.comment) }}">{{ notification.comment.shortTitle }}</a>
 {% endblock entry_comment_reply_notification %}
 
@@ -40,17 +40,17 @@
 {% endblock entry_comment_deleted_notification %}
 
 {% block entry_comment_mentioned_notification %}
-    {{ component('user_inline', {user: notification.comment.user}) }} {{ 'mentioned_you'|trans|lower }} - <a
+    {{ component('user_inline', {user: notification.comment.user, showNewIcon: true}) }} {{ 'mentioned_you'|trans|lower }} - <a
         href="{{ entry_comment_view_url(notification.comment) }}#{{ get_url_fragment(notification.comment) }}">{{ notification.comment.shortTitle }}</a>
 {% endblock entry_comment_mentioned_notification %}
 
 {% block post_created_notification %}
-    {{ component('user_inline', {user: notification.post.user}) }} {{ 'added_new_post'|trans|lower }} - <a
+    {{ component('user_inline', {user: notification.post.user, showNewIcon: true}) }} {{ 'added_new_post'|trans|lower }} - <a
         href="{{ post_url(notification.post) }}">{{ notification.post.shortTitle }}</a>
 {% endblock post_created_notification %}
 
 {% block post_edited_notification %}
-    {{ component('user_inline', {user: notification.post.user}) }} {{ 'edit_post'|trans|lower }} - <a
+    {{ component('user_inline', {user: notification.post.user, showNewIcon: true}) }} {{ 'edit_post'|trans|lower }} - <a
         href="{{ post_url(notification.post) }}">{{ notification.post.shortTitle }}</a>
 {% endblock post_edited_notification %}
 
@@ -61,22 +61,22 @@
 {% endblock post_deleted_notification %}
 
 {% block post_mentioned_notification %}
-    {{ component('user_inline', {user: notification.post.user}) }} {{ 'mentioned_you'|trans|lower }} - <a
+    {{ component('user_inline', {user: notification.post.user, showNewIcon: true}) }} {{ 'mentioned_you'|trans|lower }} - <a
         href="{{ post_url(notification.post) }}">{{ notification.post.shortTitle }}</a>
 {% endblock post_mentioned_notification %}
 
 {% block post_comment_created_notification %}
-    {{ component('user_inline', {user: notification.comment.user}) }} {{ 'added_new_comment'|trans|lower }} - <a
+    {{ component('user_inline', {user: notification.comment.user, showNewIcon: true}) }} {{ 'added_new_comment'|trans|lower }} - <a
         href="{{ post_url(notification.comment.post) }}#{{ get_url_fragment(notification.comment) }}">{{ notification.comment.shortTitle }}</a>
 {% endblock post_comment_created_notification %}
 
 {% block post_comment_edited_notification %}
-    {{ component('user_inline', {user: notification.comment.user}) }} {{ 'edited_comment'|trans|lower }} - <a
+    {{ component('user_inline', {user: notification.comment.user, showNewIcon: true}) }} {{ 'edited_comment'|trans|lower }} - <a
         href="{{ post_url(notification.comment.post) }}#{{ get_url_fragment(notification.comment) }}">{{ notification.comment.shortTitle }}</a>
 {% endblock post_comment_edited_notification %}
 
 {% block post_comment_reply_notification %}
-    {{ component('user_inline', {user: notification.comment.user}) }} {{ 'replied_to_your_comment'|trans|lower }} - <a
+    {{ component('user_inline', {user: notification.comment.user, showNewIcon: true}) }} {{ 'replied_to_your_comment'|trans|lower }} - <a
         href="{{ post_url(notification.comment.post) }}#{{ get_url_fragment(notification.comment) }}">{{ notification.comment.shortTitle }}</a>
 {% endblock post_comment_reply_notification %}
 
@@ -87,18 +87,37 @@
 {% endblock post_comment_deleted_notification %}
 
 {% block post_comment_mentioned_notification %}
-    {{ component('user_inline', {user: notification.comment.user}) }} {{ 'mentioned_you'|trans|lower }} - <a
+    {{ component('user_inline', {user: notification.comment.user, showNewIcon: true}) }} {{ 'mentioned_you'|trans|lower }} - <a
         href="{{ post_url(notification.comment.post) }}#{{ get_url_fragment(notification.comment) }}">{{ notification.comment.shortTitle }}</a>
 {% endblock post_comment_mentioned_notification %}
 
 {% block message_notification %}
-    {{ component('user_inline', {user: notification.message.sender}) }} {{ 'wrote_message'|trans|lower }} <a
+    {{ component('user_inline', {user: notification.message.sender, showNewIcon: true}) }} {{ 'wrote_message'|trans|lower }} <a
         href="{{ path('messages_single', {'id': notification.message.thread.id}) }}">{{ notification.message.title }}</a>
 {% endblock message_notification %}
 
 {% block magazine_ban_notification %}
-    {{ component('user_inline', {user: notification.ban.bannedBy}) }} {{ 'banned'|trans|lower }}. {{ 'ban_expired'|trans }} {{ component('date', {date: notification.ban.expiredAt}) }}. {{ notification.ban.reason }}
+    {% if notification.ban.expiredAt is not same as null -%}
+        {{ 'you_have_been_banned_from_magazine'|trans({'%m': component('magazine_inline', {'magazine': notification.ban.magazine})})|raw }}
+        <div>
+            {% if now() < notification.ban.expiredAt %}
+                {{ 'ban_expires'|trans }}:
+            {% else %}
+                {{ 'ban_expired'|trans }}:
+            {% endif %}
+            {{ component('date', {date: notification.ban.expiredAt}) -}}.
+        </div>
+    {% else -%}
+        {{ 'you_have_been_banned_from_magazine_permanently'|trans({'%m': component('magazine_inline', {'magazine': notification.ban.magazine})})|raw }}
+    {% endif -%}
+    <div>
+        {{ 'reason'|trans }}: {{ notification.ban.reason }}
+    </div>
 {% endblock magazine_ban_notification %}
+
+{% block magazine_unban_notification %}
+    {{ 'you_are_no_longer_banned_from_magazine'|trans({'%m': component('magazine_inline', {'magazine': notification.ban.magazine})})|raw }}
+{% endblock magazine_unban_notification %}
 
 {% block reportlink %}
     {% if notification.report.entry is defined and notification.report.entry is not same as null %}
@@ -125,7 +144,7 @@
 {% endblock %}
 
 {% block report_created_notification %}
-    {{ component('user_inline', {user: notification.report.reporting}) }} {{ 'reported'|trans|lower }} {{ component('user_inline', {user: notification.report.reported}) }}<br />
+    {{ component('user_inline', {user: notification.report.reporting, showNewIcon: true}) }} {{ 'reported'|trans|lower }} {{ component('user_inline', {user: notification.report.reported, showNewIcon: true}) }}<br />
     {{ 'report_subject'|trans }}: {{ block('reportlink') }}<br />
     {% if app.user.admin or app.user.moderator or notification.report.magazine.userIsModerator(app.user) %}
         <a href="{{ path('magazine_panel_reports', { 'name': notification.report.magazine.name, 'status': 'pending' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
@@ -134,7 +153,7 @@
 
 {% block report_rejected_notification %}
     {{ 'own_report_rejected'|trans }} <br />
-    {{ 'reported_user'|trans }}: {{ component('user_inline', {user: notification.report.reported}) }}<br />
+    {{ 'reported_user'|trans }}: {{ component('user_inline', {user: notification.report.reported, showNewIcon: true}) }}<br />
     {{ 'report_subject'|trans }}: {{ block('reportlink') }}<br />
     {% if app.user.admin or app.user.moderator or notification.report.magazine.userIsModerator(app.user) %}
         <a href="{{ path('user_settings_reports', {'status': 'rejected' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
@@ -148,8 +167,8 @@
         {{ 'own_content_reported_accepted'|trans }}<br />
     {% else %}
         {{ 'report_accepted'|trans }}<br />
-        {{ 'reported_user'|trans }}: {{ component('user_inline', {user: notification.report.reported}) }}<br />
-        {{ 'reporting_user'|trans }}: {{ component('user_inline', {user: notification.report.reported}) }}<br />
+        {{ 'reported_user'|trans }}: {{ component('user_inline', {user: notification.report.reported, showNewIcon: true}) }}<br />
+        {{ 'reporting_user'|trans }}: {{ component('user_inline', {user: notification.report.reported, showNewIcon: true}) }}<br />
     {% endif %}
     {{ 'report_subject'|trans }}: {{ block('reportlink') }}<br />
     {% if app.user.admin or app.user.moderator or notification.report.magazine.userIsModerator(app.user) %}
@@ -159,7 +178,7 @@
 
 {% block new_signup %}
     {{ 'notification_title_new_signup'|trans }}<br />
-    {{ component('user_inline', { user: notification.newUser } ) }}
+    {{ component('user_inline', { user: notification.newUser, showNewIcon: true } ) }}
     {% if do_new_users_need_approval() and notification.newUser.applicationStatus is not same as enum('App\\Enums\\EApplicationStatus').Approved %}
         <div>
             <a href="{{ path('admin_signup_requests') }}?username={{ notification.newUser.username }}">

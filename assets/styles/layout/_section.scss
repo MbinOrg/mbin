@@ -5,6 +5,10 @@
   margin-bottom: .5rem;
   padding: 2rem 1rem;
 
+  &.section-sm {
+    padding: .5em;
+  }
+
   a:not(.notification-setting) {
     color: var(--kbin-section-title-link-color);
     overflow-wrap: anywhere;
@@ -33,7 +37,6 @@
 
   &--top {
     border-top: 0 !important;
-    margin-top: 0 !important;
   }
 
   &--muted {

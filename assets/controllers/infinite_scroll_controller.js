@@ -34,7 +34,7 @@ export default class extends Controller {
             window.infiniteScrollUrls.push(paginationElem.href);
 
             this.handleEntries(paginationElem.href);
-        } catch (e) {
+        } catch {
             this.loadingValue = false;
             this.showPagination();
         }
@@ -47,7 +47,7 @@ export default class extends Controller {
 
         try {
             response = await response.json();
-        } catch (e) {
+        } catch {
             this.showPagination();
             throw new Error('Invalid JSON response');
         }

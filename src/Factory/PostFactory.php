@@ -8,6 +8,7 @@ use App\DTO\PostDto;
 use App\DTO\PostResponseDto;
 use App\Entity\Post;
 use App\Entity\User;
+use App\Repository\BookmarkListRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class PostFactory
@@ -17,6 +18,7 @@ class PostFactory
         private readonly UserFactory $userFactory,
         private readonly MagazineFactory $magazineFactory,
         private readonly ImageFactory $imageFactory,
+        private readonly BookmarkListRepository $bookmarkListRepository,
     ) {
     }
 
@@ -44,6 +46,7 @@ class PostFactory
             $dto->lang,
             $dto->isAdult,
             $dto->isPinned,
+            $dto->isLocked,
             $dto->comments,
             $dto->uv,
             $dto->dv,
@@ -55,7 +58,9 @@ class PostFactory
             $dto->createdAt,
             $dto->editedAt,
             $dto->lastActive,
-            $dto->slug
+            $dto->slug,
+            bookmarks: $this->bookmarkListRepository->getBookmarksOfContentInterface($post),
+            isAuthorModeratorInMagazine: $dto->magazine->userIsModerator($dto->user),
         );
     }
 
@@ -70,6 +75,7 @@ class PostFactory
         $dto->lang = $post->lang;
         $dto->isAdult = $post->isAdult;
         $dto->isPinned = $post->sticky;
+        $dto->isLocked = $post->isLocked;
         $dto->slug = $post->slug;
         $dto->comments = $post->commentCount;
         $dto->uv = $post->countUpVotes();

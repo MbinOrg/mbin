@@ -41,7 +41,7 @@ class PostMagazinesUpdateCommand extends Command
 
     private function handleMagazine(Post $post, OutputInterface $output): void
     {
-        $tags = $this->tagLinkRepository->getTagsOfPost($post);
+        $tags = $this->tagLinkRepository->getTagsOfContent($post);
 
         $output->writeln((string) $post->getId());
         foreach ($tags as $tag) {

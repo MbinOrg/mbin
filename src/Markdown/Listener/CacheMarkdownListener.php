@@ -11,6 +11,10 @@ namespace App\Markdown\Listener;
 use App\Markdown\Event\BuildCacheContext;
 use App\Markdown\Event\ConvertMarkdown;
 use App\Repository\ApActivityRepository;
+use App\Repository\MagazineRepository;
+use App\Repository\UserRepository;
+use App\Service\MentionManager;
+use App\Utils\RegPatterns;
 use App\Utils\UrlUtils;
 use League\CommonMark\Output\RenderedContentInterface;
 use Psr\Cache\CacheException;
@@ -35,6 +39,9 @@ final class CacheMarkdownListener implements EventSubscriberInterface
         private readonly RequestStack $requestStack,
         private readonly LoggerInterface $logger,
         private readonly ApActivityRepository $activityRepository,
+        private readonly MentionManager $mentionManager,
+        private readonly UserRepository $userRepository,
+        private readonly MagazineRepository $magazineRepository,
     ) {
     }
 
@@ -51,10 +58,14 @@ final class CacheMarkdownListener implements EventSubscriberInterface
     public function preConvertMarkdown(ConvertMarkdown $event): void
     {
         $request = $this->requestStack->getCurrentRequest();
+        if (null === $request) {
+            $this->logger->debug('[ConvertMarkdown] request is null]');
+        }
         $cacheEvent = new BuildCacheContext($event, $request);
         $this->dispatcher->dispatch($cacheEvent);
 
-        $item = $this->pool->getItem($cacheEvent->getCacheKey());
+        $key = $cacheEvent->getCacheKey();
+        $item = $this->pool->getItem($key);
 
         if ($item->isHit()) {
             $content = $item->get();
@@ -85,11 +96,16 @@ final class CacheMarkdownListener implements EventSubscriberInterface
 
         try {
             if (method_exists($item, 'tag')) {
-                $urls = array_map(fn ($item) => UrlUtils::getCacheKeyForMarkdownUrl($item), $this->getUrlsFromMarkdown($event->getMarkdown()));
+                $md = $event->getMarkdown();
+                $urls = array_map(fn ($item) => UrlUtils::getCacheKeyForMarkdownUrl($item), $this->getMissingUrlsFromMarkdown($md));
+                $mentions = array_map(fn ($item) => UrlUtils::getCacheKeyForMarkdownUserMention($item), $this->getMissingMentionsFromMarkdown($md));
+                $magazineMentions = array_map(fn ($item) => UrlUtils::getCacheKeyForMarkdownMagazineMention($item), $this->getMissingMagazineMentions($md));
 
-                $this->logger->debug('added tags {t} to markdown', ['t' => $urls]);
+                $tags = array_unique(array_merge($urls, $mentions, $magazineMentions));
 
-                $item->tag($urls);
+                $this->logger->debug('added tags {t} to markdown "{m}"', ['t' => join(', ', $tags), 'm' => $md]);
+
+                $item->tag($tags);
             }
         } catch (CacheException) {
         }
@@ -100,19 +116,65 @@ final class CacheMarkdownListener implements EventSubscriberInterface
     }
 
     /** @return string[] */
-    private function getUrlsFromMarkdown(string $markdown): array
+    private function getMissingUrlsFromMarkdown(string $markdown): array
     {
-        $words = preg_split('/[ \n]/', $markdown);
         $urls = [];
-        foreach ($words as $word) {
-            if (filter_var($word, FILTER_VALIDATE_URL)) {
-                $entity = $this->activityRepository->findByObjectId($word);
-                if (null === $entity) {
-                    $urls[] = $word;
-                }
+        foreach (UrlUtils::extractUrlsFromString($markdown) as $url) {
+            $entity = $this->activityRepository->findByObjectId($url);
+            if (null === $entity) {
+                $urls[] = $url;
             }
         }
 
         return $urls;
+    }
+
+    /** @return string[] */
+    private function getMissingMentionsFromMarkdown(string $markdown): array
+    {
+        $remoteMentions = $this->mentionManager->extract($markdown, MentionManager::REMOTE) ?? [];
+        $missingMentions = [];
+
+        foreach ($remoteMentions as $mention) {
+            if (null === $this->userRepository->findOneBy(['apId' => $mention])) {
+                $missingMentions[] = $mention;
+            }
+        }
+
+        return $missingMentions;
+    }
+
+    /** @return string[] */
+    private function getMissingMagazineMentions(string $markdown): array
+    {
+        // No-break space is causing issues with word splitting. So replace a no-break (0xc2 0xa0) by a normal space first.
+        $words = preg_split('/[ \n\[\]()]/', str_replace(\chr(194).\chr(160), '&nbsp;', $markdown));
+        $missingCommunityMentions = [];
+        foreach ($words as $word) {
+            $matches = null;
+            // Remove newline (\n), tab (\t), carriage return (\r), etc.
+            $word2 = preg_replace('/[[:cntrl:]]/', '', $word);
+            if (preg_match('/'.RegPatterns::COMMUNITY_REGEX.'/', $word2, $matches)) {
+                // Check if the required matched array keys exist
+                if (!isset($matches[1]) || !isset($matches[2])) {
+                    $this->logger->warning('Invalid community mention format: {word}', ['word' => $word2]);
+                    // Just skip and continue
+                    continue;
+                }
+
+                $apId = "$matches[1]@$matches[2]";
+                $this->logger->debug("searching for magazine '{m}', original word: '{w}', word without cntrl: '{w2}'", ['m' => $apId, 'w' => $word, 'w2' => $word2]);
+                try {
+                    $magazine = $this->magazineRepository->findOneBy(['apId' => $apId]);
+                    if (!$magazine) {
+                        $missingCommunityMentions[] = $apId;
+                    }
+                } catch (\Exception $e) {
+                    $this->logger->error('An error occurred while looking for magazine "{m}": {t} - {msg}', ['m' => $apId, 't' => \get_class($e), 'msg' => $e->getMessage()]);
+                }
+            }
+        }
+
+        return $missingCommunityMentions;
     }
 }

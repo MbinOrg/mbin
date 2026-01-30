@@ -167,9 +167,13 @@ table th a{
 
 table th,
 table td {
-  padding: 1.5rem 1rem;
+  padding: 0.5rem 0.25rem;
   position: relative;
   border: var(--kbin-section-border);
+
+  button.btn {
+    padding: .25rem;
+  }
 }
 
 table tbody tr {
@@ -190,6 +194,11 @@ table tbody tr:nth-of-type(even) {
 
 figure {
   margin: 0;
+}
+
+.options--top,
+.section--top {
+  margin-top: 0.5rem !important;
 }
 
 .rounded-edges {
@@ -365,6 +374,10 @@ figure {
   gap: .25rem;
 }
 
+.flex-item {
+  flex-grow: 1;
+}
+
 @include b.media-breakpoint-down(lg) {
   .flex.mobile {
     display: block;
@@ -497,5 +510,25 @@ details {
 .boost-link {
   &.active{
     color: var(--kbin-boosted-color);
+  }
+}
+
+.magazine-banner {
+  margin-top: .5rem;
+  text-align: center;
+
+  img.cover {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+  }
+}
+
+.rounded-edges {
+  .magazine-banner {
+    border-radius: var(--kbin-rounded-edges-radius);
+    img.cover {
+      border-radius: var(--kbin-rounded-edges-radius);
+    }
   }
 }

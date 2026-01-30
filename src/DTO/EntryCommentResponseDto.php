@@ -90,6 +90,11 @@ class EntryCommentResponseDto implements \JsonSerializable
     public int $childCount = 0;
     public ?bool $canAuthUserModerate = null;
 
+    /** @var string[]|null */
+    #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
+    public ?array $bookmarks = null;
+    public ?bool $isAuthorModeratorInMagazine = null;
+
     public static function create(
         ?int $id = null,
         ?UserSmallResponseDto $user = null,
@@ -113,6 +118,8 @@ class EntryCommentResponseDto implements \JsonSerializable
         ?\DateTime $lastActive = null,
         int $childCount = 0,
         ?bool $canAuthUserModerate = null,
+        ?array $bookmarks = null,
+        ?bool $isAuthorModeratorInMagazine = null,
     ): self {
         $dto = new EntryCommentResponseDto();
         $dto->commentId = $id;
@@ -137,6 +144,8 @@ class EntryCommentResponseDto implements \JsonSerializable
         $dto->lastActive = $lastActive;
         $dto->childCount = $childCount;
         $dto->canAuthUserModerate = $canAuthUserModerate;
+        $dto->bookmarks = $bookmarks;
+        $dto->isAuthorModeratorInMagazine = $isAuthorModeratorInMagazine;
 
         return $dto;
     }
@@ -188,6 +197,8 @@ class EntryCommentResponseDto implements \JsonSerializable
             'childCount' => $this->childCount,
             'children' => $this->children,
             'canAuthUserModerate' => $this->canAuthUserModerate,
+            'bookmarks' => $this->bookmarks,
+            'isAuthorModeratorInMagazine' => $this->isAuthorModeratorInMagazine,
         ]);
     }
 }

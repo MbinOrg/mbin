@@ -52,6 +52,10 @@
     position: relative;
     height: 100%;
 
+    @include b.media-breakpoint-down(lg) {
+      max-width: 100vw;
+    }
+
     & > menu {
       @include b.media-breakpoint-down(lg) {
         margin-right: .5rem;
@@ -305,7 +309,8 @@
       color: var(--kbin-meta-text-color);
 
       span {
-        padding-left: 1rem;
+        padding-left: .5rem;
+        width: max-content;
       }
 
       a {
@@ -318,6 +323,7 @@
   .head-nav {
 
     @include b.media-breakpoint-down(lg) {
+      overflow: hidden;
 
       &__menu {
         display: none;
@@ -328,6 +334,10 @@
 
       li a.active {
         background: var(--kbin-header-link-active-bg);
+      }
+
+      &__mobile-menu {
+        display: none;
       }
     }
   }

@@ -17,7 +17,6 @@ use App\Entity\HashtagLink;
 use App\Entity\MagazineBlock;
 use App\Entity\MagazineSubscription;
 use App\Entity\Moderator;
-use App\Entity\User;
 use App\Entity\UserBlock;
 use App\Entity\UserFollow;
 use App\Service\SettingsManager;
@@ -284,13 +283,9 @@ class EntryCommentRepository extends ServiceEntityRepository
             ->select('PARTIAL c.{id}')
             ->addSelect('u')
             ->addSelect('e')
-            ->addSelect('v')
             ->addSelect('em')
-            ->addSelect('f')
             ->join('c.user', 'u')
             ->join('c.entry', 'e')
-            ->join('c.votes', 'v')
-            ->leftJoin('c.favourites', 'f')
             ->join('e.magazine', 'em')
             ->where('c IN (?1)')
             ->setParameter(1, $comments)
@@ -302,49 +297,12 @@ class EntryCommentRepository extends ServiceEntityRepository
             ->addSelect('cc')
             ->addSelect('ccu')
             ->addSelect('ccua')
-            ->addSelect('ccv')
-            ->addSelect('ccf')
             ->leftJoin('c.children', 'cc')
             ->join('cc.user', 'ccu')
             ->leftJoin('ccu.avatar', 'ccua')
-            ->leftJoin('cc.votes', 'ccv')
-            ->leftJoin('cc.favourites', 'ccf')
             ->where('c IN (?1)')
             ->setParameter(1, $comments)
             ->getQuery()
             ->execute();
-    }
-
-    public function hydrateParents(EntryComment ...$comments): void
-    {
-        $this->createQueryBuilder('c')
-            ->select('PARTIAL c.{id}')
-            ->addSelect('cp')
-            ->addSelect('cpu')
-            ->addSelect('cpe')
-            ->leftJoin('c.parent', 'cp')
-            ->leftJoin('cp.user', 'cpu')
-            ->leftJoin('cp.entry', 'cpe')
-            ->where('c IN (?1)')
-            ->setParameter(1, $comments)
-            ->getQuery()
-            ->execute();
-    }
-
-    public function findToDelete(User $user, int $limit): array
-    {
-        $query = $this->createQueryBuilder('c')
-            ->where('c.visibility != :visibility')
-            ->andWhere('c.user = :user')
-            ->setParameters(['visibility' => VisibilityInterface::VISIBILITY_SOFT_DELETED, 'user' => $user])
-            ->orderBy('c.id', 'DESC');
-
-        if ($limit) {
-            $query->setMaxResults($limit);
-        }
-
-        return $query
-            ->getQuery()
-            ->getResult();
     }
 }

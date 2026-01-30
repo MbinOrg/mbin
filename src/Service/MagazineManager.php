@@ -82,6 +82,10 @@ class MagazineManager
                 ['name' => $magazine->name],
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
+            // default new local magazines to be discoverable
+            $magazine->apDiscoverable = $dto->discoverable ?? true;
+            // default new local magazines to be indexable
+            $magazine->apIndexable = $dto->indexable ?? true;
         }
 
         $this->entityManager->persist($magazine);
@@ -143,6 +147,13 @@ class MagazineManager
         $magazine->rules = $dto->rules;
         $magazine->isAdult = $dto->isAdult;
         $magazine->postingRestrictedToMods = $dto->isPostingRestrictedToMods;
+
+        if (null !== $dto->discoverable) {
+            $magazine->apDiscoverable = $dto->discoverable;
+        }
+        if (null !== $dto->indexable) {
+            $magazine->apIndexable = $dto->indexable;
+        }
 
         $this->entityManager->flush();
 
@@ -281,6 +292,10 @@ class MagazineManager
             $magazine->icon = $this->imageRepository->find($dto->icon->id);
         }
 
+        if ($dto->banner && $magazine->banner?->getId() !== $dto->banner->id) {
+            $magazine->banner = $this->imageRepository->find($dto->banner->id);
+        }
+
         // custom css
         $customCss = $dto->customCss;
 
@@ -319,6 +334,20 @@ class MagazineManager
         $this->entityManager->persist($magazine);
         $this->entityManager->flush();
 
+        $this->bus->dispatch(new DeleteImageMessage($image));
+    }
+
+    public function detachBanner(Magazine $magazine): void
+    {
+        if (!$magazine->banner) {
+            return;
+        }
+
+        $image = $magazine->banner->getId();
+
+        $magazine->banner = null;
+        $this->entityManager->persist($magazine);
+        $this->entityManager->flush();
         $this->bus->dispatch(new DeleteImageMessage($image));
     }
 

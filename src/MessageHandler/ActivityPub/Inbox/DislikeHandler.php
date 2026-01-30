@@ -12,8 +12,10 @@ use App\Entity\PostComment;
 use App\Entity\User;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\DislikeMessage;
+use App\Message\ActivityPub\Outbox\GenericAnnounceMessage;
 use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
+use App\Repository\ActivityRepository;
 use App\Service\ActivityPubManager;
 use App\Service\SettingsManager;
 use App\Service\VoteManager;
@@ -35,6 +37,7 @@ class DislikeHandler extends MbinMessageHandler
         private readonly VoteManager $voteManager,
         private readonly LoggerInterface $logger,
         private readonly SettingsManager $settingsManager,
+        private readonly ActivityRepository $activityRepository,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
@@ -47,7 +50,7 @@ class DislikeHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof DislikeMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("DislikeHandler called, but is wasn\'t a DislikeMessage. Type: ".\get_class($message));
         }
         if (!isset($message->payload['type'])) {
             return;
@@ -75,6 +78,11 @@ class DislikeHandler extends MbinMessageHandler
             if (!empty($actor) && !empty($entity)) {
                 if ($actor instanceof User && ($entity instanceof Entry || $entity instanceof EntryComment || $entity instanceof Post || $entity instanceof PostComment)) {
                     $this->voteManager->vote(VotableInterface::VOTE_DOWN, $entity, $actor);
+                    if (null === $entity->magazine->apId && null !== $actor->apId) {
+                        // local magazine, remote user
+                        $dislikeActivity = $this->activityRepository->createForRemoteActivity($message->payload);
+                        $this->bus->dispatch(new GenericAnnounceMessage($entity->magazine->getId(), null, $actor->apInboxUrl, $dislikeActivity->uuid->toString(), null));
+                    }
                 }
             }
         } elseif ('Undo' === $message->payload['type']) {
@@ -88,6 +96,11 @@ class DislikeHandler extends MbinMessageHandler
                 // Check if actor and entity aren't empty
                 if ($actor instanceof User && ($entity instanceof Entry || $entity instanceof EntryComment || $entity instanceof Post || $entity instanceof PostComment)) {
                     $this->voteManager->removeVote($entity, $actor);
+                    if (null === $entity->magazine->apId && null !== $actor->apId) {
+                        // local magazine, remote user
+                        $dislikeActivity = $this->activityRepository->createForRemoteActivity($message->payload);
+                        $this->bus->dispatch(new GenericAnnounceMessage($entity->magazine->getId(), null, $actor->apInboxUrl, $dislikeActivity->uuid->toString(), null));
+                    }
                 }
             }
         }

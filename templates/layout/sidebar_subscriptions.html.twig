@@ -29,9 +29,9 @@
                                 and app.request.cookies.get(KBIN_SUBSCRIPTIONS_SIDEBARS_SAME_SIDE) is same as V_TRUE
                             or app.request.cookies.get(KBIN_GENERAL_SIDEBAR_POSITION) is not same as V_LEFT
                                 and app.request.cookies.get(KBIN_SUBSCRIPTIONS_SIDEBARS_SAME_SIDE) is not same as V_TRUE %}
-                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                            <i class="fa-solid fa-arrow-right move-subscription-right" aria-hidden="true"></i>
                         {% else %}
-                            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                            <i class="fa-solid fa-arrow-left move-subscription-left" aria-hidden="true"></i>
                         {% endif %}
                     </a>
                 {% endif %}
@@ -41,14 +41,14 @@
                         aria-label="{{ 'subscription_sidebar_pop_out_left'|trans }}"
                         data-action="subs-panel#popLeft"
                     >
-                       <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                       <i class="fa-solid fa-arrow-left move-subscription-left" aria-hidden="true"></i>
                     </a>
                     <a href="#"
                         title="{{ 'subscription_sidebar_pop_out_right'|trans }}"
                         aria-label="{{ 'subscription_sidebar_pop_out_right'|trans }}"
                         data-action="subs-panel#popRight"
                     >
-                        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                        <i class="fa-solid fa-arrow-right move-subscription-right" aria-hidden="true"></i>
                     </a>
                 {% endif %}
             </span>

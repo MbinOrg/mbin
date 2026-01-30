@@ -6,6 +6,8 @@ namespace App\Form;
 
 use App\DTO\UserSettingsDto;
 use App\Entity\User;
+use App\Enums\EDirectMessageSettings;
+use App\Enums\EFrontContentOptions;
 use App\Form\DataTransformer\FeaturedMagazinesBarTransformer;
 use App\PageView\EntryCommentPageView;
 use App\PageView\EntryPageView;
@@ -38,6 +40,16 @@ class UserSettingsType extends AbstractType
         foreach (EntryCommentPageView::SORT_OPTIONS as $option) {
             $commentDefaultSortChoices[$this->translator->trans($option)] = $option;
         }
+        $directMessageSettingChoices = [];
+        foreach (EDirectMessageSettings::getValues() as $option) {
+            $directMessageSettingChoices[$this->translator->trans($option)] = $option;
+        }
+        $frontDefaultContentChoices = [
+            $this->translator->trans('default_content_default') => null,
+        ];
+        foreach (EFrontContentOptions::OPTIONS as $option) {
+            $frontDefaultContentChoices[$this->translator->trans('default_content_'.$option)] = $option;
+        }
         $builder
             ->add(
                 'hideAdult',
@@ -58,9 +70,25 @@ class UserSettingsType extends AbstractType
                 'autocomplete' => true,
                 'choices' => $frontDefaultSortChoices,
             ])
+            ->add('frontDefaultContent', ChoiceType::class, [
+                'autocomplete' => true,
+                'choices' => $frontDefaultContentChoices,
+            ])
             ->add('commentDefaultSort', ChoiceType::class, [
                 'autocomplete' => true,
                 'choices' => $commentDefaultSortChoices,
+            ])
+            ->add('directMessageSetting', ChoiceType::class, [
+                'autocomplete' => true,
+                'choices' => $directMessageSettingChoices,
+            ])
+            ->add('discoverable', CheckboxType::class, [
+                'required' => false,
+                'help' => 'user_discoverable_help',
+            ])
+            ->add('indexable', CheckboxType::class, [
+                'required' => false,
+                'help' => 'user_indexable_by_search_engines_help',
             ])
             ->add('featuredMagazines', TextareaType::class, ['required' => false])
             ->add('preferredLanguages', LanguageType::class, [
@@ -132,7 +160,7 @@ class UserSettingsType extends AbstractType
 
         /** @var User $user */
         $user = $this->security->getUser();
-        if ($user->isAdmin()) {
+        if ($user->isAdmin() or $user->isModerator()) {
             $builder->add('notifyOnUserSignup', CheckboxType::class, ['required' => false]);
         }
 

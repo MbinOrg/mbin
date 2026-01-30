@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\Controller\Api\Bookmark;
 
 use App\Controller\Api\BaseApi;
+use App\DTO\BookmarksDto;
 use App\Schema\Errors\NotFoundErrorSchema;
 use App\Schema\Errors\TooManyRequestsErrorSchema;
 use App\Schema\Errors\UnauthorizedErrorSchema;
 use App\Service\BookmarkManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -27,7 +28,7 @@ class BookmarkApiController extends BaseApi
             new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
             new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
         ],
-        content: null
+        content: new Model(type: BookmarksDto::class)
     )]
     #[OA\Response(
         response: 401,
@@ -61,9 +62,9 @@ class BookmarkApiController extends BaseApi
         in: 'path',
         schema: new OA\Schema(type: 'string', enum: ['entry', 'entry_comment', 'post', 'post_comment'])
     )]
-    #[OA\Tag(name: 'bookmark:list')]
-    #[Security(name: 'oauth2', scopes: ['user:bookmark:add'])]
-    #[IsGranted('ROLE_OAUTH2_USER:BOOKMARK:ADD')]
+    #[OA\Tag(name: 'bookmark')]
+    #[Security(name: 'oauth2', scopes: ['bookmark:add'])]
+    #[IsGranted('ROLE_OAUTH2_BOOKMARK:ADD')]
     public function subjectBookmarkStandard(int $subject_id, string $subject_type, RateLimiterFactory $apiUpdateLimiter): JsonResponse
     {
         $user = $this->getUserOrThrow();
@@ -75,7 +76,10 @@ class BookmarkApiController extends BaseApi
         }
         $this->bookmarkManager->addBookmarkToDefaultList($user, $subject);
 
-        return new JsonResponse(status: 200, headers: $headers);
+        $dto = new BookmarksDto();
+        $dto->bookmarks = $this->bookmarkListRepository->getBookmarksOfContentInterface($subject);
+
+        return new JsonResponse($dto, status: 200, headers: $headers);
     }
 
     #[OA\Response(
@@ -86,7 +90,7 @@ class BookmarkApiController extends BaseApi
             new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
             new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
         ],
-        content: null
+        content: new Model(type: BookmarksDto::class)
     )]
     #[OA\Response(
         response: 401,
@@ -120,9 +124,9 @@ class BookmarkApiController extends BaseApi
         in: 'path',
         schema: new OA\Schema(type: 'string', enum: ['entry', 'entry_comment', 'post', 'post_comment'])
     )]
-    #[OA\Tag(name: 'bookmark:list')]
-    #[Security(name: 'oauth2', scopes: ['user:bookmark:add'])]
-    #[IsGranted('ROLE_OAUTH2_USER:BOOKMARK:ADD')]
+    #[OA\Tag(name: 'bookmark')]
+    #[Security(name: 'oauth2', scopes: ['bookmark:add'])]
+    #[IsGranted('ROLE_OAUTH2_BOOKMARK:ADD')]
     public function subjectBookmarkToList(string $list_name, int $subject_id, string $subject_type, RateLimiterFactory $apiUpdateLimiter): JsonResponse
     {
         $user = $this->getUserOrThrow();
@@ -138,7 +142,10 @@ class BookmarkApiController extends BaseApi
         }
         $this->bookmarkManager->addBookmark($user, $list, $subject);
 
-        return new JsonResponse(status: 200, headers: $headers);
+        $dto = new BookmarksDto();
+        $dto->bookmarks = $this->bookmarkListRepository->getBookmarksOfContentInterface($subject);
+
+        return new JsonResponse($dto, status: 200, headers: $headers);
     }
 
     #[OA\Response(
@@ -149,7 +156,7 @@ class BookmarkApiController extends BaseApi
             new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
             new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
         ],
-        content: null
+        content: new Model(type: BookmarksDto::class)
     )]
     #[OA\Response(
         response: 401,
@@ -183,9 +190,9 @@ class BookmarkApiController extends BaseApi
         in: 'path',
         schema: new OA\Schema(type: 'string', enum: ['entry', 'entry_comment', 'post', 'post_comment'])
     )]
-    #[OA\Tag(name: 'bookmark:list')]
-    #[Security(name: 'oauth2', scopes: ['user:bookmark:remove'])]
-    #[IsGranted('ROLE_OAUTH2_USER:BOOKMARK:REMOVE')]
+    #[OA\Tag(name: 'bookmark')]
+    #[Security(name: 'oauth2', scopes: ['bookmark:remove'])]
+    #[IsGranted('ROLE_OAUTH2_BOOKMARK:REMOVE')]
     public function subjectRemoveBookmarkFromList(string $list_name, int $subject_id, string $subject_type, RateLimiterFactory $apiUpdateLimiter): JsonResponse
     {
         $user = $this->getUserOrThrow();
@@ -201,7 +208,10 @@ class BookmarkApiController extends BaseApi
         }
         $this->bookmarkRepository->removeBookmarkFromList($user, $list, $subject);
 
-        return new JsonResponse(status: 200, headers: $headers);
+        $dto = new BookmarksDto();
+        $dto->bookmarks = $this->bookmarkListRepository->getBookmarksOfContentInterface($subject);
+
+        return new JsonResponse($dto, status: 200, headers: $headers);
     }
 
     #[OA\Response(
@@ -212,7 +222,7 @@ class BookmarkApiController extends BaseApi
             new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
             new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
         ],
-        content: null
+        content: new Model(type: BookmarksDto::class)
     )]
     #[OA\Response(
         response: 401,
@@ -246,9 +256,9 @@ class BookmarkApiController extends BaseApi
         in: 'path',
         schema: new OA\Schema(type: 'string', enum: ['entry', 'entry_comment', 'post', 'post_comment'])
     )]
-    #[OA\Tag(name: 'bookmark:list')]
-    #[Security(name: 'oauth2', scopes: ['user:bookmark:remove'])]
-    #[IsGranted('ROLE_OAUTH2_USER:BOOKMARK:REMOVE')]
+    #[OA\Tag(name: 'bookmark')]
+    #[Security(name: 'oauth2', scopes: ['bookmark:remove'])]
+    #[IsGranted('ROLE_OAUTH2_BOOKMARK:REMOVE')]
     public function subjectRemoveBookmarks(int $subject_id, string $subject_type, RateLimiterFactory $apiUpdateLimiter): JsonResponse
     {
         $user = $this->getUserOrThrow();
@@ -260,6 +270,9 @@ class BookmarkApiController extends BaseApi
         }
         $this->bookmarkRepository->removeAllBookmarksForContent($user, $subject);
 
-        return new JsonResponse(status: 200, headers: $headers);
+        $dto = new BookmarksDto();
+        $dto->bookmarks = $this->bookmarkListRepository->getBookmarksOfContentInterface($subject);
+
+        return new JsonResponse($dto, status: 200, headers: $headers);
     }
 }

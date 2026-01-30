@@ -28,7 +28,7 @@ class UserDto implements UserDtoInterface
     public ?string $email = null;
     #[Assert\Length(min: 6, max: 4096)]
     public ?string $plainPassword = null; // @todo move password and agreeTerms to RegisterDto
-    #[Assert\Length(min: 2, max: self::MAX_ABOUT_LENGTH)]
+    #[Assert\Length(min: 2, max: self::MAX_ABOUT_LENGTH, countUnit: Assert\Length::COUNT_GRAPHEMES)]
     public ?string $about = null;
     public ?\DateTimeImmutable $createdAt = null;
     public ?string $fields = null;
@@ -50,6 +50,9 @@ class UserDto implements UserDtoInterface
     public ?string $serverSoftware = null;
     public ?string $serverSoftwareVersion = null;
     public ?string $applicationText = null;
+    public ?int $reputationPoints = null;
+    public ?bool $discoverable = null;
+    public ?bool $indexable = null;
 
     #[Assert\Callback]
     public function validate(
@@ -93,6 +96,9 @@ class UserDto implements UserDtoInterface
         ?bool $isAdmin = null,
         ?bool $isGlobalModerator = null,
         ?string $applicationText = null,
+        ?int $reputationPoints = null,
+        ?bool $discoverable = null,
+        ?bool $indexable = null,
     ): self {
         $dto = new UserDto();
         $dto->id = $id;
@@ -110,6 +116,9 @@ class UserDto implements UserDtoInterface
         $dto->isAdmin = $isAdmin;
         $dto->isGlobalModerator = $isGlobalModerator;
         $dto->applicationText = $applicationText;
+        $dto->reputationPoints = $reputationPoints;
+        $dto->discoverable = $discoverable;
+        $dto->indexable = $indexable;
 
         return $dto;
     }

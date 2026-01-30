@@ -1,0 +1,43 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://kbin.test/contexts"
+    ],
+    "id": "SCRUBBED_ID",
+    "type": "Update",
+    "actor": "https://kbin.test/u/owner",
+    "published": "SCRUBBED_DATE",
+    "to": [
+        "https://www.w3.org/ns/activitystreams#Public"
+    ],
+    "cc": [
+        "https://kbin.test/m/test/followers"
+    ],
+    "object": {
+        "type": "Group",
+        "id": "SCRUBBED_ID",
+        "name": "test",
+        "preferredUsername": "test",
+        "inbox": "https://kbin.test/m/test/inbox",
+        "outbox": "https://kbin.test/m/test/outbox",
+        "followers": "https://kbin.test/m/test/followers",
+        "featured": "https://kbin.test/m/test/pinned",
+        "url": "https://kbin.test/m/test",
+        "publicKey": "SCRUBBED_KEY",
+        "summary": "",
+        "source": {
+            "content": "",
+            "mediaType": "text/markdown"
+        },
+        "sensitive": false,
+        "attributedTo": "https://kbin.test/m/test/moderators",
+        "postingRestrictedToMods": false,
+        "discoverable": true,
+        "indexable": true,
+        "endpoints": {
+            "sharedInbox": "https://kbin.test/f/inbox"
+        },
+        "published": "SCRUBBED_DATE",
+        "updated": "SCRUBBED_DATE"
+    }
+}

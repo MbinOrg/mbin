@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Traits;
 
+use App\Service\ActivityPub\KeysGenerator;
 use Doctrine\ORM\Mapping\Column;
 
 trait ActivityPubActorTrait
@@ -42,6 +43,9 @@ trait ActivityPubActorTrait
     public ?bool $apDiscoverable = null;
 
     #[Column(type: 'boolean', nullable: true)]
+    public ?bool $apIndexable = null;
+
+    #[Column(type: 'boolean', nullable: true)]
     public ?bool $apManuallyApprovesFollowers = null;
 
     #[Column(type: 'text', nullable: true)]
@@ -49,6 +53,12 @@ trait ActivityPubActorTrait
 
     #[Column(type: 'text', nullable: true)]
     public ?string $publicKey = null;
+
+    #[Column(type: 'text', nullable: true)]
+    public ?string $oldPrivateKey = null;
+
+    #[Column(type: 'text', nullable: true)]
+    public ?string $oldPublicKey = null;
 
     #[Column(type: 'datetimetz', nullable: true)]
     public ?\DateTime $apFetchedAt = null;
@@ -59,6 +69,9 @@ trait ActivityPubActorTrait
     #[Column(type: 'datetimetz', nullable: true)]
     public ?\DateTime $apTimeoutAt = null;
 
+    #[Column(type: 'datetimetz', nullable: true)]
+    public ?\DateTime $lastKeyRotationDate = null;
+
     public function getPrivateKey(): ?string
     {
         return $this->privateKey;
@@ -67,5 +80,26 @@ trait ActivityPubActorTrait
     public function getPublicKey(): ?string
     {
         return $this->publicKey;
+    }
+
+    public function rotatePrivateKey(bool $revert = false): void
+    {
+        if (!$revert) {
+            $this->oldPrivateKey = $this->privateKey;
+            $this->oldPublicKey = $this->publicKey;
+            // set new private and public key
+            KeysGenerator::generate($this);
+        } else {
+            if (null === $this->oldPrivateKey || null === $this->oldPublicKey) {
+                throw new \InvalidArgumentException('you cannot revert if there is no old key');
+            }
+            $newerPrivateKey = $this->privateKey;
+            $newerPublicKey = $this->publicKey;
+            $this->privateKey = $this->oldPrivateKey;
+            $this->publicKey = $this->oldPublicKey;
+            $this->oldPrivateKey = $newerPrivateKey;
+            $this->oldPublicKey = $newerPublicKey;
+        }
+        $this->lastKeyRotationDate = new \DateTime();
     }
 }

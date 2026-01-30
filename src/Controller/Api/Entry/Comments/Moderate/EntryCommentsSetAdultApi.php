@@ -86,7 +86,7 @@ class EntryCommentsSetAdultApi extends EntriesBaseApi
         $manager->flush();
 
         return new JsonResponse(
-            $this->serializeComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfEntryComment($comment)),
+            $this->serializeEntryComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfContent($comment)),
             headers: $headers
         );
     }

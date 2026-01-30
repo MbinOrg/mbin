@@ -22,6 +22,7 @@ class PostResponseDto implements \JsonSerializable
     public ?string $lang = null;
     public bool $isAdult = false;
     public bool $isPinned = false;
+    public bool $isLocked = false;
     public ?string $slug = null;
     public int $comments = 0;
     public ?int $uv = 0;
@@ -40,6 +41,14 @@ class PostResponseDto implements \JsonSerializable
     public ?bool $canAuthUserModerate = null;
     public ?ENotificationStatus $notificationStatus = null;
 
+    /** @var string[]|null */
+    #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
+    public ?array $bookmarks = null;
+    public ?bool $isAuthorModeratorInMagazine = null;
+
+    /**
+     * @param string[] $bookmarks
+     */
     public static function create(
         int $id,
         UserSmallResponseDto $user,
@@ -49,6 +58,7 @@ class PostResponseDto implements \JsonSerializable
         ?string $lang = null,
         ?bool $isAdult = null,
         bool $isPinned = false,
+        bool $isLocked = false,
         ?int $comments = null,
         ?int $uv = null,
         ?int $dv = null,
@@ -62,6 +72,8 @@ class PostResponseDto implements \JsonSerializable
         ?\DateTime $lastActive = null,
         ?string $slug = null,
         ?bool $canAuthUserModerate = null,
+        ?array $bookmarks = null,
+        ?bool $isAuthorModeratorInMagazine = null,
     ): self {
         $dto = new PostResponseDto();
         $dto->postId = $id;
@@ -72,6 +84,7 @@ class PostResponseDto implements \JsonSerializable
         $dto->lang = $lang;
         $dto->isAdult = $isAdult;
         $dto->isPinned = $isPinned;
+        $dto->isLocked = $isLocked;
         $dto->comments = $comments;
         $dto->uv = $uv;
         $dto->dv = $dv;
@@ -85,6 +98,8 @@ class PostResponseDto implements \JsonSerializable
         $dto->lastActive = $lastActive;
         $dto->slug = $slug;
         $dto->canAuthUserModerate = $canAuthUserModerate;
+        $dto->bookmarks = $bookmarks;
+        $dto->isAuthorModeratorInMagazine = $isAuthorModeratorInMagazine;
 
         return $dto;
     }
@@ -115,6 +130,7 @@ class PostResponseDto implements \JsonSerializable
             'lang' => $this->lang,
             'isAdult' => $this->isAdult,
             'isPinned' => $this->isPinned,
+            'isLocked' => $this->isLocked,
             'comments' => $this->comments,
             'uv' => $this->uv,
             'dv' => $this->dv,
@@ -131,6 +147,8 @@ class PostResponseDto implements \JsonSerializable
             'slug' => $this->slug,
             'canAuthUserModerate' => $this->canAuthUserModerate,
             'notificationStatus' => $this->notificationStatus,
+            'bookmarks' => $this->bookmarks,
+            'isAuthorModeratorInMagazine' => $this->isAuthorModeratorInMagazine,
         ]);
     }
 }

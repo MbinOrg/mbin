@@ -38,14 +38,17 @@ use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPub\ApObjectExtractor;
 use App\Service\ActivityPub\Webfinger\WebFinger;
 use App\Service\ActivityPub\Webfinger\WebFingerFactory;
+use App\Utils\UrlUtils;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use League\HTMLToMarkdown\HtmlConverter;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Exception\CacheException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class ActivityPubManager
 {
@@ -59,7 +62,7 @@ class ActivityPubManager
         private readonly MagazineRepository $magazineRepository,
         private readonly ApHttpClientInterface $apHttpClient,
         private readonly ImageRepository $imageRepository,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
         private readonly EntityManagerInterface $entityManager,
         private readonly PersonFactory $personFactory,
         private readonly SettingsManager $settingsManager,
@@ -73,6 +76,7 @@ class ActivityPubManager
         private readonly EntryManager $entryManager,
         private readonly RemoteInstanceManager $remoteInstanceManager,
         private readonly InstanceRepository $instanceRepository,
+        private readonly CacheInterface $cache,
     ) {
     }
 
@@ -136,7 +140,7 @@ class ActivityPubManager
             return null;
         }
 
-        $this->logger->debug('[ActivityPubManager::findActorOrCreate] Cearching for actor at "{handle}"', ['handle' => $actorUrlOrHandle]);
+        $this->logger->debug('[ActivityPubManager::findActorOrCreate] Searching for actor at "{handle}"', ['handle' => $actorUrlOrHandle]);
         if (str_contains($actorUrlOrHandle, $this->settingsManager->get('KBIN_DOMAIN').'/m/')) {
             $magazine = str_replace('https://'.$this->settingsManager->get('KBIN_DOMAIN').'/m/', '', $actorUrlOrHandle);
             $this->logger->debug('[ActivityPubManager::findActorOrCreate] Found magazine: "{magName}"', ['magName' => $magazine]);
@@ -147,14 +151,18 @@ class ActivityPubManager
         $actorUrl = $actorUrlOrHandle;
         if (false === filter_var($actorUrl, FILTER_VALIDATE_URL)) {
             if (!substr_count(ltrim($actorUrl, '@'), '@')) {
+                // local user. Maybe an @ at the beginning, but not in the middle
                 $user = $this->userRepository->findOneBy(['username' => ltrim($actorUrl, '@')]);
-                if ($user instanceof User) {
-                    if ($user->apId && !$user->isDeleted && !$user->isSoftDeleted() && !$user->isTrashed() && (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
-                        $this->dispatchUpdateActor($user->apProfileId);
-                    }
-
-                    return $user;
+            } else {
+                // remote user. Maybe @user@domain, maybe only user@domain -> trim left and look in apId
+                $user = $this->userRepository->findOneBy(['apId' => ltrim($actorUrl, '@')]);
+            }
+            if ($user instanceof User) {
+                if ($user->apId && !$user->isDeleted && !$user->isSoftDeleted() && !$user->isTrashed() && (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
+                    $this->dispatchUpdateActor($user->apProfileId);
                 }
+
+                return $user;
             }
 
             $actorUrl = $this->webfinger($actorUrl)->getProfileId();
@@ -178,6 +186,10 @@ class ActivityPubManager
         }
 
         $user = $this->userRepository->findOneBy(['apProfileId' => $actorUrl]);
+        if (!$user) {
+            // also try the public URL if it was not found by the profile id
+            $user = $this->userRepository->findOneBy(['apPublicUrl' => $actorUrl]);
+        }
         if ($user instanceof User) {
             $this->logger->debug('[ActivityPubManager::findActorOrCreate] Found remote user for url: "{url}" in db', ['url' => $actorUrl]);
             if ($user->apId && !$user->isDeleted && !$user->isSoftDeleted() && !$user->isTrashed() && (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
@@ -188,6 +200,10 @@ class ActivityPubManager
         }
 
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
+        if (!$magazine) {
+            // also try the public URL if it was not found by the profile id
+            $magazine = $this->magazineRepository->findOneBy(['apPublicUrl' => $actorUrl]);
+        }
         if ($magazine instanceof Magazine) {
             $this->logger->debug('[ActivityPubManager::findActorOrCreate] Found remote user for url: "{url}" in db', ['url' => $actorUrl]);
             if (!$magazine->isTrashed() && !$magazine->isSoftDeleted() && (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
@@ -317,12 +333,20 @@ class ActivityPubManager
             throw new InstanceBannedException();
         }
         $webfinger = $this->webfinger($actorUrl);
+        $dto = $this->userFactory->createDtoFromAp($actorUrl, $webfinger->getHandle());
         $this->userManager->create(
-            $this->userFactory->createDtoFromAp($actorUrl, $webfinger->getHandle()),
+            $dto,
             false,
             false,
             preApprove: true,
         );
+
+        if (method_exists($this->cache, 'invalidateTags')) {
+            // clear markdown renders that are tagged with the handle of the user
+            $tag = UrlUtils::getCacheKeyForMarkdownUserMention($dto->apId);
+            $this->cache->invalidateTags([$tag]);
+            $this->logger->debug('cleared cached items with tag {t}', ['t' => $tag]);
+        }
 
         return $this->updateUser($actorUrl);
     }
@@ -363,7 +387,8 @@ class ActivityPubManager
             $user->apFollowersUrl = $actor['followers'] ?? null;
             $user->apAttributedToUrl = $actor['attributedTo'] ?? null;
             $user->apPreferredUsername = $actor['preferredUsername'] ?? null;
-            $user->apDiscoverable = $actor['discoverable'] ?? true;
+            $user->apDiscoverable = $actor['discoverable'] ?? null;
+            $user->apIndexable = $actor['indexable'] ?? null;
             $user->apManuallyApprovesFollowers = $actor['manuallyApprovesFollowers'] ?? false;
             $user->apPublicUrl = $actor['url'] ?? $actorUrl;
             $user->apDeletedAt = null;
@@ -397,6 +422,9 @@ class ActivityPubManager
                     $this->bus->dispatch(new DeleteImageMessage($user->avatar->getId()));
                 }
                 $user->avatar = $newImage;
+            } elseif (null !== $user->avatar) {
+                $this->bus->dispatch(new DeleteImageMessage($user->avatar->getId()));
+                $user->avatar = null;
             }
 
             // Only update cover if image is set
@@ -409,6 +437,19 @@ class ActivityPubManager
                     $this->bus->dispatch(new DeleteImageMessage($user->cover->getId()));
                 }
                 $user->cover = $newImage;
+            } elseif (null !== $user->cover) {
+                $this->bus->dispatch(new DeleteImageMessage($user->cover->getId()));
+                $user->cover = null;
+            }
+
+            if (isset($actor['publicKey']['publicKeyPem']) && $user->publicKey !== $actor['publicKey']['publicKeyPem']) {
+                if (null !== $user->publicKey) {
+                    // only log the message if there already was a public key. When initially created the actors do not get one
+                    $this->logger->info('The public key of user "{u}" has changed', ['u' => $user->username]);
+                    $user->lastKeyRotationDate = new \DateTime();
+                }
+                $user->oldPublicKey = $user->publicKey;
+                $user->publicKey = $actor['publicKey']['publicKeyPem'];
             }
 
             if (null !== $user->apFollowersUrl) {
@@ -450,7 +491,7 @@ class ActivityPubManager
 
         if (\count($images)) {
             try {
-                $imageObject = $images[0];
+                $imageObject = $images[array_key_first($images)];
                 if (isset($imageObject['height'])) {
                     // determine the highest resolution image
                     foreach ($images as $i) {
@@ -478,6 +519,26 @@ class ActivityPubManager
         return null;
     }
 
+    public static function extractUrlFromAttachment(mixed $attachment): ?string
+    {
+        $url = null;
+        if (\is_array($attachment)) {
+            $link = array_filter(
+                $attachment,
+                fn ($val) => 'Link' === $val['type']
+            );
+
+            $firstArrayKey = array_key_first($link);
+            if (!empty($link[$firstArrayKey]) && isset($link[$firstArrayKey]['href']) && \is_string($link[$firstArrayKey]['href'])) {
+                $url = $link[$firstArrayKey]['href'];
+            } elseif (isset($link['href']) && \is_string($link['href'])) {
+                $url = $link['href'];
+            }
+        }
+
+        return $url;
+    }
+
     /**
      * Creates a new magazine (Group).
      *
@@ -492,11 +553,23 @@ class ActivityPubManager
         if ($this->settingsManager->isBannedInstance($actorUrl)) {
             throw new InstanceBannedException();
         }
+        $dto = $this->magazineFactory->createDtoFromAp($actorUrl, $this->buildHandle($actorUrl));
         $this->magazineManager->create(
-            $this->magazineFactory->createDtoFromAp($actorUrl, $this->buildHandle($actorUrl)),
+            $dto,
             null,
             false
         );
+
+        try {
+            if (method_exists($this->cache, 'invalidateTags')) {
+                // clear markdown renders that are tagged with the handle of the magazine
+                $tag = UrlUtils::getCacheKeyForMarkdownMagazineMention($dto->apId);
+                $this->cache->invalidateTags([$tag]);
+                $this->logger->debug('cleared cached items with tag {t}', ['t' => $tag]);
+            }
+        } catch (CacheException $ex) {
+            $this->logger->error('An error occurred during cache clearing: {e} - {m}', ['e' => \get_class($ex), 'm' => $ex->getMessage()]);
+        }
 
         return $this->updateMagazine($actorUrl);
     }
@@ -541,6 +614,21 @@ class ActivityPubManager
                     $this->bus->dispatch(new DeleteImageMessage($magazine->icon->getId()));
                 }
                 $magazine->icon = $newImage;
+            } elseif (null !== $magazine->icon) {
+                $this->bus->dispatch(new DeleteImageMessage($magazine->icon->getId()));
+                $magazine->icon = null;
+            }
+
+            if (isset($actor['image'])) {
+                $banner = !\array_key_exists('type', $actor['image']) ? $actor['image'] : [$actor['image']];
+                $newImage = $this->handleImages($banner);
+                if ($magazine->banner && $newImage !== $magazine->banner) {
+                    $this->bus->dispatch(new DeleteImageMessage($magazine->banner->getId()));
+                }
+                $magazine->banner = $newImage;
+            } elseif (null !== $magazine->banner) {
+                $this->bus->dispatch(new DeleteImageMessage($magazine->banner->getId()));
+                $magazine->banner = null;
             }
 
             if ($actor['name']) {
@@ -566,13 +654,14 @@ class ActivityPubManager
             $magazine->apAttributedToUrl = isset($actor['attributedTo']) && \is_string($actor['attributedTo']) ? $actor['attributedTo'] : null;
             $magazine->apFeaturedUrl = $actor['featured'] ?? null;
             $magazine->apPreferredUsername = $actor['preferredUsername'] ?? null;
-            $magazine->apDiscoverable = $actor['discoverable'] ?? true;
+            $magazine->apDiscoverable = $actor['discoverable'] ?? null;
             $magazine->apPublicUrl = $actor['url'] ?? $actorUrl;
             $magazine->apDeletedAt = null;
             $magazine->apTimeoutAt = null;
             $magazine->apFetchedAt = new \DateTime();
             $magazine->isAdult = $actor['sensitive'] ?? false;
             $magazine->postingRestrictedToMods = filter_var($actor['postingRestrictedToMods'] ?? false, FILTER_VALIDATE_BOOLEAN) ?? false;
+            $magazine->apIndexable = $actor['indexable'] ?? null;
 
             if (null !== $magazine->apFollowersUrl) {
                 try {
@@ -600,6 +689,16 @@ class ActivityPubManager
                     $this->handleMagazineFeaturedCollection($actorUrl, $magazine);
                 } catch (InvalidArgumentException $ignored) {
                 }
+            }
+
+            if (isset($actor['publicKey']['publicKeyPem']) && $magazine->publicKey !== $actor['publicKey']['publicKeyPem']) {
+                if (null !== $magazine->publicKey) {
+                    // only log the message if there already was a public key. When initially created the actors do not get one
+                    $this->logger->info('The public key of magazine "{m}" has changed', ['m' => $magazine->name]);
+                    $magazine->lastKeyRotationDate = new \DateTime();
+                }
+                $magazine->oldPublicKey = $magazine->publicKey;
+                $magazine->publicKey = $actor['publicKey']['publicKeyPem'];
             }
 
             if (null !== $magazine->apId) {
@@ -793,9 +892,10 @@ class ActivityPubManager
         $arr = array_unique(
             array_filter(
                 array_merge(
-                    \is_array($activity['cc']) ? $activity['cc'] : [$activity['cc']],
-                    \is_array($activity['to']) ? $activity['to'] : [$activity['to']]
-                ), fn ($val) => !\in_array($val, [ActivityPubActivityInterface::PUBLIC_URL, $followersUrl, []])
+                    \App\Utils\JsonldUtils::getArrayValue($activity, 'cc'),
+                    \App\Utils\JsonldUtils::getArrayValue($activity, 'to'),
+                ),
+                fn ($val) => !\in_array($val, [ActivityPubActivityInterface::PUBLIC_URL, $followersUrl, []])
             )
         );
 
@@ -914,43 +1014,19 @@ class ActivityPubManager
 
     public static function getReceivers(array $object): array
     {
-        $res = [];
-        if (isset($object['audience']) and \is_array($object['audience'])) {
-            $res = array_merge($res, $object['audience']);
-        } elseif (isset($object['audience']) and \is_string($object['audience'])) {
-            $res[] = $object['audience'];
-        }
-
-        if (isset($object['to']) and \is_array($object['to'])) {
-            $res = array_merge($res, $object['to']);
-        } elseif (isset($object['to']) and \is_string($object['to'])) {
-            $res[] = $object['to'];
-        }
-
-        if (isset($object['cc']) and \is_array($object['cc'])) {
-            $res = array_merge($res, $object['cc']);
-        } elseif (isset($object['cc']) and \is_string($object['cc'])) {
-            $res[] = $object['cc'];
-        }
+        $res = array_merge(
+            \App\Utils\JsonldUtils::getArrayValue($object, 'audience'),
+            \App\Utils\JsonldUtils::getArrayValue($object, 'to'),
+            \App\Utils\JsonldUtils::getArrayValue($object, 'cc'),
+        );
 
         if (isset($object['object']) and \is_array($object['object'])) {
-            if (isset($object['object']['audience']) and \is_array($object['object']['audience'])) {
-                $res = array_merge($res, $object['object']['audience']);
-            } elseif (isset($object['object']['audience']) and \is_string($object['object']['audience'])) {
-                $res[] = $object['object']['audience'];
-            }
-
-            if (isset($object['object']['to']) and \is_array($object['object']['to'])) {
-                $res = array_merge($res, $object['object']['to']);
-            } elseif (isset($object['object']['to']) and \is_string($object['object']['to'])) {
-                $res[] = $object['object']['to'];
-            }
-
-            if (isset($object['object']['cc']) and \is_array($object['object']['cc'])) {
-                $res = array_merge($res, $object['object']['cc']);
-            } elseif (isset($object['object']['cc']) and \is_string($object['object']['cc'])) {
-                $res[] = $object['object']['cc'];
-            }
+            $res = array_merge(
+                $res,
+                \App\Utils\JsonldUtils::getArrayValue($object['object'], 'audience'),
+                \App\Utils\JsonldUtils::getArrayValue($object['object'], 'to'),
+                \App\Utils\JsonldUtils::getArrayValue($object['object'], 'cc'),
+            );
         } elseif (isset($object['attributedTo']) && \is_array($object['attributedTo'])) {
             // if there is no "object" inside of this it will probably be a create activity which has an attributedTo field
             // this was implemented for peertube support, because they list the channel (Group) and the user in an array in that field
@@ -990,6 +1066,7 @@ class ActivityPubManager
     public function getEntityObject(string|array $apObject, array $fullPayload, callable $chainDispatch): Entry|EntryComment|Post|PostComment|null
     {
         $object = null;
+        $activity = null;
         $calledUrl = null;
         if (\is_string($apObject)) {
             if (false === filter_var($apObject, FILTER_VALIDATE_URL)) {
@@ -1006,6 +1083,8 @@ class ActivityPubManager
                     $object = $this->apHttpClient->getActivityObject($apObject);
                 } else {
                     $this->logger->info('[ActivityPubManager::getEntityObject] The instance is banned, url: {url}', ['url' => $apObject]);
+
+                    return null;
                 }
             }
         } else {
@@ -1064,14 +1143,10 @@ class ActivityPubManager
 
     public function isActivityPublic(array $payload): bool
     {
-        $to = [];
-        if (!empty($payload['to']) && \is_array($payload['to'])) {
-            $to = array_merge($to, $payload['to']);
-        }
-
-        if (!empty($payload['cc']) && \is_array($payload['cc'])) {
-            $to = array_merge($to, $payload['cc']);
-        }
+        $to = array_merge(
+            \App\Utils\JsonldUtils::getArrayValue($payload, 'to'),
+            \App\Utils\JsonldUtils::getArrayValue($payload, 'cc'),
+        );
 
         foreach ($to as $receiver) {
             $id = null;
@@ -1136,16 +1211,36 @@ class ActivityPubManager
         return null;
     }
 
+    public function extractTotalAmountFromCollection(mixed $collection): ?int
+    {
+        $id = null;
+        if (\is_string($collection)) {
+            if (false !== filter_var($collection, FILTER_VALIDATE_URL)) {
+                $id = $collection;
+            }
+        } elseif (\is_array($collection)) {
+            if (isset($collection['totalItems'])) {
+                return \intval($collection['totalItems']);
+            } elseif (isset($collection['id'])) {
+                $id = $collection['id'];
+            }
+        }
+
+        if ($id) {
+            $this->apHttpClient->invalidateCollectionObjectCache($id);
+            $collection = $this->apHttpClient->getCollectionObject($id);
+            if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
+                return $collection['totalItems'];
+            }
+        }
+
+        return null;
+    }
+
     public function extractRemoteLikeCount(array $apObject): ?int
     {
         if (!empty($apObject['likes'])) {
-            if (false !== filter_var($apObject['likes'], FILTER_VALIDATE_URL)) {
-                $this->apHttpClient->invalidateCollectionObjectCache($apObject['likes']);
-                $collection = $this->apHttpClient->getCollectionObject($apObject['likes']);
-                if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
-                    return $collection['totalItems'];
-                }
-            }
+            return $this->extractTotalAmountFromCollection($apObject['likes']);
         }
 
         return null;
@@ -1154,13 +1249,7 @@ class ActivityPubManager
     public function extractRemoteDislikeCount(array $apObject): ?int
     {
         if (!empty($apObject['dislikes'])) {
-            if (false !== filter_var($apObject['dislikes'], FILTER_VALIDATE_URL)) {
-                $this->apHttpClient->invalidateCollectionObjectCache($apObject['dislikes']);
-                $collection = $this->apHttpClient->getCollectionObject($apObject['dislikes']);
-                if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
-                    return $collection['totalItems'];
-                }
-            }
+            return $this->extractTotalAmountFromCollection($apObject['dislikes']);
         }
 
         return null;
@@ -1169,13 +1258,7 @@ class ActivityPubManager
     public function extractRemoteShareCount(array $apObject): ?int
     {
         if (!empty($apObject['shares'])) {
-            if (false !== filter_var($apObject['shares'], FILTER_VALIDATE_URL)) {
-                $this->apHttpClient->invalidateCollectionObjectCache($apObject['shares']);
-                $collection = $this->apHttpClient->getCollectionObject($apObject['shares']);
-                if (isset($collection['totalItems']) && \is_int($collection['totalItems'])) {
-                    return $collection['totalItems'];
-                }
-            }
+            return $this->extractTotalAmountFromCollection($apObject['shares']);
         }
 
         return null;

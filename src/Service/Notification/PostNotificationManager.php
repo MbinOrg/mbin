@@ -21,6 +21,7 @@ use App\Repository\UserRepository;
 use App\Service\Contracts\ContentNotificationManagerInterface;
 use App\Service\GenerateHtmlClassService;
 use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use App\Service\MentionManager;
 use App\Service\SettingsManager;
 use App\Utils\IriGenerator;
@@ -46,7 +47,7 @@ class PostNotificationManager implements ContentNotificationManagerInterface
         private readonly Environment $twig,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly EntityManagerInterface $entityManager,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
         private readonly GenerateHtmlClassService $classService,
         private readonly SettingsManager $settingsManager,
         private readonly NotificationSettingsRepository $notificationSettingsRepository,
@@ -66,7 +67,7 @@ class PostNotificationManager implements ContentNotificationManagerInterface
         $this->notifyMagazine(new PostCreatedNotification($subject->user, $subject));
 
         // Notify mentioned
-        $mentions = MentionManager::clearLocal($this->mentionManager->extract($subject->body));
+        $mentions = $this->mentionManager->clearLocal($this->mentionManager->extract($subject->body));
         foreach ($this->mentionManager->getUsersFromArray($mentions) as $user) {
             if (!$user->isBlocked($subject->user)) {
                 $notification = new PostMentionedNotification($user, $subject);

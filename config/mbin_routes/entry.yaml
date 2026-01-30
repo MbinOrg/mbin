@@ -186,14 +186,12 @@ entry_comment_boost:
 
 entry_create:
   controller: App\Controller\Entry\EntryCreateController
-  defaults: { type: link }
-  path: /new/{type}
+  path: /new_entry
   methods: [ GET, POST ]
 
 magazine_entry_create:
   controller: App\Controller\Entry\EntryCreateController
-  defaults: { type: link }
-  path: /m/{name}/new/{type}
+  path: /m/{name}/new_entry
   methods: [ GET, POST ]
 
 entry_edit:
@@ -276,6 +274,14 @@ entry_pin:
   requirements:
     entry_id: \d+
 
+entry_lock:
+    controller: App\Controller\Entry\EntryLockController
+    defaults: { slug: -, sortBy: default }
+    path: /m/{magazine_name}/t/{entry_id}/{slug}/lock
+    methods: [ POST ]
+    requirements:
+        entry_id: \d+
+
 entry_voters:
   controller: App\Controller\Entry\EntryVotersController
   defaults: { slug: -, sortBy: default }
@@ -350,3 +356,11 @@ entry_boost:
   methods: [ POST ]
   requirements:
     id: \d+
+
+entry_crosspost:
+    controller: App\Controller\CrosspostController
+    defaults: { entityClass: App\Entity\Entry }
+    path: /crosspost/{id}
+    methods: [ GET ]
+    requirements:
+        id: \d+

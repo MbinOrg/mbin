@@ -9,8 +9,9 @@ use App\Entity\User;
 use App\Message\ActivityPub\Outbox\DeliverMessage;
 use App\Message\Contracts\MessageInterface;
 use App\Message\DeleteUserMessage;
+use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\ActivityPub\Wrapper\DeleteWrapper;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use App\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -24,12 +25,13 @@ class DeleteUserHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly LoggerInterface $logger,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
         private readonly KernelInterface $kernel,
         private readonly UserManager $userManager,
         private readonly DeleteWrapper $deleteWrapper,
         private readonly MessageBusInterface $bus,
         private readonly EntityManagerInterface $entityManager,
+        private readonly ActivityJsonBuilder $activityJsonBuilder,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
@@ -52,7 +54,8 @@ class DeleteUserHandler extends MbinMessageHandler
         if (!$user) {
             throw new UnrecoverableMessageHandlingException('User not found');
         } elseif ($user->isDeleted && null === $user->markedForDeletionAt) {
-            throw new UnrecoverableMessageHandlingException('User already deleted');
+            // user already deleted
+            return;
         }
 
         $isLocal = null === $user->apId;
@@ -90,30 +93,35 @@ class DeleteUserHandler extends MbinMessageHandler
         }
 
         $this->entityManager->beginTransaction();
+        try {
+            // delete the original user, so all the content is cascade deleted
+            $this->entityManager->remove($user);
+            $this->entityManager->flush();
 
-        // delete the original user, so all the content is cascade deleted
-        $this->entityManager->remove($user);
-        $this->entityManager->flush();
+            // recreate a user with the same name, so this handle is blocked
+            $user = $this->userManager->create($userDto, verifyUserEmail: false, rateLimit: false, preApprove: true);
+            $user->isDeleted = true;
+            $user->markedForDeletionAt = null;
+            $user->isVerified = false;
 
-        // recreate a user with the same name, so this handle is blocked
-        $user = $this->userManager->create($userDto, verifyUserEmail: false, rateLimit: false, preApprove: true);
-        $user->isDeleted = true;
-        $user->markedForDeletionAt = null;
-        $user->isVerified = false;
+            if ($isLocal) {
+                $user->privateKey = $privateKey;
+                $user->publicKey = $publicKey;
+            }
 
-        if ($isLocal) {
-            $user->privateKey = $privateKey;
-            $user->publicKey = $publicKey;
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+
+            if ($isLocal) {
+                $this->sendDeleteMessages($inboxes, $user);
+            }
+
+            $this->entityManager->commit();
+        } catch (\Exception $e) {
+            $this->entityManager->rollback();
+
+            throw $e;
         }
-
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-
-        if ($isLocal) {
-            $this->sendDeleteMessages($inboxes, $user);
-        }
-
-        $this->entityManager->commit();
     }
 
     private function getInboxes(?User $user): array
@@ -127,7 +135,8 @@ class DeleteUserHandler extends MbinMessageHandler
             return;
         }
 
-        $message = $this->deleteWrapper->buildForUser($deletedUser);
+        $activity = $this->deleteWrapper->buildForUser($deletedUser);
+        $message = $this->activityJsonBuilder->buildActivityJson($activity);
 
         foreach ($targetInboxes as $inbox) {
             $this->bus->dispatch(new DeliverMessage($inbox, $message));

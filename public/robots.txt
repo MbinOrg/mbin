@@ -2,11 +2,13 @@
 
 # Using: https://github.com/mitchellkrogza/nginx-ultimate-bad-bot-blocker/blob/master/robots.txt/robots.txt
 ### Version Information for nginx-ultimate-bad-bot-blocker #
+### Version Information #
 ###################################################
-### Version: V4.2025.01.4984
-### Updated: Sun Jan 19 10:06:56 UTC 2025
-### Bad Bot Count: 675
+### Version: V4.2025.11.5580
+### Updated: Sun Nov  9 10:09:12 UTC 2025
+### Bad Bot Count: 681
 ###################################################
+### Version Information ##
 User-agent: 01h4x.com
 Disallow:/
 User-agent: 360Spider
@@ -39,11 +41,17 @@ User-agent: AfD-Verbotsverfahren
 Disallow:/
 User-agent: AhrefsBot
 Disallow:/
+User-agent: Ai2Bot
+Disallow:/
 User-agent: AiHitBot
 Disallow:/
 User-agent: Aipbot
 Disallow:/
 User-agent: Alexibot
+Disallow:/
+User-agent: Aliyun
+Disallow:/
+User-agent: AliyunSecBot
 Disallow:/
 User-agent: AllSubmitter
 Disallow:/
@@ -344,6 +352,8 @@ Disallow:/
 User-agent: GT::WWW
 Disallow:/
 User-agent: GalaxyBot
+Disallow:/
+User-agent: GeedoProductSearch
 Disallow:/
 User-agent: Genieo
 Disallow:/
@@ -1193,6 +1203,8 @@ User-agent: ZyBorg
 Disallow:/
 User-agent: adscanner
 Disallow:/
+User-agent: allenai.org
+Disallow:/
 User-agent: anthropic-ai
 Disallow:/
 User-agent: archive.org_bot
@@ -1230,6 +1242,8 @@ Disallow:/
 User-agent: dataforseo.com
 Disallow:/
 User-agent: dataforseobot
+Disallow:/
+User-agent: dataprovider
 Disallow:/
 User-agent: demandbase-bot
 Disallow:/
@@ -1359,7 +1373,33 @@ User-agent: zgrab
 Disallow:/
 
 # Extra bad bots
+User-agent: ChatGPT Agent
+Disallow: /
+User-agent: Claude-SearchBot
+Disallow: /
+User-agent: Claude-User
+Disallow: /
+User-agent: Claude-Web
+Disallow: /
+User-agent: Cloudflare-AutoRAG
+Disallow: /
+User-agent: CloudVertexBot
+Disallow: /
+User-agent: cohere-ai
+Disallow: /
+User-agent: cohere-training-data-crawler
+Disallow: /
+User-agent: Google-CloudVertexBot
+Disallow: /
 User-agent: Google-Extended
+Disallow: /
+User-agent: Google-Firebase
+Disallow: /
+User-agent: Google-NotebookLM
+Disallow: /
+User-agent: GoogleAgent-Mariner
+Disallow: /
+User-agent: Perplexity-User
 Disallow: /
 User-agent: PerplexityBot
 Disallow: /
@@ -1372,6 +1412,12 @@ Disallow: /
 User-agent: Amazonbot
 Disallow: /
 User-agent: Timpibot
+Disallow: /
+User-agent: meta-webindexer
+Disallow: /
+User-agent: MistralAI-User
+Disallow: /
+User-agent: MistralAI-User/1.0
 Disallow: /
 
 # Rest of indexing robots
@@ -1391,3 +1437,25 @@ Disallow: /new/*
 Disallow: /newMagazine
 Disallow: /terms
 Disallow: /privacy-policy
+Disallow: /search
+
+# Voting, Boosting, Reporting
+Disallow /er/*
+Disallow /ev/*
+Disallow /ef/*
+Disallow /eb/*
+Disallow /ecr/*
+Disallow /ecv/*
+Disallow /ecf/*
+Disallow /ecb/*
+Disallow /pr/*
+Disallow /pv/*
+Disallow /pf/*
+Disallow /pb/*
+Disallow /pcr/*
+Disallow /pcv/*
+Disallow /pcf/*
+Disallow /pcb/*
+
+# Crossposting
+Disallow /crosspost/*

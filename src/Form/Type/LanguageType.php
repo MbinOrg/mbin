@@ -48,6 +48,8 @@ class LanguageType extends AbstractType
                             }
                         }
 
+                        natcasesort($choices);
+
                         return array_flip($choices);
                     }), [$this->preferredLanguages, $this->priorityLanguage]);
                 },

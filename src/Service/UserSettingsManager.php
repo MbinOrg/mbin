@@ -36,6 +36,10 @@ class UserSettingsManager
             $user->customCss,
             $user->ignoreMagazinesCustomCss,
             $user->notifyOnUserSignup,
+            $user->directMessageSetting,
+            $user->frontDefaultContent,
+            $user->apDiscoverable,
+            $user->apIndexable,
         );
     }
 
@@ -59,9 +63,19 @@ class UserSettingsManager
         $user->preferredLanguages = $dto->preferredLanguages ? array_unique($dto->preferredLanguages) : [];
         $user->customCss = $dto->customCss;
         $user->ignoreMagazinesCustomCss = $dto->ignoreMagazinesCustomCss;
+        $user->directMessageSetting = $dto->directMessageSetting;
+        $user->frontDefaultContent = $dto->frontDefaultContent;
 
         if (null !== $dto->notifyOnUserSignup) {
             $user->notifyOnUserSignup = $dto->notifyOnUserSignup;
+        }
+
+        if (null !== $dto->discoverable) {
+            $user->apDiscoverable = $dto->discoverable;
+        }
+
+        if (null !== $dto->indexable) {
+            $user->apIndexable = $dto->indexable;
         }
 
         $this->entityManager->flush();

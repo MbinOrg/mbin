@@ -6,12 +6,16 @@ doctrine:
             enumApplicationStatus: App\DoctrineExtensions\DBAL\Types\EnumApplicationStatus
             enumNotificationStatus: App\DoctrineExtensions\DBAL\Types\EnumNotificationStatus
             enumSortOptions: App\DoctrineExtensions\DBAL\Types\EnumSortOptions
+            enumDirectMessageSettings: App\DoctrineExtensions\DBAL\Types\EnumDirectMessageSettings
+            enumFrontContentOptions: App\DoctrineExtensions\DBAL\Types\EnumFrontContentOptions
         mapping_types:
             user_type: string
             citext: citext
             enumApplicationStatus: string
             enumNotificationStatus: string
             enumSortOptions: string
+            enumDirectMessageSettings: string
+            enumFrontContentOptions: string
 
         # IMPORTANT: You MUST configure your server version,
         # either here or in the DATABASE_URL env var (see .env file)
@@ -28,6 +32,8 @@ doctrine:
         report_fields_where_declared: true
         validate_xml_mapping: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        identity_generation_preferences:
+            Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
         auto_mapping: true
         controller_resolver:
             auto_mapping: true

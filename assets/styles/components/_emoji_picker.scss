@@ -1,0 +1,11 @@
+emoji-picker {
+  --background: var(--kbin-bg);
+  --input-font-color: var(--kbin-text-color);
+  --button-active-background: var(--kbin-button-primary-bg);
+  --button-hover-background: var(--kbin-button-primary-hover-bg);
+  --border-color: var(--kbin-input-border-color);
+}
+
+.rounded-edges emoji-picker {
+  --border-radius: var(--kbin-rounded-edges-radius);
+}

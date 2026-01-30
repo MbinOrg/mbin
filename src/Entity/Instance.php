@@ -47,6 +47,12 @@ class Instance
     #[Column]
     private int $failedDelivers = 0;
 
+    #[Column(options: ['default' => false])]
+    public bool $isBanned = false;
+
+    #[Column(options: ['default' => false])]
+    public bool $isExplicitlyAllowed = false;
+
     #[Column, Id, GeneratedValue]
     private int $id;
 

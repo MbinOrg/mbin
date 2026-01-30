@@ -20,10 +20,9 @@ class SearchApiTest extends WebTestCase
 
     private RSA\PrivateKey $key;
 
-    public function __construct($name = null, array $data = [], $dataName = '')
+    public function setUp(): void
     {
-        parent::__construct($name, $data, $dataName);
-
+        parent::setUp();
         $this->key = RSA::createKey(1024);
     }
 

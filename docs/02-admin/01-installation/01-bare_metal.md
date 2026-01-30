@@ -11,9 +11,29 @@ This guide is aimed for Debian / Ubuntu distribution servers, but it could run o
 
 ## Minimum hardware requirements
 
-**CPU:** 2 cores (>2.5 GHz)  
-**RAM:** 4GB (more is recommended for large instances)  
-**Storage:** 20GB (more is recommended, especially if you have a lot of remote/local magazines and/or have a lot of (local) users)
+- **vCPU:** 4 virtual cores (>= 2GHz, _more is recommended_ on larger instances)
+- **RAM:** 6GB (_more is recommended_ for large instances)
+- **Storage:** 40GB (_more is recommended_, especially if you have a lot of remote/local magazines and/or have a lot of (local) users)
+
+You can start with a smaller server and add more resources later if you are using a VPS for example. Our _recommendation_ is to have 12 vCPUs with 32GB of RAM.
+
+## Software Requirements
+
+- Debian 12 or Ubuntu 22.04 LTS or later
+- PHP v8.3 or higher
+- NodeJS v22 or higher
+- Valkey / KeyDB / Redis (pick one)
+- PostgreSQL
+- Supervisor
+- RabbitMQ
+- AMQProxy
+- Nginx / OpenResty (pick one)
+- _Optionally:_ Mercure
+
+This guide will show you how-to install and configure all of the above. Except for Mercure and Nginx, for Mercure see the [optional features page](../03-optional-features/README.md).
+
+> [!TIP]
+> Once the installation is completed, also check out the [additional configuration guides](../02-configuration/README.md) (including the Nginx setup).
 
 ## System Prerequisites
 
@@ -29,7 +49,7 @@ Install prequirements:
 sudo apt-get install lsb-release ca-certificates curl wget unzip gnupg apt-transport-https software-properties-common python3-launchpadlib git redis-server postgresql postgresql-contrib nginx acl -y
 ```
 
-On **Ubuntu 22.04 LTS** or older, prepare latest PHP package repositoy (8.3) by using a Ubuntu PPA (this step is optional for Ubuntu 23.10 or later) via:
+On **Ubuntu 22.04 LTS** or older, prepare latest PHP package repositoy (8.4) by using a Ubuntu PPA (this step is optional for Ubuntu 23.10 or later) via:
 
 ```bash
 sudo add-apt-repository ppa:ondrej/php -y
@@ -38,18 +58,24 @@ sudo add-apt-repository ppa:ondrej/php -y
 On **Debian 12** or later, you can install the latest PHP package repository (this step is optional for Debian 13 or later) via:
 
 ```bash
-sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+sudo apt-get -y install lsb-release ca-certificates curl
+sudo curl -sSLo /tmp/debsuryorg-archive-keyring.deb https://packages.sury.org/debsuryorg-archive-keyring.deb
+sudo dpkg -i /tmp/debsuryorg-archive-keyring.deb
+sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
 ```
 
-Install _PHP 8.3_ with PHP extensions:
+Install _PHP 8.4_ with the required additional PHP extensions:
 
 ```bash
 sudo apt-get update
-sudo apt-get install php8.3 php8.3-common php8.3-fpm php8.3-cli php8.3-amqp php8.3-bcmath php8.3-pgsql php8.3-gd php8.3-curl php8.3-xml php8.3-redis php8.3-mbstring php8.3-zip php8.3-bz2 php8.3-intl php8.3-bcmath -y
+sudo apt-get install php8.4 php8.4-common php8.4-fpm php8.4-cli php8.4-amqp php8.4-bcmath php8.4-pgsql php8.4-gd php8.4-curl php8.4-xml php8.4-redis php8.4-mbstring php8.4-zip php8.4-bz2 php8.4-intl php8.4-bcmath -y
 ```
 
 > [!NOTE]
-> If you are upgrading to PHP 8.3 from an older version, please re-review the [PHP configuration](#php) section of this guide as existing `ini` settings are NOT automatically copied to new versions. Additionally review which php-fpm version is configured in your nginx site.
+> If you are upgrading to PHP 8.3 from an older version, please re-review the [PHP configuration](#php) section of this guide as existing `ini` settings are NOT automatically copied to new versions. Additionally review which php-fpm version is configured in your Nginx site.
+
+> [!IMPORTANT]
+> **Never** even install `xdebug` PHP extension in production environments. Even if you don't enabled it but only installed `xdebug` can give massive performance issues.
 
 Install Composer:
 
@@ -58,35 +84,32 @@ sudo curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
 sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
 ```
 
+## Nginx / OpenResty
+
+Mbin bare metal setup requires a reverse proxy called Nginx (or OpenResty) to be installed and configured correctly. This is a requirement for Mbin to work safe, properly and to scale well.
+
+For Nginx/OpenResty setup see the [Nginx configuration](../02-configuration/02-nginx.md).
+
 ## Firewall
 
-If you have a firewall installed (or you're behind a NAT), be sure to open port `443` for the web server. Mbin should run behind a reverse proxy like Nginx.
+If you have a firewall installed (or you're behind a NAT), be sure to open port `443` for the web server. As said above, Mbin should run behind a reverse proxy like Nginx or OpenResty.
 
-For Nginx see: [Nginx configuration](../02-configuration/02-nginx.md).
-
-## Install NodeJS (frontend tools)
+## Install Node.JS (frontend tools)
 
 1. Prepare & download keyring:
 
 > [!NOTE]
 > This assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
 
+2. Setup the Nodesource repository:
+
 ```bash
-sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+curl -fsSL https://deb.nodesource.com/setup_24.x | sudo bash -
 ```
 
-2. Setup deb repository:
+3. Install Node.JS:
 
 ```bash
-NODE_MAJOR=20
-echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
-```
-
-3. Update and install NodeJS:
-
-```bash
-sudo apt-get update
 sudo apt-get install nodejs -y
 ```
 
@@ -248,43 +271,51 @@ See also: [Mbin config files](../02-configuration/01-mbin_config_files.md) for m
 Edit some PHP settings within your `php.ini` file:
 
 ```bash
-sudo nano /etc/php/8.3/fpm/php.ini
+sudo nano /etc/php/8.4/fpm/php.ini
 ```
 
 ```ini
 ; Maximum execution time of each script, in seconds
 max_execution_time = 60
 ; Both max file size and post body size are personal preferences
-upload_max_filesize = 8M
-post_max_size = 8M
+upload_max_filesize = 12M
+post_max_size = 12M
 ; Remember the memory limit is per child process
-memory_limit = 256M
+memory_limit = 512M
 ; maximum memory allocated to store the results
 realpath_cache_size = 4096K
 ; save the results for 10 minutes (600 seconds)
 realpath_cache_ttl = 600
 ```
 
-Optionally also enable OPCache for improved performances with PHP:
+Optionally also enable OPCache for improved performances with PHP (recommended for both fpm and cli ini files):
 
 ```ini
-opcache.enable=1
-opcache.enable_cli=1
+opcache.enable = 1
+opcache.enable_cli = 1
+opcache.preload = /var/www/mbin/config/preload.php
+opcache.preload_user = www-data
 ; Memory consumption (in MBs), personal preference
-opcache.memory_consumption=512
+opcache.memory_consumption = 512
 ; Internal string buffer (in MBs), personal preference
-opcache.interned_strings_buffer=128
-opcache.max_accelerated_files=100000
-; Enable PHP JIT
-opcache.jit_buffer_size=500M
+opcache.interned_strings_buffer = 128
+opcache.max_accelerated_files = 100000
+opcache.validate_timestamps = 0
+; Enable PHP JIT with all optimizations
+opcache.jit = 1255
+opcache.jit_buffer_size = 500M
 ```
+
+> [!CAUTION]
+> Be aware that activating `opcache.preload` can lead to errors if you run multiple sites
+> (because of re-declaring classes).
 
 More info: [Symfony Performance docs](https://symfony.com/doc/current/performance.html)
 
 Edit your PHP `www.conf` file as well, to increase the amount of PHP child processes (optional):
 
 ```bash
-sudo nano /etc/php/8.3/fpm/pool.d/www.conf
+sudo nano /etc/php/8.4/fpm/pool.d/www.conf
 ```
 
 With the content (these are personal preferences, adjust to your needs):
@@ -300,14 +331,12 @@ pm.max_spare_servers = 10
 Be sure to restart (or reload) the PHP-FPM service after you applied any changing to the `php.ini` file:
 
 ```bash
-sudo systemctl restart php8.3-fpm.service
+sudo systemctl restart php8.4-fpm.service
 ```
 
 ### Composer
 
-Choose either production or developer (not both).
-
-#### Composer Production
+Setup composer in production mode:
 
 ```bash
 composer install --no-dev
@@ -316,21 +345,10 @@ APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear
 composer clear-cache
 ```
 
-#### Composer Development
-
-If you run production already then _skip the steps below_.
-
 > [!CAUTION]
-> When running in development mode your instance will make _sensitive information_ available,
-> such as database credentials, via the debug toolbar and/or stack traces.
-> **DO NOT** expose your development instance to the Internet or you will have a bad time.
-
-```bash
-composer install
-composer dump-env dev
-APP_ENV=dev APP_DEBUG=1 php bin/console cache:clear
-composer clear-cache
-```
+> When running Symfony in _development mode_, your instance may _expose sensitive information_ to the public,
+> including database credentials, through the debug toolbar and stack traces.
+> **NEVER** expose your development instance to the Internet — doing so can lead to serious security risks.
 
 ### Caching
 
@@ -421,10 +439,10 @@ requirepass "{!SECRET!!KEY!-32_1-!}"
 
 ### PostgreSQL (Database)
 
-Create new `kbin` database user (or `mbin` user if you know what you are doing), using the password, `{!SECRET!!KEY!-32_2-!}`, you generated earlier:
+Create new `mbin` database user, using the password, `{!SECRET!!KEY!-32_2-!}`, you generated earlier:
 
 ```bash
-sudo -u postgres createuser --createdb --createrole --pwprompt kbin
+sudo -u postgres createuser --createdb --createrole --pwprompt mbin
 ```
 
 Create tables and database structure:
@@ -438,40 +456,36 @@ php bin/console doctrine:migrations:migrate
 > [!IMPORTANT]
 > Check out the [PostgreSQL configuration page](../02-configuration/04-postgresql.md). You should not run the default PostgreSQL configuration in production!
 
-## Install RabbitMQ
+## Message Handling
 
-[RabbitMQ Install](https://www.rabbitmq.com/install-debian.html#apt-quick-start-cloudsmith)
+### RabbitMQ
+
+RabbitMQ is a feature rich, multi-protocol messaging and streaming broker, used by Mbin to process outgoing and incoming messages. 
+
+Read also [What is RabbitMQ](../FAQ.md#what-is-rabbitmq) and [Symfony Messenger Queues](../04-running-mbin/04-messenger.md) for more information.
+
+#### Installing RabbitMQ
+
+See also: [RabbitMQ Install](https://www.rabbitmq.com/docs/install-debian#apt-quick-start).
 
 > [!NOTE]
 > This assumes you already installed all the prerequisites packages from the "System prerequisites" chapter.
 
 ```bash
-## Team RabbitMQ's main signing key
+## Team RabbitMQ's signing key
 curl -1sLf "https://keys.openpgp.org/vks/v1/by-fingerprint/0A9AF2115F4687BD29803A206B73A36E6026DFCA" | sudo gpg --dearmor | sudo tee /usr/share/keyrings/com.rabbitmq.team.gpg > /dev/null
-## Community mirror of Cloudsmith: modern Erlang repository
-curl -1sLf https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key | sudo gpg --dearmor | sudo tee /usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg > /dev/null
-## Community mirror of Cloudsmith: RabbitMQ repository
-curl -1sLf https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key | sudo gpg --dearmor | sudo tee /usr/share/keyrings/rabbitmq.9F4587F226208342.gpg > /dev/null
 
 ## Add apt repositories maintained by Team RabbitMQ
 sudo tee /etc/apt/sources.list.d/rabbitmq.list <<EOF
-## Provides modern Erlang/OTP releases
+## Modern Erlang/OTP releases
 ##
-deb [arch=amd64 signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa1.novemberain.com/rabbitmq/rabbitmq-erlang/deb/ubuntu jammy main
-deb-src [signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa1.novemberain.com/rabbitmq/rabbitmq-erlang/deb/ubuntu jammy main
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb1.rabbitmq.com/rabbitmq-erlang/ubuntu/jammy jammy main
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb2.rabbitmq.com/rabbitmq-erlang/ubuntu/jammy jammy main
 
-# another mirror for redundancy
-deb [arch=amd64 signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa2.novemberain.com/rabbitmq/rabbitmq-erlang/deb/ubuntu jammy main
-deb-src [signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa2.novemberain.com/rabbitmq/rabbitmq-erlang/deb/ubuntu jammy main
-
-## Provides RabbitMQ
+## Latest RabbitMQ releases
 ##
-deb [arch=amd64 signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa1.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu jammy main
-deb-src [signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa1.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu jammy main
-
-# another mirror for redundancy
-deb [arch=amd64 signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa2.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu jammy main
-deb-src [signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa2.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu jammy main
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb1.rabbitmq.com/rabbitmq-server/ubuntu/jammy jammy main
+deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb2.rabbitmq.com/rabbitmq-server/ubuntu/jammy jammy main
 EOF
 
 ## Update package indices
@@ -488,11 +502,11 @@ sudo apt-get install -y erlang-base \
 sudo apt-get install rabbitmq-server -y --fix-missing
 ```
 
-Now, we will add a new `kbin` user with the correct permissions:
+Now, we will add a new `mbin` user with the correct permissions:
 
 ```bash
-sudo rabbitmqctl add_user 'kbin' '{!SECRET!!KEY!-16_2-!}'
-sudo rabbitmqctl set_permissions -p '/' 'kbin' '.' '.' '.*'
+sudo rabbitmqctl add_user 'mbin' '{!SECRET!!KEY!-16_2-!}'
+sudo rabbitmqctl set_permissions -p / mbin ".*" ".*" ".*"
 ```
 
 Remove the `guest` account:
@@ -501,17 +515,40 @@ Remove the `guest` account:
 sudo rabbitmqctl delete_user 'guest'
 ```
 
-## Configure Queue Messenger Handler
+### AMQProxy
+
+Installing and using AMQProxy is _optional_, however we highly recommend using AMQProxy for better performance and reduced protocol overhead.
+
+AMQProxy is proxy server for the AMQP protcol (one of the protocols supported by RabbitMQ) with channel pooling and channel reusing. Allows PHP clients to keep long lived connections to upstream servers, increasing publishing speed.
+
+See also [What is AMQProxy](../FAQ.md#what-is-amqproxy)
+
+#### Installing AMQProxy
+
+```bash
+curl -fsSL https://packagecloud.io/cloudamqp/amqproxy/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/amqproxy.gpg > /dev/null
+. /etc/os-release
+echo "deb [signed-by=/usr/share/keyrings/amqproxy.gpg] https://packagecloud.io/cloudamqp/amqproxy/$ID $VERSION_CODENAME main" | sudo tee /etc/apt/sources.list.d/amqproxy.list
+sudo apt-get update
+sudo apt-get install amqproxy
+```
+
+### Configure Queue Messenger Handler
 
 ```bash
 cd /var/www/mbin
 nano .env
 ```
 
+We recommend to use RabbitMQ together with AMQProxy, AMQProxy is listening on port `5673` by default (you could also directly use RabbitMQ, but that is *not* recommended):
+
 ```ini
 # Use RabbitMQ (recommended for production):
 RABBITMQ_PASSWORD=!ChangeThisRabbitPass!
-MESSENGER_TRANSPORT_DSN=amqp://kbin:${RABBITMQ_PASSWORD}@127.0.0.1:5672/%2f/messages
+# Use RabbitMQ with AMQProxy (port 5673, recommended for production):
+MESSENGER_TRANSPORT_DSN=amqp://mbin:${RABBITMQ_PASSWORD}@127.0.0.1:5673/%2f/messages
+# Directly connect to RabbitMQ, without proxy (port 5672)
+#MESSENGER_TRANSPORT_DSN=amqp://mbin:${RABBITMQ_PASSWORD}@127.0.0.1:5672/%2f/messages
 
 # or Redis/KeyDB:
 #MESSENGER_TRANSPORT_DSN=redis://${REDIS_PASSWORD}@127.0.0.1:6379/messages
@@ -519,9 +556,9 @@ MESSENGER_TRANSPORT_DSN=amqp://kbin:${RABBITMQ_PASSWORD}@127.0.0.1:5672/%2f/mess
 #MESSENGER_TRANSPORT_DSN=doctrine://default
 ```
 
-## Setup Supervisor
+### Setup Supervisor
 
-We use Supervisor to run our background workers, aka. "Messengers".
+We use Supervisor to run our background workers, aka. "Messengers", which are processes that work together with RabbitMQ to consume the actual data.
 
 Install Supervisor:
 
@@ -540,6 +577,8 @@ With the following content:
 ```ini
 [program:messenger]
 command=php /var/www/mbin/bin/console messenger:consume scheduler_default old async outbox deliver inbox resolve receive failed --time-limit=3600
+#stdout_logfile=NONE
+#redirect_stderr=true
 user=www-data
 numprocs=6
 startsecs=0
@@ -549,9 +588,11 @@ startretries=10
 process_name=%(program_name)s_%(process_num)02d
 ```
 
-Save and close the file.
+> [!IMPORTANT]
+> Uncomment the `stdout_logfile` and `redirect_stderr` lines if you do **not** want the Supervisor worker logs being written to `/var/log/supervisor`. After all the same log entries will be written to the Mbin production log.
 
-Note: you can increase the number of running messenger jobs if your queue is building up (i.e. more messages are coming in than your messengers can handle)
+> [!NOTE]
+> You can increase the number of running messenger jobs if your queue is building up (i.e. more messages are coming in than your messengers can handle).
 
 Save and close the file. Restart supervisor jobs:
 

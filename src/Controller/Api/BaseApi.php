@@ -5,8 +5,16 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Controller\AbstractController;
+use App\DTO\EntryCommentDto;
+use App\DTO\EntryCommentResponseDto;
+use App\DTO\EntryDto;
+use App\DTO\EntryResponseDto;
 use App\DTO\MagazineDto;
 use App\DTO\MagazineResponseDto;
+use App\DTO\PostCommentDto;
+use App\DTO\PostCommentResponseDto;
+use App\DTO\PostDto;
+use App\DTO\PostResponseDto;
 use App\DTO\ReportDto;
 use App\DTO\ReportRequestDto;
 use App\DTO\UserDto;
@@ -23,6 +31,7 @@ use App\Entity\MagazineLog;
 use App\Entity\OAuth2ClientAccess;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Enums\ENotificationStatus;
 use App\Exception\SubjectHasBeenReportedException;
 use App\Factory\EntryCommentFactory;
 use App\Factory\EntryFactory;
@@ -30,6 +39,7 @@ use App\Factory\ImageFactory;
 use App\Factory\MagazineFactory;
 use App\Factory\PostCommentFactory;
 use App\Factory\PostFactory;
+use App\Factory\UserFactory;
 use App\Form\Constraint\ImageConstraint;
 use App\Repository\BookmarkListRepository;
 use App\Repository\BookmarkRepository;
@@ -37,16 +47,20 @@ use App\Repository\Criteria;
 use App\Repository\EntryCommentRepository;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
+use App\Repository\InstanceRepository;
 use App\Repository\NotificationSettingsRepository;
 use App\Repository\OAuth2ClientAccessRepository;
 use App\Repository\PostCommentRepository;
 use App\Repository\PostRepository;
+use App\Repository\ReputationRepository;
 use App\Repository\TagLinkRepository;
 use App\Repository\UserRepository;
 use App\Schema\PaginationSchema;
 use App\Service\BookmarkManager;
+use App\Service\InstanceManager;
 use App\Service\IpResolver;
 use App\Service\ReportManager;
+use App\Service\SettingsManager;
 use App\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
@@ -103,6 +117,11 @@ class BaseApi extends AbstractController
         private readonly ReportManager $reportManager,
         private readonly OAuth2ClientAccessRepository $clientAccessRepository,
         protected readonly NotificationSettingsRepository $notificationSettingsRepository,
+        protected readonly SettingsManager $settingsManager,
+        protected readonly UserFactory $userFactory,
+        protected readonly ReputationRepository $reputationRepository,
+        protected readonly InstanceRepository $instanceRepository,
+        protected readonly InstanceManager $instanceManager,
     ) {
     }
 
@@ -215,46 +234,30 @@ class BaseApi extends AbstractController
     public function serializeContentInterface(ContentInterface $content, bool $forceVisible = false): mixed
     {
         $toReturn = null;
-        $className = $this->entityManager->getClassMetadata(\get_class($content))->rootEntityName;
-        switch ($className) {
-            case Entry::class:
-                /**
-                 * @var Entry $content
-                 */
-                $dto = $this->entryFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfEntry($content));
-                $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
-                $toReturn = $dto->jsonSerialize();
-                $toReturn['itemType'] = 'entry';
-                break;
-            case EntryComment::class:
-                /**
-                 * @var EntryComment $content
-                 */
-                $dto = $this->entryCommentFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfEntryComment($content));
-                $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
-                $toReturn = $dto->jsonSerialize();
-                $toReturn['itemType'] = 'entry_comment';
-                break;
-            case Post::class:
-                /**
-                 * @var Post $content
-                 */
-                $dto = $this->postFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfPost($content));
-                $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
-                $toReturn = $dto->jsonSerialize();
-                $toReturn['itemType'] = 'post';
-                break;
-            case PostComment::class:
-                /**
-                 * @var PostComment $content
-                 */
-                $dto = $this->postCommentFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfPostComment($content));
-                $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
-                $toReturn = $dto->jsonSerialize();
-                $toReturn['itemType'] = 'post_comment';
-                break;
-            default:
-                throw new \LogicException('Invalid contentInterface classname "'.$className.'"');
+        if ($content instanceof Entry) {
+            $cross = $this->entryRepository->findCross($content);
+            $crossDtos = array_map(fn ($entry) => $this->entryFactory->createResponseDto($entry, []), $cross);
+            $dto = $this->entryFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfContent($content), $crossDtos);
+            $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
+            $toReturn = $dto->jsonSerialize();
+            $toReturn['itemType'] = 'entry';
+        } elseif ($content instanceof EntryComment) {
+            $dto = $this->entryCommentFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfContent($content));
+            $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
+            $toReturn = $dto->jsonSerialize();
+            $toReturn['itemType'] = 'entry_comment';
+        } elseif ($content instanceof Post) {
+            $dto = $this->postFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfContent($content));
+            $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
+            $toReturn = $dto->jsonSerialize();
+            $toReturn['itemType'] = 'post';
+        } elseif ($content instanceof PostComment) {
+            $dto = $this->postCommentFactory->createResponseDto($content, $this->tagLinkRepository->getTagsOfContent($content));
+            $dto->visibility = $forceVisible ? VisibilityInterface::VISIBILITY_VISIBLE : $dto->visibility;
+            $toReturn = $dto->jsonSerialize();
+            $toReturn['itemType'] = 'post_comment';
+        } else {
+            throw new \LogicException('Invalid contentInterface classname "'.$this->entityManager->getClassMetadata(\get_class($content))->rootEntityName.'"');
         }
 
         if ($forceVisible) {
@@ -281,20 +284,7 @@ class BaseApi extends AbstractController
             $this->tagLinkRepository,
         );
 
-        if ($response->subject) {
-            $response->subject->visibility = 'visible';
-        }
-
-        $toReturn = $response->jsonSerialize();
-        if ($subject) {
-            if ($toReturn['subject'] instanceof \JsonSerializable) {
-                $toReturn['subject'] = $toReturn['subject']->jsonSerialize();
-            }
-
-            $toReturn['subject']['visibility'] = $subject->getVisibility();
-        }
-
-        return $toReturn;
+        return $response->jsonSerialize();
     }
 
     /**
@@ -309,7 +299,7 @@ class BaseApi extends AbstractController
         $response = $this->magazineFactory->createResponseDto($dto);
 
         if ($user = $this->getUser()) {
-            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto);
+            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto)?->getStatus() ?? ENotificationStatus::Default;
         }
 
         return $response;
@@ -327,7 +317,7 @@ class BaseApi extends AbstractController
         $response = new UserResponseDto($dto);
 
         if ($user = $this->getUser()) {
-            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto);
+            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto)?->getStatus() ?? ENotificationStatus::Default;
         }
 
         return $response;
@@ -365,7 +355,23 @@ class BaseApi extends AbstractController
         }
     }
 
+    /**
+     * @throws BadRequestHttpException|\Exception
+     */
     public function handleUploadedImage(): Image
+    {
+        $img = $this->handleUploadedImageOptional();
+        if (null === $img) {
+            throw new BadRequestHttpException('Uploaded file not found!');
+        }
+
+        return $img;
+    }
+
+    /**
+     * @throws BadRequestHttpException|\Exception
+     */
+    public function handleUploadedImageOptional(): ?Image
     {
         try {
             /**
@@ -373,12 +379,12 @@ class BaseApi extends AbstractController
              */
             $uploaded = $this->request->getCurrentRequest()->files->get('uploadImage');
 
-            if (null === self::$constraint) {
-                self::$constraint = ImageConstraint::default();
+            if (null === $uploaded) {
+                return null;
             }
 
-            if (null === $uploaded) {
-                throw new BadRequestHttpException('Uploaded file not found!');
+            if (null === self::$constraint) {
+                self::$constraint = ImageConstraint::default();
             }
 
             if (self::$constraint->maxSize < $uploaded->getSize()) {
@@ -423,5 +429,92 @@ class BaseApi extends AbstractController
         } catch (SubjectHasBeenReportedException $e) {
             // Do nothing
         }
+    }
+
+    /**
+     * Serialize a single entry to JSON.
+     *
+     * @param Entry[]|null $crosspostedEntries
+     */
+    protected function serializeEntry(EntryDto|Entry $dto, array $tags, ?array $crosspostedEntries = null): EntryResponseDto
+    {
+        $crosspostedEntryDtos = null;
+        if (null !== $crosspostedEntries) {
+            $crosspostedEntryDtos = array_map(fn (Entry $item) => $this->entryFactory->createResponseDto($item, []), $crosspostedEntries);
+        }
+        $response = $this->entryFactory->createResponseDto($dto, $tags, $crosspostedEntryDtos);
+
+        if ($this->isGranted('ROLE_OAUTH2_ENTRY:VOTE')) {
+            $response->isFavourited = $dto instanceof EntryDto ? $dto->isFavourited : $dto->isFavored($this->getUserOrThrow());
+            $response->userVote = $dto instanceof EntryDto ? $dto->userVote : $dto->getUserChoice($this->getUserOrThrow());
+        }
+
+        if ($user = $this->getUser()) {
+            $response->canAuthUserModerate = $dto->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto)?->getStatus() ?? ENotificationStatus::Default;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Serialize a single entry comment to JSON.
+     */
+    protected function serializeEntryComment(EntryCommentDto $comment, array $tags): EntryCommentResponseDto
+    {
+        $response = $this->entryCommentFactory->createResponseDto($comment, $tags);
+
+        if ($this->isGranted('ROLE_OAUTH2_ENTRY_COMMENT:VOTE')) {
+            $response->isFavourited = $comment->isFavourited;
+            $response->userVote = $comment->userVote;
+        }
+
+        if ($user = $this->getUser()) {
+            $response->canAuthUserModerate = $comment->magazine->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+        }
+
+        return $response;
+    }
+
+    /**
+     * Serialize a single post to JSON.
+     */
+    protected function serializePost(Post|PostDto $dto, array $tags): PostResponseDto
+    {
+        if (null === $dto) {
+            return [];
+        }
+        $response = $this->postFactory->createResponseDto($dto, $tags);
+
+        if ($this->isGranted('ROLE_OAUTH2_POST:VOTE')) {
+            $response->isFavourited = $dto instanceof PostDto ? $dto->isFavourited : $dto->isFavored($this->getUserOrThrow());
+            $response->userVote = $dto instanceof PostDto ? $dto->userVote : $dto->getUserChoice($this->getUserOrThrow());
+        }
+
+        if ($user = $this->getUser()) {
+            $response->canAuthUserModerate = $dto->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto)?->getStatus() ?? ENotificationStatus::Default;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Serialize a single comment to JSON.
+     */
+    protected function serializePostComment(PostCommentDto $comment, array $tags): PostCommentResponseDto
+    {
+        $response = $this->postCommentFactory->createResponseDto($comment, $tags);
+
+        if ($this->isGranted('ROLE_OAUTH2_POST_COMMENT:VOTE')) {
+            $response->isFavourited = $comment instanceof PostCommentDto ? $comment->isFavourited : $comment->isFavored($this->getUserOrThrow());
+            $response->userVote = $comment instanceof PostCommentDto ? $comment->userVote : $comment->getUserChoice($this->getUserOrThrow());
+        }
+
+        if ($user = $this->getUser()) {
+            $response->canAuthUserModerate = $comment->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+        }
+
+        return $response;
     }
 }

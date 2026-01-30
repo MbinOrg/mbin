@@ -12,9 +12,9 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class MagazineDeleteIconApiTest extends WebTestCase
 {
-    public function __construct($name = null, array $data = [], $dataName = '')
+    public function setUp(): void
     {
-        parent::__construct($name, $data, $dataName);
+        parent::setUp();
         $this->kibbyPath = \dirname(__FILE__, 6).'/assets/kibby_emoji.png';
     }
 
@@ -93,12 +93,14 @@ class MagazineDeleteIconApiTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
-        self::assertArrayKeysMatch(MagazineRetrieveApiTest::MAGAZINE_RESPONSE_KEYS, $jsonData);
+        self::assertArrayKeysMatch(WebTestCase::MAGAZINE_RESPONSE_KEYS, $jsonData);
         self::assertIsArray($jsonData['icon']);
         self::assertArrayKeysMatch(self::IMAGE_KEYS, $jsonData['icon']);
         self::assertSame(96, $jsonData['icon']['width']);
         self::assertSame(96, $jsonData['icon']['height']);
         self::assertEquals('a8/1c/a81cc2fea35eeb232cd28fcb109b3eb5a4e52c71bce95af6650d71876c1bcbb7.png', $jsonData['icon']['filePath']);
+
+        self::assertNull($jsonData['banner']);
 
         $this->client->request('DELETE', "/api/moderate/magazine/{$magazine->getId()}/icon", server: ['HTTP_AUTHORIZATION' => $token]);
 

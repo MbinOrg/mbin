@@ -9,20 +9,18 @@ use App\Entity\User;
 use App\Event\Entry\EntryBeforeDeletedEvent;
 use App\Event\Entry\EntryBeforePurgeEvent;
 use App\Event\Entry\EntryDeletedEvent;
-use App\Message\ActivityPub\Outbox\DeleteMessage;
 use App\Message\Notification\EntryDeletedNotificationMessage;
 use App\Repository\EntryRepository;
-use App\Service\ActivityPub\Wrapper\DeleteWrapper;
+use App\Service\ActivityPub\DeleteService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Uid\Uuid;
 
 class EntryDeleteSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly MessageBusInterface $bus,
         private readonly EntryRepository $entryRepository,
-        private readonly DeleteWrapper $deleteWrapper,
+        private readonly DeleteService $deleteService,
     ) {
     }
 
@@ -56,10 +54,6 @@ class EntryDeleteSubscriber implements EventSubscriberInterface
     public function onEntryBeforeDeleteImpl(?User $user, Entry $entry): void
     {
         $this->bus->dispatch(new EntryDeletedNotificationMessage($entry->getId()));
-
-        if (!$entry->apId || !$entry->magazine->apId || (null !== $user && $entry->magazine->userIsModerator($user))) {
-            $payload = $this->deleteWrapper->adjustDeletePayload($user, $entry, Uuid::v4()->toRfc4122());
-            $this->bus->dispatch(new DeleteMessage($payload, $entry->user->getId(), $entry->magazine->getId()));
-        }
+        $this->deleteService->announceIfNecessary($user, $entry);
     }
 }

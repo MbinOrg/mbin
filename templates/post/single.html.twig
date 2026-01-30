@@ -44,6 +44,14 @@
             </div>
         {% endif %}
 
+        {% if post.isLocked %}
+            <div class="alert alert__info">
+                <p>
+                    {{ 'comments_locked'|trans }}
+                </p>
+            </div>
+        {% endif %}
+
         <div id="comments">
             {% include 'post/comment/_list.html.twig' %}
         </div>

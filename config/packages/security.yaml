@@ -53,6 +53,8 @@ security:
                 path: /
                 token_provider:
                     doctrine: true
+                # see https://symfony.com/doc/current/security/remember_me.html#using-signed-remember-me-tokens
+                signature_properties: ['username', 'password', 'totpSecret', 'isBanned', 'isDeleted', 'markedForDeletionAt']
             two_factor:
                 auth_form_path: 2fa_login
                 check_path: 2fa_login_check
@@ -70,7 +72,6 @@ security:
         - { path: ^/reset-password, role: PUBLIC_ACCESS }
         - { path: ^/login, role: PUBLIC_ACCESS }
         - { path: ^/resend-email-activation, role: PUBLIC_ACCESS }
-        - { path: ^/consent, role: PUBLIC_ACCESS }
         - { path: ^/oauth, role: PUBLIC_ACCESS }
         - { path: ^/terms, role: PUBLIC_ACCESS }
         - { path: ^/privacy-policy, role: PUBLIC_ACCESS }
@@ -120,10 +121,17 @@ security:
         - { path: ^/2fa, role: IS_AUTHENTICATED_2FA_IN_PROGRESS }
 
         - { path: ^/admin, roles: [ROLE_ADMIN, ROLE_MODERATOR] }
-        - { path: ^/authorize, roles: PUBLIC_ACCESS }
+        - { path: ^/authorize, roles: IS_AUTHENTICATED_REMEMBERED }
         - { path: ^/token, roles: PUBLIC_ACCESS }
         - { path: ^/api/doc, roles: PUBLIC_ACCESS }
         - { path: ^/api/client, roles: PUBLIC_ACCESS }
+        - { path: ^/api/info, roles: PUBLIC_ACCESS }
+        - { path: ^/api/instance, roles: PUBLIC_ACCESS }
+        - { path: ^/api/federated, roles: PUBLIC_ACCESS }
+        - { path: ^/api/defederated, roles: PUBLIC_ACCESS }
+        - { path: ^/api/dead, roles: PUBLIC_ACCESS }
+        - { path: ^/api/users/admins, role: PUBLIC_ACCESS }
+        - { path: ^/api/users/moderators, role: PUBLIC_ACCESS }
         - { path: ^/, roles: PUBLIC_ACCESS_UNLESS_PRIVATE_INSTANCE }
 
     role_hierarchy:
@@ -137,6 +145,9 @@ security:
                 'ROLE_OAUTH2_POST:EDIT',
                 'ROLE_OAUTH2_POST_COMMENT:CREATE',
                 'ROLE_OAUTH2_POST_COMMENT:EDIT',
+                'ROLE_OAUTH2_BOOKMARK:ADD',
+                'ROLE_OAUTH2_BOOKMARK:REMOVE',
+                'ROLE_OAUTH2_BOOKMARK_LIST:EDIT',
             ]
         ROLE_OAUTH2_DELETE:
             [
@@ -144,6 +155,7 @@ security:
                 'ROLE_OAUTH2_ENTRY_COMMENT:DELETE',
                 'ROLE_OAUTH2_POST:DELETE',
                 'ROLE_OAUTH2_POST_COMMENT:DELETE',
+                'ROLE_OAUTH2_BOOKMARK_LIST:DELETE',
             ]
         ROLE_OAUTH2_REPORT:
             [
@@ -164,6 +176,17 @@ security:
                 'ROLE_OAUTH2_DOMAIN:SUBSCRIBE',
                 'ROLE_OAUTH2_MAGAZINE:SUBSCRIBE',
                 'ROLE_OAUTH2_USER:FOLLOW',
+            ]
+        'ROLE_OAUTH2_BOOKMARK':
+            [
+              'ROLE_OAUTH2_BOOKMARK:ADD',
+              'ROLE_OAUTH2_BOOKMARK:REMOVE',
+            ]
+        'ROLE_OAUTH2_BOOKMARK_LIST':
+            [
+              'ROLE_OAUTH2_BOOKMARK_LIST:READ',
+              'ROLE_OAUTH2_BOOKMARK_LIST:EDIT',
+              'ROLE_OAUTH2_BOOKMARK_LIST:DELETE',
             ]
         ROLE_OAUTH2_BLOCK:
             [
@@ -224,23 +247,13 @@ security:
             [
                 'ROLE_OAUTH2_USER:NOTIFICATION:READ',
                 'ROLE_OAUTH2_USER:NOTIFICATION:DELETE',
+                'ROLE_OAUTH2_USER:NOTIFICATION:EDIT',
             ]
         'ROLE_OAUTH2_USER:OAUTH_CLIENTS':
             [
                 'ROLE_OAUTH2_USER:OAUTH_CLIENTS:READ',
                 'ROLE_OAUTH2_USER:OAUTH_CLIENTS:EDIT',
             ]
-        'ROLE_OAUTH2_USER:BOOKMARK':
-            [
-                'ROLE_OAUTH2_USER:BOOKMARK:ADD',
-                'ROLE_OAUTH2_USER:BOOKMARK:REMOVE',
-            ]
-        'ROLE_OAUTH2_USER:BOOKMARK_LIST':
-          [
-              'ROLE_OAUTH2_USER:BOOKMARK_LIST:READ',
-              'ROLE_OAUTH2_USER:BOOKMARK_LIST:EDIT',
-              'ROLE_OAUTH2_USER:BOOKMARK_LIST:DELETE',
-          ]
         'ROLE_OAUTH2_MODERATE':
             [
                 'ROLE_OAUTH2_MODERATE:ENTRY',
@@ -256,6 +269,7 @@ security:
                 'ROLE_OAUTH2_MODERATE:ENTRY:PIN',
                 'ROLE_OAUTH2_MODERATE:ENTRY:SET_ADULT',
                 'ROLE_OAUTH2_MODERATE:ENTRY:TRASH',
+                'ROLE_OAUTH2_MODERATE:ENTRY:LOCK',
             ]
         'ROLE_OAUTH2_MODERATE:ENTRY_COMMENT':
             [
@@ -267,6 +281,7 @@ security:
             [
                 'ROLE_OAUTH2_MODERATE:POST:LANGUAGE',
                 'ROLE_OAUTH2_MODERATE:POST:PIN',
+                'ROLE_OAUTH2_MODERATE:POST:LOCK',
                 'ROLE_OAUTH2_MODERATE:POST:SET_ADULT',
                 'ROLE_OAUTH2_MODERATE:POST:TRASH',
             ]

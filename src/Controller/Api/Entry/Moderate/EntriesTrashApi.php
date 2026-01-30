@@ -79,7 +79,7 @@ class EntriesTrashApi extends EntriesBaseApi
 
         $manager->trash($moderator, $entry);
 
-        $response = $this->serializeEntry($factory->createDto($entry), $this->tagLinkRepository->getTagsOfEntry($entry));
+        $response = $this->serializeEntry($factory->createDto($entry), $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry));
 
         // Force response to have all fields visible
         $visibility = $response->visibility;
@@ -161,7 +161,7 @@ class EntriesTrashApi extends EntriesBaseApi
         }
 
         return new JsonResponse(
-            $this->serializeEntry($factory->createDto($entry), $this->tagLinkRepository->getTagsOfEntry($entry)),
+            $this->serializeEntry($factory->createDto($entry), $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry)),
             headers: $headers
         );
     }

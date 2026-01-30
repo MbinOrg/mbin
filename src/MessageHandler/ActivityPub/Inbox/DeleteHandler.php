@@ -13,6 +13,7 @@ use App\Message\ActivityPub\Inbox\DeleteMessage;
 use App\Message\Contracts\MessageInterface;
 use App\Message\DeleteUserMessage;
 use App\MessageHandler\MbinMessageHandler;
+use App\Repository\ActivityRepository;
 use App\Repository\ApActivityRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPubManager;
@@ -39,6 +40,7 @@ class DeleteHandler extends MbinMessageHandler
         private readonly EntryCommentManager $entryCommentManager,
         private readonly PostManager $postManager,
         private readonly PostCommentManager $postCommentManager,
+        private readonly ActivityRepository $activityRepository,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
@@ -51,7 +53,7 @@ class DeleteHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof DeleteMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("DeleteHandler called, but is wasn\'t a DeleteMessage. Type: ".\get_class($message));
         }
         $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
 
@@ -75,6 +77,13 @@ class DeleteHandler extends MbinMessageHandler
         }
 
         $entity = $this->entityManager->getRepository($object['type'])->find((int) $object['id']);
+
+        if ($entity instanceof Entry || $entity instanceof EntryComment || $entity instanceof Post || $entity instanceof PostComment) {
+            if (!$entity->magazine->apId || ($actor->apId && !$entity->user->apId)) {
+                // local magazine or remote actor for a local users content -> need to announce it later
+                $this->activityRepository->createForRemoteActivity($message->payload, $entity);
+            }
+        }
 
         if ($entity instanceof Entry) {
             $this->deleteEntry($entity, $actor);

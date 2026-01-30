@@ -1,12 +1,19 @@
 <li class="dropdown">
   <button class="stretched-link" data-subject-target="more">{{ 'more'|trans }}</button>
   <ul class="dropdown__menu" data-controller="clipboard">
-    <li>
-      <a href="{{ path('entry_report', {id: entry.id}) }}"
-        class="{{ html_classes({'active': is_route_name('entry_report')}) }}" data-action="subject#getForm">
-        {{ 'report'|trans }}
-      </a>
-    </li>
+    {% if app.user is defined and app.user %}
+      <li>
+        <a href="{{ path('entry_report', {id: entry.id}) }}"
+          class="{{ html_classes({'active': is_route_name('entry_report')}) }}" data-action="subject#getForm">
+          {{ 'report'|trans }}
+        </a>
+      </li>
+      <li>
+        <a href="{{ path('entry_crosspost', {id: entry.id}) }}">
+          {{ 'crosspost'|trans }}
+        </a>
+      </li>
+    {% endif %}
     <li>
       <a href="{{ entry_voters_url(entry, 'up') }}"
         class="{{ html_classes({'active': is_route_name('entry_fav') or is_route_name('entry_voters')}) }}">
@@ -65,6 +72,19 @@
         <button type="submit">{{ 'delete'|trans }}</button>
       </form>
     </li>
+    {% endif %}
+    {% if is_granted('lock', entry) %}
+      <li>
+        <form method="post" action="{{ path('entry_lock', {'magazine_name': entry.magazine.name, 'entry_id': entry.id, 'slug': entry.slug}) }}" data-action="confirmation#ask"
+          data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
+          <input type="hidden" name="token" value="{{ csrf_token('entry_lock') }}">
+          {% if entry.isLocked %}
+            <button type="submit"><i class="fa fa-lock-open" aria-hidden="true" style="margin-right: .5em;"></i>{{ 'unlock'|trans }}</button>
+          {% else %}
+            <button type="submit"><i class="fa fa-lock" aria-hidden="true" style="margin-right: .5em;"></i>{{ 'lock'|trans }}</button>
+          {% endif %}
+        </form>
+      </li>
     {% endif %}
     {% if is_granted('moderate', entry) %}
     <li>

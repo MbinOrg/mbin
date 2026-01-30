@@ -7,8 +7,10 @@ supervisord.pid
 reports/
 .php-cs-fixer.cache
 tools/vendor/
+
 # VSCode
 .vscode/
+.vs/
 *.session.sql
 
 # Keys
@@ -18,9 +20,13 @@ tools/vendor/
 .env
 /public/media/*
 /public/media
-docker/compose.override.yml
 yarn.lock
 /metal/
+/tests/assets/copy
+
+# Docker specific
+/storage/
+/compose.override.yaml
 
 ###> symfony/framework-bundle ###
 /.env.local
@@ -61,6 +67,7 @@ yarn-error.log
 .phpunit.result.cache
 clover.xml
 /coverage
+/.phpunit.cache/
 ###< phpunit/phpunit ###
 
 ###> phpstan/phpstan ###

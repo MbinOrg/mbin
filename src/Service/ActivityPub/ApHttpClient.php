@@ -123,7 +123,7 @@ class ApHttpClient implements ApHttpClientInterface
             $content = $response->getContent(false);
             $this->logger->debug('[ApHttpClient::getActivityObjectImpl] URL: {url} - content: {content}', ['url' => $url, 'content' => $content]);
         } catch (\Exception $e) {
-            $this->logRequestException($response, $url, 'ApHttpClient:getActivityObject', $e);
+            $this->logRequestException($response ?? null, $url, 'ApHttpClient:getActivityObject', $e);
         }
 
         return $content;
@@ -372,7 +372,7 @@ class ApHttpClient implements ApHttpClientInterface
      *
      * @throws InvalidApPostException rethrows the error
      */
-    private function logRequestException(?ResponseInterface $response, string $requestUrl, string $requestType, \Exception $e): void
+    private function logRequestException(?ResponseInterface $response, string $requestUrl, string $requestType, \Exception $e, ?string $requestBody = null): void
     {
         if (null !== $response) {
             try {
@@ -385,15 +385,16 @@ class ApHttpClient implements ApHttpClientInterface
 
         // Often 400, 404 errors just return the full HTML page, so we don't want to log the full content of them
         // We truncate the content to 200 characters max.
-        $this->logger->error('[ApHttpClient::logRequestException] {type} failed: {address}, ex: {e}: {msg}. Truncated content: {content}', [
+        $this->logger->error('[ApHttpClient::logRequestException] {type} failed: {address}, ex: {e}: {msg}. Truncated content: {content}. Truncated request body: {body}', [
             'type' => $requestType,
             'address' => $requestUrl,
             'e' => \get_class($e),
             'msg' => $e->getMessage(),
             'content' => substr($content ?? 'No content provided', 0, 200),
+            'body' => substr($requestBody ?? 'No body provided', 0, 200),
         ]);
         // And only log the full content in debug log mode
-        if ($content) {
+        if (isset($content)) {
             $this->logger->debug('[ApHttpClient::logRequestException] Full response body content: {content}', [
                 'content' => $content,
             ]);
@@ -404,14 +405,15 @@ class ApHttpClient implements ApHttpClientInterface
     /**
      * Sends a POST request to the specified URL with optional request body and caching mechanism.
      *
-     * @param string        $url   the URL to which the POST request will be sent
-     * @param User|Magazine $actor The actor initiating the request, either a User or Magazine object
-     * @param array|null    $body  (Optional) The body of the POST request. Defaults to null.
+     * @param string        $url              the URL to which the POST request will be sent
+     * @param User|Magazine $actor            The actor initiating the request, either a User or Magazine object
+     * @param array|null    $body             (Optional) The body of the POST request. Defaults to null.
+     * @param bool          $useOldPrivateKey (Optional) Whether to use the old private key for signing (e.g. to send an update activity rotating the private key)
      *
      * @throws InvalidApPostException      if the POST request fails with a non-2xx response status code
      * @throws TransportExceptionInterface
      */
-    public function post(string $url, User|Magazine $actor, ?array $body = null): void
+    public function post(string $url, User|Magazine $actor, ?array $body = null, bool $useOldPrivateKey = false): void
     {
         $cacheKey = 'ap_'.hash('sha256', $url.':'.$body['id']);
 
@@ -436,7 +438,7 @@ class ApHttpClient implements ApHttpClientInterface
                 'max_duration' => self::MAX_DURATION,
                 'timeout' => self::TIMEOUT,
                 'body' => $jsonBody,
-                'headers' => $this->getHeaders($url, $actor, $body),
+                'headers' => $this->getHeaders($url, $actor, $body, $useOldPrivateKey),
             ]);
 
             $statusCode = $response->getStatusCode();
@@ -445,7 +447,7 @@ class ApHttpClient implements ApHttpClientInterface
                 throw new InvalidApPostException('Post failed', $url, $statusCode, $body);
             }
         } catch (\Exception $e) {
-            $this->logRequestException($response, $url, 'ApHttpClient:post', $e);
+            $this->logRequestException($response ?? null, $url, 'ApHttpClient:post', $e, $jsonBody);
         }
 
         // build cache
@@ -558,15 +560,20 @@ class ApHttpClient implements ApHttpClientInterface
         }, array_keys($headers), $headers);
     }
 
-    private function getHeaders(string $url, User|Magazine $actor, ?array $body = null): array
+    private function getHeaders(string $url, User|Magazine $actor, ?array $body = null, bool $useOldPrivateKey = false): array
     {
+        if ($useOldPrivateKey) {
+            $this->logger->debug('[ApHttpClient::getHeaders] Signing headers using the old private key');
+        }
         $headers = self::headersToSign($url, $body ? self::digest($body) : null);
         $stringToSign = self::headersToSigningString($headers);
         $signedHeaders = implode(' ', array_map('strtolower', array_keys($headers)));
-        $key = openssl_pkey_get_private($actor->privateKey);
-        $success_sign = openssl_sign($stringToSign, $signature, $key, OPENSSL_ALGO_SHA256);
-        // Free the key from memory
-        openssl_free_key($key);
+        $key = openssl_pkey_get_private($useOldPrivateKey ? $actor->oldPrivateKey : $actor->privateKey);
+        if (false !== $key) {
+            $success_sign = openssl_sign($stringToSign, $signature, $key, OPENSSL_ALGO_SHA256);
+        } else {
+            $success_sign = false;
+        }
         $signatureHeader = null;
         if ($success_sign) {
             $signature = base64_encode($signature);
@@ -575,9 +582,14 @@ class ApHttpClient implements ApHttpClientInterface
                 : $this->groupFactory->getActivityPubId($actor).'#main-key';
             $signatureHeader = 'keyId="'.$keyId.'",headers="'.$signedHeaders.'",algorithm="rsa-sha256",signature="'.$signature.'"';
         } else {
-            $this->logger->error('[ApHttpClient::getHeaders] Failed to sign headers for {url}: {headers}', [
+            $this->logger->error('[ApHttpClient::getHeaders] Failed to sign headers for {url} with private key of {actor}: {headers}', [
                 'url' => $url,
                 'headers' => $headers,
+                'actor' => $actor->apId ?? (
+                    $actor instanceof User
+                        ? $this->personFactory->getActivityPubId($actor).'#main-key'
+                        : $this->groupFactory->getActivityPubId($actor).'#main-key'
+                ),
             ]);
             throw new \Exception('Failed to sign headers');
         }
@@ -600,9 +612,11 @@ class ApHttpClient implements ApHttpClientInterface
         $stringToSign = self::headersToSigningString($headers);
         $signedHeaders = implode(' ', array_map('strtolower', array_keys($headers)));
         $key = openssl_pkey_get_private($privateKey);
-        $success_sign = openssl_sign($stringToSign, $signature, $key, OPENSSL_ALGO_SHA256);
-        // Free the key from memory
-        openssl_free_key($key);
+        if (false !== $key) {
+            $success_sign = openssl_sign($stringToSign, $signature, $key, OPENSSL_ALGO_SHA256);
+        } else {
+            $success_sign = false;
+        }
         $signatureHeader = null;
         if ($success_sign) {
             $signature = base64_encode($signature);

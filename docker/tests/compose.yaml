@@ -1,0 +1,20 @@
+services:
+    db:
+        image: postgres:${POSTGRES_VERSION:-17}-trixie
+        container_name: mbin-tests-db
+        shm_size: 128mb
+        restart: unless-stopped
+        ports:
+            - '5433:5432'
+        environment:
+            - POSTGRES_DB=mbin_test
+            - POSTGRES_USER=mbin
+            - POSTGRES_PASSWORD=ChangeThisPostgresPass
+    valkey:
+        image: valkey/valkey:trixie
+        container_name: mbin-tests-valkey
+        restart: unless-stopped
+        ports:
+            - '6380:6379'
+        healthcheck:
+            test: ['CMD', 'redis-cli', 'ping']

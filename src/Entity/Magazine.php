@@ -28,9 +28,14 @@ use Doctrine\ORM\Mapping\UniqueConstraint;
 
 #[Entity(repositoryClass: MagazineRepository::class)]
 #[Index(columns: ['visibility', 'is_adult'], name: 'magazine_visibility_adult_idx')]
-#[Index(columns: ['visibility'], name: 'magazine_visibility_idx')]
 #[Index(columns: ['is_adult'], name: 'magazine_adult_idx')]
+#[Index(columns: ['name_ts'], name: 'magazine_name_ts')]
+#[Index(columns: ['title_ts'], name: 'magazine_title_ts')]
+#[Index(columns: ['description_ts'], name: 'magazine_description_ts')]
 #[UniqueConstraint(name: 'magazine_name_idx', columns: ['name'])]
+#[UniqueConstraint(name: 'magazine_ap_id_idx', columns: ['ap_id'])]
+#[UniqueConstraint(name: 'magazine_ap_profile_id_idx', columns: ['ap_profile_id'])]
+#[UniqueConstraint(name: 'magazine_ap_public_url_idx', columns: ['ap_public_url'])]
 class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiResourceInterface
 {
     use ActivityPubActorTrait;
@@ -45,6 +50,9 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     #[ManyToOne(targetEntity: Image::class, cascade: ['persist'])]
     #[JoinColumn(nullable: true)]
     public ?Image $icon = null;
+    #[ManyToOne(targetEntity: Image::class, cascade: ['persist'])]
+    #[JoinColumn(nullable: true)]
+    public ?Image $banner = null;
     #[Column(type: 'string', nullable: false)]
     public string $name;
     #[Column(type: 'string')]
@@ -104,6 +112,14 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     #[OneToMany(mappedBy: 'magazine', targetEntity: MagazineLog::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $logs;
+
+    #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]
+    private ?string $nameTs;
+    #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]
+    private ?string $titleTs;
+    #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]
+    private ?string $descriptionTs;
+
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
@@ -118,6 +134,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         bool $isAdult,
         bool $postingRestrictedToMods,
         ?Image $icon,
+        ?Image $banner = null,
     ) {
         $this->name = $name;
         $this->title = $title;
@@ -126,6 +143,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         $this->isAdult = $isAdult;
         $this->postingRestrictedToMods = $postingRestrictedToMods;
         $this->icon = $icon;
+        $this->banner = $banner;
         $this->moderators = new ArrayCollection();
         $this->entries = new ArrayCollection();
         $this->posts = new ArrayCollection();
@@ -430,7 +448,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
          * @var MagazineBan $ban
          */
         $ban = $this->bans->matching($criteria)->first();
-        $ban->expiredAt = new \DateTime('+10 seconds');
+        $ban->expiredAt = new \DateTime('-10 seconds');
 
         return $ban;
     }
@@ -513,5 +531,10 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         }
 
         return true;
+    }
+
+    public function getContentCount(): int
+    {
+        return $this->entryCount + $this->entryCommentCount + $this->postCount + $this->postCommentCount;
     }
 }
