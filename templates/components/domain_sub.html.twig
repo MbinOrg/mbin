@@ -11,7 +11,11 @@
                 class="{{ html_classes('btn btn__secondary', {'active': is_domain_subscribed(domain)}) }}"
                 title="{{ is_domain_subscribed(domain) ? 'unsubscribe'|trans : 'subscribe'|trans }}"
                 data-action="subs#send">
-            {{ is_domain_subscribed(domain) ? 'unsubscribe_short'|trans : 'subscribe_short'|trans }}
+            {% if is_domain_subscribed(domain) %}
+                <i class="fa-sharp fa-solid fa-folder-minus" aria-hidden="true"></i><span>{{ 'unsubscribe_short'|trans }}</span>
+            {% else %}
+                <i class="fa-sharp fa-solid fa-folder-plus" aria-hidden="true"></i><span>{{ 'subscribe_short'|trans }}</span>
+            {% endif %}
         </button>
     </form>
     <form action="{{ path('domain_' ~ (is_domain_blocked(domain) ? 'unblock' : 'block'), {name: domain.name}) }}"
