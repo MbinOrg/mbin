@@ -218,7 +218,7 @@ class EntryFrontController extends AbstractController
             } else {
                 // check if teh "random" magazine exists and if so, use it
                 $randomMagazine = $this->magazineRepository->findOneByName('random');
-                if(null !== $randomMagazine) {
+                if (null !== $randomMagazine) {
                     $dto->magazine = $randomMagazine;
                 }
             }
