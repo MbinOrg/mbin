@@ -1437,6 +1437,7 @@ Disallow: /new/*
 Disallow: /newMagazine
 Disallow: /terms
 Disallow: /privacy-policy
+Disallow: /search
 
 # Voting, Boosting, Reporting
 Disallow /er/*
